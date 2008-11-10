@@ -1,3 +1,5 @@
+require 'rexml/document'
+
 class DocumentsController < ApplicationController
   # GET /documents
   # GET /documents.xml

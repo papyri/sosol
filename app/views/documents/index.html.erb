@@ -2,12 +2,14 @@
 
 <table>
   <tr>
+		<th>Title</th>
     <th>Content</th>
   </tr>
 
 <% for document in @documents %>
   <tr>
-    <td><%=h document.content %></td>
+		<td><%=h REXML::XPath.first(REXML::Document.new(document.content), "/TEI.2/teiHeader/fileDesc/titleStmt/title").text %></td>
+		<td><%=h "#{document.content[0,200]}..." %></td>
     <td><%= link_to 'Show', document %></td>
     <td><%= link_to 'Edit', edit_document_path(document) %></td>
     <td><%= link_to 'Destroy', document, :confirm => 'Are you sure?', :method => :delete %></td>
