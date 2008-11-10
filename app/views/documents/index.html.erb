@@ -8,7 +8,7 @@
 
 <% for document in @documents %>
   <tr>
-		<td><%= REXML::XPath.first(REXML::Document.new(document.content), "/TEI.2/teiHeader/fileDesc/titleStmt/title").text %></td>
+		<td><%= get_title document.content %></td>
 		<td><%=h "#{document.content[0,200]}..." %></td>
     <td><%= link_to 'Show', document %></td>
     <td><%= link_to 'Edit', edit_document_path(document) %></td>
