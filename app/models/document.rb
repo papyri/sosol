@@ -1,5 +1,7 @@
 class Document < ActiveRecord::Base
 	include DocumentsHelper
+	
+	has_many :events
 
 	# validate :must_be_valid_xml
 	validate :must_be_valid_epidoc
