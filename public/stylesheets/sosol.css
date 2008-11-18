@@ -32,10 +32,6 @@ body {
   text-align: left;
 }
 
-.preview {
-	border: medium solid #dadada;
-}
-
 .apis-portal-title {
 font-size:14px;
 font-weight:bold;
@@ -43,8 +39,21 @@ color: #000;
 background:transparent;
 }
 
+h2 {
+	font-size: 10pt;
+}
+
+.PContent
+{
+	padding: 1em;
+    white-space: normal;
+    background-color: #FFF;
+    border: medium solid #dadada;
+    overflow: hidden;
+    font-size: small;
+}
+
 DIV#edition {
-    font-size: 18px;
     padding-left:15px;
     position:relative;
 }
