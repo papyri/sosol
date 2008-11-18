@@ -8,10 +8,10 @@
 <% form_for(@document) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :leiden %><br />
-		<%= f.text_area :leiden, :cols => 80, :rows => 40, :disabled => 'disabled' %>
-  </p>
+  <div class="preview">
+    <%= @transformed %>
+  </div>
+  <br />
   <%= render :partial => 'edit_commit', :locals => { :f => f } %>
 <% end %>
 

@@ -1,4 +1,5 @@
 require 'rexml/document'
+require 'xml/xslt'
 
 class DocumentsController < ApplicationController
   # GET /documents
@@ -46,6 +47,12 @@ class DocumentsController < ApplicationController
   
   def preview
     edit
+    
+    xslt = XML::XSLT.new()
+    xslt.xml = REXML::Document.new(@document.content)
+    xslt.xsl = REXML::Document.new File.open(File.join(File.dirname(__FILE__), 'ddbdp.xsl'))
+    
+    @transformed = xslt.serve()
   end
 
   # POST /documents

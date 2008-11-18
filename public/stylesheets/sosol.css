@@ -32,6 +32,10 @@ body {
   text-align: left;
 }
 
+.preview {
+	border: medium solid #dadada;
+}
+
 #document_menu {
   background: #eaeaea;
   text-align: left;
