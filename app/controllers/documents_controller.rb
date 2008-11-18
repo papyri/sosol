@@ -48,9 +48,10 @@ class DocumentsController < ApplicationController
   def preview
     edit
     
+    Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
     xslt = XML::XSLT.new()
     xslt.xml = REXML::Document.new(@document.content)
-    xslt.xsl = REXML::Document.new File.open(File.join(File.dirname(__FILE__), 'ddbdp.xsl'))
+    xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     
     @transformed = xslt.serve()
   end
