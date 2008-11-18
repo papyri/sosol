@@ -38,6 +38,15 @@ class DocumentsController < ApplicationController
   def edit
     @document = Document.find(params[:id])
   end
+  
+  # GET /documents/1/xml
+  def editxml
+    edit
+  end
+  
+  def preview
+    edit
+  end
 
   # POST /documents
   # POST /documents.xml

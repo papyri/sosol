@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: white;
+  font: 13.34px helvetica, arial, clean, sans-serif;
+  *font-size: small;
+  text-align: center;
+}
+
+#main {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -8.6em;
+}
+
+body {
+  text-align: center;
+}
+
+.site {
+  width: 50em;
+  margin: 0 auto;
+  padding: 0 3em;
+  text-align: left;
+}
+
+#document_menu {
+  background: #eaeaea;
+  text-align: left;
+  overflow: hidden;
+}
+
+#document_menu ul {
+   overflow: hidden;
+   background: #f4f4f4;
+   border-bottom: 3px solid white;
+ }
+ 
+   #document_menu ul li {
+     background: #f4f4f4;
+     float: left;
+     list-style-type: none;
+     height: 1.6em;
+     padding-top: .4em;
+     border-right: 2px solid #eee;
+     position: relative;
+   }
+   
+   #document_menu ul li:hover {
+     background: #f4f4f4;
+   }
+   
+   #document_menu ul li.active {
+     background: white;
+   }
+   
+     #document_menu ul li a {
+       padding: 1em 1.25em .3em 1.25em;
+       color: #979797;
+       font-size: 110%;
+     }
+     
+     #document_menu ul li a:hover {
+       color: #f4f4f4;
+       text-decoration: none;
+     }
+     
+   #document_menu ul li.active a {
+     color: black;
+   }
+
+	#document_menu ul li.active a:hover {
+     color: #f4f4f4;
+   }
+
+#document_sub_menu {
+  height: 2.099em;
+  background: #dadada;
+  margin-bottom: 1.5em;
+  line-height: 1.5;
+}
+
+  #document_sub_menu .site {
+    padding: .4em 1em 0 1em;
+  }
+
+    #document_sub_menu ul {
+      list-style: none;
+    }
+
+    #document_sub_menu li {
+      float: left;
+      position: relative;
+    }
+
+      #document_sub_menu li ul {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+        top: 1em;
+        left: 0;
+        background-color: #d0d0d0;
+        margin-left: 1.7em;
+        border-left: 1px solid #cfcfcf;
+        border-right: 1px solid #cfcfcf;
+        border-bottom: 1px solid #cfcfcf;
+        padding: .3em;
+      }
+
+      #document_sub_menu li > ul {
+        top: auto;
+        left: auto;
+      }
+
+        #document_sub_menu li ul li {
+          top: auto;
+          left: auto;
+          float: none;
+          min-width: 6em;
+        }
+
+          #document_sub_menu li ul li a {
+            margin-left: 0;
+            padding: .1em .3em;
+            display: block;
+          }
+
+      #document_sub_menu li:hover ul {
+        display: block;
+      }
+
+    #document_sub_menu a {
+      padding: .3em;
+      margin-left: 2em;
+      color: black;
+    }
+
+    #document_sub_menu a:hover {
+      text-decoration: none;
+      background-color: #bbb;
+    }
+
+    #document_sub_menu li.active a {
+      background: #eee;
+    }

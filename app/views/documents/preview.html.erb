@@ -3,14 +3,14 @@
 <%= render :partial => 'edit_bar' %>
 
 <div class="site">
-<h1>Editing document</h1>
+<h1>Previewing document</h1>
 
 <% form_for(@document) do |f| %>
   <%= f.error_messages %>
 
   <p>
     <%= f.label :leiden %><br />
-		<%= f.text_area :leiden, :cols => 80, :rows => 40 %>
+		<%= f.text_area :leiden, :cols => 80, :rows => 40, :disabled => 'disabled' %>
   </p>
   <%= render :partial => 'edit_commit', :locals => { :f => f } %>
 <% end %>
