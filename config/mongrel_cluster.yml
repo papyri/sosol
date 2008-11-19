@@ -1,4 +1,5 @@
 --- 
+prefix: /protosite
 cwd: /var/rails/protosite/current
 log_file: log/mongrel.log
 port: "10000"
