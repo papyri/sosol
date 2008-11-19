@@ -10,7 +10,7 @@
 
   <p>
     <%= f.label :content %><br />
-		<%= f.text_area :content, :cols => 80, :rows => 40 %>
+		<%= f.text_area :content, :cols => 80, :rows => 40, :class => 'greek' %>
   </p>
   <%= render :partial => 'edit_commit', :locals => { :f => f } %>
 <% end %>
