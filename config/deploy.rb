@@ -19,3 +19,8 @@ set :mongrel_clean, true
 role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
+
+task :after_update_code, :roles => :app do
+	db_config = "#{shared_path}/config/database.yml.production"
+	run "cp #{db_config} #{release_path}/config/database.yml"
+end
