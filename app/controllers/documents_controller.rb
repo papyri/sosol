@@ -94,7 +94,7 @@ class DocumentsController < ApplicationController
   # DELETE /documents/1.xml
   def destroy
     @document = Document.find(params[:id])
-    @document.destroy
+    # @document.destroy
 
     respond_to do |format|
       format.html { redirect_to(documents_url) }
