@@ -32,10 +32,23 @@ body {
   text-align: left;
 }
 
-/* stolen from gbodard */
+/*
+InsAph .greek style:
+font-family: "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", "Palatino Linotype", "Titus Cyberbit Basic", "Cardo", "Vusillus Old Face", "Alphabetum", "Galatia SIL", "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode","Caslon",  "Lucida Grande", "Verdana", "Tahoma";
+
+777 Nov 19 15:53:44< gbodard> We were going for coverage, not looks
+778 Nov 19 15:53:45< gbodard> :p
+779 Nov 19 15:54:06< gbodard> On which grounds Cardo would be higher now
+780 Nov 19 15:54:09< hcayless> I know, but it does no harm to put the nicer ones first
+781 Nov 19 15:54:12< paregorios> hey, why didn't we bid for money to hire a typographer to make the papy font to rule them all :o
+782 Nov 19 15:54:15 * ryanfb is thankful browsers can now inspect DOM elements and tell you their computed styles
+783 Nov 19 15:54:59< hcayless> gbodard: I see what you're saying.  I was being dense
+784 Nov 19 15:57:37< gbodard> Not at all
+785 Nov 19 15:58:09< gbodard> But Arial MS, New Athena, and CArdo will all have pretty good coverage of anything epigraphers and papyrologists need
+*/
 .greek {
 	font-size: small;
-	font-family: "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", "Palatino Linotype", "Titus Cyberbit Basic", "Cardo", "Vusillus Old Face", "Alphabetum", "Galatia SIL", "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode","Caslon",  "Lucida Grande", "Verdana", "Tahoma";
+	font-family: "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma";
 }
 
 .apis-portal-title {
