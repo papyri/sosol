@@ -10,6 +10,7 @@ set :branch, "master"
 # via the :deploy_to variable:
 set :deploy_to, "/var/rails/#{application}"
 set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
+set :mongrel_clean, true
 
 # If you aren't using Subversion to manage your source code, specify
 # your SCM below:
