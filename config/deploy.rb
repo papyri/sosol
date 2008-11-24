@@ -24,3 +24,10 @@ task :after_update_code, :roles => :app do
 	db_config = "#{shared_path}/config/database.yml.production"
 	run "cp #{db_config} #{release_path}/config/database.yml"
 end
+
+namespace :gems do
+	desc "Install gems"
+	task :install, :roles => :app do
+		run "cd #{current_path} && #{sudo} rake RAILS_ENV=production gems:install"
+	end
+end
