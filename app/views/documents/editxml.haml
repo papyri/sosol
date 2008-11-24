@@ -1,0 +1,14 @@
+#main
+  = render :partial => 'edit_bar'
+  .site
+    %h1 Editing document
+    
+    - form_for(@document) do |f|
+      = f.error_messages
+      
+      %p
+        = f.label :content
+        %br
+        = f.text_area :content, :cols => 80, :rows => 40, :class => 'greek'
+  
+      = render :partial => 'edit_commit', :locals => { :f => f }
