@@ -1,6 +1,3 @@
-require 'rexml/document'
-require 'xml/xslt'
-
 class DocumentsController < ApplicationController
   # GET /documents
   # GET /documents.xml

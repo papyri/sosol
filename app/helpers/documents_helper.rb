@@ -1,7 +1,4 @@
-# require 'rexml/document'
-
 module DocumentsHelper
-	require 'xml/libxml'
 =begin
 	def valid_xml?(xml)
 		begin
