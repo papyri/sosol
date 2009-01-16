@@ -1,3 +1,0 @@
-[submodule "vendor/plugins/restful_authentication"]
-	path = vendor/plugins/restful_authentication
-	url = git://github.com/technoweenie/restful-authentication.git
