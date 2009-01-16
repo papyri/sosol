@@ -24,7 +24,7 @@
       border-right: 2px solid #eee
       position: relative
    
-      :hover
+      &:hover
         background: #f4f4f4
       
       .active
@@ -33,7 +33,7 @@
         a
           color: black
           
-          :hover
+          &:hover
             color: #f4f4f4
       
       a
@@ -41,6 +41,64 @@
         color: #979797
         font-size: 110%
         
-        :hover
+        &:hover
           color: #f4f4f4
           text-decoration: none
+          
+#document_sub_menu
+  height: 2.099em
+  background: #dadada
+  margin-bottom: 1.5em
+  line-height: 1.5
+
+  .site
+    padding: .4em 1em 0 1em
+
+  ul
+    list-style: none
+
+  li 
+    float: left
+    position: relative
+    
+    .active
+      a
+        background: #eee
+      
+    ul 
+      display: none
+      position: absolute
+      z-index: 1000
+      top: 1em
+      left: 0
+      background-color: #d0d0d0
+      margin-left: 1.7em
+      border-left: 1px solid #cfcfcf
+      border-right: 1px solid #cfcfcf
+      border-bottom: 1px solid #cfcfcf
+      padding: .3em
+
+      li
+        top: auto
+        left: auto
+        float: none
+        min-width: 6em
+  
+        a
+          margin-left: 0
+          padding: .1em .3em
+          display: block
+
+        &:hover
+          ul 
+            display: block
+  
+
+  a 
+    padding: .3em
+    margin-left: 2em
+    color: black
+    
+    &:hover 
+      text-decoration: none
+      background-color: #bbb
