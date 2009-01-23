@@ -1,7 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  type: MyString
+  category: MyString
 
 two:
-  type: MyString
+  category: MyString
