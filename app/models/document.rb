@@ -1,7 +1,7 @@
 class Document < ActiveRecord::Base
   include DocumentsHelper
   
-  has_many :events
+  # has_many :events
   validates_presence_of :content
 
   # validate :must_be_valid_xml

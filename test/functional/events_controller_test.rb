@@ -14,7 +14,7 @@ class EventsControllerTest < ActionController::TestCase
 
   def test_should_create_event
     assert_difference('Event.count') do
-      post :create, :event => { }
+      post :create, :event => { :category => 'commit' }
     end
 
     assert_redirected_to event_path(assigns(:event))

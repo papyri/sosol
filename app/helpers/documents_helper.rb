@@ -10,7 +10,8 @@ module DocumentsHelper
 =end
 
   def get_title(xml)
-    REXML::XPath.first(REXML::Document.new(xml), "/TEI.2/teiHeader/fileDesc/titleStmt/title").text
+    parsed = REXML::XPath.first(REXML::Document.new(xml), "/TEI.2/teiHeader/fileDesc/titleStmt/title")
+    parsed.nil? ? "Invalid XML" : parsed.text
   end
 
   def valid_epidoc?(xml)

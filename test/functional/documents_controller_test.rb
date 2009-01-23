@@ -14,7 +14,7 @@ class DocumentsControllerTest < ActionController::TestCase
 
   def test_should_create_document
     assert_difference('Document.count') do
-      post :create, :document => { }
+      post :create, :document => { :content => 'stubbed' }
     end
 
     assert_redirected_to document_path(assigns(:document))
