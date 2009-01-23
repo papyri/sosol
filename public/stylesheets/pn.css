@@ -1,0 +1,42 @@
+.apis-portal-title {
+font-size:14px;
+font-weight:bold;
+color: #000;
+background:transparent;
+}
+
+.PContent
+{
+	padding: 1em;
+    white-space: normal;
+    background-color: #FFF;
+    border: medium solid #dadada;
+    overflow: hidden;
+    font-size: small;
+}
+
+DIV#edition {
+    padding-left:15px;
+    position:relative;
+}
+
+DIV#edition h2 {
+	font-size: 10pt;
+}
+
+DIV#edition SUP {
+	color: /*#0c3b82;*/ #985;
+}
+
+.linenumber {
+	color: /*#0c3b82;*/ #985;
+        display:block;
+	width:40px;
+	height:18px;
+	font-size:10px;
+	padding-top:4px;
+	margin-left:-45px;
+	position:absolute;
+	z-index:1;
+        text-align:right;
+}
