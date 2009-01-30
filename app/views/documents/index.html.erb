@@ -10,8 +10,8 @@
 <% for document in @documents %>
   <tr>
 		<td><%= get_title document.content %></td>
-		<td><%=h "#{document.content.chars[0,200]}..." %></td>
-		<td><%=h "#{document.leiden.nil? ? 'nil' : document.leiden.chars[0,200]}..." %></td>
+		<td><%=h "#{document.content.mb_chars[0,200]}..." %></td>
+		<td><%=h "#{document.leiden.nil? ? 'nil' : document.leiden.mb_chars[0,200]}..." %></td>
     <td><%= link_to 'Show', document %></td>
     <td><%= link_to 'Edit', edit_document_path(document) %></td>
   </tr>
