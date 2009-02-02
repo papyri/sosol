@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   
   # Pick a unique cookie name to distinguish our session data from others'
   session :session_key => '_sosol_session_id'
-  layout 'default'
+  # layout 'default'
 
   before_filter :get_user_id
   before_filter :rpx_setup
