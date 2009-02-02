@@ -30,6 +30,11 @@ Rails::Initializer.run do |config|
 	config.gem "ruby-xslt", :lib => "xml/xslt"
 	config.gem "libxml-ruby", :lib => "xml/libxml"
 	config.gem "haml"
+	
+	config.gem 'mojombo-grit',
+	  :lib     => 'grit',
+	  :source  => 'http://gems.github.com',
+	  :version => '>= 0.9.4'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
