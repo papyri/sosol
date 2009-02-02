@@ -39,8 +39,8 @@ module Rpx
       api_call 'unmap', :primaryKey => key, :identifier => identifier
     end
 
-    def signin_url(dest)
-      "#{rp_url}/openid/signin?token_url=#{CGI.escape(dest)}"
+    def signin_url(dest, signin_method='signin')
+      "#{rp_url}/openid/#{signin_method}?token_url=#{CGI.escape(dest)}"
     end
 
     private

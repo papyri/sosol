@@ -1,3 +1,35 @@
+<% if @current_user %>
+  <p>You are signed in as <strong><%=h @current_user.name%></strong>. <%=link_to 'Sign out', :controller => :site, :action => :logout %></p>
+
+  <div class="section">
+    <h2>Your OpenIDs</h2>
+    <% if @identifiers.length == 0 %>
+      <p>No OpenIDs are associated with this account.</p>
+    <% else %>
+      <p>OpenIDs associated with this account:</p>
+
+      <ul>
+      <% @identifiers.each do |identifier| %>
+        <li><%= h identifier %> -
+          <%= link_to "X", :controller => :rpx,
+                           :action => "remove_openid", :openid => identifier %>
+        </li>
+      <% end %>
+      </ul>
+    <% end %>
+
+    <%= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow' %>
+  </div>
+<% else %>
+  <iframe src=<%= rpx_signin_url('embed') %>
+    scrolling="no" frameBorder="no" style="width:400px;height:240px;">
+  </iframe>
+  <!-- <div class="section">
+      <h2>RPX sign in</h2>
+      <span style="font-size: 150%;"><%= link_to "Use RPX to create or sign in to an account", rpx_signin_url, :class => 'rpxnow' %></span>
+    </div> -->
+<% end %>
+
 <% if flash[:notice] %>
   <%= h flash[:notice] %>
 <% end %>
