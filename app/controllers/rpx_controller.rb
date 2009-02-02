@@ -1,0 +1,2 @@
+class RpxController < ApplicationController
+end
