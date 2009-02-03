@@ -1,5 +1,5 @@
 <% if @current_user %>
-  <p><strong><%=h @current_user.name%></strong> <%=link_to 'Sign out', logout_url %></p>
+  <p><strong><%=h @current_user.name%></strong> <%=link_to 'log out', logout_url %></p>
 
   <!-- <div class="section">
       <h2>Your OpenIDs</h2>
@@ -21,5 +21,5 @@
       <%= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow' %>
     </div> -->
 <% else %>
-<%=link_to 'Sign in', login_url %>
+<%=link_to 'Login', login_url %>
 <% end %>
