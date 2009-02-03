@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090130164716) do
+ActiveRecord::Schema.define(:version => 20090203185629) do
 
   create_table "documents", :force => true do |t|
     t.text     "content"
@@ -20,6 +20,12 @@ ActiveRecord::Schema.define(:version => 20090130164716) do
 
   create_table "events", :force => true do |t|
     t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
