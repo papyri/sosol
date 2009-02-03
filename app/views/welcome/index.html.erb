@@ -27,5 +27,7 @@
 <% if flash[:notice] %>
   <%= h flash[:notice] %>
 <% end %>
-<h1><%= SITE_NAME %></h1>
-<p>Find me in app/views/welcome/index.html.erb</p>
+
+<div class="site">
+<h1><%= link_to SITE_NAME, root_url %></h1>
+</div>
