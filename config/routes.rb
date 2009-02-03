@@ -50,4 +50,8 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
+  
+  map.logout 'logout',
+    :controller => "user",
+    :action => "logout"
 end

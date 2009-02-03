@@ -4,9 +4,4 @@ class WelcomeController < ApplicationController
       @identifiers = @rpx.mappings(@current_user.id)
     end
   end
-  
-  def logout
-    reset_session
-    redirect_to :action => "index"
-  end
 end
