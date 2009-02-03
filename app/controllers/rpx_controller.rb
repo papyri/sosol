@@ -7,19 +7,19 @@ class RpxController < ApplicationController
     @rpx.unmap identifier, @current_user.id
     flash[:notice] = "OpenID #{identifier} removed"
 
-    redirect_to :controller => :site, :action => "index"
+    redirect_to :controller => :welcome, :action => "index"
   end
 
   def associate_return
     if params[:error]
       flash[:error] = "OpenID Authentication Failed: #{params[:error]}"
-      redirect_to :controller => "site", :action => "index"
+      redirect_to :controller => "welcome", :action => "index"
       return
     end
 
     if !params[:token]
       flash[:notice] = "OpenID Authentication Cancelled"
-      redirect_to :controller => "site", :action => "index"
+      redirect_to :controller => "welcome", :action => "index"
       return
     end
 
@@ -35,11 +35,11 @@ class RpxController < ApplicationController
         @rpx.map identifier, @current_user.id
         flash[:notice] = "#{identifier} added to your account"
       end
-      redirect_to :controller => "site", :action => "index"
+      redirect_to :controller => "welcome", :action => "index"
     else
       if @current_user.id == primary_key.to_i
         flash[:notice] = "That OpenID was already associated with this account"
-        redirect_to :controller => "site", :action => "index"
+        redirect_to :controller => "welcome", :action => "index"
       else
         # The OpenID was already associated with a different user account.
         @page_title = "Replace OpenID Account"
@@ -66,7 +66,7 @@ class RpxController < ApplicationController
   def login_return
     if params[:error] || !params[:token]
       flash[:notice] = "Sign-in cancelled"
-      redirect_to :controller => "site", :action => "index"
+      redirect_to :controller => "welcome", :action => "index"
       return
     end
 
@@ -76,9 +76,10 @@ class RpxController < ApplicationController
     primary_key = data["primaryKey"]
 
     if primary_key
+      # User exists, redirect to index
       user = User.find(primary_key)
       session[:user_id] = user.id
-      redirect_to :controller => "site", :action => "index"
+      redirect_to :controller => "welcome", :action => "index"
     else
       session[:identifier] = identifier
       @name = guess_name data
@@ -118,7 +119,7 @@ class RpxController < ApplicationController
 
     session[:user_id] = user.id
     session[:identifier] = nil
-    redirect_to :controller => "site", :action => "index"
+    redirect_to :controller => "welcome", :action => "index"
   end
 
   private
