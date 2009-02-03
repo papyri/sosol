@@ -14,7 +14,8 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   
   # Pick a unique cookie name to distinguish our session data from others'
-  session :session_key => '_sosol_session_id'
+  # this is set in environment.rb
+  # session :session_key => '_sosol_session_id'
   # layout 'default'
 
   before_filter :get_user_id
