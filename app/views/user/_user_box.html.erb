@@ -1,25 +1,5 @@
 <% if @current_user %>
   <p><strong><%=h @current_user.name%></strong> <%=link_to 'log out', logout_url %></p>
-
-  <!-- <div class="section">
-      <h2>Your OpenIDs</h2>
-      <% if @identifiers.length == 0 %>
-        <p>No OpenIDs are associated with this account.</p>
-      <% else %>
-        <p>OpenIDs associated with this account:</p>
-
-        <ul>
-        <% @identifiers.each do |identifier| %>
-          <li><%= h identifier %> -
-            <%= link_to "X", :controller => :rpx,
-                             :action => "remove_openid", :openid => identifier %>
-          </li>
-        <% end %>
-        </ul>
-      <% end %>
-
-      <%= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow' %>
-    </div> -->
 <% else %>
 <%=link_to 'Login', login_url %>
 <% end %>
