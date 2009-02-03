@@ -1,0 +1,14 @@
+<p>
+You've authenticated as <strong><%= h session[:identifier] %></strong>,
+but you need to enter a nickname to sign up.
+</p>
+
+<% form_for :new_user, :url => { :action => "create_submit" } do |f| %>
+  <table>
+    <tr>
+      <th>Nickname</th>
+      <td><%= f.text_field :name, :value => @name %></td>
+    </tr>
+  </table>
+  <%= submit_tag "Create" %>
+<% end %>
