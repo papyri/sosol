@@ -21,9 +21,7 @@
     <%= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow' %>
   </div>
 <% else %>
-  <iframe src=<%= rpx_signin_url('embed') %>
-    scrolling="no" frameBorder="no" style="width:400px;height:240px;">
-  </iframe>
+<%=link_to 'Sign in', login_url %>
 <% end %>
 
 <% if flash[:notice] %>

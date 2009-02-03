@@ -54,4 +54,8 @@ ActionController::Routing::Routes.draw do |map|
   map.logout 'logout',
     :controller => "user",
     :action => "logout"
+    
+  map.login 'login',
+    :controller => "user",
+    :action => "login"
 end
