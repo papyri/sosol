@@ -10,12 +10,14 @@
 </head>
 <body>
 
+<div id="header">
   <div class="site">
-  <div id="logo"><h1><%= link_to SITE_NAME, root_url %></h1></div>
-  <div style="float: right;">
-    <%= render(:partial => 'user/user_box') %>
+    <div id="logo"><h1><%= link_to SITE_NAME, root_url %></h1></div>
+    <div style="float: right;">
+      <%= render(:partial => 'user/user_box') %>
+    </div>
   </div>
-  </div>
+</div>
 
 <p style="color: green"><%= flash[:notice] %></p>
 
