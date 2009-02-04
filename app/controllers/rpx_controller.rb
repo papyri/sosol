@@ -1,6 +1,8 @@
 require 'rpx'
 
 class RpxController < ApplicationController
+  layout 'site'
+  
   def remove_openid
     identifier = params[:openid]
 
