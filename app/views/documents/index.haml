@@ -1,0 +1,5 @@
+#main.site
+  %h2 Listing documents
+  %ul
+  - for document in @documents
+    %li= link_to(get_title(document.content), edit_document_path(document))

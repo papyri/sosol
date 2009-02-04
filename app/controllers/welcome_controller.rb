@@ -3,7 +3,7 @@ class WelcomeController < ApplicationController
   
   def index
     if @current_user
-      @identifiers = @rpx.mappings(@current_user.id)
+      render_component :controller => "documents", :action => "index"
     end
   end
 end
