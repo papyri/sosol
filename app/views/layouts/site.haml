@@ -7,7 +7,7 @@
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
   %body
-    #header
+    #header{ :class => params[:controller] == 'documents' ? '' : 'basic' }
       .site
         #logo
           %h1= link_to SITE_NAME, root_url
