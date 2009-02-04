@@ -3,7 +3,7 @@
     %p
       %strong
         = h @current_user.name
-        = link_to 'log out', logout_url
+        = link_to 'sign out', signout_url
 - else
-  #login
-    = link_to 'Login', login_url
+  #signin
+    = link_to 'Sign In', signin_url

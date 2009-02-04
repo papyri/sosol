@@ -51,11 +51,11 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
   
-  map.logout 'logout',
+  map.signout 'signout',
     :controller => "user",
-    :action => "logout"
+    :action => "signout"
     
-  map.login 'login',
+  map.signin 'signin',
     :controller => "user",
-    :action => "login"
+    :action => "signin"
 end

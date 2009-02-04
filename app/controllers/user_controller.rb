@@ -1,12 +1,12 @@
 class UserController < ApplicationController
   layout 'site'
   
-  def logout
+  def signout
     reset_session
     redirect_to :controller => :welcome, :action => "index"
   end
   
-  def login
+  def signin
     
   end
 end
