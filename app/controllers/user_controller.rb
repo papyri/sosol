@@ -6,6 +6,12 @@ class UserController < ApplicationController
     redirect_to :controller => :welcome, :action => "index"
   end
   
+  def account
+    if @current_user
+      @identifiers = @rpx.mappings(@current_user.id)
+    end
+  end
+  
   def signin
     
   end

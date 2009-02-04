@@ -58,4 +58,8 @@ ActionController::Routing::Routes.draw do |map|
   map.signin 'signin',
     :controller => "user",
     :action => "signin"
+    
+  map.account 'account',
+    :controller => "user",
+    :action => "account"
 end
