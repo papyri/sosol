@@ -11,7 +11,6 @@
       .site
         #logo
           %h1= link_to SITE_NAME, root_url
-        #user_box
-          = render(:partial => 'user/user_box')
+        = render(:partial => 'user/user_box')
 
     = yield
