@@ -1,9 +1,7 @@
 - if @current_user
   #user_box
-    %p
-      %strong
-        = h @current_user.name
-        = link_to 'sign out', signout_url
+    .name= h @current_user.name
+    .links= link_to 'sign out', signout_url
 - else
   #signin
     = link_to 'Sign In', signin_url
