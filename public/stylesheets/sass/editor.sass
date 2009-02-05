@@ -1,3 +1,16 @@
+// gray + 90 = #dadada
+!main_color = gray + 90
+!main_color_fade = !main_color + 16
+!main_color_fade_medium = !main_color + 20
+!main_color_fade_full = !main_color + 26
+!main_color_fade_max = !main_color + 37
+!main_color_darken = !main_color - 10
+!main_color_darken_medium = !main_color - 31
+!main_color_darken_full = !main_color - 67
+// use a blue-ish color for non-underlined link elements we
+// want to highlight
+!non_underlined_link = #4183c4
+
 *
   margin: 0
   padding: 0
@@ -10,12 +23,12 @@ body
   text-align: center
 
 #header
-  background: #eaeaea
+  background = !main_color_fade
   overflow: hidden
 
 #header.basic
   margin-bottom: 1.5em
-  border-bottom-color: #dadada
+  border-bottom-color = !main_color
   border-bottom-style: solid
   border-bottom-width: 0.5em
 
@@ -45,12 +58,12 @@ body
 
 #user_box
   float: right
-  background: #f4f4f4
+  background = !main_color_fade_full
   padding: 0.5em
   padding-left: 1em
   padding-right: 1em
   margin-top: 1.5em
-  border-color: #dadada
+  border-color = !main_color
   border-style: solid
   border-width: 0.1em
   .name
@@ -60,7 +73,7 @@ body
     float: right
     margin-left: 3em
     a
-      color: #4183c4
+      color = !non_underlined_link
       text-decoration: none
       &:hover
         text-decoration: underline
@@ -73,12 +86,12 @@ body
   padding-left: 1em
   padding-right: 1em
   margin-top: 0.6em
-  background: #f4f4f4
-  border-color: #dadada
+  background = !main_color_fade_full
+  border-color = !main_color
   border-style: solid
   border-width: 0.1em
   &:hover
-    background: #dadada
+    background = !main_color
   a
     color: black
 
@@ -87,39 +100,43 @@ body
   font-family: "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma"
 
 #document_menu
-  background: #eaeaea
+  background = !main_color_fade
   text-align: left
   overflow: hidden
   
   ul
     overflow: hidden
-    background: #f4f4f4
-    border-bottom: 3px solid white
+    background = !main_color_fade_full
+    border-bottom-width: .2em
+    border-bottom-style: solid
+    border-bottom-color = !main_color_fade_max
     
     li
-      background: #f4f4f4
+      background = !main_color_fade_full
       float: left
       list-style-type: none
       height: 1.6em
       padding-top: .4em
-      border-right: 2px solid #eee
+      border-right-color = !main_color_fade_medium
+      border-right-width: .13em
+      border-right-style: solid
       position: relative
    
       &:hover
-        background: #f4f4f4
+        background = !main_color_fade_full
       
       .active
-        background: white
+        background = !main_color_fade_max
         
         a
           color: black
           
           &:hover
-            color: #f4f4f4
+            color = !main_color_fade_full
       
       a
         padding: 1em 1.25em .3em 1.25em
-        color: #979797
+        color = !main_color_darken_full
         font-size: 110%
         
         &:hover
@@ -147,7 +164,7 @@ body
 
 #document_sub_menu
   height: 2.099em
-  background: #dadada
+  background = !main_color
   margin-bottom: 1.5em
   line-height: 1.5
 
@@ -159,7 +176,7 @@ body
 
   li.active
     a
-      background: #eee
+      background = !main_color_fade_medium
 
   li 
     float: left
@@ -171,11 +188,12 @@ body
       z-index: 1000
       top: 1em
       left: 0
-      background-color: #d0d0d0
+      background-color = !main_color_darken
       margin-left: 1.7em
-      border-left: 1px solid #cfcfcf
-      border-right: 1px solid #cfcfcf
-      border-bottom: 1px solid #cfcfcf
+      border-color = !main_color_darken
+      border-style: solid
+      border-width: .16em
+      border-top-style: none
       padding: .3em
 
       li
@@ -201,4 +219,4 @@ body
     
     &:hover 
       text-decoration: none
-      background-color: #bbb
+      background-color = !main_color_darken_medium
