@@ -56,16 +56,22 @@ body
     text-decoration: none
     color: black
 
-#user_box
-  float: right
-  background = !main_color_fade_full
+=text_box
   padding: 0.5em
   padding-left: 1em
   padding-right: 1em
-  margin-top: 1.5em
-  border-color = !main_color
   border-style: solid
   border-width: 0.1em
+  border-color = !main_color
+  background = !main_color_fade_full
+
+.text_box
+  +text_box
+
+#user_box
+  +text_box
+  float: right
+  margin-top: 1.5em
   .name
     float: left
     font-weight: bold
@@ -79,17 +85,11 @@ body
         text-decoration: underline
    
 #signin
+  +text_box
   float: right
   font-size: 1.5em
   font-weight: bold
-  padding: 0.5em
-  padding-left: 1em
-  padding-right: 1em
   margin-top: 0.6em
-  background = !main_color_fade_full
-  border-color = !main_color
-  border-style: solid
-  border-width: 0.1em
   &:hover
     background = !main_color
   a
