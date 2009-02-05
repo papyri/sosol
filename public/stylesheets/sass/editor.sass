@@ -99,50 +99,6 @@ body
   font-size: small
   font-family: "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma"
 
-#document_menu
-  background = !main_color_fade
-  text-align: left
-  overflow: hidden
-  
-  ul
-    overflow: hidden
-    background = !main_color_fade_full
-    border-bottom-width: .2em
-    border-bottom-style: solid
-    border-bottom-color = !main_color_fade_max
-    
-    li
-      background = !main_color_fade_full
-      float: left
-      list-style-type: none
-      height: 1.6em
-      padding-top: .4em
-      border-right-color = !main_color_fade_medium
-      border-right-width: .13em
-      border-right-style: solid
-      position: relative
-   
-      &:hover
-        background = !main_color_fade_full
-      
-      .active
-        background = !main_color_fade_max
-        
-        a
-          color: black
-          
-          &:hover
-            color = !main_color_fade_full
-      
-      a
-        padding: 1em 1.25em .3em 1.25em
-        color = !main_color_darken_full
-        font-size: 110%
-        
-        &:hover
-          color: black
-          text-decoration: none
-
 #edit
   form
     textarea
@@ -161,6 +117,50 @@ body
 
 #signup_explanation
   clear: both
+  
+#document_menu
+  background = !main_color_fade
+  text-align: left
+  overflow: hidden
+
+  ul
+    overflow: hidden
+    background = !main_color_fade_full
+    border-bottom-width: .2em
+    border-bottom-style: solid
+    border-bottom-color = !main_color_fade_max
+
+    li
+      background = !main_color_fade_full
+      float: left
+      list-style-type: none
+      height: 1.6em
+      padding-top: .4em
+      border-right-color = !main_color_fade_medium
+      border-right-width: .13em
+      border-right-style: solid
+      position: relative
+
+      &:hover
+        background = !main_color_fade_full
+
+      .active
+        background = !main_color_fade_max
+
+        a
+          color: black
+
+          &:hover
+            color = !main_color_fade_full
+
+      a
+        padding: 1em 1.25em .3em 1.25em
+        color = !main_color_darken_full
+        font-size: 110%
+
+        &:hover
+          color: black
+          text-decoration: none
 
 #document_sub_menu
   height: 2.099em
