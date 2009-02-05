@@ -20,3 +20,9 @@ config.action_controller.allow_forgery_protection    = false
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
+
+# config/environments/production_secret.rb should set
+# API_KEY for RPX, and possibly other unversioned secrets for production
+require File.join(File.dirname(__FILE__), 'test_secret')
+
+REALM = 'sosol-development'
