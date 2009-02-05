@@ -22,7 +22,7 @@ config.action_controller.perform_caching             = true
 # config.action_mailer.raise_delivery_errors = false
 
 # config/environments/production_secret.rb should set
-# API_KEY for RPX, and possibly other unversioned secrets for production
+# RPX_API_KEY for RPX, and possibly other unversioned secrets for production
 require File.join(File.dirname(__FILE__), 'production_secret')
 
-REALM = 'sosol-development'
+RPX_REALM = 'sosol-development'

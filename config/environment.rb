@@ -71,7 +71,7 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
   
   # RPX application configuration
-  BASE_URL = 'https://rpxnow.com'
+  RPX_BASE_URL = 'https://rpxnow.com'
   
   SITE_NAME = 'SoSOL'
   SITE_FULL_NAME = 'Son of Suda On Line'
