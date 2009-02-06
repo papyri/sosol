@@ -1,7 +1,7 @@
 namespace :rpx do
   desc "Unmaps all user mappings for the current environment and drops them from the database"
   task :unmap => :environment do
-    @rpx = Rpx::RpxHelper.new(API_KEY, BASE_URL, REALM)
+    @rpx = Rpx::RpxHelper.new(RPX_API_KEY, RPX_BASE_URL, RPX_REALM)
     @users = User.find(:all)
     
     for user in @users
