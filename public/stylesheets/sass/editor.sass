@@ -5,15 +5,26 @@
 body
   height: 100%
   background-color: white
-  font: 13.34px helvetica, arial, clean, sans-serif
-  // *font-size: small
+  font-family: helvetica, arial, clean, sans-serif
+  font-size: small
   text-align: center
+
+#header
+  background: #eaeaea
+  overflow: hidden
+
+#header.basic
+  margin-bottom: 1.5em
+  border-bottom-color: #dadada
+  border-bottom-style: solid
+  border-bottom-width: 0.5em
 
 #main
   min-height: 100%
   height: auto !important
   height: 100%
   margin: 0 auto -8.6em
+  clear: both
 
 .site
   width: 50em
@@ -21,6 +32,55 @@ body
   margin: 0 auto
   padding: 0 3em
   text-align: left
+  
+#logo
+  width: auto
+  float: left
+  padding-top: 1.2em
+  h1
+    font-size: 3em
+  a
+    text-decoration: none
+    color: black
+
+#user_box
+  float: right
+  background: #f4f4f4
+  padding: 0.5em
+  padding-left: 1em
+  padding-right: 1em
+  margin-top: 1.5em
+  border-color: #dadada
+  border-style: solid
+  border-width: 0.1em
+  .name
+    float: left
+    font-weight: bold
+  .links
+    float: right
+    margin-left: 3em
+    a
+      color: #4183c4
+      text-decoration: none
+      &:hover
+        text-decoration: underline
+   
+#signin
+  float: right
+  font-size: 1.5em
+  font-weight: bold
+  padding: 0.5em
+  padding-left: 1em
+  padding-right: 1em
+  margin-top: 0.6em
+  background: #f4f4f4
+  border-color: #dadada
+  border-style: solid
+  border-width: 0.1em
+  &:hover
+    background: #dadada
+  a
+    color: black
 
 .greek
   font-size: small
@@ -63,9 +123,28 @@ body
         font-size: 110%
         
         &:hover
-          color: #f4f4f4
+          color: black
           text-decoration: none
-          
+
+#edit
+  form
+    textarea
+      width: 100%
+      height: 50em
+    input.comment
+      width: 100%
+
+#rpx_box
+  float: left
+  width: 30em
+
+#signup_box
+  float: right
+  width: 20em
+
+#signup_explanation
+  clear: both
+
 #document_sub_menu
   height: 2.099em
   background: #dadada

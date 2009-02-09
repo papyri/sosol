@@ -74,4 +74,10 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
+  
+  # RPX application configuration
+  RPX_BASE_URL = 'https://rpxnow.com'
+  
+  SITE_NAME = 'SoSOL'
+  SITE_FULL_NAME = 'Son of Suda On Line'
 end

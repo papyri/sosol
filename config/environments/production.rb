@@ -20,3 +20,9 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
+
+# config/environments/production_secret.rb should set
+# RPX_API_KEY for RPX, and possibly other unversioned secrets for production
+require File.join(File.dirname(__FILE__), 'production_secret')
+
+RPX_REALM = 'sosol-development'

@@ -4,10 +4,11 @@
   .site
     %h1 Previewing document
 
-    - form_for(@document) do |f|
-      = f.error_messages
+    #edit
+      - form_for(@document) do |f|
+        = f.error_messages
 
-      .PContent
-        = @transformed
-      %br
-      = render :partial => 'edit_commit', :locals => { :f => f }
+        .PContent
+          = @transformed
+        %br
+        = render :partial => 'edit_commit', :locals => { :f => f }

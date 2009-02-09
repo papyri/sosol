@@ -1,4 +1,6 @@
 class DocumentsController < ApplicationController
+  layout 'site'
+  
   # GET /documents
   # GET /documents.xml
   def index

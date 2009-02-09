@@ -21,9 +21,13 @@ role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
+# Copy in unversioned files with secret info (API keys, DB passwords, etc.)
 task :after_update_code, :roles => :app do
 	db_config = "#{shared_path}/config/database.yml.production"
 	run "cp #{db_config} #{release_path}/config/database.yml"
+	
+	secret_config = "#{shared_path}/config/environments/production_secret.rb"
+	run "cp #{secret_config} #{release_path}/config/environments/production_secret.rb"
 end
 
 namespace :gems do

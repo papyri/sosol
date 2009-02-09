@@ -15,3 +15,9 @@ config.action_controller.perform_caching             = false
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
+
+# config/environments/development_secret.rb should set
+# RPX_API_KEY for RPX, and possibly other unversioned secrets for development
+require File.join(File.dirname(__FILE__), 'development_secret')
+
+RPX_REALM = 'sosol-development'

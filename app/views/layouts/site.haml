@@ -1,0 +1,16 @@
+!!!
+%html{html_attrs('en')}
+  %head
+    %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
+    %title
+      == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
+    = stylesheet_link_tag 'editor'
+    = stylesheet_link_tag 'pn'
+  %body
+    #header{ :class => (['edit','editxml','preview'].include? params[:action]) ? '' : 'basic' }
+      .site
+        #logo
+          %h1= link_to SITE_NAME, root_url
+        = render(:partial => 'user/user_box')
+
+    = yield
