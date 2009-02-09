@@ -29,4 +29,12 @@ class Repository
     # destroy a git repository
     FileUtils::rm_r path, :verbose => true, :secure => true
   end
+  
+  def create_branch(name)
+    # We have to abuse git here because Grit::Head doesn't appear to have
+    # a facility for writing out a sha1 to refs/heads/name yet
+    # Also, we always assume we want to branch from master
+    # TODO: Update master branch tip from canonical
+    @repo.git.branch({}, name, 'master')
+  end
 end
