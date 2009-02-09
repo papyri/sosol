@@ -4,4 +4,12 @@ class User < ActiveRecord::Base
   def repository
     @repository ||= Repository.new(self)
   end
+  
+  def after_create
+    repository.create
+  end
+  
+  def before_destroy
+    repository.destroy
+  end
 end
