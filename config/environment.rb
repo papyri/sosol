@@ -75,4 +75,7 @@ Rails::Initializer.run do |config|
   
   SITE_NAME = 'SoSOL'
   SITE_FULL_NAME = 'Son of Suda On Line'
+  
+  CANONICAL_REPOSITORY = "#{RAILS_ROOT}/db/canonical.git"
+  USER_REPOSITORY_ROOT = "#{RAILS_ROOT}/db/git"
 end
