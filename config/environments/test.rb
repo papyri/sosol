@@ -22,7 +22,6 @@ config.action_controller.allow_forgery_protection    = false
 config.action_mailer.delivery_method = :test
 
 # config/environments/production_secret.rb should set
-# RPX_API_KEY for RPX, and possibly other unversioned secrets for test
+# RPX_API_KEY and RPX_REALM (site name) for RPX,
+# and possibly other unversioned secrets for test
 require File.join(File.dirname(__FILE__), 'test_secret')
-
-RPX_REALM = 'sosol-development'
