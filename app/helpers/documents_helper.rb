@@ -15,6 +15,10 @@ module DocumentsHelper
   end
 
   def valid_epidoc?(xml)
+    # This uses libxml-ruby
+    # Rewrite in Java/JRuby? REXML doesn't provide validation
+    # document.validate also only gives use true|false, some Java way
+    # may provide better errors
     parser = XML::Parser.new
     parser.string = xml
     begin
