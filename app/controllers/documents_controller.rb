@@ -36,16 +36,16 @@ class DocumentsController < ApplicationController
 
   # GET /documents/1/edit
   def edit
-    @document = Document.find(params[:id])
+    editxml
   end
   
   # GET /documents/1/xml
   def editxml
-    edit
+    @document = Document.find(params[:id])
   end
   
   def preview
-    edit
+    editxml
     
     Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
     xslt = XML::XSLT.new()
