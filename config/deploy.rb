@@ -3,6 +3,7 @@ require 'mongrel_cluster/recipes'
 set :application, "protosite"
 set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
+set :user, "idp2"
 set :git_enable_submodules, true
 set :branch, "master"
 
@@ -12,6 +13,7 @@ set :branch, "master"
 set :deploy_to, "/var/rails/#{application}"
 set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
 set :mongrel_clean, true
+set :use_sudo, false
 
 # If you aren't using Subversion to manage your source code, specify
 # your SCM below:
