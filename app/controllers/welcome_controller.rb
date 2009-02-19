@@ -3,7 +3,7 @@ class WelcomeController < ApplicationController
   
   def index
     if @current_user
-      render_component :controller => "documents", :action => "index"
+      render_component :controller => "articles", :action => "index"
     end
   end
 end

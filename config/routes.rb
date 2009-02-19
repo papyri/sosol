@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
 
-  map.resources :documents, :member => { :editxml => :get, :preview => :get }
+  map.resources :articles, :member => { :editxml => :get, :preview => :get }
 
   # The priority is based upon order of creation: first created -> highest priority.
 

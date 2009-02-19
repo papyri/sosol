@@ -1,10 +1,10 @@
 #main
   = render :partial => 'edit_bar'
   .site
-    %h1 Editing document
+    %h1 Editing Article
 
     #edit
-      - form_for(@document) do |f|
+      - form_for(@article) do |f|
         = f.error_messages
 
         %p

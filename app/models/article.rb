@@ -1,5 +1,5 @@
-class Document < ActiveRecord::Base
-  include DocumentsHelper
+class Article < ActiveRecord::Base
+  include ArticlesHelper
   
   # has_many :events
   validates_presence_of :content
