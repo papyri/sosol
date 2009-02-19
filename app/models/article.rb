@@ -1,9 +1,12 @@
 class Article < ActiveRecord::Base
   include ArticlesHelper
   
+  has_many :comments
+  belongs_to :user
+  
   # has_many :events
   validates_presence_of :content
-
+  
   # validate :must_be_valid_xml
   # validate :must_be_valid_epidoc
 

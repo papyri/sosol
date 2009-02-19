@@ -15,4 +15,9 @@ class UserController < ApplicationController
   def signin
     
   end
+  
+  
+  def dashboard
+	
+  end
 end
