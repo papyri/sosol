@@ -44,7 +44,6 @@ class ArticlesController < ApplicationController
   # GET /articles/new.xml
   def new
     @article = Article.new
-    @article.user_id = @current_user.id
 
     respond_to do |format|
       format.html # new.html.erb
@@ -77,6 +76,8 @@ class ArticlesController < ApplicationController
   # POST /articles.xml
   def create
     @article = Article.new(params[:article])
+    @article.user_id = @current_user.id
+    @article.category = params[:category]
 
     respond_to do |format|
       if @article.save
