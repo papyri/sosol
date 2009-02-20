@@ -36,14 +36,17 @@
       - comment_count = 'comments' + article.id.to_s()
       - onclick_call = 'show_hide(' + comment_count + ')' 
       %strong{:onclick => onclick_call} 
-        = 'comments'
+        = 'comments ('
         = article.comments.length
-        
+        = ')'
       %div{:id => comment_count}      
-      - if article.comments != nil
-        
-        - article.comments do |c|
-          c.text
+      - if article.comments != nil        
+        - article.comments.each do |c|
+          = c.text
+          %strong= 'by '
+          -if c.user != nil
+            = c.user.name
+          %br
       - else
         no
      
