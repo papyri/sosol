@@ -1,0 +1,5 @@
+#main.site
+  %h2 Listing articles
+  %ul
+  - for article in @articles
+    %li= link_to(get_title(article.content), edit_article_path(article))

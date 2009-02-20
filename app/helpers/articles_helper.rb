@@ -1,4 +1,4 @@
-module DocumentsHelper
+module ArticlesHelper
 =begin
   def valid_xml?(xml)
     begin
@@ -18,11 +18,11 @@ module DocumentsHelper
     parser = XML::Parser.new
     parser.string = xml
     begin
-      document = parser.parse
+      article = parser.parse
     rescue XML::Parser::ParseError
       return false
     end
     dtd = XML::Dtd.new("-//STOA//DTD EPIDOC//EN", "/Users/ryan/source/idp2/git/protosite/app/helpers/tei-epidoc.dtd")
-    document.validate(dtd)
+    article.validate(dtd)
   end
 end
