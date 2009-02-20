@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 20090219224637) do
     t.text     "leiden"
     t.integer  "user_id"
     t.string   "pn"
+    t.string   "category"
   end
 
   create_table "comments", :force => true do |t|

@@ -40,8 +40,11 @@ class CommentsController < ApplicationController
   # POST /comments
   # POST /comments.xml
   def create
-    @comment = Comment.new(params[:comment])
-
+  
+     @comment = Comment.new(params[:comment])
+     @comment.article_id = params[:article_id]
+	 @comment.user_id = @current_user.id
+  
     respond_to do |format|
       if @comment.save
         flash[:notice] = 'Comment was successfully created.'

@@ -1,0 +1,49 @@
+
+#main.site
+
+  = render :partial => 'show_hide'
+
+  %h2 Listing All Articles
+  %ul
+  - for article in @articles   
+    %li 
+      %strong= article.id
+      = link_to(get_title(article.content), edit_article_path(article)) 
+      
+
+    
+    %div{:id => "user"}
+      %strong user
+      - if article.user != nil
+        = article.user.name
+      - else
+        no
+        
+    %div{:id => "category"}
+      %strong category
+      =article.category
+      
+      
+    %div{:id => "content"}
+      %strong content
+      =article.content
+    
+    %div{:id => "leiden"}
+      %strong leiden
+      =article.leiden       
+   
+    %div{:id => "comments"}      
+      - comment_count = 'comments' + article.id.to_s()
+      - onclick_call = 'show_hide(' + comment_count + ')' 
+      %strong{:onclick => onclick_call} 
+        = 'comments'
+        = article.comments.length
+        
+      %div{:id => comment_count}      
+      - if article.comments != nil
+        
+        - article.comments do |c|
+          c.text
+      - else
+        no
+     

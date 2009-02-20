@@ -1,6 +1,16 @@
 class ArticlesController < ApplicationController
   layout 'site'
   
+  
+  def comment_on
+  	@article = Article.find(params[:id])
+  	@comment = Comment.new()
+  end
+  
+  def list_all
+    @articles = Article.find(:all)
+  end
+  
   # GET /articles
   # GET /articles.xml
   def index
