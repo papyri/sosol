@@ -12,7 +12,11 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :session
 
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
-  map.connect 'dashboard', :controller => 'user', :action => 'dashboard'
+  map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
+  
+  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
+  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
   map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
 
   # The priority is based upon order of creation: first created -> highest priority.

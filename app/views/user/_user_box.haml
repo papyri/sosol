@@ -2,6 +2,8 @@
   #user_box
     .name= h @current_user.name
     .links
+      = link_to 'home', dashboard_url
+      \|
       = link_to 'account', account_url
       \|
       = link_to 'sign out', signout_url

@@ -3,6 +3,16 @@
 <% form_for(@article) do |f| %>
   <%= f.error_messages %>
 
+<%= radio_button_tag(:category, "Meta") %>
+<%= label_tag(:category, "Meta") %>
+
+<%= radio_button_tag(:category, "Transcription") %>
+<%= label_tag(:category, "Transcription") %>
+
+<%= radio_button_tag(:category, "Translation") %>
+<%= label_tag(:category, "Translation") %>
+
+
   <p>
     <%= f.label :content %><br />
     <%= f.text_area :content %>

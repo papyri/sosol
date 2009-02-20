@@ -1,6 +1,13 @@
 class ArticlesController < ApplicationController
   layout 'site'
   
+  def begin
+  
+  end
+  
+  def new_from_pn
+  
+  end
   
   def comment_on
   	@article = Article.find(params[:id])
@@ -37,6 +44,7 @@ class ArticlesController < ApplicationController
   # GET /articles/new.xml
   def new
     @article = Article.new
+    @article.user_id = @current_user.id
 
     respond_to do |format|
       format.html # new.html.erb

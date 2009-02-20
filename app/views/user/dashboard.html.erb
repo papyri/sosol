@@ -31,7 +31,7 @@ function showHide(id)
     <li> <%= link_to a.id, edit_article_path(a)%> </li>
 <% end %>
 </div>
-<%= link_to "New Doc", { :controller => "article", :action => "begin_article" } %>
+<%= link_to "New Doc", { :controller => "articles", :action => "begin" } %>
 
 
 <h2 onclick="showHide('comments')">Comments</h2>
