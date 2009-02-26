@@ -1,0 +1,53 @@
+
+
+<% render :partial => 'edit_bar' %>
+
+
+
+
+<h1>New comment</h1>
+
+<% form_for(@comment) do |f| %>
+  <%= f.error_messages %>
+ 
+<%= hidden_field_tag :article_id, @article.id %> 
+<%= @article.id %>
+  <p>
+    <%= f.label :text %><br />
+    <%= f.text_field :text %>
+  </p>
+  <p>
+    <%= f.label :reason %><br />
+    <%= f.text_field :reason %>
+  </p>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+
+
+<% end %>
+
+
+
+
+<table>
+<% if @article.comments != nil %>
+<% @article.comments.each do |c| %>
+  <tr>
+    <td><%=h c.text %></td>
+    <td><%=h c.reason %></td>
+    <td><%=h c.article_id %></td>
+  </tr>
+<% end %>
+<%else%>
+<%= 'No Comment! '  %>
+<%end%>
+
+
+
+<%  %>
+<% %>
+<% %>
+<% %>
+<% %>
+

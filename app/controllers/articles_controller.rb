@@ -1,6 +1,23 @@
 class ArticlesController < ApplicationController
   layout 'site'
   
+  def begin
+  
+  end
+  
+  def new_from_pn
+  
+  end
+  
+  def comment_on
+  	@article = Article.find(params[:id])
+  	@comment = Comment.new()
+  end
+  
+  def list_all
+    @articles = Article.find(:all)
+  end
+  
   # GET /articles
   # GET /articles.xml
   def index
@@ -59,6 +76,8 @@ class ArticlesController < ApplicationController
   # POST /articles.xml
   def create
     @article = Article.new(params[:article])
+    @article.user_id = @current_user.id
+    @article.category = params[:category]
 
     respond_to do |format|
       if @article.save

@@ -1,0 +1,47 @@
+<script>
+function showHide(id)
+{
+  var element = document.getElementById(id);
+  if ( element.style.display != 'none' )
+  {
+     element.style.display = 'none';
+  }
+  else
+  {
+    element.style.display = '';
+  }
+}
+</script>
+
+<h1>
+<% if @current_user.name != nil %>
+<%= @current_user.name %>
+<% else %>
+<%= 'Guest' %>
+<% end %> 
+'s Dashboard'</h1>
+
+
+<h2 onclick="showHide('documents')">Documents</h2>
+<div id='documents'>
+ <% articles = @current_user.articles %>
+<ul>
+ <% articles.each do |a| %>
+
+    <li> <%= link_to a.id, edit_article_path(a)%> </li>
+<% end %>
+</div>
+<%= link_to "New Doc", { :controller => "articles", :action => "begin" } %>
+
+
+<h2 onclick="showHide('comments')">Comments</h2>
+<div id='comments'>
+ <% comments = @current_user.comments %>
+<ul>
+ <% comments.each do |c| %>
+    <li> <%= c.text%> </li>
+<% end %>
+<% %>
+</ul>
+</div>
+
