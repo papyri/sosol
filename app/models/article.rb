@@ -18,6 +18,12 @@ class Article < ActiveRecord::Base
   end
   
   def leiden_plus
-    xml2nonxml(get_abs_from_edition_div(content))
+    abs = get_abs_from_edition_div(content)
+    transformed = xml2nonxml(abs)
+    if transformed =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
+      transformed + "\n" + parse_exception_pretty_print(abs, $1.to_i)
+    else
+      transformed
+    end
   end
 end

@@ -35,4 +35,9 @@ module ArticlesHelper
     end
     processed
   end
+  
+  def parse_exception_pretty_print(text, position)
+    carat = '^'.rjust(position)
+    text + "\n" + carat
+  end
 end
