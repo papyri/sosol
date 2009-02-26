@@ -43,7 +43,8 @@ class CommentsController < ApplicationController
   
      @comment = Comment.new(params[:comment])
      @comment.article_id = params[:article_id]
-	 @comment.user_id = @current_user.id
+     # TODO: filter
+     @comment.user_id = @current_user.id unless @current_user.nil?
   
     respond_to do |format|
       if @comment.save
