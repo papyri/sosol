@@ -1,5 +1,30 @@
+require 'net/http' 
+
 class ArticlesController < ApplicationController
   layout 'site'
+  
+  def new_meta
+    #@article = Article.new
+    @meta = Meta.new
+  end
+  
+  def chuck_test
+    get_pn_file("oai:papyri.info:identifiers:apis:michigan:2503")
+    
+  end
+  
+
+  def get_pn_file(control_name)
+    baseUrl = "apptest.cul.columbia.edu"
+    url = "/navigator/portal/apisfull.psml?controlName=" + control_name
+   # baseUrl = "www.mybit.net"
+    http = Net::HTTP.start(baseUrl, 8082)
+
+      resp = http.get(url) 
+      render :inline => "<%= resp %>", :locals => { :resp => resp.body }
+   
+  end
+
   
   def begin
   
@@ -78,6 +103,7 @@ class ArticlesController < ApplicationController
     @article = Article.new(params[:article])
     @article.user_id = @current_user.id
     @article.category = params[:category]
+    
 
     respond_to do |format|
       if @article.save

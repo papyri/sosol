@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090219224637) do
+ActiveRecord::Schema.define(:version => 20090226005832) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -19,6 +19,10 @@ ActiveRecord::Schema.define(:version => 20090219224637) do
     t.integer  "user_id"
     t.string   "pn"
     t.string   "category"
+    t.integer  "master_article_id"
+    t.integer  "meta_id"
+    t.integer  "transcription_id"
+    t.integer  "translation_id"
   end
 
   create_table "comments", :force => true do |t|
@@ -32,6 +36,49 @@ ActiveRecord::Schema.define(:version => 20090219224637) do
 
   create_table "events", :force => true do |t|
     t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "master_articles", :force => true do |t|
+    t.integer  "article_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "user_id"
+    t.string   "comment_id"
+  end
+
+  create_table "metas", :force => true do |t|
+    t.string   "notBeforeDate"
+    t.string   "notAfterDate"
+    t.string   "onDate"
+    t.string   "publication"
+    t.string   "language"
+    t.string   "subject"
+    t.string   "title"
+    t.string   "provenance"
+    t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "article_id"
+    t.integer  "user_id"
+  end
+
+  create_table "transcriptions", :force => true do |t|
+    t.string   "content"
+    t.string   "leiden"
+    t.integer  "user_id"
+    t.integer  "article_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "translations", :force => true do |t|
+    t.string   "content"
+    t.string   "language"
+    t.integer  "user_id"
+    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -5,38 +5,47 @@
 
 
 
-<h1>New comment</h1>
-
 <% form_for(@comment) do |f| %>
   <%= f.error_messages %>
  
 <%= hidden_field_tag :article_id, @article.id %> 
-<%= @article.id %>
   <p>
-    <%= f.label :text %><br />
+    New comment
     <%= f.text_field :text %>
+    <%= f.submit "Add" %>
   </p>
   <p>
-    <%= f.label :reason %><br />
+    <%= f.label :reason %>
     <%= f.text_field :reason %>
   </p>
   <p>
-    <%= f.submit "Create" %>
+    
   </p>
-
-
 <% end %>
 
 
+<br>
 
+<h2>Comments</h2>
 
-<table>
+<br>
+
+<table width ="66%">
+  <tr>
+    <td><strong>Text</strong></td>
+    <td><strong>Reason</strong></td>
+    <td><strong>Article</strong></td>
+    <td><strong>User</strong></td>
+  </tr>
 <% if @article.comments != nil %>
 <% @article.comments.each do |c| %>
   <tr>
     <td><%=h c.text %></td>
     <td><%=h c.reason %></td>
     <td><%=h c.article_id %></td>
+    <% if c.user != nil %>
+    <td><%=h c.user.name %></td>
+    <%end%>
   </tr>
 <% end %>
 <%else%>

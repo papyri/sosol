@@ -201,3 +201,37 @@ DIV#edition SUP {
     #document_sub_menu li.active a {
       background: #eee;
     }
+    
+    
+
+    
+.meta {
+  background-color: #D3C0C0;
+  border: solid #FF0000;
+}    
+
+.meta p {
+  text-align: left;
+}    
+
+.transcription
+{
+  background-color: #C0C1D3;
+  border: solid #0000FF;
+}
+
+.transcription p {
+  text-align: left;
+}    
+
+.translation
+{
+  background-color: #E6B39D;
+  border: solid #FFA500;
+}
+
+.translation p {
+  text-align: left;
+}    
+
+

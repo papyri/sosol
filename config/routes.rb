@@ -1,5 +1,19 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :translations
 
+  map.resources :transcriptions
+
+  
+  
+  
+ 
+  map.resources :master_articles, :has_many => :articles
+
+  map.resources :metas
+
+
+
+  map.connect 'chuck', :controller => 'articles', :action => 'chuck_test'
 
   map.resources :comments
 
@@ -14,8 +28,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   
+  map.new_meta  'articles/new_meta', :controller => 'articles', :action => 'new_meta'
   map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
   map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  
+  #map.edit_script 
+  
   #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
   map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
 

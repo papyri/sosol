@@ -19,19 +19,41 @@ function showHide(id)
 <% else %>
 <%= 'Guest' %>
 <% end %> 
-'s Dashboard'</h1>
+'s Dashboard</h1>
 
 
 <h2 onclick="showHide('documents')">Documents</h2>
+<%= link_to "New Doc", { :controller => "master_articles", :action => "new" } %>
+<%= link_to "New Article", { :controller => "articles", :action => "begin" } %>
+
+
+<div id='documents'>
+<% master_articles = @current_user.master_articles %>
+Your Documents
+<ul>
+  <% master_articles.each do |ma| %>
+    <li><%= link_to ma.title, edit_master_article_path(ma) %>
+      <ul>
+         <% articles = ma.articles %>
+         <% articles.each do |a| %>
+           <li> <%= link_to a.category, edit_article_path(a)%> </li>
+         <% end %>
+      </ul>
+     </li>
+    <%end%> 
+ </ul>
+ </div>
+
 <div id='documents'>
  <% articles = @current_user.articles %>
+ Your Articles
 <ul>
  <% articles.each do |a| %>
 
     <li> <%= link_to a.id, edit_article_path(a)%> </li>
 <% end %>
 </div>
-<%= link_to "New Doc", { :controller => "articles", :action => "begin" } %>
+
 
 
 <h2 onclick="showHide('comments')">Comments</h2>

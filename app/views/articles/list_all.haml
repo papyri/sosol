@@ -1,11 +1,12 @@
 
+
 = render :partial => 'show_hide'
 
 #main.site
 
   - onclick_start = "showHide('" 
   - onclick_stop =    "')"
-    
+  - content_list = Array.new
 
 
   %h2 Listing All Articles
@@ -16,7 +17,12 @@
       %strong= article.id
       = link_to(get_title(article.content), edit_article_path(article)) 
       
-
+      %div{:id => "master_article"}
+        %strong= "part of "
+        -if article.master_article != nil
+          = article.master_article.title
+        -else
+          none
     
     %div{:id => "user"}
       %strong user
@@ -35,6 +41,7 @@
       %strong{:onclick => onclick_call}
         content
       %div{:id => content_count}
+        - content_list << content_count
         =article.content
     
     %div{:id => "leiden"}

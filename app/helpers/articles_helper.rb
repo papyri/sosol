@@ -25,4 +25,5 @@ module ArticlesHelper
     dtd = XML::Dtd.new("-//STOA//DTD EPIDOC//EN", "/Users/ryan/source/idp2/git/protosite/app/helpers/tei-epidoc.dtd")
     article.validate(dtd)
   end
+
 end

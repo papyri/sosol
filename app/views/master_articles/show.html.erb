@@ -1,0 +1,19 @@
+
+<p>
+<h1>
+  <b>Title:</b>
+  
+  <%=h @master_article.title %>
+  </h1>
+</p>
+
+
+<% @master_article.articles.each do |article| %>
+
+<%= render :partial => article.get_category_obj() %>
+<%end%>
+
+
+
+<%= link_to 'Edit', edit_master_article_path(@master_article) %> |
+<%= link_to 'Back', master_articles_path %>

@@ -1,0 +1,26 @@
+<h1>Listing transcriptions</h1>
+
+<table>
+  <tr>
+    <th>Content</th>
+    <th>Leiden</th>
+    <th>User</th>
+    <th>Article</th>
+  </tr>
+
+<% for transcription in @transcriptions %>
+  <tr>
+    <td><%=h transcription.content %></td>
+    <td><%=h transcription.leiden %></td>
+    <td><%=h transcription.user_id %></td>
+    <td><%=h transcription.article_id %></td>
+    <td><%= link_to 'Show', transcription %></td>
+    <td><%= link_to 'Edit', edit_transcription_path(transcription) %></td>
+    <td><%= link_to 'Destroy', transcription, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New transcription', new_transcription_path %>

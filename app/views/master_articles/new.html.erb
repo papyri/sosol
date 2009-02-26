@@ -1,0 +1,49 @@
+<script type="text/javascript">
+function checkBoxOrders()
+{
+
+  
+  var meta = document.getElementById('doMeta');
+  var script = document.getElementById('doTranscription');
+  var trans = document.getElementById('doTranslation');
+  
+  if (trans.checked)
+  {
+    script.checked = true;
+  }
+  if (script.checked)
+  {
+    meta.checked = true;
+  }
+
+}
+
+</script>
+
+
+<h1>New master_article</h1>
+
+<% form_for(@master_article) do |f| %>
+  <%= f.error_messages %>
+
+
+<%= check_box_tag "doMeta", "doMeta", false, :onclick => "checkBoxOrders()"  %>
+Meta
+
+<%= check_box_tag "doTranscription", "doTranscription", false, :onclick => "checkBoxOrders()"  %>
+Transcription
+
+<%= check_box_tag "doTranslation", "doTranslation", false, :onclick => "checkBoxOrders()"  %>
+Translation
+
+
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', master_articles_path %>

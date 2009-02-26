@@ -18,11 +18,27 @@ class ApplicationController < ActionController::Base
   # session :session_key => '_sosol_session_id'
   # layout 'default'
 
+  before_filter :get_current_master_article
   before_filter :get_user_id
   before_filter :rpx_setup
 
   private
 
+  def set_current_master_article(master_id)
+   session[:master_id] = master_id	
+  end
+  
+  def get_current_master_article()
+    master_id = session[:master_id]
+    if (master_id)
+      begin
+    	@current_master_article = MasterArticle.find(master_id)
+      rescue 
+        @current_master_article = nil
+      end
+    end
+  end
+	
   def get_user_id
     user_id = session[:user_id]
     if user_id
