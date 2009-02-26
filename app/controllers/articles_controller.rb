@@ -76,7 +76,8 @@ class ArticlesController < ApplicationController
   # POST /articles.xml
   def create
     @article = Article.new(params[:article])
-    @article.user_id = @current_user.id
+    # TODO: filter
+    @article.user_id = @current_user.id unless @current_user.nil?
     @article.category = params[:category]
 
     respond_to do |format|
