@@ -11,7 +11,7 @@ body {
   background-color: white;
   font: 13.34px helvetica, arial, clean, sans-serif;
   *font-size: small;
-  text-align: center;
+  *text-align: center;
 }
 
 #main {
@@ -21,9 +21,7 @@ body {
   margin: 0 auto -8.6em;
 }
 
-body {
-  text-align: center;
-}
+
 
 .site {
   width: 50em;
@@ -214,6 +212,10 @@ DIV#edition SUP {
   text-align: left;
 }    
 
+.meta_background {
+  background-color: #D3C0C0;
+}
+
 .transcription
 {
   background-color: #C0C1D3;
@@ -222,7 +224,11 @@ DIV#edition SUP {
 
 .transcription p {
   text-align: left;
-}    
+} 
+   
+.transcription_background {
+  background-color: #C0C1D3;
+}
 
 .translation
 {
@@ -234,4 +240,28 @@ DIV#edition SUP {
   text-align: left;
 }    
 
+.translation_background {
+ background-color: #E6B39D;
+}
+
+
+.dashboard {
+
+ margin: 8px;
+  padding: 8px;
+  
+  background-color: #ddffdd;
+  text-align: left;
+
+}
+
+.dashboard h2 {  
+  display: inline;
+  text-align: left;
+}
+
+.dashboard ul li {
+   list-style-position: inside;
+   padding-left: 20px;
+}
 

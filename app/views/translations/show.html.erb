@@ -1,23 +1,4 @@
-<p>
-  <b>Content:</b>
-  <%=h @translation.content %>
-</p>
-
-<p>
-  <b>Language:</b>
-  <%=h @translation.language %>
-</p>
-
-<p>
-  <b>User:</b>
-  <%=h @translation.user_id %>
-</p>
-
-<p>
-  <b>Article:</b>
-  <%=h @translation.article_id %>
-</p>
+<%= render :partial => @translation %>
 
 
-<%= link_to 'Edit', edit_translation_path(@translation) %> |
-<%= link_to 'Back', translations_path %>
+<%= link_to 'Document', url_for(@translation.article.master_article) %>

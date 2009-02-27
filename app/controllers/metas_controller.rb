@@ -1,4 +1,7 @@
 class MetasController < ApplicationController
+
+  layout 'site'
+ 
   # GET /metas
   # GET /metas.xml
   def index

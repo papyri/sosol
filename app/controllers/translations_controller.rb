@@ -1,4 +1,8 @@
 class TranslationsController < ApplicationController
+
+  layout 'site'
+  
+
   # GET /translations
   # GET /translations.xml
   def index

@@ -1,3 +1,5 @@
+<div class="meta_background">
+
 <h1>Editing meta</h1>
 
 <% form_for(@meta) do |f| %>
@@ -40,9 +42,9 @@
     <%= f.text_field :notes %>
   </p>
   <p>
-    <%= f.submit "Update" %>
+    <%= f.submit "Save" %>
   </p>
 <% end %>
 
-<%= link_to 'Show', @meta %> |
-<%= link_to 'Back', metas_path %>
+<%= link_to 'Document', url_for(@meta.article.master_article) %>
+

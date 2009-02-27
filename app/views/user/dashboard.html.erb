@@ -13,57 +13,65 @@ function showHide(id)
 }
 </script>
 
-<h1>
-<% if @current_user.name != nil %>
-<%= @current_user.name %>
-<% else %>
-<%= 'Guest' %>
-<% end %> 
-'s Dashboard</h1>
+<div class="dashboard">
+
+<!--
+	<h1>
+		<% if @current_user.name != nil %>
+		  <%= @current_user.name %>
+		<% else %>
+		  <%= 'Guest' %>
+		<% end %> 
+	  's Dashboard
+	</h1>
+-->
+
+	<h2 onclick="showHide('documents')">Documents</h2>
+	<%= link_to "New", { :controller => "master_articles", :action => "new" } %>
+	<br/>
 
 
-<h2 onclick="showHide('documents')">Documents</h2>
-<%= link_to "New Doc", { :controller => "master_articles", :action => "new" } %>
-<%= link_to "New Article", { :controller => "articles", :action => "begin" } %>
+	<div id='documents'>
+	  <% master_articles = @current_user.master_articles %>
+		<ul>
+		  <% master_articles.each do |ma| %>
+			<li><%= link_to ma.title, url_for(ma) %>
+			<!--
+			  <ul>
+				 <% articles = ma.articles %>
+				 <% articles.each do |a| %>
+				   <li> <%= link_to a.category, edit_article_path(a)%> </li>
+				 <% end %>
+			  </ul>
+			  -->
+			 </li>
+			<%end%> 
+		 </ul>
+	</div>
+	
+<!--
+	 <% articles = @current_user.articles %>
+     <h2 onclick="showHide('articles')">Articles</h2>
+     <br/>
+     
+	 <div id='articles'>
+	  <ul>
+	    <% articles.each do |a| %>
+		  <li> <%= link_to a.id, edit_article_path(a)%> </li>
+	    <% end %>
+	 </div>
+-->
 
 
-<div id='documents'>
-<% master_articles = @current_user.master_articles %>
-Your Documents
-<ul>
-  <% master_articles.each do |ma| %>
-    <li><%= link_to ma.title, edit_master_article_path(ma) %>
-      <ul>
-         <% articles = ma.articles %>
-         <% articles.each do |a| %>
-           <li> <%= link_to a.category, edit_article_path(a)%> </li>
-         <% end %>
-      </ul>
-     </li>
-    <%end%> 
- </ul>
- </div>
+	<h2 onclick="showHide('comments')">Comments</h2>
+	<br/>
+	<div id='comments'>
+	  <% comments = @current_user.comments %>
+		<ul>
+		  <% comments.each do |c| %>
+			<li> <%= c.text%> </li>
+		  <% end %>
+		</ul>
+	</div>
 
-<div id='documents'>
- <% articles = @current_user.articles %>
- Your Articles
-<ul>
- <% articles.each do |a| %>
-
-    <li> <%= link_to a.id, edit_article_path(a)%> </li>
-<% end %>
 </div>
-
-
-
-<h2 onclick="showHide('comments')">Comments</h2>
-<div id='comments'>
- <% comments = @current_user.comments %>
-<ul>
- <% comments.each do |c| %>
-    <li> <%= c.text%> </li>
-<% end %>
-<% %>
-</ul>
-</div>
-

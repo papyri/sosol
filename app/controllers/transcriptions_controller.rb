@@ -1,4 +1,8 @@
 class TranscriptionsController < ApplicationController
+  
+  layout 'site'
+  
+  
   # GET /transcriptions
   # GET /transcriptions.xml
   def index
