@@ -5,6 +5,6 @@
 </h1>
 
 <% @master_article.articles.each do |article| %>
-	<%= render :partial => article.get_category_obj() %>
+	<%= render :partial => article.get_category_obj(), :locals => { :show_links => true }%>
 <%end%>
 

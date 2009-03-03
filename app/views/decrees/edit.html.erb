@@ -1,0 +1,28 @@
+<h1>Editing decree</h1>
+
+<% form_for(@decree) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :action %><br />
+    <%= f.text_field :action %>
+  </p>
+  <p>
+    <%= f.label :trigger %><br />
+    <%= f.text_field :trigger %>
+  </p>
+  <p>
+    <%= f.label :choices %><br />
+    <%= f.text_field :choices %>
+  </p>
+  <p>
+    <%= f.label :board_id %><br />
+    <%= f.text_field :board_id %>
+  </p>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @decree %> |
+<%= link_to 'Back', decrees_path %>

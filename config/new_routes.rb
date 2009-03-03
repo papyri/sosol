@@ -3,12 +3,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :decrees
 
-  map.resources :boards
-
-  map.resources :votes
-
-  map.resources :decrees
-
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
 

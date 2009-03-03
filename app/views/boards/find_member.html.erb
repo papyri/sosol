@@ -1,0 +1,7 @@
+<h1>Editing board</h1>
+
+<% users = User.find(:all) %>
+<% users.each do |user| %>  
+  <%= link_to user.name, :controller => "boards", :action => "add_member", :id => @board.id, :user_name => user.name %>
+<% end %>
+

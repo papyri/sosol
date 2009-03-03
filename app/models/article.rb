@@ -4,6 +4,7 @@ class Article < ActiveRecord::Base
   has_many :comments
   belongs_to :user
   belongs_to :master_article
+  belongs_to :board
   
   #article types
   has_one :meta

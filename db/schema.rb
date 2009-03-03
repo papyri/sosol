@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090226005832) do
+ActiveRecord::Schema.define(:version => 20090303223336) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -23,6 +23,18 @@ ActiveRecord::Schema.define(:version => 20090226005832) do
     t.integer  "meta_id"
     t.integer  "transcription_id"
     t.integer  "translation_id"
+    t.string   "status"
+    t.integer  "board_id"
+  end
+
+  create_table "boards", :force => true do |t|
+    t.string   "title"
+    t.string   "category"
+    t.integer  "user_id"
+    t.integer  "decree_id"
+    t.integer  "article_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "comments", :force => true do |t|
@@ -30,6 +42,15 @@ ActiveRecord::Schema.define(:version => 20090226005832) do
     t.integer  "user_id"
     t.integer  "article_id"
     t.string   "reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "decrees", :force => true do |t|
+    t.string   "action"
+    t.decimal  "trigger"
+    t.string   "choices"
+    t.integer  "board_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -85,6 +106,15 @@ ActiveRecord::Schema.define(:version => 20090226005832) do
 
   create_table "users", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "board_id"
+  end
+
+  create_table "votes", :force => true do |t|
+    t.string   "choice"
+    t.string   "user_id"
+    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

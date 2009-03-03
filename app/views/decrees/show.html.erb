@@ -1,0 +1,23 @@
+<p>
+  <b>Action:</b>
+  <%=h @decree.action %>
+</p>
+
+<p>
+  <b>Trigger:</b>
+  <%=h @decree.trigger %>
+</p>
+
+<p>
+  <b>Choices:</b>
+  <%=h @decree.choices %>
+</p>
+
+<p>
+  <b>Board:</b>
+  <%=h @decree.board_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_decree_path(@decree) %> |
+<%= link_to 'Back', decrees_path %>

@@ -4,4 +4,9 @@ class User < ActiveRecord::Base
   has_many :master_articles
   has_many :articles
   has_many :comments
+  
+  has_many :boards
+  belongs_to :board
+  #has_and_belongs_to_many :boards
+  
 end

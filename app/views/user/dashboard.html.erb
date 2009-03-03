@@ -32,22 +32,57 @@ function showHide(id)
 
 
 	<div id='documents'>
-	  <% master_articles = @current_user.master_articles %>
-		<ul>
-		  <% master_articles.each do |ma| %>
-			<li><%= link_to ma.title, url_for(ma) %>
-			<!--
-			  <ul>
-				 <% articles = ma.articles %>
-				 <% articles.each do |a| %>
-				   <li> <%= link_to a.category, edit_article_path(a)%> </li>
-				 <% end %>
-			  </ul>
-			  -->
-			 </li>
-			<%end%> 
-		 </ul>
+	  <% if @current_user.master_articles != nil%>
+		  <% master_articles = @current_user.master_articles %>
+			<ul>
+			  <% master_articles.each do |ma| %>
+				<li><%= link_to ma.title, url_for(ma) %>
+				<!--
+				  <ul>
+					 <% articles = ma.articles %>
+					 <% articles.each do |a| %>
+					   <li> <%= link_to a.category, edit_article_path(a)%> </li>
+					 <% end %>
+				  </ul>
+				  -->
+				 </li>
+				<%end%> 
+			 </ul>
+	  <% end %>
 	</div>
+	
+	
+	
+	
+	
+	<% if @current_user.boards != nil && @current_user.boards.length > 0 %>
+		<h2 onclick="showHide('boards')">Editorial Boards</h2>		
+		<br/>
+
+		<div id='boards'>
+	     <% @current_user.boards.each do |board| %>
+	       <h4><%= board.title %></h4>
+		   <% articles = board.articles %>		    
+			<ul>
+			  <% articles.each do |article| %>
+				<li>
+				<%= link_to article.category, url_for(article) %>  <%= article.status %>  
+				
+				<%= link_to "blah", :controller => "articles", :action => "board_review", :id => article.id %>
+				 </li>
+				<%end%> 
+			 </ul>
+	        <% end %>
+		</div>
+  <% end %>	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 <!--
 	 <% articles = @current_user.articles %>

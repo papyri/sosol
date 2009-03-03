@@ -30,33 +30,7 @@ class MasterArticlesController < ApplicationController
   # GET /master_articles/new.xml
   def new
     @master_article = MasterArticle.new
-   # @master_article.save #must be saved to get an id
-    
-    #for now hard code the types
- #   @meta_article = Article.new
-  #  @meta_article.category = "Meta"
-   # @meta_article.master_article_id = @master_article.id
- #   @meta_article.user_id = @current_user.id
-  #  @meta_article.content = "<xml>none<xlm>"
-   # @meta_article.save
-    
-#	@script_article = Article.new
- #   @script_article.category = "Transcription"
-    #@script_article.master_article_id = @master_article.id
-  #  @script_article.user_id = @current_user.id
-  #  @script_article.content = "<xml>none<xlm>"
-   # @script_article.save
-        
-   # @trans_article = Article.new
-  #  @trans_article.category = "Translation"
-   # @trans_article.master_article_id = @master_article.id
-  #  @trans_article.user_id = @current_user.id
-  #  @trans_article.content = "<xml>none<xlm>"
-   # @trans_article.save
-
-   # @master_article.articles << @meta_article
-   # @master_article.articles << @script_article
-   # @master_article.articles << @trans_article
+  
 
     respond_to do |format|
       format.html # new.html.erb
@@ -92,14 +66,24 @@ class MasterArticlesController < ApplicationController
 		@meta_article.master_article_id = @master_article.id
 		@meta_article.user_id = @current_user.id
 		@meta_article.content = "<xml>none</xml>"
+		@meta_article.status = "new"
 		@meta_article.save	     
 		
 		@meta = Meta.new()
 		@meta.article_id = @meta_article.id
-        @meta.user_id = @current_user.id
+        @meta.user_id = @current_user.id		               
         @meta.save
+        
+        board = Board.find_by_category("Meta")
+        if board != nil
+        	board.articles << @meta_article
+        	board.save
+        	@meta_article.board_id = board.id        
+        end
+        
         @meta_article.meta_id = @meta.id
         @meta_article.save	 
+        
     end
         
         
@@ -109,12 +93,21 @@ class MasterArticlesController < ApplicationController
 		@script_article.master_article_id = @master_article.id
 		@script_article.user_id = @current_user.id
 		@script_article.content = "<xml>none</xml>"
+		@script_article.status = "new"
 		@script_article.save
 		
 		@script = Transcription.new()
 		@script.article_id = @script_article.id
         @script.user_id = @current_user.id
         @script.save
+        
+        board = Board.find_by_category("Transcription")
+        if board != nil
+        	board.articles << @script_article
+        	board.save
+        	@script_article.board_id = board.id        
+        end        
+        
         @script_article.transcription_id = @script.id
         @script_article.save	 		
     end
@@ -126,12 +119,23 @@ class MasterArticlesController < ApplicationController
 		@trans_article.master_article_id = @master_article.id
 		@trans_article.user_id = @current_user.id
 		@trans_article.content = "<xml>none</xml>"
+		@trans_article.status = "new"
 		@trans_article.save
 		
 		@translation = Translation.new()
 		@translation.article_id = @trans_article.id
         @translation.user_id = @current_user.id
         @translation.save
+        
+        
+        board = Board.find_by_category("Translation")
+        if board != nil
+        	board.articles << @translation_article
+        	board.save
+        	@translation_article.board_id = board.id        
+        end
+        
+        
         @trans_article.translation_id = @translation.id
         @trans_article.save
     end
