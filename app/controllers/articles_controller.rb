@@ -3,6 +3,34 @@ require 'net/http'
 class ArticlesController < ApplicationController
   layout 'site'
   
+  def board_review
+    @article = Article.find(params[:id])
+    @vote = Vote.new()
+  
+  end
+  
+  def vote
+    @vote = Vote.new(params[:vote])
+    @article = Article.find(params[:id])
+    
+    @vote.user_id = @current_user.id
+    @vote.save
+    @article.votes << @vote
+    
+    
+	@comment = Comment.new()
+	@comment.article_id = params[:id]
+	@comment.text = params[:comment]
+	@comment.user_id = @current_user.id
+	@comment.reason = "vote"
+	@comment.save
+	
+	#TODO tie vote and comment together?	
+	
+	#do what now? go to review page
+	render :controller => "articles", :action => "board_review", :id => @article.id
+  end
+  
   def new_meta
     #@article = Article.new
     @meta = Meta.new

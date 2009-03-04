@@ -2,6 +2,7 @@ class Article < ActiveRecord::Base
   include ArticlesHelper
   
   has_many :comments
+  has_many :votes
   belongs_to :user
   belongs_to :master_article
   belongs_to :board
