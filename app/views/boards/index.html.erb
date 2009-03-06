@@ -4,18 +4,14 @@
   <tr>
     <th>Title</th>
     <th>Category</th>
-    <th>User</th>
-    <th>Decree</th>
-    <th>Article</th>
+
   </tr>
 
 <% for board in @boards %>
   <tr>
     <td><%=h board.title %></td>
     <td><%=h board.category %></td>
-    <td><%=h board.user_id %></td>
-    <td><%=h board.decree_id %></td>
-    <td><%=h board.article_id %></td>
+
     <td><%= link_to 'Show', board %></td>
     <td><%= link_to 'Edit', edit_board_path(board) %></td>
     <td><%= link_to 'Destroy', board, :confirm => 'Are you sure?', :method => :delete %></td>

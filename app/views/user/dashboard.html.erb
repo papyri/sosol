@@ -53,7 +53,31 @@ function showHide(id)
 	
 	
 	
+<!--	
+	<% boards = Board.find(:all) %>
+	<% boards.each do | board | %>
+	  <% if board.users.find_by_id(@current_user.id) %>
+	       <h4><%= board.title %></h4>
+		   <% articles = board.articles %>		    
+			<ul>
+			  <% articles.each do |article| %>
+				<li>
+				<%= link_to article.category, url_for(article) %>  <%= article.status %>  
+				
+				<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
+				 </li>
+				<%end%> 
+			 </ul>
+	  
+	  <% end %>	
+	<% end %>
+-->	
 	
+	
+	
+	
+	
+
 	
 	<% if @current_user.boards != nil && @current_user.boards.length > 0 %>
 		<h2 onclick="showHide('boards')">Editorial Boards</h2>		
@@ -68,7 +92,7 @@ function showHide(id)
 				<li>
 				<%= link_to article.category, url_for(article) %>  <%= article.status %>  
 				
-				<%= link_to "blah", :controller => "articles", :action => "board_review", :id => article.id %>
+				<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
 				 </li>
 				<%end%> 
 			 </ul>

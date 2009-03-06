@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090303232306) do
+ActiveRecord::Schema.define(:version => 20090306052257) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -31,12 +31,20 @@ ActiveRecord::Schema.define(:version => 20090303232306) do
   create_table "boards", :force => true do |t|
     t.string   "title"
     t.string   "category"
-    t.integer  "user_id"
     t.integer  "decree_id"
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "boards_users", :id => false, :force => true do |t|
+    t.string   "board_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
     t.string   "text"
@@ -109,7 +117,6 @@ ActiveRecord::Schema.define(:version => 20090303232306) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "board_id"
   end
 
   create_table "votes", :force => true do |t|

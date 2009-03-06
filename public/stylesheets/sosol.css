@@ -277,3 +277,18 @@ DIV#edition SUP {
 .decree p {
   text-align: left;
 }    
+
+
+
+.board_tally  {
+  text-align: left;
+  background-color: #EEED9E;
+  border: solid #FFFF00;
+}   
+
+ 
+.review_comments {
+  text-align: left;
+  background-color: #B1EE9E;
+  border: solid #0ECB0E;
+} 

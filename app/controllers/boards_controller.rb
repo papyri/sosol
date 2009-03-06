@@ -11,19 +11,27 @@ class BoardsController < ApplicationController
      @board = Board.find(params[:id])
      user = User.find_by_name(params[:user_name])
      
-     #@board.users << User.find(params[:user_id])
      @board.users << user
      @board.save
-     user.boards << @board
-     user.save
+     
+    # user.boards << @board
+    # user.save
     
       redirect_to :action => "edit", :id => (@board).id
     end
     
     def remove_member
+    
+      user = User.find(params[:user_id])
+      
       @board = Board.find(params[:id])
-      @board.users.remove(params[:user_id])
+      @board.users.delete(user)
       @board.save
+      
+      
+     # user.boards.delete(@board)
+      #user.save
+      
       redirect_to :action => "edit", :id => (@board).id
     end
     
