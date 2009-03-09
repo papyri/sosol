@@ -52,6 +52,13 @@ class MetasController < ApplicationController
   def show
     @meta = Meta.find(params[:id])
 
+
+    @meta.load_xml()
+
+    #doc = @meta.load_xml()
+    #@meta.notBefore = doc
+    #@meta.notAfter = {doc => "notAfter"}
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @meta }

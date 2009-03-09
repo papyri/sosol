@@ -1,0 +1,24 @@
+<h1>Listing translation_contents</h1>
+
+<table>
+  <tr>
+    <th>Content</th>
+    <th>Translation</th>
+    <th>Language</th>
+  </tr>
+
+<% for translation_content in @translation_contents %>
+  <tr>
+    <td><%=h translation_content.content %></td>
+    <td><%=h translation_content.translation_id %></td>
+    <td><%=h translation_content.language %></td>
+    <td><%= link_to 'Show', translation_content %></td>
+    <td><%= link_to 'Edit', edit_translation_content_path(translation_content) %></td>
+    <td><%= link_to 'Destroy', translation_content, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New translation_content', new_translation_content_path %>

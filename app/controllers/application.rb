@@ -48,9 +48,9 @@ class ApplicationController < ActionController::Base
   end
 
   def rpx_setup   
- #  session[:user_id] = 1
- #  get_user_id()
- #  return 
+   session[:user_id] = 1
+   get_user_id()
+   return 
     unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)
       render :template => 'const_message'
       return false

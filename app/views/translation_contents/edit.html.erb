@@ -1,0 +1,24 @@
+<h1>Editing translation_content</h1>
+
+<% form_for(@translation_content) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :content %><br />
+    <%= f.text_field :content %>
+  </p>
+  <p>
+    <%= f.label :translation_id %><br />
+    <%= f.text_field :translation_id %>
+  </p>
+  <p>
+    <%= f.label :language %><br />
+    <%= f.text_field :language %>
+  </p>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @translation_content %> |
+<%= link_to 'Back', translation_contents_path %>
