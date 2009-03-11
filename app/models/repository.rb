@@ -57,4 +57,8 @@ class Repository
     # TODO: Update master branch tip from canonical
     @repo.git.branch({}, name, 'master')
   end
+  
+  def branches
+    @repo.branches.map{|b| b.name}.delete("master")
+  end
 end
