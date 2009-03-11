@@ -59,6 +59,6 @@ class Repository
   end
   
   def branches
-    @repo.branches.map{|b| b.name}.delete("master")
+    @repo.branches.map{|b| b.name}
   end
 end

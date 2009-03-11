@@ -22,6 +22,12 @@ class ArticlesController < ApplicationController
   # GET /articles.xml
   def index
     @articles = Article.find(:all)
+    if !@current_user.nil?
+      @branches = @current_user.repository.branches
+      @branches.delete("master")
+    else
+      @branches = []
+    end
 
     respond_to do |format|
       format.html # index.html.erb
