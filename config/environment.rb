@@ -31,6 +31,8 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
 	config.gem "ruby-xslt", :lib => "xml/xslt"
 	config.gem "libxml-ruby", :lib => "xml/libxml"
 	config.gem "haml"
+	config.gem "capistrano", :version => ">= 2.5.5"
+	config.gem "json"
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
