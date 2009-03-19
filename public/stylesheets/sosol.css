@@ -244,6 +244,19 @@ DIV#edition SUP {
  background-color: #E6B39D;
 }
 
+.translation_content
+{
+  background-color: #E1CAC0;
+  border: solid #FFA500;
+}
+
+.translation_content p {
+  text-align: left;
+}    
+
+.translation_content_background {
+ background-color: #E6B39D;
+}
 
 .dashboard {
 

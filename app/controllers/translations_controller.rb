@@ -3,6 +3,43 @@ class TranslationsController < ApplicationController
   layout 'site'
   
 
+
+
+  # ask user which language they want to add
+  def add_new_translation_content
+ 	
+    @translation = Translation.find(params[:id])
+    langs = @translation.GetLanguages();
+    @languages = {"Franz&#195;&#182;sisch" => "fr", "Englisch" => "en", "Deutsch" => "de", "Italienisch" => "it", "Spanisch" => "es", "Latein" => "la", "Griechisch" => "el" }
+    #remove existing langs from the options
+    langs.each do |lang|       
+      @languages.each do |l|        
+        if l[1] == lang
+          @languages.delete(l[0])          
+        end
+      end
+    end  
+  end
+ 
+  # adds the new language to the translation content
+  def add_new_translation_language
+    @translation = Translation.find(params[:id])
+    @translation.AddNewLanguageToContent(params[:language])
+   
+       respond_to do |format|
+      if @translation.save
+        flash[:notice] = 'New language successfully added to translation.'
+        format.html { redirect_to(@translation) }
+       # format.xml  { render :xml => @translation, :status => :created, :location => @translation }
+      #else
+      #  format.html { render :action => "new" }
+      #  format.xml  { render :xml => @translation.errors, :status => :unprocessable_entity }
+      end
+    end
+    
+  end
+
+
   # GET /translations
   # GET /translations.xml
   def index
@@ -18,7 +55,7 @@ class TranslationsController < ApplicationController
   # GET /translations/1.xml
   def show
     @translation = Translation.find(params[:id])
-
+   @translation.GetTranslationsFromXML()
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @translation }
@@ -63,8 +100,28 @@ class TranslationsController < ApplicationController
   def update
     @translation = Translation.find(params[:id])
 
+
+#need to put the langs back into the xml
+langReg = Regexp.new('(translation_content_)(..)(_content)')
+
+params.each do |p|
+  langMatch = langReg.match(p[0])
+  if langMatch
+  
+   tc = TranslationContent.new()
+   tc.content =  p[1];
+   tc.language = langMatch[0].split('_')[2]
+   
+   @translation.PutTranslationToXML(tc)
+  # @translation.content = @translation.content + "^^^" + tc.language + "^^^"
+  end
+
+end
+
+
     respond_to do |format|
-      if @translation.update_attributes(params[:translation])
+     # if @translation.update_attributes(params[:translation])
+      if @translation.save
         flash[:notice] = 'Translation was successfully updated.'
         format.html { redirect_to(@translation) }
         format.xml  { head :ok }

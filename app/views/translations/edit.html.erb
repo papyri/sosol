@@ -3,17 +3,37 @@
 
 <h1>Editing translation</h1>
 
+<%= link_to "Add" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %>
+
 <% form_for(@translation) do |f| %>
   <%= f.error_messages %>
+
 
   <p>
     <%= f.label :content %><br />
     <%= f.text_area :content %>
   </p>
+  <!--
   <p>
     <%= f.label :language %><br />
     <%= f.text_field :language %>
   </p>
+  
+  -->
+  <% #get the language content %>
+  <% tcs = @translation.GetTranslationsFromXML() %>
+	  
+	  <% tcs.each do |tc| %> 
+		<% section_id = "translation_content_" + tc.language %>
+	 
+		<h3 style="display:inline;" onclick="showHide(<%=   section_id%>)"><%= tc.language %></h3>
+
+		<div id= <%= section_id %> >
+			<% text_id = section_id + "_content" %>
+			<%= text_area_tag ( text_id, tc.content, :cols => "100", :rows => "20" ) %>    
+		</div>
+	  <% end %>
+	  
   
   <!--
   <p>

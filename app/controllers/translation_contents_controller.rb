@@ -1,4 +1,9 @@
 class TranslationContentsController < ApplicationController
+ 
+ 
+ 
+ 
+ 
   # GET /translation_contents
   # GET /translation_contents.xml
   def index
@@ -40,12 +45,23 @@ class TranslationContentsController < ApplicationController
   # POST /translation_contents
   # POST /translation_contents.xml
   def create
-    @translation_content = TranslationContent.new(params[:translation_content])
+    #@translation_content = TranslationContent.new(params[:translation_content])
+    
+    @translation_content = TranslationContent.new()
+    @translation_content.language = params[:language]
+
 
     respond_to do |format|
       if @translation_content.save
+        translation = Translation.find(params[:translation_id])
+    	translation.translation_contents << @translation_content
         flash[:notice] = 'TranslationContent was successfully created.'
-        format.html { redirect_to(@translation_content) }
+        #go to edit of item
+        #render :controller => "translations", :action => "edit", :id => translation.id
+        
+        format.html { render :controller => "translations", :action => "edit", :id => translation.id }
+        
+        #format.html { redirect_to(@translation_content) }
         format.xml  { render :xml => @translation_content, :status => :created, :location => @translation_content }
       else
         format.html { render :action => "new" }

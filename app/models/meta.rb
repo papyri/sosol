@@ -13,7 +13,7 @@ class Meta < ActiveRecord::Base
 	doc = REXML::Document.new file
   
     #set base to meta data in epidoc
-    basePath = "TEI.2/text/body/div";
+    basePath = "TEI.2/text/body/div"
     
     #notes
     notePath = "[@type='commentary'][@subtype='general']/p"
