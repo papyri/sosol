@@ -2,6 +2,50 @@ class TranslationsController < ApplicationController
 
   layout 'site'
   
+  
+  
+   def submit
+ 
+   @translation = Translation.find(params[:id])
+ 
+   if (params[:comment] == nil || params[:comment] == "")
+     flash[:notice] = 'You must provide reasoning.'
+     redirect_to :action => "review_for_submit", :id => params[:id]
+   else
+	 
+	   comment = Comment.new()
+	   comment.article_id = params[:id]
+	   comment.text = params[:comment]
+	   comment.user_id = @current_user.id
+	   comment.reason = "submit"
+	   comment.save()
+	   
+	   @translation.article.comments << comment
+	   @translation.article.status = "submitted"
+	   @translation.article.save()  #need to save here?
+	   @translation.save()
+	   
+	   flash[:notice] = 'Translation has been submitted.'
+	   redirect_to  url_for(@translation.article.master_article)
+   end   
+ end
+  
+  
+   def review_for_submit
+   	@translation = Translation.find(params[:id])
+ 
+   end
+ 
+  def ask_for_epidoc_file
+      @translation = Translation.find(params[:id])
+  end
+  
+  def load_epidoc_file
+    @translation = Translation.find(params[:id])
+    @translation.load_epidoc_from_file(params[:filename])
+    @translation.save
+    redirect_to :controller => "translations", :action => "edit", :id => @translation.id
+  end
 
   def epidoc_to_translation_contents
     @translation = Translation.find(params[:id])

@@ -4,6 +4,14 @@ class Translation < ActiveRecord::Base
   belongs_to :article
   has_many :translation_contents
   
+  
+  
+  def load_epidoc_from_file(filename)
+    file =  File.open(filename, "r")
+    self.epidoc = file.read
+  	PutEpidocToTranslationContents(true)
+  end
+  
   #puts the translations present in the epidoc to the translation_contents
   #if delete_extra is true, then any translation_contents that are not in the epidoc will be deleted
   def PutEpidocToTranslationContents(delete_extra = false)

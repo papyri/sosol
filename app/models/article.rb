@@ -18,6 +18,14 @@ class Article < ActiveRecord::Base
   # validate :must_be_valid_xml
   # validate :must_be_valid_epidoc
   
+  #article has serveral status states
+  #new - user created ie does not exist elsewhere
+  #edit - editing existing ie alread is in repository somewhere
+  #submitted - user submitted and it is being reviewed by the board
+  #accepted - board has approved
+  #rejected - board rejected
+  #graffiti - board hated it  
+  
 #edit_article_path(article)
   def get_category_obj()
     if self.meta

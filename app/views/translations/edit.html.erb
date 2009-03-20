@@ -18,9 +18,10 @@ function showHide(id)
 
 <h1>Editing translation</h1>
 
-<%= link_to "Add" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %>
-<%= link_to "Epidoc-->Translations" , :controller => "translations", :action => "epidoc_to_translation_contents", :id => @translation.id %>
-<%= link_to "Translations-->Epidoc" , :controller => "translations", :action => "translation_contents_to_epidoc", :id => @translation.id %>
+<%= link_to "Add" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %><br/>
+<%= link_to "Epidoc-->Translations" , :controller => "translations", :action => "epidoc_to_translation_contents", :id => @translation.id %><br/>
+<%= link_to "Translations-->Epidoc" , :controller => "translations", :action => "translation_contents_to_epidoc", :id => @translation.id %><br/>
+<%= link_to "From File" , :controller => "translations", :action => "ask_for_epidoc_file", :id => @translation.id %><br/>
 
 <% form_for(@translation) do |f| %>
   <%= f.error_messages %>

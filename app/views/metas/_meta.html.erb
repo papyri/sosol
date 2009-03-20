@@ -3,8 +3,12 @@
 <h3 style="display:inline;">Meta</h3>
 
 <% if show_links  %>
-	<%= link_to 'Edit', url_for(:controller => 'metas', :action => 'edit', :id => meta.id) %> 
-	<%= link_to 'Submit', url_for(:controller => 'metas', :action => 'review_for_submit', :id => meta.id) %> 
+    <% if meta.article.status == "submitted" %>
+      Submitted
+    <% else %>
+		<%= link_to 'Edit', url_for(:controller => 'metas', :action => 'edit', :id => meta.id) %> 	
+		<%= link_to 'Submit', url_for(:controller => 'metas', :action => 'review_for_submit', :id => meta.id) %> 
+	<% end %>
 <% end %>
 	<p>
 	  <b>Notbeforedate:</b>

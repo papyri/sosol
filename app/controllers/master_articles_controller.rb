@@ -130,9 +130,9 @@ class MasterArticlesController < ApplicationController
         
         board = Board.find_by_category("Translation")
         if board != nil
-        	board.articles << @translation_article
+        	board.articles << @trans_article
         	board.save
-        	@translation_article.board_id = board.id        
+        	@trans_article.board_id = board.id        
         end
         
         

@@ -1,3 +1,4 @@
+
 <script>
 function commentChanged(e)
 {
@@ -22,22 +23,23 @@ function commentChanged(e)
 </script>
 
 
-
 <% if flash[:notice] %>
   <div class= "notice"><%= flash[:notice] %></div>
  <% end %>
 
 
 
-<%= render :partial => @meta , :locals => { :show_links => false }%>
+<%= render :partial => @translation , :locals => { :show_links => false }%>
 
 
+<% form_tag( :controller => "translations", :action => "submit", :method => "get") do %>
 
-<% form_tag( :controller => "metas", :action => "submit", :method => "get") do %>
-
-<%= hidden_field_tag( :id, @meta.id) %>
 <%= label_tag(:comment, "Describe your changes and reasoning.") %>
+
+<%= hidden_field_tag( :id, @translation.id) %>
+
 <br />
+
   <%= text_area_tag( :comment, "",:rows => 5, :cols => 80, :onkeyup => "commentChanged(event)") %>
   <br />
   <%= submit_tag("Submit", :id => "submit_button", :disabled => "true") %>
@@ -46,4 +48,4 @@ function commentChanged(e)
 
 
 <br /><br />
-<%= link_to 'Document', url_for(@meta.article.master_article) %>
+<%= link_to 'Document', url_for(@translation.article.master_article) %>
