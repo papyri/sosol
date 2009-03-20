@@ -3,13 +3,26 @@ class TranslationsController < ApplicationController
   layout 'site'
   
 
+  def epidoc_to_translation_contents
+    @translation = Translation.find(params[:id])
+    @translation.PutEpidocToTranslationContents(true)
+    @translation.save
+    redirect_to :controller => "translations", :action => "edit", :id => @translation.id
+  end
 
+
+  def translation_contents_to_epidoc
+    @translation = Translation.find(params[:id])
+    @translation.PutTranslationContentsToEpidoc()
+    @translation.save
+    redirect_to :controller => "translations", :action => "edit", :id => @translation.id
+  end
 
   # ask user which language they want to add
   def add_new_translation_content
  	
     @translation = Translation.find(params[:id])
-    langs = @translation.GetLanguages();
+    langs = @translation.GetLanguagesInTranslationContents();
     @languages = {"Franz&#195;&#182;sisch" => "fr", "Englisch" => "en", "Deutsch" => "de", "Italienisch" => "it", "Spanisch" => "es", "Latein" => "la", "Griechisch" => "el" }
     #remove existing langs from the options
     langs.each do |lang|       
@@ -24,7 +37,7 @@ class TranslationsController < ApplicationController
   # adds the new language to the translation content
   def add_new_translation_language
     @translation = Translation.find(params[:id])
-    @translation.AddNewLanguageToContent(params[:language])
+    @translation.AddNewLanguageToTranslationContents(params[:language])
    
        respond_to do |format|
       if @translation.save
@@ -55,7 +68,7 @@ class TranslationsController < ApplicationController
   # GET /translations/1.xml
   def show
     @translation = Translation.find(params[:id])
-   @translation.GetTranslationsFromXML()
+   @translation.GetTranslationsFromTranslationContents()
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @translation }
@@ -99,21 +112,29 @@ class TranslationsController < ApplicationController
   # PUT /translations/1.xml
   def update
     @translation = Translation.find(params[:id])
-
-
-#need to put the langs back into the xml
+    #TODO find the param hash for epidoc
+   hackTrans = Translation.new(params[:translation])
+   @translation.epidoc = hackTrans.epidoc
+   #save the changes in the translation contents
 langReg = Regexp.new('(translation_content_)(..)(_content)')
 
 params.each do |p|
   langMatch = langReg.match(p[0])
   if langMatch
-  
-   tc = TranslationContent.new()
-   tc.content =  p[1];
-   tc.language = langMatch[0].split('_')[2]
-   
-   @translation.PutTranslationToXML(tc)
-  # @translation.content = @translation.content + "^^^" + tc.language + "^^^"
+    #find the corresponding contents
+    @translation.translation_contents.each do |tc|
+      if tc.language == langMatch[0].split('_')[2]
+        tc.content = p[1]
+        tc.save
+      end
+    end
+#  
+#   tc = TranslationContent.new()
+#   tc.content =  p[1];
+#   tc.language = langMatch[0].split('_')[2]
+#   
+#   @translation.PutTranslationToXML(tc)
+  # @translation.epidoc = @translation.epidoc + "^^^" + tc.language + "^^^"
   end
 
 end

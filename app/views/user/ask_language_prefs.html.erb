@@ -1,0 +1,14 @@
+
+
+<div class="language_prefs">
+
+<p>Enter choices for languages en de it fr la el etc..</p>
+
+<% form_tag(:controller=>"user", :action=>"set_language_prefs") do %>
+
+<%= text_field_tag(:languages, @langs) %>
+
+<%= submit_tag "Set" %>
+<% end %>
+
+</div>

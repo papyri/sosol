@@ -16,6 +16,17 @@ class UserController < ApplicationController
     
   end
   
+  def ask_language_prefs
+    @langs = @current_user.language_prefs
+  
+  end
+
+  def set_language_prefs
+    @current_user.language_prefs =  params[:languages]
+    @current_user.save
+    
+    redirect_to :controller => :user, :action => "dashboard"
+  end  
   
   def dashboard
 	

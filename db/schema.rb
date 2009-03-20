@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090308142559) do
+ActiveRecord::Schema.define(:version => 20090320151211) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(:version => 20090308142559) do
   end
 
   create_table "translations", :force => true do |t|
-    t.string   "content"
+    t.string   "epidoc"
     t.string   "language"
     t.integer  "user_id"
     t.integer  "article_id"
@@ -126,6 +126,7 @@ ActiveRecord::Schema.define(:version => 20090308142559) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "language_prefs"
   end
 
   create_table "votes", :force => true do |t|

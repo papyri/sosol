@@ -4,32 +4,112 @@ class Translation < ActiveRecord::Base
   belongs_to :article
   has_many :translation_contents
   
-  
-  
-  #pull out translation sections from xml
-  #return an array of translation_contents
-  def GetTranslationsFromXML()
-    tcs = Array.new()
+  #puts the translations present in the epidoc to the translation_contents
+  #if delete_extra is true, then any translation_contents that are not in the epidoc will be deleted
+  def PutEpidocToTranslationContents(delete_extra = false)
     
+    epidocLangs = GetLanguagesInEpidoc()    
+    #see if we have any extra languages in the translation_contents
+    if delete_extra == true
+		self.translation_contents.each do |tc|
+		  extra_lang = true
+		  epidocLangs.each do |el|
+			if el == tc.language
+			  extra_lang = false
+			end
+		  end
+		  
+		  if extra_lang == true
+			tc.delete      
+		  end
+		end
+    end
+
+    epidoc_tcs = GetTranslationsFromEpidoc()
+    
+    epidoc_tcs.each do |etc|
+        #see if it already exists    
+        exist = false
+	    self.translation_contents.each do |tc|
+    	  if etc.language == tc.language
+    	    if exist == true && delete_extra == true
+    	      #we have found a duplicate so delete it
+    	      tc.delete
+    	    else
+    	    	tc.content = etc.content
+    	    	tc.save
+    	    	exist = true
+    	    end
+    	  end
+    	end
+    
+    	if exist == false
+    	  #need to create new tc
+    	  new_tc = TranslationContent.new()
+    	  new_tc.language = etc.language
+    	  new_tc.content = etc.content
+    	  self.translation_contents << new_tc
+    	end
+    end    
+  end
+  
+  
+  
+  def GetTranslationsFromTranslationContents()
+    tcs = Array.new()    
+    self.translation_contents.each do |tc|    
+    	tcs << tc    	  
+    end
+ 
+  end
+  
+  #puts the translation_contents model data into the translation epidoc
+  def PutTranslationContentsToEpidoc()
+    self.translation_contents.each do |tc|
+      PutTranslationToEpidoc(tc)
+    end
+  
+  end
+  
+  #pull out translation sections from epidoc
+  #return an array of translation_contents
+  def GetTranslationsFromEpidoc()
+    tcs = Array.new()
+ 
     #file = File.new ( "/home/charles/translation_test.xml")
-    doc = REXML::Document.new self.content
-    #not that his will come from the content not from a files
+    doc = REXML::Document.new self.epidoc
 
     
     transLanguage = "TEI.2/text/body/div[@type='translation']"
     transPath = "TEI.2/text/body/div[@type='translation']"
     
     REXML::XPath.each(doc, transPath) do |result| 
-      transLanguage = result.attributes["lang"];
-      
- 
-      #can do new path on result?
+      transLanguage = result.attributes["lang"];      
+     
      new_tc = TranslationContent.new()
+     new_tc.language = transLanguage     
+   
       REXML::XPath.each (result, "p") do |p_part|
-      	new_tc.content = p_part()
+      	transDoc = REXML::Document.new(p_part.to_s)
+      	new_tc.content = transDoc.root.to_s
+     
+       	
+      	#new_tc.content = p_part.to_s
+      	#just get the inner xml
+      	endIndex = new_tc.content.rindex("</p>")
+      	startIndex = new_tc.content.index("<p>")
+      	if endIndex && startIndex      	        
+        	startIndex = startIndex + 3
+        	subLength = endIndex - startIndex        
+      		new_tc.content = new_tc.content[startIndex, subLength]      
+        else      	     
+      		#probably empty tag "<p/>"
+      		new_tc.content = ""
+      	end
+      	#new_tc.content = startIndex.to_s + " " + subLength.to_s + "  "+ endIndex.to_s      	
       end
    #  new_tc.content = result.to_s
-      new_tc.language = transLanguage
+      #new_tc.language = transLanguage
       tcs << new_tc
     
     end
@@ -37,86 +117,99 @@ class Translation < ActiveRecord::Base
    tcs
   end
   
-  #takes array of contents and inserts them into the XML
-  def PutTranslationsToXML(translation_contents)
+  #takes array of contents and inserts them into the Epidoc XML
+  def PutTranslationsToEpidoc(translation_contents)
     translation_contents.each do |tc|
-      PutTranslationToXML(tc)
+      PutTranslationToEpidoc(tc)
  	end
   end
   
   
-  def PutTranslationToXML(translation_content)
+  def PutTranslationToEpidoc(translation_content)
     #see if the lang is already in XML
     contentPath = "TEI.2/text/body/div[@type='translation'][@lang='"
     contentPath = contentPath + translation_content.language + "']"
-    
+   
     
     bodyPath = "TEI.2/text/body"
     
-    doc = REXML::Document.new self.content
+    doc = REXML::Document.new self.epidoc
+
+    if doc == nil || self.epidoc == ""
+      doc = REXML::Document.new("<TEI.2><text><body></body></text></TEI.2>")
+    end
+    #TODO add bad doc check
+    #TODO create new doc
+
+#    matchFound = false
+#    REXML::XPath.each(doc, bodyPath) do |m|
+#      matchFound = true
+#    end
+#    if matchFound == false
+#      doc.Element
+#    
+#    end
     
- #   newElement = REXML::Element.new("found")
- #   newElement.add_text( contentPath )
- 
- 
- #2 possibilities, 
+ #3 possibilities, 
  #	1. content is just text, so it can be added via .text = 
  #	2. content is XML, so it can be formated to XM and added as a node
  #  3. content is mal formed XML ! then what?
- 
-   tempDoc = REXML::Document.new(translation_content.content)
+  
+   #enclose translation in p tag 
+   tempDoc = REXML::Document.new("<p>" + translation_content.content + "</p>")
+   
    if (tempDoc)
-   # it is valid xml, so add it as node
+   # it is valid xml, so add it as node     
    
    else
-   #it is not so add it as text
-   
+   #invalid need to warn and do what?
+  #   self.content = "temp doc failed"
+ #    return
    
    end
-   
-      
+         
     pathFound = false
  
+    #should only be one match for language
     REXML::XPath.each(doc, contentPath) do |result |
       pathFound = true
-      #doc.root.add_element(newElement)
-      #result = REXML::Element.new()
-      
-      #remove previous 
+     
+      #remove previous elements
       result.each_element do |subElement|
         result.delete(subElement)
       end
       
-      if (tempDoc)
-        
-        result.add_element(tempDoc.root)
-        else
-      result.text = translation_content.content       
+      if (tempDoc)        
+        result.add_element(tempDoc.root)               
       end
+      \
     end
     
     if pathFound == false   
       newLang = REXML::Element.new("div");
       newLang.add_attribute("type", "translation")      
       newLang.add_attribute("lang", translation_content.language)
-      newLang.add_text(translation_content.content + "notfound")
-            
+      
+     # newLang.add_text("<p>" + translation_content.content + "</p>")
+      
+      newContent = REXML::Element.new("p")
+      newContent.add_text(translation_content.content)
+      newLang.add_element(newContent)
+      
       REXML::XPath.each(doc, bodyPath) do |result|
       	result.add_element(newLang)       	    
       end         
     end
     
-    self.content = doc.to_s()    
-  
+    self.epidoc = doc.to_s()      
   end
   
-  #gets list of exiting languages in translation
-  def GetLanguages()
+  #gets list of existing languages in epidoc
+  def GetLanguagesInEpidoc()
     languages = Array.new()
     
     #file = File.new ( "/home/charles/translation_test.xml")
-    doc = REXML::Document.new self.content
-    #not that his will come from the content not from a files
+    doc = REXML::Document.new self.epidoc   
     
     transLanguage = "TEI.2/text/body/div[@type='translation']"    
     
@@ -127,13 +220,70 @@ class Translation < ActiveRecord::Base
     languages
   end
   
-  
-  
-  
-  def AddNewLanguageToContent(language)
-    tc = TranslationContent.new();
-    tc.language = language;
-    #no content yet
-    PutTranslationToXML(tc)
+  #gets list of existing languages in translation_contents
+  def GetLanguagesInTranslationContents()
+    languages = Array.new()
+    
+    self.translation_contents.each do |tc|
+      languages << tc.language
+    end
+    
+    languages
   end
+  
+  
+  def AddNewLanguageToTranslationContents(language)
+  
+    #check that it does not already exist
+    lang_exist = false
+    
+    langs = GetLanguagesInTranslationContents()
+    
+    langs.each do |l|
+      if l == language
+        lang_exist = true
+      end
+    end
+  
+    if lang_exist == true
+      return #do nothing it alread exist
+    end
+  
+    #check that it is not already in the epidoc 
+    #  and was not pulled out by error 
+    #  is this needed?   
+    langs = GetLanguagesInEpidoc()
+  
+    lang_exist = false
+    langs.each do |l|
+      if l == language
+        lang_exist = true
+      end
+    end
+  
+    new_tc = nil
+    if lang_exist == true
+      #need to pull out of epidoc and put into translation_contents
+      tcs = GetTranslationsFromEpidoc()
+      tcs.each do |tc|
+        if tc.language == language
+          new_tc = tc
+          #set new_tc to existing tc so we can add it to the database
+        end
+      end
+    end
+  
+    if new_tc == nil    
+    	new_tc = TranslationContent.new();
+    	new_tc.language = language;
+    	new_tc.content = ""    	
+    end
+    
+    self.translation_contents << new_tc
+    
+    #no need to put into epidoc yet
+  end
+  
+  
+  
 end
