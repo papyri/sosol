@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090320151211) do
+ActiveRecord::Schema.define(:version => 20090324192114) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20090320151211) do
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "finalizer_user_id"
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
@@ -131,7 +132,7 @@ ActiveRecord::Schema.define(:version => 20090320151211) do
 
   create_table "votes", :force => true do |t|
     t.string   "choice"
-    t.string   "user_id"
+    t.integer  "user_id",    :limit => 255
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"

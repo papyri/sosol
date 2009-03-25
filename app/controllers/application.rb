@@ -49,6 +49,7 @@ class ApplicationController < ActionController::Base
 
   def rpx_setup   
    session[:user_id] = 1
+
    get_user_id()
    return 
     unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)

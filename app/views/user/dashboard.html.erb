@@ -90,9 +90,33 @@ function showHide(id)
 			<ul>
 			  <% articles.each do |article| %>
 				<li>
-				<%= link_to article.category, url_for(article) %>  <%= article.status %>  
-				
-				<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
+				<%= link_to article.master_article.title, url_for(article.master_article) %>  <%= article.status %>  
+				  <% if article.status == "submitted" %>
+					<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
+					<% article.votes.each do |vote| %>
+					  
+					   <% if vote.user_id == @current_user.id %>
+					      your vote "<%=vote.choice %>"
+					   <% end %>
+					<% end %>
+					
+					<% if article.status == "approved" %>
+					  <% if article.board.finalizer_user_id == @current_user.id %>
+						 ready to finalize <% #add finalize link %>
+					  <% else %>
+					     has been approved.
+					  <% end %>
+					<% end %>
+					
+					<% if article.status == "rejected" %>
+					  has been rejected.					
+					<% end %>
+					
+					<% if article.status == "graffiti" %>
+					  is graffiti.					
+					<% end %>
+					
+				  <% end %>
 				 </li>
 				<%end%> 
 			 </ul>
@@ -121,7 +145,7 @@ function showHide(id)
 	 </div>
 -->
 
-
+<!--
 	<h2 onclick="showHide('comments')">Comments</h2>
 	<br/>
 	<div id='comments'>
@@ -132,8 +156,11 @@ function showHide(id)
 		  <% end %>
 		</ul>
 	</div>
+-->
+
 
 </div>
+
 
 
 <%= link_to "Language Prefs", :controller => 'user', :action => 'ask_language_prefs' %>

@@ -18,9 +18,13 @@ function showHide(id)
 <h3 style="display:inline;">Translation</h3>
 
 
-<% if show_links  %>
-	<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit', :id => translation.id) %> 	
-	<%= link_to 'Submit', url_for(:controller => 'translations', :action => 'review_for_submit', :id => translation.id) %> 
+<% if defined?(show_links) &&  show_links  %>
+    <% if translation.article.status == "submitted" %>
+      	Submitted
+    <% else %>
+		<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit', :id => translation.id) %> 	
+		<%= link_to 'Submit', url_for(:controller => 'translations', :action => 'review_for_submit', :id => translation.id) %> 
+	<% end %>
 <% end %>
 
 <br />

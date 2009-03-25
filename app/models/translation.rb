@@ -4,7 +4,16 @@ class Translation < ActiveRecord::Base
   belongs_to :article
   has_many :translation_contents
   
-  
+  def approve()
+    #the vote has approved the article
+    self.article.status = "approved"
+    self.article.save
+    #choose the finalizer
+    #for now pick the last person to vote
+    self.article.board.finalizer_user_id = self.article.votes[ self.article.votes.length - 1 ].user_id
+    self.article.board.save #need to check on automatic saving of linked models
+  	#TODO send them an email
+  end
   
   def load_epidoc_from_file(filename)
     file =  File.open(filename, "r")

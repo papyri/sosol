@@ -10,23 +10,48 @@ class ArticlesController < ApplicationController
   end
   
   def vote
+    
+    
+    
     @vote = Vote.new(params[:vote])
     @article = Article.find(params[:id])
     
-    @vote.user_id = @current_user.id
-    @vote.save
-    @article.votes << @vote
-    
-    
-	@comment = Comment.new()
-	@comment.article_id = params[:id]
-	@comment.text = params[:comment]
-	@comment.user_id = @current_user.id
-	@comment.reason = "vote"
-	@comment.save
+    #double check that they have not already voted
+    has_voted = @article.votes.find_by_user_id(@current_user.id)
+    if !has_voted 
+		
+		@vote.user_id = @current_user.id
+		@vote.save   
+		@article.votes << @vote
+		
+		
+		@comment = Comment.new()
+		@comment.article_id = params[:id]
+		@comment.text = params[:comment]
+		@comment.user_id = @current_user.id
+		@comment.reason = "vote"
+		@comment.save
+		
+		#TODO tie vote and comment together?	
+		
+		#need to tally votes and see if any action will take place
+		decree_action = @article.board.tally_votes(@article.votes)
+		#arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
+		#NOTE here are the types of actions for the voting results
+		#approve, rejecte, graffiti
+		if decree_action == "approve"
+		  @article.get_category_obj().approve		
+		elsif decree_action == "rejected"
+		  @article.get_category_obj().rejecte
+		elsif decree_action == "graffiti"
+		  @article.get_category_obj().graffiti
+		else
+		  #unknown action or no action
+		
+		end
+		
 	
-	#TODO tie vote and comment together?	
-	
+	end #!has_voted
 	#do what now? go to review page
 	render :controller => "articles", :action => "board_review", :id => @article.id
   end

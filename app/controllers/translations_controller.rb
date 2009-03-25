@@ -83,10 +83,16 @@ class TranslationsController < ApplicationController
     @translation = Translation.find(params[:id])
     @translation.AddNewLanguageToTranslationContents(params[:language])
    
+   
+    #  if @translation.save
+   	#	redirect_to :controller => "translations", :action => "edit", :id => @translation.id
+   #	end
+   	
        respond_to do |format|
       if @translation.save
         flash[:notice] = 'New language successfully added to translation.'
-        format.html { redirect_to(@translation) }
+        format.html { redirect_to( edit_translation_path @translation) }
+        
        # format.xml  { render :xml => @translation, :status => :created, :location => @translation }
       #else
       #  format.html { render :action => "new" }
