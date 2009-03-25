@@ -14,7 +14,23 @@ config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = false
 
 # Don't care if the mailer can't send
-config.action_mailer.raise_delivery_errors = false
+#config.action_mailer.raise_delivery_errors = false
+
+
+\#for mail testing
+config.action_mailer.raise_delivery_errors = true
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smpt_settings = 
+{
+	:address			=>	'smpt.gmail.com',
+	:port					=>	587,
+	:domain				=>	"www.google.com",
+	:authentication	=>	:plain,
+	:user_name			=>	'sosol.site@gmail.com',
+	:password				=>	'protosite'
+}
+
+
 
 # config/environments/development_secret.rb should set
 # RPX_API_KEY and RPX_REALM (site name) for RPX,

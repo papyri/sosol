@@ -1,0 +1,14 @@
+
+<h2><%= link_to @translation.article.master_article.title, url_for(@translation.article.master_article) %></h2>
+
+<%= render :partial => @translation , :locals => {:show_edit_link => true} %>
+
+
+<h3>Comments</h3>
+<div class="review_comments">
+  <% @translation.article.comments.each do |comment | %>
+    <%= render :partial => comment %>
+    <br />
+  <% end %>
+</div>
+
