@@ -9,7 +9,9 @@
   </p>
   <p>
     <%= f.label :category %><br />
-    <%= f.text_field :category %>
+    
+    <% possible_categories = {"Meta" => "Meta", "Transcription" => "Transcription", "Translation" => "Translation" } %>
+    <%= f.select :category , possible_categories %>
   </p>
 
   <p>
