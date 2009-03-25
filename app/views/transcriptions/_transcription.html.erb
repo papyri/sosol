@@ -1,7 +1,31 @@
 <div class="transcription">
 
 <h3 style="display:inline;">Transcription</h3>
-<%= link_to 'Edit', url_for(:controller => 'transcriptions', :action => 'edit', :id => transcription.id) %> 
+
+
+<% if defined?(show_links) &&  show_links  %>
+	<% show_edit_link = true %>
+	<% show_submit_link = true %>
+<% end %>
+
+<% if defined?(show_edit_link) && show_edit_link %>
+  	<%= link_to 'Edit', url_for(:controller => 'transcriptions', :action => 'edit', :id => transcription.id) %> 	
+<% end %>
+
+<% if defined?(show_submit_link) && show_submit_link %>
+  <% if transcription.article.status == "submitted" %>
+  	Submitted
+  <% else %>
+		<%= link_to 'Submit', url_for(:controller => 'transcriptions', :action => 'review_for_submit', :id => transcription.id) %> 
+	<% end %>
+<% end %>
+
+
+
+
+
+
+
 
 <p>
   <b>Content:</b>

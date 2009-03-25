@@ -4,6 +4,8 @@ class Translation < ActiveRecord::Base
   belongs_to :article
   has_many :translation_contents
   
+
+  
   def approve()
     #the vote has approved the article
     self.article.status = "approved"

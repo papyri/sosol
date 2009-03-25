@@ -79,50 +79,62 @@ function showHide(id)
 	
 
 	
-	<% if @current_user.boards != nil && @current_user.boards.length > 0 %>
-		<h2 onclick="showHide('boards')">Editorial Boards</h2>		
-		<br/>
+<% if @current_user.boards != nil && @current_user.boards.length > 0 %>
+	<h2 onclick="showHide('boards')">Editorial Boards</h2>		
+	<br/>
 
-		<div id='boards'>
-	     <% @current_user.boards.each do |board| %>
-	       <h4><%= board.title %></h4>
-		   <% articles = board.articles %>		    
+	<div id='boards'>
+		<% @current_user.boards.each do |board| %>
+			<h4><%= board.title %></h4>
+		  <% articles = board.articles %>		    
 			<ul>
 			  <% articles.each do |article| %>
-				<li>
-				<%= link_to article.master_article.title, url_for(article.master_article) %>  <%= article.status %>  
+					<li>
+					<%= link_to article.master_article.title, url_for(article.master_article) %>  <%= article.status %>  
+				  
+				  				 
 				  <% if article.status == "submitted" %>
-					<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
-					<% article.votes.each do |vote| %>
-					  
-					   <% if vote.user_id == @current_user.id %>
-					      your vote "<%=vote.choice %>"
-					   <% end %>
+						<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
+						
+						<% # check if user has voted on the article %>
+						<% article.votes.each do |vote| %>					  
+							<% if vote.user_id == @current_user.id %>
+								your vote "<%=vote.choice %>"
+							<% end %>
+						<% end %>
 					<% end %>
 					
-					<% if article.status == "approved" %>
+					<% cat_control = url_for  article.get_category_obj() %>
+					<% # cat_control = url_for :controller => cat_control, :action => "finalize" %>
+					
+					
+					<% if article.status == "approved" %>					
+						<% # check if user is the finalizer %>
+						<% #  TODO need to move the finalizer to the article!! %>
 					  <% if article.board.finalizer_user_id == @current_user.id %>
-						 ready to finalize <% #add finalize link %>
+							ready to finalize <%= link_to "finalize", :controller => cat_control, :action => "finalize" %> 
 					  <% else %>
-					     has been approved.
+						 	<%= link_to "finalize", :controller => article.get_category_obj(), :action => "finalize", :id => article.get_category_obj() %>
 					  <% end %>
 					<% end %>
-					
+				
+				
 					<% if article.status == "rejected" %>
 					  has been rejected.					
 					<% end %>
+				
 					
 					<% if article.status == "graffiti" %>
 					  is graffiti.					
 					<% end %>
+								
 					
-				  <% end %>
-				 </li>
-				<%end%> 
-			 </ul>
-	        <% end %>
-		</div>
-  <% end %>	
+					</li>
+				<% end %> 
+			</ul>
+		<% end %>
+	</div>
+ <% end %>	
 	
 	
 	

@@ -2,7 +2,11 @@ class TranslationsController < ApplicationController
 
   layout 'site'
   
+    
+  def finalize
+  	@translation = Translation.find(params[:id])
   
+  end
   
    def submit
  

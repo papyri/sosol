@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
   end
 
   def rpx_setup   
-   session[:user_id] = 1
+   session[:user_id] = 4
 
    get_user_id()
    return 

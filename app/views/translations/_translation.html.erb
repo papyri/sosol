@@ -19,13 +19,25 @@ function showHide(id)
 
 
 <% if defined?(show_links) &&  show_links  %>
-    <% if translation.article.status == "submitted" %>
-      	Submitted
-    <% else %>
-		<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit', :id => translation.id) %> 	
+	<% show_edit_link = true %>
+	<% show_submit_link = true %>
+<% end %>
+
+
+<% if defined?(show_edit_link) && show_edit_link %>
+  	<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit', :id => translation.id) %> 	
+<% end %>
+
+<% if defined?(show_submit_link) && show_submit_link %>
+  <% if translation.article.status == "submitted" %>
+  	Submitted
+  <% else %>
 		<%= link_to 'Submit', url_for(:controller => 'translations', :action => 'review_for_submit', :id => translation.id) %> 
 	<% end %>
 <% end %>
+
+
+
 
 <br />
 

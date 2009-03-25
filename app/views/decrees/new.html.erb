@@ -8,7 +8,7 @@
  
  		<% possible_actions = {"Approve" => "approve", "Reject" => "reject", "Graffiti" => "graffiti" } %>
   	<%= f.select :action, possible_actions %>
-  	
+  	    select_tag :action
   	<br />The resulting action of the decree when the trigger is met.
   	<br /><br />
    </p>   

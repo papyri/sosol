@@ -13,8 +13,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
-
-  map.resources :translations
+  #finalize added so mapping can be done with the "controller/id/finalize" path
+  map.resources :translations, :member => {:finalize => :get }
 
   map.resources :transcriptions
 

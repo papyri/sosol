@@ -2,14 +2,31 @@
 
 <h3 style="display:inline;">Meta</h3>
 
-<% if show_links  %>
-    <% if meta.article.status == "submitted" %>
-      Submitted
-    <% else %>
-		<%= link_to 'Edit', url_for(:controller => 'metas', :action => 'edit', :id => meta.id) %> 	
+
+<% if defined?(show_links) &&  show_links  %>
+	<% show_edit_link = true %>
+	<% show_submit_link = true %>
+<% end %>
+
+<% if defined?(show_edit_link) && show_edit_link %>
+  	<%= link_to 'Edit', url_for(:controller => 'metas', :action => 'edit', :id => meta.id) %> 	
+<% end %>
+
+<% if defined?(show_submit_link) && show_submit_link %>
+  <% if meta.article.status == "submitted" %>
+  	Submitted
+  <% else %>
 		<%= link_to 'Submit', url_for(:controller => 'metas', :action => 'review_for_submit', :id => meta.id) %> 
 	<% end %>
 <% end %>
+
+
+
+
+
+
+
+
 	<p>
 	  <b>Notbeforedate:</b>
 	  <%=h meta.notBeforeDate %>
