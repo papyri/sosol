@@ -108,7 +108,7 @@ class Translation < ActiveRecord::Base
      new_tc = TranslationContent.new()
      new_tc.language = transLanguage     
    
-      REXML::XPath.each (result, "p") do |p_part|
+      REXML::XPath.each(result, "p") do |p_part|
       	transDoc = REXML::Document.new(p_part.to_s)
       	new_tc.content = transDoc.root.to_s
      

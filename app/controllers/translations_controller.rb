@@ -5,7 +5,8 @@ class TranslationsController < ApplicationController
     
   def finalize
   	@translation = Translation.find(params[:id])
-  	TranslationMailer.deliver_final_translation("ok@mybit.net")
+  	
+  	TranslationMailer.deliver_final_translation("ok@mybit.net", @translation.epidoc)
  
   end
   

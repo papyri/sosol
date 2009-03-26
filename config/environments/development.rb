@@ -17,14 +17,17 @@ config.action_controller.perform_caching             = false
 #config.action_mailer.raise_delivery_errors = false
 
 
-\#for mail testing
+#for mail testing
+#require 'smtp_tls'
 config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
-config.action_mailer.smpt_settings = 
+config.action_mailer.smtp_settings = 
+#config.action_mailer.server_settings = 
+#ActionMailer::Base.smtp_settings =
 {
-	:address			=>	'smpt.gmail.com',
+	:address			=>	'smtp.gmail.com',
 	:port					=>	587,
-	:domain				=>	"www.google.com",
+	:domain				=>	"www.mybit.net",
 	:authentication	=>	:plain,
 	:user_name			=>	'sosol.site@gmail.com',
 	:password				=>	'protosite'
