@@ -11,6 +11,7 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 require 'rexml/document'
+require 'rpx'
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
