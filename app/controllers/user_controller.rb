@@ -29,6 +29,10 @@ class UserController < ApplicationController
   end  
   
   def dashboard
+    #don't let someone who isn't signed in go to the dashboard
+    if @current_user == nil
+      redirect_to :controller => "user", :action => "signin"
+    end
 	
   end
 end
