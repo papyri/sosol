@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090324192114) do
+ActiveRecord::Schema.define(:version => 20090330194931) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(:version => 20090324192114) do
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
-    t.string   "board_id"
+    t.integer  "board_id",   :limit => 255
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(:version => 20090324192114) do
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
-    t.string   "text"
+    t.text     "text",       :limit => 255
     t.integer  "user_id"
     t.integer  "article_id"
     t.string   "reason"
@@ -97,8 +97,8 @@ ActiveRecord::Schema.define(:version => 20090324192114) do
   end
 
   create_table "transcriptions", :force => true do |t|
-    t.string   "content"
-    t.string   "leiden"
+    t.text     "content",    :limit => 255
+    t.text     "leiden",     :limit => 255
     t.integer  "user_id"
     t.integer  "article_id"
     t.datetime "created_at"
@@ -106,7 +106,7 @@ ActiveRecord::Schema.define(:version => 20090324192114) do
   end
 
   create_table "translation_contents", :force => true do |t|
-    t.string   "content"
+    t.text     "content",        :limit => 255
     t.integer  "translation_id"
     t.string   "language"
     t.datetime "created_at"
@@ -114,13 +114,15 @@ ActiveRecord::Schema.define(:version => 20090324192114) do
   end
 
   create_table "translations", :force => true do |t|
-    t.string   "epidoc"
+    t.text     "epidoc",                 :limit => 255
     t.string   "language"
     t.integer  "user_id"
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "translation_content_id"
+    t.boolean  "xml_to_translations_ok"
+    t.boolean  "translations_to_xml_ok"
   end
 
   create_table "users", :force => true do |t|

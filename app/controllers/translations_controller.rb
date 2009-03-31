@@ -36,6 +36,21 @@ class TranslationsController < ApplicationController
    end   
  end
   
+  def edit_epidoc
+  	@translation = Translation.find(params[:id])
+  	#check if epidoc ok
+  	if !@translation.translations_to_xml_ok
+  		#they changed the translations and messed up the xml so the xml may not be what they want
+  		#flash[:notice] = "The translation changes are inconsisent with the xml!"
+  	else
+  		#flash[:notice] = "OK"
+  	end
+  end
+    
+  def edit_contents
+  	@translation = Translation.find(params[:id])  	
+  	#check if contents ok
+  end
   
    def review_for_submit
    	@translation = Translation.find(params[:id])
@@ -82,6 +97,7 @@ class TranslationsController < ApplicationController
         end
       end
     end  
+        
   end
  
   # adds the new language to the translation content
@@ -97,8 +113,7 @@ class TranslationsController < ApplicationController
        respond_to do |format|
       if @translation.save
         flash[:notice] = 'New language successfully added to translation.'
-        format.html { redirect_to( edit_translation_path @translation) }
-        
+        format.html { redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id }
        # format.xml  { render :xml => @translation, :status => :created, :location => @translation }
       #else
       #  format.html { render :action => "new" }
@@ -135,6 +150,8 @@ class TranslationsController < ApplicationController
   # GET /translations/new.xml
   def new
     @translation = Translation.new
+    @translation.xml_to_translations_ok = true
+    @translation.translations_to_xml_ok = false
 
     respond_to do |format|
       format.html # new.html.erb
@@ -164,49 +181,122 @@ class TranslationsController < ApplicationController
     end
   end
 
+
+  
+
+
   # PUT /translations/1
   # PUT /translations/1.xml
   def update
-    @translation = Translation.find(params[:id])
-    #TODO find the param hash for epidoc
-   hackTrans = Translation.new(params[:translation])
-   @translation.epidoc = hackTrans.epidoc
-   #save the changes in the translation contents
-langReg = Regexp.new('(translation_content_)(..)(_content)')
+		
 
-params.each do |p|
-  langMatch = langReg.match(p[0])
-  if langMatch
-    #find the corresponding contents
-    @translation.translation_contents.each do |tc|
-      if tc.language == langMatch[0].split('_')[2]
-        tc.content = p[1]
-        tc.save
-      end
-    end
-#  
-#   tc = TranslationContent.new()
-#   tc.content =  p[1];
-#   tc.language = langMatch[0].split('_')[2]
-#   
-#   @translation.PutTranslationToXML(tc)
-  # @translation.epidoc = @translation.epidoc + "^^^" + tc.language + "^^^"
-  end
+#		if params[:edit_epidoc] == "true"
+#		  redirect_to(@translation)
+#		end
+		  
+		@translation = Translation.find(params[:id])
+		
+		#incomingTranslation = Translation.new(params[:translation])
+		
+		#lots of work to do here,
+		#editing options are:
+		#  1. editing the XML epidoc
+		#			check if valid
+		#				if valid, update translation texts
+		#				if invalid, do what ? save but don't update text since we can't (and we don't want to wipe them out?)
+		#
+		#  2. editing the translation texts
+		#				check if can transform into epidoc (ie we add them to the existing epidoc, but don't change the other data in the epidoc)
+		#				if can transform then save the epidoc
+		
+		#what to do if we end up with one form (epidoc or texts) that cannot be transformed to the other? we can save both but how do we decide which has presidence?
+		
+		
+			
+		#separate the epidoc content that just came in
+	#	editiedTranslation = Translation.new(params[:translation])
+	#	@translation.epidoc = editiedTranslation.epidoc
+	
+	  #remember the original translation 
+	  #TODO what is Ruby default method for coping, deep or shallow?
+		#bakTranslation = @translation
+		
+		if  params[:edit_epidoc] == "true"  		 
+		  #need warn if epidoc fails or is not transferable!
+		  #separate the epidoc content that just came in
+			@translation.epidoc = Translation.new(params[:translation]).epidoc
+		  #update contents using the new epidoc
+		  @translation.xml_to_translations_ok = @translation.PutEpidocToTranslationContents(true)	
+		  if !@translation.xml_to_translations_ok
+		    #epidoc to translations failed, warn user
+		    
+		    #reload edit page with failed data
+		    
+		    #@translation.xml_to_translations_ok = false
+		    @translation.save		    
+		    flash[:notice] = "XML failed to convert to translations."
+		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+		    return
+		  else
+		  	@translation.save
+		  	flash[:notice] = "XML saved, translations updated."
+		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+		    return
+		  end
+		#else
+		elsif params[:edit_contents] == "true"
+									
+			#save the changes in the translation contents				
+			langReg = Regexp.new('(translation_content_)(..)(_content)')
 
-end
-
-
-    respond_to do |format|
+			params.each do |p|
+				langMatch = langReg.match(p[0])
+				if langMatch
+					#find the corresponding contents
+					@translation.translation_contents.each do |tc|
+						if tc.language == langMatch[0].split('_')[2]
+							tc.content = p[1]
+							tc.save
+							#TODO add warninig if save fails
+						end
+					end
+				end
+			end
+			@translation.translations_to_xml_ok = @translation.PutTranslationsToEpidoc(@translation.translation_contents)
+			
+			if !@translation.translations_to_xml_ok #!@translation.PutTranslationsToEpidoc(@translation.translation_contents)
+				#failed to save
+				#@translation.translations_to_xml_ok = false
+				#add error message
+				flash[:notice] = "Translations failed to convert to XML"
+				redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
+		    return
+		  else
+		  	@translation.save
+		  	flash[:notice] = "Translations saved, XML updated"
+		  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
+		    return
+			end
+			
+		#else
+		  #editing both parts
+		  
+		
+		end
+		
+		
+#    respond_to do |format|
      # if @translation.update_attributes(params[:translation])
-      if @translation.save
-        flash[:notice] = 'Translation was successfully updated.'
-        format.html { redirect_to(@translation) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @translation.errors, :status => :unprocessable_entity }
-      end
-    end
+#      if @translation.save
+#        flash[:notice] = 'Translation was successfully updated.'
+#        format.html { render :action => "edit" }# redirect_to(@translation) } # or render :action => "edit"
+#        format.xml  { head :ok }
+#      else
+#        format.html { render :action => "edit" }
+#        format.xml  { render :xml => @translation.errors, :status => :unprocessable_entity }
+#      end
+#    end
+    
   end
 
   # DELETE /translations/1

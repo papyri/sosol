@@ -26,6 +26,14 @@ class Translation < ActiveRecord::Base
   #puts the translations present in the epidoc to the translation_contents
   #if delete_extra is true, then any translation_contents that are not in the epidoc will be deleted
   def PutEpidocToTranslationContents(delete_extra = false)
+ 
+		#todo, add more error checking, ie on tc.save
+
+		#first check that we can get translations from the epidoc
+		success, epidoc_tcs = GetTranslationsFromEpidoc()
+		if  !success
+			return false
+		end
     
     epidocLangs = GetLanguagesInEpidoc()    
     #see if we have any extra languages in the translation_contents
@@ -44,8 +52,8 @@ class Translation < ActiveRecord::Base
 		end
     end
 
-    epidoc_tcs = GetTranslationsFromEpidoc()
-    
+#    success, epidoc_tcs = GetTranslationsFromEpidoc()
+        
     epidoc_tcs.each do |etc|
         #see if it already exists    
         exist = false
@@ -70,6 +78,8 @@ class Translation < ActiveRecord::Base
     	  self.translation_contents << new_tc
     	end
     end    
+    
+    return true
   end
   
   
@@ -93,134 +103,153 @@ class Translation < ActiveRecord::Base
   #pull out translation sections from epidoc
   #return an array of translation_contents
   def GetTranslationsFromEpidoc()
-    tcs = Array.new()
+  	success = true
  
-    #file = File.new ( "/home/charles/translation_test.xml")
-    doc = REXML::Document.new self.epidoc
+ 
+ 		begin #exception handling
+			tcs = Array.new()
+	 
+			#file = File.new ( "/home/charles/translation_test.xml")
+			doc = REXML::Document.new self.epidoc
 
-    
-    transLanguage = "TEI.2/text/body/div[@type='translation']"
-    transPath = "TEI.2/text/body/div[@type='translation']"
-    
-    REXML::XPath.each(doc, transPath) do |result| 
-      transLanguage = result.attributes["lang"];      
-     
-     new_tc = TranslationContent.new()
-     new_tc.language = transLanguage     
-   
-      REXML::XPath.each(result, "p") do |p_part|
-      	transDoc = REXML::Document.new(p_part.to_s)
-      	new_tc.content = transDoc.root.to_s
-     
-       	
-      	#new_tc.content = p_part.to_s
-      	#just get the inner xml
-      	endIndex = new_tc.content.rindex("</p>")
-      	startIndex = new_tc.content.index("<p>")
-      	if endIndex && startIndex      	        
-        	startIndex = startIndex + 3
-        	subLength = endIndex - startIndex        
-      		new_tc.content = new_tc.content[startIndex, subLength]      
-        else      	     
-      		#probably empty tag "<p/>"
-      		new_tc.content = ""
-      	end
-      	#new_tc.content = startIndex.to_s + " " + subLength.to_s + "  "+ endIndex.to_s      	
-      end
-   #  new_tc.content = result.to_s
-      #new_tc.language = transLanguage
-      tcs << new_tc
-    
-    end
-  
-   tcs
+			
+			transLanguage = "TEI.2/text/body/div[@type='translation']"
+			transPath = "TEI.2/text/body/div[@type='translation']"
+			
+			REXML::XPath.each(doc, transPath) do |result| 
+				transLanguage = result.attributes["lang"];      
+			 
+			 new_tc = TranslationContent.new()
+			 new_tc.language = transLanguage     
+		 
+				REXML::XPath.each(result, "p") do |p_part|
+					transDoc = REXML::Document.new(p_part.to_s)
+					new_tc.content = transDoc.root.to_s			 
+					
+					#new_tc.content = p_part.to_s
+					#just get the inner xml
+					endIndex = new_tc.content.rindex("</p>")
+					startIndex = new_tc.content.index("<p>")
+					if endIndex && startIndex      	        
+						startIndex = startIndex + 3
+						subLength = endIndex - startIndex        
+						new_tc.content = new_tc.content[startIndex, subLength]      
+					else      	     
+						#probably empty tag "<p/>"
+						new_tc.content = ""
+					end
+					#new_tc.content = startIndex.to_s + " " + subLength.to_s + "  "+ endIndex.to_s      	
+				end
+		 #  new_tc.content = result.to_s
+				#new_tc.language = transLanguage
+				tcs << new_tc
+			
+			end
+		rescue 
+		# $!
+		  success = false
+		
+		end  
+   return success, tcs
   end
   
   #takes array of contents and inserts them into the Epidoc XML
   def PutTranslationsToEpidoc(translation_contents)
     translation_contents.each do |tc|
-      PutTranslationToEpidoc(tc)
- 	end
+      if !PutTranslationToEpidoc(tc)
+      	return false
+      end
+ 		end
+ 		return true
   end
   
   
   def PutTranslationToEpidoc(translation_content)
-    #see if the lang is already in XML
-    contentPath = "TEI.2/text/body/div[@type='translation'][@lang='"
-    contentPath = contentPath + translation_content.language + "']"
-   
-    
-    bodyPath = "TEI.2/text/body"
-    
-    doc = REXML::Document.new self.epidoc
 
-    if doc == nil || self.epidoc == ""
-      doc = REXML::Document.new("<TEI.2><text><body></body></text></TEI.2>")
-    end
-    #TODO add bad doc check
-    #TODO create new doc
+  	begin
+  	
+			#see if the lang is already in XML
+			contentPath = "TEI.2/text/body/div[@type='translation'][@lang='"
+			contentPath = contentPath + translation_content.language + "']"
+		 
+			
+			bodyPath = "TEI.2/text/body"
+			
+			doc = REXML::Document.new self.epidoc
 
-#    matchFound = false
-#    REXML::XPath.each(doc, bodyPath) do |m|
-#      matchFound = true
-#    end
-#    if matchFound == false
-#      doc.Element
-#    
-#    end
-    
- #3 possibilities, 
- #	1. content is just text, so it can be added via .text = 
- #	2. content is XML, so it can be formated to XM and added as a node
- #  3. content is mal formed XML ! then what?
-  
-   #enclose translation in p tag 
-   tempDoc = REXML::Document.new("<p>" + translation_content.content + "</p>")
-   
-   if (tempDoc)
-   # it is valid xml, so add it as node     
-   
-   else
-   #invalid need to warn and do what?
-  #   self.content = "temp doc failed"
- #    return
-   
-   end
-         
-    pathFound = false
- 
-    #should only be one match for language
-    REXML::XPath.each(doc, contentPath) do |result |
-      pathFound = true
-     
-      #remove previous elements
-      result.each_element do |subElement|
-        result.delete(subElement)
-      end
-      
-      if (tempDoc)        
-        result.add_element(tempDoc.root)               
-      end
-      \
-    end
-    
-    if pathFound == false   
-      newLang = REXML::Element.new("div");
-      newLang.add_attribute("type", "translation")      
-      newLang.add_attribute("lang", translation_content.language)
-      
-     # newLang.add_text("<p>" + translation_content.content + "</p>")
-      
-      newContent = REXML::Element.new("p")
-      newContent.add_text(translation_content.content)
-      newLang.add_element(newContent)
-      
-      REXML::XPath.each(doc, bodyPath) do |result|
-      	result.add_element(newLang)       	    
-      end         
-    end
-    
-    self.epidoc = doc.to_s()      
+			if doc == nil || self.epidoc == ""
+				doc = REXML::Document.new("<TEI.2><text><body></body></text></TEI.2>")
+			end
+			#TODO add bad doc check
+			#TODO create new doc
+
+	#    matchFound = false
+	#    REXML::XPath.each(doc, bodyPath) do |m|
+	#      matchFound = true
+	#    end
+	#    if matchFound == false
+	#      doc.Element
+	#    
+	#    end
+			
+	 #3 possibilities, 
+	 #	1. content is just text, so it can be added via .text = 
+	 #	2. content is XML, so it can be formated to XM and added as a node
+	 #  3. content is mal formed XML ! then what?
+		
+		 #enclose translation in p tag 
+		 tempDoc = REXML::Document.new("<p>" + translation_content.content + "</p>")
+		 
+		 if (tempDoc)
+		 # it is valid xml, so add it as node     
+		 
+		 else
+		 #invalid need to warn and do what?
+		#   self.content = "temp doc failed"
+	 #    return
+		 
+		 end
+					 
+			pathFound = false
+	 
+			#should only be one match for language
+			REXML::XPath.each(doc, contentPath) do |result |
+				pathFound = true
+			 
+				#remove previous elements
+				result.each_element do |subElement|
+					result.delete(subElement)
+				end
+				
+				if (tempDoc)        
+					result.add_element(tempDoc.root)               
+				end
+				\
+			end
+			
+			if pathFound == false   
+				newLang = REXML::Element.new("div");
+				newLang.add_attribute("type", "translation")      
+				newLang.add_attribute("lang", translation_content.language)
+				
+			 # newLang.add_text("<p>" + translation_content.content + "</p>")
+				
+				newContent = REXML::Element.new("p")
+				newContent.add_text(translation_content.content)
+				newLang.add_element(newContent)
+				
+				REXML::XPath.each(doc, bodyPath) do |result|
+					result.add_element(newLang)       	    
+				end         
+			end
+			
+			self.epidoc = doc.to_s()      
+		rescue
+			return false
+		
+		end
+			
+			return true
   end
   
   #gets list of existing languages in epidoc
@@ -283,7 +312,7 @@ class Translation < ActiveRecord::Base
     new_tc = nil
     if lang_exist == true
       #need to pull out of epidoc and put into translation_contents
-      tcs = GetTranslationsFromEpidoc()
+      success, tcs = GetTranslationsFromEpidoc()
       tcs.each do |tc|
         if tc.language == language
           new_tc = tc

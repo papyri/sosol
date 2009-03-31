@@ -15,16 +15,6 @@ function showHide(id)
 
 <div class="dashboard">
 
-<!--
-	<h1>
-		<% if @current_user.name != nil %>
-		  <%= @current_user.name %>
-		<% else %>
-		  <%= 'Guest' %>
-		<% end %> 
-	  's Dashboard
-	</h1>
--->
 
 	<h2 onclick="showHide('documents')">Documents</h2>
 	<%= link_to "New", { :controller => "master_articles", :action => "new" } %>
@@ -32,7 +22,7 @@ function showHide(id)
 
 
 	<div id='documents'>
-	  <% if @current_user.master_articles != nil%>
+	  <% if @current_user != nil && @current_user.master_articles != nil%>
 		  <% master_articles = @current_user.master_articles %>
 			<ul>
 			  <% master_articles.each do |ma| %>
@@ -50,36 +40,9 @@ function showHide(id)
 			 </ul>
 	  <% end %>
 	</div>
-	
-	
-	
-<!--	
-	<% boards = Board.find(:all) %>
-	<% boards.each do | board | %>
-	  <% if board.users.find_by_id(@current_user.id) %>
-	       <h4><%= board.title %></h4>
-		   <% articles = board.articles %>		    
-			<ul>
-			  <% articles.each do |article| %>
-				<li>
-				<%= link_to article.category, url_for(article) %>  <%= article.status %>  
-				
-				<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
-				 </li>
-				<%end%> 
-			 </ul>
-	  
-	  <% end %>	
-	<% end %>
--->	
-	
-	
-	
-	
-	
 
 	
-<% if @current_user.boards != nil && @current_user.boards.length > 0 %>
+<% if @current_user != nil && @current_user.boards != nil && @current_user.boards.length > 0 %>
 	<h2 onclick="showHide('boards')">Editorial Boards</h2>		
 	<br/>
 

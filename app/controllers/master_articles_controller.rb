@@ -53,94 +53,105 @@ class MasterArticlesController < ApplicationController
     @master_article = MasterArticle.new(params[:master_article])
     @master_article.user_id = @current_user.id
     @master_article.save
+    #TODO add warning if not saved
      #is there a way to delay saving? we need the master_article id now
 
 
 	#make it the current master
-	set_current_master_article(@master_article.id)
+	#set_current_master_article(@master_article.id)
 
        #for now hard code the types
     if params[:doMeta]
-		@meta_article = Article.new
-		@meta_article.category = "Meta"
-		@meta_article.master_article_id = @master_article.id
-		@meta_article.user_id = @current_user.id
-		@meta_article.content = "<xml>none</xml>"
-		@meta_article.status = "new"
-		@meta_article.save	     
-		
-		@meta = Meta.new()
-		@meta.article_id = @meta_article.id
-        @meta.user_id = @current_user.id		               
-        @meta.save
+				@meta_article = Article.new
+				@meta_article.category = "Meta"
+				@meta_article.master_article_id = @master_article.id
+				@meta_article.user_id = @current_user.id
+				@meta_article.content = "<xml>none</xml>"
+				@meta_article.status = "new"
+				@meta_article.save
+				#TODO add warning if not saved
+				
+				@meta = Meta.new()
+				@meta.article_id = @meta_article.id
+				@meta.user_id = @current_user.id		               
+				@meta.save
+				#TODO add warning if not saved
         
         board = Board.find_by_category("Meta")
         if board != nil
         	board.articles << @meta_article
         	board.save
+        	#TODO add warning if not saved
         	@meta_article.board_id = board.id        
         end
         
         @meta_article.meta_id = @meta.id
-        @meta_article.save	 
+        @meta_article.save
+        #TODO add warning if not saved
         
     end
         
         
     if params[:doTranscription]
-		@script_article = Article.new
-		@script_article.category = "Transcription"
-		@script_article.master_article_id = @master_article.id
-		@script_article.user_id = @current_user.id
-		@script_article.content = "<xml>none</xml>"
-		@script_article.status = "new"
-		@script_article.save
-		
-		@script = Transcription.new()
-		@script.article_id = @script_article.id
+				@script_article = Article.new
+				@script_article.category = "Transcription"
+				@script_article.master_article_id = @master_article.id
+				@script_article.user_id = @current_user.id
+				@script_article.content = "<xml>none</xml>"
+				@script_article.status = "new"
+				@script_article.save
+				#TODO add warning if not saved
+				
+				@script = Transcription.new()
+				@script.article_id = @script_article.id
         @script.user_id = @current_user.id
         @script.save
+        #TODO add warning if not saved
         
         board = Board.find_by_category("Transcription")
         if board != nil
         	board.articles << @script_article
         	board.save
+        	#TODO add warning if not saved
         	@script_article.board_id = board.id        
         end        
         
         @script_article.transcription_id = @script.id
-        @script_article.save	 		
+        @script_article.save
+        #TODO add warning if not saved
     end
      
      
     if params[:doTranslation]
-		@trans_article = Article.new
-		@trans_article.category = "Translation"
-		@trans_article.master_article_id = @master_article.id
-		@trans_article.user_id = @current_user.id
-		@trans_article.content = "<xml>none</xml>"
-		@trans_article.status = "new"
-		@trans_article.save
-		
-		@translation = Translation.new()
-		@translation.article_id = @trans_article.id
+				@trans_article = Article.new
+				@trans_article.category = "Translation"
+				@trans_article.master_article_id = @master_article.id
+				@trans_article.user_id = @current_user.id
+				@trans_article.content = "<xml>none</xml>"
+				@trans_article.status = "new"
+				@trans_article.save
+				#TODO add warning if not saved
+				
+				@translation = Translation.new()
+				@translation.article_id = @trans_article.id
         @translation.user_id = @current_user.id
         @translation.save
-        
+        #TODO add warning if not saved
         
         board = Board.find_by_category("Translation")
         if board != nil
         	board.articles << @trans_article
         	board.save
+        	#TODO add warning if not saved
         	@trans_article.board_id = board.id        
-        end
-        
+        end        
         
         @trans_article.translation_id = @translation.id
         @trans_article.save
+        #TODO add warning if not saved
     end
        
-  #todo add warnings, backouts for above failures etc..
+  #TODO add warnings, backouts for above failures etc..
     respond_to do |format|
       if @master_article.save
         flash[:notice] = 'MasterArticle was successfully created.'

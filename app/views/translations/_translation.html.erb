@@ -1,17 +1,4 @@
-<script>
-function showHide(id)
-{
-  var element = document.getElementById(id);
-  if ( element.style.display != 'none' )
-  {
-     element.style.display = 'none';
-  }
-  else
-  {
-    element.style.display = '';
-  }
-}
-</script>
+
 
 <div class="translation">
 
@@ -25,7 +12,7 @@ function showHide(id)
 
 
 <% if defined?(show_edit_link) && show_edit_link %>
-  	<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit', :id => translation.id) %> 	
+  	<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit_contents', :id => translation.id) %> 	
 <% end %>
 
 <% if defined?(show_submit_link) && show_submit_link %>

@@ -18,27 +18,31 @@ function showHide(id)
 
 <h1>Editing translation</h1>
 
-<%= link_to "Add" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %><br/>
-<%= link_to "Epidoc-->Translations" , :controller => "translations", :action => "epidoc_to_translation_contents", :id => @translation.id %><br/>
-<%= link_to "Translations-->Epidoc" , :controller => "translations", :action => "translation_contents_to_epidoc", :id => @translation.id %><br/>
-<%= link_to "From File" , :controller => "translations", :action => "ask_for_epidoc_file", :id => @translation.id %><br/>
+
+<% if flash[:warning] or flash[:notice] %>
+   <div id="notice" <% if flash[:warning] %>class="warning"<% end %>>
+     <%= flash[:warning] || flash[:notice] %>
+   </div>
+   <script type="text/javascript">
+     setTimeout("new Effect.Fade('notice');", 6000);
+   </script>
+<% end %>
+
+
+
 
 <% form_for(@translation) do |f| %>
+
+<%= link_to "Add Language" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %>  |
+
+<%= link_to "Edit XML" , :controller => "translations", :action => "edit_epidoc", :id => @translation.id %> |
+
+  <%= f.submit "Save Changes" %><br />
+  
   <%= f.error_messages %>
 
+<%= hidden_field_tag :edit_contents, "true" %>
 
-  <p>
-    <%= f.label :epidoc %><br />
-    <%= f.text_area :epidoc %>
-  </p>
-  <!--
-  <p>
-    <%= f.label :language %><br />
-    <%= f.text_field :language %>
-  </p>
-  
-  -->
-  
   
   <% #get the language content %>
   <% langs = @current_user.language_prefs.split(' ') %>
@@ -68,20 +72,7 @@ function showHide(id)
 		<br />
 	  <% end %>
 	  
- 
-  <!--
-  <p>
-    <%= f.label :user_id %><br />
-    <%= f.text_field :user_id %>
-  </p>
-  <p>
-    <%= f.label :article_id %><br />
-    <%= f.text_field :article_id %>
-  </p>
-  -->
-  <p>
-    <%= f.submit "Update" %>
-  </p>
+
 <% end %>
 
 
