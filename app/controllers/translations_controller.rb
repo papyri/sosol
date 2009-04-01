@@ -46,6 +46,20 @@ class TranslationsController < ApplicationController
   		#flash[:notice] = "OK"
   	end
   end
+  
+  def ask_for_epidoc_number
+  	@translation = Translation.find(params[:id])
+  end
+  
+  def load_epidoc_from_number
+  
+  	filename = get_translations_dir + params[:epidoc_number] + ".xml"  	  
+  	#TODO add error checking
+  	@translation = Translation.find(params[:id])
+  	@translation.load_epidoc_from_file(filename)
+  	@translation.save
+  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translations.id
+  end
     
   def edit_contents
   	@translation = Translation.find(params[:id])  	

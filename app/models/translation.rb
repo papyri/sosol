@@ -17,7 +17,9 @@ class Translation < ActiveRecord::Base
   	#TODO send them an email
   end
   
-  def load_epidoc_from_file(filename)
+
+  
+  def load_epidoc_from_file(filename)   
     file =  File.open(filename, "r")
     self.epidoc = file.read
   	PutEpidocToTranslationContents(true)

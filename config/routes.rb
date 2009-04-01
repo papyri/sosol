@@ -19,8 +19,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :transcriptions
 
   
-  
-  
+  map.resources :users
+  #map.users 'users', :controller => 'users', :action => 'index'
+ 
  
   map.resources :master_articles, :has_many => :articles
 
@@ -28,7 +29,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
 
-  map.connect 'chuck', :controller => 'articles', :action => 'chuck_test'
+ # map.connect 'chuck', :controller => 'articles', :action => 'chuck_test'
 
   map.resources :comments
 

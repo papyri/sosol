@@ -16,6 +16,14 @@ class UserController < ApplicationController
     
   end
   
+  def index  	  
+  	if @current_user.admin
+  		@users = User.find(:all)
+  	else
+  	  render :file => 'public/403.html', :status => '403'
+  	end
+  end
+  
   def ask_language_prefs
     @langs = @current_user.language_prefs
   
