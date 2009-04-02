@@ -19,7 +19,7 @@ class MetasController < ApplicationController
   	@meta = Meta.find(params[:id])
   	@meta.load_epidoc_from_file(filename)
   	@meta.save
-  	redirect_to :controller => "metas", :action => "edit", :id => @metas.id
+  	redirect_to :controller => "metas", :action => "edit", :id => @meta.id
   end
     
   def ask_for_epidoc_file
@@ -30,7 +30,7 @@ class MetasController < ApplicationController
     @meta = Meta.find(params[:id])
     @meta.load_epidoc_from_file(params[:filename])
     @meta.save
-    redirect_to :controller => "metas", :action => "edit", :id => @metas.id
+    redirect_to :controller => "metas", :action => "edit", :id => @meta.id
   end
 
 
