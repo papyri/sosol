@@ -53,7 +53,7 @@ class TranslationsController < ApplicationController
   
   def load_epidoc_from_number
   
-  	filename = get_translations_dir + params[:epidoc_number] + ".xml"  	  
+  	filename = get_translations_dir + params[:epidoc_number].to_s + ".xml"  	  
   	#TODO add error checking
   	@translation = Translation.find(params[:id])
   	@translation.load_epidoc_from_file(filename)
