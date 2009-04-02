@@ -58,7 +58,7 @@ class TranslationsController < ApplicationController
   	@translation = Translation.find(params[:id])
   	@translation.load_epidoc_from_file(filename)
   	@translation.save
-  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translations.id
+  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
   end
     
   def edit_contents

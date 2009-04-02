@@ -7,7 +7,7 @@ class Meta < ActiveRecord::Base
   
   
   
-  def load_xml(filename)
+  def load_epidoc_from_file(filename)
     
 	file = File.new( filename )#"/home/charles/HGV_meta_EpiDoc_HGV1_1.xml" )
 	doc = REXML::Document.new file

@@ -3,6 +3,38 @@ class MetasController < ApplicationController
   layout 'site'
  
  
+  def ask_for_epidoc_number
+  	@meta = Meta.find(params[:id])
+  end
+  
+  def load_epidoc_from_number
+  
+  	filenumber = params[:epidoc_number]
+  	hgvDirNumber = filenumber.to_i / 1000
+  	hgvDirNumber = hgvDirNumber.to_i + 1
+  	hgvDir = "HGV" + hgvDirNumber.to_s
+  	
+  	filename = get_metas_dir + hgvDir + '/' + filenumber.to_s + ".xml"  	  
+  	#TODO add error checking
+  	@meta = Meta.find(params[:id])
+  	@meta.load_epidoc_from_file(filename)
+  	@meta.save
+  	redirect_to :controller => "metas", :action => "edit", :id => @metas.id
+  end
+    
+  def ask_for_epidoc_file
+      @meta = Meta.find(params[:id])
+  end
+  
+  def load_epidoc_file
+    @meta = Meta.find(params[:id])
+    @meta.load_epidoc_from_file(params[:filename])
+    @meta.save
+    redirect_to :controller => "metas", :action => "edit", :id => @metas.id
+  end
+
+
+ 
  def submit
  
  
