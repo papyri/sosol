@@ -39,6 +39,9 @@ function showHide(id)
 
   <%= f.submit "Save Changes" %><br />
   
+  <% if !@translation.translations_to_xml_ok || !@translation.xml_to_translations_ok %>
+  <%= f.submit "Save Changes & Overwite XML" %><br />
+  <% end %>
   <%= f.error_messages %>
 
 <%= hidden_field_tag :edit_contents, "true" %>

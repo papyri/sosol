@@ -47,16 +47,24 @@ class ApplicationController < ActionController::Base
     return true
   end
 
+
+#repository directories, shold be moved to config file somewhere?
   def get_translations_dir
 		#hold the hard coded location of the translation files
 		return "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"	
   end
 
+  def get_metas_dir
+		#hold the hard coded location of the meta files
+		return "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"	
+  end
+  
+  
   def rpx_setup   
 
-#    session[:user_id] = 3
+#    session[:user_id] = 1
 #    get_user_id()
- #   return 
+#    return 
 
     unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)
       render :template => 'const_message'

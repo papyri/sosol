@@ -210,7 +210,8 @@ class TranslationsController < ApplicationController
 		  
 		@translation = Translation.find(params[:id])
 		
-		#incomingTranslation = Translation.new(params[:translation])
+		#incomingTranslation = Translation.new(params[:translation])		
+		doOverwrite = params[:commit] == "Save Changes & Overwite XML"
 		
 		#lots of work to do here,
 		#editing options are:
@@ -241,19 +242,19 @@ class TranslationsController < ApplicationController
 			@translation.epidoc = Translation.new(params[:translation]).epidoc
 		  #update contents using the new epidoc
 		  @translation.xml_to_translations_ok = @translation.PutEpidocToTranslationContents(true)	
-		  if !@translation.xml_to_translations_ok
-		    #epidoc to translations failed, warn user
-		    
+		  if @translation.xml_to_translations_ok
+		  	@translation.save
+		  	flash[:notice] = "XML saved, translations updated."
+		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+		    return		    
+		  else
+		    #epidoc to translations failed, warn user		    
 		    #reload edit page with failed data
 		    
 		    #@translation.xml_to_translations_ok = false
+		    #note we still save to keep the epidoc, the PutEpidocToTranslationContents will not save if it fails
 		    @translation.save		    
 		    flash[:notice] = "XML failed to convert to translations."
-		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
-		    return
-		  else
-		  	@translation.save
-		  	flash[:notice] = "XML saved, translations updated."
 		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
 		    return
 		  end
@@ -276,19 +277,21 @@ class TranslationsController < ApplicationController
 					end
 				end
 			end
+			
+			#see if we can convert to xml
 			@translation.translations_to_xml_ok = @translation.PutTranslationsToEpidoc(@translation.translation_contents)
 			
-			if !@translation.translations_to_xml_ok #!@translation.PutTranslationsToEpidoc(@translation.translation_contents)
-				#failed to save
+			if @translation.translations_to_xml_ok #@translation.PutTranslationsToEpidoc(@translation.translation_contents)
+		  	@translation.save
+		  	flash[:notice] = "Translations saved, XML updated"
+		  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
+		    return				
+		  else
+		    #failed to save
 				#@translation.translations_to_xml_ok = false
 				#add error message
 				flash[:notice] = "Translations failed to convert to XML"
 				redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
-		    return
-		  else
-		  	@translation.save
-		  	flash[:notice] = "Translations saved, XML updated"
-		  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
 		    return
 			end
 			

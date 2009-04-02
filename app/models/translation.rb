@@ -169,19 +169,27 @@ class Translation < ActiveRecord::Base
   def PutTranslationToEpidoc(translation_content)
 
   	begin
+  	#what happens if the existing epidoc is crap or of the wrong type!?
   	
 			#see if the lang is already in XML
 			contentPath = "TEI.2/text/body/div[@type='translation'][@lang='"
 			contentPath = contentPath + translation_content.language + "']"
-		 
-			
-			bodyPath = "TEI.2/text/body"
-			
-			doc = REXML::Document.new self.epidoc
+		 			
+			bodyPath = "TEI.2/text/body"			
 
-			if doc == nil || self.epidoc == ""
+			if nil == self.epidoc || "" == self.epidoc
 				doc = REXML::Document.new("<TEI.2><text><body></body></text></TEI.2>")
+			else
+				doc = REXML::Document.new self.epidoc
 			end
+			
+			#need to check that we are actually working with an epidoc
+			if 0 == REXML::XPath.match(doc, bodyPath).length
+				return false #if the path is not there then we cannot insert our translations
+			end
+			
+				
+			
 			#TODO add bad doc check
 			#TODO create new doc
 
