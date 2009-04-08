@@ -166,7 +166,7 @@ class TranslationsController < ApplicationController
   def new
     @translation = Translation.new
     @translation.xml_to_translations_ok = true
-    @translation.translations_to_xml_ok = false
+    @translation.translations_to_xml_ok = true
 
     respond_to do |format|
       format.html # new.html.erb

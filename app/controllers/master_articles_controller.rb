@@ -133,6 +133,8 @@ class MasterArticlesController < ApplicationController
 				#TODO add warning if not saved
 				
 				@translation = Translation.new()
+				@translation.xml_to_translations_ok = true
+    		@translation.translations_to_xml_ok = true
 				@translation.article_id = @trans_article.id
         @translation.user_id = @current_user.id
         @translation.save
