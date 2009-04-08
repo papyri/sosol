@@ -7,7 +7,8 @@ class TranslationsController < ApplicationController
   	@translation = Translation.find(params[:id])
   	
   	TranslationMailer.deliver_final_translation("ok@mybit.net", @translation.epidoc)
- 
+ 		@translation.article.status = "finalized"
+ 		@translation.article.save
   end
   
    def submit
@@ -204,6 +205,7 @@ class TranslationsController < ApplicationController
   def update
 		
 
+		flash[:notice] = " "#so the += will work, otherwise error with + nil
 #		if params[:edit_epidoc] == "true"
 #		  redirect_to(@translation)
 #		end
@@ -211,8 +213,19 @@ class TranslationsController < ApplicationController
 		@translation = Translation.find(params[:id])
 		
 		#incomingTranslation = Translation.new(params[:translation])		
-		doOverwrite = params[:commit] == "Save Changes & Overwite XML"
 		
+		#if @translation.xml_to_translations_ok && @translation.translations_to_xml_ok 
+		#	doOverwrite = true
+		#end
+		
+		forceOverwrite = false
+		if params[:commit] == "Save Changes & Overwite XML" || params[:commit] == "Save Changes & Overwite Translations"
+		  forceOverwrite = true 
+		end
+		
+		#doOverwrite = params[:commit] == "Save Changes & Overwite XML"
+		
+		#doOverwrite = params[:commit] == "Save Changes & Overwite Translations"
 		#lots of work to do here,
 		#editing options are:
 		#  1. editing the XML epidoc
@@ -235,30 +248,53 @@ class TranslationsController < ApplicationController
 	  #remember the original translation 
 	  #TODO what is Ruby default method for coping, deep or shallow?
 		#bakTranslation = @translation
-		
-		if  params[:edit_epidoc] == "true"  		 
+	
+	
+	
+	
+	
+	#-----EDIT XML-----EDIT XML-----EDIT XML-----EDIT XML-----EDIT XML-----EDIT XML-----EDIT XML-----EDIT XML-----
+		if  params[:edit_epidoc] == "true"  	
+		  #the xml rules, let them put whatever crap they want in it?, but lets remember that it is not convertable & not allow them to commit it? (ie it would break the reading of it later?)
+
 		  #need warn if epidoc fails or is not transferable!
+
 		  #separate the epidoc content that just came in
 			@translation.epidoc = Translation.new(params[:translation]).epidoc
-		  #update contents using the new epidoc
-		  @translation.xml_to_translations_ok = @translation.PutEpidocToTranslationContents(true)	
-		  if @translation.xml_to_translations_ok
-		  	@translation.save
-		  	flash[:notice] = "XML saved, translations updated."
-		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
-		    return		    
-		  else
-		    #epidoc to translations failed, warn user		    
-		    #reload edit page with failed data
-		    
-		    #@translation.xml_to_translations_ok = false
-		    #note we still save to keep the epidoc, the PutEpidocToTranslationContents will not save if it fails
-		    @translation.save		    
-		    flash[:notice] = "XML failed to convert to translations."
-		    redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
-		    return
+
+		  #update contents using the new epidoc		  		  
+		  if (@translation.xml_to_translations_ok && @translation.translations_to_xml_ok) || forceOverwrite #forcing overwrite does not make sense if we cannot parse the new xml, really just means to try to overwrite
+		  	#try to convert
+				@translation.xml_to_translations_ok = @translation.PutEpidocToTranslationContents(true)	#returns false if translations cannot be pulled from epidoc (contents are not altered)
+				
+				if @translation.xml_to_translations_ok
+					@translation.save
+					flash[:notice] = "XML saved, translations updated."
+					redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+					return		    
+				else
+					#epidoc to translations failed, warn user		    
+					#reload edit page with failed data
+					
+					#@translation.xml_to_translations_ok = false
+					#note we still save to keep the epidoc, the PutEpidocToTranslationContents will not save if it fails
+					@translation.save		    
+					flash[:notice] = "XML failed to convert to translations."
+					redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+					return
+				end
+			
+			else
+				
+				@translation.xml_to_translations_ok = false #since we did not try
+				@translation.save
+				flash[:notice] = "XML saved."
+				redirect_to :controller => "translations", :action => "edit_epidoc", :id => @translation.id
+				return
 		  end
-		#else
+		#=====EDIT XML=====EDIT XML=====EDIT XML=====EDIT XML=====EDIT XML=====EDIT XML=====EDIT XML=====EDIT XML=====		  
+		  
+		#-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----EDIT CONTENTS-----
 		elsif params[:edit_contents] == "true"
 									
 			#save the changes in the translation contents				
@@ -278,27 +314,50 @@ class TranslationsController < ApplicationController
 				end
 			end
 			
-			#see if we can convert to xml
-			@translation.translations_to_xml_ok = @translation.PutTranslationsToEpidoc(@translation.translation_contents)
-			
-			if @translation.translations_to_xml_ok #@translation.PutTranslationsToEpidoc(@translation.translation_contents)
-		  	@translation.save
-		  	flash[:notice] = "Translations saved, XML updated"
-		  	redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
-		    return				
-		  else
-		    #failed to save
-				#@translation.translations_to_xml_ok = false
-				#add error message
-				flash[:notice] = "Translations failed to convert to XML"
+			if (@translation.xml_to_translations_ok && @translation.translations_to_xml_ok) || forceOverwrite
+				
+				#see if we can convert to xml
+				begin
+				#try to write into existing xml
+					@translation.translations_to_xml_ok = @translation.PutTranslationsToEpidoc(@translation.translation_contents, false)
+				rescue XmlCreationError 
+				  begin
+						if forceOverwrite						  
+							#writing to existing xml failed, so check if we want to wipe it out and start new (note that this drastic option will only happen if we have failed to add to existing xml)
+							@translation.translations_to_xml_ok = @translation.PutTranslationsToEpidoc(@translation.translation_contents, true)
+						end
+					rescue
+				  	flash[:notice] += $!.message
+				  	@translation.translations_to_xml_ok = false #??
+				  end
+				end
+				
+				if @translation.translations_to_xml_ok
+					#since we made the xml, then we assuem it is ok too
+					@translation.xml_to_translations_ok = true
+					@translation.save
+					flash[:notice] += "Translations saved, XML updated"
+					redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
+					return				
+				else
+					#failed
+					#@translation.translations_to_xml_ok = false
+					#add error message
+					flash[:notice] += "Translations failed to convert to XML"
+					redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
+					return
+				end
+			else
+				#we have already saved the changes, so just redirect here
+				flash[:notice] += "Translations saved"
 				redirect_to :controller => "translations", :action => "edit_contents", :id => @translation.id
-		    return
+				return			
 			end
-			
+			#=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====EDIT CONTENTS=====
+		
 		#else
 		  #editing both parts
-		  
-		
+		  		
 		end
 		
 		

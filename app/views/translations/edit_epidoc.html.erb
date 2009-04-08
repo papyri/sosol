@@ -19,11 +19,19 @@
 
 <% form_for(@translation) do |f| %>
 
+
 <% #link_to "From File" , :controller => "translations", :action => "ask_for_epidoc_file", :id => @translation.id %>  |
 
 <%= link_to "Edit Translations" , :controller => "translations", :action => "edit_contents", :id => @translation.id %> |
 
 <%= f.submit "Save Changes" %><br/>
+
+  <% if !@translation.xml_to_translations_ok || !@translation.translations_to_xml_ok %>
+  <%= f.submit "Save Changes & Overwite Translations" %><br />
+  <% end %>
+  <%= f.error_messages %>
+
+
 
 <%= hidden_field_tag :edit_epidoc, "true" %>
 

@@ -39,7 +39,7 @@ function showHide(id)
 
   <%= f.submit "Save Changes" %><br />
   
-  <% if !@translation.translations_to_xml_ok || !@translation.xml_to_translations_ok %>
+  <% if !@translation.xml_to_translations_ok || !@translation.translations_to_xml_ok %>
   <%= f.submit "Save Changes & Overwite XML" %><br />
   <% end %>
   <%= f.error_messages %>

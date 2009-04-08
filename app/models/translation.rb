@@ -1,4 +1,8 @@
 require "rexml/document"
+class XmlCreationError < StandardError
+
+end
+
 
 class Translation < ActiveRecord::Base
   belongs_to :article
@@ -27,6 +31,7 @@ class Translation < ActiveRecord::Base
   
   #puts the translations present in the epidoc to the translation_contents
   #if delete_extra is true, then any translation_contents that are not in the epidoc will be deleted
+  #if translations cannot be gotten from epidoc, false is returned and translation is unchanged
   def PutEpidocToTranslationContents(delete_extra = false)
  
 		#todo, add more error checking, ie on tc.save
@@ -156,70 +161,74 @@ class Translation < ActiveRecord::Base
   end
   
   #takes array of contents and inserts them into the Epidoc XML
-  def PutTranslationsToEpidoc(translation_contents)
-    translation_contents.each do |tc|
-      if !PutTranslationToEpidoc(tc)
-      	return false
-      end
- 		end
+  def PutTranslationsToEpidoc(translation_contents, forceOverwrite)
+
+		begin
+		
+			translation_contents.each do |tc|
+				if !PutTranslationToEpidoc(tc, forceOverwrite)				
+					return false
+				else
+					forceOverwrite = false #since we just forced a new doc
+				end
+			end
+			
+		rescue  XmlCreationError
+			raise $! #pass on the error
+		end
+			
  		return true
   end
   
   
-  def PutTranslationToEpidoc(translation_content)
+  def PutTranslationToEpidoc(translation_content, forceOverwrite)
 
-  	begin
-  	#what happens if the existing epidoc is crap or of the wrong type!?
-  	
 			#see if the lang is already in XML
 			contentPath = "TEI.2/text/body/div[@type='translation'][@lang='"
 			contentPath = contentPath + translation_content.language + "']"
 		 			
 			bodyPath = "TEI.2/text/body"			
+			
+			newDocText = "<TEI.2><text><body></body></text></TEI.2>"
 
-			if nil == self.epidoc || "" == self.epidoc
-				doc = REXML::Document.new("<TEI.2><text><body></body></text></TEI.2>")
+
+
+			if (nil == self.epidoc) || ("" == self.epidoc) || forceOverwrite
+			  
+				#raise "chicken"
+			  begin 
+			  #raise "goat"
+					doc = REXML::Document.new(newDocText)
+				rescue
+					raise XmlCreationError,   "Failed to create new xml."
+				end			
+			
 			else
-				doc = REXML::Document.new self.epidoc
+			
+			
+				begin
+					doc = REXML::Document.new(self.epidoc)					
+				rescue
+					raise XmlCreationError,  "Cannot parse xml."
+				end
+				
 			end
 			
 			#need to check that we are actually working with an epidoc
-			if 0 == REXML::XPath.match(doc, bodyPath).length
-				return false #if the path is not there then we cannot insert our translations
+			if 0 == REXML::XPath.match(doc, bodyPath).length					
+				raise XmlCreationError, "Incorrect path in xml."				
 			end
 			
-				
-			
-			#TODO add bad doc check
-			#TODO create new doc
-
-	#    matchFound = false
-	#    REXML::XPath.each(doc, bodyPath) do |m|
-	#      matchFound = true
-	#    end
-	#    if matchFound == false
-	#      doc.Element
-	#    
-	#    end
-			
+		
+		begin
 	 #3 possibilities, 
 	 #	1. content is just text, so it can be added via .text = 
 	 #	2. content is XML, so it can be formated to XM and added as a node
 	 #  3. content is mal formed XML ! then what?
-		
+	 
 		 #enclose translation in p tag 
 		 tempDoc = REXML::Document.new("<p>" + translation_content.content + "</p>")
-		 
-		 if (tempDoc)
-		 # it is valid xml, so add it as node     
-		 
-		 else
-		 #invalid need to warn and do what?
-		#   self.content = "temp doc failed"
-	 #    return
-		 
-		 end
-					 
+				
 			pathFound = false
 	 
 			#should only be one match for language
@@ -253,8 +262,10 @@ class Translation < ActiveRecord::Base
 				end         
 			end
 			
-			self.epidoc = doc.to_s()      
+			self.epidoc = doc.to_s()  
+			#raise "hi" +  self.epidoc  + "bye"  
 		rescue
+ 			#raise $!.message
 			return false
 		
 		end
