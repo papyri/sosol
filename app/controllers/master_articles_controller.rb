@@ -187,10 +187,14 @@ class MasterArticlesController < ApplicationController
   # DELETE /master_articles/1.xml
   def destroy
     @master_article = MasterArticle.find(params[:id])
+    
+    @master_article.articles.destroy_all
     @master_article.destroy
+    
+
 
     respond_to do |format|
-      format.html { redirect_to(master_articles_url) }
+      format.html { redirect_to dashboard_url }#:controller => "users", :action => "dashboard", :id => @current_user.id }#{ redirect_to(master_articles_url) }
       format.xml  { head :ok }
     end
   end

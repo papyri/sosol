@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090401203640) do
+ActiveRecord::Schema.define(:version => 20090409191823) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
-    t.integer  "board_id",   :limit => 255
+    t.integer  "board_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
-    t.text     "text",       :limit => 255
+    t.text     "text"
     t.integer  "user_id"
     t.integer  "article_id"
     t.string   "reason"
@@ -76,8 +76,8 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "user_id"
-    t.string   "comment_id"
+    t.integer  "user_id"
+    t.integer  "comment_id"
   end
 
   create_table "metas", :force => true do |t|
@@ -97,8 +97,8 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
   end
 
   create_table "transcriptions", :force => true do |t|
-    t.text     "content",    :limit => 255
-    t.text     "leiden",     :limit => 255
+    t.text     "content"
+    t.text     "leiden"
     t.integer  "user_id"
     t.integer  "article_id"
     t.datetime "created_at"
@@ -106,7 +106,7 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
   end
 
   create_table "translation_contents", :force => true do |t|
-    t.text     "content",        :limit => 255
+    t.text     "content"
     t.integer  "translation_id"
     t.string   "language"
     t.datetime "created_at"
@@ -114,7 +114,7 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
   end
 
   create_table "translations", :force => true do |t|
-    t.text     "epidoc",                 :limit => 255
+    t.text     "epidoc"
     t.string   "language"
     t.integer  "user_id"
     t.integer  "article_id"
@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(:version => 20090401203640) do
 
   create_table "votes", :force => true do |t|
     t.string   "choice"
-    t.integer  "user_id",    :limit => 255
+    t.integer  "user_id"
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"

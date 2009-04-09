@@ -1,5 +1,18 @@
 
 
+
+
+<% if flash[:warning] or flash[:notice] %>
+   <div id="notice" <% if flash[:warning] %>class="warning"<% end %>>
+     <%= flash[:warning] || flash[:notice] %>
+   </div>
+   <script type="text/javascript">
+     setTimeout("new Effect.Fade('notice');", 6000);
+   </script>
+<% end %>
+
+
+
 <h1>  
   <%=h @master_article.title %>
 </h1>
@@ -7,4 +20,11 @@
 <% @master_article.articles.each do |article| %>
 	<%= render :partial => article.get_category_obj(), :locals => { :show_links => true }%>
 <%end%>
+ 
+
+<% if @master_article.user_id == @current_user.id %>
+	<%= link_to("Delete All", { :action => "destroy", :id => @master_article }, :confirm => "Are you sure you want to delete this document and all of its articles?", :method => :delete) %>
+	
+	
+<% end %>
 
