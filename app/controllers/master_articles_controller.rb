@@ -192,9 +192,8 @@ class MasterArticlesController < ApplicationController
     @master_article.destroy
     
 
-
     respond_to do |format|
-      format.html { redirect_to dashboard_url }#:controller => "users", :action => "dashboard", :id => @current_user.id }#{ redirect_to(master_articles_url) }
+      format.html { redirect_to dashboard_url }
       format.xml  { head :ok }
     end
   end
