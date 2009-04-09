@@ -277,15 +277,19 @@ class Translation < ActiveRecord::Base
   def GetLanguagesInEpidoc()
     languages = Array.new()
     
-    #file = File.new ( "/home/charles/translation_test.xml")
-    doc = REXML::Document.new self.epidoc   
-    
-    transLanguage = "TEI.2/text/body/div[@type='translation']"    
-    
-    REXML::XPath.each(doc, transLanguage) do |result|     
-      languages << result.attributes["lang"]        
-    end
-  
+    begin
+			#file = File.new ( "/home/charles/translation_test.xml")
+			doc = REXML::Document.new self.epidoc   
+			
+			transLanguage = "TEI.2/text/body/div[@type='translation']"    
+			
+			REXML::XPath.each(doc, transLanguage) do |result|     
+				languages << result.attributes["lang"]        
+			end
+		rescue
+			#just catch the exceptions, leave language array as is
+		end
+		  
     languages
   end
   

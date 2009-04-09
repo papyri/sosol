@@ -184,7 +184,7 @@ class TranslationsController < ApplicationController
   def create
     @translation = Translation.new(params[:translation])
 
-    respond_to do |format|
+    respond_to do |format|  
       if @translation.save
         flash[:notice] = 'Translation was successfully created.'
         format.html { redirect_to(@translation) }
