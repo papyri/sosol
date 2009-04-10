@@ -23,9 +23,9 @@ class Board < ActiveRecord::Base
 			votes.each do |vote|	      
 	     		#see if vote is in choices
 			  	index = decree_choices.index(vote.choice) #double check that this doesn't return true for no in known
-			  	if index >= 0
-					decree_vote_count = decree_vote_count + 1      	     
-				end
+			  	if  index != nil
+						decree_vote_count = decree_vote_count + 1      	     
+					end
 			end	
 			
 
@@ -53,8 +53,7 @@ class Board < ActiveRecord::Base
 			
 			end
 			
-			
-	    
+			   
 	    
 	   end	 	#decree 
 
