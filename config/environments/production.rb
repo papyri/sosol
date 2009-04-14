@@ -25,10 +25,12 @@ config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = 
 {	
-	:address			=>	'sosol@halsted.vis.uky.edu',
+	:address			=>	'localhost',
 	:port					=>	25,
 	:domain				=>	'halsted.vis.uky.edu',
-	:authentication	=>	:plain,
+	:authentication	=>	:login,
+	:user_name			=>	'sosol',
+	:password				=>	'protosite'
 }
 
 
