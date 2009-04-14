@@ -24,14 +24,11 @@ config.action_controller.perform_caching             = true
 config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = 
-{
-	:enable_starttls_auto => true,
-	:address			=>	'smtp.gmail.com',
-	:port					=>	587,
-	:domain				=>	"www.mybit.net",
+{	
+	:address			=>	'sosol@halsted.vis.uky.edu',
+	:port					=>	25,
+	:domain				=>	'halsted.vis.uky.edu',
 	:authentication	=>	:plain,
-	:user_name			=>	'sosol.site@gmail.com',
-	:password				=>	'protosite'
 }
 
 
