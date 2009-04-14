@@ -29,8 +29,8 @@ config.action_mailer.smtp_settings =
 	:port					=>	25,
 	:domain				=>	'halsted.vis.uky.edu',
 	:authentication	=>	:login,
-	:user_name			=>	'sosol',
-	:password				=>	'protosite'
+	:user_name			=>	'user',
+	:password				=>	'password'
 }
 
 
