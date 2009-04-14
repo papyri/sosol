@@ -28,9 +28,6 @@ config.action_mailer.smtp_settings =
 	:address			=>	'localhost',
 	:port					=>	25,
 	:domain				=>	'halsted.vis.uky.edu',
-	:authentication	=>	:login,
-	:user_name			=>	'user',
-	:password				=>	'password'
 }
 
 
