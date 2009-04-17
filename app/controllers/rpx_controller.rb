@@ -81,7 +81,9 @@ class RpxController < ApplicationController
       # User exists, redirect to index
       user = User.find(primary_key)
       session[:user_id] = user.id
-      redirect_to :controller => "welcome", :action => "index"
+      #redirect_to :controller => "welcome", :action => "index"
+      #redirect to dashboard
+      redirect_to :controller => "user", :action => "dashboard"
     else
       session[:identifier] = identifier
       @name = guess_name data
