@@ -18,12 +18,22 @@
 </h1>
 
 <% @master_article.articles.each do |article| %>
-	<%= render :partial => article.get_category_obj(), :locals => { :show_links => true }%>
+  <% "prevent orphans from being displayed, should not exist" %>
+  <% if article.get_category_obj() != nil %>
+		<%= render :partial => article.get_category_obj(), :locals => { :show_links => true }%>
+	<% end %>
 <%end%>
  
 
 <% if @master_article.user_id == @current_user.id %>
+	
+	<% if @current_user.developer  %>
+		<%= link_to "Add", :controller => "master_articles", :action => "ask_to_add_article", :id => @master_article  %> | 
+		<%= link_to "Delete", :controller => "master_articles", :action => "show_deletes", :id => @master_article  %> | 
+	<% end %>
+	
 	<%= link_to("Delete All", { :action => "destroy", :id => @master_article }, :confirm => "Are you sure you want to delete this document and all of its articles?", :method => :delete) %>
+	
 	
 	
 <% end %>

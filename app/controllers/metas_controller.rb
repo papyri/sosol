@@ -9,12 +9,10 @@ class MetasController < ApplicationController
   
   def load_epidoc_from_number
   
-  	filenumber = params[:epidoc_number]
-  	hgvDirNumber = filenumber.to_i / 1000
-  	hgvDirNumber = hgvDirNumber.to_i + 1
-  	hgvDir = "HGV" + hgvDirNumber.to_s
+  	  
   	
-  	filename = get_metas_dir + hgvDir + '/' + filenumber.to_s + ".xml"  	  
+  	filename = self.get_filename_from_tm(params[:epidoc_number])
+  	
   	#TODO add error checking
   	@meta = Meta.find(params[:id])
   	@meta.load_epidoc_from_file(filename)

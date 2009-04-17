@@ -35,7 +35,7 @@ class Article < ActiveRecord::Base
     elsif self.translation
       obj = self.translation           
     else
-      obj = self
+      obj = nil #self
     end
     
     obj   

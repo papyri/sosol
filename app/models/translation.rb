@@ -22,6 +22,14 @@ class Translation < ActiveRecord::Base
   end
   
 
+ def load_epidoc_from_tm(tm_number)
+  	filename = get_filename_from_tm(tm_number)
+  	load_epidoc_from_file(filename)
+  end
+  
+  def get_filename_from_tm(tm_number)
+		filename = TRANSLATION_DIR + tm_number.to_s + ".xml"   	
+  end
   
   def load_epidoc_from_file(filename)   
     file =  File.open(filename, "r")

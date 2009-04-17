@@ -5,6 +5,19 @@ class Meta < ActiveRecord::Base
   belongs_to :article
   
   
+  def load_epidoc_from_tm(tm_number)
+  	filename = get_filename_from_tm(tm_number)
+  	load_epidoc_from_file(filename)
+  end
+  
+  def get_filename_from_tm(tm_number)
+
+  	hgvDirNumber = tm_number.to_i / 1000
+  	hgvDirNumber = hgvDirNumber.to_i + 1
+  	hgvDir = "HGV" + hgvDirNumber.to_s
+  	
+  	filename = META_DIR + hgvDir + '/' + tm_number.to_s + ".xml"
+  end
   
   
   def load_epidoc_from_file(filename)
