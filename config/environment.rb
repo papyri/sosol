@@ -82,7 +82,7 @@ Rails::Initializer.run do |config|
  # META_DIR = "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"
  # TRANSLATION_DIR ="/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"  
   
-  META_DIR = "#{RAILS_ROOT}/protosite/shared/idp.data/HGV_meta_EpiDoc/"
-  TRANSLATION_DIR = "#{RAILS_ROOT}/protosite/shared/idp.data/HGV_trans_EpiDoc/"
+  META_DIR = "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"
+  TRANSLATION_DIR = "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"
   
 end
