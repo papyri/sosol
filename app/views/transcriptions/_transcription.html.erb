@@ -20,6 +20,9 @@
 	<% end %>
 <% end %>
 
+<% if defined?(show_delete) && show_delete %>
+	<%= link_to 'Delete', transcription, :confirm => 'Are you sure you want to permanently delete this?', :method => :delete %>
+<% end %>
 
 
 
