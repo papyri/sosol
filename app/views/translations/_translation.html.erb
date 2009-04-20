@@ -4,6 +4,12 @@
 
 <h3 style="display:inline;">Translation</h3>
 
+<% if translation.article.status == "finalized" %>
+	<% show_links = false %>
+	<% show_edit_link = false %>
+	<% show_submit_link = false %>	
+	<% show_delete_link = false %>
+<% end %>
 
 <% if defined?(show_links) &&  show_links  %>
 	<% show_edit_link = true %>
