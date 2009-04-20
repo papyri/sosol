@@ -1,0 +1,33 @@
+<p>
+  <b>Board:</b>
+  <%=h @emailer.board_id %>
+</p>
+
+<p>
+  <b>Member:</b>
+  <%=h @emailer.user_id %>
+</p>
+
+<p>
+  <b>Extra addresses:</b>
+  <%=h @emailer.extra_addresses %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%=h @emailer.status %>
+</p>
+
+<p>
+  <b>Include document:</b>
+  <%=h @emailer.include_document %>
+</p>
+
+<p>
+  <b>Message:</b>
+  <%=h @emailer.message %>
+</p>
+
+
+<%= link_to 'Edit', edit_emailer_path(@emailer) %> |
+<%= link_to 'Back', emailers_path %>

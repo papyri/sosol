@@ -110,7 +110,7 @@ class TranslationsController < ApplicationController
  	
     @translation = Translation.find(params[:id])
     langs = @translation.GetLanguagesInTranslationContents();
-    @languages = {"Franz&#195;&#182;sisch" => "fr", "Englisch" => "en", "Deutsch" => "de", "Italienisch" => "it", "Spanisch" => "es", "Latein" => "la", "Griechisch" => "el" }
+    @languages = {"French" => "fr", "English" => "en", "German" => "de", "Italien" => "it", "Spanish" => "es", "Latin" => "la", "Greek" => "el" }
     #remove existing langs from the options
     langs.each do |lang|       
       @languages.each do |l|        

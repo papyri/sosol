@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  board_id: 1
+  member_id: 1
+  extra_addresses: MyText
+  status: MyString
+  include_document: false
+  message: MyText
+
+two:
+  board_id: 1
+  member_id: 1
+  extra_addresses: MyText
+  status: MyString
+  include_document: false
+  message: MyText

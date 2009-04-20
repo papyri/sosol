@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090417204933) do
+ActiveRecord::Schema.define(:version => 20090420214648) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -61,6 +61,17 @@ ActiveRecord::Schema.define(:version => 20090417204933) do
     t.decimal  "trigger"
     t.string   "choices"
     t.integer  "board_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "emailers", :force => true do |t|
+    t.integer  "board_id"
+    t.integer  "user_id"
+    t.text     "extra_addresses"
+    t.string   "status"
+    t.boolean  "include_document"
+    t.text     "message"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -136,6 +147,7 @@ ActiveRecord::Schema.define(:version => 20090417204933) do
     t.string   "last_name"
     t.string   "affiliation"
     t.string   "email"
+    t.integer  "emailer_id"
   end
 
   create_table "votes", :force => true do |t|

@@ -1,0 +1,38 @@
+<div class="emailer">
+
+
+<p>
+  <b>Member:</b>
+  <% emailer.users.each do |user| %>
+  <%= user.name + "( " + user.email + " )  " %>
+  <% end %>
+</p>
+
+<p>
+  <b>Extra addresses:</b>
+  <%=h emailer.extra_addresses %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%=h emailer.status %>
+</p>
+
+<p>
+  <b>Include document:</b>
+  <%=h emailer.include_document %>
+</p>
+
+<p>
+  <b>Message:</b>
+  <%=h emailer.message %>
+</p>
+
+
+
+
+
+<%= link_to 'Edit', edit_emailer_path(emailer) %> 
+
+
+</div>

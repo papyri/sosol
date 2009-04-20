@@ -292,6 +292,17 @@ DIV#edition SUP {
 }    
 
 
+    
+.emailer {
+  background-color: #7DB7F0;
+  border: solid #003DFF;
+}    
+
+.emailer p {
+  text-align: left;
+}    
+
+
 
 .board_tally  {
   text-align: left;

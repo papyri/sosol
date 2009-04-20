@@ -28,6 +28,16 @@
   <%= render :partial => decree %>
 <% end %>
 
+
+
+<h3 style = "display:inline;">E-mails  </h3><%= link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id %><br /><br />
+
+<% @board.emailers.each do |emailer| %>
+  <%= render :partial => emailer %>
+<% end %>
+
+
+
   <p>
     <%= f.submit "Save" %>
   </p>

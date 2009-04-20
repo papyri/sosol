@@ -9,4 +9,5 @@ class User < ActiveRecord::Base
   #belongs_to :board
   has_and_belongs_to_many :boards
   
+  belongs_to :emailers
 end
