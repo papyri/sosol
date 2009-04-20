@@ -27,6 +27,9 @@ class Article < ActiveRecord::Base
   #graffiti - board hated it  
   
 #edit_article_path(article)
+
+
+#Returns the object represented by the article's category
   def get_category_obj()
     if self.meta
       obj = self.meta
@@ -35,7 +38,7 @@ class Article < ActiveRecord::Base
     elsif self.translation
       obj = self.translation           
     else
-      obj = nil #self
+      obj = nil 
     end
     
     obj   

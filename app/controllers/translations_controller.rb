@@ -3,12 +3,19 @@ class TranslationsController < ApplicationController
   layout 'site'
   
     
-  def finalize
+  def review_for_finalize
   	@translation = Translation.find(params[:id])
-  	
+  	@article = @translation.article
+  end
+    
+  def finalize
+  
+  	@translation = Translation.find(params[:id])
+  	#TranslationMailer.deliver_final_translation(  , @translation.epidoc)
   	TranslationMailer.deliver_final_translation("ok@mybit.net", @translation.epidoc)
- 		@translation.article.status = "finalized"
- 		@translation.article.save
+ 		#TODO COMMENTED OUT FOR TESTING
+ 		#@translation.article.status = "finalized"
+ 		#@translation.article.save
   end
   
    def submit

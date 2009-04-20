@@ -76,9 +76,9 @@ function showHide(id)
 							<% # check if user is the finalizer %>
 							<% #  TODO need to move the finalizer to the article!! %>
 							<% if article.board.finalizer_user_id == @current_user.id %>
-								ready to finalize <%= link_to "finalize", finalize_translation_url(article.get_category_obj()) %>
+								ready to finalize <%= link_to "finalize", review_for_finalize_translation_url(article.get_category_obj()) %>
 							<% else %>
-								<%= link_to "finalize", finalize_translation_url(article.get_category_obj()) %>
+								<%= link_to "finalize", review_for_finalize_translation_url(article.get_category_obj()) %>
 							<% end %>
 						<% end %>
 					

@@ -43,4 +43,31 @@ class UserController < ApplicationController
     end
 	
   end
+  
+  
+
+  def update_personal
+  #TODO don't let any bozo change this data
+  	if @current_user.id != params[:id]
+  		flash[:warning] = "Invalid Access."
+  		
+  		redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
+  		return
+  	end
+  	
+    @user = User.find(params[:id])
+
+    respond_to do |format|
+      if @user.update_attributes(params[:user])
+        flash[:notice] = 'User was successfully updated.'
+        format.html { redirect_to( dashboard_url) } #TODO redirect to ? dashboard or account
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "account" }
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+  
+  
 end
