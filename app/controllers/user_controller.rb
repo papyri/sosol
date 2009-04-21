@@ -48,9 +48,9 @@ class UserController < ApplicationController
 
   def update_personal
   #TODO don't let any bozo change this data
-  	if @current_user.id != params[:id]
+  	if @current_user.id != params[:id].to_i()
   		flash[:warning] = "Invalid Access."
-  	
+
   		redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
   		return
   	end
