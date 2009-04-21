@@ -1,5 +1,6 @@
 class EmailersController < ApplicationController
 
+
 	def find_board_member
 		@emailer = Emailer.find(params[:id])
 	end

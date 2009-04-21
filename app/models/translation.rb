@@ -8,7 +8,9 @@ class Translation < ActiveRecord::Base
   belongs_to :article
   has_many :translation_contents
   
-
+  def get_content()
+  	self.epidoc
+  end
   
   def approve()
     #the vote has approved the article

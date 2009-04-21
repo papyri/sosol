@@ -50,7 +50,7 @@ class UserController < ApplicationController
   #TODO don't let any bozo change this data
   	if @current_user.id != params[:id]
   		flash[:warning] = "Invalid Access."
-  		
+  	
   		redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
   		return
   	end

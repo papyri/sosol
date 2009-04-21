@@ -39,6 +39,9 @@ class TranslationsController < ApplicationController
 	   @translation.article.save()  #need to save here?
 	   @translation.save()
 	   
+	   #status has changed
+	   @translation.article.send_status_emails()
+	   
 	   flash[:notice] = 'Translation has been submitted.'
 	   redirect_to  url_for(@translation.article.master_article)
    end   

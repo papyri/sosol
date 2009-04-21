@@ -2,8 +2,8 @@
 
 <% form_for(@emailer) do |f| %>
   <%= f.error_messages %>
-    <%= f.hidden_field :board_id %>
-  
+    <%= f.hidden_field :board_id %>  
+  <!--
   <p>
     <%= f.label :status %><br />
     <%= f.text_field :status %>
@@ -16,6 +16,7 @@
     <%= f.label :message %><br />
     <%= f.text_area :message %>
   </p>
+  -->
   <p>
     <%= f.submit "Create" %>
   </p>

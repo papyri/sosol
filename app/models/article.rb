@@ -54,4 +54,54 @@ class Article < ActiveRecord::Base
     errors.add_to_base("Content must be valid EpiDoc") unless valid_epidoc?(content)
   end
   
+  
+  
+  
+  
+  #Check with the board to see if we want to send an email on status change.
+  def send_status_emails
+  	
+  	#search emailer for status
+  	self.board.emailers.each do |mailer|
+  		#mailer_statuss = mailer.status.split(' ')
+  		if mailer.status == self.status
+  			#send the email
+  			
+  			#--addresses
+  			mailer.users.each do |user|
+  				addresses += " " + user.email
+  			end
+  			addresses += mailer.extra_addresses
+  			
+  			#--epidoc
+  			if mailer.include_document
+  				epidoc = self.get_category_obj().get_content #xml content or such... how to get??
+  			else
+  				epidoc = nil
+  			end
+  			
+  			body = mailer.message
+  			
+  			#TODO parse the message to add local vars
+  			#votes
+  			
+  			#comments
+  			#owner
+  			#status
+  			#who changed status
+  			subject_line = self.master_article.title + " " + self.category + "-" + self.status
+  			EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc) 
+  		end
+  	end	
+  end
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 end

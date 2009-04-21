@@ -4,6 +4,29 @@ require "rexml/document"
 class Meta < ActiveRecord::Base
   belongs_to :article
   
+  def get_content()
+  	#TODO create epidoc?
+  	#hack return strings for now  	  
+  	retval = self.notBeforeDate
+  	retval += " "
+    retval += self.notAfterDate
+    retval += " "
+    retval += self.onDate
+    retval += " "
+    retval += self.publication
+    retval += " "
+    retval += self.language
+    retval += " "
+    retval += self.subject
+    retval += " "
+    retval += self.title
+    retval += " "
+    retval += self.provenance
+    retval += " "
+    retval += self.notes
+    retval += " "
+  end
+  
   
   def load_epidoc_from_tm(tm_number)
   	filename = get_filename_from_tm(tm_number)
