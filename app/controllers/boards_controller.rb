@@ -21,9 +21,10 @@ class BoardsController < ApplicationController
      @board = Board.find(params[:id])
      user = User.find_by_name(params[:user_name])
      
-     @board.users << user
-     @board.save
-     
+     if nil == @board.users.find_by_id(user.id) 
+     	@board.users << user
+     	@board.save
+     end
     # user.boards << @board
     # user.save
     

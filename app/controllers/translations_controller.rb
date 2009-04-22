@@ -7,45 +7,47 @@ class TranslationsController < ApplicationController
   	@translation = Translation.find(params[:id])
   	@article = @translation.article
   end
+
     
-  def finalize
+ # def finalize  
+ # 	@translation = Translation.find(params[:id])
+ #		@translation.article.status = "finalized"
+ #		@translation.article.save
+ #		@translation.article.send_status_emails
+ # end
   
-  	@translation = Translation.find(params[:id])
-  	#TranslationMailer.deliver_final_translation(  , @translation.epidoc)
-  	TranslationMailer.deliver_final_translation("ok@mybit.net", @translation.epidoc)
- 		#TODO COMMENTED OUT FOR TESTING
- 		#@translation.article.status = "finalized"
- 		#@translation.article.save
-  end
+  #
+  #
+  #
   
-   def submit
- 
-   @translation = Translation.find(params[:id])
- 
-   if (params[:comment] == nil || params[:comment] == "")
-     flash[:notice] = 'You must provide reasoning.'
-     redirect_to :action => "review_for_submit", :id => params[:id]
-   else
-	 
-	   comment = Comment.new()
-	   comment.article_id = params[:id]
-	   comment.text = params[:comment]
-	   comment.user_id = @current_user.id
-	   comment.reason = "submit"
-	   comment.save()
-	   
-	   @translation.article.comments << comment
-	   @translation.article.status = "submitted"
-	   @translation.article.save()  #need to save here?
-	   @translation.save()
-	   
-	   #status has changed
-	   @translation.article.send_status_emails()
-	   
-	   flash[:notice] = 'Translation has been submitted.'
-	   redirect_to  url_for(@translation.article.master_article)
-   end   
- end
+#  def submit
+# 
+#   @translation = Translation.find(params[:id])
+# 
+#   if (params[:comment] == nil || params[:comment] == "")
+#     flash[:notice] = 'You must provide reasoning.'
+#     redirect_to :action => "review_for_submit", :id => params[:id]
+#   else
+#	 
+#	   comment = Comment.new()
+#	   comment.article_id = params[:id]
+#	   comment.text = params[:comment]
+#	   comment.user_id = @current_user.id
+#	   comment.reason = "submit"
+#	   comment.save()
+#	   
+#	   @translation.article.comments << comment
+#	   @translation.article.status = "submitted"
+#	   @translation.article.save()  #need to save here?
+#	   @translation.save()
+#	   
+#	   #status has changed
+#	   @translation.article.send_status_emails()
+#	   
+#	   flash[:notice] = 'Translation has been submitted.'
+#	   redirect_to  url_for(@translation.article.master_article)
+#   end   
+# 	end
   
   def edit_epidoc
   	@translation = Translation.find(params[:id])
@@ -62,8 +64,7 @@ class TranslationsController < ApplicationController
   	@translation = Translation.find(params[:id])
   end
   
-  def load_epidoc_from_number
-  
+  def load_epidoc_from_number  
   	filename = get_translations_dir + params[:epidoc_number].to_s + ".xml"  	  
   	#TODO add error checking
   	@translation = Translation.find(params[:id])
@@ -79,7 +80,6 @@ class TranslationsController < ApplicationController
   
    def review_for_submit
    	@translation = Translation.find(params[:id])
- 
    end
  
   def ask_for_epidoc_file

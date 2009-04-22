@@ -8,55 +8,84 @@ class ArticlesController < ApplicationController
     @vote = Vote.new()
   end
   
+  def finalize  
+  	@article = Article.find(params[:id])
+ 		@article.status = "finalized"
+ 		@article.save
+ 		@article.send_status_emails(@article.status)
+ 		#where to redirect to? or give message
+ 		#use standard finlized in category article? 		
+  end
   
   def vote            
     @vote = Vote.new(params[:vote])
-    @article = Article.find(params[:id])
-    current_status = @article.status
+    @article = Article.find(params[:id])   
     
     #double check that they have not already voted
     has_voted = @article.votes.find_by_user_id(@current_user.id)
     if !has_voted 
 		
-		@vote.user_id = @current_user.id
-		@vote.save   
-		@article.votes << @vote
+			@vote.user_id = @current_user.id
+			@vote.save   
+			@article.votes << @vote
+					
+			@comment = Comment.new()
+			@comment.article_id = params[:id]
+			@comment.text = params[:comment]
+			@comment.user_id = @current_user.id
+			@comment.reason = "vote"
+			@comment.save
+			
+			#TODO tie vote and comment together?	
+			
+			#need to tally votes and see if any action will take place
+			decree_action = @article.board.tally_votes(@article.votes)
+			#arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
+			#NOTE here are the types of actions for the voting results
+			#approve, reject, graffiti
+			if decree_action == "approve"
+				@article.get_category_obj().approve
+				@article.send_status_emails(decree_action)		
+			elsif decree_action == "reject"
+				@article.get_category_obj().reject
+				@article.send_status_emails(decree_action)
+			elsif decree_action == "graffiti"
+				@article.get_category_obj().graffiti
+				@article.send_status_emails(decree_action)
+			else
+				#unknown action or no action		
+			end		
 		
-		
-		@comment = Comment.new()
-		@comment.article_id = params[:id]
-		@comment.text = params[:comment]
-		@comment.user_id = @current_user.id
-		@comment.reason = "vote"
-		@comment.save
-		
-		#TODO tie vote and comment together?	
-		
-		#need to tally votes and see if any action will take place
-		decree_action = @article.board.tally_votes(@article.votes)
-		#arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
-		#NOTE here are the types of actions for the voting results
-		#approve, reject, graffiti
-		if decree_action == "approve"
-		  @article.get_category_obj().approve		
-		elsif decree_action == "rejected"
-		  @article.get_category_obj().reject
-		elsif decree_action == "graffiti"
-		  @article.get_category_obj().graffiti
-		else
-		  #unknown action or no action
-		
-		end
-		
-		#need to check if status changed to see if emails should be sent
-		if current_stauts != @article.status
-			send_status_emails()
-		end
-		
-	end #!has_voted
-	#do what now? go to review page
-	render :controller => "articles", :action => "board_review", :id => @article.id
+		end #!has_voted
+		#do what now? go to review page
+		render :controller => "articles", :action => "board_review", :id => @article.id
   end
+  
+  
+  def submit
+ 
+		@article = Article.find(params[:id])
+
+		comment = Comment.new()
+		comment.article_id = params[:id]
+		comment.text = params[:comment]
+		comment.user_id = @current_user.id
+		comment.reason = "submit"
+		comment.save()
+
+		@article.comments << comment
+		@article.status = "submitted"
+		@article.save()
+		
+		#status has changed
+		@article.send_status_emails(@article.status)
+
+		flash[:notice] = 'Article has been submitted.'
+		redirect_to  url_for(@article.master_article)
+    
+ 	end
+  
+  
   
   def new_meta
     #@article = Article.new
@@ -64,8 +93,7 @@ class ArticlesController < ApplicationController
   end
   
   def chuck_test
-    get_pn_file("oai:papyri.info:identifiers:apis:michigan:2503")
-    
+    get_pn_file("oai:papyri.info:identifiers:apis:michigan:2503")    
   end
   
 
@@ -76,18 +104,17 @@ class ArticlesController < ApplicationController
     http = Net::HTTP.start(baseUrl, 8082)
 
       resp = http.get(url) 
-      render :inline => "<%= resp %>", :locals => { :resp => resp.body }
-   
+      render :inline => "<%= resp %>", :locals => { :resp => resp.body }   
   end
 
   
-  def begin
+#  def begin
   
-  end
+#  end
   
-  def new_from_pn
+#  def new_from_pn
   
-  end
+#  end
   
   def comment_on
   	@article = Article.find(params[:id])

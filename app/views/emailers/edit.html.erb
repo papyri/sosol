@@ -18,14 +18,22 @@
   </p>
   
   
-<%= f.label :status %>
-<%= f.select :status,  @statuss   %>
+<%= f.label :when %>
+<%= f.select :when,  @whens   %>
 
 
   <p>
     <%= f.label :include_document %><br />
-    <%= f.check_box :include_document %>
+    <%= f.check_box :include_document %>      
   </p>
+  
+  
+  <p>
+    <%= f.label :send_to_owner %><br />
+    <%= f.check_box :send_to_owner %>
+  </p>
+  
+  
   <p>
     <%= f.label :message %><br />
     <%= f.text_area :message, :cols => "80", :rows => "20" %>

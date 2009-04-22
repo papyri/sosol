@@ -42,9 +42,9 @@ ActionController::Routing::Routes.draw do |map|
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
  # map.language_prefs 'language_prefs', :controller => 'user', :action => 'ask_language_prefs'
   
-  map.new_meta  'articles/new_meta', :controller => 'articles', :action => 'new_meta'
-  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
-  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  #map.new_meta  'articles/new_meta', :controller => 'articles', :action => 'new_meta'
+  #map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
+  #map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
   
   #map.edit_script 
   

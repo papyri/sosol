@@ -59,17 +59,27 @@ class Article < ActiveRecord::Base
   
   
   #Check with the board to see if we want to send an email on status change.
-  def send_status_emails
-  	
+  def send_status_emails(when_to_send)
+ 		#errMsg = " " 
   	#search emailer for status
   	self.board.emailers.each do |mailer|
-  		#mailer_statuss = mailer.status.split(' ')
-  		if mailer.status == self.status
+  	
+#  		doSend = false
+#  		if when_to_send != nil
+#  			doSend = mailer.when == self.status
+#  		else
+#  			doSend = mailer.when == self.status
+#  		end
+  		
+  		if mailer.when == when_to_send
   			#send the email
   			
   			#--addresses
+  			addresses = " "
   			mailer.users.each do |user|
-  				addresses += " " + user.email
+  				if user.email != nil
+  					addresses += " " + user.email
+  				end
   			end
   			addresses += mailer.extra_addresses
   			
@@ -90,9 +100,10 @@ class Article < ActiveRecord::Base
   			#status
   			#who changed status
   			subject_line = self.master_article.title + " " + self.category + "-" + self.status
-  			EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc) 
+  			EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
   		end
   	end	
+  	
   end
   
   

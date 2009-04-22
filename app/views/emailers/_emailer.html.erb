@@ -2,7 +2,7 @@
 
 
 <p>
-  <b>Member:</b>
+  <b>Members:</b>
   <% emailer.users.each do |user| %>
 		<% if user.name != nil && user.email != nil %>
 			<%= user.name + "( " + user.email + " )  " %>
@@ -16,13 +16,18 @@
 </p>
 
 <p>
-  <b>Status:</b>
-  <%=h emailer.status %>
+  <b>When to send:</b>
+  <%=h emailer.when %>
 </p>
 
 <p>
   <b>Include document:</b>
   <%=h emailer.include_document %>
+</p>
+
+<p>
+  <b>Send to owner:</b>
+  <%=h emailer.send_to_owner %>
 </p>
 
 <p>
