@@ -316,3 +316,33 @@ DIV#edition SUP {
   background-color: #B1EE9E;
   border: solid #0ECB0E;
 } 
+
+
+.help {
+  background-color: #E4F0F3;
+  width: 50%;
+  position: relative;
+  left: 25%;
+  padding: 1em;
+}    
+
+.help p {
+  text-align: left;
+  text-indent: 2em;
+}  
+
+ 
+
+.help h2 {
+  text-align: left;
+}  
+
+.help h3 {
+  text-align: left;
+  text-indent: 1em;
+}  
+
+.help h4 {
+  text-align: left;
+  text-indent: 2em;
+} 
