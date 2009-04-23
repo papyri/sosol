@@ -75,13 +75,15 @@ class Article < ActiveRecord::Base
   			#send the email
   			addresses = Array.new	
   			#--addresses
-  			#addresses = " "
   			mailer.users.each do |user|
   				if user.email != nil
   					addresses << user.email
   				end
   			end
-  			addresses << mailer.extra_addresses
+  			extras = mailer.extra_addresses.split(" ")
+  			extras.each do |extra|
+  				addresses << extra
+  			end
   			if mailer.send_to_owner
   				if self.user.email != nil
   					addresses << self.user.email
@@ -106,7 +108,7 @@ class Article < ActiveRecord::Base
   			#who changed status
   			subject_line = self.master_article.title + " " + self.category + "-" + self.status
   			#if addresses == nil 
-  			
+  			#raise addresses.to_s + addresses.size.to_s
   			#else
   				EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
   			#end

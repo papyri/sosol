@@ -9,6 +9,9 @@ class Translation < ActiveRecord::Base
   has_many :translation_contents
   
   def get_content()
+  	if self.epidoc == nil
+  		return " "
+  	end
   	self.epidoc
   end
   
