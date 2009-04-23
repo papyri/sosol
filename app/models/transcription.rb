@@ -3,7 +3,7 @@ class Transcription < ActiveRecord::Base
   
   
   def get_content()
-  	self.content
+  	"not yet implemented"
   end
   
   

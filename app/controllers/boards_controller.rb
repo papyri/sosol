@@ -1,10 +1,8 @@
 class BoardsController < ApplicationController
 
-    layout "site"
-    
-    
-    	before_filter :check_admin
-	
+	layout "site"
+	before_filter :check_admin
+
 	def check_admin
 		if !@current_user.admin
 			render :file => 'public/403.html', :status => '403'
@@ -12,40 +10,32 @@ class BoardsController < ApplicationController
 	end
 	
 	
-    
-    def find_member
- 		@board = Board.find(params[:id])
-    end
-    
-    def add_member
-     @board = Board.find(params[:id])
-     user = User.find_by_name(params[:user_name])
-     
-     if nil == @board.users.find_by_id(user.id) 
-     	@board.users << user
-     	@board.save
-     end
-    # user.boards << @board
-    # user.save
-    
-      redirect_to :action => "edit", :id => (@board).id
-    end
-    
-    def remove_member
-    
-      user = User.find(params[:user_id])
-      
-      @board = Board.find(params[:id])
-      @board.users.delete(user)
-      @board.save
-      
-      
-     # user.boards.delete(@board)
-      #user.save
-      
-      redirect_to :action => "edit", :id => (@board).id
-    end
-    
+	def find_member
+		@board = Board.find(params[:id])
+	end
+
+	def add_member
+		@board = Board.find(params[:id])
+		user = User.find_by_name(params[:user_name])
+
+		if nil == @board.users.find_by_id(user.id) 
+			@board.users << user
+			@board.save
+		end
+
+		redirect_to :action => "edit", :id => (@board).id
+	end
+
+	def remove_member
+		user = User.find(params[:user_id])
+
+		@board = Board.find(params[:id])
+		@board.users.delete(user)
+		@board.save
+
+		redirect_to :action => "edit", :id => (@board).id
+	end
+
     
     
     
@@ -92,13 +82,10 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(params[:board])
 
-
-if @board.save
-        flash[:notice] = 'Board was successfully created.'
-        redirect_to :action => "edit", :id => (@board).id
-    
-       end 
-        
+		if @board.save
+			flash[:notice] = 'Board was successfully created.'
+			redirect_to :action => "edit", :id => (@board).id    
+    end         
 #    respond_to do |format|
 #      if @board.save
 #        flash[:notice] = 'Board was successfully created.'

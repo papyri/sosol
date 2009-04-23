@@ -73,15 +73,20 @@ class Article < ActiveRecord::Base
   		
   		if mailer.when == when_to_send
   			#send the email
-  			
+  			addresses = Array.new	
   			#--addresses
-  			addresses = " "
+  			#addresses = " "
   			mailer.users.each do |user|
   				if user.email != nil
-  					addresses += " " + user.email
+  					addresses << user.email
   				end
   			end
-  			addresses += mailer.extra_addresses
+  			addresses << mailer.extra_addresses
+  			if mailer.send_to_owner
+  				if self.user.email != nil
+  					addresses << self.user.email
+  				end
+  			end
   			
   			#--epidoc
   			if mailer.include_document
@@ -100,7 +105,12 @@ class Article < ActiveRecord::Base
   			#status
   			#who changed status
   			subject_line = self.master_article.title + " " + self.category + "-" + self.status
-  			EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  			#if addresses == nil 
+  			
+  			#else
+  				EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  			#end
+  			
   		end
   	end	
   	

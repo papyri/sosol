@@ -6,24 +6,26 @@ class Meta < ActiveRecord::Base
   
   def get_content()
   	#TODO create epidoc?
-  	#hack return strings for now  	  
-  	retval = self.notBeforeDate
+  	#hack return strings for now  
+  	
+  	retval = " "	  
+  	retval += self.notBeforeDate unless self.notBeforeDate == nil
   	retval += " "
-    retval += self.notAfterDate
+    retval += self.notAfterDate unless self.notAfterDate  == nil
     retval += " "
-    retval += self.onDate
+    retval += self.onDate unless self.onDate  == nil
     retval += " "
-    retval += self.publication
+    retval += self.publication unless self.publication  == nil
     retval += " "
-    retval += self.language
+    retval += self.language unless self.language  == nil
     retval += " "
-    retval += self.subject
+    retval += self.subject unless self.subject  == nil
     retval += " "
-    retval += self.title
+    retval += self.title unless self.title  == nil
     retval += " "
-    retval += self.provenance
+    retval += self.provenance unless self.provenance  == nil
     retval += " "
-    retval += self.notes
+    retval += self.notes unless self.notes  == nil
     retval += " "
   end
   

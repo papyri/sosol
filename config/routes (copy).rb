@@ -1,18 +1,24 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
+
+  map.resources :translation_contents
+
   map.resources :votes
 
   map.resources :decrees
 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
-
-  map.resources :translations
+  #finalize added so mapping can be done with the "controller/id/finalize" path
+  map.resources :translations, :member => { :finalize => :post, :review_for_finalize => :get }
 
   map.resources :transcriptions
 
   
-  
-  
+  map.resources :users
+ 	
+  #map.users 'users', :controller => 'users', :action => 'index'
+ 
  
   map.resources :master_articles, :has_many => :articles
 
@@ -20,7 +26,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
 
-  map.connect 'chuck', :controller => 'articles', :action => 'chuck_test'
+ # map.connect 'chuck', :controller => 'articles', :action => 'chuck_test'
 
   map.resources :comments
 
@@ -34,10 +40,11 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
+ # map.language_prefs 'language_prefs', :controller => 'user', :action => 'ask_language_prefs'
   
-  map.new_meta  'articles/new_meta', :controller => 'articles', :action => 'new_meta'
-  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
-  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  #map.new_meta  'articles/new_meta', :controller => 'articles', :action => 'new_meta'
+  #map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
+  #map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
   
   #map.edit_script 
   

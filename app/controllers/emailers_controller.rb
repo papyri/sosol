@@ -9,11 +9,14 @@ class EmailersController < ApplicationController
 	 @emailer = Emailer.find(params[:id])
 	 user = User.find_by_name(params[:user_name])
 	 
-	 @emailer.users << user
-	 @emailer.save     
+	 	if nil == @emailer.users.find_by_id(user.id) 
+			@emailer.users << user
+			@emailer.save
+		end   
 	
 	 redirect_to :action => "edit", :id => @emailer.id
 	end
+	
 	
 	def remove_member
 	
@@ -93,8 +96,9 @@ class EmailersController < ApplicationController
     respond_to do |format|
       if @emailer.update_attributes(params[:emailer])
         flash[:notice] = 'Emailer was successfully updated.'
-        format.html { redirect_to(@emailer) }
-        format.xml  { head :ok }
+        format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
+        #format.html { redirect_to(@emailer) }
+        #format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @emailer.errors, :status => :unprocessable_entity }

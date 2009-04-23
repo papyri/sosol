@@ -8,9 +8,6 @@ class MetasController < ApplicationController
   end
   
   def load_epidoc_from_number
-  
-  	  
-  	
   	filename = self.get_filename_from_tm(params[:epidoc_number])
   	
   	#TODO add error checking
@@ -32,39 +29,6 @@ class MetasController < ApplicationController
   end
 
 
- 
- def submit
- 
- 
-   @meta = Meta.find(params[:id])
- 
-   if (params[:comment] == nil || params[:comment] == "")
-     flash[:notice] = 'You must provide reasoning.'
-     redirect_to :action => "review_for_submit", :id => params[:id]
-   else
-	 
-	   comment = Comment.new()
-	   comment.article_id = params[:id]
-	   comment.text = params[:comment]
-	   comment.user_id = @current_user.id
-	   comment.reason = "submit"
-	   comment.save()
-	   
-	   @meta.article.comments << comment
-	   @meta.article.status = "submitted"
-	   @meta.article.save()  #need to save here?
-	   @meta.save()
-	   
-	   flash[:notice] = 'Meta has been submitted.'
-	   redirect_to  url_for(@meta.article.master_article)
-   end   
- end
- 
- def review_for_submit
-   @meta = Meta.find(params[:id])
- 
- end
- 
  
   # GET /metas
   # GET /metas.xml

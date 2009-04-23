@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090422194156) do
+ActiveRecord::Schema.define(:version => 20090423005730) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -76,6 +76,15 @@ ActiveRecord::Schema.define(:version => 20090422194156) do
     t.datetime "updated_at"
     t.boolean  "send_to_owner"
   end
+
+  create_table "emailers_users", :id => false, :force => true do |t|
+    t.string   "emailer_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "emailers_users", ["emailer_id", "user_id"], :name => "index_emailers_users_on_emailer_id_and_user_id", :unique => true
 
   create_table "events", :force => true do |t|
     t.string   "category"

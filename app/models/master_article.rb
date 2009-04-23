@@ -53,6 +53,7 @@ class MasterArticle < ActiveRecord::Base
         	
         end
         
+        @meta_article.send_status_emails(@meta_article.status)
     
   end
   
@@ -108,6 +109,8 @@ class MasterArticle < ActiveRecord::Base
         	
         end
         
+        @script_article.send_status_emails(@script_article.status)
+        
     end
      
      
@@ -154,7 +157,7 @@ class MasterArticle < ActiveRecord::Base
         	end
         end
         
-        
+        @trans_article.send_status_emails(@trans_article.status)
     end
   
   

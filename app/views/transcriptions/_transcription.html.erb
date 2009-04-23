@@ -16,7 +16,7 @@
   <% if transcription.article.status == "submitted" %>
   	Submitted
   <% else %>
-		<%= link_to 'Submit', url_for(:controller => 'transcriptions', :action => 'review_for_submit', :id => transcription.id) %> 
+		<%= link_to 'Submit', url_for(:controller => 'articles', :action => 'review_for_submit', :id => transcription.article.id) %> 
 	<% end %>
 <% end %>
 
@@ -29,7 +29,11 @@
 
 
 
+<p>
+	Not Implemented
+</p>
 
+<!--
 <p>
   <b>Content:</b>
   <%=h transcription.content %>
@@ -39,17 +43,6 @@
   <b>Leiden:</b>
   <%=h transcription.leiden %>
 </p>
-
-<p>
-  <b>User:</b>
-  <%=h transcription.user_id %>
-</p>
-
-<p>
-  <b>Article:</b>
-  <%=h transcription.article_id %>
-</p>
-
-
+-->
 
 </div>

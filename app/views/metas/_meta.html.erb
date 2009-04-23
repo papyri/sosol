@@ -16,7 +16,7 @@
   <% if meta.article.status == "submitted" %>
   	Submitted
   <% else %>
-		<%= link_to 'Submit', url_for(:controller => 'metas', :action => 'review_for_submit', :id => meta.id) %> 
+		<%= link_to 'Submit', url_for(:controller => 'articles', :action => 'review_for_submit', :id => meta.article.id) %> 
 	<% end %>
 <% end %>
 

@@ -3,6 +3,12 @@ require 'net/http'
 class ArticlesController < ApplicationController
   layout 'site'
   
+  
+  def review_for_submit
+  	@article = Article.find(params[:id])
+  end
+  
+  
   def board_review
     @article = Article.find(params[:id])
     @vote = Vote.new()
@@ -44,14 +50,18 @@ class ArticlesController < ApplicationController
 			#NOTE here are the types of actions for the voting results
 			#approve, reject, graffiti
 			if decree_action == "approve"
-				@article.get_category_obj().approve
+				#@article.get_category_obj().approve
+				@article.status = "appoved"
 				@article.send_status_emails(decree_action)		
 			elsif decree_action == "reject"
-				@article.get_category_obj().reject
+				#@article.get_category_obj().reject				
+				@article.status = "new" #reset to unsubmitted				
 				@article.send_status_emails(decree_action)
-			elsif decree_action == "graffiti"
-				@article.get_category_obj().graffiti
+			elsif decree_action == "graffiti"								
 				@article.send_status_emails(decree_action)
+				#do destroy after email since the email may need info in the artice
+				#@article.get_category_obj().graffiti
+				@article.destroy #need to destroy related?
 			else
 				#unknown action or no action		
 			end		
@@ -87,25 +97,24 @@ class ArticlesController < ApplicationController
   
   
   
-  def new_meta
-    #@article = Article.new
-    @meta = Meta.new
-  end
+#  def new_meta
+#    #@article = Article.new
+#    @meta = Meta.new
+#  end
   
-  def chuck_test
-    get_pn_file("oai:papyri.info:identifiers:apis:michigan:2503")    
-  end
+#  def chuck_test
+#    get_pn_file("oai:papyri.info:identifiers:apis:michigan:2503")    
+#  end
   
 
-  def get_pn_file(control_name)
-    baseUrl = "apptest.cul.columbia.edu"
-    url = "/navigator/portal/apisfull.psml?controlName=" + control_name
-   # baseUrl = "www.mybit.net"
-    http = Net::HTTP.start(baseUrl, 8082)
-
-      resp = http.get(url) 
-      render :inline => "<%= resp %>", :locals => { :resp => resp.body }   
-  end
+#  def get_pn_file(control_name)
+#    baseUrl = "apptest.cul.columbia.edu"
+#    url = "/navigator/portal/apisfull.psml?controlName=" + control_name
+#   # baseUrl = "www.mybit.net"
+#    http = Net::HTTP.start(baseUrl, 8082)
+#      resp = http.get(url) 
+#      render :inline => "<%= resp %>", :locals => { :resp => resp.body }   
+#  end
 
   
 #  def begin
@@ -159,25 +168,24 @@ class ArticlesController < ApplicationController
   end
 
   # GET /articles/1/edit
-  def edit
-    editxml
-  end
+#  def edit
+#    editxml
+#  end
   
   # GET /articles/1/xml
-  def editxml
-    @article = Article.find(params[:id])
-  end
+#  def editxml
+#    @article = Article.find(params[:id])
+#  end
   
-  def preview
-    editxml
+#  def preview
+#    editxml   
+#    Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
+#    xslt = XML::XSLT.new()
+#    xslt.xml = REXML::Document.new(@article.content)
+#    xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     
-    Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
-    xslt = XML::XSLT.new()
-    xslt.xml = REXML::Document.new(@article.content)
-    xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
-    
-    @transformed = xslt.serve()
-  end
+#    @transformed = xslt.serve()
+#  end
 
   # POST /articles
   # POST /articles.xml

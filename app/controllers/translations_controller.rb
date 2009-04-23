@@ -3,10 +3,10 @@ class TranslationsController < ApplicationController
   layout 'site'
   
     
-  def review_for_finalize
-  	@translation = Translation.find(params[:id])
-  	@article = @translation.article
-  end
+#  def review_for_finalize
+#  	@translation = Translation.find(params[:id])
+#  	@article = @translation.article
+#  end
 
     
  # def finalize  
