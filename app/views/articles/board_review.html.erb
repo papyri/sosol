@@ -52,7 +52,7 @@
 	<% form_for :vote, @vote, :url => { :action => "vote", :id => @article.id }  do |f| %>
 
 	<%= text_area_tag :comment, "", :rows => "5", :cols => "80" %>
-
+<br />
 		<% board.decrees.each do |decree| %>
 		  <% decree.get_choice_array.each do |choice| %>
 			<%= f.radio_button(:choice, choice) %><%= choice %>

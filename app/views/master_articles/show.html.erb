@@ -16,7 +16,7 @@
 <h1>  
   <%=h @master_article.title %>
 </h1>
-
+by <%= @master_article.user.name %>
 <% @master_article.articles.each do |article| %>
   <% "prevent orphans from being displayed, should not exist" %>
   <% if article.get_category_obj() != nil %>

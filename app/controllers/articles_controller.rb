@@ -49,9 +49,10 @@ class ArticlesController < ApplicationController
 			#arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
 			#NOTE here are the types of actions for the voting results
 			#approve, reject, graffiti
+			
 			if decree_action == "approve"
 				#@article.get_category_obj().approve
-				@article.status = "appoved"
+				@article.status = "approved"
 				@article.send_status_emails(decree_action)		
 			elsif decree_action == "reject"
 				#@article.get_category_obj().reject				
@@ -61,7 +62,10 @@ class ArticlesController < ApplicationController
 				@article.send_status_emails(decree_action)
 				#do destroy after email since the email may need info in the artice
 				#@article.get_category_obj().graffiti
+				master_article = @article.master_article
 				@article.destroy #need to destroy related?
+				redirect_to  url_for(master_article)
+				return
 			else
 				#unknown action or no action		
 			end		

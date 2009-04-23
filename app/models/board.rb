@@ -13,7 +13,7 @@ class Board < ActiveRecord::Base
 	 def tally_votes(votes)
 	 #work in progress
 	 #how to determine order -- just assume user hasn't made rules where multiple decress can be true at once?
-	 	
+errMsg = " "	 	
 	   self.decrees.each do |decree|
 
 
@@ -28,38 +28,36 @@ class Board < ActiveRecord::Base
 						decree_vote_count = decree_vote_count + 1      	     
 					end
 			end	
-			
-
-
-
 			   
 			#see if we are using percent or min voting counting
 			if decree.trigger < 1
 			#percentage
-				percent = self.users.length.to_f / decree_vote_count.to_f
-				if percent >= decree.trigger
-				#check if the action has already been done
-				#do the action? or return the action?
-				#	    
-				return decree.action
+					if decree_vote_count > 0
+						percent = self.users.length.to_f / decree_vote_count.to_f
+					
+						if percent >= decree.trigger
+						#check if the action has already been done
+						#do the action? or return the action?
+						#	  
+						#errMsg += percent.to_s  
+						return decree.action
+					end
 				end
 			else 
 			#min vote count
-				if decree_vote_count > decree.trigger
+				if decree_vote_count >= decree.trigger
 				#check if the action has already been done
 				#do the action? or return the action?
 				#
+				#errMsg += " " + decree_vote_count + " " + vote.choice + " " 
 				return decree.action
 				end
 			
 			end
-			
-			   
-	    
+			   	    
 	   end	 	#decree 
 
-
-		
+#raise errMsg
 		return ""
 		
 	 end #tally_votes

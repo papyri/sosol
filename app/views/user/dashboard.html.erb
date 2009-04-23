@@ -53,8 +53,8 @@ function showHide(id)
 			<ul>
 			  <% articles.each do |article| %>
 					
-					<% if article.master_article != nil %>	
-					<% "hide orphaned articles they should not exist" %>
+					<% if article.master_article != nil && article.status != "new"%>	
+					<% "hide orphaned articles they should not exist, and hide new from board" %>
 						<li>
 						
 						
