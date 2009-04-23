@@ -69,7 +69,7 @@ class EmailersController < ApplicationController
   # GET /emailers/1/edit
   def edit
     @emailer = Emailer.find(params[:id])
-    @whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti" }
+    @whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
   end
 
   # POST /emailers

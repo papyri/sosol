@@ -11,7 +11,8 @@ class EmailerMailer < ActionMailer::Base
 		subject subject_line
 		recipients  addresses
 		#cc = 
-		#bcc = 
+		#recipients "SoSOL@vis.uky.edu"
+		#bcc = addresses
 				
 		
 		if article_content != nil

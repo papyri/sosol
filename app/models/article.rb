@@ -110,8 +110,14 @@ class Article < ActiveRecord::Base
   			#if addresses == nil 
   			#raise addresses.to_s + addresses.size.to_s
   			#else
-  				EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
   			#end
+  			
+  			addresses.each do |address|
+  				if address != nil && address.strip != ""
+  					EmailerMailer.deliver_boardmail(address, subject_line, body, epidoc)   										
+  				end
+  			end
   			
   		end
   	end	

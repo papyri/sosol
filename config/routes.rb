@@ -29,6 +29,8 @@ ActionController::Routing::Routes.draw do |map|
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
 
+	map.help 'help', :controller => 'user', :action => 'help'
+
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
  

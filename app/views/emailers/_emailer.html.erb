@@ -4,8 +4,11 @@
 <p>
   <b>Members:</b>
   <% emailer.users.each do |user| %>
-		<% if user.name != nil && user.email != nil %>
-			<%= user.name + "( " + user.email + " )  " %>
+		<% if user.name != nil %>
+			<%= user.name %>
+			<% if user.email == nil %>
+				 (no valid address!)
+			<% end %>
 		<% end %>
   <% end %>
 </p>
