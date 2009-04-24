@@ -13,7 +13,7 @@ class Board < ActiveRecord::Base
 	 def tally_votes(votes)
 	 #work in progress
 	 #how to determine order -- just assume user hasn't made rules where multiple decress can be true at once?
-errMsg = " "	 	
+	 #errMsg = " "	 	
 	   self.decrees.each do |decree|
 
 

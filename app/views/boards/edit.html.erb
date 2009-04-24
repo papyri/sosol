@@ -1,8 +1,11 @@
-<h1>Editing board</h1>
+<h1><%= @board.title %> board</h1>
+for <b> <%= @board.category %> </b> items
+<br /><br />
 
 <% form_for(@board) do |f| %>
   <%= f.error_messages %>
 
+<!--
   <p>
     <%= f.label :title %><br />
     <%= f.text_field :title %>
@@ -11,7 +14,7 @@
     <%= f.label :category %><br />
     <%= f.text_field :category %>
   </p>
-
+-->
 
 <h3 style = "display:inline;">Members  </h3><%= link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id %><br />
 

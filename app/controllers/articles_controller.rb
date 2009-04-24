@@ -14,6 +14,12 @@ class ArticlesController < ApplicationController
     @vote = Vote.new()
   end
   
+  def review_for_finalize
+  	@article = Article.find(params[:id])
+  end
+  
+  
+  
   def finalize  
   	@article = Article.find(params[:id])
  		@article.status = "finalized"
@@ -49,14 +55,18 @@ class ArticlesController < ApplicationController
 			#arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
 			#NOTE here are the types of actions for the voting results
 			#approve, reject, graffiti
+		
+		
 			
 			if decree_action == "approve"
 				#@article.get_category_obj().approve
 				@article.status = "approved"
+				@article.save
 				@article.send_status_emails(decree_action)		
 			elsif decree_action == "reject"
 				#@article.get_category_obj().reject				
 				@article.status = "new" #reset to unsubmitted				
+				@article.save
 				@article.send_status_emails(decree_action)
 			elsif decree_action == "graffiti"								
 				@article.send_status_emails(decree_action)
@@ -72,6 +82,7 @@ class ArticlesController < ApplicationController
 		
 		end #!has_voted
 		#do what now? go to review page
+		
 		render :controller => "articles", :action => "board_review", :id => @article.id
   end
   

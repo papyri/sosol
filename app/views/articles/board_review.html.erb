@@ -1,3 +1,27 @@
+<script>
+function commentChanged(e)
+{
+
+  <!-- don't care what key, just check that the comment has info -->
+  var comment_area = document.getElementById("comment");
+  var vote_button = document.getElementById("vote_button");  
+  var commentText = comment_area.value;
+ 
+  commentText = commentText.replace(/^\s+|\s+$/g, '');
+  
+  if (commentText == "")
+  {
+    vote_button.disabled = true;
+   
+  }
+  else
+  {
+    vote_button.disabled = false;
+  }
+}
+</script>
+
+
 
 <h2><%= link_to @article.master_article.title, url_for(@article.master_article) %></h2>
 
@@ -51,7 +75,12 @@
 <% if !user_has_voted %>
 	<% form_for :vote, @vote, :url => { :action => "vote", :id => @article.id }  do |f| %>
 
-	<%= text_area_tag :comment, "", :rows => "5", :cols => "80" %>
+
+
+ <%= text_area_tag( :comment, "",:rows => 5, :cols => 80, :onkeyup => "commentChanged(event)") %>
+  <br />
+  
+ 
 <br />
 		<% board.decrees.each do |decree| %>
 		  <% decree.get_choice_array.each do |choice| %>
@@ -59,9 +88,10 @@
 		  <% end %>
 		<% end %>
 		
+	
 		
-
-	<%= submit_tag "Vote" %>
+<br />
+	<%= submit_tag("Vote", :id => "vote_button", :disabled => "true") %>
 	<% end %>
 <% end %>
 
