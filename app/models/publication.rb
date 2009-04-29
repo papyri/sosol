@@ -1,12 +1,13 @@
 class Publication < ActiveRecord::Base
-  validates_presence_of :title
+  validates_presence_of :title, :branch
   
   belongs_to :user
   has_and_belongs_to_many :identifiers
   
   validates_uniqueness_of :title, :scope => 'user_id'
+  validates_uniqueness_of :branch, :scope => 'user_id'
 
-  validates_each :title do |model, attr, value|
+  validates_each :branch do |model, attr, value|
     # Excerpted from git/refs.c:
     # Make sure "ref" is something reasonable to have under ".git/refs/";
     # We do not like it if:
@@ -20,15 +21,14 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
-  # Spaces are a special case which we want to replace with underscore,
-  # do this before validation so that we validate and save the underscored
-  # version
+  # If branch hasn't been specified, create it from the title before
+  # validation, replacing spaces with underscore.
   def before_validation
-    self.title = title_to_ref(self.title)
+    self.branch ||= title_to_ref(self.title)
   end
   
   def after_create
-    user.repository.create_branch(title)
+    user.repository.create_branch(branch)
   end
   
   protected
