@@ -5,23 +5,19 @@ class Publication < ActiveRecord::Base
   has_and_belongs_to_many :identifiers
   
   validates_uniqueness_of :title, :scope => 'user_id'
-  # Excerpted from git/refs.c:
-  #   Make sure "ref" is something reasonable to have under ".git/refs/";
-  #   We do not like it if:
-  #
-  #   - any path component of it begins with ".", or
-  #   - it has double dots "..", or
-  #   - it has ASCII control character, "~", "^", ":" or SP, anywhere, or
-  #   - it ends with a "/".
-  #   - it ends with ".lock"
+
   validates_each :title do |model, attr, value|
-    if value =~ /\.lock$/ ||
-       value =~ /\/$/ ||
-       value =~ /\.\./ ||
-       value =~ /[~^: ]/ ||
-       value =~ /^\./
+    # Excerpted from git/refs.c:
+    # Make sure "ref" is something reasonable to have under ".git/refs/";
+    # We do not like it if:
+    if value =~ /^\./ ||    # - any path component of it begins with ".", or
+       value =~ /\.\./ ||   # - it has double dots "..", or
+       value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
+       value =~ /\/$/ ||    # - it ends with a "/".
+       value =~ /\.lock$/   # - it ends with ".lock"
       model.errors.add(attr, "Title \"#{value}\" contains illegal characters")
     end
+    # not yet handling ASCII control characters
   end
   
   # Spaces are a special case which we want to replace with underscore,
