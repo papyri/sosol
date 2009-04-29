@@ -83,6 +83,7 @@ class Repository
     # a facility for writing out a sha1 to refs/heads/name yet
     # Also, we always assume we want to branch from master
     # TODO: Update master branch tip from canonical
+    
     @repo.git.branch({}, name, 'master')
   end
   
