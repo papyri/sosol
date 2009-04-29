@@ -23,6 +23,7 @@ class Publication < ActiveRecord::Base
   
   # If branch hasn't been specified, create it from the title before
   # validation, replacing spaces with underscore.
+  # TODO: do a branch rename inside before_validation_on_update?
   def before_validation
     self.branch ||= title_to_ref(self.title)
   end
