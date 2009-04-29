@@ -16,7 +16,7 @@ class Publication < ActiveRecord::Base
        value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
        value =~ /\/$/ ||    # - it ends with a "/".
        value =~ /\.lock$/   # - it ends with ".lock"
-      model.errors.add(attr, "Title \"#{value}\" contains illegal characters")
+      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
     end
     # not yet handling ASCII control characters
   end
