@@ -1,5 +1,22 @@
 require 'fileutils'
 
+class Grit::Commit
+  def to_hash
+    return {
+      :id => @id,
+      # Default for this is just first 7 chars
+      # :id_abbrev => id_abbrev,
+      :author_name => @author.name,
+      :author_email => @author.email,
+      :authored_date => @authored_date,
+      :committer_name => @committer.name,
+      :committer_email => @committer.email,
+      :committed_date => @committed_date,
+      :message => @message
+    }
+  end
+end
+
 class Repository
   attr_reader :master, :path, :repo
   
@@ -55,6 +72,10 @@ class Repository
     subtree = tree.contents.first
     blob = subtree / File.basename(file)
     return blob.data
+  end
+  
+  def get_log_for_file_from_branch(file, branch)
+    @repo.log(branch, file).map{|commit| commit.to_hash}
   end
   
   def create_branch(name)
