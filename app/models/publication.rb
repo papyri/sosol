@@ -28,6 +28,7 @@ class Publication < ActiveRecord::Base
     self.branch ||= title_to_ref(self.title)
   end
   
+  # TODO: rename actual branch after branch attribute rename
   def after_create
     user.repository.create_branch(branch)
   end
