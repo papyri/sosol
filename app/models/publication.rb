@@ -14,21 +14,25 @@ class Publication < ActiveRecord::Base
   #   - it has ASCII control character, "~", "^", ":" or SP, anywhere, or
   #   - it ends with a "/".
   #   - it ends with ".lock"
-  #
-  # This validates absence of everything but SP, which we handle
-  # with title_to_ref
   validates_each :title do |model, attr, value|
     if value =~ /\.lock$/ ||
        value =~ /\/$/ ||
        value =~ /\.\./ ||
-       value =~ /[~^:]/ ||
+       value =~ /[~^: ]/ ||
        value =~ /^\./
       model.errors.add(attr, "Title \"#{value}\" contains illegal characters")
     end
   end
   
+  # Spaces are a special case which we want to replace with underscore,
+  # do this before validation so that we validate and save the underscored
+  # version
+  def before_validation
+    self.title = title_to_ref(self.title)
+  end
+  
   def after_create
-    user.repository.create_branch(title_to_ref(title))
+    user.repository.create_branch(title)
   end
   
   protected
