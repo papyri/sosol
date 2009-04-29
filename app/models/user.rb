@@ -14,5 +14,6 @@ class User < ActiveRecord::Base
   
   def before_destroy
     repository.destroy
+    publications.destroy_all
   end
 end
