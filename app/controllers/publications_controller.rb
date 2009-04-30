@@ -37,6 +37,8 @@ class PublicationsController < ApplicationController
   def edit
     @publication = Publication.find(params[:id])
     # just use the first identifier for now
-    @identifer = @publication.identifiers.first
+    @identifier = @publication.identifiers.first
+    @xml_content = @current_user.repository.get_file_from_branch(
+      @identifier.to_path, @publication.branch)
   end
 end
