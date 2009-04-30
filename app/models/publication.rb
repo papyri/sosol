@@ -33,6 +33,8 @@ class Publication < ActiveRecord::Base
     user.repository.create_branch(branch)
   end
   
+  # TODO: destroy branch on publication destroy
+  
   protected
     def title_to_ref(str)
       str.tr(' ','_')
