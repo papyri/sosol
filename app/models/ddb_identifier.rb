@@ -10,7 +10,7 @@ class DDBIdentifier < Identifier
     ddb_volume_number = components[1].to_s
     ddb_document_number = components[2].to_s
     
-    ddb_collection_name = ddb_series_to_collection(ddb_series_number).to_s
+    ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
     ddb_volume_path = ddb_collection_name + '.' + ddb_document_number
     ddb_xml_path = [ddb_collection_name,
@@ -29,5 +29,7 @@ class DDBIdentifier < Identifier
                       COLLECTION_XML_PATH, 'master')
     xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
       "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
+    
+    return xpath_result.to_s
   end
 end
