@@ -1,14 +1,14 @@
 #article_menu
   .site
     %ul
-      %li#active= link_to 'Edit', edit_article_path(@article)
+      %li#active= link_to 'Edit', edit_publication_path(@publication)
       %li= link_to 'History'
 
 #article_sub_menu
   .site
     .joiner
     %ul
-      %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Text', edit_article_path(@article)
-      %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', editxml_article_path(@article)
-      %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', preview_article_path(@article)
-      %li{ :class => params[:action] == 'comment_on' ? 'active' : ' '}= link_to 'Comment', comment_on_article_path(@article)
+      %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Leiden+', edit_publication_path(@publication)
+      %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML'#, editxml_publication_path(@publication)
+      %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview'#, preview_publication_path(@publication)
+      %li{ :class => params[:action] == 'comment_on' ? 'active' : ' '}= link_to 'Comment'#, comment_on_publication_path(@publication)
