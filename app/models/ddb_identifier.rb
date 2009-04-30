@@ -12,7 +12,7 @@ class DDBIdentifier < Identifier
     
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
-    ddb_volume_path = ddb_collection_name + '.' + ddb_document_number
+    ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
     ddb_xml_path = [ddb_collection_name,
                     ddb_volume_number,
                     ddb_document_number,
