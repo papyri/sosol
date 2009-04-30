@@ -11,17 +11,14 @@ class PublicationsController < ApplicationController
       @branches = @current_user.repository.branches
       @branches.delete("master")
       
-      user_publications = Publication.find_all_by_user_id(@current_user.id)
-      # probably not strictly necessary to intersect publications against
-      # branches as this will eventually be enforced in the model
-      @publications = user_publications.select do |publication|
-        @branches.include?(publication.branch)
-      end
+      @publications = Publication.find_all_by_user_id(@current_user.id)
+      # just give branches that don't have corresponding publications
+      @branches -= @publications.map{|p| p.branch}
     end
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @branches }
+      format.xml  { render :xml => @publications }
     end
   end
 end
