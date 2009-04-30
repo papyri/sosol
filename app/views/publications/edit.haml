@@ -1,7 +1,9 @@
 #main
   = render :partial => 'edit_bar'
   .site
-    %h1 Editing Publication
+    %h1
+      Editing Publication
+      = @publication.title
   -#
     #edit
       - form_for(@publication) do |f|
