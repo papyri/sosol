@@ -1,0 +1,7 @@
+#main.site
+  %h2 Listing Publications
+  %ul
+  - for publication in @publications
+    %li= publication.title #link_to(publication.title, edit_publication_path(publication))
+  - for branch in @branches
+    %li= branch
