@@ -1,4 +1,4 @@
-class ArticlesController < ApplicationController
+class PublicationsController < ApplicationController
   layout 'site'
   
   # GET /publications
