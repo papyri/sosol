@@ -20,11 +20,18 @@ end
 class Repository
   attr_reader :master, :path, :repo
   
-  def initialize(master)
+  # Allow Repository instances to be created outside User context.
+  # These instances will only work with the canonical repo.
+  def initialize(master = nil)
     @master = master
-    @path = File.join(USER_REPOSITORY_ROOT, "#{master.name}.git")
+    if master.nil?
+      @path = CANONICAL_REPOSITORY
+    else
+      @path = File.join(USER_REPOSITORY_ROOT, "#{master.name}.git")
+    end
+    
     @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
-    if exists?
+    if master.nil? || exists?
       @repo = Grit::Repo.new(path)
     else
       @repo = nil
