@@ -36,5 +36,7 @@ class PublicationsController < ApplicationController
   # GET /publications/1/edit
   def edit
     @publication = Publication.find(params[:id])
+    # just use the first identifier for now
+    @identifer = @publication.identifiers.first
   end
 end
