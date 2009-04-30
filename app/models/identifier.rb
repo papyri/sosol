@@ -6,5 +6,5 @@ class Identifier < ActiveRecord::Base
   # identifiers of the same type must be unique
   validates_uniqueness_of :name, :scope => "type"
   validates_inclusion_of :type,
-                         :in => %w{ DDB }
+                         :in => %w{ DDBIdentifier }
 end

@@ -1,0 +1,2 @@
+class DDBIdentifier < Identifier
+end
