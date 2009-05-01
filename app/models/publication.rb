@@ -35,6 +35,11 @@ class Publication < ActiveRecord::Base
   
   # TODO: destroy branch on publication destroy
   
+  # entry point identifier to use when we're just coming in from a publication
+  def entry_identifier
+    identifiers.first
+  end
+  
   protected
     def title_to_ref(str)
       str.tr(' ','_')
