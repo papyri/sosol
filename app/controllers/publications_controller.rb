@@ -35,10 +35,6 @@ class PublicationsController < ApplicationController
   
   # GET /publications/1/edit
   def edit
-    @publication = Publication.find(params[:id])
-    # just use the first identifier for now
-    @identifier = @publication.identifiers.first
-    @xml_content = @current_user.repository.get_file_from_branch(
-      @identifier.to_path, @publication.branch)
+
   end
 end
