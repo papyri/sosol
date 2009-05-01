@@ -2,7 +2,7 @@
   %h2 Listing Publications
   %ul
     - for publication in @publications
-      %li= link_to(publication.title, edit_publication_path(publication))
+      %li= link_to(publication.title, edit_publication_identifier_path(publication, publication.identifiers.first))
   - if @branches.length > 0
     %h2 Listing Branches
     %ul
