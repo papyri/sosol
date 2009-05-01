@@ -10,9 +10,12 @@ class DDBIdentifier < Identifier
     ddb_volume_number = components[1].to_s
     ddb_document_number = components[2].to_s
     
+    # e.g. 0001 => bgu
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
+    # e.g. bgu.10
     ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
+    # e.g. bgu.10.1901.xml
     ddb_xml_path = [ddb_collection_name,
                     ddb_volume_number,
                     ddb_document_number,
@@ -20,6 +23,7 @@ class DDBIdentifier < Identifier
     
     path_components << ddb_collection_name << ddb_volume_path << ddb_xml_path
     
+    # e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
     return path_components.join('/')
   end
   
