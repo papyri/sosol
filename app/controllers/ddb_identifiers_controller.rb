@@ -12,6 +12,10 @@ class DdbIdentifiersController < ApplicationController
   def update
     @publication = Publication.find(params[:publication_id])
     @identifier = DDBIdentifier.find(params[:id])
-    @identifier.set_xml_content(@publication, params[:xml_content][:to_s], "dummy comment")
+    # strip carriage returns
+    xml_content = params[:xml_content][:to_s].gsub(/\r\n?/, "\n")
+    @identifier.set_xml_content(@publication,
+                                xml_content,
+                                params[:comment])
   end
 end
