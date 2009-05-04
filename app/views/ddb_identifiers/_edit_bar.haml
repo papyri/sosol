@@ -2,8 +2,7 @@
   .site
     %ul
       %li#active= link_to 'Edit', edit_polymorphic_path([@publication, @identifier])
-      %li= link_to 'History'
-
+      %li= link_to 'History', polymorphic_path([@publication, @identifier], :action => :history)
 #article_sub_menu
   .site
     .joiner
