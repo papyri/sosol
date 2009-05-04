@@ -19,8 +19,11 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
   map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
   
-  map.resources :publications, :has_many => [:identifiers, :ddb_identifiers]
-
+  map.resources :publications do |publication|
+    publication.resources :ddb_identifiers, :member => { :history, :get }
+    # publication.resources :identifiers
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
