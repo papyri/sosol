@@ -37,4 +37,13 @@ class DDBIdentifier < Identifier
     
     return xpath_result.to_s
   end
+  
+  def xml_content(publication)
+    return publication.user.repository.get_file_from_branch(
+      self.to_path, publication.branch)
+  end
+  
+  def set_xml_content(publication, content)
+    logger.debug content
+  end
 end
