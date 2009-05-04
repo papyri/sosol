@@ -43,7 +43,10 @@ class DDBIdentifier < Identifier
       self.to_path, publication.branch)
   end
   
-  def set_xml_content(publication, content)
-    logger.debug content
+  def set_xml_content(publication, content, comment)
+    publication.user.repository.commit_content(self.to_path,
+                                               publication.branch,
+                                               content,
+                                               comment)
   end
 end

@@ -97,4 +97,10 @@ class Repository
   def branches
     @repo.branches.map{|b| b.name}
   end
+  
+  def commit_content(file, branch, data, comment)
+    index = @repo.index
+    index.add(file, data)
+    index.commit(comment, nil, nil, nil, branch)
+  end
 end
