@@ -1,0 +1,23 @@
+<% if !defined?(dlc) %>
+	<% dlc = DocumentLinksController.new() %>
+<% end %>
+
+<% if dlc.show_comment %>
+	<%= link_to 'Comment', url_for(:controller => 'articles', :action => 'comment_on', :id => article.id) %> 	
+<% end %>
+
+<% article.get_category_obj().class.name.downcase %>
+
+<% if dlc.show_edit %>
+	<%= link_to 'Edit', url_for(:controller => article.get_category_obj().class.name.downcase + "s", :action => 'edit', :id => article.get_category_obj().id) %> 	
+<% end %>
+
+<% if dlc.show_submit %>  
+	<% if @current_user.id == article.user_id  &&  article.status == 'new' %>
+		<%= link_to 'Submit', url_for(:controller => 'articles', :action => 'review_for_submit', :id => article.id) %> 
+	<% end %>
+<% end %>
+
+<% if dlc.show_delete %>
+	<%= link_to 'Delete', article.get_category_obj(), :confirm => 'Are you sure you want to permanently delete this?', :method => :delete %>
+<% end %>

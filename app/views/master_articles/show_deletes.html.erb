@@ -21,7 +21,7 @@
 <% @master_article.articles.each do |article| %>
   <% "prevent orphans from being displayed, should not exist" %>
   <% if article.get_category_obj() != nil &&  @master_article.user_id == @current_user.id %>
-		<%= render :partial => article.get_category_obj(), :locals => { :show_delete => true }%>
+		<%= render :partial => article.get_category_obj(), :locals => { :dlc => DocumentLinksController.new(false, false, false,true) }%>
 	<% end %>
 <%end%>
  

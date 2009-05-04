@@ -346,3 +346,36 @@ DIV#edition SUP {
   text-align: left;
   text-indent: 2em;
 } 
+
+
+.dashboard_documents {
+	
+}
+
+.dashboard_documents  ul {	
+
+}
+
+.dashboard_documents  ul li {
+	list-style-image: url(/images/documents.png); 	
+}
+
+
+
+
+
+.select_user_name a:link {
+	 color: black;	 	 	
+	 text-decoration: none;
+
+}
+
+.select_user_name a:visited {
+	 	 	
+	 text-decoration: none;
+}
+
+.select_user_name a:hover {
+	 color: red;	 
+	 font-weight: bold;
+}

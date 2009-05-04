@@ -4,35 +4,11 @@
 
 <h3 style="display:inline;">Translation</h3>
 
-<% if translation.article.status == "finalized" %>
-	<% show_links = false %>
-	<% show_edit_link = false %>
-	<% show_submit_link = false %>	
-	<% show_delete_link = false %>
+<% if !defined? dlc || dlc == nil %>
+	<% dlc = DocumentLinksController.new() %>
 <% end %>
 
-<% if defined?(show_links) &&  show_links  %>
-	<% show_edit_link = true %>
-	<% show_submit_link = true %>
-<% end %>
-
-
-<% if defined?(show_edit_link) && show_edit_link %>
-  	<%= link_to 'Edit', url_for(:controller => 'translations', :action => 'edit_contents', :id => translation.id) %> 	
-<% end %>
-
-<% if defined?(show_submit_link) && show_submit_link %>
-  <% if translation.article.status == "submitted" %>
-  	Submitted
-  <% else %>
-		<%= link_to 'Submit', url_for(:controller => 'articles', :action => 'review_for_submit', :id => translation.article.id) %> 
-	<% end %>
-<% end %>
-
-<% if defined?(show_delete) && show_delete %>
-	<%= link_to 'Delete', translation, :confirm => 'Are you sure you want to permanently delete this?', :method => :delete %>
-<% end %>
-
+<%= render :partial => 'articles/links', :locals => { :article => translation.article, :dlc => dlc } %>
 
 
 <br />
@@ -44,7 +20,6 @@
 		<% section_id = "translation_content_" + tc.language %>
 	 
 		<h3 style="display:inline;" onclick="showHide('<%=   section_id%>')"><%= tc.language %></h3>
-
 		<% lang_found = false %>
         <% langs.each do |l| %>        	
         	<% if tc.language == l %>
@@ -55,13 +30,13 @@
         <% lang_found = true %><!--show all for the moment-->
         
         <% if lang_found == true %>
-          <div id= <%= section_id %> >
+          <div id= '<%= section_id %>' >
         <% else %>
-			<div id= <%= section_id %> style ='display: none;' >
-		<% end %>
+					<div id= '<%= section_id %>' style ='display: none;' >
+				<% end %>
 		
 			<div class="translation_content">
-			<%=tc.content %>    
+				<%=tc.content %>    
 			</div>
 		</div>
 		<br />

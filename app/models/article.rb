@@ -62,7 +62,7 @@ class Article < ActiveRecord::Base
   def send_status_emails(when_to_send)
  		#errMsg = " " 
   	#search emailer for status
-  	if self.board.emailers == nil
+  	if self.board == nil || self.board.emailers == nil
   	return
   	end
   	self.board.emailers.each do |mailer|

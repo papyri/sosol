@@ -65,8 +65,8 @@ class Meta < ActiveRecord::Base
     
     #date
     datePath = "[@type='commentary'][@subtype='textDate']"
-	metaPath = basePath + datePath + "/p/date[@type='textDate']"
-	REXML::XPath.each(doc,metaPath)  do |res|
+		metaPath = basePath + datePath + "/p/date[@type='textDate']"
+		REXML::XPath.each(doc,metaPath)  do |res|
       self.onDate = res.attributes["value"]
       self.notAfterDate = res.attributes["notAfter"]
       self.notBeforeDate = res.attributes["notBefore"]
@@ -77,15 +77,31 @@ class Meta < ActiveRecord::Base
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
     
     #title
-    titlePath = "bibl[@type='publication'][@subtype='principal']/title/"    
-    metaPath = basePath + publicationPath + titlePath
+    #incorrect title titlePath = "bibl[@type='publication'][@subtype='principal']/title/"    
+    titlePath = "TEI.2/teiHeader/fileDesc/titleStmt/title/"
+    
+    #metaPath = basePath + publicationPath + titlePath
+    metaPath = titlePath
     REXML::XPath.each(doc, metaPath) do |res|
       self.title = res.text    
     end
     
+    
+    #publication
+    publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"    
+
+    #title
+    titlePath = "bibl[@type='publication'][@subtype='principal']/title/"        
+    
+    metaPath = basePath + publicationPath + titlePath
+    REXML::XPath.each(doc, metaPath) do |res|
+      self.publication = res.text    
+    end
+    
+    
     #TM number
     trismegistosPath = "bible[@type='Trismegistos']/biblScope[@type='numbers']"
-	metaPath = basePath + publicationPath + trismegistosPath;
+		metaPath = basePath + publicationPath + trismegistosPath;
     REXML::XPath.each(doc, metaPath) do |res|
       #TODO
       replaceMe = res.text    

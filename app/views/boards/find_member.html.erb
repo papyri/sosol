@@ -1,7 +1,4 @@
 <h1>Editing board</h1>
 
-<% users = User.find(:all) %>
-<% users.each do |user| %>  
-  <%= link_to user.name, :controller => "boards", :action => "add_member", :id => @board.id, :user_name => user.name %>
-<% end %>
+<%= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("boards", "add_member", @board.id  ) }%>
 

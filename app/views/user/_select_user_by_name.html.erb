@@ -1,0 +1,13 @@
+
+
+<% if li != nil %>
+		
+	<% users = User.find(:all) %>
+	<% users.each do |user| %>
+		<div class="select_user_name">  
+			<%= link_to user.name, :controller => li.controller, :action => li.action, :id => li.id, :user_name => user.name %>
+		</div>
+	<% end %>
+
+<% end %>
+

@@ -6,7 +6,8 @@
 
 <h3 style="display:inline;" onclick="showHide(<%=   section_id%>)">Translation <%= translation_content.language %></h3>
 
-<div id= <%= section_id %> >
+<div id="<%= section_id %>" >
+
 <% show_links = true %>
 <% if show_links  %>
 	<%= link_to 'Edit', url_for(:controller => 'translation_contents', :action => 'edit', :id => translation_content.id) %> 

@@ -1,18 +1,3 @@
-<script>
-function showHide(id)
-{
-  var element = document.getElementById(id);
-  if ( element.style.display != 'none' )
-  {
-     element.style.display = 'none';
-  }
-  else
-  {
-    element.style.display = '';
-  }
-}
-</script>
-
 <div class="dashboard">
 
 
@@ -21,7 +6,7 @@ function showHide(id)
 	<br/>
 
 
-	<div id='documents'>
+	<div id='documents' class='dashboard_documents'>
 	  <% if @current_user != nil && @current_user.master_articles != nil%>
 		  <% master_articles = @current_user.master_articles %>
 			<ul>

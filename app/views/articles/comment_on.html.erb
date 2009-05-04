@@ -1,26 +1,28 @@
-
-
-<% render :partial => 'edit_bar' %>
-
-
-
+<%= render :partial => @article.get_category_obj(), :locals => { :show_links => false }%>
 
 <% form_for(@comment) do |f| %>
   <%= f.error_messages %>
  
 <%= hidden_field_tag :article_id, @article.id %> 
+
+
+<%= hidden_field_tag :reason, "general" %> 
+  <br />
+  <br />
+  
   <p>
-    New comment
-    <%= f.text_field :text %>
-    <%= f.submit "Add" %>
+    
+    <%= f.text_area :text, :rows => 5, :cols => 80 %>
+    <br /><%= f.submit "Add" %>  New comment
   </p>
+  
+ <!--
   <p>
     <%= f.label :reason %>
     <%= f.text_field :reason %>
-  </p>
-  <p>
-    
-  </p>
+  </p>  
+ -->
+  
 <% end %>
 
 
@@ -30,33 +32,12 @@
 
 <br>
 
-<table width ="66%">
-  <tr>
-    <td><strong>Text</strong></td>
-    <td><strong>Reason</strong></td>
-    <td><strong>Article</strong></td>
-    <td><strong>User</strong></td>
-  </tr>
-<% if @article.comments != nil %>
-<% @article.comments.each do |c| %>
-  <tr>
-    <td><%=h c.text %></td>
-    <td><%=h c.reason %></td>
-    <td><%=h c.article_id %></td>
-    <% if c.user != nil %>
-    <td><%=h c.user.name %></td>
-    <%end%>
-  </tr>
-<% end %>
-<%else%>
-<%= 'No Comment! '  %>
-<%end%>
 
+<div class="review_comments">
+  <% @article.comments.each do |comment | %>
+    <%= render :partial => comment %>
+    <br />
+  <% end %>
+</div>
 
-
-<%  %>
-<% %>
-<% %>
-<% %>
-<% %>
 
