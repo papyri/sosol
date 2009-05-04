@@ -1,3 +1,10 @@
-%ul
-  - for commit in @commits
-    %li= commit[:message]
+#main
+  = render :partial => 'edit_bar'
+  .site
+    %h1
+      History for Publication
+      = @publication.title
+    #edit
+      %ul
+        - for commit in @commits
+          %li= commit[:message]
