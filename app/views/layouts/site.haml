@@ -7,7 +7,7 @@
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
   %body
-    #header{ :class => (['edit','editxml','preview'].include? params[:action]) ? '' : 'basic' }
+    #header{ :class => (['edit','editxml','preview','history'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
           %h1= link_to SITE_NAME, root_url
