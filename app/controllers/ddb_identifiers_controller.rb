@@ -17,5 +17,6 @@ class DdbIdentifiersController < ApplicationController
     @identifier.set_xml_content(@publication,
                                 xml_content,
                                 params[:comment])
+    redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 end
