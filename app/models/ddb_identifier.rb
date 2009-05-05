@@ -56,7 +56,7 @@ class DDBIdentifier < Identifier
   
   def leiden_plus(publication)
     content = xml_content(publication)
-    abs = get_abs_from_edition_div(content)
+    abs = preprocess_abs(get_abs_from_edition_div(content))
     transformed = xml2nonxml(abs)
     if transformed =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
       transformed + "\n" + parse_exception_pretty_print(abs, $1.to_i)
