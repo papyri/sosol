@@ -21,7 +21,8 @@ class DdbIdentifiersController < ApplicationController
     @identifier.set_xml_content(@publication,
                                 xml_content,
                                 params[:comment])
-    redirect_to edit_polymorphic_path([@publication, @identifier])
+    redirect_to polymorphic_path([@publication, @identifier],
+                                 :action => :editxml)
   end
   
   # GET /publications/1/ddb_identifiers/1/history
