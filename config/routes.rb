@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
   
   map.resources :publications do |publication|
-    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get }
+    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get }
     # publication.resources :identifiers
   end
   
