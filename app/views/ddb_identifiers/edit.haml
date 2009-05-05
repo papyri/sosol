@@ -4,6 +4,9 @@
     %h1
       Editing Publication
       = @publication.title
+    %h3
+      Identifier
+      = @identifier.name
     #edit
       - form_for @identifier, :url => { :action => :update } do |f|
         = f.error_messages

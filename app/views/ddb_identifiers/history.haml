@@ -1,9 +1,9 @@
 #main
   = render :partial => 'edit_bar'
   .site
-    %h1
-      History for Publication
-      = @publication.title
+    %h3
+      History for Identifier
+      = @identifier.name
     #edit
       %ul
         - for commit in @commits
