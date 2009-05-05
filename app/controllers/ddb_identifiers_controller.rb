@@ -28,4 +28,16 @@ class DdbIdentifiersController < ApplicationController
       @identifier.to_path, @publication.branch
     )
   end
+  
+  # GET /publications/1/ddb_identifiers/1/preview
+  def preview
+    edit
+    
+    Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
+    xslt = XML::XSLT.new()
+    xslt.xml = REXML::Document.new(@xml_content)
+    xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
+    
+    @transformed = xslt.serve()
+  end
 end

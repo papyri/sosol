@@ -1,0 +1,14 @@
+#main
+  = render :partial => 'edit_bar'
+
+  .site
+    %h1 Previewing article
+
+    #edit
+      - form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages
+
+        .PContent
+          = @transformed
+        %br
+        = render :partial => 'edit_commit', :locals => { :f => f }
