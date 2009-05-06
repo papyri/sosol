@@ -67,7 +67,29 @@ class DDBIdentifier < Identifier
     end
   end
   
-  def DDBIdentifier.leiden_plus_to_xml(content)
-    transformed = DDBIdentifier.nonxml2xml(content)
+  def leiden_plus_to_xml(content, publication)
+    # transform the Leiden+ to XML
+    transformed_xml_content = REXML::Document.new(
+      DDBIdentifier.nonxml2xml(content))
+    # fetch the original content
+    original_xml_content = REXML::Document.new(xml_content(publication))
+
+    # inject the transformed content into the original content
+    # delete original abs
+    original_xml_content.delete_element('/TEI.2/text/body/div[@type = "edition"]//ab')
+    
+    # add modified abs to edition
+    modified_abs = transformed_xml_content.elements[
+      '/wrapab']
+    original_edition =  original_xml_content.elements[
+      '/TEI.2/text/body/div[@type = "edition"]']
+    modified_abs.each do |ab|
+      original_edition.add_element(ab)
+    end
+    
+    # write back to a string
+    modified_xml_content = ''
+    original_xml_content.write(modified_xml_content)
+    return modified_xml_content
   end
 end
