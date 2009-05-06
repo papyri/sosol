@@ -9,15 +9,17 @@ class DdbIdentifiersController < ApplicationController
   
   # GET /publications/1/ddb_identifiers/1/editxml
   def editxml
-    @publication = Publication.find(params[:publication_id])
-    @identifier = DDBIdentifier.find(params[:id])
+    find_publication_and_identifier
     @xml_content = @identifier.xml_content(@publication)
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
   def update
-    @publication = Publication.find(params[:publication_id])
-    @identifier = DDBIdentifier.find(params[:id])
+  end
+  
+  # PUT /publications/1/ddb_identifiers/1/updatexml
+  def updatexml
+    find_publication_and_identifier
     # strip carriage returns
     xml_content = params[:xml_content].gsub(/\r\n?/, "\n")
     @identifier.set_xml_content(@publication,
@@ -29,8 +31,7 @@ class DdbIdentifiersController < ApplicationController
   
   # GET /publications/1/ddb_identifiers/1/history
   def history
-    @publication = Publication.find(params[:publication_id])
-    @identifier = DDBIdentifier.find(params[:id])
+    find_publication_and_identifier
     @commits = @publication.user.repository.get_log_for_file_from_branch(
       @identifier.to_path, @publication.branch
     )
@@ -47,4 +48,11 @@ class DdbIdentifiersController < ApplicationController
     
     @transformed = xslt.serve()
   end
+  
+  protected
+  
+    def find_publication_and_identifier
+      @publication = Publication.find(params[:publication_id])
+      @identifier = DDBIdentifier.find(params[:id])
+    end
 end
