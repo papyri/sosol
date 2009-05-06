@@ -15,6 +15,16 @@ class DdbIdentifiersController < ApplicationController
   
   # PUT /publications/1/ddb_identifiers/1/update
   def update
+    find_publication_and_identifier
+    # transform back to XML
+    xml_content = DDBIdentifier.leiden_plus_to_xml(params[:leiden_plus])
+    # put in correct hierarchy
+    # commit xml to repo
+    @identifier.set_xml_content(@publication,
+                                xml_content,
+                                params[:comment])
+    redirect_to polymorphic_path([@publication, @identifier],
+                                 :action => :edit)
   end
   
   # PUT /publications/1/ddb_identifiers/1/updatexml
