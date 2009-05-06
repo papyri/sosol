@@ -20,8 +20,8 @@ by <%= @master_article.user.name %>
 <% @master_article.articles.each do |article| %>
   <% "prevent orphans from being displayed, however, they should not exist" %>
   <% if article.get_category_obj() != nil %>
-  	
   	<% dlc = DocumentLinksController.new() %>
+	
   	
   	<% dlc.show_comment = true %>
     
@@ -37,13 +37,12 @@ by <%= @master_article.user.name %>
 			<% dlc.show_finalize = (article.board.finalizer_user_id == @current_user.id) && (article.status == "approved") %>
 			
     <% end %>
-    
+ 
     <% dlc.show_submit = (@current_user.id == article.user_id) && (article.status == "new") %>
     
-    <% dlc.show_delete = (@current_user.id == article.user_id) && (article.status == "new") %>    
+    <% dlc.show_delete = (@current_user.id == article.user_id) && (article.status == "new") %>    	
     
-    
-		<%= render :partial => article.get_category_obj(), :locals => { :dlc => dlc }%>
+	<%= render :partial => article.get_category_obj(), :locals => { :dlc => dlc } %>
 	<% end %>
 <%end%>
  

@@ -18,29 +18,57 @@
     <%= f.text_field :onDate %>
   </p>
   <p>
+    <%= f.label :mentioned_dates %><br />
+    <%= f.text_field :mentioned_dates %>
+  </p>
+  <p>
     <%= f.label :publication %><br />
     <%= f.text_field :publication %>
   </p>
   <p>
-    <%= f.label :language %><br />
-    <%= f.text_field :language %>
+    <%= f.label :other_publications %><br />
+    <%= f.text_field :other_publications %>
   </p>
   <p>
-    <%= f.label :subject %><br />
-    <%= f.text_field :subject %>
+    <%= f.label :bl %><br />
+    <%= f.text_field :bl %>
   </p>
   <p>
     <%= f.label :title %><br />
     <%= f.text_field :title %>
   </p>
   <p>
-    <%= f.label :provenance %><br />
-    <%= f.text_field :provenance %>
+    <%= f.label :illustrations %><br />
+    <%= f.text_field :illustrations %>
   </p>
+  <p>
+    <%= f.label :provenance_ancient_findspot %><br />
+    <%= f.text_field :provenance_ancient_findspot %>
+  </p>
+  
+  <p>
+    <%= f.label :provenance_nome %><br />
+    <%= f.text_field :provenance_nome %>
+  </p>
+  
+  <p>
+    <%= f.label :provenance_ancient_region %><br />
+    <%= f.text_field :provenance_ancient_region %>
+  </p>
+      
   <p>
     <%= f.label :notes %><br />
     <%= f.text_field :notes %>
   </p>
+  <p>
+    <%= f.label :material %><br />
+    <%= f.text_field :material %>
+  </p>
+  <p>
+    <%= f.label :tm_nr %><br />
+    <%= f.text_field :tm_nr %>
+  </p>
+
   <p>
     <%= f.submit "Save" %>
   </p>

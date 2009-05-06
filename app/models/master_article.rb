@@ -41,7 +41,7 @@ class MasterArticle < ActiveRecord::Base
         
         if tm_number != nil && tm_number.strip != ""
         #try to read data
-        	begin
+        	begin        	        
         		@meta.load_epidoc_from_tm(tm_number)
         		@meta.save
         	rescue

@@ -1,7 +1,8 @@
 <% if !defined?(dlc) %>
-	<% dlc = DocumentLinksController.new() %>
+		<% dlc = DocumentLinksController.new() %>
 <% end %>
 
+  
 <% if dlc.show_comment %>
 	<%= link_to 'Comment', url_for(:controller => 'articles', :action => 'comment_on', :id => article.id) %> 	
 <% end %>

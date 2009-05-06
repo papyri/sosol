@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090423005730) do
+ActiveRecord::Schema.define(:version => 20090505163205) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -106,15 +106,23 @@ ActiveRecord::Schema.define(:version => 20090423005730) do
     t.string   "notAfterDate"
     t.string   "onDate"
     t.string   "publication"
-    t.string   "language"
-    t.string   "subject"
     t.string   "title"
-    t.string   "provenance"
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "article_id"
     t.integer  "user_id"
+    t.string   "material"
+    t.string   "bl"
+    t.string   "tm_nr"
+    t.string   "content"
+    t.string   "provenance_ancient_findspot"
+    t.string   "provenance_nome"
+    t.string   "provenance_ancient_region"
+    t.string   "other_publications"
+    t.string   "translations"
+    t.string   "illustrations"
+    t.string   "mentioned_dates"
   end
 
   create_table "transcriptions", :force => true do |t|

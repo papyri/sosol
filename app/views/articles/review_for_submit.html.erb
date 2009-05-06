@@ -29,7 +29,7 @@ function commentChanged(e)
 
 
 
-<%= render :partial => @article.get_category_obj() , :locals => { :show_links => false }%>
+<%= render :partial => @article.get_category_obj() %>
 
 
 <% form_tag( :controller => "articles", :action => "submit", :method => "get") do %>
@@ -46,6 +46,14 @@ function commentChanged(e)
   
   <% end %>
 
+
+<h3>Comments</h3>
+<div class="review_comments">
+  <% @article.comments.each do |comment | %>
+    <%= render :partial => comment %>
+    <br />
+  <% end %>
+</div>
 
 <br /><br />
 <%= link_to 'Document', url_for(@article.master_article) %>

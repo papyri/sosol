@@ -2,9 +2,11 @@
 
 <h3 style="display:inline;">Meta</h3>
 
-<% if !defined? dlc || dlc == nil %>
-	<% dlc = DocumentLinksController.new() %>
+<% if !defined?(dlc) %>
+		<% dlc = DocumentLinksController.new() %>
 <% end %>
+
+
 
 <%= render :partial => 'articles/links', :locals => { :article => meta.article, :dlc => dlc } %>
 
@@ -22,6 +24,11 @@
 	  <b>Ondate:</b>
 	  <%=h meta.onDate %>
 	</p>
+	
+	<p>
+		<b>Mentioned Dates:</b>
+		<%=h meta.mentioned_dates %>
+	</p>
 
 	<p>
 	  <b>Publication:</b>
@@ -29,13 +36,13 @@
 	</p>
 
 	<p>
-	  <b>Language:</b>
-	  <%=h meta.language %>
+	  <b>Other Publications:</b>
+	  <%=h meta.other_publications %>
 	</p>
 
 	<p>
-	  <b>Subject:</b>
-	  <%=h meta.subject %>
+	  <b>BL:</b>
+	  <%=h meta.bl %>
 	</p>
 
 	<p>
@@ -44,8 +51,23 @@
 	</p>
 
 	<p>
-	  <b>Provenance:</b>
-	  <%=h meta.provenance %>
+	  <b>Illustrations:</b>
+	  <%=h meta.illustrations %>
+	</p>
+	
+	<p>
+	  <b>Provenance Ancient Findspot:</b>
+	  <%=h meta.provenance_ancient_findspot %>
+	</p>
+
+	<p>
+	  <b>Provenance Nome:</b>
+	  <%=h meta.provenance_nome %>
+	</p>
+	
+	<p>
+	  <b>Provenance: Ancient Region</b>
+	  <%=h meta.provenance_ancient_region %>
 	</p>
 
 	<p>
@@ -53,7 +75,22 @@
 	  <%=h meta.notes %>
 	</p>
 
-
-
+	<p>
+	  <b>Material:</b>
+	  <%=h meta.material %>
+	</p>
+	
+	<p>
+	  <b>TM:</b>
+	  <%=h meta.tm_nr %>
+	</p>
+ 
+ 
  
 </div>
+
+
+	
+
+
+
