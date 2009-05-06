@@ -14,5 +14,5 @@
         %p
           = f.label "Leiden+"
           %br
-          = text_area_tag :leiden_plus, @identifier.leiden_plus(@publication), :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek'
+          = text_area_tag :leiden_plus, @leiden_plus, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek'
         = render :partial => 'edit_commit', :locals => { :f => f }

@@ -1,8 +1,10 @@
 class DdbIdentifiersController < ApplicationController
   layout 'site'
   
+  # GET /publications/1/ddb_identifiers/1/edit
   def edit
     editxml
+    @leiden_plus = @identifier.leiden_plus(@publication)
   end
   
   # GET /publications/1/ddb_identifiers/1/editxml
