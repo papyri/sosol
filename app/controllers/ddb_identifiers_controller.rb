@@ -17,8 +17,7 @@ class DdbIdentifiersController < ApplicationController
   def update
     find_publication_and_identifier
     # transform back to XML
-    xml_content = DDBIdentifier.leiden_plus_to_xml(params[:leiden_plus])
-    # put in correct hierarchy
+    xml_content = @identifier.leiden_plus_to_xml(params[:leiden_plus], @publication)
     # commit xml to repo
     @identifier.set_xml_content(@publication,
                                 xml_content,
