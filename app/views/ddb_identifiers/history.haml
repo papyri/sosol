@@ -6,5 +6,5 @@
       = @identifier.name
     #edit
       %ul
-        - for commit in @commits
+        - for commit in @identifier[:commits]
           %li= commit[:message]
