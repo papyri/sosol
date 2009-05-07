@@ -42,20 +42,19 @@ class DDBIdentifier < Identifier
     return xpath_result.to_s
   end
   
-  def xml_content(publication)
-    return publication.user.repository.get_file_from_branch(
-      self.to_path, publication.branch)
+  def xml_content
+    return self.content
   end
   
-  def set_xml_content(publication, content, comment)
-    publication.user.repository.commit_content(self.to_path,
-                                               publication.branch,
-                                               content,
-                                               comment)
+  def set_xml_content(content, comment)
+    self.publication.user.repository.commit_content(self.to_path,
+                                                    self.publication.branch,
+                                                    content,
+                                                    comment)
   end
   
-  def leiden_plus(publication)
-    content = xml_content(publication)
+  def leiden_plus
+    content = self.xml_content
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(content))
     transformed = DDBIdentifier.xml2nonxml(abs)
@@ -67,12 +66,12 @@ class DDBIdentifier < Identifier
     end
   end
   
-  def leiden_plus_to_xml(content, publication)
+  def leiden_plus_to_xml(content)
     # transform the Leiden+ to XML
     transformed_xml_content = REXML::Document.new(
       DDBIdentifier.nonxml2xml(content))
     # fetch the original content
-    original_xml_content = REXML::Document.new(xml_content(publication))
+    original_xml_content = REXML::Document.new(self.xml_content)
 
     # inject the transformed content into the original content
     # delete original abs

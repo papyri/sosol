@@ -4,23 +4,22 @@ class DdbIdentifiersController < ApplicationController
   # GET /publications/1/ddb_identifiers/1/edit
   def edit
     editxml
-    @leiden_plus = @identifier.leiden_plus(@publication)
+    @leiden_plus = @identifier.leiden_plus
   end
   
   # GET /publications/1/ddb_identifiers/1/editxml
   def editxml
     find_publication_and_identifier
-    @xml_content = @identifier.xml_content(@publication)
+    @xml_content = @identifier.xml_content
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_publication_and_identifier
     # transform back to XML
-    xml_content = @identifier.leiden_plus_to_xml(params[:leiden_plus], @publication)
+    xml_content = @identifier.leiden_plus_to_xml(params[:leiden_plus])
     # commit xml to repo
-    @identifier.set_xml_content(@publication,
-                                xml_content,
+    @identifier.set_xml_content(xml_content,
                                 params[:comment])
     redirect_to polymorphic_path([@publication, @identifier],
                                  :action => :edit)
@@ -31,8 +30,7 @@ class DdbIdentifiersController < ApplicationController
     find_publication_and_identifier
     # strip carriage returns
     xml_content = params[:xml_content].gsub(/\r\n?/, "\n")
-    @identifier.set_xml_content(@publication,
-                                xml_content,
+    @identifier.set_xml_content(xml_content,
                                 params[:comment])
     redirect_to polymorphic_path([@publication, @identifier],
                                  :action => :editxml)

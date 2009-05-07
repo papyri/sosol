@@ -3,8 +3,11 @@ class Identifier < ActiveRecord::Base
   
   belongs_to :publication
   
-  # identifiers for a given publication
-  # validates_uniqueness_of :name, :scope => "publication"
   validates_inclusion_of :type,
                          :in => %w{ DDBIdentifier }
+  
+  def content
+    return self.publication.user.repository.get_file_from_branch(
+      self.to_path, self.publication.branch)
+  end
 end
