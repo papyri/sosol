@@ -63,6 +63,14 @@ class DDBIdentifier < Identifier
     end
   end
   
+  def set_leiden_plus(leiden_plus_content, comment)
+    # transform back to XML
+    xml_content = self.leiden_plus_to_xml(
+      leiden_plus_content)
+    # commit xml to repo
+    self.set_xml_content(xml_content, comment)
+  end
+  
   def leiden_plus_to_xml(content)
     # transform the Leiden+ to XML
     transformed_xml_content = REXML::Document.new(
