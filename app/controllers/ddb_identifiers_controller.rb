@@ -9,38 +9,39 @@ class DdbIdentifiersController < ApplicationController
   
   # GET /publications/1/ddb_identifiers/1/editxml
   def editxml
-    find_publication_and_identifier
+    find_identifier
     @xml_content = @identifier.xml_content
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
   def update
-    find_publication_and_identifier
+    find_identifier
     # transform back to XML
     xml_content = @identifier.leiden_plus_to_xml(params[:leiden_plus])
     # commit xml to repo
     @identifier.set_xml_content(xml_content,
                                 params[:comment])
-    redirect_to polymorphic_path([@publication, @identifier],
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
   
   # PUT /publications/1/ddb_identifiers/1/updatexml
   def updatexml
-    find_publication_and_identifier
+    find_identifier
     # strip carriage returns
     xml_content = params[:xml_content].gsub(/\r\n?/, "\n")
     @identifier.set_xml_content(xml_content,
                                 params[:comment])
-    redirect_to polymorphic_path([@publication, @identifier],
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml)
   end
   
   # GET /publications/1/ddb_identifiers/1/history
   def history
-    find_publication_and_identifier
-    @commits = @publication.user.repository.get_log_for_file_from_branch(
-      @identifier.to_path, @publication.branch
+    find_identifier
+    @commits = 
+      @identifier.publication.user.repository.get_log_for_file_from_branch(
+        @identifier.to_path, @identifier.publication.branch
     )
   end
   
@@ -57,9 +58,12 @@ class DdbIdentifiersController < ApplicationController
   end
   
   protected
+    def find_identifier
+      @identifier = DDBIdentifier.find(params[:id])
+    end
   
     def find_publication_and_identifier
       @publication = Publication.find(params[:publication_id])
-      @identifier = DDBIdentifier.find(params[:id])
+      find_identifier
     end
 end
