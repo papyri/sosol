@@ -28,21 +28,27 @@ class User < ActiveRecord::Base
     # "sb/sb.6/sb.6.9108.xml",
     # "p.yale/p.yale.1/p.yale.1.43.xml",
     # "p.yale/p.yale.1/p.yale.1.44.xml"
-    [['P.Genova II 67','oai:papyri.info:identifiers:ddbdp:0118:2:67'],
-     ['SB XXIV 16003','oai:papyri.info:identifiers:ddbdp:0239:24:16003'],
-     ['P.Lond. VII 2067','oai:papyri.info:identifiers:ddbdp:0154:7:2067'],
-     ['P.Harr. I 109','oai:papyri.info:identifiers:ddbdp:0129:1:109']
+    [['P.Genova II 67','oai:papyri.info:identifiers:ddbdp:0118:2:67','hgv30114'],
+     ['SB XXIV 16003','oai:papyri.info:identifiers:ddbdp:0239:24:16003','hgv79280'],
+     ['P.Lond. VII 2067','oai:papyri.info:identifiers:ddbdp:0154:7:2067','hgv1628'],
+     ['P.Harr. I 109','oai:papyri.info:identifiers:ddbdp:0129:1:109','hgv31474']
     ].each do |fixture|
       pubtitle = fixture[0]
       pubid = fixture[1]
+      hgvid = fixture[2]
       
       p = Publication.new
       
       i = DDBIdentifier.new
       i.name = pubid
       
+      h = HGVMetaIdentifier.new
+      h.name = hgvid
+      
       p.title = pubtitle
       p.identifiers << i
+      p.identifiers << h
+      
       self.publications << p
     end
   end
