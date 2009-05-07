@@ -1,0 +1,2 @@
+class HGVIdentifier < Identifier
+end
