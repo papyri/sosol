@@ -47,10 +47,7 @@ class DDBIdentifier < Identifier
   end
   
   def set_xml_content(content, comment)
-    self.publication.user.repository.commit_content(self.to_path,
-                                                    self.publication.branch,
-                                                    content,
-                                                    comment)
+    self.set_content(content, :comment => comment)
   end
   
   def leiden_plus

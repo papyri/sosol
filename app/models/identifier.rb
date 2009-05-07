@@ -10,4 +10,12 @@ class Identifier < ActiveRecord::Base
     return self.publication.user.repository.get_file_from_branch(
       self.to_path, self.publication.branch)
   end
+  
+  def set_content(content, options = {})
+    options.reverse_merge! :comment => ''
+    self.publication.user.repository.commit_content(self.to_path,
+                                                    self.publication.branch,
+                                                    content,
+                                                    options[:comment])
+  end
 end
