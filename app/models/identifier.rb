@@ -4,7 +4,7 @@ class Identifier < ActiveRecord::Base
   belongs_to :publication
   
   validates_inclusion_of :type,
-                         :in => %w{ DDBIdentifier }
+                         :in => %w{ DDBIdentifier HGVMetaIdentifier }
   
   def content
     return self.publication.user.repository.get_file_from_branch(
