@@ -1,0 +1,2 @@
+class HGVMetaIdentifier < Identifier
+end

@@ -1,2 +1,0 @@
-class HGVIdentifier < Identifier
-end
