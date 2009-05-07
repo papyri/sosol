@@ -38,11 +38,8 @@ class User < ActiveRecord::Base
       
       p = Publication.new
       
-      i = Identifier.find_by_name(pubid)
-      if i.nil?
-        i = DDBIdentifier.new
-        i.name = pubid
-      end
+      i = DDBIdentifier.new
+      i.name = pubid
       
       p.title = pubtitle
       p.identifiers << i

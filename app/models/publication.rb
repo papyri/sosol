@@ -2,7 +2,7 @@ class Publication < ActiveRecord::Base
   validates_presence_of :title, :branch
   
   belongs_to :user
-  has_and_belongs_to_many :identifiers
+  has_many :identifiers
   
   validates_uniqueness_of :title, :scope => 'user_id'
   validates_uniqueness_of :branch, :scope => 'user_id'

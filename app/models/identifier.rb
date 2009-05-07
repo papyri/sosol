@@ -1,10 +1,10 @@
 class Identifier < ActiveRecord::Base
   validates_presence_of :name, :type
   
-  has_and_belongs_to_many :publications
+  belongs_to :publication
   
-  # identifiers of the same type must be unique
-  validates_uniqueness_of :name, :scope => "type"
+  # identifiers for a given publication
+  # validates_uniqueness_of :name, :scope => "publication"
   validates_inclusion_of :type,
                          :in => %w{ DDBIdentifier }
 end
