@@ -2,8 +2,8 @@
   .site
     %ul
       %li.active= link_to 'Text', edit_polymorphic_path([@identifier.publication, @identifier])
-      %li= link_to 'Metadata', polymorphic_path([@identifier.publication, @identifier], :action => :history)
-      %li= link_to 'Translation', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+      %li= link_to 'Metadata', edit_polymorphic_path([@identifier.publication, @identifier])
+      %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
 #article_sub_menu
   .site
     .joiner
