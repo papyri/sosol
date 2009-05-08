@@ -35,6 +35,8 @@ class PublicationsController < ApplicationController
   
   # GET /publications/1/edit
   def edit
-
+    @publication = Publication.find(params[:id])
+    
+    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
 end
