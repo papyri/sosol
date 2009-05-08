@@ -39,4 +39,14 @@ class PublicationsController < ApplicationController
     
     redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
+  
+  def edit_text
+    edit
+  end
+  
+  def edit_meta
+    @publication = Publication.find(params[:id])
+    @identifier = HGVMetaIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
 end
