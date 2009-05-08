@@ -1,7 +1,14 @@
 #article_menu
   .site
     %ul
-      %li#active= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+      %li.active= link_to 'Text', edit_polymorphic_path([@identifier.publication, @identifier])
+      %li= link_to 'Metadata', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+      %li= link_to 'Translation', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+#article_sub_menu
+  .site
+    .joiner
+    %ul
+      %li.active= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
       %li= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
 #article_sub_menu
   .site
