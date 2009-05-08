@@ -1,0 +1,9 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    %h1
+      Editing Publication
+      = @identifier.publication.title
+    %h3
+      Identifier
+      = @identifier.name
