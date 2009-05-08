@@ -8,8 +8,8 @@
   .site
     .joiner
     %ul
-      %li.active= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
-      %li= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+      %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+      %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
 - if params[:action] != 'history' && @identifier.class == DDBIdentifier
   #article_sub_menu
     .site
