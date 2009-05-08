@@ -20,10 +20,10 @@ class HGVMetaIdentifier < Identifier
   def load_epidoc_from_file
     doc = REXML::Document.new self.content
 
-    #set base to meta data in epidoc
+    # set base to meta data in epidoc
     basePath = "TEI.2/text/body/div"
 
-    #date
+    # date
     datePath = "[@type='commentary'][@subtype='textDate']"
     metaPath = basePath + datePath + "/p/date[@type='textDate']"
     REXML::XPath.each(doc,metaPath)  do |res|
@@ -33,24 +33,24 @@ class HGVMetaIdentifier < Identifier
     end
 
 
-    #publication
+    # publication
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
 
-    #title
-    #incorrect title titlePath = "bibl[@type='publication'][@subtype='principal']/title/"
+    # title
+    # incorrect title titlePath = "bibl[@type='publication'][@subtype='principal']/title/"
     titlePath = "TEI.2/teiHeader/fileDesc/titleStmt/title/"
 
-    #metaPath = basePath + publicationPath + titlePath
+    # metaPath = basePath + publicationPath + titlePath
     metaPath = titlePath
     REXML::XPath.each(doc, metaPath) do |res|
       self.title = res.text
     end
 
 
-    #publication
+    # publication
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
 
-    #title
+    # title
     titlePath = "bibl[@type='publication'][@subtype='principal']/title/"
 
     metaPath = basePath + publicationPath + titlePath
@@ -59,7 +59,7 @@ class HGVMetaIdentifier < Identifier
     end
 
 
-    #TM number
+    # TM number
     trismegistosPath = "bible[@type='Trismegistos']/biblScope[@type='numbers']"
     metaPath = basePath + publicationPath + trismegistosPath;
     REXML::XPath.each(doc, metaPath) do |res|
@@ -67,93 +67,93 @@ class HGVMetaIdentifier < Identifier
     end
 
 
-    #-----------------unused--------------------
-    #DDbDp number
+    # -----------------unused--------------------
+    # DDbDp number
     dukeSeries = "bibl/[@type='DDbDP']/series"
     dukeNumber = "bibl/[@type='DDbDP']/biblScope[@type='numbers']"
 
   metaPath = basePath + publicationPath + dukeSeries;
     REXML::XPath.each(doc, metaPath) do |res|
-      #TODO
+      # TODO
       replaceMe = res.text
     end
 
   metaPath = basePath + publicationPath + dukeNumber;
     REXML::XPath.each(doc, metaPath) do |res|
-      #TODO
+      # TODO
       replaceMe = res.text
     end
 
-    #Perseus links
+    # Perseus links
     perseusPath = "p/xref[@type='Perseus']"
 
   metaPath = basePath + publicationPath + perseusPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      #TODO
+      # TODO
       replaceMe = res.attributes["href"]
       replaceMe = res.text
     end
 
-    #===============end unused==================
+    # ===============end unused==================
 
-    #illustration - photo
+    # illustration - photo
     illustrationPath = "[@type='bibliography'][@subtype='illustrations']/p"
     metaPath = basePath + illustrationPath;
     REXML::XPath.each(doc, metaPath) do |res|
       self.illustrations = res.text
     end
 
-    #Content
-    #TODO replace ...? or is that actually a tag?
+    # Content
+    # TODO replace ...? or is that actually a tag?
     contentPath = "[@type='...']/p/rs[@type='textType']"
     metaPath = basePath + contentPath;
     REXML::XPath.each(doc, metaPath) do |res|
       self.content = res.text
     end
 
-    #Other Publication
+    # Other Publication
     otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
     metaPath = basePath + otherPublicationPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.other_publications = res.text    #note items are separated by semicolons
+      self.other_publications = res.text    # note items are separated by semicolons
     end
 
-    #Translations
+    # Translations
     translationsPath = "[@type='bibliography'][@n='translations']/p"
     metaPath = basePath + translationsPath;
     REXML::XPath.each(doc, metaPath) do |res|
       translations = res.text
     end
 
-    #BL
+    # BL
     blPath = "[@type='bibliography']/bibl[@type='BL']"
     metaPath = basePath + blPath;
     REXML::XPath.each(doc, metaPath) do |res|
       self.bl = res.text
     end
 
-    #notes - aka general commentary, will there only be one?
+    # notes - aka general commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
       self.notes = res.text
     end
 
-    #mentioned dates - aka mentioned dates commentary, will there only be one?
+    # mentioned dates - aka mentioned dates commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p/head"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
       self.mentioned_dates = res.text
     end
 
-    #material
+    # material
     materialPath = "[@type='description']/p/rs[@type='material']"
     metaPath = basePath + materialPath
     REXML::XPath.each(doc, metaPath) do |res|
       self.material = res.text
     end
 
-    #provenance
+    # provenance
     provenacePath = "[@type='history'][@subtype='locations']/p/"
 
     provenacePathA = "placeName[@type='ancientFindspot']"
@@ -174,6 +174,6 @@ class HGVMetaIdentifier < Identifier
       self.provenance_ancient_region = res.text
     end
 
-    #Mentioned dates ?? no epidoc tag?
+    # Mentioned dates ?? no epidoc tag?
   end
 end
