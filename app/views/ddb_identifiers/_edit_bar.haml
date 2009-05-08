@@ -1,17 +1,17 @@
-#article_menu
+#identifier_menu
   .site
     %ul
       %li.active= link_to 'Text', edit_polymorphic_path([@identifier.publication, @identifier])
       %li= link_to 'Metadata', edit_polymorphic_path([@identifier.publication, @identifier])
       %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
-#article_sub_menu
+#identifier_sub_menu
   .site
     .joiner
     %ul
       %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
       %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
 - if params[:action] != 'history' && @identifier.class == DDBIdentifier
-  #article_sub_menu
+  #identifier_sub_menu
     .site
       .joiner
         %ul
