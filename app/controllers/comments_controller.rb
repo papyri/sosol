@@ -51,7 +51,9 @@ class CommentsController < ApplicationController
     respond_to do |format|
       if @comment.save
         flash[:notice] = 'Comment was successfully created.'
-        format.html { redirect_to(@comment) }
+        
+        format.html { redirect_to :controller => 'articles', :action => 'comment_on', :id => @comment.article.id }   #redirect_to(@comment.article) }
+        #TODO redirect xml?
         format.xml  { render :xml => @comment, :status => :created, :location => @comment }
       else
         format.html { render :action => "new" }

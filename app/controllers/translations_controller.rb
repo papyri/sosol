@@ -186,7 +186,9 @@ class TranslationsController < ApplicationController
 
   # GET /translations/1/edit
   def edit
-    @translation = Translation.find(params[:id])
+  	#to keep inline with edit for article redirect this edit
+  	redirect_to (:action => 'edit_contents', :id => params[:id])
+    #@translation = Translation.find(params[:id])
   end
 
   # POST /translations

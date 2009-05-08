@@ -1,6 +1,12 @@
+
+<h2><%= link_to @meta.article.master_article.title, url_for(@meta.article.master_article) %></h2>
+by <%= @meta.article.user.name %>
+
+
 <div class="meta_background">
 
-<h1>Editing meta</h1>
+
+<h3>Editing meta</h3>
 
 <% form_for(@meta) do |f| %>
   <%= f.error_messages %>

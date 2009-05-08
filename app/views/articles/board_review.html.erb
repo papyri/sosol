@@ -24,7 +24,7 @@ function commentChanged(e)
 
 
 <h2><%= link_to @article.master_article.title, url_for(@article.master_article) %></h2>
-
+by <%= @article.master_article.user.name %>
 <%= render :partial => @article.get_category_obj()  %>
 
 
