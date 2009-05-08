@@ -1,8 +1,8 @@
 #identifier_menu
   .site
     %ul
-      %li.active= link_to 'Text', edit_text_publication_path(@identifier.publication)
-      %li= link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}= link_to 'Text', edit_text_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}= link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
       %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
 #identifier_sub_menus
   .identifier_sub_menu
