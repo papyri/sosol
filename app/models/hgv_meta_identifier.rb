@@ -27,9 +27,9 @@ class HGVMetaIdentifier < Identifier
     datePath = "[@type='commentary'][@subtype='textDate']"
     metaPath = basePath + datePath + "/p/date[@type='textDate']"
     REXML::XPath.each(doc,metaPath)  do |res|
-      self.onDate = res.attributes["value"]
-      self.notAfterDate = res.attributes["notAfter"]
-      self.notBeforeDate = res.attributes["notBefore"]
+      onDate = res.attributes["value"]
+      notAfterDate = res.attributes["notAfter"]
+      notBeforeDate = res.attributes["notBefore"]
     end
 
 
@@ -43,7 +43,7 @@ class HGVMetaIdentifier < Identifier
     # metaPath = basePath + publicationPath + titlePath
     metaPath = titlePath
     REXML::XPath.each(doc, metaPath) do |res|
-      self.title = res.text
+      title = res.text
     end
 
 
@@ -55,7 +55,7 @@ class HGVMetaIdentifier < Identifier
 
     metaPath = basePath + publicationPath + titlePath
     REXML::XPath.each(doc, metaPath) do |res|
-      self.publication = res.text
+      publication = res.text
     end
 
 
@@ -63,7 +63,7 @@ class HGVMetaIdentifier < Identifier
     trismegistosPath = "bible[@type='Trismegistos']/biblScope[@type='numbers']"
     metaPath = basePath + publicationPath + trismegistosPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.tm_nr = res.text
+      tm_nr = res.text
     end
 
 
@@ -100,7 +100,7 @@ class HGVMetaIdentifier < Identifier
     illustrationPath = "[@type='bibliography'][@subtype='illustrations']/p"
     metaPath = basePath + illustrationPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.illustrations = res.text
+      illustrations = res.text
     end
 
     # Content
@@ -108,14 +108,14 @@ class HGVMetaIdentifier < Identifier
     contentPath = "[@type='...']/p/rs[@type='textType']"
     metaPath = basePath + contentPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.content = res.text
+      content = res.text
     end
 
     # Other Publication
     otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
     metaPath = basePath + otherPublicationPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.other_publications = res.text    # note items are separated by semicolons
+      other_publications = res.text    # note items are separated by semicolons
     end
 
     # Translations
@@ -129,28 +129,28 @@ class HGVMetaIdentifier < Identifier
     blPath = "[@type='bibliography']/bibl[@type='BL']"
     metaPath = basePath + blPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.bl = res.text
+      bl = res.text
     end
 
     # notes - aka general commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.notes = res.text
+      notes = res.text
     end
 
     # mentioned dates - aka mentioned dates commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p/head"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
-      self.mentioned_dates = res.text
+      mentioned_dates = res.text
     end
 
     # material
     materialPath = "[@type='description']/p/rs[@type='material']"
     metaPath = basePath + materialPath
     REXML::XPath.each(doc, metaPath) do |res|
-      self.material = res.text
+      material = res.text
     end
 
     # provenance
@@ -159,19 +159,19 @@ class HGVMetaIdentifier < Identifier
     provenacePathA = "placeName[@type='ancientFindspot']"
     metaPath = basePath + provenacePath + provenacePathA
     REXML::XPath.each(doc, metaPath) do |res|
-      self.provenance_ancient_findspot = res.text
+      provenance_ancient_findspot = res.text
     end
 
     provenacePathB = "geogName[@type='nome']"
     metaPath = basePath + provenacePath + provenacePathB
     REXML::XPath.each(doc, metaPath) do |res|
-      self.provenance_nome = res.text
+      provenance_nome = res.text
     end
 
     provenacePathC = "geogName[@type='ancientRegion']"
     metaPath = basePath + provenacePath + provenacePathC
     REXML::XPath.each(doc, metaPath) do |res|
-      self.provenance_ancient_region = res.text
+      provenance_ancient_region = res.text
     end
 
     # Mentioned dates ?? no epidoc tag?
