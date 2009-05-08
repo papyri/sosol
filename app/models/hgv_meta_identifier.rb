@@ -17,11 +17,9 @@ class HGVMetaIdentifier < Identifier
     return path_components.join('/')
   end
   
-  def load_epidoc_from_file(filename)
-
-  	file = File.new( filename )
-  	#file = File.new( "/home/charles/HGV_meta_EpiDoc_HGV1_1.xml" )
-  	doc = REXML::Document.new file
+  def load_epidoc_from_file
+    
+  	doc = REXML::Document.new self.content
 
       #set base to meta data in epidoc
       basePath = "TEI.2/text/body/div"    
