@@ -8,6 +8,9 @@ class HgvMetaIdentifiersController < ApplicationController
   
   def history
     find_identifier
+    @identifier.get_commits
+    # use a superclass view
+    render :template => 'identifiers/history'
   end
   
   protected
