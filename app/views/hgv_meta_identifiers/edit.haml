@@ -7,13 +7,14 @@
     %h3
       Identifier
       = @identifier.name
-      
-    - form_for @identifier, :url => { :action => :update } do |f| 
-      = f.error_messages 
+    
+    #edit
+      - form_for @identifier, :url => { :action => :update } do |f| 
+        = f.error_messages 
 
-      - @identifier.valid_epidoc_attributes.each do |epidoc_attribute|
-        %p
-          = f.label epidoc_attribute
-          = f.text_field epidoc_attribute
+        - @identifier.valid_epidoc_attributes.each do |epidoc_attribute|
+          %p
+            = f.label epidoc_attribute
+            = f.text_field epidoc_attribute
 
-      = render :partial => 'identifiers/edit_commit', :locals => { :f => f }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f }
