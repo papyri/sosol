@@ -1,5 +1,5 @@
 module NumbersRDF
-  NUMBERS_SERVER_BASE_URL = 'http://appdev.cul.columbia.edu:8082/numbers/'
+  NUMBERS_SERVER_BASE_URL = 'http://apptest.cul.columbia.edu:8082/numbers/'
   # OAI identifiers should be in the form scheme ":" namespace-identifier ":" local-identifier
   OAI_SCHEME = 'oai'
   OAI_NAMESPACE_IDENTIFIER = 'papyri.info'
