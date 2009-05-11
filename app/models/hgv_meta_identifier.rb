@@ -17,7 +17,7 @@ class HGVMetaIdentifier < Identifier
     return path_components.join('/')
   end
   
-  def epidoc_attributes
+  def valid_epidoc_attributes
     return [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
       :tm_nr, :illustrations, :contentText, :other_publications,
       :translations, :bl, :notes, :mentioned_dates, :material,
@@ -25,15 +25,46 @@ class HGVMetaIdentifier < Identifier
       :provenance_ancient_region]
   end
   
-  def get_or_set_xml(get_or_set, self_attribute, xml_node)
+  def get_or_set_xml_attribute(get_or_set, self_attribute, xml_node, attribute)
     if get_or_set == :get
-      self[self_attribute] = xml_node
+      self[self_attribute] = xml_node.attributes[attribute]
     elsif get_or_set == :set
-      xml_node = self[self_attribute]
+      xml_node.attributes[attribute] = self[self_attribute]
     end
   end
 
-  def load_epidoc_from_file
+  def get_or_set_xml_text(get_or_set, self_attribute, xml_node)
+    if get_or_set == :get
+      self[self_attribute] = xml_node.text
+    elsif get_or_set == :set
+      xml_node.text = self[self_attribute]
+    end
+  end
+
+  def get_epidoc_attributes
+    self.get_or_set_epidoc(:get)
+    
+    # Set nil attrs to empty strings
+    valid_epidoc_attributes.each do |this_attr|
+        if self[this_attr].nil?
+          self[this_attr] = ''
+        end
+    end
+  end
+  
+  def set_epidoc(attributes_hash)
+    self.get_epidoc_attributes_from_params(attributes_hash)
+    epidoc = self.get_or_set_epidoc(:set)
+    self.set_content(epidoc, :comment => 'testing')
+  end
+  
+  def get_epidoc_attributes_from_params(attributes_hash)
+    attributes_hash.each_pair do |key, value|
+      self[key] = value
+    end
+  end
+
+  def get_or_set_epidoc(get_or_set = :get)
     doc = REXML::Document.new self.content
 
     # set base to meta data in epidoc
@@ -43,9 +74,9 @@ class HGVMetaIdentifier < Identifier
     datePath = "[@type='commentary'][@subtype='textDate']"
     metaPath = basePath + datePath + "/p/date[@type='textDate']"
     REXML::XPath.each(doc,metaPath)  do |res|
-      get_or_set_xml(:get, :onDate, res.attributes["value"])
-      get_or_set_xml(:get, :notAfterDate, res.attributes["notAfter"])
-      get_or_set_xml(:get, :notBeforeDate, res.attributes["notBefore"])
+      get_or_set_xml_attribute(get_or_set, :onDate, res, "value")
+      get_or_set_xml_attribute(get_or_set, :notAfterDate, res, "notAfter")
+      get_or_set_xml_attribute(get_or_set, :notBeforeDate, res, "notBefore")
     end
 
 
@@ -59,7 +90,7 @@ class HGVMetaIdentifier < Identifier
     # metaPath = basePath + publicationPath + titlePath
     metaPath = titlePath
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :title, res.text)
+      get_or_set_xml_text(get_or_set, :title, res)
     end
 
 
@@ -71,7 +102,7 @@ class HGVMetaIdentifier < Identifier
 
     metaPath = basePath + publicationPath + titlePath
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :publicationTitle, res.text)
+      get_or_set_xml_text(get_or_set, :publicationTitle, res)
     end
 
 
@@ -79,7 +110,7 @@ class HGVMetaIdentifier < Identifier
     trismegistosPath = "bible[@type='Trismegistos']/biblScope[@type='numbers']"
     metaPath = basePath + publicationPath + trismegistosPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :tm_nr, res.text)
+      get_or_set_xml_text(get_or_set, :tm_nr, res)
     end
 
 
@@ -116,7 +147,7 @@ class HGVMetaIdentifier < Identifier
     illustrationPath = "[@type='bibliography'][@subtype='illustrations']/p"
     metaPath = basePath + illustrationPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :illustrations, res.text)
+      get_or_set_xml_text(get_or_set, :illustrations, res)
     end
 
     # Content
@@ -124,49 +155,49 @@ class HGVMetaIdentifier < Identifier
     contentPath = "[@type='...']/p/rs[@type='textType']"
     metaPath = basePath + contentPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :contentText, res.text)
+      get_or_set_xml_text(get_or_set, :contentText, res)
     end
 
     # Other Publication
     otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
     metaPath = basePath + otherPublicationPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :other_publications, res.text)    # note items are separated by semicolons
+      get_or_set_xml_text(get_or_set, :other_publications, res)    # note items are separated by semicolons
     end
 
     # Translations
     translationsPath = "[@type='bibliography'][@n='translations']/p"
     metaPath = basePath + translationsPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :translations, res.text)
+      get_or_set_xml_text(get_or_set, :translations, res)
     end
 
     # BL
     blPath = "[@type='bibliography']/bibl[@type='BL']"
     metaPath = basePath + blPath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :bl, res.text)
+      get_or_set_xml_text(get_or_set, :bl, res)
     end
 
     # notes - aka general commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :notes, res.text)
+      get_or_set_xml_text(get_or_set, :notes, res)
     end
 
     # mentioned dates - aka mentioned dates commentary, will there only be one?
     notePath = "[@type='commentary'][@subtype='general']/p/head"
     metaPath = basePath + notePath;
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :mentioned_dates, res.text)
+      get_or_set_xml_text(get_or_set, :mentioned_dates, res)
     end
 
     # material
     materialPath = "[@type='description']/p/rs[@type='material']"
     metaPath = basePath + materialPath
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :material, res.text)
+      get_or_set_xml_text(get_or_set, :material, res)
     end
 
     # provenance
@@ -175,28 +206,27 @@ class HGVMetaIdentifier < Identifier
     provenacePathA = "placeName[@type='ancientFindspot']"
     metaPath = basePath + provenacePath + provenacePathA
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :provenance_ancient_findspot, res.text)
+      get_or_set_xml_text(get_or_set, :provenance_ancient_findspot, res)
     end
 
     provenacePathB = "geogName[@type='nome']"
     metaPath = basePath + provenacePath + provenacePathB
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :provenance_nome, res.text)
+      get_or_set_xml_text(get_or_set, :provenance_nome, res)
     end
 
     provenacePathC = "geogName[@type='ancientRegion']"
     metaPath = basePath + provenacePath + provenacePathC
     REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml(:get, :provenance_ancient_region, res.text)
+      get_or_set_xml_text(get_or_set, :provenance_ancient_region, res)
     end
 
-    # Set nil attrs to empty strings
-    epidoc_attributes.each do |this_attr|
-        if self[this_attr].nil?
-          self[this_attr] = ''
-        end
-    end
 
     # Mentioned dates ?? no epidoc tag?
+    
+    # write back to a string
+    modified_xml_content = ''
+    doc.write(modified_xml_content)
+    return modified_xml_content
   end
 end

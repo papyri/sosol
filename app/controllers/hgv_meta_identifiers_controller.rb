@@ -3,7 +3,14 @@ class HgvMetaIdentifiersController < ApplicationController
   
   def edit
     find_identifier
-    @identifier.load_epidoc_from_file
+    @identifier.get_epidoc_attributes
+  end
+  
+  def update
+    find_identifier
+    @identifier.set_epidoc(params[:hgv_meta_identifier])
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit)
   end
   
   def history
