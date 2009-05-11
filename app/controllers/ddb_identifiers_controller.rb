@@ -36,10 +36,7 @@ class DdbIdentifiersController < ApplicationController
   # GET /publications/1/ddb_identifiers/1/history
   def history
     find_identifier
-    @identifier[:commits] = 
-      @identifier.publication.user.repository.get_log_for_file_from_branch(
-        @identifier.to_path, @identifier.publication.branch
-    )
+    @identifier.get_commits
   end
   
   # GET /publications/1/ddb_identifiers/1/preview

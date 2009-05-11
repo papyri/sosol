@@ -18,4 +18,11 @@ class Identifier < ActiveRecord::Base
                                                     content,
                                                     options[:comment])
   end
+  
+  def get_commits
+    self[:commits] = 
+      self.publication.user.repository.get_log_for_file_from_branch(
+        self.to_path, self.publication.branch
+    )
+  end
 end
