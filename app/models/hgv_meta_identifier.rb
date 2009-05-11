@@ -16,6 +16,14 @@ class HGVMetaIdentifier < Identifier
     # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
     return path_components.join('/')
   end
+  
+  def epidoc_attributes
+    return [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
+      :tm_nr, :illustrations, :contentText, :other_publications,
+      :translations, :bl, :notes, :mentioned_dates, :material,
+      :provenance_ancient_findspot, :provenance_nome,
+      :provenance_ancient_region]
+  end
 
   def load_epidoc_from_file
     doc = REXML::Document.new self.content
@@ -175,11 +183,7 @@ class HGVMetaIdentifier < Identifier
     end
 
     # Set nil attrs to empty strings
-    [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
-      :tm_nr, :illustrations, :contentText, :other_publications,
-      :translations, :bl, :notes, :mentioned_dates, :material,
-      :provenance_ancient_findspot, :provenance_nome,
-      :provenance_ancient_region].each do |this_attr|
+    epidoc_attributes.each do |this_attr|
         if self[this_attr].nil?
           self[this_attr] = ''
         end
