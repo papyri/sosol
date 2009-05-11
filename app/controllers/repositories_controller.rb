@@ -1,5 +1,6 @@
 class RepositoriesController < ApplicationController
   layout 'site'
+  before_filter :authorize
   
   before_filter :find_repository
 

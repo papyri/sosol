@@ -1,5 +1,6 @@
 class HgvMetaIdentifiersController < ApplicationController
   layout 'site'
+  before_filter :authorize
   
   def edit
     find_identifier

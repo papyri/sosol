@@ -1,5 +1,6 @@
 class DdbIdentifiersController < ApplicationController
   layout 'site'
+  before_filter :authorize
   
   # GET /publications/1/ddb_identifiers/1/edit
   def edit
