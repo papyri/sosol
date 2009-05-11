@@ -3,6 +3,7 @@ class HgvMetaIdentifiersController < ApplicationController
   
   def edit
     find_identifier
+    @identifier.load_epidoc_from_file
   end
   
   def history
