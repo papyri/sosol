@@ -174,6 +174,17 @@ class HGVMetaIdentifier < Identifier
       self[:provenance_ancient_region] = res.text
     end
 
+    # Set nil attrs to empty strings
+    [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
+      :tm_nr, :illustrations, :contentText, :other_publications,
+      :translations, :bl, :notes, :mentioned_dates, :material,
+      :provenance_ancient_findspot, :provenance_nome,
+      :provenance_ancient_region].each do |this_attr|
+        if self[this_attr].nil?
+          self[this_attr] = ''
+        end
+    end
+
     # Mentioned dates ?? no epidoc tag?
   end
 end
