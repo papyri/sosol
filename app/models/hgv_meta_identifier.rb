@@ -52,10 +52,10 @@ class HGVMetaIdentifier < Identifier
     end
   end
   
-  def set_epidoc(attributes_hash)
+  def set_epidoc(attributes_hash, comment)
     self.get_epidoc_attributes_from_params(attributes_hash)
     epidoc = self.get_or_set_epidoc(:set)
-    self.set_content(epidoc, :comment => 'testing')
+    self.set_content(epidoc, :comment => comment)
   end
   
   def get_epidoc_attributes_from_params(attributes_hash)

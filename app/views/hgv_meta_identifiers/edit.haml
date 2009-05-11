@@ -16,5 +16,4 @@
           = f.label epidoc_attribute
           = f.text_field epidoc_attribute
 
-      %p
-        = f.submit "Save" 
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f }
