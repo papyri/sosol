@@ -7,3 +7,73 @@
     %h3
       Identifier
       = @identifier.name
+      
+    - form_for @identifier, :url => { :action => :update } do |f| 
+      = f.error_messages 
+
+      %p
+        = f.label :notBeforeDate 
+        = f.text_field :notBeforeDate 
+      
+      %p
+        = f.label :notAfterDate 
+        = f.text_field :notAfterDate 
+      
+      %p
+        = f.label :onDate 
+        = f.text_field :onDate 
+      
+      %p
+        = f.label :mentioned_dates 
+        = f.text_field :mentioned_dates 
+      
+      %p
+        = f.label :publicationTitle 
+        = f.text_field :publicationTitle 
+      
+      %p
+        = f.label :other_publications 
+        = f.text_field :other_publications 
+      
+      %p
+        = f.label :bl 
+        = f.text_field :bl 
+      
+      %p
+        = f.label :title 
+        = f.text_field :title 
+      
+      %p
+        = f.label :illustrations 
+        = f.text_field :illustrations 
+      
+      %p
+        = f.label :provenance_ancient_findspot 
+        = f.text_field :provenance_ancient_findspot 
+      
+
+      %p
+        = f.label :provenance_nome 
+        = f.text_field :provenance_nome 
+      
+
+      %p
+        = f.label :provenance_ancient_region 
+        = f.text_field :provenance_ancient_region 
+      
+
+      %p
+        = f.label :notes 
+        = f.text_field :notes 
+      
+      %p
+        = f.label :material 
+        = f.text_field :material 
+      
+      %p
+        = f.label :tm_nr 
+        = f.text_field :tm_nr 
+      
+
+      %p
+        = f.submit "Save" 
