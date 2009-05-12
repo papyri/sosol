@@ -11,12 +11,17 @@ module NumbersRDF
   
   module NumbersHelper
     def identifier_to_local_identifier(identifier)
-      identifier.split(OAI_IDENTIFIER_PREFIX)[1]
+      identifier.sub(/^#{OAI_IDENTIFIER_PREFIX}/, '')
+    end
+    
+    def identifier_to_components(identifier)
+      identifier.split(':')
     end
 
     def identifier_to_path(identifier)
       local_identifier = identifier_to_local_identifier(identifier)
-      url_paths = [NUMBERS_SERVER_BASE_PATH] + local_identifier.split(':')
+      url_paths = [NUMBERS_SERVER_BASE_PATH] + 
+                  identifier_to_components(local_identifier)
       return url_paths.join('/')
     end
 
