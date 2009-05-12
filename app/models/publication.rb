@@ -1,4 +1,6 @@
 class Publication < ActiveRecord::Base
+  include NumbersRDF::NumbersHelper
+  
   validates_presence_of :title, :branch
   
   belongs_to :user
@@ -19,6 +21,25 @@ class Publication < ActiveRecord::Base
       model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
     end
     # not yet handling ASCII control characters
+  end
+  
+  def populate_identifiers_from_identifier(identifier)
+    self.title = identifier.tr(':','_')
+    # Coming in from an identifier, build up a publication
+    identifiers = identifiers_to_hash(identifier_to_identifiers(identifier))
+    if identifiers.has_key?('ddbdp')
+      identifiers['ddbdp'].each do |ddb|
+        self.identifiers << DDBIdentifier.new(:name => ddb)
+      end
+    end
+    
+    # Use HGV hack for now
+    if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
+      identifiers['trismegistos'].each do |tm|
+        tm_nr = identifier_to_components(tm).last
+        self.identifiers << HGVMetaIdentifier.new(:name => "hgv#{tm_nr}")
+      end
+    end
   end
   
   # If branch hasn't been specified, create it from the title before
