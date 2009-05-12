@@ -46,6 +46,16 @@ module NumbersRDF
       end
     end
     
+    def identifiers_to_hash(identifiers)
+      identifiers_hash = Hash.new
+      identifiers.each do |identifier|
+        local_identifier = identifier_to_local_identifier(identifier)
+        components = identifier_to_components(local_identifier)
+        identifiers_hash[components[1]] = identifier
+      end
+      return identifiers_hash
+    end
+    
     def process_numbers_server_response_body(rdf_xml)
       doc = REXML::Document.new(rdf_xml)
       identifiers = []
