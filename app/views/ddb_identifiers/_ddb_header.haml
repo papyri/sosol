@@ -1,0 +1,10 @@
+%h1
+  Editing Publication
+  = @identifier.publication.title
+%h3
+  Identifier
+  = @identifier.name
+  (
+  %a{ :href => "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}" }
+    view in PN
+  )
