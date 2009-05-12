@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
     # "p.stras/p.stras.9/p.stras.9.816.xml",
     # "sb/sb.6/sb.6.9108.xml",
     # "p.yale/p.yale.1/p.yale.1.43.xml",
-    # "p.yale/p.yale.1/p.yale.1.44.xml"
+    
     [['P.Genova II 67','oai:papyri.info:identifiers:ddbdp:0118:2:67','hgv30114'],
      ['SB XXIV 16003','oai:papyri.info:identifiers:ddbdp:0239:24:16003','hgv79280'],
      ['P.Lond. VII 2067','oai:papyri.info:identifiers:ddbdp:0154:7:2067','hgv1628'],
@@ -51,6 +51,14 @@ class User < ActiveRecord::Base
       
       self.publications << p
     end
+    
+    # try populating from ids
+    p = Publication.new
+    # "p.yale/p.yale.1/p.yale.1.44.xml"
+    p.populate_identifiers_from_identifier(
+      'oai:papyri.info:identifiers:ddbdp:0228:1:44')
+    self.publications << p
+    
   end
   
   def before_destroy
