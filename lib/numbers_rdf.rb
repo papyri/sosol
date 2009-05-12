@@ -51,7 +51,10 @@ module NumbersRDF
       identifiers.each do |identifier|
         local_identifier = identifier_to_local_identifier(identifier)
         components = identifier_to_components(local_identifier)
-        identifiers_hash[components[1]] = identifier
+        key = components[1]
+        identifiers_hash[key] = 
+          Array.new() unless identifiers_hash.has_key?(key)
+        identifiers_hash[key] << identifier
       end
       return identifiers_hash
     end
