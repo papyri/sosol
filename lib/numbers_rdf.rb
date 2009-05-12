@@ -47,7 +47,6 @@ module NumbersRDF
     end
     
     def process_numbers_server_response_body(rdf_xml)
-      puts rdf_xml
       doc = REXML::Document.new(rdf_xml)
       identifiers = []
       ore_describes_path = "/rdf:RDF/rdf:Description/ore:aggregates/rdf:Description/ore:describes"
