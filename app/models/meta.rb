@@ -68,8 +68,8 @@ class Meta < ActiveRecord::Base
     retval += self.other_publications unless self.other_publications  == nil
   	retval += separator
   	
-    retval += " illustration: "
-    retval += self.illustration unless self.illustration  == nil
+    retval += " illustrations: "
+    retval += self.illustrations unless self.illustrations  == nil
   	retval += separator
   	
 #    retval += " "
