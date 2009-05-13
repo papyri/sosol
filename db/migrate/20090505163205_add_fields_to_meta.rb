@@ -1,17 +1,17 @@
 class AddFieldsToMeta < ActiveRecord::Migration
   def self.up
-		add_column :metas, :material, :tstring
-		add_column :metas, :bl, :tstring
-		add_column :metas, :tm_nr, :tstring
-		add_column :metas, :content, :tstring
-		add_column :metas, :provenance_ancient_findspot, :tstring
-		add_column :metas, :provenance_nome, :tstring
-		add_column :metas, :provenance_ancient_region, :tstring
-		add_column :metas, :other_publications, :tstring
-		add_column :metas, :translations, :tstring
-		add_column :metas, :illustrations, :tstring
+		add_column :metas, :material, :string
+		add_column :metas, :bl, :string
+		add_column :metas, :tm_nr, :string
+		add_column :metas, :content, :string
+		add_column :metas, :provenance_ancient_findspot, :string
+		add_column :metas, :provenance_nome, :string
+		add_column :metas, :provenance_ancient_region, :string
+		add_column :metas, :other_publications, :string
+		add_column :metas, :translations, :string
+		add_column :metas, :illustrations, :string
 		
-		add_column :metas, :mentioned_dates, :tstring
+		add_column :metas, :mentioned_dates, :string
 
 		remove_column :metas, :provenance
 		remove_column :metas, :language
@@ -32,9 +32,9 @@ class AddFieldsToMeta < ActiveRecord::Migration
 		remove_column :metas, :illustrations		
 		remove_column :metas, :mentioned_dates
 
-		add_column :metas, :provenance, :tstring
-		add_column :metas, :language, :tstring
-		add_column :metas, :subject, :tstring
+		add_column :metas, :provenance, :string
+		add_column :metas, :language, :string
+		add_column :metas, :subject, :string
   
   end
 end
