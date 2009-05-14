@@ -22,7 +22,7 @@ class DDBIdentifier < Identifier
   def titleize
     ddb_collection_name, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name.gsub!(/\./,'. ')
+    ddb_collection_name.gsub!(/\./,'. ').rstrip!
     title = 
       [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
     return title.titleize
