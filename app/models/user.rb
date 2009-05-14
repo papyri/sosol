@@ -28,36 +28,16 @@ class User < ActiveRecord::Base
     # "sb/sb.6/sb.6.9108.xml",
     # "p.yale/p.yale.1/p.yale.1.43.xml",
     
-    [['P.Genova II 67','oai:papyri.info:identifiers:ddbdp:0118:2:67','hgv30114'],
-     ['SB XXIV 16003','oai:papyri.info:identifiers:ddbdp:0239:24:16003','hgv79280'],
-     ['P.Lond. VII 2067','oai:papyri.info:identifiers:ddbdp:0154:7:2067','hgv1628'],
-     ['P.Harr. I 109','oai:papyri.info:identifiers:ddbdp:0129:1:109','hgv31474']
-    ].each do |fixture|
-      pubtitle = fixture[0]
-      pubid = fixture[1]
-      hgvid = fixture[2]
-      
+    ['oai:papyri.info:identifiers:ddbdp:0118:2:67',
+     'oai:papyri.info:identifiers:ddbdp:0239:24:16003',
+     'oai:papyri.info:identifiers:ddbdp:0154:7:2067',
+     'oai:papyri.info:identifiers:ddbdp:0129:1:109',
+     'oai:papyri.info:identifiers:ddbdp:0228:1:44'
+    ].each do |pn_id|
       p = Publication.new
-      
-      i = DDBIdentifier.new
-      i.name = pubid
-      
-      h = HGVMetaIdentifier.new
-      h.name = hgvid
-      
-      p.title = pubtitle
-      p.identifiers << i
-      p.identifiers << h
-      
+      p.populate_identifiers_from_identifier(pn_id)
       self.publications << p
     end
-    
-    # try populating from ids
-    p = Publication.new
-    # "p.yale/p.yale.1/p.yale.1.44.xml"
-    p.populate_identifiers_from_identifier(
-      'oai:papyri.info:identifiers:ddbdp:0228:1:44')
-    self.publications << p
     
   end
   
