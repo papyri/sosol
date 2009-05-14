@@ -19,6 +19,7 @@ class DdbIdentifiersController < ApplicationController
     find_identifier
     @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
                                 params[:comment])
+    flash[:notice] = "File updated."
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
@@ -30,6 +31,7 @@ class DdbIdentifiersController < ApplicationController
     xml_content = params[:ddb_identifier][:xml_content].gsub(/\r\n?/, "\n")
     @identifier.set_xml_content(xml_content,
                                 params[:comment])
+    flash[:notice] = "File updated."
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml)
   end
