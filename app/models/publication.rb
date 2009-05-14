@@ -29,7 +29,9 @@ class Publication < ActiveRecord::Base
     identifiers = identifiers_to_hash(identifier_to_identifiers(identifier))
     if identifiers.has_key?('ddbdp')
       identifiers['ddbdp'].each do |ddb|
-        self.identifiers << DDBIdentifier.new(:name => ddb)
+        d = DDBIdentifier.new(:name => ddb)
+        self.identifiers << d
+        self.title = d.titleize
       end
     end
     

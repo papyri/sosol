@@ -19,6 +19,15 @@ class DDBIdentifier < Identifier
     return [ddb_collection_name, ddb_volume_number, ddb_document_number]
   end
   
+  def titleize
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      to_components
+    ddb_collection_name.gsub!(/\./,'. ')
+    title = 
+      [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
+    return title.titleize
+  end
+  
   def to_path
     path_components = [ DDB_PATH_PREFIX ]
     
