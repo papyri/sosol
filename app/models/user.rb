@@ -32,7 +32,8 @@ class User < ActiveRecord::Base
      'oai:papyri.info:identifiers:ddbdp:0239:24:16003',
      'oai:papyri.info:identifiers:ddbdp:0154:7:2067',
      'oai:papyri.info:identifiers:ddbdp:0129:1:109',
-     'oai:papyri.info:identifiers:ddbdp:0228:1:44'
+     'oai:papyri.info:identifiers:ddbdp:0228:1:44',
+     'oai:papyri.info:identifiers:ddbdp:0206:2:414'
     ].each do |pn_id|
       p = Publication.new
       p.populate_identifiers_from_identifier(pn_id)
