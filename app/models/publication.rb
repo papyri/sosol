@@ -39,7 +39,9 @@ class Publication < ActiveRecord::Base
     if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
       identifiers['trismegistos'].each do |tm|
         tm_nr = identifier_to_components(tm).last
-        self.identifiers << HGVMetaIdentifier.new(:name => "hgv#{tm_nr}")
+        self.identifiers << HGVMetaIdentifier.new(
+          :name => "#{identifiers['hgv'].first}",
+          :alternate_name => "hgv#{tm_nr}")
       end
     end
   end

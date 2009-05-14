@@ -3,8 +3,8 @@ class HGVMetaIdentifier < Identifier
 
   def to_path
     path_components = [ HGV_META_PATH_PREFIX ]
-    # for now, assume the name is e.g. hgv2302zzr
-    trimmed_name = name.sub(/^hgv/, '') # 2302zzr
+    # assume the alternate name is e.g. hgv2302zzr
+    trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
     number = trimmed_name.sub(/\D/, '').to_i # 2302
 
     hgv_dir_number = ((number - 1) / 1000) + 1
