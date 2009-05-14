@@ -13,26 +13,25 @@ class DDBIdentifier < Identifier
     ddb_volume_number = components[1].to_s
     ddb_document_number = components[2].to_s
     
-    # e.g. 0001 => bgu
-    ddb_collection_name = ddb_series_to_collection(ddb_series_number)
-    
-    return [ddb_collection_name, ddb_volume_number, ddb_document_number]
+    return [ddb_series_number, ddb_volume_number, ddb_document_number]
   end
   
   def titleize
-    ddb_collection_name, ddb_volume_number, ddb_document_number =
+    ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name.gsub!(/\./,'. ').rstrip!
+    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
     title = 
       [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
-    return title.titleize
   end
   
   def to_path
     path_components = [ DDB_PATH_PREFIX ]
     
-    ddb_collection_name, ddb_volume_number, ddb_document_number =
+    ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
+      
+    # e.g. 0001 => bgu
+    ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
     # e.g. bgu.10
     ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
@@ -48,15 +47,26 @@ class DDBIdentifier < Identifier
     return path_components.join('/')
   end
   
-  # map DDB series number to DDB collection name using collection.xml
-  def ddb_series_to_collection(ddb_series_number)
+  def get_collection_xml
     canonical_repo = Repository.new
     collection_xml = canonical_repo.get_file_from_branch(
                       COLLECTION_XML_PATH, 'master')
+  end
+
+  # map DDB series number to DDB collection name using collection.xml
+  def ddb_series_to_collection(ddb_series_number)
+    collection_xml = get_collection_xml
     xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
       "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
     return xpath_result.to_s
+  end
+  
+  def ddb_series_to_human_collection(ddb_series_number)
+    collection_xml = get_collection_xml
+    xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+      "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
+    xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
   end
   
   def xml_content
