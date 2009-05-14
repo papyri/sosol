@@ -6,8 +6,7 @@ class DDBIdentifier < Identifier
   
   acts_as_leiden_plus
   
-  def to_path
-    path_components = [ DDB_PATH_PREFIX ]
+  def to_components
     trimmed_name = name.sub(/^oai:papyri.info:identifiers:ddbdp:/, '')
     components = trimmed_name.split(':')
     ddb_series_number = components[0].to_s
@@ -16,6 +15,15 @@ class DDBIdentifier < Identifier
     
     # e.g. 0001 => bgu
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
+    
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number]
+  end
+  
+  def to_path
+    path_components = [ DDB_PATH_PREFIX ]
+    
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      to_components
     
     # e.g. bgu.10
     ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
