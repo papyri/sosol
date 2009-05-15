@@ -22,7 +22,7 @@ class IdentifiersController < ApplicationController
   def updatexml
     find_identifier
     # strip carriage returns
-    xml_content = params[:ddb_identifier][:xml_content].gsub(/\r\n?/, "\n")
+    xml_content = params[@identifier.class.to_s.underscore][:xml_content].gsub(/\r\n?/, "\n")
     @identifier.set_xml_content(xml_content,
                                 params[:comment])
     flash[:notice] = "File updated."
