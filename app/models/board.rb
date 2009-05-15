@@ -23,7 +23,7 @@ class Board < ActiveRecord::Base
 			decree_vote_count = 0
 			votes.each do |vote|	      
 	     		#see if vote is in choices
-			  	index = decree_choices.index(vote.choice) #double check that this doesn't return true for no in known
+			  	index = decree_choices.index(vote.choice) #double check that this doesn't return true for "no" in "known"
 			  	if  index != nil
 						decree_vote_count = decree_vote_count + 1      	     
 					end
@@ -32,8 +32,8 @@ class Board < ActiveRecord::Base
 			#see if we are using percent or min voting counting
 			if decree.trigger < 1
 			#percentage
-					if decree_vote_count > 0
-						percent = self.users.length.to_f / decree_vote_count.to_f
+					if decree_vote_count > 0 && self.users.length.to_f > 0
+						percent =  decree_vote_count.to_f / self.users.length.to_f
 					
 						if percent >= decree.trigger
 						#check if the action has already been done
