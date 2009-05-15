@@ -18,18 +18,6 @@ class DdbIdentifiersController < IdentifiersController
                                  :action => :edit)
   end
   
-  # PUT /publications/1/ddb_identifiers/1/updatexml
-  def updatexml
-    find_identifier
-    # strip carriage returns
-    xml_content = params[:ddb_identifier][:xml_content].gsub(/\r\n?/, "\n")
-    @identifier.set_xml_content(xml_content,
-                                params[:comment])
-    flash[:notice] = "File updated."
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :editxml)
-  end
-  
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     editxml
