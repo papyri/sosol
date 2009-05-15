@@ -96,6 +96,7 @@ class DDBIdentifier < Identifier
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(content))
     transformed = DDBIdentifier.xml2nonxml(abs)
+    # should be cause wrapped in exception check
     if transformed.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
       transformed.to_s + "\n" + 
         DDBIdentifier.parse_exception_pretty_print(abs, $1.to_i)
