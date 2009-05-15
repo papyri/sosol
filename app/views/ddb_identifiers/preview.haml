@@ -2,7 +2,7 @@
   = render :partial => 'identifiers/edit_bar'
 
   .site
-    = render :partial => 'ddb_header'
+    = render :partial => 'identifiers/header'
     #edit
       - form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
