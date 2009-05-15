@@ -8,12 +8,6 @@ class DdbIdentifiersController < IdentifiersController
     @identifier[:leiden_plus] = @identifier.leiden_plus
   end
   
-  # GET /publications/1/ddb_identifiers/1/editxml
-  def editxml
-    find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
-  end
-  
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_identifier
