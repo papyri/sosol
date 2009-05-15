@@ -8,5 +8,6 @@ class IdentifiersController < ApplicationController
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
+    render :template => 'identifiers/editxml'
   end
 end
