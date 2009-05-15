@@ -2,6 +2,23 @@ class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
   
+  def new
+  end
+  
+  # POST /publications
+  # POST /publications.xml
+  def create
+    @publication = Publication.new()
+    @publication.populate_identifiers_from_identifier(
+      params[:publication][:pn_id])
+    @publication.user = @current_user
+    
+    if @publication.save
+      flash[:notice] = 'Publication was successfully created.'
+      redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    end
+  end
+  
   # GET /publications
   # GET /publications.xml
   def index
