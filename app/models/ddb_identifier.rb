@@ -92,9 +92,8 @@ class DDBIdentifier < Identifier
   end
   
   def leiden_plus
-    content = self.xml_content
     abs = DDBIdentifier.preprocess_abs(
-      DDBIdentifier.get_abs_from_edition_div(content))
+      DDBIdentifier.get_abs_from_edition_div(xml_content))
     begin
       transformed = DDBIdentifier.xml2nonxml(abs)
     rescue e
