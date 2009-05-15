@@ -1,4 +1,4 @@
-class HgvMetaIdentifiersController < ApplicationController
+class HgvMetaIdentifiersController < IdentifiersController
   layout 'site'
   before_filter :authorize
   

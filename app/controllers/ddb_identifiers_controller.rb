@@ -1,4 +1,4 @@
-class DdbIdentifiersController < ApplicationController
+class DdbIdentifiersController < IdentifiersController
   layout 'site'
   before_filter :authorize
   
