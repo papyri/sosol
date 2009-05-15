@@ -21,3 +21,9 @@
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
               %li{ :class => params[:action] == 'comment_on' ? 'active' : ' '}= link_to 'Comment'#, comment_on_publication_path(@publication)
+      - when HGVMetaIdentifier
+        .identifier_sub_menu#sub_menu_2
+          .site
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Metadata', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
