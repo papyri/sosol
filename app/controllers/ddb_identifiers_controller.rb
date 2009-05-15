@@ -20,11 +20,11 @@ class DdbIdentifiersController < IdentifiersController
   
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
-    editxml
+    find_identifier
     
     Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
     xslt = XML::XSLT.new()
-    xslt.xml = REXML::Document.new(@identifier[:xml_content])
+    xslt.xml = REXML::Document.new(@identifier.xml_content)
     xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     
     @identifier[:html_preview] = xslt.serve()
