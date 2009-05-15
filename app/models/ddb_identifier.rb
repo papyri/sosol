@@ -91,14 +91,6 @@ class DDBIdentifier < Identifier
     xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
   end
   
-  def xml_content
-    return self.content
-  end
-  
-  def set_xml_content(content, comment)
-    self.set_content(content, :comment => comment)
-  end
-  
   def leiden_plus
     content = self.xml_content
     abs = DDBIdentifier.preprocess_abs(

@@ -25,4 +25,14 @@ class Identifier < ActiveRecord::Base
         self.to_path, self.publication.branch
     )
   end
+  
+  
+  def xml_content
+    return self.content
+  end
+  
+  
+  def set_xml_content(content, comment)
+    self.set_content(content, :comment => comment)
+  end
 end
