@@ -30,14 +30,6 @@ class DdbIdentifiersController < IdentifiersController
                                  :action => :editxml)
   end
   
-  # GET /publications/1/ddb_identifiers/1/history
-  def history
-    find_identifier
-    @identifier.get_commits
-    # use a superclass view
-    render :template => 'identifiers/history'
-  end
-  
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     editxml

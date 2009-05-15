@@ -10,4 +10,11 @@ class IdentifiersController < ApplicationController
     @identifier[:xml_content] = @identifier.xml_content
     render :template => 'identifiers/editxml'
   end
+  
+  # GET /publications/1/xxx_identifiers/1/history
+  def history
+    find_identifier
+    @identifier.get_commits
+    render :template => 'identifiers/history'
+  end
 end
