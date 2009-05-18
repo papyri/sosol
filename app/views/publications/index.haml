@@ -8,7 +8,9 @@
     %ul
     - for branch in @branches
       %li= branch
+  %br
   - form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
-    = form.text_field 'pn_id'
+    = label_tag 'pn_id', 'Create from PN ID:'
+    = form.text_field 'pn_id', :size => 60
     = form.submit "Create", :class => 'save'
     
