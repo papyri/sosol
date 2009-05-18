@@ -58,12 +58,15 @@ class DDBIdentifier < Identifier
     # e.g. bgu.10
     ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
     # e.g. bgu.10.1901.xml
-    ddb_xml_path = [ddb_collection_name,
-                    ddb_volume_number,
-                    ddb_document_number,
-                    'xml'].join('.')
+    ddb_xml_path_components = []
+    ddb_xml_path_components << ddb_collection_name
+    ddb_xml_path_components << ddb_volume_number unless ddb_volume_number.empty?
+    ddb_xml_path_components << ddb_document_number << 'xml'
+    ddb_xml_path = ddb_xml_path_components.join('.')
     
-    path_components << ddb_collection_name << ddb_volume_path << ddb_xml_path
+    path_components << ddb_collection_name
+    path_components << ddb_volume_path unless ddb_volume_number.empty?
+    path_components << ddb_xml_path
     
     # e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
     return path_components.join('/')
