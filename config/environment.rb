@@ -84,4 +84,5 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   
   CANONICAL_REPOSITORY = "#{RAILS_ROOT}/db/canonical.git"
   USER_REPOSITORY_ROOT = "#{RAILS_ROOT}/db/git"
+  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p=db/git/"
 end

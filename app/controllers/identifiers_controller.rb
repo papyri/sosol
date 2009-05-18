@@ -15,6 +15,15 @@ class IdentifiersController < ApplicationController
   def history
     find_identifier
     @identifier.get_commits
+    @identifier[:commits].each do |commit|
+      if commit[:message].empty?
+        commit[:message] = '(no commit message)'
+      end
+      commit[:url] = GITWEB_BASE_URL +
+                     ["#{@current_user.name}.git",
+                      "a=commitdiff",
+                      "h=#{commit[:id]}"].join(';')
+    end
     render :template => 'identifiers/history'
   end
   
