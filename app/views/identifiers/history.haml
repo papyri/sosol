@@ -7,4 +7,4 @@
     #edit
       %ul
         - for commit in @identifier[:commits]
-          %li= commit[:message]
+          %li= commit[:message] == '' ? '(no commit message)' : commit[:message]
