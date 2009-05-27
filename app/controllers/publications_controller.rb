@@ -11,7 +11,7 @@ class PublicationsController < ApplicationController
     @publication = Publication.new()
     @publication.populate_identifiers_from_identifier(
       params[:publication][:pn_id])
-    @publication.user = @current_user
+    @publication.owner = @current_user
     
     if @publication.save
       flash[:notice] = 'Publication was successfully created.'

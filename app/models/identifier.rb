@@ -7,13 +7,13 @@ class Identifier < ActiveRecord::Base
                          :in => %w{ DDBIdentifier HGVMetaIdentifier }
   
   def content
-    return self.publication.user.repository.get_file_from_branch(
+    return self.publication.owner.repository.get_file_from_branch(
       self.to_path, self.publication.branch)
   end
   
   def set_content(content, options = {})
     options.reverse_merge! :comment => ''
-    self.publication.user.repository.commit_content(self.to_path,
+    self.publication.owner.repository.commit_content(self.to_path,
                                                     self.publication.branch,
                                                     content,
                                                     options[:comment])
@@ -21,7 +21,7 @@ class Identifier < ActiveRecord::Base
   
   def get_commits
     self[:commits] = 
-      self.publication.user.repository.get_log_for_file_from_branch(
+      self.publication.owner.repository.get_log_for_file_from_branch(
         self.to_path, self.publication.branch
     )
   end

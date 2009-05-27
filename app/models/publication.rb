@@ -3,7 +3,7 @@ class Publication < ActiveRecord::Base
   
   validates_presence_of :title, :branch
   
-  belongs_to :user
+  belongs_to :owner, :polymorphic => true
   has_many :identifiers
   
   validates_uniqueness_of :title, :scope => 'user_id'
