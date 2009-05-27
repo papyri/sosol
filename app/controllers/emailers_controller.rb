@@ -1,34 +1,32 @@
 class EmailersController < ApplicationController
+  def find_board_member
+    @emailer = Emailer.find(params[:id])
+  end
+  
+  def add_member
+   @emailer = Emailer.find(params[:id])
+   user = User.find_by_name(params[:user_name])
+   
+    if nil == @emailer.users.find_by_id(user.id) 
+      @emailer.users << user
+      @emailer.save
+    end   
+  
+   redirect_to :action => "edit", :id => @emailer.id
+  end
+  
+  
+  def remove_member
+  
+    user = User.find(params[:user_id])
+    
+    @emailer = Emailer.find(params[:id])
+    @emailer.users.delete(user)
+    @emailer.save            
 
-
-	def find_board_member
-		@emailer = Emailer.find(params[:id])
-	end
-	
-	def add_member
-	 @emailer = Emailer.find(params[:id])
-	 user = User.find_by_name(params[:user_name])
-	 
-	 	if nil == @emailer.users.find_by_id(user.id) 
-			@emailer.users << user
-			@emailer.save
-		end   
-	
-	 redirect_to :action => "edit", :id => @emailer.id
-	end
-	
-	
-	def remove_member
-	
-		user = User.find(params[:user_id])
-		
-		@emailer = Emailer.find(params[:id])
-		@emailer.users.delete(user)
-		@emailer.save            
-
-		redirect_to :action => "edit", :id => @emailer.id
-	end
-	
+    redirect_to :action => "edit", :id => @emailer.id
+  end
+  
 
   
   # GET /emailers
@@ -78,9 +76,9 @@ class EmailersController < ApplicationController
     @emailer = Emailer.new(params[:emailer])
     
     if @emailer.save
-    	board = Board.find(@emailer.board_id)
-    	board.emailers << @emailer
-    	board.save
+      board = Board.find(@emailer.board_id)
+      board.emailers << @emailer
+      board.save
     
       flash[:notice] = 'Emailer was successfully created.'
       redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  

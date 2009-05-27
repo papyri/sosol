@@ -16,12 +16,12 @@ class UserController < ApplicationController
     
   end
   
-#  def index  	  
-#  	if @current_user.admin
-#  		@users = User.find(:all)
-#  	else
-#  	  render :file => 'public/403.html', :status => '403'
-#  	end
+#  def index      
+#   if @current_user.admin
+#     @users = User.find(:all)
+#   else
+#     render :file => 'public/403.html', :status => '403'
+#   end
 #  end
   
 #  def ask_language_prefs
@@ -40,20 +40,20 @@ class UserController < ApplicationController
     if @current_user == nil
       redirect_to :controller => "user", :action => "signin"
     end
-	
+  
   end
   
   
 
   def update_personal
   #TODO don't let any bozo change this data
-  	if @current_user.id != params[:id].to_i()
-  		flash[:warning] = "Invalid Access."
+    if @current_user.id != params[:id].to_i()
+      flash[:warning] = "Invalid Access."
 
-  		redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
-  		return
-  	end
-  	
+      redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
+      return
+    end
+    
     @user = User.find(params[:id])
 
     respond_to do |format|

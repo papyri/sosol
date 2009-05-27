@@ -1,44 +1,41 @@
 class BoardsController < ApplicationController
 
-	layout "site"
-	before_filter :check_admin
+  layout "site"
+  before_filter :check_admin
 
-	def check_admin
-		if !@current_user.admin
-			render :file => 'public/403.html', :status => '403'
-		end
-	end
-	
-	
-	def find_member
-		@board = Board.find(params[:id])
-	end
+  def check_admin
+    if !@current_user.admin
+      render :file => 'public/403.html', :status => '403'
+    end
+  end
+  
+  
+  def find_member
+    @board = Board.find(params[:id])
+  end
 
-	def add_member
-		@board = Board.find(params[:id])
-		user = User.find_by_name(params[:user_name])
+  def add_member
+    @board = Board.find(params[:id])
+    user = User.find_by_name(params[:user_name])
 
-		if nil == @board.users.find_by_id(user.id) 
-			@board.users << user
-			@board.save
-		end
+    if nil == @board.users.find_by_id(user.id) 
+      @board.users << user
+      @board.save
+    end
 
-		redirect_to :action => "edit", :id => (@board).id
-	end
+    redirect_to :action => "edit", :id => (@board).id
+  end
 
-	def remove_member
-		user = User.find(params[:user_id])
+  def remove_member
+    user = User.find(params[:user_id])
 
-		@board = Board.find(params[:id])
-		@board.users.delete(user)
-		@board.save
+    @board = Board.find(params[:id])
+    @board.users.delete(user)
+    @board.save
 
-		redirect_to :action => "edit", :id => (@board).id
-	end
+    redirect_to :action => "edit", :id => (@board).id
+  end
 
-    
-    
-    
   # GET /boards
   # GET /boards.xml
   def index
@@ -65,7 +62,7 @@ class BoardsController < ApplicationController
   # GET /boards/new.xml
   def new
     @board = Board.new
-	
+  
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @board }
@@ -82,9 +79,9 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(params[:board])
 
-		if @board.save
-			flash[:notice] = 'Board was successfully created.'
-			redirect_to :action => "edit", :id => (@board).id    
+    if @board.save
+      flash[:notice] = 'Board was successfully created.'
+      redirect_to :action => "edit", :id => (@board).id    
     end         
 #    respond_to do |format|
 #      if @board.save

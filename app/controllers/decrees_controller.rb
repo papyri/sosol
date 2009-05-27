@@ -48,14 +48,14 @@ class DecreesController < ApplicationController
   def create
     @decree = Decree.new(params[:decree])
 
-	  if @decree.save
-	    board = Board.find(@decree.board_id)
-	    board.decrees << @decree
-	    board.save
-			
-			flash[:notice] = 'Decree was successfully created.'
-			redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id
-		end
+    if @decree.save
+      board = Board.find(@decree.board_id)
+      board.decrees << @decree
+      board.save
+      
+      flash[:notice] = 'Decree was successfully created.'
+      redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id
+    end
 
 #    respond_to do |format|
 #      if @decree.save
