@@ -1,0 +1,46 @@
+
+
+<div class="translation_background">
+
+<h1>Editing XML</h1>
+
+
+
+<% if flash[:warning] or flash[:notice] %>
+   <div id="notice" <% if flash[:warning] %>class="warning"<% end %>>
+     <%= flash[:warning] || flash[:notice] %>
+   </div>
+   <script type="text/javascript">
+     setTimeout("new Effect.Fade('notice');", 6000);
+   </script>
+<% end %>
+
+
+
+<% form_for(@translation) do |f| %>
+
+
+<% #link_to "From File" , :controller => "translations", :action => "ask_for_epidoc_file", :id => @translation.id %>  |
+
+<%= link_to "Edit Translations" , :controller => "translations", :action => "edit_contents", :id => @translation.id %> |
+
+<%= f.submit "Save Changes" %><br/>
+
+  <% if !@translation.xml_to_translations_ok || !@translation.translations_to_xml_ok %>
+  <%= f.submit "Save Changes & Overwite Translations" %><br />
+  <% end %>
+  <%= f.error_messages %>
+
+
+
+<%= hidden_field_tag :edit_epidoc, "true" %>
+
+  <p>
+    <%= f.text_area :epidoc, :rows => "50", :cols => "100" %>
+  </p>
+ 
+<% end %>
+
+
+<%= link_to 'Document', url_for(@translation.article.master_article) %>
+<div>

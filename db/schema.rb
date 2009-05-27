@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090219224637) do
+ActiveRecord::Schema.define(:version => 20090505163205) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -19,10 +19,36 @@ ActiveRecord::Schema.define(:version => 20090219224637) do
     t.integer  "user_id"
     t.string   "pn"
     t.string   "category"
+    t.integer  "master_article_id"
+    t.integer  "meta_id"
+    t.integer  "transcription_id"
+    t.integer  "translation_id"
+    t.string   "status"
+    t.integer  "board_id"
+    t.integer  "vote_id"
   end
 
+  create_table "boards", :force => true do |t|
+    t.string   "title"
+    t.string   "category"
+    t.integer  "decree_id"
+    t.integer  "article_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "finalizer_user_id"
+  end
+
+  create_table "boards_users", :id => false, :force => true do |t|
+    t.integer  "board_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
+
   create_table "comments", :force => true do |t|
-    t.string   "text"
+    t.text     "text"
     t.integer  "user_id"
     t.integer  "article_id"
     t.string   "reason"
@@ -30,14 +56,122 @@ ActiveRecord::Schema.define(:version => 20090219224637) do
     t.datetime "updated_at"
   end
 
+  create_table "decrees", :force => true do |t|
+    t.string   "action"
+    t.decimal  "trigger"
+    t.string   "choices"
+    t.integer  "board_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "emailers", :force => true do |t|
+    t.integer  "board_id"
+    t.integer  "user_id"
+    t.text     "extra_addresses"
+    t.string   "when"
+    t.boolean  "include_document"
+    t.text     "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "send_to_owner"
+  end
+
+  create_table "emailers_users", :id => false, :force => true do |t|
+    t.string   "emailer_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "emailers_users", ["emailer_id", "user_id"], :name => "index_emailers_users_on_emailer_id_and_user_id", :unique => true
+
   create_table "events", :force => true do |t|
     t.string   "category"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  create_table "master_articles", :force => true do |t|
+    t.integer  "article_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "comment_id"
+  end
+
+  create_table "metas", :force => true do |t|
+    t.string   "notBeforeDate"
+    t.string   "notAfterDate"
+    t.string   "onDate"
+    t.string   "publication"
+    t.string   "title"
+    t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "article_id"
+    t.integer  "user_id"
+    t.string   "material"
+    t.string   "bl"
+    t.string   "tm_nr"
+    t.string   "content"
+    t.string   "provenance_ancient_findspot"
+    t.string   "provenance_nome"
+    t.string   "provenance_ancient_region"
+    t.string   "other_publications"
+    t.string   "translations"
+    t.string   "illustrations"
+    t.string   "mentioned_dates"
+  end
+
+  create_table "transcriptions", :force => true do |t|
+    t.text     "content"
+    t.text     "leiden"
+    t.integer  "user_id"
+    t.integer  "article_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "translation_contents", :force => true do |t|
+    t.text     "content"
+    t.integer  "translation_id"
+    t.string   "language"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "translations", :force => true do |t|
+    t.text     "epidoc"
+    t.string   "language"
+    t.integer  "user_id"
+    t.integer  "article_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "translation_content_id"
+    t.boolean  "xml_to_translations_ok"
+    t.boolean  "translations_to_xml_ok"
+  end
+
   create_table "users", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "language_prefs"
+    t.boolean  "admin"
+    t.boolean  "developer"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "affiliation"
+    t.string   "email"
+    t.integer  "emailer_id"
+  end
+
+  create_table "votes", :force => true do |t|
+    t.string   "choice"
+    t.integer  "user_id"
+    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,0 +1,27 @@
+
+
+
+
+<% if flash[:warning] or flash[:notice] %>
+   <div id="notice" <% if flash[:warning] %>class="warning"<% end %>>
+     <%= flash[:warning] || flash[:notice] %>
+   </div>
+   <script type="text/javascript">
+     setTimeout("new Effect.Fade('notice');", 6000);
+   </script>
+<% end %>
+
+
+
+<h1>  
+  <%=h @master_article.title %>
+</h1>
+<h3>Delete Items</h3>
+
+<% @master_article.articles.each do |article| %>
+  <% "prevent orphans from being displayed, should not exist" %>
+  <% if article.get_category_obj() != nil &&  @master_article.user_id == @current_user.id %>
+		<%= render :partial => article.get_category_obj(), :locals => { :dlc => DocumentLinksController.new(false, false, false,true) }%>
+	<% end %>
+<%end%>
+ 

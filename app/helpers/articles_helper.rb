@@ -40,4 +40,5 @@ module ArticlesHelper
     carat = '^'.rjust(position)
     text + "\n" + carat
   end
+
 end

@@ -5,7 +5,7 @@ set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
 set :user, "idp2"
 set :git_enable_submodules, true
-set :branch, "master"
+set :branch, "ccarpenter"
 
 # If you aren't deploying to /u/apps/#{application} on the target
 # servers (which is the default), you can specify the actual location

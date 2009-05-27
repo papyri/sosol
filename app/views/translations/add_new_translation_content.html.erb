@@ -1,0 +1,11 @@
+<h1> Add New Translation </h1>
+
+
+<% form_tag :controller => "translations", :action => "add_new_translation_language", :id => @translation.id  do %>
+
+<%= select_tag( :language, options_for_select( @languages ) ) %>
+
+
+<%= submit_tag("Add") %>
+
+<% end %>

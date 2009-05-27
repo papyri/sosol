@@ -1,16 +1,28 @@
 
+
+= render :partial => 'show_hide'
+
 #main.site
 
-  = render :partial => 'show_hide'
+  - onclick_start = "showHide('" 
+  - onclick_stop =    "')"
+  - content_list = Array.new
+
 
   %h2 Listing All Articles
   %ul
   - for article in @articles   
+    -id_str = article.id.to_s()
     %li 
       %strong= article.id
       = link_to(get_title(article.content), edit_article_path(article)) 
       
-
+      %div{:id => "master_article"}
+        %strong= "part of "
+        -if article.master_article != nil
+          = article.master_article.title
+        -else
+          none
     
     %div{:id => "user"}
       %strong user
@@ -21,32 +33,40 @@
         
     %div{:id => "category"}
       %strong category
-      =article.category
-      
+      =article.category      
       
     %div{:id => "content"}
-      %strong content
-      =article.content
+      - onclick_call = onclick_start + "content" + id_str + onclick_stop
+      - content_count = "content" + id_str
+      %strong{:onclick => onclick_call}
+        content
+      %div{:id => content_count}
+        - content_list << content_count
+        =article.content
     
     %div{:id => "leiden"}
-      %strong leiden
-      =article.leiden       
+      - onclick_call = onclick_start + "leiden" + id_str + onclick_stop
+      - leiden_count = "leiden" + id_str
+      %strong{:onclick => onclick_call}
+        leiden
+      %div{:id => leiden_count}
+        =article.leiden       
    
     %div{:id => "comments"}      
-      - comment_count = 'comments' + article.id.to_s()
-      - onclick_call = 'show_hide(' + comment_count + ')' 
+      - comment_count = 'comments' + id_str
+      - onclick_call = "showHide('" + comment_count + "')" 
       %strong{:onclick => onclick_call} 
         = 'comments ('
         = article.comments.length
         = ')'
       %div{:id => comment_count}      
-      - if article.comments != nil        
-        - article.comments.each do |c|
-          = c.text
-          %strong= 'by '
-          -if c.user != nil
-            = c.user.name
-          %br
-      - else
-        no
+        - if article.comments != nil        
+          - article.comments.each do |c|
+            = c.text
+            %strong= 'by '
+            -if c.user != nil
+              = c.user.name
+            %br
+        - else
+          no
      

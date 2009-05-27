@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  action: MyString
+  trigger: 9.99
+  choices: MyString
+  board_id: 1
+
+two:
+  action: MyString
+  trigger: 9.99
+  choices: MyString
+  board_id: 1

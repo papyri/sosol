@@ -1,0 +1,30 @@
+<div class="transcription_background">
+
+<h1>Editing transcription</h1>
+
+<% form_for(@transcription) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :content %><br />
+    <%= f.text_field :content %>
+  </p>
+  <p>
+    <%= f.label :leiden %><br />
+    <%= f.text_field :leiden %>
+  </p>
+  <p>
+    <%= f.label :user_id %><br />
+    <%= f.text_field :user_id %>
+  </p>
+  <p>
+    <%= f.label :article_id %><br />
+    <%= f.text_field :article_id %>
+  </p>
+  <p>
+    <%= f.submit "Save" %>
+  </p>
+<% end %>
+
+
+<%= link_to 'Document', url_for(@transcription.article.master_article) %>

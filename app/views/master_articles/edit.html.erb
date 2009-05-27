@@ -1,0 +1,20 @@
+<h1>Editing master_article</h1>
+
+<% form_for(@master_article) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :article_id %><br />
+    <%= f.text_field :article_id %>
+  </p>
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @master_article %> |
+<%= link_to 'Back', master_articles_path %>

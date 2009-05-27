@@ -1,8 +1,3 @@
-<p>
-  <b>Content:</b>
-  <%=h @article.leiden %>
-</p>
+<%= render :partial => @article.get_category_obj(), :locals => { :show_links => true }%>
 
 
-<%= link_to 'Edit', edit_article_path(@article) %> |
-<%= link_to 'Back', articles_path %>

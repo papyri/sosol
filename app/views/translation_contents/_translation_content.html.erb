@@ -1,0 +1,25 @@
+
+<% section_id = "translation_content" + translation_content.language %>
+
+<div class="translation_content" >
+
+
+<h3 style="display:inline;" onclick="showHide(<%=   section_id%>)">Translation <%= translation_content.language %></h3>
+
+<div id="<%= section_id %>" >
+
+<% show_links = true %>
+<% if show_links  %>
+	<%= link_to 'Edit', url_for(:controller => 'translation_contents', :action => 'edit', :id => translation_content.id) %> 
+	<%= link_to 'Submit', url_for(:controller => 'translation_contents', :action => 'review_for_submit', :id => translation_content.id) %> 
+<% end %>
+
+<p>
+  <b>Content:</b>
+  <%=h translation_content.content %>
+</p>
+
+
+
+</div>
+</div>

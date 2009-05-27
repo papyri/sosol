@@ -1,0 +1,102 @@
+<script type="text/javascript">
+function checkBoxOrders()
+{
+
+  
+  var meta = document.getElementById('doMeta');
+  var script = document.getElementById('doTranscription');
+  var trans = document.getElementById('doTranslation');
+  
+  if (trans.checked)
+  {
+    script.checked = true;
+  }
+  if (script.checked)
+  {
+    meta.checked = true;
+  }
+
+}
+
+</script>
+
+
+<h1>New Document</h1>
+
+<% form_for(@master_article) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  
+<%= check_box_tag "doMeta", "doMeta", false, :onclick => "checkBoxOrders()"  %>
+Meta
+
+<%= check_box_tag "doTranscription", "doTranscription", false, :onclick => "checkBoxOrders()"  %>
+Text
+
+<%= check_box_tag "doTranslation", "doTranslation", false, :onclick => "checkBoxOrders()"  %>
+Translation
+
+
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+
+
+
+<br \><br \>
+<h1>Edit by TM Number </h1>
+
+<% form_for(@master_article) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :title %> (optional)<br />
+    <%= f.text_field :title %>
+  </p>
+
+TM<%= text_field_tag "tm_number" %><br \>
+
+  <p>
+    <%= f.submit "Edit" %>
+  </p>
+<% end %>
+
+
+<!--
+
+<br \><br \>
+<h1>Edit Existing</h1>
+
+<% form_for(@master_article) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+
+<%= check_box_tag "doMeta", "doMeta", false %>
+New Meta   -or-   Edit Existing TM#<%= text_field_tag "tmMeta" %><br \>
+
+<%= check_box_tag "doTranscription", "doTranscription", false %>
+New Text   -or-   Edit Existing <%= text_field_tag "tmTranscription" %><br \>
+
+<%= check_box_tag "doTranslation", "doTranslation", false %>
+New Translation   -or-   Edit Existing TM#<%= text_field_tag "tmTranslation" %><br \>
+
+
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+-->
+

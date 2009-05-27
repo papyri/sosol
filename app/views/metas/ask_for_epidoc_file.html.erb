@@ -1,0 +1,14 @@
+
+
+<% form_tag ( {:controller=>"metas", :action=>"load_epidoc_file", :id=>  @meta.id} , :method => "get") do%>
+
+  <p>
+    filename<br />
+    <%= text_field_tag :filename %>
+  </p>
+
+  <p>
+    <%= submit_tag "Load" %>
+  </p>
+<% end %>
+

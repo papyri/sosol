@@ -1,0 +1,49 @@
+
+
+<div class="translation">
+
+<h3 style="display:inline;">Translation</h3>
+
+<% if !defined?(dlc) %>
+		<% dlc = DocumentLinksController.new() %>
+<% end %>
+
+<%= render :partial => 'articles/links', :locals => { :article => translation.article, :dlc => dlc } %>
+
+
+<br />
+
+  <% langs = @current_user.language_prefs.split(' ') %>
+  <% tcs = translation.GetTranslationsFromTranslationContents() %>
+	 
+	  <% tcs.each do |tc| %> 
+		<% section_id = "translation_content_" + tc.language %>
+	 
+		<h3 style="display:inline;" onclick="showHide('<%=   section_id%>')"><%= tc.language %></h3>
+		<% lang_found = false %>
+        <% langs.each do |l| %>        	
+        	<% if tc.language == l %>
+        		<% lang_found = true %>
+        	<% end %>
+        <% end %>
+        
+        <% lang_found = true %><!--show all for the moment-->
+        
+        <% if lang_found == true %>
+          <div id= '<%= section_id %>' >
+        <% else %>
+					<div id= '<%= section_id %>' style ='display: none;' >
+				<% end %>
+		
+			<div class="translation_content">
+				<%=tc.content %>    
+			</div>
+		</div>
+		<br />
+	  <% end %>
+
+
+
+
+
+</div>

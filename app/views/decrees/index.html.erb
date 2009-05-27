@@ -1,0 +1,26 @@
+<h1>Listing decrees</h1>
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Trigger</th>
+    <th>Choices</th>
+    <th>Board</th>
+  </tr>
+
+<% for decree in @decrees %>
+  <tr>
+    <td><%=h decree.action %></td>
+    <td><%=h decree.trigger %></td>
+    <td><%=h decree.choices %></td>
+    <td><%=h decree.board_id %></td>
+    <td><%= link_to 'Show', decree %></td>
+    <td><%= link_to 'Edit', edit_decree_path(decree) %></td>
+    <td><%= link_to 'Destroy', decree, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New decree', new_decree_path %>

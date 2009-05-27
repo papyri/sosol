@@ -1,0 +1,22 @@
+<h1>Listing master_articles</h1>
+
+<table>
+  <tr>
+    <th>Article</th>
+    <th>Title</th>
+  </tr>
+
+<% for master_article in @master_articles %>
+  <tr>
+    <td><%=h master_article.article_id %></td>
+    <td><%=h master_article.title %></td>
+    <td><%= link_to 'Show', master_article %></td>
+    <td><%= link_to 'Edit', edit_master_article_path(master_article) %></td>
+    <td><%= link_to 'Destroy', master_article, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New master_article', new_master_article_path %>

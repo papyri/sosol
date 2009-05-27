@@ -81,4 +81,11 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   
   CANONICAL_REPOSITORY = "#{RAILS_ROOT}/db/canonical.git"
   USER_REPOSITORY_ROOT = "#{RAILS_ROOT}/db/git"
+  
+ # META_DIR = "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"
+ # TRANSLATION_DIR ="/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"  
+  
+  META_DIR = "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"
+  TRANSLATION_DIR = "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"
+  
 end

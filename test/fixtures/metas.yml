@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  notBeforeDate: MyString
+  notAfterDate: MyString
+  onDate: MyString
+  publication: MyString
+  language: MyString
+  subject: MyString
+  title: MyString
+  provenance: MyString
+  notes: MyString
+
+two:
+  notBeforeDate: MyString
+  notAfterDate: MyString
+  onDate: MyString
+  publication: MyString
+  language: MyString
+  subject: MyString
+  title: MyString
+  provenance: MyString
+  notes: MyString

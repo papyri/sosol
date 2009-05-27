@@ -1,0 +1,83 @@
+<script>
+function showHide(id)
+{
+  var element = document.getElementById(id);
+  if ( element.style.display != 'none' )
+  {
+     element.style.display = 'none';
+  }
+  else
+  {
+    element.style.display = '';
+  }
+}
+</script>
+
+
+<div class="translation_background">
+
+<h1>Editing translation</h1>
+
+
+<% if flash[:warning] or flash[:notice] %>
+   <div id="notice" <% if flash[:warning] %>class="warning"<% end %>>
+     <%= flash[:warning] || flash[:notice] %>
+   </div>
+   <script type="text/javascript">
+     setTimeout("new Effect.Fade('notice');", 6000);
+   </script>
+<% end %>
+
+
+
+
+<% form_for(@translation) do |f| %>
+
+<%= link_to "Add Language" , :controller => "translations", :action => "add_new_translation_content", :id => @translation.id %>  |
+
+<%= link_to "Edit XML" , :controller => "translations", :action => "edit_epidoc", :id => @translation.id %> |
+
+  <%= f.submit "Save Changes" %><br />
+  
+  <% if !@translation.xml_to_translations_ok || !@translation.translations_to_xml_ok %>
+  <%= f.submit "Save Changes & Overwite XML" %><br />
+  <% end %>
+  <%= f.error_messages %>
+
+<%= hidden_field_tag :edit_contents, "true" %>
+
+  
+  <% #get the language content %>
+  <% langs = @current_user.language_prefs.split(' ') %>
+  <% tcs = @translation.GetTranslationsFromTranslationContents() %>
+	 
+	  <% tcs.each do |tc| %> 
+		<% section_id = "translation_content_" + tc.language %>
+	 
+		<h3 style="display:inline;" onclick="showHide('<%=   section_id%>')"><%= tc.language %></h3>
+
+		<% lang_found = false %>
+        <% langs.each do |l| %>        	
+        	<% if tc.language == l %>
+        		<% lang_found = true %>
+        	<% end %>
+        <% end %>
+        
+        <% if lang_found == true %>
+          <div id= <%= section_id %> >
+        <% else %>
+			<div id= <%= section_id %> style ='display: none;' >
+		<% end %>
+		
+			<% text_id = section_id + "_content" %>
+			<%= text_area_tag ( text_id, tc.content, :cols => "100", :rows => "20" ) %>    
+		</div>
+		<br />
+	  <% end %>
+	  
+
+<% end %>
+
+
+<%= link_to 'Document', url_for(@translation.article.master_article) %>
+<div>

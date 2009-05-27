@@ -1,0 +1,59 @@
+
+<script>
+function commentChanged(e)
+{
+
+  <!-- don't care what key, just check that the comment has info -->
+  var comment_area = document.getElementById("comment");
+  var sub_button = document.getElementById("submit_button");  
+  var commentText = comment_area.value;
+ 
+  commentText = commentText.replace(/^\s+|\s+$/g, '');
+  
+  if (commentText == "")
+  {
+    sub_button.disabled = true;
+   
+  }
+  else
+  {
+    sub_button.disabled = false;
+  }
+}
+</script>
+
+
+<% if flash[:notice] %>
+  <div class= "notice"><%= flash[:notice] %></div>
+ <% end %>
+
+
+<h1><%= link_to @article.master_article.title, url_for(@article.master_article) %></h1>
+<%= render :partial => @article.get_category_obj() %>
+
+
+<% form_tag( :controller => "articles", :action => "submit", :method => "get") do %>
+
+<%= label_tag(:comment, "Describe your changes and reasoning.") %>
+
+<%= hidden_field_tag( :id, @article.id) %>
+
+<br />
+
+  <%= text_area_tag( :comment, "",:rows => 5, :cols => 80, :onkeyup => "commentChanged(event)") %>
+  <br />
+  <%= submit_tag("Submit", :id => "submit_button", :disabled => "true") %>
+  
+  <% end %>
+
+
+<h3>Comments</h3>
+<div class="review_comments">
+  <% @article.comments.each do |comment | %>
+    <%= render :partial => comment %>
+    <br />
+  <% end %>
+</div>
+
+<br /><br />
+

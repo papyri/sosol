@@ -1,47 +1,130 @@
-<script>
-function showHide(id)
-{
-  var element = document.getElementById(id);
-  if ( element.style.display != 'none' )
-  {
-     element.style.display = 'none';
-  }
-  else
-  {
-    element.style.display = '';
-  }
-}
-</script>
-
-<h1>
-<% if @current_user.name != nil %>
-<%= @current_user.name %>
-<% else %>
-<%= 'Guest' %>
-<% end %> 
-'s Dashboard'</h1>
+<div class="dashboard">
 
 
-<h2 onclick="showHide('documents')">Documents</h2>
-<div id='documents'>
- <% articles = @current_user.articles %>
-<ul>
- <% articles.each do |a| %>
+	<h2 onclick="showHide('documents')">Documents</h2>
+	<%= link_to "New", { :controller => "master_articles", :action => "new" } %>
+	<br/>
 
-    <li> <%= link_to a.id, edit_article_path(a)%> </li>
-<% end %>
+
+	<div id='documents' class='dashboard_documents'>
+	  <% if @current_user != nil && @current_user.master_articles != nil%>
+		  <% master_articles = @current_user.master_articles %>
+			<ul>
+			  <% master_articles.each do |ma| %>
+				<li><%= link_to ma.title, url_for(ma) %>
+				<!--
+				  <ul>
+					 <% articles = ma.articles %>
+					 <% articles.each do |a| %>
+					   <li> <%= link_to a.category, edit_article_path(a)%> </li>
+					 <% end %>
+				  </ul>
+				  -->
+				 </li>
+				<%end%> 
+			 </ul>
+	  <% end %>
+	</div>
+
+	
+<% if @current_user != nil && @current_user.boards != nil && @current_user.boards.length > 0 %>
+	<h2 onclick="showHide('boards')">Editorial Boards</h2>		
+	<br/>
+
+	<div id='boards'>
+		<% @current_user.boards.each do |board| %>
+			<h4><%= board.title %></h4>
+		  <% articles = board.articles %>		    
+			<ul>
+			  <% articles.each do |article| %>
+					
+					<% if article.master_article != nil && article.status != "new"%>	
+					<% "hide orphaned articles they should not exist, and hide new from board" %>
+						<li>
+						
+						
+						<%= link_to article.master_article.title, url_for(article.master_article) %>  <%= article.status %>  
+						
+										 
+						<% if article.status == "submitted" %>
+							<%= link_to "review", :controller => "articles", :action => "board_review", :id => article.id %>
+							
+							<% # check if user has voted on the article %>
+							<% article.votes.each do |vote| %>					  
+								<% if vote.user_id == @current_user.id %>
+									your vote "<%=vote.choice %>"
+								<% end %>
+							<% end %>
+						<% end %>						
+						
+						<% if article.status == "approved" %>					
+							<% # check if user is the finalizer %>
+							<% #  TODO need to move the finalizer to the article!! %>
+							<% if article.board.finalizer_user_id == @current_user.id %>
+								ready to finalize <%= link_to "finalize", review_for_finalize_article_url(article) %>
+							<% else %>
+								<%= link_to "finalize", review_for_finalize_article_url(article) %>
+							<% end %>
+						<% end %>
+					
+					
+						<% if article.status == "rejected" %>
+							has been rejected.					
+						<% end %>
+					
+						
+						<% if article.status == "graffiti" %>
+							is graffiti.					
+						<% end %>
+									
+						
+						</li>
+						
+					<% end %>
+					
+					
+				<% end %> 
+			</ul>
+		<% end %>
+	</div>
+ <% end %>	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<!--
+	 <% articles = @current_user.articles %>
+     <h2 onclick="showHide('articles')">Articles</h2>
+     <br/>
+     
+	 <div id='articles'>
+	  <ul>
+	    <% articles.each do |a| %>
+		  <li> <%= link_to a.id, edit_article_path(a)%> </li>
+	    <% end %>
+	 </div>
+-->
+
+<!--
+	<h2 onclick="showHide('comments')">Comments</h2>
+	<br/>
+	<div id='comments'>
+	  <% comments = @current_user.comments %>
+		<ul>
+		  <% comments.each do |c| %>
+			<li> <%= c.text%> </li>
+		  <% end %>
+		</ul>
+	</div>
+-->
+
+
 </div>
-<%= link_to "New Doc", { :controller => "articles", :action => "begin" } %>
 
 
-<h2 onclick="showHide('comments')">Comments</h2>
-<div id='comments'>
- <% comments = @current_user.comments %>
-<ul>
- <% comments.each do |c| %>
-    <li> <%= c.text%> </li>
-<% end %>
-<% %>
-</ul>
-</div>
 

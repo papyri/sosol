@@ -18,11 +18,27 @@ class ApplicationController < ActionController::Base
   # session :session_key => '_sosol_session_id'
   # layout 'default'
 
+  before_filter :get_current_master_article
   before_filter :get_user_id
   before_filter :rpx_setup
 
   private
 
+  def set_current_master_article(master_id)
+   session[:master_id] = master_id	
+  end
+  
+  def get_current_master_article()
+    master_id = session[:master_id]
+    if (master_id)
+      begin
+    	@current_master_article = MasterArticle.find(master_id)
+      rescue 
+        @current_master_article = nil
+      end
+    end
+  end
+	
   def get_user_id
     user_id = session[:user_id]
     if user_id
@@ -31,7 +47,27 @@ class ApplicationController < ActionController::Base
     return true
   end
 
-  def rpx_setup
+
+#repository directories, shold be moved to config file somewhere?
+#  def get_translations_dir
+		#hold the hard coded location of the translation files
+#		return "/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"	
+		#return "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"	
+#  end
+
+#  def get_metas_dir
+		#hold the hard coded location of the meta files
+#		return "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"	
+		#return "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"	
+#  end
+  
+  
+  def rpx_setup   
+
+ #   session[:user_id] = 1
+ #  get_user_id()
+ #   return 
+
     unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)
       render :template => 'const_message'
       return false

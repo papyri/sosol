@@ -1,5 +1,23 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
 
+  map.resources :translation_contents
+
+  map.resources :votes
+
+  map.resources :decrees
+
+  map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
+ 
+  map.resources :translations
+
+  map.resources :transcriptions
+
+  map.resources :users
+ 	
+  map.resources :master_articles
+
+  map.resources :metas
 
   map.resources :comments
 
@@ -11,13 +29,12 @@ ActionController::Routing::Routes.draw do |map|
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
 
+	map.help 'help', :controller => 'user', :action => 'help'
+
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
-  
-  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
-  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
-  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
-  map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
+ 
+  map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
   # The priority is based upon order of creation: first created -> highest priority.
 

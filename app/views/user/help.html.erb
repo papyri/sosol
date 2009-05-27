@@ -1,0 +1,185 @@
+
+
+<div class="help">
+
+<h1>SoSOL Help</h1>
+
+<p>
+Current notes: 
+The boards are now open for anyone to edit. Please do not create any new boards - do not destroy any boards.
+Currently you cannot delete an email, just set When_To_Send to "Never". Currently you cannot delete a decree, just set the trigger to a really big number (actually just bigger than the number of board members will do).
+
+The translation & meta works for new-->finalize.
+Meta will send an email to selected board members when a new document is started. An email will be sent to the owner when the edit is approved by the board. An email will be sent to selected board members when the item is finalized.
+
+
+</p>
+
+
+<h2>Dashboard/Home</h2>
+<p>
+The dashboard/home page is the center of your SoSOL experience. Here you can review your documents or start new ones. Click on the title to view the document page.
+</p>
+<p>
+If you are a member of an editorial board, you will see a listing of documents related to the board. The document's status will be shown, along with a link if the item requires your attention.
+</p>
+
+<h2>What is a document?</h2>
+<p>
+A document is a grouping of items to edit. Currently the items are: Meta, Text (sometimes still called transcription), and Translation. You may give the document any title that you wish.
+</p>
+
+<h2>Creating a document</h2>
+<p>
+On the new document page you may create a completely new document or a edit an existing one using the TM number.
+</p>
+
+<h3>New Document</h3>
+<p>
+Type in any title you wish, this is just to help your organize your documents. Check the checkboxes for the items you want to create. Click Create.
+</p>
+
+<h3>Edit by TM Number</h3>
+<p>
+Type in any title you wish, this is just to help your organize your documents. If you do not choose a title, the title will be the TM number. Type in the TM number & click Edit. The meta, text and translation will be loaded if they exist. If not, new items will be created for you.
+</p>
+
+<h2>Document Page</h2>
+
+<p>
+This page contains a brief view of all the items in a document.  Each item will have an Edit and Submit link. You may also Delete All which will delete the entire document. 
+</p>
+
+
+<h2>Editing an item</h2>
+<p>
+On the document page, click the Edit link. The editing pages vary depending on what you are editing.
+</p>
+<h3>Meta</h3>
+<p>
+The meta only has a fill in form. Change or fill in the items and click Save.
+</p>
+<h3>Text</h3>
+<p>
+The text will have the leiden, xml and preview views. It is not implemented in this version of the site.
+</p>
+
+<h3>Translation</h3>
+<p>
+The translation can be edited via the raw Epidoc xml or by the language view. 
+</p>
+
+<h4>XML</h4>
+<p>
+Currently the entire epidoc xml is presented to edit.
+</p>
+
+<h4>Translations - languages</h4>
+<p>
+This page presents each language in a separate text box. Each text box may be expanded or folded by clicking on the language abbreviation. The language prefs choosen for your account will automatically be expanded. A new language can be added with the Add Language link.
+</p>
+
+
+<h2>Submitting an item</h2>
+<p>
+From the document view, click Submit. You will be presented with a review and space to describe your changes etc.. Click Submit.
+</p>
+
+<h2>Reviewing an item</h2>
+<p>
+Once an item has been submitted, members of the editing board will be given the chance to review and vote on the item. Click on the Review link that appears beside the document on the dashboard.
+</p>
+<p>
+The review gives you a brief view of the item, a list of comments, the vote history, and a list of voting options. You may link to the entire document by clicking the title. Comment on your vote, check your choosen vote and click Vote. Once you have voted, you may not change your vote.
+</p>
+<p>
+When a vote is placed. The votes are tallied and the result depends on how the decrees are set up for the board.
+</p>
+<h2>Finalizing an item</h2>
+<p>
+If an item is approved, then it must be finalized. What this entails will vary for each item but it essentially means that one person has the job of reviewing all of the comments and edits and deciding the final result. Once they have made the final edits, then they must click Finalize and the process will be completed. What happens for completion will vary with each item type. The texts will be commited to the repository. The meta will be emailed to James, etc...
+</p>
+
+
+
+
+
+
+<h2>Editorial Boards</h2>
+<p>
+Editorial boards controll the flow of the item that is being edited. Each board has a title and a category. The category controls which category of item is being edited. Choices are "Meta", "Transcription", or "Translation".
+The members are users who are allowed to review and vote on the items.
+</p>
+
+<p>
+Under normal use there will be and admin for each board who controls the settings. Currently I have set everyone to be an admin.
+</p>
+
+<h3>Decrees</h3>
+</p>
+<p>
+ Decrees describe the types of votes, how they are counted and the resulting action. Each decree has an Action, Trigger and Choices.
+</p>
+
+<h4>Action</h4>
+<p>
+This is what happens when the tally is positive for the decree.
+</p>
+
+<h4>Trigger</h4>
+<p>
+This determines how the vote is tallied. For the vote to be a percentage of the total board members enter the value as a decimal percentage, i.e. 0.50 is 50%. For the vote to be an absolute count, use a whole number, i.e. 2 would require that any 2 members vote.
+</p>
+
+<h4>Choices</h4>
+<p>
+This list the choices that count towards the decree. Choices are space separated. The same choice could be used in multiple decrees.
+</p>
+
+<h3>Emails</h3>
+<p>
+Emails can be sent out when certain events take place concerning the item. The emails can be sent to board members, the item's owner or any other addresses you want to add. The email may contain a message and/or the document being edited.
+</p>
+
+
+
+<h4>Members</h4>
+<p>
+This is a list of the board members that will get the email.
+</p>
+<h4>Extra Addresses</h4>
+<p>
+This is a list of extra addresses you want to recieve the email. Separate by spaces only.
+</p>
+<h4>When to send</h4>
+<p>
+This is when to send the email.
+<ul>
+	<li>New</li>
+	<li>Submitted</li>
+	<li>Aproved</li>
+	<li>Rejected</li>
+	<li>Graffiti</li>
+	<li>Finalized</li>
+	<li>Never</li>
+</ul>
+</p>
+<h4>Include Document</h4>
+<p>
+Check to include an attachment of edited item.
+</p>
+<h4>Include Owner</h4>
+<p>
+Check to include an email to the owner of the item.
+</p>
+<h4>Message</h4>
+<p>
+The message that will be the body of the email.
+</p>
+
+
+
+</div>
+
+
+
