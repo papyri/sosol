@@ -1,0 +1,29 @@
+#identifier_menu
+  .site
+    %ul
+      %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}= link_to 'Text', edit_text_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}= link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
+      %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
+#identifier_sub_menus
+  .identifier_sub_menu
+    .site
+      .joiner
+      %ul
+        %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+        %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+  - if params[:action] != 'history' 
+    - case @identifier
+      - when DDBIdentifier
+        .identifier_sub_menu#sub_menu_2
+          .site
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+              %li{ :class => params[:action] == 'comment_on' ? 'active' : ' '}= link_to 'Comment'#, comment_on_publication_path(@publication)
+      - when HGVMetaIdentifier
+        .identifier_sub_menu#sub_menu_2
+          .site
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Metadata', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)

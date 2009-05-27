@@ -3,3 +3,5 @@
   %ul
   - for article in @articles
     %li= link_to(get_title(article.content), edit_article_path(article))
+  - for branch in @branches
+    %li= branch

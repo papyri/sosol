@@ -21,6 +21,15 @@ class ApplicationController < ActionController::Base
   before_filter :get_current_master_article
   before_filter :get_user_id
   before_filter :rpx_setup
+  
+  protected
+  
+  def authorize
+    if @current_user.nil?
+      flash[:notice] = "Please log in"
+      redirect_to signin_url
+    end
+  end
 
   private
 

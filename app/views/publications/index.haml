@@ -1,0 +1,16 @@
+#main.site
+  %h2 Listing Publications
+  %ul
+    - for publication in @publications
+      %li= link_to(publication.title, edit_polymorphic_path([publication, publication.entry_identifier]))
+  - if @branches.length > 0
+    %h2 Listing Branches
+    %ul
+    - for branch in @branches
+      %li= branch
+  %br
+  - form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
+    = label_tag 'pn_id', 'Create from PN ID:'
+    = form.text_field 'pn_id', :size => 60
+    = form.submit "Create", :class => 'save'
+    

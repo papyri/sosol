@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090505163205) do
+ActiveRecord::Schema.define(:version => 20090514210236) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -152,6 +152,21 @@ ActiveRecord::Schema.define(:version => 20090505163205) do
     t.integer  "translation_content_id"
     t.boolean  "xml_to_translations_ok"
     t.boolean  "translations_to_xml_ok"
+  create_table "identifiers", :force => true do |t|
+    t.string   "name"
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "publication_id"
+    t.string   "alternate_name"
+  end
+
+  create_table "publications", :force => true do |t|
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.string   "branch"
   end
 
   create_table "users", :force => true do |t|
@@ -174,6 +189,7 @@ ActiveRecord::Schema.define(:version => 20090505163205) do
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "has_repository", :default => false
   end
 
 end

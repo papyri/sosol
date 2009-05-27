@@ -33,6 +33,11 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   config.gem "haml"
   config.gem "capistrano", :version => ">= 2.5.5"
   config.gem "json"
+	
+	config.gem 'mojombo-grit',
+	  :lib     => 'grit',
+	  :source  => 'http://gems.github.com',
+	  :version => '>= 0.9.4'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -84,8 +89,8 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   
  # META_DIR = "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"
  # TRANSLATION_DIR ="/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"  
-  
   META_DIR = "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"
   TRANSLATION_DIR = "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"
   
+  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p=db/git/"
 end

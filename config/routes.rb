@@ -36,6 +36,19 @@ ActionController::Routing::Routes.draw do |map|
  
   map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
+  
+  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
+  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
+  map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
+  
+  map.resources :publications, :member => { :edit_text => :get, :edit_meta => :get, :show => :get, :create => :post }
+  map.resources :publications do |publication|
+    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put }
+    publication.resources :hgv_meta_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put }
+    # publication.resources :identifiers
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

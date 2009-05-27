@@ -32,5 +32,19 @@ namespace :git do
         warn "branch isn't configured for a separate database"
       end
     end
+    namespace :canonical do
+      desc "Clone Canonical idp.data Git database"
+      task :clone => :environment do
+        require 'config/boot'
+        
+        CANONICAL_CLONE_URL = "git://halsted.vis.uky.edu/git/idp.data.git"
+        
+        clone_command = ["git clone --bare",
+                        CANONICAL_CLONE_URL,
+                        CANONICAL_REPOSITORY].join(' ')
+        
+        system(clone_command)
+      end
+    end
   end
 end

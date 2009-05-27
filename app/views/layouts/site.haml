@@ -7,18 +7,10 @@
       == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
-    = stylesheet_link_tag 'sosol'
-
-    = javascript_include_tag 'prototype'	
-        	
-    = javascript_include_tag 'effects'	
-    = javascript_include_tag 'dragdrop'
-    = javascript_include_tag 'controls'	
     = javascript_include_tag :defaults
-    
   %body
-    #header{ :class => (['edit','editxml','preview'].include? params[:action]) ? '' : 'basic' }
-      .site        
+    #header{ :class => (['edit','editxml','preview','history'].include? params[:action]) ? '' : 'basic' }
+      .site
         #logo
           %h1= link_to SITE_NAME, root_url
         -#= render(:partial => 'master_articles/master_article_box')
