@@ -9,10 +9,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
-  map.resources :translations
-
-  map.resources :transcriptions
-
   map.resources :users
  	
   map.resources :metas
