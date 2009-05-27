@@ -1,6 +1,4 @@
-class DDBIdentifier < Identifier
-  include DdbIdentifiersHelper
-  
+class DDBIdentifier < Identifier  
   DDB_PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
