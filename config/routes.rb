@@ -1,8 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
 
-  map.resources :translation_contents
-
   map.resources :votes
 
   map.resources :decrees
