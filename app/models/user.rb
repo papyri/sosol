@@ -1,8 +1,8 @@
 class User < ActiveRecord::Base
   validates_uniqueness_of :name
   
-  has_many :articles
-  has_many :comments
+  # has_many :articles
+  # has_many :comments
   
   #has_many :boards
   #belongs_to :board
@@ -10,8 +10,6 @@ class User < ActiveRecord::Base
   
   has_and_belongs_to_many :emailers
   
-	# has_many :articles
-  # has_many :comments
   has_many :publications
   
   def repository
