@@ -5,7 +5,7 @@ class CreateBoards < ActiveRecord::Migration
       t.string :category
       t.integer :user_id
       t.integer :decree_id
-      t.integer :article_id
+      # t.integer :article_id
 
       t.timestamps
     end
