@@ -15,8 +15,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :users
  	
-  map.resources :master_articles
-
   map.resources :metas
 
   map.resources :comments
