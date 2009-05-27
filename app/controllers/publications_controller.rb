@@ -25,7 +25,7 @@ class PublicationsController < ApplicationController
     @branches = @current_user.repository.branches
     @branches.delete("master")
     
-    @publications = Publication.find_all_by_user_id(@current_user.id)
+    @publications = Publication.find_all_by_owner_id(@current_user.id)
     # just give branches that don't have corresponding publications
     @branches -= @publications.map{|p| p.branch}
 

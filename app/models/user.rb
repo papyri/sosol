@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   
   has_and_belongs_to_many :emailers
   
-  has_many :publications, :as => :resource
+  has_many :publications, :as => :owner
   
   def repository
     @repository ||= Repository.new(self)
@@ -45,7 +45,8 @@ class User < ActiveRecord::Base
     ].each do |pn_id|
       p = Publication.new
       p.populate_identifiers_from_identifier(pn_id)
-      self.publications << p
+      p.owner = self
+      p.save!
     end
     
   end

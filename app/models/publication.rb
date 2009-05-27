@@ -6,8 +6,8 @@ class Publication < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   has_many :identifiers
   
-  validates_uniqueness_of :title, :scope => 'user_id'
-  validates_uniqueness_of :branch, :scope => 'user_id'
+  validates_uniqueness_of :title, :scope => 'owner_id'
+  validates_uniqueness_of :branch, :scope => 'owner_id'
 
   validates_each :branch do |model, attr, value|
     # Excerpted from git/refs.c:
@@ -55,7 +55,7 @@ class Publication < ActiveRecord::Base
   
   # TODO: rename actual branch after branch attribute rename
   def after_create
-    user.repository.create_branch(branch)
+    owner.repository.create_branch(branch)
   end
   
   # TODO: destroy branch on publication destroy
