@@ -9,8 +9,6 @@ ActionController::Routing::Routes.draw do |map|
  
   map.resources :users
  	
-  map.resources :metas
-
   map.resources :comments
 
   map.resources :events
