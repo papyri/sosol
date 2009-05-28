@@ -5,10 +5,12 @@
 %h1
   Editing Publication
   = @identifier.publication.title
+  (
+  = link_to "Submit", ""
+  )
 %h3
   Identifier
   = @identifier.name
   (
-  %a{ :href => "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}" }
-    view in PN
+  = link_to "View in PN", "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}"
   )
