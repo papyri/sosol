@@ -62,6 +62,7 @@ class BoardsController < ApplicationController
   # GET /boards/new.xml
   def new
     @board = Board.new
+    @valid_identifier_classes = Identifier::IDENTIFIER_SUBCLASSES
   
     respond_to do |format|
       format.html # new.html.erb
