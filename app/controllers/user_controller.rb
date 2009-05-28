@@ -40,7 +40,8 @@ class UserController < ApplicationController
     if @current_user == nil
       redirect_to :controller => "user", :action => "signin"
     end
-  
+    @publications = Publication.find_all_by_owner_id(@current_user.id)
+    
   end
   
   
