@@ -1,6 +1,6 @@
 class AddOwnerTargetToEvent < ActiveRecord::Migration
   def self.up
-    add_column :events, :ownder_id, :integer
+    add_column :events, :owner_id, :integer
     add_column :events, :owner_type, :string
     add_column :events, :target_id, :integer
     add_column :events, :target_type, :string
@@ -10,6 +10,6 @@ class AddOwnerTargetToEvent < ActiveRecord::Migration
     remove_column :events, :target_type
     remove_column :events, :target_id
     remove_column :events, :owner_type
-    remove_column :events, :ownder_id
+    remove_column :events, :owner_id
   end
 end
