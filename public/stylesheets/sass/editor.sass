@@ -158,18 +158,20 @@ body
 #identifier_menu
   background = !main_color_fade
   text-align: left
-  overflow: hidden
+  clear: both
+  / height: 2em
+  / overflow: hidden
 
   ul
-    overflow: hidden
+    / overflow: hidden
+    height: 2em
     background = !main_color_fade_full
     border-bottom-width: .2em
     border-bottom-style: solid
     border-bottom-color = !main_color_fade_max
 
     li.active
-      a
-        background = !main_color_fade_max
+      background = !main_color_fade_max
 
     li
       background = !main_color
@@ -181,18 +183,37 @@ body
       border-right-width: .13em
       border-right-style: solid
       position: relative
+      
+      ul
+        height: auto
+        border-width: .2em
+        border-style: solid
+        border-color = !main_color
+        border-top-width: 0em
+        display: none
+        position: absolute
+        width: 20em
+        margin-top: .4em
+        background = !main_color_fade_max
+        
+        li
+          background = !main_color_fade_max
+          clear: both
+          float: left
 
       &:hover
         background = !main_color_fade_full
-
-      .active
-        background = !main_color_fade_max
+        
+        > ul,li
+          / clear: both
+          display: block
+          z-index: 1000
 
         a
           color: black
 
-          &:hover
-            color = !main_color_fade_full
+          / &:hover
+          /   color = !main_color_fade_full
       a
         padding: 1em 1.25em .3em 1.25em
         color = !main_color_darken_full
@@ -222,6 +243,7 @@ body
   clear: both
 
 #identifier_sub_menus
+  clear: both
   margin-bottom: 1.5em
 
 #sub_menu_2
@@ -257,7 +279,6 @@ body
     ul
       display: none
       position: absolute
-      z-index: 1000
       top: 1em
       left: 0
       background-color = !main_color_darken

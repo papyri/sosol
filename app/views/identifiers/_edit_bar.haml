@@ -1,7 +1,14 @@
 #identifier_menu
   .site
     %ul
-      %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}= link_to 'Text', edit_text_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
+        = link_to 'Text', edit_text_publication_path(@identifier.publication)
+        - texts = @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}
+        - if texts.length > 1
+          %ul
+            - for text in texts
+              %li
+                = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
       %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}= link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
       %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
 #identifier_sub_menus
