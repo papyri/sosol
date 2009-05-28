@@ -4,7 +4,4 @@
       = event.owner == @current_user ? "You" : event.owner.name
       = event.category
       = event.target.title
-      (
-      = time_ago_in_words(event.created_at)
-      ago
-      )
+      == (#{time_ago_in_words(event.created_at)} ago)
