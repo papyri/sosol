@@ -7,11 +7,15 @@
       = f.label :title
       %br
       = f.text_field :title
+    %br
     %p
-      = f.label :category
+      = f.label "Identifier classes"
       %br
-      - possible_categories = {"Meta" => "Meta", "Transcription" => "Transcription", "Translation" => "Translation" }
-      = f.select :category , possible_categories
+      - @valid_identifier_classes.each do |identifier_class|
+        = check_box_tag identifier_class
+        = identifier_class.sub(/Identifier$/,'')
+        %br
+    %br
     %p
       = f.submit "Create"
   = link_to 'Back', boards_path

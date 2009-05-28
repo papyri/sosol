@@ -79,6 +79,13 @@ class BoardsController < ApplicationController
   # POST /boards.xml
   def create
     @board = Board.new(params[:board])
+    
+    @board.identifier_classes = []
+    Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
+      if params.has_key?(identifier_class) && params[identifier_class] == "1"
+        @board.identifier_classes << identifier_class
+      end
+    end
 
     if @board.save
       flash[:notice] = 'Board was successfully created.'
