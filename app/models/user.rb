@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :emailers
   
   has_many :publications, :as => :owner
+  has_many :events, :as => :owner
   
   def repository
     @repository ||= Repository.new(self)
