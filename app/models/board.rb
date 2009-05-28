@@ -5,6 +5,12 @@ class Board < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :publications, :as => :owner
   has_many :events, :as => :owner
+  
+  # :identifier_classes is an array of identifier classes this board has
+  # commit control over. This isn't done relationally because it's not a
+  # relation to instances of identifiers but rather to identifier classes
+  # themselves.
+  serialize :identifier_classes
 
   def tally_votes(votes)
     #work in progress
