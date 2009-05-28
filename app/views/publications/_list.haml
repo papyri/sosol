@@ -9,6 +9,6 @@
 /     %li= branch
 %br
 - form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
-  = label_tag 'pn_id', 'Create from PN ID:'
-  = form.text_field 'pn_id', :size => 60
+  = label_tag 'pn_id', 'Create publication from PN ID:'
+  = form.text_field 'pn_id', :size => 40
   = form.submit "Create", :class => 'save'
