@@ -57,8 +57,9 @@ class Publication < ActiveRecord::Base
   # TODO: rename actual branch after branch attribute rename
   def after_create
     owner.repository.create_branch(branch)
+    
     e = Event.new
-    e.category = "created"
+    e.category = "started editing"
     e.target = self
     e.owner = self.owner
     e.save!
