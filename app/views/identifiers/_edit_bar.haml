@@ -9,7 +9,14 @@
             - for text in texts
               %li
                 = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
-      %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}= link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}
+        = link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
+        - metas = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
+        - if metas.length > 1
+          %ul
+            - for meta in metas
+              %li
+                = link_to meta.alternate_name, edit_polymorphic_path([@identifier.publication, meta])
       %li= link_to 'Translation', edit_polymorphic_path([@identifier.publication, @identifier])
 #identifier_sub_menus
   .identifier_sub_menu
