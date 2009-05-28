@@ -31,8 +31,12 @@ class Identifier < ActiveRecord::Base
     return self.content
   end
   
-  
   def set_xml_content(content, comment)
     self.set_content(content, :comment => comment)
+  end
+  
+  def Identifier.subclasses
+    Dir.glob(RAILS_ROOT + '/app/models/*.rb').each { |file| require file }
+    Object.subclasses_of(Identifier)
   end
 end
