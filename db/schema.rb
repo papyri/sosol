@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(:version => 20090528165638) do
     t.string   "category"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ownder_id"
+    t.integer  "owner_id"
     t.string   "owner_type"
     t.integer  "target_id"
     t.string   "target_type"
