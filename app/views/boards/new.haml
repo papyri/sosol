@@ -1,0 +1,16 @@
+%h1
+  New board
+- form_for(@board) do |f|
+  = f.error_messages
+  %p
+    = f.label :title
+    %br
+    = f.text_field :title
+  %p
+    = f.label :category
+    %br
+    - possible_categories = {"Meta" => "Meta", "Transcription" => "Transcription", "Translation" => "Translation" }
+    = f.select :category , possible_categories
+  %p
+    = f.submit "Create"
+= link_to 'Back', boards_path
