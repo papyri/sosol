@@ -43,8 +43,13 @@ class User < ActiveRecord::Base
       p.populate_identifiers_from_identifier(pn_id)
       p.owner = self
       p.save!
+      
+      e = Event.new
+      e.category = "started editing"
+      e.target = p
+      e.owner = self
+      e.save!
     end
-    
   end
   
   def before_destroy
