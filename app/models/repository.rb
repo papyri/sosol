@@ -79,15 +79,13 @@ class Repository
   end
   
   def commit_content(file, branch, data, comment)
-    if data != get_file_from_branch(file, branch)
-      index = @repo.index
-      index.read_tree(branch)
-      index.add(file, data)
-      index.commit(comment,
-                   @repo.commits(branch,1).first.to_s, # commit parent
-                   nil,
-                   nil,
-                   branch)
-    end
+    index = @repo.index
+    index.read_tree(branch)
+    index.add(file, data)
+    index.commit(comment,
+                 @repo.commits(branch,1).first.to_s, # commit parent
+                 nil,
+                 nil,
+                 branch)
   end
 end
