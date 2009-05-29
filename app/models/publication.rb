@@ -66,6 +66,7 @@ class Publication < ActiveRecord::Base
     duplicate = self.clone
     duplicate.owner = new_owner
     duplicate.title = self.owner.name + "/" + self.title
+    duplicate.branch = title_to_ref(duplicate.title)
     duplicate.save!
     
     duplicate.owner.repository.copy_branch_from_repo(
