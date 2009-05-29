@@ -5,8 +5,8 @@ class User < ActiveRecord::Base
   
   has_and_belongs_to_many :emailers
   
-  has_many :publications, :as => :owner
-  has_many :events, :as => :owner
+  has_many :publications, :as => :owner, :dependent => :destroy
+  has_many :events, :as => :owner, :dependent => :destroy
   
   has_repository
   
@@ -53,7 +53,5 @@ class User < ActiveRecord::Base
   
   def before_destroy
     repository.destroy
-    publications.destroy_all
-    events.destroy_all
   end
 end
