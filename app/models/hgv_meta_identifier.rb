@@ -14,7 +14,7 @@ class HGVMetaIdentifier < Identifier
     path_components << hgv_dir_name << hgv_xml_path
 
     # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
-    return path_components.join('/')
+    return File.join(path_components)
   end
   
   def valid_epidoc_attributes

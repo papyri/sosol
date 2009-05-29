@@ -67,7 +67,7 @@ class DDBIdentifier < Identifier
     path_components << ddb_xml_path
     
     # e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
-    return path_components.join('/')
+    return File.join(path_components)
   end
   
   def get_collection_xml
