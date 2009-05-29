@@ -24,6 +24,7 @@ class Board < ActiveRecord::Base
   end
   
   def before_destroy
+    publications.destroy_all
     repository.destroy
   end
 
