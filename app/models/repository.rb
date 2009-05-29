@@ -74,6 +74,10 @@ class Repository
     @repo.git.branch({}, name, 'master')
   end
   
+  def add_alternates(other_repo)
+    @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
+  end
+  
   def branches
     @repo.branches.map{|b| b.name}
   end
