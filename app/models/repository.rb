@@ -31,25 +31,26 @@ class Repository
     end
     
     @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
-    if master.nil? || exists?
+    if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
     else
       @repo = nil
     end
   end
   
-  def exists?
-    master.has_repository?
+  def exists?(path)
+    # master.has_repository?
+    File.exists?(path)
   end
 
   def create
-    master.update_attribute :has_repository, true
+    # master.update_attribute :has_repository, true
     # create a git repository
     @repo ||= @canonical.fork_bare(path)
   end
   
   def destroy
-    master.update_attribute :has_repository, false
+    # master.update_attribute :has_repository, false
     # destroy a git repository
     FileUtils::rm_r path, :verbose => true, :secure => true
   end
