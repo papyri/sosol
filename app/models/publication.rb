@@ -4,7 +4,7 @@ class Publication < ActiveRecord::Base
   validates_presence_of :title, :branch
   
   belongs_to :owner, :polymorphic => true
-  has_many :identifiers
+  has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target
   
   validates_uniqueness_of :title, :scope => 'owner_id'
