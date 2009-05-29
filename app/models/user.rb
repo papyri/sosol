@@ -8,9 +8,7 @@ class User < ActiveRecord::Base
   has_many :publications, :as => :owner
   has_many :events, :as => :owner
   
-  def repository
-    @repository ||= Repository.new(self)
-  end
+  has_repository
   
   def after_create
     repository.create
