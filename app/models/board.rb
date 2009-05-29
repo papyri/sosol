@@ -3,7 +3,7 @@ class Board < ActiveRecord::Base
   has_many :emailers
 
   has_and_belongs_to_many :users
-  has_many :publications, :as => :owner
+  has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner
   
   # :identifier_classes is an array of identifier classes this board has
@@ -24,7 +24,6 @@ class Board < ActiveRecord::Base
   end
   
   def before_destroy
-    publications.destroy_all
     repository.destroy
   end
 
