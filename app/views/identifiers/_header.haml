@@ -2,11 +2,13 @@
   .flash
     %h3
       = flash[:notice]
-%h1
-  Editing Publication
-  = @identifier.publication.title
-  == (#{link_to "Submit", submit_publication_path(@identifier.publication), :method => :post})
-%h3
-  Identifier
-  = @identifier.name
-  == (#{link_to "View in PN", "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}"})
+#edit_header
+  %h1
+    Editing Publication
+    = @identifier.publication.title
+  #submit
+    = button_to "Submit", submit_publication_path(@identifier.publication), :class => 'submit', :method => :post
+  %h3
+    Identifier
+    = @identifier.name
+    == (#{link_to "View in PN", "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}"})

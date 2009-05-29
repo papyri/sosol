@@ -18,6 +18,37 @@
 =helvetica
   font-family: helvetica, arial, clean, sans-serif
 
+=text_padding
+  padding: 0.5em
+  padding-left: 1em
+  padding-right: 1em
+  
+=text_padding_small
+  padding: 0.25em
+  padding-left: 0.5em
+  padding-right: 0.5em
+
+=text_box
+  +text_padding
+  border-style: solid
+  border-width: 0.1em
+  border-color = !main_color
+  background = !main_color_fade_full
+
+=styled_button
+  +helvetica
+  font-size: 1.25em
+  +text_padding_small
+  background = !main_color_fade_full
+  border-color = !main_color
+  border-style: outset
+  border-width: 0.13em
+  &:hover
+    background = !main_color
+  &:active
+    background: #c0c0c0
+    border-style: inset
+
 body
   height: 100%
   +helvetica
@@ -48,6 +79,19 @@ body
   margin: 0 auto
   padding: 0 3em
   text-align: left
+
+#edit_header
+  h1
+    float: left
+  h3
+    clear: both
+
+  #submit
+    float: left
+    margin-left: 1em
+
+input.submit
+  +styled_button
   
 #logo
   width: auto
@@ -58,18 +102,6 @@ body
   a
     text-decoration: none
     color: black
-
-=text_padding
-  padding: 0.5em
-  padding-left: 1em
-  padding-right: 1em
-  
-=text_box
-  +text_padding
-  border-style: solid
-  border-width: 0.1em
-  border-color = !main_color
-  background = !main_color_fade_full
 
 .text_box
   +text_box
@@ -128,21 +160,8 @@ body
     input.comment
       width: 100%
     input.save
-      +helvetica
-      font-size: 1.25em
+      +styled_button
       margin-top: 1em
-      +text_padding
-      background = !main_color_fade_full
-      border-color = !main_color
-      border-style: outset
-      border-width: 0.13em
-      
-      &:hover
-        background = !main_color
-      
-      &:active
-        background: #c0c0c0
-        border-style: inset
 
 #rpx_box
   float: left
