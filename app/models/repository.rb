@@ -27,7 +27,10 @@ class Repository
     if master.nil?
       @path = CANONICAL_REPOSITORY
     else
-      @path = File.join(REPOSITORY_ROOT, "#{master.name}.git")
+      master_class_path = @master.class.to_s.underscore.pluralize
+      FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, master_class_path))
+      @path = File.join(REPOSITORY_ROOT,
+                        master_class_path, "#{master.name}.git")
     end
     
     @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
