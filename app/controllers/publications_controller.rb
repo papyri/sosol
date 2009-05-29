@@ -14,6 +14,7 @@ class PublicationsController < ApplicationController
     @publication.owner = @current_user
     
     if @publication.save
+      @publication.branch_from_master
       flash[:notice] = 'Publication was successfully created.'
       redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     end

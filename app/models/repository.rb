@@ -65,13 +65,19 @@ class Repository
     @repo.log(branch, file).map{|commit| commit.to_hash}
   end
   
-  def create_branch(name)
+  def create_branch(name, source_name = 'master')
     # We have to abuse git here because Grit::Head doesn't appear to have
     # a facility for writing out a sha1 to refs/heads/name yet
-    # Also, we always assume we want to branch from master
-    # TODO: Update master branch tip from canonical
+    # Also, we always assume we want to branch from master by default
+    # TODO: Update master branch tip from canonical?
     
-    @repo.git.branch({}, name, 'master')
+    @repo.git.branch({}, name, source_name)
+  end
+  
+  def copy_branch_from_repo(branch, new_branch, other_repo)
+    self.add_alternates(other_repo)
+    head_ref = other_repo.repo.get_head(branch).commit.sha
+    self.create_branch(new_branch, head_ref)
   end
   
   def add_alternates(other_repo)

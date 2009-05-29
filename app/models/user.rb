@@ -43,6 +43,7 @@ class User < ActiveRecord::Base
       p.populate_identifiers_from_identifier(pn_id)
       p.owner = self
       p.save!
+      p.branch_from_master
       
       e = Event.new
       e.category = "started editing"

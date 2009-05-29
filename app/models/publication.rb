@@ -56,7 +56,21 @@ class Publication < ActiveRecord::Base
   
   # TODO: rename actual branch after branch attribute rename
   def after_create
+  end
+  
+  def branch_from_master
     owner.repository.create_branch(branch)
+  end
+  
+  def copy_to_owner(new_owner)
+    duplicate = self.clone
+    duplicate.owner = new_owner
+    duplicate.title = self.owner.name + "/" + self.title
+    duplicate.save!
+    
+    duplicate.owner.repository.copy_branch_from_repo(
+      self.branch, duplicate.branch, self.owner.repository
+    )
   end
   
   # TODO: destroy branch on publication destroy
