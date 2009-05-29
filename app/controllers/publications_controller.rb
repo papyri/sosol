@@ -20,6 +20,14 @@ class PublicationsController < ApplicationController
     end
   end
   
+  def submit
+    @publication = Publication.find(params[:id])
+    @publication.submit
+    
+    flash[:notice] = 'Publication submitted.'
+    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+  end
+  
   # GET /publications
   # GET /publications.xml
   def index

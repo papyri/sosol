@@ -5,7 +5,7 @@
 %h1
   Editing Publication
   = @identifier.publication.title
-  == (#{link_to "Submit", ""})
+  == (#{link_to "Submit", submit_publication_path(@identifier.publication), :method => :post})
 %h3
   Identifier
   = @identifier.name

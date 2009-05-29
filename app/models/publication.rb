@@ -54,6 +54,29 @@ class Publication < ActiveRecord::Base
     self.branch ||= title_to_ref(self.title)
   end
   
+  def submit
+    boards = Board.find(:all)
+    boards.each do |board|
+      board_matches_publication = false
+      identifiers.each do |identifier|
+        if board.identifier_classes.include?(identifier.class.to_s)
+          board_matches_publication = true
+          break
+        end
+      end
+      
+      if board_matches_publication
+        copy_to_owner(board)
+      end
+    end
+    
+    e = Event.new
+    e.category = "submitted"
+    e.target = self
+    e.owner = self.owner
+    e.save!
+  end
+  
   # TODO: rename actual branch after branch attribute rename
   def after_create
   end
