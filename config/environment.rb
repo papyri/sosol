@@ -87,8 +87,8 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   SITE_NAME = 'SoSOL'
   SITE_FULL_NAME = 'Son of Suda On Line'
   
-  CANONICAL_REPOSITORY = "#{RAILS_ROOT}/db/canonical.git"
-  USER_REPOSITORY_ROOT = "#{RAILS_ROOT}/db/git"
+  REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
+  CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
  # META_DIR = "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"
  # TRANSLATION_DIR ="/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"  
