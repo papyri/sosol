@@ -11,6 +11,21 @@ class Board < ActiveRecord::Base
   # relation to instances of identifiers but rather to identifier classes
   # themselves.
   serialize :identifier_classes
+  
+  has_repository
+  
+  # workaround repository need for owner name for now
+  def name
+    return title
+  end
+  
+  def after_create
+    repository.create
+  end
+  
+  def before_destroy
+    repository.destroy
+  end
 
   def tally_votes(votes)
     #work in progress
