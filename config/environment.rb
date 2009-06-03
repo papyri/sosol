@@ -95,5 +95,5 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   META_DIR = "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"
   TRANSLATION_DIR = "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"
   
-  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p=db/git/"
+  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 end

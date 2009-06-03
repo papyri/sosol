@@ -20,7 +20,7 @@ class IdentifiersController < ApplicationController
         commit[:message] = '(no commit message)'
       end
       commit[:url] = GITWEB_BASE_URL +
-                     ["#{@current_user.name}.git",
+                     ["#{@current_user.repository.path.sub(/^#{REPOSITORY_ROOT}\//,'')}",
                       "a=commitdiff",
                       "h=#{commit[:id]}"].join(';')
     end
