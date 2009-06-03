@@ -114,6 +114,12 @@ class DDBIdentifier < Identifier
     self.set_xml_content(xml_content, comment)
   end
   
+  REXML::Attribute.class_eval( %q^
+    def to_string
+      %Q[#@expanded_name="#{to_s().gsub(/"/, '&quot;')}"]
+    end
+  ^ )
+  
   def leiden_plus_to_xml(content)
     # transform the Leiden+ to XML
     transformed_xml_content = REXML::Document.new(
