@@ -103,6 +103,12 @@ class Publication < ActiveRecord::Base
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.save!
     
+    # copy identifiers over to new pub
+    identifiers.each do |identifier|
+      duplicate_identifer = identifier.clone
+      duplicate.identifiers << duplicate_identifer
+    end
+    
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
     )
