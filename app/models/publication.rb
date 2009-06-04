@@ -6,6 +6,7 @@ class Publication < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
+  has_many :votes, :dependent => :destroy
   
   validates_uniqueness_of :title, :scope => 'owner_id'
   validates_uniqueness_of :branch, :scope => 'owner_id'
