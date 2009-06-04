@@ -10,13 +10,16 @@ class PublicationsController < ApplicationController
   def create
     @publication = Publication.new()
     @publication.populate_identifiers_from_identifier(
-      params[:publication][:pn_id])
+      params[:pn_id])
     @publication.owner = @current_user
     
     if @publication.save
       @publication.branch_from_master
       flash[:notice] = 'Publication was successfully created.'
       redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    else
+      flash[:notice] = 'Error creating publication'
+      redirect_to dashboard_url
     end
   end
   

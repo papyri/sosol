@@ -2,9 +2,9 @@
   %h2 Your Publications
   = render :partial => "publications/list", :object => @publications
   %br
-  - form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
+  - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
     = label_tag 'pn_id', 'Create publication from PN ID:'
-    = form.text_field 'pn_id', :size => 40
+    = text_field_tag 'pn_id', '', :size => 40
     = form.submit "Create", :class => 'save'
   %br
   - if @current_user.boards.length > 0
