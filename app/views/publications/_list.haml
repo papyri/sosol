@@ -2,8 +2,8 @@
   - for publication in list
     %li
       = link_to(publication.title, edit_polymorphic_path([publication, publication.entry_identifier]))
-      - if publication.status == "submitted"
-        (submitted)
+      - if !publication.status.nil? && publication.status != ''
+        == (#{publication.status})
 / - if @branches.length > 0
 /   %h2 Listing Branches
 /   %ul
