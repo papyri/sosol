@@ -71,4 +71,67 @@ class PublicationsController < ApplicationController
     @identifier = HGVMetaIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
+  
+  def vote            
+    @vote = Vote.new(params[:vote])
+    @publication = Publication.find(params[:id])   
+    
+    #double check that they have not already voted
+    has_voted = @publication.votes.find_by_user_id(@current_user.id)
+    if !has_voted 
+      @vote.user_id = @current_user.id
+      @vote.save   
+      @publication.votes << @vote
+          
+      # @comment = Comment.new()
+      # @comment.article_id = params[:id]
+      # @comment.text = params[:comment]
+      # @comment.user_id = @current_user.id
+      # @comment.reason = "vote"
+      # @comment.save
+      
+      #TODO tie vote and comment together?  
+      
+      #need to tally votes and see if any action will take place
+      decree_action = @publication.owner.tally_votes(@publication.votes)
+      #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
+      #NOTE here are the types of actions for the voting results
+      #approve, reject, graffiti
+      
+      # create an event if anything happened
+      if !decree_action.nil? && decree_action != ''
+        e = Event.new
+        e.owner = @publication.owner
+        e.target = @publication
+        e.category = "marked as \"#{decree_action}\""
+        e.save!
+      end
+    
+    
+      if decree_action == "approve"
+        #@publication.get_category_obj().approve
+        @publication.status = "approved"
+        @publication.save
+        # @publication.send_status_emails(decree_action)    
+      elsif decree_action == "reject"
+        #@publication.get_category_obj().reject       
+        @publication.status = "new" #reset to unsubmitted       
+        @publication.save
+        # @publication.send_status_emails(decree_action)
+      elsif decree_action == "graffiti"               
+        # @publication.send_status_emails(decree_action)
+        #do destroy after email since the email may need info in the artice
+        #@publication.get_category_obj().graffiti
+        @publication.destroy #need to destroy related?
+        redirect_to url_for(dashboard)
+        return
+      else
+        #unknown action or no action    
+      end   
+    
+    end #!has_voted
+    #do what now? go to review page
+    
+    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+  end
 end
