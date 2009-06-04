@@ -28,6 +28,7 @@ role :db,  "halsted.vis.uky.edu", :primary => true
 task :after_update_code, :roles => :app do
   git_path = "#{shared_path}/db/git"
   run "mkdir -p #{git_path}"
+  run "rm -rf #{release_path}/db/git"
   run "ln -s #{git_path} #{release_path}/db/git"
   
   db_config = "#{shared_path}/config/database.yml.production"
