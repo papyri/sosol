@@ -41,7 +41,7 @@ class UserController < ApplicationController
       redirect_to :controller => "user", :action => "signin"
     end
     @publications = Publication.find_all_by_owner_id(@current_user.id)
-    @events = Event.find(:all, :order => "created_at DESC")
+    @events = Event.find(:all, :order => "created_at DESC", :limit => 25)
     
   end
   
