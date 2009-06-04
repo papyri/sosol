@@ -5,7 +5,7 @@ set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
 set :user, "idp2"
 set :git_enable_submodules, true
-set :branch, "ccarpenter"
+set :branch, "master"
 
 # If you aren't deploying to /u/apps/#{application} on the target
 # servers (which is the default), you can specify the actual location
@@ -26,16 +26,20 @@ role :db,  "halsted.vis.uky.edu", :primary => true
 # Copy in unversioned files with secret info (API keys, DB passwords, etc.)
 # TODO: add git repo stuff here
 task :after_update_code, :roles => :app do
-	db_config = "#{shared_path}/config/database.yml.production"
-	run "cp #{db_config} #{release_path}/config/database.yml"
-	
-	secret_config = "#{shared_path}/config/environments/production_secret.rb"
-	run "cp #{secret_config} #{release_path}/config/environments/production_secret.rb"
+  git_path = "#{shared_path}/db/git"
+  run "mkdir -p #{git_path}"
+  run "ln -s #{git_path} #{release_path}/db/git"
+  
+  db_config = "#{shared_path}/config/database.yml.production"
+  run "cp #{db_config} #{release_path}/config/database.yml"
+  
+  secret_config = "#{shared_path}/config/environments/production_secret.rb"
+  run "cp #{secret_config} #{release_path}/config/environments/production_secret.rb"
 end
 
 namespace :gems do
-	desc "Install gems"
-	task :install, :roles => :app do
-		run "cd #{current_path} && #{sudo} rake RAILS_ENV=production gems:install"
-	end
+  desc "Install gems"
+  task :install, :roles => :app do
+    run "cd #{current_path} && #{sudo} rake RAILS_ENV=production gems:install"
+  end
 end
