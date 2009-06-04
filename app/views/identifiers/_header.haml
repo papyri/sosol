@@ -6,11 +6,11 @@
   %h1
     Editing Publication
     = @identifier.publication.title
-  #submit
-    - if @identifier.publication.owner_type == "User"
+  - if @identifier.publication.owner_type == "User"
+    #submit
       = button_to "Submit", submit_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :post
-    - elsif @identifier.publication.owner_type == "Board"
-      = button_to "Vote", submit_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :post
+  - elsif @identifier.publication.owner_type == "Board"
+    = render :partial => "boards/review", :object => @identifier.publication
   %h3
     Identifier
     = @identifier.name
