@@ -15,6 +15,14 @@ class PublicationsController < ApplicationController
     
     if @publication.save
       @publication.branch_from_master
+      
+      # need to remove repeat against publication model
+      e = Event.new
+      e.category = "started editing"
+      e.target = @publication
+      e.owner = @current_user
+      e.save!
+      
       flash[:notice] = 'Publication was successfully created.'
       redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     else
