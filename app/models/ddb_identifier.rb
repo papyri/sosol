@@ -114,6 +114,8 @@ class DDBIdentifier < Identifier
     self.set_xml_content(xml_content, comment)
   end
   
+  # Override REXML::Attribute#to_string so that attributes are defined
+  # with double quotes instead of single quotes
   REXML::Attribute.class_eval( %q^
     def to_string
       %Q[#@expanded_name="#{to_s().gsub(/"/, '&quot;')}"]
