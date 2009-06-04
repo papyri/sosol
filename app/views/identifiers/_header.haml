@@ -7,7 +7,7 @@
     Editing Publication
     = @identifier.publication.title
   #submit
-    = button_to "Submit", submit_publication_path(@identifier.publication), :class => 'submit', :method => :post
+    = button_to "Submit", submit_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :post
   %h3
     Identifier
     = @identifier.name

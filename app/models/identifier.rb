@@ -28,6 +28,10 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def mutable?
+    self.publication.mutable?
+  end
+  
   def xml_content
     return self.content
   end

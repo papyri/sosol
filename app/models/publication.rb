@@ -70,11 +70,22 @@ class Publication < ActiveRecord::Base
       end
     end
     
+    self.status = "submitted"
+    self.save!
+    
     e = Event.new
     e.category = "submitted"
     e.target = self
     e.owner = self.owner
     e.save!
+  end
+  
+  def mutable?
+    if self.status == "submitted"
+      return false
+    else
+      return true
+    end
   end
   
   # TODO: rename actual branch after branch attribute rename
