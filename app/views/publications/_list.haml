@@ -1,6 +1,5 @@
-%h2 Your Publications
 %ul
-  - for publication in @publications
+  - for publication in list
     %li
       = link_to(publication.title, edit_polymorphic_path([publication, publication.entry_identifier]))
       - if publication.status == "submitted"
@@ -10,8 +9,3 @@
 /   %ul
 /   - for branch in @branches
 /     %li= branch
-%br
-- form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
-  = label_tag 'pn_id', 'Create publication from PN ID:'
-  = form.text_field 'pn_id', :size => 40
-  = form.submit "Create", :class => 'save'

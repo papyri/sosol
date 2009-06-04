@@ -1,5 +1,17 @@
 #main.site
+  %h2 Your Publications
   = render :partial => "publications/list", :object => @publications
   %br
+  - form_for :publication, :url => { :controller => :publications, :action => :create } do |form|
+    = label_tag 'pn_id', 'Create publication from PN ID:'
+    = form.text_field 'pn_id', :size => 40
+    = form.submit "Create", :class => 'save'
+  %br
+  - if @current_user.boards.length > 0
+    - @current_user.boards.each do |board|
+      - if board.publications.length > 0
+        %h2== #{board.title} Publications
+        = render :partial => "publications/list", :object => board.publications
+        %br
   %h2 News Feed
   = render :partial => "events/list", :object => @events
