@@ -58,7 +58,7 @@ class Repository
     FileUtils::rm_r path, :verbose => true, :secure => true
   end
   
-  def get_file_from_branch(file, branch)
+  def get_file_from_branch(file, branch = 'master')
     tree = @repo.tree(branch, [File.dirname(file)])
     subtree = tree.contents.first
     return nil if subtree.nil?
@@ -66,7 +66,7 @@ class Repository
     return blob.nil? ? nil : blob.data
   end
   
-  def get_log_for_file_from_branch(file, branch)
+  def get_log_for_file_from_branch(file, branch = 'master')
     @repo.log(branch, file).map{|commit| commit.to_hash}
   end
   
