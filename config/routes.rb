@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :publications do |publication|
     publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put }
+    publication.resources :hgv_trans_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put }
     # publication.resources :identifiers
   end
   
