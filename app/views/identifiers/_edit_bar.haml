@@ -17,7 +17,8 @@
             - for meta in metas
               %li
                 = link_to meta.alternate_name, edit_polymorphic_path([@identifier.publication, meta])
-      %li= link_to 'Translation', edit_trans_publication_path(@identifier.publication)
+      %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
+        = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
 #identifier_sub_menus
   .identifier_sub_menu
     .site
