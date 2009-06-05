@@ -61,8 +61,9 @@ class Repository
   def get_file_from_branch(file, branch)
     tree = @repo.tree(branch, [File.dirname(file)])
     subtree = tree.contents.first
+    return nil if subtree.nil?
     blob = subtree / File.basename(file)
-    return blob.data
+    return blob.nil? ? nil : blob.data
   end
   
   def get_log_for_file_from_branch(file, branch)
