@@ -19,6 +19,8 @@ class Identifier < ActiveRecord::Base
                                                     self.publication.branch,
                                                     content,
                                                     options[:comment])
+    self.modified = true
+    self.save!
   end
   
   def get_commits
