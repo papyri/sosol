@@ -1,7 +1,11 @@
 %ul
   - for publication in list
     %li
-      = link_to(publication.title, edit_polymorphic_path([publication, publication.entry_identifier]))
+      - for identifier in publication.identifiers
+        = link_to(identifier.titleize, edit_polymorphic_path([publication, identifier]))
+        - if identifier.modified
+          == *
+        == (#{identifier.class})
       - if !publication.status.nil? && publication.status != ''
         == (#{publication.status})
 / - if @branches.length > 0
