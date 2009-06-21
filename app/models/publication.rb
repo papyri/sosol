@@ -44,6 +44,15 @@ class Publication < ActiveRecord::Base
         self.identifiers << HGVMetaIdentifier.new(
           :name => "#{identifiers['hgv'].first}",
           :alternate_name => "hgv#{tm_nr}")
+        
+        # Check if there's a trans, if so, add it
+        translation = HGVTransIdentifier.new(
+          :name => "#{identifiers['hgv'].first}",
+          :alternate_name => "hgv#{tm_nr}"
+        )
+        if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
+          self.identifiers << translation
+        end
       end
     end
   end

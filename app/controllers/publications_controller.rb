@@ -83,6 +83,12 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
+  def edit_trans
+    @publication = Publication.find(params[:id])
+    @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
+  
   def vote            
     @vote = Vote.new(params[:vote])
     @publication = Publication.find(params[:id])   

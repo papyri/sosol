@@ -1,5 +1,5 @@
 class Identifier < ActiveRecord::Base
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
   
   validates_presence_of :name, :type
   

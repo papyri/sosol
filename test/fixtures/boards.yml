@@ -3,13 +3,9 @@
 one:
   title: MyString
   category: MyString
-  user_id: 1
   decree_id: 1
-  article_id: 1
 
 two:
   title: MyString
   category: MyString
-  user_id: 1
   decree_id: 1
-  article_id: 1
