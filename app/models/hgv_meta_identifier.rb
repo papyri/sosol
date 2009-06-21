@@ -46,7 +46,10 @@ class HGVMetaIdentifier < Identifier
     hgv_volume_number = components[1].to_s
     hgv_document_number = components[2].to_s
     
-    [hgv_collection_name, to_roman(hgv_volume_number.to_i), hgv_document_number].join(' ')
+    components[1] = to_roman(components[1].to_i)
+    
+    # [hgv_collection_name, to_roman(hgv_volume_number.to_i), hgv_document_number].join(' ')
+    components.join(' ')
   end
   
   def valid_epidoc_attributes
