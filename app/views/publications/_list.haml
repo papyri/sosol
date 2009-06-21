@@ -3,7 +3,7 @@
     %li
       %ul
         - for identifier in publication.identifiers
-          %li{ :class => (identifier == publication.identifiers.last ? 'last' : '') }
+          %li{ :class => (identifier == publication.identifiers.last ? 'last' : '') }<
             - case identifier
               - when DDBIdentifier
                 = image_tag('ddb.gif')
