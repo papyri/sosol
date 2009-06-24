@@ -55,6 +55,19 @@ class HGVMetaIdentifier < Identifier
     components.join(' ')
   end
   
+  def id_attribute
+    return "hgvTEMP"
+  end
+  
+  def n_attribute
+    ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    return ddb.n_attribute
+  end
+  
+  def xml_title_text
+    return "Description of document"
+  end
+  
   def valid_epidoc_attributes
     return [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
       :tm_nr, :illustrations, :contentText, :other_publications,

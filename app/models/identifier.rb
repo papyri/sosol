@@ -38,7 +38,7 @@ class Identifier < ActiveRecord::Base
     
     id = self.id_attribute
     n = self.n_attribute
-    title = self.titleize
+    title = self.xml_title_text
     
     return template.result(binding)
   end

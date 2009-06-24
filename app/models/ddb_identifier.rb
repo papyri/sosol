@@ -37,6 +37,10 @@ class DDBIdentifier < Identifier
     return to_components.join(';')
   end
   
+  def xml_title_text
+    id_attribute
+  end
+  
   def to_path
     path_components = [ DDB_PATH_PREFIX ]
     

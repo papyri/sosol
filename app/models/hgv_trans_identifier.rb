@@ -17,4 +17,17 @@ class HGVTransIdentifier < Identifier
     # e.g. HGV_trans_EpiDoc/2302zzr.xml
     return File.join(path_components)
   end
+  
+  def id_attribute
+    return "hgv-TEMP"
+  end
+  
+  def n_attribute
+    ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    return ddb.n_attribute
+  end
+  
+  def xml_title_text
+    return " HGVTITLE (DDBTITLE) "
+  end
 end
