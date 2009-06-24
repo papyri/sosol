@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 SYSTEM "/usr/local/epiduke/data/dtd/tei-epidoc.dtd">
-<TEI.2 id="#{id}" n="#{n}">
+<TEI.2 id="<%= id %>" n="<%= n %>">
   <teiHeader status="new" type="text">
     <fileDesc>
       <titleStmt>
-        <title level="m" type="main">bgu.1.1</title>
+        <title level="m" type="main"><%= title %></title>
       </titleStmt>
       <publicationStmt>
         <p/>
@@ -45,7 +45,7 @@
     </profileDesc>
     <revisionDesc>
       <change>
-        <date>#{creation_date}</date>
+        <date when="<%= Time.now.xmlschema %>"><%= Time.now.to_s %></date>
         <respStmt>
           <name>SoSOL</name>
         </respStmt>

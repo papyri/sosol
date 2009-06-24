@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 SYSTEM "/usr/local/epiduke/data/dtd/tei-epidoc.dtd">
-<TEI.2 id="hgv1" n="p.adl;;G2">
+<TEI.2 id="<%= id %>" n="<%= n %>">
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>Temporary title</title>
+        <title><%= title %></title>
       </titleStmt>
       <publicationStmt>
         <p/>
       </publicationStmt>
       <sourceDesc>
-        <p>#{???}</p>
+        <p/>
       </sourceDesc>
     </fileDesc>
     <encodingDesc>
@@ -43,11 +43,11 @@
     </profileDesc>
     <revisionDesc>
       <change>
-        <date>#{date}</date>
+        <date when="<%= Time.now.xmlschema %>"><%= Time.now.to_s %></date>
         <respStmt>
           <name>SoSOL</name>
         </respStmt>
-        <item>Record created</item>
+        <item>Automated creation from template</item>
       </change>
     </revisionDesc>
   </teiHeader>
