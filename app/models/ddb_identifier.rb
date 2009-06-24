@@ -2,24 +2,10 @@ class DDBIdentifier < Identifier
   DDB_PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
-  acts_as_leiden_plus
+  IDENTIFIER_NAMESPACE = 'ddbdp'
+  TEMPORARY_COLLECTION = '0500'
   
-  def self.next_temporary_identifier
-    year = Time.now.year
-    latest = DDBIdentifier.find(:all,
-                       :conditions => ["name like ?", "oai:papyri.info:identifiers:ddbdp:0500:#{year}:%"],
-                       :order => "name DESC",
-                       :limit => 1)
-    if latest.empty?
-      # no constructed id's for this year/class
-      document_number = 1
-    else
-      document_number = latest.to_components.last.to_i + 1
-    end
-    
-    return sprintf("oai:papyri.info:identifiers:ddbdp:0500:%04d:%04d",
-                   year, document_number)
-  end
+  acts_as_leiden_plus
   
   def to_components
     trimmed_name = name.sub(/^oai:papyri.info:identifiers:ddbdp:/, '')
