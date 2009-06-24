@@ -1,6 +1,9 @@
 class HGVMetaIdentifier < Identifier
   HGV_META_PATH_PREFIX = 'HGV_meta_EpiDoc'
   
+  IDENTIFIER_NAMESPACE = 'hgv'
+  TEMPORARY_COLLECTION = 'SoSOL'
+  
   ROMAN_MAP = { 1 => "I",
                 4 => "IV",
                 5 => "V",
