@@ -30,6 +30,19 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def template
+    template_path = File.join(RAILS_ROOT, ['data','templates'],
+                              "#{self.class.to_s.underscore}.xml.erb")
+    
+    template = ERB.new(File.new(template_path).read)
+    
+    id = self.id_attribute
+    n = self.n_attribute
+    title = self.titleize
+    
+    return template.result(binding)
+  end
+  
   def self.next_temporary_identifier
     year = Time.now.year
     latest = self.find(:all,

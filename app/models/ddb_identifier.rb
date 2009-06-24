@@ -25,6 +25,18 @@ class DDBIdentifier < Identifier
       [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
   end
   
+  def id_attribute
+    ddb_series_number, ddb_volume_number, ddb_document_number =
+      to_components
+    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name.downcase!
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
+  end
+  
+  def n_attribute
+    return to_components.join(';')
+  end
+  
   def to_path
     path_components = [ DDB_PATH_PREFIX ]
     
