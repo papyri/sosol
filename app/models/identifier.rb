@@ -30,7 +30,7 @@ class Identifier < ActiveRecord::Base
     )
   end
   
-  def template
+  def file_template
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
     
