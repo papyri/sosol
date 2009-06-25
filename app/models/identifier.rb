@@ -30,6 +30,18 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def self.new_from_template(publication)
+    new_identifier = self.new(:name => self.next_temporary_identifier)
+    new_identifier.publication = publication
+    
+    new_identifier.save!
+    
+    initial_content = new_identifier.file_template
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
+    
+    return new_identifier
+  end
+  
   def file_template
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
