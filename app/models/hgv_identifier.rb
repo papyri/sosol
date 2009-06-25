@@ -40,4 +40,11 @@ class HGVIdentifier < Identifier
     # [hgv_collection_name, to_roman(hgv_volume_number.to_i), hgv_document_number].join(' ')
     components.join(' ')
   end
+  
+  def temporary_path
+    # path constructor for born-digital temporary SoSOL identifiers
+    trimmed_name = name.sub(/^oai:papyri.info:identifiers:hgv:/, '')
+    components = trimmed_name.split(':')
+    return File.join(self.class::PATH_PREFIX, components)
+  end
 end

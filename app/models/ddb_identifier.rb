@@ -1,5 +1,5 @@
 class DDBIdentifier < Identifier  
-  DDB_PATH_PREFIX = 'DDB_EpiDoc_XML'
+  PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
   IDENTIFIER_NAMESPACE = 'ddbdp'
@@ -42,7 +42,7 @@ class DDBIdentifier < Identifier
   end
   
   def to_path
-    path_components = [ DDB_PATH_PREFIX ]
+    path_components = [ PATH_PREFIX ]
     
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
