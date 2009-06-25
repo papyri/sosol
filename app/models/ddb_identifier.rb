@@ -75,18 +75,28 @@ class DDBIdentifier < Identifier
 
   # map DDB series number to DDB collection name using collection.xml
   def ddb_series_to_collection(ddb_series_number)
-    collection_xml = get_collection_xml
-    xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
-      "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
+    # FIXME: put in canonical collection.xml
+    if ddb_series_number.to_i == 500
+      return 'sosol'
+    else
+      collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
-    return xpath_result.to_s
+      return xpath_result.to_s
+    end
   end
   
   def ddb_series_to_human_collection(ddb_series_number)
-    collection_xml = get_collection_xml
-    xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
-      "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
-    xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    # FIXME: put in canonical collection.xml
+    if ddb_series_number.to_i == 500
+      return 'SoSOL'
+    else
+      collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
+      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    end
   end
   
   def leiden_plus
