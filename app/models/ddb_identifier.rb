@@ -6,16 +6,6 @@ class DDBIdentifier < Identifier
   TEMPORARY_COLLECTION = '0500'
   
   acts_as_leiden_plus
-  
-  def to_components
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:ddbdp:/, '')
-    components = trimmed_name.split(':')
-    ddb_series_number = components[0].to_s
-    ddb_volume_number = components[1].to_s
-    ddb_document_number = components[2].to_s
-    
-    return [ddb_series_number, ddb_volume_number, ddb_document_number]
-  end
 
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =

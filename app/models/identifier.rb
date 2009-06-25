@@ -30,6 +30,14 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def to_components
+    trimmed_name = name.sub(/^oai:papyri.info:identifiers:#{self.class::IDENTIFIER_NAMESPACE}:/, '')
+    components = trimmed_name.split(':')
+    components.map! {|c| c.to_s}
+
+    return components
+  end
+  
   def self.new_from_template(publication)
     new_identifier = self.new(:name => self.next_temporary_identifier)
     new_identifier.publication = publication
