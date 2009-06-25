@@ -1,8 +1,5 @@
-class HGVTransIdentifier < Identifier
+class HGVTransIdentifier < HGVIdentifier
   HGV_TRANS_PATH_PREFIX = 'HGV_trans_EpiDoc'
-  
-  IDENTIFIER_NAMESPACE = 'hgv'
-  TEMPORARY_COLLECTION = 'SoSOL'
   
   def to_path
     path_components = [ HGV_TRANS_PATH_PREFIX ]
