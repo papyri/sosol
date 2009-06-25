@@ -37,6 +37,9 @@ class HGVIdentifier < Identifier
     
     hgv_volume_number = to_roman(hgv_volume_number.to_i)
     
+    # strip leading zeros
+    hgv_document_numbers.map! {|dn| dn.sub(/^0*/,'')}
+    
     # convert e.g. '%20' to ' '
     hgv_document_numbers.map! {|dn| CGI.unescape(dn)}
 
