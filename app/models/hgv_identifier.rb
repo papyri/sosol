@@ -33,12 +33,14 @@ class HGVIdentifier < Identifier
     components = trimmed_name.split(':')
     hgv_collection_name = components[0].to_s
     hgv_volume_number = components[1].to_s
-    hgv_document_number = components[2].to_s
+    hgv_document_numbers = components[2..-1].map {|dn| dn.to_s}
+    
+    hgv_volume_number = to_roman(hgv_volume_number.to_i)
+    
+    # convert e.g. '%20' to ' '
+    hgv_document_numbers.map! {|dn| CGI.unescape(dn)}
 
-    components[1] = to_roman(components[1].to_i)
-
-    # [hgv_collection_name, to_roman(hgv_volume_number.to_i), hgv_document_number].join(' ')
-    components.join(' ')
+    [hgv_collection_name, hgv_volume_number, hgv_document_numbers].join(' ')
   end
   
   def temporary_path
