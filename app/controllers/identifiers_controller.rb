@@ -27,6 +27,17 @@ class IdentifiersController < ApplicationController
     render :template => 'identifiers/history'
   end
   
+  # POST /identifiers
+  def create
+    @publication = Publication.find(params[:publication_id])
+    identifier_type = params[:identifier_type].constantize
+    
+    @identifier = identifier_type.new_from_template(@publication)
+    flash[:notice] = "File created."
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :editxml) and return
+  end
+  
   # PUT /publications/1/xxx_identifiers/1/updatexml
   def updatexml
     find_identifier
