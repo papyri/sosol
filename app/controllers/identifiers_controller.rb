@@ -35,7 +35,7 @@ class IdentifiersController < ApplicationController
     @identifier = identifier_type.new_from_template(@publication)
     flash[:notice] = "File created."
     redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :editxml) and return
+                                 :action => :edit) and return
   end
   
   # PUT /publications/1/xxx_identifiers/1/updatexml
