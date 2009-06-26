@@ -2,6 +2,7 @@ set :application, "protosite"
 set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
 set :user, "idp2"
+set :scm_verbose, true
 set :git_enable_submodules, true
 set :branch, "master"
 
