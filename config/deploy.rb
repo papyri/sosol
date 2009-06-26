@@ -1,5 +1,3 @@
-require 'mongrel_cluster/recipes'
-
 set :application, "protosite"
 set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
@@ -11,8 +9,6 @@ set :branch, "master"
 # servers (which is the default), you can specify the actual location
 # via the :deploy_to variable:
 set :deploy_to, "/var/rails/#{application}"
-set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
-set :mongrel_clean, true
 set :use_sudo, false
 
 # If you aren't using Subversion to manage your source code, specify
