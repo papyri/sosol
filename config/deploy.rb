@@ -20,10 +20,19 @@ role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
-# Restart task for Phusion Passenger
+# Tasks from Phusion Passenger User's Guide
 namespace :deploy do
-  task :restart do
-    run "touch #{current_path}/tmp/restart.txt"
+  task :start, :roles => :app do
+    run "touch #{current_release}/tmp/restart.txt"
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application"
+  task :restart, :roles => :app do
+    run "touch #{current_release}/tmp/restart.txt"
   end
 end
 
