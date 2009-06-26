@@ -1,9 +1,8 @@
-require 'mongrel_cluster/recipes'
-
 set :application, "protosite"
 set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
 set :scm, "git"
 set :user, "idp2"
+set :scm_verbose, true
 set :git_enable_submodules, true
 set :branch, "master"
 
@@ -11,8 +10,6 @@ set :branch, "master"
 # servers (which is the default), you can specify the actual location
 # via the :deploy_to variable:
 set :deploy_to, "/var/rails/#{application}"
-set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
-set :mongrel_clean, true
 set :use_sudo, false
 
 # If you aren't using Subversion to manage your source code, specify
@@ -22,6 +19,13 @@ set :use_sudo, false
 role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
+
+# Restart task for Phusion Passenger
+namespace :deploy do
+  task :restart do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+end
 
 # Copy in unversioned files with secret info (API keys, DB passwords, etc.)
 # TODO: add git repo stuff here
