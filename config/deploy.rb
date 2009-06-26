@@ -12,10 +12,6 @@ set :branch, "master"
 set :deploy_to, "/var/rails/#{application}"
 set :use_sudo, false
 
-# If you aren't using Subversion to manage your source code, specify
-# your SCM below:
-# set :scm, :subversion
-
 role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
