@@ -20,6 +20,13 @@ role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
+# Restart task for Phusion Passenger
+namespace :deploy do
+  task :restart do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+end
+
 # Copy in unversioned files with secret info (API keys, DB passwords, etc.)
 # TODO: add git repo stuff here
 task :after_update_code, :roles => :app do
