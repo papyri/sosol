@@ -1,20 +1,38 @@
-class HGVMetaIdentifier < Identifier
-  HGV_META_PATH_PREFIX = 'HGV_meta_EpiDoc'
+class HGVMetaIdentifier < HGVIdentifier
+  PATH_PREFIX = 'HGV_meta_EpiDoc'
 
   def to_path
-    path_components = [ HGV_META_PATH_PREFIX ]
-    # assume the alternate name is e.g. hgv2302zzr
-    trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
-    number = trimmed_name.sub(/\D/, '').to_i # 2302
+    if alternate_name.nil?
+      # no alternate name, use SoSOL temporary path
+      return self.temporary_path
+    else
+      path_components = [ PATH_PREFIX ]
+      # assume the alternate name is e.g. hgv2302zzr
+      trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
+      number = trimmed_name.sub(/\D/, '').to_i # 2302
 
-    hgv_dir_number = ((number - 1) / 1000) + 1
-    hgv_dir_name = "HGV#{hgv_dir_number}"
-    hgv_xml_path = trimmed_name + '.xml'
+      hgv_dir_number = ((number - 1) / 1000) + 1
+      hgv_dir_name = "HGV#{hgv_dir_number}"
+      hgv_xml_path = trimmed_name + '.xml'
 
-    path_components << hgv_dir_name << hgv_xml_path
+      path_components << hgv_dir_name << hgv_xml_path
 
-    # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
-    return File.join(path_components)
+      # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
+      return File.join(path_components)
+    end
+  end
+  
+  def id_attribute
+    return "hgvTEMP"
+  end
+  
+  def n_attribute
+    ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    return ddb.n_attribute
+  end
+  
+  def xml_title_text
+    return "Description of document"
   end
   
   def valid_epidoc_attributes

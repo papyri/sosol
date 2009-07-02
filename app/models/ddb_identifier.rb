@@ -1,51 +1,42 @@
 class DDBIdentifier < Identifier  
-  DDB_PATH_PREFIX = 'DDB_EpiDoc_XML'
+  PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
-  ROMAN_MAP = { 1 => "I",
-                4 => "IV",
-                5 => "V",
-                9 => "IX",
-                10 => "X",
-                40 => "XL",
-                50 => "L",
-                90 => "XC",
-                100 => "C",
-                400 => "CD",
-                500 => "D",
-                900 => "CM",
-                1000 => "M" }
+  IDENTIFIER_NAMESPACE = 'ddbdp'
+  TEMPORARY_COLLECTION = '0500'
   
   acts_as_leiden_plus
-  
-  def to_components
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:ddbdp:/, '')
-    components = trimmed_name.split(':')
-    ddb_series_number = components[0].to_s
-    ddb_volume_number = components[1].to_s
-    ddb_document_number = components[2].to_s
-    
-    return [ddb_series_number, ddb_volume_number, ddb_document_number]
-  end
-  
-  def to_roman(arabic)
-    # shamelessly stolen from http://rubyquiz.com/quiz22.html
-    ROMAN_MAP.keys.sort { |a, b| b <=> a }.inject("") do |roman, div|
-      times, arabic = arabic.divmod(div)
-      roman << ROMAN_MAP[div] * times
-    end
-  end
-  
+
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
     ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+
+    # strip leading zeros
+    ddb_document_number.sub!(/^0*/,'')
+
     title = 
-      [ddb_collection_name, to_roman(ddb_volume_number.to_i), ddb_document_number].join(' ')
+      [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
+  end
+  
+  def id_attribute
+    ddb_series_number, ddb_volume_number, ddb_document_number =
+      to_components
+    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name.downcase!
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
+  end
+  
+  def n_attribute
+    return to_components.join(';')
+  end
+  
+  def xml_title_text
+    id_attribute
   end
   
   def to_path
-    path_components = [ DDB_PATH_PREFIX ]
+    path_components = [ PATH_PREFIX ]
     
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
@@ -78,18 +69,28 @@ class DDBIdentifier < Identifier
 
   # map DDB series number to DDB collection name using collection.xml
   def ddb_series_to_collection(ddb_series_number)
-    collection_xml = get_collection_xml
-    xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
-      "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
+    # FIXME: put in canonical collection.xml
+    if ddb_series_number.to_i == 500
+      return 'sosol'
+    else
+      collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
-    return xpath_result.to_s
+      return xpath_result.to_s
+    end
   end
   
   def ddb_series_to_human_collection(ddb_series_number)
-    collection_xml = get_collection_xml
-    xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
-      "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
-    xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    # FIXME: put in canonical collection.xml
+    if ddb_series_number.to_i == 500
+      return 'SoSOL'
+    else
+      collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
+      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    end
   end
   
   def leiden_plus

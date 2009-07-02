@@ -1,9 +1,18 @@
-%ul
+%ul.publications
   - for publication in list
     %li
-      = link_to(publication.title, edit_polymorphic_path([publication, publication.entry_identifier]))
-      - if !publication.status.nil? && publication.status != ''
-        == (#{publication.status})
+      %ul
+        - for identifier in publication.identifiers
+          %li{ :class => (identifier == publication.identifiers.last ? 'last' : '') }<
+            - case identifier
+              - when DDBIdentifier
+                = image_tag('ddb.gif')
+              - when HGVMetaIdentifier
+                = image_tag('hgv.gif')
+            = link_to(identifier.titleize, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
+            
+        - if !publication.status.nil? && publication.status != ''
+          == (#{publication.status})
 / - if @branches.length > 0
 /   %h2 Listing Branches
 /   %ul

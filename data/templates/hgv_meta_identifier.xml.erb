@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TEI.2 SYSTEM "/usr/local/epiduke/data/dtd/tei-epidoc.dtd">
+<TEI.2 id="<%= id %>" n="<%= n %>">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title><%= title %></title>
+      </titleStmt>
+      <publicationStmt>
+        <p/>
+      </publicationStmt>
+      <sourceDesc>
+        <p/>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <p>This file encoded to comply with EpiDoc Guidelines and DTD version 5
+                <xref>http://www.stoa.org/epidoc/gl/5/</xref></p>
+    </encodingDesc>
+    <profileDesc>
+      <langUsage>
+        <language id="fr">Französisch</language>
+        <language id="en">Englisch</language>
+        <language id="de">Deutsch</language>
+        <language id="it">Italienisch</language>
+        <language id="es">Spanisch</language>
+        <language id="la">Latein</language>
+        <language id="el">Griechisch</language>
+      </langUsage>
+      <textClass>
+        <keywords>
+          <term>
+            <rs type="textType">Kopie</rs>
+            <rs type="textType">Homaloge</rs>
+            <rs type="textType">Urkunde</rs>
+            <rs type="textType">Verzicht</rs>
+            <rs type="textType">Eintreibung (Schuld)</rs>
+            <rs type="textType">Geld</rs>
+            <rs type="textType">Namen</rs>
+          </term>
+        </keywords>
+      </textClass>
+    </profileDesc>
+    <revisionDesc>
+      <change>
+        <date when="<%= Time.now.xmlschema %>"><%= Time.now.to_s %></date>
+        <respStmt>
+          <name>SoSOL</name>
+        </respStmt>
+        <item>Automated creation from template</item>
+      </change>
+    </revisionDesc>
+  </teiHeader>
+  <text>
+    <body>
+      <div type="description">
+        <p>
+          <rs type="material">Papyrus</rs>
+        </p>
+      </div>
+      <div type="commentary" subtype="textDate">
+        <p>
+          <date type="textDate" value="change" notBefore="change" notAfter="change">change</date>
+        </p>
+      </div>
+      <div type="commentary" subtype="general">
+        <p>commentary</p>
+      </div>
+      <div type="bibliography" subtype="principalEdition">
+        <listBibl>
+          <bibl type="publication" subtype="principal">
+            <title level="s" type="abbreviated">P.Temporary</title>
+            <biblScope type="numbers">2</biblScope>
+          </bibl>
+          <bibl type="Trismegistos">
+            <biblScope type="numbers">1</biblScope>
+          </bibl>
+          <bibl type="DDbDP"><series>0000</series>; ; <biblScope type="numbers">??</biblScope></bibl>
+        </listBibl>
+        <p>Perseus links: <xref type="Perseus" href="0000;;??">Text in Perseus</xref></p>
+      </div>
+      <div type="bibliography" subtype="illustrations">
+        <p>change</p>
+      </div>
+      <div type="history" subtype="locations">
+        <p>
+          <placeName type="ancientFindspot">Location</placeName>
+        </p>
+      </div>
+    </body>
+  </text>
+</TEI.2>

@@ -281,6 +281,19 @@ input.submit
         text-decoration: none
         background-color: #aaa
 
+ul.publications
+  a.modified
+    font-weight: bold
+  li
+    ul
+      li
+        list-style: none
+        display: inline
+      li:after
+        content: ", "
+      li.last:after
+        content: ". "
+
 .identifier_sub_menu
   height: 2.099em
   background = !main_color

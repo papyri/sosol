@@ -16,7 +16,7 @@
           %ul
             - for meta in metas
               %li
-                = link_to meta.alternate_name, edit_polymorphic_path([@identifier.publication, meta])
+                = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
       %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
         = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
 #identifier_sub_menus
@@ -26,6 +26,7 @@
       %ul
         %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
         %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+        %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
   - if params[:action] != 'history' 
     - case @identifier
       - when DDBIdentifier
