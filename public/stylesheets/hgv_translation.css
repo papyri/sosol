@@ -1,0 +1,90 @@
+#editable_preview_xsl {
+  display:none;
+}
+#editing_trans_preview {
+height:20em;
+overflow:scroll;
+width:40em;
+}
+#editing_trans_xml {
+height:200em;
+
+width:400em;
+}
+#editing_trans_xml_div {
+height:20em;
+overflow:scroll;
+width:40em;
+}
+#info_div {
+color:#00FF00;
+height:10em;
+width:10em;
+}
+#info_div h1 {
+color:#FF0000;
+font-size:small;
+}
+#info_div p {
+font-size:x-small;
+}
+#chooser_div {
+float:right;
+height:20em;
+width:20em;
+}
+
+#app_div {
+height:10em;
+width:40em;
+}
+#app_div textarea {
+color:#ff0000;
+height:1em;
+width:10em;
+}
+
+#milestone div {
+height:10em;
+width:40em;
+}
+
+
+#glossary_div {
+height:10em;
+overflow:scroll;
+width:40em;
+}
+
+.glossary_chooser {
+
+}
+.glossary_chooser h2 {
+color:#FF0000;
+display:inline;
+font-size:medium;
+cursor:pointer;
+}
+.glossary_chooser h3 {
+color:#000000;
+display:inline;
+font-size:small;
+}
+.glossary_chooser h3:before {
+content:" - ";
+}
+.glossary_chooser p {
+font-size:small;
+text-indent:50px;
+}
+
+.glossary_chooser p:before {
+content:"-";
+}
+
+.editable_term {
+background-color:#AAAAAA;
+}
+.editable_text {
+background-color:#EEEEEE;
+}

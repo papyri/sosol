@@ -18,7 +18,7 @@ class HGVMetaIdentifier < Identifier
   end
   
   def valid_epidoc_attributes
-    return [:onDate, :notAfterDate, :notBeforeDate, :title, :publicationTitle,
+    return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :title, :publicationTitle, :publicationVolume, :publicationNumbers,
       :tm_nr, :illustrations, :contentText, :other_publications,
       :translations, :bl, :notes, :mentioned_dates, :material,
       :provenance_ancient_findspot, :provenance_nome,
@@ -77,6 +77,7 @@ class HGVMetaIdentifier < Identifier
       get_or_set_xml_attribute(get_or_set, :onDate, res, "value")
       get_or_set_xml_attribute(get_or_set, :notAfterDate, res, "notAfter")
       get_or_set_xml_attribute(get_or_set, :notBeforeDate, res, "notBefore")
+      get_or_set_xml_text(get_or_set, :textDate, res)
     end
 
 
@@ -105,9 +106,22 @@ class HGVMetaIdentifier < Identifier
       get_or_set_xml_text(get_or_set, :publicationTitle, res)
     end
 
+	volumePath = "bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']/"
+	metaPath = basePath + publicationPath + volumePath
+    REXML::XPath.each(doc, metaPath) do |res|
+      get_or_set_xml_text(get_or_set, :publicationVolume, res)
+    end
+	
+	
+	numbersPath = "bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']/"
+	metaPath = basePath + publicationPath + numbersPath
+    REXML::XPath.each(doc, metaPath) do |res|
+      get_or_set_xml_text(get_or_set, :publicationNumbers, res)
+    end
+	
 
     # TM number
-    trismegistosPath = "bible[@type='Trismegistos']/biblScope[@type='numbers']"
+    trismegistosPath = "bibl[@type='Trismegistos']/biblScope[@type='numbers']"
     metaPath = basePath + publicationPath + trismegistosPath;
     REXML::XPath.each(doc, metaPath) do |res|
       get_or_set_xml_text(get_or_set, :tm_nr, res)
@@ -159,7 +173,9 @@ class HGVMetaIdentifier < Identifier
     end
 
     # Other Publication
-    otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
+    #otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
+    #there are multiple xpaths for this info!?
+    otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/bibl[@type='publication'][@subtype='other']/"
     metaPath = basePath + otherPublicationPath;
     REXML::XPath.each(doc, metaPath) do |res|
       get_or_set_xml_text(get_or_set, :other_publications, res)    # note items are separated by semicolons
