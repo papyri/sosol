@@ -28,7 +28,7 @@
 
 
 <xsl:template match="p">
-	<xsl:apply-templates select="term | milestone | text()"></xsl:apply-templates>
+	<xsl:apply-templates select="app | gap | term | milestone | text()"></xsl:apply-templates>
 </xsl:template>
 
 
@@ -38,6 +38,27 @@
 	<xsl:apply-templates></xsl:apply-templates>	
 
 </xsl:template>
+
+<xsl:template match="app">
+  
+  <xsl:apply-templates select="lem/text()"></xsl:apply-templates>
+
+</xsl:template>
+
+<xsl:template match="lem/text()">
+
+		<xsl:variable name="path_id">
+			<xsl:for-each select="ancestor::*">/<xsl:value-of select="name()"/>[<xsl:number/>]</xsl:for-each>/<xsl:value-of select="name()"/>[<xsl:number/>]
+		</xsl:variable>		
+		
+		<span onmouseup="saveLocation(this.id)" onmouseover="showApp(this.id)" onkeyup="textEdit(this.id)" contentEditable="true" id="{$path_id}" class="editable_term"><xsl:value-of select="."></xsl:value-of></span>
+
+		<xsl:apply-templates select="@target"></xsl:apply-templates>
+	 
+</xsl:template>
+
+
+
 
 
 <xsl:template match="text()">
@@ -83,5 +104,39 @@
 	<sup><b><xsl:value-of select="@n"/></b></sup>
 </xsl:template>
 
+
+<xsl:template match="gap">
+
+  <xsl:variable name="path_id">
+    <xsl:for-each select="ancestor::*">/<xsl:value-of select="name()"/>[<xsl:number/>]</xsl:for-each>/<xsl:value-of select="name()"/>[<xsl:number/>]
+  </xsl:variable>	
+  
+   
+   <xsl:variable name="gap_class">
+    <xsl:choose>
+      <xsl:when test="@reason='lost'">
+       gap_lost
+      </xsl:when>
+    
+      <xsl:otherwise>
+        gap_illegible
+      </xsl:otherwise>
+    </xsl:choose>
+   </xsl:variable>
+   
+   <span id="{$path_id}" class="{$gap_class}">
+    ca.
+    <xsl:choose>      
+      <xsl:when test="@extent='unknown'">
+      ?        
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="@extent" />
+      </xsl:otherwise>
+    </xsl:choose>
+  
+  </span>
+  
+</xsl:template>
 
 </xsl:stylesheet>
