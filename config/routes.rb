@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :glossaries
+
   map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
 
   map.resources :votes

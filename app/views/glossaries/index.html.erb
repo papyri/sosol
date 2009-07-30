@@ -1,0 +1,40 @@
+
+
+
+      <h1>Glossary</h1>
+
+      <table>
+        <tr>
+          <td>Item</td>
+          <td>Term</td>
+          <td>en</td>
+          <td>de</td>
+          <td>fr</td>
+          <td>sp</td>
+          <td>la</td
+        </tr>
+
+      <% for glossary in @glossaries %>
+        <tr>
+        
+          <td><%=h glossary.item %></td>
+          <td><%=h glossary.term %></td>
+          <td><%=h glossary.en %></td>
+          <td><%=h glossary.de %></td>
+          <td><%=h glossary.fr %></td>
+          <td><%=h glossary.sp %></td>
+          <td><%=h glossary.la %></td>
+        
+          
+          <td><%= link_to 'Show', {:action => "show", :id=> glossary.item } %></td>
+          <td><%= link_to 'Edit', {:action => "edit", :id=> glossary.item } %></td>
+          <td><%= link_to 'Destroy', {:action => "show", :id=> glossary.item}, :confirm => 'Are you sure?', :method => :delete  %></td>
+        </tr>
+      <% end %>
+      </table>
+
+      <br />
+
+      <%= link_to 'New glossary', new_glossary_path %>
+
+ 
