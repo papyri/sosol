@@ -9,6 +9,8 @@
                 = image_tag('ddb.gif')
               - when HGVMetaIdentifier
                 = image_tag('hgv.gif')
+              - when HGVTransIdentifier
+                = image_tag('hgv.gif')
             = link_to(identifier.titleize, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
             
         - if !publication.status.nil? && publication.status != ''
