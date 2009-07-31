@@ -106,19 +106,19 @@ function transform_xml_to_preview(xml_text_area_id, editable_trans_text_id, xsl_
   
   var xsl=xmlFromString( document.getElementById(xsl_text_area_id).value );
   
-// code for IE
+  // code for IE
   if (window.ActiveXObject)
   {   
     var ex=xml.transformNode(xsl);
     document.getElementById(editable_trans_text_id).innerHTML=ex;
   }
-// code for Mozilla, Firefox, Opera, etc.
+  // code for Mozilla, Firefox, Opera, etc.
   else if (document.implementation && document.implementation.createDocument)
   {
     var xsltProcessor=new XSLTProcessor();
     xsltProcessor.importStylesheet(xsl);
     var resultDocument = xsltProcessor.transformToFragment(xml,document);
-//document.getElementById("translated_div").appendChild(resultDocument);
+    //document.getElementById("translated_div").appendChild(resultDocument);
     var el = document.getElementById(editable_trans_text_id);
     while (el.childNodes.length > 0)
     {
@@ -192,6 +192,7 @@ function SavedLocationInfo (minOffset, maxOffset, path, xscroll)
   this.path = path;
   this.xscroll = xscroll;
 }
+
 var savedLocation;
 
 <!-- end SAVED CURSOR LOCATION -->
@@ -215,10 +216,9 @@ function setActiveTab(tab_id)
   document.getElementById(chooser_name).style.display="";  
 }
 
-
 <!-- end CHOOSER TABS -->
 
-
+<!-- SHOW INFO -->
 function showApp(node_path)
 { 
   //node_path is to the lem node
@@ -358,7 +358,6 @@ function showTerm(node_path)
 	el.appendChild(termDef);  		
 }
 
-
 function glossary_resolver(prefix)
 {
 	if (prefix == "xml")
@@ -392,7 +391,7 @@ function findDef(term)
   }  
   return result;	
 }
-
+<!-- end SHOW INFO -->
 
 <!-- INSERT ITEMS -->
 
@@ -400,7 +399,6 @@ function transformAfterInsert()
 {
   transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "editable_preview_xsl" );
 }
-
 
 function insertMissing()
 {
@@ -423,41 +421,6 @@ function insertMissing()
   //alert(extent);
   insertGap(reason, unit, extent);
 }
-
-/*
-function getBeforeAfter(xml, resultNode, beforeText, afterText)
-{
-  xml=xmlFromString( document.getElementById("editing_trans_xml").value );
-  
-  if (window.ActiveXObject)//ie
-	{
-	  xml.setProperty("SelectionLanguage", "XPath");	  
-	  resultNode = xml.selectSingleNode(addTextPathToXPath(savedLocation.path));    
-	  	  
-    //get the before and after text
-    beforeText = resultNode.text.substr(0,savedLocation.minOffset);
-	  afterText = resultNode.text.substr(savedLocation.minOffset);		
-	  
-	  //change the result to be the after text
-	  resultNode.text = afterText;
-	
-  }
-  else //mozilla
-  {	  
-    var resultNodes = xml.evaluate(addTextPathToXPath(savedLocation.path), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
-    resultNode = resultNodes.singleNodeValue;		
-    
-    //get the before and after text
-	  beforeText = resultNode.textContent.substr(0,savedLocation.minOffset);
-	  afterText = resultNode.textContent.substr(savedLocation.minOffset);		
-	  
-	  //change the result to be the after text
-	  resultNode.textContent = afterText;
-	
-  }  
-  
-}
-*/
 
 function insertGap(reason, unit, extent)
 {
@@ -534,9 +497,6 @@ function insertGap(reason, unit, extent)
 	transformAfterInsert();
   
 }
-
-
-
 
 function insertEmptyTag(tagname)
 {	
@@ -633,45 +593,62 @@ function insertNewLanguage(langType, langText)
 	newP.appendChild(newTextNode);
 	newLangDiv.appendChild(newP);
 	
+	var textBodyPath = "/TEI.2/text/body";
 	
-	//get exiting parent node for insertion
-	var resultNodes = xml.evaluate("/TEI.2/text/body", xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);	
+	if (window.ActiveXObject)//ie
+	{
+	  xml.setProperty("SelectionLanguage", "XPath");	  
+	  resultNode = xml.selectSingleNode(textBodyPath);              
+  }
+  else //mozilla
+  {	  
+    var resultNodes = xml.evaluate(textBodyPath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
+    resultNode = resultNodes.singleNodeValue;		
+  } 	
 	
-	var result = resultNodes.singleNodeValue;	
+	resultNode.appendChild(newLangDiv);
 	
-	result.appendChild(newLangDiv);
-	
-	//insure that langUsage is includes the language
+	//insure that langUsage includes the language
 	
 	//check if langUsage is already there
-	var testPath = "/TEI.2/teiHeader/profileDesc/langUsage/language[@id='" + langType + "']";
-	var testLangUsageResultNodes = xml.evaluate(testPath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);	
-	if (testLangUsageResultNodes.singleNodeValue == null)
+	var testPath = "/TEI.2/teiHeader/profileDesc/langUsage/language[@id='" + langType + "']";		
+  if (window.ActiveXObject)//ie
 	{
+	  xml.setProperty("SelectionLanguage", "XPath");	  
+	  testLangUsageResultNode = xml.selectSingleNode(testPath);              
+  }
+  else //mozilla
+  {	  
+    var resultNodes = xml.evaluate(testPath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
+    testLangUsageResultNode = resultNodes.singleNodeValue;		
+  } 
+	
+	if (testLangUsageResultNode == null)
+	{
+	    var langPath = "/TEI.2/teiHeader/profileDesc/langUsage";
+	    if (window.ActiveXObject)//ie
+      {
+        xml.setProperty("SelectionLanguage", "XPath");	  
+        langUsageResultNode = xml.selectSingleNode(langPath);              
+      }
+      else //mozilla
+      {	  
+        var resultNodes = xml.evaluate(langPath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
+        langUsageResultNode = resultNodes.singleNodeValue;		
+      } 
+      
 		//add new langUsage node
-		var langUsageResultNodes = xml.evaluate("/TEI.2/teiHeader/profileDesc/langUsage", xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);	
-	
-		var langUsageResult = langUsageResultNodes.singleNodeValue;	
-	
 		var newLangUsage = xml.createElement("language");
 		newLangUsage.setAttribute("id", langType);
 		var langUsageTextNode = xml.createTextNode(langText);
 	
 		newLangUsage.appendChild(langUsageTextNode);
-		langUsageResult.appendChild(newLangUsage);
+		langUsageResultNode.appendChild(newLangUsage);
 	}
 	
-	//update the text editing element
-	var el_ta = document.getElementById("editing_trans_xml");
-	
-	
-	var s = new XMLSerializer();
-	el_ta.value = s.serializeToString(xml);
-	
+	insertXmlIntoEditor(xml);
 	transformAfterInsert();
 }
-
-
 
 function insertMilestone(unit, n, rend)
 {	
@@ -710,8 +687,7 @@ function insertMilestone(unit, n, rend)
 	  afterText = resultNode.textContent.substr(savedLocation.minOffset);		
 	  
 	  //change the result to be the after text
-	  resultNode.textContent = afterText;
-	
+	  resultNode.textContent = afterText;	
   } 
 	
 	
@@ -739,11 +715,9 @@ function insertMilestone(unit, n, rend)
 	//var s = new XMLSerializer();
 	//el_ta.value = s.serializeToString(xml);
 	
-	insertXmlIntoEditor(xml);
-		
+	insertXmlIntoEditor(xml);		
 	transformAfterInsert();
 }
-
 
 function insertApp()
 {
@@ -785,26 +759,8 @@ function insertApp()
   } 
 		
 	
-	//var resultNodes = xml.evaluate(addTextPathToXPath(savedLocation.path), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);	
-	
-	//var result = resultNodes.singleNodeValue;
-		
-	//get the before and after text
-	//var beforeText = result.textContent.substr(0,savedLocation.minOffset);
-	//var afterText = result.textContent.substr(savedLocation.maxOffset);
-	
 	var newTextNode;
-	/*
-	if (savedLocation.minOffset != savedLocation.maxOffset)
-	{
-		var selectedText = result.textContent.substr(savedLocation.minOffset, savedLocation.maxOffset - savedLocation.minOffset);
-		newTextNode = xml.createTextNode(selectedText);
-	}
-	else
-	{
-		newTextNode = xml.createTextNode("  ");
-	}
-	*/
+
 	
   if (savedLocation.minOffset != savedLocation.maxOffset)
 	{
@@ -840,8 +796,6 @@ function insertApp()
   {
     lemNode.appendChild( newTextNode );
   }
-	
-	
 	
 	var witNode = xml.createElement("wit");
 	
@@ -885,8 +839,6 @@ function insertApp()
 		
 	transformAfterInsert();
 }
-
-
 
 function insertTerm(termIn)
 {	

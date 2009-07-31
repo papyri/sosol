@@ -6,6 +6,9 @@ height:20em;
 overflow:scroll;
 width:40em;
 }
+
+
+
 #editing_trans_xml {
 height:200em !important;
 
@@ -17,16 +20,20 @@ overflow:scroll;
 width:40em;
 }
 #info_div {
-color:#00FF00;
+/* color:#00FF00; */
+border-style: double;
+border-width:small;
 height:5em;
-width:400em;
+width:40em;
+margin-bottom: 5px;
+padding: 5px 5px;
 }
 #info_div h1 {
-color:#FF0000;
-font-size:small;
+/* color:#FF0000; */
+font-size:medium;
 }
 #info_div p {
-font-size:x-small;
+font-size:small;
 }
 #chooser_div {
 float:right;
@@ -35,9 +42,24 @@ width:20em;
 }
 .chooser
 {
-height:10em;
+border-style: solid;
+border-width:small;
+height:5em;
 width:40em;
+padding: 10px 10px;
 }
+
+.chooser_tab
+{
+border-style: solid;
+border-width:2px;
+height:2em;
+background-color:#EEEEEE;
+text-transform:uppercase;
+padding: 1px 5px;
+margin-top: 20px;
+}
+
 
 #app_div {
 height:10em;
@@ -93,11 +115,18 @@ content:"-";
 }
 
 .editable_term {
-background-color:#AAAAAA;
+background-color:#EE4444;
+font-weight:400;
 }
 .editable_text {
 background-color:#EEEEEE;
+font-weight:100;
 }
+.editable_lem {
+background-color:#AAAAEE;
+font-weight:100;
+}
+
 
 
 

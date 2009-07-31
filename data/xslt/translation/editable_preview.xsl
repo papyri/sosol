@@ -9,7 +9,7 @@
   <xsl:template match="/">
     <div class = "trans">
          
-				<div style="background-color: #eeeeee">
+				<div style="background-color: #eeeeee; padding: 10px 10px;">
   
 							<xsl:for-each select="/TEI.2/text/body">
 								<xsl:apply-templates></xsl:apply-templates>
@@ -51,7 +51,7 @@
 			<xsl:for-each select="ancestor::*">/<xsl:value-of select="name()"/>[<xsl:number/>]</xsl:for-each>/<xsl:value-of select="name()"/>[<xsl:number/>]
 		</xsl:variable>		
 		
-		<span onmouseup="saveLocation(this.id)" onmouseover="showApp(this.id)" onkeyup="textEdit(this.id)" contentEditable="true" id="{$path_id}" class="editable_term"><xsl:value-of select="."></xsl:value-of></span>
+		<span onmouseup="saveLocation(this.id)" onmouseover="showApp(this.id)" onkeyup="textEdit(this.id)" contentEditable="true" id="{$path_id}" class="editable_lem"><xsl:value-of select="."></xsl:value-of></span>
 
 		<xsl:apply-templates select="@target"></xsl:apply-templates>
 	 

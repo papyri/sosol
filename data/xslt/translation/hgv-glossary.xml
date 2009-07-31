@@ -21,16 +21,8 @@
           <term xml:lang="grc"/>
           <gloss xml:lang="en">Korrektur (extern)</gloss>
         </item>
-        <item xml:id="abrochos">
-          <term xml:lang="grc">ἄβροχος</term>
-          <gloss xml:lang="en">or forms of the verb ἀβροχέω. Used as a technical term to designate land which was not watered by the Nile flood.</gloss>
-          <gloss xml:lang="de">oder Formen des Verbs ἀβροχέω. Technische Bezeichnung für Land, das nicht von der Nilflut erreicht worden war.</gloss>
-        </item>
-        <item xml:id="aigialos">
-          <term xml:lang="grc">αἰγιαλός</term>
-          <gloss xml:lang="en">State land of poorer quality, which borders lakes or marshes.</gloss>
-          <gloss xml:lang="de">Staatsland geringerer Qualität am Ufer von Seen und Sümpfen.</gloss>
-        </item>
+        
+        
         <item xml:id="aioniosAugoustos">
           <term xml:lang="grc">αἰώνιοϛ Αὔγουστοϛ</term>
           <gloss xml:lang="en">everlasting Augustus.</gloss>
@@ -1550,7 +1542,7 @@
           <gloss xml:lang="en">Unit of capacity used for liquids. 1 chous = c. 4.875 litres.</gloss>
           <gloss xml:lang="de">Hohlmaß (1/6 metrêtês), ca. 4,875 l.</gloss>
         </item>
-      </list>
+      <item xml:id="abrochos"><term xml:lang="grc">ἄβροχος</term><gloss xml:lang="en">or forms of the verb ἀβροχέω. Used as a technical term to designate land which was not watered by the Nile flood.</gloss><gloss xml:lang="de">oder Formen des Verbs ἀβροχέω. Technische Bezeichnung für Land, das nicht von der Nilflut erreicht worden war.</gloss><gloss xml:lang="fr">oui</gloss></item><item xml:id="aaamonkeyabrochos"><term xml:lang="grc">ἄβροχος</term><gloss xml:lang="en">or forms of the verb ἀβροχέω. Used as a technical term to designate land which was not watered by the Nile flood.</gloss><gloss xml:lang="de">oder Formen des Verbs ἀβροχέω. Technische Bezeichnung für Land, das nicht von der Nilflut erreicht worden war.</gloss><gloss xml:lang="fr">oui</gloss></item><item xml:id="aaa"><term xml:lang="grc">boo</term><gloss xml:lang="en">bear</gloss><gloss xml:lang="de">die bear</gloss><gloss xml:lang="fr">oui</gloss><gloss xml:lang="sp">oso</gloss><gloss xml:lang="la">lat</gloss></item><item xml:id="bugaboo"><term xml:lang="grc">critter</term><gloss xml:lang="en">bug</gloss><gloss xml:lang="de">die</gloss></item></list>
     </body>
   </text>
 </TEI>

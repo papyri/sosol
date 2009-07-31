@@ -13,10 +13,10 @@
 
         #info_div
         #inserting_chooser
-          %span{ :class => 'chooser_tab', :id => 'glossary', :onclick => 'setActiveTab(this.id)' }Term -  
-          %span{ :class => 'chooser_tab', :id => 'app', :onclick => 'setActiveTab(this.id)' } App - 
-          %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line -
-          %span{ :class => 'chooser_tab', :id => 'language', :onclick => 'setActiveTab(this.id)' } Language -
+          %span{ :class => 'chooser_tab', :id => 'glossary', :onclick => 'setActiveTab(this.id)' }Term 
+          %span{ :class => 'chooser_tab', :id => 'app', :onclick => 'setActiveTab(this.id)' } App
+          %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line
+          %span{ :class => 'chooser_tab', :id => 'language', :onclick => 'setActiveTab(this.id)' } Language
           %span{ :class => 'chooser_tab', :id => 'missing', :onclick => 'setActiveTab(this.id)' } Missing
           
           #glossary_div{:class => "chooser"}
@@ -36,10 +36,10 @@
           #language_div{:class => "chooser"}
             %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('en', 'English')" }English
             %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('de', 'German')" }German
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('fr', 'German')" }French
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('sp', 'German')" }Spanish
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('la', 'German')" }Latin
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('grc', 'German')" }Greek          
+            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('fr', 'French')" }French
+            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('sp', 'Spanish')" }Spanish
+            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('la', 'Latin')" }Latin
+            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('grc', 'Greek')" }Greek          
           #missing_div{:class => "chooser"}
             %input{ :checked => "", :type => "radio", :class => "missing_radio", :id => "missing_reason_lost", :name => "missing_reason", :value => "lost" }Lost
             %input{ :type => "radio", :class => "missing_radio", :id => "missing_reason_illegible", :name => "missing_reason", :value => "illegible" }Illegible
