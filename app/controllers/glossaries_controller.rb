@@ -28,17 +28,6 @@ class GlossariesController < ApplicationController
     end
   end
 
-  # GET /glossaries/new
-  # GET /glossaries/new.xml
-  def new
-    @glossary = Glossary.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @glossary }
-    end
-  end
-
   # GET /glossaries/1/edit
   def edit
     @glossary = Glossary.findItem(params[:id])

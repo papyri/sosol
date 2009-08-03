@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090720220603) do
+ActiveRecord::Schema.define(:version => 20090620155431) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -68,18 +68,6 @@ ActiveRecord::Schema.define(:version => 20090720220603) do
     t.string   "owner_type"
     t.integer  "target_id"
     t.string   "target_type"
-  end
-
-  create_table "glossaries", :force => true do |t|
-    t.string   "item"
-    t.string   "term"
-    t.string   "en"
-    t.string   "de"
-    t.string   "fr"
-    t.string   "sp"
-    t.string   "la"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "identifiers", :force => true do |t|
