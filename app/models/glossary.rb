@@ -1,4 +1,4 @@
-class Glossary < ActiveRecord::Base
+class Glossary
 
 require 'rexml/document'
 include REXML
