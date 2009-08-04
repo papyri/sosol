@@ -1,24 +1,29 @@
-class Glossary
+class Glossary < HGVTransIdentifier
 
 require 'rexml/document'
 include REXML
 
-
-def Glossary.deleteEntryInFile(itemId)
-
-  xmlFile = File.new(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "r") #("hgv-glossary.xml")
-  doc = Document.new(xmlFile)
-
-  doc.root.elements.delete("text/body/list/item[@xml:id='" + itemId + "']")
-  
-  xmlFile.close
-  xmlFile = File.new(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "w") #("hgv-glossary.xml")
-  doc.write(xmlFile);
-  xmlFile.close
-  
+def to_path
+  return File.join(PATH_PREFIX, 'glossary.xml')
 end
 
-def Glossary.addEntryToFile(entry)
+# noop out AR save methods
+def save
+end
+def save!
+end
+
+def delete_entry_in_file(item_id)
+  doc = Document.new(self.content)
+
+  doc.root.elements.delete("text/body/list/item[@xml:id='" + item_id + "']")
+  
+  modified_xml_content = ''
+  doc.write(modified_xml_content);
+  self.set_content(modified_xml_content)
+end
+
+def add_entry_to_file(entry)
 
   entryGlossary = Glossary.new(entry)
   
