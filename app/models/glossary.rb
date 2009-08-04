@@ -53,34 +53,7 @@ def add_entry_to_file(entry)
   doc.write(xmlFile)
   xmlFile.close  
 end
-  
-  
-def Glossary.glossariesToXmlFile(glossaries)
 
-  #open xmlfile
-  xmlFile = File.new(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "r") #("hgv-glossary.xml")
-  doc = Document.new(xmlFile)
-  
-  #delete all items
-  doc.root.elements.delete_all("text/body/list/item")
-  
-  #sort glossary entries
-  glossaries.sort! { |a,b| a.item.downcase <=> b.item.downcase }
-  
-  
-  #put entries into xml
-  listNode = doc.root.elements("text/body/list")
-  glossaries.each { |glossary|
-    listNode.add( createItemElement(glossary) )  
-  }
-  
-  xmlFile.close
-  xmlFile = File.new(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "w") 
-  doc.write(xmlFile, 2)
-  xmlFile.close
-
-end
-  
 def Glossary.createItemElement(glossaryEntry)
       
       itemElement = Element.new("item")
