@@ -202,18 +202,38 @@ var savedLocation;
 
 function hideChoosers()
 {
+  document.getElementById("text_div").style.display = "none";
   document.getElementById("glossary_div").style.display = "none";
   document.getElementById("app_div").style.display = "none";
   document.getElementById("milestone_div").style.display = "none";
   document.getElementById("language_div").style.display = "none";
   document.getElementById("missing_div").style.display = "none";
+  document.getElementById("hide_div").style.display = "none";
+  
+  document.getElementById("text").style.color = "#000000";
+  document.getElementById("glossary").style.color = "#000000";
+  document.getElementById("app").style.color = "#000000";
+  document.getElementById("milestone").style.color = "#000000";
+  document.getElementById("language").style.color = "#000000";
+  document.getElementById("missing").style.color = "#000000";
+  document.getElementById("hide").style.color = "#000000";
+  
+  document.getElementById("text").style.backgroundColor = "#EEEEEE";
+  document.getElementById("glossary").style.backgroundColor = "#EEEEEE";
+  document.getElementById("app").style.backgroundColor = "#EEEEEE";
+  document.getElementById("milestone").style.backgroundColor = "#EEEEEE";
+  document.getElementById("language").style.backgroundColor = "#EEEEEE";
+  document.getElementById("missing").style.backgroundColor = "#EEEEEE";
+  document.getElementById("hide").style.backgroundColor = "#EEEEEE";
 }
 
 function setActiveTab(tab_id)
 {
   chooser_name = tab_id + "_div";
   hideChoosers();
-  document.getElementById(chooser_name).style.display="";  
+  document.getElementById(chooser_name).style.display=""; 
+  document.getElementById(tab_id).style.backgroundColor = "#000000";
+  document.getElementById(tab_id).style.color = "#EEEEEE";
 }
 
 <!-- end CHOOSER TABS -->
@@ -345,10 +365,10 @@ function showTerm(node_path)
 	termHeader.appendChild(termText);
 	
 	termDef = document.createElement("p");
-	termText = document.createTextNode(def);
+	termText = document.createTextNode(def.term);
 	termDef.appendChild(termText);
 
-	
+
 	el = document.getElementById("info_div");
 	while (el.childNodes.length > 0)
 	{
@@ -356,6 +376,17 @@ function showTerm(node_path)
 	}
 	el.appendChild(termHeader);
 	el.appendChild(termDef);  		
+
+
+  for (i=0;i<def.glossArray.length;i++)
+  {    
+	  glossDef = document.createElement("p");
+	  glossText = document.createTextNode( " - " + def.glossArray[i]);
+	  glossDef.appendChild(glossText);    
+	  el.appendChild(glossDef);
+  }
+
+	
 }
 
 function glossary_resolver(prefix)
@@ -367,27 +398,65 @@ function glossary_resolver(prefix)
 	return "http://www.tei-c.org/ns/1.0";
 }
 
+function findDefsResult (term, glossArray)
+{
+  this.glossArray = glossArray;
+  this.term = term;  
+}
 function findDef(term)
 {  
+  var result = new findDefsResult();
+  result.glossArray = new Array();
+  
 	var glossary = xmlFromString( document.getElementById("glossary_xml").value );
          
 	var resultNode;	
-	var result = "";
+	//var result = "";
   //c is just a made up namespace to make the parser work
 	var termPath = '/c:TEI/c:text/c:body/c:list/c:item[@xml:id="' + term + '"]/c:term';
-	  
+	
+	var glossPath = '/c:TEI/c:text/c:body/c:list/c:item[@xml:id="' + term + '"]/c:gloss';
+  var glossNodes;
+  
 	if (window.ActiveXObject)//ie
 	{
 	  glossary.setProperty("SelectionLanguage", "XPath");
 	  glossary.setProperty("SelectionNamespaces", "xmlns:c='http://www.tei-c.org/ns/1.0'");
 	  resultNode = glossary.selectSingleNode(termPath);
-    result = resultNode.text;
+    result.term = resultNode.text;
+    
+    glossNodes = glossary.selectNodes(glossPath);
+    for (i=0; i<glossNodes.length; i++)
+    {
+      //alert(glossNodes[i].text);
+      result.glossArray[i] = glossNodes[i].text;
+    }
+    //for each node add to list
   }
   else //mozilla
   {
 	  var nsResolver = glossary.createNSResolver(  glossary.ownerDocument == null ? glossary.documentElement : glossary.ownerDocument.documentElement );
     resultNode = glossary.evaluate(termPath, glossary, glossary_resolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);	
-    result = resultNode.singleNodeValue.textContent;
+    result.term = resultNode.singleNodeValue.textContent;
+    
+    glossNodes = glossary.evaluate(glossPath, glossary, glossary_resolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);	
+    
+    var count = 0;
+    try {
+      var thisNode = glossNodes.iterateNext();
+      
+      while (thisNode) {
+       // alert(thisNode.textContent);
+        result.glossArray[count] = thisNode.textContent;
+        count += 1;
+        thisNode = glossNodes.iterateNext();
+        
+      }
+    }
+    catch (e) {
+      alert(e.message);
+    }
+    
   }  
   return result;	
 }
@@ -548,6 +617,86 @@ function insertEmptyTag(tagname)
 	var newInsertion = p.insertBefore(newNode, resultNode);
 	
 	p.insertBefore(beforeTextNode, newInsertion);
+	
+	
+	insertXmlIntoEditor(xml);
+	transformAfterInsert();
+}
+
+
+function addText(before, after)
+{	
+  
+	//inserts empty text before or after selection
+	var xml=xmlFromString( document.getElementById("editing_trans_xml").value );  
+	
+	var resultNode;
+	//var beforeText;
+	//var afterText;
+	
+	
+	if (window.ActiveXObject)//ie
+	{
+	  xml.setProperty("SelectionLanguage", "XPath");	  
+	  resultNode = xml.selectSingleNode(addTextPathToXPath(savedLocation.path));    
+	  	  
+    //get the before and after text
+    //beforeText = resultNode.text.substr(0,savedLocation.minOffset);
+	 // afterText = resultNode.text.substr(savedLocation.minOffset);		
+	  
+	  //change the result to be the after text
+	  //resultNode.text = afterText;
+	
+  }
+  else //mozilla
+  {	  
+    var resultNodes = xml.evaluate(addTextPathToXPath(savedLocation.path), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
+    resultNode = resultNodes.singleNodeValue;		
+    
+    //get the before and after text
+	// beforeText = resultNode.textContent.substr(0,savedLocation.minOffset);
+	//  afterText = resultNode.textContent.substr(savedLocation.minOffset);		
+	  
+	  //change the result to be the after text
+	//  resultNode.textContent = afterText;
+	
+  } 	
+	
+	//var newNode = xml.createElement(tagname);
+		
+	//create text node with before
+	//var beforeTextNode = xml.createTextNode(beforeText);
+	
+  var newTextNode = xml.createTextNode("\u00a0\u00a0\u00a0");//something to see
+		
+		
+		
+	//insert the new term node 
+	var pChild = resultNode;
+	while (pChild != null && pChild.parentNode.nodeName != "p")
+	{
+	  pChild = resultNode.parentNode;
+  }
+	
+	
+  //var p = resultNode.parentNode;
+
+  if (before)
+  {
+    pChild.parentNode.insertBefore(newTextNode, pChild);  
+  }
+  if (after)
+  {
+    if (pChild.nextSibling)
+    {
+      pChild.parentNode.insertBefore(newTextNode, pChild.nextSibling);
+    }
+    else
+    {      
+      pChild.parentNode.appendChild(newTextNode);
+    }
+	}
+	//p.insertBefore(beforeTextNode, newInsertion);
 	
 	
 	insertXmlIntoEditor(xml);
