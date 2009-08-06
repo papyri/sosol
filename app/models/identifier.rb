@@ -8,25 +8,33 @@ class Identifier < ActiveRecord::Base
   validates_inclusion_of :type,
                          :in => IDENTIFIER_SUBCLASSES
   
+  def repository
+    return self.publication.nil? ? Repository.new() : self.publication.owner.repository
+  end
+  
+  def branch
+    return self.publication.nil? ? 'master' : self.publication.branch
+  end
+  
   def content
-    return self.publication.owner.repository.get_file_from_branch(
-      self.to_path, self.publication.branch)
+    return self.repository.get_file_from_branch(
+      self.to_path, self.branch)
   end
   
   def set_content(content, options = {})
     options.reverse_merge! :comment => ''
-    self.publication.owner.repository.commit_content(self.to_path,
-                                                    self.publication.branch,
-                                                    content,
-                                                    options[:comment])
+    self.repository.commit_content(self.to_path,
+                                   self.branch,
+                                   content,
+                                   options[:comment])
     self.modified = true
     self.save!
   end
   
   def get_commits
     self[:commits] = 
-      self.publication.owner.repository.get_log_for_file_from_branch(
-        self.to_path, self.publication.branch
+      self.repository.get_log_for_file_from_branch(
+        self.to_path, self.branch
     )
   end
   
