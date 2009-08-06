@@ -1,5 +1,6 @@
 class GlossariesController < ApplicationController
 
+   # FIXME: add a find_glossary method that uses Glossary.new({:publication_id => ???}) to populate @glossary, then call methods against it instead of Glossary.new (which uses canon)
   layout 'site'
   before_filter :authorize
   
@@ -7,7 +8,6 @@ class GlossariesController < ApplicationController
   # GET /glossaries
   # GET /glossaries.xml
   def index
-   
    @glossaries = Glossary.new.xml_to_entries()
 
     respond_to do |format|
@@ -54,7 +54,7 @@ class GlossariesController < ApplicationController
   # DELETE /glossaries/1
   # DELETE /glossaries/1.xml
   def destroy
-    Glossary.deleteEntryInFile(params[:id])
+    Glossary.new.delete_entry_in_file(params[:id])
     redirect_to :action => 'index'
   end
 end
