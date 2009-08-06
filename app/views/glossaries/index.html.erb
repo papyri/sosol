@@ -19,11 +19,9 @@
         
           <td><%=h glossary.item %></td>
           <td><%=h glossary.term %></td>
-          <td><%=h glossary.en %></td>
-          <td><%=h glossary.de %></td>
-          <td><%=h glossary.fr %></td>
-          <td><%=h glossary.sp %></td>
-          <td><%=h glossary.la %></td>
+          <% glossary.text.each do |lang, definition| %>
+            <td><%=h glossary.text[lang] %></td>
+          <% end %>
         
           
           <td><%= link_to 'Show', {:action => "show", :id=> glossary.item } %></td>
