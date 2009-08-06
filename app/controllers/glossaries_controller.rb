@@ -39,7 +39,7 @@ class GlossariesController < ApplicationController
     #TODO add new to xml
     #glossaries must exist...
     #add new entry 
-    
+    raise "Glossary needs parent publication"
     Glossary.new.add_entry_to_file(params[:glossary])
     redirect_to :action => 'index'
   end
@@ -47,13 +47,14 @@ class GlossariesController < ApplicationController
   # PUT /glossaries/1
   # PUT /glossaries/1.xml
   def update
-    raise "hell"
+    raise "Glossary needs parent publication"
     Glossary.addEntry(params[:glossary])
   end
 
   # DELETE /glossaries/1
   # DELETE /glossaries/1.xml
   def destroy
+    raise "Glossary needs parent publication"
     Glossary.new.delete_entry_in_file(params[:id])
     redirect_to :action => 'index'
   end
