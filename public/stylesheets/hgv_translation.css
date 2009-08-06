@@ -1,24 +1,41 @@
 #editable_preview_xsl {
   display:none;
 }
+
 #editing_trans_preview {
 height:20em;
 overflow:scroll;
 width:40em;
+padding: 5px 5px;
+font-size: medium;/*set so that em sizing is consisent*/
+
+border-style: solid;
+border-width:small;
+
+margin-bottom: 5px;
 }
-
-
 
 #editing_trans_xml {
 height:200em !important;
-
 width:400em !important;
+font-size: medium;/*set so that em sizing is consisent*/
+
+padding: 5px 5px;
+
+border-style: solid;
+border-width:small;
 }
+
 #editing_trans_xml_div {
 height:20em;
 overflow:scroll;
 width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+border-style: solid;
+border-width:small;
 }
+
 #info_div {
 /* color:#00FF00; */
 border-style: double;
@@ -27,6 +44,7 @@ height:5em;
 width:40em;
 margin-bottom: 5px;
 padding: 5px 5px;
+font-size: medium;/*set so that em sizing is consisent*/
 }
 #info_div h1 {
 /* color:#FF0000; */
@@ -37,8 +55,9 @@ font-size:small;
 }
 #chooser_div {
 float:right;
-height:20em;
+height:40em;
 width:20em;
+font-size: medium;/*set so that em sizing is consisent*/
 }
 .chooser
 {
@@ -46,7 +65,9 @@ border-style: solid;
 border-width:small;
 height:5em;
 width:40em;
-padding: 10px 10px;
+
+margin-bottom: 10px;
+font-size: medium;/*set so that em sizing is consisent*/
 }
 
 .chooser_tab
@@ -64,24 +85,68 @@ margin-top: 20px;
 #app_div {
 height:10em;
 width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
 }
+
 #app_div textarea {
-color:#ff0000;
+overflow: auto;
+font-size: medium;/*set so that em sizing is consisent*/
 height:1.5em !important;
 width:10em !important;
 /*for somereason the order is being ignored here, this is the last stylesheet but it is being overidden somewhere else so I added the important csc*/
 }
 
-#milestone_div {
-height:10em;
-width:40em;
+#app_div .app_label {
+text-align: left; 
+vertical-align: middle;
+height:1.5em ;
+width:6em ;
+display: inline-block;
 }
 
 
+
+#milestone_div {
+height:10em;
+width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
+#text_div {
+height:10em;
+width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
+#language_div {
+font-size: medium;/*set so that em sizing is consisent*/
+height:10em;
+width:40em;
+padding: 5px 5px;
+}
+
+#missing_div {
+font-size: medium;/*set so that em sizing is consisent*/
+height:10em;
+width:40em;
+padding: 5px 5px;
+}
+
+#hide_div {
+height:0em;
+width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+}
+
 #glossary_div {
+font-size: medium;/*set so that em sizing is consisent*/
 height:10em;
 overflow:scroll;
 width:40em;
+padding: 5px 5px;
 }
 
 #glossary_xml {
@@ -89,7 +154,7 @@ width:40em;
 }
 
 .glossary_chooser {
-
+font-size: medium;/*set so that em sizing is consisent*/
 }
 .glossary_chooser h2 {
 color:#FF0000;
@@ -119,7 +184,7 @@ background-color:#EE4444;
 font-weight:400;
 }
 .editable_text {
-background-color:#EEEEEE;
+background-color:#DDDDDD;
 font-weight:100;
 }
 .editable_lem {

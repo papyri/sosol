@@ -13,12 +13,16 @@
 
         #info_div
         #inserting_chooser
+          %span{ :class => 'chooser_tab', :id => 'text', :onclick => 'setActiveTab(this.id)' }Text 
           %span{ :class => 'chooser_tab', :id => 'glossary', :onclick => 'setActiveTab(this.id)' }Term 
           %span{ :class => 'chooser_tab', :id => 'app', :onclick => 'setActiveTab(this.id)' } App
           %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line
           %span{ :class => 'chooser_tab', :id => 'language', :onclick => 'setActiveTab(this.id)' } Language
           %span{ :class => 'chooser_tab', :id => 'missing', :onclick => 'setActiveTab(this.id)' } Missing
-          
+          %span{ :class => 'chooser_tab', :id => 'hide', :onclick => 'setActiveTab(this.id)' } Hide
+          #text_div{:class => "chooser"}
+            %button{ :type => "button", :onclick=>"addText(true, false)"}Add Text Before
+            %button{ :type => "button", :onclick=>"addText(false, true)"}Add Text After
           #glossary_div{:class => "chooser"}
             =@glossary
           #milestone_div{:class => "chooser"}
@@ -26,14 +30,19 @@
             %button{ :type => "button", :onclick=>"insertMilestone('line', 0)" }Insert Milestone LB
             %button{ :type => "button", :onclick=>"insertEmptyTag('lb')" }Insert LB
           #app_div{:class => "chooser"}
-            App Type
-            %textarea{ :id => 'app_type' }
-            Lem
-            %textarea{ :id => 'app_lem' }
-            bibl
-            %textarea{ :id => 'app_bibl' }
+            %p
+              %span{ :class => "app_label" }App Type
+              %textarea{ :id => 'app_type' }
+            %p
+              %span{ :class => "app_label" }Lem
+              %textarea{ :id => 'app_lem' }            
+            %p
+              %span{ :class => "app_label" }bibl
+              %textarea{ :id => 'app_bibl' }
+            
             %button{ :type => "button", :onclick=>"insertApp()" }Insert
           #language_div{:class => "chooser"}
+            <h3>Insert New Language</h3>
             %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('en', 'English')" }English
             %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('de', 'German')" }German
             %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('fr', 'French')" }French
@@ -50,7 +59,7 @@
             Count
             %input{ :type => "text", :id => "missing_count" }
             %button{ :type => "button", :class => "insert_missing_button", :onclick=>"insertMissing()" }Insert    
-            
+          #hide_div{:class => "chooser"}
         #trans_and_xml
           #editing_trans_preview	
           #editing_trans_xml_div          
