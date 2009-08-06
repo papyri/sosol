@@ -5,20 +5,19 @@ class HgvTransIdentifiersController < IdentifiersController
   def edit
     find_identifier
 
-    #send xslt to page so it can use it on the fly
+    # send xslt to page so it can use it on the fly
     f = File.open(File.join(RAILS_ROOT, 'data/xslt/translation/editable_preview.xsl'), "r")    
     @editable_preview_xsl = f.read      
     
+    # pass glossary xml so page can find defs on the fly
+    @glossary_xml = Glossary.new({:publication => @identifier.publication}).content
+     
     #create glossary
     xslt = XML::XSLT.new()
-    xslt.xml = REXML::Document.new File.open(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "r")
+    xslt.xml = REXML::Document.new @glossary_xml
     xslt.xsl = REXML::Document.new File.open( File.join(RAILS_ROOT, 'data/xslt/translation/glossary_to_chooser.xsl'), "r")    
     @glossary = xslt.serve()
-    
-    #pass glossary xml so page can find defs on the fly
-    gloss = File.open(File.join(RAILS_ROOT, 'data/xslt/translation/hgv-glossary.xml'), "r")
-    @glossary_xml = gloss.read
-    
+        
     #render :template => 'identifiers/editxml'
   end
   
