@@ -10,7 +10,7 @@ class HgvTransIdentifiersController < IdentifiersController
     @editable_preview_xsl = f.read      
     
     # pass glossary xml so page can find defs on the fly
-    @glossary_xml = Glossary.new({:publication => @identifier.publication}).content
+    @glossary_xml = HGVTransGlossary.new({:publication => @identifier.publication}).content
      
     #create glossary
     xslt = XML::XSLT.new()

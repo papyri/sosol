@@ -1,4 +1,4 @@
-class Glossary < HGVTransIdentifier
+class HGVTransGlossary < HGVTransIdentifier
   require 'rexml/document'
   include REXML
 
@@ -78,7 +78,7 @@ class Glossary < HGVTransIdentifier
     self.set_content(modified_xml_content)
   end
 
-  def Glossary.create_item_element(glossaryEntry)
+  def HGVTransGlossary.create_item_element(glossaryEntry)
     itemElement = Element.new("item")
     itemElement.add_attribute("xml:id", glossaryEntry.item)
 
@@ -98,7 +98,7 @@ class Glossary < HGVTransIdentifier
     itemElement
   end
 
-  def Glossary.create_gloss_element(lang, definition)
+  def HGVTransGlossary.create_gloss_element(lang, definition)
     glossElement = Element.new("gloss")
     glossElement.add_attribute("xml:lang", lang)
     glossElement.add_text(definition.chomp)
