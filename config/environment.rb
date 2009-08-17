@@ -34,6 +34,8 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   config.gem "capistrano", :version => ">= 2.5.5"
   config.gem "json"
   
+  config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
+  
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   
   config.gem 'mojombo-grit',
