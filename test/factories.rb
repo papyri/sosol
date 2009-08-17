@@ -15,3 +15,10 @@ end
 Factory.define :decree do |f|
   f.association :board
 end
+
+Factory.define :emailer do |f|
+  f.association :board
+  f.extra_addresses 'MyText'
+  f.include_document 'false'
+  f.message 'MyText'
+end
