@@ -4,10 +4,15 @@ class BoardsControllerTest < ActionController::TestCase
   def setup
     @admin = Factory(:admin)
     @request.session[:user_id] = @admin.id
+    @board = Factory(:board, :title => 'board_1')
+    @board_two = Factory(:board, :title => 'board_2')
   end
   
   def teardown
     @request.session[:user_id] = nil
+    @admin.destroy
+    @board.destroy unless !Board.exists? @board.id
+    @board_two.destroy unless !Board.exists? @board_two.id
   end
   
   test "should get index" do
@@ -29,33 +34,24 @@ class BoardsControllerTest < ActionController::TestCase
     assert_redirected_to edit_board_path(assigns(:board))
   end
 
-  test "should show board" do
-    board = Factory(:board)
-    
-    get :show, :id => board.id
+  test "should show board" do    
+    get :show, :id => @board.id
     assert_response :success
   end
 
-  test "should get edit" do
-    board = Factory(:board)
-    
-    get :edit, :id => board.id
+  test "should get edit" do    
+    get :edit, :id => @board.id
     assert_response :success
   end
 
-  test "should update board" do
-    board = Factory(:board)
-    
-    put :update, :id => board.id, :board => { }
+  test "should update board" do    
+    put :update, :id => @board.id, :board => { }
     assert_redirected_to board_path(assigns(:board))
   end
 
   test "should destroy board" do
-    board_one = Factory(:board, :title => 'board_1')
-    board_two = Factory(:board, :title => 'board_2')
-    
     assert_difference('Board.count', -1) do
-      delete :destroy, :id => board_one.id
+      delete :destroy, :id => @board.id
     end
 
     assert_redirected_to boards_path
