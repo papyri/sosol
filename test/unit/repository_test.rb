@@ -11,6 +11,14 @@ class RepositoryTest < ActiveSupport::TestCase
         @repo.commit_content('README.TXT','master','TEST','TEST')
       end
     end
+    
+    should "have no master" do
+      assert_nil @repo.master
+    end
+    
+    should "have the canonical path" do
+      assert_equal CANONICAL_REPOSITORY, @repo.path
+    end
   
   end
   
