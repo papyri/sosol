@@ -1,8 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  name: MyString
-  admin: true
-
-two:
-  name: MyString
