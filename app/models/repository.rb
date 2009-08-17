@@ -55,7 +55,7 @@ class Repository
   def destroy
     # master.update_attribute :has_repository, false
     # destroy a git repository
-    FileUtils::rm_r path, :verbose => true, :secure => true
+    FileUtils::rm_r path, :verbose => false, :secure => true
   end
   
   def get_file_from_branch(file, branch = 'master')  
