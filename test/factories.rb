@@ -26,3 +26,14 @@ end
 Factory.define :event do |f|
   f.category 'commit'
 end
+
+Factory.define :vote do |f|
+  f.association :user
+  f.association :publication
+  f.choice 'MyString'
+end
+
+Factory.define :publication do |f|
+  f.association :owner, :factory => :user
+  f.title 'MyString'
+end

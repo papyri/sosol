@@ -1,6 +1,20 @@
 require 'test_helper'
 
 class VotesControllerTest < ActionController::TestCase
+  def setup
+    @user = Factory(:user)
+    @publication = Factory(:publication, :owner => @user)
+    @vote = Factory(:vote, :user => @user, :publication => @publication)
+    @vote_two = Factory(:vote, :user => @user, :publication => @publication)
+  end
+  
+  def teardown
+    @vote.destroy
+    @vote_two.destroy
+    @publication.destroy
+    @user.destroy
+  end
+  
   test "should get index" do
     get :index
     assert_response :success
@@ -21,23 +35,23 @@ class VotesControllerTest < ActionController::TestCase
   end
 
   test "should show vote" do
-    get :show, :id => votes(:one).id
+    get :show, :id => @vote.id
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => votes(:one).id
+    get :edit, :id => @vote.id
     assert_response :success
   end
 
   test "should update vote" do
-    put :update, :id => votes(:one).id, :vote => { }
+    put :update, :id => @vote.id, :vote => { }
     assert_redirected_to vote_path(assigns(:vote))
   end
 
   test "should destroy vote" do
     assert_difference('Vote.count', -1) do
-      delete :destroy, :id => votes(:one).id
+      delete :destroy, :id => @vote.id
     end
 
     assert_redirected_to votes_path
