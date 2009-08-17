@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RepositoryTest < Test::Unit::TestCase
+class RepositoryTest < ActiveSupport::TestCase
   context "The canonical Repository" do
     setup do
       @repo = Repository.new
