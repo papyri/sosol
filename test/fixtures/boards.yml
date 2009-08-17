@@ -1,11 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  title: MyString
-  category: MyString
+  title: board_1
+  category: category_1
   decree_id: 1
 
 two:
-  title: MyString
-  category: MyString
+  title: board_2
+  category: category_2
   decree_id: 1

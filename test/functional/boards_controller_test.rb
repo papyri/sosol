@@ -1,6 +1,14 @@
 require 'test_helper'
 
 class BoardsControllerTest < ActionController::TestCase
+  def setup
+    @request.session[:user_id] = User.first.id
+  end
+  
+  def teardown
+    @request.session[:user_id] = nil
+  end
+  
   test "should get index" do
     get :index
     assert_response :success
@@ -17,7 +25,7 @@ class BoardsControllerTest < ActionController::TestCase
       post :create, :board => { }
     end
 
-    assert_redirected_to board_path(assigns(:board))
+    assert_redirected_to edit_board_path(assigns(:board))
   end
 
   test "should show board" do
