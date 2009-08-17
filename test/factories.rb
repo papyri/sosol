@@ -22,3 +22,7 @@ Factory.define :emailer do |f|
   f.include_document 'false'
   f.message 'MyText'
 end
+
+Factory.define :event do |f|
+  f.category 'commit'
+end
