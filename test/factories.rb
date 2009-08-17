@@ -11,3 +11,7 @@ end
 Factory.define :admin, :parent => :user do |f|
   f.admin true
 end
+
+Factory.define :decree do |f|
+  f.association :board
+end
