@@ -94,6 +94,10 @@ class Repository
   end
   
   def commit_content(file, branch, data, comment)
+    if @path == CANONICAL_REPOSITORY
+      raise "Cannot commit directly to canonical repository"
+    end
+    
     index = @repo.index
     index.read_tree(branch)
     index.add(file, data)

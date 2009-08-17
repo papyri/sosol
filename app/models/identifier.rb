@@ -21,7 +21,7 @@ class Identifier < ActiveRecord::Base
       self.to_path, self.branch)
   end
   
-  def set_content(content, options = {})
+  def set_content(content, options = {})    
     options.reverse_merge! :comment => ''
     self.repository.commit_content(self.to_path,
                                    self.branch,
