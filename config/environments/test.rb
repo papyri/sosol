@@ -25,3 +25,5 @@ config.action_mailer.delivery_method = :test
 # RPX_API_KEY and RPX_REALM (site name) for RPX,
 # and possibly other unversioned secrets for test
 require File.join(File.dirname(__FILE__), 'test_secret')
+
+REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'test', 'git')
