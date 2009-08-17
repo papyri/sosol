@@ -2,7 +2,8 @@ require 'test_helper'
 
 class BoardsControllerTest < ActionController::TestCase
   def setup
-    @request.session[:user_id] = User.first.id
+    @admin = Factory(:admin)
+    @request.session[:user_id] = @admin.id
   end
   
   def teardown
@@ -29,23 +30,32 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should show board" do
-    get :show, :id => boards(:one).id
+    board = Factory(:board)
+    
+    get :show, :id => board.id
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => boards(:one).id
+    board = Factory(:board)
+    
+    get :edit, :id => board.id
     assert_response :success
   end
 
   test "should update board" do
-    put :update, :id => boards(:one).id, :board => { }
+    board = Factory(:board)
+    
+    put :update, :id => board.id, :board => { }
     assert_redirected_to board_path(assigns(:board))
   end
 
   test "should destroy board" do
+    board_one = Factory(:board, :title => 'board_1')
+    board_two = Factory(:board, :title => 'board_2')
+    
     assert_difference('Board.count', -1) do
-      delete :destroy, :id => boards(:one).id
+      delete :destroy, :id => board_one.id
     end
 
     assert_redirected_to boards_path
