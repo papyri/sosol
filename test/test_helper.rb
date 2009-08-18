@@ -37,4 +37,7 @@ class Test::Unit::TestCase
   # fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def assert_path_equal(path_array, path_string)
+    assert_equal File.join(PATH_PREFIX, path_array), path_string
+  end
 end
