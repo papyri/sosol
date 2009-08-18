@@ -1,9 +1,11 @@
 require 'test_helper'
 
-PATH_PREFIX = HGVMetaIdentifier::PATH_PREFIX
-
 class HGVMetaIdentifierTest < ActiveSupport::TestCase
   context "identifier mapping" do
+    setup do
+      @path_prefix = HGVMetaIdentifier::PATH_PREFIX
+    end
+    
     should "map the first identifier" do
       hgv1 = Factory.build(:HGVMetaIdentifier, :alternate_name => 'hgv1')
       assert_path_equal %w{HGV1 1.xml}, hgv1.to_path

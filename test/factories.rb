@@ -54,3 +54,11 @@ Factory.define :HGVMetaIdentifier do |f|
   f.name { Factory.next(:hgv_identifier_string) }
   f.alternate_name { Factory.next(:hgv_number) }
 end
+
+Factory.sequence :ddb_identifier_string do |n|
+  "oai:papyri.info:identifiers:ddbdp:0001:1:#{n}"
+end
+
+Factory.define :DDBIdentifier do |f|
+  f.name { Factory.next(:ddb_identifier_string) }
+end
