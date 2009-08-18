@@ -4,8 +4,8 @@ class BoardsControllerTest < ActionController::TestCase
   def setup
     @admin = Factory(:admin)
     @request.session[:user_id] = @admin.id
-    @board = Factory(:board, :title => 'board_1')
-    @board_two = Factory(:board, :title => 'board_2')
+    @board = Factory(:board)
+    @board_two = Factory(:board)
   end
   
   def teardown

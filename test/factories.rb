@@ -1,11 +1,15 @@
+Factory.sequence :name do |n|
+  "name_#{n}"
+end
+
 Factory.define :board do |f|
-  f.title 'board'
+  f.title { Factory.next(:name) }
   f.category 'category'
   f.decree_id 1
 end
 
 Factory.define :user do |f|
-  f.name 'John'
+  f.name { Factory.next(:name) }
 end
 
 Factory.define :admin, :parent => :user do |f|
