@@ -1,8 +1,11 @@
 require 'test_helper'
 
 class BoardTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+  should "delete its repository upon destruction" do
+    board = Factory(:board)
+    path = board.repository.path
+    assert File.exists?(path)
+    board.destroy
+    assert !File.exists?(path)
   end
 end
