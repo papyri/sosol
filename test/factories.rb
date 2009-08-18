@@ -41,3 +41,16 @@ Factory.define :publication do |f|
   f.association :owner, :factory => :user
   f.title 'MyString'
 end
+
+Factory.sequence :hgv_identifier_string do |n|
+  "oai:papyri.info:identifiers:hgv:P.Fake:#{n}"
+end
+
+Factory.sequence :hgv_number do |n|
+  "hgv#{n}"
+end
+
+Factory.define :HGVMetaIdentifier do |f|
+  f.name { Factory.next(:hgv_identifier_string) }
+  f.alternate_name { Factory.next(:hgv_number) }
+end
