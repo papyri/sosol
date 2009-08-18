@@ -12,6 +12,8 @@ class Board < ActiveRecord::Base
   # themselves.
   serialize :identifier_classes
   
+  validates_uniqueness_of :title
+  
   has_repository
   
   # workaround repository need for owner name for now
