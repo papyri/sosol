@@ -66,6 +66,24 @@ class Repository
     return blob.nil? ? nil : blob.data
   end
   
+  def get_all_files_from_path_on_branch(path = '', branch = 'master')
+    root_tree = @repo.tree(branch, [path]).contents.first
+    return recurse_git_tree(root_tree, [path])
+  end
+  
+  def recurse_git_tree(tree, path)
+    files = []
+    tree.blobs.each do |blob|
+      files << File.join(path, blob.name)
+    end
+    tree.trees.each do |this_tree|
+      path.push(this_tree.name)
+      files += recurse_git_tree(this_tree, path)
+      path.pop
+    end
+    return files
+  end
+  
   def get_log_for_file_from_branch(file, branch = 'master')
     @repo.log(branch, file).map{|commit| commit.to_hash}
   end
