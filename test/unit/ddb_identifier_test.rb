@@ -18,5 +18,10 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       bgu_ppetr2_1 = Factory.build(:DDBIdentifier, :name => "oai:papyri.info:identifiers:ddbdp:0186::1")
       assert_path_equal %w{p.petr.2 p.petr.2.1.xml}, bgu_ppetr2_1.to_path
     end
+    
+    should "map files with '+' in the name" do
+      chla_5_299FrA_B_C = Factory.build(:DDBIdentifier, :name => "oai:papyri.info:identifiers:ddbdp:0279:5:299FrA+B+C")
+      assert_path_equal %w{chla chla.5 chla.5.299FrA+B+C.xml}, chla_5_299FrA_B_C.to_path
+    end
   end
 end
