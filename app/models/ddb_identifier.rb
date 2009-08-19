@@ -47,7 +47,7 @@ class DDBIdentifier < Identifier
     
     # switch forward slashes to underscores
     # e.g. 0014:2:1964/1967 => o.bodl/o.bodl.2/o.bodl.2.1964_1967.xml
-    ddb_series_number.tr!('/','_')
+    ddb_document_number.tr!('/','_')
       
     # e.g. 0001 => bgu
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
