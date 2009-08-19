@@ -55,7 +55,7 @@ class Repository
   def destroy
     # master.update_attribute :has_repository, false
     # destroy a git repository
-    FileUtils::rm_r path, :verbose => true, :secure => true
+    FileUtils::rm_r path, :verbose => false, :secure => true
   end
   
   def get_file_from_branch(file, branch = 'master')  
@@ -64,6 +64,24 @@ class Repository
     return nil if subtree.nil?
     blob = subtree / File.basename(file)
     return blob.nil? ? nil : blob.data
+  end
+  
+  def get_all_files_from_path_on_branch(path = '', branch = 'master')
+    root_tree = @repo.tree(branch, [path]).contents.first
+    return recurse_git_tree(root_tree, [path])
+  end
+  
+  def recurse_git_tree(tree, path)
+    files = []
+    tree.blobs.each do |blob|
+      files << File.join(path, blob.name)
+    end
+    tree.trees.each do |this_tree|
+      path.push(this_tree.name)
+      files += recurse_git_tree(this_tree, path)
+      path.pop
+    end
+    return files
   end
   
   def get_log_for_file_from_branch(file, branch = 'master')
@@ -94,6 +112,10 @@ class Repository
   end
   
   def commit_content(file, branch, data, comment)
+    if @path == CANONICAL_REPOSITORY
+      raise "Cannot commit directly to canonical repository"
+    end
+    
     index = @repo.index
     index.read_tree(branch)
     index.add(file, data)

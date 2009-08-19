@@ -13,9 +13,8 @@
 <% for emailer in @emailers %>
   <tr>
     <td><%=h emailer.board_id %></td>
-    <td><%=h emailer.member_id %></td>
+    <td><%=h emailer.user_id %></td>
     <td><%=h emailer.extra_addresses %></td>
-    <td><%=h emailer.status %></td>
     <td><%=h emailer.include_document %></td>
     <td><%=h emailer.message %></td>
     <td><%= link_to 'Show', emailer %></td>

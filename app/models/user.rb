@@ -29,25 +29,27 @@ class User < ActiveRecord::Base
     # "p.stras/p.stras.9/p.stras.9.816.xml",
     # "sb/sb.6/sb.6.9108.xml",
     # "p.yale/p.yale.1/p.yale.1.43.xml",
-    
-    ['oai:papyri.info:identifiers:ddbdp:0118:2:67',
-     'oai:papyri.info:identifiers:ddbdp:0239:24:16003',
-     'oai:papyri.info:identifiers:ddbdp:0154:7:2067',
-     'oai:papyri.info:identifiers:ddbdp:0129:1:109',
-     'oai:papyri.info:identifiers:ddbdp:0228:1:44',
-     'oai:papyri.info:identifiers:ddbdp:0206:2:414'
-    ].each do |pn_id|
-      p = Publication.new
-      p.populate_identifiers_from_identifier(pn_id)
-      p.owner = self
-      p.save!
-      p.branch_from_master
+
+    if ENV['RAILS_ENV'] != 'test'
+      ['oai:papyri.info:identifiers:ddbdp:0118:2:67',
+       'oai:papyri.info:identifiers:ddbdp:0239:24:16003',
+       'oai:papyri.info:identifiers:ddbdp:0154:7:2067',
+       'oai:papyri.info:identifiers:ddbdp:0129:1:109',
+       'oai:papyri.info:identifiers:ddbdp:0228:1:44',
+       'oai:papyri.info:identifiers:ddbdp:0206:2:414'
+      ].each do |pn_id|
+        p = Publication.new
+        p.populate_identifiers_from_identifier(pn_id)
+        p.owner = self
+        p.save!
+        p.branch_from_master
       
-      e = Event.new
-      e.category = "started editing"
-      e.target = p
-      e.owner = self
-      e.save!
+        e = Event.new
+        e.category = "started editing"
+        e.target = p
+        e.owner = self
+        e.save!
+      end
     end
   end
   
