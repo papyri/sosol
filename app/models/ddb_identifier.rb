@@ -41,6 +41,10 @@ class DDBIdentifier < Identifier
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
       
+    # switch commas to dashes
+    # e.g. 0001:13:2230,1 => bgu/bgu.13/bgu.13.2230-1.xml 
+    ddb_document_number.tr!(',','-')
+      
     # e.g. 0001 => bgu
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
