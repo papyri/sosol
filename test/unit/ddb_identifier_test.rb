@@ -29,5 +29,10 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       assert_path_equal %w{bgu bgu.13 bgu.13.2230-1.xml}, bgu_13_2230_1.to_path
     end
     
+    should "map files with '/' in the identifier" do
+      o_bodl_2_1964_1967 = Factory.build(:DDBIdentifier, :name => "oai:papyri.info:identifiers:ddbdp:0014:2:1964/1967")
+      assert_path_equal %w{o.bodl o.bodl.2 o.bodl.2.1964_1967.xml}, o_bodl_2_1964_1967.to_path
+    end
+    
   end
 end
