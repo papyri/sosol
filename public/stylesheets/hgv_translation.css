@@ -10,7 +10,7 @@ padding: 5px 5px;
 font-size: medium;/*set so that em sizing is consisent*/
 
 border-style: solid;
-border-width:small;
+border-width:medium;
 
 margin-bottom: 5px;
 }
@@ -23,7 +23,7 @@ font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 
 border-style: solid;
-border-width:small;
+border-width:medium;
 }
 
 #editing_trans_xml_div {
@@ -33,13 +33,14 @@ width:40em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 border-style: solid;
-border-width:small;
+border-width:medium;
 }
 
 #info_div {
 /* color:#00FF00; */
+overflow:auto;
 border-style: double;
-border-width:small;
+border-width:medium;
 height:5em;
 width:40em;
 margin-bottom: 5px;
@@ -62,7 +63,7 @@ font-size: medium;/*set so that em sizing is consisent*/
 .chooser
 {
 border-style: solid;
-border-width:small;
+border-width:medium;
 height:5em;
 width:40em;
 
@@ -187,7 +188,15 @@ font-weight:400;
 background-color:#DDDDDD;
 font-weight:100;
 }
+
+
+.editable_text:focus{
+background-color:#bbbbbb;
+font-weight:100;
+}
+
 .editable_lem {
+
 background-color:#AAAAEE;
 font-weight:100;
 }
