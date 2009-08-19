@@ -19,6 +19,7 @@
           %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line
           %span{ :class => 'chooser_tab', :id => 'language', :onclick => 'setActiveTab(this.id)' } Language
           %span{ :class => 'chooser_tab', :id => 'missing', :onclick => 'setActiveTab(this.id)' } Missing
+          -# %span{ :class => 'chooser_tab', :id => 'delete', :onclick => 'setActiveTab(this.id)' } Delete
           %span{ :class => 'chooser_tab', :id => 'hide', :onclick => 'setActiveTab(this.id)' } Hide
           #text_div{:class => "chooser"}
             %button{ :type => "button", :onclick=>"addText(true, false)"}Add Text Before
@@ -58,7 +59,9 @@
             <br />
             Count
             %input{ :type => "text", :id => "missing_count" }
-            %button{ :type => "button", :class => "insert_missing_button", :onclick=>"insertMissing()" }Insert    
+            %button{ :type => "button", :class => "insert_missing_button", :onclick=>"insertMissing()" }Insert                        
+          -# #delete_div{:class => "chooser"}
+            %button{ :type => "button", :class => "delete_element_button", :onclick=>"deleteElement()" }Delete Element            
           #hide_div{:class => "chooser"}
         #trans_and_xml
           #editing_trans_preview	
@@ -66,6 +69,7 @@
             %textarea{:id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")' }=@identifier.content           
           %textarea{ :id => 'editable_preview_xsl'}=@editable_preview_xsl
           %textarea{ :id => 'glossary_xml'}=@glossary_xml
+
         
 	
 

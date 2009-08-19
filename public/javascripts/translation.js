@@ -36,6 +36,8 @@ function xmlFromFile(filename)
   if (window.ActiveXObject)
   {
     xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+    xmlDoc.resolveExternals = false;
+		xmlDoc.validateOnParse = false;
   }
   // code for Mozilla, Firefox, Opera, etc.
   else if (document.implementation
@@ -208,6 +210,7 @@ function hideChoosers()
   document.getElementById("milestone_div").style.display = "none";
   document.getElementById("language_div").style.display = "none";
   document.getElementById("missing_div").style.display = "none";
+  //document.getElementById("delete_div").style.display = "none";
   document.getElementById("hide_div").style.display = "none";
   
   document.getElementById("text").style.color = "#000000";
@@ -216,6 +219,7 @@ function hideChoosers()
   document.getElementById("milestone").style.color = "#000000";
   document.getElementById("language").style.color = "#000000";
   document.getElementById("missing").style.color = "#000000";
+  //document.getElementById("delete").style.color = "#000000";
   document.getElementById("hide").style.color = "#000000";
   
   document.getElementById("text").style.backgroundColor = "#EEEEEE";
@@ -224,6 +228,7 @@ function hideChoosers()
   document.getElementById("milestone").style.backgroundColor = "#EEEEEE";
   document.getElementById("language").style.backgroundColor = "#EEEEEE";
   document.getElementById("missing").style.backgroundColor = "#EEEEEE";
+  //document.getElementById("delete").style.backgroundColor = "#EEEEEE";
   document.getElementById("hide").style.backgroundColor = "#EEEEEE";
 }
 
@@ -461,6 +466,52 @@ function findDef(term)
   return result;	
 }
 <!-- end SHOW INFO -->
+
+
+
+<!-- DELETE ITEMS -->
+function deleteElement()
+{
+  try {
+  var xmlDoc;
+  xmlDoc=document.implementation.createDocument("","",null);
+  xmlDoc.async = false;
+  xmlDoc.load('/data/global-parameters.xml');
+  
+   var s = new XMLSerializer();
+	  alert( s.serializeToString(xmlDoc) );
+  }
+  catch (e)
+  {
+    alert(e.message);
+  }
+  return;
+  
+  //TODO add check dialog
+	var xml=xmlFromString( document.getElementById("editing_trans_xml").value );  	
+	var resultNode;
+		
+	if (window.ActiveXObject)//ie
+	{
+	  xml.setProperty("SelectionLanguage", "XPath");	  
+	  resultNode = xml.selectSingleNode(addTextPathToXPath(savedLocation.path));        
+	 	
+  }
+  else //mozilla
+  {	  
+    var resultNodes = xml.evaluate(addTextPathToXPath(savedLocation.path), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);		
+    resultNode = resultNodes.singleNodeValue;		    
+	  
+	
+  }  
+  
+  resultNode.parentNode.removeChild(resultNode);
+  
+  insertXmlIntoEditor(xml);
+	transformAfterInsert();
+  
+}
+<!-- end DELETE ITEMS -->
 
 <!-- INSERT ITEMS -->
 
