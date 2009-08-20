@@ -41,7 +41,7 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   config.gem 'mojombo-grit',
     :lib     => 'grit',
     :source  => 'http://gems.github.com',
-    :version => '>= 0.9.4'
+    :version => '>= 1.1.1'
     
   # increase timeout for git operations
   Grit::Git.git_timeout = 60
