@@ -94,10 +94,5 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
- # META_DIR = "/home/charles/work/idpdata/idp.data/HGV_meta_EpiDoc/"
- # TRANSLATION_DIR ="/home/charles/work/idpdata/idp.data/HGV_trans_EpiDoc/"  
-  META_DIR = "/var/rails/protosite/shared/idp.data/HGV_meta_EpiDoc/"
-  TRANSLATION_DIR = "/var/rails/protosite/shared/idp.data/HGV_trans_EpiDoc/"
-  
   GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 end
