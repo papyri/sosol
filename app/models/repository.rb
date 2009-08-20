@@ -63,7 +63,23 @@ class Repository
     subtree = tree.contents.first
     return nil if subtree.nil?
     blob = subtree / File.basename(file)
-    return blob.nil? ? nil : blob.data
+    return get_blob_data(blob)
+  end
+  
+  def get_blob_data(blob)
+    begin
+      # blob.data gets INSANELY slow for large files in a large repo,
+      # this uses @repo.git.show to call a git command instead:
+      #   slower than I would like but still an order of magnitude
+      #   faster (for an example see e.g.
+      #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
+      data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
+      return data
+    rescue
+      Grit::Git.git_timeout *= 2
+      RAILS_DEFAULT_LOGGER.warn "Fetching blob data timed out, increasing timeout to #{Grit::Git.git_timeout}"
+      get_blob_data(blob)
+    end
   end
   
   def get_all_files_from_path_on_branch(path = '', branch = 'master')
