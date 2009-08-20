@@ -29,9 +29,12 @@ class HgvTransIdentifiersController < IdentifiersController
   end
   
   def update
+    #raise "contents are: " + params[:content]
     find_identifier
-    #@identifier.set_content(params[:editing_trans_xml])
-    @identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])
+    @identifier.set_content(params[:editing_trans_xml])
+    
+    flash[:notice] = "File updated."
+    #@identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
