@@ -19,6 +19,12 @@
                 = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
       %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
         = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
+        - trans = @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}
+        - if trans.length > 1
+          %ul
+            - for tran in trans
+              %li
+                = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
 #identifier_sub_menus
   .identifier_sub_menu
     .site
@@ -48,3 +54,4 @@
             %ul
               %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)

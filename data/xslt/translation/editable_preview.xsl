@@ -34,9 +34,15 @@
 
 <xsl:template match="div" >
 
-	<span ><h3><xsl:value-of select="@lang"></xsl:value-of></h3></span>			
-	<xsl:apply-templates></xsl:apply-templates>	
+  <xsl:variable name="lang_id">
+    <xsl:value-of select="@lang"></xsl:value-of>_div</xsl:variable>
 
+
+<!--	<span><h3 onclick="showHide('{$lang}')"><xsl:value-of select="@lang"></xsl:value-of></h3></span>		-->
+	<span><h3><xsl:value-of select="@lang"></xsl:value-of></h3></span>		
+<div id="{$lang_id}">	
+	<xsl:apply-templates></xsl:apply-templates>	
+</div>
 </xsl:template>
 
 <xsl:template match="app">
