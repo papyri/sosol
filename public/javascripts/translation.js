@@ -77,25 +77,38 @@ function textEdit(node_path)
   var resultNode;
   var result;
   
+  
+  //alert(text_area_element.innerHTML);//escapes
+  //alert(text_area_element.innerText);//null
+	//alert(text_area_element.textContent);//text
+	//alert(text_area_element.value);//text
+  
+  //alert(newText.innerHTML);
+  //alert(newText.innerText);
+	//alert(newText.textContent);
+	//alert(newText.nodeValue);
+	  
   // code for IE
   if (window.ActiveXObject)
   {
     xml.setProperty("SelectionLanguage", "XPath");
 	  resultNode = xml.selectSingleNode(addTextPathToXPath(node_path));
 	  result = resultNode.text;
-	  resultNode.text = newText.innerHTML;
-	  
+
+	  resultNode.text = newText.innerText;//newText.innerHTML;	  
 	  text_area_element.value = xml.xml
   }
   else
   {    
 	  resultNode = xml.evaluate(addTextPathToXPath(node_path), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 	  result = resultNode.singleNodeValue.textContent;
-	  resultNode.singleNodeValue.textContent = newText.innerHTML;
+	  resultNode.singleNodeValue.textContent = newText.textContent;//newText.innerHTML;
 	  
 	  var s = new XMLSerializer();
 	  text_area_element.value = s.serializeToString(xml);
   }	
+  
+
 }
 
 <!-- end XML PARSING -->
