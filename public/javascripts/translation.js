@@ -108,6 +108,7 @@ function textEdit(node_path)
 	  text_area_element.value = s.serializeToString(xml);
   }	
   
+  saveLocation(node_path);
 
 }
 
