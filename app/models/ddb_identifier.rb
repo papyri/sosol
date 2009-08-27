@@ -52,6 +52,10 @@ class DDBIdentifier < Identifier
     # e.g. 0001 => bgu
     ddb_collection_name = ddb_series_to_collection(ddb_series_number)
     
+    if ddb_collection_name.nil?
+      raise "DDB Collection Name Not Found"
+    end
+    
     # e.g. bgu.10
     ddb_volume_path = ddb_collection_name + '.' + ddb_volume_number
     # e.g. bgu.10.1901.xml
@@ -85,7 +89,7 @@ class DDBIdentifier < Identifier
       xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
         "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
-      return xpath_result.to_s
+      return xpath_result.nil? ? nil : xpath_result.to_s
     end
   end
   
