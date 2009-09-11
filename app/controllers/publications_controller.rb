@@ -31,6 +31,20 @@ class PublicationsController < ApplicationController
     end
   end
   
+  def create_from_templates
+    @publication = Publication.new_from_templates(@current_user)
+    
+    # need to remove repeat against publication model
+    e = Event.new
+    e.category = "created"
+    e.target = @publication
+    e.owner = @current_user
+    e.save!
+    
+    flash[:notice] = 'Publication was successfully created.'
+    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+  end
+  
   def submit
     @publication = Publication.find(params[:id])
     @publication.submit

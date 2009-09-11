@@ -90,6 +90,24 @@ class Publication < ActiveRecord::Base
     e.save!
   end
   
+  def self.new_from_templates(creator)
+    new_publication = Publication.new(:owner => creator)
+    
+    # fetch a title without creating from template
+    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
+    
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    # create the two required identifier classes from templates
+    new_ddb = DDBIdentifier.new_from_template(new_publication)
+    new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
+    
+    return new_publication
+  end
+  
   def mutable?
     if self.status == "submitted"
       return false
