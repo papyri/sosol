@@ -31,6 +31,11 @@ class RepositoryTest < ActiveSupport::TestCase
       @user.destroy
     end
     
+    should "have the same master tip as canonical after creation" do
+      assert_equal @user.repository.repo.get_head('master').commit.id,
+        Repository.new.repo.get_head('master').commit.id
+    end
+    
     should "update master tip before branch creation" do
       # rewind the head first
       first_canon_commit = Repository.new.repo.log().last
