@@ -3,6 +3,7 @@ class Publication < ActiveRecord::Base
   
   validates_presence_of :title, :branch
   
+  belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
@@ -91,7 +92,7 @@ class Publication < ActiveRecord::Base
   end
   
   def self.new_from_templates(creator)
-    new_publication = Publication.new(:owner => creator)
+    new_publication = Publication.new(:owner => creator, :creator => creator)
     
     # fetch a title without creating from template
     new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
@@ -127,6 +128,7 @@ class Publication < ActiveRecord::Base
   def copy_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
+    duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.save!
