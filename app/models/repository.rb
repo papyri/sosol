@@ -104,11 +104,15 @@ class Repository
     @repo.log(branch, file).map{|commit| commit.to_hash}
   end
   
+  def update_master_from_canonical
+    @repo.update_ref('master',@canonical.get_head('master').commit.id)
+  end
+  
   def create_branch(name, source_name = 'master')
     # We have to abuse git here because Grit::Head doesn't appear to have
     # a facility for writing out a sha1 to refs/heads/name yet
     # Also, we always assume we want to branch from master by default
-    # TODO: Update master branch tip from canonical?
+    self.update_master_from_canonical
     
     @repo.git.branch({}, name, source_name)
   end
