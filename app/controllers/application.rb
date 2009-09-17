@@ -18,6 +18,9 @@ class ApplicationController < ActionController::Base
   # session :session_key => '_sosol_session_id'
   # layout 'default'
 
+  include MaintenanceMode
+  before_filter :disabled?
+
   before_filter :get_user_id
   before_filter :rpx_setup
   
