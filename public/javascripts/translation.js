@@ -218,32 +218,15 @@ var savedLocation;
 
 function hideChoosers()
 {
-  document.getElementById("text_div").style.display = "none";
-  document.getElementById("glossary_div").style.display = "none";
-  document.getElementById("app_div").style.display = "none";
-  document.getElementById("milestone_div").style.display = "none";
-  document.getElementById("language_div").style.display = "none";
-  document.getElementById("missing_div").style.display = "none";
-  //document.getElementById("delete_div").style.display = "none";
-  document.getElementById("hide_div").style.display = "none";
-  
-  document.getElementById("text").style.color = "#000000";
-  document.getElementById("glossary").style.color = "#000000";
-  document.getElementById("app").style.color = "#000000";
-  document.getElementById("milestone").style.color = "#000000";
-  document.getElementById("language").style.color = "#000000";
-  document.getElementById("missing").style.color = "#000000";
-  //document.getElementById("delete").style.color = "#000000";
-  document.getElementById("hide").style.color = "#000000";
-  
-  document.getElementById("text").style.backgroundColor = "#EEEEEE";
-  document.getElementById("glossary").style.backgroundColor = "#EEEEEE";
-  document.getElementById("app").style.backgroundColor = "#EEEEEE";
-  document.getElementById("milestone").style.backgroundColor = "#EEEEEE";
-  document.getElementById("language").style.backgroundColor = "#EEEEEE";
-  document.getElementById("missing").style.backgroundColor = "#EEEEEE";
-  //document.getElementById("delete").style.backgroundColor = "#EEEEEE";
-  document.getElementById("hide").style.backgroundColor = "#EEEEEE";
+  // Using Prototype ($w() utility method, $() utility method, Array#each)
+  // allows you to write more expressive, maintainable code.
+  // This could actually probably be done even easier by setting two CSS
+  // classes and using Element#toggleClassName in this and setActiveTab.
+  $w('text glossary app milestone language missing hide').each(function(id) {
+    $(id + '_div').style.display = 'none';
+    $(id).style.color = '#000000';
+    $(id).style.backgroundColor = '#EEEEEE';
+  });
 }
 
 function setActiveTab(tab_id)

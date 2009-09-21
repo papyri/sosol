@@ -3,6 +3,7 @@ class Publication < ActiveRecord::Base
   
   validates_presence_of :title, :branch
   
+  belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
@@ -90,6 +91,24 @@ class Publication < ActiveRecord::Base
     e.save!
   end
   
+  def self.new_from_templates(creator)
+    new_publication = Publication.new(:owner => creator, :creator => creator)
+    
+    # fetch a title without creating from template
+    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
+    
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    # create the two required identifier classes from templates
+    new_ddb = DDBIdentifier.new_from_template(new_publication)
+    new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
+    
+    return new_publication
+  end
+  
   def mutable?
     if self.status == "submitted"
       return false
@@ -109,6 +128,7 @@ class Publication < ActiveRecord::Base
   def copy_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
+    duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.save!

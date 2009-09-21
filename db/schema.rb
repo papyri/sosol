@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090620155431) do
+ActiveRecord::Schema.define(:version => 20090916153409) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -88,6 +88,8 @@ ActiveRecord::Schema.define(:version => 20090620155431) do
     t.string   "owner_type"
     t.string   "branch"
     t.string   "status"
+    t.integer  "creator_id"
+    t.string   "creator_type"
   end
 
   create_table "users", :force => true do |t|

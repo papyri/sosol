@@ -33,7 +33,7 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
   map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
   
-  map.resources :publications, :member => { :edit_text => :get, :edit_meta => :get, :edit_trans => :get, :show => :get, :create => :post, :submit => :post }
+  map.resources :publications, :member => { :edit_text => :get, :edit_meta => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :submit => :post }
   map.resources :publications do |publication|
     publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put }
