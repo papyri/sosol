@@ -144,13 +144,13 @@ class DDBIdentifier < Identifier
 
     # inject the transformed content into the original content
     # delete original abs
-    original_xml_content.delete_element('/TEI.2/text/body/div[@type = "edition"]//ab')
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]//ab')
     
     # add modified abs to edition
     modified_abs = transformed_xml_content.elements[
       '/wrapab']
     original_edition =  original_xml_content.elements[
-      '/TEI.2/text/body/div[@type = "edition"]']
+      '/TEI/text/body/div[@type = "edition"]']
     modified_abs.each do |ab|
       original_edition.add_element(ab)
     end
