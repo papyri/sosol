@@ -20,12 +20,16 @@ class HGVTransGlossary < HGVTransIdentifier
     end
 
     def read_xml_item(xml_item)
+      #<item xml:id=" ">                term in latin chars?
+      # <term xml:lang="grc"> </term>   term in greek chars
+      # <gloss xml:lang=" "> </gloss>   definition repeated for multiple langs
+      #</item>
+                
       if xml_item.attributes['xml:id'] != nil
         @item = xml_item.attributes['xml:id']
       end
 
       if  xml_item.elements['term'] != nil && xml_item.elements['term'].attributes['xml:lang'] == 'grc'
-        #newGloss.grc = item.elements("term[@xml:lang='grc']")
         @term = xml_item.elements['term'].text
       end
 
@@ -35,6 +39,11 @@ class HGVTransGlossary < HGVTransIdentifier
         @text[lang] = term_def
       }
     end
+  end
+
+  LangCodes = [ 'de', 'en', 'sp', 'fr', 'it', 'la' ] 
+  def self.lang_codes
+    LangCodes
   end
 
   def to_path
@@ -52,7 +61,6 @@ class HGVTransGlossary < HGVTransIdentifier
   end
 
   def add_entry_to_file(entry)
-
     glossary_entry = Entry.new(nil, entry)
 
     doc = Document.new(self.content)
@@ -62,14 +70,15 @@ class HGVTransGlossary < HGVTransIdentifier
     doc.root.elements.delete("text/body/list/item[@xml:id='" + glossary_entry.item + "']")
 
     #add edited item
-    #todo add in alphebetical order
-    doc.root.each_element('text/body/list') { |listNode|
-      if (!inserted)
+    #todo add in alphabetical order
+    doc.root.each_element('text/body/list/item') { |itemNode|
+    
+      if (!inserted && itemNode.attributes['xml:id'] == glossary_entry.item) 
         inserted = true
 
-        #listNode.parent.insert_before(listNode, itemNode)
+        itemNode.parent.insert_before(listNode, create_item_element(glossary_entry))
 
-        listNode.add_element(create_item_element(glossary_entry)) 
+       
       end
     } 
 

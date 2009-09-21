@@ -30,7 +30,8 @@ class HgvTransGlossariesController < ApplicationController
 
   # GET /hgv_trans_glossaries/1/edit
   def edit
-    @glossary = HGVTransGlossary.new.find_item(params[:id])
+    @entry = HGVTransGlossary.new.find_item(params[:id])
+    @possible_langs = HGVTransGlossary.lang_codes
   end
 
   # POST /hgv_trans_glossaries
@@ -46,7 +47,7 @@ class HgvTransGlossariesController < ApplicationController
 
   # PUT /hgv_trans_glossaries/1
   # PUT /hgv_trans_glossaries/1.xml
-  def update
+  def update  
     raise "HGVTransGlossary needs parent publication"
     HGVTransGlossary.addEntry(params[:hgv_trans_glossary])
   end

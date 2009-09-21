@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :glossaries
+  #map.resources :glossaries
+  map.resources :hgv_trans_glossaries, :member => { :update => :put }
 
   map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
 

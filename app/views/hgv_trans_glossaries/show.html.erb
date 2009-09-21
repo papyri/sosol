@@ -9,33 +9,14 @@
   <%=h @glossary.term %>
 </p>
 
-<p>
-  <b>en</b>
-  <%=h @glossary.en %>
-</p>
 
-<p>
-  <b>de</b>
-  <%=h @glossary.de %>
-</p>
 
-<p>
-  <b>fr</b>
-  <%=h @glossary.fr %>
-</p>
-
-<p>
-  <b>sp</b>
-  <%=h @glossary.sp %>
-</p>
-
-<p>
-  <b>la</b>
-  <%=h @glossary.la %>
-</p>
+<% @glossary.text.each do |lang, definition| %>
+            <p><b><%= lang %> - </b><%=h @glossary.text[lang] %></p>
+          <% end %>
+          
 
 
 
 
-
-<%= link_to 'Back', glossaries_path %>
+<%= link_to 'Back', hgv_trans_glossaries_path %>

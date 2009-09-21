@@ -1,56 +1,51 @@
 <div id='main'>
-  render :partial => 'identifiers/edit_bar'
+  <%# render :partial => 'identifiers/edit_bar' %>
   
   <div class='site'>
-    render :partial => 'identifiers/header'
+    <%# render :partial => 'identifiers/header' %>
 
     <h1>Editing glossary</h1>
 
-    <% form_for(@glossary) do |f| %>
-      <%= f.error_messages %>
 
-      <p>
-        <%= f.label :item %>
-        <%= f.text_field :item %>
-      </p>
-      
-      <p>
-        <%= f.label :term %>
-        <%= f.text_field :term %>
-      </p>
+<% form_tag("update", :method => "put") do %>
 
-      <p>
-        <%= f.label :en %>
-        <%= f.text_field :en %>
-      </p>
+<p> <b>Item</b> <%= text_field_tag(:item, @entry.item ) %> </p>
+<p> <b>Greek Term</b> <%= text_field_tag(:term, @entry.term ) %>  </p>
 
-      <p>
-        <%= f.label :de %>
-        <%= f.text_field :de %>
-      </p>
 
-      <p>
-        <%= f.label :fr %>
-        <%= f.text_field :fr %>
-      </p>
 
-      <p>
-        <%= f.label :sp %>
-        <%= f.text_field :sp %>
-      </p>
 
-      <p>
-        <%= f.label :la %>
-        <%= f.text_field :la %>
-      </p>
+<% @entry.text.each do |lang, definition| %>
+<% @possible_langs.delete(lang) %>
+<p><b><%= lang %></b>
+<%= text_field_tag(lang, @entry.text[lang]) %>
+            </p>
+          <% end %>
+          
+          
+<% @possible_langs.each do |lang| %>
 
-      <p>
-        <%= f.submit "Update" %>
-      </p>
-    <% end %>
+<p><b><%= lang %></b>
+<%= text_field_tag(lang) %>
+            </p>
+          <% end %>
+          
+          
+          
+          
+        
+          
+          
+          
+          
 
-    <%= link_to 'Show', @glossary %> |
-    <%= link_to 'Back', glossaries_path %>
+<br />
+<%= submit_tag("Update") %>
+
+<% end %>
+
+
+
 
   </div>
 </div>
