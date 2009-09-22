@@ -29,8 +29,9 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "ruby-xslt", :lib => "xml/xslt"
+  # config.gem "ruby-xslt", :lib => "xml/xslt"
   # config.gem "libxml-ruby", :lib => "xml/libxml"
+  
   config.gem "haml"
   config.gem "capistrano", :version => ">= 2.5.5"
   config.gem "json"
