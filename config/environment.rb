@@ -34,7 +34,12 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   
   config.gem "haml"
   config.gem "capistrano", :version => ">= 2.5.5"
-  config.gem "json"
+
+  if(RUBY_PLATFORM == 'java')
+    config.gem "json-jruby", :lib => "json"
+  else
+    config.gem "json"
+  end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
   
