@@ -1,0 +1,6 @@
+%p
+  %label Edit summary (Briefly describe the changes you have made):
+  %br
+  = text_field_tag :comment, '', :class => :comment, :size => '80', :disabled => !identifier.mutable?
+  %br
+  = f.submit "Save", :class => 'save', :disabled => !identifier.mutable?

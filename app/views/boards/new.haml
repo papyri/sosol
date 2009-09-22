@@ -1,0 +1,21 @@
+#main.site
+  %h1
+    New board
+  - form_for(@board) do |f|
+    = f.error_messages
+    %p
+      = f.label :title
+      %br
+      = f.text_field :title
+    %br
+    %p
+      = f.label "Identifier classes"
+      %br
+      - @valid_identifier_classes.each do |identifier_class|
+        = check_box_tag identifier_class
+        = identifier_class.sub(/Identifier$/,'')
+        %br
+    %br
+    %p
+      = f.submit "Create"
+  = link_to 'Back', boards_path

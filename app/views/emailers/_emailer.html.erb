@@ -1,0 +1,48 @@
+<div class="emailer">
+
+
+<p>
+  <b>Members:</b>
+  <% emailer.users.each do |user| %>
+		<% if user.name != nil %>
+			<%= user.name %>
+			<% if user.email == nil %>
+				 (no valid address!)
+			<% end %>
+		<% end %>
+  <% end %>
+</p>
+
+<p>
+  <b>Extra addresses:</b>
+  <%=h emailer.extra_addresses %>
+</p>
+
+<p>
+  <b>When to send:</b>
+  <%=h emailer.when %>
+</p>
+
+<p>
+  <b>Include document:</b>
+  <%=h emailer.include_document %>
+</p>
+
+<p>
+  <b>Send to owner:</b>
+  <%=h emailer.send_to_owner %>
+</p>
+
+<p>
+  <b>Message:</b>
+  <%=h emailer.message %>
+</p>
+
+
+
+
+
+<%= link_to 'Edit', edit_emailer_path(emailer) %> 
+
+
+</div>

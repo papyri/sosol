@@ -11,7 +11,7 @@ body {
   background-color: white;
   font: 13.34px helvetica, arial, clean, sans-serif;
   *font-size: small;
-  text-align: center;
+  *text-align: center;
 }
 
 #main {
@@ -21,9 +21,7 @@ body {
   margin: 0 auto -8.6em;
 }
 
-body {
-  text-align: center;
-}
+
 
 .site {
   width: 50em;
@@ -201,3 +199,183 @@ DIV#edition SUP {
     #document_sub_menu li.active a {
       background: #eee;
     }
+    
+    
+
+    
+.meta {
+  background-color: #D3C0C0;
+  border: solid #FF0000;
+}    
+
+.meta p {
+  text-align: left;
+}    
+
+.meta_background {
+  background-color: #D3C0C0;
+}
+
+.transcription
+{
+  background-color: #C0C1D3;
+  border: solid #0000FF;
+}
+
+.transcription p {
+  text-align: left;
+} 
+   
+.transcription_background {
+  background-color: #C0C1D3;
+}
+
+.translation
+{
+  background-color: #E6B39D;
+  border: solid #FFA500;
+}
+
+.translation p {
+  text-align: left;
+}    
+
+.translation_background {
+ background-color: #E6B39D;
+}
+
+.translation_content
+{
+  background-color: #E1CAC0;
+  border: solid #FFA500;
+}
+
+.translation_content p {
+  text-align: left;
+}    
+
+.translation_content_background {
+ background-color: #E6B39D;
+}
+
+.dashboard {
+
+ margin: 8px;
+  padding: 8px;
+  
+  background-color: #ddffdd;
+  text-align: left;
+
+}
+
+.dashboard h2 {  
+  display: inline;
+  text-align: left;
+}
+
+.dashboard ul li {
+   list-style-position: inside;
+   padding-left: 20px;
+}
+
+
+
+
+    
+.decree {
+  background-color: #CF9EEE;
+  border: solid #A020F0;
+}    
+
+.decree p {
+  text-align: left;
+}    
+
+
+    
+.emailer {
+  background-color: #7DB7F0;
+  border: solid #003DFF;
+}    
+
+.emailer p {
+  text-align: left;
+}    
+
+
+
+.board_tally  {
+  text-align: left;
+  background-color: #EEED9E;
+  border: solid #FFFF00;
+}   
+
+ 
+.review_comments {
+  text-align: left;
+  background-color: #B1EE9E;
+  border: solid #0ECB0E;
+} 
+
+
+.help {
+  background-color: #E4F0F3;
+  width: 50%;
+  position: relative;
+  left: 25%;
+  padding: 1em;
+}    
+
+.help p {
+  text-align: left;
+  text-indent: 2em;
+}  
+
+ 
+
+.help h2 {
+  text-align: left;
+}  
+
+.help h3 {
+  text-align: left;
+  text-indent: 1em;
+}  
+
+.help h4 {
+  text-align: left;
+  text-indent: 2em;
+} 
+
+
+.dashboard_documents {
+	
+}
+
+.dashboard_documents  ul {	
+
+}
+
+.dashboard_documents  ul li {
+	list-style-image: url(/images/documents.png); 	
+}
+
+
+
+
+
+.select_user_name a:link {
+	 color: black;	 	 	
+	 text-decoration: none;
+
+}
+
+.select_user_name a:visited {
+	 	 	
+	 text-decoration: none;
+}
+
+.select_user_name a:hover {
+	 color: red;	 
+	 font-weight: bold;
+}

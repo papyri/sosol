@@ -1,0 +1,17 @@
+- if flash[:notice]
+  .flash
+    %h3
+      = flash[:notice]
+#edit_header
+  %h1
+    Editing Publication
+    = @identifier.publication.title
+  - if @identifier.publication.owner_type == "User"
+    #submit
+      = button_to "Submit", submit_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :post
+  - elsif @identifier.publication.owner_type == "Board"
+    = render :partial => "boards/review", :object => @identifier.publication
+  %h3
+    Identifier
+    = @identifier.name
+    == (#{link_to "View in PN", "http://apptest.cul.columbia.edu:8082/navigator/portal/apisfull.psml?controlName=#{@identifier.name}"})

@@ -1,0 +1,29 @@
+<h1>Listing emailers</h1>
+
+<table>
+  <tr>
+    <th>Board</th>
+    <th>Member</th>
+    <th>Extra addresses</th>
+    <th>Status</th>
+    <th>Include document</th>
+    <th>Message</th>
+  </tr>
+
+<% for emailer in @emailers %>
+  <tr>
+    <td><%=h emailer.board_id %></td>
+    <td><%=h emailer.user_id %></td>
+    <td><%=h emailer.extra_addresses %></td>
+    <td><%=h emailer.include_document %></td>
+    <td><%=h emailer.message %></td>
+    <td><%= link_to 'Show', emailer %></td>
+    <td><%= link_to 'Edit', edit_emailer_path(emailer) %></td>
+    <td><%= link_to 'Destroy', emailer, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New emailer', new_emailer_path %>

@@ -18,11 +18,23 @@ class ApplicationController < ActionController::Base
   # session :session_key => '_sosol_session_id'
   # layout 'default'
 
+  include MaintenanceMode
+  before_filter :disabled?
+
   before_filter :get_user_id
   before_filter :rpx_setup
+  
+  protected
+  
+  def authorize
+    if @current_user.nil?
+      flash[:notice] = "Please log in"
+      redirect_to signin_url
+    end
+  end
 
   private
-
+  
   def get_user_id
     user_id = session[:user_id]
     if user_id
@@ -30,7 +42,7 @@ class ApplicationController < ActionController::Base
     end
     return true
   end
-
+  
   def rpx_setup
     unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)
       render :template => 'const_message'

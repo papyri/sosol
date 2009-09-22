@@ -2,15 +2,19 @@
 %html{html_attrs('en')}
   %head
     %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
+    %meta{ 'name' => 'robots', 'content' => 'noindex, nofollow' }
     %title
       == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
+    = javascript_include_tag :defaults
   %body
-    #header{ :class => (['edit','editxml','preview'].include? params[:action]) ? '' : 'basic' }
+    #header{ :class => (['edit','editxml','preview','history'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
           %h1= link_to SITE_NAME, root_url
+        -#= render(:partial => 'master_articles/master_article_box')
+        -#= render(:partial => 'user/admin_box')
         = render(:partial => 'user/user_box')
 
     = yield

@@ -1,0 +1,49 @@
+<h1><%= @board.title %> board</h1>
+for <b> <%= @board.category %> </b> items
+<br /><br />
+
+<% form_for(@board) do |f| %>
+  <%= f.error_messages %>
+
+<!--
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.label :category %><br />
+    <%= f.text_field :category %>
+  </p>
+-->
+
+<h3 style = "display:inline;">Members  </h3><%= link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id %><br />
+
+<% @board.users.each do |user| %>
+  <%= user.name %>
+  <%= link_to "x", :controller => "boards", :action => "remove_member", :user_id => user.id %>
+<% end %>
+<br />
+
+
+<h3 style = "display:inline;">Decrees  </h3><%= link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id %><br /><br />
+
+<% @board.decrees.each do |decree| %>
+  <%= render :partial => decree %>
+<% end %>
+
+
+
+<h3 style = "display:inline;">E-mails  </h3><%= link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id %><br /><br />
+
+<% @board.emailers.each do |emailer| %>
+  <%= render :partial => emailer %>
+<% end %>
+
+
+
+  <p>
+    <%= f.submit "Save" %>
+  </p>
+<% end %>
+
+

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TEI.2 SYSTEM "/usr/local/epiduke/data/dtd/tei-epidoc.dtd">
+<TEI.2 id="<%= id %>" n="<%= n %>">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title><%= title %></title>
+      </titleStmt>
+      <publicationStmt>
+        <p/>
+      </publicationStmt>
+      <sourceDesc>
+        <p>The contents of this document are generated from SOSOL.</p>
+      </sourceDesc>
+    </fileDesc>
+    <profileDesc>
+      <langUsage>
+        <language id="fr">Französisch</language>
+        <language id="en">Englisch</language>
+        <language id="de">Deutsch</language>
+        <language id="it">Italienisch</language>
+        <language id="es">Spanisch</language>
+        <language id="la">Latein</language>
+        <language id="el">Griechisch</language>
+      </langUsage>
+    </profileDesc>
+    <revisionDesc>
+      <change>
+        <date when="<%= Time.now.xmlschema %>"><%= Time.now.to_s %></date>
+        <respStmt>
+          <resp>SoSOL</resp>
+        </respStmt>
+        <item>Automated creation from template</item>
+      </change>
+    </revisionDesc>
+  </teiHeader>
+  <text>
+    <body>
+      <div type="translation" lang="de">
+        <p><milestone unit="line" n="1"/>Translation goes here. To insert items, select text or click on the location in this window, then use the controls above to add the item.
+              <milestone unit="line" n="2"/>To add term, select text or location in this window and click term in term list.               
+        </p>
+      </div>
+    </body>
+  </text>
+</TEI.2>

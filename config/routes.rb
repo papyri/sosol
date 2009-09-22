@@ -1,4 +1,16 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :glossaries
+
+  map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
+
+  map.resources :votes
+
+  map.resources :decrees
+
+  map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
+ 
+  map.resources :users
+ 	
   map.resources :events
 
   # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
@@ -7,8 +19,27 @@ ActionController::Routing::Routes.draw do |map|
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
 
-  map.resources :documents, :member => { :editxml => :get, :preview => :get }
+	map.help 'help', :controller => 'user', :action => 'help'
 
+  map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
+  map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
+ 
+  map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
+
+  
+  map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
+  map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
+  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
+  map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
+  
+  map.resources :publications, :member => { :edit_text => :get, :edit_meta => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :submit => :post }
+  map.resources :publications do |publication|
+    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put }
+    publication.resources :hgv_meta_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put }
+    publication.resources :hgv_trans_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put }
+    # publication.resources :identifiers
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

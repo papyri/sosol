@@ -9,10 +9,11 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
+require 'git_conf'
 
 require 'rexml/document'
 
-Rails::Initializer.run do |config|
+Rails::Initializer.run(:process, GitConf.new) do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -27,9 +28,24 @@ Rails::Initializer.run do |config|
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
+
+  config.gem "ruby-xslt", :lib => "xml/xslt"
   # config.gem "libxml-ruby", :lib => "xml/libxml"
-	config.gem "ruby-xslt", :lib => "xml/xslt"
-	config.gem "haml"
+  config.gem "haml"
+  config.gem "capistrano", :version => ">= 2.5.5"
+  config.gem "json"
+  
+  config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
+  
+  config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
+  
+  config.gem 'mojombo-grit',
+    :lib     => 'grit',
+    :source  => 'http://gems.github.com',
+    :version => '>= 1.1.1'
+    
+  # increase timeout for git operations
+  Grit::Git.git_timeout = 60
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -76,6 +92,8 @@ Rails::Initializer.run do |config|
   SITE_NAME = 'SoSOL'
   SITE_FULL_NAME = 'Son of Suda On Line'
   
-  CANONICAL_REPOSITORY = "#{RAILS_ROOT}/db/canonical.git"
-  USER_REPOSITORY_ROOT = "#{RAILS_ROOT}/db/git"
+  REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
+  CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
+  
+  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 end

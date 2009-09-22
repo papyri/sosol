@@ -21,6 +21,16 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
+config.action_mailer.raise_delivery_errors = true
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = 
+{	
+	:address			=>	'localhost',
+	:port					=>	25,
+	:domain				=>	'halsted.vis.uky.edu',
+}
+
+
 # config/environments/production_secret.rb should set
 # RPX_API_KEY and RPX_REALM (site name) for RPX,
 # and possibly other unversioned secrets for production

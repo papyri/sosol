@@ -1,0 +1,10 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    %h3
+      History for Identifier
+      = @identifier.name
+    #edit
+      %ul
+        - for commit in @identifier[:commits]
+          %li= link_to commit[:message], commit[:url]

@@ -1,6 +1,16 @@
 require 'test_helper'
 
 class EventsControllerTest < ActionController::TestCase
+  def setup
+    @event = Factory(:event)
+    @event_two = Factory(:event)
+  end
+  
+  def teardown
+    @event.destroy
+    @event_two.destroy
+  end
+  
   def test_should_get_index
     get :index
     assert_response :success
@@ -21,23 +31,23 @@ class EventsControllerTest < ActionController::TestCase
   end
 
   def test_should_show_event
-    get :show, :id => events(:one).id
+    get :show, :id => @event.id
     assert_response :success
   end
 
   def test_should_get_edit
-    get :edit, :id => events(:one).id
+    get :edit, :id => @event.id
     assert_response :success
   end
 
   def test_should_update_event
-    put :update, :id => events(:one).id, :event => { }
+    put :update, :id => @event.id, :event => { }
     assert_redirected_to event_path(assigns(:event))
   end
 
   def test_should_destroy_event
     assert_difference('Event.count', -1) do
-      delete :destroy, :id => events(:one).id
+      delete :destroy, :id => @event.id
     end
 
     assert_redirected_to events_path

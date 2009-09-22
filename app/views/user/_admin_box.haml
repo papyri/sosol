@@ -1,0 +1,7 @@
+- if @current_user
+  #admin_box
+    - if @current_user.admin 
+      .links
+        = link_to 'boards', boards_url         	
+
+    

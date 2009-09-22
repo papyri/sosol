@@ -1,0 +1,40 @@
+<p>
+  <b>Board:</b>
+  <%=h @emailer.board_id %>
+</p>
+
+<p>
+  <b>Members:</b>
+  <%=h @emailer.user_id %>
+</p>
+
+<p>
+  <b>Extra addresses:</b>
+  <%=h @emailer.extra_addresses %>
+</p>
+
+<p>
+  <b>When:</b>
+  <%=h @emailer.when %>
+</p>
+
+<p>
+  <b>Include document:</b>
+  <%=h @emailer.include_document %>
+</p>
+
+
+<p>
+  <b>Send to owner:</b>
+  <%=h @emailer.send_to_owner %>
+</p>
+
+
+<p>
+  <b>Message:</b>
+  <%=h @emailer.message %>
+</p>
+
+
+<%= link_to 'Edit', edit_emailer_path(@emailer) %> |
+<%= link_to 'Back', emailers_path %>

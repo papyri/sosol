@@ -1,6 +1,46 @@
+
+
 <div class="section">
-    <h1>THIS IS INCOMPLETE</h1>
-    <h2>Your OpenIDs</h2>
+    <h1><%= @current_user.name %> 's Account Info</h1>
+  
+    <h3>
+    	Personal    
+    </h3>
+    <% form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f| %>
+    	<%= f.error_messages %>
+    	 	<p>
+					<%= f.label :first_name %><br />
+					<%= f.text_field :first_name %>
+				</p>
+				<p>
+					<%= f.label :last_name %><br />
+					<%= f.text_field :last_name %>
+				</p>							
+				<p>
+					<%= f.label :affiliation %><br />
+					<%= f.text_field :affiliation %>
+				</p>						
+				<p>
+					<%= f.label :email %><br />
+					<%= f.text_field :email %>
+				</p>	
+				
+				<br />
+				<h3>Interface</h3>
+				<p>
+						Enter choices for languages (en de it fr la el es) <br />
+						<%= f.text_field :language_prefs %>
+				</p>
+				<p>
+					<br />
+					<%= f.submit "Update" %>
+				</p>
+				
+									  
+    <% end %>
+    
+    <br /><br />
+    <h3>Your OpenIDs</h3>
     <% if @identifiers.length == 0 %>
       <p>No OpenIDs are associated with this account.</p>
     <% else %>
