@@ -1,9 +1,9 @@
 class RenameStatusToWhenInEmailer < ActiveRecord::Migration
   def self.up
-    	rename_column :emailers, :status, :when
+    	rename_column :emailers, :status, :when_to_send
   end
 
   def self.down
-    	rename_column :emailers, :when, :status
+    	rename_column :emailers, :when_to_send, :status
   end
 end

@@ -11,15 +11,8 @@
 
 ActiveRecord::Schema.define(:version => 20090916153409) do
 
-  create_table "boards", :force => true do |t|
-    t.string   "title"
-    t.string   "category"
-    t.integer  "decree_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "finalizer_user_id"
-    t.text     "identifier_classes"
-  end
+# Could not dump table "boards" because of following StandardError
+#   Unknown type '' for column 'id'
 
   create_table "boards_users", :id => false, :force => true do |t|
     t.integer  "board_id"
@@ -27,8 +20,6 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
@@ -42,10 +33,10 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"
     t.integer  "user_id"
-    t.text     "extra_addresses"
-    t.string   "when"
+    t.string   "extra_addresses"
+    t.string   "when_to_send"
     t.boolean  "include_document"
-    t.text     "message"
+    t.string   "message"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "send_to_owner"
@@ -80,6 +71,16 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.boolean  "modified",       :default => false
   end
 
+  create_table "identifiers", :force => true do |t|
+    t.string   "name"
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "publication_id"
+    t.string   "alternate_name"
+    t.boolean  "modified",       :default => false
+  end
+
   create_table "publications", :force => true do |t|
     t.string   "title"
     t.datetime "created_at"
@@ -92,20 +93,8 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.string   "creator_type"
   end
 
-  create_table "users", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "has_repository", :default => false
-    t.string   "language_prefs"
-    t.boolean  "admin"
-    t.boolean  "developer"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "affiliation"
-    t.string   "email"
-    t.integer  "emailer_id"
-  end
+# Could not dump table "users" because of following StandardError
+#   Unknown type '' for column 'id'
 
   create_table "votes", :force => true do |t|
     t.string   "choice"
