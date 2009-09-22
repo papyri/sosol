@@ -1,8 +1,8 @@
 class HgvTransIdentifiersController < IdentifiersController
   layout 'site'
   before_filter :authorize
-  require 'xml'
-  require 'xml/xslt'
+  # require 'xml'
+  # require 'xml/xslt'
   
   def edit
     find_identifier
@@ -20,10 +20,12 @@ class HgvTransIdentifiersController < IdentifiersController
     @glossary_xml = HGVTransGlossary.new({:publication => @identifier.publication}).content
      
     #create glossary
-    xslt = XML::XSLT.new()
-    xslt.xml = REXML::Document.new @glossary_xml
-    xslt.xsl = REXML::Document.new File.open( File.join(RAILS_ROOT, 'data/xslt/translation/glossary_to_chooser.xsl'), "r")    
-    @glossary = xslt.serve()
+    # xslt = XML::XSLT.new()
+    # xslt.xml = REXML::Document.new @glossary_xml
+    # xslt.xsl = REXML::Document.new File.open( File.join(RAILS_ROOT, 'data/xslt/translation/glossary_to_chooser.xsl'), "r")
+    # @glossary = xslt.serve()
+    
+    @glossary = ""
         
     #render :template => 'identifiers/editxml'
   end
