@@ -11,8 +11,15 @@
 
 ActiveRecord::Schema.define(:version => 20090916153409) do
 
-# Could not dump table "boards" because of following StandardError
-#   Unknown type '' for column 'id'
+  create_table "boards", :force => true do |t|
+    t.string   "title"
+    t.string   "category"
+    t.integer  "decree_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "finalizer_user_id"
+    t.string   "identifier_classes", :limit => nil
+  end
 
   create_table "boards_users", :id => false, :force => true do |t|
     t.integer  "board_id"
@@ -93,8 +100,20 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.string   "creator_type"
   end
 
-# Could not dump table "users" because of following StandardError
-#   Unknown type '' for column 'id'
+  create_table "users", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "has_repository", :default => false
+    t.string   "language_prefs"
+    t.boolean  "admin"
+    t.boolean  "developer"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "affiliation"
+    t.string   "email"
+    t.integer  "emailer_id"
+  end
 
   create_table "votes", :force => true do |t|
     t.string   "choice"
