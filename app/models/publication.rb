@@ -1,6 +1,4 @@
-class Publication < ActiveRecord::Base
-  include NumbersRDF::NumbersHelper
-  
+class Publication < ActiveRecord::Base  
   validates_presence_of :title, :branch
   
   belongs_to :creator, :polymorphic => true
@@ -29,7 +27,8 @@ class Publication < ActiveRecord::Base
   def populate_identifiers_from_identifier(identifier)
     self.title = identifier.tr(':','_')
     # Coming in from an identifier, build up a publication
-    identifiers = identifiers_to_hash(identifier_to_identifiers(identifier))
+    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
+      NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
     if identifiers.has_key?('ddbdp')
       identifiers['ddbdp'].each do |ddb|
         d = DDBIdentifier.new(:name => ddb)
@@ -41,7 +40,7 @@ class Publication < ActiveRecord::Base
     # Use HGV hack for now
     if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
       identifiers['trismegistos'].each do |tm|
-        tm_nr = identifier_to_components(tm).last
+        tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
         self.identifiers << HGVMetaIdentifier.new(
           :name => "#{identifiers['hgv'].first}",
           :alternate_name => "hgv#{tm_nr}")
