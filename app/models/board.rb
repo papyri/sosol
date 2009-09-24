@@ -12,7 +12,7 @@ class Board < ActiveRecord::Base
   # themselves.
   serialize :identifier_classes
   
-  validates_uniqueness_of :title
+  validates_uniqueness_of :title, :case_sensitive => false
   
   has_repository
   

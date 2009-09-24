@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :case_sensitive => false
   
   has_and_belongs_to_many :boards
   
