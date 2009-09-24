@@ -1,8 +1,8 @@
 require 'net/http'
 
 module NumbersRDF
-  NUMBERS_SERVER_DOMAIN = 'apptest.cul.columbia.edu'
-  NUMBERS_SERVER_PORT = 8082
+  NUMBERS_SERVER_DOMAIN = 'papyri.info'
+  NUMBERS_SERVER_PORT = 80
   NUMBERS_SERVER_BASE_PATH = '/numbers'
   # OAI identifiers should be in the form scheme ":" namespace-identifier ":" local-identifier
   OAI_SCHEME = 'oai'
