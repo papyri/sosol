@@ -1,3 +1,4 @@
+#Board represents an editorial review board.
 class Board < ActiveRecord::Base
   has_many :decrees
   has_many :emailers
@@ -29,6 +30,7 @@ class Board < ActiveRecord::Base
     repository.destroy
   end
 
+  #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
     #work in progress
     #how to determine order -- just assume user hasn't made rules where multiple decress can be true at once?
