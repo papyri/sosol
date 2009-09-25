@@ -28,7 +28,7 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should create board" do
     assert_difference('Board.count') do
-      post :create, :board => { }
+      post :create, :board => Factory.build(:board).attributes
     end
 
     assert_redirected_to edit_board_path(assigns(:board))
