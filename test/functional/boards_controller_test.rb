@@ -32,6 +32,7 @@ class BoardsControllerTest < ActionController::TestCase
     end
 
     assert_redirected_to edit_board_path(assigns(:board))
+    assigns(:board).destroy
   end
 
   test "should show board" do    
