@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "finalizer_user_id"
-    t.string   "identifier_classes", :limit => nil
+    t.text     "identifier_classes"
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
@@ -40,10 +40,10 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"
     t.integer  "user_id"
-    t.string   "extra_addresses"
+    t.text     "extra_addresses"
     t.string   "when_to_send"
     t.boolean  "include_document"
-    t.string   "message"
+    t.text     "message"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "send_to_owner"
