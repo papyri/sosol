@@ -78,16 +78,6 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.boolean  "modified",       :default => false
   end
 
-  create_table "identifiers", :force => true do |t|
-    t.string   "name"
-    t.string   "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "publication_id"
-    t.string   "alternate_name"
-    t.boolean  "modified",       :default => false
-  end
-
   create_table "publications", :force => true do |t|
     t.string   "title"
     t.datetime "created_at"
