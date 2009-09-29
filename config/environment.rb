@@ -42,9 +42,9 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   end
   
   if(RUBY_PLATFORM == 'java')
-    config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2"
-    config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2"
-    config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2"
+    config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
+    config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
+    config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
   end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
