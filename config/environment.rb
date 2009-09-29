@@ -9,11 +9,10 @@ RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
-require 'git_conf'
 
 require 'rexml/document'
 
-Rails::Initializer.run(:process, GitConf.new) do |config|
+Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -57,7 +56,7 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
     :version => '>= 1.1.1'
     
   # increase timeout for git operations
-  Grit::Git.git_timeout = 60
+  # Grit::Git.git_timeout = 60
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
