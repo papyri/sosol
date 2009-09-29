@@ -137,8 +137,11 @@ class DDBIdentifier < Identifier
   
   def leiden_plus_to_xml(content)
     # transform the Leiden+ to XML
+    nonx2x = DDBIdentifier.nonxml2xml(content)
+    nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
+    
     transformed_xml_content = REXML::Document.new(
-      DDBIdentifier.nonxml2xml(content))
+      nonx2x)
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
 
