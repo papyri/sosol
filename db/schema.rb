@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.datetime "updated_at"
   end
 
+  add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
+
   create_table "decrees", :force => true do |t|
     t.string   "action"
     t.decimal  "trigger"
