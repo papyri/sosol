@@ -41,6 +41,12 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
     config.gem "json"
   end
   
+  if(RUBY_PLATFORM == 'java')
+    config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2"
+    config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2"
+    config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2"
+  end
+  
   config.gem 'mojombo-grit',
     :lib     => 'grit',
     :source  => 'http://gems.github.com',
