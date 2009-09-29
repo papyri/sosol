@@ -99,4 +99,14 @@ class Identifier < ActiveRecord::Base
   def set_xml_content(content, comment)
     self.set_content(content, :comment => comment)
   end
+  
+  #added to speed up dashboard since titleize can be slow
+  def title
+    if read_attribute(:title) == nil
+      write_attribute(:title,titleize)
+      self.save
+    end
+    return  read_attribute(:title)
+  end
+  
 end
