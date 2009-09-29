@@ -27,7 +27,3 @@ config.action_mailer.delivery_method = :test
 require File.join(File.dirname(__FILE__), 'test_secret')
 
 REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'test', 'git')
-
-config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
-
-config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"

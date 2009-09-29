@@ -47,6 +47,10 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2"
   end
   
+  config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
+  
+  config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
+  
   config.gem 'mojombo-grit',
     :lib     => 'grit',
     :source  => 'http://gems.github.com',
