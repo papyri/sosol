@@ -69,14 +69,14 @@
         <!-- Heading for a ddb style file -->
         <xsl:if test="$leiden-style = 'ddbdp'">
           <h2 class="apis-portal-title">DDbDP Full Text: 
-            <xsl:value-of select="TEI.2/@id"/>
+            <xsl:value-of select="TEI/@id"/>
           </h2>
         </xsl:if>
 
 
         <!-- Found in htm-tpl-metadata.xsl -->
         <!-- Would need to change once combined -->
-        <xsl:if test="starts-with(//TEI.2/@id, 'hgv')">
+        <xsl:if test="starts-with(//TEI/@id, 'hgv')">
           <xsl:call-template name="metadata"/>
         </xsl:if>
         
