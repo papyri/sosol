@@ -4,23 +4,25 @@
   <!-- HTML site navigation -->
   <parameter>
     <name>topNav</name>
-    <value on="yes">ddbdp</value>
-    <value>default</value>
+    <value on="yes">default</value>
+    <value>ddbdp</value>
   </parameter>
   
   <parameter>
     <name>leiden-style</name>
-    <value on="yes">ddbdp</value>
+    <value>ddbdp</value>
     <value>edh</value>
-    <value>insaph</value>
-    <value>panciera</value>
+    <value>edh-itx</value>
+    <value>ila</value>
+    <value>london</value>
+    <value on="yes">panciera</value>
     <value>seg</value>
   </parameter>
   
   <parameter>
     <name>meta-style</name>
-    <value>default</value>
-    <value on="yes">hgv</value>
+    <value on="yes">default</value>
+    <value>hgv</value>
   </parameter>
   
   <parameter>
@@ -37,8 +39,8 @@
   
   <parameter>
     <name>apparatus-style</name>
-    <value on="yes">ddbdp</value>
-    <value>default</value>
+    <value on="yes">default</value>
+    <value>ddbdp</value>
   </parameter>
   
   <!-- Line increment -->
