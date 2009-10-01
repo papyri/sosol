@@ -54,9 +54,6 @@ Rails::Initializer.run do |config|
     :lib     => 'grit',
     :source  => 'http://gems.github.com',
     :version => '>= 1.1.1'
-    
-  # increase timeout for git operations
-  # Grit::Git.git_timeout = 60
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
