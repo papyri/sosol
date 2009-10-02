@@ -17,7 +17,8 @@ class HgvTransIdentifiersController < IdentifiersController
     #raise @xslt.to_s
     
     # pass glossary xml so page can find defs on the fly
-    @glossary_xml = HGVTransGlossary.new({:publication => @identifier.publication}).content
+    glossary_identifier = HGVTransGlossary.new({:publication => @identifier.publication})
+    @glossary_xml = glossary_identifier.content
      
     #create glossary
     # xslt = XML::XSLT.new()
@@ -25,7 +26,7 @@ class HgvTransIdentifiersController < IdentifiersController
     # xslt.xsl = REXML::Document.new File.open( File.join(RAILS_ROOT, 'data/xslt/translation/glossary_to_chooser.xsl'), "r")
     # @glossary = xslt.serve()
     
-    @glossary = ""
+    @glossary = glossary_identifier.to_chooser
         
     #render :template => 'identifiers/editxml'
   end
