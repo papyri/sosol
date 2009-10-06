@@ -69,7 +69,7 @@ class Publication < ActiveRecord::Base
     boards.each do |board|
       board_matches_publication = false
       identifiers.each do |identifier|
-        if board.identifier_classes.include?(identifier.class.to_s)
+        if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
           board_matches_publication = true
           break
         end
