@@ -50,7 +50,8 @@ class PublicationsController < ApplicationController
     @publication.submit
     
     flash[:notice] = 'Publication submitted.'
-    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    redirect_to @publication
+    # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
   
   # GET /publications
@@ -72,7 +73,17 @@ class PublicationsController < ApplicationController
   # GET /publications/1
   # GET /publications/1.xml
   def show
+  
+
     @publication = Publication.find(params[:id])
+    @show_submit = false
+    @publication.identifiers.each  do |identifier| 
+      @show_submit = @show_submit || !identifier.mutable?    
+    end
+    
+    if !@publication.status.nil? && (@publication.status == "submitted") 
+      @show_submit = false
+    end
 
     respond_to do |format|
       format.html # show.html.erb
