@@ -1,0 +1,32 @@
+#main.site
+  %h2 
+    = @publication.title
+    - if !@publication.status.nil? && @publication.status != ''
+      == (#{@publication.status})
+  = render :partial => "common/flash_all"    
+  - if flash[:notice]
+    .flash
+      %h3
+        = flash[:notice]
+      
+  #submit
+    = button_to "Submit", submit_publication_path(@publication), :disabled => !@show_submit, :class => 'submit', :method => :post
+
+  - for identifier in @publication.identifiers
+    %p       
+      - case identifier
+        - when DDBIdentifier
+          %h3 Text
+          = image_tag('ddb.gif')           
+        - when HGVMetaIdentifier
+          %h3 Meta
+          = image_tag('hgv.gif')
+        - when HGVTransIdentifier
+          %h3 Translation
+          = image_tag('hgv.gif')
+      %b
+        = identifier.title
+      = render :partial => identifier
+      
+ 
+

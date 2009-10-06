@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090929170138) do
+ActiveRecord::Schema.define(:version => 20090930202845) do
 
   create_table "articles", :force => true do |t|
     t.text     "content"
@@ -49,9 +49,9 @@ ActiveRecord::Schema.define(:version => 20090929170138) do
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
-    t.text     "text"
+    t.text     "comment"
     t.integer  "user_id"
-    t.integer  "article_id"
+    t.integer  "identifier_id"
     t.string   "reason"
     t.datetime "created_at"
     t.datetime "updated_at"
