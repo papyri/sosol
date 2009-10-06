@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: start-edition.xsl 1510 2008-08-14 15:27:51Z zau $ -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:tei="http://www.tei-c.org/ns/1.0"
+                xmlns:t="http://www.tei-c.org/ns/1.0"
+                version="1.0">
+  <xsl:output method="xml" encoding="UTF-8"/>
 
   <xsl:include href="global-varsandparams.xsl"/>
 
@@ -10,6 +14,7 @@
   <xsl:include href="htm-teidiv.xsl"/>
   <xsl:include href="htm-teidivedition.xsl"/>
   <xsl:include href="htm-teiforeign.xsl"/>
+  <xsl:include href="htm-teifigure.xsl"/>
   <xsl:include href="htm-teig.xsl"/>
   <xsl:include href="htm-teigap.xsl"/>
   <xsl:include href="htm-teihead.xsl"/>
@@ -26,8 +31,8 @@
   <xsl:include href="htm-teispace.xsl"/>
   <xsl:include href="htm-teisupplied.xsl"/>
   <xsl:include href="htm-teiterm.xsl"/>
-  <xsl:include href="htm-teixref.xsl"/>
-
+  <xsl:include href="htm-teiref.xsl"/>
+  
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:include href="teiabbrandexpan.xsl"/>
   <xsl:include href="teiaddanddel.xsl"/>
@@ -48,54 +53,61 @@
   <xsl:include href="htm-tpl-lang.xsl"/>
   <xsl:include href="htm-tpl-metadata.xsl"/>
   <xsl:include href="htm-tpl-nav.xsl"/>
+  <xsl:include href="htm-tpl-license.xsl"/>
 
   <!-- global named templates with no html, also used by start-txt -->
   <xsl:include href="tpl-reasonlost.xsl"/>
   <xsl:include href="tpl-certlow.xsl"/>
+  <xsl:include href="tpl-text.xsl"/>
 
 
 
   <!-- HTML FILE -->
   <xsl:template match="/">
-    <html>
-      <head>        
-        <title>
-          <xsl:if test="$leiden-style = 'ddbdp'">
-            <xsl:value-of select="TEI.2/@id"/>
-            <xsl:text> </xsl:text>
-          </xsl:if>
-          <xsl:text>Greek Leiden Edition View</xsl:text>
-        </title>
-
-        <!-- Found in htm-tpl-cssandscripts.xsl -->
+      <html>
+         <head>        
+            <title>
+               <xsl:if test="$leiden-style = 'ddbdp'">
+                  <xsl:value-of select="t:TEI/@xml:id"/>
+                  <xsl:text> </xsl:text>
+               </xsl:if>
+               <xsl:text>Greek Leiden Edition View</xsl:text>
+            </title>
+            <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+            <!-- Found in htm-tpl-cssandscripts.xsl -->
         <xsl:call-template name="css-script"/>
-      </head>
-      <body>
+         </head>
+         <body>
 
         <!-- Found in htm-tpl-nav.xsl -->
         <xsl:call-template name="topNavigation"/>
 
         
-        <!-- Heading for a ddb style file -->
+            <!-- Heading for a ddb style file -->
         <xsl:if test="$leiden-style = 'ddbdp'">
-          <h1>
-            <xsl:value-of select="TEI.2/@id"/>
-          </h1>
-        </xsl:if>
+               <h1>
+                  <xsl:value-of select="t:TEI/@xml:id"/>
+               </h1>
+            </xsl:if>
 
 
-        <!-- Found in htm-tpl-metadata.xsl -->
-        <!-- Would need to change once combined -->
+            <!-- Found in htm-tpl-metadata.xsl -->
+            
+            <!-- could substitute //publicationsStmt/idno[@type='filename'] for //TEI.2/@id
+               but it's commented out. -->
+        <!-- Would need to change once combined 
         <xsl:if test="starts-with(//TEI.2/@id, 'hgv')">
           <xsl:call-template name="metadata"/>
-        </xsl:if>
+        </xsl:if>-->
         
         
         <!-- Main text output -->
         <xsl:apply-templates/>
+        
+            <xsl:call-template name="license"/>
 
-      </body>
-    </html>
+         </body>
+      </html>
   </xsl:template>
 
 

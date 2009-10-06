@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: start-txt.xsl 1510 2008-08-14 15:27:51Z zau $ -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:t="http://www.tei-c.org/ns/1.0"
+                version="1.0">
 
   <xsl:output method="text" encoding="UTF-8" indent="yes" xml:space="preserve"/>
 
@@ -22,7 +24,7 @@
   <xsl:include href="txt-teip.xsl"/>
   <xsl:include href="txt-teispace.xsl"/>
   <xsl:include href="txt-teisupplied.xsl"/>
-  <xsl:include href="txt-teixref.xsl"/>
+  <xsl:include href="txt-teiref.xsl"/>
   
   <xsl:include href="teiabbrandexpan.xsl"/>
   <xsl:include href="teiaddanddel.xsl"/>
@@ -44,11 +46,12 @@
   
   <xsl:include href="tpl-reasonlost.xsl"/>
   <xsl:include href="tpl-certlow.xsl"/>
+  <xsl:include href="tpl-text.xsl"/>
 
 
   <xsl:template match="/">
     <!-- No templates for metadata just yet -->
-    <xsl:apply-templates />
+    <xsl:apply-templates/>
   </xsl:template>
 
 
@@ -57,14 +60,14 @@
   <!-- NEW FILE  -->
   
   <xsl:template match="text()">
-    <xsl:choose>
-      <xsl:when test="normalize-space(.) = ''">
-        <xsl:text> </xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="normalize-space(.)"/>
-      </xsl:otherwise>
-    </xsl:choose>
+      <xsl:choose>
+         <xsl:when test="normalize-space(.) = ''">
+            <xsl:text> </xsl:text>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="normalize-space(.)"/>
+         </xsl:otherwise>
+      </xsl:choose>
     
   </xsl:template>
 </xsl:stylesheet>
