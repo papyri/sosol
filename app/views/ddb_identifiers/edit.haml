@@ -1,10 +1,103 @@
 #main
+
+  = javascript_include_tag 'leiden'
+    
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
+    = stylesheet_link_tag 'leiden'
     #edit
-      - form_for @identifier, :url => { :action => :update } do |f|
+      - form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
         = f.error_messages
+
+        #inserting_chooser
+          <br/>
+          %span{ :class => 'chooser_tab', :id => 'expand', :onclick => 'setActiveTab(this.id)' }EXPAN 
+          %span{ :class => 'chooser_tab', :id => 'num', :onclick => 'setActiveTab(this.id)' } Number
+          %span{ :class => 'chooser_tab', :id => 'diacritical', :onclick => 'setActiveTab(this.id)' } Diacritical
+          %span{ :class => 'chooser_tab', :id => 'hide', :onclick => 'setActiveTab(this.id)' } Hide
+          #expand_div{:class => "chooser"}
+            <h3>Select Values for Expan </h3>
+            #expbox_div
+              %input{ :type => "text", :class => "choosetext", :id => "expan_content", :size => "07"}EXPAN Content
+              <br/>
+              %input{ :type => "text", :class => "choosetext", :id => "ex_content", :size => "07"}EX Content (required)
+              <br/>
+              %input{ :type => "checkbox", :class => "ex_check_c", :id => "excertlow", :name => "ex_check_n", :value => "excertlow"}EX cert low
+              <br/>
+              <br/>
+              <br/>
+              %button{:type => "button", :onclick => "insertUnderdot()"}Underdot
+            #expbutton_div{:class => "absbutton"}
+              %button{:type => "button", :onclick => "insertExpan()"}Insert
+              &nbsp
+              %button{:type => "button", :onclick => "setActiveTab('hide')"}Close
+          #diacritical_div{:class => "chooser"}
+            <h3>Select Diacritical and Enter Character To Insert </h3>
+            #diatype_div
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "acute", :name => "diacritical_type", :value => "acute", :onclick => "checktypedia(this.id)"}Acute
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "asper", :name => "diacritical_type", :value => "asper", :onclick => "checktypedia(this.id)"}Asper
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "circumflex", :name => "diacritical_type", :value => "circumflex", :onclick => "checktypedia(this.id)"}Circumflex
+              <br/>
+              %input{ :checked => "", :type => "radio", :class => "diacritical_radio", :id => "diaeresis", :name => "diacritical_type", :value => "diaeresis", :onclick => "checktypedia(this.id)"}Diaeresis
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "grave", :name => "diacritical_type", :value => "grave", :onclick => "checktypedia(this.id)"}Grave
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "lenis", :name => "diacritical_type", :value => "lenis", :onclick => "checktypedia(this.id)"}Lenis
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_radio", :id => "oxia", :name => "diacritical_type", :value => "oxia", :onclick => "checktypedia(this.id)"}Oxia
+            #diaopt_div
+              %input{ :type => "radio", :class => "diacritical_opt_radio", :id => "unclear", :name => "diacritical_option", :value => "unclear", :onclick => "checkoption(this.id)"}Unclear
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_opt_radio", :id => "lost", :name => "diacritical_option", :value => "lost", :onclick => "checkoption(this.id)"}Lost
+              <br/>
+              %input{ :type => "radio", :class => "diacritical_opt_radio", :id => "illegible", :name => "diacritical_option", :value => "illegible", :onclick => "checkoption(this.id)"}Illegible
+              <br/>
+              %input{ :checked => "", :type => "radio", :class => "diacritical_opt_radio", :id => "nopts", :name => "diacritical_option", :value => "nopts", :onclick => "checkoption(this.id)"}No Options
+            #diachar_div
+              %input{ :type => "text", :class => "choosetext", :id => "diachar", :size => "01"} Diacritical Character
+            #diaqty_div
+              %input{ :type => "text", :class => "choosetext", :id => "lostillnbr", :size => "01"} Lost/Illegible Quantity
+            #diabutton_div{:class => "absbutton"}
+              %button{:type => "button", :onclick => "insertDiacritical()"}Insert
+              &nbsp
+              %button{:type => "button", :onclick => "setActiveTab('hide')"}Close
+          #num_div{:class => "chooser"}
+            <h3>Select Number Type and Enter Associated Values To Insert </h3>
+            #numtype_div
+              %input{ :type => "radio", :class => "number_radio", :id => "value", :name => "number_type", :value => "value", :onclick => "checktypenum(this.id)"}Value Only
+              <br/>
+              %input{ :type => "radio", :class => "number_radio", :id => "content", :name => "number_type", :value => "content", :onclick => "checktypenum(this.id)"}Content Only
+              <br/>
+              %input{ :checked => "", :type => "radio", :class => "number_radio", :id => "valuecontent", :name => "number_type", :value => "valuecontent", :onclick => "checktypenum(this.id)"}Value & Content
+              <br/>
+              %input{ :type => "radio", :class => "number_radio", :id => "fraction", :name => "number_type", :value => "fraction", :onclick => "checktypenum(this.id)"}Fraction
+              <br/>
+              %input{ :type => "radio", :class => "number_radio", :id => "nested", :name => "number_type", :value => "nested", :onclick => "checktypenum(this.id)"}Nested Large
+              <br/>
+              <br/>
+              %button{:type => "button", :onclick => "insertUnderdot()"}Underdot
+            #numinp_div
+              %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Value to Insert
+              <br/>
+              %input{ :type => "text", :class => "choosetext", :id => "number_content", :size => "04"}Number Content to Insert
+            #nestwhole_div
+              %input{ :type => "text", :class => "choosetext", :id => "nested_number", :size => "07"}Number
+              &nbsp
+              %input{ :type => "text", :class => "choosetext", :id => "nested_whole", :size => "07"}Whole
+              &nbsp
+              %input{ :type => "text", :class => "choosetext", :id => "nested_whole_content", :size => "02"}Whole Content
+            #nestpart_div
+              %input{ :type => "text", :class => "choosetext", :id => "nested_partial", :size => "02"}Partial
+              &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+              %input{ :type => "text", :class => "choosetext", :id => "nested_partial_content", :size => "02"}Partial Content
+            #numbutton_div{:class => "absbutton"}
+              %button{ :type => "button", :onclick=>"insertNum()" }Insert
+              &nbsp
+              %button{:type => "button", :onclick => "setActiveTab('hide')"}Close
+          #hide_div{:class => "chooser"}
 
         %p
           = f.label "Leiden+"

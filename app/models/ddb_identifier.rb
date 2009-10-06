@@ -11,8 +11,7 @@ class DDBIdentifier < Identifier
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
     ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
-	#test to see if can push a change up
-  #test to see if can do from laptop
+
     # strip leading zeros
     ddb_document_number.sub!(/^0*/,'')
 
