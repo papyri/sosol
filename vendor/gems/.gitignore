@@ -3,3 +3,4 @@ net-ssh-*
 net-sftp-*
 net-scp-*
 highline-*
+jruby-openssl-*

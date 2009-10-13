@@ -33,7 +33,7 @@ Rails::Initializer.run do |config|
   
   config.gem "haml"
   config.gem "capistrano", :version => ">= 2.5.5", :lib => false
-
+  
   if(RUBY_PLATFORM == 'java')
     config.gem "json-jruby", :lib => "json"
   else
@@ -41,6 +41,7 @@ Rails::Initializer.run do |config|
   end
   
   if(RUBY_PLATFORM == 'java')
+    config.gem "jruby-openssl", :lib => false
     config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
