@@ -32,7 +32,7 @@ Rails::Initializer.run do |config|
   # config.gem "libxml-ruby", :lib => "xml/libxml"
   
   config.gem "haml"
-  config.gem "capistrano", :version => ">= 2.5.5"
+  config.gem "capistrano", :version => ">= 2.5.5", :lib => false
 
   if(RUBY_PLATFORM == 'java')
     config.gem "json-jruby", :lib => "json"
