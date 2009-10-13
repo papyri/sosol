@@ -1,0 +1,5 @@
+capistrano-*
+net-ssh-*
+net-sftp-*
+net-scp-*
+highline-*
