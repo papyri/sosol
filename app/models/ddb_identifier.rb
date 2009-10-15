@@ -169,6 +169,6 @@ class DDBIdentifier < Identifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt start-div-portlet.xsl})))
+        %w{data xslt pn start-div-portlet.xsl})))
   end
 end
