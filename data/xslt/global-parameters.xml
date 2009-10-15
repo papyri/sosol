@@ -10,12 +10,12 @@
   
   <parameter>
     <name>leiden-style</name>
-    <value>ddbdp</value>
+    <value on="yes">ddbdp</value>
     <value>edh</value>
     <value>edh-itx</value>
     <value>ila</value>
     <value>london</value>
-    <value on="yes">panciera</value>
+    <value>panciera</value>
     <value>seg</value>
   </parameter>
   
