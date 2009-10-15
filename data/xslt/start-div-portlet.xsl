@@ -59,6 +59,7 @@
 
   <!-- HTML FILE -->
   <xsl:template match="/">
+    <xsl:param name='leiden-style'>ddbdp</xsl:param>
 <div class="pn-ddbdp-data">
     <div class="greek">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
