@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:xalan="http://xml.apache.org/xalan"
 >
-<xsl:output method="xml" />
+<xsl:output method="xml" encoding="UTF-8" />
 <xsl:template match="/">
   <xsl:call-template name="TEI.2" />
 </xsl:template>
