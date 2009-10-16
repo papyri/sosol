@@ -25,7 +25,7 @@ class RpxController < ApplicationController
       return
     end
 
-    data = @rpx.auth_info params[:token]
+    data = @rpx.auth_info(params[:token], request.url)
 
     identifier = data["identifier"]
     primary_key = data["primaryKey"]
@@ -72,7 +72,7 @@ class RpxController < ApplicationController
       return
     end
 
-    data = @rpx.auth_info params[:token]
+    data = @rpx.auth_info(params[:token], request.url)
 
     identifier = data["identifier"]
     primary_key = data["primaryKey"]
