@@ -75,11 +75,12 @@ class RpxController < ApplicationController
     data = @rpx.auth_info(params[:token], request.url)
 
     identifier = data["identifier"]
-    primary_key = data["primaryKey"]
+    
+    user_identifier = UserIdentifier.find_by_identifier(identifier)
 
-    if primary_key
-      # User exists, redirect to index
-      user = User.find(primary_key)
+    if user_identifier
+      # User Identifier exists, login and redirect to index
+      user = user_identifier.user
       session[:user_id] = user.id
       #redirect_to :controller => "welcome", :action => "index"
       #redirect to dashboard
@@ -113,10 +114,11 @@ class RpxController < ApplicationController
       # be sure to recover from it and roll back any changes made up
       # to this point.  Otherwise, the user account will have been
       # created with no identifier associated with it.
-      @rpx.map identifier, user.id
+      user.user_identifiers.push(UserIdentifier.create(:identifier => identifier))
+      user.save!
     rescue Exception => e
       user.destroy
-      flash[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect} #{e.http_response.body}"
+      flash[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
       render :action => "login_return"
       return
     end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090916153409) do
+ActiveRecord::Schema.define(:version => 20091019182632) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -90,6 +90,13 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.string   "status"
     t.integer  "creator_id"
     t.string   "creator_type"
+  end
+
+  create_table "user_identifiers", :force => true do |t|
+    t.string   "identifier"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|
