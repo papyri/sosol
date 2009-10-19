@@ -11,28 +11,10 @@
 
 ActiveRecord::Schema.define(:version => 20090930202845) do
 
-  create_table "articles", :force => true do |t|
-    t.text     "content"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "leiden"
-    t.integer  "user_id"
-    t.string   "pn"
-    t.string   "category"
-    t.integer  "master_article_id"
-    t.integer  "meta_id"
-    t.integer  "transcription_id"
-    t.integer  "translation_id"
-    t.string   "status"
-    t.integer  "board_id"
-    t.integer  "vote_id"
-  end
-
   create_table "boards", :force => true do |t|
     t.string   "title"
     t.string   "category"
     t.integer  "decree_id"
-    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "finalizer_user_id"
@@ -49,7 +31,7 @@ ActiveRecord::Schema.define(:version => 20090930202845) do
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
-    t.text     "comment"
+    t.text     "comment",       :limit => 255
     t.integer  "user_id"
     t.integer  "identifier_id"
     t.string   "reason"
@@ -97,18 +79,6 @@ ActiveRecord::Schema.define(:version => 20090930202845) do
     t.string   "target_type"
   end
 
-  create_table "glossaries", :force => true do |t|
-    t.string   "item"
-    t.string   "term"
-    t.string   "en"
-    t.string   "de"
-    t.string   "fr"
-    t.string   "sp"
-    t.string   "la"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "identifiers", :force => true do |t|
     t.string   "name"
     t.string   "type"
@@ -118,39 +88,6 @@ ActiveRecord::Schema.define(:version => 20090930202845) do
     t.string   "alternate_name"
     t.boolean  "modified",       :default => false
     t.string   "title"
-  end
-
-  create_table "master_articles", :force => true do |t|
-    t.integer  "article_id"
-    t.string   "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "user_id"
-    t.integer  "comment_id"
-  end
-
-  create_table "metas", :force => true do |t|
-    t.string   "notBeforeDate"
-    t.string   "notAfterDate"
-    t.string   "onDate"
-    t.string   "publication"
-    t.string   "title"
-    t.string   "notes"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "article_id"
-    t.integer  "user_id"
-    t.string   "material"
-    t.string   "bl"
-    t.string   "tm_nr"
-    t.string   "content"
-    t.string   "provenance_ancient_findspot"
-    t.string   "provenance_nome"
-    t.string   "provenance_ancient_region"
-    t.string   "other_publications"
-    t.string   "translations"
-    t.string   "illustrations"
-    t.string   "mentioned_dates"
   end
 
   create_table "publications", :force => true do |t|
@@ -165,39 +102,11 @@ ActiveRecord::Schema.define(:version => 20090930202845) do
     t.string   "creator_type"
   end
 
-  create_table "transcriptions", :force => true do |t|
-    t.text     "content"
-    t.text     "leiden"
-    t.integer  "user_id"
-    t.integer  "article_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "translation_contents", :force => true do |t|
-    t.text     "content"
-    t.integer  "translation_id"
-    t.string   "language"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "translations", :force => true do |t|
-    t.text     "epidoc"
-    t.string   "language"
-    t.integer  "user_id"
-    t.integer  "article_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "translation_content_id"
-    t.boolean  "xml_to_translations_ok"
-    t.boolean  "translations_to_xml_ok"
-  end
-
   create_table "users", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "has_repository", :default => false
     t.string   "language_prefs"
     t.boolean  "admin"
     t.boolean  "developer"
@@ -206,13 +115,11 @@ ActiveRecord::Schema.define(:version => 20090930202845) do
     t.string   "affiliation"
     t.string   "email"
     t.integer  "emailer_id"
-    t.boolean  "has_repository", :default => false
   end
 
   create_table "votes", :force => true do |t|
     t.string   "choice"
     t.integer  "user_id"
-    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "publication_id"
