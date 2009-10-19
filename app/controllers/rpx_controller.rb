@@ -71,17 +71,18 @@ class RpxController < ApplicationController
   end
 
   def associate_really
-    identifier = session[:identifier]
-    session[:identifier] = nil
-
-    if params[:confirm] == "Yes"
-      @rpx.map identifier, @current_user.id
-      flash[:notice] = "#{identifier} added to your account"
-    else
-      flash[:notice] = "No OpenID was added to your account"
-    end
-
-    redirect_to :controller => "site", :action => "index"
+    # This is from the RPX template code, but we don't use it.
+    # identifier = session[:identifier]
+    # session[:identifier] = nil
+    # 
+    # if params[:confirm] == "Yes"
+    #   @rpx.map identifier, @current_user.id
+    #   flash[:notice] = "#{identifier} added to your account"
+    # else
+    #   flash[:notice] = "No OpenID was added to your account"
+    # end
+    # 
+    # redirect_to :controller => "site", :action => "index"
   end
 
   def login_return
