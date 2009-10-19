@@ -3,10 +3,10 @@ vendor/plugins/rxsugar:
   :repository: git://halsted.vis.uky.edu/git/xsugar.git
   :revision: master
 
-vendor/plugins/render_component:
-  :type: git
-  :repository: git://github.com/lackac/render_component.git
-  :revision: rails-edge
+# vendor/plugins/render_component:
+#   :type: git
+#   :repository: git://github.com/lackac/render_component.git
+#   :revision: rails-edge
   
 data/xslt/epidoc:
   :type: subversion
