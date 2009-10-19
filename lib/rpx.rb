@@ -31,6 +31,11 @@ module Rpx
       data['identifiers']
     end
 
+    def all_mappings
+      data = api_call 'all_mappings'
+      data['mappings']
+    end
+
     def map(identifier, key)
       api_call 'map', :primaryKey => key, :identifier => identifier
     end
