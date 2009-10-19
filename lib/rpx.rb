@@ -56,7 +56,7 @@ module Rpx
       return parts.join('')
     end
 
-    def api_call(method_name, partial_query)
+    def api_call(method_name, partial_query = {})
       url = URI.parse("#{@base_url}/api/v2/#{method_name}")
 
       query = partial_query.dup
