@@ -8,7 +8,7 @@ class UserController < ApplicationController
   
   def account
     if @current_user
-      @identifiers = @rpx.mappings(@current_user.id)
+      @identifiers = @current_user.user_identifiers
     end    
   end
   

@@ -47,7 +47,7 @@ namespace :externals do
         FileUtils.rm_rf(path)
         shared = File.expand_path(File.join("../shared/externals", path))
         FileUtils.mkdir_p(shared)
-        destination = File.join(shared, revision)
+        destination = File.join(shared, revision.to_s)
         if !File.exists?(destination)
           unless system(scm.checkout(revision, destination))
             FileUtils.rm_rf(destination) if File.exists?(destination)

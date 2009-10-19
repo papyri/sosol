@@ -1,7 +1,7 @@
-
-
 <div class="section">
-    <h1><%= @current_user.name %> 's Account Info</h1>
+    <p style="color: red"><%= flash[:error] %></p>
+  
+    <h1><%= @current_user.name %>'s Account Info</h1>
   
     <h3>
     	Personal    
@@ -48,9 +48,9 @@
 
       <ul>
       <% @identifiers.each do |identifier| %>
-        <li><%= h identifier %> -
-          <%= link_to "X", :controller => :rpx,
-                           :action => "remove_openid", :openid => identifier %>
+        <li><%= h identifier.identifier %> -
+          <%= link_to "delete", :controller => :rpx,
+                           :action => "remove_openid", :openid => identifier.id %>
         </li>
       <% end %>
       </ul>
