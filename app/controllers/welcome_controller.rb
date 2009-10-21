@@ -3,7 +3,8 @@ class WelcomeController < ApplicationController
   
   def index
     if @current_user
-      render_component :controller => "user", :action => "dashboard"
+      redirect_to :controller => "user", :action => "dashboard"
+      return
     end
   end
 end

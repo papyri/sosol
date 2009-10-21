@@ -21,14 +21,19 @@ module Rpx
       @realm = realm
     end
 
-    def auth_info(token)
-      data = api_call 'auth_info', :token => token
+    def auth_info(token, token_url)
+      data = api_call 'auth_info', :token => token, :tokenUrl => token_url
       data['profile']
     end
 
     def mappings(primary_key)
       data = api_call 'mappings', :primaryKey => primary_key
       data['identifiers']
+    end
+
+    def all_mappings
+      data = api_call 'all_mappings'
+      data['mappings']
     end
 
     def map(identifier, key)
@@ -51,7 +56,7 @@ module Rpx
       return parts.join('')
     end
 
-    def api_call(method_name, partial_query)
+    def api_call(method_name, partial_query = {})
       url = URI.parse("#{@base_url}/api/v2/#{method_name}")
 
       query = partial_query.dup

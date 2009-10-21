@@ -6,6 +6,7 @@ class DDBIdentifier < Identifier
   TEMPORARY_COLLECTION = '0500'
   
   acts_as_leiden_plus
+  require 'jruby_xml'
 
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
@@ -162,5 +163,12 @@ class DDBIdentifier < Identifier
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
     return modified_xml_content
+  end
+
+  def preview
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt pn start-div-portlet.xsl})))
   end
 end

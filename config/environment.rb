@@ -5,15 +5,14 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
-require 'git_conf'
 
 require 'rexml/document'
 
-Rails::Initializer.run(:process, GitConf.new) do |config|
+Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -28,11 +27,26 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem "ruby-xslt", :lib => "xml/xslt"
-  config.gem "libxml-ruby", :lib => "xml/libxml"
+
+  # config.gem "ruby-xslt", :lib => "xml/xslt"
+  # config.gem "libxml-ruby", :lib => "xml/libxml"
+  
   config.gem "haml"
-  config.gem "capistrano", :version => ">= 2.5.5"
-  config.gem "json"
+  # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
+  
+  if(RUBY_PLATFORM == 'java')
+    config.gem "json-jruby", :lib => "json"
+  else
+    config.gem "json"
+  end
+  
+  if(RUBY_PLATFORM == 'java')
+    config.gem "jruby-openssl", :lib => false
+    config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
+    config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
+    config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
+		config.gem "rack", :lib => false
+  end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
   
@@ -42,9 +56,6 @@ Rails::Initializer.run(:process, GitConf.new) do |config|
     :lib     => 'grit',
     :source  => 'http://gems.github.com',
     :version => '>= 1.1.1'
-    
-  # increase timeout for git operations
-  Grit::Git.git_timeout = 60
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

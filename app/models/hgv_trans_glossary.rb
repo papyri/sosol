@@ -1,6 +1,8 @@
 class HGVTransGlossary < HGVTransIdentifier
   require 'rexml/document'
   include REXML
+  
+  require 'jruby_xml'
 
   class Entry
     attr_accessor :item, :term, :text
@@ -156,4 +158,10 @@ class HGVTransGlossary < HGVTransIdentifier
     return entries.sort { |a,b| a.item.downcase <=> b.item.downcase }
   end
 
+  def to_chooser
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt translation glossary_to_chooser.xsl})))
+  end
 end

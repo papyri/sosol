@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :case_sensitive => false
+  
+  has_many :user_identifiers, :dependent => :destroy
   
   has_and_belongs_to_many :boards
   
