@@ -42,7 +42,9 @@ class RpxController < ApplicationController
       return
     end
 
-    data = @rpx.auth_info(params[:token], request.url)
+    # FIXME: Glassfish reqeust object seems to ignore context root?
+    # data = @rpx.auth_info(params[:token], request.url)
+    data = @rpx.auth_info(params[:token], url_for :controller => :rpx, :action => :associate_return, :only_path => false)
 
     identifier = data["identifier"]
     user_identifier = UserIdentifier.find_by_identifier(identifier)
@@ -92,7 +94,9 @@ class RpxController < ApplicationController
       return
     end
 
-    data = @rpx.auth_info(params[:token], request.url)
+    # FIXME: Glassfish reqeust object seems to ignore context root?
+    # data = @rpx.auth_info(params[:token], request.url)
+    data = @rpx.auth_info(params[:token], url_for :controller => :rpx, :action => :login_return, :only_path => false)
 
     identifier = data["identifier"]
     
