@@ -17,7 +17,7 @@ role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
 # Variables for production server running Glassfish
-set :context_root, "/protosite"
+set :context_root, "protosite"
 set :jruby_location, "/opt/jruby/"
 set :gf_port, "3000"
 set :environment, "production"
