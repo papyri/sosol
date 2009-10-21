@@ -27,14 +27,17 @@ set :jruby_max_runtimes, "1"
 
 # Tasks adapted from Glassfish Capistrano recipes http://tinyurl.com/yhu8jdw
 namespace :deploy do
+  desc "Start Glassfish Gem from a shutdown state"
   task :cold , :roles => :app do
     start
   end
   
+  desc "Starts a server running Glassfish Gem"
   task :start, :roles => :app do
     run "CLASSPATH='#{release_path}/lib/java/saxon9he.jar' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{current_path}/capistrano-#{application} --daemon #{release_path}"
   end
 
+  desc "Stop a server running Glassfish Gem"
   task :stop, :roles => :app do
     run "kill -INT $(cat #{current_path}/capistrano-#{application})"  
   end
