@@ -19,6 +19,6 @@ test:
   timeout: 5000
 
 production:
-  adapter: mysql
+  adapter: <%= jdbc %>mysql
   database: idp2
   username: idp2
