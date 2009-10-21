@@ -57,7 +57,7 @@ namespace :externals do
         FileUtils.ln_s(destination, path)
       else
         shared = File.join(shared_path, "externals", path)
-        destination = File.join(shared, revision)
+        destination = File.join(shared, revision.to_s)
         run "rm -rf #{latest_release}/#{path} && mkdir -p #{shared} && if [ ! -d #{destination} ]; then (#{scm.checkout(revision, destination)}) || rm -rf #{destination}; fi && ln -nsf #{destination} #{latest_release}/#{path}"
       end
     end
