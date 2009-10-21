@@ -11,7 +11,9 @@ Warbler::Config.new do |config|
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
-  config.includes = FileList["db/production.sqlite3", "data", "vendor/gems/*/.specification"]
+  config.includes = FileList[
+    # "db/production.sqlite3",
+    "data", "vendor/gems/*/.specification"]
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
