@@ -9,7 +9,7 @@ class BoardTest < ActiveSupport::TestCase
     
     subject { @board }
     
-    should_validate_uniqueness_of :title
+    should_validate_uniqueness_of :title, :case_sensitive => false
     
     teardown do
       @board.destroy unless !Board.exists? @board.id

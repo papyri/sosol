@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
     
     subject { @user }
     
-    should_validate_uniqueness_of :name
+    should_validate_uniqueness_of :name, :case_sensitive => false
     
     teardown do
       @user.destroy unless !User.exists? @user.id

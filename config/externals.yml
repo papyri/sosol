@@ -2,3 +2,13 @@ vendor/plugins/rxsugar:
   :type: git
   :repository: git://halsted.vis.uky.edu/git/xsugar.git
   :revision: master
+
+# vendor/plugins/render_component:
+#   :type: git
+#   :repository: git://github.com/lackac/render_component.git
+#   :revision: rails-edge
+  
+data/xslt/epidoc:
+  :type: subversion
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/trunk/example-p5-xslt/
+  :revision: HEAD

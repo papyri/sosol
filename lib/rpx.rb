@@ -21,8 +21,8 @@ module Rpx
       @realm = realm
     end
 
-    def auth_info(token)
-      data = api_call 'auth_info', :token => token
+    def auth_info(token, token_url)
+      data = api_call 'auth_info', :token => token, :tokenUrl => token_url
       data['profile']
     end
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090916153409) do
+ActiveRecord::Schema.define(:version => 20091019182632) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -30,6 +30,15 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
 
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
+  create_table "comments", :force => true do |t|
+    t.text     "comment",       :limit => 255
+    t.integer  "user_id"
+    t.integer  "identifier_id"
+    t.string   "reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "decrees", :force => true do |t|
     t.string   "action"
     t.decimal  "trigger"
@@ -43,7 +52,7 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.integer  "board_id"
     t.integer  "user_id"
     t.text     "extra_addresses"
-    t.string   "when"
+    t.string   "when_to_send"
     t.boolean  "include_document"
     t.text     "message"
     t.datetime "created_at"
@@ -78,6 +87,7 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.integer  "publication_id"
     t.string   "alternate_name"
     t.boolean  "modified",       :default => false
+    t.string   "title"
   end
 
   create_table "publications", :force => true do |t|
@@ -90,6 +100,13 @@ ActiveRecord::Schema.define(:version => 20090916153409) do
     t.string   "status"
     t.integer  "creator_id"
     t.string   "creator_type"
+  end
+
+  create_table "user_identifiers", :force => true do |t|
+    t.string   "identifier"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|
