@@ -85,7 +85,7 @@ module Rpx
       end
 
       if data['stat'] != 'ok'
-        raise RpxException.new(resp), 'Unexpected API error'
+        raise RpxException.new(resp), "Unexpected API error:\n  data: #{data.inspect}\n  resp: #{resp.inspect}"
       end
 
       return data
