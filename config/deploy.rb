@@ -29,6 +29,7 @@ set :jruby_max_runtimes, "1"
 namespace :deploy do
   desc "Start Glassfish Gem from a shutdown state"
   task :cold , :roles => :app do
+    update
     start
   end
   
