@@ -24,6 +24,7 @@ set :environment, "production"
 set :jruby_runtimes, "1"
 set :jruby_min_runtimes, "1"
 set :jruby_max_runtimes, "1"
+set :rake, "/opt/jruby/bin/jruby -S rake"
 
 # Tasks adapted from Glassfish Capistrano recipes http://tinyurl.com/yhu8jdw
 namespace :deploy do
