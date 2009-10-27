@@ -1,4 +1,18 @@
 module JRubyXML
+  class EpiDocValidator
+    include Singleton
+
+    attr_reader :verifier_factory, :schema
+
+    def initialize
+      @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://relaxng.org/ns/structure/1.0") 
+      @schema = verifier_factory.compileSchema(
+        "http://epidoc.googlecode.com/files/exp-epidoc.rng")
+    end
+  end
+
   class << self
     def stream_from_string(input_string)
       javax.xml.transform.stream.StreamSource.new(
