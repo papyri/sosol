@@ -11,13 +11,23 @@ module JRubyXML
     end
   end
   
-  class EpiDocValidator < JARVValidator
+  class EpiDocP5Validator < JARVValidator
     def initialize
       @verifier_factory = 
         org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0") 
+          "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
         "http://epidoc.googlecode.com/files/exp-epidoc.rng")
+    end
+  end
+  
+  class EpiDocP4Validator < JARVValidator
+    def initialize
+      @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://www.w3.org/XML/1998/namespace")
+      @schema = verifier_factory.compileSchema(
+        "http://www.stoa.org/epidoc/dtd/6/tei-epidoc.dtd")
     end
   end
 
