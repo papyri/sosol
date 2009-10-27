@@ -1,9 +1,17 @@
 module JRubyXML
-  class EpiDocValidator
+  # http://iso-relax.sourceforge.net/JARV/JARV.html
+  class JARVValidator
     include Singleton
-
+    
     attr_reader :verifier_factory, :schema
-
+    
+    def validate(input_source_xml_stream)
+      verifier = @schema.newVerifier()
+      verifier.verify(input_source_xml_stream)
+    end
+  end
+  
+  class EpiDocValidator < JARVValidator
     def initialize
       @verifier_factory = 
         org.iso_relax.verifier.VerifierFactory.newInstance(
@@ -14,6 +22,10 @@ module JRubyXML
   end
 
   class << self
+    def input_source_from_string(input_string)
+      org.xml.sax.InputSource.new(java.io.StringReader.new(input_string))
+    end
+    
     def stream_from_string(input_string)
       javax.xml.transform.stream.StreamSource.new(
         java.io.StringReader.new(input_string))
