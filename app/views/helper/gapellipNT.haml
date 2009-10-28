@@ -1,0 +1,18 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter Extent of Non-Transcribed Gap and Gap Type</h3>
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "gapellipNT_value", :size => "07"}Extent
+      #type_left
+        %input{ :checked => "", :type => "radio", :class => "gapellipNT_radio", :id => "character", :name => "gapellipNT_type", :value => "character", :onclick => "checktypegap(this.id)"}Character
+        <br/>
+        %input{ :type => "radio", :class => "gapellipNT_radio", :id => "line", :name => "gapellipNT_type", :value => "line", :onclick => "checktypegap(this.id)"}Line
+      #button_left
+        %button{ :type => "button", :onclick=>"insertGapEllipNT('')"}Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

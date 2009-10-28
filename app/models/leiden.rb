@@ -6,11 +6,10 @@ class Leiden < DDBIdentifier
     #add <wrapab> tag
     abs = DDBIdentifier.preprocess_abs(content)
     begin
-      #call to blackboard to convert
+      #call to convert
       transformed = DDBIdentifier.xml2nonxml(abs)
       
       #remove <= and => that represents <wrapab>
-      #transformed.delete!("<>=")
       transformed.slice!(/^<=/)
       transformed.slice!(/=>$/)
 

@@ -1,0 +1,205 @@
+.helperpop /* the whole div displayed by each tab */
+{
+/*border-style: solid;
+border-width:medium;
+/*height:5em;
+width:40em;*/
+margin-bottom: 0.63em;
+font-size: medium;/*set so that em sizing is consisent*/
+}
+
+.choosetext /* applied to all input text boxes */
+{
+margin-bottom: 3px; /* space between input boxes that are stacked */
+margin-right: 3px; /* move label away */
+}
+
+#number_div {
+height:15em;
+width:48em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
+#numcol1 {
+float:left;
+height:10em;
+width:13em;
+}
+
+#numtype_div {
+position:relative;
+top:0.63em;
+width:12em;
+}
+
+#numbutton_div {
+position:relative;
+top:1.5em;
+width:10em;
+}
+
+#numcol2 {
+float:left;
+height:10em;
+width:34em;
+}
+
+#numinp_div {
+position:relative;
+top:0.63em;
+}
+
+#nestwhole_div {
+position:relative;
+top:2.5em;
+}
+
+#nestpart_div {
+position:relative;
+top:3em;
+left:8.5em;
+}
+
+#diacritical_div {
+height:10em;
+width:41em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+/*display: "";*/
+}
+
+#dia_left {
+position:relative;
+top:0.63em;
+float:left;
+width:8em;
+}
+
+#gapsize {
+height:7em;
+width:40em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+/*display: "";*/
+}
+
+#extent_left {
+position:relative;
+top:0.63em;
+float:left;
+width:10em;
+}
+
+#type_left {
+position:relative;
+top:0.63em;
+float:left;
+width:10em;
+}
+
+#low_left {
+position:relative;
+top:0.63em;
+float:left;
+width:8em;
+}
+
+#button_left {
+position:relative;
+top:0.63em;
+float:left;
+width:10em; 
+}
+
+#gapelliplangradio_div {
+position:relative;
+top:0.63em;
+float:left;
+width:10em;
+}
+
+#gapelliplangext_div {
+position:relative;
+top:0.63em;
+float:left;
+width:15em;
+}
+
+#abbrevtext_div {
+position:relative;
+top:0.63em;
+float:left;
+width:22em;
+}
+
+#division_type {
+position:relative;
+top:0.63em;
+float:left;
+width:25em;
+}
+
+#app2col {
+height:10em;
+width:53em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
+#app3col {
+height:10em;
+width:80em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
+#app_col {
+float:left;
+height:9em;
+width:26em;
+}
+
+#app_low {
+position:relative;
+top:0.63em;
+left:10em;
+width:7em;
+}
+
+#app_text {
+position:relative;
+top:0.63em;
+width:26em;
+}
+
+#app_desc {
+position:relative;
+top:0.63em;
+width:14em;
+}
+
+#app_button {
+position:relative;
+top:2em;
+width:10em; 
+}
+
+#app_clarify_text {
+position:relative;
+top:3em;
+width:50em;
+clear: both;
+}
+
+#app_subst_text {
+position:relative;
+top:2.9em;
+width:26em;
+}
+
+#app_subst_desc {
+position:relative;
+top:2.9em;
+width:14em;
+}

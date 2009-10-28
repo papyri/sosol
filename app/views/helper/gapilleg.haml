@@ -1,0 +1,19 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter Extent of Illegible Gap and Gap Type</h3>
+      <h4>Valid values: e.g. 2 / c.3 / ? or ca.? / 7-11 / ca.3 or ca.c.3</h4>
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "gapilleg_value", :size => "07"}Extent
+      #type_left
+        %input{ :checked => "", :type => "radio", :class => "gapilleg_radio", :id => "character", :name => "gapilleg_type", :value => "character", :onclick => "checktypegap(this.id)"}Character
+        <br/>
+        %input{ :type => "radio", :class => "gapilleg_radio", :id => "line", :name => "gapilleg_type", :value => "line", :onclick => "checktypegap(this.id)"}Line
+      #button_left
+        %button{ :type => "button", :onclick=>"insertGap('illegible')"}Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

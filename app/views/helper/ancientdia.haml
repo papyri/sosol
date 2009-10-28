@@ -1,0 +1,29 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #diacritical_div{:class => "helperpop"}
+      <h4>Does not work as multiple yet - needs work - only 1 at this time</h4>
+      #dia_left
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "acute", :name => "diacritical_type", :value => "acute", :onclick => "checktypedia(this.id)"}Acute
+        <br/>
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "asper", :name => "diacritical_type", :value => "asper", :onclick => "checktypedia(this.id)"}Asper
+        <br/>
+      #dia_left
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "circumflex", :name => "diacritical_type", :value => "circumflex", :onclick => "checktypedia(this.id)"}Circumflex
+        <br/>
+        %input{ :checked => "", :type => "radio", :class => "diacritical_radio", :id => "diaeresis", :name => "diacritical_type", :value => "diaeresis", :onclick => "checktypedia(this.id)"}Diaeresis
+        <br/>
+      #dia_left
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "grave", :name => "diacritical_type", :value => "grave", :onclick => "checktypedia(this.id)"}Grave
+        <br/>
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "lenis", :name => "diacritical_type", :value => "lenis", :onclick => "checktypedia(this.id)"}Lenis
+        <br/>
+      #dia_left
+        %input{ :type => "radio", :class => "diacritical_radio", :id => "oxia", :name => "diacritical_type", :value => "oxia", :onclick => "checktypedia(this.id)"}Oxia
+      #dia_left
+        %button{:type => "button", :onclick => "insertDiacriticalSub()"}Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

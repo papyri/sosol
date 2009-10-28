@@ -1,0 +1,39 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #number_div{:class => "helperpop"}
+      <h3>Select Number Type and Enter Associated Values To Insert </h3>
+      #numcol1
+        #numtype_div
+          %input{ :type => "radio", :class => "number_radio", :id => "value", :name => "number_type", :value => "value", :onclick => "checktypenum(this.id)"}Value Only
+          <br/>
+          %input{ :type => "radio", :class => "number_radio", :id => "content", :name => "number_type", :value => "content", :onclick => "checktypenum(this.id)"}Content Only
+          <br/>
+          %input{ :checked => "", :type => "radio", :class => "number_radio", :id => "valuecontent", :name => "number_type", :value => "valuecontent", :onclick => "checktypenum(this.id)"}Value & Content
+          <br/>
+          %input{ :type => "radio", :class => "number_radio", :id => "fraction", :name => "number_type", :value => "fraction", :onclick => "checktypenum(this.id)"}Fraction
+          <br/>
+          %input{ :type => "radio", :class => "number_radio", :id => "nested", :name => "number_type", :value => "nested", :onclick => "checktypenum(this.id)"}Nested Large
+        #numbutton_div
+          %button{ :type => "button", :onclick=>"insertNum()" }Insert
+          &nbsp
+          %button{:type => "button", :onclick => "closeHelper()"}Close
+      #numcol2
+        #numinp_div
+          %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Value to Insert
+          <br/>
+          %input{ :type => "text", :class => "choosetext greek", :id => "number_content", :size => "04"}Number Content to Insert
+        #nestwhole_div
+          %input{ :type => "text", :class => "choosetext", :id => "nested_number", :size => "09"}Number
+          &nbsp
+          %input{ :type => "text", :class => "choosetext", :id => "nested_whole", :size => "09"}Whole
+          &nbsp
+          %input{ :type => "text", :class => "choosetext greek", :id => "nested_whole_content", :size => "04"}Whole Content
+        #nestpart_div
+          %input{ :type => "text", :class => "choosetext", :id => "nested_partial", :size => "04"}Partial
+          &nbsp &nbsp &nbsp &nbsp
+          %input{ :type => "text", :class => "choosetext greek", :id => "nested_partial_content", :size => "04"}Partial Content
+       

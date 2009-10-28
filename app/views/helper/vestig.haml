@@ -1,0 +1,22 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter Extent of Vestig Gap and Vestig Type</h3>
+      <h4>Valid values: e.g. 2 / c.3 / blank</h4>
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "vestig_value", :size => "07"}Extent
+      #type_left
+        %input{ :checked => "", :type => "radio", :class => "vestig_radio", :id => "character", :name => "vestig_type", :value => "character", :onclick => "checktypevestig(this.id)"}Character
+        <br/>
+        %input{ :type => "radio", :class => "vestig_radio", :id => "line", :name => "vestig_type", :value => "line", :onclick => "checktypevestig(this.id)"}Line
+      #low_left
+        %form{:name => "vestig"}
+          %input{ :type => "checkbox", :class => "vestiglow_check_c", :id => "vestiglow", :name => "vestiglow_check_n", :value => "vestiglow"}Cert Low (line only)
+      #button_left
+        %button{ :type => "button", :onclick=>"insertVestig()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

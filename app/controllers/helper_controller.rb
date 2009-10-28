@@ -1,0 +1,45 @@
+class HelperController < ApplicationController
+  
+  def ancientdia
+  end
+  
+  def number
+  end
+  
+  def gaplost
+  end
+  
+  def gapelliplang
+  end
+  
+  def gapellipNT
+  end
+  
+  def gapilleg
+  end
+  
+  def vestig
+  end
+  
+  def abbrev
+  end
+  
+  def appalt
+  end
+  
+  def appBL
+  end
+  
+  def appedit
+  end
+  
+  def apporth
+  end
+  
+  def appsubst
+  end
+  
+  def division
+  end
+
+end
