@@ -45,8 +45,20 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
   
+  
+  
+  def submit_review
+    @publication = Publication.find(params[:id])
+    @comments = Comment.find_all_by_publication_id(params[:id])          
+    #redirect_to @publication
+    # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+  end
+  
   def submit
     @publication = Publication.find(params[:id])
+    
+    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit" } )
+    @comment.save
     @publication.submit
     
     flash[:notice] = 'Publication submitted.'
@@ -84,6 +96,8 @@ class PublicationsController < ApplicationController
     if !@publication.status.nil? && (@publication.status == "submitted") 
       @show_submit = false
     end
+    
+    @comments = Comment.find_all_by_publication_id(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb

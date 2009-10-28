@@ -27,6 +27,10 @@
       %b
         = identifier.title
       = render :partial => identifier
-      
+
+  - if @comments != nil  
+    %h3 Comments 
+    - for comment in @comments
+      = render :partial => comment      
  
 
