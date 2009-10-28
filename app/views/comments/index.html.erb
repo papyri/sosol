@@ -2,17 +2,21 @@
 
 <table>
   <tr>
-    <th>Text</th>
+    <th>Comment</th>
     <th>User</th>
-    <th>Article</th>
+    <th>Publication</th>
+    <th>Identifier</th>
+    <th>Git Hash</th>
     <th>Reason</th>
   </tr>
 
 <% for comment in @comments %>
   <tr>
-    <td><%=h comment.text %></td>
+    <td><%=h comment.comment %></td>
     <td><%=h comment.user_id %></td>
-    <td><%=h comment.article_id %></td>
+    <td><%=h comment.publication_id %></td>
+    <td><%=h comment.identifier_id %></td>
+    <td><%=h comment.git_hash %></td>
     <td><%=h comment.reason %></td>
     <td><%= link_to 'Show', comment %></td>
     <td><%= link_to 'Edit', edit_comment_path(comment) %></td>
