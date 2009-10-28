@@ -5,10 +5,10 @@
 #edit_header
   %h1
     Editing Publication
-    = @identifier.publication.title
+    = link_to @identifier.publication.title, @identifier.publication
   - if @identifier.publication.owner_type == "User"
     #submit
-      = button_to "Submit", submit_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :post
+      = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
   - elsif @identifier.publication.owner_type == "Board"
     = render :partial => "boards/review", :object => @identifier.publication
   %h3
