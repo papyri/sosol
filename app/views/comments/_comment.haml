@@ -1,0 +1,10 @@
+.comment_partial
+  .name 
+    - if comment.user != nil && comment.user.name != nil
+      = comment.user.name
+  .reason 
+    - if comment.reason != nil
+      = comment.reason
+  .comment    
+    - if comment.comment != nil
+      = comment.comment

@@ -1,6 +1,6 @@
 <p>
   <b>Text:</b>
-  <%=h @comment.text %>
+  <%=h @comment.comment %>
 </p>
 
 <p>
@@ -9,8 +9,18 @@
 </p>
 
 <p>
-  <b>Article:</b>
-  <%=h @comment.article_id %>
+  <b>Publication:</b>
+  <%=h @comment.publication_id %>
+</p>
+
+<p>
+  <b>Identifier:</b>
+  <%=h @comment.identifier_id %>
+</p>
+
+<p>
+  <b>Git Hash:</b>
+  <%=h @comment.git_hash %>
 </p>
 
 <p>
