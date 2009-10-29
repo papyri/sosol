@@ -1,0 +1,25 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Choose Your Language and Extent of Ellipsis Line Gap</h3>
+      #gapelliplangradio_div
+        %form{:name => "appsubstdel"}
+          %input{ :type => "radio", :class => "gapelliplang_radio", :id => "Arabic", :name => "gapelliplang_type", :value => "Arabic", :onclick => "checkelliplang(this.id)"}Arabic
+          <br/>
+          %input{ :type => "radio", :class => "gapelliplang_radio", :id => "Aramaic", :name => "gapelliplang_type", :value => "Aramaic", :onclick => "checkelliplang(this.id)"}Aramaic
+          <br/>
+          %input{ :type => "radio", :class => "gapelliplang_radio", :id => "Coptic", :name => "gapelliplang_type", :value => "Coptic", :onclick => "checkelliplang(this.id)"}Coptic
+          <br/>
+          %input{ :checked => "", :type => "radio", :class => "gapelliplang_radio", :id => "Demotic", :name => "gapelliplang_type", :value => "Demotic", :onclick => "checkelliplang(this.id)"}Demotic
+          <br/>
+          %input{ :type => "radio", :class => "gapelliplang_radio", :id => "Nabatean", :name => "gapelliplang_type", :value => "Nabatean", :onclick => "checkelliplang(this.id)"}Nabatean
+      #gapelliplangext_div
+        %input{ :type => "text", :class => "choosetext", :id => "gapelliplang_value", :size => "03"}Extent (blank = unknown)
+      #button_left
+        %button{ :type => "button", :onclick=>"insertGapEllipLang()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

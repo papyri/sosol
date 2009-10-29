@@ -8,6 +8,8 @@ class Identifier < ActiveRecord::Base
   validates_inclusion_of :type,
                          :in => IDENTIFIER_SUBCLASSES
   
+  require 'jruby_xml'
+  
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
@@ -21,14 +23,24 @@ class Identifier < ActiveRecord::Base
       self.to_path, self.branch)
   end
   
-  def set_content(content, options = {})    
-    options.reverse_merge! :comment => ''
-    self.repository.commit_content(self.to_path,
-                                   self.branch,
-                                   content,
-                                   options[:comment])
-    self.modified = true
-    self.save!
+  def is_valid?(content = nil)
+    if content.nil?
+      content = self.content
+    end
+    self.class::VALIDATOR.instance.validate(
+      JRubyXML.input_source_from_string(content))
+  end
+  
+  def set_content(content, options = {})
+    if is_valid?(content)
+      options.reverse_merge! :comment => ''
+      self.repository.commit_content(self.to_path,
+                                     self.branch,
+                                     content,
+                                     options[:comment])
+      self.modified = true
+      self.save!
+    end
   end
   
   def get_commits

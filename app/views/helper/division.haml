@@ -1,0 +1,15 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter Type of Division</h3>
+      <h4>Valid values: cannot be blank, cannot have '.' but can have '+'</h4>
+      #division_type
+        %input{ :type => "text", :class => "choosetext", :id => "division_value", :size => "25"}Type of Division
+      #button_left
+        %button{ :type => "button", :onclick=>"insertDivisionSub()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

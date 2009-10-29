@@ -1,0 +1,18 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter abbreviation, e.g. "Jos(h)ua"</h3>
+      <h4>Valid values: στρ(ατηγός) / (ἔτους) / (Ἑπτα)κωμ(ίας) / ν(ε)ωτ(έρῳ) / Ἀθην(  ) / στρ(ατηγός?) vel sim</h4>
+      #abbrevtext_div
+        %input{ :type => "text", :class => "choosetext greek", :id => "abbrev_value", :size => "25"}Abbreviation
+      #low_left
+        %form{:name => "abbrev"}
+          %input{ :type => "checkbox", :class => "abbrevlow_check_c", :id => "abbrevlow", :name => "abbrevlow_check_n", :value => "abbrevlow"}Cert Low
+      #button_left
+        %button{ :type => "button", :onclick=>"insertAbbrev()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close
