@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :comments
 
   map.resources :events
-
+  
   # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   # map.login '/login', :controller => 'sessions', :action => 'new'
   # map.register '/register', :controller => 'users', :action => 'create'
@@ -25,6 +25,7 @@ ActionController::Routing::Routes.draw do |map|
 	map.help 'help', :controller => 'user', :action => 'help'
 
   map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
+  
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
  
   map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }

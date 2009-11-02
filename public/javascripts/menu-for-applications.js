@@ -124,7 +124,8 @@ DHTMLSuite.config.prototype = {
 	init : function()
 	{
 		this.imagePath = '../images_dhtmlsuite/';	// Path to images
-		this.cssPath = '../css_dhtmlsuite/';	// Path to images
+//		this.cssPath = '../css_dhtmlsuite/';	// Path to stylesheets
+    this.cssPath = '/public/stylesheets/';	// Path to stylesheets
 	}
 	// }}}
 	,
@@ -1171,8 +1172,8 @@ DHTMLSuite.menuItem = function()
 	var cssPrefix;							// Css prefix for the menu items.
 	var modelItemRef;						// Reference to menuModelItem
 
-//	this.layoutCSS = 'menu-item.css';
-  this.layoutCSS = 'demo-menu-item.css';
+	this.layoutCSS = 'menu-item.css';
+//  this.layoutCSS = 'demo-menu-item.css';
 //	this.cssPrefix = 'DHTMLSuite_';
   this.cssPrefix = 'Custom_';
 
@@ -1593,8 +1594,8 @@ DHTMLSuite.menuBar = function(){
 //	this.cssPrefix = 'DHTMLSuite_';
   this.cssPrefix = 'Custom_';
 	this.menuItemLayoutCss = false;	// false = use default for the menuItem class.
-	this.layoutCSS = 'demo-menu-bar.css';
-//  this.layoutCSS = 'menu-bar.css';
+//	this.layoutCSS = 'demo-menu-bar.css';
+  this.layoutCSS = 'menu-bar.css';
 	this.menuBarBackgroundImage = 'menu_strip_bg.jpg';
 	this.menuItem_objects = new Object();
 	DHTMLSuite.variableStorage.menuBar_highlightedItems = new Array();

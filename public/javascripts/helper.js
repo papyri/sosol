@@ -130,12 +130,7 @@ function insertAppAlt()
   else
     {
       startxml = "<app type=\"alternative\"><lem>" + lem + "</lem><rdg>" + rdg + "</rdg></app>";
-     /* success = function(resp) {
-            leidenh = resp.responseText;
-            window.close();
-            insertText(leidenh);
-             }*/
-          
+        
       convertXML()
     }
 } /*########################     end insertAppAlt     ########################*/
@@ -166,12 +161,7 @@ function insertAppBL()
         }
       
       startxml = "<app type=\"BL\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-     /* success = function(resp) {
-            leidenh = resp.responseText;
-            window.close();
-            insertText(leidenh);
-             }*/
-          
+               
       convertXML()
     }
 } /*########################     end insertAppBL     ########################*/
@@ -202,12 +192,7 @@ function insertAppEdit()
         }
       
       startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-    /*  success = function(resp) {
-            leidenh = resp.responseText;
-            window.close();
-            insertText(leidenh);
-             }*/
-          
+              
       convertXML()
     }
 } /*########################     end insertAppEdit     ########################*/
@@ -238,12 +223,7 @@ function insertAppOrth()
     }
   
   startxml = "<choice>" + corrstart + corr + "</corr>" + sicstart + sic + "</sic></choice>";
- /* success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+       
   convertXML()
   
 } /*########################     end insertAppOrth     ########################*/
@@ -266,12 +246,7 @@ function insertAppSubst()
     }
   
   startxml = "<subst>" + addstart + addplace + "</add><del rend=\"corrected\">" + delrend + "</del></subst>";
- /* success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+       
   convertXML()
   
 } /*########################     end insertAppSubst     ########################*/
@@ -400,12 +375,7 @@ function insertGap(type)
   if (editpass == "yes")
     {
       startxml = "<gap reason=\"" + type + "\" " + qtyext + "=\"" + lostextent + "\" unit=\"" + gap_type + "\"" + optprecis + "/>";
-    /*  success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+     
       convertXML()
     }
 } /*########################     end insertGapLost     ########################*/
@@ -441,12 +411,7 @@ function insertGapEllipLang(type)
   if (editpass == "yes")
     {
       startxml = "<gap reason=\"ellipsis\" " + qtyext + " unit=\"line\"><desc>" + elliplang + "</desc></gap>";
-    /*  success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+          
       convertXML()
     }
 } /*########################     end insertGapEllipLang     ########################*/
@@ -500,12 +465,7 @@ function insertGapEllipNT()
   if (editpass == "yes")
     {
       startxml = "<gap reason=\"ellipsis\" " + qtyext + " unit=\"" + gap_type + "\">" + descnode + "</gap>";
-    /*  success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+          
       convertXML()
     }
 } /*########################     end insertGapEllipNT     ########################*/
@@ -568,12 +528,7 @@ function insertVestig()
   if (editpass == "yes")
     {
       startxml = "<gap reason=\"illegible\" " + qtyext + " unit=\"" + vestig_type + "\"" + optprecis + ">" + desc + "</gap>";
-    /*  success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-      
+    
       convertXML()
     }
 } /*########################     end insertVestig     ########################*/
@@ -608,16 +563,11 @@ function insertDivisionSub()
     {
       startxml = "<div n=\"" + divisiontype + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
-      new Ajax.Request("/leiden/xmlAjax/", 
+      new Ajax.Request(window.opener.ajaxConvert, 
       {
         method: 'get',
         parameters : {xml:startxml},
         onSuccess : success,
-      /*  onSuccess : function(resp) {
-         leidenh = resp.responseText;
-         insertText(leidenh);
-         window.close();
-          },*/
         onFailure : function(resp) {
         alert("Oops, there's been an error." + resp.responseText);   
           }
@@ -761,12 +711,6 @@ function finishNum()
   }
   }
   
-  /*success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-  
   convertXML()
 
 } /*########################     end finishNum     ########################*/
@@ -843,13 +787,7 @@ function insertAbbrTag()
   if (editpass == "yes")
     {
       startxml = "<abbr>" + abbrevtext.substr(0,lp) + "</abbr>";
-    //  alert("startxml is: " + startxml);
-      /*success = function(resp) {
-            leidenh = resp.responseText;
-            window.close();
-            insertText(leidenh);
-             }*/
-      
+          
       convertXML()
     }
 }    
@@ -965,12 +903,7 @@ function finishAbbrev()
     }
   
   startxml = "<expan>" + expandcont + extagbeg + excont + "</ex>" + other + "</expan>";
-  /*success = function(resp) {
-        leidenh = resp.responseText;
-        window.close();
-        insertText(leidenh);
-         }*/
-  
+    
   convertXML()
   
 } /*########################     end finishAbbrev                   ########################*/
@@ -984,7 +917,7 @@ function convertXML()
 {
   xmltopass = wrapxml(startxml);
 
-  new Ajax.Request("/leiden/xmlAjax/", 
+  new Ajax.Request(window.opener.ajaxConvert, 
   {
   method: 'get',
   parameters : {xml:xmltopass},
