@@ -13,7 +13,6 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
-
   }
   
 window.onload = init;
@@ -69,9 +68,9 @@ function helpDialogOpen(view)
       alert("Oops, error, this is not a valid helper dialog page " + view);
     }
   }
-  
-  controller = "/helper/" + view;
-  window.open (controller, '', openconfig); 
+  //helpView is global variable defined with Ruby url_for in inline javascript in edit.haml 
+  newWindowURL = helpView.replace("wheretogo", view);
+  window.open (newWindowURL, '', openconfig); 
 }
 
 /*###########################################################################################*/
@@ -159,8 +158,7 @@ function insertDivisionMain(division_type)
   
   startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
   
-  //inline ajax call because cannot use normal 'convertXMLMain' because this xml already contains the ab tab 
-  new Ajax.Request("/leiden/xmlAjax/", 
+  new Ajax.Request(ajaxConvert, 
   {
   method: 'get',
   parameters : {xml:startxml},
@@ -207,7 +205,7 @@ function convertXMLMain()
 {
   xmltopass = wrapxmlMain(startxml);
   
-  new Ajax.Request("/leiden/xmlAjax/", 
+  new Ajax.Request(ajaxConvert, 
   {
   method: 'get',
   parameters : {xml:xmltopass},

@@ -1,8 +1,10 @@
 #main
-
+  :javascript
+    helpView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
+    ajaxConvert = "#{url_for(:controller => 'leiden', :action => 'xmlAjax')}";
   = javascript_include_tag 'leiden'
-  = javascript_include_tag 'menu-for-applications'
-    
+  = javascript_include_tag 'menu-for-applications' 
+   
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
