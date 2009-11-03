@@ -6,6 +6,7 @@ class HgvTransIdentifiersController < IdentifiersController
   
   def edit
     find_identifier
+		#raise "+" + @identifier.content
 
     # send xslt to page so it can use it on the fly
     f = File.open(File.join(RAILS_ROOT, 'data/xslt/translation/editable_preview.xsl'), "r")    
@@ -35,6 +36,11 @@ class HgvTransIdentifiersController < IdentifiersController
     #raise "contents are: " + params[:content]
     find_identifier
     @identifier.set_content(params[:editing_trans_xml])
+    
+    if params[:comment] != nil && params[:comment].strip != ""
+      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => params[:comment], :reason => "commit" } )
+      @comment.save    
+    end
     
     flash[:notice] = "File updated."
     #@identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])

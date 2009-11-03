@@ -13,6 +13,10 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
                                 params[:comment])
+    if params[:comment] != nil && params[:comment].strip != ""
+      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => params[:comment], :reason => "commit" } )
+      @comment.save    
+    end
     flash[:notice] = "File updated."
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
