@@ -1,6 +1,8 @@
 var diacritical_type = "diaeresis";
 var gap_type = "character";
 var diacritical_option = "nopts";
+var tryit_type = "xml2non";
+var valueback = "";
 var xmltopass = "initial";
 var number_type = "valuecontent";
 var elliplang = "Demotic";
@@ -42,6 +44,11 @@ function checktypedia(id)
 function checktypegap(id)
 {
   gap_type = document.getElementById(id).value;
+}
+
+function checktryit(id)
+{
+  tryit_type = document.getElementById(id).value;
 }
 
 function checktypevestig(id)
@@ -908,6 +915,46 @@ function finishAbbrev()
   
 } /*########################     end finishAbbrev                   ########################*/
 
+/*###########################################################################################*/
+/* tryitConversion                                                                             */
+/*###########################################################################################*/
+
+function tryitConversion()
+{
+  
+  //element = document.getElementById('tryit_input');
+  //element.focus();
+  convertValue = document.getElementById("tryit_input").value;
+  success = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_output").value = valueback;
+        } 
+  
+  if (tryit_type == "xml2non")
+    {
+      startxml = convertValue;
+      
+      convertXML()
+    }
+  else
+    {
+      //startleiden = convertValue;
+      new Ajax.Request(window.opener.convLeiden2XML, 
+        {
+          method: 'get',
+          parameters : {leiden:convertValue},
+          async : false,
+          onSuccess : success,
+          onFailure : function(resp) 
+          {
+            alert("Oops, there's been an error during Ajax call." + resp.responseText);   
+          }
+        });
+      //convertLeiden
+    }
+    
+} /*########################     end tryitConversion     ########################*/
   
 /*###########################################################################################*/
 /* ajax call to server to convert xml to leiden+                                             */

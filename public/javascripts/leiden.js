@@ -51,6 +51,7 @@ function helpDialogOpen(view)
       openconfig = config='height=350, width=875, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
+  case "tryit":
   case "appBL":
   case "appedit":
     {
