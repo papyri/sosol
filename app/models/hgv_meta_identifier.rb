@@ -1,6 +1,10 @@
 class HGVMetaIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_meta_EpiDoc'
 
+  def self.friendly_name
+    return "Meta"
+  end
+  
   def to_path
     if alternate_name.nil?
       # no alternate name, use SoSOL temporary path

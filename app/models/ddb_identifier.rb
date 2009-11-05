@@ -9,6 +9,11 @@ class DDBIdentifier < Identifier
   
   acts_as_leiden_plus
 
+
+  def self.friendly_name
+    return "Text"
+  end
+  
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components

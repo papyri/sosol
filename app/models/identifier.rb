@@ -11,6 +11,10 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
   
+  def self.friendly_name
+    return "Base Identifier"
+  end
+  
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end

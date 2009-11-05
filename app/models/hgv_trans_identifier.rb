@@ -1,6 +1,10 @@
 class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
   
+  def self.friendly_name
+    return "Translation"
+  end
+  
   def to_path
     if alternate_name.nil?
       # no alternate name, use SoSOL temporary path
