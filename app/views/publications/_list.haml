@@ -2,7 +2,7 @@
   - for publication in list
     %li
       %ul
-        = link_to( image_tag('documents.png') , publication)
+        = link_to( image_tag('documents.png', :border => "0") , publication)
         - for identifier in publication.identifiers
           %li{ :class => (identifier == publication.identifiers.last ? 'last' : '') }<
             - case identifier
