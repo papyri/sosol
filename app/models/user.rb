@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner, :dependent => :destroy
   
+  has_many :comments
+  
   has_repository
   
   def after_create

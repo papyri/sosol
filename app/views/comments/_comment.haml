@@ -5,6 +5,10 @@
   .reason 
     - if comment.reason != nil
       = comment.reason
+    on
+    - if comment.identifier.title != nil
+      = comment.identifier.title
   .comment    
     - if comment.comment != nil
       = comment.comment
+

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091026160035) do
+ActiveRecord::Schema.define(:version => 20091105164204) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(:version => 20091026160035) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "git_hash"
-    t.string   "publication_id"
+    t.integer  "publication_id", :limit => 255
   end
 
   create_table "decrees", :force => true do |t|

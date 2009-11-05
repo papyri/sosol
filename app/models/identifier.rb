@@ -4,6 +4,7 @@ class Identifier < ActiveRecord::Base
   validates_presence_of :name, :type
   
   belongs_to :publication
+  has_many :comments
   
   validates_inclusion_of :type,
                          :in => IDENTIFIER_SUBCLASSES
