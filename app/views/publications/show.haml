@@ -12,20 +12,32 @@
   #submit
     = button_to "Submit", submit_publication_path(@publication), :disabled => !@show_submit, :class => 'submit', :method => :post
 
-  - for identifier in @publication.identifiers
-    %p       
-      - case identifier
-        - when DDBIdentifier
-          %h3 Text
-          = image_tag('ddb.gif')           
-        - when HGVMetaIdentifier
-          %h3 Meta
-          = image_tag('hgv.gif')
-        - when HGVTransIdentifier
-          %h3 Translation
-          = image_tag('hgv.gif')
-      %b
-        = identifier.title
+  - for identifier in @publication.identifiers 
+    - image_name = ""       
+    - case identifier
+      - when DDBIdentifier
+        %h3 
+          Text - 
+          = identifier.name
+          = identifier.class
+        - image_name = 'ddb.gif'
+
+      - when HGVMetaIdentifier
+        %h3 
+          Meta -
+          = identifier.name
+        - image_name = 'hgv.gif'
+      - when HGVTransIdentifier
+        %h3 
+          Translation - 
+          = identifier.name
+        - image_name = 'hgv.gif'
+        
+      
+    %p
+      = image_tag(image_name)  
+      
+      = identifier.title
       = render :partial => identifier
 
   - if @comments != nil  
@@ -34,3 +46,9 @@
       = render :partial => comment      
  
 
+  - for class_type in Identifier::IDENTIFIER_SUBCLASSES
+    - create_type = eval class_type + ".friendly_name"
+    - create_type = 'Create new ' + create_type
+    = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
+    %br
+  
