@@ -35,6 +35,11 @@ class HGVMetaIdentifier < HGVIdentifier
     return "Description of document"
   end
   
+  def is_valid?(content = nil)
+  	#FIXME added here since meta is not P5 validable yet
+    return true
+  end
+  
   def valid_epidoc_attributes
     return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :title, :publicationTitle, :publicationVolume, :publicationNumbers,
       :tm_nr, :illustrations, :contentText, :other_publications,

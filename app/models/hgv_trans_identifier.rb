@@ -32,4 +32,10 @@ class HGVTransIdentifier < HGVIdentifier
   def xml_title_text
     return " HGVTITLE (DDBTITLE) "
   end
+      
+	def is_valid?(content = nil)
+  	#FIXME added here since trans is not P5 validable yet
+    return true
+  end
+  
 end
