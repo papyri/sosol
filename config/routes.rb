@@ -12,7 +12,7 @@ ActionController::Routing::Routes.draw do |map|
  
   map.resources :users
  	
-  map.resources :comments
+  map.resources :comments, :member => { :ask_for => :get }
 
   map.resources :events
 

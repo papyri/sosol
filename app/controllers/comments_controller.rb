@@ -10,6 +10,18 @@ class CommentsController < ApplicationController
     end
   end
 
+  # GET
+  def ask_for
+    #shows current comments and gives form for new comment
+    @comments = Comment.find_all_by_publication_id(params[:publication_id])
+
+    @publication = Publication.find(params[:publication_id])
+    @publication_id = params[:publication_id]
+    @identifier_id = params[:identifier_id]
+   
+   # @comment = Comment.new( :publication_id => params[:publication_id], :identifier_id => params[:identifier_id])
+  end
+
   # GET /comments/1
   # GET /comments/1.xml
   def show
@@ -42,18 +54,17 @@ class CommentsController < ApplicationController
   def create
   
     @comment = Comment.new(params[:comment])
-    @comment.article_id = params[:article_id]
 
     @comment.user_id = @current_user.id
-    if params[:reason] != nil
-      @comment.reason = params[:reason]
-    end
+ #   if params[:reason] != nil
+ #     @comment.reason = params[:reason]
+ #   end
   
     respond_to do |format|
       if @comment.save
         flash[:notice] = 'Comment was successfully created.'
         
-        format.html { redirect_to :controller => 'articles', :action => 'comment_on', :id => @comment.article.id }   #redirect_to(@comment.article) }
+        format.html { redirect_to(@comment) }
         #TODO redirect xml?
         format.xml  { render :xml => @comment, :status => :created, :location => @comment }
       else
