@@ -41,5 +41,8 @@ class HelperController < ApplicationController
   
   def division
   end
+  
+  def tryit
+  end
 
 end
