@@ -45,7 +45,7 @@ namespace :deploy do
       end
     end
     
-    run "CLASSPATH='#{jars.join(";")}' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{current_path}"
+    run "CLASSPATH='#{current_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{current_path}"
   end
 
   desc "Stop a server running Glassfish Gem"
