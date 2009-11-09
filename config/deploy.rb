@@ -36,15 +36,6 @@ namespace :deploy do
   
   desc "Starts a server running Glassfish Gem"
   task :start, :roles => :app do
-    jar_path = File.join('lib', 'java')
-    jars = []
-
-    Dir.entries(jar_path).sort.each do |entry|
-      if entry =~ /.jar$/
-        jars << File.join(current_path, jar_path, entry)
-      end
-    end
-    
     run "CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
   end
 
