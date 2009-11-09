@@ -41,11 +41,11 @@ namespace :deploy do
 
     Dir.entries(jar_path).sort.each do |entry|
       if entry =~ /.jar$/
-        jars << File.join(release_path, jar_path, entry)
+        jars << File.join(current_path, jar_path, entry)
       end
     end
     
-    run "CLASSPATH='#{jars.join(";")}' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
+    run "CLASSPATH='#{jars.join(";")}' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{current_path}"
   end
 
   desc "Stop a server running Glassfish Gem"
