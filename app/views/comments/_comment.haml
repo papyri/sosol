@@ -2,6 +2,8 @@
   .name 
     - if comment.user != nil && comment.user.name != nil
       = comment.user.name
+  .time
+    = comment.created_at
   .reason 
     - if comment.reason != nil
       = comment.reason

@@ -13,7 +13,7 @@ class CommentsController < ApplicationController
   # GET
   def ask_for
     #shows current comments and gives form for new comment
-    @comments = Comment.find_all_by_publication_id(params[:publication_id])
+    @comments = Comment.find_all_by_publication_id(params[:publication_id], :order => 'created_at').reverse
 
     @publication = Publication.find(params[:publication_id])
     @publication_id = params[:publication_id]
