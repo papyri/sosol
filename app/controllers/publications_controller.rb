@@ -42,7 +42,8 @@ class PublicationsController < ApplicationController
     e.save!
     
     flash[:notice] = 'Publication was successfully created.'
-    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    redirect_to @publication
   end
   
   
