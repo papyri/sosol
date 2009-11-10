@@ -4,11 +4,7 @@
     - if !@publication.status.nil? && @publication.status != ''
       == (#{@publication.status})
   = render :partial => "common/flash_all"    
-  - if flash[:notice]
-    .flash
-      %h3
-        = flash[:notice]
-      
+
   #submit
     = button_to "Submit", submit_publication_path(@publication), :disabled => !@show_submit, :class => 'submit', :method => :post
 
