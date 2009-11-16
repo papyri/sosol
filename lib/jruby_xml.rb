@@ -46,10 +46,7 @@ module JRubyXML
     end
 
     def apply_xsl_transform(xml_stream, xsl_stream)
-      java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl")
-  
-      transformer_factory = javax.xml.transform.TransformerFactory.newInstance()
-      transformer = transformer_factory.newTransformer(xsl_stream)
+      transformer = get_transformer(xsl_stream)
   
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
@@ -58,5 +55,33 @@ module JRubyXML
   
       string_writer.toString()
     end
+    
+    def pretty_print(xml_stream)
+      transformer = get_transformer()
+      transformer.setOutputProperty(
+        javax.xml.transform.OutputKeys.const_get('INDENT'), "yes")
+      transformer.setOutputProperty(
+        "{http://xml.apache.org/xslt}indent-amount", "2")
+      
+      string_writer = java.io.StringWriter.new()
+      result = javax.xml.transform.stream.StreamResult.new(string_writer)
+
+      transformer.transform(xml_stream, result)
+
+      string_writer.toString()
+    end
+    
+    protected
+      def get_transformer(xsl_stream = nil)
+        java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl")
+
+        transformer_factory = javax.xml.transform.TransformerFactory.newInstance()
+        
+        if xsl_stream.nil?
+          return transformer_factory.newTransformer()
+        else
+          return transformer_factory.newTransformer(xsl_stream)
+        end
+      end
   end
 end
