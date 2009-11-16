@@ -1,3 +1,5 @@
+
+
 <div class="decree">
 
 <p>
@@ -8,6 +10,7 @@
 <p>
   <b>Trigger:</b>
   <%=h decree.trigger %>
+  <%=h decree.tally_method %>
 </p>
 
 <p>
@@ -15,8 +18,8 @@
   <%=h decree.choices %>
 </p>
 
-
+<% if !defined?(hide_edit_link) %>
 <%= link_to 'Edit', edit_decree_path(decree) %> 
-
+<% end %>
 
 </div>

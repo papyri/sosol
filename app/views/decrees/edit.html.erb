@@ -2,29 +2,31 @@
 
 <% form_for(@decree) do |f| %>
   <%= f.error_messages %>
-
   <p>
-    <%= f.label :action %><br />
- 
- 		<% possible_actions = {"Approve" => "approve", "Reject" => "reject", "Graffiti" => "graffiti" } %>
-  	<%= f.select :action, possible_actions %>
-  	<br />The resulting action of the decree when the trigger is met.
-  	<br /><br />
-   </p>   
+    <%= f.label :action %>
+  	<%= f.select :action, Decree.result_actions_hash %>
+  	<br />The resulting action of the decree when the trigger is met. 
+  </p>   
+  
+  <br /><br />
   
   <p>
-    <%= f.label :trigger %><br />
-    <%= f.text_field :trigger %> <br />
-    The number of votes that will trigger the action.
-    This may be the percentage of the board members in decimal form (i.e. 50% is .50), or this may be the absolute number of votes (ie 1 will trigger the action if any one member votes))
-    <br /><br />
+    <%= f.label :trigger %>
+    <%= f.text_field :trigger %>     
+    <%= f.select :tally_method, Decree.tally_methods_hash %> <br>
+    The number of votes or the percentage that will trigger the action.
   </p>
+   	
+  <br /><br />
+  
   <p>
-    <%= f.label :choices %><br />
+    <%= f.label :choices %>
     <%= f.text_field :choices %><br />
     The choices that constitue a vote for this decree. Separate by spaces (i.e. yes no defer).
-    <br /><br />
+    
   </p>
+  
+  <br /><br />
   <p>    
     <%= f.hidden_field :board_id %>
   </p>
