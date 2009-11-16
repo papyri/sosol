@@ -1,0 +1,38 @@
+= stylesheet_link_tag "board"
+%h1
+  = @board.title
+edit board for 
+- @board.identifier_classes.each do |ic|
+  = ic
+  <br />
+  
+<br /><br />
+
+- form_for(@board) do |f|
+  = f.error_messages 
+
+  = f.label :title
+  = f.text_field :title
+  = f.submit "Save"
+
+  .member
+    %h3{'style' => "display:inline;"}
+      Members
+    = link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id
+    <br />
+    - @board.users.each do |user|
+      = user.name
+      = link_to "x", :controller => "boards", :action => "remove_member", :user_id => user.id 
+  
+  %h3{'style' => "display:inline;"}
+    Decrees
+  = link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id 
+
+  - @board.decrees.each do |decree| 
+    = render :partial => decree 
+
+  %h3{'style' => "display:inline;"}
+    E-mails
+  = link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id
+  - @board.emailers.each do |emailer| 
+    = render :partial => emailer

@@ -1,0 +1,29 @@
+= stylesheet_link_tag "board"
+
+%p
+  %b 
+    Title:
+  = @board.title 
+
+%p
+  %b 
+    Identifiers:
+  - @board.identifier_classes.each do |ic| 
+    = ic   
+
+%p
+  .member
+    %h3
+      Members
+    - @board.users.count
+    - @board.users.each do |user| 
+      %p 
+        user.name
+
+%p
+  %b
+    Decrees
+  - @board.decrees.each do |decree|
+    = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
+
+= link_to 'Edit', edit_board_path(@board)  
