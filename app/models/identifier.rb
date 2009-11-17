@@ -36,7 +36,13 @@ class Identifier < ActiveRecord::Base
       JRubyXML.input_source_from_string(content))
   end
   
+  def before_commit(content)
+    return content
+  end
+  
   def set_content(content, options = {})
+    content = before_commit(content)
+    
     if is_valid?(content)
       options.reverse_merge! :comment => ''
       self.repository.commit_content(self.to_path,

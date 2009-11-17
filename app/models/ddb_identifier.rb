@@ -112,6 +112,13 @@ class DDBIdentifier < Identifier
     end
   end
   
+  def before_commit(content)
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb handDesc.xsl})))
+  end
+  
   def leiden_plus
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(xml_content))
