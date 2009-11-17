@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091105164204) do
+ActiveRecord::Schema.define(:version => 20091117193653) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -119,11 +119,10 @@ ActiveRecord::Schema.define(:version => 20091105164204) do
     t.string   "language_prefs"
     t.boolean  "admin"
     t.boolean  "developer"
-    t.string   "first_name"
-    t.string   "last_name"
     t.string   "affiliation"
     t.string   "email"
     t.integer  "emailer_id"
+    t.string   "full_name"
   end
 
   create_table "votes", :force => true do |t|
