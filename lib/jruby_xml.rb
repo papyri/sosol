@@ -1,4 +1,18 @@
 module JRubyXML
+  class ValidationErrorHandler
+    include Java::org.xml.sax.ErrorHandler
+    def fatalError(e)
+      puts "FATAL: #{e}"
+    end
+    
+    def error(e)
+      puts e
+    end
+    
+    def warning(e)
+    end
+  end
+  
   # http://iso-relax.sourceforge.net/JARV/JARV.html
   class JARVValidator
     include Singleton
@@ -7,6 +21,7 @@ module JRubyXML
     
     def validate(input_source_xml_stream)
       verifier = @schema.newVerifier()
+      verifier.setErrorHandler(ValidationErrorHandler.new())
       verifier.verify(input_source_xml_stream)
     end
   end
