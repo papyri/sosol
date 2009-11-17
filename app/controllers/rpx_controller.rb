@@ -157,6 +157,8 @@ class RpxController < ApplicationController
   def guess_name(data)
     if data['displayName']
       return data['displayName']
+    elsif data['preferredUsername']
+      return data['preferredUsername']
     end
 
     # There wasn't anything, so let the user enter a nickname.
