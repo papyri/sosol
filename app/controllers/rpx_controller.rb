@@ -112,12 +112,14 @@ class RpxController < ApplicationController
     else
       session[:identifier] = identifier
       @name = guess_name data
+      @email = guess_email data
     end
   end
 
   def create_submit
     identifier = session[:identifier]
     @name = params[:new_user][:name]
+    @email = params[:new_user][:email]
 
     if @name.empty?
       flash[:error] = "Username must not be empty"
@@ -126,7 +128,7 @@ class RpxController < ApplicationController
     end
 
     begin
-      user = User.create(:name => @name)
+      user = User.create(:name => @name, :email => @email)
     rescue ActiveRecord::StatementInvalid => e
       flash[:error] = "Username not available"
       render :action => "login_return"
@@ -162,6 +164,16 @@ class RpxController < ApplicationController
     end
 
     # There wasn't anything, so let the user enter a nickname.
+    return ''
+  end
+  
+  def guess_email(data)
+    if data['verifiedEmail']
+      return data['verifiedEmail']
+    elsif data['email']
+      return data['email']
+    end
+    
     return ''
   end
 

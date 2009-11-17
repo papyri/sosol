@@ -10,6 +10,10 @@ but you need to enter a nickname to sign up.
       <th>Nickname</th>
       <td><%= f.text_field :name, :value => @name %></td>
     </tr>
+    <tr>
+      <th>E-Mail</th>
+      <td><%= f.text_field :email, :value => @email %></td>
+    </tr>
   </table>
   <%= submit_tag "Create" %>
 <% end %>
