@@ -20,16 +20,29 @@
 
   <xsl:template match="tei:handNotes">
     <xsl:if test="//tei:handShift">
-      <xsl:element name="handNotes" namespace="http://www.tei-c.org/ns/1.0">
-        <xsl:for-each-group select="//tei:handShift" group-by="@new">
-          <xsl:element name="handNote" namespace="http://www.tei-c.org/ns/1.0">
-            <xsl:attribute name="xml:id">
-              <xsl:value-of select="@new"/>
-            </xsl:attribute>
-          </xsl:element>
-        </xsl:for-each-group>
-        </xsl:element>
+      <xsl:call-template name="generate-handnotes"/>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="tei:profileDesc">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+      <xsl:if test="//tei:handShift and not(tei:handNotes)">
+        <xsl:call-template name="generate-handnotes"/>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template name="generate-handnotes">
+    <xsl:element name="handNotes" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:for-each-group select="//tei:handShift" group-by="@new">
+        <xsl:element name="handNote" namespace="http://www.tei-c.org/ns/1.0">
+          <xsl:attribute name="xml:id">
+            <xsl:value-of select="@new"/>
+          </xsl:attribute>
+        </xsl:element>
+      </xsl:for-each-group>
+    </xsl:element>
   </xsl:template>
 
 </xsl:stylesheet>
