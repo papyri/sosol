@@ -1,12 +1,27 @@
 module JRubyXML
+  class ValidationError < ::StandardError
+    attr :line, :column
+    
+    def initialize(line, column)
+      @line = line
+      @column = column
+    end
+    
+    def to_str
+      return "Error at line #{@line}, column #{@column}: #{self.message}"
+    end
+  end
+  
   class ValidationErrorHandler
     include Java::org.xml.sax.ErrorHandler
+    
+    # Errors will be SAXParseException objects
     def fatalError(e)
-      puts "FATAL: #{e}"
+      raise ValidationError.new(e.getLineNumber, e.getColumnNumber), e.getMessage
     end
     
     def error(e)
-      puts e
+      raise ValidationError.new(e.getLineNumber, e.getColumnNumber), e.getMessage
     end
     
     def warning(e)
