@@ -97,7 +97,7 @@ class PublicationsController < ApplicationController
       @show_submit = false
     end
 
-		@comments = nil # Comment.find_all_by_publication_id(params[:id])
+		@comments = Comment.find_all_by_publication_id(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
