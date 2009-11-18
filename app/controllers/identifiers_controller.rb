@@ -48,7 +48,7 @@ class IdentifiersController < ApplicationController
                                   params[:comment])
       flash[:notice] = "File updated."
     rescue JRubyXML::ParseError => parse_error
-      flash[:notice] = parse_error.to_str
+      flash[:error] = parse_error.to_str
     end
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
