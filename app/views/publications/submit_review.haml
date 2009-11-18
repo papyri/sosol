@@ -7,11 +7,15 @@
 
   %p   
     You have changed the following items:
-    - for identifier in @publication.identifiers
-      %ul
-        = if identifier.modified
+    %ul
+      - something_modified = false
+      - for identifier in @publication.identifiers      
+        - if identifier.modified
+          - something_modified = true
           %li
-          = identifier.title
+            = identifier.title
+      - if !something_modified
+        %b Nothing has been modified.
     They will be submitted to the proper boards for review.
     - form_tag  :controller => 'publications', :action => "submit"  do
       You will no longer be able to edit any of the items in this the publication once it is submitted. 
