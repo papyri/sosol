@@ -120,10 +120,10 @@ module JRubyXML
                 sax_parse_exception.getColumnNumber),
               sax_parse_exception.getMessage
           else
-            raise "Unknown XPath error"
+            raise "Unknown XPath error during SAXON transform"
           end
         else
-          raise "Unknown error"
+          raise "Unknown error during SAXON transform"
         end
       end
       
