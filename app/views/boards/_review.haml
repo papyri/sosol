@@ -1,10 +1,10 @@
 %h3 Votes
 - user_has_voted = false
 %ul
-  - if review.votes.length == 0
+  - if publication.votes.length == 0
     %li No votes yet.
   - else
-    - review.votes.each do |vote|
+    - publication.votes.each do |vote|
       %li
         = vote.choice
         = vote.user.name
@@ -12,8 +12,8 @@
           - user_has_voted = true
 %br
 - if !user_has_voted
-  - form_for :vote, Vote.new, :url => { :controller => "publications", :action => "vote", :id => review.id } do |f|
+  - form_for :vote, Vote.new, :url => { :controller => "publications", :action => "vote", :id => publication.id } do |f|
     #submit
       Your Vote:
-      = select "vote", "choice", review.owner.decrees.collect{ |d| d.get_choice_array }
-      = f.submit "Vote", :disabled => !review.mutable?
+      = select "vote", "choice", publication.owner.decrees.collect{ |d| d.get_choice_array }
+      = f.submit "Vote", :disabled => !publication.mutable?
