@@ -57,6 +57,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def grit_actor
+    Grit::Actor.new(self.full_name, self.email)
+  end
+  
   def before_destroy
     repository.destroy
   end

@@ -48,7 +48,8 @@ class Identifier < ActiveRecord::Base
       self.repository.commit_content(self.to_path,
                                      self.branch,
                                      content,
-                                     options[:comment])
+                                     options[:comment],
+                                     options[:actor])
       self.modified = true
       self.save!
     end
@@ -111,6 +112,10 @@ class Identifier < ActiveRecord::Base
                    year, document_number)
   end
   
+  def owner
+    self.publication.owner
+  end
+  
   def mutable?
     self.publication.mutable?
   end
@@ -120,7 +125,8 @@ class Identifier < ActiveRecord::Base
   end
   
   def set_xml_content(content, comment)
-    self.set_content(content, :comment => comment)
+    self.set_content(content, :comment => comment,
+      :actor => (self.owner.class == User) ? self.owner.grit_actor : nil)
   end
   
   #added to speed up dashboard since titleize can be slow
@@ -129,7 +135,7 @@ class Identifier < ActiveRecord::Base
       write_attribute(:title,titleize)
       self.save
     end
-    return  read_attribute(:title)
+    return read_attribute(:title)
   end
   
 end

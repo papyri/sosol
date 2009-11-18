@@ -131,7 +131,7 @@ class Repository
     @repo.branches.map{|b| b.name}
   end
   
-  def commit_content(file, branch, data, comment)
+  def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
       raise "Cannot commit directly to canonical repository"
     end
@@ -141,7 +141,7 @@ class Repository
     index.add(file, data)
     index.commit(comment,
                  @repo.commits(branch,1).first.to_s, # commit parent
-                 nil,
+                 actor,
                  nil,
                  branch)
   end
