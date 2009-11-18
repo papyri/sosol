@@ -180,10 +180,12 @@ class RpxController < ApplicationController
   end
   
   def guess_full_name(data)
-    if data['name']['formatted']
-      return data['name']['formatted']
-    elsif data['name']['familyName'] || data['name']['givenName']
-      return [data['name']['givenName'], data['name']['familyName']].join(' ')
+    if data['name']
+      if data['name']['formatted']
+        return data['name']['formatted']
+      elsif data['name']['familyName'] || data['name']['givenName']
+        return [data['name']['givenName'], data['name']['familyName']].join(' ')
+      end
     end
     
     return ''
