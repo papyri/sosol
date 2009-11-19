@@ -3,6 +3,8 @@ require 'rpx'
 class RpxController < ApplicationController
   layout 'site'
   
+  protect_from_forgery :except => [:login_return, :associate_return]
+  
   def remove_openid
     user_identifier = UserIdentifier.find_by_id(params[:openid])
     if user_identifier.nil?
