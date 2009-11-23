@@ -151,6 +151,7 @@ class Publication < ActiveRecord::Base
       #@publication.get_category_obj().approve
       self.status = "approved"
       self.save
+      self.commit_to_canon
       # @publication.send_status_emails(decree_action)    
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
@@ -166,6 +167,33 @@ class Publication < ActiveRecord::Base
       return
     else
       #unknown action or no action    
+    end
+  end
+  
+  def commit_to_canon
+    canon = Repository.new
+    publication_sha = 
+      self.owner.repository.repo.get_head(self.branch).commit.sha
+    canonical_sha = canon.repo.get_head('master').commit.sha
+    
+    # FIXME: This walks the whole rev list, should maybe use git merge-base
+    # to find the branch point? Though that may do the same internally...
+    # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
+    
+    # canon.repo.git.merge({:no_commit => true, :stat => true},
+      # self.owner.repository.repo.get_head(self.branch).commit.sha)
+    
+    # get the result of merging canon master into this branch
+    merge = Grit::Merge.new(
+      self.owner.repository.repo.git.merge_tree({},
+        publication_sha, canonical_sha, publication_sha))
+    
+    if merge.conflicts == 0
+      if merge.sections == 0
+        # nothing new from canon, trivial merge by updating HEAD
+        canon.add_alternates(self.owner.repository)
+        canon.repo.update_ref('master', publication_sha)
+      end
     end
   end
   
