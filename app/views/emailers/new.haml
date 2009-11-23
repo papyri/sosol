@@ -1,0 +1,23 @@
+%h1
+  New E-mailer for 
+  = @board.title
+
+- form_for(@emailer) do |f| 
+  = f.error_messages
+  = f.hidden_field :board_id 
+  
+  
+  = f.label :when_to_send
+  = f.select :when_to_send, @board.workflow_actions_hash
+  
+  
+  %p
+    = f.label :include_document
+    = f.check_box :include_document 
+  
+  
+    = f.label :message 
+    = f.text_area :message
+  %p
+    = f.submit "Create" 
+  
