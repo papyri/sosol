@@ -28,11 +28,11 @@ class Identifier < ActiveRecord::Base
       self.to_path, self.branch)
   end
   
-  def is_valid?(content = nil)
+  def is_valid_xml?(content = nil)
     if content.nil?
       content = self.content
     end
-    self.class::VALIDATOR.instance.validate(
+    self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content))
   end
   
@@ -43,7 +43,8 @@ class Identifier < ActiveRecord::Base
   def set_content(content, options = {})
     content = before_commit(content)
     
-    if is_valid?(content)
+    options.reverse_merge! :validate => true
+    if options[:validate] && is_valid_xml?(content)
       options.reverse_merge! :comment => ''
       self.repository.commit_content(self.to_path,
                                      self.branch,
@@ -77,7 +78,7 @@ class Identifier < ActiveRecord::Base
     new_identifier.save!
     
     initial_content = new_identifier.file_template
-    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :validate => false)
     
     return new_identifier
   end
