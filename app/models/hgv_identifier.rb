@@ -20,7 +20,7 @@ class HGVIdentifier < Identifier
                 900 => "CM",
                 1000 => "M" }
   
-  VALIDATOR = JRubyXML::EpiDocP4Validator
+  XML_VALIDATOR = JRubyXML::EpiDocP4Validator
   
   def to_roman(arabic)
     # shamelessly stolen from http://rubyquiz.com/quiz22.html

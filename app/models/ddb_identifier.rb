@@ -5,7 +5,7 @@ class DDBIdentifier < Identifier
   IDENTIFIER_NAMESPACE = 'ddbdp'
   TEMPORARY_COLLECTION = '0500'
   
-  VALIDATOR = JRubyXML::EpiDocP5Validator
+  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   acts_as_leiden_plus
 
