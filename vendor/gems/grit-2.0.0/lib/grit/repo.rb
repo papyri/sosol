@@ -322,7 +322,7 @@ module Grit
     def fork_bare(path, options = {})
       default_options = {:bare => true, :shared => true}
       real_options = default_options.merge(options)
-      Git.new(path).fs_mkdir('..')
+      FileUtils.mkdir_p(File.split(path).first)
       self.git.clone(real_options, self.path, path)
       Repo.new(path)
     end
@@ -335,7 +335,7 @@ module Grit
     def fork_bare_from(path, options = {})
       default_options = {:bare => true, :shared => true}
       real_options = default_options.merge(options)
-      Git.new(self.path).fs_mkdir('..')
+      FileUtils.mkdir_p(File.split(self.path).first)
       self.git.clone(real_options, path, self.path)
       Repo.new(self.path)
     end
