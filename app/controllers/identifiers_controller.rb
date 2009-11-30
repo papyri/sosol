@@ -45,7 +45,7 @@ class IdentifiersController < ApplicationController
     xml_content = params[@identifier.class.to_s.underscore][:xml_content].gsub(/\r\n?/, "\n")
     begin
       @identifier.set_xml_content(xml_content,
-                                  params[:comment])
+                                  :comment => params[:comment])
       flash[:notice] = "File updated."
     rescue JRubyXML::ParseError => parse_error
       flash[:error] = parse_error.to_str
