@@ -73,7 +73,7 @@ class Identifier < ActiveRecord::Base
     new_identifier.save!
     
     initial_content = new_identifier.file_template
-    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :validate => false)
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
     
     return new_identifier
   end
