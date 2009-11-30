@@ -41,19 +41,14 @@ class Identifier < ActiveRecord::Base
   end
   
   def set_content(content, options = {})
-    content = before_commit(content)
-    
-    options.reverse_merge! :validate => true
-    if options[:validate] && is_valid_xml?(content)
-      options.reverse_merge! :comment => ''
-      self.repository.commit_content(self.to_path,
-                                     self.branch,
-                                     content,
-                                     options[:comment],
-                                     options[:actor])
-      self.modified = true
-      self.save!
-    end
+    options.reverse_merge! :comment => ''
+    self.repository.commit_content(self.to_path,
+                                   self.branch,
+                                   content,
+                                   options[:comment],
+                                   options[:actor])
+    self.modified = true
+    self.save!
   end
   
   def get_commits
@@ -78,7 +73,7 @@ class Identifier < ActiveRecord::Base
     new_identifier.save!
     
     initial_content = new_identifier.file_template
-    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :validate => false)
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
     
     return new_identifier
   end
@@ -125,9 +120,16 @@ class Identifier < ActiveRecord::Base
     return self.content
   end
   
-  def set_xml_content(content, comment)
-    self.set_content(content, :comment => comment,
-      :actor => (self.owner.class == User) ? self.owner.grit_actor : nil)
+  def set_xml_content(content, options)
+    options.reverse_merge!(
+      :validate => true,
+      :actor    => ((self.owner.class == User) ? self.owner.grit_actor : nil))
+      
+    content = before_commit(content)
+
+    if options[:validate] && is_valid_xml?(content)
+      self.set_content(content, options)
+    end
   end
   
   #added to speed up dashboard since titleize can be slow

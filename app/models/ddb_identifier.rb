@@ -138,7 +138,7 @@ class DDBIdentifier < Identifier
     xml_content = self.leiden_plus_to_xml(
       leiden_plus_content)
     # commit xml to repo
-    self.set_xml_content(xml_content, comment)
+    self.set_xml_content(xml_content, :comment => comment)
   end
   
   # Override REXML::Attribute#to_string so that attributes are defined

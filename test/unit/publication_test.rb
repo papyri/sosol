@@ -15,5 +15,11 @@ class PublicationTest < ActiveSupport::TestCase
     should "have an equivalent creator and owner" do
       assert_equal @publication.creator, @publication.owner
     end
+    
+    should "have valid XML for templates" do
+      @publication.identifiers.each do |identifier|
+        assert identifier.is_valid_xml?
+      end
+    end
   end
 end
