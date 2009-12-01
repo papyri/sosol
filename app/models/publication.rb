@@ -151,7 +151,8 @@ class Publication < ActiveRecord::Base
       #@publication.get_category_obj().approve
       self.status = "approved"
       self.save
-      self.commit_to_canon
+      self.send_to_finalizer
+      # self.commit_to_canon
       # @publication.send_status_emails(decree_action)    
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
@@ -168,6 +169,17 @@ class Publication < ActiveRecord::Base
     else
       #unknown action or no action    
     end
+  end
+  
+  def send_to_finalizer
+    board_members = self.owner.users
+    # just select a random board member to be the finalizer
+    finalizer = board_members[rand(board_members.length)]
+    
+    finalizing_publication = copy_to_owner(finalizer)
+    
+    finalizing_publication.status = 'finalizing'
+    finalizing_publication.save!
   end
   
   def commit_to_canon
@@ -218,6 +230,8 @@ class Publication < ActiveRecord::Base
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
     )
+    
+    return duplicate
   end
   
   # TODO: destroy branch on publication destroy
