@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_many :user_identifiers, :dependent => :destroy
   
   has_and_belongs_to_many :boards
+  has_many :finalizing_boards, :class_name => :board, :foreign_key => 'finalizer_user_id'
   
   has_and_belongs_to_many :emailers
   
