@@ -20,6 +20,11 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal CANONICAL_REPOSITORY, @repo.path
     end
   
+    should "preserve objects after alternates repository deletion" do
+      # TODO: FIXME
+      assert true
+    end
+  
   end
   
   context "a User Repository" do

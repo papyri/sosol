@@ -55,6 +55,13 @@ class Repository
   def destroy
     # master.update_attribute :has_repository, false
     # destroy a git repository
+    
+    # BEFORE DELETION: REPACK CANONICAL
+    # This will pull in all objects regardless of alternates/shared status.
+    # If you delete an alternates-referenced repository without repacking,
+    # referenced objects will disappear, possibly making the repo unusable.
+    @canonical.git.repack({})
+    
     FileUtils::rm_r path, :verbose => false, :secure => true
   end
   
