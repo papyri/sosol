@@ -1,6 +1,9 @@
 #identifier_menu
   .site
     %ul
+      - if @identifier.publication.status == 'finalizing'
+        %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
+          = link_to 'Finalize'
       %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
         = link_to 'Text', edit_text_publication_path(@identifier.publication)
         - texts = @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}
