@@ -1,6 +1,14 @@
 class Identifier < ActiveRecord::Base
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
   
+  
+  #status represents last thing done
+  IDENTIFIER_STATUS = %w{ edit, submit, accept, finalize }
+  #the status are roughly:
+  #edit - created/checkout by user - only user is changing
+  #submit - board has it and maybe changing it - user no longer has
+  #accept - board has approved it - waiting to be finalized
+  #finalize - has been through the entire process - is done - this is mainly needed since item may still be around as part of a publication (otherwise we could just delete it when done)
   validates_presence_of :name, :type
   
   belongs_to :publication
@@ -109,6 +117,9 @@ class Identifier < ActiveRecord::Base
     self.publication.mutable?
   end
   
+
+
+  
   def xml_content
     return self.content
   end
@@ -125,5 +136,99 @@ class Identifier < ActiveRecord::Base
     end
     return  read_attribute(:title)
   end
+  
+  
+  #caution - sending emails here might mean they are sent even if the status change does not get saved
+ # def status=(status_in)
+ #   write_attribute(:status, status_in)
+ #   send_status_emails(status_in)      
+ # end
+  
+  #Check with the board to see if we want to send an email on status change.
+  def send_status_emails(when_to_send)
+#TODO move to board
+  	#search emailer for status
+  	if self.board == nil || self.board.emailers == nil
+  	return
+  	end
+  	self.board.emailers.each do |mailer|
+  	
+  		if mailer.when_to_send == when_to_send
+  			#send the email
+  			addresses = Array.new	
+  			#--addresses
+  			mailer.users.each do |user|
+  				if user.email != nil
+  					addresses << user.email
+  				end
+  			end
+  			extras = mailer.extra_addresses.split(" ")
+  			extras.each do |extra|
+  				addresses << extra
+  			end
+  			if mailer.send_to_owner
+  				if self.user.email != nil
+  					addresses << self.user.email
+  				end
+  			end
+  			
+  			#--document content
+  			if mailer.include_document
+  				document_content = self.content 
+  			else
+  				document_content = nil
+  			end
+  			
+  			body = mailer.message
+  			
+  			#TODO parse the message to add local vars
+  			#votes
+  			
+  			#comments
+  			#owner
+  			#status
+  			#who changed status
+  			subject_line = self.publication.title + " " + self.friendly_name + "-" + self.status
+  			#if addresses == nil 
+  			#raise addresses.to_s + addresses.size.to_s
+  			#else
+  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  			#end
+  			
+  			addresses.each do |address|
+  				if address != nil && address.strip != ""
+  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
+  				end
+  			end
+  			
+  		end
+  	end	
+  	
+  end
+  
+  
+
+  #standard result actions 
+  def result_action_approve
+   
+    self.status = "approve"
+  end
+  
+  def result_action_reject
+   
+    self.status = "reject"
+  end
+  
+  #delete 
+  def result_action_graffiti
+    
+    self.status = "graffiti"
+  end
+  
+  def result_action_finialize
+  
+    self.staus = "finalize"
+  end
+  
   
 end

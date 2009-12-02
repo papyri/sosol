@@ -30,9 +30,37 @@ class Board < ActiveRecord::Base
   def before_destroy
     repository.destroy
   end
+  
+  def result_actions
+    #return array of possible actions that can be implemented
+    retval = []
+    identifier_classes.each do |ic|
+      eval_statement = ic + ".instance_methods"
+      im = eval(eval_statement)
+      match_expression = /(result_action_)/
+      im.each do |method_name|
+        if method_name =~ /(result_action_)/
+          retval << method_name.sub(/(result_action_)/, "")
+        end
+      end             
+    end
+    retval
+    
+  end
+  def result_actions_hash  
+    ra = result_actions    
+    ret_hash = {}
+    
+    #create hash
+    ra.each do |v|
+      ret_hash[v.sub(/_/, " ").capitalize] = v
+    end
+    ret_hash
+  end
 
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
+  #if we want a board to control more than one identifier type we must change it here
     #work in progress
     #how to determine order -- just assume user hasn't made rules where multiple decress can be true at once?
     #errMsg = " "    
@@ -51,7 +79,7 @@ class Board < ActiveRecord::Base
       end 
 
       #see if we are using percent or min voting counting
-      if decree.trigger < 1
+      if decree.tally_method == "percentage"
         #percentage
         if decree_vote_count > 0 && self.users.length.to_f > 0
           percent =  decree_vote_count.to_f / self.users.length.to_f
@@ -64,8 +92,8 @@ class Board < ActiveRecord::Base
             return decree.action
           end
         end
-      else 
-        #min vote count
+      elsif decree.tally_method == "count"
+        #min absolute vote count
         if decree_vote_count >= decree.trigger
           #check if the action has already been done
           #do the action? or return the action?

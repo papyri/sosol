@@ -4,7 +4,7 @@
   <%= f.error_messages %>
   <p>
     <%= f.label :action %>
-  	<%= f.select :action, Decree.result_actions_hash %>
+  	<%= f.select :action, @decree.board.result_actions_hash %>
   	<br />The resulting action of the decree when the trigger is met. 
   </p>   
   
