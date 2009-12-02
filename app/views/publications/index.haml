@@ -1,3 +1,7 @@
 #main.site
   %h2 Your Publications
-  = render :partial => "publications/list", :object => @publications
+  = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
+  - statuses = @publications.collect{|p| p.status}.uniq.compact
+  - for status in statuses
+    %h3== Your #{status} publications
+    = render :partial => "publications/list", :object => @publications.collect{|p| p.status == status ? p : nil}.compact
