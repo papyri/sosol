@@ -11,11 +11,11 @@
     %p
       = f.label "Identifier classes"
       %br
-      - @valid_identifier_classes.each do |identifier_class|
+      - @available_identifier_classes.each do |identifier_class|
         = check_box_tag identifier_class
         = identifier_class.sub(/Identifier$/,'')
         %br
     %br
     %p
       = f.submit "Create"
-  = link_to 'Back', boards_path
+  -#= link_to 'Back', boards_path

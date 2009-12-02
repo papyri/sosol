@@ -61,9 +61,15 @@ class BoardsController < ApplicationController
   # GET /boards/new
   # GET /boards/new.xml
   def new
-    @board = Board.new
-    @valid_identifier_classes = Identifier::IDENTIFIER_SUBCLASSES
-  
+    @board = Board.new    
+    
+    #don't let more than one board use the same identifier class
+    @available_identifier_classes = Identifier::IDENTIFIER_SUBCLASSES
+    existing_boards = Board.find(:all)
+    existing_boards.each do |b|
+      @available_identifier_classes -= b.identifier_classes    
+    end
+     
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @board }
@@ -79,6 +85,7 @@ class BoardsController < ApplicationController
   # POST /boards.xml
   def create
     @board = Board.new(params[:board])
+    
     
     @board.identifier_classes = []
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
