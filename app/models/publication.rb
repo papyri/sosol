@@ -3,6 +3,10 @@ class Publication < ActiveRecord::Base
   
   belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
+  
+  has_many :children, :class_name => 'Publication', :foreign_key => 'parent_id'
+  belongs_to :parent, :class_name => 'Publication'
+  
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
   has_many :votes, :dependent => :destroy
@@ -219,6 +223,7 @@ class Publication < ActiveRecord::Base
     duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
     duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.parent = self
     duplicate.save!
     
     # copy identifiers over to new pub
