@@ -5,25 +5,33 @@
       == (#{@publication.status})
   = render :partial => "common/flash_all"    
 
-  %p   
-    You have changed the following items:
-    %ul
-      - something_modified = false
-      - for identifier in @publication.identifiers      
-        - if identifier.modified
-          - something_modified = true
-          %li
-            = identifier.title
-      - if !something_modified
-        %b Nothing has been modified.
-    They will be submitted to the proper boards for review.
-    - form_tag  :controller => 'publications', :action => "submit"  do
-      You will no longer be able to edit any of the items in this the publication once it is submitted. 
+  -# check if they have modified anything
+  - something_modified = false
+  - for identifier in @publication.identifiers      
+    - something_modified = something_modified || identifier.modified
+  
+  - if @allow_submit
+    %p   
+      You have changed the following items:
+      %ul  
+        - for identifier in @publication.identifiers      
+          - if identifier.modified
+            %li
+              = identifier.title          
+      They will be submitted to the proper boards for review.
+      - form_tag  :controller => 'publications', :action => "submit"  do
+        You will no longer be able to edit any of the items in this the publication once it is submitted. 
+        %br
+        Briefly describe the reason for your submission.
+        = text_field_tag 'submit_comment'
+        %br
+        = submit_tag "Submit to Boards"
+  - else
+    %b
+      Publication may not be submitted at this time.
       %br
-      Briefly describe the reason for your submission.
-      = text_field_tag 'submit_comment'
-      %br
-      = submit_tag "Submit to Boards"
+    - if !@publication.modified?
+      No changes have been made.
     
   - for identifier in @publication.identifiers
     %p       

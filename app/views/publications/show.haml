@@ -6,8 +6,12 @@
   = render :partial => "common/flash_all"    
 
   #submit
-    = button_to "Submit", submit_publication_path(@publication), :disabled => !@show_submit, :class => 'submit', :method => :post
+    - if @show_submit
+      = button_to "Submit", submit_review_publication_path(@publication), :class => 'submit', :method => :get
 
+  - if @current_user.developer
+    - if @publication.modified?
+      %h1 MODIFIED PUBLICATION
   - for identifier in @publication.identifiers 
     - image_name = ""       
     - case identifier
@@ -34,7 +38,7 @@
       = image_tag(image_name)  
       
       = identifier.title
-      = render :partial => identifier
+      = render :partial => identifier        
 
   - if @comments != nil  
     %h3 Comments 

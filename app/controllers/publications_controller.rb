@@ -5,6 +5,23 @@ class PublicationsController < ApplicationController
   def new
   end
   
+  
+  def allow_submit?
+    #check if publication has been changed by user
+    allow = @publication.modified?
+    
+    #check if any part of the publication is still being edited (ie not already submitted)
+    if allow #something has been modified so lets see if they can submit it
+      allow = false #dont let them submit unless something is in edit status
+      @publication.identifiers.each  do |identifier|
+        if identifier.nil? || identifier.status == "editing" 
+          allow = true
+        end        
+      end
+    end
+   allow
+  end
+  
   # POST /publications
   # POST /publications.xml
   def create
@@ -50,7 +67,9 @@ class PublicationsController < ApplicationController
   
   def submit_review
     @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(params[:id])          
+    @comments = Comment.find_all_by_publication_id(params[:id])  
+    @allow_submit = allow_submit?
+            
     #redirect_to @publication
     # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
@@ -86,19 +105,11 @@ class PublicationsController < ApplicationController
   # GET /publications/1
   # GET /publications/1.xml
   def show
-  
 
     @publication = Publication.find(params[:id])
-    @show_submit = false
-    @publication.identifiers.each  do |identifier| 
-      @show_submit = @show_submit || !identifier.mutable?    
-    end
-    
-    if !@publication.status.nil? && (@publication.status == "submitted") 
-      @show_submit = false
-    end
+    @comments = Comment.find_all_by_publication_id(params[:id])
 
-		@comments = Comment.find_all_by_publication_id(params[:id])
+    @show_submit = allow_submit?
 
     respond_to do |format|
       format.html # show.html.erb

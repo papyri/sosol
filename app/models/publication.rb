@@ -109,6 +109,16 @@ class Publication < ActiveRecord::Base
     return new_publication
   end
   
+  def modified?
+    
+    retval = false
+    self.identifiers.each do |i|
+      retval = retval || i.modified?
+    end
+    
+    retval
+  end 
+  
   def mutable?
     if self.status == "submitted"
       return false
