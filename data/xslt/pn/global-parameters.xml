@@ -39,8 +39,8 @@
   
   <parameter>
     <name>apparatus-style</name>
-    <value on="yes">default</value>
-    <value>ddbdp</value>
+    <value>default</value>
+    <value on="yes">ddbdp</value>
   </parameter>
   
   <!-- Line increment -->
