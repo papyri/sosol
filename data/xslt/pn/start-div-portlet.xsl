@@ -2,7 +2,7 @@
 <!-- $Id: start-edition.xsl 1510 2008-08-14 15:27:51Z zau $ -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <xsl:include href="../epidoc/global-varsandparams.xsl"/>
+  <xsl:include href="global-varsandparams.xsl"/>
 
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
   <xsl:include href="../epidoc/htm-teiab.xsl"/>
@@ -59,7 +59,7 @@
 
   <!-- HTML FILE -->
   <xsl:template match="/">
-    <xsl:param name='leiden-style'>ddbdp</xsl:param>
+    <!-- <xsl:param name='leiden-style'>ddbdp</xsl:param> -->
 <div class="pn-ddbdp-data">
     <div class="greek">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
@@ -87,8 +87,8 @@
         <!-- Main text output -->
         <xsl:apply-templates/>
 
-      </div>
-      </div>
+    </div>
+</div>
   </xsl:template>
   <xsl:template name="metadata"></xsl:template>
 
