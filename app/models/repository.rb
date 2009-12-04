@@ -117,6 +117,7 @@ class Repository
     @repo.git.branch({}, name, source_name)
   end
   
+  #(from_branch, to_branch, from_repo)
   def copy_branch_from_repo(branch, new_branch, other_repo)
     self.add_alternates(other_repo)
     head_ref = other_repo.repo.get_head(branch).commit.sha
