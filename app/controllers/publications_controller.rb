@@ -84,6 +84,7 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
+    @identifier = @publication.entry_identifier
   end
   
   # GET /publications/1

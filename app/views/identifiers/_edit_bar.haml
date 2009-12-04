@@ -2,7 +2,7 @@
   .site
     %ul
       - if @identifier.publication.status == 'finalizing'
-        %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
+        %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'finalize')) ? 'active' : ''}
           = link_to 'Finalize', finalize_publication_path(@identifier.publication)
       %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
         = link_to 'Text', edit_text_publication_path(@identifier.publication)
