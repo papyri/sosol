@@ -10,6 +10,11 @@ class PublicationsController < ApplicationController
     #check if publication has been changed by user
     allow = @publication.modified?
     
+    allow = allow && @publication.status == "editing"
+    return allow
+    
+    #below bypassed until we have return mechanism in place
+    
     #check if any part of the publication is still being edited (ie not already submitted)
     if allow #something has been modified so lets see if they can submit it
       allow = false #dont let them submit unless something is in edit status
@@ -140,28 +145,30 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])    
   end
   
-  def vote            
+  def vote  
+
     @vote = Vote.new(params[:vote])
-    @publication = Publication.find(params[:id])   
+    @vote.user_id = @current_user.id
+    
+    #find identifier to put vote on
+    
+    #tally votes for identifier
+    
+    #run method for result
+    puts "id = " + @vote.identifier_id.to_s
     
     #double check that they have not already voted
-    has_voted = @publication.votes.find_by_user_id(@current_user.id)
+    has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
     if !has_voted 
-      @vote.user_id = @current_user.id
       @vote.save   
-      @publication.votes << @vote
           
-      # @comment = Comment.new()
-      # @comment.article_id = params[:id]
-      # @comment.text = params[:comment]
-      # @comment.user_id = @current_user.id
-      # @comment.reason = "vote"
-      # @comment.save
-      
-      #TODO tie vote and comment together?  
+#todo add comment to vote
       
       #need to tally votes and see if any action will take place
-      decree_action = @publication.owner.tally_votes(@publication.votes)
+      #should only be voting while the publication is owned by the correct board
+      #todo add check to ensure board is correct
+      decree_action = @vote.publication.owner.tally_votes(@vote.identifier.votes)
+      
       #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
       #NOTE here are the types of actions for the voting results
       #approve, reject, graffiti
@@ -169,8 +176,8 @@ class PublicationsController < ApplicationController
       # create an event if anything happened
       if !decree_action.nil? && decree_action != ''
         e = Event.new
-        e.owner = @publication.owner
-        e.target = @publication
+        e.owner = @vote.publication.owner
+        e.target = @vote.publication
         e.category = "marked as \"#{decree_action}\""
         e.save!
       end
@@ -178,20 +185,26 @@ class PublicationsController < ApplicationController
     
       if decree_action == "approve"
         #@publication.get_category_obj().approve
-        @publication.status = "approved"
-        @publication.save
+        @vote.identifier.status = "approved"
+        @vote.save
+        #@publication.status = "approved"
+        #@publication.save
         # @publication.send_status_emails(decree_action)    
       elsif decree_action == "reject"
-        #@publication.get_category_obj().reject       
-        @publication.status = "new" #reset to unsubmitted       
-        @publication.save
+        #todo implement throughback
+        @vote.identifier.status = "reject"     
+        @vote.save
         # @publication.send_status_emails(decree_action)
       elsif decree_action == "graffiti"               
         # @publication.send_status_emails(decree_action)
         #do destroy after email since the email may need info in the artice
         #@publication.get_category_obj().graffiti
-        @publication.destroy #need to destroy related?
-        redirect_to url_for(dashboard)
+        @vote.identifier.destroy #need to destroy related?
+        #this art of the publication was crap, do we assume the rest is as well?
+        #for now we will just continue the submition process
+        self.submit_to_next_board
+        
+        #redirect_to url_for(dashboard)
         return
       else
         #unknown action or no action    
@@ -200,6 +213,7 @@ class PublicationsController < ApplicationController
     end #!has_voted
     #do what now? go to review page
     
-    redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+    #todo redirect to publication summary page
   end
 end
