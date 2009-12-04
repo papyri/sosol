@@ -58,6 +58,12 @@ class Board < ActiveRecord::Base
     ret_hash
   end
 
+  def controls_identifier?(identifier)
+   self.identifier_classes.include?(identifier.class.to_s)  
+  end
+
+
+
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
   #if we want a board to control more than one identifier type we must change it here
