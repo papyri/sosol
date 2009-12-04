@@ -36,6 +36,11 @@ class User < ActiveRecord::Base
     # "p.yale/p.yale.1/p.yale.1.43.xml",
 
     if ENV['RAILS_ENV'] != 'test'
+      if ENV['RAILS_ENV'] == 'development'
+        self.admin = true
+        self.save!
+      end
+      
       ['oai:papyri.info:identifiers:ddbdp:0118:2:67',
        'oai:papyri.info:identifiers:ddbdp:0239:24:16003',
        'oai:papyri.info:identifiers:ddbdp:0154:7:2067',
