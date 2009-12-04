@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091105164204) do
+ActiveRecord::Schema.define(:version => 20091113210934) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20091105164204) do
     t.integer  "board_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "tally_method"
   end
 
   create_table "emailers", :force => true do |t|
@@ -90,6 +91,8 @@ ActiveRecord::Schema.define(:version => 20091105164204) do
     t.string   "alternate_name"
     t.boolean  "modified",       :default => false
     t.string   "title"
+    t.string   "status",         :default => "editing"
+    t.integer  "board_id"
   end
 
   create_table "publications", :force => true do |t|
@@ -132,6 +135,7 @@ ActiveRecord::Schema.define(:version => 20091105164204) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "publication_id"
+    t.integer  "identifier_id"
   end
 
 end
