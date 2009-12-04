@@ -3,16 +3,18 @@ class Identifier < ActiveRecord::Base
   
   
   #status represents last thing done
-  IDENTIFIER_STATUS = %w{ edit, submit, accept, finalize }
+  IDENTIFIER_STATUS = %w{ editing, submitted, accepted, finalized }
   #the status are roughly:
-  #edit - created/checkout by user - only user is changing
-  #submit - board has it and maybe changing it - user no longer has
-  #accept - board has approved it - waiting to be finalized
-  #finalize - has been through the entire process - is done - this is mainly needed since item may still be around as part of a publication (otherwise we could just delete it when done)
+  #editing - created/checkout by user - only user is changing
+  #submitted - board has it and maybe changing it - user no longer has
+  #accepted - board has approved it - waiting to be finalized
+  #finalized - has been through the entire process - is done - this is mainly needed since item may still be around as part of a publication (otherwise we could just delete it when done)
   validates_presence_of :name, :type
   
   belongs_to :publication
   has_many :comments
+  
+  has_many :votes, :dependent => :destroy
   
   validates_inclusion_of :type,
                          :in => IDENTIFIER_SUBCLASSES
@@ -114,7 +116,17 @@ class Identifier < ActiveRecord::Base
   end
   
   def mutable?
-    self.publication.mutable?
+    #only let the board edit if they own it
+    if self.publication.owner_type == "Board"
+      if self.publication.owner.identifier_classes.include?(self.class.to_s)
+       return true
+      end
+    elsif self.publication.owner_type == "User" && self.publication.status == "editing"
+      return true #they can edit any of their stuff if it is not submitted    
+    end
+    
+    return false    
+   # self.publication.mutable?
   end
   
 
@@ -211,23 +223,22 @@ class Identifier < ActiveRecord::Base
   #standard result actions 
   def result_action_approve
    
-    self.status = "approve"
+    self.status = "approved"
   end
   
   def result_action_reject
    
-    self.status = "reject"
+    self.status = "rejected"
   end
   
-  #delete 
   def result_action_graffiti
     
-    self.status = "graffiti"
+    #delete
   end
   
   def result_action_finialize
   
-    self.staus = "finalize"
+    self.staus = "finalized"
   end
   
   
