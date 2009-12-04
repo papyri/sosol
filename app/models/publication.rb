@@ -5,7 +5,7 @@ class Publication < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
-  has_many :votes, :dependent => :destroy
+ # has_many :votes, :dependent => :destroy
   has_many :comments
   
   validates_uniqueness_of :title, :scope => 'owner_id'
@@ -65,7 +65,78 @@ class Publication < ActiveRecord::Base
     self.branch ||= title_to_ref(self.title)
   end
   
+  
+  def submit_to_next_board
+    #horrible hack here to specifiy board order, change later with workflow engine
+    #1 meta
+    #2 transcription
+    #3 translation    
+
+    #find all unsubmitted meta ids
+    identifiers.each do |i|
+      if i.class.to_s == "HGVMetaIdentifier"  &&  i.status == "editing"
+        #submit it
+        submit_identifier(i)
+        return
+      end
+    end
+    
+    #find all unsubmitted text ids
+    identifiers.each do |i|
+      if i.class.to_s == "DDBIdentifier"  &&  i.status == "editing"
+        #submit it
+        submit_identifier(i)
+        return 
+      end
+    end
+    
+    #find all unsubmitted translation ids
+    identifiers.each do |i|
+      if i.class.to_s == "HGVTransIdentifier"  &&  i.status == "editing"
+        #submit it
+        submit_identifier(i)
+        return
+      end
+    end  
+  
+  end
+  
+  def submit_identifier(identifier)
+    #find correct board
+    
+    boards = Board.find(:all)
+    boards.each do |board|
+    if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
+
+      duplicate = self.clone
+      #duplicate.owner = new_owner
+     # duplicate.creator = self.creator
+   #   duplicate.title = self.owner.name + "/" + self.title
+   #   duplicate.branch = title_to_ref(duplicate.title)
+        
+      
+      self.owner_id = board.id
+      self.owner_type = "Board"
+      
+      identifier.status = "submitted"
+      self.status = "submitted"
+      
+      self.title = self.owner.name + "/" + self.title      
+      self.branch = title_to_ref(self.title)
+      
+      self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
+    #(from_branch, to_branch, from_repo)
+      self.save
+      return
+      end
+    end
+      
+  end
+  
   def submit
+    submit_to_next_board
+    return
+    #note return here to comment out rest of function
     boards = Board.find(:all)
     boards.each do |board|
       board_matches_publication = false
