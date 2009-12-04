@@ -3,11 +3,12 @@
   %h1
     Editing Publication
     = link_to @identifier.publication.title, @identifier.publication
-  - if @identifier.publication.owner_type == "User"
-    #submit
-      = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
-  - elsif @identifier.publication.owner_type == "Board"
-    = render :partial => "boards/review", :object => @identifier.publication
+  -#- if @identifier.publication.owner_type == "User"
+  -#  #submit
+  -#   = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
+  -#- elsif @identifier.publication.owner_type == "Board"
+  - if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier)
+    = render :partial => "boards/review", :locals => {:identifier => @identifier}
   %h3
     Identifier
     = @identifier.name
