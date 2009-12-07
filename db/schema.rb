@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(:version => 20091207163339) do
     t.string   "status",       :default => "editing"
     t.integer  "creator_id"
     t.string   "creator_type"
+    t.integer  "parent_id"
   end
 
   create_table "user_identifiers", :force => true do |t|

@@ -52,10 +52,10 @@ Rails::Initializer.run do |config|
   
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   
-  config.gem 'mojombo-grit',
+  config.gem 'grit',
     :lib     => 'grit',
-    :source  => 'http://gems.github.com',
-    :version => '>= 1.1.1'
+    :source  => 'http://gemcutter.org',
+    :version => '>= 2.0'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

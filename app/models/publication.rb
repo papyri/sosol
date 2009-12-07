@@ -3,6 +3,10 @@ class Publication < ActiveRecord::Base
   
   belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
+  
+  has_many :children, :class_name => 'Publication', :foreign_key => 'parent_id'
+  belongs_to :parent, :class_name => 'Publication'
+  
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
  # has_many :votes, :dependent => :destroy
@@ -233,6 +237,8 @@ class Publication < ActiveRecord::Base
       #@publication.get_category_obj().approve
       self.status = "approved"
       self.save
+      self.send_to_finalizer
+      # self.commit_to_canon
       # @publication.send_status_emails(decree_action)    
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
@@ -251,8 +257,58 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def send_to_finalizer
+    board_members = self.owner.users
+    # just select a random board member to be the finalizer
+    finalizer = board_members[rand(board_members.length)]
+    
+    finalizing_publication = copy_to_owner(finalizer)
+    
+    finalizing_publication.status = 'finalizing'
+    finalizing_publication.save!
+  end
+  
+  def head
+    self.owner.repository.repo.get_head(self.branch).commit.sha
+  end
+  
+  def commit_to_canon
+    canon = Repository.new
+    publication_sha = self.head
+    canonical_sha = canon.repo.get_head('master').commit.sha
+    
+    # FIXME: This walks the whole rev list, should maybe use git merge-base
+    # to find the branch point? Though that may do the same internally...
+    # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
+    
+    # canon.repo.git.merge({:no_commit => true, :stat => true},
+      # self.owner.repository.repo.get_head(self.branch).commit.sha)
+    
+    # get the result of merging canon master into this branch
+    merge = Grit::Merge.new(
+      self.owner.repository.repo.git.merge_tree({},
+        publication_sha, canonical_sha, publication_sha))
+    
+    if merge.conflicts == 0
+      if merge.sections == 0
+        # nothing new from canon, trivial merge by updating HEAD
+        canon.add_alternates(self.owner.repository)
+        canon.repo.update_ref('master', publication_sha)
+        self.status = 'committed'
+        self.save!
+      end
+    end
+  end
+  
   def branch_from_master
     owner.repository.create_branch(branch)
+  end
+  
+  def diff_from_canon
+    canon = Repository.new
+    canonical_sha = canon.repo.get_head('master').commit.sha
+    self.owner.repository.repo.git.diff(
+      {:unified => 5000}, canonical_sha, self.head)
   end
   
   def copy_to_owner(new_owner)
@@ -261,6 +317,7 @@ class Publication < ActiveRecord::Base
     duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
     duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.parent = self
     duplicate.save!
     
     # copy identifiers over to new pub
@@ -272,6 +329,8 @@ class Publication < ActiveRecord::Base
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
     )
+    
+    return duplicate
   end
   
   # TODO: destroy branch on publication destroy

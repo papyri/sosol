@@ -111,6 +111,20 @@ class PublicationsController < ApplicationController
     end
   end
   
+  def finalize_review
+    @publication = Publication.find(params[:id])
+    @identifier = @publication.entry_identifier
+    @diff = @publication.diff_from_canon
+  end
+  
+  def finalize
+    @publication = Publication.find(params[:id])
+    @publication.commit_to_canon
+    
+    flash[:notice] = 'Publication finalized.'
+    redirect_to @publication
+  end
+  
   # GET /publications/1
   # GET /publications/1.xml
   def show
