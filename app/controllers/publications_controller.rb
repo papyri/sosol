@@ -35,6 +35,10 @@ class PublicationsController < ApplicationController
       params[:pn_id])
     @publication.owner = @current_user
     
+    @publication.creator = @current_user
+    #@publication.creator_type = "User"
+    #@publication.creator_id = @current_user
+    
     if @publication.save
       @publication.branch_from_master
       
@@ -222,4 +226,32 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
     #todo redirect to publication summary page
   end
+  
+  
+  
+  
+  
+  # DELETE 
+  def destroy
+    @publication = Publication.find(params[:id])
+    pub_name = @publication.title
+    @publication.destroy
+
+
+    e = Event.new
+    e.category = "deleted"
+    e.target = @publication
+    e.owner = @current_user
+    e.save!
+    
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
+    respond_to do |format|
+      format.html { redirect_to dashboard_url }
+      
+    end
+  end
+  
+  
+  
+  
 end

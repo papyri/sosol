@@ -52,3 +52,5 @@
     = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
     %br
   
+  = link_to "delete", @publication, :method => :delete 
+   
