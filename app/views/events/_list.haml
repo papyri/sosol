@@ -3,5 +3,6 @@
     %li
       = event.owner == @current_user ? "You" : event.owner.name
       = event.category
-      = event.target.title
+      - if event.target && event.target.title
+        = event.target.title
       == (#{time_ago_in_words(event.created_at)} ago)
