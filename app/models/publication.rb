@@ -222,6 +222,16 @@ class Publication < ActiveRecord::Base
     owner.repository.create_branch(branch)
   end
   
+  def controlled_identifiers
+    if self.owner.class == Board
+      return self.identifiers.select do |i|
+        self.owner.identifier_classes.include?(i.class.to_s)
+      end
+    else
+      return []
+    end
+  end
+  
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
