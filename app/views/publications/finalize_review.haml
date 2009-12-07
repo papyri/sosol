@@ -1,6 +1,8 @@
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
+    = button_to "Finalize", finalize_publication_path(@publication), :disabled => (@publication.status != 'finalizing'), :class => 'submit', :method => :post
+    %br
     .diff
       - @diff.split("\n")[3..-1].each do |diff_line|
         - unless diff_line.empty?
