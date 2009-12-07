@@ -1,4 +1,7 @@
 #main.site
+  :javascript 
+    function checkForComment() { comment_text = $('submit_comment').value; $('submit_button').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; } 
+    
   %h2 
     = @publication.title
     - if !@publication.status.nil? && @publication.status != ''
@@ -23,9 +26,9 @@
         You will no longer be able to edit any of the items in this the publication once it is submitted. 
         %br
         Briefly describe the reason for your submission.
-        = text_field_tag 'submit_comment'
+        = text_field_tag 'submit_comment', "", :onkeyup => "checkForComment(event)"
         %br
-        = submit_tag "Submit to Boards"
+        = submit_tag "Submit to Boards", :disabled => true, :id => "submit_button"
   - else
     %b
       Publication may not be submitted at this time.
