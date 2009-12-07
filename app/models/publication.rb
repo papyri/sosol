@@ -186,10 +186,13 @@ class Publication < ActiveRecord::Base
     finalizing_publication.save!
   end
   
+  def head
+    self.owner.repository.repo.get_head(self.branch).commit.sha
+  end
+  
   def commit_to_canon
     canon = Repository.new
-    publication_sha = 
-      self.owner.repository.repo.get_head(self.branch).commit.sha
+    publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
     
     # FIXME: This walks the whole rev list, should maybe use git merge-base
@@ -215,6 +218,12 @@ class Publication < ActiveRecord::Base
   
   def branch_from_master
     owner.repository.create_branch(branch)
+  end
+  
+  def diff_from_canon
+    canon = Repository.new
+    canonical_sha = canon.repo.get_head('master').commit.sha
+    self.owner.repository.repo.diff(canonical_sha, self.head)
   end
   
   def copy_to_owner(new_owner)

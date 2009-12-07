@@ -85,6 +85,7 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
     @identifier = @publication.entry_identifier
+    @diff = @publication.diff_from_canon
   end
   
   # GET /publications/1
