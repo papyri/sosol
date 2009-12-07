@@ -74,7 +74,7 @@ class Publication < ActiveRecord::Base
 
     #find all unsubmitted meta ids
     identifiers.each do |i|
-      if i.class.to_s == "HGVMetaIdentifier"  &&  i.status == "editing"
+      if i.modified? && i.class.to_s == "HGVMetaIdentifier"  &&  i.status == "editing"
         #submit it
         submit_identifier(i)
         return
@@ -83,7 +83,7 @@ class Publication < ActiveRecord::Base
     
     #find all unsubmitted text ids
     identifiers.each do |i|
-      if i.class.to_s == "DDBIdentifier"  &&  i.status == "editing"
+      if i.modified? && i.class.to_s == "DDBIdentifier"  &&  i.status == "editing"
         #submit it
         submit_identifier(i)
         return 
@@ -92,7 +92,7 @@ class Publication < ActiveRecord::Base
     
     #find all unsubmitted translation ids
     identifiers.each do |i|
-      if i.class.to_s == "HGVTransIdentifier"  &&  i.status == "editing"
+      if i.modified? && i.class.to_s == "HGVTransIdentifier"  &&  i.status == "editing"
         #submit it
         submit_identifier(i)
         return
@@ -120,6 +120,7 @@ class Publication < ActiveRecord::Base
       
       identifier.status = "submitted"
       self.status = "submitted"
+      
       
       self.title = self.creator.name + "/" + self.title      
       self.branch = title_to_ref(self.title)
