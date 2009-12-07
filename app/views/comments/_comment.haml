@@ -8,7 +8,7 @@
     - if comment.reason != nil
       = comment.reason
     on
-    - if comment.identifier != nil && comment.identifier.title != nil
+    - if comment.identifier && comment.identifier.title
       = comment.identifier.title
   .comment    
     - if comment.comment != nil

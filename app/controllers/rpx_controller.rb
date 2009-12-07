@@ -3,6 +3,8 @@ require 'rpx'
 class RpxController < ApplicationController
   layout 'site'
   
+  protect_from_forgery :except => [:login_return, :associate_return]
+  
   def remove_openid
     user_identifier = UserIdentifier.find_by_id(params[:openid])
     if user_identifier.nil?
@@ -112,12 +114,16 @@ class RpxController < ApplicationController
     else
       session[:identifier] = identifier
       @name = guess_name data
+      @email = guess_email data
+      @full_name = guess_full_name data
     end
   end
 
   def create_submit
     identifier = session[:identifier]
     @name = params[:new_user][:name]
+    @email = params[:new_user][:email]
+    @full_name = params[:new_user][:full_name]
 
     if @name.empty?
       flash[:error] = "Username must not be empty"
@@ -126,7 +132,7 @@ class RpxController < ApplicationController
     end
 
     begin
-      user = User.create(:name => @name)
+      user = User.create(:name => @name, :email => @email, :full_name => @full_name)
     rescue ActiveRecord::StatementInvalid => e
       flash[:error] = "Username not available"
       render :action => "login_return"
@@ -157,9 +163,33 @@ class RpxController < ApplicationController
   def guess_name(data)
     if data['displayName']
       return data['displayName']
+    elsif data['preferredUsername']
+      return data['preferredUsername']
     end
 
     # There wasn't anything, so let the user enter a nickname.
+    return ''
+  end
+  
+  def guess_email(data)
+    if data['verifiedEmail']
+      return data['verifiedEmail']
+    elsif data['email']
+      return data['email']
+    end
+    
+    return ''
+  end
+  
+  def guess_full_name(data)
+    if data['name']
+      if data['name']['formatted']
+        return data['name']['formatted']
+      elsif data['name']['familyName'] || data['name']['givenName']
+        return [data['name']['givenName'], data['name']['familyName']].join(' ')
+      end
+    end
+    
     return ''
   end
 

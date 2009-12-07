@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_many :user_identifiers, :dependent => :destroy
   
   has_and_belongs_to_many :boards
+  has_many :finalizing_boards, :class_name => :board, :foreign_key => 'finalizer_user_id'
   
   has_and_belongs_to_many :emailers
   
@@ -55,6 +56,10 @@ class User < ActiveRecord::Base
         e.save!
       end
     end
+  end
+  
+  def grit_actor
+    Grit::Actor.new(self.full_name, self.email)
   end
   
   def before_destroy

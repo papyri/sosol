@@ -200,7 +200,7 @@ class PublicationsController < ApplicationController
         #do destroy after email since the email may need info in the artice
         #@publication.get_category_obj().graffiti
         @vote.identifier.destroy #need to destroy related?
-        #this art of the publication was crap, do we assume the rest is as well?
+        #this part of the publication was crap, do we assume the rest is as well?
         #for now we will just continue the submition process
         self.submit_to_next_board
         
@@ -210,6 +210,12 @@ class PublicationsController < ApplicationController
         #unknown action or no action    
       end   
     
+
+ # unsure if following needed due to merge conflict
+ #     if !Publication.exists?(@publication)
+ #       redirect_to url_for(dashboard)
+ #     end
+
     end #!has_voted
     #do what now? go to review page
     

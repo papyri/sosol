@@ -202,6 +202,54 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
+  def tally_votes
+    # @comment = Comment.new()
+    # @comment.article_id = params[:id]
+    # @comment.text = params[:comment]
+    # @comment.user_id = @current_user.id
+    # @comment.reason = "vote"
+    # @comment.save
+    
+    #TODO tie vote and comment together?  
+    
+    #need to tally votes and see if any action will take place
+    decree_action = self.owner.tally_votes(self.votes)
+    #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
+    #NOTE here are the types of actions for the voting results
+    #approve, reject, graffiti
+    
+    # create an event if anything happened
+    if !decree_action.nil? && decree_action != ''
+      e = Event.new
+      e.owner = self.owner
+      e.target = self
+      e.category = "marked as \"#{decree_action}\""
+      e.save!
+    end
+  
+  
+    if decree_action == "approve"
+      #@publication.get_category_obj().approve
+      self.status = "approved"
+      self.save
+      # @publication.send_status_emails(decree_action)    
+    elsif decree_action == "reject"
+      #@publication.get_category_obj().reject       
+      self.status = "new" #reset to unsubmitted       
+      self.save
+      # @publication.send_status_emails(decree_action)
+    elsif decree_action == "graffiti"               
+      # @publication.send_status_emails(decree_action)
+      #do destroy after email since the email may need info in the artice
+      #@publication.get_category_obj().graffiti
+      self.destroy #need to destroy related?
+      # redirect_to url_for(dashboard)
+      return
+    else
+      #unknown action or no action    
+    end
+  end
+  
   def branch_from_master
     owner.repository.create_branch(branch)
   end

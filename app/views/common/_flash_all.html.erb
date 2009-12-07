@@ -1,6 +1,6 @@
 <% flash.each do |key, msg| %>
-    <%= content_tag :div, msg, :class => [key, "_message"], :id => "notice_#{key}" %>
+    <%= content_tag :div, msg, :class => ["flash", key].join(' '), :id => "notice_#{key}" %>
     <% content_tag(:script, :type => "text/javascript")  do -%>
-        setTimeout("new Effect.Fade('notice_<%= key %>');", 15000);
+        setTimeout("new Effect.Fade('notice_<%= key %>',{duration:2.0});", 15000);
     <% end %>
 <% end %>

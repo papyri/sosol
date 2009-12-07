@@ -15,7 +15,7 @@ class DdbIdentifiersController < IdentifiersController
                                 params[:comment])
     if params[:comment] != nil && params[:comment].strip != ""
       @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save    
+      @comment.save
     end
     flash[:notice] = "File updated."
     redirect_to polymorphic_path([@identifier.publication, @identifier],

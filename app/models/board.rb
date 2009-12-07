@@ -4,6 +4,8 @@ class Board < ActiveRecord::Base
   has_many :emailers
 
   has_and_belongs_to_many :users
+  belongs_to :finalizer_user, :class_name => :user
+  
   has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner
   

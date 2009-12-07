@@ -38,24 +38,27 @@ class Identifier < ActiveRecord::Base
       self.to_path, self.branch)
   end
   
-  def is_valid?(content = nil)
+  def is_valid_xml?(content = nil)
     if content.nil?
       content = self.content
     end
-    self.class::VALIDATOR.instance.validate(
+    self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content))
   end
   
+  def before_commit(content)
+    return content
+  end
+  
   def set_content(content, options = {})
-    if is_valid?(content)
-      options.reverse_merge! :comment => ''
-      self.repository.commit_content(self.to_path,
-                                     self.branch,
-                                     content,
-                                     options[:comment])
-      self.modified = true
-      self.save!
-    end
+    options.reverse_merge! :comment => ''
+    self.repository.commit_content(self.to_path,
+                                   self.branch,
+                                   content,
+                                   options[:comment],
+                                   options[:actor])
+    self.modified = true
+    self.save!
   end
   
   def get_commits
@@ -115,6 +118,10 @@ class Identifier < ActiveRecord::Base
                    year, document_number)
   end
   
+  def owner
+    self.publication.owner
+  end
+  
   def mutable?
     #only let the board edit if they own it
     if self.publication.owner_type == "Board"
@@ -136,8 +143,16 @@ class Identifier < ActiveRecord::Base
     return self.content
   end
   
-  def set_xml_content(content, comment)
-    self.set_content(content, :comment => comment)
+  def set_xml_content(content, options)
+    options.reverse_merge!(
+      :validate => true,
+      :actor    => ((self.owner.class == User) ? self.owner.grit_actor : nil))
+      
+    content = before_commit(content)
+
+    if options[:validate] && is_valid_xml?(content)
+      self.set_content(content, options)
+    end
   end
   
   #added to speed up dashboard since titleize can be slow
@@ -146,7 +161,7 @@ class Identifier < ActiveRecord::Base
       write_attribute(:title,titleize)
       self.save
     end
-    return  read_attribute(:title)
+    return read_attribute(:title)
   end
   
   

@@ -93,179 +93,83 @@ class HGVMetaIdentifier < HGVIdentifier
 
   def get_or_set_epidoc(get_or_set = :get)
     doc = REXML::Document.new self.content
-
-    # set base to meta data in epidoc
+    
+    # set base to metadata in epidoc
     basePath = "TEI.2/text/body/div"
-
-    # date
-    datePath = "[@type='commentary'][@subtype='textDate']"
-    metaPath = basePath + datePath + "/p/date[@type='textDate']"
-    REXML::XPath.each(doc,metaPath)  do |res|
-      get_or_set_xml_attribute(get_or_set, :onDate, res, "value")
-      get_or_set_xml_attribute(get_or_set, :notAfterDate, res, "notAfter")
-      get_or_set_xml_attribute(get_or_set, :notBeforeDate, res, "notBefore")
-      get_or_set_xml_text(get_or_set, :textDate, res)
-    end
-
-
-    # publication
+    
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
-
-    # title
-    # incorrect title titlePath = "bibl[@type='publication'][@subtype='principal']/title/"
     titlePath = "TEI.2/teiHeader/fileDesc/titleStmt/title/"
-
-    # metaPath = basePath + publicationPath + titlePath
-    metaPath = titlePath
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :title, res)
+    provenancePath = "[@type='history'][@subtype='locations']/p/"
+    
+    # A hash from attribute symbol to either:
+    # (1) a String containing XPath for text
+    # (2) an array where the first element is (1) and the last is a hash
+    #     of attributes to xml attributes
+    attributes_xpath_hash = {
+      :textDate => 
+        [
+          basePath + "[@type='commentary'][@subtype='textDate']/" + 
+            "p/date[@type='textDate']",
+          {
+            :onDate => "value",
+            :notAfterDate => "notAfter",
+            :notBeforeDate => "notBefore"
+          }
+        ],
+      :title => titlePath,
+      :publicationTitle => 
+        basePath + publicationPath + 
+          "bibl[@type='publication'][@subtype='principal']/" + 
+          "title/",
+      :publicationVolume =>
+        basePath + publicationPath + 
+          "bibl[@type='publication'][@subtype='principal']/" + 
+          "biblScope[@type='volume']/",
+      :publicationNumbers => 
+        basePath + publicationPath +
+          "bibl[@type='publication'][@subtype='principal']/" +
+          "biblScope[@type='numbers']/",
+      :tm_nr => 
+        basePath + publicationPath + 
+          "bibl[@type='Trismegistos']/biblScope[@type='numbers']",
+      :illustrations => 
+        basePath + "[@type='bibliography'][@subtype='illustrations']/p",
+      :contentText => basePath + "[@type='...']/p/rs[@type='textType']",
+      :other_publications => 
+        basePath + "[@type='bibliography'][@subtype='otherPublications']/" + 
+          "bibl[@type='publication'][@subtype='other']/",
+      :translations => 
+        basePath + "[@type='bibliography'][@n='translations']/p",
+      :bl => basePath + "[@type='bibliography']/bibl[@type='BL']",
+      :notes => basePath + "[@type='commentary'][@subtype='general']/p",
+      :mentioned_dates => 
+        basePath + "[@type='commentary'][@subtype='general']/p/head",
+      :material => basePath + "[@type='description']/p/rs[@type='material']",
+      :provenance_ancient_findspot => 
+        basePath + provenancePath + "placeName[@type='ancientFindspot']",
+      :provenance_nome =>
+        basePath + provenancePath + "geogName[@type='nome']",
+      :provenance_ancient_region =>
+        basePath + provenancePath + "geogName[@type='ancientRegion']"
+    }
+    
+    attributes_xpath_hash.each_pair do |self_attribute, value|
+      if value.class == String
+        xpath = value
+        xml_attributes = {}
+      elsif value.class == Array
+        xpath = value.first
+        xml_attributes = value.last
+      end
+      
+      REXML::XPath.each(doc, xpath) do |res|
+        xml_attributes.each_pair do |nested_self_attribute, xml_attribute|
+          get_or_set_xml_attribute(get_or_set, nested_self_attribute, res, xml_attribute)
+        end
+        
+        get_or_set_xml_text(get_or_set, self_attribute, res)
+      end
     end
-
-
-    # publication
-    publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
-
-    # title
-    titlePath = "bibl[@type='publication'][@subtype='principal']/title/"
-
-    metaPath = basePath + publicationPath + titlePath
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :publicationTitle, res)
-    end
-
-	volumePath = "bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']/"
-	metaPath = basePath + publicationPath + volumePath
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :publicationVolume, res)
-    end
-	
-	
-	numbersPath = "bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']/"
-	metaPath = basePath + publicationPath + numbersPath
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :publicationNumbers, res)
-    end
-	
-
-    # TM number
-    trismegistosPath = "bibl[@type='Trismegistos']/biblScope[@type='numbers']"
-    metaPath = basePath + publicationPath + trismegistosPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :tm_nr, res)
-    end
-
-
-    # -----------------unused--------------------
-    # DDbDp number
-    dukeSeries = "bibl/[@type='DDbDP']/series"
-    dukeNumber = "bibl/[@type='DDbDP']/biblScope[@type='numbers']"
-
-  metaPath = basePath + publicationPath + dukeSeries;
-    REXML::XPath.each(doc, metaPath) do |res|
-      # TODO
-      replaceMe = res.text
-    end
-
-  metaPath = basePath + publicationPath + dukeNumber;
-    REXML::XPath.each(doc, metaPath) do |res|
-      # TODO
-      replaceMe = res.text
-    end
-
-    # Perseus links
-    perseusPath = "p/xref[@type='Perseus']"
-
-  metaPath = basePath + publicationPath + perseusPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      # TODO
-      replaceMe = res.attributes["href"]
-      replaceMe = res.text
-    end
-
-    # ===============end unused==================
-
-    # illustration - photo
-    illustrationPath = "[@type='bibliography'][@subtype='illustrations']/p"
-    metaPath = basePath + illustrationPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :illustrations, res)
-    end
-
-    # Content
-    # TODO replace ...? or is that actually a tag?
-    contentPath = "[@type='...']/p/rs[@type='textType']"
-    metaPath = basePath + contentPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :contentText, res)
-    end
-
-    # Other Publication
-    #otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/p/bibl"
-    #there are multiple xpaths for this info!?
-    otherPublicationPath = "[@type='bibliography'][@subtype='otherPublications']/bibl[@type='publication'][@subtype='other']/"
-    metaPath = basePath + otherPublicationPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :other_publications, res)    # note items are separated by semicolons
-    end
-
-    # Translations
-    translationsPath = "[@type='bibliography'][@n='translations']/p"
-    metaPath = basePath + translationsPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :translations, res)
-    end
-
-    # BL
-    blPath = "[@type='bibliography']/bibl[@type='BL']"
-    metaPath = basePath + blPath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :bl, res)
-    end
-
-    # notes - aka general commentary, will there only be one?
-    notePath = "[@type='commentary'][@subtype='general']/p"
-    metaPath = basePath + notePath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :notes, res)
-    end
-
-    # mentioned dates - aka mentioned dates commentary, will there only be one?
-    notePath = "[@type='commentary'][@subtype='general']/p/head"
-    metaPath = basePath + notePath;
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :mentioned_dates, res)
-    end
-
-    # material
-    materialPath = "[@type='description']/p/rs[@type='material']"
-    metaPath = basePath + materialPath
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :material, res)
-    end
-
-    # provenance
-    provenacePath = "[@type='history'][@subtype='locations']/p/"
-
-    provenacePathA = "placeName[@type='ancientFindspot']"
-    metaPath = basePath + provenacePath + provenacePathA
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :provenance_ancient_findspot, res)
-    end
-
-    provenacePathB = "geogName[@type='nome']"
-    metaPath = basePath + provenacePath + provenacePathB
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :provenance_nome, res)
-    end
-
-    provenacePathC = "geogName[@type='ancientRegion']"
-    metaPath = basePath + provenacePath + provenacePathC
-    REXML::XPath.each(doc, metaPath) do |res|
-      get_or_set_xml_text(get_or_set, :provenance_ancient_region, res)
-    end
-
-
-    # Mentioned dates ?? no epidoc tag?
     
     # write back to a string
     modified_xml_content = ''

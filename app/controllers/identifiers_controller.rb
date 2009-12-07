@@ -43,9 +43,13 @@ class IdentifiersController < ApplicationController
     find_identifier
     # strip carriage returns
     xml_content = params[@identifier.class.to_s.underscore][:xml_content].gsub(/\r\n?/, "\n")
-    @identifier.set_xml_content(xml_content,
-                                params[:comment])
-    flash[:notice] = "File updated."
+    begin
+      @identifier.set_xml_content(xml_content,
+                                  :comment => params[:comment])
+      flash[:notice] = "File updated."
+    rescue JRubyXML::ParseError => parse_error
+      flash[:error] = parse_error.to_str
+    end
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
   end
