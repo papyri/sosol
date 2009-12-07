@@ -212,6 +212,8 @@ class Publication < ActiveRecord::Base
         # nothing new from canon, trivial merge by updating HEAD
         canon.add_alternates(self.owner.repository)
         canon.repo.update_ref('master', publication_sha)
+        self.status = 'committed'
+        self.save!
       end
     end
   end
