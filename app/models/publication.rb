@@ -121,7 +121,7 @@ class Publication < ActiveRecord::Base
       identifier.status = "submitted"
       self.status = "submitted"
       
-      self.title = self.owner.name + "/" + self.title      
+      self.title = self.creator.name + "/" + self.title      
       self.branch = title_to_ref(self.title)
       
       self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
