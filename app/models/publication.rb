@@ -232,6 +232,12 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def controlled_paths
+    self.controlled_identifiers.collect do |i|
+      i.to_path
+    end
+  end
+  
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
