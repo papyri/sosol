@@ -223,7 +223,8 @@ class Publication < ActiveRecord::Base
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
-    self.owner.repository.repo.diff(canonical_sha, self.head)
+    self.owner.repository.repo.git.diff(
+      {:unified => 5000}, canonical_sha, self.head)
   end
   
   def copy_to_owner(new_owner)
