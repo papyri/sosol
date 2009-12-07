@@ -167,6 +167,21 @@ input.submit
     input.save
       +styled_button
 
+.diff
+  border: 1px solid gray
+  padding: 1em
+  pre
+    white-space: pre-wrap
+  ins
+    pre
+      code
+        background: rgb(187, 255, 170)
+  del
+    text-decoration: none
+    pre
+      code
+        background: rgb(255, 187, 170)
+
 #edit
   form
     textarea
