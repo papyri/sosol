@@ -18,6 +18,10 @@
               = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))
             - if @current_user.developer
               == (#{identifier.status})
+              = "{"
+              - identifier.votes.each do |v|
+                = v.choice
+              = "}"
         - if @current_user.developer  
           == (#{publication.status})
           -# if !publication.status.nil? && publication.status != ''
