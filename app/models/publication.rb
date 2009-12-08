@@ -261,7 +261,7 @@ class Publication < ActiveRecord::Base
       {:unified => 5000}, canonical_sha, self.head)
   end
   
-  def copy_to_owner(new_owner)
+  def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
     duplicate.creator = self.creator
@@ -275,6 +275,12 @@ class Publication < ActiveRecord::Base
       duplicate_identifer = identifier.clone
       duplicate.identifiers << duplicate_identifer
     end
+    
+    return duplicate
+  end
+  
+  def copy_to_owner(new_owner)
+    duplicate = clone_to_owner(new_owner)
     
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
