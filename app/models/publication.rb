@@ -132,6 +132,7 @@ class Publication < ActiveRecord::Base
       self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
     #(from_branch, to_branch, from_repo)
       self.save
+      identifier.save
       return
       end
     end
