@@ -11,14 +11,17 @@
               - when HGVMetaIdentifier
                 = image_tag('hgv.gif')
               - when HGVTransIdentifier
-                = image_tag('hgv.gif')
+                = image_tag('hgv.gif')            
             - if publication.status != 'finalizing'
               = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
             - else
               = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))
-            
-        - if !publication.status.nil? && publication.status != ''
+            - if @current_user.developer
+              == (#{identifier.status})
+        - if @current_user.developer  
           == (#{publication.status})
+          -# if !publication.status.nil? && publication.status != ''
+          -#  == (#{publication.status})
 / - if @branches.length > 0
 /   %h2 Listing Branches
 /   %ul
