@@ -251,7 +251,7 @@ class Identifier < ActiveRecord::Base
     #delete
   end
   
-  def result_action_finialize
+  def result_action_finalize
   
     self.staus = "finalized"
   end
