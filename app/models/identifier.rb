@@ -253,7 +253,7 @@ class Identifier < ActiveRecord::Base
   
   def result_action_finalize
   
-    self.staus = "finalized"
+    self.status = "finalized"
   end
   
   
