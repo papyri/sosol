@@ -51,6 +51,7 @@ class User < ActiveRecord::Base
         p = Publication.new
         p.populate_identifiers_from_identifier(pn_id)
         p.owner = self
+        p.creator = self
         p.save!
         p.branch_from_master
       
@@ -65,6 +66,15 @@ class User < ActiveRecord::Base
   
   def grit_actor
     Grit::Actor.new(self.full_name, self.email)
+  end
+  
+  def author_string
+    "#{self.full_name} <#{self.email}>"
+  end
+  
+  def git_author_string
+    local_time = Time.now
+    "#{self.author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
   
   def before_destroy

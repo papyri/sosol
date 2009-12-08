@@ -175,16 +175,11 @@ class Publication < ActiveRecord::Base
     end
   end
   
-  def send_to_finalizer
-    board_members = self.owner.users
-    
-    # just select a random board member to be the finalizer
-    finalizer = board_members[rand(board_members.length)]
-    
-    finalizing_publication = copy_to_owner(finalizer)
-    # finalizing_publication = clone_to_owner(finalizer)
+  def flatten_commits(finalizing_publication, finalizer, board_members)
+    finalizing_publication.repository.fetch_objects(self.repository)
     
     # flatten commits by original publication creator
+    # - use the submission reason as the main comment
     # - concatenate all non-empty commit messages into a list
     # - write a 'Signed-off-by:' line for each Ed. Board member
     # - rewrite the committer to the finalizer
@@ -194,11 +189,69 @@ class Publication < ActiveRecord::Base
     # X insert a change in the XML revisionDesc header
     #   should instead happen at submit so EB sees it?
     
+    canon_branch_point = self.merge_base
+    # this relies on the parent being a remote, e.g. fetch_objects being used
+    # during branch copy
+    # board_branch_point = self.merge_base(
+    #   [self.parent.repository.name, self.parent.branch].join('/'))
+    # this works regardless
+    board_branch_point = self.origin.head
+    
+    creator_commits = self.repository.repo.commits_between(canon_branch_point,
+                                                           board_branch_point)
+    board_commits = self.repository.repo.commits_between(board_branch_point,
+                                                         self.head)
+    
+    creator_commit_messages = [self.submission_reason.comment, '']
+    creator_commits.each do |creator_commit|
+      message = creator_commit.message.strip
+      unless message.empty?
+        creator_commit_messages << " - #{message}"
+      end
+    end
+    
+    signed_off_messages = []
+    board_members.each do |board_member|
+      signed_off_messages << "Signed-off-by: #{board_member.author_string}"
+    end
+    
+    commit_message =
+      (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
+    
+    parent_commit = canon_branch_point
+    tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
+    contents = []
+    contents << ['tree', tree_sha1].join(' ')
+    contents << ['parent', parent_commit].join(' ')
+    
+    contents << ['author', self.creator.git_author_string].join(' ')
+    contents << ['committer', finalizer.git_author_string].join(' ')
+    contents << ''
+    contents << commit_message
+    
+    flattened_commit_sha1 = 
+      finalizing_publication.repository.repo.git.put_raw_object(
+        contents.join("\n"), 'commit')
+    
+    finalizing_publication.repository.create_branch(
+      finalizing_publication.branch, flattened_commit_sha1)
+    
     # rewrite commits by EB
     # - write a 'Signed-off-by:' line for each Ed. Board member
     # - rewrite the committer to the finalizer
     # - change parent lineage to flattened commits
-        
+  end
+  
+  def send_to_finalizer
+    board_members = self.owner.users
+    
+    # just select a random board member to be the finalizer
+    finalizer = board_members[rand(board_members.length)]
+    
+    # finalizing_publication = copy_to_owner(finalizer)
+    finalizing_publication = clone_to_owner(finalizer)
+    self.flatten_commits(finalizing_publication, finalizer, board_members)
+    
     finalizing_publication.status = 'finalizing'
     finalizing_publication.save!
   end
@@ -207,8 +260,8 @@ class Publication < ActiveRecord::Base
     self.owner.repository.repo.get_head(self.branch).commit.sha
   end
   
-  def merge_base
-    self.owner.repository.repo.git.merge_base({},'master',self.head)
+  def merge_base(branch = 'master')
+    self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
   end
   
   def commit_to_canon
@@ -266,6 +319,20 @@ class Publication < ActiveRecord::Base
       {:unified => 5000}, canonical_sha, self.head)
   end
   
+  def submission_reason
+    reason = Comment.find_by_publication_id(self.origin.id,
+      :conditions => "reason = 'submit'")
+  end
+  
+  def origin
+    # walk the parent list until we encounter one with no parent
+    origin_publication = self
+    while (origin_publication.parent != nil) do
+      origin_publication = origin_publication.parent
+    end
+    return origin_publication
+  end
+  
   def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
@@ -284,8 +351,12 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
   
+  def repository
+    return self.owner.repository
+  end
+  
   def copy_to_owner(new_owner)
-    duplicate = clone_to_owner(new_owner)
+    duplicate = self.clone_to_owner(new_owner)
     
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
