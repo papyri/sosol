@@ -17,6 +17,11 @@
       = f.hidden_field :publication_id
       = f.hidden_field :identifier_id
       Your Vote:
-      = select "vote", "choice", identifier.publication.owner.decrees.collect{ |d| d.get_choice_array }
+      - choices = Hash.new
+      - identifier.publication.owner.decrees.each do |d|
+        - d.get_choice_array.each do |c|
+          - choices[c] = c
+      = select "vote", "choice", choices
+      = text_field :comment, "comment"
       -#= f.submit "Vote", :disabled => !publication.mutable?
       = f.submit "Vote"
