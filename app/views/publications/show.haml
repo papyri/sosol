@@ -45,12 +45,12 @@
     - for comment in @comments
       = render :partial => comment      
  
-
-  - for class_type in Identifier::IDENTIFIER_SUBCLASSES
-    - create_type = eval class_type + ".friendly_name"
-    - create_type = 'Create new ' + create_type
-    = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
-    %br
+  - if @publication.status == "editing"
+    - for class_type in Identifier::IDENTIFIER_SUBCLASSES
+      - create_type = eval class_type + ".friendly_name"
+      - create_type = 'Create new ' + create_type
+      = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
+      %br
   
-  = link_to "delete", @publication, :method => :delete 
+    = link_to "delete", @publication, :method => :delete 
    
