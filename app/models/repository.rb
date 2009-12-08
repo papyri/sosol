@@ -27,10 +27,10 @@ class Repository
     if master.nil?
       @path = CANONICAL_REPOSITORY
     else
-      master_class_path = @master.class.to_s.underscore.pluralize
-      FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, master_class_path))
+      @master_class_path = @master.class.to_s.underscore.pluralize
+      FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
       @path = File.join(REPOSITORY_ROOT,
-                        master_class_path, "#{master.name}.git")
+                        @master_class_path, "#{master.name}.git")
     end
     
     @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
@@ -39,6 +39,10 @@ class Repository
     else
       @repo = nil
     end
+  end
+  
+  def owner
+    return @master
   end
   
   def exists?(path)
@@ -125,9 +129,28 @@ class Repository
   end
   
   def copy_branch_from_repo(branch, new_branch, other_repo)
-    self.add_alternates(other_repo)
+    # Lightweight (but have to watch out for side-effects of repo deletion):
+    # self.add_alternates(other_repo)
+    # Heavyweight (missing objects are actually copied):
+    self.fetch_objects(other_repo)
+    
     head_ref = other_repo.repo.get_head(branch).commit.sha
     self.create_branch(new_branch, head_ref)
+  end
+  
+  def add_remote(other_repo)
+    unless @repo.remote_list.include?(other_repo.name)
+      @repo.remote_add(other_repo.name, other_repo.path)
+    end
+  end
+  
+  def fetch_objects(other_repo)
+    self.add_remote(other_repo)
+    @repo.remote_fetch(other_repo.name)
+  end
+  
+  def name
+    return [@master_class_path, @master.name].join('/')
   end
   
   def add_alternates(other_repo)
