@@ -177,8 +177,24 @@ class Publication < ActiveRecord::Base
   
   def send_to_finalizer
     board_members = self.owner.users
+    
     # just select a random board member to be the finalizer
     finalizer = board_members[rand(board_members.length)]
+    
+    # flatten commits by original publication creator
+    # - concatenate all non-empty commit messages into a list
+    # - write a 'Signed-off-by:' line for each Ed. Board member
+    # - rewrite the committer to the finalizer
+    # - parent will be the branch point from canon (merge-base)
+    # - tree will be from creator's last commit
+    # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
+    # X insert a change in the XML revisionDesc header
+    #   should instead happen at submit so EB sees it?
+    
+    # rewrite commits by EB
+    # - write a 'Signed-off-by:' line for each Ed. Board member
+    # - rewrite the committer to the finalizer
+    # - change parent lineage to flattened commits
     
     finalizing_publication = copy_to_owner(finalizer)
     
