@@ -40,7 +40,11 @@ class UserController < ApplicationController
     if @current_user == nil
       redirect_to :controller => "user", :action => "signin"
     end
-    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User'", :include => :identifiers)
+    #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User'", :include => :identifiers)
+       
+    #or do we want to use the creator id?
+    @publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
+    
     @events = Event.find(:all, :order => "created_at DESC",
                          :include => [:owner, :target])[0..25]
     
