@@ -181,6 +181,9 @@ class Publication < ActiveRecord::Base
     # just select a random board member to be the finalizer
     finalizer = board_members[rand(board_members.length)]
     
+    finalizing_publication = copy_to_owner(finalizer)
+    # finalizing_publication = clone_to_owner(finalizer)
+    
     # flatten commits by original publication creator
     # - concatenate all non-empty commit messages into a list
     # - write a 'Signed-off-by:' line for each Ed. Board member
@@ -195,15 +198,17 @@ class Publication < ActiveRecord::Base
     # - write a 'Signed-off-by:' line for each Ed. Board member
     # - rewrite the committer to the finalizer
     # - change parent lineage to flattened commits
-    
-    finalizing_publication = copy_to_owner(finalizer)
-    
+        
     finalizing_publication.status = 'finalizing'
     finalizing_publication.save!
   end
   
   def head
     self.owner.repository.repo.get_head(self.branch).commit.sha
+  end
+  
+  def merge_base
+    self.owner.repository.repo.git.merge_base({},'master',self.head)
   end
   
   def commit_to_canon
