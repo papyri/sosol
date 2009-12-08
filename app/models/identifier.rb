@@ -3,11 +3,11 @@ class Identifier < ActiveRecord::Base
   
   
   #status represents last thing done
-  IDENTIFIER_STATUS = %w{ editing, submitted, accepted, finalized }
+  IDENTIFIER_STATUS = %w{ editing, submitted, approved, finalized }
   #the status are roughly:
   #editing - created/checkout by user - only user is changing
   #submitted - board has it and maybe changing it - user no longer has
-  #accepted - board has approved it - waiting to be finalized
+  #approved - board has approved it - waiting to be finalized
   #finalized - has been through the entire process - is done - this is mainly needed since item may still be around as part of a publication (otherwise we could just delete it when done)
   validates_presence_of :name, :type
   
