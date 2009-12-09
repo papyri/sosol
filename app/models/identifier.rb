@@ -239,6 +239,7 @@ class Identifier < ActiveRecord::Base
   def result_action_approve
    
     self.status = "approved"
+    self.publication.send_to_finalizer
   end
   
   def result_action_reject

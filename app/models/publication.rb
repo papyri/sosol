@@ -111,25 +111,26 @@ class Publication < ActiveRecord::Base
     boards = Board.find(:all)
     boards.each do |board|
     if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
-
-      duplicate = self.clone
+      
+      copy_to_owner(board)
+      # duplicate = self.clone
       #duplicate.owner = new_owner
      # duplicate.creator = self.creator
    #   duplicate.title = self.owner.name + "/" + self.title
    #   duplicate.branch = title_to_ref(duplicate.title)
         
       
-      self.owner_id = board.id
-      self.owner_type = "Board"
+      # self.owner_id = board.id
+      # self.owner_type = "Board"
       
       identifier.status = "submitted"
       self.status = "submitted"
       
       
-      self.title = self.creator.name + "/" + self.title      
-      self.branch = title_to_ref(self.title)
-      
-      self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
+      # self.title = self.creator.name + "/" + self.title
+      # self.branch = title_to_ref(self.title)
+      # 
+      # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
     #(from_branch, to_branch, from_repo)
       self.save
       identifier.save
