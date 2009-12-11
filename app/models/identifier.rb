@@ -128,7 +128,7 @@ class Identifier < ActiveRecord::Base
       if self.publication.owner.identifier_classes.include?(self.class.to_s)
        return true
       end
-    elsif self.publication.owner_type == "User" && self.publication.status == "editing"
+    elsif self.publication.owner_type == "User" && %w{editing new}.include?(self.publication.status)
       return true #they can edit any of their stuff if it is not submitted    
     end
     
