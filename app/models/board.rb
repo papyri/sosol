@@ -49,6 +49,7 @@ class Board < ActiveRecord::Base
     retval
     
   end
+  
   def result_actions_hash  
     ra = result_actions    
     ret_hash = {}

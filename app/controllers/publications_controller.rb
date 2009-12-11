@@ -163,8 +163,7 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])    
   end
   
-  def vote  
-
+  def vote
     @vote = Vote.new(params[:vote])
     @vote.user_id = @current_user.id      
     
@@ -175,19 +174,16 @@ class PublicationsController < ApplicationController
     @comment.identifier = @vote.identifier
     @comment.publication = @vote.publication
 
-
     #double check that they have not already voted
     has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
     if !has_voted 
       @vote.save   
       @comment.save
-          
-#todo add comment to vote
       
       #need to tally votes and see if any action will take place
       #should only be voting while the publication is owned by the correct board
       #todo add check to ensure board is correct
-      decree_action = @vote.publication.owner.tally_votes(@vote.identifier.votes)
+      decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
       #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
       #NOTE here are the types of actions for the voting results
       #approve, reject, graffiti

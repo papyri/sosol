@@ -209,7 +209,9 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-  def tally_votes
+  def tally_votes(user_votes = nil)
+    user_votes ||= self.votes
+    
     # @comment = Comment.new()
     # @comment.article_id = params[:id]
     # @comment.text = params[:comment]
@@ -220,7 +222,7 @@ class Publication < ActiveRecord::Base
     #TODO tie vote and comment together?  
     
     #need to tally votes and see if any action will take place
-    decree_action = self.owner.tally_votes(self.votes)
+    decree_action = self.owner.tally_votes(user_votes)
     #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
     #NOTE here are the types of actions for the voting results
     #approve, reject, graffiti
@@ -253,10 +255,11 @@ class Publication < ActiveRecord::Base
       #@publication.get_category_obj().graffiti
       self.destroy #need to destroy related?
       # redirect_to url_for(dashboard)
-      return
     else
       #unknown action or no action    
     end
+    
+    return decree_action
   end
   
   def flatten_commits(finalizing_publication, finalizer, board_members)
