@@ -5,6 +5,7 @@ end
 Factory.define :board do |f|
   f.title { Factory.next(:name) }
   f.category 'category'
+  f.identifier_classes ['DDBIdentifier']
   f.decree_id 1
 end
 
