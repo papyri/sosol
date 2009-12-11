@@ -5,7 +5,12 @@ class DdbIdentifiersController < IdentifiersController
   # GET /publications/1/ddb_identifiers/1/edit
   def edit
     find_identifier
-    @identifier[:leiden_plus] = @identifier.leiden_plus
+    begin
+      @identifier[:leiden_plus] = @identifier.leiden_plus
+    rescue RXSugar::XMLParseError => parse_error
+      flash[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      @identifier[:leiden_plus] = parse_error.content
+    end
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
