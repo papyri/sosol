@@ -76,33 +76,16 @@ class Publication < ActiveRecord::Base
     #2 transcription
     #3 translation    
 
-    #find all unsubmitted meta ids
-    identifiers.each do |i|
-      if i.modified? && i.class.to_s == "HGVMetaIdentifier"  &&  i.status == "editing"
-        #submit it
-        submit_identifier(i)
-        return
+    # find all unsubmitted meta ids, then text ids, then translation ids
+    [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
+      identifiers.each do |i|
+        if i.modified? && i.class == ic &&  i.status == "editing"
+          #submit it
+          submit_identifier(i)
+          return
+        end
       end
     end
-    
-    #find all unsubmitted text ids
-    identifiers.each do |i|
-      if i.modified? && i.class.to_s == "DDBIdentifier"  &&  i.status == "editing"
-        #submit it
-        submit_identifier(i)
-        return 
-      end
-    end
-    
-    #find all unsubmitted translation ids
-    identifiers.each do |i|
-      if i.modified? && i.class.to_s == "HGVTransIdentifier"  &&  i.status == "editing"
-        #submit it
-        submit_identifier(i)
-        return
-      end
-    end  
-  
   end
   
   def submit_identifier(identifier)
