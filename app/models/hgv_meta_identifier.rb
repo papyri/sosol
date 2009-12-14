@@ -90,10 +90,8 @@ class HGVMetaIdentifier < HGVIdentifier
       self[key] = value
     end
   end
-
-  def get_or_set_epidoc(get_or_set = :get)
-    doc = REXML::Document.new self.content
-    
+  
+  def self.attributes_xpath_hash
     # set base to metadata in epidoc
     basePath = "TEI.2/text/body/div"
     
@@ -152,8 +150,12 @@ class HGVMetaIdentifier < HGVIdentifier
       :provenance_ancient_region =>
         basePath + provenancePath + "geogName[@type='ancientRegion']"
     }
+  end
+
+  def get_or_set_epidoc(get_or_set = :get)
+    doc = REXML::Document.new self.content
     
-    attributes_xpath_hash.each_pair do |self_attribute, value|
+    self.class.attributes_xpath_hash.each_pair do |self_attribute, value|
       if value.class == String
         xpath = value
         xml_attributes = {}
