@@ -27,4 +27,11 @@ class HGVMetaIdentifierTest < ActiveSupport::TestCase
       assert_path_equal %w{HGV24 23403zzr.xml}, hgv23403zzr.to_path
     end
   end
+  
+  context "identifier titleize" do
+    should "correctly title identifiers with only a collection" do
+      p_rev_laws = Factory.build(:HGVMetaIdentifier, :alternate_name => 'hgv30114', :name => 'oai:papyri.info:identifiers:hgv:P.Rev.%20Laws::')
+      assert_equal p_rev_laws.titleize, 'P.Rev. Laws'
+    end
+  end
 end
