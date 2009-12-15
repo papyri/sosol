@@ -177,7 +177,7 @@ module JRubyXML
     def apply_xpath(input_document_string, input_xpath_string, namespace_aware = false)
       document = document_from_string(input_document_string, namespace_aware)
       xpath = xpath_from_string(input_xpath_string,
-        get_xpath_namespace_context(document))
+        namespace_aware ? get_xpath_namespace_context(document) : nil)
       
       xpath_result = xpath.evaluate(document, 
         javax.xml.xpath.XPathConstants.const_get('NODESET'))
