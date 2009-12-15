@@ -1,4 +1,5 @@
 require 'net/http'
+require 'jruby_xml'
 
 module NumbersRDF
   NUMBERS_SERVER_DOMAIN = 'papyri.info'
@@ -61,13 +62,12 @@ module NumbersRDF
       end
     
       def process_numbers_server_response_body(rdf_xml)
-        doc = REXML::Document.new(rdf_xml)
         identifiers = []
-        ore_describes_path = "/rdf:RDF/rdf:Description/ore:aggregates/rdf:Description/ore:describes"
-        REXML::XPath.each(doc, ore_describes_path) do |ore_describes|
-          identifiers << ore_describes.attributes['rdf:resource']
+        ore_describes_path = "/rdf:RDF/rdf:Description/*/rdf:Description/ore:describes"
+        JRubyXML.apply_xpath(rdf_xml, ore_describes_path, true).each do |ore_describes|
+          identifiers << ore_describes[:attributes]['rdf:resource']
         end
-      
+        
         return identifiers
       end
     end
