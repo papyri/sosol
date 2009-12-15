@@ -1,0 +1,12 @@
+%p== Emend existing publication:
+- form_tag :controller => 'publications', :action => "create" do
+  %select{ :id => 'IdentifierClass', :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})" }
+    %option{ :value => 'DDBIdentifier'}== DDB
+    %option{ :value => 'HGVIdentifier'}== HGV
+  - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
+    %select{ :id => "#{identifier_class}CollectionSelect", :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "$('volume_number').disabled='';if(this.options[0].value==''){this.remove(0)}"}
+      %option{ :value => ''}
+      - identifier_class.collection_names.each do |collection_name|
+        %option{ :value => collection_name }= collection_name
+  = text_field_tag 'volume_number', "Volume Number", :disabled => true, :onclick => "this.clear();$('document_number').disabled=''"
+  = text_field_tag 'document_number', "Document Number", :disabled => true, :onclick => "this.clear()"

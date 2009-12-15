@@ -7,6 +7,8 @@
     %h3== Your #{status} publications
     = render :partial => "publications/list", :object => @publications.collect{|p| p.status == status ? p : nil}.compact
   %br
+  = render :partial => "publications/publication_selector"
+  %br
   - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
     = label_tag 'pn_id', 'Create publication from PN ID:'
     = text_field_tag 'pn_id', '', :size => 40
