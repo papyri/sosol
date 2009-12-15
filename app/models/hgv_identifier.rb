@@ -31,7 +31,9 @@ class HGVIdentifier < Identifier
   end
   
   def titleize
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:hgv:/, '')
+    trimmed_name = name.sub(
+      /^#{NumbersRDF::PREFIX}:#{IDENTIFIER_NAMESPACE}:/,
+      '')
     components = trimmed_name.split(':')
     hgv_collection_name = components[0].to_s
     hgv_volume_number = components[1].to_s
