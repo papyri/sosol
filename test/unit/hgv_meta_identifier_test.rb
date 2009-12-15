@@ -31,7 +31,7 @@ class HGVMetaIdentifierTest < ActiveSupport::TestCase
   context "identifier titleize" do
     should "correctly title identifiers with only a collection" do
       p_rev_laws = Factory.build(:HGVMetaIdentifier, :alternate_name => 'hgv30114', :name => 'oai:papyri.info:identifiers:hgv:P.Rev.%20Laws::')
-      assert_equal p_rev_laws.titleize, 'P.Rev. Laws'
+      assert_equal 'P.Rev. Laws', p_rev_laws.titleize
     end
   end
 end
