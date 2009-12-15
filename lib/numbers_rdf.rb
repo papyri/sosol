@@ -1,5 +1,6 @@
 require 'net/http'
 require 'jruby_xml'
+require 'iconv'
 
 module NumbersRDF
   NUMBERS_SERVER_DOMAIN = 'papyri.info'
@@ -45,7 +46,8 @@ module NumbersRDF
         if response.code != '200'
           return nil
         else
-          return process_numbers_server_response_body(response.body)
+          return process_numbers_server_response_body(
+            Iconv.iconv('UTF-8','LATIN1',response.body).join)
         end
       end
     
