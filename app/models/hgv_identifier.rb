@@ -66,4 +66,10 @@ class HGVIdentifier < Identifier
     components = trimmed_name.split(':')
     return File.join(self.class::PATH_PREFIX, components)
   end
+  
+  def self.collection_names
+    identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(
+      "#{NumbersRDF::PREFIX}:#{IDENTIFIER_NAMESPACE}")
+    identifiers.collect{|i| CGI.unescape(i.split(':').last)}
+  end
 end
