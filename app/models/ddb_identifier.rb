@@ -113,7 +113,7 @@ class DDBIdentifier < Identifier
       collection_names << 
         version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
     end
-    return collection_names
+    return collection_names.sort
   end
   
   def self.ddb_series_to_human_collection(ddb_series_number)
