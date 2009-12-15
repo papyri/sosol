@@ -158,8 +158,11 @@ module JRubyXML
       xpath_results = []
       0.upto(xpath_result.getLength() - 1) do |i|
         item = xpath_result.item(i)
-        xpath_results << [item.getNodeName(), item.getNodeValue(), 
-          named_node_map_to_hash(item.getAttributes())]
+        xpath_results << {
+            :name => item.getNodeName(),
+            :value => item.getNodeValue(),
+            :attributes => named_node_map_to_hash(item.getAttributes())
+          }
       end
       return xpath_results
     end
@@ -168,7 +171,7 @@ module JRubyXML
       root_xpath = xpath_from_string('/*')
       document_root = xpath_result_to_array(root_xpath.evaluate(document,
         javax.xml.xpath.XPathConstants.const_get('NODESET'))).first
-      return NamespaceContext.new(document_root.last)
+      return NamespaceContext.new(document_root[:attributes])
     end
 
     def apply_xpath(input_document_string, input_xpath_string, namespace_aware = false)
