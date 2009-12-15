@@ -18,7 +18,8 @@ class DDBIdentifier < Identifier
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_human_collection(ddb_series_number)
 
     # strip leading zeros
     ddb_document_number.sub!(/^0*/,'')
@@ -30,7 +31,8 @@ class DDBIdentifier < Identifier
   def id_attribute
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_human_collection(ddb_series_number)
     ddb_collection_name.downcase!
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
   end
@@ -58,7 +60,8 @@ class DDBIdentifier < Identifier
     ddb_document_number.tr!('/','_')
       
     # e.g. 0001 => bgu
-    ddb_collection_name = ddb_series_to_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_collection(ddb_series_number)
     
     if ddb_collection_name.nil?
       raise "DDB Collection Name Not Found"
@@ -81,14 +84,14 @@ class DDBIdentifier < Identifier
     return File.join(path_components)
   end
   
-  def get_collection_xml
+  def self.get_collection_xml
     canonical_repo = Repository.new
     collection_xml = canonical_repo.get_file_from_branch(
                       COLLECTION_XML_PATH, 'master')
   end
 
   # map DDB series number to DDB collection name using collection.xml
-  def ddb_series_to_collection(ddb_series_number)
+  def self.ddb_series_to_collection(ddb_series_number)
     # FIXME: put in canonical collection.xml
     if ddb_series_number.to_i == 500
       return 'sosol'
@@ -101,7 +104,19 @@ class DDBIdentifier < Identifier
     end
   end
   
-  def ddb_series_to_human_collection(ddb_series_number)
+  def self.collection_names
+    collection_names = []
+    collection_xml = get_collection_xml
+    versions = JRubyXML.apply_xpath(collection_xml,
+      "/rdf:RDF/rdf:Description/dcterms:isVersionOf", true)
+    versions.each do |version|
+      collection_names << 
+        version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    end
+    return collection_names
+  end
+  
+  def self.ddb_series_to_human_collection(ddb_series_number)
     # FIXME: put in canonical collection.xml
     if ddb_series_number.to_i == 500
       return 'SoSOL'
