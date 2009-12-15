@@ -9,6 +9,7 @@ module NumbersRDF
   OAI_SCHEME = 'oai'
   OAI_NAMESPACE_IDENTIFIER = 'papyri.info'
   OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}:"
+  PREFIX = "#{OAI_IDENTIFIER_PREFIX}:identifiers"
   
   module NumbersHelper
     class << self
