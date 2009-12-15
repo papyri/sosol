@@ -8,13 +8,13 @@ module NumbersRDF
   # OAI identifiers should be in the form scheme ":" namespace-identifier ":" local-identifier
   OAI_SCHEME = 'oai'
   OAI_NAMESPACE_IDENTIFIER = 'papyri.info'
-  OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}:"
+  OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}"
   PREFIX = "#{OAI_IDENTIFIER_PREFIX}:identifiers"
   
   module NumbersHelper
     class << self
       def identifier_to_local_identifier(identifier)
-        identifier.sub(/^#{OAI_IDENTIFIER_PREFIX}/, '')
+        identifier.sub(/^#{OAI_IDENTIFIER_PREFIX}:/, '')
       end
     
       def identifier_to_components(identifier)
