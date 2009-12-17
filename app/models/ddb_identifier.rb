@@ -10,6 +10,18 @@ class DDBIdentifier < Identifier
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
 
+  class CollectionXML
+    include Singleton
+    
+    attr_reader :collection_xml, :rexml_document
+    
+    def initialize
+      canonical_repo = Repository.new
+      @collection_xml = canonical_repo.get_file_from_branch(
+                        COLLECTION_XML_PATH, 'master')
+      @rexml_document = REXML::Document.new(@collection_xml)
+    end
+  end
 
   def self.friendly_name
     return "Text"
@@ -85,9 +97,7 @@ class DDBIdentifier < Identifier
   end
   
   def self.get_collection_xml
-    canonical_repo = Repository.new
-    collection_xml = canonical_repo.get_file_from_branch(
-                      COLLECTION_XML_PATH, 'master')
+    CollectionXML.instance.collection_xml
   end
 
   # map DDB series number to DDB collection name using collection.xml
@@ -96,11 +106,32 @@ class DDBIdentifier < Identifier
     if ddb_series_number.to_i == 500
       return 'sosol'
     else
-      collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+      # collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
         "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
       return xpath_result.nil? ? nil : xpath_result.to_s
+    end
+  end
+  
+  # map DDB human collection name to DDB series number using collection.xml
+  def self.ddb_human_collection_to_series(ddb_collection_name)
+    # collection_xml = get_collection_xml
+    #[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']
+    xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
+      "/rdf:RDF/rdf:Description/dcterms:isVersionOf[@rdf:resource = 'Perseus:abo:pap,#{ddb_collection_name}']/..")
+    xpath_result.attributes['rdf:about'].sub(/^Perseus:text:1999.05./,'')
+  end
+  
+  def self.ddb_series_to_human_collection(ddb_series_number)
+    # FIXME: put in canonical collection.xml
+    if ddb_series_number.to_i == 500
+      return 'SoSOL'
+    else
+      # collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
+        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
+      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
     end
   end
   
@@ -114,18 +145,6 @@ class DDBIdentifier < Identifier
         version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
     end
     return collection_names.sort
-  end
-  
-  def self.ddb_series_to_human_collection(ddb_series_number)
-    # FIXME: put in canonical collection.xml
-    if ddb_series_number.to_i == 500
-      return 'SoSOL'
-    else
-      collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
-        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
-      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
-    end
   end
   
   def before_commit(content)
