@@ -163,6 +163,47 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])    
   end
   
+  def create_from_selector
+    identifier_class = params[:IdentifierClass]
+    collection = params["#{identifier_class}CollectionSelect".intern]
+    volume = params[:volume_number]
+    document = params[:document_number]
+    
+    if identifier_class == 'DDBIdentifier'
+      collection = DDBIdentifier.ddb_human_collection_to_series(collection)
+    elsif identifier_class == 'HGVIdentifier'
+      collection = CGI.escape(collection)
+    end
+    
+    namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
+    identifier = [NumbersRDF::PREFIX, 
+      namespace, collection, volume, document].join(':')
+    
+    @publication = Publication.new()
+    @publication.populate_identifiers_from_identifier(
+      identifier)
+    @publication.owner = @current_user
+
+    @publication.creator = @current_user
+
+    if @publication.save
+      @publication.branch_from_master
+
+      # need to remove repeat against publication model
+      e = Event.new
+      e.category = "started editing"
+      e.target = @publication
+      e.owner = @current_user
+      e.save!
+
+      flash[:notice] = 'Publication was successfully created.'
+      redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    else
+      flash[:notice] = 'Error creating publication'
+      redirect_to dashboard_url
+    end
+  end
+  
   def vote
     @vote = Vote.new(params[:vote])
     @vote.user_id = @current_user.id      
