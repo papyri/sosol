@@ -1,4 +1,5 @@
 #main.site
+  = render :partial => "common/flash_all"
   %h2 Your Publications
   = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
   - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","approved","finalizing"].index(s)}
