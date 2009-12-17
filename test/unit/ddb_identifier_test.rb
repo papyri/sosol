@@ -1,6 +1,26 @@
 require 'test_helper'
 
-class DDBIdentifierTest < ActiveSupport::TestCase  
+class DDBIdentifierTest < ActiveSupport::TestCase
+  context "collection names" do
+    setup do
+      @collection_names = DDBIdentifier.collection_names
+    end
+    
+    should "be unique" do
+      assert_equal @collection_names.uniq, @collection_names
+    end
+    
+    should "uniquely map to series numbers" do
+      series_numbers = @collection_names.collect {|i| DDBIdentifier.ddb_human_collection_to_series(i)}
+      
+      assert_equal series_numbers.uniq, series_numbers
+      
+      series_numbers_to_collection_names = series_numbers.collect {|i| DDBIdentifier.ddb_series_to_human_collection(i)}
+      
+      assert_equal @collection_names, series_numbers_to_collection_names
+    end
+  end
+  
   context "identifier mapping" do
     setup do
       @path_prefix = DDBIdentifier::PATH_PREFIX
