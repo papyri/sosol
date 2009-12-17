@@ -179,28 +179,35 @@ class PublicationsController < ApplicationController
     identifier = [NumbersRDF::PREFIX, 
       namespace, collection, volume, document].join(':')
     
-    @publication = Publication.new()
-    @publication.populate_identifiers_from_identifier(
-      identifier)
-    @publication.owner = @current_user
-
-    @publication.creator = @current_user
-
-    if @publication.save
-      @publication.branch_from_master
-
-      # need to remove repeat against publication model
-      e = Event.new
-      e.category = "started editing"
-      e.target = @publication
-      e.owner = @current_user
-      e.save!
-
-      flash[:notice] = 'Publication was successfully created.'
-      redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
-    else
-      flash[:notice] = 'Error creating publication'
+    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    
+    if related_identifiers.length == 0
+      flash[:notice] = 'Error creating publication: publication not found'
       redirect_to dashboard_url
+    else
+      @publication = Publication.new()
+      @publication.populate_identifiers_from_identifier(
+        identifier)
+      @publication.owner = @current_user
+
+      @publication.creator = @current_user
+
+      if @publication.save
+        @publication.branch_from_master
+
+        # need to remove repeat against publication model
+        e = Event.new
+        e.category = "started editing"
+        e.target = @publication
+        e.owner = @current_user
+        e.save!
+
+        flash[:notice] = 'Publication was successfully created.'
+        redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+      else
+        flash[:notice] = 'Error creating publication'
+        redirect_to dashboard_url
+      end
     end
   end
   
