@@ -172,12 +172,14 @@ class PublicationsController < ApplicationController
     if identifier_class == 'DDBIdentifier'
       collection = DDBIdentifier.ddb_human_collection_to_series(collection)
     elsif identifier_class == 'HGVIdentifier'
-      collection = CGI.escape(collection)
+      collection = URI.escape(collection)
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
     identifier = [NumbersRDF::PREFIX, 
       namespace, collection, volume, document].join(':')
+
+    Rails.logger.info("Identifier: #{identifier}")
     
     related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     
