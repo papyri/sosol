@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: global-varsandparams.xsl 1447 2008-08-07 12:57:55Z zau $ -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 version="1.0">
@@ -10,7 +10,8 @@
   
   <!-- Location of HGV glossary file relative to the current file -->
   <xsl:param name="hgv-gloss">
-      <xsl:text>../../../xml/idp.data/trunk/HGV_trans_EpiDoc/glossary.xml</xsl:text>
+      <!--<xsl:text>../../../xml/idp.data/trunk/HGV_trans_EpiDoc/glossary.xml</xsl:text>-->
+      <xsl:text>../../../data/xslt/translation/hgv-glossary.xml</xsl:text>
   </xsl:param>
   
   <!-- Mapping file -->
