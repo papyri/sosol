@@ -42,4 +42,11 @@ class HGVTransIdentifier < HGVIdentifier
     return true
   end
   
+  
+  def preview
+      JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt pn start-divtrans-portlet.xsl})))
+  end
 end
