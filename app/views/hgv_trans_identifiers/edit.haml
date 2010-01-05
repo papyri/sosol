@@ -65,6 +65,8 @@
           #hide_div{:class => "chooser"}
         #trans_and_xml
           #editing_trans_preview	
+          #editing_trans_text_view
+            = @identifier[:text_html_preview]
           #editing_trans_xml_div          
             %textarea{:name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")' }
               =@identifier.content 
@@ -75,4 +77,7 @@
             =@glossary_xml
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+        
+        
+        
 	

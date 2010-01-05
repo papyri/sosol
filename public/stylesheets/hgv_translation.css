@@ -15,6 +15,17 @@ border-width:medium;
 margin-bottom: 5px;
 }
 
+#editing_trans_text_view {
+width: 40em !important;
+font-size: medium;/*set so that em sizing is consisent*/
+
+padding: 5px 5px;
+
+border-style: solid;
+border-width:medium;
+
+}
+
 #editing_trans_xml {
 height:200em !important;
 width:400em !important;

@@ -28,6 +28,13 @@ class HgvTransIdentifiersController < IdentifiersController
     # @glossary = xslt.serve()
     
     @glossary = glossary_identifier.to_chooser
+    
+    #find text
+    @identifier.publication.identifiers.each do |id|
+      if (id.class.to_s == "DDBIdentifier")
+        @identifier[:text_html_preview] = id.preview
+      end    
+    end
         
     #render :template => 'identifiers/editxml'
   end
@@ -52,12 +59,14 @@ class HgvTransIdentifiersController < IdentifiersController
   def preview
     find_identifier
     
-    Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
-    xslt = XML::XSLT.new()
-    xslt.xml = REXML::Document.new(@identifier.xml_content)
-    xslt.xsl = REXML::Document.new File.open('start-divtrans-portlet.xsl')
+   # Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
+   # xslt = XML::XSLT.new()
+   # xslt.xml = REXML::Document.new(@identifier.xml_content)
+   # xslt.xsl = REXML::Document.new File.open('start-divtrans-portlet.xsl')
     
-    @identifier[:html_preview] = xslt.serve()
+   # @identifier[:html_preview] = xslt.serve()
+    
+    @identifier[:html_preview] = @identifier.preview
   end
   
   
