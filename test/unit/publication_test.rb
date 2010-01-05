@@ -21,6 +21,10 @@ class PublicationTest < ActiveSupport::TestCase
         assert identifier.is_valid_xml?
       end
     end
+    
+    should "have status 'new'" do
+      assert_equal @publication.status, "new"
+    end
   end
   
   context "a publication copied to another owner" do

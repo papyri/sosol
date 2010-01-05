@@ -7,8 +7,21 @@ class DDBIdentifier < Identifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
+  # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
 
+  class CollectionXML
+    include Singleton
+    
+    attr_reader :collection_xml, :rexml_document
+    
+    def initialize
+      canonical_repo = Repository.new
+      @collection_xml = canonical_repo.get_file_from_branch(
+                        COLLECTION_XML_PATH, 'master')
+      @rexml_document = REXML::Document.new(@collection_xml)
+    end
+  end
 
   def self.friendly_name
     return "Text"
@@ -17,7 +30,8 @@ class DDBIdentifier < Identifier
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_human_collection(ddb_series_number)
 
     # strip leading zeros
     ddb_document_number.sub!(/^0*/,'')
@@ -29,7 +43,8 @@ class DDBIdentifier < Identifier
   def id_attribute
     ddb_series_number, ddb_volume_number, ddb_document_number =
       to_components
-    ddb_collection_name = ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_human_collection(ddb_series_number)
     ddb_collection_name.downcase!
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
   end
@@ -57,7 +72,8 @@ class DDBIdentifier < Identifier
     ddb_document_number.tr!('/','_')
       
     # e.g. 0001 => bgu
-    ddb_collection_name = ddb_series_to_collection(ddb_series_number)
+    ddb_collection_name = 
+      self.class.ddb_series_to_collection(ddb_series_number)
     
     if ddb_collection_name.nil?
       raise "DDB Collection Name Not Found"
@@ -80,36 +96,55 @@ class DDBIdentifier < Identifier
     return File.join(path_components)
   end
   
-  def get_collection_xml
-    canonical_repo = Repository.new
-    collection_xml = canonical_repo.get_file_from_branch(
-                      COLLECTION_XML_PATH, 'master')
+  def self.get_collection_xml
+    CollectionXML.instance.collection_xml
   end
 
   # map DDB series number to DDB collection name using collection.xml
-  def ddb_series_to_collection(ddb_series_number)
+  def self.ddb_series_to_collection(ddb_series_number)
     # FIXME: put in canonical collection.xml
     if ddb_series_number.to_i == 500
       return 'sosol'
     else
-      collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+      # collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
         "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
     
       return xpath_result.nil? ? nil : xpath_result.to_s
     end
   end
   
-  def ddb_series_to_human_collection(ddb_series_number)
+  # map DDB human collection name to DDB series number using collection.xml
+  def self.ddb_human_collection_to_series(ddb_collection_name)
+    # collection_xml = get_collection_xml
+    #[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']
+    xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
+      "/rdf:RDF/rdf:Description/dcterms:isVersionOf[@rdf:resource = 'Perseus:abo:pap,#{ddb_collection_name}']/..")
+    xpath_result.attributes['rdf:about'].sub(/^Perseus:text:1999.05./,'')
+  end
+  
+  def self.ddb_series_to_human_collection(ddb_series_number)
     # FIXME: put in canonical collection.xml
     if ddb_series_number.to_i == 500
       return 'SoSOL'
     else
-      collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(REXML::Document.new(collection_xml),
+      # collection_xml = get_collection_xml
+      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
         "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
       xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
     end
+  end
+  
+  def self.collection_names
+    collection_names = []
+    collection_xml = get_collection_xml
+    versions = JRubyXML.apply_xpath(collection_xml,
+      "/rdf:RDF/rdf:Description/dcterms:isVersionOf", true)
+    versions.each do |version|
+      collection_names << 
+        version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
+    end
+    return collection_names.sort
   end
   
   def before_commit(content)
@@ -122,14 +157,7 @@ class DDBIdentifier < Identifier
   def leiden_plus
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(xml_content))
-    begin
-      transformed = DDBIdentifier.xml2nonxml(abs)
-    rescue Exception => e
-      if e.message.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
-        return e.message.to_s + "\n" + 
-          DDBIdentifier.parse_exception_pretty_print(abs, $1.to_i)
-      end
-    end
+    transformed = DDBIdentifier.xml2nonxml(abs)
     return transformed
   end
   
@@ -139,6 +167,12 @@ class DDBIdentifier < Identifier
       leiden_plus_content)
     # commit xml to repo
     self.set_xml_content(xml_content, :comment => comment)
+  end
+  
+  def is_reprinted?
+    xpath_result = REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/body/head/ref[@type='reprint-in']")
+    return xpath_result.nil? ? false : true
   end
   
   # Override REXML::Attribute#to_string so that attributes are defined

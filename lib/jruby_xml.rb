@@ -82,6 +82,33 @@ module JRubyXML
         "http://www.stoa.org/epidoc/dtd/6/tei-epidoc.dtd")
     end
   end
+  
+  class NamespaceContext
+    include javax.xml.namespace.NamespaceContext
+    
+    def initialize(root_node_attribute_hash)
+      @prefixes = {
+        javax.xml.XMLConstants.const_get('DEFAULT_NS_PREFIX') => 
+          javax.xml.XMLConstants.const_get('NULL_NS_URI'),
+        javax.xml.XMLConstants.const_get('XML_NS_PREFIX') => 
+          javax.xml.XMLConstants.const_get('XML_NS_URI'),
+        javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE') =>
+          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI')
+      }
+      root_node_attribute_hash.each_pair do |attribute_name, uri|
+        if attribute_name =~ /^xmlns:/
+          namespace = attribute_name.split(':').last
+          @prefixes[namespace] = uri
+        elsif attribute_name == 'xmlns'
+          @prefixes[javax.xml.XMLConstants.const_get('DEFAULT_NS_PREFIX')] = uri
+        end
+      end
+    end
+    
+    def getNamespaceURI(prefix)
+      return @prefixes[prefix]
+    end
+  end
 
   class << self
     def input_source_from_string(input_string)
@@ -95,6 +122,66 @@ module JRubyXML
 
     def stream_from_file(input_file)
       javax.xml.transform.stream.StreamSource.new(input_file)
+    end
+    
+    def document_from_string(input_string, namespace_aware = false)
+      dom_factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+      dom_factory.setNamespaceAware(namespace_aware)
+      builder = dom_factory.newDocumentBuilder()
+      document = builder.parse(input_source_from_string(input_string))
+    end
+    
+    def xpath_from_string(input_string, namespace_context = nil)
+      xpath_factory = javax.xml.xpath.XPathFactory.newInstance()
+      xpath = xpath_factory.newXPath()
+      unless namespace_context.nil?
+        xpath.setNamespaceContext(namespace_context)
+      end
+      xpath_expression = xpath.compile(input_string)
+    end
+    
+    def named_node_map_to_hash(named_node_map)
+      if named_node_map.nil?
+        return nil
+      else
+        result_hash = {}
+        0.upto(named_node_map.getLength() - 1) do |i|
+          item = named_node_map.item(i)
+          result_hash[item.getNodeName()] = item.getNodeValue()
+        end
+        return result_hash
+      end
+    end
+    
+    def xpath_result_to_array(xpath_result)
+      # xpath_result is a org.w3c.dom.NodeList
+      xpath_results = []
+      0.upto(xpath_result.getLength() - 1) do |i|
+        item = xpath_result.item(i)
+        xpath_results << {
+            :name => item.getNodeName(),
+            :value => item.getNodeValue(),
+            :attributes => named_node_map_to_hash(item.getAttributes())
+          }
+      end
+      return xpath_results
+    end
+    
+    def get_xpath_namespace_context(document)
+      root_xpath = xpath_from_string('/*')
+      document_root = xpath_result_to_array(root_xpath.evaluate(document,
+        javax.xml.xpath.XPathConstants.const_get('NODESET'))).first
+      return NamespaceContext.new(document_root[:attributes])
+    end
+
+    def apply_xpath(input_document_string, input_xpath_string, namespace_aware = false)
+      document = document_from_string(input_document_string, namespace_aware)
+      xpath = xpath_from_string(input_xpath_string,
+        namespace_aware ? get_xpath_namespace_context(document) : nil)
+      
+      xpath_result = xpath.evaluate(document, 
+        javax.xml.xpath.XPathConstants.const_get('NODESET'))
+      return xpath_result_to_array(xpath_result)
     end
 
     def apply_xsl_transform(xml_stream, xsl_stream)

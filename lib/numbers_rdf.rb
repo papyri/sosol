@@ -1,4 +1,6 @@
 require 'net/http'
+require 'jruby_xml'
+require 'iconv'
 
 module NumbersRDF
   NUMBERS_SERVER_DOMAIN = 'papyri.info'
@@ -7,12 +9,13 @@ module NumbersRDF
   # OAI identifiers should be in the form scheme ":" namespace-identifier ":" local-identifier
   OAI_SCHEME = 'oai'
   OAI_NAMESPACE_IDENTIFIER = 'papyri.info'
-  OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}:"
+  OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}"
+  PREFIX = "#{OAI_IDENTIFIER_PREFIX}:identifiers"
   
   module NumbersHelper
     class << self
       def identifier_to_local_identifier(identifier)
-        identifier.sub(/^#{OAI_IDENTIFIER_PREFIX}/, '')
+        identifier.sub(/^#{OAI_IDENTIFIER_PREFIX}:/, '')
       end
     
       def identifier_to_components(identifier)
@@ -43,7 +46,8 @@ module NumbersRDF
         if response.code != '200'
           return nil
         else
-          return process_numbers_server_response_body(response.body)
+          return process_numbers_server_response_body(
+            Iconv.iconv('UTF-8','LATIN1',response.body).join)
         end
       end
     
@@ -61,13 +65,12 @@ module NumbersRDF
       end
     
       def process_numbers_server_response_body(rdf_xml)
-        doc = REXML::Document.new(rdf_xml)
         identifiers = []
-        ore_describes_path = "/rdf:RDF/rdf:Description/ore:aggregates/rdf:Description/ore:describes"
-        REXML::XPath.each(doc, ore_describes_path) do |ore_describes|
-          identifiers << ore_describes.attributes['rdf:resource']
+        ore_describes_path = "/rdf:RDF/rdf:Description/*/rdf:Description/ore:describes"
+        JRubyXML.apply_xpath(rdf_xml, ore_describes_path, true).each do |ore_describes|
+          identifiers << ore_describes[:attributes]['rdf:resource']
         end
-      
+        
         return identifiers
       end
     end
