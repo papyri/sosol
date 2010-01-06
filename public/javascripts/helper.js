@@ -16,8 +16,7 @@ var success = function(resp) {
 
 function init() 
   {
-//line below causes error in IE when load pages other than vestig because checkbox does not exist on them
-  document.vestig.vestiglow_check_n.disabled = true;
+  //add anything you need for initial page load here
   }
   
 window.onload = init;

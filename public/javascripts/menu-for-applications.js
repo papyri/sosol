@@ -123,9 +123,10 @@ DHTMLSuite.config.prototype = {
 	 */
 	init : function()
 	{
-		this.imagePath = '../images_dhtmlsuite/';	// Path to images
+		//this.imagePath = '../images_dhtmlsuite/';	// Path to images
+		this.imagePath = '/images/';	// Path to images
 //		this.cssPath = '../css_dhtmlsuite/';	// Path to stylesheets
-    this.cssPath = '/public/stylesheets/';	// Path to stylesheets
+		this.cssPath = '/stylesheets/';	// Path to stylesheets
 	}
 	// }}}
 	,
