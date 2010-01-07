@@ -14,3 +14,57 @@ module ApplicationHelper
     BASE_URL + '/openid/v2/widget'
   end
 end
+
+require 'rexml/document'
+
+class REXML::XPath
+
+  public
+
+  @@breakXpathIntoLumps = {}
+
+  def self.breakXpathIntoLumps xpath
+    key = xpath.hash
+    
+    if !@@breakXpathIntoLumps.include? key
+      lumps = []
+      lumpPath = ''
+
+      xpath.split('/').delete_if{|item| (item == '') || (!item)}.each {|item|
+
+      attributes = {}
+      item.scan(/\[@([^=]+)=["']([^\]]+)["']\]/) {|match| attributes[match[0]] = match[1]}
+
+      lumps[lumps.length] = {
+        :xpath => lumpPath += '/' + item,
+        :element => item.include?('[') ? item[0, item.index('[')] : item,
+        :attributes => attributes
+        }
+      }
+      @@breakXpathIntoLumps[key] = lumps
+    end
+    @@breakXpathIntoLumps[key]
+  end
+
+end
+
+class REXML::Document
+
+  public
+
+  #todo: defend against evil parameterisation, currently assumes valid and fully qualified xpath string
+  def bulldozePath xpath
+    if self.elements[xpath].class != REXML::Element
+      lumps = REXML::XPath::breakXpathIntoLumps xpath
+      head = nil
+      lumps.each do |lump|
+        if self.elements[lump[:xpath]].class == REXML::Element
+          head = self.elements[lump[:xpath]]
+        elsif head.class == REXML::Element
+          head = head.add_element lump[:element], lump[:attributes]
+        end
+      end
+    end
+  end
+
+end

@@ -29,7 +29,7 @@ class HGVMetaIdentifier < HGVIdentifier
   def id_attribute
     return "hgvTEMP"
   end
-  
+
   def n_attribute
     ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
     return ddb.n_attribute
@@ -49,7 +49,8 @@ class HGVMetaIdentifier < HGVIdentifier
       :tm_nr, :illustrations, :contentText, :other_publications,
       :translations, :bl, :notes, :mentioned_dates, :material,
       :provenance_ancient_findspot, :provenance_nome,
-      :provenance_ancient_region]
+      :provenance_ancient_region,
+      :provenance_modern_findspot, :inventory_number, :planned_for_future_print_release]
   end
   
   def get_or_set_xml_attribute(get_or_set, self_attribute, xml_node, attribute)
@@ -84,29 +85,29 @@ class HGVMetaIdentifier < HGVIdentifier
     epidoc = self.get_or_set_epidoc(:set)
     self.set_content(epidoc, :comment => comment)
   end
-  
+
   def get_epidoc_attributes_from_params(attributes_hash)
     attributes_hash.each_pair do |key, value|
       self[key] = value
     end
   end
-  
+
   def self.attributes_xpath_hash
     # set base to metadata in epidoc
-    basePath = "TEI.2/text/body/div"
-    
+    basePathBody = "/TEI.2/text/body/div"
+    basePathHeader = "/TEI.2/teiHeader/fileDesc/"
+
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
-    titlePath = "TEI.2/teiHeader/fileDesc/titleStmt/title/"
     provenancePath = "[@type='history'][@subtype='locations']/p/"
-    
+
     # A hash from attribute symbol to either:
     # (1) a String containing XPath for text
     # (2) an array where the first element is (1) and the last is a hash
     #     of attributes to xml attributes
     attributes_xpath_hash = {
-      :textDate => 
+      :textDate =>
         [
-          basePath + "[@type='commentary'][@subtype='textDate']/" + 
+          basePathBody + "[@type='commentary'][@subtype='textDate']/" + 
             "p/date[@type='textDate']",
           {
             :onDate => "value",
@@ -114,47 +115,53 @@ class HGVMetaIdentifier < HGVIdentifier
             :notBeforeDate => "notBefore"
           }
         ],
-      :title => titlePath,
+      :title => basePathHeader + "titleStmt/title/",
       :publicationTitle => 
-        basePath + publicationPath + 
+        basePathBody + publicationPath + 
           "bibl[@type='publication'][@subtype='principal']/" + 
           "title/",
       :publicationVolume =>
-        basePath + publicationPath + 
+        basePathBody + publicationPath + 
           "bibl[@type='publication'][@subtype='principal']/" + 
           "biblScope[@type='volume']/",
       :publicationNumbers => 
-        basePath + publicationPath +
+        basePathBody + publicationPath +
           "bibl[@type='publication'][@subtype='principal']/" +
           "biblScope[@type='numbers']/",
       :tm_nr => 
-        basePath + publicationPath + 
+        basePathBody + publicationPath + 
           "bibl[@type='Trismegistos']/biblScope[@type='numbers']",
       :illustrations => 
-        basePath + "[@type='bibliography'][@subtype='illustrations']/p",
-      :contentText => basePath + "[@type='...']/p/rs[@type='textType']",
+        basePathBody + "[@type='bibliography'][@subtype='illustrations']/p",
+      :contentText => basePathBody + "[@type='...']/p/rs[@type='textType']",
       :other_publications => 
-        basePath + "[@type='bibliography'][@subtype='otherPublications']/" + 
+        basePathBody + "[@type='bibliography'][@subtype='otherPublications']/" + 
           "bibl[@type='publication'][@subtype='other']/",
       :translations => 
-        basePath + "[@type='bibliography'][@n='translations']/p",
-      :bl => basePath + "[@type='bibliography']/bibl[@type='BL']",
-      :notes => basePath + "[@type='commentary'][@subtype='general']/p",
+        basePathBody + "[@type='bibliography'][@n='translations']/p",
+      :bl => basePathBody + "[@type='bibliography']/bibl[@type='BL']",
+      :notes => basePathBody + "[@type='commentary'][@subtype='general']/p",
       :mentioned_dates => 
-        basePath + "[@type='commentary'][@subtype='general']/p/head",
-      :material => basePath + "[@type='description']/p/rs[@type='material']",
+        basePathBody + "[@type='commentary'][@subtype='general']/p/head",
+      :material => basePathBody + "[@type='description']/p/rs[@type='material']",
       :provenance_ancient_findspot => 
-        basePath + provenancePath + "placeName[@type='ancientFindspot']",
+        basePathBody + provenancePath + "placeName[@type='ancientFindspot']",
       :provenance_nome =>
-        basePath + provenancePath + "geogName[@type='nome']",
+        basePathBody + provenancePath + "geogName[@type='nome']",
       :provenance_ancient_region =>
-        basePath + provenancePath + "geogName[@type='ancientRegion']"
+        basePathBody + provenancePath + "geogName[@type='ancientRegion']",
+      :provenance_modern_findspot =>
+        basePathBody + provenancePath + "placeName[@type='modernFindspot']",
+      :inventory_number =>
+        basePathHeader + "sourceDesc/msDesc/msIdentifier/idno[@type='invno']", 
+      :planned_for_future_print_release =>
+        basePathHeader + "publicationStmt/idno[@type='futurePrintRelease']"
     }
   end
 
   def get_or_set_epidoc(get_or_set = :get)
     doc = REXML::Document.new self.content
-    
+
     self.class.attributes_xpath_hash.each_pair do |self_attribute, value|
       if value.class == String
         xpath = value
@@ -164,18 +171,22 @@ class HGVMetaIdentifier < HGVIdentifier
         xml_attributes = value.last
       end
       
+      if (get_or_set == :set) && !self[self_attribute].empty?
+        doc.bulldozePath xpath # assure xpath exists
+      end
+
       REXML::XPath.each(doc, xpath) do |res|
         xml_attributes.each_pair do |nested_self_attribute, xml_attribute|
           get_or_set_xml_attribute(get_or_set, nested_self_attribute, res, xml_attribute)
         end
-        
         get_or_set_xml_text(get_or_set, self_attribute, res)
       end
-    end
-    
+   end
+
     # write back to a string
     modified_xml_content = ''
-    doc.write(modified_xml_content)
+    doc.write modified_xml_content
     return modified_xml_content
   end
+
 end
