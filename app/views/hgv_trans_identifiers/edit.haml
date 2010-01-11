@@ -29,7 +29,10 @@
           #milestone_div{:class => "chooser"}
             %button{ :type => "button", :onclick=>"insertMilestone('line', 0, 'break')" }Insert Milestone Hard LB
             %button{ :type => "button", :onclick=>"insertMilestone('line', 0)" }Insert Milestone LB
-            %button{ :type => "button", :onclick=>"insertEmptyTag('lb')" }Insert LB
+            %br
+            %span{ :class => "label" }Line Number
+            %textarea{ :id=> 'milestone_line_number' }
+            -#%button{ :type => "button", :onclick=>"insertEmptyTag('lb')" }Insert LB
           #app_div{:class => "chooser"}
             %p
               %span{ :class => "app_label" }App Type
@@ -37,9 +40,9 @@
             %p
               %span{ :class => "app_label" }Lem
               %textarea{ :id => 'app_lem' }            
-            %p
-              %span{ :class => "app_label" }text
-              %textarea{ :id => 'app_text' }
+            -#%p
+            -#  %span{ :class => "app_label" }text
+            -#  %textarea{ :id => 'app_text' }
             
             %button{ :type => "button", :onclick=>"insertApp()" }Insert
           #language_div{:class => "chooser"}

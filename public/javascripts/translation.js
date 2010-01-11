@@ -855,7 +855,24 @@ function insertNewLanguage(langType, langText)
 
 function insertMilestone(unit, n, rend)
 {	
-	var lineNumber = prompt("Line Number");
+
+  n = document.getElementById("milestone_line_number").value;
+  
+  var lineNumber = parseInt(n);
+  
+  var problem_counter = 0;
+  while (lineNumber == 0 || isNaN(lineNumber))
+  {
+    lineNumber = prompt("Line Number");
+    problem_counter++;
+    if (problem_counter > 3)
+    {
+      return
+    }
+  
+  }
+
+	//var lineNumber = prompt("Line Number");
 	if (lineNumber == null)
 		return;
 	n = lineNumber;

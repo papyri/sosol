@@ -126,6 +126,23 @@ font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 }
 
+#milestone_div textarea {
+overflow: auto;
+font-size: medium;/*set so that em sizing is consisent*/
+height:1.5em !important;
+width:10em !important;
+/*for somereason the order is being ignored here, this is the last stylesheet but it is being overidden somewhere else so I added the important csc*/
+}
+
+#milestone_div .label {
+text-align: left; 
+vertical-align: middle;
+height:1.5em ;
+width:6em ;
+display: inline-block;
+}
+
+
 #text_div {
 height:10em;
 width:40em;

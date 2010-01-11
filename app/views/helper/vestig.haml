@@ -15,7 +15,7 @@
         %input{ :type => "radio", :class => "vestig_radio", :id => "line", :name => "vestig_type", :value => "line", :onclick => "checktypevestig(this.id)"}Line
       #low_left
         %form{:name => "vestig"}
-          %input{ :type => "checkbox", :class => "vestiglow_check_c", :id => "vestiglow", :name => "vestiglow_check_n", :value => "vestiglow"}Cert Low (line only)
+          %input{ :type => "checkbox", :class => "vestiglow_check_c", :id => "vestiglow", :name => "vestiglow_check_n", :value => "vestiglow", :disabled => "true"}Cert Low (line only)
       #button_left
         %button{ :type => "button", :onclick=>"insertVestig()" }Insert
         &nbsp
