@@ -1,0 +1,28 @@
+%h1
+  New glossary
+- form_for(@glossary) do |f|
+  = f.error_messages
+  %p
+    = f.label :item
+    = f.text_field :item
+  %p
+    = f.label :term
+    = f.text_field :term
+  %p
+    = f.label :en
+    = f.text_field :en
+  %p
+    = f.label :de
+    = f.text_field :de
+  %p
+    = f.label :fr
+    = f.text_field :fr
+  %p
+    = f.label :sp
+    = f.text_field :sp
+  %p
+    = f.label :la
+    = f.text_field :la
+  %p
+    = f.submit "Create"
+= link_to 'Back', glossaries_path

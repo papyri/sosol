@@ -1,0 +1,15 @@
+%p
+  %b
+    Item
+  = h @glossary.item
+%p
+  %b
+    Greek Term
+  = h @glossary.term
+- @glossary.text.each do |lang, definition|
+  %p
+    %b
+      = lang
+      \-
+    = h @glossary.text[lang]
+= link_to 'Back', hgv_trans_glossaries_path
