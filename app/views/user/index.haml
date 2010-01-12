@@ -1,0 +1,23 @@
+%h1
+  Users
+%table
+  %tr
+    %th
+      Id
+    %th
+      Name
+    %th
+      Admin
+    %th
+      Developer
+  - for user in @users
+  %tr
+    %td
+      = h user.id
+    %td
+      = h user.name
+    %td
+      = h user.admin
+    %td
+      = h user.developer
+  - end
