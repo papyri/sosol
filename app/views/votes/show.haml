@@ -1,0 +1,15 @@
+%p
+  %b
+    Choice:
+  = h @vote.choice
+%p
+  %b
+    User:
+  = h @vote.user_id
+%p
+  %b
+    Publication:
+  = h @vote.publication_id
+= link_to 'Edit', edit_vote_path(@vote)
+|
+= link_to 'Back', votes_path

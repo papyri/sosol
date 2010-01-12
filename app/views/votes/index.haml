@@ -1,0 +1,26 @@
+%h1
+  Listing votes
+%table
+  %tr
+    %th
+      Choice
+    %th
+      User
+    %th
+      Article
+  - for vote in @votes
+    %tr
+      %td
+        = h vote.choice
+      %td
+        = h vote.user_id
+      %td
+        = h vote.publication_id
+      %td
+        = link_to 'Show', vote
+      %td
+        = link_to 'Edit', edit_vote_path(vote)
+      %td
+        = link_to 'Destroy', vote, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New vote', new_vote_path

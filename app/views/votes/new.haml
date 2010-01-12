@@ -1,0 +1,19 @@
+%h1
+  New vote
+- form_for(@vote) do |f|
+  = f.error_messages
+  %p
+    = f.label :choice
+    %br
+    = f.text_field :choice
+  %p
+    = f.label :user_id
+    %br
+    = f.text_field :user_id
+  %p
+    = f.label :publication_id
+    %br
+    = f.text_field :publication_id
+  %p
+    = f.submit "Create"
+= link_to 'Back', votes_path
