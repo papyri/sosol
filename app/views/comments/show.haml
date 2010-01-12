@@ -1,0 +1,27 @@
+%p
+  %b
+    Text:
+  = h @comment.comment
+%p
+  %b
+    User:
+  = h @comment.user_id
+%p
+  %b
+    Publication:
+  = h @comment.publication_id
+%p
+  %b
+    Identifier:
+  = h @comment.identifier_id
+%p
+  %b
+    Git Hash:
+  = h @comment.git_hash
+%p
+  %b
+    Reason:
+  = h @comment.reason
+= link_to 'Edit', edit_comment_path(@comment)
+|
+= link_to 'Back', comments_path
