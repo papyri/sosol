@@ -1,0 +1,36 @@
+%h1
+  Listing emailers
+%table
+  %tr
+    %th
+      Board
+    %th
+      Member
+    %th
+      Extra addresses
+    %th
+      Status
+    %th
+      Include document
+    %th
+      Message
+  - for emailer in @emailers
+    %tr
+      %td
+        = h emailer.board_id
+      %td
+        = h emailer.user_id
+      %td
+        = h emailer.extra_addresses
+      %td
+        = h emailer.include_document
+      %td
+        = h emailer.message
+      %td
+        = link_to 'Show', emailer
+      %td
+        = link_to 'Edit', edit_emailer_path(emailer)
+      %td
+        = link_to 'Destroy', emailer, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New emailer', new_emailer_path

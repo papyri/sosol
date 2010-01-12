@@ -1,0 +1,31 @@
+%p
+  %b
+    Board:
+  = h @emailer.board_id
+%p
+  %b
+    Members:
+  = h @emailer.user_id
+%p
+  %b
+    Extra addresses:
+  = h @emailer.extra_addresses
+%p
+  %b
+    When to send:
+  = h @emailer.when_to_send
+%p
+  %b
+    Include document:
+  = h @emailer.include_document
+%p
+  %b
+    Send to owner:
+  = h @emailer.send_to_owner
+%p
+  %b
+    Message:
+  = h @emailer.message
+= link_to 'Edit', edit_emailer_path(@emailer)
+|
+= link_to 'Back', emailers_path
