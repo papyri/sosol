@@ -1,0 +1,13 @@
+%h1
+  Editing event
+- form_for(@event) do |f|
+  = f.error_messages
+  %p
+    = f.label :category
+    %br
+    = f.text_field :category
+  %p
+    = f.submit "Update"
+= link_to 'Show', @event
+|
+= link_to 'Back', events_path

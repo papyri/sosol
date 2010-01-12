@@ -1,0 +1,18 @@
+%h1
+  Listing events
+%table
+  %tr
+    %th
+      Type
+  - for event in @events
+    %tr
+      %td
+        = h event.category
+      %td
+        = link_to 'Show', event
+      %td
+        = link_to 'Edit', edit_event_path(event)
+      %td
+        = link_to 'Destroy', event, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New event', new_event_path
