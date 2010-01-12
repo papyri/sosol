@@ -1,0 +1,48 @@
+.section
+  %p{ :style => "color: red" }
+    = flash[:error]
+  %h1
+    == #{@current_user.name}'s Account Info
+  %h3
+    Personal
+  - form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
+    = f.error_messages
+    %p
+      = f.label :full_name
+      %br
+      = f.text_field :full_name
+    %p
+      = f.label :affiliation
+      %br
+      = f.text_field :affiliation
+    %p
+      = f.label :email
+      %br
+      = f.text_field :email
+    %br
+    %h3
+      Interface
+    %p
+      Enter choices for languages (en de it fr la el es)
+      %br
+      = f.text_field :language_prefs
+    %p
+      %br
+      = f.submit "Update"
+  %br
+  %br
+  %h3
+    Your OpenIDs
+  - if @identifiers.length == 0
+    %p
+      No OpenIDs are associated with this account.
+  - else
+    %p
+      OpenIDs associated with this account:
+    %ul
+      - @identifiers.each do |identifier|
+        %li
+          = h identifier.identifier
+          \-
+          = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
+  = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow'
