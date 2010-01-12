@@ -11,9 +11,17 @@
   <xsl:template match="/">
     <div class = "trans">         
 				<div>  
-							<xsl:for-each select="/t:TEI/t:text/t:body">
-								<xsl:apply-templates></xsl:apply-templates>
-							</xsl:for-each>        
+          <xsl:choose>
+							<xsl:when test="/t:TEI/t:text/t:body">
+								<xsl:for-each select="/t:TEI/t:text/t:body">
+                  <xsl:apply-templates></xsl:apply-templates>
+                </xsl:for-each>
+							</xsl:when>        
+              <xsl:otherwise>
+                <h3>XML Error</h3>
+                <p>Check the XML. It is not transformable. Common problems are: XML may not be TEI, may be missing body, or may not be well formed.</p>                              
+              </xsl:otherwise>
+          </xsl:choose>
 				</div>     
     </div>
   </xsl:template>
