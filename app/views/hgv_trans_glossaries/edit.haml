@@ -5,27 +5,24 @@
     %h1
       Editing glossary
     - form_tag("update", :method => "put") do
-    %p
-      %b
-        Item
-      = text_field_tag(:item, @entry.item )
-    %p
-      %b
-        Greek Term
-      = text_field_tag(:term, @entry.term )
-    - @entry.text.each do |lang, definition|
-    - @possible_langs.delete(lang)
-    %p
-      %b
-        = lang
-      = text_field_tag(lang, @entry.text[lang])
-    - end
-    - @possible_langs.each do |lang|
-    %p
-      %b
-        = lang
-      = text_field_tag(lang)
-    - end
-    %br
-    = submit_tag("Update")
-    - end
+      %p
+        %b
+          Item
+        = text_field_tag(:item, @entry.item )
+      %p
+        %b
+          Greek Term
+        = text_field_tag(:term, @entry.term )
+      - @entry.text.each do |lang, definition|
+        - @possible_langs.delete(lang)
+        %p
+          %b
+            = lang
+          = text_field_tag(lang, @entry.text[lang])
+      - @possible_langs.each do |lang|
+        %p
+          %b
+            = lang
+          = text_field_tag(lang)
+      %br
+      = submit_tag("Update")

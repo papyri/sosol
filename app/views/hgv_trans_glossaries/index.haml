@@ -23,9 +23,8 @@
       %td
         = h glossary.term
       - glossary.text.each do |lang, definition|
-      %td
-        = h glossary.text[lang]
-      - end
+        %td
+          = h glossary.text[lang]
       %td
         = link_to 'Show', {:action => "show", :id=> glossary.item }
       %td
