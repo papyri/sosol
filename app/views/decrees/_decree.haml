@@ -1,0 +1,16 @@
+.decree
+  %p
+    %b
+      Action:
+    = h decree.action
+  %p
+    %b
+      Trigger:
+    = h decree.trigger
+    = h decree.tally_method
+  %p
+    %b
+      Choices:
+    = h decree.choices
+  - if !defined?(hide_edit_link)
+    = link_to 'Edit', edit_decree_path(decree)
