@@ -66,6 +66,46 @@ function addTextPathToXPath(pathIn)
 	return pathIn.replace(re, "/text()[");
 }
 
+function milestoneEdit(node_path)
+{
+  var newText = document.getElementById(node_path);
+	var text_area_element = document.getElementById("editing_trans_xml");
+	var xml = xmlFromString( text_area_element.value );
+
+  var resultNode;
+  var result;
+	  
+  // code for IE
+  if (window.ActiveXObject)
+  {
+    xml.setProperty("SelectionLanguage", "XPath");
+	  xml.setProperty("SelectionNamespaces", "xmlns:t='http://www.tei-c.org/ns/1.0'");
+	  resultNode = xml.selectSingleNode(addTextPathToXPath(node_path));
+    result = resultNode.getAttribute("n");
+	  //result = resultNode.text;
+
+	  resultNode.setAttribute("n") = newText.innerText; 
+	  text_area_element.value = xml.xml
+  }
+  else
+  {        
+    
+    
+    resultNode = xml.evaluate( addTextPathToXPath(node_path), xml, translation_resolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+	  result = resultNode.singleNodeValue.attributes['n'].value;    
+	  resultNode.singleNodeValue.attributes['n'].value = newText.textContent;    
+    
+	  var s = new XMLSerializer();
+	  text_area_element.value = s.serializeToString(xml);
+  }	
+  
+  saveLocation(node_path);
+
+  
+  
+}
+
+
 
 function textEdit(node_path)
 {

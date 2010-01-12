@@ -112,7 +112,12 @@
   <!--milestone -->
   <xsl:template match="t:milestone[@unit='line']">
     <xsl:if test="@rend='break'"><br /></xsl:if>
-    <sup><b><xsl:value-of select="@n"/></b></sup>
+    
+    <xsl:variable name="path_id">
+      <xsl:call-template name="get_xpath"/>
+    </xsl:variable>
+    
+    <span contentEditable="false"></span><sup><b><span onmouseup="saveLocation(this.id)" onkeyup="milestoneEdit(this.id)" contentEditable="true" id="{$path_id}" class="editable_milestone"><xsl:value-of select="@n"></xsl:value-of></span></b></sup>
   </xsl:template>
 
 
