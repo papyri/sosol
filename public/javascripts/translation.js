@@ -894,6 +894,9 @@ function insertMilestone(unit, n, rend)
     beforeText = resultNode.text.substr(0,savedLocation.minOffset);
 	  afterText = resultNode.text.substr(savedLocation.minOffset);		
 	  
+    
+    //ensure there is space after the milestone
+    resultNode.text = "\u00a0\u00a0\u00a0" + afterText;	
 	  //change the result to be the after text
 	  resultNode.text = afterText;
     milestoneNode = xml.createNode(1,"milestone", resultNode.parentNode.namespaceURI);
@@ -908,8 +911,9 @@ function insertMilestone(unit, n, rend)
 	  beforeText = resultNode.textContent.substr(0,savedLocation.minOffset);
 	  afterText = resultNode.textContent.substr(savedLocation.minOffset);		
 	  
-	  //change the result to be the after text
-	  resultNode.textContent = afterText;	
+    //ensure there is space after the milestone
+    resultNode.textContent = "\u00a0\u00a0\u00a0" + afterText;	
+	  //change the result to be the after text	  
     milestoneNode = xml.createElementNS(resultNode.parentNode.namespaceURI, "milestone");
   } 
 	
@@ -946,14 +950,9 @@ function insertApp()
 	tempNode = document.getElementById("app_lem");
 	var lemText = tempNode.value;
   
-	tempNode = document.getElementById("app_text");
-	var textText = tempNode.value;
-  
-  
-	//tempNode = document.getElementById("app_bibl");
-	//var bibText = tempNode.value;
-	
-	//alert( typeText + " " + lemText);
+	//tempNode = document.getElementById("app_text");
+	//var textText = tempNode.value;
+ 
 	
 	var xml=xmlFromString( document.getElementById("editing_trans_xml").value );
 	
@@ -990,14 +989,10 @@ function insertApp()
     //create new nodes
     appNode = xml.createElementNS(resultNode.parentNode.namespaceURI,"app");	
     lemNode = xml.createElementNS(resultNode.parentNode.namespaceURI,"lem");	
-    //lemNode = xml.createNode(1, "lem", resultNode.parentNode.namespaceURI);
   } 
 		
 	
 	var newTextNode;
- // alert(resultNode.parentNode.namespaceURI);	
- // alert(resultNode.parentNode.localName);	
- // alert(resultNode.parentNode.nodeName);	
   
   if (savedLocation.minOffset != savedLocation.maxOffset)
 	{
@@ -1016,58 +1011,44 @@ function insertApp()
 	{
 		newTextNode = xml.createTextNode("\u00a0\u00a0\u00a0");//something to see
 	}
-	
-	//alert(beforeText + " -- " + afterText);
-	
-  //var appNode = xml.createNode(1, "app", resultNode.parentNode.namespaceURI);
-	//var appNode = xml.createElementNS(resultNode.parentNode.namespaceURI,"app");
-  
    
 	if (typeText)
 		appNode.setAttribute("type", typeText);
 	
-	//var lemNode = xml.createElement("lem");
-  //var lemNode = xml.createElementNS(resultNode.parentNode.namespaceURI,"lem");
-  
-  //var lemNode = xml.createNode(1, "lem", resultNode.parentNode.namespaceURI);
+
 	//todo add if lemText and if selected text
   if (lemText)
   {
     lemNode.setAttribute("resp", lemText);
   }
-	if (textText)
-	{    
-	  lemNode.appendChild( xml.createTextNode(textText));
-  }
-  else//use selected text
-  {    
+
+
+//only use selected text, to make consistent ui
+//	if (textText)
+//	{    
+//	  lemNode.appendChild( xml.createTextNode(textText));
+//  }
+//  else//use selected text
+//  {    
     lemNode.appendChild( newTextNode );
-  }
-	
-	//var witNode = xml.createElement("wit");
-	
-	
-	//var bibNode = xml.createElement("bibl");	
-	//bibNode.appendChild( xml.createTextNode(bibText));
-	
-	
-	//witNode.appendChild(bibNode);
+//  }
+
 	appNode.appendChild(lemNode);
-	//appNode.appendChild(witNode);
-	
+
 	
 	//change the result to be the after text
 		if (window.ActiveXObject)///IE	
-	{
+	{    
+    //ensure there is space after the term
     //change the result to be the after text
-	  resultNode.text = afterText
+    resultNode.text = "\u00a0\u00a0\u00a0" + afterText;	
   }
   else //mozilla
   {
+    //ensure there is space after the text
     //change the result to be the after text
-	  resultNode.textContent = afterText;	
-	}
-	
+    resultNode.textContent = "\u00a0\u00a0\u00a0" + afterText;	
+	}	
 	
 	//create text node with before
 	var beforeTextNode = xml.createTextNode(beforeText);
@@ -1150,12 +1131,12 @@ function insertTerm(termIn)
 	if (window.ActiveXObject)///IE	
 	{
     //change the result to be the after text
-	  resultNode.text = afterText
+	  resultNode.text = "\u00a0\u00a0\u00a0" + afterText
   }
   else //mozilla
   {
     //change the result to be the after text
-	  resultNode.textContent = afterText;	
+	  resultNode.textContent = "\u00a0\u00a0\u00a0" + afterText;	
 	}
 	
 	//create text node with before
