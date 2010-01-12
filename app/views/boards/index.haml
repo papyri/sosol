@@ -1,0 +1,22 @@
+%h1
+  Listing boards
+%table
+  %tr
+    %th
+      Title
+    %th
+      Category
+  - for board in @boards
+    %tr
+      %td
+        = h board.title
+      %td
+        = h board.category
+      %td
+        = link_to 'Show', board
+      %td
+        = link_to 'Edit', edit_board_path(board)
+      %td
+        = link_to 'Destroy', board, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New board', new_board_path
