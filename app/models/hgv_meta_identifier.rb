@@ -45,7 +45,8 @@ class HGVMetaIdentifier < HGVIdentifier
   end
   
   def valid_epidoc_attributes
-    return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :title, :publicationTitle, :publicationVolume, :publicationNumbers,
+    return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :titleStmt, 
+      :publicationTitle, :publicationVolume, :publicationNumbers,
       :tm_nr, :illustrations, :contentText, :other_publications,
       :translations, :bl, :notes, :mentioned_dates, :material,
       :provenance_ancient_findspot, :provenance_nome,
@@ -115,7 +116,7 @@ class HGVMetaIdentifier < HGVIdentifier
             :notBeforeDate => "notBefore"
           }
         ],
-      :title => basePathHeader + "titleStmt/title/",
+      :titleStmt => basePathHeader + "titleStmt/title/",
       :publicationTitle => 
         basePathBody + publicationPath + 
           "bibl[@type='publication'][@subtype='principal']/" + 
