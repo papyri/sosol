@@ -267,7 +267,8 @@ function hideChoosers()
   // allows you to write more expressive, maintainable code.
   // This could actually probably be done even easier by setting two CSS
   // classes and using Element#toggleClassName in this and setActiveTab.
-  $w('text glossary app milestone language missing hide').each(function(id) {
+  //$w('text glossary app milestone language missing hide').each(function(id) {
+  $w('glossary app milestone language missing hide').each(function(id) {
     $(id + '_div').style.display = 'none';
     $(id).style.color = '#000000';
     $(id).style.backgroundColor = '#EEEEEE';
