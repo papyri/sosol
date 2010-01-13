@@ -11,9 +11,17 @@
   <xsl:template match="/">
     <div class = "trans">         
 				<div>  
-							<xsl:for-each select="/t:TEI/t:text/t:body">
-								<xsl:apply-templates></xsl:apply-templates>
-							</xsl:for-each>        
+          <xsl:choose>
+							<xsl:when test="/t:TEI/t:text/t:body">
+								<xsl:for-each select="/t:TEI/t:text/t:body">
+                  <xsl:apply-templates></xsl:apply-templates>
+                </xsl:for-each>
+							</xsl:when>        
+              <xsl:otherwise>
+                <h3>XML Error</h3>
+                <p>Check the XML. It is not transformable. Common problems are: XML may not be TEI, may be missing body, or may not be well formed.</p>                              
+              </xsl:otherwise>
+          </xsl:choose>
 				</div>     
     </div>
   </xsl:template>
@@ -104,7 +112,12 @@
   <!--milestone -->
   <xsl:template match="t:milestone[@unit='line']">
     <xsl:if test="@rend='break'"><br /></xsl:if>
-    <sup><b><xsl:value-of select="@n"/></b></sup>
+    
+    <xsl:variable name="path_id">
+      <xsl:call-template name="get_xpath"/>
+    </xsl:variable>
+    
+    <span contentEditable="false"></span><sup><b><span onmouseup="saveLocation(this.id)" onkeyup="milestoneEdit(this.id)" contentEditable="true" id="{$path_id}" class="editable_milestone"><xsl:value-of select="@n"></xsl:value-of></span></b></sup>
   </xsl:template>
 
 
