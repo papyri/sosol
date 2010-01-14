@@ -45,4 +45,10 @@
           = h identifier.identifier
           \-
           = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
-  = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow'
+  = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
+
+
+%script{:src => rpx_widget_url, :type => "text/javascript"}
+:javascript
+  RPXNOW.overlay = true;
+  RPXNOW.language_preference = 'en';
