@@ -1,5 +1,5 @@
 
-= link_to 'Leiden', edit_text_publication_path(ddb_identifier.publication)
+= link_to 'Leiden', edit_polymorphic_path([ddb_identifier.publication, ddb_identifier]) 
 = link_to 'XML', editxml_publication_ddb_identifier_path( ddb_identifier.publication, ddb_identifier)
 = link_to 'Preview', preview_publication_ddb_identifier_path( ddb_identifier.publication, ddb_identifier)
 %br
