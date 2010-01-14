@@ -1,6 +1,8 @@
 class HGVMetaIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_meta_EpiDoc'
-
+  
+  XML_VALIDATOR = JRubyXML::EpiDocP4Validator
+  
   def self.friendly_name
     return "Meta"
   end

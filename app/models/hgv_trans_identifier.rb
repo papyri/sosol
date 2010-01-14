@@ -1,6 +1,8 @@
 class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
   
+  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
+  
   def self.friendly_name
     return "Translation"
   end
