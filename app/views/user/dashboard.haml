@@ -19,6 +19,8 @@
     = form.submit "Create New Publication", :class => 'save'
   %br
   - if @current_user.boards.length > 0
+    %h2
+      Boards
     - @current_user.boards.each do |board|
       - if board.publications.length > 0
         %h2== #{board.title} Publications
