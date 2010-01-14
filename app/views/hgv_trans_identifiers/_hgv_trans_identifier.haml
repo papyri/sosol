@@ -1,5 +1,5 @@
 
-= link_to 'Translation', edit_trans_publication_path(hgv_trans_identifier.publication)
+= link_to 'Translation', edit_polymorphic_path([hgv_trans_identifier.publication, hgv_trans_identifier])  
 = link_to 'XML', editxml_publication_hgv_trans_identifier_path( hgv_trans_identifier.publication, hgv_trans_identifier)
 = link_to 'Preview', preview_publication_hgv_trans_identifier_path( hgv_trans_identifier.publication, hgv_trans_identifier)
 %br

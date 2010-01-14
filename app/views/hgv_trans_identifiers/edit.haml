@@ -13,7 +13,7 @@
 
         #info_div
         #inserting_chooser
-          %span{ :class => 'chooser_tab', :id => 'text', :onclick => 'setActiveTab(this.id)' }Text 
+          -# %span{ :class => 'chooser_tab', :id => 'text', :onclick => 'setActiveTab(this.id)' }Text 
           %span{ :class => 'chooser_tab', :id => 'glossary', :onclick => 'setActiveTab(this.id)' }Term 
           %span{ :class => 'chooser_tab', :id => 'app', :onclick => 'setActiveTab(this.id)' } App
           %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line
@@ -21,9 +21,9 @@
           %span{ :class => 'chooser_tab', :id => 'missing', :onclick => 'setActiveTab(this.id)' } Missing
           -# %span{ :class => 'chooser_tab', :id => 'delete', :onclick => 'setActiveTab(this.id)' } Delete
           %span{ :class => 'chooser_tab', :id => 'hide', :onclick => 'setActiveTab(this.id)' } Hide
-          #text_div{:class => "chooser"}
-            %button{ :type => "button", :onclick=>"addText(true, false)"}Add Text Before
-            %button{ :type => "button", :onclick=>"addText(false, true)"}Add Text After
+          -# #text_div{:class => "chooser"}
+          -#   %button{ :type => "button", :onclick=>"addText(true, false)"}Add Text Before
+          -#  %button{ :type => "button", :onclick=>"addText(false, true)"}Add Text After
           #glossary_div{:class => "chooser"}
             =@glossary
           #milestone_div{:class => "chooser"}
