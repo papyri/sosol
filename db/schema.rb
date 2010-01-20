@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(:version => 20100120175728) do
   add_index "boards_users", ["board_id", "user_id"], :name => "index_boards_users_on_board_id_and_user_id", :unique => true
 
   create_table "comments", :force => true do |t|
-    t.text     "comment",        :limit => 2047
+    t.text     "comment"
     t.integer  "user_id"
     t.integer  "identifier_id"
     t.string   "reason"
