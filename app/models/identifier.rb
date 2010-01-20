@@ -12,7 +12,9 @@ class Identifier < ActiveRecord::Base
   validates_presence_of :name, :type
   
   belongs_to :publication
-  has_many :comments
+  
+  #assume we want to delete the comments along with the identifier
+  has_many :comments, :dependent => :destroy
   
   has_many :votes, :dependent => :destroy
   
