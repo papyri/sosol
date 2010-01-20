@@ -3,7 +3,7 @@
   = @decree.board.title
   board
 - form_for(@decree) do |f|
-= f.error_messages
+  = f.error_messages
   %p
     = f.label :action
     = f.select :action, @decree.board.result_actions_hash
