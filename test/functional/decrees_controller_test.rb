@@ -26,7 +26,9 @@ class DecreesControllerTest < ActionController::TestCase
 
   test "should create decree" do
     assert_difference('Decree.count') do
-      post :create, :decree => { :board_id => @board.id }
+      post :create, :decree => 
+        { :board_id => @board.id,
+          :tally_method => Decree::TALLY_METHODS[:count] }
     end
 
     assert_redirected_to edit_board_path(@board.id)
