@@ -20,9 +20,14 @@ end
 Factory.define :decree do |f|
   f.association :board
   f.tally_method Decree::TALLY_METHODS[:percent]
-  f.action "approve"
-  f.choices "yes"
-  f.trigger 0.5
+end
+
+Factory.define :percent_decree, :parent => :decree do |f|
+  f.tally_method Decree::TALLY_METHODS[:percent]
+end
+
+Factory.define :count_decree, :parent => :decree do |f|
+  f.tally_method Decree::TALLY_METHODS[:count]
 end
 
 Factory.define :emailer do |f|
