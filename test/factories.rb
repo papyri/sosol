@@ -2,6 +2,10 @@ Factory.sequence :name do |n|
   "name_#{n}"
 end
 
+Factory.sequence :email do |n|
+  "person#{n}@example.com"
+end
+
 Factory.define :board do |f|
   f.title { Factory.next(:name) }
   f.category 'category'
@@ -11,6 +15,7 @@ end
 
 Factory.define :user do |f|
   f.name { Factory.next(:name) }
+  f.email { Factory.next(:email) }
 end
 
 Factory.define :admin, :parent => :user do |f|
