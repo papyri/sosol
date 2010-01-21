@@ -1,3 +1,7 @@
+:javascript 
+  function checkForComment() { comment_text = $('comment_comment').value; $('vote_submit').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; } 
+
+
 %h3 Votes
 - user_has_voted = false
 %ul
@@ -22,6 +26,8 @@
         - d.get_choice_array.each do |c|
           - choices[c] = c
       = select "vote", "choice", choices
-      = text_field :comment, "comment"
+      %br
+      Your Comment Required:
+      = text_area :comment, "comment", :onkeyup => "checkForComment(event)"
       -#= f.submit "Vote", :disabled => !publication.mutable?
-      = f.submit "Vote"
+      = f.submit "Vote", :disabled => true

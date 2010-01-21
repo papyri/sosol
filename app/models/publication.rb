@@ -235,7 +235,7 @@ class Publication < ActiveRecord::Base
       # @publication.send_status_emails(decree_action)    
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
-      self.status = "new" #reset to unsubmitted       
+      self.status = "editing" #reset to unsubmitted       
       self.save
       # @publication.send_status_emails(decree_action)
     elsif decree_action == "graffiti"               
