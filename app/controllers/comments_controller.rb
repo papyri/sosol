@@ -64,7 +64,9 @@ class CommentsController < ApplicationController
       if @comment.save
         flash[:notice] = 'Comment was successfully created.'
         
-        format.html { redirect_to(@comment) }
+        #url will not work correctly without :id, however id is not used in ask_for, so we just use 1
+        format.html { redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => @comment.publication_id, :identifier_id => @comment.publication_id, :method => "get" }
+        #format.html { redirect_to(@comment) }
         #TODO redirect xml?
         format.xml  { render :xml => @comment, :status => :created, :location => @comment }
       else
