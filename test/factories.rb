@@ -19,6 +19,7 @@ end
 
 Factory.define :decree do |f|
   f.association :board
+  f.tally_method Decree::TALLY_METHODS[:percent]
 end
 
 Factory.define :emailer do |f|

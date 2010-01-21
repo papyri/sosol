@@ -88,7 +88,7 @@ class Board < ActiveRecord::Base
       end 
 
       #see if we are using percent or min voting counting
-      if decree.tally_method == "percentage"
+      if decree.tally_method == Decree::TALLY_METHODS[:percent]
         #percentage
         if decree_vote_count > 0 && self.users.length.to_f > 0
           percent =  decree_vote_count.to_f / self.users.length.to_f
@@ -101,7 +101,7 @@ class Board < ActiveRecord::Base
             return decree.action
           end
         end
-      elsif decree.tally_method == "count"
+      elsif decree.tally_method == Decree::TALLY_METHODS[:count]
         #min absolute vote count
         if decree_vote_count >= decree.trigger
           #check if the action has already been done

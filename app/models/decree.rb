@@ -2,12 +2,18 @@
 class Decree < ActiveRecord::Base
   belongs_to :board
   
+  TALLY_METHODS = Hash[%w{percent count}.map {|i| [i.to_sym, i]}]
   
+  validates_inclusion_of :tally_method,
+                         :in => TALLY_METHODS.values
+                         
+  validates_presence_of :tally_method
   
   def self.tally_methods_hash
   #hash with friendly name for valid tally methods. Mainly for setting selection on forms.
-    { "Percentage" => "percent", "Absolute Count" => "count"}
+    { "Percentage" => TALLY_METHODS[:percent], "Absolute Count" => TALLY_METHODS[:count]}
   end
+  
  # def self.result_actions_hash
   #hash with friendly name for valid decree actions. Mainly for setting selection on forms.
 #    {"Approve" => "approve", "Reject" => "reject", "Graffiti" => "graffiti" } 
