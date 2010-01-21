@@ -1,7 +1,7 @@
 #Board represents an editorial review board.
 class Board < ActiveRecord::Base
-  has_many :decrees
-  has_many :emailers
+  has_many :decrees, :dependent => :destroy
+  has_many :emailers, :dependent => :destroy
 
   has_and_belongs_to_many :users
   belongs_to :finalizer_user, :class_name => 'User'

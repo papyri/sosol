@@ -1,9 +1,10 @@
 require 'test_helper'
 
 class BoardTest < ActiveSupport::TestCase
-  context "an existing board" do
+  context "a created board" do
     setup do
       @board = Factory(:board)
+      @decree = Factory(:decree, :board => @board)
       @path = @board.repository.path
     end
     
@@ -18,10 +19,19 @@ class BoardTest < ActiveSupport::TestCase
     should "have a repository" do
       assert File.exists?(@path)
     end
-  
-    should "delete its repository upon destruction" do
-      @board.destroy
-      assert !File.exists?(@path)
+    
+    context "upon destruction" do
+      setup do
+        @board.destroy
+      end
+      
+      should "delete its repository" do
+        assert !File.exists?(@path)
+      end
+    
+      should "destroy associated decrees" do
+        assert !Decree.exists?(@decree.id)
+      end
     end
   end
 end
