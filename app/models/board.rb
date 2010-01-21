@@ -69,54 +69,15 @@ class Board < ActiveRecord::Base
 
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
-  #if we want a board to control more than one identifier type we must change it here
-    #work in progress
-    #how to determine order -- just assume user hasn't made rules where multiple decress can be true at once?
-    #errMsg = " "    
+    # NOTE: assumes board controls one identifier type, and user hasn't made
+    # rules where multiple decrees can be true at once
+    
     self.decrees.each do |decree|
-
-      #pull choices out
-      decree_choices = decree.choices.split(' ')       
-      #count votes
-      decree_vote_count = 0
-      votes.each do |vote|        
-        #see if vote is in choices
-        index = decree_choices.index(vote.choice) #double check that this doesn't return true for "no" in "known"
-        if  index != nil
-          decree_vote_count = decree_vote_count + 1            
-        end
-      end 
-
-      #see if we are using percent or min voting counting
-      if decree.tally_method == Decree::TALLY_METHODS[:percent]
-        #percentage
-        if decree_vote_count > 0 && self.users.length.to_f > 0
-          percent =  decree_vote_count.to_f / self.users.length.to_f
-
-          if percent >= decree.trigger
-            #check if the action has already been done
-            #do the action? or return the action?
-            #   
-            #errMsg += percent.to_s  
-            return decree.action
-          end
-        end
-      elsif decree.tally_method == Decree::TALLY_METHODS[:count]
-        #min absolute vote count
-        if decree_vote_count >= decree.trigger
-          #check if the action has already been done
-          #do the action? or return the action?
-          #
-          #errMsg += " " + decree_vote_count + " " + vote.choice + " " 
-          return decree.action
-        end
-
+      if decree.perform_action?(votes)
+        return decree.action
       end
-
-    end    #decree 
-
-    #raise errMsg
+    end
+    
     return ""
-
   end #tally_votes
 end
