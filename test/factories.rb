@@ -2,6 +2,10 @@ Factory.sequence :name do |n|
   "name_#{n}"
 end
 
+Factory.sequence :email do |n|
+  "person#{n}@example.com"
+end
+
 Factory.define :board do |f|
   f.title { Factory.next(:name) }
   f.category 'category'
@@ -11,6 +15,7 @@ end
 
 Factory.define :user do |f|
   f.name { Factory.next(:name) }
+  f.email { Factory.next(:email) }
 end
 
 Factory.define :admin, :parent => :user do |f|
@@ -20,9 +25,14 @@ end
 Factory.define :decree do |f|
   f.association :board
   f.tally_method Decree::TALLY_METHODS[:percent]
-  f.action "approve"
-  f.choices "yes"
-  f.trigger 0.5
+end
+
+Factory.define :percent_decree, :parent => :decree do |f|
+  f.tally_method Decree::TALLY_METHODS[:percent]
+end
+
+Factory.define :count_decree, :parent => :decree do |f|
+  f.tally_method Decree::TALLY_METHODS[:count]
 end
 
 Factory.define :emailer do |f|

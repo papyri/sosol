@@ -37,14 +37,13 @@ class Board < ActiveRecord::Base
     #return array of possible actions that can be implemented
     retval = []
     identifier_classes.each do |ic|
-      eval_statement = ic + ".instance_methods"
-      im = eval(eval_statement)
+      im = ic.constantize.instance_methods
       match_expression = /(result_action_)/
       im.each do |method_name|
         if method_name =~ /(result_action_)/
           retval << method_name.sub(/(result_action_)/, "")
         end
-      end             
+      end
     end
     retval
     

@@ -3,7 +3,7 @@ require 'test_helper'
 class DecreeTest < ActiveSupport::TestCase
   [
     { :tally_method => Decree::TALLY_METHODS[:percent],
-      :trigger => 0.5 },
+      :trigger => 50.0 },
     { :tally_method => Decree::TALLY_METHODS[:count],
       :trigger => 2 }
   ].each do |method|

@@ -40,7 +40,7 @@ class Decree < ActiveRecord::Base
     if tally_method == TALLY_METHODS[:percent]
       #percentage
       if decree_vote_count > 0 && self.board.users.length.to_f > 0
-        percent =  decree_vote_count.to_f / self.board.users.length.to_f
+        percent =  (decree_vote_count.to_f / self.board.users.length.to_f) * 100
 
         if percent >= self.trigger
           #check if the action has already been done
