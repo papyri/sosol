@@ -28,7 +28,7 @@
           -#  == (#{publication.status})
         - if publication.owner_type && publication.owner_type == "Board"
           = " by "
-          - if publication.creator.name
+          - if !publication.creator.nil?
             = publication.creator.name
           - else
             "?"
