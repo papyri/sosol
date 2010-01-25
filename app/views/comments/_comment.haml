@@ -1,16 +1,16 @@
 .comment_partial
   .name 
-    - if comment.user != nil && comment.user.name != nil
+    - if comment.user && comment.user.name
       = comment.user.name
   .time
     = comment.created_at
   .reason 
-    - if comment.reason != nil
+    - if comment.reason
       = comment.reason
-    on
     - if comment.identifier && comment.identifier.title
-      = comment.identifier.title
+      on
+      = comment.identifier.friendly_name
   .comment    
-    - if comment.comment != nil
+    - if comment.comment
       = comment.comment
 
