@@ -10,7 +10,36 @@ Factory.define :board do |f|
   f.title { Factory.next(:name) }
   f.category 'category'
   f.identifier_classes ['DDBIdentifier']
-  f.decree_id 1
+end
+
+Factory.define :hgv_board, :parent => :board do |f|
+  f.decrees { |decrees|
+    [
+      decrees.association(
+        :percent_decree,
+        :trigger => 100.0,
+        :action => "accept",
+        :choices => "yes no"),
+      decrees.association(
+        :count_decree,
+        :trigger => 1.0,
+        :action => "reject",
+        :choices => "reject"),
+      decrees.association(
+        :count_decree,
+        :trigger => 1.0,
+        :action => "graffiti",
+        :choices => "graffiti")
+    ]
+  }
+end
+
+Factory.define :hgv_meta_board, :parent => :hgv_board do |f|
+  f.identifier_classes ['HGVMetaIdentifier']
+end
+
+Factory.define :hgv_trans_board, :parent => :hgv_board do |f|
+  f.identifier_classes ['HGVTransIdentifier']
 end
 
 Factory.define :user do |f|

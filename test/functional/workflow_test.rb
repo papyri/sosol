@@ -25,32 +25,20 @@ class WorkflowTest < ActiveSupport::TestCase
               :action => "graffiti",
               :choices => "graffiti")
       
-      @hgv_board = Factory(:board)
       @james = Factory(:user)
-      @hgv_board.users << @james
       
-      Factory(:percent_decree,
-              :board => @hgv_board,
-              :trigger => 100.0,
-              :action => "accept",
-              :choices => "yes no")
-      Factory(:count_decree,
-              :board => @hgv_board,
-              :trigger => 1.0,
-              :action => "reject",
-              :choices => "reject")
-      Factory(:count_decree,
-              :board => @hgv_board,
-              :trigger => 1.0,
-              :action => "graffiti",
-              :choices => "graffiti")
+      @hgv_meta_board = Factory(:hgv_meta_board)
+      @hgv_trans_board = Factory(:hgv_trans_board)
+      
+      @hgv_meta_board.users << @james
+      @hgv_trans_board.users << @james
+      
+      @submitter = Factory(:user)
     end
     
     teardown do
-      [@ddb_board, @hgv_board].each do |board|
-        board.users.each {|i| i.destroy}
-        board.destroy
-      end
+      [ @ddb_board.users, @james, @submitter,
+        @ddb_board, @hgv_meta_board, @hgv_trans_board ].each {|entity| entity.destroy}
     end
     
     def generate_board_vote_for_decree(board, decree, identifier)
@@ -79,6 +67,12 @@ class WorkflowTest < ActiveSupport::TestCase
     end
 
     context "a user submitting a publication with only DDB modifications" do
+      setup do
+      end
+      
+      teardown do
+      end
+      
       should "succeed" do
         assert true
       end
