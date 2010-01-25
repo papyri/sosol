@@ -66,16 +66,36 @@ class WorkflowTest < ActiveSupport::TestCase
       end
     end
 
-    context "a user submitting a publication with only DDB modifications" do
+    context "a publication" do
       setup do
+        @publication = Factory(:publication, :status => "new")
+        
+        # branch from master so we aren't just creating an empty branch
+        @publication.branch_from_master
       end
       
       teardown do
+        # @publication.destroy
       end
       
-      should "succeed" do
-        assert true
+      context "submitted with only DDB modifications" do
+        setup do
+          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          
+          @publication.submit
+        end
+        
+        should "be copied to the DDB board" do
+          assert_equal @publication, @ddb_board.publications.first.parent
+          assert_equal @publication.children, @ddb_board.publications
+        end
+
+        should "not be copied to the HGV boards" do
+          assert_equal 0, @hgv_meta_board.publications.length
+          assert_equal 0, @hgv_trans_board.publications.length
+        end
       end
+      
     end
   end
 end
