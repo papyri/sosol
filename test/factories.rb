@@ -83,6 +83,7 @@ end
 
 Factory.define :publication do |f|
   f.association :owner, :factory => :user
+  f.creator { |pub| pub.owner }
   f.title 'MyString'
 end
 
