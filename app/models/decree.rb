@@ -2,7 +2,8 @@
 class Decree < ActiveRecord::Base
   belongs_to :board
   
-  TALLY_METHODS = Hash[%w{percent count}.map {|i| [i.to_sym, i]}]
+  TALLY_METHODS = {:percent => "percent",
+                   :count => "count"}
   
   validates_inclusion_of :tally_method,
                          :in => TALLY_METHODS.values
