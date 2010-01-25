@@ -6,6 +6,9 @@ class HGVMetaIdentifier < HGVIdentifier
   def self.friendly_name
     return "Meta"
   end
+  def friendly_name
+    return "Meta"
+  end 
   
   def to_path
     if alternate_name.nil?

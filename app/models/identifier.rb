@@ -26,6 +26,9 @@ class Identifier < ActiveRecord::Base
   def self.friendly_name
     return "Base Identifier"
   end
+  def friendly_name
+    return "Base Identifier"
+  end 
   
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
@@ -167,18 +170,14 @@ class Identifier < ActiveRecord::Base
   end
   
   
-  #caution - sending emails here might mean they are sent even if the status change does not get saved
- # def status=(status_in)
- #   write_attribute(:status, status_in)
- #   send_status_emails(status_in)      
- # end
+ 
   
   #Check with the board to see if we want to send an email on status change.
   def send_status_emails(when_to_send)
 #TODO move to board
   	#search emailer for status
   	if self.board == nil || self.board.emailers == nil
-  	return
+  	  return
   	end
   	self.board.emailers.each do |mailer|
   	
