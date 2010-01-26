@@ -3,7 +3,7 @@ require 'test_helper'
 class WorkflowTest < ActiveSupport::TestCase
   context "for IDP2" do
     setup do
-      @ddb_board = Factory(:board)
+      @ddb_board = Factory(:board, :title => 'DDbDP Editorial Board')
     
       3.times do |i|
         @ddb_board.users << Factory(:user)
@@ -27,8 +27,8 @@ class WorkflowTest < ActiveSupport::TestCase
       
       @james = Factory(:user)
       
-      @hgv_meta_board = Factory(:hgv_meta_board)
-      @hgv_trans_board = Factory(:hgv_trans_board)
+      @hgv_meta_board = Factory(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = Factory(:hgv_trans_board, :title => 'Translations')
       
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
