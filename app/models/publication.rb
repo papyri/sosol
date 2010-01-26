@@ -389,10 +389,16 @@ class Publication < ActiveRecord::Base
   end
   
   def diff_from_canon
-    canon = Repository.new
-    canonical_sha = canon.repo.get_head('master').commit.sha
-    self.owner.repository.repo.git.diff(
-      {:unified => 5000}, canonical_sha, self.head)
+    begin
+      canon = Repository.new
+      canonical_sha = canon.repo.get_head('master').commit.sha
+      return self.owner.repository.repo.git.diff(
+        {:unified => 5000}, canonical_sha, self.head)
+    rescue
+      Grit::Git.git_timeout *= 2
+      RAILS_DEFAULT_LOGGER.warn "Fetching diff timed out, increasing timeout to #{Grit::Git.git_timeout}"
+      return self.diff_from_canon
+    end
   end
   
   def submission_reason
