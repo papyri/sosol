@@ -151,7 +151,7 @@ class Repository
   end
   
   def name
-    return [@master_class_path, @master.name].join('/')
+    return [@master_class_path, @master.name].join('/').tr(' ', '_')
   end
   
   def add_alternates(other_repo)
