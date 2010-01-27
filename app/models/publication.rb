@@ -198,23 +198,42 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
+  #sets thes origin status for publication identifiers that the publication's board controls
+  def set_origin_identifier_status(status_in)          
+      self.identifiers.each do |i|
+        if self.board.identifier_classes && self.board.identifier_classes.include?(i.class.to_s)
+          i.origin.status = "approved"
+          i.origin.save
+        end
+      end
+  end
+
+  def set_local_identifier_status(status_in)          
+      self.identifiers.each do |i|
+        if self.board.identifier_classes && self.board.identifier_classes.include?(i.class.to_s)
+          i.status = "approved"
+          i.save
+        end
+      end
+  end
+
+  def set_origin_and_local_identifier_status(status_in)
+    set_origin_identifier_status(status_in)          
+    set_local_identifier_status(status_in)          
+  end
+
+  
+  
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes
     
-    # @comment = Comment.new()
-    # @comment.article_id = params[:id]
-    # @comment.text = params[:comment]
-    # @comment.user_id = @current_user.id
-    # @comment.reason = "vote"
-    # @comment.save
-    
-    #TODO tie vote and comment together?  
-    
     #need to tally votes and see if any action will take place
-    decree_action = self.owner.tally_votes(user_votes)
-    #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
-    #NOTE here are the types of actions for the voting results
-    #approve, reject, graffiti
+    if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      return "" #another check to make sure only the board is voting on its copy
+    else
+      decree_action = self.owner.tally_votes(user_votes)
+    end
+   
     
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -227,22 +246,48 @@ class Publication < ActiveRecord::Base
   
   
     if decree_action == "approve"
-      #@publication.get_category_obj().approve
+      
+      #set local publication status to approved
       self.status = "approved"
       self.save
+      
+      #on approval, set the identifier(s) to approved (local and origin)
+      set_origin_and_local_identifier_status("approved")
+      
+      #TODO send emails
+      # @publication.send_status_emails(decree_action)          
+      
+      #set up for finalizing
       self.send_to_finalizer
-      # self.commit_to_canon
-      # @publication.send_status_emails(decree_action)    
+      
+      
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
-      self.status = "editing" #reset to unsubmitted       
+      
+      self.origin.status = "editing"
+      #do we want to copy ours back to the user? yes
+      #TODO test copy to user
+      self.copy_repo_to_parent_repo
+      self.origin.save
+      
+      #what to do with our copy?
+      self.status = "rejected" #reset to unsubmitted       
       self.save
+      
+      #TODO send status emails
       # @publication.send_status_emails(decree_action)
+      
     elsif decree_action == "graffiti"               
       # @publication.send_status_emails(decree_action)
       #do destroy after email since the email may need info in the artice
       #@publication.get_category_obj().graffiti
-      self.destroy #need to destroy related?
+      
+      #todo do we let one board destroy the entire document?
+      #will this destroy all board copies....
+      self.origin.destroy #need to destroy related?
+      #or
+      #self.submit_to_next_board
+      
       # redirect_to url_for(dashboard)
     else
       #unknown action or no action    
@@ -442,6 +487,12 @@ class Publication < ActiveRecord::Base
     )
     
     return duplicate
+  end
+    
+  #copy a child publication repo back to the parent repo
+  def copy_repo_to_parent_repo
+     #all we need to do is copy the repo back the parents repo
+     self.origin.repository.copy_branch_from_repo(self.branch, self.origin.branch, self.repository)
   end
   
   # TODO: destroy branch on publication destroy
