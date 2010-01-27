@@ -227,69 +227,87 @@ class PublicationsController < ApplicationController
   end
   
   def vote
+    #note that votes will go with the boards copy of the pub and identifiers
+    #  vote history will also be recorded in the comment of the origin pub and identifier
+    @publication = Publication.find(params[:id])  
+    
+    #note that votes go to origin identifier
     @vote = Vote.new(params[:vote])
     @vote.user_id = @current_user.id      
+    
+    if @publication.owner_type != "Board"
+      #we have a problem since no one should be voting on a publication if it is not in theirs
+      flash[:error] = "You do not have permission to vote on this publication which you do not own!"
+      #kind a harsh but send em back to their own dashboard
+      redirect_to dashboard_url
+      return
+    else
+      @vote.board_id = @publication.owner_id
+    end
     
     @comment = Comment.new()
     @comment.comment = params[:comment][:comment]
     @comment.user = @current_user
     @comment.reason = "vote"
-    @comment.identifier = @vote.identifier
-    @comment.publication = @vote.publication
+    #associate comment with original identifier/publication
+    @comment.identifier = @vote.identifier.origin   
+    @comment.publication = @vote.publication.origin
 
     #double check that they have not already voted
     has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
     if !has_voted 
-      @vote.save   
-      @comment.save
+      @vote.save  
       
-      #need to tally votes and see if any action will take place
-      #should only be voting while the publication is owned by the correct board
-      #todo add check to ensure board is correct
-      decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
-      #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
-      #NOTE here are the types of actions for the voting results
-      #approve, reject, graffiti
+      #the below will be moved to after_save in Vote model 
+      #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        @comment.save
+
+        #need to tally votes and see if any action will take place
+        decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
+
+=begin     this takes place in the tally_votes method    
+        # create an event if anything happened
+        if !decree_action.nil? && decree_action != ''
+          e = Event.new
+          e.owner = @vote.publication.owner
+          e.target = @vote.publication
+          e.category = "marked as \"#{decree_action}\""
+          e.save!
+        end
       
-      # create an event if anything happened
-      if !decree_action.nil? && decree_action != ''
-        e = Event.new
-        e.owner = @vote.publication.owner
-        e.target = @vote.publication
-        e.category = "marked as \"#{decree_action}\""
-        e.save!
-      end
-    
-    
-      if decree_action == "approve"
-        #@publication.get_category_obj().approve
-        @vote.identifier.status = "approved"
-        @vote.identifier.save
-        @vote.save
-        #@publication.status = "approved"
-        #@publication.save
-        # @publication.send_status_emails(decree_action)    
-      elsif decree_action == "reject"
-        #todo implement throughback
-        @vote.identifier.status = "reject"     
-        @vote.identifier.save
-        @vote.save
-        # @publication.send_status_emails(decree_action)
-      elsif decree_action == "graffiti"               
-        # @publication.send_status_emails(decree_action)
-        #do destroy after email since the email may need info in the artice
-        #@publication.get_category_obj().graffiti
-        @vote.identifier.destroy #need to destroy related?
-        #this part of the publication was crap, do we assume the rest is as well?
-        #for now we will just continue the submition process
-        self.submit_to_next_board
-        
-        #redirect_to url_for(dashboard)
-        return
-      else
-        #unknown action or no action    
-      end   
-    
+      
+        if decree_action == "approve"
+          #@publication.get_category_obj().approve
+          @vote.identifier.status = "approved"
+          @vote.identifier.save
+          @vote.save
+          #@publication.status = "approved"
+          #@publication.save
+          # @publication.send_status_emails(decree_action)    
+        elsif decree_action == "reject"
+          #todo implement throughback
+          @vote.identifier.status = "reject"     
+          @vote.identifier.save
+          @vote.save
+          # @publication.send_status_emails(decree_action)
+        elsif decree_action == "graffiti"               
+          # @publication.send_status_emails(decree_action)
+          #do destroy after email since the email may need info in the artice
+          #@publication.get_category_obj().graffiti
+          @vote.identifier.destroy #need to destroy related?
+          #this part of the publication was crap, do we assume the rest is as well?
+          #for now we will just continue the submition process
+          self.submit_to_next_board
+          
+          #redirect_to url_for(dashboard)
+          return
+        else
+          #unknown action or no action    
+        end   
+=end
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
+
+
 
  # unsure if following needed due to merge conflict
  #     if !Publication.exists?(@publication)
