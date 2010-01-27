@@ -10,7 +10,13 @@ class PublicationsController < ApplicationController
     #check if publication has been changed by user
     allow = @publication.modified?
     
-    allow = allow && @publication.status == "editing"
+    #only let creator submit
+    allow = allow && @publication.creator_id == @current_user.id 
+    
+    #only let user submit, don't let a board member submit
+    allow = allow && @publication.owner_type == "User"
+    
+    allow = allow && @publication.status == "editing" 
     return allow
     
     #below bypassed until we have return mechanism in place
@@ -76,7 +82,7 @@ class PublicationsController < ApplicationController
   
   def submit_review
     @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(params[:id])  
+    @comments = Comment.find_all_by_publication_id(@publication.origin.id)  
     @allow_submit = allow_submit?
             
     #redirect_to @publication
@@ -86,7 +92,7 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
-    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit" } )
+    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
     @publication.submit
     
@@ -130,7 +136,14 @@ class PublicationsController < ApplicationController
   def show
 
     @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(params[:id], :order => 'created_at DESC')
+    @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
+    
+    
+    #if @publication.parent_id 
+    #  @comments = Comment.find_all_by_publication_id(@publication.parent_id, :order => 'created_at DESC')
+    #else
+    #  @comments = Comment.find_all_by_publication_id(params[:id], :order => 'created_at DESC')
+    #end
 
     @show_submit = allow_submit?
 
