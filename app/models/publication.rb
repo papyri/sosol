@@ -93,7 +93,7 @@ class Publication < ActiveRecord::Base
     
     boards = Board.find(:all)
     boards.each do |board|
-    if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
+    if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
       
       copy_to_owner(board)
       # duplicate = self.clone
@@ -420,8 +420,9 @@ class Publication < ActiveRecord::Base
     
     # copy identifiers over to new pub
     identifiers.each do |identifier|
-      duplicate_identifer = identifier.clone
-      duplicate.identifiers << duplicate_identifer
+      duplicate_identifier = identifier.clone
+      duplicate_identifier.parent = identifier
+      duplicate.identifiers << duplicate_identifier
     end
     
     return duplicate
@@ -431,6 +432,8 @@ class Publication < ActiveRecord::Base
     return self.owner.repository
   end
   
+  #copies this publication's branch to the new_owner's branch
+  #returns duplicate publication with new_owner
   def copy_to_owner(new_owner)
     duplicate = self.clone_to_owner(new_owner)
     
