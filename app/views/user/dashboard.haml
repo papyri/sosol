@@ -23,9 +23,11 @@
     %h2
       Boards
     - @current_user.boards.each do |board|
-      - if board.publications.length > 0
+      -# only show board publications that are in editing mode for the board
+      - board_publications = board.publications.collect{|p| p.status == "editing" ? p :nil}.compact
+      - if board_publications.length > 0
         %h2== #{board.title} Publications
-        = render :partial => "publications/list", :object => board.publications
+        = render :partial => "publications/list", :object => board_publications
         %br
   %h2 News Feed
   = render :partial => "events/list", :object => @events
