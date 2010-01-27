@@ -127,6 +127,13 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     @publication.commit_to_canon
     
+    #TODO need to submit to next board
+    #need to set status of ids
+    @publication.set_origin_and_local_identifier_status("committed")
+    
+    #send publication to the next board
+    @publication.origin.submit_to_next_board
+    
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
   end
