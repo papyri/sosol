@@ -183,24 +183,26 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
   
-  
+
+=begin
+
   #caution - sending emails here might mean they are sent even if the status change does not get saved
-#  def status=(status_in)
+  def status=(status_in)
     
     #see if status is actually changing
-#    do_send = false
-#    if status_in != read_attribute(:status)
-#      do_send = true
-#    end
+    do_send = false
+    if status_in != read_attribute(:status)
+      do_send = true
+    end
     
     #update status
-#    write_attribute(:status, status_in)
+    write_attribute(:status, status_in)
     
     #check if we need to send emails
-#    if do_send
-#      send_status_emails(status_in)      
-#    end
-#  end
+    if do_send
+      send_status_emails(status_in)      
+    end
+  end
   
   #Check with the board to see if we want to send an email on status change.
   def send_status_emails(when_to_send)
@@ -263,7 +265,8 @@ class Identifier < ActiveRecord::Base
   	end	
   	
   end
-  
+
+=end
   
 
   #standard result actions 
