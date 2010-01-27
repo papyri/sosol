@@ -270,6 +270,7 @@ class Identifier < ActiveRecord::Base
   
 
   #standard result actions 
+  #NOTE none of this is currently used except for creating board
   def result_action_approve
    
     self.status = "approved"
@@ -286,10 +287,11 @@ class Identifier < ActiveRecord::Base
     #delete
   end
   
+=begin not used
   def result_action_finalize
   
     self.status = "finalized"
   end
-  
+=end
   
 end
