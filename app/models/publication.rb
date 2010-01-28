@@ -12,8 +12,8 @@ class Publication < ActiveRecord::Base
  # has_many :votes, :dependent => :destroy
   has_many :comments
   
-  validates_uniqueness_of :title, :scope => 'owner_id'
-  validates_uniqueness_of :branch, :scope => 'owner_id'
+  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id]
+  validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
   validates_each :branch do |model, attr, value|
     # Excerpted from git/refs.c:
