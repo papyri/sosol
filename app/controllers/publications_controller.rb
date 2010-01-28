@@ -117,6 +117,26 @@ class PublicationsController < ApplicationController
     end
   end
   
+  def become_finalizer
+    #TODO make sure we don't steel it from someone who is working on it
+    
+    
+    
+    @publication = Publication.find(params[:id])
+    
+    
+    @publication.remove_finalizer
+    
+    #note this can only be called on a board owned publication
+    if @publication.owner_type != "Board"
+      flash[:error] = "Can't change finalizer on non-board copy of publication."
+      redirect_to show
+    end
+    @publication.send_to_finalizer(@current_user)
+    redirect_to finalize_review
+  
+  end
+  
   def finalize_review
     @publication = Publication.find(params[:id])
     @identifier = @publication.entry_identifier
@@ -130,6 +150,16 @@ class PublicationsController < ApplicationController
     #TODO need to submit to next board
     #need to set status of ids
     @publication.set_origin_and_local_identifier_status("committed")
+    @publication.set_board_identifier_status("committed")
+    
+    #as it is set up the finalizer will have a parent that is a board whose status must be set
+    @publication.parent.status = "committed"
+    @publication.parent.save
+    
+    #set the finalizer pub status
+    @publication.status = "committed"
+    @publication.save
+    
     
     #send publication to the next board
     @publication.origin.submit_to_next_board
@@ -238,6 +268,13 @@ class PublicationsController < ApplicationController
     #  vote history will also be recorded in the comment of the origin pub and identifier
     @publication = Publication.find(params[:id])  
     
+    if @publication.status != "voting" 
+      flash[:warining] = "Voting is over for this publication."
+      
+      redirect_to @publication
+      return
+    end
+    
     #note that votes go to origin identifier
     @vote = Vote.new(params[:vote])
     @vote.user_id = @current_user.id      
@@ -253,7 +290,7 @@ class PublicationsController < ApplicationController
     end
     
     @comment = Comment.new()
-    @comment.comment = params[:comment][:comment]
+    @comment.comment = @vote.choice + " - " + params[:comment][:comment]
     @comment.user = @current_user
     @comment.reason = "vote"
     #associate comment with original identifier/publication
@@ -264,13 +301,15 @@ class PublicationsController < ApplicationController
     has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
     if !has_voted 
       @vote.save  
+      @comment.save
       
       #the below will be moved to after_save in Vote model 
       #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        @comment.save
+        
 
         #need to tally votes and see if any action will take place
-        decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
+      #  decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
+      @vote.publication.tally_votes(@vote.identifier.votes)
 
 =begin     this takes place in the tally_votes method    
         # create an event if anything happened
@@ -324,7 +363,8 @@ class PublicationsController < ApplicationController
     end #!has_voted
     #do what now? go to review page
     
-    redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+    #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+    redirect_to @vote.publication
     #todo redirect to publication summary page
   end
   

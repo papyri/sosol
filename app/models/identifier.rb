@@ -142,16 +142,28 @@ class Identifier < ActiveRecord::Base
   end
   
   def mutable?
+  
+    #determines who can edit the identifier
+    
+    
     #only let the board edit if they own it
-    if self.publication.owner_type == "Board"
+    if self.publication.owner_type == "Board" && self.publication.status == "editing"
       if self.publication.owner.identifier_classes.include?(self.class.to_s)
        return true
       end
+    
+    #let the finalizer edit the id the board owns  
+    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
+      return true 
+      
+    #they can edit any of their stuff if it is not submitted      
     elsif self.publication.owner_type == "User" && %w{editing new}.include?(self.publication.status)
-      return true #they can edit any of their stuff if it is not submitted    
+      return true 
     end
     
     return false    
+
+
    # self.publication.mutable?
   end
   

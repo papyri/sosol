@@ -9,6 +9,15 @@
     - if @show_submit
       = button_to "Submit", submit_review_publication_path(@publication), :class => 'submit', :method => :get
 
+
+    -# if owner is a board, and it is approved, add a button to make me the finalizer
+    - if @publication.owner_type == "Board" && @publication.status == "approved"
+      -# if i am already the finalizer dont show the button
+      - finalizer = @publication.find_finalizer_user
+      - if !(finalizer && finalizer.id == @current_user.id)
+        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
+
+
   - if @current_user.developer
     - if @publication.modified?
       %h1 MODIFIED PUBLICATION
