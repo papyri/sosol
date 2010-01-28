@@ -1,7 +1,7 @@
 class HGVMetaIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_meta_EpiDoc'
   
-  XML_VALIDATOR = JRubyXML::EpiDocP4Validator
+  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   def self.friendly_name
     return "Meta"
@@ -50,7 +50,7 @@ class HGVMetaIdentifier < HGVIdentifier
     return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :titleStmt, 
       :publicationTitle, :publicationVolume, :publicationNumbers,
       :tm_nr, :illustrations, :contentText, :other_publications,
-      :translations, :bl, :notes, :mentioned_dates, :material,
+      :translations, :bl, :notes, :mentioned_dates_hdr, :mentioned_dates, :material,
       :provenance_ancient_findspot, :provenance_nome,
       :provenance_ancient_region,
       :provenance_modern_findspot, :inventory_number, :planned_for_future_print_release]
@@ -97,8 +97,8 @@ class HGVMetaIdentifier < HGVIdentifier
 
   def self.attributes_xpath_hash
     # set base to metadata in epidoc
-    basePathBody = "/TEI.2/text/body/div"
-    basePathHeader = "/TEI.2/teiHeader/fileDesc/"
+    basePathBody = "/TEI/text/body/div"
+    basePathHeader = "/TEI/teiHeader/fileDesc/"
 
     publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
     provenancePath = "[@type='history'][@subtype='locations']/p/"
@@ -110,10 +110,9 @@ class HGVMetaIdentifier < HGVIdentifier
     attributes_xpath_hash = {
       :textDate =>
         [
-          basePathBody + "[@type='commentary'][@subtype='textDate']/" + 
-            "p/date[@type='textDate']",
+          basePathHeader + "sourceDesc/msDesc/history/origin/origDate[@type='textDate']",
           {
-            :onDate => "value",
+            :onDate => "when",
             :notAfterDate => "notAfter",
             :notBeforeDate => "notBefore"
           }
@@ -132,31 +131,39 @@ class HGVMetaIdentifier < HGVIdentifier
           "bibl[@type='publication'][@subtype='principal']/" +
           "biblScope[@type='numbers']/",
       :tm_nr => 
-        basePathBody + publicationPath + 
-          "bibl[@type='Trismegistos']/biblScope[@type='numbers']",
+        basePathHeader + 
+          "publicationStmt/idno[@type='TM']",
       :illustrations => 
         basePathBody + "[@type='bibliography'][@subtype='illustrations']/p",
-      :contentText => basePathBody + "[@type='...']/p/rs[@type='textType']",
+      #not sure what to do about multiples
+      :contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term(1)",
       :other_publications => 
         basePathBody + "[@type='bibliography'][@subtype='otherPublications']/" + 
           "bibl[@type='publication'][@subtype='other']/",
+      #tweaked but may need more added to form - may have multiples
       :translations => 
-        basePathBody + "[@type='bibliography'][@n='translations']/p",
+        basePathBody + "[@type='bibliography'][@subtype='translations']/listBibl/bibl[@type='translations']",
+      #works same but may need more added to form
       :bl => basePathBody + "[@type='bibliography']/bibl[@type='BL']",
       :notes => basePathBody + "[@type='commentary'][@subtype='general']/p",
+      #added this one
+      :mentioned_dates_hdr => 
+        basePathBody + "[@type='commentary'][@subtype='mentionedDates']/head",
       :mentioned_dates => 
-        basePathBody + "[@type='commentary'][@subtype='general']/p/head",
-      :material => basePathBody + "[@type='description']/p/rs[@type='material']",
+        basePathBody + "[@type='commentary'][@subtype='mentionedDates']/p",
+      :material => basePathHeader + "sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material",
       :provenance_ancient_findspot => 
-        basePathBody + provenancePath + "placeName[@type='ancientFindspot']",
+        basePathHeader + "sourceDesc/msDesc/history/origin/p/placeName[@type='ancientFindspot']",
       :provenance_nome =>
-        basePathBody + provenancePath + "geogName[@type='nome']",
+        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='nome']",
       :provenance_ancient_region =>
-        basePathBody + provenancePath + "geogName[@type='ancientRegion']",
+        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='ancientRegion']",
+      #guessed at this one
       :provenance_modern_findspot =>
-        basePathBody + provenancePath + "placeName[@type='modernFindspot']",
+        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='modernFindspot']",
       :inventory_number =>
         basePathHeader + "sourceDesc/msDesc/msIdentifier/idno[@type='invNo']", 
+      #does not currently exist in data
       :planned_for_future_print_release =>
         basePathHeader + "publicationStmt/idno[@type='futurePrintRelease']"
     }
