@@ -12,7 +12,7 @@ class WorkflowTest < ActiveSupport::TestCase
       Factory(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
-              :action => "accept",
+              :action => "approve",
               :choices => "yes no defer")
       Factory(:percent_decree,
               :board => @ddb_board,
@@ -44,7 +44,7 @@ class WorkflowTest < ActiveSupport::TestCase
     def generate_board_vote_for_decree(board, decree, identifier, user)
       Factory(:vote,
               :publication => identifier.publication,
-              :identifier => identifier,
+              :identifier_id => identifier.id,
               :user => user,
               :choice => (decree.get_choice_array)[rand(
                 decree.get_choice_array.size)])
@@ -95,13 +95,14 @@ class WorkflowTest < ActiveSupport::TestCase
           assert_equal 0, @hgv_trans_board.publications.length
         end
         
-        context "voted 'accept'" do
+        context "voted 'approve'" do
           setup do
-            generate_board_votes_for_action(@ddb_board, "accept", @new_ddb)
+            @new_ddb_submitted = @ddb_board.publications.first.identifiers.first
+            generate_board_votes_for_action(@ddb_board, "approve", @new_ddb_submitted)
           end
           
-          should "have two 'accept' votes" do
-            assert_equal 2, @new_ddb.votes.find(:all).collect {|v| %{yes no defer}.include?(v.choice)}.length
+          should "have two 'approve' votes" do
+            assert_equal 2, @new_ddb_submitted.votes.find(:all).collect {|v| %{yes no defer}.include?(v.choice)}.length
           end
           
           should "be copied to a finalizer" do
