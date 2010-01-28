@@ -225,7 +225,6 @@ class Publication < ActiveRecord::Base
       e.save!
     end
   
-  
     if decree_action == "approve"
       #@publication.get_category_obj().approve
       self.status = "approved"
