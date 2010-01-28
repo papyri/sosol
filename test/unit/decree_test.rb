@@ -32,8 +32,9 @@ class DecreeTest < ActiveSupport::TestCase
     
       context "with votes on a publication/identifier" do
         setup do
-          @publication = Factory(:publication, :owner => @decree.board.users.first)
-          @ddb_identifier = Factory(:DDBIdentifier, :publication => @publication)
+          @publication = Factory(:publication, :owner => @decree.board, :creator => @decree.board.users.first)
+          @publication.branch_from_master
+          @ddb_identifier = DDBIdentifier.new_from_template(@publication)
         end
       
         teardown do
@@ -44,11 +45,11 @@ class DecreeTest < ActiveSupport::TestCase
           2.times do |v|
             Factory(:vote,
                     :publication => @publication,
-                    :identifier => @ddb_identifier,
+                    :identifier_id => @ddb_identifier.id,
                     :user => @decree.board.users[v],
                     :choice => "yes")
           end
-
+          
           assert @decree.perform_action?(@ddb_identifier.votes)
         end
       
