@@ -12,7 +12,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
     
     if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => params[:comment], :reason => "commit" } )
+      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
       @comment.save    
     end
     

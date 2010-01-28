@@ -13,6 +13,10 @@ class Identifier < ActiveRecord::Base
   
   belongs_to :publication
   
+  
+  has_many :children, :class_name => 'Identifier', :foreign_key => 'parent_id'
+  belongs_to :parent, :class_name => 'Identifier'
+  
   #assume we want to delete the comments along with the identifier
   has_many :comments, :dependent => :destroy
   
@@ -23,9 +27,22 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
   
+  
+  def origin
+    # walk the parent list until we encounter one with no parent
+    origin_identifier = self
+    while (origin_identifier.parent != nil) do
+      origin_identifier = origin_identifier.parent
+    end
+    return origin_identifier
+  end
+  
   def self.friendly_name
     return "Base Identifier"
   end
+  def friendly_name
+    return "Base Identifier"
+  end 
   
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
@@ -125,16 +142,28 @@ class Identifier < ActiveRecord::Base
   end
   
   def mutable?
+  
+    #determines who can edit the identifier
+    
+    
     #only let the board edit if they own it
-    if self.publication.owner_type == "Board"
+    if self.publication.owner_type == "Board" && self.publication.status == "editing"
       if self.publication.owner.identifier_classes.include?(self.class.to_s)
        return true
       end
+    
+    #let the finalizer edit the id the board owns  
+    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
+      return true 
+      
+    #they can edit any of their stuff if it is not submitted      
     elsif self.publication.owner_type == "User" && %w{editing new}.include?(self.publication.status)
-      return true #they can edit any of their stuff if it is not submitted    
+      return true 
     end
     
     return false    
+
+
    # self.publication.mutable?
   end
   
@@ -166,19 +195,33 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
   
-  
+
+=begin
+
   #caution - sending emails here might mean they are sent even if the status change does not get saved
- # def status=(status_in)
- #   write_attribute(:status, status_in)
- #   send_status_emails(status_in)      
- # end
+  def status=(status_in)
+    
+    #see if status is actually changing
+    do_send = false
+    if status_in != read_attribute(:status)
+      do_send = true
+    end
+    
+    #update status
+    write_attribute(:status, status_in)
+    
+    #check if we need to send emails
+    if do_send
+      send_status_emails(status_in)      
+    end
+  end
   
   #Check with the board to see if we want to send an email on status change.
   def send_status_emails(when_to_send)
 #TODO move to board
   	#search emailer for status
   	if self.board == nil || self.board.emailers == nil
-  	return
+  	  return
   	end
   	self.board.emailers.each do |mailer|
   	
@@ -234,10 +277,12 @@ class Identifier < ActiveRecord::Base
   	end	
   	
   end
-  
+
+=end
   
 
   #standard result actions 
+  #NOTE none of this is currently used except for creating board
   def result_action_approve
    
     self.status = "approved"
@@ -254,10 +299,11 @@ class Identifier < ActiveRecord::Base
     #delete
   end
   
+=begin not used
   def result_action_finalize
   
     self.status = "finalized"
   end
-  
+=end
   
 end

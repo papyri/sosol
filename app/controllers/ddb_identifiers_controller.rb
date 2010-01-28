@@ -18,8 +18,9 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
                                 params[:comment])
+    #TODO add check to see if set really happened
     if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => params[:comment], :reason => "commit" } )
+      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
       @comment.save
     end
     flash[:notice] = "File updated."

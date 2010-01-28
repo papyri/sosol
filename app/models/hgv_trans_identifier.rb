@@ -6,6 +6,9 @@ class HGVTransIdentifier < HGVIdentifier
   def self.friendly_name
     return "Translation"
   end
+  def friendly_name
+    return "Translation"
+  end  
   
   def to_path
     if alternate_name.nil?

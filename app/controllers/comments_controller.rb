@@ -13,13 +13,14 @@ class CommentsController < ApplicationController
   # GET
   def ask_for
     #shows current comments and gives form for new comment
-    @comments = Comment.find_all_by_publication_id(params[:publication_id], :order => 'created_at').reverse
-
     @publication = Publication.find(params[:publication_id])
-    @publication_id = params[:publication_id]
-    @identifier_id = params[:identifier_id]
+    @publication_id = @publication.origin.id
+    
+    @identifier = Identifier.find(params[:identifier_id])
+    @identifier_id  = @identifier.origin.id
    
-   # @comment = Comment.new( :publication_id => params[:publication_id], :identifier_id => params[:identifier_id])
+    @comments = Comment.find_all_by_publication_id(@publication_id, :order => 'created_at').reverse
+
   end
 
   # GET /comments/1
@@ -65,7 +66,7 @@ class CommentsController < ApplicationController
         flash[:notice] = 'Comment was successfully created.'
         
         #url will not work correctly without :id, however id is not used in ask_for, so we just use 1
-        format.html { redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => @comment.publication_id, :identifier_id => @comment.publication_id, :method => "get" }
+        format.html { redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => @comment.publication_id, :identifier_id => @comment.identifier.id, :method => "get" }
         #format.html { redirect_to(@comment) }
         #TODO redirect xml?
         format.xml  { render :xml => @comment, :status => :created, :location => @comment }

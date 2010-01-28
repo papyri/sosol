@@ -75,7 +75,7 @@ class Publication < ActiveRecord::Base
     #1 meta
     #2 transcription
     #3 translation    
-
+    
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
@@ -86,6 +86,12 @@ class Publication < ActiveRecord::Base
         end
       end
     end
+    
+    #if we get to this point, nothing else was submitted therefore we are done with publication
+    #can this be reached without a commit actually taking place?
+    self.origin.status = "committed" 
+    self.save
+    
   end
   
   def submit_identifier(identifier)
@@ -93,9 +99,12 @@ class Publication < ActiveRecord::Base
     
     boards = Board.find(:all)
     boards.each do |board|
-    if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
+    if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
       
-      copy_to_owner(board)
+      boards_copy = copy_to_owner(board)
+      boards_copy.status = "voting"
+      boards_copy.save
+      
       # duplicate = self.clone
       #duplicate.owner = new_owner
      # duplicate.creator = self.creator
@@ -187,7 +196,7 @@ class Publication < ActiveRecord::Base
   end 
   
   def mutable?
-    if self.status == "submitted"
+    if self.status != "editing" && self.status != "new"
       return false
     else
       return true
@@ -198,23 +207,75 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
+  
+  #sets thes origin status for publication identifiers that the publication's board controls
+  def set_origin_identifier_status(status_in)    
+
+      #finalizer is a user so they dont have a board, must go up until we find a board
+      
+      board = self.find_first_board
+      if board
+              
+        self.identifiers.each do |i|
+          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+            i.origin.status = status_in
+            i.origin.save
+          end
+        end
+        
+      end
+  end
+
+  def set_local_identifier_status(status_in)   
+
+      board = self.find_first_board
+      if board
+            
+        self.identifiers.each do |i|
+          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+            i.status = status_in
+            i.save
+          end
+        end
+        
+      end
+  end
+
+  def set_origin_and_local_identifier_status(status_in)
+    set_origin_identifier_status(status_in)          
+    set_local_identifier_status(status_in)          
+  end
+
+#needed to set the finalizer's board identifier status
+  def set_board_identifier_status(status_in)
+      pub = self.find_first_board_parent
+      if pub            
+        pub.identifiers.each do |i|
+          if pub.owner.identifier_classes && pub.owner.identifier_classes.include?(i.class.to_s)
+            i.status = status_in
+            i.save
+          end
+        end
+        
+      end
+  end
+  
+  
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes
     
-    # @comment = Comment.new()
-    # @comment.article_id = params[:id]
-    # @comment.text = params[:comment]
-    # @comment.user_id = @current_user.id
-    # @comment.reason = "vote"
-    # @comment.save
-    
-    #TODO tie vote and comment together?  
+    #check that we are still taking votes
+    if self.status != "voting"
+      return "" #return nothing and do nothing since the voting is now over
+    end
     
     #need to tally votes and see if any action will take place
-    decree_action = self.owner.tally_votes(user_votes)
-    #arrrggg status vs action....could assume that voting will only take place if status is submitted, but that will limit our workflow options?
-    #NOTE here are the types of actions for the voting results
-    #approve, reject, graffiti
+    if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      return "" #another check to make sure only the board is voting on its copy
+    else
+      decree_action = self.owner.tally_votes(user_votes)
+    end
+   
     
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -227,23 +288,56 @@ class Publication < ActiveRecord::Base
   
   
     if decree_action == "approve"
-      #@publication.get_category_obj().approve
+      
+      #set local publication status to approved
       self.status = "approved"
       self.save
+      
+      #on approval, set the identifier(s) to approved (local and origin)
+      set_origin_and_local_identifier_status("approved")
+      
+      #TODO send emails
+      # @publication.send_status_emails(decree_action)          
+      
+      #set up for finalizing
       self.send_to_finalizer
-      # self.commit_to_canon
-      # @publication.send_status_emails(decree_action)    
+      
+      
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
-      self.status = "editing" #reset to unsubmitted       
+     
+      self.origin.status = "editing"
+      self.set_origin_and_local_identifier_status("editing")
+      
+      #do we want to copy ours back to the user? yes
+      #TODO test copy to user
+      self.copy_repo_to_parent_repo
+      self.origin.save
+      
+      #what to do with our copy?
+      self.status = "rejected" #reset to unsubmitted       
       self.save
+      
+      self.destroy
+      #redirect to dashboard
+      redirect_to ( dashboard_url )
+      #TODO send status emails
       # @publication.send_status_emails(decree_action)
+      
     elsif decree_action == "graffiti"               
       # @publication.send_status_emails(decree_action)
       #do destroy after email since the email may need info in the artice
       #@publication.get_category_obj().graffiti
-      self.destroy #need to destroy related?
-      # redirect_to url_for(dashboard)
+      
+      #todo do we let one board destroy the entire document?
+      #will this destroy all board copies....
+      self.origin.destroy #need to destroy related? 
+      self.destroy
+      redirect_to ( dashboard_url )
+      #TODO we need to walk the tree and delete everything everywhere??
+      #or
+      #self.submit_to_next_board
+      
     else
       #unknown action or no action    
     end
@@ -318,18 +412,48 @@ class Publication < ActiveRecord::Base
     # - change parent lineage to flattened commits
   end
   
-  def send_to_finalizer
-    board_members = self.owner.users
-    
-    # just select a random board member to be the finalizer
-    finalizer = board_members[rand(board_members.length)]
-    
+  #finalizer is a user
+  def send_to_finalizer(finalizer = nil)
+ 
+    board_members = self.owner.users   
+    if !finalizer
+      #get someone from the board    
+#      board_members = self.owner.users    
+      # just select a random board member to be the finalizer
+      finalizer = board_members[rand(board_members.length)]  
+    end
+      
     # finalizing_publication = copy_to_owner(finalizer)
     finalizing_publication = clone_to_owner(finalizer)
     self.flatten_commits(finalizing_publication, finalizer, board_members)
     
+    #should we clear the modified flag so we can tell if the finalizer has done anything
+    # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.status = 'finalizing'
     finalizing_publication.save!
+  end  
+  
+  def remove_finalizer
+    #need to find out if there is a finalizer, and take the publication from them
+    #finalizer will point back to this boards publication
+   # Publication.existing_finalizer self.id
+    current_finalizer_publication = find_finalizer_publication
+    #delete him?
+    #whatch out for cascading comment deltes...???TODO
+    if current_finalizer_publication
+      current_finalizer_publication.delete
+    end
+  
+  end
+  
+  
+  def find_finalizer_user
+    find_finalizer_publication.owner
+  end
+  
+  def find_finalizer_publication
+  #returns the finalizer user or nil if finalizer does not exist
+    Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
   end
   
   def head
@@ -409,6 +533,27 @@ class Publication < ActiveRecord::Base
     return origin_publication
   end
   
+  #finds the closest parent publication whose owner is a board and returns that board
+  def find_first_board
+    board_publication = self
+    while (board_publication.owner_type != "Board" && board_publication != nil) do
+      board_publication = board_publication.parent
+    end
+    if board_publication
+      return board_publication.owner
+    end
+    return nil
+  end
+  
+  #finds the closest parent publication whose owner is a board and returns that publication
+  def find_first_board_parent
+    board_publication = self
+    while (board_publication.owner_type != "Board" && board_publication != nil) do
+      board_publication = board_publication.parent
+    end
+    return board_publication      
+  end
+  
   def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
@@ -420,8 +565,9 @@ class Publication < ActiveRecord::Base
     
     # copy identifiers over to new pub
     identifiers.each do |identifier|
-      duplicate_identifer = identifier.clone
-      duplicate.identifiers << duplicate_identifer
+      duplicate_identifier = identifier.clone
+      duplicate_identifier.parent = identifier
+      duplicate.identifiers << duplicate_identifier
     end
     
     return duplicate
@@ -431,6 +577,8 @@ class Publication < ActiveRecord::Base
     return self.owner.repository
   end
   
+  #copies this publication's branch to the new_owner's branch
+  #returns duplicate publication with new_owner
   def copy_to_owner(new_owner)
     duplicate = self.clone_to_owner(new_owner)
     
@@ -439,6 +587,12 @@ class Publication < ActiveRecord::Base
     )
     
     return duplicate
+  end
+    
+  #copy a child publication repo back to the parent repo
+  def copy_repo_to_parent_repo
+     #all we need to do is copy the repo back the parents repo
+     self.origin.repository.copy_branch_from_repo(self.branch, self.origin.branch, self.repository)
   end
   
   # TODO: destroy branch on publication destroy

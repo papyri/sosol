@@ -26,6 +26,9 @@ class DDBIdentifier < Identifier
   def self.friendly_name
     return "Text"
   end
+  def friendly_name
+    return "Text"
+  end 
   
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =

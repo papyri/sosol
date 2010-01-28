@@ -1,7 +1,7 @@
 #Decrees represent the possible choices, outcomes and counting methods of a vote.
 class Decree < ActiveRecord::Base
   belongs_to :board
-  
+
   TALLY_METHODS = {:percent => "percent",
                    :count => "count"}
   

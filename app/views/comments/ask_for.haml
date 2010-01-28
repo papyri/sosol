@@ -10,7 +10,7 @@
   = form.hidden_field :reason
   = form.text_field :comment
   = form.hidden_field :reason
-  = form.submit "Add Comment"
+  = form.submit "Add Comment", :id => "submit_button"
 
 - for comment in @comments
   = render :partial => comment
