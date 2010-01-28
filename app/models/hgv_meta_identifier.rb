@@ -156,7 +156,7 @@ class HGVMetaIdentifier < HGVIdentifier
       :provenance_modern_findspot =>
         basePathBody + provenancePath + "placeName[@type='modernFindspot']",
       :inventory_number =>
-        basePathHeader + "sourceDesc/msDesc/msIdentifier/idno[@type='invno']", 
+        basePathHeader + "sourceDesc/msDesc/msIdentifier/idno[@type='invNo']", 
       :planned_for_future_print_release =>
         basePathHeader + "publicationStmt/idno[@type='futurePrintRelease']"
     }
