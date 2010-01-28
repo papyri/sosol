@@ -11,9 +11,10 @@ edit board for
 - form_for(@board) do |f|
   = f.error_messages 
 
-  = f.label :title
-  = f.text_field :title
-  = f.submit "Save"
+  -# dont let them change the name of the board...repositories depend on it 1-2010
+  -#= f.label :title
+  -#= f.text_field :title
+  -#= f.submit "Save"
 
   .member
     %h3{'style' => "display:inline;"}
