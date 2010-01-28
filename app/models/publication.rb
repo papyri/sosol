@@ -278,7 +278,9 @@ class Publication < ActiveRecord::Base
     board_commits = self.repository.repo.commits_between(board_branch_point,
                                                          self.head)
     
-    creator_commit_messages = [self.submission_reason.comment, '']
+    reason_comment = self.submission_reason
+    
+    creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     creator_commits.each do |creator_commit|
       message = creator_commit.message.strip
       unless message.empty?
