@@ -25,6 +25,10 @@ class PublicationTest < ActiveSupport::TestCase
     should "have status 'new'" do
       assert_equal @publication.status, "new"
     end
+    
+    should "have a head" do
+      assert @publication.head
+    end
   end
   
   context "a publication copied to another owner" do
