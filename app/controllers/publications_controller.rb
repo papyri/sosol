@@ -171,16 +171,9 @@ class PublicationsController < ApplicationController
   # GET /publications/1
   # GET /publications/1.xml
   def show
-
-    @publication = Publication.find(params[:id])
+    
+    @publication = Publication.find(params[:id])    
     @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
-    
-    
-    #if @publication.parent_id 
-    #  @comments = Comment.find_all_by_publication_id(@publication.parent_id, :order => 'created_at DESC')
-    #else
-    #  @comments = Comment.find_all_by_publication_id(params[:id], :order => 'created_at DESC')
-    #end
 
     @show_submit = allow_submit?
 
@@ -311,8 +304,19 @@ class PublicationsController < ApplicationController
     #     end
     
         #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
-    redirect_to @vote.publication
 
+
+    begin
+      #see if publication still exists
+      Publication.find(params[:id])
+      redirect_to @publication
+      return
+    rescue
+      #voting destroyed publication so go to the dashboard
+      redirect_to dashboard_url
+      return
+    end
+   
   end
   
   
