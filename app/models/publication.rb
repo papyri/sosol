@@ -319,7 +319,8 @@ class Publication < ActiveRecord::Base
       
       self.destroy
       #redirect to dashboard
-      redirect_to ( dashboard_url )
+     # redirect_to ( dashboard_url )
+     # redirect_to :controller => "user", :action => "dashboard"
       #TODO send status emails
       # @publication.send_status_emails(decree_action)
       
@@ -332,7 +333,7 @@ class Publication < ActiveRecord::Base
       #will this destroy all board copies....
       self.origin.destroy #need to destroy related? 
       self.destroy
-      redirect_to ( dashboard_url )
+     # redirect_to ( dashboard_url )
       #TODO we need to walk the tree and delete everything everywhere??
       #or
       #self.submit_to_next_board
