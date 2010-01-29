@@ -12,8 +12,8 @@ class Publication < ActiveRecord::Base
  # has_many :votes, :dependent => :destroy
   has_many :comments
   
-  validates_uniqueness_of :title, :scope => 'owner_id'
-  validates_uniqueness_of :branch, :scope => 'owner_id'
+  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id]
+  validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
   validates_each :branch do |model, attr, value|
     # Excerpted from git/refs.c:
@@ -286,7 +286,6 @@ class Publication < ActiveRecord::Base
       e.save!
     end
   
-  
     if decree_action == "approve"
       
       #set local publication status to approved
@@ -372,7 +371,9 @@ class Publication < ActiveRecord::Base
     board_commits = self.repository.repo.commits_between(board_branch_point,
                                                          self.head)
     
-    creator_commit_messages = [self.submission_reason.comment, '']
+    reason_comment = self.submission_reason
+    
+    creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     creator_commits.each do |creator_commit|
       message = creator_commit.message.strip
       unless message.empty?

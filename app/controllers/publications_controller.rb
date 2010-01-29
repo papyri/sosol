@@ -300,72 +300,19 @@ class PublicationsController < ApplicationController
     #double check that they have not already voted
     has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
     if !has_voted 
-      @vote.save  
+      @vote.save
       @comment.save
-      
-      #the below will be moved to after_save in Vote model 
-      #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        
-
-        #need to tally votes and see if any action will take place
-      #  decree_action = @vote.publication.tally_votes(@vote.identifier.votes)
-      @vote.publication.tally_votes(@vote.identifier.votes)
-
-=begin     this takes place in the tally_votes method    
-        # create an event if anything happened
-        if !decree_action.nil? && decree_action != ''
-          e = Event.new
-          e.owner = @vote.publication.owner
-          e.target = @vote.publication
-          e.category = "marked as \"#{decree_action}\""
-          e.save!
-        end
-      
-      
-        if decree_action == "approve"
-          #@publication.get_category_obj().approve
-          @vote.identifier.status = "approved"
-          @vote.identifier.save
-          @vote.save
-          #@publication.status = "approved"
-          #@publication.save
-          # @publication.send_status_emails(decree_action)    
-        elsif decree_action == "reject"
-          #todo implement throughback
-          @vote.identifier.status = "reject"     
-          @vote.identifier.save
-          @vote.save
-          # @publication.send_status_emails(decree_action)
-        elsif decree_action == "graffiti"               
-          # @publication.send_status_emails(decree_action)
-          #do destroy after email since the email may need info in the artice
-          #@publication.get_category_obj().graffiti
-          @vote.identifier.destroy #need to destroy related?
-          #this part of the publication was crap, do we assume the rest is as well?
-          #for now we will just continue the submition process
-          self.submit_to_next_board
-          
-          #redirect_to url_for(dashboard)
-          return
-        else
-          #unknown action or no action    
-        end   
-=end
-#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
-
-
-
- # unsure if following needed due to merge conflict
- #     if !Publication.exists?(@publication)
- #       redirect_to url_for(dashboard)
- #     end
-
     end #!has_voted
     #do what now? go to review page
     
-    #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+    # unsure if following needed due to merge conflict
+    #     if !Publication.exists?(@publication)
+    #       redirect_to url_for(dashboard)
+    #     end
+    
+        #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
     redirect_to @vote.publication
-    #todo redirect to publication summary page
+
   end
   
   
