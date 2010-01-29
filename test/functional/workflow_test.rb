@@ -107,6 +107,9 @@ class WorkflowTest < ActiveSupport::TestCase
           
           should "be copied to a finalizer" do
             assert_equal 1, @ddb_board.publications.first.children.length
+            finalizing_publication = @ddb_board.publications.first.children.first
+            assert_equal "finalizing", finalizing_publication.status
+            assert_equal User, finalizing_publication.owner.class
           end
         end
       end
