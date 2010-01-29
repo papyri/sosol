@@ -10,7 +10,7 @@ class Vote < ActiveRecord::Base
   end
   
   def tally
-  #  if self.identifier && self.identifier.status == "editing"
+    if self.identifier # && self.identifier.status == "editing"
       #need to tally votes and see if any action will take place
       #should only be voting while the publication is owned by the correct board
       related_votes = self.identifier.votes
@@ -57,8 +57,9 @@ class Vote < ActiveRecord::Base
       else
         #unknown action or no action
       end
-    #end
-=end    
+    
+=end
+    end    
     return nil
   end
 
