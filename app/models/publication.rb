@@ -167,7 +167,7 @@ class Publication < ActiveRecord::Base
     # fetch a title without creating from template
     new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
     
-    new_publication.status = "new"
+    new_publication.status = "editing" #TODO add new flag else where or flesh out new status#"new"
     
     new_publication.save!
     
