@@ -293,7 +293,7 @@ class Publication < ActiveRecord::Base
       self.save
       
       #on approval, set the identifier(s) to approved (local and origin)
-      set_origin_and_local_identifier_status("approved")
+      self.set_origin_and_local_identifier_status("approved")
       
       #TODO send emails
       # @publication.send_status_emails(decree_action)          
@@ -310,12 +310,14 @@ class Publication < ActiveRecord::Base
       
       #do we want to copy ours back to the user? yes
       #TODO test copy to user
-      self.copy_repo_to_parent_repo
+      #WARNING since they decided not to let editors edit we don't need to copy back to user 1-28-2010
+      #self.copy_repo_to_parent_repo
+      
       self.origin.save
       
       #what to do with our copy?
-      self.status = "rejected" #reset to unsubmitted       
-      self.save
+     # self.status = "rejected" #reset to unsubmitted       
+     # self.save
       
       self.destroy
       #redirect to dashboard
