@@ -172,7 +172,14 @@ class PublicationsController < ApplicationController
   # GET /publications/1.xml
   def show
     
-    @publication = Publication.find(params[:id])    
+    begin
+      @publication = Publication.find(params[:id])
+    rescue    
+      flash[:error] = "Publication not found"
+      redirect_to (dashboard_url)
+      return
+    end
+     
     @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
 
     @show_submit = allow_submit?
