@@ -25,7 +25,7 @@ class WorkflowTest < ActiveSupport::TestCase
               :action => "graffiti",
               :choices => "graffiti")
       
-      @james = Factory(:user)
+      @james = Factory(:user, :name => "James")
       
       @hgv_meta_board = Factory(:hgv_meta_board, :title => 'HGV metadata')
       @hgv_trans_board = Factory(:hgv_trans_board, :title => 'Translations')
@@ -33,7 +33,7 @@ class WorkflowTest < ActiveSupport::TestCase
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
       
-      @submitter = Factory(:user)
+      @submitter = Factory(:user, :name => "Submitter")
     end
     
     teardown do
@@ -88,6 +88,7 @@ class WorkflowTest < ActiveSupport::TestCase
         should "be copied to the DDB board" do
           assert_equal @publication, @ddb_board.publications.first.parent
           assert_equal @publication.children, @ddb_board.publications
+          assert_equal @ddb_board, @publication.children.first.owner
         end
 
         should "not be copied to the HGV boards" do

@@ -69,6 +69,12 @@ class Publication < ActiveRecord::Base
     self.branch ||= title_to_ref(self.title)
   end
   
+  # Should check the owner's repo to make sure the branch doesn't exist and halt if so
+  def before_create
+    if self.owner.repository.branches.include?(self.branch)
+      return false
+    end
+  end
   
   def submit_to_next_board
     #horrible hack here to specifiy board order, change later with workflow engine
@@ -202,11 +208,6 @@ class Publication < ActiveRecord::Base
       return true
     end
   end
-  
-  # TODO: rename actual branch after branch attribute rename
-  def after_create
-  end
-  
   
   #sets thes origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)    
@@ -418,7 +419,6 @@ class Publication < ActiveRecord::Base
   
   #finalizer is a user
   def send_to_finalizer(finalizer = nil)
- 
     board_members = self.owner.users   
     if !finalizer
       #get someone from the board    
