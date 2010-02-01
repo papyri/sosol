@@ -10,13 +10,19 @@
     = render :partial => "publications/list", :object => @publications.collect{|p| p.status == status ? p : nil}.compact
   %br
   = render :partial => "publications/publication_selector"
-  %br
-  - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
-    = label_tag 'pn_id', 'Create publication from PN ID:'
-    = text_field_tag 'pn_id', '', :size => 40
-    = form.submit "Create", :class => ''
+  
+  - if @current_user.developer
+    #developer
+      %br
+      - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
+        = label_tag 'pn_id', 'Create publication from PN ID:'
+        = text_field_tag 'pn_id', '', :size => 40
+        = form.submit "Create", :class => ''
+  
   %br
   - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create_from_templates" } do |form|
+    = "or create a new publicaiton:"
+    %br
     = form.submit "Create New Publication", :class => 'save'
   %br
   - if @current_user.boards.length > 0
