@@ -20,12 +20,14 @@
       %br
       = f.text_field :email
     %br
-    %h3
-      Interface
-    %p
-      Enter choices for languages (en de it fr la el es)
-      %br
-      = f.text_field :language_prefs
+    
+    -#%h3
+    -#  Interface
+    -#%p
+    -#  Enter choices for languages (en de it fr la el es)
+    -#  %br
+    -#  = f.text_field :language_prefs
+    
     %p
       %br
       = f.submit "Update"
@@ -43,9 +45,9 @@
       - @identifiers.each do |identifier|
         %li
           = h identifier.identifier
-          \-
-          = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
-  = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
+          -#\-
+          -#= link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
+  -#= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
 
 
 %script{:src => rpx_widget_url, :type => "text/javascript"}
