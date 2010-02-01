@@ -53,6 +53,7 @@ module Rpx
     def rp_url
       parts = @base_url.split('://', 2)
       parts = parts.insert(1, '://' + @realm + '.')
+      parts[0] = 'http'
       return parts.join('')
     end
 
