@@ -23,7 +23,7 @@ class PublicationTest < ActiveSupport::TestCase
     end
     
     should "have status 'new'" do
-      assert_equal @publication.status, "new"
+      assert_equal "new", @publication.status
     end
     
     should "have a head" do
