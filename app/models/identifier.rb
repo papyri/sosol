@@ -1,6 +1,7 @@
 class Identifier < ActiveRecord::Base
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
   
+  FRIENDLY_NAME = "Base Identifier"
   
   #status represents last thing done
   IDENTIFIER_STATUS = %w{ editing submitted approved finalized }
@@ -36,13 +37,6 @@ class Identifier < ActiveRecord::Base
     end
     return origin_identifier
   end
-  
-  def self.friendly_name
-    return "Base Identifier"
-  end
-  def friendly_name
-    return "Base Identifier"
-  end 
   
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
@@ -260,7 +254,7 @@ class Identifier < ActiveRecord::Base
   			#owner
   			#status
   			#who changed status
-  			subject_line = self.publication.title + " " + self.friendly_name + "-" + self.status
+  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
   			#if addresses == nil 
   			#raise addresses.to_s + addresses.size.to_s
   			#else

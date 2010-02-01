@@ -6,6 +6,8 @@ class HGVIdentifier < Identifier
   IDENTIFIER_NAMESPACE = 'hgv'
   TEMPORARY_COLLECTION = 'SoSOL'
   
+  FRIENDLY_NAME = "HGV Identifier"
+  
   ROMAN_MAP = { 1 => "I",
                 4 => "IV",
                 5 => "V",
