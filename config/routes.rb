@@ -30,6 +30,7 @@ ActionController::Routing::Routes.draw do |map|
  
   map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
+  map.master_list 'master_list', :controller => "publications", :action => "master_list"
   
   map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
   map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
