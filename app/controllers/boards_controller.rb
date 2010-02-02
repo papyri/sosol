@@ -3,12 +3,29 @@ class BoardsController < ApplicationController
   layout "site"
   before_filter :check_admin
 
+  
   def check_admin
     if !@current_user.admin
       render :file => 'public/403.html', :status => '403'
     end
   end
   
+  def overview
+    @board = Board.find(params[:id])
+
+    # below is dangerous since it will expose publications to non owners
+    #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
+    
+    #return only owner publications
+    finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  "status == 'finalizing'")    
+
+    if finalizing_publications
+      @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+    else
+     @finalizing_publications = nil
+    end
+    
+  end
   
   def find_member
     @board = Board.find(params[:id])

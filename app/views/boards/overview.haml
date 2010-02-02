@@ -1,0 +1,62 @@
+
+#main.site
+  = render :partial => "common/flash_all"
+  = stylesheet_link_tag "board"
+
+  -# ----------board set-up info-------------
+  %h1
+    = @board.title 
+  = "controls "     
+  - @board.identifier_classes.each do |ic| 
+    = ic  
+  %br
+  
+  .member
+    %h3
+      Members
+    - @board.users.count
+    - @board.users.each do |user| 
+      %p 
+        = user.name
+  
+  %b
+    Decrees
+  - @board.decrees.each do |decree|
+    = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
+
+
+  -#-------publications--------
+
+  %br
+
+  %br
+    
+    - approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+             
+    %h2
+      #{@board.title} 
+      Publications 
+    - board_publications = @board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
+    - if board_publications.length > 0        
+      %h3== Voting Publications
+      = render :partial => "publications/list", :object => board_publications
+      %br
+      
+    -#- approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+    - if approved_publications.length > 0        
+      %h3== Approved Publications
+      = render :partial => "publications/list", :object => approved_publications
+      %br
+      
+    - board_publications = @board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
+    - if board_publications.length > 0        
+      %h3== Committed Publications
+      = render :partial => "publications/list", :object => board_publications
+      %br
+      
+    
+    - if @finalizing_publications.length > 0         
+      %h3== Finalizing
+      = render :partial => "publications/list", :object => @finalizing_publications
+    -#  %br
+        
