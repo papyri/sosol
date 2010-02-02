@@ -3,12 +3,7 @@ class HGVTransIdentifier < HGVIdentifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
-  def self.friendly_name
-    return "Translation"
-  end
-  def friendly_name
-    return "Translation"
-  end  
+  FRIENDLY_NAME = "Translation"
   
   def to_path
     if alternate_name.nil?
