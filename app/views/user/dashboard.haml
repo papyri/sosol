@@ -28,7 +28,16 @@
   - if @current_user.boards.length > 0
     %h2
       Boards
-    - @current_user.boards.each do |board|      
+    - @current_user.boards.each do |board| 
+      - finalizing_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
+      - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+      -#remove approved publications if in the finalizer list
+      - finalizing_publications.each do |fp|
+        -#remove it from the list of approved publications
+        - approved_publications.each do |ap|
+          - if fp.origin == ap.origin
+            - approved_publications.delete(ap)
+           
       %h2
         #{board.title} 
         Publications 
@@ -38,10 +47,10 @@
         = render :partial => "publications/list", :object => board_publications
         %br
         
-      - board_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
-      - if board_publications.length > 0        
+      -#- approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+      - if approved_publications.length > 0        
         %h3== Approved Publications
-        = render :partial => "publications/list", :object => board_publications
+        = render :partial => "publications/list", :object => approved_publications
         %br
         
       - board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
@@ -50,10 +59,10 @@
         = render :partial => "publications/list", :object => board_publications
         %br
         
-      - board_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
-      - if board_publications.length > 0         
+      -#- finalizing_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
+      - if finalizing_publications.length > 0         
         %h3== Your Publications to Finalize
-        = render :partial => "publications/list", :object => board_publications
+        = render :partial => "publications/list", :object => finalizing_publications
         %br
         
   %h2 News Feed
