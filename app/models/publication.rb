@@ -452,7 +452,10 @@ class Publication < ActiveRecord::Base
   
   
   def find_finalizer_user
-    find_finalizer_publication.owner
+    if find_finalizer_publication
+      return find_finalizer_publication.owner    
+    end
+    return nil
   end
   
   def find_finalizer_publication
