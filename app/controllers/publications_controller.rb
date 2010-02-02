@@ -16,7 +16,7 @@ class PublicationsController < ApplicationController
     #only let user submit, don't let a board member submit
     allow = allow && @publication.owner_type == "User"
     
-    allow = allow && @publication.status == "editing" 
+    allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
     return allow
     
     #below bypassed until we have return mechanism in place
