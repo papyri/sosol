@@ -98,6 +98,10 @@ class Identifier < ActiveRecord::Base
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
     
+    #since the identifier is new, set the content to not modified so we can tell if they change it
+    new_identifier.modified = false
+    new_identifier.save!
+    
     return new_identifier
   end
   
