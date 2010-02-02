@@ -51,7 +51,7 @@ class WorkflowTest < ActiveSupport::TestCase
     end
     
     def generate_board_votes_for_action(board, action, identifier)
-      decree = board.decrees.find(:all).find {|d| d.action == action}
+      decree = board.decrees.detect {|d| d.action == action}
       vote_count = 0
       if decree.tally_method == Decree::TALLY_METHODS[:percent]
         while (((vote_count.to_f / decree.board.users.length)*100) < decree.trigger) do
@@ -103,7 +103,7 @@ class WorkflowTest < ActiveSupport::TestCase
           end
           
           should "have two 'approve' votes" do
-            assert_equal 2, @new_ddb_submitted.votes.find(:all).collect {|v| %{yes no defer}.include?(v.choice)}.length
+            assert_equal 2, @new_ddb_submitted.votes.select {|v| %{yes no defer}.include?(v.choice)}.length
           end
           
           should "be copied to a finalizer" do
