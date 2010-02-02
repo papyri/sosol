@@ -14,10 +14,6 @@ class Identifier < ActiveRecord::Base
   
   belongs_to :publication
   
-  
-  has_many :children, :class_name => 'Identifier', :foreign_key => 'parent_id'
-  belongs_to :parent, :class_name => 'Identifier'
-  
   #assume we want to delete the comments along with the identifier
   has_many :comments, :dependent => :destroy
   
@@ -28,14 +24,20 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
   
-  
   def origin
-    # walk the parent list until we encounter one with no parent
-    origin_identifier = self
-    while (origin_identifier.parent != nil) do
-      origin_identifier = origin_identifier.parent
+    self.publication.origin.identifiers.detect {|i| i.name == self.name}
+  end
+  
+  def parent
+    self.publication.parent.identifiers.detect {|i| i.name == self.name}
+  end
+  
+  def children
+    child_identifiers = []
+    self.publication.children.each do |child_pub|
+      child_identifiers << child_pub.identifiers.detect{|i| i.name == self.name}
     end
-    return origin_identifier
+    return child_identifiers
   end
   
   def repository

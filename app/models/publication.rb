@@ -570,7 +570,6 @@ class Publication < ActiveRecord::Base
     # copy identifiers over to new pub
     identifiers.each do |identifier|
       duplicate_identifier = identifier.clone
-      duplicate_identifier.parent = identifier
       duplicate.identifiers << duplicate_identifier
     end
     
