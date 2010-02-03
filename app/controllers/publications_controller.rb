@@ -287,7 +287,7 @@ class PublicationsController < ApplicationController
     begin
       @publication = Publication.find(params[:id])  
     rescue    
-      flash[:error] = "Publication not found, voting is over for this publications."
+      flash[:warning] = "Publication not found - voting is over for this publications."
       redirect_to (dashboard_url)
       return
     end
@@ -295,7 +295,7 @@ class PublicationsController < ApplicationController
     
     
     if @publication.status != "voting" 
-      flash[:warining] = "Voting is over for this publication."
+      flash[:warning] = "Voting is over for this publication."
       
       redirect_to @publication
       return
