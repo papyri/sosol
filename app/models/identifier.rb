@@ -1,9 +1,10 @@
 class Identifier < ActiveRecord::Base
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
   
+  FRIENDLY_NAME = "Base Identifier"
   
   #status represents last thing done
-  IDENTIFIER_STATUS = %w{ editing submitted approved finalized }
+  IDENTIFIER_STATUS = %w{ editing submitted approved finalized committed }
   #the status are roughly:
   #editing - created/checkout by user - only user is changing
   #submitted - board has it and maybe changing it - user no longer has
@@ -36,13 +37,6 @@ class Identifier < ActiveRecord::Base
     end
     return origin_identifier
   end
-  
-  def self.friendly_name
-    return "Base Identifier"
-  end
-  def friendly_name
-    return "Base Identifier"
-  end 
   
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
@@ -103,6 +97,10 @@ class Identifier < ActiveRecord::Base
     
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
+    
+    #since the identifier is new, set the content to not modified so we can tell if they change it
+    new_identifier.modified = false
+    new_identifier.save!
     
     return new_identifier
   end
@@ -260,7 +258,7 @@ class Identifier < ActiveRecord::Base
   			#owner
   			#status
   			#who changed status
-  			subject_line = self.publication.title + " " + self.friendly_name + "-" + self.status
+  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
   			#if addresses == nil 
   			#raise addresses.to_s + addresses.size.to_s
   			#else

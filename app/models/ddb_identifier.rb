@@ -2,6 +2,8 @@ class DDBIdentifier < Identifier
   PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
+  FRIENDLY_NAME = "Text"
+  
   IDENTIFIER_NAMESPACE = 'ddbdp'
   TEMPORARY_COLLECTION = '0500'
   
@@ -22,13 +24,6 @@ class DDBIdentifier < Identifier
       @rexml_document = REXML::Document.new(@collection_xml)
     end
   end
-
-  def self.friendly_name
-    return "Text"
-  end
-  def friendly_name
-    return "Text"
-  end 
   
   def titleize
     ddb_series_number, ddb_volume_number, ddb_document_number =
