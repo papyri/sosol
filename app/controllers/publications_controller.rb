@@ -282,7 +282,17 @@ class PublicationsController < ApplicationController
   def vote
     #note that votes will go with the boards copy of the pub and identifiers
     #  vote history will also be recorded in the comment of the origin pub and identifier
-    @publication = Publication.find(params[:id])  
+    
+    #if not pub found ie race condition of voting on reject or graffiti    
+    begin
+      @publication = Publication.find(params[:id])  
+    rescue    
+      flash[:error] = "Publication not found, voting is over for this publications."
+      redirect_to (dashboard_url)
+      return
+    end
+    
+    
     
     if @publication.status != "voting" 
       flash[:warining] = "Voting is over for this publication."
