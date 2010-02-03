@@ -40,6 +40,7 @@
            
       %h2
         #{board.title} 
+        -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
         Publications 
       - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
       - if board_publications.length > 0        
