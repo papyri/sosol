@@ -4,7 +4,7 @@ class Identifier < ActiveRecord::Base
   FRIENDLY_NAME = "Base Identifier"
   
   #status represents last thing done
-  IDENTIFIER_STATUS = %w{ editing submitted approved finalized }
+  IDENTIFIER_STATUS = %w{ editing submitted approved finalized committed }
   #the status are roughly:
   #editing - created/checkout by user - only user is changing
   #submitted - board has it and maybe changing it - user no longer has
