@@ -41,9 +41,9 @@ class UserController < ApplicationController
       redirect_to :controller => "user", :action => "signin"
     end
     #below selects publications to show in standard user data section of dashboard
-    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id == creator_id", :include => :identifiers)
+    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id", :include => :identifiers)
     #below selects publications current user is responsible for finalizing to show in board section of dashboard
-    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type == 'User' AND status == 'finalizing'", :include => :identifiers)
+    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers)
        
     #or do we want to use the creator id?
     #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
