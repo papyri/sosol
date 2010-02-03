@@ -16,6 +16,7 @@ class PublicationsController < ApplicationController
     #only let user submit, don't let a board member submit
     allow = allow && @publication.owner_type == "User"
     
+    #dont let user submit if already submitted, or committed etc..
     allow = allow && @publication.status == "editing" 
     return allow
     
@@ -31,6 +32,19 @@ class PublicationsController < ApplicationController
       end
     end
    allow
+  end
+  
+  def determine_creatable_identifiers
+    #only let user create new for non-existing    
+    @creatable_identifiers = Identifier::IDENTIFIER_SUBCLASSES
+        @publication.identifiers.each do |i|
+          @creatable_identifiers.each do |ci|
+            puts ci
+            if ci == i.type.to_s
+              @creatable_identifiers.delete(ci)    
+            end
+          end
+        end  
   end
   
   # POST /publications
@@ -184,6 +198,8 @@ class PublicationsController < ApplicationController
 
     @show_submit = allow_submit?
 
+    determine_creatable_identifiers()
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @publication }

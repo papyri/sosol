@@ -54,15 +54,15 @@
     - for comment in @comments
       = render :partial => comment      
  
-  -# if @publication.status == "editing"
-  -# show_submit is similar to status=editing but more thorough
-  - if @show_submit
-    - for class_type in Identifier::IDENTIFIER_SUBCLASSES
-      - create_type = class_type.constantize::FRIENDLY_NAME
-      - create_type = 'Create new ' + create_type
-      = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
-      %br
+ 
+  
 
-    - if @current_user.developer  
-      = link_to "developer delete", @publication, :method => :delete 
-   
+  - for class_type in @creatable_identifiers
+    - create_type = class_type.constantize::FRIENDLY_NAME
+    - create_type = 'Create new ' + create_type
+    = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
+    %br
+
+  - if @current_user.developer  
+    = link_to "developer delete", @publication, :method => :delete 
+ 
