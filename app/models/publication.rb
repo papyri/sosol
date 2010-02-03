@@ -209,7 +209,7 @@ class Publication < ActiveRecord::Base
   end 
   
   def mutable?
-    if self.status != "editing" && self.status != "new"
+    if self.status != "editing" # && self.status != "new"
       return false
     else
       return true
