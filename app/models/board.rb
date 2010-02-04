@@ -81,4 +81,92 @@ class Board < ActiveRecord::Base
     
     return ""
   end #tally_votes
+  
+
+  def send_status_emails(when_to_send, publication)
+
+  	#search emailer for status
+  	if self.emailers == nil
+  	  return
+  	end
+    
+    #find identifiers for email
+    email_identifiers = Array.new
+    publication.identifiers.each do |identifier|
+      if self.identifier_classes.include?(identifier.class.to_s)
+        email_identifiers << identifier      
+      end
+    end
+    
+    
+  	self.emailers.each do |mailer|
+  	
+  		if mailer.when_to_send == when_to_send
+  			#send the email
+  			addresses = Array.new	
+  			#--addresses
+  			mailer.users.each do |user|
+  				if user.email != nil
+  					addresses << user.email
+  				end
+  			end
+  			extras = mailer.extra_addresses.split(" ")
+  			extras.each do |extra|
+  				addresses << extra
+  			end
+  			if mailer.send_to_owner
+  				if publication && publication.creator && publication.creator.email
+  					addresses << publication.creator.email
+  				end
+  			end
+  			
+  			#--document content
+  			if mailer.include_document
+  				#document_content = self.content 
+          document_content = ""
+          email_identifiers.each do |ec|
+            document_content += ec.content
+          end
+  			else
+  				document_content = nil
+  			end
+  			
+  			body = mailer.message
+  			
+  			#TODO parse the message to add local vars
+  			#votes
+  			
+  			#comments
+  			#owner
+  			#status
+  			#who changed status
+        friendly_name = ""
+        email_identifiers.each do |ec|
+          friendly_name += ec.class::FRIENDLY_NAME
+        end
+        
+  			#subject_line = publication.title + " " + self.class::FRIENDLY_NAME + "-" + publication.status
+        subject_line = publication.title + " " + friendly_name + "-" + when_to_send
+  			#if addresses == nil 
+  			#raise addresses.to_s + addresses.size.to_s
+  			#else
+  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  			#end
+  			
+  			addresses.each do |address|
+  				if address != nil && address.strip != ""
+  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
+  				end
+  			end
+  			
+  		end
+  	end	
+  	
+  end
+
+
+  
+  
+  
+  
 end

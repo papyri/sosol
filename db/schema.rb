@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100127044952) do
+ActiveRecord::Schema.define(:version => 20100203215323) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20100127044952) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "send_to_owner"
+    t.boolean  "send_to_all_board_members", :default => false
   end
 
   create_table "emailers_users", :id => false, :force => true do |t|

@@ -3,6 +3,15 @@ class EmailersController < ApplicationController
     @emailer = Emailer.find(params[:id])
   end
   
+  def whens_hash
+    { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
+  end
+  
+  def find_sosol_users
+    @emailer = Emailer.find(params[:id])
+    @sosol_users = User.find(:all)
+  end
+  
   def add_member
    @emailer = Emailer.find(params[:id])
    user = User.find_by_name(params[:user_name])
@@ -12,7 +21,9 @@ class EmailersController < ApplicationController
       @emailer.save
     end   
   
-   redirect_to :action => "edit", :id => @emailer.id
+   
+   #redirect_to :action => "edit", :id => @emailer.id
+   redirect_to :controller => "boards", :action => "edit", :id => @emailer.board
   end
   
   
@@ -24,7 +35,8 @@ class EmailersController < ApplicationController
     @emailer.users.delete(user)
     @emailer.save            
 
-    redirect_to :action => "edit", :id => @emailer.id
+    #redirect_to :action => "edit", :id => @emailer.id
+    redirect_to :controller => "boards", :action => "edit", :id => @emailer.board
   end
   
 
@@ -57,6 +69,7 @@ class EmailersController < ApplicationController
     @emailer = Emailer.new
     @emailer.board_id = params[:board_id]
     @board = Board.find(params[:board_id])
+    @whens = whens_hash
 
     respond_to do |format|
       format.html # new.html.erb
@@ -67,7 +80,8 @@ class EmailersController < ApplicationController
   # GET /emailers/1/edit
   def edit
     @emailer = Emailer.find(params[:id])
-    @whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
+    @whens = whens_hash()
+    #@whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
   end
 
   # POST /emailers
@@ -81,7 +95,8 @@ class EmailersController < ApplicationController
       board.save
     
       flash[:notice] = 'Emailer was successfully created.'
-      redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  
+      redirect_to :controller => 'emailers', :action => 'edit', :id => @emailer.id  
+      #redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  
         
     end
   end
@@ -111,6 +126,7 @@ class EmailersController < ApplicationController
     @emailer.destroy
 
     respond_to do |format|
+      format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
       format.html { redirect_to(emailers_url) }
       format.xml  { head :ok }
     end

@@ -8,16 +8,8 @@
   
   
   = f.label :when_to_send
-  = f.select :when_to_send, @board.result_actions_hash
+  = f.select :when_to_send, @whens
   
-  
-  %p
-    = f.label :include_document
-    = f.check_box :include_document 
-  
-  
-    = f.label :message 
-    = f.text_area :message
   %p
     = f.submit "Create" 
   

@@ -36,7 +36,8 @@ class PublicationsController < ApplicationController
   
   def determine_creatable_identifiers
     #only let user create new for non-existing    
-    @creatable_identifiers = Identifier::IDENTIFIER_SUBCLASSES
+    @creatable_identifiers =  %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
+    #@creatable_identifiers = Identifier::IDENTIFIER_SUBCLASSES
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
             puts ci
@@ -167,8 +168,16 @@ class PublicationsController < ApplicationController
     @publication.set_board_identifier_status("committed")
     
     #as it is set up the finalizer will have a parent that is a board whose status must be set
-    @publication.parent.status = "committed"
-    @publication.parent.save
+    #check that parent is board
+    if @publication.parent && @publication.parent.owner_type == "Board"              
+      @publication.parent.status = "committed"
+      @publication.parent.save
+      @publication.parent.send_status_emails("committed", @publication)
+    #else #the user is a super user
+    end
+         
+        
+
     
     #set the finalizer pub status
     @publication.status = "committed"

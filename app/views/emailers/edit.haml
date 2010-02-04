@@ -3,34 +3,49 @@
   = @emailer.board.title
 - form_for(@emailer) do |f|
   = f.error_messages
-  %h3{ :style => "display:inline;" }
-    Members
-  = link_to "Add", :controller => "emailers", :action => "find_board_member", :id => @emailer.id
-  %br
-  - @emailer.users.each do |user|
-    = user.name
-    = link_to "x", :controller => "emailers", :action => "remove_member", :user_id => user.id
-  %br
-  %p
-    = f.label :extra_addresses
-    %br
-    = f.text_area :extra_addresses, :cols => "80", :rows => "2"
+  
+  
   = f.label :when_to_send
   = f.select :when_to_send,  @whens
+
   %p
     = f.label :include_document
     %br
     = f.check_box :include_document
+  
+  
   %p
     = f.label :send_to_owner
     %br
-    = f.check_box :send_to_owner
+    = f.check_box :send_to_owner  
+  
+  
+  %p
+    = f.label :send_to_all_board_members
+    %br
+    = f.check_box :send_to_all_board_members    
+  
+    
+  
+  %h4{ :style => "display:inline;" }
+    Send to Other SoSol Users
+  -#= link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => @emailer.id
+  %br
+  - @emailer.users.each do |user|
+    = user.name
+    -#= link_to "x", :controller => "emailers", :action => "remove_member", :user_id => user.id  
+  %br
+
+
+  %p
+    = f.label :extra_addresses
+    %br
+    = f.text_area :extra_addresses, :cols => "80", :rows => "2"
+
+
   %p
     = f.label :message
     %br
     = f.text_area :message, :cols => "80", :rows => "20"
   %p
     = f.submit "Update"
-= link_to 'Show', @emailer
-|
-= link_to 'Back', emailers_path

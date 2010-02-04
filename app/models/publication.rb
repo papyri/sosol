@@ -131,6 +131,7 @@ class Publication < ActiveRecord::Base
         identifier.status = "submitted"
         self.status = "submitted"
         
+        board.send_status_emails("submitted", self)
         
         # self.title = self.creator.name + "/" + self.title
         # self.branch = title_to_ref(self.title)
@@ -220,6 +221,68 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
+=begin
+  def send_status_emails(when_to_send)
+
+  	#search emailer for status
+  	if self.board == nil || self.board.emailers == nil
+  	  return
+  	end
+    
+  	self.board.emailers.each do |mailer|
+  	
+  		if mailer.when_to_send == when_to_send
+  			#send the email
+  			addresses = Array.new	
+  			#--addresses
+  			mailer.users.each do |user|
+  				if user.email != nil
+  					addresses << user.email
+  				end
+  			end
+  			extras = mailer.extra_addresses.split(" ")
+  			extras.each do |extra|
+  				addresses << extra
+  			end
+  			if mailer.send_to_owner
+  				if self.user.email != nil
+  					addresses << self.user.email
+  				end
+  			end
+  			
+  			#--document content
+  			if mailer.include_document
+  				document_content = self.content 
+  			else
+  				document_content = nil
+  			end
+  			
+  			body = mailer.message
+  			
+  			#TODO parse the message to add local vars
+  			#votes
+  			
+  			#comments
+  			#owner
+  			#status
+  			#who changed status
+  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
+  			#if addresses == nil 
+  			#raise addresses.to_s + addresses.size.to_s
+  			#else
+  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
+  			#end
+  			
+  			addresses.each do |address|
+  				if address != nil && address.strip != ""
+  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
+  				end
+  			end
+  			
+  		end
+  	end	
+  end
+=end
   
   #sets thes origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)    
@@ -308,7 +371,8 @@ class Publication < ActiveRecord::Base
       #on approval, set the identifier(s) to approved (local and origin)
       self.set_origin_and_local_identifier_status("approved")
       
-      #TODO send emails
+      #send emails
+       self.owner.send_status_emails("approved", self)
       # @publication.send_status_emails(decree_action)          
       
       #set up for finalizing
@@ -320,6 +384,8 @@ class Publication < ActiveRecord::Base
      
       self.origin.status = "editing"
       self.set_origin_and_local_identifier_status("editing")
+      
+      self.owner.send_status_emails("rejected", self)
       
       #do we want to copy ours back to the user? yes
       #TODO test copy to user
@@ -344,6 +410,7 @@ class Publication < ActiveRecord::Base
       #do destroy after email since the email may need info in the artice
       #@publication.get_category_obj().graffiti
       
+      self.owner.send_status_emails("graffiti")
       #todo do we let one board destroy the entire document?
       #will this destroy all board copies....
       self.origin.destroy #need to destroy related? 
@@ -511,6 +578,7 @@ class Publication < ActiveRecord::Base
       end
     end
   end
+  
   
   def branch_from_master
     owner.repository.create_branch(branch)
