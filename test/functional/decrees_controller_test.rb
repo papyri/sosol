@@ -46,7 +46,7 @@ class DecreesControllerTest < ActionController::TestCase
 
   test "should update decree" do
     put :update, :id => @decree.id, :decree => { }
-    assert_redirected_to decree_path(assigns(:decree))
+    assert_redirected_to edit_board_path(@board.id)
   end
 
   test "should destroy decree" do
@@ -54,6 +54,6 @@ class DecreesControllerTest < ActionController::TestCase
       delete :destroy, :id => @decree.id
     end
 
-    assert_redirected_to decrees_path
+    assert_redirected_to edit_board_path(@board.id)
   end
 end

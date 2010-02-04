@@ -17,17 +17,20 @@ Factory.define :hgv_board, :parent => :board do |f|
     [
       decrees.association(
         :percent_decree,
+        :board => nil,
         :trigger => 100.0,
         :action => "accept",
         :choices => "yes no"),
       decrees.association(
         :count_decree,
         :trigger => 1.0,
+        :board => nil,
         :action => "reject",
         :choices => "reject"),
       decrees.association(
         :count_decree,
         :trigger => 1.0,
+        :board => nil,
         :action => "graffiti",
         :choices => "graffiti")
     ]

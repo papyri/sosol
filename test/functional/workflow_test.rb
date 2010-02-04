@@ -25,7 +25,7 @@ class WorkflowTest < ActiveSupport::TestCase
               :action => "graffiti",
               :choices => "graffiti")
       
-      @james = Factory(:user)
+      @james = Factory(:user, :name => "James")
       
       @hgv_meta_board = Factory(:hgv_meta_board, :title => 'HGV metadata')
       @hgv_trans_board = Factory(:hgv_trans_board, :title => 'Translations')
@@ -33,12 +33,12 @@ class WorkflowTest < ActiveSupport::TestCase
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
       
-      @submitter = Factory(:user)
+      @submitter = Factory(:user, :name => "Submitter")
     end
     
     teardown do
-      [ @ddb_board.users, @james, @submitter,
-        @ddb_board, @hgv_meta_board, @hgv_trans_board ].each {|entity| entity.destroy}
+      ( @ddb_board.users + [ @james, @submitter,
+        @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
     end
     
     def generate_board_vote_for_decree(board, decree, identifier, user)
@@ -51,7 +51,7 @@ class WorkflowTest < ActiveSupport::TestCase
     end
     
     def generate_board_votes_for_action(board, action, identifier)
-      decree = board.decrees.find(:all).find {|d| d.action == action}
+      decree = board.decrees.detect {|d| d.action == action}
       vote_count = 0
       if decree.tally_method == Decree::TALLY_METHODS[:percent]
         while (((vote_count.to_f / decree.board.users.length)*100) < decree.trigger) do
@@ -68,7 +68,7 @@ class WorkflowTest < ActiveSupport::TestCase
 
     context "a publication" do
       setup do
-        @publication = Factory(:publication, :status => "new")
+        @publication = Factory(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
         
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
@@ -88,6 +88,7 @@ class WorkflowTest < ActiveSupport::TestCase
         should "be copied to the DDB board" do
           assert_equal @publication, @ddb_board.publications.first.parent
           assert_equal @publication.children, @ddb_board.publications
+          assert_equal @ddb_board, @publication.children.first.owner
         end
 
         should "not be copied to the HGV boards" do
@@ -102,7 +103,7 @@ class WorkflowTest < ActiveSupport::TestCase
           end
           
           should "have two 'approve' votes" do
-            assert_equal 2, @new_ddb_submitted.votes.find(:all).collect {|v| %{yes no defer}.include?(v.choice)}.length
+            assert_equal 2, @new_ddb_submitted.votes.select {|v| %{yes no defer}.include?(v.choice)}.length
           end
           
           should "be copied to a finalizer" do
