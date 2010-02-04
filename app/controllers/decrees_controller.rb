@@ -78,7 +78,8 @@ class DecreesController < ApplicationController
     respond_to do |format|
       if @decree.update_attributes(params[:decree])
         flash[:notice] = 'Decree was successfully updated.'
-        format.html { redirect_to(@decree) }
+        
+        format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -94,7 +95,8 @@ class DecreesController < ApplicationController
     @decree.destroy
 
     respond_to do |format|
-      format.html { redirect_to(decrees_url) }
+      format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }
+      #format.html { redirect_to(decrees_url) }
       format.xml  { head :ok }
     end
   end

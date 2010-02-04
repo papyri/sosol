@@ -16,7 +16,9 @@ class PublicationsController < ApplicationController
     #only let user submit, don't let a board member submit
     allow = allow && @publication.owner_type == "User"
     
+    #dont let user submit if already submitted, or committed etc..
     allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
+    
     return allow
     
     #below bypassed until we have return mechanism in place
@@ -31,6 +33,19 @@ class PublicationsController < ApplicationController
       end
     end
    allow
+  end
+  
+  def determine_creatable_identifiers
+    #only let user create new for non-existing    
+    @creatable_identifiers = Identifier::IDENTIFIER_SUBCLASSES
+        @publication.identifiers.each do |i|
+          @creatable_identifiers.each do |ci|
+            puts ci
+            if ci == i.type.to_s
+              @creatable_identifiers.delete(ci)    
+            end
+          end
+        end  
   end
   
   # POST /publications
@@ -133,7 +148,7 @@ class PublicationsController < ApplicationController
       redirect_to show
     end
     @publication.send_to_finalizer(@current_user)
-    redirect_to finalize_review
+    redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
   
   end
   
@@ -184,6 +199,8 @@ class PublicationsController < ApplicationController
 
     @show_submit = allow_submit?
 
+    determine_creatable_identifiers()
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @publication }
@@ -266,10 +283,20 @@ class PublicationsController < ApplicationController
   def vote
     #note that votes will go with the boards copy of the pub and identifiers
     #  vote history will also be recorded in the comment of the origin pub and identifier
-    @publication = Publication.find(params[:id])  
+    
+    #if not pub found ie race condition of voting on reject or graffiti    
+    begin
+      @publication = Publication.find(params[:id])  
+    rescue    
+      flash[:warning] = "Publication not found - voting is over for this publications."
+      redirect_to (dashboard_url)
+      return
+    end
+    
+    
     
     if @publication.status != "voting" 
-      flash[:warining] = "Voting is over for this publication."
+      flash[:warning] = "Voting is over for this publication."
       
       redirect_to @publication
       return
@@ -351,6 +378,12 @@ class PublicationsController < ApplicationController
   end
   
   
-  
+  def master_list
+    if @current_user.developer
+      @publications = Publication.find(:all)
+    else
+      redirect_to dashboard_url
+    end
+  end
   
 end

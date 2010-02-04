@@ -14,3 +14,4 @@
     = h decree.choices
   - if !defined?(hide_edit_link)
     = link_to 'Edit', edit_decree_path(decree)
+    = link_to 'Delete', decree, :confirm => 'Are you sure?', :method => :delete

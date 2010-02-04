@@ -26,12 +26,19 @@
           == (#{publication.status})
           -# if !publication.status.nil? && publication.status != ''
           -#  == (#{publication.status})
-        - if publication.owner_type && publication.owner_type == "Board"
+        - if @current_user != publication.creator
+          -#- if publication.owner_type && publication.owner_type == "Board"
           = " by "
           - if !publication.creator.nil?
             = publication.creator.name
           - else
             "?"
+        - if publication.status == "approved"
+          -#find out who is finalizing
+          - if publication.find_finalizer_user
+            = "is being finalized by "
+            = publication.find_finalizer_user.name
+          
 / - if @branches.length > 0
 /   %h2 Listing Branches
 /   %ul

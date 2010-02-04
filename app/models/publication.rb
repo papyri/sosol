@@ -81,20 +81,33 @@ class Publication < ActiveRecord::Base
     #1 meta
     #2 transcription
     #3 translation    
-    
+    error_text = ""
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
         if i.modified? && i.class == ic &&  i.status == "editing"
           #submit it
-          submit_identifier(i)
-          return
+          if submit_identifier(i)
+            return
+          else            
+            error_text  += "no board for " + ic 
+            return #for now
+          end
         end
       end
     end
     
     #if we get to this point, nothing else was submitted therefore we are done with publication
     #can this be reached without a commit actually taking place?
+=begin
+    if error_text != ""
+      flash[:warning] = error_text
+      # couldnt submit to non exiting board so send back to user?
+      #TODO check this
+      self.origin.status = "editing" 
+      self.save
+    end
+=end
     self.origin.status = "committed" 
     self.save
     
@@ -105,37 +118,37 @@ class Publication < ActiveRecord::Base
     
     boards = Board.find(:all)
     boards.each do |board|
-    if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
-      
-      boards_copy = copy_to_owner(board)
-      boards_copy.status = "voting"
-      boards_copy.save
-      
-      # duplicate = self.clone
-      #duplicate.owner = new_owner
-     # duplicate.creator = self.creator
-   #   duplicate.title = self.owner.name + "/" + self.title
-   #   duplicate.branch = title_to_ref(duplicate.title)
+      if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
         
-      
-      # self.owner_id = board.id
-      # self.owner_type = "Board"
-      
-      identifier.status = "submitted"
-      self.status = "submitted"
-      
-      
-      # self.title = self.creator.name + "/" + self.title
-      # self.branch = title_to_ref(self.title)
-      # 
-      # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
-    #(from_branch, to_branch, from_repo)
-      self.save
-      identifier.save
-      return
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save
+        
+        # duplicate = self.clone
+        #duplicate.owner = new_owner
+       # duplicate.creator = self.creator
+     #   duplicate.title = self.owner.name + "/" + self.title
+     #   duplicate.branch = title_to_ref(duplicate.title)
+          
+        
+        # self.owner_id = board.id
+        # self.owner_type = "Board"
+        
+        identifier.status = "submitted"
+        self.status = "submitted"
+        
+        
+        # self.title = self.creator.name + "/" + self.title
+        # self.branch = title_to_ref(self.title)
+        # 
+        # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
+      #(from_branch, to_branch, from_repo)
+        self.save
+        identifier.save
+        return true
       end
     end
-      
+    return false
   end
   
   def submit
@@ -202,7 +215,7 @@ class Publication < ActiveRecord::Base
   end 
   
   def mutable?
-    if self.status != "editing" && self.status != "new"
+    if self.status != "editing" # && self.status != "new"
       return false
     else
       return true
@@ -452,7 +465,10 @@ class Publication < ActiveRecord::Base
   
   
   def find_finalizer_user
-    find_finalizer_publication.owner
+    if find_finalizer_publication
+      return find_finalizer_publication.owner    
+    end
+    return nil
   end
   
   def find_finalizer_publication
