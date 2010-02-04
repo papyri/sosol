@@ -36,7 +36,7 @@ class PublicationsController < ApplicationController
   
   def determine_creatable_identifiers
     #only let user create new for non-existing    
-    @creatable_identifiers = Identifier::IDENTIFIER_SUBCLASSES
+    @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
             puts ci
