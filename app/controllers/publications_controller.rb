@@ -17,7 +17,8 @@ class PublicationsController < ApplicationController
     allow = allow && @publication.owner_type == "User"
     
     #dont let user submit if already submitted, or committed etc..
-    allow = allow && @publication.status == "editing" 
+    allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
+    
     return allow
     
     #below bypassed until we have return mechanism in place

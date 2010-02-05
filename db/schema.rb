@@ -94,7 +94,6 @@ ActiveRecord::Schema.define(:version => 20100203215323) do
     t.string   "title"
     t.string   "status",         :default => "editing"
     t.integer  "board_id"
-    t.integer  "parent_id"
   end
 
   create_table "publications", :force => true do |t|

@@ -1,6 +1,24 @@
 require 'test_helper'
 
 class PublicationTest < ActiveSupport::TestCase
+  context "a publication conflicting with an existing branch" do
+    setup do
+      @user = Factory(:user)
+      
+      @branchname = "testpublication"
+      @user.repository.create_branch(@branchname)
+      @publication = Factory.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
+    end
+    
+    teardown do
+      @user.destroy
+    end
+    
+    should "not be saved to the database" do
+      assert !@publication.save
+    end
+  end
+  
   context "a new publication from templates" do
     setup do
       @user = Factory(:user)
