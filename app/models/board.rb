@@ -152,8 +152,38 @@ class Board < ActiveRecord::Base
   			
   			#TODO parse the message to add local vars
   			#votes
-  			
-  			#comments
+  			#comments        
+        if mailer.include_comments  
+          comment_text = ""       
+          begin
+            comments = Comment.find_all_by_publication_id(publication.origin.id)    
+          rescue
+            #do nothing no comments found
+          end                        
+            if comments
+              comments.each do |comment|
+                if comment.comment
+                  comment_text += comment.comment 
+                end
+                comment_text += "("
+                if comment.reason
+                  comment_text += comment.reason 
+                end
+                if comment.identifier
+                  comment_text += " on " + comment.identifier.class::FRIENDLY_NAME
+                end
+                if comment.user && comment.user.name
+                  comment_text += " by " + comment.user.name 
+                end
+                comment_text += " " + comment.created_at.to_formatted_s(:db)
+                comment_text += ")"
+                comment_text += "\n"
+              end            
+              body += "\n"
+              body += "Comments:\n"
+              body += comment_text
+            end          
+        end
   			#owner
   			#status
         friendly_name = ""

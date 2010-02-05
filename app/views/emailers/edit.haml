@@ -13,12 +13,15 @@
     %br
     = f.check_box :include_document
   
-  
+  %p
+    = f.label :include_comments
+    %br
+    = f.check_box :include_comments
+      
   %p
     = f.label :send_to_owner
     %br
-    = f.check_box :send_to_owner  
-  
+    = f.check_box :send_to_owner    
   
   %p
     = f.label :send_to_all_board_members
