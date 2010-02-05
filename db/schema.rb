@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100203215323) do
+ActiveRecord::Schema.define(:version => 20100205163546) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(:version => 20100203215323) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "git_hash"
-    t.integer  "publication_id", :limit => 255
+    t.integer  "publication_id"
   end
 
   create_table "decrees", :force => true do |t|
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20100203215323) do
     t.datetime "updated_at"
     t.boolean  "send_to_owner"
     t.boolean  "send_to_all_board_members", :default => false
+    t.boolean  "include_comments",          :default => false
   end
 
   create_table "emailers_users", :id => false, :force => true do |t|
@@ -94,6 +95,7 @@ ActiveRecord::Schema.define(:version => 20100203215323) do
     t.string   "title"
     t.string   "status",         :default => "editing"
     t.integer  "board_id"
+    t.integer  "parent_id"
   end
 
   create_table "publications", :force => true do |t|
