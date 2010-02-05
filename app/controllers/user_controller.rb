@@ -39,6 +39,7 @@ class UserController < ApplicationController
     #don't let someone who isn't signed in go to the dashboard
     if @current_user == nil
       redirect_to :controller => "user", :action => "signin"
+      return
     end
     #below selects publications to show in standard user data section of dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
