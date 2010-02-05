@@ -24,18 +24,18 @@ ActionController::Routing::Routes.draw do |map|
 
 	map.help 'help', :controller => 'user', :action => 'help'
 
-  map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
+  #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
  
-  map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
+  #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
   map.master_list 'master_list', :controller => "publications", :action => "master_list"
   
   map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
   map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
   #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
-  map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
+  #deleteable map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
   
   map.resources :publications, :member => { :edit_text => :get, :edit_meta => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_selector => :post, :submit_review => :get, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
   map.resources :publications do |publication|
