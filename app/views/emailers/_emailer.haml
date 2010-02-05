@@ -9,7 +9,12 @@
     %b
       Include document:
     = h emailer.include_document
-  
+
+  %p
+    %b
+      Include comments:
+    = h emailer.include_comments
+    
   %p
     %b
       Send to owner:
@@ -25,13 +30,15 @@
   %p
     %b
       Other SoSol Users:
-    = link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => emailer.id
+    - if !defined?(hide_edit_link)  
+      = link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => emailer.id
     - emailer.users.each do |user|
       - if user.name != nil
         = user.name
         - if user.email == nil
           (no valid address!)
-        = link_to "x", :controller => "emailers", :action => "remove_member", :id => emailer.id, :user_id => user.id 
+        - if !defined?(hide_edit_link)
+          = link_to "x", :controller => "emailers", :action => "remove_member", :id => emailer.id, :user_id => user.id 
   %p
     %b
       Extra addresses:
@@ -42,5 +49,7 @@
     %b
       Message:
     = h emailer.message
-  = link_to 'Edit', edit_emailer_path(emailer)
-  = link_to 'Delete', emailer, :confirm => 'Are you sure?', :method => :delete
+    
+  - if !defined?(hide_edit_link)
+    = link_to 'Edit', edit_emailer_path(emailer)
+    = link_to 'Delete', emailer, :confirm => 'Are you sure?', :method => :delete
