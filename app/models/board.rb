@@ -105,15 +105,32 @@ class Board < ActiveRecord::Base
   			#send the email
   			addresses = Array.new	
   			#--addresses
-  			mailer.users.each do |user|
-  				if user.email != nil
-  					addresses << user.email
-  				end
-  			end
-  			extras = mailer.extra_addresses.split(" ")
-  			extras.each do |extra|
-  				addresses << extra
-  			end
+  			
+        #board members
+        if mailer.send_to_all_board_members
+          self.users.each do |board_user|          
+            addresses << board_user.email        
+          end
+        end
+        
+        #other sosol users
+        if mailer.users
+          mailer.users.each do |user|
+            if user.email != nil
+              addresses << user.email
+            end
+          end
+        end
+        
+        #extra addresses
+        if mailer.extra_addresses
+          extras = mailer.extra_addresses.split(" ")
+          extras.each do |extra|
+            addresses << extra
+          end
+        end
+        
+        #owner address
   			if mailer.send_to_owner
   				if publication && publication.creator && publication.creator.email
   					addresses << publication.creator.email
@@ -139,7 +156,6 @@ class Board < ActiveRecord::Base
   			#comments
   			#owner
   			#status
-  			#who changed status
         friendly_name = ""
         email_identifiers.each do |ec|
           friendly_name += ec.class::FRIENDLY_NAME
@@ -154,7 +170,7 @@ class Board < ActiveRecord::Base
   			#end
   			
   			addresses.each do |address|
-  				if address != nil && address.strip != ""
+  				if address && address.strip != ""
   					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
   				end
   			end
