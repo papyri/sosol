@@ -3,6 +3,9 @@
     %li
       %ul
         = link_to( image_tag('documents.png', :border => "0") , publication)
+        - if @current_user.developer
+          %b
+            = publication.owner.name
         - for identifier in publication.identifiers
           %li{ :class => (identifier == publication.identifiers.last ? 'last' : '') }<
             - case identifier
