@@ -21,7 +21,7 @@
   
   %br
   - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create_from_templates" } do |form|
-    = "or create a new publicaiton:"
+    = "or create a new publication:"
     %br
     = form.submit "Create New Publication", :class => 'save'
   %br
