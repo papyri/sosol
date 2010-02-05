@@ -171,7 +171,7 @@ class PublicationsController < ApplicationController
     if @publication.parent && @publication.parent.owner_type == "Board"              
       @publication.parent.status = "committed"
       @publication.parent.save
-      @publication.parent.send_status_emails("committed", @publication)
+      @publication.parent.owner.send_status_emails("committed", @publication)
     #else #the user is a super user
     end
          
