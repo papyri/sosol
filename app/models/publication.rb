@@ -84,7 +84,7 @@ class Publication < ActiveRecord::Base
           if submit_identifier(i)
             return
           else            
-            error_text  += "no board for " + ic 
+            error_text  += "no board for " + ic.to_s
             return #for now
           end
         end
