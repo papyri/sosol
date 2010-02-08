@@ -161,6 +161,17 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
     @publication.commit_to_canon
+
+=begin    
+    #TODO need to add comment box or such on finalize_reveiw page  save comments
+    @comment = Comment.new()
+    @comment.comment = params[:comment][:comment]
+    @comment.user = @current_user
+    @comment.reason = "finalizing"
+    #associate comment with original identifier/publication
+    #@comment.identifier = ??
+    @comment.publication = @publication.origin
+=end    
     
     #TODO need to submit to next board
     #need to set status of ids
