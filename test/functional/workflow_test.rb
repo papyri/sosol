@@ -112,9 +112,25 @@ class WorkflowTest < ActiveSupport::TestCase
             assert_equal "finalizing", finalizing_publication.status
             assert_equal User, finalizing_publication.owner.class
           end
-        end
-      end
-      
+        end # approve
+        
+        context "voted 'reject'" do
+          setup do
+            @new_ddb_submitted = @ddb_board.publications.first.identifiers.first
+            generate_board_votes_for_action(@ddb_board, "reject", @new_ddb_submitted)
+          end
+
+          should "have two 'reject' vote comments" do
+            # assert_equal 2, @new_ddb_submitted.votes.select {|v| %{reject}.include?(v.choice)}.length
+          end
+
+          should "be copied back to the submitter" do
+          end
+          
+          should "be deleted from editorial board" do
+          end
+        end # reject
+      end # DDB-only
     end
   end
 end
