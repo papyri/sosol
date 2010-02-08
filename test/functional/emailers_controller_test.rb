@@ -29,7 +29,7 @@ class EmailersControllerTest < ActionController::TestCase
       post :create, :emailer => { :board_id => @board.id }
     end
 
-    assert_redirected_to edit_board_path(@board.id)
+    assert_redirected_to edit_emailer_path(@board.emailers.last.id)
   end
 
   test "should show emailer" do
@@ -52,6 +52,6 @@ class EmailersControllerTest < ActionController::TestCase
       delete :destroy, :id => @emailer.id
     end
 
-    assert_redirected_to emailers_path
+    assert_redirected_to edit_board_path(@emailer.board.id)
   end
 end
