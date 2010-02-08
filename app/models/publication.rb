@@ -193,13 +193,14 @@ class Publication < ActiveRecord::Base
     
     # branch from master so we aren't just creating an empty branch
     new_publication.branch_from_master
-    
-    # create the two required identifier classes from templates
-    new_ddb = DDBIdentifier.new_from_template(new_publication)
+        
+    #don't create anything that in not needed yet, just the required meta data
     new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
     
+    #new_ddb = DDBIdentifier.new_from_template(new_publication)
+    
     # go ahead and create the third so we can get rid of the create button
-    new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
+    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
     
     
     return new_publication
