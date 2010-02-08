@@ -26,12 +26,22 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     teardown do
-      @publication.destroy
+      @publication.destroy unless !Publication.exists? @publication.id
       @user.destroy
     end
     
     should "have an equivalent creator and owner" do
       assert_equal @publication.creator, @publication.owner
+    end
+    
+    should "have a branch with its branch attribute" do
+      assert @user.repository.branches.include?(@publication.branch)
+    end
+    
+    should "delete its branch upon destruction" do
+      publication_branch = @publication.branch
+      @publication.destroy
+      assert !@user.repository.branches.include?(publication_branch)
     end
     
     should "have valid XML for templates" do

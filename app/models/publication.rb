@@ -76,6 +76,10 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def after_destroy
+    self.owner.repository.delete_branch(self.branch)
+  end
+  
   def submit_to_next_board
     #horrible hack here to specifiy board order, change later with workflow engine
     #1 meta

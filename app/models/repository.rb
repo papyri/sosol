@@ -128,6 +128,10 @@ class Repository
     @repo.git.branch({}, name, source_name)
   end
   
+  def delete_branch(name)
+    @repo.git.branch({:D => true}, name)
+  end
+  
   #(from_branch, to_branch, from_repo)
   def copy_branch_from_repo(branch, new_branch, other_repo)
     # Lightweight (but have to watch out for side-effects of repo deletion):

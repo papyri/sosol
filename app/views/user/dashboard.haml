@@ -1,4 +1,5 @@
 #main.site
+  - max_visible_pubs = 5
   = render :partial => "common/flash_all"
   %h2 Your Publications
   -# render publications without status
@@ -7,7 +8,14 @@
   - for status in statuses
     %br
     %h3== Your #{status} publications
-    = render :partial => "publications/list", :object => @publications.collect{|p| p.status == status ? p : nil}.compact
+    - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
+    = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
+    - if this_publication_set.length > max_visible_pubs
+      %div{:id => "more_user_#{status}", :style => "display:none;"}
+        = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
+      %div{:id => "more_user_link_#{status}"}
+        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');return false;"}
+          More...
   %br
   = render :partial => "publications/publication_selector"
   
