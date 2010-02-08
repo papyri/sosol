@@ -1,9 +1,14 @@
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
+    %h1
+      History for 
+      = @identifier.title
+      from publication
+      = @identifier.publication.title
+      %br
     %h3
-      History for Identifier
-      = @identifier.name
+      = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
     #edit
       %ul
         - for commit in @identifier[:commits]
