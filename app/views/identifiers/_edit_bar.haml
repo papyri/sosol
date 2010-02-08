@@ -46,6 +46,7 @@
         - else
           %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
           %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+          %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
 
         -# another way to do it
         -# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post
