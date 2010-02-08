@@ -75,7 +75,7 @@ class WorkflowTest < ActiveSupport::TestCase
       end
       
       teardown do
-        # @publication.destroy
+        @publication.destroy
       end
       
       context "submitted with only DDB modifications" do
