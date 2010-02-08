@@ -13,8 +13,8 @@
     - if this_publication_set.length > max_visible_pubs
       %div{:id => "more_user_#{status}", :style => "display:none;"}
         = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
-      %div{:id => "more_link_#{status}"}
-        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_link_#{status}');return false;"}
+      %div{:id => "more_user_link_#{status}"}
+        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');return false;"}
           More...
   %br
   = render :partial => "publications/publication_selector"
