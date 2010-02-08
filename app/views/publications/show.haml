@@ -3,6 +3,7 @@
     = @publication.title
     - if !@publication.status.nil? && @publication.status != ''
       == (#{@publication.status})
+      
   = render :partial => "common/flash_all"    
 
   #submit
@@ -27,19 +28,18 @@
       - when DDBIdentifier
         %h3 
           Text - 
-          = identifier.name
-          = identifier.class
+          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
         - image_name = 'ddb.gif'
 
       - when HGVMetaIdentifier
         %h3 
           Meta -
-          = identifier.name
+          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
         - image_name = 'hgv.gif'
       - when HGVTransIdentifier
         %h3 
           Translation - 
-          = identifier.name
+          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
         - image_name = 'hgv.gif'
         
       
