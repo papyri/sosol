@@ -16,6 +16,14 @@ class UserController < ApplicationController
     
   end
   
+  def developer
+    if !@current_user.developer
+      redirect_to dashboard_url
+      return
+    end
+    @boards = Board.find(:all)
+  end
+  
 #  def index      
 #   if @current_user.admin
 #     @users = User.find(:all)

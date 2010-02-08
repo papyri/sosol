@@ -4,6 +4,9 @@
     .links
       = link_to 'home', dashboard_url
       \|
+      - if @current_user.developer
+        = link_to 'developer', developer_url
+        \|
       - if @current_user.admin 
         = link_to 'boards', boards_url
         \|
