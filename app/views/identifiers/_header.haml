@@ -2,8 +2,11 @@
 
 #edit_header
   %h1
-    Editing Publication
+    = "Editing "
+    = @identifier.title
+    = " from publication "
     = link_to @identifier.publication.title, @identifier.publication
+    
   -#- if @identifier.publication.owner_type == "User"
   -#  #submit
   -#   = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
