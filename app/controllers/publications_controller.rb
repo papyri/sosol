@@ -217,6 +217,14 @@ class PublicationsController < ApplicationController
     @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
 
     @show_submit = allow_submit?
+    
+    #only let creator delete
+    @allow_delete = @current_user.id == @publication.creator.id 
+    #only delete new or editing
+    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
+    
+    #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
+    
 
     determine_creatable_identifiers()
     
@@ -374,7 +382,9 @@ class PublicationsController < ApplicationController
   
   
   
-  
+  def confirm_delete
+    @publication = Publication.find(params[:id])
+  end
   
   # DELETE 
   def destroy

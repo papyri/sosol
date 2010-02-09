@@ -63,6 +63,9 @@
     = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
     %br
 
+  - if @allow_delete
+    = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
+  
   - if @current_user.developer  
-    = link_to "developer delete", @publication, :method => :delete 
+    = link_to "developer immediate delete", @publication, :method => :delete 
    
