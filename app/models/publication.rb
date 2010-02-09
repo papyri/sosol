@@ -1,4 +1,7 @@
 class Publication < ActiveRecord::Base  
+  
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  
   validates_presence_of :title, :branch
   
   belongs_to :creator, :polymorphic => true

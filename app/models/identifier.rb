@@ -3,13 +3,8 @@ class Identifier < ActiveRecord::Base
   
   FRIENDLY_NAME = "Base Identifier"
   
-  #status represents last thing done
-  IDENTIFIER_STATUS = %w{ editing submitted approved finalized committed }
-  #the status are roughly:
-  #editing - created/checkout by user - only user is changing
-  #submitted - board has it and maybe changing it - user no longer has
-  #approved - board has approved it - waiting to be finalized
-  #finalized - has been through the entire process - is done - this is mainly needed since item may still be around as part of a publication (otherwise we could just delete it when done)
+  IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  
   validates_presence_of :name, :type
   
   belongs_to :publication
