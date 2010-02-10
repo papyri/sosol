@@ -423,7 +423,7 @@ class Publication < ActiveRecord::Base
       #do destroy after email since the email may need info in the artice
       #@publication.get_category_obj().graffiti
       
-      self.owner.send_status_emails("graffiti")
+      self.owner.send_status_emails("graffiti", self)
       #todo do we let one board destroy the entire document?
       #will this destroy all board copies....
       self.origin.destroy #need to destroy related? 
