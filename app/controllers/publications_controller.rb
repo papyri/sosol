@@ -277,10 +277,37 @@ class PublicationsController < ApplicationController
     
     related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     
+    conflicting_identifiers = []
+    related_identifiers.each do |relid|
+      possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+      actual_conflicts = possible_conflicts.select {|pc| pc.publication.owner == @current_user}
+      conflicting_identifiers += actual_conflicts
+    end
+    
     if related_identifiers.length == 0
       flash[:notice] = 'Error creating publication: publication not found'
       redirect_to dashboard_url
-    else
+      return
+    elsif conflicting_identifiers.length > 0
+      conflicting_publication = conflicting_identifiers.first.publication
+      conflicting_identifiers.each do |confid|
+        if confid.publication != conflicting_publication
+          flash[:notice] = 'Error creating publication: multiple conflicting publications'
+          redirect_to dashboard_url
+          return
+        end
+      end
+      
+      if (conflicting_publication.status == "committed")
+        # TODO: should set "archived" and take approp action here instead
+        conflicting_publication.destroy
+      else
+        flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
+        redirect_to dashboard_url
+        return
+      end
+    end
+    # else
       @publication = Publication.new()
       @publication.populate_identifiers_from_identifier(
         identifier)
@@ -304,7 +331,7 @@ class PublicationsController < ApplicationController
         flash[:notice] = 'Error creating publication'
         redirect_to dashboard_url
       end
-    end
+    # end
   end
   
   def vote
