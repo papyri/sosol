@@ -454,7 +454,9 @@ class Publication < ActiveRecord::Base
     # X insert a change in the XML revisionDesc header
     #   should instead happen at submit so EB sees it?
     
+    self.owner.repository.update_master_from_canonical
     canon_branch_point = self.merge_base
+    
     # this relies on the parent being a remote, e.g. fetch_objects being used
     # during branch copy
     # board_branch_point = self.merge_base(
@@ -508,7 +510,10 @@ class Publication < ActiveRecord::Base
     commit_message =
       (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
     
-    parent_commit = canon_branch_point
+    # parent commit should ALWAYS be canonical master head
+    # FIXME: handle racing during finalization
+    parent_commit = Repository.new.repo.get_head('master').commit.sha
+    # parent_commit = canon_branch_point
     
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
