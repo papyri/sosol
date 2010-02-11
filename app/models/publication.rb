@@ -472,13 +472,12 @@ class Publication < ActiveRecord::Base
     reason_comment = self.submission_reason
     
     
-    controlled_identifiers = self.identifiers.select {|i| self.owner.controls_identifier?(i)}
-    controlled_paths = controlled_identifiers.collect {|i| i.to_path}
-    Rails.logger.info("Controlled Paths: #{controlled_paths.inspect}")
+    board_controlled_paths = self.controlled_paths
+    Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
 
     controlled_commits = creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
-      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, controlled_paths.clone)
+      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
       controlled_commit_diffs.length > 0
     end
     
@@ -492,12 +491,12 @@ class Publication < ActiveRecord::Base
       end
     end
     
-    controlled_blobs = controlled_paths.collect do |controlled_path|
+    controlled_blobs = board_controlled_paths.collect do |controlled_path|
       self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
     end
     
     controlled_paths_blobs = 
-      Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
+      Hash[*((board_controlled_paths.zip(controlled_blobs)).flatten)]
     
     Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
     Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
