@@ -1,0 +1,29 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+
+    #editBibliography
+      - form_for @identifier, :url => { :action => :update }, :html => {:autocomplete => 'off'} do |f| 
+        = f.error_messages 
+
+        - @identifier.bibliographies.each_pair do |bibliography, itemList|
+          %fieldset
+            %legend
+              = bibliography.to_s.titleize
+              - itemList.each do |key, value|
+                %p
+                  = f.label key
+                  - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][' + key.to_s + ']'
+                  - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
+                  %input{:name => tag_name, :id => tag_id, :value => value}
+            = #f.label epidoc_attribute.to_s.underscore
+            = #f.text_field epidoc_attribute, :disabled => !@identifier.mutable?
+
+            - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][zotero]'
+            - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
+            %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '80', :rows => '5'}
+            %input{:type => 'button', :value => 'accept zotero data', :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
+            %input{:type => 'button', :value => 'cancel', :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
+        
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
