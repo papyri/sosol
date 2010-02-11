@@ -1,5 +1,5 @@
 class Identifier < ActiveRecord::Base
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
   
   FRIENDLY_NAME = "Base Identifier"
   

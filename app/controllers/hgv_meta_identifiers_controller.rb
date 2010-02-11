@@ -11,16 +11,20 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
     
-    if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save    
-    end
+    save_comment params[:comment]
     
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
   
   protected
+    def save_comment comment
+      if comment != nil && comment.strip != ""
+        @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
+        @comment.save
+      end
+    end
+
     def find_identifier
       @identifier = HGVMetaIdentifier.find(params[:id])
     end
