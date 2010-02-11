@@ -469,9 +469,22 @@ class Publication < ActiveRecord::Base
     
     reason_comment = self.submission_reason
     
+    
+    controlled_identifiers = self.identifiers.select {|i| self.owner.controls_identifier?(i)}
+    controlled_paths = controlled_identifiers.collect {|i| i.to_path}
+    Rails.logger.info("Controlled Paths: #{controlled_paths.inspect}")
+
+    controlled_commits = creator_commits.select do |creator_commit|
+      Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
+      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, controlled_paths)
+      controlled_commit_diffs.length > 0
+    end
+    
+    Rails.logger.info("Controlled Commits: #{controlled_commits.inspect}")
+    
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
-    creator_commits.each do |creator_commit|
-      message = creator_commit.message.strip
+    controlled_commits.each do |controlled_commit|
+      message = controlled_commit.message.strip
       unless message.empty?
         creator_commit_messages << " - #{message}"
       end
@@ -486,7 +499,9 @@ class Publication < ActiveRecord::Base
       (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
     
     parent_commit = canon_branch_point
+    
     tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
+    
     contents = []
     contents << ['tree', tree_sha1].join(' ')
     contents << ['parent', parent_commit].join(' ')
