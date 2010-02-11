@@ -256,7 +256,13 @@ class PublicationsController < ApplicationController
     @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])    
   end
-  
+
+  def edit_biblio
+    @publication = Publication.find(params[:id])
+    @identifier = HGVBiblioIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
+
   def create_from_selector
     identifier_class = params[:IdentifierClass]
     collection = params["#{identifier_class}CollectionSelect".intern]
