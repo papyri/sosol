@@ -476,7 +476,7 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
-      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, controlled_paths)
+      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, controlled_paths.clone)
       controlled_commit_diffs.length > 0
     end
     
@@ -490,6 +490,16 @@ class Publication < ActiveRecord::Base
       end
     end
     
+    controlled_blobs = controlled_paths.collect do |controlled_path|
+      self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
+    end
+    
+    controlled_paths_blobs = 
+      Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
+    
+    Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+    Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+    
     signed_off_messages = []
     board_members.each do |board_member|
       signed_off_messages << "Signed-off-by: #{board_member.author_string}"
@@ -500,8 +510,23 @@ class Publication < ActiveRecord::Base
     
     parent_commit = canon_branch_point
     
-    tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
+    # roll a tree SHA1 by reading the canonical master tree,
+    # adding controlled path blobs, then writing the modified tree
+    # (happens on the finalizer's repo)
+    finalizer.repository.update_master_from_canonical
+    index = finalizer.repository.repo.index
+    index.read_tree('master')
+    controlled_paths_blobs.each_pair do |path, blob|
+      index.add(path, blob.data)
+    end
     
+    tree_sha1 = index.write_tree(index.tree, index.current_tree)
+    Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+    # tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
+    
+    # most of this is dup'd from Grit::Index#commit
+    # with modifications to allow for correct timestamping
+    # and author/committer split
     contents = []
     contents << ['tree', tree_sha1].join(' ')
     contents << ['parent', parent_commit].join(' ')
