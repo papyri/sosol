@@ -115,29 +115,30 @@ class HGVMetaIdentifier < HGVIdentifier
             :notBeforeDate => "notBefore"
           }
         ],
-      :titleStmt => basePathHeader + "titleStmt/title/",
+      :titleStmt => basePathHeader + "titleStmt/title",
       :publicationTitle => 
         basePathBody + publicationPath + 
           "bibl[@type='publication'][@subtype='principal']/" + 
-          "title/",
+          "title",
       :publicationVolume =>
         basePathBody + publicationPath + 
           "bibl[@type='publication'][@subtype='principal']/" + 
-          "biblScope[@type='volume']/",
+          "biblScope[@type='volume']",
       :publicationNumbers => 
         basePathBody + publicationPath +
           "bibl[@type='publication'][@subtype='principal']/" +
-          "biblScope[@type='numbers']/",
+          "biblScope[@type='numbers']",
       :tm_nr => 
         basePathHeader + 
           "publicationStmt/idno[@type='TM']",
       :illustrations => 
         basePathBody + "[@type='bibliography'][@subtype='illustrations']/p",
       #not sure what to do about multiples
-      :contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term(1)",
+      #:contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term(1)",
+      :contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term[position() = 1]",
       :other_publications => 
         basePathBody + "[@type='bibliography'][@subtype='otherPublications']/" + 
-          "bibl[@type='publication'][@subtype='other']/",
+          "bibl[@type='publication'][@subtype='other']",
       #tweaked but may need more added to form - may have multiples
       :translations => 
         basePathBody + "[@type='bibliography'][@subtype='translations']/listBibl/bibl[@type='translations']",
@@ -179,7 +180,7 @@ class HGVMetaIdentifier < HGVIdentifier
         xml_attributes = value.last
       end
       
-      if (get_or_set == :set) && !self[self_attribute].empty?
+      if (get_or_set == :set) && !self[self_attribute].empty? && !xpath.index(/\(\d*\)/)
         doc.bulldozePath xpath # assure xpath exists
       end
 
