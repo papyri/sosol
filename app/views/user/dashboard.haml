@@ -14,8 +14,11 @@
       %div{:id => "more_user_#{status}", :style => "display:none;"}
         = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
       %div{:id => "more_user_link_#{status}"}
-        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');return false;"}
+        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
           More...
+      %div{:id => "less_user_link_#{status}", :style => "display:none;"}
+        %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
+          Less...
   %br
   = render :partial => "publications/publication_selector"
   

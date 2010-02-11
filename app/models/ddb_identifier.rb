@@ -155,7 +155,14 @@ class DDBIdentifier < Identifier
   def leiden_plus
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(xml_content))
-    transformed = DDBIdentifier.xml2nonxml(abs)
+    begin
+      transformed = DDBIdentifier.xml2nonxml(abs)
+    rescue Exception => e
+      if e.message.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
+        return e.message.to_s + "\n" + 
+          DDBIdentifier.parse_exception_pretty_print(abs, $1.to_i)
+      end
+    end
     return transformed
   end
   
@@ -182,26 +189,60 @@ class DDBIdentifier < Identifier
   ^ )
   
   def leiden_plus_to_xml(content)
+    # a lot of these changes are to make multiple div/ab docs work
     # transform the Leiden+ to XML
-    nonx2x = DDBIdentifier.nonxml2xml(content)
-    nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
     
+    begin
+      nonx2x = DDBIdentifier.nonxml2xml(content)
+    rescue Exception => e
+      if e.message.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
+        return e.message.to_s + "\n" #+ session[:templeiden]
+         # DDBIdentifier.parse_exception_pretty_print(content, $1.to_i)
+      end
+    end
+    
+    nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
     transformed_xml_content = REXML::Document.new(
       nonx2x)
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
-
-    # inject the transformed content into the original content
-    # delete original abs
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]//ab')
+    
+    #count the number of divs in the text and loop through and delete each - couldn't get xpath to do all at once
+    
+    div_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/div')
+    
+    del_loop_cnt = 0
+    nbr_to_del = div_original_edition.length
+    until del_loop_cnt == nbr_to_del 
+      original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div')
+      del_loop_cnt+=1
+    end
+    
+    #repeat for abs if file is set up that way
+    
+    ab_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/ab')
+    
+    del_loop_cnt = 0
+    nbr_to_del = ab_original_edition.length
+    until del_loop_cnt == nbr_to_del 
+      original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/ab')
+      del_loop_cnt+=1
+    end
     
     # add modified abs to edition
     modified_abs = transformed_xml_content.elements[
       '/wrapab']
+    
     original_edition =  original_xml_content.elements[
       '/TEI/text/body/div[@type = "edition"]']
-    modified_abs.each do |ab|
-      original_edition.add_element(ab)
+    
+    #put loop in because previous did not work with multiple because destructive to array
+    #loop through however many need to add and always add the first one in the array which gets deleted
+    loop_cnt = 0
+    nbr_to_add = modified_abs.length
+    until loop_cnt == nbr_to_add 
+      original_edition.add_element(modified_abs[0])
+      loop_cnt+=1
     end
     
     # write back to a string
