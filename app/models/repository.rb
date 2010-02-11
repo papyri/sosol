@@ -69,11 +69,15 @@ class Repository
     FileUtils::rm_r path, :verbose => false, :secure => true
   end
   
-  def get_file_from_branch(file, branch = 'master')  
+  def get_blob_from_branch(file, branch = 'master')
     tree = @repo.tree(branch, [File.dirname(file)])
     subtree = tree.contents.first
     return nil if subtree.nil?
     blob = subtree / File.basename(file)
+  end
+  
+  def get_file_from_branch(file, branch = 'master')  
+    blob = get_blob_from_branch(file, branch)
     return get_blob_data(blob)
   end
   
