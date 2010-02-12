@@ -207,26 +207,20 @@ class DDBIdentifier < Identifier
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     
-    #count the number of divs in the text and loop through and delete each - couldn't get xpath to do all at once
+    #pull divs in the text and loop through and delete each - couldn't get xpath to do all at once
     
     div_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/div')
     
-    del_loop_cnt = 0
-    nbr_to_del = div_original_edition.length
-    until del_loop_cnt == nbr_to_del 
+    div_original_edition.each do |div|
       original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div')
-      del_loop_cnt+=1
     end
     
     #repeat for abs if file is set up that way
     
     ab_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/ab')
-    
-    del_loop_cnt = 0
-    nbr_to_del = ab_original_edition.length
-    until del_loop_cnt == nbr_to_del 
+
+    ab_original_edition.each do |ab|
       original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/ab')
-      del_loop_cnt+=1
     end
     
     # add modified abs to edition
