@@ -53,6 +53,7 @@ function helpDialogOpen(view)
     }
   case "tryit":
   case "appBL":
+  case "appSoSOL":
   case "appedit":
     {
       openconfig = config='height=275, width=1225, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';

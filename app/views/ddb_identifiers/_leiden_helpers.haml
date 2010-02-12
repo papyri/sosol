@@ -11,10 +11,10 @@
 %ul#menuModel{ :style => "display:inherit"}
   %li#1
     %a{:href => "#", :title => "Leiden+ Input Helpers"} Helpers
-    %ul{ :width => "165"}
+    %ul{ :width => "auto"}
       %li#101
         %a{ :href => "#"} Gap
-        %ul{ :width => "175"}
+        %ul{ :width => "auto"}
           %li#1011{ :jsFunction => "helpDialogOpen('gaplost')"}
             %a{ :href => "#"}Lacuna
           %li#1012{ :jsFunction => "helpDialogOpen('gapilleg')"}
@@ -34,7 +34,7 @@
       %li#106{ :itemType => "separator"}
       %li#107
         %a{ :href => "#"} Ancient Diacriticals
-        %ul{ :width => "100"}
+        %ul{ :width => "auto"}
           %li#1071{ :jsFunction => "insertDiacriticalMain('acute')"}
             %a{ :href => "#"}Acute
           %li#1072{ :jsFunction => "insertDiacriticalMain('asper')"}
@@ -54,52 +54,52 @@
       %li#108{ :itemType => "separator"}
       %li#109
         %a{ :href => "#"} App
-        %ul{ :width => "175"}
+        %ul{ :width => "auto"}
           %li#1091{ :jsFunction => "helpDialogOpen('apporth')"}
             %a{ :href => "#"}Orthographic correction
           %li#1092{ :jsFunction => "helpDialogOpen('appsubst')"}
             %a{ :href => "#"}Scribal correction
-          %li#1093{ :jsFunction => "helpDialogOpen('appedit')"}
-            %a{ :href => "#"}Series Corrigenda
+          %li#1093{ :jsFunction => "helpDialogOpen('appalt')"}
+            %a{ :href => "#"}Alternate readings
+          %li#1094{ :jsFunction => "helpDialogOpen('appedit')"}
+            %a{ :href => "#"}Editorial correction
+          %li#1095{ :jsFunction => "helpDialogOpen('appBL')"}
+            %a{ :href => "#"}Corrections in BL
+          %li#1096{ :jsFunction => "helpDialogOpen('appSoSOL')"}
+            %a{ :href => "#"}SoSOL correction
       %li#110{ :itemType => "separator"}
-      %li#111{ :jsFunction => "helpDialogOpen('appBL')"}
-        %a{ :href => "#"}Corrections in BL
+      %li#111
+        %a{ :href => "#"}Deletion
+        %ul{ :width => "auto"}
+          %li#1111{ :jsFunction => "insertDeletionMain('slashes')"}
+            %a{ :href => "#"}Deletion with Slashes
+          %li#1112{ :jsFunction => "insertDeletionMain('cross-strokes')"}
+            %a{ :href => "#"}Deletion with Cross-Strokes
+          %li#1113{ :jsFunction => "insertDeletionMain('erasure')"}
+            %a{ :href => "#"}Deletion with Erasure
       %li#112{ :itemType => "separator"}
-      %li#113{ :jsFunction => "helpDialogOpen('appalt')"}
-        %a{ :href => "#"}Alternate readings
+      %li#113
+        %a{ :href => "#"}Milestone
+        %ul{ :width => "auto"}
+          %li#1131{ :jsFunction => "insertMilestoneMain('paragraphos')"}
+            %a{ :href => "#"}Paragraphos
+          %li#1132{ :jsFunction => "insertMilestoneMain('horizontal-rule')"}
+            %a{ :href => "#"}Horizontal Rule
+          %li#1133{ :jsFunction => "insertMilestoneMain('box')"}
+            %a{ :href => "#"}Box
       %li#114{ :itemType => "separator"}
       %li#115
-        %a{ :href => "#"}Deletion
-        %ul{ :width => "200"}
-          %li#1151{ :jsFunction => "insertDeletionMain('slashes')"}
-            %a{ :href => "#"}Deletion with Slashes
-          %li#1152{ :jsFunction => "insertDeletionMain('cross-strokes')"}
-            %a{ :href => "#"}Deletion with Cross-Strokes
-          %li#1153{ :jsFunction => "insertDeletionMain('erasure')"}
-            %a{ :href => "#"}Deletion with Erasure
-      %li#116{ :itemType => "separator"}
-      %li#117
-        %a{ :href => "#"}Milestone
-        %ul{ :width => "125"}
-          %li#1171{ :jsFunction => "insertMilestoneMain('paragraphos')"}
-            %a{ :href => "#"}Paragraphos
-          %li#1172{ :jsFunction => "insertMilestoneMain('horizontal-rule')"}
-            %a{ :href => "#"}Horizontal Rule
-          %li#1173{ :jsFunction => "insertMilestoneMain('box')"}
-            %a{ :href => "#"}Box
-      %li#118{ :itemType => "separator"}
-      %li#119
         %a{ :href => "#"}Division
-        %ul{ :width => "100"}
-          %li#1191{ :jsFunction => "insertDivisionMain('recto')"}
+        %ul{ :width => "auto"}
+          %li#1151{ :jsFunction => "insertDivisionMain('recto')"}
             %a{ :href => "#"}Recto
-          %li#1192{ :jsFunction => "insertDivisionMain('verso')"}
+          %li#1152{ :jsFunction => "insertDivisionMain('verso')"}
             %a{ :href => "#"}Verso
-          %li#1193{ :jsFunction => "insertDivisionMain('fragment')"}
+          %li#1153{ :jsFunction => "insertDivisionMain('fragment')"}
             %a{ :href => "#"}Fragment
-          %li#1194{ :jsFunction => "insertDivisionMain('column')"}
+          %li#1154{ :jsFunction => "insertDivisionMain('column')"}
             %a{ :href => "#"}Column
-          %li#1195{ :jsFunction => "helpDialogOpen('division')"}
+          %li#1155{ :jsFunction => "helpDialogOpen('division')"}
             %a{ :href => "#"}Other
   %li#2{ :itemType => "separator"}
   %li#3{ :jsFunction => "insertUnderdot()"}
