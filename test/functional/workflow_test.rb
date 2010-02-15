@@ -128,6 +128,7 @@ class WorkflowTest < ActiveSupport::TestCase
           end
           
           should "be deleted from editorial board" do
+            assert !Publication.exists?(@new_ddb_submitted.id)
           end
         end # reject
       end # DDB-only
