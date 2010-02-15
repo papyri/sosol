@@ -1,0 +1,27 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #app3col{:class => "helperpop"}
+      <h4>Correction indicated in SoSOL: Πατιων --> Πατσών(τεως) = <:<+Πατσών(τεως)+>|SoSOL:sir name|Πατιων:></h4>
+      #app_col
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLlem_value", :size => "25"}Lem (lem)
+        #app_desc
+          correct form: e.g. <+Πατσών(τεως)+>
+        #app_button
+          %button{ :type => "button", :onclick=>"insertAppSoSOL()"}Insert
+          &nbsp
+          %button{:type => "button", :onclick => "closeHelper()"}Close
+      #app_col
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLresp_value", :size => "25"}SoSOL (resp)
+        #app_desc
+          Your sir  name: Sosin
+      #app_col
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLrdg_value", :size => "25"}Reading (rdg)
+        #app_desc
+          previous, incorrect, form: e.g. Πατιων

@@ -173,6 +173,37 @@ function insertAppBL()
 } /*########################     end insertAppBL     ########################*/
 
 /*###########################################################################################*/
+/* insertAppSoSOL                                                                             */
+/*###########################################################################################*/
+
+function insertAppSoSOL()
+{
+  lem = document.getElementById("appSoSOLlem_value").value;
+  resp = document.getElementById("appSoSOLresp_value").value;
+  rdg = document.getElementById("appSoSOLrdg_value").value;
+  
+  if (lem.length == 0)
+    {
+      alert("Lem cannot be left blank");
+    }
+  else
+    {
+      if (resp.length == 0)
+        {
+          alert("Resp cannot be left blank - please type in your sir name");
+        }
+      else
+        {
+          lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
+        }
+      
+      startxml = "<app type=\"SoSOL\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
+               
+      convertXML()
+    }
+} /*########################     end insertAppSoSOL     ########################*/
+
+/*###########################################################################################*/
 /* insertAppEdit                                                                             */
 /*###########################################################################################*/
 
