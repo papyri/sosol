@@ -227,7 +227,12 @@ module JRubyXML
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
 
-      transformer.transform(xml_stream, result)
+      if xml_stream.class == Java::ComSunOrgApacheXercesInternalDom::DeferredDocumentImpl
+        transformer.transform(
+          javax.xml.transform.dom.DOMSource.new(xml_stream), result)
+      else
+        transformer.transform(xml_stream, result)
+      end
 
       string_writer.toString()
     end
