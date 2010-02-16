@@ -70,8 +70,8 @@
           #editing_trans_preview	
           #editing_trans_text_view
             = @identifier[:text_html_preview]
-          #editing_trans_xml_div          
-            %textarea{:name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")' }
+          #editing_trans_xml_div       
+            %textarea{:disabled => !@identifier.mutable?, :name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")' }
               =@identifier.content 
               -#why? if the =@identifer.content is on the same line as the %textarea then 2 spaces are added before the text, thus the xslt parsing fails!
           %textarea{ :id => 'editable_preview_xsl'}
@@ -81,6 +81,9 @@
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
         
+        - if !@identifier.mutable?
+          :javascript
+            - DisablePage()
         
         
 	

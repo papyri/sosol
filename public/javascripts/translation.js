@@ -1,8 +1,42 @@
 function init() {
   setActiveTab("glossary");
   transformAfterInsert();
+  //DisablePage();
 }
 window.onload = init;
+
+
+function DisablePage()
+{
+  //note that this does not really disable the page, but makes it appear disabled
+  DisableChildNodes(document.getElementById("editing_trans_preview"), 2);
+  document.getElementById("inserting_chooser").style.display = 'none';
+}
+
+function DisableChildNodes(node, level)
+{
+  if (level <= 0)
+    return;
+  level = level - 1;
+  if (node.childNodes && node.childNodes.length > 0)
+  {    
+    for (var i=0;i<node.childNodes.length; i++)
+    {
+      DisableChildNodes(node.childNodes[i], level);   
+    }    
+  }
+
+   //seems to have no effect
+   //node.disabled = false;
+  
+  //make it appear disabled
+  if (node.style)
+  {
+    node.style.color ='#7F7F7F';
+    node.style.backgroundColor = '#E5E5E5';    
+  }
+  
+}
 
 
 
