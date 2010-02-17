@@ -1,0 +1,18 @@
+de:
+  bibliography:
+    signature: 'Signatur'
+    title: 'Titel'
+    author: 'Autor'
+    monographic_title: 'Buchtitel'
+    series_title: 'Reihe'
+    series_number: 'Band'
+    editor: 'Herausgeber'
+    place_of_publication: 'Erscheinungsort'
+    publication_date: 'Erscheinungsdatum'
+    pagination: 'Paginierung'
+    pagination_start: 'von'
+    pagination_end: 'bis'
+    notes: 'Hinweise'
+    zotero:
+      accept: 'zotero Daten übernehmen'
+      cancel: 'zotero Daten verwerfen'

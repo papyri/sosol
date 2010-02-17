@@ -1,0 +1,18 @@
+es:
+  bibliography:
+    signature: 'etiqueta'
+    title: 'título'
+    author: 'autor'
+    monographic_title: 'título del libro'
+    series_title: 'fila'
+    series_number: 'banda'
+    editor: 'editor'
+    place_of_publication: 'publicación'
+    publication_date: 'fecha de publicación'
+    pagination: 'Paginación'
+    pagination_start: 'de'
+    pagination_end: 'hasta'
+    notes: 'notas'
+    zotero:
+      accept: 'utilizar los datos'
+      cancel: 'descartar los datos de zotero'

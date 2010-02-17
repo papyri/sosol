@@ -1,0 +1,18 @@
+fr:
+  bibliography:
+    signature: 'étiquette'
+    title: 'titre'
+    author: 'auteur'
+    monographic_title: 'titre du livre'
+    series_title: 'series'
+    series_number: 'numéro'
+    editor: 'sous la direction de'
+    place_of_publication: 'publication'
+    publication_date: 'date de publication'
+    pagination: 'pagination'
+    pagination_start: 'partir de la page'
+    pagination_end: 'à page'
+    notes: 'notes'
+    zotero:
+      accept: 'prendre les données zotero'
+      cancel: 'jeter les données zotero'

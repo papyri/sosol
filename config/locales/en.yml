@@ -1,0 +1,18 @@
+en:
+  bibliography:
+    signature: 'signature'
+    title: 'title'
+    author: 'author'
+    monographic_title: 'monographic title'
+    series_title: 'series title'
+    series_number: 'series number'
+    editor: 'editor'
+    place_of_publication: 'place of publication'
+    publication_date: 'publication date'
+    pagination: 'pagination'
+    pagination_start: 'pagination start'
+    pagination_end: 'pagination end'
+    notes: 'notes'
+    zotero:
+      accept: 'accept zotero data'
+      cancel: 'discard zotero data'
