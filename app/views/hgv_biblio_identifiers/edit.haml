@@ -13,17 +13,15 @@
               = bibliography.to_s.titleize
               - itemList.each do |key, value|
                 %p
-                  = f.label key
+                  = f.label I18n.t('bibliography.' + key.to_s)
                   - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][' + key.to_s + ']'
                   - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
-                  %input{:name => tag_name, :id => tag_id, :value => value}
-            = #f.label epidoc_attribute.to_s.underscore
-            = #f.text_field epidoc_attribute, :disabled => !@identifier.mutable?
+                  %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@identifier.mutable?}
 
             - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][zotero]'
             - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
-            %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '80', :rows => '5'}
-            %input{:type => 'button', :value => 'accept zotero data', :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
-            %input{:type => 'button', :value => 'cancel', :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
+            %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '80', :rows => '5', :disabled => !@identifier.mutable?}
+            %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
+            %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
         
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }

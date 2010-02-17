@@ -14,7 +14,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
   end
 
   def after_initialize
-    @bibliography_id_list = [:sb, :xyz] # add further bilbiographies by extending the list, such as :xyz
+    @bibliography_id_list = [:sb] # add further bilbiographies by extending the list, such as :xyz
     @xpath = "/TEI/teiHeader/fileDesc/sourceDesc/listBibl/"
     @item_list = {
       :signature            => {:multiple => false, :xpath => "idno[@type='signature']"},
