@@ -18,7 +18,7 @@ function showHide(id)
 function discardBiblbiography(jsonSourceElementId)
 {
   $(jsonSourceElementId).value = '';
-  
+  $(jsonSourceElementId).form.reset();
   return false;
 }
 
@@ -30,9 +30,10 @@ function applyBiblbiography(jsonSourceElementId, targetElementIdPrefix)
   {
   	for (i in json)
 	{
-      if($(targetElementIdPrefix + i))
+      var targetElement = $(targetElementIdPrefix + i);
+	  if(targetElement && !targetElement.disabled)
       {
-        $(targetElementIdPrefix + i).value = json[i]
+        targetElement.value = json[i]
       }
   	}
 	$(jsonSourceElementId).value = '';
@@ -49,15 +50,14 @@ function deserialiseBibliography(json)
 {
   try
   {
-  	json = json.replace(/^[\s]+|[\s]+$/g, '').evalJSON();
-
+	json = json.replace(/^[\s]+|[\s]+$/g, '').replace(/'/g, "\\'").replace(/\|/g, "'").evalJSON();
+	
 	var page = json['page'];
 
     if(page)
     {
 	  json['paginationStart'] = page.substr(0, page.indexOf('-'));
-	  json['paginationEnd']   = page.substr(page.indexOf('-') + 1, page.indexOf('/') - page.indexOf('-') - 1);
-	  json['pagination']       = page.substr(page.indexOf('/') + 1);
+	  json['paginationEnd']   = page.substr(page.indexOf('-') + 1);
     }
 	
 	return json;
