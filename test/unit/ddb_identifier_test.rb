@@ -86,12 +86,15 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     #       canonical = Repository.new
     #       files = canonical.get_all_files_from_path_on_branch(@path_prefix)
     #       files.each do |filename|
-    #         puts filename
+    #         Rails.logger.info "Filename: #{filename}"
     #         # reusing the same Repository instance here leads to an eventual
     #         # Grit timeout; possible Grit bug/leak?
     #         xml_content = REXML::Document.new(Repository.new.get_file_from_branch(filename))
-    #         n_attribute = REXML::XPath.first(xml_content, '/TEI.2').attributes["n"]
-    #         this_ddb = Factory.build(:DDBIdentifier, :name => "papyri.info/ddbdp/#{n_attribute}")
+    #         ddb_hybrid = REXML::XPath.first(xml_content, '/TEI//idno[@type = "ddb-hybrid"]').text
+    #         Rails.logger.info "DDB Hybrid: #{ddb_hybrid}"
+    #         identifier_name = "papyri.info/ddbdp/#{ddb_hybrid}"
+    #         Rails.logger.info "Identifier to hash: #{NumbersRDF::NumbersHelper.identifiers_to_hash(NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier_name)).inspect}"
+    #         this_ddb = Factory.build(:DDBIdentifier, :name => identifier_name)
     #         assert_equal filename, this_ddb.to_path
     #       end
     #     end
