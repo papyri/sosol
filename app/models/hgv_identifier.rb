@@ -68,8 +68,10 @@ class HGVIdentifier < Identifier
   end
   
   def self.collection_names
-    identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(
-      "#{NumbersRDF::PREFIX}:#{IDENTIFIER_NAMESPACE}")
-    identifiers.collect{|i| CGI.unescape(i.split(':').last)}
+    # FIXME: need to be able to get this without hitting the numbers server?
+    return []
+    # identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(
+    #       "#{NumbersRDF::PREFIX}:#{IDENTIFIER_NAMESPACE}")
+    #     identifiers.collect{|i| CGI.unescape(i.split(':').last)}
   end
 end

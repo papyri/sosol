@@ -6,13 +6,13 @@ class HGVMetaIdentifier < HGVIdentifier
   FRIENDLY_NAME = "Meta"
   
   def to_path
-    if alternate_name.nil?
+    # if alternate_name.nil?
       # no alternate name, use SoSOL temporary path
-      return self.temporary_path
-    else
+      # return self.temporary_path
+    # else
       path_components = [ PATH_PREFIX ]
       # assume the alternate name is e.g. hgv2302zzr
-      trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
+      trimmed_name = self.to_components.last # 2302zzr
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
       hgv_dir_number = ((number - 1) / 1000) + 1
@@ -23,7 +23,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
       # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
       return File.join(path_components)
-    end
+    # end
   end
   
   def id_attribute

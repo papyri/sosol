@@ -37,32 +37,37 @@ class Publication < ActiveRecord::Base
     # Coming in from an identifier, build up a publication
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
       NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
-    if identifiers.has_key?('ddbdp')
-      identifiers['ddbdp'].each do |ddb|
-        d = DDBIdentifier.new(:name => ddb)
-        self.identifiers << d
-        self.title = d.titleize
+      
+    [DDBIdentifier, HGVMetaIdentifier].each do |identifier_class|
+      if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
+        identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
+          temp_id = identifier_class.new(:name => identifier_string)
+          self.identifiers << temp_id
+          if self.title == identifier.tr(':','_')
+            self.title = temp_id.titleize
+          end
+        end
       end
     end
     
     # Use HGV hack for now
-    if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
-      identifiers['trismegistos'].each do |tm|
-        tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
-        self.identifiers << HGVMetaIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}")
-        
-        # Check if there's a trans, if so, add it
-        translation = HGVTransIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}"
-        )
-        if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
-          self.identifiers << translation
-        end
-      end
-    end
+    # if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
+    #   identifiers['trismegistos'].each do |tm|
+    #     tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
+    #     self.identifiers << HGVMetaIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}")
+    #     
+    #     # Check if there's a trans, if so, add it
+    #     translation = HGVTransIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}"
+    #     )
+    #     if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
+    #       self.identifiers << translation
+    #     end
+    #   end
+    # end
   end
   
   # If branch hasn't been specified, create it from the title before

@@ -79,8 +79,9 @@ class Identifier < ActiveRecord::Base
   end
   
   def to_components
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:#{self.class::IDENTIFIER_NAMESPACE}:/, '')
-    components = trimmed_name.split(':')
+    trimmed_name = NumbersRDF::NumbersHelper::identifier_to_local_identifier(self.name)
+    # trimmed_name.sub!(/^\/#{self.class::IDENTIFIER_NAMESPACE}\//,'')
+    components = NumbersRDF::NumbersHelper::identifier_to_components(trimmed_name)
     components.map! {|c| c.to_s}
 
     return components

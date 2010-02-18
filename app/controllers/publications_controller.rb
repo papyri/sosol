@@ -270,14 +270,15 @@ class PublicationsController < ApplicationController
     document = params[:document_number]
     
     if identifier_class == 'DDBIdentifier'
-      collection = DDBIdentifier.ddb_human_collection_to_series(collection)
+      collection = collection.downcase.sub(/\.$/,'').tr(' ','')
     elsif identifier_class == 'HGVIdentifier'
       collection = URI.escape(collection)
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
-    identifier = [NumbersRDF::PREFIX, 
-      namespace, collection, volume, document].join(':')
+    document_path = [collection, volume, document].join(';')
+    
+    identifier = [NumbersRDF::OAI_NAMESPACE_IDENTIFIER, namespace, document_path].join('/')
 
     Rails.logger.info("Identifier: #{identifier}")
     

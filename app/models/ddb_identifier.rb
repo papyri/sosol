@@ -26,10 +26,10 @@ class DDBIdentifier < Identifier
   end
   
   def titleize
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
+    # ddb_collection_name = 
+      # self.class.ddb_series_to_human_collection(ddb_series_number)
 
     # strip leading zeros
     ddb_document_number.sub!(/^0*/,'')
@@ -39,10 +39,10 @@ class DDBIdentifier < Identifier
   end
   
   def id_attribute
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
+    # ddb_collection_name = 
+      # self.class.ddb_series_to_human_collection(ddb_series_number)
     ddb_collection_name.downcase!
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
   end
@@ -58,8 +58,8 @@ class DDBIdentifier < Identifier
   def to_path
     path_components = [ PATH_PREFIX ]
     
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
       
     # switch commas to dashes
     # e.g. 0001:13:2230,1 => bgu/bgu.13/bgu.13.2230-1.xml 
@@ -67,11 +67,11 @@ class DDBIdentifier < Identifier
     
     # switch forward slashes to underscores
     # e.g. 0014:2:1964/1967 => o.bodl/o.bodl.2/o.bodl.2.1964_1967.xml
-    ddb_document_number.tr!('/','_')
+    # ddb_document_number.tr!('/','_')
       
     # e.g. 0001 => bgu
-    ddb_collection_name = 
-      self.class.ddb_series_to_collection(ddb_series_number)
+    # ddb_collection_name = 
+      # self.class.ddb_series_to_collection(ddb_series_number)
     
     if ddb_collection_name.nil?
       raise "DDB Collection Name Not Found"
