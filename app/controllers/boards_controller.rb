@@ -13,16 +13,22 @@ class BoardsController < ApplicationController
   def overview
     @board = Board.find(params[:id])
 
-    # below is dangerous since it will expose publications to non owners
-    #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
-    
-    #return only owner publications
-    finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
+    if @board.users.find_by_id(@current_user.id) || @current_user.developer
+      # below is dangerous since it will expose publications to non owners
+      #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
+      
+      #return only owner publications
+      finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
 
-    if finalizing_publications
-      @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+      if finalizing_publications
+        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+      else
+       @finalizing_publications = nil
+      end
     else
-     @finalizing_publications = nil
+      #dont let them have access
+      redirect_to dashboard_url
+      return
     end
     
   end
