@@ -53,8 +53,10 @@ class UserController < ApplicationController
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
     @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
     #below selects publications current user is responsible for finalizing to show in board section of dashboard
-    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+    #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => :identifiers, :order => "updated_at DESC")
        
+    @boards = @current_user.boards   
     #or do we want to use the creator id?
     #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
     
@@ -63,7 +65,21 @@ class UserController < ApplicationController
     
   end
   
-  
+  def archives
+   # @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
+    #@board_final_pubs = Array.new()
+    #@events = Array.new()
+    puts  params[:board_id]
+    if params[:board_id] 
+      @board = Board.find_by_id(params[:board_id])
+      puts "==================="
+      @publications = @board.publications.find( :all, :conditions => { :status => 'archived' }, :include => :identifiers, :order => "updated_at DESC")
+    else
+      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
+    end
+    
+
+  end  
 
   def update_personal
   #TODO don't let any bozo change this data

@@ -306,7 +306,8 @@ class PublicationsController < ApplicationController
       
       if (conflicting_publication.status == "committed")
         # TODO: should set "archived" and take approp action here instead
-        conflicting_publication.destroy
+        #conflicting_publication.destroy
+        conflicting_publication.archive
       else
         flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
         redirect_to dashboard_url
@@ -413,6 +414,16 @@ class PublicationsController < ApplicationController
    
   end
   
+  def confirm_archive
+    @publication = Publication.find(params[:id])
+  end
+  
+  def archive
+    @publication = Publication.find(params[:id])
+    @publication.archive
+    redirect_to @publication    
+  end
+  
   
   
   def confirm_delete
@@ -438,6 +449,8 @@ class PublicationsController < ApplicationController
       
     end
   end
+  
+  
   
   
   def master_list

@@ -349,6 +349,14 @@ class Publication < ActiveRecord::Base
       end
   end
   
+  def archive
+    #delete the repo
+    self.owner.repository.delete_branch(self.branch)
+    #set status to archved
+    self.status = "archived" 
+    #should we set identifiers status as well?
+    self.save  
+  end
   
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes

@@ -22,6 +22,8 @@
   - if @current_user.developer
     - if @publication.modified?
       %h1 MODIFIED PUBLICATION
+      
+      
   - for identifier in @publication.identifiers 
     - image_name = ""       
     - case identifier
@@ -36,6 +38,7 @@
           Meta -
           = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
         - image_name = 'hgv.gif'
+        
       - when HGVTransIdentifier
         %h3 
           Translation - 
@@ -47,25 +50,30 @@
       = image_tag(image_name)  
       
       = identifier.title
-      = render :partial => identifier        
+      - if @publication.status != "archived"
+        = render :partial => identifier        
 
   - if @comments != nil  
     %h3 Comments 
     - for comment in @comments
       = render :partial => comment      
- 
- 
-  
+   
 
-  - for class_type in @creatable_identifiers
-    - create_type = class_type.constantize::FRIENDLY_NAME
-    - create_type = 'Create new ' + create_type
-    = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
-    %br
+  - if @publication.status == "editing"
+    - for class_type in @creatable_identifiers
+      - create_type = class_type.constantize::FRIENDLY_NAME
+      - create_type = 'Create new ' + create_type
+      = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
+      %br
 
   - if @allow_delete
     = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
+    %br
+  
+  - if @publication.status == "committed"
+    = link_to "Archive", :controller => 'publications', :id => @publication.id, :action => "confirm_archive"
+    %br
   
   - if @current_user.developer  
     = link_to "developer immediate delete", @publication, :method => :delete 
-   
+    %br
