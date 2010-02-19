@@ -87,7 +87,7 @@ class BoardsController < ApplicationController
     @board = Board.new    
     
     #don't let more than one board use the same identifier class
-    @available_identifier_classes = Identifier::IDENTIFIER_SUBCLASSES
+    @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     existing_boards = Board.find(:all)
     existing_boards.each do |b|
       @available_identifier_classes -= b.identifier_classes    
@@ -109,14 +109,18 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(params[:board])
     
-    
     @board.identifier_classes = []
+    
+    #for now just let them choose one identifer class
+    @board.identifier_classes << params[:identifier_class]
+
+=begin    
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
       if params.has_key?(identifier_class) && params[identifier_class] == "1"
         @board.identifier_classes << identifier_class
       end
     end
-
+=end
     if @board.save
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id    

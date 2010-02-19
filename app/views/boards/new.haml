@@ -12,9 +12,12 @@
       = f.label "Identifier classes"
       %br
       - @available_identifier_classes.each do |identifier_class|
-        = check_box_tag identifier_class
+        -#= check_box_tag identifier_class
+        -# limit to one choice
+        = radio_button_tag "identifier_class", "#{identifier_class}", "#{identifier_class}"
         = identifier_class.sub(/Identifier$/,'')
         %br
+        
     %br
     %p
       = f.submit "Create"
