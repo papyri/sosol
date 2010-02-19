@@ -8,7 +8,7 @@ class DdbIdentifiersController < IdentifiersController
     begin
       @identifier[:leiden_plus] = @identifier.leiden_plus
     rescue RXSugar::XMLParseError => parse_error
-      flash[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_plus] = parse_error.content
     end
   end
@@ -27,7 +27,7 @@ class DdbIdentifiersController < IdentifiersController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    :action => :edit)
     rescue RXSugar::NonXMLParseError => parse_error
-      flash[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_plus] = parse_error.content
       render :template => 'ddb_identifiers/edit'
     end
