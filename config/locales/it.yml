@@ -13,6 +13,14 @@ it:
     pagination_start: 'impaginazione start'
     pagination_end: 'impaginazione end'
     notes: 'memo'
+    number: 'numero'
+    date: 'data'
+    new_entry: 'new entry'
+    headings:
+        main: 'bibliografia'
+        other: 'altri riferimenti bibliografici'
+        secondary: 'Secondaria'
+        meta: 'Metadati'
     zotero:
       accept: 'accettare i dati zotero'
       cancel: 'scartare i dati zotero'

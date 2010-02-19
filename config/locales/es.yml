@@ -13,6 +13,14 @@ es:
     pagination_start: 'de'
     pagination_end: 'hasta'
     notes: 'notas'
+    number: 'banda'
+    date: 'fecha'
+    new_entry: 'nueva entrada'
+    headings:
+        main: 'bibliografía'
+        other: 'otras referencias bibliográficas'
+        secondary: 'secundaria'
+        meta: 'metadatos'
     zotero:
       accept: 'utilizar los datos'
       cancel: 'descartar los datos de zotero'

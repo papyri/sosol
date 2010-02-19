@@ -13,6 +13,14 @@ de:
     pagination_start: 'von'
     pagination_end: 'bis'
     notes: 'Hinweise'
+    number: 'Nummer'
+    date: 'Datum'
+    new_entry: 'Neuer Eintrag'
+    headings:
+        main: 'Hauptbibliographie'
+        other: 'Weitere bibliographische Verweise'
+        secondary: 'Sekundärliteratur'
+        meta: 'Metadaten'
     zotero:
       accept: 'zotero Daten übernehmen'
       cancel: 'zotero Daten verwerfen'

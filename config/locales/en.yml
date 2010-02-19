@@ -13,6 +13,14 @@ en:
     pagination_start: 'pagination start'
     pagination_end: 'pagination end'
     notes: 'notes'
+    number: 'number'
+    date: 'date'
+    new_entry: 'new entry'
+    headings:
+        main: 'main bibliographies'
+        other: 'further bibliographical references'
+        secondary: 'secondary literature'
+        meta: 'metadata'
     zotero:
       accept: 'accept zotero data'
       cancel: 'discard zotero data'
