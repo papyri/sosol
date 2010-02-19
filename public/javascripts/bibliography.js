@@ -1,3 +1,18 @@
+// little helpers
+
+function toggleBibliographyEditor(editorPartialToShowUp)
+{
+  $$('div#main div#editBibliography div').each(Element.hide);
+  if(editorPartialToShowUp)
+  {
+    $$('div#main div#editBibliography div' + editorPartialToShowUp).each(Element.toggle);
+  }
+}
+
+toggleBibliographyEditor()
+
+// zotero
+
 function discardBiblbiography(jsonSourceElementId)
 {
   $(jsonSourceElementId).value = '';
@@ -23,7 +38,7 @@ function applyBiblbiography(jsonSourceElementId, targetElementIdPrefix)
   }
   else
   {
-  	alert('The data you entered into the zotero field cannot be read. \n\n Try again and drag a single data record from your\n zotero library into the text field.');
+  	alert('The data you entered into the zotero field cannot be read. \n\n Please, try again and drag a single data record from your\n zotero library into the text field.');
   }
   
   return false;

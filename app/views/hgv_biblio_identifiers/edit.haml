@@ -1,5 +1,3 @@
-= javascript_include_tag 'bibliography'
-
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -7,23 +5,25 @@
 
     #editBibliography
       - form_for @identifier, :url => { :action => :update }, :html => {:autocomplete => 'off'} do |f| 
-        = f.error_messages 
+        = f.error_messages
 
-        - @identifier.bibliographies.each_pair do |bibliography, itemList|
-          %fieldset
-            %legend
-              = bibliography.to_s.titleize
-              - itemList.each do |key, value|
-                %p
-                  = f.label I18n.t('bibliography.' + key.to_s)
-                  - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][' + key.to_s + ']'
-                  - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
-                  %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@identifier.mutable?}
-
-            - tag_name = 'hgv_biblio_identifier[' + bibliography.to_s + '][zotero]'
-            - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
-            %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '80', :rows => '5', :disabled => !@identifier.mutable?}
-            %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
-            %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
+        %h2{:onclick => "toggleBibliographyEditor('#bibliographyMain')"}= I18n.t('bibliography.headings.main').titleize
+        #bibliographyMain
+          = render :partial => 'bibliography', :collection => @identifier.bibliography_main, :locals => {:type => :main}
         
+        %h2{:onclick => "toggleBibliographyEditor('#bibliographyOther')"}= I18n.t('bibliography.headings.other').titleize
+        #bibliographyOther
+          = render :partial => 'bibliography', :collection => @identifier.bibliography_other, :locals => {:type => :other}
+          = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_other], :locals => {:type => :other}
+
+        %h2{:onclick => "toggleBibliographyEditor('#bibliographySecondary')"}= I18n.t('bibliography.headings.secondary').titleize
+        #bibliographySecondary
+          = render :partial => 'bibliography', :collection => @identifier.bibliography_secondary, :locals => {:type => :secondary}
+          = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
+
+        -#%h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
+        -##bibliographyMeta
+
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+
+= javascript_include_tag 'bibliography'
