@@ -24,6 +24,12 @@
   - @board.decrees.each do |decree|
     = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
 
+  %b
+    Emails
+  - @board.emailers.each do |emailer|
+    = render :partial => emailer, :locals =>  {:hide_edit_link=> 'true'}
+
+
 
   -#-------publications--------
 
