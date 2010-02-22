@@ -122,7 +122,7 @@ class Identifier < ActiveRecord::Base
       # no constructed id's for this year/class
       document_number = 1
     else
-      document_number = latest.to_components.last.to_i + 1
+      document_number = latest.to_components.last.split(';').last.to_i + 1
     end
     
     return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};%04d;%04d",
