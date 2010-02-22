@@ -5,7 +5,7 @@ class DDBIdentifier < Identifier
   FRIENDLY_NAME = "Text"
   
   IDENTIFIER_NAMESPACE = 'ddbdp'
-  TEMPORARY_COLLECTION = '0500'
+  TEMPORARY_COLLECTION = 'sosol'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   

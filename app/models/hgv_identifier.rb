@@ -62,8 +62,8 @@ class HGVIdentifier < Identifier
   
   def temporary_path
     # path constructor for born-digital temporary SoSOL identifiers
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:hgv:/, '')
-    components = trimmed_name.split(':')
+    trimmed_name = name.sub(/papyri.info\/hgv\//, '')
+    components = trimmed_name.split(';')
     return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
   end
   

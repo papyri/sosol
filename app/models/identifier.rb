@@ -115,7 +115,7 @@ class Identifier < ActiveRecord::Base
   def self.next_temporary_identifier
     year = Time.now.year
     latest = self.find(:all,
-                       :conditions => ["name like ?", "oai:papyri.info:identifiers:#{self::IDENTIFIER_NAMESPACE}:#{self::TEMPORARY_COLLECTION}:#{year}:%"],
+                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%"],
                        :order => "name DESC",
                        :limit => 1).first
     if latest.nil?
@@ -125,7 +125,7 @@ class Identifier < ActiveRecord::Base
       document_number = latest.to_components.last.to_i + 1
     end
     
-    return sprintf("oai:papyri.info:identifiers:#{self::IDENTIFIER_NAMESPACE}:#{self::TEMPORARY_COLLECTION}:%04d:%04d",
+    return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};%04d;%04d",
                    year, document_number)
   end
   
