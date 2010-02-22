@@ -239,69 +239,6 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-=begin
-  def send_status_emails(when_to_send)
-
-  	#search emailer for status
-  	if self.board == nil || self.board.emailers == nil
-  	  return
-  	end
-    
-  	self.board.emailers.each do |mailer|
-  	
-  		if mailer.when_to_send == when_to_send
-  			#send the email
-  			addresses = Array.new	
-  			#--addresses
-  			mailer.users.each do |user|
-  				if user.email != nil
-  					addresses << user.email
-  				end
-  			end
-  			extras = mailer.extra_addresses.split(" ")
-  			extras.each do |extra|
-  				addresses << extra
-  			end
-  			if mailer.send_to_owner
-  				if self.user.email != nil
-  					addresses << self.user.email
-  				end
-  			end
-  			
-  			#--document content
-  			if mailer.include_document
-  				document_content = self.content 
-  			else
-  				document_content = nil
-  			end
-  			
-  			body = mailer.message
-  			
-  			#TODO parse the message to add local vars
-  			#votes
-  			
-  			#comments
-  			#owner
-  			#status
-  			#who changed status
-  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
-  			
-  			addresses.each do |address|
-  				if address != nil && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
-  				end
-  			end
-  			
-  		end
-  	end	
-  end
-=end
-  
   #sets thes origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)    
 
