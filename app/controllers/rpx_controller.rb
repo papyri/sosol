@@ -126,15 +126,17 @@ class RpxController < ApplicationController
     @full_name = params[:new_user][:full_name]
 
     if @name.empty?
-      flash[:error] = "Username must not be empty"
+      flash.now[:error] = "Nickname must not be empty"
       render :action => "login_return"
       return
     end
 
     begin
       user = User.create(:name => @name, :email => @email, :full_name => @full_name)
-    rescue ActiveRecord::StatementInvalid => e
-      flash[:error] = "Username not available"
+      #this save to execute validates_uniqueness_of :name so not continue with duplicate
+      user.save!
+    rescue ActiveRecord::RecordInvalid => e
+      flash.now[:error] = "Nickname not available"
       render :action => "login_return"
       return
     end
@@ -148,7 +150,7 @@ class RpxController < ApplicationController
       user.save!
     rescue Exception => e
       user.destroy
-      flash[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
+      flash.now[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
       render :action => "login_return"
       return
     end
