@@ -47,16 +47,27 @@ module NumbersRDF
         response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
                                           NUMBERS_SERVER_PORT)
       end
-    
-      def identifier_to_identifiers(identifier)
+      
+      def apply_xpath_to_identifier(xpath, identifier)
         response = identifier_to_numbers_server_response(identifier)
 
         if response.code != '200'
           return nil
         else
           return [identifier] + process_numbers_server_response_body(
-            Iconv.iconv('UTF-8','LATIN1',response.body).join)
+            Iconv.iconv('UTF-8','LATIN1',response.body).join,
+            xpath)
         end
+      end
+      
+      def identifier_to_identifiers(identifier)
+        apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:relation/@rdf:resource", identifier)
+      end
+      
+      def identifier_to_parts(identifier)
+        apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:hasPart/@rdf:resource", identifier)
       end
     
       def identifiers_to_hash(identifiers)
@@ -72,15 +83,13 @@ module NumbersRDF
         return identifiers_hash
       end
     
-      def process_numbers_server_response_body(rdf_xml)
-        identifiers = []
-        ore_describes_path = "/rdf:RDF/rdf:Description/ns1:relation"
-        JRubyXML.apply_xpath(rdf_xml, ore_describes_path, true).each do |ore_describes|
-          resource = ore_describes[:attributes]['rdf:resource']
-          identifiers << identifier_url_to_identifier(resource)
+      def process_numbers_server_response_body(rdf_xml, xpath)
+        [].tap do |identifiers|
+          JRubyXML.apply_xpath(rdf_xml, xpath, true).each do |xpath_result|
+            resource = xpath_result[:value]
+            identifiers << identifier_url_to_identifier(resource)
+          end
         end
-        
-        return identifiers
       end
     end
   end
