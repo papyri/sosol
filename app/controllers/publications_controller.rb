@@ -278,7 +278,7 @@ class PublicationsController < ApplicationController
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
     document_path = [collection, volume, document].join(';')
     
-    identifier = [NumbersRDF::OAI_NAMESPACE_IDENTIFIER, namespace, document_path].join('/')
+    identifier = [NumbersRDF::NAMESPACE_IDENTIFIER, namespace, document_path].join('/')
 
     Rails.logger.info("Identifier: #{identifier}")
     

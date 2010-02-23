@@ -7,17 +7,13 @@ module NumbersRDF
   NUMBERS_SERVER_PORT = 80
   NUMBERS_SERVER_BASE_PATH = '/numbers'
   
-  # OAI identifiers should be in the form scheme ":" namespace-identifier ":" local-identifier
-  OAI_SCHEME = 'oai'
-  OAI_NAMESPACE_IDENTIFIER = 'papyri.info'
-  OAI_IDENTIFIER_PREFIX = "#{OAI_SCHEME}:#{OAI_NAMESPACE_IDENTIFIER}"
-  PREFIX = "#{OAI_IDENTIFIER_PREFIX}:identifiers"
+  NAMESPACE_IDENTIFIER = 'papyri.info'
   
   module NumbersHelper
     class << self
       # TODO: after move from dev.papyri.info to papyri.info can probably use NUMBERS_SERVER_DOMAIN
       def identifier_to_local_identifier(identifier)
-        identifier.sub(/^#{OAI_NAMESPACE_IDENTIFIER}/, '')
+        identifier.sub(/^#{NAMESPACE_IDENTIFIER}/, '')
       end
       
       def identifier_url_to_identifier(identifier)
