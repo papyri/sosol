@@ -50,20 +50,32 @@ module NumbersRDF
         if response.code != '200'
           return nil
         else
-          return [identifier] + process_numbers_server_response_body(
+          return process_numbers_server_response_body(
             Iconv.iconv('UTF-8','LATIN1',response.body).join,
             xpath)
         end
       end
       
       def identifier_to_identifiers(identifier)
-        apply_xpath_to_identifier(
+        results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:relation/@rdf:resource", identifier)
+        if results.nil?
+          return nil
+        else
+          return [identifier] + results.collect{|r| identifier_url_to_identifier(r)}
+        end
       end
       
       def identifier_to_parts(identifier)
-        apply_xpath_to_identifier(
+        results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:hasPart/@rdf:resource", identifier)
+        return results.collect{|r| identifier_url_to_identifier(r)}
+      end
+      
+      def identifier_to_title(identifier)
+        apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:identifier/text()", identifier
+        ).last
       end
     
       def identifiers_to_hash(identifiers)
@@ -80,11 +92,8 @@ module NumbersRDF
       end
     
       def process_numbers_server_response_body(rdf_xml, xpath)
-        [].tap do |identifiers|
-          JRubyXML.apply_xpath(rdf_xml, xpath, true).each do |xpath_result|
-            resource = xpath_result[:value]
-            identifiers << identifier_url_to_identifier(resource)
-          end
+        JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
+          xpath_result[:value]
         end
       end
     end
