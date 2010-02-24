@@ -73,9 +73,10 @@ module NumbersRDF
       end
       
       def identifier_to_title(identifier)
-        apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:identifier/text()", identifier
-        ).last
+        result = apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:identifier[last()]/text()", identifier
+        )
+        return result.nil? ? nil : result.last
       end
     
       def identifiers_to_hash(identifiers)
