@@ -43,8 +43,8 @@ class Publication < ActiveRecord::Base
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier.tr(':','_')
-            self.title = temp_id.titleize
+          if self.title == identifier.tr(':;','_')
+            self.title = temp_id.titleize.tr(':;','_')
           end
         end
       end
@@ -197,7 +197,7 @@ class Publication < ActiveRecord::Base
     new_publication = Publication.new(:owner => creator, :creator => creator)
     
     # fetch a title without creating from template
-    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
+    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize.tr(':;','_')
     
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
     
