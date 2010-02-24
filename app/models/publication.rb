@@ -162,7 +162,7 @@ class Publication < ActiveRecord::Base
   def submit
     submit_to_next_board
     return
-    #note return here to comment out rest of function
+=begin
     boards = Board.find(:all)
     boards.each do |board|
       board_matches_publication = false
@@ -186,6 +186,9 @@ class Publication < ActiveRecord::Base
     e.target = self
     e.owner = self.owner
     e.save!
+    
+=end
+    
   end
   
   def self.new_from_templates(creator)
@@ -636,9 +639,10 @@ class Publication < ActiveRecord::Base
       if merge.sections == 0
         # nothing new from canon, trivial merge by updating HEAD
         canon.add_alternates(self.owner.repository)
-        canon.repo.update_ref('master', publication_sha)
+        canon_sha = shacanon.repo.update_ref('master', publication_sha)
         self.status = 'committed'
         self.save!
+        return canon_sha
       end
     end
   end

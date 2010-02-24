@@ -160,14 +160,14 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-    @publication.commit_to_canon
+    canon_sha = @publication.commit_to_canon
 
     if params[:comment] && params[:comment] != ""
       @comment = Comment.new()
       @comment.comment = params[:comment]
       @comment.user = @current_user
       @comment.reason = "finalizing"
-      #TODO add git has from committ @comment.git_hash = ??
+      @comment.git_hash = canon_sha
       #associate comment with original identifier/publication
       @comment.identifier_id = params[:identifier_id]
       @comment.publication = @publication.origin
