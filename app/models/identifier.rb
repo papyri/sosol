@@ -78,6 +78,14 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def titleize
+    title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
+    if title.nil?
+      return self.name
+    end
+    return title
+  end
+  
   def to_components
     trimmed_name = NumbersRDF::NumbersHelper::identifier_to_local_identifier(self.name)
     # trimmed_name.sub!(/^\/#{self.class::IDENTIFIER_NAMESPACE}\//,'')
@@ -85,6 +93,14 @@ class Identifier < ActiveRecord::Base
     components.map! {|c| c.to_s}
 
     return components
+  end
+  
+  def self.collection_names
+    unless defined? @collection_names
+      parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+      @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
+    end
+    return @collection_names
   end
   
   def self.new_from_template(publication)
