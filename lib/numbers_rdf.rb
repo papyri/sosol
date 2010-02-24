@@ -73,6 +73,7 @@ module NumbersRDF
       end
       
       def identifier_to_title(identifier)
+        # TODO: update with actual title XPath once it's in place
         result = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:identifier[last()]/text()", identifier
         )
