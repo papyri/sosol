@@ -41,7 +41,7 @@ class HGVIdentifier < Identifier
     self.collection_names
     
     unless defined? @collection_names_hash
-      @collection_names_hash = {}
+      @collection_names_hash = {TEMPORARY_COLLECTION => TEMPORARY_COLLECTION}
       @collection_names.each do |collection_name|
         human_name = collection_name.tr('_',' ')
         @collection_names_hash[collection_name] = human_name

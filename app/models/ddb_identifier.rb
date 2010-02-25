@@ -33,7 +33,7 @@ class DDBIdentifier < Identifier
     self.collection_names
     
     unless defined? @collection_names_hash
-      @collection_names_hash = {}
+      @collection_names_hash = {TEMPORARY_COLLECTION => "SoSOL"}
       response = 
         NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(
           "prefix dc: <http://purl.org/dc/terms/> construct { ?ddb dc:bibliographicCitation ?bibl} from <rmi://localhost/papyri.info#pi> where {?ddb dc:isPartOf <http://papyri.info/ddbdp> . ?ddb dc:bibliographicCitation ?bibl}\n&default-graph-uri=rmi://localhost/papyri.info#pi&format=rdfxml"
