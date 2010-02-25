@@ -36,4 +36,18 @@ class HGVIdentifier < Identifier
     components = trimmed_name.split(';')
     return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
   end
+  
+  def self.collection_names_hash
+    self.collection_names
+    
+    unless defined? @collection_names_hash
+      @collection_names_hash = {}
+      @collection_names.each do |collection_name|
+        human_name = collection_name.tr('_',' ')
+        @collection_names_hash[collection_name] = human_name
+      end
+    end
+    
+    return @collection_names_hash
+  end
 end

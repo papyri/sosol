@@ -29,6 +29,29 @@ class DDBIdentifier < Identifier
     id_attribute
   end
   
+  def self.collection_names_hash
+    self.collection_names
+    
+    unless defined? @collection_names_hash
+      @collection_names_hash = {}
+      response = 
+        NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(
+          "prefix dc: <http://purl.org/dc/terms/> construct { ?ddb dc:bibliographicCitation ?bibl} from <rmi://localhost/papyri.info#pi> where {?ddb dc:isPartOf <http://papyri.info/ddbdp> . ?ddb dc:bibliographicCitation ?bibl}\n&default-graph-uri=rmi://localhost/papyri.info#pi&format=rdfxml"
+        )
+      if response.code == '200'
+        @collection_names.each do |collection_name|
+          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/ns1:bibliographicCitation/text()"
+          human_name = 
+            NumbersRDF::NumbersHelper.process_numbers_server_response_body(
+              response.body, xpath).first
+          @collection_names_hash[collection_name] = human_name
+        end
+      end
+    end
+    
+    return @collection_names_hash
+  end
+  
   def to_path
     path_components = [ PATH_PREFIX ]
     
