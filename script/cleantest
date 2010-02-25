@@ -1,0 +1,11 @@
+#!/bin/sh
+
+rm -f db/development.sqlite3
+rm -f db/test.sqlite3
+rm -rf db/test/git/boards/*
+rm -rf db/test/git/users/*
+rm -rf db/git/boards/*
+rm -rf db/git/users/*
+jrake db:migrate:reset
+jrake
+
