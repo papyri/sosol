@@ -52,6 +52,20 @@ class DDBIdentifier < Identifier
     return @collection_names_hash
   end
   
+  def titleize
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
+    
+    ddb_collection_name = 
+      self.class.collection_names_hash[ddb_collection_name]
+    
+    # strip leading zeros
+    ddb_document_number.sub!(/^0*/,'')
+
+    title = 
+     [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
+  end
+  
   def to_path
     path_components = [ PATH_PREFIX ]
     
