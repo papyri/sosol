@@ -1,4 +1,5 @@
-var diacritical_type = "diaeresis";
+var diacritical_type_one = "acute";
+var diacritical_type_two = "asper";
 var gap_type = "character";
 var diacritical_option = "nopts";
 var tryit_type = "xml2non";
@@ -35,9 +36,21 @@ function checkelliplang(id)
   elliplang = document.getElementById(id).value;
 }
 
-function checktypedia(id)
+/*###########################################################################################*/
+/* sets 2 values to be used in insertDiacriticalSub                                          */
+/* accepts 2 parms - 1 = the diacritical html form id, 2= which variable to set (1 or 2)     */
+/*###########################################################################################*/
+
+function checktypedia(id,dia)
 {
-  diacritical_type = document.getElementById(id).value;
+  if (dia == 1)
+    {
+    diacritical_type_one = document.getElementById(id).value;
+    }
+  else
+    {
+    diacritical_type_two = document.getElementById(id).value;
+    }
 }
 
 function checktypegap(id)
@@ -56,7 +69,6 @@ function checktypevestig(id)
   
   if (vestig_type == "line")
     {
-      
       document.vestig.vestiglow_check_n.disabled = false;
     }
   else
@@ -295,21 +307,28 @@ function insertAppSubst()
 
 function insertDiacriticalSub()
 {
-  /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
-     XML to pass the xsugar grammar - stripped back out when returns */
+  if (diacritical_type_one == diacritical_type_two)
+    {
+      alert("Both diacriticals cannot be the same - change one of them");
+    }
+  else
+    {
+      /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
+         XML to pass the xsugar grammar - stripped back out when returns */
+      
+      startxml = "<hi rend=\"" + diacritical_type_one + "\"><hi rend=\"" + diacritical_type_two + "\">A</hi></hi>";
   
-  startxml = "<hi rend=\"" + diacritical_type + "\">A</hi>";
-  
-// sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  success = function(resp) {
-    leidenh = resp.responseText;
-//  strips the leading space and default character 'A' to only insert the ancient dicritical
-    textToInsert = leidenh.substr(2);
-    window.close();
-    insertText(textToInsert);
-     }
-  
-  convertXML();
+      // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
+      success = function(resp) {
+        leidenh = resp.responseText;
+      //  strips the leading space and default character 'A' to only insert the ancient dicritical
+        textToInsert = leidenh.substr(2);
+        window.close();
+        insertText(textToInsert);
+         }
+      
+      convertXML();
+    }
   
 } /*########################     end insertDiacriticalSub     ########################*/
 

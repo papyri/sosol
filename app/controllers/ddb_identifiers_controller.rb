@@ -8,7 +8,7 @@ class DdbIdentifiersController < IdentifiersController
     begin
       @identifier[:leiden_plus] = @identifier.leiden_plus
     rescue RXSugar::XMLParseError => parse_error
-      flash[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_plus] = parse_error.content
     end
   end
@@ -16,16 +16,21 @@ class DdbIdentifiersController < IdentifiersController
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_identifier
-    @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
-                                params[:comment])
-    #TODO add check to see if set really happened
-    if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save
+    begin
+      @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
+                                  params[:comment])
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+        @comment.save
+      end
+      flash[:notice] = "File updated."
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :edit)
+    rescue RXSugar::NonXMLParseError => parse_error
+      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      @identifier[:leiden_plus] = parse_error.content
+      render :template => 'ddb_identifiers/edit'
     end
-    flash[:notice] = "File updated."
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :edit)
   end
   
   # GET /publications/1/ddb_identifiers/1/preview
