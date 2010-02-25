@@ -155,14 +155,9 @@ class DDBIdentifier < Identifier
   def leiden_plus
     abs = DDBIdentifier.preprocess_abs(
       DDBIdentifier.get_abs_from_edition_div(xml_content))
-    begin
-      transformed = DDBIdentifier.xml2nonxml(abs)
-    rescue Exception => e
-      if e.message.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
-        return e.message.to_s + "\n" + 
-          DDBIdentifier.parse_exception_pretty_print(abs, $1.to_i)
-      end
-    end
+    # transform XML to Leiden+ 
+    transformed = DDBIdentifier.xml2nonxml(abs)
+    
     return transformed
   end
   
@@ -191,16 +186,8 @@ class DDBIdentifier < Identifier
   def leiden_plus_to_xml(content)
     # a lot of these changes are to make multiple div/ab docs work
     # transform the Leiden+ to XML
-    
-    begin
-      nonx2x = DDBIdentifier.nonxml2xml(content)
-    rescue Exception => e
-      if e.message.to_s =~ /^dk\.brics\.grammar\.parser\.ParseException: parse error at character (\d+)/
-        return e.message.to_s + "\n" #+ session[:templeiden]
-         # DDBIdentifier.parse_exception_pretty_print(content, $1.to_i)
-      end
-    end
-    
+    nonx2x = DDBIdentifier.nonxml2xml(content)
+        
     nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
     transformed_xml_content = REXML::Document.new(
       nonx2x)

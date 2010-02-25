@@ -24,7 +24,6 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "ancientdia":
   case "abbrev":
   case "gapellipNT":
   case "gapilleg":
@@ -35,6 +34,11 @@ function helpDialogOpen(view)
       openconfig = config='height=185, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
+  case "ancientdia":
+    {
+      openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
   case "gapelliplang":
     {
       openconfig = config='height=210, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
@@ -43,12 +47,12 @@ function helpDialogOpen(view)
   case "appalt":
   case "appsubst":
     {
-      openconfig = config='height=225, width=875, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=225, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "apporth":
     {
-      openconfig = config='height=350, width=875, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
@@ -56,7 +60,7 @@ function helpDialogOpen(view)
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=1225, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
