@@ -31,7 +31,11 @@ module NumbersRDF
         url_paths << 'rdf'
         return url_paths.join('/')
       end
-
+      
+      def sparql_query_to_path(sparql_query)
+        "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+      end
+      
       # FIXME: this should eventually go to e.g. /source or http://papyri.info/navigator/full/apis_columbia_p204 or something. Will be used to replace "View in PN" link constructed in app/views/identifiers/_pn_link.haml
       def identifier_to_url(identifier)
         return 'http://' + NUMBERS_SERVER_DOMAIN + ':' + 
@@ -44,9 +48,13 @@ module NumbersRDF
                                           NUMBERS_SERVER_PORT)
       end
       
-      def apply_xpath_to_identifier(xpath, identifier)
-        response = identifier_to_numbers_server_response(identifier)
-
+      def sparql_query_to_numbers_server_response(sparql_query)
+        path = sparql_query_to_path(sparql_query)
+        response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
+                                          NUMBERS_SERVER_PORT)
+      end
+      
+      def apply_xpath_to_numbers_server_response(xpath, response)
         if response.code != '200'
           return nil
         else
@@ -54,6 +62,16 @@ module NumbersRDF
             Iconv.iconv('UTF-8','LATIN1',response.body).join,
             xpath)
         end
+      end
+      
+      def apply_xpath_to_sparql_query(xpath, sparql_query)
+        response = sparql_query_to_numbers_server_response(sparql_query)
+        apply_xpath_to_numbers_server_response(xpath, response)
+      end
+      
+      def apply_xpath_to_identifier(xpath, identifier)
+        response = identifier_to_numbers_server_response(identifier)
+        apply_xpath_to_numbers_server_response(xpath, response)
       end
       
       def identifier_to_identifiers(identifier)
