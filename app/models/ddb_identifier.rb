@@ -44,7 +44,7 @@ class DDBIdentifier < Identifier
           human_name = 
             NumbersRDF::NumbersHelper.process_numbers_server_response_body(
               response.body, xpath).first
-          @collection_names_hash[collection_name] = human_name
+          @collection_names_hash[collection_name] = human_name unless human_name.nil?
         end
       end
     end
