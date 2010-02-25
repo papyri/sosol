@@ -79,7 +79,14 @@ class Identifier < ActiveRecord::Base
   end
   
   def titleize
-    title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
+    title = nil
+    if self.class == HGVMetaIdentifier
+      title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
+    elsif self.class == HGVTransIdentifier
+      title = NumbersRDF::NumbersHelper::identifier_to_title(
+        self.name.sub(/trans/,''))
+    end
+    
     if title.nil?
       collection_name, volume_number, document_number =
         self.to_components.last.split(';')
