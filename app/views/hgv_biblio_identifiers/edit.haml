@@ -1,3 +1,5 @@
+= stylesheet_link_tag 'bibliography'
+
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -8,16 +10,16 @@
         = f.error_messages
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMain')"}= I18n.t('bibliography.headings.main').titleize
-        #bibliographyMain
+        #bibliographyMain.bibliographyContainer
           = render :partial => 'bibliography', :collection => @identifier.bibliography_main, :locals => {:type => :main}
         
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyOther')"}= I18n.t('bibliography.headings.other').titleize
-        #bibliographyOther
+        #bibliographyOther.bibliographyContainer
           = render :partial => 'bibliography', :collection => @identifier.bibliography_other, :locals => {:type => :other}
           = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_other], :locals => {:type => :other}
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographySecondary')"}= I18n.t('bibliography.headings.secondary').titleize
-        #bibliographySecondary
+        #bibliographySecondary.bibliographyContainer
           = render :partial => 'bibliography', :collection => @identifier.bibliography_secondary, :locals => {:type => :secondary}
           = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
 

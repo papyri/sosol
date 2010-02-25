@@ -18,13 +18,15 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     @xpath_other = "/TEI/text/body/div[@type='bibliography'][@subtype='otherPublications']/listBibl"
     @xpath_secondary = "/TEI/text/body/div[@type='bibliography'][@subtype='citations']/listBibl"
 
-    @item_list_main = @item_list_other = {
+    @item_list_main = @item_list_other = @item_list_secondary = {
       :signature            => {:multiple => false, :xpath => "idno[@type='signature']"},
       :title                => {:multiple => false, :xpath => "title[@level='a'][@type='main']"},
       :author               => {:multiple => true,  :xpath => "author"},
       :monographic_title    => {:multiple => false, :xpath => "title[@level='m'][@type='main']"},
       :series_title         => {:multiple => false, :xpath => "series/title[@level='s'][@type='main']"},
       :series_number        => {:multiple => false, :xpath => "series/biblScope[@type='volume']"},
+      :journal_title        => {:multiple => false, :xpath => "monogr/title[@level='j'][@type='main']"},
+      :journal_number       => {:multiple => false, :xpath => "monogr/biblScope[@type='volume']"},
       :editor               => {:multiple => true,  :xpath => "editor"},
       :place_of_publication => {:multiple => false, :xpath => "pubPlace"},
       :publication_date     => {:multiple => false, :xpath => "date"},
@@ -34,19 +36,11 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
       :notes                => {:multiple => false, :xpath => "notes"}
     }
 
-    @item_list_secondary = {
-      :author               => {:multiple => true,  :xpath => "author"},
-      :title                => {:multiple => false, :xpath => "title[@level='a'][@type='main']"},
-      :number               => {:multiple => false, :xpath => "series/biblScope[@type='volume']"},
-      :pagination           => {:multiple => false, :xpath => "biblScope[@type='page']"},
-      :date                 => {:multiple => false, :xpath => "date"},
-    }
-
     @bibliography_main = {}
     @bibliography_other = {}
     @bibliography_secondary = {}
 
-    @id_list_main = [:sb, :xyz] # add further bilbiographies by extending the list, such as :xyz
+    @id_list_main = [:sb] # add further bilbiographies by extending the list, such as :xyz
     @bibl_tag_other = "bibl[@type='publication'][@subtype='other']"
     @bibl_tag_secondary = "bibl"
   end
@@ -182,8 +176,8 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     tmp = ''
 
     if element_path.include? '/@' # i.e. path points to an attribute rather than an element
-      document.elements.each(element_path.slice(0, element_path.index('/@')) ) {|element|
-        tmp = element.attributes[element_path.slice(element_path.index('/@') + 2, 100)]
+      document.elements.each(element_path.slice(0, element_path.index('/@')) ) {|element|      
+        tmp = element.attributes[element_path.slice(element_path.index('/@') + 2, 100)] || ''
       }
     else
       document.elements.each(element_path) {|element|
@@ -191,7 +185,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
           tmp += element.get_text.value + ', '
         end
       }
-    end      
+    end
 
     return tmp.sub(/, \Z/, '')
   end

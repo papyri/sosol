@@ -2,10 +2,10 @@
 
 function toggleBibliographyEditor(editorPartialToShowUp)
 {
-  $$('div#main div#editBibliography div').each(Element.hide);
+  $$('div#main div#editBibliography div.bibliographyContainer').each(Element.hide);
   if(editorPartialToShowUp)
   {
-    $$('div#main div#editBibliography div' + editorPartialToShowUp).each(Element.toggle);
+    $$('div#main div#editBibliography div' + editorPartialToShowUp).each(Element.show);
   }
 }
 

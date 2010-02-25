@@ -34,8 +34,8 @@
         <text variable="collection-number" prefix="seriesNumber : |" suffix="|, " />
       </if>
       <else-if type="article-journal">
-        <text variable="container-title" prefix="seriesTitle : |" suffix="|, " form="short" />
-        <text variable="volume" prefix="seriesNumber : |" suffix="|, " />
+        <text variable="container-title" prefix="journalTitle : |" suffix="|, " form="short" />
+        <text variable="volume" prefix="journalNumber : |" suffix="|, " />
       </else-if>
     </choose> 
   </macro>

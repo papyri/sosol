@@ -14,6 +14,10 @@
 
   - tag_name = parameter_prefix + '[zotero]'
   - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
-  %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '80', :rows => '5', :disabled => !@identifier.mutable?}
-  %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
-  %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
+  .zoteroInactive
+    .zoteroHook{:onclick => "$(this.parentNode).toggleClassName('zoteroInactive');$(this.parentNode).toggleClassName('zoteroActive');"}
+      Zotero
+    .zoteroEditor
+      %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '60', :rows => '5', :disabled => !@identifier.mutable?}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}

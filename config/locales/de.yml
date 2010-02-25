@@ -6,6 +6,8 @@ de:
     monographic_title: 'Buchtitel'
     series_title: 'Reihe'
     series_number: 'Band'
+    journal_title: 'Heft'
+    journal_number: 'Heftnummer'
     editor: 'Herausgeber'
     place_of_publication: 'Erscheinungsort'
     publication_date: 'Erscheinungsdatum'

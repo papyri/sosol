@@ -6,6 +6,8 @@ fr:
     monographic_title: 'titre du livre'
     series_title: 'series'
     series_number: 'numéro'
+    journal_title: 'titre du journal'
+    journal_number: 'revue no.'
     editor: 'sous la direction de'
     place_of_publication: 'publication'
     publication_date: 'date de publication'
