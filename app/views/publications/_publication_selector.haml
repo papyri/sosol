@@ -1,8 +1,9 @@
-%p== Emend existing publication:
-- form_tag :controller => 'publications', :action => "create_from_selector" do
-  = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})")
-  - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
-    = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.to_a), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "$('volume_number').disabled='';$('document_number').disabled='';$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
-  = text_field_tag 'volume_number', "Volume Number", :disabled => true, :onclick => "this.clear()", :size => 15
-  = text_field_tag 'document_number', "Document Number", :disabled => true, :onclick => "this.clear()", :size => 15
-  = submit_tag "Emend", :disabled => true, :id => 'emend_button'
+- cache do
+  %p== Emend existing publication:
+  - form_tag :controller => 'publications', :action => "create_from_selector" do
+    = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})")
+    - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.to_a), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "$('volume_number').disabled='';$('document_number').disabled='';$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
+    = text_field_tag 'volume_number', "Volume Number", :disabled => true, :onclick => "this.clear()", :size => 15
+    = text_field_tag 'document_number', "Document Number", :disabled => true, :onclick => "this.clear()", :size => 15
+    = submit_tag "Emend", :disabled => true, :id => 'emend_button'
