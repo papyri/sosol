@@ -33,7 +33,7 @@ class Publication < ActiveRecord::Base
   end
   
   def populate_identifiers_from_identifier(identifier)
-    self.title = identifier.tr(':','_')
+    self.title = identifier.tr(':;','_')
     # Coming in from an identifier, build up a publication
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
       NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
