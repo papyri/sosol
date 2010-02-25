@@ -69,8 +69,8 @@ module NumbersRDF
         apply_xpath_to_numbers_server_response(xpath, response)
       end
       
-      def apply_xpath_to_identifier(xpath, identifier)
-        response = identifier_to_numbers_server_response(identifier)
+      def apply_xpath_to_identifier(xpath, identifier, decorator = 'rdf')
+        response = identifier_to_numbers_server_response(identifier, decorator)
         apply_xpath_to_numbers_server_response(xpath, response)
       end
       
@@ -99,11 +99,10 @@ module NumbersRDF
       end
       
       def identifier_to_title(identifier)
-        # TODO: update with actual title XPath once it's in place
         result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:identifier[last()]/text()", identifier
+          "/rdf:RDF/rdf:Description/ns1:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
         )
-        return result.nil? ? nil : result.last
+        return result.nil? ? nil : result.first
       end
     
       def identifiers_to_hash(identifiers)
