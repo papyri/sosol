@@ -7,13 +7,12 @@ class HGVTransIdentifier < HGVIdentifier
   FRIENDLY_NAME = "Translation"
   
   def to_path
-    if alternate_name.nil?
-      # no alternate name, use SoSOL temporary path
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
     else
       path_components = [ PATH_PREFIX ]
-      # assume the alternate name is e.g. hgv2302zzr
-      trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
+      # assume the name is e.g. hgv2302zzr
+      trimmed_name = self.to_components.last # 2302zzr
 
       hgv_xml_path = trimmed_name + '.xml'
 

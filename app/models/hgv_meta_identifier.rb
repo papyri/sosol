@@ -10,7 +10,7 @@ class HGVMetaIdentifier < HGVIdentifier
       return self.temporary_path
     else
       path_components = [ PATH_PREFIX ]
-      # assume the alternate name is e.g. hgv2302zzr
+      # assume the name is e.g. hgv2302zzr
       trimmed_name = self.to_components.last # 2302zzr
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
