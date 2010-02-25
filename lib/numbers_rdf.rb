@@ -108,13 +108,15 @@ module NumbersRDF
     
       def identifiers_to_hash(identifiers)
         identifiers_hash = Hash.new
-        identifiers.each do |identifier|
-          local_identifier = identifier_to_local_identifier(identifier)
-          components = identifier_to_components(local_identifier)
-          key = components[1]
-          identifiers_hash[key] = 
-            Array.new() unless identifiers_hash.has_key?(key)
-          identifiers_hash[key] << identifier
+        unless identifiers.nil?
+          identifiers.each do |identifier|
+            local_identifier = identifier_to_local_identifier(identifier)
+            components = identifier_to_components(local_identifier)
+            key = components[1]
+            identifiers_hash[key] = 
+              Array.new() unless identifiers_hash.has_key?(key)
+            identifiers_hash[key] << identifier
+          end
         end
         return identifiers_hash
       end
