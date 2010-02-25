@@ -33,7 +33,7 @@ class Publication < ActiveRecord::Base
   end
   
   def populate_identifiers_from_identifier(identifier)
-    self.title = identifier.tr(':;','_')
+    self.title = identifier_to_ref(identifier)
     # Coming in from an identifier, build up a publication
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
       NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
@@ -43,8 +43,8 @@ class Publication < ActiveRecord::Base
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier.tr(':;','_')
-            self.title = temp_id.titleize.tr(':;','_')
+          if self.title == identifier_to_ref(identifier)
+            self.title = temp_id.titleize
           end
         end
       end
@@ -197,7 +197,7 @@ class Publication < ActiveRecord::Base
     new_publication = Publication.new(:owner => creator, :creator => creator)
     
     # fetch a title without creating from template
-    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize.tr(':;','_')
+    new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
     
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
     
@@ -690,5 +690,9 @@ class Publication < ActiveRecord::Base
   protected
     def title_to_ref(str)
       str.tr(' ','_')
+    end
+    
+    def identifier_to_ref(str)
+      str.tr(':;','_')
     end
 end
