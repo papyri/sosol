@@ -76,15 +76,13 @@ class UserController < ApplicationController
     
     @user = User.find(params[:id])
 
-    respond_to do |format|
-      if @user.update_attributes(params[:user])
-        flash[:notice] = 'User was successfully updated.'
-        format.html { redirect_to( dashboard_url) } #TODO redirect to ? dashboard or account
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "account" }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
-      end
+    begin 
+      @user.update_attributes(params[:user])
+      flash[:notice] = 'User was successfully updated.'
+      redirect_to :controller => "user", :action => "account"
+    rescue Exception => e
+      flash[:error] = 'Error occured - user was not updated.'
+      redirect_to :controller => "user", :action => "account"
     end
   end
   

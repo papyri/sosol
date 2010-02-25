@@ -1,6 +1,5 @@
-.section
-  %p{ :style => "color: red" }
-    = flash[:error]
+#main
+  = render :partial => "common/flash_all"
   %h1
     == #{@current_user.name}'s Account Info
   %h3
