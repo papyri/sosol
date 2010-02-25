@@ -25,10 +25,10 @@ module NumbersRDF
         identifier.split('/')
       end
 
-      def identifier_to_path(identifier)
+      def identifier_to_path(identifier, decorator)
         local_identifier = identifier_to_local_identifier(identifier)
         url_paths = identifier_to_components(local_identifier)
-        url_paths << 'rdf'
+        url_paths << decorator
         return url_paths.join('/')
       end
       
@@ -42,8 +42,8 @@ module NumbersRDF
                 NUMBERS_SERVER_PORT.to_s + identifier_to_path(identifier)
       end
     
-      def identifier_to_numbers_server_response(identifier)
-        path = identifier_to_path(identifier)
+      def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
+        path = identifier_to_path(identifier, decorator)
         response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
                                           NUMBERS_SERVER_PORT)
       end
