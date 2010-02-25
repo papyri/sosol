@@ -6,10 +6,12 @@
     <author>
       <name>Carmen Lanz</name>
       <email>carmen.lanz@zaw.uni-heidelberg.de</email>
+      <uri>http://www.uni-heidelberg.de/fakultaeten/philosophie/zaw/papy/index.html</uri> 
+      <uri>http://halsted.vis.uky.edu/protosite/stylesheets/csl/sosol-json.csl</uri>
     </author>
-    <summary>Builds json formatted key value list</summary>
-    <category term="generic-base"/>
+    <summary>Builds jsonlike formatted key value list, uses another string delimiter however</summary>
     <category term="numeric"/>
+    <category term="generic-base"/>
     <updated>2010-02-11T08:07:24+00:00</updated>
     <published>2010-02-11T08:07:24+00:00</published>
   </info>
@@ -17,10 +19,10 @@
   <macro name="monograph">
     <choose>
       <if type="book">
-        <text variable="title" prefix="monographicTitle : '" suffix="', " />
+        <text variable="title" prefix="monographicTitle : |" suffix="|, " />
       </if>
       <else-if type="chapter">
-        <text variable="container-title" prefix="monographicTitle : '" suffix="', " />
+        <text variable="container-title" prefix="monographicTitle : |" suffix="|, " />
       </else-if>
     </choose> 
   </macro>
@@ -28,12 +30,12 @@
   <macro name="series">
     <choose>
       <if type="book chapter" match="any">
-        <text variable="collection-title" prefix="seriesTitle : '" suffix="', " />
-        <text variable="collection-number" prefix="seriesNumber : '" suffix="', " />
+        <text variable="collection-title" prefix="seriesTitle : |" suffix="|, " />
+        <text variable="collection-number" prefix="seriesNumber : |" suffix="|, " />
       </if>
       <else-if type="article-journal">
-        <text variable="collection-title" prefix="seriesTitle : '" suffix="', " />
-        <text variable="volume" prefix="seriesNumber : '" suffix="', " />
+        <text variable="container-title" prefix="journalTitle : |" suffix="|, " form="short" />
+        <text variable="volume" prefix="journalNumber : |" suffix="|, " />
       </else-if>
     </choose> 
   </macro>
@@ -41,7 +43,7 @@
   <macro name="placeOfPublication">
     <choose>
       <if type="book chapter" match="any">
-        <text variable="publisher-place" prefix="placeOfPublication : '" suffix="', " />
+        <text variable="publisher-place" prefix="placeOfPublication : |" suffix="|, " />
       </if>
     </choose> 
   </macro>
@@ -49,13 +51,13 @@
   <macro name="itemType">
     <choose>
       <if type="book">
-        <text type="value" value="type : 'book', "/>
+        <text type="value" value="type : |book|, "/>
       </if>
       <else-if type="chapter">
-        <text type="value" value="type : 'bookSection', "/>
+        <text type="value" value="type : |bookSection|, "/>
       </else-if>
       <else-if type="article-journal">
-        <text type="value" value="type : 'journalArticle', "/>
+        <text type="value" value="type : |journalArticle|, "/>
       </else-if>
     </choose> 
   </macro>
@@ -63,20 +65,18 @@
   <macro name="article">
     <choose>
       <if type="chapter article-journal" match="any">
-        <text variable="title" prefix="title : '" suffix="', " />
-        <names variable="author" prefix="author : '" suffix="', " delimiter=", ">
+        <text variable="title" prefix="title : |" suffix="|, " />
+        <names variable="author" prefix="author : |" suffix="|, " delimiter=", ">
           <name delimiter=", " delimiter-precedes-last="always"/>
         </names>
-        <text variable="page" prefix="page : '" suffix="', " />
-        <text variable="note" prefix="notes : '" suffix="', " />
+        <text variable="page" prefix="page : |" suffix="|, " />
+        <text variable="note" prefix="notes : |" suffix="|, " />
       </if>
     </choose>
   </macro>
 
   <macro name="json">
     <text type="value" value="{"/>
-    
-    <text type="value" value="signature : 'A.bc.defg_284740', "/>        
 
     <text macro="itemType" />
 
@@ -86,17 +86,19 @@
 
     <text macro="series" />
 
-    <names variable="editor" prefix="editor : '" suffix="', ">
+    <names variable="editor" prefix="editor : |" suffix="|, ">
       <name delimiter=", " delimiter-precedes-last="always"/>
     </names>
 
     <text macro="placeOfPublication" />
 
-    <date variable="issued" prefix="publicationDate : '" suffix="'" >
+    <date variable="issued" prefix="publicationDate : |" suffix="|, " >
       <date-part name="year" />
       <date-part name="month" form="short" prefix=" " />
       <date-part name="day" prefix=" " />
     </date>
+    
+    <text type="value" value="signature : |A.bc.defg_284740|"/>
 
     <text type="value" value="}"/>
   </macro>

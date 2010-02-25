@@ -1,0 +1,28 @@
+de:
+  bibliography:
+    signature: 'Signatur'
+    title: 'Titel'
+    author: 'Autor'
+    monographic_title: 'Buchtitel'
+    series_title: 'Reihe'
+    series_number: 'Band'
+    journal_title: 'Heft'
+    journal_number: 'Heftnummer'
+    editor: 'Herausgeber'
+    place_of_publication: 'Erscheinungsort'
+    publication_date: 'Erscheinungsdatum'
+    pagination: 'Paginierung'
+    pagination_start: 'von'
+    pagination_end: 'bis'
+    notes: 'Hinweise'
+    number: 'Nummer'
+    date: 'Datum'
+    new_entry: 'Neuer Eintrag'
+    headings:
+        main: 'Hauptbibliographie'
+        other: 'Weitere bibliographische Verweise'
+        secondary: 'Sekundärliteratur'
+        meta: 'Metadaten'
+    zotero:
+      accept: 'zotero Daten übernehmen'
+      cancel: 'zotero Daten verwerfen'

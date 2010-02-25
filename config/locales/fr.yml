@@ -1,0 +1,28 @@
+fr:
+  bibliography:
+    signature: 'étiquette'
+    title: 'titre'
+    author: 'auteur'
+    monographic_title: 'titre du livre'
+    series_title: 'series'
+    series_number: 'numéro'
+    journal_title: 'titre du journal'
+    journal_number: 'revue no.'
+    editor: 'sous la direction de'
+    place_of_publication: 'publication'
+    publication_date: 'date de publication'
+    pagination: 'pagination'
+    pagination_start: 'partir de la page'
+    pagination_end: 'à page'
+    notes: 'notes'
+    number: 'numéro'
+    date: 'date'
+    new_entry: 'nouvelle entrée'
+    headings:
+        main: 'bibliographie'
+        other: 'autres références bibliographiques'
+        secondary: 'secondaire'
+        meta: 'métadonnées'
+    zotero:
+      accept: 'prendre les données zotero'
+      cancel: 'jeter les données zotero'

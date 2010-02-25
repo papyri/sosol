@@ -1,0 +1,23 @@
+- bibliography_id = bibliography.first
+- item_list = bibliography.last
+-# parameter_prefix = 'hgv_biblio_identifier' + (bibliography_id.to_i.to_s == bibliography_id.to_s ? '[other]' : '[main]') + '[' + bibliography_id.to_s + ']'
+- parameter_prefix = 'hgv_biblio_identifier[' + type.to_s + '][' + bibliography_id.to_s + ']' 
+
+%fieldset
+  %legend= bibliography_id == 0 ? I18n.t('bibliography.new_entry').titleize : bibliography_id.to_s.titleize
+  - item_list.each do |key, value|
+    - tag_name = parameter_prefix + '[' + key.to_s + ']'
+    - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
+    %p  
+      %label{:for => tag_name}= I18n.t('bibliography.' + key.to_s).titleize
+      %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@identifier.mutable?}
+
+  - tag_name = parameter_prefix + '[zotero]'
+  - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
+  .zoteroInactive
+    .zoteroHook{:onclick => "$(this.parentNode).toggleClassName('zoteroInactive');$(this.parentNode).toggleClassName('zoteroActive');"}
+      Zotero
+    .zoteroEditor
+      %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '60', :rows => '5', :disabled => !@identifier.mutable?}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
