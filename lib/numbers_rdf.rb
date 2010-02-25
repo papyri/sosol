@@ -90,6 +90,14 @@ module NumbersRDF
         return results.collect{|r| identifier_url_to_identifier(r)}
       end
       
+      # Turns e.g. papyri.info/hgv/P.Amh._2_48 into papyri.info/hgv/123
+      def identifier_to_identifier(identifier)
+        result = apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:identifier[last()]/@rdf:resource", identifier
+        )
+        return result.nil? ? nil : identifier_url_to_identifier(result.last)
+      end
+      
       def identifier_to_title(identifier)
         # TODO: update with actual title XPath once it's in place
         result = apply_xpath_to_identifier(
