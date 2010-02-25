@@ -38,7 +38,7 @@ class Publication < ActiveRecord::Base
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
       NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
       
-    [DDBIdentifier, HGVMetaIdentifier].each do |identifier_class|
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
