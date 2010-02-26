@@ -11,7 +11,6 @@ module NumbersRDF
   
   module NumbersHelper
     class << self
-      # TODO: after move from dev.papyri.info to papyri.info can probably use NUMBERS_SERVER_DOMAIN
       def identifier_to_local_identifier(identifier)
         identifier.sub(/^#{NAMESPACE_IDENTIFIER}/, '')
       end
