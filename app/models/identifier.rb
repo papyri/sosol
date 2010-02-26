@@ -78,12 +78,46 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  def titleize
+    title = nil
+    if self.class == HGVMetaIdentifier
+      title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
+    elsif self.class == HGVTransIdentifier
+      title = NumbersRDF::NumbersHelper::identifier_to_title(
+        self.name.sub(/trans/,''))
+    end
+    
+    if title.nil?
+      collection_name, volume_number, document_number =
+        self.to_components.last.split(';')
+
+      collection_name = 
+        self.class.collection_names_hash[collection_name]
+
+      # strip leading zeros
+      document_number.sub!(/^0*/,'')
+
+      title = 
+       [collection_name, volume_number, document_number].join(' ')
+    end
+    return title
+  end
+  
   def to_components
-    trimmed_name = name.sub(/^oai:papyri.info:identifiers:#{self.class::IDENTIFIER_NAMESPACE}:/, '')
-    components = trimmed_name.split(':')
+    trimmed_name = NumbersRDF::NumbersHelper::identifier_to_local_identifier(self.name)
+    # trimmed_name.sub!(/^\/#{self.class::IDENTIFIER_NAMESPACE}\//,'')
+    components = NumbersRDF::NumbersHelper::identifier_to_components(trimmed_name)
     components.map! {|c| c.to_s}
 
     return components
+  end
+  
+  def self.collection_names
+    unless defined? @collection_names
+      parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+      @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
+    end
+    return @collection_names
   end
   
   def self.new_from_template(publication)
@@ -114,17 +148,17 @@ class Identifier < ActiveRecord::Base
   def self.next_temporary_identifier
     year = Time.now.year
     latest = self.find(:all,
-                       :conditions => ["name like ?", "oai:papyri.info:identifiers:#{self::IDENTIFIER_NAMESPACE}:#{self::TEMPORARY_COLLECTION}:#{year}:%"],
+                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%"],
                        :order => "name DESC",
                        :limit => 1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1
     else
-      document_number = latest.to_components.last.to_i + 1
+      document_number = latest.to_components.last.split(';').last.to_i + 1
     end
     
-    return sprintf("oai:papyri.info:identifiers:#{self::IDENTIFIER_NAMESPACE}:#{self::TEMPORARY_COLLECTION}:%04d:%04d",
+    return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};%04d;%04d",
                    year, document_number)
   end
   
@@ -185,92 +219,6 @@ class Identifier < ActiveRecord::Base
     end
     return read_attribute(:title)
   end
-  
-
-=begin
-
-  #caution - sending emails here might mean they are sent even if the status change does not get saved
-  def status=(status_in)
-    
-    #see if status is actually changing
-    do_send = false
-    if status_in != read_attribute(:status)
-      do_send = true
-    end
-    
-    #update status
-    write_attribute(:status, status_in)
-    
-    #check if we need to send emails
-    if do_send
-      send_status_emails(status_in)      
-    end
-  end
-  
-  #Check with the board to see if we want to send an email on status change.
-  def send_status_emails(when_to_send)
-#TODO move to board
-  	#search emailer for status
-  	if self.board == nil || self.board.emailers == nil
-  	  return
-  	end
-  	self.board.emailers.each do |mailer|
-  	
-  		if mailer.when_to_send == when_to_send
-  			#send the email
-  			addresses = Array.new	
-  			#--addresses
-  			mailer.users.each do |user|
-  				if user.email != nil
-  					addresses << user.email
-  				end
-  			end
-  			extras = mailer.extra_addresses.split(" ")
-  			extras.each do |extra|
-  				addresses << extra
-  			end
-  			if mailer.send_to_owner
-  				if self.user.email != nil
-  					addresses << self.user.email
-  				end
-  			end
-  			
-  			#--document content
-  			if mailer.include_document
-  				document_content = self.content 
-  			else
-  				document_content = nil
-  			end
-  			
-  			body = mailer.message
-  			
-  			#TODO parse the message to add local vars
-  			#votes
-  			
-  			#comments
-  			#owner
-  			#status
-  			#who changed status
-  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
-  			
-  			addresses.each do |address|
-  				if address != nil && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
-  				end
-  			end
-  			
-  		end
-  	end	
-  	
-  end
-
-=end
-  
 
   #standard result actions 
   #NOTE none of this is currently used except for creating board

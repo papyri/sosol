@@ -26,8 +26,12 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     teardown do
-      @publication.destroy unless !Publication.exists? @publication.id
+      @publication.destroy unless !Publication.exists?(@publication.id)
       @user.destroy
+    end
+    
+    should "exist" do
+      assert Publication.exists?(@publication.id)
     end
     
     should "have an equivalent creator and owner" do

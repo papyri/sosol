@@ -5,45 +5,19 @@ class DDBIdentifier < Identifier
   FRIENDLY_NAME = "Text"
   
   IDENTIFIER_NAMESPACE = 'ddbdp'
-  TEMPORARY_COLLECTION = '0500'
+  TEMPORARY_COLLECTION = 'sosol'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
-
-  class CollectionXML
-    include Singleton
-    
-    attr_reader :collection_xml, :rexml_document
-    
-    def initialize
-      canonical_repo = Repository.new
-      @collection_xml = canonical_repo.get_file_from_branch(
-                        COLLECTION_XML_PATH, 'master')
-      @rexml_document = REXML::Document.new(@collection_xml)
-    end
-  end
-  
-  def titleize
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
-
-    # strip leading zeros
-    ddb_document_number.sub!(/^0*/,'')
-
-    title = 
-      [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
-  end
   
   def id_attribute
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
+    
     ddb_collection_name.downcase!
+    
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
   end
   
@@ -55,11 +29,34 @@ class DDBIdentifier < Identifier
     id_attribute
   end
   
+  def self.collection_names_hash
+    self.collection_names
+    
+    unless defined? @collection_names_hash
+      @collection_names_hash = {TEMPORARY_COLLECTION => "SoSOL"}
+      response = 
+        NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(
+          "prefix dc: <http://purl.org/dc/terms/> construct { ?ddb dc:bibliographicCitation ?bibl} from <rmi://localhost/papyri.info#pi> where {?ddb dc:isPartOf <http://papyri.info/ddbdp> . ?ddb dc:bibliographicCitation ?bibl}\n&default-graph-uri=rmi://localhost/papyri.info#pi&format=rdfxml"
+        )
+      if response.code == '200'
+        @collection_names.each do |collection_name|
+          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/ns1:bibliographicCitation/text()"
+          human_name = 
+            NumbersRDF::NumbersHelper.process_numbers_server_response_body(
+              response.body, xpath).first
+          @collection_names_hash[collection_name] = human_name unless human_name.nil?
+        end
+      end
+    end
+    
+    return @collection_names_hash
+  end
+  
   def to_path
     path_components = [ PATH_PREFIX ]
     
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components[2..-1].join('/').split(';')
       
     # switch commas to dashes
     # e.g. 0001:13:2230,1 => bgu/bgu.13/bgu.13.2230-1.xml 
@@ -68,10 +65,6 @@ class DDBIdentifier < Identifier
     # switch forward slashes to underscores
     # e.g. 0014:2:1964/1967 => o.bodl/o.bodl.2/o.bodl.2.1964_1967.xml
     ddb_document_number.tr!('/','_')
-      
-    # e.g. 0001 => bgu
-    ddb_collection_name = 
-      self.class.ddb_series_to_collection(ddb_series_number)
     
     if ddb_collection_name.nil?
       raise "DDB Collection Name Not Found"
@@ -92,57 +85,6 @@ class DDBIdentifier < Identifier
     
     # e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
     return File.join(path_components)
-  end
-  
-  def self.get_collection_xml
-    CollectionXML.instance.collection_xml
-  end
-
-  # map DDB series number to DDB collection name using collection.xml
-  def self.ddb_series_to_collection(ddb_series_number)
-    # FIXME: put in canonical collection.xml
-    if ddb_series_number.to_i == 500
-      return 'sosol'
-    else
-      # collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
-    
-      return xpath_result.nil? ? nil : xpath_result.to_s
-    end
-  end
-  
-  # map DDB human collection name to DDB series number using collection.xml
-  def self.ddb_human_collection_to_series(ddb_collection_name)
-    # collection_xml = get_collection_xml
-    #[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']
-    xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-      "/rdf:RDF/rdf:Description/dcterms:isVersionOf[@rdf:resource = 'Perseus:abo:pap,#{ddb_collection_name}']/..")
-    xpath_result.attributes['rdf:about'].sub(/^Perseus:text:1999.05./,'')
-  end
-  
-  def self.ddb_series_to_human_collection(ddb_series_number)
-    # FIXME: put in canonical collection.xml
-    if ddb_series_number.to_i == 500
-      return 'SoSOL'
-    else
-      # collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
-      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
-    end
-  end
-  
-  def self.collection_names
-    collection_names = []
-    collection_xml = get_collection_xml
-    versions = JRubyXML.apply_xpath(collection_xml,
-      "/rdf:RDF/rdf:Description/dcterms:isVersionOf", true)
-    versions.each do |version|
-      collection_names << 
-        version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
-    end
-    return collection_names.sort
   end
   
   def before_commit(content)
