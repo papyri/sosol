@@ -6,13 +6,12 @@ class HGVMetaIdentifier < HGVIdentifier
   FRIENDLY_NAME = "Meta"
   
   def to_path
-    if alternate_name.nil?
-      # no alternate name, use SoSOL temporary path
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
     else
       path_components = [ PATH_PREFIX ]
-      # assume the alternate name is e.g. hgv2302zzr
-      trimmed_name = alternate_name.sub(/^hgv/, '') # 2302zzr
+      # assume the name is e.g. hgv2302zzr
+      trimmed_name = self.to_components.last # 2302zzr
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
       hgv_dir_number = ((number - 1) / 1000) + 1
@@ -38,12 +37,7 @@ class HGVMetaIdentifier < HGVIdentifier
   def xml_title_text
     return "Description of document"
   end
-  
-  def is_valid?(content = nil)
-  	#FIXME added here since meta is not P5 validable yet
-    return true
-  end
-  
+
   def valid_epidoc_attributes
     return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :titleStmt, 
       :publicationTitle, :publicationVolume, :publicationNumbers,

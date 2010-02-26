@@ -33,36 +33,41 @@ class Publication < ActiveRecord::Base
   end
   
   def populate_identifiers_from_identifier(identifier)
-    self.title = identifier.tr(':','_')
+    self.title = identifier_to_ref(identifier)
     # Coming in from an identifier, build up a publication
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
       NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
-    if identifiers.has_key?('ddbdp')
-      identifiers['ddbdp'].each do |ddb|
-        d = DDBIdentifier.new(:name => ddb)
-        self.identifiers << d
-        self.title = d.titleize
+      
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
+      if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
+        identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
+          temp_id = identifier_class.new(:name => identifier_string)
+          self.identifiers << temp_id
+          if self.title == identifier_to_ref(identifier)
+            self.title = temp_id.titleize
+          end
+        end
       end
     end
     
     # Use HGV hack for now
-    if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
-      identifiers['trismegistos'].each do |tm|
-        tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
-        self.identifiers << HGVMetaIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}")
-        
-        # Check if there's a trans, if so, add it
-        translation = HGVTransIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}"
-        )
-        if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
-          self.identifiers << translation
-        end
-      end
-    end
+    # if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
+    #   identifiers['trismegistos'].each do |tm|
+    #     tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
+    #     self.identifiers << HGVMetaIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}")
+    #     
+    #     # Check if there's a trans, if so, add it
+    #     translation = HGVTransIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}"
+    #     )
+    #     if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
+    #       self.identifiers << translation
+    #     end
+    #   end
+    # end
   end
   
   # If branch hasn't been specified, create it from the title before
@@ -236,69 +241,6 @@ class Publication < ActiveRecord::Base
   # TODO: rename actual branch after branch attribute rename
   def after_create
   end
-  
-=begin
-  def send_status_emails(when_to_send)
-
-  	#search emailer for status
-  	if self.board == nil || self.board.emailers == nil
-  	  return
-  	end
-    
-  	self.board.emailers.each do |mailer|
-  	
-  		if mailer.when_to_send == when_to_send
-  			#send the email
-  			addresses = Array.new	
-  			#--addresses
-  			mailer.users.each do |user|
-  				if user.email != nil
-  					addresses << user.email
-  				end
-  			end
-  			extras = mailer.extra_addresses.split(" ")
-  			extras.each do |extra|
-  				addresses << extra
-  			end
-  			if mailer.send_to_owner
-  				if self.user.email != nil
-  					addresses << self.user.email
-  				end
-  			end
-  			
-  			#--document content
-  			if mailer.include_document
-  				document_content = self.content 
-  			else
-  				document_content = nil
-  			end
-  			
-  			body = mailer.message
-  			
-  			#TODO parse the message to add local vars
-  			#votes
-  			
-  			#comments
-  			#owner
-  			#status
-  			#who changed status
-  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
-  			
-  			addresses.each do |address|
-  				if address != nil && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
-  				end
-  			end
-  			
-  		end
-  	end	
-  end
-=end
   
   #sets thes origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)    
@@ -760,5 +702,9 @@ class Publication < ActiveRecord::Base
   protected
     def title_to_ref(str)
       str.tr(' ','_')
+    end
+    
+    def identifier_to_ref(str)
+      str.tr(':;','_')
     end
 end
