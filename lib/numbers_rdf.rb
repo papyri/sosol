@@ -3,7 +3,7 @@ require 'jruby_xml'
 require 'iconv'
 
 module NumbersRDF
-  NUMBERS_SERVER_DOMAIN = 'dev.papyri.info'
+  NUMBERS_SERVER_DOMAIN = 'papyri.info'
   NUMBERS_SERVER_PORT = 80
   NUMBERS_SERVER_BASE_PATH = '/numbers'
   
