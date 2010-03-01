@@ -608,7 +608,7 @@ class Publication < ActiveRecord::Base
       tree_sha1 = index.write_tree(index.tree, index.current_tree)
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
-      commit_message = "Finalization merge of #{self.branch}"
+      commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
       
       contents = []
       contents << ['tree', tree_sha1].join(' ')
