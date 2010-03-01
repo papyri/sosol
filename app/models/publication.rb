@@ -587,6 +587,8 @@ class Publication < ActiveRecord::Base
       return self.identifiers.select do |i|
         self.owner.identifier_classes.include?(i.class.to_s)
       end
+    elsif self.status == 'finalizing'
+      return self.parent.controlled_identifiers
     else
       return []
     end
@@ -602,7 +604,8 @@ class Publication < ActiveRecord::Base
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
     self.owner.repository.repo.git.diff(
-      {:unified => 5000}, canonical_sha, self.head)
+      {:unified => 5000}, canonical_sha, self.head,
+      '--', *(self.controlled_paths))
   end
   
   def submission_reason
