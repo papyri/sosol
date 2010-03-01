@@ -558,22 +558,85 @@ class Publication < ActiveRecord::Base
     # to find the branch point? Though that may do the same internally...
     # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
     
+    # Commits that are in canonical master but not this branch
+    # Forcing method_missing here to directly call rev-list is much faster
+    commits = self.owner.repository.repo.git.method_missing('rev-list',{}, canonical_sha, "^#{publication_sha}").split("\n")
+    
     # canon.repo.git.merge({:no_commit => true, :stat => true},
       # self.owner.repository.repo.get_head(self.branch).commit.sha)
     
     # get the result of merging canon master into this branch
-    merge = Grit::Merge.new(
-      self.owner.repository.repo.git.merge_tree({},
-        publication_sha, canonical_sha, publication_sha))
+    # merge = Grit::Merge.new(
+    #   self.owner.repository.repo.git.merge_tree({},
+    #     publication_sha, canonical_sha, publication_sha))
     
-    if merge.conflicts == 0
-      if merge.sections == 0
-        # nothing new from canon, trivial merge by updating HEAD
-        canon.fetch_objects(self.owner.repository)
-        canon.repo.update_ref('master', publication_sha)
-        self.status = 'committed'
-        self.save!
+    if commits.length == 0
+      # nothing new from canon, trivial merge by updating HEAD 
+      # e.g. "Fast-forward" merge, HEAD is already contained in the commit
+      # canon.fetch_objects(self.owner.repository)
+      canon.add_alternates(self.owner.repository)
+      canon.repo.update_ref('master', publication_sha)
+      canon.repo.git.repack({})
+      
+      self.status = 'committed'
+      self.save!
+    else
+      # Both the merged commit and HEAD are independent and must be tied 
+      # together by a merge commit that has both of them as its parents.
+      
+      # TODO: DRY from flatten_commits
+      controlled_blobs = self.controlled_paths.collect do |controlled_path|
+        self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
       end
+
+      controlled_paths_blobs = 
+        Hash[*((self.controlled_paths.zip(controlled_blobs)).flatten)]
+
+      Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+      Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+      
+      # roll a tree SHA1 by reading the canonical master tree,
+      # adding controlled path blobs, then writing the modified tree
+      # (happens on the finalizer's repo)
+      self.owner.repository.update_master_from_canonical
+      index = self.owner.repository.repo.index
+      index.read_tree('master')
+      controlled_paths_blobs.each_pair do |path, blob|
+        index.add(path, blob.data)
+      end
+
+      tree_sha1 = index.write_tree(index.tree, index.current_tree)
+      Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+      commit_message = "Finalization merge of #{self.branch}"
+      
+      contents = []
+      contents << ['tree', tree_sha1].join(' ')
+      contents << ['parent', publication_sha].join(' ')
+      contents << ['parent', canonical_sha].join(' ')
+
+      contents << ['author', self.owner.git_author_string].join(' ')
+      contents << ['committer', self.owner.git_author_string].join(' ')
+      contents << ''
+      contents << commit_message
+      
+      finalized_commit_sha1 = 
+        self.owner.repository.repo.git.put_raw_object(
+          contents.join("\n"), 'commit')
+      
+      Rails.logger.info("Finalized commit contents:\n#{contents.join("\n")}")
+      Rails.logger.info("Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+      
+      # Update our own head first
+      self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
+      
+      # canon.fetch_objects(self.owner.repository)
+      canon.add_alternates(self.owner.repository)
+      canon.repo.update_ref('master', finalized_commit_sha1)
+      canon.repo.git.repack({})
+      
+      self.status = 'committed'
+      self.save!
     end
   end
   
