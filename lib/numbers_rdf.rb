@@ -35,12 +35,16 @@ module NumbersRDF
         "/mulgara/sparql/?query=" + URI.escape(sparql_query)
       end
       
-      # FIXME: this should eventually go to e.g. /source or http://papyri.info/navigator/full/apis_columbia_p204 or something. Will be used to replace "View in PN" link constructed in app/views/identifiers/_pn_link.haml
       def identifier_to_url(identifier)
-        return 'http://' + NUMBERS_SERVER_DOMAIN + ':' + 
-                NUMBERS_SERVER_PORT.to_s + identifier_to_path(identifier)
+        result = apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:references/@rdf:resource", identifier)
+        if result.nil?
+          return "http://#{NUMBERS_SERVER_DOMAIN}"
+        else
+          return result.last
+        end
       end
-    
+      
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
         path = identifier_to_path(identifier, decorator)
         response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
