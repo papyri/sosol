@@ -671,7 +671,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| i.class != HGVMetaIdentifier}
+    self.controlled_identifiers.select{|i| !([HGVMetaIdentifier, HGVBiblioIdentifier].include?(i.class))}
   end
   
   def canon_controlled_paths
