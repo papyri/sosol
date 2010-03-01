@@ -683,9 +683,10 @@ class Publication < ActiveRecord::Base
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
-    self.owner.repository.repo.git.diff(
+    diff = self.owner.repository.repo.git.diff(
       {:unified => 5000}, canonical_sha, self.head,
       '--', *(self.controlled_paths))
+    return diff || ""
   end
   
   def submission_reason
