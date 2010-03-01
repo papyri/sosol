@@ -66,7 +66,9 @@ class Repository
     # referenced objects will disappear, possibly making the repo unusable.
     @canonical.git.repack({})
     
-    FileUtils::rm_r path, :verbose => false, :secure => true
+    canon = Repository.new
+    canon.del_alternates(self)
+    FileUtils::rm_r path, :verbose => false
   end
   
   def get_blob_from_branch(file, branch = 'master')
@@ -164,6 +166,10 @@ class Repository
   
   def add_alternates(other_repo)
     @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
+  end
+  
+  def del_alternates(other_repo)
+    @repo.alternates = @repo.alternates() - [ File.join(other_repo.repo.path, "objects") ]
   end
   
   def branches
