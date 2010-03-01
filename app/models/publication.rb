@@ -570,71 +570,77 @@ class Publication < ActiveRecord::Base
     #   self.owner.repository.repo.git.merge_tree({},
     #     publication_sha, canonical_sha, publication_sha))
     
-    if commits.length == 0
-      # nothing new from canon, trivial merge by updating HEAD 
-      # e.g. "Fast-forward" merge, HEAD is already contained in the commit
-      # canon.fetch_objects(self.owner.repository)
-      canon.add_alternates(self.owner.repository)
-      canon.repo.update_ref('master', publication_sha)
-      canon.repo.git.repack({})
+    if canon_controlled_identifiers.length > 0
+      if commits.length == 0
+        # nothing new from canon, trivial merge by updating HEAD 
+        # e.g. "Fast-forward" merge, HEAD is already contained in the commit
+        # canon.fetch_objects(self.owner.repository)
+        canon.add_alternates(self.owner.repository)
+        canon.repo.update_ref('master', publication_sha)
+        canon.repo.git.repack({})
       
-      self.status = 'committed'
-      self.save!
+        self.status = 'committed'
+        self.save!
+      else
+        # Both the merged commit and HEAD are independent and must be tied 
+        # together by a merge commit that has both of them as its parents.
+      
+        # TODO: DRY from flatten_commits
+        controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
+          self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
+        end
+
+        controlled_paths_blobs = 
+          Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
+
+        Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+        Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+      
+        # roll a tree SHA1 by reading the canonical master tree,
+        # adding controlled path blobs, then writing the modified tree
+        # (happens on the finalizer's repo)
+        self.owner.repository.update_master_from_canonical
+        index = self.owner.repository.repo.index
+        index.read_tree('master')
+        controlled_paths_blobs.each_pair do |path, blob|
+          index.add(path, blob.data)
+        end
+
+        tree_sha1 = index.write_tree(index.tree, index.current_tree)
+        Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+        commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
+      
+        contents = []
+        contents << ['tree', tree_sha1].join(' ')
+        contents << ['parent', canonical_sha].join(' ')
+        contents << ['parent', publication_sha].join(' ')
+
+        contents << ['author', self.owner.git_author_string].join(' ')
+        contents << ['committer', self.owner.git_author_string].join(' ')
+        contents << ''
+        contents << commit_message
+      
+        finalized_commit_sha1 = 
+          self.owner.repository.repo.git.put_raw_object(
+            contents.join("\n"), 'commit')
+      
+        Rails.logger.info("Finalized commit contents:\n#{contents.join("\n")}")
+        Rails.logger.info("Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+      
+        # Update our own head first
+        self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
+      
+        # canon.fetch_objects(self.owner.repository)
+        canon.add_alternates(self.owner.repository)
+        canon.repo.update_ref('master', finalized_commit_sha1)
+        canon.repo.git.repack({})
+      
+        self.status = 'committed'
+        self.save!
+      end
     else
-      # Both the merged commit and HEAD are independent and must be tied 
-      # together by a merge commit that has both of them as its parents.
-      
-      # TODO: DRY from flatten_commits
-      controlled_blobs = self.controlled_paths.collect do |controlled_path|
-        self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
-      end
-
-      controlled_paths_blobs = 
-        Hash[*((self.controlled_paths.zip(controlled_blobs)).flatten)]
-
-      Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-      Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-      
-      # roll a tree SHA1 by reading the canonical master tree,
-      # adding controlled path blobs, then writing the modified tree
-      # (happens on the finalizer's repo)
-      self.owner.repository.update_master_from_canonical
-      index = self.owner.repository.repo.index
-      index.read_tree('master')
-      controlled_paths_blobs.each_pair do |path, blob|
-        index.add(path, blob.data)
-      end
-
-      tree_sha1 = index.write_tree(index.tree, index.current_tree)
-      Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-
-      commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
-      
-      contents = []
-      contents << ['tree', tree_sha1].join(' ')
-      contents << ['parent', canonical_sha].join(' ')
-      contents << ['parent', publication_sha].join(' ')
-
-      contents << ['author', self.owner.git_author_string].join(' ')
-      contents << ['committer', self.owner.git_author_string].join(' ')
-      contents << ''
-      contents << commit_message
-      
-      finalized_commit_sha1 = 
-        self.owner.repository.repo.git.put_raw_object(
-          contents.join("\n"), 'commit')
-      
-      Rails.logger.info("Finalized commit contents:\n#{contents.join("\n")}")
-      Rails.logger.info("Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
-      
-      # Update our own head first
-      self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
-      
-      # canon.fetch_objects(self.owner.repository)
-      canon.add_alternates(self.owner.repository)
-      canon.repo.update_ref('master', finalized_commit_sha1)
-      canon.repo.git.repack({})
-      
+      # nothing under canon control, just say it's committed
       self.status = 'committed'
       self.save!
     end
@@ -659,6 +665,17 @@ class Publication < ActiveRecord::Base
   
   def controlled_paths
     self.controlled_identifiers.collect do |i|
+      i.to_path
+    end
+  end
+  
+  def canon_controlled_identifiers
+    # TODO: implement a class-level var e.g. CANON_CONTROL for this
+    self.controlled_identifiers.select{|i| i.class != HGVMetaIdentifier}
+  end
+  
+  def canon_controlled_paths
+    self.canon_controlled_identifiers.collect do |i|
       i.to_path
     end
   end
