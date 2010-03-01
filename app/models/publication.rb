@@ -612,8 +612,8 @@ class Publication < ActiveRecord::Base
       
       contents = []
       contents << ['tree', tree_sha1].join(' ')
-      contents << ['parent', publication_sha].join(' ')
       contents << ['parent', canonical_sha].join(' ')
+      contents << ['parent', publication_sha].join(' ')
 
       contents << ['author', self.owner.git_author_string].join(' ')
       contents << ['committer', self.owner.git_author_string].join(' ')
