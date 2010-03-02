@@ -103,6 +103,7 @@ class DDBIdentifier < Identifier
     return transformed
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_leiden_plus(leiden_plus_content, comment)
     # transform back to XML
     xml_content = self.leiden_plus_to_xml(
