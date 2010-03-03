@@ -69,10 +69,8 @@ class UserController < ApplicationController
    # @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
     #@board_final_pubs = Array.new()
     #@events = Array.new()
-    puts  params[:board_id]
     if params[:board_id] 
       @board = Board.find_by_id(params[:board_id])
-      puts "==================="
       @publications = @board.publications.find( :all, :conditions => { :status => 'archived' }, :include => :identifiers, :order => "updated_at DESC")
     else
       @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
