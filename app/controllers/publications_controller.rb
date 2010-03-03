@@ -387,6 +387,8 @@ class PublicationsController < ApplicationController
     @comment.comment = @vote.choice + " - " + params[:comment][:comment]
     @comment.user = @current_user
     @comment.reason = "vote"
+    #use most recent sha from identifier
+    @comment.git_hash = @vote.identifier.get_recent_commit_sha
     #associate comment with original identifier/publication
     @comment.identifier = @vote.identifier.origin   
     @comment.publication = @vote.publication.origin
