@@ -40,8 +40,7 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
-            puts ci
-            if ci == i.type.to_s
+            if ci == i.class.to_s
               @creatable_identifiers.delete(ci)    
             end
           end
@@ -107,10 +106,10 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
-    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    @publication.submit    
+    @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
-    @publication.submit
-    
+
     flash[:notice] = 'Publication submitted.'
     redirect_to @publication
     # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])

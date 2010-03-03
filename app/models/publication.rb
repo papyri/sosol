@@ -32,6 +32,9 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
+  #inelegant way to pass this info, but it works
+  attr_accessor :recent_submit_sha
+  
   def populate_identifiers_from_identifier(identifier)
     self.title = identifier_to_ref(identifier)
     # Coming in from an identifier, build up a publication
@@ -125,8 +128,12 @@ class Publication < ActiveRecord::Base
     
   end
   
+  
   def submit_identifier(identifier)
-    #find correct board
+    
+    @recent_submit_sha = "";
+    
+    #find correct board    
     
     boards = Board.find(:all)
     boards.each do |board|
@@ -158,6 +165,9 @@ class Publication < ActiveRecord::Base
       #(from_branch, to_branch, from_repo)
         self.save
         identifier.save
+        
+        #make the most recent sha for the identifier available...is this the one we want?
+        @recent_submit_sha = identifier.get_recent_commit_sha
         return true
       end
     end

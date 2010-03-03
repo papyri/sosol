@@ -80,6 +80,16 @@ class Identifier < ActiveRecord::Base
     )
   end
   
+  #parse out most recent sha from log
+  def get_recent_commit_sha
+    commits = get_commits
+    if commits && commits.length > 0
+      return commits[0][:id].to_s
+    end
+    return ""
+    
+  end
+  
   def titleize
     title = nil
     if self.class == HGVMetaIdentifier
