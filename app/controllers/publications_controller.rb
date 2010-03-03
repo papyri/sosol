@@ -40,8 +40,7 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
-            puts ci
-            if ci == i.type.to_s
+            if ci == i.class.to_s
               @creatable_identifiers.delete(ci)    
             end
           end
@@ -107,10 +106,10 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
-    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    @publication.submit    
+    @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
-    @publication.submit
-    
+
     flash[:notice] = 'Publication submitted.'
     redirect_to @publication
     # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
@@ -160,18 +159,20 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-    @publication.commit_to_canon
+    canon_sha = @publication.commit_to_canon
 
-=begin    
-    #TODO need to add comment box or such on finalize_reveiw page  save comments
-    @comment = Comment.new()
-    @comment.comment = params[:comment][:comment]
-    @comment.user = @current_user
-    @comment.reason = "finalizing"
-    #associate comment with original identifier/publication
-    #@comment.identifier = ??
-    @comment.publication = @publication.origin
-=end    
+    if params[:comment] && params[:comment] != ""
+      @comment = Comment.new()
+      @comment.comment = params[:comment]
+      @comment.user = @current_user
+      @comment.reason = "finalizing"
+      @comment.git_hash = canon_sha
+      #associate comment with original identifier/publication
+      @comment.identifier_id = params[:identifier_id]
+      @comment.publication = @publication.origin
+      
+      @comment.save
+    end
     
     #TODO need to submit to next board
     #need to set status of ids
@@ -311,7 +312,8 @@ class PublicationsController < ApplicationController
       
       if (conflicting_publication.status == "committed")
         # TODO: should set "archived" and take approp action here instead
-        conflicting_publication.destroy
+        #conflicting_publication.destroy
+        conflicting_publication.archive
       else
         flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
         redirect_to dashboard_url
@@ -385,6 +387,8 @@ class PublicationsController < ApplicationController
     @comment.comment = @vote.choice + " - " + params[:comment][:comment]
     @comment.user = @current_user
     @comment.reason = "vote"
+    #use most recent sha from identifier
+    @comment.git_hash = @vote.identifier.get_recent_commit_sha
     #associate comment with original identifier/publication
     @comment.identifier = @vote.identifier.origin   
     @comment.publication = @vote.publication.origin
@@ -418,6 +422,16 @@ class PublicationsController < ApplicationController
    
   end
   
+  def confirm_archive
+    @publication = Publication.find(params[:id])
+  end
+  
+  def archive
+    @publication = Publication.find(params[:id])
+    @publication.archive
+    redirect_to @publication    
+  end
+  
   
   
   def confirm_delete
@@ -443,6 +457,8 @@ class PublicationsController < ApplicationController
       
     end
   end
+  
+  
   
   
   def master_list

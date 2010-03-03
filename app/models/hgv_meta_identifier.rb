@@ -75,6 +75,7 @@ class HGVMetaIdentifier < HGVIdentifier
     end
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
     self.get_epidoc_attributes_from_params(attributes_hash)
     epidoc = self.get_or_set_epidoc(:set)

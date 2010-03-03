@@ -44,10 +44,10 @@ class IdentifiersController < ApplicationController
     # strip carriage returns
     xml_content = params[@identifier.class.to_s.underscore][:xml_content].gsub(/\r\n?/, "\n")
     begin
-      @identifier.set_xml_content(xml_content,
+      commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
     if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
       @comment.save
     end                                  
       flash[:notice] = "File updated."

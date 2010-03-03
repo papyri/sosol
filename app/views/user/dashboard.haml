@@ -4,7 +4,7 @@
   %h2 Your Publications
   -# render publications without status
   = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
-  - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed"].index(s) }
+  - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
   - for status in statuses
     %br
     %h3== Your #{status} publications
@@ -18,7 +18,7 @@
           More...
       %div{:id => "less_user_link_#{status}", :style => "display:none;"}
         %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
-          Less...
+          Less...  
   %br
   = render :partial => "publications/publication_selector"
   
@@ -36,11 +36,11 @@
     %br
     = form.submit "Create New Publication", :class => 'save'
   %br
-  - if @current_user.boards.length > 0
+  - if @boards.length > 0
     %h2
       Boards
-    - @current_user.boards.each do |board| 
-      - finalizing_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
+    - @boards.each do |board| 
+      - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
       - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
       -#remove approved publications if in the finalizer list
       - finalizing_publications.each do |fp|
@@ -84,6 +84,12 @@
           %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_board_#{status}_#{board.title}');Effect.SlideDown('more_board_link_#{status}_#{board.title}');Effect.SlideUp('less_board_link_#{status}_#{board.title}');return false;"}
             Less...                    
         %br
-        
+
+      
+      - archived_publications = board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
+      - if archived_publications.length > 0
+        = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id, :board_id => board.id
+        %br
+
   %h2 News Feed
   = render :partial => "events/list", :object => @events
