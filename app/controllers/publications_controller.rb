@@ -153,7 +153,17 @@ class PublicationsController < ApplicationController
   
   def finalize_review
     @publication = Publication.find(params[:id])
-    @identifier = @publication.entry_identifier
+    @identifier = nil#@publication.entry_identifier
+    #if we are finalizing then find the board that this pub came from 
+    # and find the identifers that the board controls
+    if @publication.parent.owner_type == "Board"
+      @publication.identifiers.each do |id|
+        if @publication.parent.owner.controls_identifier?(id)
+          @identifier = id
+          #TODO change to array if board can control multiple identifiers
+        end
+      end      
+    end
     @diff = @publication.diff_from_canon
   end
   
