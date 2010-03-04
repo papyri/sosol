@@ -39,30 +39,30 @@ class User < ActiveRecord::Base
       if ENV['RAILS_ENV'] == 'development'
         self.admin = true
         self.save!
-      end
       
-      ['papyri.info/ddbdp/p.genova;2;67',
-       'papyri.info/ddbdp/sb;24;16003',
-       'papyri.info/ddbdp/p.lond;7;2067',
-       'papyri.info/ddbdp/p.harr;1;109',
-       'papyri.info/ddbdp/p.yale;1;44',
-       'papyri.info/ddbdp/p.tebt;2;414'
-      ].each do |pn_id|
-        p = Publication.new
-        p.populate_identifiers_from_identifier(pn_id)
-        p.owner = self
-        p.creator = self
-        p.save!
-        p.branch_from_master
+        ['papyri.info/ddbdp/p.genova;2;67',
+         'papyri.info/ddbdp/sb;24;16003',
+         'papyri.info/ddbdp/p.lond;7;2067',
+         'papyri.info/ddbdp/p.harr;1;109',
+         'papyri.info/ddbdp/p.yale;1;44',
+         'papyri.info/ddbdp/p.tebt;2;414'
+        ].each do |pn_id|
+          p = Publication.new
+          p.populate_identifiers_from_identifier(pn_id)
+          p.owner = self
+          p.creator = self
+          p.save!
+          p.branch_from_master
               
-        e = Event.new
-        e.category = "started editing"
-        e.target = p
-        e.owner = self
-        e.save!
-      end
-    end
-  end
+          e = Event.new
+          e.category = "started editing"
+          e.target = p
+          e.owner = self
+          e.save!
+        end # each
+      end # == development
+    end # != test
+  end # after_create
   
   def grit_actor
     Grit::Actor.new(self.full_name, self.email)
