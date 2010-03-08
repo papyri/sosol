@@ -2,6 +2,8 @@ class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
   
+  protect_from_forgery :only => []
+  
   def new
   end
   
@@ -40,7 +42,8 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
-            if ci == i.class.to_s
+            Rails.logger.info("Creatable identifier: #{ci}")
+            if ci == i.type.to_s
               @creatable_identifiers.delete(ci)    
             end
           end
@@ -471,8 +474,6 @@ class PublicationsController < ApplicationController
       
     end
   end
-  
-  
   
   
   def master_list
