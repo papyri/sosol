@@ -1,0 +1,15 @@
+#main
+
+  = render :partial => "common/flash_all"
+
+  %h1
+    - if @board && @board.name
+      = @board.name
+    - else
+      = "Your "
+    = " Archived Publications"
+  
+  
+  = render :partial => "publications/list", :object => @publications
+  
+

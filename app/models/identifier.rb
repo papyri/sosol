@@ -60,15 +60,17 @@ class Identifier < ActiveRecord::Base
     return content
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_content(content, options = {})
     options.reverse_merge! :comment => ''
-    self.repository.commit_content(self.to_path,
+    commit_sha = self.repository.commit_content(self.to_path,
                                    self.branch,
                                    content,
                                    options[:comment],
                                    options[:actor])
     self.modified = true
     self.save!
+    return commit_sha
   end
   
   def get_commits
@@ -76,6 +78,16 @@ class Identifier < ActiveRecord::Base
       self.repository.get_log_for_file_from_branch(
         self.to_path, self.branch
     )
+  end
+  
+  #parse out most recent sha from log
+  def get_recent_commit_sha
+    commits = get_commits
+    if commits && commits.length > 0
+      return commits[0][:id].to_s
+    end
+    return ""
+    
   end
   
   def titleize
@@ -199,6 +211,7 @@ class Identifier < ActiveRecord::Base
     return self.content
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_xml_content(content, options)
     options.reverse_merge!(
       :validate => true,
@@ -206,9 +219,12 @@ class Identifier < ActiveRecord::Base
       
     content = before_commit(content)
 
+    commit_sha = ""
     if options[:validate] && is_valid_xml?(content)
-      self.set_content(content, options)
+      commit_sha = self.set_content(content, options)
     end
+    
+    return commit_sha
   end
   
   #added to speed up dashboard since titleize can be slow

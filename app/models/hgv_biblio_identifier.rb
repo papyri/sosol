@@ -1,9 +1,11 @@
 class HGVBiblioIdentifier < HGVMetaIdentifier
   attr_reader :bibliography_main, :bibliography_other, :bibliography_secondary, :xpath_main, :xpath_other,  :xpath_secondary 
 
-  def self.friendly_name
-    return 'Bibliography'
-  end
+  FRIENDLY_NAME = "Bibliography"
+
+  #def self.friendly_name
+  #  return 'Bibliography'
+  #end
 
   def self.find_by_publication_id publication_id
     return HGVMetaIdentifier.find_by_publication_id(publication_id).becomes(HGVBiblioIdentifier)

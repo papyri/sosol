@@ -15,10 +15,13 @@
                 = image_tag('hgv.gif')
               - when HGVTransIdentifier
                 = image_tag('hgv.gif')            
-            - if publication.status != 'finalizing'
-              = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
+            - if publication.status == 'finalizing'
+              = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))                        
+            - elsif publication.status == 'archived'
+              = identifier.title 
             - else
-              = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))
+              = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
+            
             - if @current_user.developer
               == (#{identifier.status})
               = "{"

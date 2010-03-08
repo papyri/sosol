@@ -42,10 +42,10 @@ class HgvTransIdentifiersController < IdentifiersController
   def update
     #raise "contents are: " + params[:content]
     find_identifier
-    @identifier.set_content(params[:editing_trans_xml])
+    commit_sha = @identifier.set_content(params[:editing_trans_xml])
     
     if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
       @comment.save    
     end
     
