@@ -42,7 +42,7 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
-            puts ci
+            Rails.logger.info("Creatable identifier: #{ci}")
             if ci == i.type.to_s
               @creatable_identifiers.delete(ci)    
             end
