@@ -275,7 +275,11 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      document_path = [collection, volume, document].join('_')
+      if volume.empty?
+        document_path = [collection, document].join('_')
+      else
+        document_path = [collection, volume, document].join('_')
+      end
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
