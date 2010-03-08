@@ -106,8 +106,15 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
+    
+    #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
+    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    @comment.save
+    
     @publication.submit    
-    @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+
+    @comment.git_hash = @publication.recent_submit_sha
     @comment.save
 
     flash[:notice] = 'Publication submitted.'
