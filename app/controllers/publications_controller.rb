@@ -178,18 +178,25 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     canon_sha = @publication.commit_to_canon
 
-    if params[:comment] && params[:comment] != ""
-      @comment = Comment.new()
+
+    #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
+    @comment = Comment.new()
+  
+    if params[:comment] && params[:comment] != ""  
       @comment.comment = params[:comment]
-      @comment.user = @current_user
-      @comment.reason = "finalizing"
-      @comment.git_hash = canon_sha
-      #associate comment with original identifier/publication
-      @comment.identifier_id = params[:identifier_id]
-      @comment.publication = @publication.origin
-      
-      @comment.save
+    else
+      @comment.comment = "no comment"
     end
+    @comment.user = @current_user
+    @comment.reason = "finalizing"
+    @comment.git_hash = canon_sha
+    #associate comment with original identifier/publication
+    @comment.identifier_id = params[:identifier_id]
+    @comment.publication = @publication.origin
+    
+    @comment.save
+  
+
     
     #TODO need to submit to next board
     #need to set status of ids
