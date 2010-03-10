@@ -7,12 +7,12 @@
 
 = stylesheet_link_tag 'menu-item'
 = stylesheet_link_tag 'menu-bar'
-/the helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
-/have a smart number associated with them.  it starts off with a 1 digit number because we have
-/less than 10 menu items at that level.  from then on there are 2 digit numbers used e.g 101, 
-/102, etc. meaning the first, second and third level menu items under item 1.  then the next level
+/The helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
+/have a smart number associated with them.  It starts off with a 1 digit number (when this level goes to
+/2 digits, no drop down data is associated).  From then on there are 2 digit numbers used e.g 101, 
+/102, etc. meaning the first, second and third level menu items under item 1.  Then the next level
 /continues this with 10101, 10102, 10102 meaning the first, second and third level menu items
-/under 101.  this same pattern can be continued on to deeper levels of menu if needed. this works
+/under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
 /in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
 /javascript.
 %ul#menuModel{ :style => "display:inherit"}
@@ -136,5 +136,14 @@
   %li#5{ :jsFunction => "helpDialogOpen('tryit')"}
     %a{ :href => "#"}Try It
   %li#6{ :itemType => "separator"}
+  %li#7{ :jsFunction => "changeTextareaSize('small')"}
+    %a{ :href => "#"}Small Display
+  %li#8{ :itemType => "separator"}
+  %li#9{ :jsFunction => "changeTextareaSize('medium')"}
+    %a{ :href => "#"}Medium Display
+  %li#10{ :itemType => "separator"}
+  %li#11{ :jsFunction => "changeTextareaSize('default')"}
+    %a{ :href => "#"}Default Display
+  %li#12{ :itemType => "separator"}
 %p
   %div#menuDiv

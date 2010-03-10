@@ -250,3 +250,26 @@ function insertTextMain(vti)
         element.value = element.value+c;
       };
 } /*########################     end insertTextMain     ########################*/
+
+/*###########################################################################################*/
+/* change the size of the edit textarea                                                      */
+/*###########################################################################################*/
+
+function changeTextareaSize(size)
+{
+  if(size == 'small')
+    {
+      document.getElementById("ddb_identifier_leiden_plus").style.height = "18em";
+    }
+  else
+    {
+    if(size == 'medium')
+      {
+        document.getElementById("ddb_identifier_leiden_plus").style.height = "34em";
+      }
+    else
+      {
+        document.getElementById("ddb_identifier_leiden_plus").style.height = "50em";
+      }
+    }
+} /*########################     end changeTextareaSize    ########################*/
