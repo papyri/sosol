@@ -244,7 +244,9 @@ class PublicationsController < ApplicationController
   end
   
   def edit_text
-    edit
+    @publication = Publication.find(params[:id])
+    @identifier = DDBIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_meta
