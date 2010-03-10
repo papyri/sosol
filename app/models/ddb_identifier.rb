@@ -95,12 +95,25 @@ class DDBIdentifier < Identifier
   end
   
   def leiden_plus
-    abs = DDBIdentifier.preprocess_abs(
-      DDBIdentifier.get_abs_from_edition_div(xml_content))
-    # transform XML to Leiden+ 
-    transformed = DDBIdentifier.xml2nonxml(abs)
-    
-    return transformed
+    repo_xml = xml_content
+    repo_xml_work = REXML::Document.new(repo_xml)
+    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]/note'
+    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
+    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
+    #otherwise, get broke Leiden+ and display that
+    if brokeleiden_here == nil
+      abs = DDBIdentifier.preprocess_abs(
+        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+      # transform XML to Leiden+ 
+      transformed = DDBIdentifier.xml2nonxml(abs)
+      
+      return transformed
+    else
+      #get the broke Leiden+
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden
+    end
   end
   
   # Returns a String of the SHA1 of the commit
@@ -136,6 +149,9 @@ class DDBIdentifier < Identifier
       nonx2x)
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
+    
+    #deletes XML with broke Leiden+ if it exists
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]')
     
     #pull divs in the text and loop through and delete each - couldn't get xpath to do all at once
     
@@ -173,6 +189,33 @@ class DDBIdentifier < Identifier
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
     return modified_xml_content
+  end
+  
+  def save_broken_leiden_plus_to_xml(brokeleiden)
+    # fetch the original content
+    original_xml_content = REXML::Document.new(self.xml_content)
+    #deletes XML with broke Leiden+ if it exists already so can add with updated data
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]')
+    #set in XML where to add new div tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element 'div', {'type'=>'translation'}
+    #set in XML where to add new note tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element "note"
+    #set in XML where to add broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]/note'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    brokeleiden = "Broke Leiden+ below saved to come back to later" + "\n" + brokeleiden
+    add_node_here.add_text brokeleiden
+    
+    # write back to a string
+    modified_xml_content = ''
+    original_xml_content.write(modified_xml_content)
+    
+    # commit xml to repo
+    self.set_xml_content(modified_xml_content, :comment => "Save broke Leiden+ to come back to later")
   end
 
   def preview

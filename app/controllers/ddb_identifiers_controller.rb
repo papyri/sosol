@@ -16,21 +16,29 @@ class DdbIdentifiersController < IdentifiersController
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_identifier
-    begin
-      commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
-                                  params[:comment])
-      if params[:comment] != nil && params[:comment].strip != ""
-        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-        @comment.save
-      end
-      flash[:notice] = "File updated."
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                   :action => :edit)
-    rescue RXSugar::NonXMLParseError => parse_error
-      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
-      @identifier[:leiden_plus] = parse_error.content
-      render :template => 'ddb_identifiers/edit'
-    end
+    case params[:commit]
+    when "SaveBrokeLeiden+"
+      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus])
+      flash.now[:error] = "File updated with broke Leiden+"
+        @identifier[:leiden_plus] = "Broke Leiden+ below saved to come back to later" + "\n" + params[:ddb_identifier][:leiden_plus]
+        render :template => 'ddb_identifiers/edit'
+    else #Save button is clicked
+      begin
+        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
+                                    params[:comment])
+        if params[:comment] != nil && params[:comment].strip != ""
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment.save
+        end
+        flash[:notice] = "File updated."
+        redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                     :action => :edit)
+      rescue RXSugar::NonXMLParseError => parse_error
+        flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+        @identifier[:leiden_plus] = parse_error.content
+        render :template => 'ddb_identifiers/edit'
+      end #begin
+    end #when
   end
   
   # GET /publications/1/ddb_identifiers/1/preview
