@@ -42,7 +42,7 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
-            puts ci
+            Rails.logger.info("Creatable identifier: #{ci}")
             if ci == i.type.to_s
               @creatable_identifiers.delete(ci)    
             end
@@ -244,7 +244,9 @@ class PublicationsController < ApplicationController
   end
   
   def edit_text
-    edit
+    @publication = Publication.find(params[:id])
+    @identifier = DDBIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_meta
@@ -275,7 +277,11 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      document_path = [collection, volume, document].join('_')
+      if volume.empty?
+        document_path = [collection, document].join('_')
+      else
+        document_path = [collection, volume, document].join('_')
+      end
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
