@@ -106,8 +106,15 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
+    
+    #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
+    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    @comment.save
+    
     @publication.submit    
-    @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+
+    @comment.git_hash = @publication.recent_submit_sha
     @comment.save
 
     flash[:notice] = 'Publication submitted.'
@@ -171,18 +178,25 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     canon_sha = @publication.commit_to_canon
 
-    if params[:comment] && params[:comment] != ""
-      @comment = Comment.new()
+
+    #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
+    @comment = Comment.new()
+  
+    if params[:comment] && params[:comment] != ""  
       @comment.comment = params[:comment]
-      @comment.user = @current_user
-      @comment.reason = "finalizing"
-      @comment.git_hash = canon_sha
-      #associate comment with original identifier/publication
-      @comment.identifier_id = params[:identifier_id]
-      @comment.publication = @publication.origin
-      
-      @comment.save
+    else
+      @comment.comment = "no comment"
     end
+    @comment.user = @current_user
+    @comment.reason = "finalizing"
+    @comment.git_hash = canon_sha
+    #associate comment with original identifier/publication
+    @comment.identifier_id = params[:identifier_id]
+    @comment.publication = @publication.origin
+    
+    @comment.save
+  
+
     
     #TODO need to submit to next board
     #need to set status of ids

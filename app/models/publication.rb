@@ -157,7 +157,19 @@ class Publication < ActiveRecord::Base
         self.status = "submitted"
         
         board.send_status_emails("submitted", self)
-        
+
+        begin        
+          submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
+          if submit_comment && submit_comment.comment
+            identifier.add_change_desc(submit_comment.comment)
+          else
+            identifier.add_change_desc()
+          end
+        rescue ActiveRecord::RecordNotFound
+          identifier.add_change_desc()
+        end
+     
+       
         # self.title = self.creator.name + "/" + self.title
         # self.branch = title_to_ref(self.title)
         # 

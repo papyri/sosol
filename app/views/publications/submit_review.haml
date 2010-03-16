@@ -20,7 +20,7 @@
         - for identifier in @publication.identifiers      
           - if identifier.modified
             %li
-              = identifier.title          
+              = identifier.title  + " " + identifier.class::FRIENDLY_NAME       
       They will be submitted to the proper boards for review.
       - form_tag  :controller => 'publications', :action => "submit"  do
         You will no longer be able to edit any of the items in this the publication once it is submitted. 

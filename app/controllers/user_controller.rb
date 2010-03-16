@@ -6,6 +6,23 @@ class UserController < ApplicationController
     redirect_to :controller => :welcome, :action => "index"
   end
   
+  #default view of stats is only for the current user, see below for all users
+  def usage_stats    
+    @users = Array.new()
+    @users << @current_user
+  end
+
+  #TODO who has the right to see this?, will this create any dangerous links to things that a user should not be able to do 
+  def all_usage_stats
+    if @current_user.admin || @current_user.developer
+      @users = User.find(:all)
+      render "usage_stats"
+      return
+    end
+    redirect_to dashboard_url
+  end
+  
+  
   def account
     if @current_user
       @identifiers = @current_user.user_identifiers

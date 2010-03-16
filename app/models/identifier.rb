@@ -236,6 +236,39 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
 
+
+  def add_change_desc(text = "")
+    doc = REXML::Document.new self.xml_content
+    base_path = "/TEI/teiHeader/revisionDesc"
+    
+    #get user name
+    user_info = self.publication.creator
+    if user_info.full_name && user_info.full_name.strip != ""
+      who_name = user_info.full_name 
+    else
+      who_name = user_info.name
+    end
+    
+    #get date now
+    when_date = DateTime.now.strftime("%Y-%m-%d")
+    
+    #find revision node
+    revision_node = REXML::XPath.first(doc, base_path)
+    
+    #make new change node
+    change_node = REXML::Element.new("change")
+    change_node.text = SITE_NAME + " " + text
+    change_node.add_attribute("when", when_date)
+    change_node.add_attribute("who", who_name )
+    
+    #add change node to revision node
+    revision_node.add_element(change_node)
+    puts doc
+    self.set_xml_content(doc.to_s, :comment => '')
+  
+  end
+
+
   #standard result actions 
   #NOTE none of this is currently used except for creating board
   def result_action_approve
