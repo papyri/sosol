@@ -20,9 +20,11 @@
     <choose>
       <if type="book">
         <text variable="title" prefix="monographicTitle : |" suffix="|, " />
+        <text variable="title" prefix="monographicTitleShort : |" suffix="|, " form="short" />
       </if>
       <else-if type="chapter">
         <text variable="container-title" prefix="monographicTitle : |" suffix="|, " />
+        <text variable="container-title" prefix="monographicTitleShort : |" suffix="|, " form="short" />
       </else-if>
     </choose> 
   </macro>
@@ -34,7 +36,7 @@
         <text variable="collection-number" prefix="seriesNumber : |" suffix="|, " />
       </if>
       <else-if type="article-journal">
-        <text variable="container-title" prefix="journalTitle : |" suffix="|, " form="short" />
+        <text variable="container-title" prefix="journalTitleShort : |" suffix="|, " form="short" />
         <text variable="volume" prefix="journalNumber : |" suffix="|, " />
       </else-if>
     </choose> 
