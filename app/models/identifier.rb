@@ -250,7 +250,7 @@ class Identifier < ActiveRecord::Base
     end
     
     #get date now
-    when_date = DateTime.now.strftime("%Y-%m-%d")
+    when_date = Time.now.xmlschema
     
     #find revision node
     revision_node = REXML::XPath.first(doc, base_path)
