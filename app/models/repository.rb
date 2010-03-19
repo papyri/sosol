@@ -176,6 +176,24 @@ class Repository
     @repo.branches.map{|b| b.name}
   end
   
+  def rename_file(original_path, new_path, branch, comment, actor)
+    content = get_file_from_branch(original_path, branch)
+    index = @repo.index
+    index.read_tree(branch)
+    # do the rename here, against index.tree
+    # rename is just a simultaneous add/delete
+    # add the new data
+    index.add(new_path, content)
+    # remove the old path from the tree
+    index.rm(original_path)
+
+    index.commit(comment,
+                 @repo.commits(branch,1).first.to_s, # commit parent,
+                 actor,
+                 nil,
+                 branch)
+  end
+  
   def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
       raise "Cannot commit directly to canonical repository"

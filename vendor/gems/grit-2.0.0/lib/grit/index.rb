@@ -28,6 +28,10 @@ module Grit
 
       current[filename] = data
     end
+    
+    def rm(file_path)
+      self.add(file_path, nil)
+    end
 
     # Sets the current tree
     #   +tree+ the branch/tag/sha... to use - a string
@@ -93,6 +97,8 @@ module Grit
       # overwrite with new tree contents
       tree.each do |k, v|
         case v
+          when NilClass
+            tree_contents.delete(k)
           when String
             sha = write_blob(v)
             sha = [sha].pack("H*")

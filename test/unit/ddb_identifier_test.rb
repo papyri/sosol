@@ -18,6 +18,8 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       
       @ddb_identifier = DDBIdentifier.new_from_template(@publication)
       @original_name = @ddb_identifier.name
+      @original_content = @ddb_identifier.content
+      @original_path = @ddb_identifier.to_path
     end
     
     teardown do
@@ -38,6 +40,14 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       should "have the correct new title" do
         expected_title = Factory.build(:DDBIdentifier, :name => @new_name).titleize
         assert_equal expected_title, @ddb_identifier.title
+      end
+      
+      should "have the correct content at the new path" do
+        assert_equal @original_content, @ddb_identifier.content
+      end
+      
+      should "have nothing at the original path" do
+        assert_equal nil, @creator.repository.get_file_from_branch(@original_path, @publication.branch)
       end
     end
   end
