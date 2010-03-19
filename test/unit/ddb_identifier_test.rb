@@ -34,6 +34,11 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       should "have the new name" do
         assert_equal @new_name, @ddb_identifier.name
       end
+      
+      should "have the correct new title" do
+        expected_title = Factory.build(:DDBIdentifier, :name => @new_name).titleize
+        assert_equal expected_title, @ddb_identifier.title
+      end
     end
   end
   
