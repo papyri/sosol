@@ -4,9 +4,10 @@ it:
     title: 'titolo'
     author: 'autore'
     monographic_title: 'titolo monografico'
+    monographic_title_short: 'titolo monografico (abbr.)'
     series_title: 'titolo della serie'
     series_number: 'numero di serie'
-    journal_title: 'journal title'
+    journal_title_short: 'journal title (abbr.)'
     journal_number: 'Journal numero'
     editor: 'editor'
     place_of_publication: 'luogo di pubblicazione'
@@ -15,12 +16,12 @@ it:
     pagination_start: 'impaginazione start'
     pagination_end: 'impaginazione end'
     notes: 'memo'
-    number: 'numero'
-    date: 'data'
+    reedition: 'riedizione di'
     new_entry: 'new entry'
+    conflict:
+      message: 'Documento contiene contrastanti dati bibliografici'
     headings:
         main: 'bibliografia'
-        other: 'altri riferimenti bibliografici'
         secondary: 'Secondaria'
         meta: 'Metadati'
     zotero:

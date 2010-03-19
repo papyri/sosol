@@ -92,7 +92,7 @@ class Identifier < ActiveRecord::Base
   
   def titleize
     title = nil
-    if self.class == HGVMetaIdentifier
+    if self.class == HGVMetaIdentifier || self.class == HGVBiblioIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(
