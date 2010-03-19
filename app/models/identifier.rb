@@ -263,9 +263,7 @@ class Identifier < ActiveRecord::Base
     
     #add change node to revision node
     revision_node.add_element(change_node)
-    puts doc
     self.set_xml_content(doc.to_s, :comment => '')
-  
   end
 
 
