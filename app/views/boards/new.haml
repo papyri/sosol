@@ -1,22 +1,22 @@
 #main.site
-= render :partial => "common/flash_all"  
-%h1
-  New board
-- form_for(@board) do |f|
-  = f.error_messages
-  %p
-    = f.label :title
-    %br
-    = f.text_field :title
-  %br
-  %p
-    = f.label "Identifier classes"
-    %br
-    - @available_identifier_classes.each do |identifier_class|
-      / limit to one choice
-      = radio_button_tag "identifier_class", "#{identifier_class}", "#{identifier_class}"
-      = identifier_class.sub(/Identifier$/,'')
+  = render :partial => "common/flash_all"  
+  %h1
+    New board
+  - form_for(@board) do |f|
+    = f.error_messages
+    %p
+      = f.label :title
       %br
-  %br
-  %p
-    = f.submit "Create"
+      = f.text_field :title
+    %br
+    %p
+      = f.label "Identifier classes"
+      %br
+      - @available_identifier_classes.each do |identifier_class|
+        / limit to one choice
+        = radio_button_tag "identifier_class", "#{identifier_class}", "#{identifier_class}"
+        = identifier_class.sub(/Identifier$/,'')
+        %br
+    %br
+    %p
+      = f.submit "Create"
