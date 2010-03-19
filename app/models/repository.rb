@@ -176,6 +176,7 @@ class Repository
     @repo.branches.map{|b| b.name}
   end
   
+  # Returns a String of the SHA1 of the committ
   def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
       raise "Cannot commit directly to canonical repository"

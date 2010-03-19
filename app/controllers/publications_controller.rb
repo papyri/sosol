@@ -43,7 +43,7 @@ class PublicationsController < ApplicationController
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
             Rails.logger.info("Creatable identifier: #{ci}")
-            if ci == i.type.to_s
+            if ci == i.class.to_s
               @creatable_identifiers.delete(ci)    
             end
           end
@@ -109,10 +109,17 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
+    
+    #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
     @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
-    @publication.submit
     
+    @publication.submit    
+
+    @comment.git_hash = @publication.recent_submit_sha
+    @comment.save
+
     flash[:notice] = 'Publication submitted.'
     redirect_to @publication
     # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
@@ -156,24 +163,43 @@ class PublicationsController < ApplicationController
   
   def finalize_review
     @publication = Publication.find(params[:id])
-    @identifier = @publication.entry_identifier
+    @identifier = nil#@publication.entry_identifier
+    #if we are finalizing then find the board that this pub came from 
+    # and find the identifers that the board controls
+    if @publication.parent.owner_type == "Board"
+      @publication.identifiers.each do |id|
+        if @publication.parent.owner.controls_identifier?(id)
+          @identifier = id
+          #TODO change to array if board can control multiple identifiers
+        end
+      end      
+    end
     @diff = @publication.diff_from_canon
   end
   
   def finalize
     @publication = Publication.find(params[:id])
-    @publication.commit_to_canon
+    canon_sha = @publication.commit_to_canon
 
-=begin    
-    #TODO need to add comment box or such on finalize_reveiw page  save comments
+
+    #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
     @comment = Comment.new()
-    @comment.comment = params[:comment][:comment]
+  
+    if params[:comment] && params[:comment] != ""  
+      @comment.comment = params[:comment]
+    else
+      @comment.comment = "no comment"
+    end
     @comment.user = @current_user
     @comment.reason = "finalizing"
+    @comment.git_hash = canon_sha
     #associate comment with original identifier/publication
-    #@comment.identifier = ??
+    @comment.identifier_id = params[:identifier_id]
     @comment.publication = @publication.origin
-=end    
+    
+    @comment.save
+  
+
     
     #TODO need to submit to next board
     #need to set status of ids
@@ -319,7 +345,8 @@ class PublicationsController < ApplicationController
       
       if (conflicting_publication.status == "committed")
         # TODO: should set "archived" and take approp action here instead
-        conflicting_publication.destroy
+        #conflicting_publication.destroy
+        conflicting_publication.archive
       else
         flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
         redirect_to dashboard_url
@@ -393,6 +420,8 @@ class PublicationsController < ApplicationController
     @comment.comment = @vote.choice + " - " + params[:comment][:comment]
     @comment.user = @current_user
     @comment.reason = "vote"
+    #use most recent sha from identifier
+    @comment.git_hash = @vote.identifier.get_recent_commit_sha
     #associate comment with original identifier/publication
     @comment.identifier = @vote.identifier.origin   
     @comment.publication = @vote.publication.origin
@@ -426,6 +455,16 @@ class PublicationsController < ApplicationController
    
   end
   
+  def confirm_archive
+    @publication = Publication.find(params[:id])
+  end
+  
+  def archive
+    @publication = Publication.find(params[:id])
+    @publication.archive
+    redirect_to @publication    
+  end
+  
   
   
   def confirm_delete
@@ -451,6 +490,8 @@ class PublicationsController < ApplicationController
       
     end
   end
+  
+  
   
   
   def master_list

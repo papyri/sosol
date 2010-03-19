@@ -60,15 +60,17 @@ class Identifier < ActiveRecord::Base
     return content
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_content(content, options = {})
     options.reverse_merge! :comment => ''
-    self.repository.commit_content(self.to_path,
+    commit_sha = self.repository.commit_content(self.to_path,
                                    self.branch,
                                    content,
                                    options[:comment],
                                    options[:actor])
     self.modified = true
     self.save!
+    return commit_sha
   end
   
   def get_commits
@@ -76,6 +78,16 @@ class Identifier < ActiveRecord::Base
       self.repository.get_log_for_file_from_branch(
         self.to_path, self.branch
     )
+  end
+  
+  #parse out most recent sha from log
+  def get_recent_commit_sha
+    commits = get_commits
+    if commits && commits.length > 0
+      return commits[0][:id].to_s
+    end
+    return ""
+    
   end
   
   def titleize
@@ -199,6 +211,7 @@ class Identifier < ActiveRecord::Base
     return self.content
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_xml_content(content, options)
     options.reverse_merge!(
       :validate => true,
@@ -206,9 +219,12 @@ class Identifier < ActiveRecord::Base
       
     content = before_commit(content)
 
+    commit_sha = ""
     if options[:validate] && is_valid_xml?(content)
-      self.set_content(content, options)
+      commit_sha = self.set_content(content, options)
     end
+    
+    return commit_sha
   end
   
   #added to speed up dashboard since titleize can be slow
@@ -219,6 +235,39 @@ class Identifier < ActiveRecord::Base
     end
     return read_attribute(:title)
   end
+
+
+  def add_change_desc(text = "")
+    doc = REXML::Document.new self.xml_content
+    base_path = "/TEI/teiHeader/revisionDesc"
+    
+    #get user name
+    user_info = self.publication.creator
+    if user_info.full_name && user_info.full_name.strip != ""
+      who_name = user_info.full_name 
+    else
+      who_name = user_info.name
+    end
+    
+    #get date now
+    when_date = DateTime.now.strftime("%Y-%m-%d")
+    
+    #find revision node
+    revision_node = REXML::XPath.first(doc, base_path)
+    
+    #make new change node
+    change_node = REXML::Element.new("change")
+    change_node.text = SITE_NAME + " " + text
+    change_node.add_attribute("when", when_date)
+    change_node.add_attribute("who", who_name )
+    
+    #add change node to revision node
+    revision_node.add_element(change_node)
+    puts doc
+    self.set_xml_content(doc.to_s, :comment => '')
+  
+  end
+
 
   #standard result actions 
   #NOTE none of this is currently used except for creating board

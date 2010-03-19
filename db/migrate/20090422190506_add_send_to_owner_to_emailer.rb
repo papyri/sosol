@@ -4,6 +4,6 @@ class AddSendToOwnerToEmailer < ActiveRecord::Migration
   end
 
   def self.down
-  	add_column :emailers, :send_to_owner
+  	remove_column :emailers, :send_to_owner
   end
 end

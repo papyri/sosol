@@ -75,10 +75,15 @@ class HGVMetaIdentifier < HGVIdentifier
     end
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
     self.get_epidoc_attributes_from_params(attributes_hash)
     epidoc = self.get_or_set_epidoc(:set)
-    self.set_content(epidoc, :comment => comment)
+    
+    #set_content does not validate xml (which is what epidoc is)
+    #self.set_content(epidoc, :comment => comment)
+    #set_xml_content validates xml
+    self.set_xml_content(epidoc, :comment => comment)
   end
 
   def get_epidoc_attributes_from_params(attributes_hash)
