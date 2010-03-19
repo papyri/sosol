@@ -11,6 +11,32 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     end
   end
   
+  context "identifier renaming" do
+    setup do
+      @creator = Factory(:user, :name => "Creator")
+      @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      
+      @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+      @original_name = @ddb_identifier.name
+    end
+    
+    teardown do
+      @publication.destroy
+      @creator.destroy
+    end
+    
+    context "with a valid target" do
+      setup do
+        @new_name = "papyri.info/ddbdp/bgu;1;1000"
+        @ddb_identifier.rename(@new_name)
+      end
+      
+      should "have the new name" do
+        assert_equal @new_name, @ddb_identifier.name
+      end
+    end
+  end
+  
   context "identifier mapping" do
     setup do
       @path_prefix = DDBIdentifier::PATH_PREFIX

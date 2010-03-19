@@ -211,6 +211,13 @@ class Identifier < ActiveRecord::Base
     end
   end
   
+  def rename(new_name)
+    message = "Rename #{self.class::FRIENDLY_NAME} from '#{self.name}' to '#{self.name}'"
+    self.name = new_name
+    self.title = self.titleize
+    self.save!
+  end
+  
   #added to speed up dashboard since titleize can be slow
   def title
     if read_attribute(:title) == nil
