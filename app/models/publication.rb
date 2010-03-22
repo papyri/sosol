@@ -138,27 +138,7 @@ class Publication < ActiveRecord::Base
     boards = Board.find(:all)
     boards.each do |board|
       if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
-        
-        boards_copy = copy_to_owner(board)
-        boards_copy.status = "voting"
-        boards_copy.save
-        
-        # duplicate = self.clone
-        #duplicate.owner = new_owner
-       # duplicate.creator = self.creator
-     #   duplicate.title = self.owner.name + "/" + self.title
-     #   duplicate.branch = title_to_ref(duplicate.title)
-          
-        
-        # self.owner_id = board.id
-        # self.owner_type = "Board"
-        
-        identifier.status = "submitted"
-        self.status = "submitted"
-        
-        board.send_status_emails("submitted", self)
-
-        begin        
+        begin
           submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
           if submit_comment && submit_comment.comment
             identifier.add_change_desc(submit_comment.comment)
@@ -168,7 +148,15 @@ class Publication < ActiveRecord::Base
         rescue ActiveRecord::RecordNotFound
           identifier.add_change_desc()
         end
-     
+        
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save
+        
+        identifier.status = "submitted"
+        self.status = "submitted"
+        
+        board.send_status_emails("submitted", self)
        
         # self.title = self.creator.name + "/" + self.title
         # self.branch = title_to_ref(self.title)
