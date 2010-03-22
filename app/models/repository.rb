@@ -118,7 +118,7 @@ class Repository
   end
   
   def get_log_for_file_from_branch(file, branch = 'master')
-    @repo.log(branch, file).map{|commit| commit.to_hash}
+    @repo.log(branch, file, :follow => true).map{|commit| commit.to_hash}
   end
   
   def update_master_from_canonical
