@@ -100,17 +100,21 @@ class Identifier < ActiveRecord::Base
     end
     
     if title.nil?
-      collection_name, volume_number, document_number =
-        self.to_components.last.split(';')
+      if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
+        collection_name, volume_number, document_number =
+          self.to_components.last.split(';')
 
-      collection_name = 
-        self.class.collection_names_hash[collection_name]
+        collection_name = 
+          self.class.collection_names_hash[collection_name]
 
-      # strip leading zeros
-      document_number.sub!(/^0*/,'')
+        # strip leading zeros
+        document_number.sub!(/^0*/,'')
 
-      title = 
-       [collection_name, volume_number, document_number].join(' ')
+        title = 
+         [collection_name, volume_number, document_number].join(' ')
+      else # HGV with no name
+        title = "HGV " + self.name.split('/').last
+      end
     end
     return title
   end
