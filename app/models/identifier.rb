@@ -281,12 +281,7 @@ class Identifier < ActiveRecord::Base
     revision_path = base_path + "/revisionDesc"
     change_path = revision_path + "/change"
     
-    # get user name
-    if user_info.full_name && user_info.full_name.strip != ""
-      who_name = user_info.full_name 
-    else
-      who_name = user_info.name
-    end
+    who_name = user_info.human_name
     
     # get date now
     when_date = Time.now.xmlschema

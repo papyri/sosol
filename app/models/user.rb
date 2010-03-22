@@ -64,6 +64,15 @@ class User < ActiveRecord::Base
     end # != test
   end # after_create
   
+  def human_name
+    # get user name
+    if self.full_name && self.full_name.strip != ""
+      return self.full_name.strip
+    else
+      return who_name = self.name
+    end
+  end
+  
   def grit_actor
     Grit::Actor.new(self.full_name, self.email)
   end
