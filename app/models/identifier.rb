@@ -263,29 +263,43 @@ class Identifier < ActiveRecord::Base
 
   def add_change_desc(text = "", user_info = self.publication.creator)
     doc = REXML::Document.new self.xml_content
-    base_path = "/TEI/teiHeader/revisionDesc"
     
-    #get user name
+    base_path = "/TEI/teiHeader"
+    revision_path = base_path + "/revisionDesc"
+    change_path = revision_path + "/change"
+    
+    # get user name
     if user_info.full_name && user_info.full_name.strip != ""
       who_name = user_info.full_name 
     else
       who_name = user_info.name
     end
     
-    #get date now
+    # get date now
     when_date = Time.now.xmlschema
     
-    #find revision node
-    revision_node = REXML::XPath.first(doc, base_path)
-    
-    #make new change node
+    # make new change node
     change_node = REXML::Element.new("change")
     change_node.text = text
     change_node.add_attribute("when", when_date)
     change_node.add_attribute("who", who_name )
     
-    #add change node to revision node
-    revision_node.add_element(change_node)
+    # add change node
+    if REXML::XPath.first(doc, change_path)
+      # want changes with most recent first, so insert before any existing change
+      doc.root.insert_before(change_path, change_node)
+    else # no existing change node, create the first one
+      # if there's no existing change node, that means there's likely no revisionDesc
+      # (don't seem to be able to have an empty revisionDesc)
+      if !REXML::XPath.first(doc, revision_path)
+        header_node = REXML::XPath.first(doc, base_path)
+        # create revision node
+        revision_node = (header_node << REXML::Element.new("revisionDesc"))
+        # add change node
+        revision_node.add_element(change_node)
+      end
+    end
+    
     self.set_xml_content(doc.to_s, :comment => '')
   end
 
