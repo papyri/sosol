@@ -280,7 +280,7 @@ class Identifier < ActiveRecord::Base
     
     #make new change node
     change_node = REXML::Element.new("change")
-    change_node.text = SITE_NAME + " " + text
+    change_node.text = text
     change_node.add_attribute("when", when_date)
     change_node.add_attribute("who", who_name )
     
