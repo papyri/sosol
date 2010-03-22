@@ -38,6 +38,23 @@ class IdentifiersController < ApplicationController
                                  :action => :edit) and return
   end
   
+  def rename_review
+    find_identifier
+    render :template => 'identifiers/rename_review'
+  end
+  
+  def rename
+    find_identifier
+    begin
+      @identifier.rename(params[:new_name])
+      flash[:notice] = "Identifier renamed."
+    rescue RuntimeError => e
+      flash[:error] = e.to_s
+    end
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :rename_review) and return
+  end
+  
   # PUT /publications/1/xxx_identifiers/1/updatexml
   def updatexml
     find_identifier
@@ -46,10 +63,10 @@ class IdentifiersController < ApplicationController
     begin
       commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
-    if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save
-    end                                  
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+        @comment.save
+      end
       flash[:notice] = "File updated."
     rescue JRubyXML::ParseError => parse_error
       flash[:error] = parse_error.to_str

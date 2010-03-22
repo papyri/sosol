@@ -11,6 +11,55 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     end
   end
   
+  context "identifier renaming" do
+    setup do
+      @creator = Factory(:user, :name => "Creator")
+      @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      # branch from master so we aren't just creating an empty branch
+      @publication.branch_from_master
+      
+      @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+      @original_name = @ddb_identifier.name
+      @original_content = @ddb_identifier.content
+      @original_path = @ddb_identifier.to_path
+    end
+    
+    teardown do
+      @publication.destroy
+      @creator.destroy
+    end
+    
+    should "raise an error when the destination exists" do
+      assert_raise RuntimeError do
+        @ddb_identifier.rename('papyri.info/ddbdp/bgu;1;1')
+      end
+    end
+    
+    context "with a valid target" do
+      setup do
+        @new_name = "papyri.info/ddbdp/bgu;1;1000"
+        @ddb_identifier.rename(@new_name)
+      end
+      
+      should "have the new name" do
+        assert_equal @new_name, @ddb_identifier.name
+      end
+      
+      should "have the correct new title" do
+        expected_title = Factory.build(:DDBIdentifier, :name => @new_name).titleize
+        assert_equal expected_title, @ddb_identifier.title
+      end
+      
+      should "have the correct content at the new path" do
+        assert_equal @original_content, @ddb_identifier.content
+      end
+      
+      should "have nothing at the original path" do
+        assert_equal nil, @creator.repository.get_file_from_branch(@original_path, @publication.branch)
+      end
+    end
+  end
+  
   context "identifier mapping" do
     setup do
       @path_prefix = DDBIdentifier::PATH_PREFIX

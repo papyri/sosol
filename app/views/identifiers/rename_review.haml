@@ -1,0 +1,27 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => "common/flash_all"
+    #rename
+      %h1
+        Renaming identifier 
+        = @identifier.title
+        from publication
+        = @identifier.publication.title
+        %br
+      %h2
+        = @identifier.class
+        = @identifier.name
+      %h3
+        REMINDER: This only renames the file and identifier. You MUST
+        = link_to 'edit the XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+        to update the appropriate metadata to the new identifier so that other processes will have the correct identifier.
+        %br
+        %br
+      - form_for @identifier, :url => { :action => "rename" } do |f|
+        = f.error_messages
+        %label New name:
+        = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+        %br
+        %br
+        = f.submit "Rename", :class => 'save', :disabled => !@identifier.mutable?
