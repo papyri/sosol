@@ -652,14 +652,14 @@ class Publication < ActiveRecord::Base
   end
   
   def controlled_identifiers
-    if self.owner.class == Board
-      return self.identifiers.select do |i|
+    return self.identifiers.select do |i|
+      if self.owner.class == Board
         self.owner.identifier_classes.include?(i.class.to_s)
+      elsif self.status == 'finalizing'
+        self.parent.owner.identifier_classes.include?(i.class.to_s)
+      else
+        false
       end
-    elsif self.status == 'finalizing'
-      return self.parent.controlled_identifiers
-    else
-      return []
     end
   end
   
