@@ -35,6 +35,11 @@ class Identifier < ActiveRecord::Base
     return child_identifiers
   end
   
+  # gives origin and its children, but not self
+  def relatives
+    return [self.origin] + self.origin.children - [self]
+  end
+  
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
@@ -234,6 +239,7 @@ class Identifier < ActiveRecord::Base
   def rename(new_name)
     original_name = self.name
     original_path = self.to_path
+    original_relatives = self.relatives
 
     self.transaction do
       self.name = new_name
@@ -248,6 +254,13 @@ class Identifier < ActiveRecord::Base
                                   self.branch,
                                   commit_message,
                                   self.owner.grit_actor)
+      
+      # rename origin and children
+      original_relatives.each do |relative|
+        relative.name = new_name
+        relative.title = self.title
+        relative.save!
+      end
     end
   end
   
