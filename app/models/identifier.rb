@@ -257,12 +257,11 @@ class Identifier < ActiveRecord::Base
   end
 
 
-  def add_change_desc(text = "")
+  def add_change_desc(text = "", user_info = self.publication.creator)
     doc = REXML::Document.new self.xml_content
     base_path = "/TEI/teiHeader/revisionDesc"
     
     #get user name
-    user_info = self.publication.creator
     if user_info.full_name && user_info.full_name.strip != ""
       who_name = user_info.full_name 
     else
