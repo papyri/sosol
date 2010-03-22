@@ -72,10 +72,14 @@ class Repository
   end
   
   def get_blob_from_branch(file, branch = 'master')
-    tree = @repo.tree(branch, [File.dirname(file)])
-    subtree = tree.contents.first
-    return nil if subtree.nil?
-    blob = subtree / File.basename(file)
+    begin
+      tree = @repo.tree(branch, [File.dirname(file)])
+      subtree = tree.contents.first
+      return nil if subtree.nil?
+      blob = subtree / File.basename(file)
+    rescue Grit::GitRuby::Repository::NoSuchPath
+      return nil
+    end
   end
   
   def get_file_from_branch(file, branch = 'master')  
@@ -178,6 +182,12 @@ class Repository
   
   def rename_file(original_path, new_path, branch, comment, actor)
     content = get_file_from_branch(original_path, branch)
+    if !content
+      raise "Rename error: Original file '#{original_path}' does not exist on branch '#{branch}'"
+    elsif get_blob_from_branch(new_path, branch)
+      raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
+    end
+    
     index = @repo.index
     index.read_tree(branch)
     # do the rename here, against index.tree

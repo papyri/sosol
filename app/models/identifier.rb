@@ -215,18 +215,20 @@ class Identifier < ActiveRecord::Base
     original_name = self.name
     original_path = self.to_path
 
-    self.name = new_name
-    self.title = self.titleize
-    self.save!
+    self.transaction do
+      self.name = new_name
+      self.title = self.titleize
+      self.save!
     
-    new_path = self.to_path
-    commit_message = "Rename #{self.class::FRIENDLY_NAME} from '#{original_name}' (#{original_path}) to '#{new_name}' (#{new_path})"
+      new_path = self.to_path
+      commit_message = "Rename #{self.class::FRIENDLY_NAME} from '#{original_name}' (#{original_path}) to '#{new_name}' (#{new_path})"
     
-    self.repository.rename_file(original_path,
-                                new_path,
-                                self.branch,
-                                commit_message,
-                                self.owner.grit_actor)
+      self.repository.rename_file(original_path,
+                                  new_path,
+                                  self.branch,
+                                  commit_message,
+                                  self.owner.grit_actor)
+    end
   end
   
   #added to speed up dashboard since titleize can be slow

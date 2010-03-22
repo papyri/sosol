@@ -15,6 +15,8 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     setup do
       @creator = Factory(:user, :name => "Creator")
       @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      # branch from master so we aren't just creating an empty branch
+      @publication.branch_from_master
       
       @ddb_identifier = DDBIdentifier.new_from_template(@publication)
       @original_name = @ddb_identifier.name
@@ -25,6 +27,12 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     teardown do
       @publication.destroy
       @creator.destroy
+    end
+    
+    should "raise an error when the destination exists" do
+      assert_raise RuntimeError do
+        @ddb_identifier.rename('papyri.info/ddbdp/bgu;1;1')
+      end
     end
     
     context "with a valid target" do
