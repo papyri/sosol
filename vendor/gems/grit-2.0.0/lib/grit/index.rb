@@ -91,7 +91,7 @@ module Grit
         sha = [obj.id].pack("H*")
         k = obj.name
         k += '/' if (obj.class == Grit::Tree)
-        tree_contents[k] = "%s %s\0%s" % [obj.mode.to_s, obj.name, sha]
+        tree_contents[k] = "%s %s\0%s" % [obj.mode.to_s.sub(/^0+/,''), obj.name, sha]
       end if now_tree
 
       # overwrite with new tree contents
@@ -108,7 +108,7 @@ module Grit
             ctree = now_tree/k if now_tree
             sha = write_tree(v, ctree)
             sha = [sha].pack("H*")
-            str = "%s %s\0%s" % ['040000', k, sha]
+            str = "%s %s\0%s" % ['40000', k, sha]
             tree_contents[k + '/'] = str
         end
       end
