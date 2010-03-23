@@ -204,7 +204,7 @@ class DDBIdentifier < Identifier
     return modified_xml_content
   end
   
-  def save_broken_leiden_plus_to_xml(brokeleiden)
+  def save_broken_leiden_plus_to_xml(brokeleiden, commit_comment = '')
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     #deletes XML with broke Leiden+ if it exists already so can add with updated data
@@ -228,7 +228,7 @@ class DDBIdentifier < Identifier
     original_xml_content.write(modified_xml_content)
     
     # commit xml to repo
-    self.set_xml_content(modified_xml_content, :comment => "Save broke Leiden+ to come back to later")
+    self.set_xml_content(modified_xml_content, :comment => commit_comment)
   end
 
   def preview

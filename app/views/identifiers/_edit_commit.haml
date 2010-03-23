@@ -1,7 +1,7 @@
 %p
   %label Edit summary (Briefly describe the changes you have made):
   %br
-  = text_field_tag :comment, '', :class => :comment, :size => '80', :disabled => !identifier.mutable?
+  = text_field_tag :comment, defined?(original_commit_comment) ? original_commit_comment : '', :class => :comment, :size => '80', :disabled => !identifier.mutable?
   = f.submit "Save", :class => 'save', :disabled => !identifier.mutable?
   - if defined?(bad_leiden) && bad_leiden
     = f.submit "Save With Broken Leiden+", :class => 'save2', :disabled => !identifier.mutable?
