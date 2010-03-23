@@ -252,6 +252,10 @@ class PublicationsController < ApplicationController
     @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
+    
+    #find other users who are editing the same thing
+    @other_user_publications = Publication.other_users(@publication.title, @current_user.id)
+    
 
     determine_creatable_identifiers()
     

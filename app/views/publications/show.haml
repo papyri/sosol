@@ -58,6 +58,11 @@
     - for comment in @comments
       = render :partial => comment      
    
+  - if @other_user_publications != nil
+    %h3 This publication is also being edited by:
+    - for other_pub in @other_user_publications
+      = other_pub.creator.name
+      %br
 
   - if @publication.status == "editing"
     - for class_type in @creatable_identifiers
