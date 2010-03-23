@@ -4,9 +4,10 @@ de:
     title: 'Titel'
     author: 'Autor'
     monographic_title: 'Buchtitel'
+    monographic_title_short: 'Buchtitel (Abk.)'
     series_title: 'Reihe'
     series_number: 'Band'
-    journal_title: 'Heft'
+    journal_title_short: 'Heft (Abk.)'
     journal_number: 'Heftnummer'
     editor: 'Herausgeber'
     place_of_publication: 'Erscheinungsort'
@@ -15,12 +16,12 @@ de:
     pagination_start: 'von'
     pagination_end: 'bis'
     notes: 'Hinweise'
-    number: 'Nummer'
-    date: 'Datum'
+    reedition: 'Neuedition von'
     new_entry: 'Neuer Eintrag'
+    conflict:
+      message: 'Das Dokument enthält bereits einfache bibliographische Einträge'
     headings:
         main: 'Hauptbibliographie'
-        other: 'Weitere bibliographische Verweise'
         secondary: 'Sekundärliteratur'
         meta: 'Metadaten'
     zotero:

@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Choose Your Language and Extent of Ellipsis Line Gap</h3>
       #gapelliplangradio_div
         %form{:name => "appsubstdel"}

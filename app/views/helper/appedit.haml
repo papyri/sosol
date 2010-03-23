@@ -5,12 +5,13 @@
   .site
     = stylesheet_link_tag 'helper'
     #app3col{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h4>Correction noted in series 'Correction noted in series 'Corrigenda', not necessarily reflected in BL: φιάλα̣ς̣ τοῦδ̣έ̣ --> Φιλαρέτου <:Φιλαρέτου|ed:|φιάλα̣ς̣ τοῦδ̣έ̣:></h4>
       #app_col
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appeditlem_value", :size => "25"}Lem (lem)
         #app_desc
-          orrect form: e.g.: Φιλαρέτου
+          Correct form: e.g.: Φιλαρέτου
         #app_button
           %button{ :type => "button", :onclick=>"insertAppEdit()"}Insert
           &nbsp

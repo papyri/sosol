@@ -2,6 +2,8 @@ class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
   
+  protect_from_forgery :only => []
+  
   def new
   end
   
@@ -40,6 +42,7 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
         @publication.identifiers.each do |i|
           @creatable_identifiers.each do |ci|
+            Rails.logger.info("Creatable identifier: #{ci}")
             if ci == i.class.to_s
               @creatable_identifiers.delete(ci)    
             end
@@ -90,17 +93,6 @@ class PublicationsController < ApplicationController
     flash[:notice] = 'Publication was successfully created.'
     #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     redirect_to @publication
-  end
-  
-  
-  
-  def submit_review
-    @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id)  
-    @allow_submit = allow_submit?
-            
-    #redirect_to @publication
-    # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
   
   def submit
@@ -246,7 +238,8 @@ class PublicationsController < ApplicationController
     #only let creator delete
     @allow_delete = @current_user.id == @publication.creator.id 
     #only delete new or editing
-    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
+    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")
+    @identifier = @publication.entry_identifier
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
     
@@ -267,7 +260,9 @@ class PublicationsController < ApplicationController
   end
   
   def edit_text
-    edit
+    @publication = Publication.find(params[:id])
+    @identifier = DDBIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_meta
@@ -298,7 +293,11 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      document_path = [collection, volume, document].join('_')
+      if volume.empty?
+        document_path = [collection, document].join('_')
+      else
+        document_path = [collection, volume, document].join('_')
+      end
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
@@ -481,8 +480,6 @@ class PublicationsController < ApplicationController
       
     end
   end
-  
-  
   
   
   def master_list

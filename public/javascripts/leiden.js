@@ -162,7 +162,28 @@ function insertDivisionMain(division_type)
 {
   getFocusMain()
   
-  startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+  switch (division_type)
+  {
+  case "r":
+  case "v":
+  
+    {
+      startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      break;
+    }
+  case "column":
+  case "fragment":
+  case "side":
+  
+    {
+      startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      break;
+    }
+  default:
+    {
+      alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.")
+    }
+  }
   
   new Ajax.Request(ajaxConvert, 
   {
