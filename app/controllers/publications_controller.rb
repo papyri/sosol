@@ -99,7 +99,7 @@ class PublicationsController < ApplicationController
   
   def submit_review
     @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id)  
+    @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')  
     @allow_submit = allow_submit?
             
     #redirect_to @publication
