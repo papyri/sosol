@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Enter Extent of Non-Transcribed Gap and Gap Type</h3>
       #extent_left
         %input{ :type => "text", :class => "choosetext", :id => "gapellipNT_value", :size => "07"}Extent
