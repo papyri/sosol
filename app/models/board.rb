@@ -27,6 +27,10 @@ class Board < ActiveRecord::Base
     return title
   end
   
+  def human_name
+    return title
+  end
+  
   def after_create
     repository.create
   end

@@ -1,6 +1,16 @@
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
-    = button_to "Finalize", finalize_publication_path(@publication), :disabled => (@publication.status != 'finalizing'), :class => 'submit', :method => :post
+
+    = render :partial => 'identifiers/header'
+    %br
+    - form_tag  finalize_publication_path(@publication), :method => :post do
+      = label_tag "Finalization comment:"
+      = text_area_tag :comment, '', :class => :comment, :cols => '80', :rows => '5'
+      = hidden_field_tag 'identifier_id', @identifier.id
+      %br
+      = submit_tag "Finalize", :class => 'save'
+
     %br
     = render :partial => 'common/diff', :object => @diff
+

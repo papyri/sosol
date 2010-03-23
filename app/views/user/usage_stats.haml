@@ -1,0 +1,55 @@
+#main
+  
+  = render :partial => "common/flash_all"
+ 
+  #usage_stats
+    - @users.each do |user|
+      - if @users.length > 1 && user.name
+        %h2
+          = user.name
+      - votes = Comment.vote.find_all_by_user_id(user.id)
+      - if votes.length > 0
+        %h3 Votes
+        - votes.each do |vote| 
+          %span.comment   
+            - if vote.publication && vote.publication.title    
+              = link_to vote.publication.title, vote.publication
+              = "(" + vote.identifier.title + ")"
+              = "Vote " + vote.comment 
+              %span.date 
+                = vote.created_at.to_formatted_s(:long)
+          
+          %br
+      
+
+      - submits = Comment.submit.find_all_by_user_id(user.id)
+      - if submits.length > 0
+        %h3 Submissions
+        - submits.each do |submit| 
+          %span.comment     
+            - if submit.publication && submit.publication.title
+              = link_to submit.publication.title, submit.publication  
+              = "(" + submit.publication.status + ")"  
+              = submit.comment 
+              %span.date 
+                = submit.created_at.to_formatted_s(:long)
+          %br
+        
+      
+      
+      - finalizings = Comment.finalizing.find_all_by_user_id(user.id)
+      - if finalizings.length > 0  
+        %h3 Finalized
+        - finalizings.each do |finalizing|
+          %span.comment 
+            - if finalizing.publication && finalizing.publication.title 
+              = link_to finalizing.publication.title, finalizing.publication
+              - if finalizing.identifier && finalizing.identifier.title
+                = finalizing.identifier.title   
+              = finalizing.comment 
+              %span.date 
+                = finalizing.created_at.to_formatted_s(:long)
+          %br
+        
+      %br
+      %br

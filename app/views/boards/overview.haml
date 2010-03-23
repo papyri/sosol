@@ -24,6 +24,12 @@
   - @board.decrees.each do |decree|
     = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
 
+  %b
+    Emails
+  - @board.emailers.each do |emailer|
+    = render :partial => emailer, :locals =>  {:hide_edit_link=> 'true'}
+
+
 
   -#-------publications--------
 
@@ -47,6 +53,12 @@
       %h3== Approved Publications
       = render :partial => "publications/list", :object => approved_publications
       %br
+    
+    
+    - if @finalizing_publications.length > 0         
+      %h3== Finalizing
+      = render :partial => "publications/list", :object => @finalizing_publications
+      %br
       
     - board_publications = @board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
     - if board_publications.length > 0        
@@ -54,9 +66,11 @@
       = render :partial => "publications/list", :object => board_publications
       %br
       
+    - board_publications = @board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
+    - if board_publications.length > 0        
+      %h3== Archived Publications
+      = render :partial => "publications/list", :object => board_publications
+      %br
     
-    - if @finalizing_publications.length > 0         
-      %h3== Finalizing
-      = render :partial => "publications/list", :object => @finalizing_publications
     -#  %br
         

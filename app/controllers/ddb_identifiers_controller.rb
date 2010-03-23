@@ -8,7 +8,7 @@ class DdbIdentifiersController < IdentifiersController
     begin
       @identifier[:leiden_plus] = @identifier.leiden_plus
     rescue RXSugar::XMLParseError => parse_error
-      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
+      flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_plus] = parse_error.content
     end
   end
@@ -16,21 +16,39 @@ class DdbIdentifiersController < IdentifiersController
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_identifier
-    begin
-      @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
-                                  params[:comment])
-      if params[:comment] != nil && params[:comment].strip != ""
-        @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-        @comment.save
-      end
-      flash[:notice] = "File updated."
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                   :action => :edit)
-    rescue RXSugar::NonXMLParseError => parse_error
-      flash.now[:error] = "Error at line #{parse_error.line}, column #{parse_error.column}"
-      @identifier[:leiden_plus] = parse_error.content
-      render :template => 'ddb_identifiers/edit'
-    end
+    @bad_leiden = false
+    @original_commit_comment = ''
+    if params[:commit] == "Save With Broken Leiden+"
+      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
+      @bad_leiden = true
+      flash.now[:notice] = "File updated with broken Leiden+"
+        @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
+        render :template => 'ddb_identifiers/edit'
+    else #Save button is clicked
+      begin
+        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
+                                    params[:comment])
+        if params[:comment] != nil && params[:comment].strip != ""
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment.save
+        end
+        flash[:notice] = "File updated."
+        redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                     :action => :edit)
+      rescue RXSugar::NonXMLParseError => parse_error
+        flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}"
+        @identifier[:leiden_plus] = parse_error.content
+        @bad_leiden = true
+        @original_commit_comment = params[:comment]
+        render :template => 'ddb_identifiers/edit'
+      rescue JRubyXML::ParseError => parse_error
+        flash[:error] = parse_error.to_str + 
+                        ".  This message because the XML created from Leiden+ below did not pass Relax NG validation.  "
+        @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
+        #@identifier[:leiden_plus] = parse_error.message
+        render :template => 'ddb_identifiers/edit'
+      end #begin
+    end #when
   end
   
   # GET /publications/1/ddb_identifiers/1/preview

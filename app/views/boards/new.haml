@@ -1,4 +1,5 @@
 #main.site
+  = render :partial => "common/flash_all"  
   %h1
     New board
   - form_for(@board) do |f|
@@ -12,10 +13,10 @@
       = f.label "Identifier classes"
       %br
       - @available_identifier_classes.each do |identifier_class|
-        = check_box_tag identifier_class
+        / limit to one choice
+        = radio_button_tag "identifier_class", "#{identifier_class}", "#{identifier_class}"
         = identifier_class.sub(/Identifier$/,'')
         %br
     %br
     %p
       = f.submit "Create"
-  -#= link_to 'Back', boards_path

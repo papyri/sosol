@@ -6,6 +6,23 @@ class UserController < ApplicationController
     redirect_to :controller => :welcome, :action => "index"
   end
   
+  #default view of stats is only for the current user, see below for all users
+  def usage_stats    
+    @users = Array.new()
+    @users << @current_user
+  end
+
+  #TODO who has the right to see this?, will this create any dangerous links to things that a user should not be able to do 
+  def all_usage_stats
+    if @current_user.admin || @current_user.developer
+      @users = User.find(:all)
+      render "usage_stats"
+      return
+    end
+    redirect_to dashboard_url
+  end
+  
+  
   def account
     if @current_user
       @identifiers = @current_user.user_identifiers
@@ -53,8 +70,10 @@ class UserController < ApplicationController
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
     @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
     #below selects publications current user is responsible for finalizing to show in board section of dashboard
-    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+    #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => :identifiers, :order => "updated_at DESC")
        
+    @boards = @current_user.boards   
     #or do we want to use the creator id?
     #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
     
@@ -63,7 +82,19 @@ class UserController < ApplicationController
     
   end
   
-  
+  def archives
+   # @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
+    #@board_final_pubs = Array.new()
+    #@events = Array.new()
+    if params[:board_id] 
+      @board = Board.find_by_id(params[:board_id])
+      @publications = @board.publications.find( :all, :conditions => { :status => 'archived' }, :include => :identifiers, :order => "updated_at DESC")
+    else
+      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
+    end
+    
+
+  end  
 
   def update_personal
   #TODO don't let any bozo change this data

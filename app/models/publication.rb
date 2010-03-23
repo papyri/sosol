@@ -32,6 +32,9 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
+  #inelegant way to pass this info, but it works
+  attr_accessor :recent_submit_sha
+  
   def populate_identifiers_from_identifier(identifier)
     self.title = identifier_to_ref(identifier)
     # Coming in from an identifier, build up a publication
@@ -125,32 +128,36 @@ class Publication < ActiveRecord::Base
     
   end
   
+  
   def submit_identifier(identifier)
-    #find correct board
+    
+    @recent_submit_sha = "";
+    
+    #find correct board    
     
     boards = Board.find(:all)
     boards.each do |board|
       if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
+        begin
+          submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
+          if submit_comment && submit_comment.comment
+            identifier.add_change_desc(submit_comment.comment)
+          else
+            identifier.add_change_desc()
+          end
+        rescue ActiveRecord::RecordNotFound
+          identifier.add_change_desc()
+        end
         
         boards_copy = copy_to_owner(board)
         boards_copy.status = "voting"
         boards_copy.save
         
-        # duplicate = self.clone
-        #duplicate.owner = new_owner
-       # duplicate.creator = self.creator
-     #   duplicate.title = self.owner.name + "/" + self.title
-     #   duplicate.branch = title_to_ref(duplicate.title)
-          
-        
-        # self.owner_id = board.id
-        # self.owner_type = "Board"
-        
         identifier.status = "submitted"
         self.status = "submitted"
         
         board.send_status_emails("submitted", self)
-        
+       
         # self.title = self.creator.name + "/" + self.title
         # self.branch = title_to_ref(self.title)
         # 
@@ -158,6 +165,9 @@ class Publication < ActiveRecord::Base
       #(from_branch, to_branch, from_repo)
         self.save
         identifier.save
+        
+        #make the most recent sha for the identifier available...is this the one we want?
+        @recent_submit_sha = identifier.get_recent_commit_sha
         return true
       end
     end
@@ -166,31 +176,6 @@ class Publication < ActiveRecord::Base
   
   def submit
     submit_to_next_board
-    return
-    #note return here to comment out rest of function
-    boards = Board.find(:all)
-    boards.each do |board|
-      board_matches_publication = false
-      identifiers.each do |identifier|
-        if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
-          board_matches_publication = true
-          break
-        end
-      end
-      
-      if board_matches_publication
-        copy_to_owner(board)
-      end
-    end
-    
-    self.status = "submitted"
-    self.save!
-    
-    e = Event.new
-    e.category = "submitted"
-    e.target = self
-    e.owner = self.owner
-    e.save!
   end
   
   def self.new_from_templates(creator)
@@ -291,6 +276,14 @@ class Publication < ActiveRecord::Base
       end
   end
   
+  def archive
+    #delete the repo
+    self.owner.repository.delete_branch(self.branch)
+    #set status to archved
+    self.status = "archived" 
+    #should we set identifiers status as well?
+    self.save  
+  end
   
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes
@@ -550,6 +543,11 @@ class Publication < ActiveRecord::Base
   end
   
   def commit_to_canon
+  
+    #commit_sha is just used to return git sha reference point for comment
+    commit_sha = nil
+  
+  
     canon = Repository.new
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
@@ -570,13 +568,14 @@ class Publication < ActiveRecord::Base
     #   self.owner.repository.repo.git.merge_tree({},
     #     publication_sha, canonical_sha, publication_sha))
     
+    
     if canon_controlled_identifiers.length > 0
       if commits.length == 0
         # nothing new from canon, trivial merge by updating HEAD 
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        canon.repo.update_ref('master', publication_sha)
+        commit_sha = canon.repo.update_ref('master', publication_sha)
         canon.repo.git.repack({})
       
         self.status = 'committed'
@@ -633,17 +632,21 @@ class Publication < ActiveRecord::Base
       
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        canon.repo.update_ref('master', finalized_commit_sha1)
+        commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
         canon.repo.git.repack({})
       
+
         self.status = 'committed'
         self.save!
+        
       end
     else
       # nothing under canon control, just say it's committed
       self.status = 'committed'
       self.save!
+      
     end
+    return commit_sha
   end
   
   
@@ -652,14 +655,14 @@ class Publication < ActiveRecord::Base
   end
   
   def controlled_identifiers
-    if self.owner.class == Board
-      return self.identifiers.select do |i|
+    return self.identifiers.select do |i|
+      if self.owner.class == Board
         self.owner.identifier_classes.include?(i.class.to_s)
+      elsif self.status == 'finalizing'
+        self.parent.owner.identifier_classes.include?(i.class.to_s)
+      else
+        false
       end
-    elsif self.status == 'finalizing'
-      return self.parent.controlled_identifiers
-    else
-      return []
     end
   end
   
