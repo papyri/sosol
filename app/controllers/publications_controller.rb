@@ -252,7 +252,6 @@ class PublicationsController < ApplicationController
     @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
-    
 
     determine_creatable_identifiers()
     
@@ -431,6 +430,10 @@ class PublicationsController < ApplicationController
     if !has_voted 
       @vote.save
       @comment.save
+      
+      #update the change desc for the identifier
+      @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
+      @vote.identifier.save
     end #!has_voted
     #do what now? go to review page
     
