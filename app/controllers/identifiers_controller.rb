@@ -46,15 +46,17 @@ class IdentifiersController < ApplicationController
     begin
       commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
-    if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save
-    end                                  
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+        @comment.save
+      end                                  
       flash[:notice] = "File updated."
-    rescue JRubyXML::ParseError => parse_error
-      flash[:error] = parse_error.to_str
-    end
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
+    rescue JRubyXML::ParseError => parse_error
+      flash.now[:error] = parse_error.to_str
+      @identifier[:xml_content] = xml_content
+      render :template => 'identifiers/editxml'
+    end
   end
 end

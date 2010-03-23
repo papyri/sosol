@@ -115,10 +115,10 @@
       %li#115
         %a{ :href => "#"}Division
         %ul{ :width => "100"}
-          %li#11501{ :jsFunction => "insertDivisionMain('recto')"}
+          %li#11501{ :jsFunction => "insertDivisionMain('r')"}
             %a{ :href => "#"}Recto
           %li#11502{ :itemType => "separator"}
-          %li#11503{ :jsFunction => "insertDivisionMain('verso')"}
+          %li#11503{ :jsFunction => "insertDivisionMain('v')"}
             %a{ :href => "#"}Verso
           %li#11504{ :itemType => "separator"}
           %li#11505{ :jsFunction => "insertDivisionMain('fragment')"}
@@ -127,7 +127,10 @@
           %li#11507{ :jsFunction => "insertDivisionMain('column')"}
             %a{ :href => "#"}Column
           %li#11508{ :itemType => "separator"}
-          %li#11509{ :jsFunction => "helpDialogOpen('division')"}
+          %li#11509{ :jsFunction => "insertDivisionMain('side')"}
+            %a{ :href => "#"}Side
+          %li#11510{ :itemType => "separator"}
+          %li#11511{ :jsFunction => "helpDialogOpen('division')"}
             %a{ :href => "#"}Other
   %li#2{ :itemType => "separator"}
   %li#3{ :jsFunction => "insertUnderdot()"}
@@ -136,14 +139,5 @@
   %li#5{ :jsFunction => "helpDialogOpen('tryit')"}
     %a{ :href => "#"}Try It
   %li#6{ :itemType => "separator"}
-  %li#7{ :jsFunction => "changeTextareaSize('small')"}
-    %a{ :href => "#"}Small Display
-  %li#8{ :itemType => "separator"}
-  %li#9{ :jsFunction => "changeTextareaSize('medium')"}
-    %a{ :href => "#"}Medium Display
-  %li#10{ :itemType => "separator"}
-  %li#11{ :jsFunction => "changeTextareaSize('default')"}
-    %a{ :href => "#"}Default Display
-  %li#12{ :itemType => "separator"}
 %p
   %div#menuDiv

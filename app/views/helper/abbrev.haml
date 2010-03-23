@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Enter abbreviation, e.g. "Jos(h)ua"</h3>
       <h4>Valid values: στρ(ατηγός) / (ἔτους) / (Ἑπτα)κωμ(ίας) / ν(ε)ωτ(έρῳ) / Ἀθην(  ) / στρ(ατηγός?) vel sim</h4>
       #abbrevtext_div

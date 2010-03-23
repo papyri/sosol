@@ -162,7 +162,28 @@ function insertDivisionMain(division_type)
 {
   getFocusMain()
   
-  startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+  switch (division_type)
+  {
+  case "r":
+  case "v":
+  
+    {
+      startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      break;
+    }
+  case "column":
+  case "fragment":
+  case "side":
+  
+    {
+      startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      break;
+    }
+  default:
+    {
+      alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.")
+    }
+  }
   
   new Ajax.Request(ajaxConvert, 
   {
@@ -250,26 +271,3 @@ function insertTextMain(vti)
         element.value = element.value+c;
       };
 } /*########################     end insertTextMain     ########################*/
-
-/*###########################################################################################*/
-/* change the size of the edit textarea                                                      */
-/*###########################################################################################*/
-
-function changeTextareaSize(size)
-{
-  if(size == 'small')
-    {
-      document.getElementById("ddb_identifier_leiden_plus").style.height = "18em";
-    }
-  else
-    {
-    if(size == 'medium')
-      {
-        document.getElementById("ddb_identifier_leiden_plus").style.height = "34em";
-      }
-    else
-      {
-        document.getElementById("ddb_identifier_leiden_plus").style.height = "50em";
-      }
-    }
-} /*########################     end changeTextareaSize    ########################*/

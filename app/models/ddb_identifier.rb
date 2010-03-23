@@ -169,6 +169,11 @@ class DDBIdentifier < Identifier
       original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/ab')
     end
     
+    #this is to put only 1 new line at the end of the edition div - without this several new lines may exist
+    #being left over after multiple ab/div's deleted above and starts adding more and more if do multiple updates
+    loc_nl_original_edition = original_xml_content.elements['/TEI/text/body/div[@type = "edition"]']
+    loc_nl_original_edition.text = "\n"
+    
     # add modified abs to edition
     modified_abs = transformed_xml_content.elements[
       '/wrapab']
@@ -176,12 +181,18 @@ class DDBIdentifier < Identifier
     original_edition =  original_xml_content.elements[
       '/TEI/text/body/div[@type = "edition"]']
     
-    #put loop in because previous did not work with multiple because destructive to array
+    #put loop in because previous did not work with multiple because destructive to array[0]
     #loop through however many need to add and always add the first one in the array which gets deleted
     loop_cnt = 0
     nbr_to_add = modified_abs.length
     until loop_cnt == nbr_to_add 
-      original_edition.add_element(modified_abs[0])
+      
+      if modified_abs[0] == "\n" #means it is a text node not and element
+        original_edition.add_text modified_abs[0]
+      else
+        original_edition.add_element(modified_abs[0])
+      end
+      
       loop_cnt+=1
     end
     
