@@ -260,6 +260,13 @@ class Identifier < ActiveRecord::Base
         relative.name = new_name
         relative.title = self.title
         relative.save!
+        
+        # copy the branch back to each relative so they can access the file
+        relative.publication.repository.delete_branch(
+          relative.publication.branch)
+        relative.publication.repository.copy_branch_from_repo(
+          self.publication.branch, relative.publication.branch, 
+          self.publication.repository)
       end
     end
   end
