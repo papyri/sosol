@@ -21,7 +21,7 @@ class DdbIdentifiersController < IdentifiersController
     if params[:commit] == "Save With Broken Leiden+"
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
-      flash.now[:error] = "File updated with broken Leiden+"
+      flash.now[:notice] = "File updated with broken Leiden+"
         @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
