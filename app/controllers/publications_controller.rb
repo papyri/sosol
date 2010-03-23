@@ -249,7 +249,8 @@ class PublicationsController < ApplicationController
     #only let creator delete
     @allow_delete = @current_user.id == @publication.creator.id 
     #only delete new or editing
-    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
+    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")
+    @identifier = @publication.entry_identifier
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
     

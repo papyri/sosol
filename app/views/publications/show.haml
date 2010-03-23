@@ -1,79 +1,81 @@
-#main.site
-  %h2 
-    = @publication.title
-    - if !@publication.status.nil? && @publication.status != ''
-      == (#{@publication.status})
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    %h2 
+      = @publication.title
+      - if !@publication.status.nil? && @publication.status != ''
+        == (#{@publication.status})
       
-  = render :partial => "common/flash_all"    
+    = render :partial => "common/flash_all"    
 
-  #submit
-    - if @show_submit
-      = button_to "Submit", submit_review_publication_path(@publication), :class => 'submit', :method => :get
-
-
-    -# if owner is a board, and it is approved, add a button to make me the finalizer
-    - if @publication.owner_type == "Board" && @publication.status == "approved"
-      -# if i am already the finalizer dont show the button
-      - finalizer = @publication.find_finalizer_user
-      - if !(finalizer && finalizer.id == @current_user.id)
-        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
+    #submit
+      - if @show_submit
+        = button_to "Submit", submit_review_publication_path(@publication), :class => 'submit', :method => :get
 
 
-  - if @current_user.developer
-    - if @publication.modified?
-      %h1 MODIFIED PUBLICATION
+      -# if owner is a board, and it is approved, add a button to make me the finalizer
+      - if @publication.owner_type == "Board" && @publication.status == "approved"
+        -# if i am already the finalizer dont show the button
+        - finalizer = @publication.find_finalizer_user
+        - if !(finalizer && finalizer.id == @current_user.id)
+          = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
+
+
+    - if @current_user.developer
+      - if @publication.modified?
+        %h1 MODIFIED PUBLICATION
       
       
-  - for identifier in @publication.identifiers 
-    - image_name = ""       
-    - case identifier
-      - when DDBIdentifier
-        %h3 
-          Text - 
-          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-        - image_name = 'ddb.gif'
+    - for identifier in @publication.identifiers 
+      - image_name = ""       
+      - case identifier
+        - when DDBIdentifier
+          %h3 
+            Text - 
+            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
+          - image_name = 'ddb.gif'
 
-      - when HGVMetaIdentifier
-        %h3 
-          Meta -
-          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-        - image_name = 'hgv.gif'
+        - when HGVMetaIdentifier
+          %h3 
+            Meta -
+            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
+          - image_name = 'hgv.gif'
         
-      - when HGVTransIdentifier
-        %h3 
-          Translation - 
-          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-        - image_name = 'hgv.gif'
+        - when HGVTransIdentifier
+          %h3 
+            Translation - 
+            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
+          - image_name = 'hgv.gif'
         
       
-    %p
-      = image_tag(image_name)  
+      %p
+        = image_tag(image_name)  
       
-      = identifier.title
-      - if @publication.status != "archived"
-        = render :partial => identifier        
+        = identifier.title
+        - if @publication.status != "archived"
+          = render :partial => identifier        
 
-  - if @comments != nil  
-    %h3 Comments 
-    - for comment in @comments
-      = render :partial => comment      
+    - if @comments != nil  
+      %h3 Comments 
+      - for comment in @comments
+        = render :partial => comment      
    
 
-  - if @publication.status == "editing"
-    - for class_type in @creatable_identifiers
-      - create_type = class_type.constantize::FRIENDLY_NAME
-      - create_type = 'Create new ' + create_type
-      = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
-      %br
+    - if @publication.status == "editing"
+      - for class_type in @creatable_identifiers
+        - create_type = class_type.constantize::FRIENDLY_NAME
+        - create_type = 'Create new ' + create_type
+        = link_to create_type, :controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post
+        %br
 
-  - if @allow_delete
-    = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
-    %br
+    - if @allow_delete
+      = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
+      %br
   
-  - if @publication.status == "committed"
-    = link_to "Archive", :controller => 'publications', :id => @publication.id, :action => "confirm_archive"
-    %br
+    - if @publication.status == "committed"
+      = link_to "Archive", :controller => 'publications', :id => @publication.id, :action => "confirm_archive"
+      %br
   
-  - if @current_user.developer  
-    = link_to "developer immediate delete", @publication, :method => :delete 
-    %br
+    - if @current_user.developer  
+      = link_to "developer immediate delete", @publication, :method => :delete 
+      %br
