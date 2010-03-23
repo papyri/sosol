@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Enter Extent of Vestig Gap and Vestig Type</h3>
       <h4>Valid values: e.g. 2 / c.3 / blank</h4>
       #extent_left

@@ -482,8 +482,6 @@ class PublicationsController < ApplicationController
   end
   
   
-  
-  
   def master_list
     if @current_user.developer
       @publications = Publication.find(:all)

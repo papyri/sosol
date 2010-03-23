@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #number_div{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Select Number Type and Enter Associated Values To Insert </h3>
       #numcol1
         #numtype_div
