@@ -10,40 +10,41 @@
       
     = render :partial => "common/flash_all"    
 
-    #submit
-      - if @show_submit
-        %h3 Submit
-        %p   
-          You have changed the following items:
-          %ul  
-            - for identifier in @publication.identifiers      
-              - if identifier.modified
-                %li
-                  = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
-          They will be submitted to the proper boards for review.
-          - form_tag  :controller => 'publications', :action => "submit"  do
-            You will no longer be able to edit any of the items in this the publication once it is submitted. 
+    - if %w{new editing}.include?(@publication.status)
+      #submit
+        - if @show_submit
+          %h3 Submit
+          %p   
+            You have changed the following items:
+            %ul  
+              - for identifier in @publication.identifiers      
+                - if identifier.modified
+                  %li
+                    = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
+            They will be submitted to the proper boards for review.
+            - form_tag  :controller => 'publications', :action => "submit"  do
+              You will no longer be able to edit any of the items in this the publication once it is submitted. 
+              %br
+              %br
+              = label_tag "Briefly describe the reason for your submission:"
+              %br
+              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 80, :rows => 4
+              %br
+              %br
+              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+        - else
+          %b
+            Publication may not be submitted at this time.
             %br
-            %br
-            = label_tag "Briefly describe the reason for your submission:"
-            %br
-            = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 80, :rows => 4
-            %br
-            %br
-            = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
-      - else
-        %b
-          Publication may not be submitted at this time.
-          %br
-        - if !@publication.modified?
-          No changes have been made.
+          - if !@publication.modified?
+            No changes have been made.
 
-      -# if owner is a board, and it is approved, add a button to make me the finalizer
-      - if @publication.owner_type == "Board" && @publication.status == "approved"
-        -# if i am already the finalizer dont show the button
-        - finalizer = @publication.find_finalizer_user
-        - if !(finalizer && finalizer.id == @current_user.id)
-          = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
+    -# if owner is a board, and it is approved, add a button to make me the finalizer
+    - if @publication.owner_type == "Board" && @publication.status == "approved"
+      -# if i am already the finalizer dont show the button
+      - finalizer = @publication.find_finalizer_user
+      - if !(finalizer && finalizer.id == @current_user.id)
+        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
     
     %br
     
