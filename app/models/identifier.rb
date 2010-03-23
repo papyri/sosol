@@ -261,12 +261,12 @@ class Identifier < ActiveRecord::Base
         relative.title = self.title
         relative.save!
         
-        # copy the branch back to each relative so they can access the file
-        relative.publication.repository.delete_branch(
-          relative.publication.branch)
-        relative.publication.repository.copy_branch_from_repo(
-          self.publication.branch, relative.publication.branch, 
-          self.publication.repository)
+        # rename the file on the relative
+        relative.repository.rename_file(original_path,
+                                        new_path,
+                                        relative.branch,
+                                        commit_message,
+                                        self.owner.grit_actor)
       end
     end
   end
