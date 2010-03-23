@@ -24,7 +24,7 @@ class DDBIdentifier < Identifier
   end
   
   def n_attribute
-    return to_components.join(';')
+    return to_components[2..-1].join(';')
   end
   
   def xml_title_text
