@@ -3,4 +3,5 @@
   %br
   = text_field_tag :comment, '', :class => :comment, :size => '80', :disabled => !identifier.mutable?
   = f.submit "Save", :class => 'save', :disabled => !identifier.mutable?
-  = f.submit "SaveBrokeLeiden+", :class => 'save2', :disabled => !identifier.mutable?
+  - if defined?(bad_leiden) && bad_leiden
+    = f.submit "Save With Broken Leiden+", :class => 'save2', :disabled => !identifier.mutable?

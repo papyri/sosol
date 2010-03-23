@@ -16,11 +16,12 @@ class DdbIdentifiersController < IdentifiersController
   # PUT /publications/1/ddb_identifiers/1/update
   def update
     find_identifier
-    case params[:commit]
-    when "SaveBrokeLeiden+"
+    @bad_leiden = false
+    if params[:commit] == "Save With Broken Leiden+"
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus])
-      flash.now[:error] = "File updated with broke Leiden+"
-        @identifier[:leiden_plus] = "Broke Leiden+ below saved to come back to later" + "\n" + params[:ddb_identifier][:leiden_plus]
+      @bad_leiden = true
+      flash.now[:error] = "File updated with broken Leiden+"
+        @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
       begin
@@ -36,6 +37,7 @@ class DdbIdentifiersController < IdentifiersController
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}"
         @identifier[:leiden_plus] = parse_error.content
+        @bad_leiden = true
         render :template => 'ddb_identifiers/edit'
       rescue JRubyXML::ParseError => parse_error
         flash[:error] = parse_error.to_str + 

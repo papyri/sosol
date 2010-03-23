@@ -9,6 +9,8 @@ class DDBIdentifier < Identifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
+  BROKE_LEIDEN_MESSAGE = "Broke Leiden+ below saved to come back to later\n"
+  
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
   
@@ -112,7 +114,7 @@ class DDBIdentifier < Identifier
       #get the broke Leiden+
       brokeleiden = brokeleiden_here.get_text.value
       
-      return brokeleiden
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
     end
   end
   
@@ -218,7 +220,7 @@ class DDBIdentifier < Identifier
     #set in XML where to add broken Leiden+ and add it
     basepath = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]/note'
     add_node_here = REXML::XPath.first(original_xml_content, basepath)
-    brokeleiden = "Broke Leiden+ below saved to come back to later" + "\n" + brokeleiden
+    brokeleiden = BROKE_LEIDEN_MESSAGE + brokeleiden
     add_node_here.add_text brokeleiden
     
     # write back to a string
