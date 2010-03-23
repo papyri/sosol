@@ -95,17 +95,6 @@ class PublicationsController < ApplicationController
     redirect_to @publication
   end
   
-  
-  
-  def submit_review
-    @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id)  
-    @allow_submit = allow_submit?
-            
-    #redirect_to @publication
-    # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
-  end
-  
   def submit
     @publication = Publication.find(params[:id])
     
