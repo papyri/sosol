@@ -4,9 +4,10 @@ es:
     title: 'título'
     author: 'autor'
     monographic_title: 'título del libro'
+    monographic_title_short: 'título del libro (abbr.)'
     series_title: 'fila'
     series_number: 'banda'
-    journal_title: 'título de la revista'
+    journal_title_short: 'título de la revista (abbr.)'
     journal_number: 'número de la revista'
     editor: 'editor'
     place_of_publication: 'publicación'
@@ -15,12 +16,12 @@ es:
     pagination_start: 'de'
     pagination_end: 'hasta'
     notes: 'notas'
-    number: 'banda'
-    date: 'fecha'
+    reedition: 'reedición de'
     new_entry: 'nueva entrada'
+    conflict:
+      message: 'Documento contiene los datos bibliográficos en conflicto'
     headings:
         main: 'bibliografía'
-        other: 'otras referencias bibliográficas'
         secondary: 'secundaria'
         meta: 'metadatos'
     zotero:

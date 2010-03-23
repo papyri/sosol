@@ -1,7 +1,7 @@
 .comment_partial
   .name 
     - if comment.user && comment.user.name
-      = comment.user.name
+      = comment.user.human_name
   .time
     = comment.created_at
   .reason 

@@ -4,9 +4,10 @@ fr:
     title: 'titre'
     author: 'auteur'
     monographic_title: 'titre du livre'
+    monographic_title_short: 'titre du livre (abbr.)'
     series_title: 'series'
     series_number: 'numéro'
-    journal_title: 'titre du journal'
+    journal_title_short: 'titre du journal (abbr.)'
     journal_number: 'revue no.'
     editor: 'sous la direction de'
     place_of_publication: 'publication'
@@ -15,12 +16,12 @@ fr:
     pagination_start: 'partir de la page'
     pagination_end: 'à page'
     notes: 'notes'
-    number: 'numéro'
-    date: 'date'
+    reedition: 'réédition de'
     new_entry: 'nouvelle entrée'
+    conflict:
+      message: 'Le document contient des données contradictoires bibliographiques'
     headings:
         main: 'bibliographie'
-        other: 'autres références bibliographiques'
         secondary: 'secondaire'
         meta: 'métadonnées'
     zotero:
