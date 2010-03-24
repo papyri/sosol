@@ -166,23 +166,27 @@ function insertDivisionMain(division_type)
   {
   case "r":
   case "v":
+    //line below for when ready for subtype face on r and v
+    //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
+  case "column": //default n to roman 1
   
-    {
-      startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-      break;
-    }
-  case "column":
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
+  case "document":
+  case "folio":
   case "fragment":
-  case "side":
-  
-    {
-      startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-      break;
-    }
+
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
   default:
-    {
+    
       alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.")
-    }
+    
   }
   
   new Ajax.Request(ajaxConvert, 
