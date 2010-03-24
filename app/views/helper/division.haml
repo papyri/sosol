@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Enter Type of Division</h3>
       <h4>Valid values: cannot be blank, cannot have '.' but can have '+'</h4>
       #division_type

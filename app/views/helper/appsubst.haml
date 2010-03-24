@@ -5,6 +5,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #app2col{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h4>Scribe corrects self, e.g. δ̣ληρου --> κ̣λήρου = <:κ̣λήρου|subst|δ̣ληρου:></h4>
       #app_col
         #app_low

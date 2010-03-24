@@ -95,17 +95,6 @@ class PublicationsController < ApplicationController
     redirect_to @publication
   end
   
-  
-  
-  def submit_review
-    @publication = Publication.find(params[:id])
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')  
-    @allow_submit = allow_submit?
-            
-    #redirect_to @publication
-    # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
-  end
-  
   def submit
     @publication = Publication.find(params[:id])
     
@@ -249,7 +238,8 @@ class PublicationsController < ApplicationController
     #only let creator delete
     @allow_delete = @current_user.id == @publication.creator.id 
     #only delete new or editing
-    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")  
+    @allow_delete = @allow_delete && (@publication.status == "new" || @publication.status == "editing")
+    @identifier = @publication.entry_identifier
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
     
@@ -497,8 +487,6 @@ class PublicationsController < ApplicationController
       
     end
   end
-  
-  
   
   
   def master_list

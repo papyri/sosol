@@ -6,6 +6,7 @@ rm -rf db/test/git/boards/*
 rm -rf db/test/git/users/*
 rm -rf db/git/boards/*
 rm -rf db/git/users/*
+echo "" > db/git/canonical.git/objects/info/alternates
 jrake db:migrate:reset
 jrake
 

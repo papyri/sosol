@@ -35,6 +35,11 @@ class Identifier < ActiveRecord::Base
     return child_identifiers
   end
   
+  # gives origin and its children, but not self
+  def relatives
+    return [self.origin] + self.origin.children - [self]
+  end
+  
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
@@ -100,17 +105,21 @@ class Identifier < ActiveRecord::Base
     end
     
     if title.nil?
-      collection_name, volume_number, document_number =
-        self.to_components.last.split(';')
+      if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
+        collection_name, volume_number, document_number =
+          self.to_components.last.split(';')
 
-      collection_name = 
-        self.class.collection_names_hash[collection_name]
+        collection_name = 
+          self.class.collection_names_hash[collection_name]
 
-      # strip leading zeros
-      document_number.sub!(/^0*/,'')
+        # strip leading zeros
+        document_number.sub!(/^0*/,'')
 
-      title = 
-       [collection_name, volume_number, document_number].join(' ')
+        title = 
+         [collection_name, volume_number, document_number].join(' ')
+      else # HGV with no name
+        title = "HGV " + self.name.split('/').last
+      end
     end
     return title
   end
@@ -227,6 +236,41 @@ class Identifier < ActiveRecord::Base
     return commit_sha
   end
   
+  def rename(new_name)
+    original_name = self.name
+    original_path = self.to_path
+    original_relatives = self.relatives
+
+    self.transaction do
+      self.name = new_name
+      self.title = self.titleize
+      self.save!
+    
+      new_path = self.to_path
+      commit_message = "Rename #{self.class::FRIENDLY_NAME} from '#{original_name}' (#{original_path}) to '#{new_name}' (#{new_path})"
+    
+      self.repository.rename_file(original_path,
+                                  new_path,
+                                  self.branch,
+                                  commit_message,
+                                  self.owner.grit_actor)
+      
+      # rename origin and children
+      original_relatives.each do |relative|
+        relative.name = new_name
+        relative.title = self.title
+        relative.save!
+        
+        # copy the branch back to each relative so they can access the file
+        relative.publication.repository.delete_branch(
+          relative.publication.branch)
+        relative.publication.repository.copy_branch_from_repo(
+          self.publication.branch, relative.publication.branch, 
+          self.publication.repository)
+      end
+    end
+  end
+  
   #added to speed up dashboard since titleize can be slow
   def title
     if read_attribute(:title) == nil
@@ -237,32 +281,40 @@ class Identifier < ActiveRecord::Base
   end
 
 
-  def add_change_desc(text = "")
+  def add_change_desc(text = "", user_info = self.publication.creator)
     doc = REXML::Document.new self.xml_content
-    base_path = "/TEI/teiHeader/revisionDesc"
     
-    #get user name
-    user_info = self.publication.creator
-    if user_info.full_name && user_info.full_name.strip != ""
-      who_name = user_info.full_name 
-    else
-      who_name = user_info.name
-    end
+    base_path = "/TEI/teiHeader"
+    revision_path = base_path + "/revisionDesc"
+    change_path = revision_path + "/change"
     
-    #get date now
+    who_name = user_info.human_name
+    
+    # get date now
     when_date = Time.now.xmlschema
     
-    #find revision node
-    revision_node = REXML::XPath.first(doc, base_path)
-    
-    #make new change node
+    # make new change node
     change_node = REXML::Element.new("change")
-    change_node.text = SITE_NAME + " " + text
+    change_node.text = text
     change_node.add_attribute("when", when_date)
     change_node.add_attribute("who", who_name )
     
-    #add change node to revision node
-    revision_node.add_element(change_node)
+    # add change node
+    if REXML::XPath.first(doc, change_path)
+      # want changes with most recent first, so insert before any existing change
+      doc.root.insert_before(change_path, change_node)
+    else # no existing change node, create the first one
+      # if there's no existing change node, that means there's likely no revisionDesc
+      # (don't seem to be able to have an empty revisionDesc)
+      if !REXML::XPath.first(doc, revision_path)
+        header_node = REXML::XPath.first(doc, base_path)
+        # create revision node
+        revision_node = (header_node << REXML::Element.new("revisionDesc"))
+        # add change node
+        revision_node.add_element(change_node)
+      end
+    end
+    
     self.set_xml_content(doc.to_s, :comment => '')
   end
 

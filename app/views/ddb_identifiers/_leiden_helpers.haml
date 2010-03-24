@@ -7,12 +7,12 @@
 
 = stylesheet_link_tag 'menu-item'
 = stylesheet_link_tag 'menu-bar'
-/the helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
-/have a smart number associated with them.  it starts off with a 1 digit number because we have
-/less than 10 menu items at that level.  from then on there are 2 digit numbers used e.g 101, 
-/102, etc. meaning the first, second and third level menu items under item 1.  then the next level
+/The helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
+/have a smart number associated with them.  It starts off with a 1 digit number (when this level goes to
+/2 digits, no drop down data is associated).  From then on there are 2 digit numbers used e.g 101, 
+/102, etc. meaning the first, second and third level menu items under item 1.  Then the next level
 /continues this with 10101, 10102, 10102 meaning the first, second and third level menu items
-/under 101.  this same pattern can be continued on to deeper levels of menu if needed. this works
+/under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
 /in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
 /javascript.
 %ul#menuModel{ :style => "display:inherit"}
@@ -115,10 +115,10 @@
       %li#115
         %a{ :href => "#"}Division
         %ul{ :width => "100"}
-          %li#11501{ :jsFunction => "insertDivisionMain('recto')"}
+          %li#11501{ :jsFunction => "insertDivisionMain('r')"}
             %a{ :href => "#"}Recto
           %li#11502{ :itemType => "separator"}
-          %li#11503{ :jsFunction => "insertDivisionMain('verso')"}
+          %li#11503{ :jsFunction => "insertDivisionMain('v')"}
             %a{ :href => "#"}Verso
           %li#11504{ :itemType => "separator"}
           %li#11505{ :jsFunction => "insertDivisionMain('fragment')"}
@@ -127,7 +127,10 @@
           %li#11507{ :jsFunction => "insertDivisionMain('column')"}
             %a{ :href => "#"}Column
           %li#11508{ :itemType => "separator"}
-          %li#11509{ :jsFunction => "helpDialogOpen('division')"}
+          %li#11509{ :jsFunction => "insertDivisionMain('side')"}
+            %a{ :href => "#"}Side
+          %li#11510{ :itemType => "separator"}
+          %li#11511{ :jsFunction => "helpDialogOpen('division')"}
             %a{ :href => "#"}Other
   %li#2{ :itemType => "separator"}
   %li#3{ :jsFunction => "insertUnderdot()"}

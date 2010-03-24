@@ -4,6 +4,8 @@
       - if @identifier.publication.status == 'finalizing'
         %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'finalize_review')) ? 'active' : ''}
           = link_to 'Finalize', finalize_review_publication_path(@identifier.publication)
+      %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}
+        = link_to 'Overview', show_publication_path(@identifier.publication)
       - if @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}.length > 0
         %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
           = link_to 'Text', edit_text_publication_path(@identifier.publication)
@@ -32,27 +34,31 @@
                 %li
                   = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
 #identifier_sub_menus
-  .identifier_sub_menu
-    .site
-      .joiner
-      %ul
-        - if params[:action] != 'finalize_review'
-          %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
-          %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
-          -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
-          %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
-          %li= link_to 'Submit', { :controller => 'publications', :action => 'submit_review', :id => @identifier.publication.id }
-          %li= link_to 'Overview', { :controller => 'publications', :action => 'show', :id => @identifier.publication.id }
-        - else
-          %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
-          %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
-          %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
+  - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
+    .identifier_sub_menu_empty
+  - else
+    .identifier_sub_menu
+      .site
+        .joiner
+        %ul
+          - if params[:controller] != 'publications'
+            %li{ :class => %w{edit editxml preview}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+            %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+            - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
+              %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
+            -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
+            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
+          - elsif params[:action] == 'finalize_review'
+            %li{ :class => params[:action] != 'history' ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
+            %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
+
 
         -# another way to do it
         -# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post
         -# %a{:href=>"#", :onClick=>"window.open('#{linky}', 'Comment', 'toolbar=0, menubar=0, location=0, status=0')"}=Comment
   
-  - if params[:action] != 'history' 
+  - if !%w{history rename_review show}.include?(params[:action])
     - case @identifier
       - when DDBIdentifier
         .identifier_sub_menu#sub_menu_2
