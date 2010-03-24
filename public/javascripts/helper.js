@@ -613,7 +613,8 @@ function insertDivisionSub()
 {
   editpass = "yes";
   
-  divisiontype = document.getElementById("division_value").value.toLowerCase();  //lowercase for grammar
+  divisiontype = document.getElementById("divisionType").value.toLowerCase();  //lowercase for grammar
+  divisionsubtype = document.getElementById("divisionSubtype").value.toLowerCase();  //lowercase for grammar
   
   if (divisiontype.length < 1) //cannot be blank extent text = extent unknown
     {
@@ -630,10 +631,19 @@ function insertDivisionSub()
           editpass = "no";
         }
     }
+  
+  if (divisionsubtype.toString().match(/\s/) || divisionsubtype.length < 1) //subtype empty or spaces
+    {
+      opt_subtype = "";
+    }
+  else
+    {
+      opt_subtype = " subtype=\"" + divisionsubtype + "\"";
+    }
     
   if (editpass == "yes")
     {
-      startxml = "<div n=\"" + divisiontype + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
