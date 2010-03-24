@@ -474,12 +474,13 @@ class PublicationsController < ApplicationController
     pub_name = @publication.title
     @publication.destroy
 
-
+=begin  no one else should care that someone deleted their own publication    
     e = Event.new
     e.category = "deleted"
     e.target = @publication
     e.owner = @current_user
     e.save!
+=end
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
     respond_to do |format|
