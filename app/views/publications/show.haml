@@ -81,23 +81,18 @@
         - if @publication.status != "archived"
           = render :partial => identifier        
 
-  - if @comments != nil  
-    %h3 Comments 
-    - for comment in @comments
-      = render :partial => comment      
-   
-  - if @other_user_publications != nil
-    %h3 This publication is also being edited by:
-    - for other_pub in @other_user_publications
-      = other_pub.creator.name
-      %br
-
     - if @comments != nil  
       %h3 Comments 
       - for comment in @comments
-        = render :partial => comment
+        = render :partial => comment      
+     
+    - if @other_user_publications != nil && @other_user_publications.length > 0
+      %h3 This publication is also being edited by:
+      - for other_pub in @other_user_publications
+        = other_pub.creator.name
+        %br
 
-    %br
+
 
     - if %w{editing new}.include?(@publication.status)
       - for class_type in @creatable_identifiers
