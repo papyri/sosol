@@ -38,16 +38,44 @@ class PublicationsController < ApplicationController
   end
   
   def determine_creatable_identifiers
-    #only let user create new for non-existing    
+
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-        @publication.identifiers.each do |i|
-          @creatable_identifiers.each do |ci|
-            Rails.logger.info("Creatable identifier: #{ci}")
-            if ci == i.class.to_s
-              @creatable_identifiers.delete(ci)    
-            end
-          end
-        end  
+    
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    @publication.identifiers.each do |i|
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      @creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    
+    
+    #only let user create new for non-existing        
+    @publication.identifiers.each do |i|
+      @creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          @creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+    
+
   end
   
   # POST /publications
