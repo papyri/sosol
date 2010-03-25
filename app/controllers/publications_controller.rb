@@ -82,7 +82,7 @@ class PublicationsController < ApplicationController
   # POST /publications.xml
   def create
     @publication = Publication.new()
-    @publication.populate_identifiers_from_identifier(
+    @publication.populate_identifiers_from_identifiers(
       params[:pn_id])
     @publication.owner = @current_user
     
@@ -336,12 +336,13 @@ class PublicationsController < ApplicationController
     identifier = [NumbersRDF::NAMESPACE_IDENTIFIER, namespace, document_path].join('/')
     
     if identifier_class == 'HGVIdentifier'
-      identifier = NumbersRDF::NumbersHelper.identifier_to_identifier(identifier)
+      related_identifiers = NumbersRDF::NumbersHelper.collection_identifier_to_identifiers(identifier)
+    else
+      related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     end
-
-    Rails.logger.info("Identifier: #{identifier}")
     
-    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    Rails.logger.info("Identifier: #{identifier}")
+    Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
     
     conflicting_identifiers = []
     related_identifiers.each do |relid|
@@ -376,8 +377,8 @@ class PublicationsController < ApplicationController
     end
     # else
       @publication = Publication.new()
-      @publication.populate_identifiers_from_identifier(
-        identifier)
+      @publication.populate_identifiers_from_identifiers(
+        related_identifiers)
       @publication.owner = @current_user
 
       @publication.creator = @current_user
