@@ -31,7 +31,7 @@ function helpDialogOpen(view)
   case "vestig":
   case "division":
     {
-      openconfig = config='height=185, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=225, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "ancientdia":
@@ -41,18 +41,18 @@ function helpDialogOpen(view)
     }
   case "gapelliplang":
     {
-      openconfig = config='height=210, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "appalt":
   case "appsubst":
     {
-      openconfig = config='height=225, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "apporth":
     {
-      openconfig = config='height=350, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
@@ -60,13 +60,13 @@ function helpDialogOpen(view)
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=300, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   default: /* nopts is default and need to clear optional xml values and leave diachar filled in */
