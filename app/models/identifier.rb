@@ -157,7 +157,7 @@ class Identifier < ActiveRecord::Base
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
     
-    template = ERB.new(File.new(template_path).read)
+    template = ERB.new(File.new(template_path).read, nil, '-')
     
     id = self.id_attribute
     n = self.n_attribute
