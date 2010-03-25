@@ -5,7 +5,7 @@ var diacritical_option = "nopts";
 var tryit_type = "xml2non";
 var valueback = "";
 var xmltopass = "initial";
-var number_type = "valuecontent";
+var number_type = "other";
 var elliplang = "Demotic";
 var vestig_type = "character";
 //default definition of what to do on successful ajax call
@@ -81,6 +81,15 @@ function checktypevestig(id)
 function checktypenum(id)
 {
   number_type = document.getElementById(id).value;
+  if (number_type == "fraction" || number_type == "nested")
+    {
+      document.number.rend_frac_check_n.checked = false;
+      document.number.rend_frac_check_n.disabled = true;
+    }
+  else
+    {
+      document.number.rend_frac_check_n.disabled = false;
+    }
 }
 
 /*###########################################################################################*/
@@ -108,6 +117,13 @@ function isNumericSpecial(isnum)
 {
 //  allows fraction
     if (isnum.toString().match(/^\d+\/?\d*$/)) return true;
+    return false;
+}
+
+function isNumericFraction(isnum) 
+{
+//  fraction only
+    if (isnum.toString().match(/^\d+\/{1}\d+$/)) return true;
     return false;
 }
 
@@ -597,7 +613,8 @@ function insertDivisionSub()
 {
   editpass = "yes";
   
-  divisiontype = document.getElementById("division_value").value.toLowerCase();  //lowercase for grammar
+  divisiontype = document.getElementById("divisionType").value.toLowerCase();  //lowercase for grammar
+  divisionsubtype = document.getElementById("divisionSubtype").value.toLowerCase();  //lowercase for grammar
   
   if (divisiontype.length < 1) //cannot be blank extent text = extent unknown
     {
@@ -614,10 +631,19 @@ function insertDivisionSub()
           editpass = "no";
         }
     }
+  
+  if (divisionsubtype.toString().match(/\s/) || divisionsubtype.length < 1) //subtype empty or spaces
+    {
+      opt_subtype = "";
+    }
+  else
+    {
+      opt_subtype = " subtype=\"" + divisionsubtype + "\"";
+    }
     
   if (editpass == "yes")
     {
-      startxml = "<div n=\"" + divisiontype + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
@@ -638,98 +664,110 @@ function insertDivisionSub()
 
 function insertNum()
 {
-  
   editpass = "yes";
   
   switch (number_type)
   {
-  case "value":
-  {
-    numval = document.getElementById("number_value").value;
-    if (numval.length < 1 || isNumericSpecial(numval) == false) 
-      {
-        alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
-        editpass = "no";
-      }
-    break;
-  }
-  case "content":
-  {
-    numcontent = document.getElementById("number_content").value;
-    if (numcontent.length < 1) 
-      {
-        alert("At least 1 numeric digit needed for number value");
-        editpass = "no";
-      }
-    break;
-  }
-  case "valuecontent":
-  {
-    numval = document.getElementById("number_value").value;
-    if (numval.length < 1 || isNumericSpecial(numval) == false) 
-      {
-        alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
-        editpass = "no";
-      }
-    numcontent = document.getElementById("number_content").value;
-    if (numcontent.length < 1) 
-      {
-        alert("At least 1 character needed for number content");
-        editpass = "no";
-      }
-    break;
-  }
+  
   case "fraction":
-  {
+  
     editpass = "yes";
     break;
-  }
+  
   case "nested":
-  {
+  
     nestnum = document.getElementById("nested_number").value;
     if (nestnum.length < 1 || isNumeric(nestnum) == false) 
       {
         alert("At least 1 numeric digit needed for nested number");
         editpass = "no";
+        break;
       }
     nestwhole = document.getElementById("nested_whole").value;
     if (nestwhole.length < 1 || isNumeric(nestwhole) == false) 
       {
         alert("At least 1 numeric digit needed for nested whole number");
         editpass = "no";
+        break;
       }
     nestwholecontent = document.getElementById("nested_whole_content").value;
     if (nestwholecontent.length < 1) 
       {
         alert("At least 1 character needed for nested whole number content");
         editpass = "no";
+        break;
       }
     nestpart = document.getElementById("nested_partial").value;
     if (nestpart.length < 1 || isNumeric(nestpart) == false) 
       {
         alert("At least 1 numeric digit needed for nested partial number");
         editpass = "no";
+        break;
       }
     nestpartcontent = document.getElementById("nested_partial_content").value;
     if (nestpartcontent.length < 1) 
       {
         alert("At least 1 character needed for nested part number content");
         editpass = "no";
+        break;
       }
-    }
-    break;
+  break; //nested
+  
+  case "other": //this code will change the value of num_type edits passed so finishNum processes correctly
+  
+    numval = document.getElementById("number_value").value;
+    numcontent = document.getElementById("number_content").value;
+    {if (numval.toString().match(/\s/) || numval.length < 1) 
+      {
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value and content both empty
+          {
+            alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
+            editpass = "no";
+          }
+        else //value empty but content has data
+          {
+            if (document.number.rend_frac_check_n.checked == true)
+              {
+                opt_rend_frac = " rend=\"fraction\"";
+              }
+            else
+              {
+                opt_rend_frac = "";
+              }
+            number_type = "content";
+          }
+      }
+    else
+      {
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
+          {  
+            moreNumEdit("value");
+          }
+        else //value and content both have data
+          {
+            moreNumEdit("valuecontent");
+          }
+      }}
+  
+  break; //other
+  
   default:
-  {
-    alert("Invalid number_type - broken view - call support");
+  
+    alert("Invalid number_type - broken view - call support " + number_type);
     editpass = "no";
-  }
-  }
+  
+  } //end switch (number_type)
   
   if (editpass == "yes")
     {
-      finishNum()
+      finishNum();
     }
 } /*########################     end insertNum     ########################*/
+
+
+/*###########################################################################################*/
+/* finishNum                                                                                 */
+/*###########################################################################################*/
   
 function finishNum()
 {
@@ -737,39 +775,75 @@ function finishNum()
   switch (number_type)
   {
   case "value":
-  {
-    startxml = "<num value=\"" + numval + "\"/>";
+  
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
     break;
-  }
+  
   case "content":
-  {
-    startxml = "<num>" + numcontent + "</num>";
+  
+    startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
     break;
-  }
+  
   case "valuecontent":
-  {
-    startxml = "<num value=\"" + numval + "\">" + numcontent + "</num>";
+  
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
     break;
-  }
+  
   case "fraction":
-  {
+  
     startxml = "<num type=\"fraction\"/>";
     break;
-  }
+  
   case "nested":
-  {
+  
     startxml = "<num value=\"" + nestnum + "\">" + "<num value=\"" + nestwhole + "\">" + nestwholecontent + "</num>" + "<num value=\"" + nestpart + "\">" + nestpartcontent + "</num>" + "</num>";
     break;
-  }
+  
   default:
-  {
+  
     startxml = "";
-  }
+  
   }
   
-  convertXML()
+  convertXML();
 
 } /*########################     end finishNum     ########################*/
+
+
+/*###########################################################################################*/
+/* moreNumEdit                                                                               */
+/*###########################################################################################*/
+  
+function moreNumEdit(newType)
+{
+  if (document.number.rend_frac_check_n.checked)
+    {
+      if (isNumericFraction(numval) == true) //validates numeric value input is in fraction format
+        {
+          opt_rend_frac = " rend=\"fraction\"";
+          number_type = newType;
+        }
+      else
+        {
+          alert("Value must be in fraction format (ex. 1/8) when Rend Fraction checked");
+          editpass = "no";
+        }
+    }
+  else
+    {
+      if (isNumericSpecial(numval) == true)
+        {
+          opt_rend_frac = "";
+          number_type = newType;
+        }
+      else
+        {
+          alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
+          editpass = "no";
+        }
+    }
+} /*########################     end moreNumEdit     ########################*/
+
 
 /*###########################################################################################*/
 /* insertAbbrev                                                                              */

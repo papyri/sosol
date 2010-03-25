@@ -38,16 +38,44 @@ class PublicationsController < ApplicationController
   end
   
   def determine_creatable_identifiers
-    #only let user create new for non-existing    
+
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-        @publication.identifiers.each do |i|
-          @creatable_identifiers.each do |ci|
-            Rails.logger.info("Creatable identifier: #{ci}")
-            if ci == i.class.to_s
-              @creatable_identifiers.delete(ci)    
-            end
-          end
-        end  
+    
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    @publication.identifiers.each do |i|
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      @creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    
+    
+    #only let user create new for non-existing        
+    @publication.identifiers.each do |i|
+      @creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          @creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+    
+
   end
   
   # POST /publications
@@ -243,6 +271,9 @@ class PublicationsController < ApplicationController
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
     
+    #find other users who are editing the same thing
+    @other_user_publications = Publication.other_users(@publication.title, @current_user.id)
+    
 
     determine_creatable_identifiers()
     
@@ -421,6 +452,10 @@ class PublicationsController < ApplicationController
     if !has_voted 
       @vote.save
       @comment.save
+      
+      #update the change desc for the identifier
+      @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
+      @vote.identifier.save
     end #!has_voted
     #do what now? go to review page
     
@@ -467,12 +502,13 @@ class PublicationsController < ApplicationController
     pub_name = @publication.title
     @publication.destroy
 
-
+=begin  no one else should care that someone deleted their own publication    
     e = Event.new
     e.category = "deleted"
     e.target = @publication
     e.owner = @current_user
     e.save!
+=end
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
     respond_to do |format|
