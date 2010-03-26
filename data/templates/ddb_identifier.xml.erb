@@ -9,7 +9,20 @@
       <publicationStmt>
         <authority>NYU Digital Library Technology Services</authority>
         <idno type="filename"><%= id %></idno>
-        <idno type="ddb-perseus-style"><%= n %></idno>
+        <idno type="ddb-hybrid"><%= n %></idno>
+        <%- related_metas = self.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.collect{|j| j.to_components.last} -%>
+        <%- related_metas.each do |hgv| -%>
+        <idno type="HGV"><%= hgv %></idno>
+        <%- end -%>
+        <%- tm_nos = related_metas.collect{|hgv| hgv.sub(/\D/, '')}.uniq -%>
+        <%- tm_nos.each do |tm| -%>
+        <idno type="TM"><%= tm %></idno>
+        <%- end -%>
+        <availability>
+          <p>© Duke Databank of Documentary Papyri. This work is licensed under a
+          <ref type="license" target="http://creativecommons.org/licenses/by/3.0/">Creative 
+          Commons Attribution 3.0 License</ref>.</p>
+        </availability>
       </publicationStmt>
       <sourceDesc>
         <p/>

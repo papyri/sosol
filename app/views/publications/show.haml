@@ -54,29 +54,12 @@
       
       
     - for identifier in @publication.identifiers 
-      - image_name = ""       
-      - case identifier
-        - when DDBIdentifier
-          %h3 
-            Text - 
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'ddb.gif'
+      %h3
+        == #{identifier.class::FRIENDLY_NAME} - 
+        = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
 
-        - when HGVMetaIdentifier
-          %h3 
-            Meta -
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'hgv.gif'
-        
-        - when HGVTransIdentifier
-          %h3 
-            Translation - 
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'hgv.gif'
-        
-      
       %p
-        = image_tag(image_name)  
+        = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : 'hgv.gif')  
       
         = identifier.title
         - if @publication.status != "archived"

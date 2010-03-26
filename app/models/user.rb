@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
          'papyri.info/ddbdp/p.tebt;2;414'
         ].each do |pn_id|
           p = Publication.new
-          p.populate_identifiers_from_identifier(pn_id)
+          p.populate_identifiers_from_identifiers(pn_id)
           p.owner = self
           p.creator = self
           p.save!
