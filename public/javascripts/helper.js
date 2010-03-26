@@ -6,6 +6,7 @@ var tryit_type = "xml2non";
 var valueback = "";
 var xmltopass = "initial";
 var number_type = "other";
+var abbrev_type = "expan";
 var elliplang = "Demotic";
 var vestig_type = "character";
 //default definition of what to do on successful ajax call
@@ -56,6 +57,11 @@ function checktypedia(id,dia)
 function checktypegap(id)
 {
   gap_type = document.getElementById(id).value;
+}
+
+function checktypeabbrev(id)
+{
+  abbrev_type = document.getElementById(id).value;
 }
 
 function checktryit(id)
@@ -855,42 +861,25 @@ function insertAbbrev()
   
   abbrevtext = document.getElementById("abbrev_value").value;
   
-  /* lp = left paren position, rp = right paren position, qm = question mark position, llp = last left paren position,
-     lrp = last right paren position, lqm = last question mark position - last positions used to see if multiple left/right
-     parens or question marks have been entered */
+  /* lp = left paren position, rp = right paren position, qm = question mark position, 
+     llp = last left paren position, lrp = last right paren position
+  
+  last positions used to see if multiple left/right parens or question marks have been entered */
   
   lp = abbrevtext.indexOf("(");
   rp = abbrevtext.indexOf(")");
   qm = abbrevtext.indexOf("?");
   llp = abbrevtext.lastIndexOf("(");
   lrp = abbrevtext.lastIndexOf(")");
-  lqm = abbrevtext.lastIndexOf("?");
   
-  if (rp < lp)
-    {
-      alert("Right parens must be located after the left parens");
-      editpass = "no";
-    }
-  else
-    {
-      if ((rp - lp) <= 1) 
-        {
-          alert("Must have at least 1 character between left and right parens");
-          editpass = "no";
-        }
-    }
-  
-  if (editpass == "yes")
-    {
 //      alert("between parens " + abbrevtext.substr(lp+1,2));
-      if ((rp - lp) == 3 && abbrevtext.substr(lp+1,2) == "  ") //2 spaces between parens is Leiden+ for abbr tag
-        {
-          insertAbbrTag();
-        }
-      else
-        {
-          insertExpanTag();
-        }
+  if (abbrev_type == "expan") // expan radio button clicked
+    {
+      insertExpanTag();
+    }
+  else // abbr radio button clicked
+    {
+      insertAbbrTag();
     }
 }    
 
@@ -900,26 +889,35 @@ function insertAbbrev()
 
 function insertAbbrTag()
 {
-  if (lp == 0)
+  if (lp > -1 || rp > -1 || qm > -1) //text contains parens or question mark
     {
-      alert("Abbreviation text must be located before left parens");
+      alert("Abbreviation text cannot have parens and/or question marks - text only");
       editpass = "no";
     }
+  
   else
     {
-      if (abbrevtext.substr(rp+1) > " ") 
+      if (abbrevtext.toString().match(/\s/) || abbrevtext.length < 1)
         {
-          alert("No text allowed after right parens for abbr tag");
+          alert("Abbreviation text cannot be blank");
           editpass = "no";
         }
-    }
-  
-  if (editpass == "yes")
-    {
-      startxml = "<abbr>" + abbrevtext.substr(0,lp) + "</abbr>";
+      else
+        {
+          if (document.abbrev.abbrevlow_check_n.checked == true) /* ask for the cert low attribute */
+            {
+              abbrend = "<certainty locus=\"name\" match=\"..\"/></abbr>";
+            }
+          else
+            {
+              abbrend = "</abbr>";
+            }
           
-      convertXML()
-    }
+          startxml = "<abbr>" + abbrevtext + abbrend;
+              
+          convertXML()
+        }
+    } 
 }    
     
 /*###########################################################################################*/
@@ -928,57 +926,54 @@ function insertAbbrTag()
 
 function insertExpanTag()
 {
-  editpass = "yes";
+  //editpass = "yes";
   
-  abbrevtext = document.getElementById("abbrev_value").value;
+  //abbrevtext = document.getElementById("abbrev_value").value;
   
   /* lp = left paren position, rp = right paren position, qm = question mark position, llp = last left paren position,
      lrp = last right paren position, lqm = last question mark position - last positions used to see if multiple left/right
      parens or question marks have been entered */
   
-  lp = abbrevtext.indexOf("(");
+  /*lp = abbrevtext.indexOf("(");
   rp = abbrevtext.indexOf(")");
   qm = abbrevtext.indexOf("?");
   llp = abbrevtext.lastIndexOf("(");
   lrp = abbrevtext.lastIndexOf(")");
-  lqm = abbrevtext.lastIndexOf("?");
+  lqm = abbrevtext.lastIndexOf("?");*/
   
-  if (rp < lp)
+  if (lp == -1 || rp == -1) //text does not contain parens
     {
-      alert("Right parens must be located after the left parens");
+      alert("Text must contain left and right parens indicating ex tag");
       editpass = "no";
     }
   else
     {
-      if ((rp - lp) <= 1) 
+      if (rp < lp)
         {
-          alert("Must have at least 1 character between left and right parens");
+          alert("Right parens must be located after the left parens");
           editpass = "no";
         }
       else
         {
-          if (lp != llp || rp != lrp)
+          if ((rp - lp) <= 1) 
             {
-              alert("Can have only 1 left parens and/or 1 right parens");
+              alert("Must have at least 1 character between left and right parens");
               editpass = "no";
             }
           else
             {
-              if (qm > -1)
+              if (lp != llp || rp != lrp)
                 {
-                  //if (qm != lqm)
-                    //{
+                  alert("Can have only 1 left parens and/or 1 right parens");
+                  editpass = "no";
+                }
+              else
+                {
+                  if (qm > -1)
+                    {
                       alert("Cannot have question mark - use checkbox for precision low");
                       editpass = "no";
-                    //}
-                  //else
-                    //{
-                      //if (qm != rp - 1)
-                        //{
-                          //alert("Question mark must be last character before right parens");
-                          //editpass = "no";
-                        //}
-                    //}
+                    }
                 }
             }
         }
@@ -994,27 +989,26 @@ function insertExpanTag()
 
 function finishAbbrev()
 {
-  if (lp == 0)
+  if (lp == 0) // left paren in first position which means ex only - no expan text
     {
       expandcont = "";
       excont = abbrevtext.slice(1,rp).replace(/\?/, "");
     }
   else
     {
-      if (lp > 0)
+      if (lp > 0) //expan and ex text
         {
           expandcont = abbrevtext.slice(0,lp);
           excont = abbrevtext.slice(lp + 1,rp).replace(/\?/, "");
         }
-      else
+      else // has to be -1 so no parens which means expan text only - no ex
         {
           expandcont = abbrevtext;
           excont = "";
         }
     }
   
-  if (document.abbrev.abbrevlow_check_n.checked == true) /* ask for the cert low attribute */
-//  if (qm > -1) /* ask for the cert low attribute */ 
+  if (document.abbrev.abbrevlow_check_n.checked == true) // check cert low attribute radio button
     {
       extagbeg = "<ex cert=\"low\">";
     }
@@ -1023,7 +1017,7 @@ function finishAbbrev()
       extagbeg = "<ex>";
     }
   
-  if (rp < abbrevtext.length)
+  if (rp < abbrevtext.length) //check if text after the ex tag
     {
       other = abbrevtext.slice(rp + 1);
     }
