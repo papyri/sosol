@@ -135,8 +135,29 @@
           %li#11512{ :itemType => "separator"}
           %li#11513{ :jsFunction => "helpDialogOpen('division')"}
             %a{ :href => "#"}Other
+      %li#116{ :itemType => "separator"}
+      %li#117
+        %a{ :href => "#"} Special Characters
+        %ul{ :width => "155"}
+          -# this is unicode character u10175
+          %li#11701{ :jsFunction => "insertSpecialCharMain('𐅵')"}
+            %a{ :href => "#"}1/2
+          %li#11702{ :itemType => "separator"}
+          -# this is unicode character u10177
+          %li#11703{ :jsFunction => "insertSpecialCharMain('𐅷')"}
+            %a{ :href => "#"}2/3
+          %li#11704{ :itemType => "separator"}
+          -# this is unicode character u10178
+          %li#11705{ :jsFunction => "insertSpecialCharMain('𐅸')"}
+            %a{ :href => "#"}3/4
+          %li#11706{ :itemType => "separator"}
+          %li#11707{ :jsFunction => "insertSpecialCharMain('\\u03DB')"}
+            %a{ :href => "#"}Final Stigma Small
+          %li#11708{ :itemType => "separator"}
+          %li#11709{ :jsFunction => "insertSpecialCharMain('\\u03DA')"}
+            %a{ :href => "#"}Final Stigma Capital
   %li#2{ :itemType => "separator"}
-  %li#3{ :jsFunction => "insertUnderdot()"}
+  %li#3{ :jsFunction => "insertSpecialCharMain('\\u0323')"}
     %a{ :href => "#"}UnderDot
   %li#4{ :itemType => "separator"}
   %li#5{ :jsFunction => "helpDialogOpen('tryit')"}

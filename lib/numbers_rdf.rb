@@ -94,11 +94,15 @@ module NumbersRDF
       end
       
       # Turns e.g. papyri.info/hgv/P.Amh._2_48 into papyri.info/hgv/123
-      def identifier_to_identifier(identifier)
-        result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:identifier[last()]/@rdf:resource", identifier
+      def collection_identifier_to_identifiers(identifier)
+        results = apply_xpath_to_identifier(
+          "/rdf:RDF/rdf:Description/ns1:identifier/@rdf:resource", identifier
         )
-        return result.nil? ? nil : identifier_url_to_identifier(result.last)
+        if results.nil?
+          return nil
+        else
+          return results.collect{|r| identifier_to_identifiers(identifier_url_to_identifier(r))}.flatten.uniq
+        end
       end
       
       def identifier_to_title(identifier)

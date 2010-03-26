@@ -38,18 +38,22 @@ class Publication < ActiveRecord::Base
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
   
-  def populate_identifiers_from_identifier(identifier)
-    self.title = identifier_to_ref(identifier)
+  def populate_identifiers_from_identifiers(identifiers)
     # Coming in from an identifier, build up a publication
-    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
-      NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
+    if identifiers.class == String
+      # have a string, need to build relation
+      identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
+    end
+    
+    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    self.title = identifier_to_ref(identifiers.first.last.first)
       
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier_to_ref(identifier)
+          if self.title == identifier_to_ref(identifiers.first.last.first)
             self.title = temp_id.titleize
           end
         end

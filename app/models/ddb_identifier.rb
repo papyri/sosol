@@ -24,7 +24,7 @@ class DDBIdentifier < Identifier
   end
   
   def n_attribute
-    return to_components.join(';')
+    return to_components[2..-1].join(';')
   end
   
   def xml_title_text
@@ -99,7 +99,7 @@ class DDBIdentifier < Identifier
   def leiden_plus
     repo_xml = xml_content
     repo_xml_work = REXML::Document.new(repo_xml)
-    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]/note'
+    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
     brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
     #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
     #otherwise, get broke Leiden+ and display that
@@ -153,7 +153,7 @@ class DDBIdentifier < Identifier
     original_xml_content = REXML::Document.new(self.xml_content)
     
     #deletes XML with broke Leiden+ if it exists
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]')
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
     
     #pull divs in the text and loop through and delete each - couldn't get xpath to do all at once
     
@@ -208,17 +208,17 @@ class DDBIdentifier < Identifier
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     #deletes XML with broke Leiden+ if it exists already so can add with updated data
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]')
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
     #set in XML where to add new div tag to contain broken Leiden+ and add it
     basepath = '/TEI/text/body/div[@type = "edition"]'
     add_node_here = REXML::XPath.first(original_xml_content, basepath)
-    add_node_here.add_element 'div', {'type'=>'translation'}
+    add_node_here.add_element 'div', {'type'=>'edition', 'subtype'=>'brokeleiden'}
     #set in XML where to add new note tag to contain broken Leiden+ and add it
-    basepath = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]'
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]'
     add_node_here = REXML::XPath.first(original_xml_content, basepath)
     add_node_here.add_element "note"
     #set in XML where to add broken Leiden+ and add it
-    basepath = '/TEI/text/body/div[@type = "edition"]/div[@type = "translation"]/note'
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
     add_node_here = REXML::XPath.first(original_xml_content, basepath)
     brokeleiden = BROKE_LEIDEN_MESSAGE + brokeleiden
     add_node_here.add_text brokeleiden

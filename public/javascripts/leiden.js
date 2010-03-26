@@ -24,7 +24,6 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "abbrev":
   case "gapellipNT":
   case "gapilleg":
   case "gaplost":
@@ -37,6 +36,11 @@ function helpDialogOpen(view)
   case "ancientdia":
     {
       openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
+  case "abbrev":
+    {
+      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "gapelliplang":
@@ -205,18 +209,15 @@ function insertDivisionMain(division_type)
 } /*########################     end insertDivisionMain     ########################*/
 
 /*###########################################################################################*/
-/* insert underdot - make character unclear                                                  */
+/* insert special unicode character - char_name passed as \u#### value to insert             */
 /*###########################################################################################*/
 
-function insertUnderdot()
+function insertSpecialCharMain(char_name)
 {
   getFocusMain()
   
-  var underdot = "\u0323"; /* unicode value for combining underdot */
-  
-  insertTextMain(underdot);
+  insertTextMain(char_name);
 }
-
 
 /*###########################################################################################*/
 /* wrapxmlMain function                                                                          */
