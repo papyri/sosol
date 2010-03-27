@@ -902,9 +902,9 @@ function insertAbbrTag()
           alert("Abbreviation text cannot be blank");
           editpass = "no";
         }
-      else
+      else //passed edits
         {
-          if (document.abbrev.abbrevlow_check_n.checked == true) /* ask for the cert low attribute */
+          if (document.abbrev.abbrevlow_check_n.checked == true) // ask for the cert low attribute
             {
               abbrend = "<certainty locus=\"name\" match=\"..\"/></abbr>";
             }
@@ -964,7 +964,7 @@ function insertExpanTag()
             {
               if (lp != llp || rp != lrp)
                 {
-                  alert("Can have only 1 left parens and/or 1 right parens");
+                  alert("Can have only 1 left paren and/or 1 right paren");
                   editpass = "no";
                 }
               else
