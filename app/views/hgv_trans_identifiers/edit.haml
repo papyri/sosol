@@ -1,4 +1,3 @@
-= javascript_include_tag 'confirm'
 #main
 
   = javascript_include_tag 'translation'
@@ -68,12 +67,12 @@
             %button{ :type => "button", :class => "delete_element_button", :onclick=>"deleteElement()" }Delete Element            
           #hide_div{:class => "chooser"}
         #trans_and_xml
-          #editing_trans_preview{ :onkeyup => 'set_conf_true()'}	
+          #editing_trans_preview
           #editing_trans_text_view
             = @identifier[:text_html_preview]
           #editing_trans_xml_div       
             -# added calls to set_conf_true and set_conf_false in translation.js containing the onkeyup function below to make confirm logic work in XML area of screen
-            %textarea{:disabled => !@identifier.mutable?, :name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")' }
+            %textarea{:disabled => !@identifier.mutable?, :name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")', :class => 'observechange' }
               =@identifier.content 
               -#why? if the =@identifer.content is on the same line as the %textarea then 2 spaces are added before the text, thus the xslt parsing fails!
           %textarea{ :id => 'editable_preview_xsl'}
@@ -88,4 +87,5 @@
             - DisablePage()
         
         
-	
+= javascript_include_tag 'confirm'
+

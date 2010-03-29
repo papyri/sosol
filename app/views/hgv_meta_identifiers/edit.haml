@@ -1,4 +1,3 @@
-= javascript_include_tag 'confirm'
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -11,6 +10,8 @@
         - @identifier.valid_epidoc_attributes.each do |epidoc_attribute|
           %p
             = f.label epidoc_attribute.to_s.underscore
-            = f.text_field epidoc_attribute, :disabled => !@identifier.mutable?, :onkeyup => 'set_conf_true()'
+            = f.text_field epidoc_attribute, :disabled => !@identifier.mutable?, :class => 'observechange'
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+
+= javascript_include_tag 'confirm'

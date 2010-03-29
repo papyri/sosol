@@ -2,9 +2,6 @@ function init() {
   setActiveTab("glossary");
   transformAfterInsert();
   //DisablePage();
-  //reset confirmation to false after initial load set it to true so only true if user sets it via keystroke
-  //function in confirm.js
-  set_conf_false();
 }
 window.onload = init;
 
@@ -204,9 +201,6 @@ function transform_xml_to_preview(xml_text_area_id, editable_trans_text_id, xsl_
   
   var xsl=xmlFromString( document.getElementById(xsl_text_area_id).value );
   
-  //set confirmation variable to true anytime user makes keystroke in XML area
-  //function in confirm.js
-  set_conf_true();
   // code for IE
   if (window.ActiveXObject)
   {   
