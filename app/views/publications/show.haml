@@ -71,11 +71,15 @@
         = render :partial => comment      
      
     - if @other_user_publications != nil && @other_user_publications.length > 0
+      %br
       %h3 This publication is also being edited by:
-      - for other_pub in @other_user_publications
-        = other_pub.creator.name
-        %br
-
+      %ul
+        - for other_pub in @other_user_publications
+          %li
+            = other_pub.creator.human_name
+            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{SITE_NAME} - Publication #{other_pub.title}")}>
+            == (last edited #{time_ago_in_words(other_pub.updated_at)} ago)
+      %br
 
 
     - if %w{editing new}.include?(@publication.status)
