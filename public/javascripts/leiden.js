@@ -30,7 +30,7 @@ function helpDialogOpen(view)
   case "vestig":
   case "division":
     {
-      openconfig = config='height=225, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "ancientdia":
@@ -253,7 +253,11 @@ function convertXMLMain()
 /*###########################################################################################*/
 
 function insertTextMain(vti)
-{
+{ 
+  //call function to set variable saying the data was modified to cause
+  //verification question if leave page without saving
+  set_conf_true();
+  
   if(typeof document.selection != 'undefined') /* means IE browser */
     {
       var range = document.selection.createRange();
