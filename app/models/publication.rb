@@ -46,14 +46,15 @@ class Publication < ActiveRecord::Base
     end
     
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
-    self.title = identifier_to_ref(identifiers.first.last.first)
+    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    self.title = original_title
       
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier_to_ref(identifiers.first.last.first)
+          if self.title == original_title
             self.title = temp_id.titleize
           end
         end
@@ -284,12 +285,24 @@ class Publication < ActiveRecord::Base
   end
   
   def archive
-    #delete the repo
+    archived_branch_name = 
+      ["archived", Time.now.strftime("%Y/%m/%d"), self.branch].join('/')
+    
+    # prevent collisions
+    if self.owner.repository.branches.include?(archived_branch_name)
+      archived_branch_name += Time.now.strftime("-%H.%M.%S")
+    end
+    
+    # branch from the original branch
+    self.owner.repository.create_branch(archived_branch_name, self.branch)
+    # delete the original branch
     self.owner.repository.delete_branch(self.branch)
-    #set status to archved
+    # set to archived branch
+    self.branch = archived_branch_name
+    # set status to archived
     self.status = "archived" 
-    #should we set identifiers status as well?
-    self.save  
+    # should we set identifiers status as well?
+    self.save!
   end
   
   def tally_votes(user_votes = nil)
