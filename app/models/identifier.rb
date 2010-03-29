@@ -75,6 +75,9 @@ class Identifier < ActiveRecord::Base
                                    options[:actor])
     self.modified = true
     self.save!
+    
+    self.publication.update_attribute(:updated_at, Time.now)
+    
     return commit_sha
   end
   
