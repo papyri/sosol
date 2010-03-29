@@ -253,7 +253,11 @@ function convertXMLMain()
 /*###########################################################################################*/
 
 function insertTextMain(vti)
-{
+{ 
+  //call function to set variable saying the data was modified to cause
+  //verification question if leave page without saving
+  set_conf_true();
+  
   if(typeof document.selection != 'undefined') /* means IE browser */
     {
       var range = document.selection.createRange();
