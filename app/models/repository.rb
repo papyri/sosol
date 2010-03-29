@@ -133,7 +133,9 @@ class Repository
     # We have to abuse git here because Grit::Head doesn't appear to have
     # a facility for writing out a sha1 to refs/heads/name yet
     # Also, we always assume we want to branch from master by default
-    self.update_master_from_canonical
+    if source_name == 'master'
+      self.update_master_from_canonical
+    end
     
     @repo.git.branch({}, name, source_name)
   end
