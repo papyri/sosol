@@ -284,12 +284,24 @@ class Publication < ActiveRecord::Base
   end
   
   def archive
-    #delete the repo
+    archived_branch_name = 
+      ["archived", Time.now.strftime("%Y/%m/%d"), self.branch].join('/')
+    
+    # prevent collisions
+    if self.owner.repository.branches.include?(archived_branch_name)
+      archived_branch_name += Time.now.strftime("-%H.%M.%S")
+    end
+    
+    # branch from the original branch
+    self.owner.repository.create_branch(archived_branch_name, self.branch)
+    # delete the original branch
     self.owner.repository.delete_branch(self.branch)
-    #set status to archved
+    # set to archived branch
+    self.branch = archived_branch_name
+    # set status to archived
     self.status = "archived" 
-    #should we set identifiers status as well?
-    self.save  
+    # should we set identifiers status as well?
+    self.save!
   end
   
   def tally_votes(user_votes = nil)
