@@ -46,14 +46,15 @@ class Publication < ActiveRecord::Base
     end
     
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
-    self.title = identifier_to_ref(identifiers.first.last.first)
+    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    self.title = original_title
       
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier_to_ref(identifiers.first.last.first)
+          if self.title == original_title
             self.title = temp_id.titleize
           end
         end
