@@ -38,9 +38,7 @@ class PublicationsController < ApplicationController
   end
   
   def determine_creatable_identifiers
-
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-    
     
     #WARNING hardcoded identifier depenency hack  
     #enforce creation order
@@ -65,6 +63,7 @@ class PublicationsController < ApplicationController
       @creatable_identifiers.delete("HGVTransIdentifier")     
     end
     
+    @creatable_identifiers.delete("HGVBiblioIdentifier")
     
     #only let user create new for non-existing        
     @publication.identifiers.each do |i|
@@ -75,7 +74,7 @@ class PublicationsController < ApplicationController
       end
     end  
     
-
+    
   end
   
   # POST /publications
