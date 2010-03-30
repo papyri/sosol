@@ -286,7 +286,11 @@ class Publication < ActiveRecord::Base
   def change_status(new_status)
     unless self.status == new_status
       old_branch_leaf = self.branch.split('/').last
-      new_branch_components = [new_status, Time.now.strftime("%Y/%m/%d"), old_branch_leaf]
+      new_branch_components = [old_branch_leaf]
+      
+      unless new_status == 'editing'
+        new_branch_components.unshift(new_status, Time.now.strftime("%Y/%m/%d"))
+      end
       
       if self.parent && (self.parent.owner.class == Board)
         new_branch_components.unshift(title_to_ref(self.parent.owner.title))
@@ -369,7 +373,7 @@ class Publication < ActiveRecord::Base
       #WARNING since they decided not to let editors edit we don't need to copy back to user 1-28-2010
       #self.copy_repo_to_parent_repo
       
-      self.origin.save
+      self.origin.save!
       
       #what to do with our copy?
      # self.status = "rejected" #reset to unsubmitted       
