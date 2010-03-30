@@ -233,7 +233,7 @@ class PublicationsController < ApplicationController
     
     #send publication to the next board
     @publication.origin.submit_to_next_board
-    @publication.archive
+    @publication.change_status('finalized')
     
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
@@ -339,22 +339,29 @@ class PublicationsController < ApplicationController
     conflicting_identifiers = []
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| pc.publication.owner == @current_user}
+      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
       conflicting_identifiers += actual_conflicts
     end
     
     if related_identifiers.length == 0
-      flash[:notice] = 'Error creating publication: publication not found'
+      flash[:error] = 'Error creating publication: publication not found'
       redirect_to dashboard_url
       return
     elsif conflicting_identifiers.length > 0
+      Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
       conflicting_publication = conflicting_identifiers.first.publication
-      conflicting_identifiers.each do |confid|
-        if confid.publication != conflicting_publication
-          flash[:notice] = 'Error creating publication: multiple conflicting publications'
-          redirect_to dashboard_url
-          return
+      conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
+      
+      if conflicting_publications.length > 1
+        flash[:error] = 'Error creating publication: multiple conflicting publications'
+        flash[:error] += '<ul>'
+        conflicting_publications.each do |conf_pub|
+          flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
         end
+        flash[:error] += '</ul>'
+        
+        redirect_to dashboard_url
+        return
       end
       
       if (conflicting_publication.status == "committed")
@@ -362,7 +369,7 @@ class PublicationsController < ApplicationController
         #conflicting_publication.destroy
         conflicting_publication.archive
       else
-        flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
+        flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
         redirect_to dashboard_url
         return
       end
@@ -375,7 +382,7 @@ class PublicationsController < ApplicationController
 
       @publication.creator = @current_user
 
-      if @publication.save
+      if @publication.save!
         @publication.branch_from_master
 
         # need to remove repeat against publication model

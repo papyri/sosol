@@ -18,7 +18,7 @@
             - if publication.status == 'finalizing'
               = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))                        
             - elsif publication.status == 'archived'
-              = identifier.title 
+              = identifier.title
             - else
               = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
             
