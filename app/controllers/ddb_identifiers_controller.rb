@@ -33,6 +33,10 @@ class DdbIdentifiersController < IdentifiersController
           @comment.save
         end
         flash[:notice] = "File updated."
+        if %w{new editing}.include?@identifier.publication.status
+          flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+        end
+        
         redirect_to polymorphic_path([@identifier.publication, @identifier],
                                      :action => :edit)
       rescue RXSugar::NonXMLParseError => parse_error

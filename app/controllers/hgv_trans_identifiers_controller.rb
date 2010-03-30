@@ -50,6 +50,10 @@ class HgvTransIdentifiersController < IdentifiersController
     end
     
     flash[:notice] = "File updated."
+    if %w{new editing}.include?@identifier.publication.status
+      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+    end
+    
     #@identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)

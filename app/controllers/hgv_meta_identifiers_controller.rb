@@ -11,6 +11,11 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
     
+    flash[:notice] = "File updated."
+    if %w{new editing}.include?@identifier.publication.status
+      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+    end
+    
     save_comment(params[:comment], commit_sha)
     
     redirect_to polymorphic_path([@identifier.publication, @identifier],
