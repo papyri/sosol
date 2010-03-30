@@ -286,8 +286,13 @@ class Publication < ActiveRecord::Base
   def change_status(new_status)
     unless self.status == new_status
       old_branch_leaf = self.branch.split('/').last
-      new_branch_name =
-        [new_status, Time.now.strftime("%Y/%m/%d"), old_branch_leaf].join('/')
+      new_branch_components = [new_status, Time.now.strftime("%Y/%m/%d"), old_branch_leaf]
+      
+      if self.parent && (self.parent.owner.class == Board)
+        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+      end
+      
+      new_branch_name = new_branch_components.join('/')
 
       # prevent collisions
       if self.owner.repository.branches.include?(new_branch_name)
