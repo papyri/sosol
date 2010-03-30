@@ -159,10 +159,10 @@ class Publication < ActiveRecord::Base
         
         boards_copy = copy_to_owner(board)
         boards_copy.status = "voting"
-        boards_copy.save
+        boards_copy.save!
         
         identifier.status = "submitted"
-        self.status = "submitted"
+        self.change_status("submitted")
         
         board.send_status_emails("submitted", self)
        
@@ -171,8 +171,8 @@ class Publication < ActiveRecord::Base
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
       #(from_branch, to_branch, from_repo)
-        self.save
-        identifier.save
+        self.save!
+        identifier.save!
         
         #make the most recent sha for the identifier available...is this the one we want?
         @recent_submit_sha = identifier.get_recent_commit_sha
