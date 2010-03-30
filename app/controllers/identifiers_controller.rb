@@ -66,8 +66,13 @@ class IdentifiersController < ApplicationController
       if params[:comment] != nil && params[:comment].strip != ""
         @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
         @comment.save
-      end                                  
+      end
+      
       flash[:notice] = "File updated."
+      if %w{new editing}.include?@identifier.publication.status
+        flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+      end
+      
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error

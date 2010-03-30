@@ -38,23 +38,50 @@ class PublicationsController < ApplicationController
   end
   
   def determine_creatable_identifiers
-    #only let user create new for non-existing    
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-        @publication.identifiers.each do |i|
-          @creatable_identifiers.each do |ci|
-            Rails.logger.info("Creatable identifier: #{ci}")
-            if ci == i.class.to_s
-              @creatable_identifiers.delete(ci)    
-            end
-          end
-        end  
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    @publication.identifiers.each do |i|
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      @creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      @creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    
+    @creatable_identifiers.delete("HGVBiblioIdentifier")
+    
+    #only let user create new for non-existing        
+    @publication.identifiers.each do |i|
+      @creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          @creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+    
+    
   end
   
   # POST /publications
   # POST /publications.xml
   def create
     @publication = Publication.new()
-    @publication.populate_identifiers_from_identifier(
+    @publication.populate_identifiers_from_identifiers(
       params[:pn_id])
     @publication.owner = @current_user
     
@@ -131,13 +158,8 @@ class PublicationsController < ApplicationController
   end
   
   def become_finalizer
-    #TODO make sure we don't steel it from someone who is working on it
-    
-    
-    
+    # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id])
-    
-    
     @publication.remove_finalizer
     
     #note this can only be called on a board owned publication
@@ -198,22 +220,14 @@ class PublicationsController < ApplicationController
     #as it is set up the finalizer will have a parent that is a board whose status must be set
     #check that parent is board
     if @publication.parent && @publication.parent.owner_type == "Board"              
-      @publication.parent.status = "committed"
-      @publication.parent.save
+      @publication.parent.archive
       @publication.parent.owner.send_status_emails("committed", @publication)
     #else #the user is a super user
     end
-         
-        
-
-    
-    #set the finalizer pub status
-    @publication.status = "committed"
-    @publication.save
-    
     
     #send publication to the next board
     @publication.origin.submit_to_next_board
+    @publication.change_status('finalized')
     
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
@@ -242,6 +256,9 @@ class PublicationsController < ApplicationController
     @identifier = @publication.entry_identifier
     
     #todo - if any part has been approved, do we want them to be able to delete the publication or force it to an archve? this would only happen if a board returns their part after another board has approved their part
+    
+    #find other users who are editing the same thing
+    @other_user_publications = Publication.other_users(@publication.title, @current_user.id)
     
 
     determine_creatable_identifiers()
@@ -289,6 +306,16 @@ class PublicationsController < ApplicationController
     volume = params[:volume_number]
     document = params[:document_number]
     
+    if volume == 'Volume Number'
+      volume = ''
+    end
+    
+    if (document == 'Document Number') || document.empty?
+      flash[:error] = 'Error creating publication: you must specify a document number'
+      redirect_to dashboard_url
+      return
+    end
+    
     if identifier_class == 'DDBIdentifier'
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
@@ -305,32 +332,40 @@ class PublicationsController < ApplicationController
     identifier = [NumbersRDF::NAMESPACE_IDENTIFIER, namespace, document_path].join('/')
     
     if identifier_class == 'HGVIdentifier'
-      identifier = NumbersRDF::NumbersHelper.identifier_to_identifier(identifier)
+      related_identifiers = NumbersRDF::NumbersHelper.collection_identifier_to_identifiers(identifier)
+    else
+      related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     end
-
-    Rails.logger.info("Identifier: #{identifier}")
     
-    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    Rails.logger.info("Identifier: #{identifier}")
+    Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
     
     conflicting_identifiers = []
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| pc.publication.owner == @current_user}
+      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
       conflicting_identifiers += actual_conflicts
     end
     
     if related_identifiers.length == 0
-      flash[:notice] = 'Error creating publication: publication not found'
+      flash[:error] = 'Error creating publication: publication not found'
       redirect_to dashboard_url
       return
     elsif conflicting_identifiers.length > 0
+      Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
       conflicting_publication = conflicting_identifiers.first.publication
-      conflicting_identifiers.each do |confid|
-        if confid.publication != conflicting_publication
-          flash[:notice] = 'Error creating publication: multiple conflicting publications'
-          redirect_to dashboard_url
-          return
+      conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
+      
+      if conflicting_publications.length > 1
+        flash[:error] = 'Error creating publication: multiple conflicting publications'
+        flash[:error] += '<ul>'
+        conflicting_publications.each do |conf_pub|
+          flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
         end
+        flash[:error] += '</ul>'
+        
+        redirect_to dashboard_url
+        return
       end
       
       if (conflicting_publication.status == "committed")
@@ -338,20 +373,20 @@ class PublicationsController < ApplicationController
         #conflicting_publication.destroy
         conflicting_publication.archive
       else
-        flash[:notice] = 'Error creating publication: publication already exists. Please delete the conflicting publication if you have not submitted it and would like to start from scratch.'
+        flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
         redirect_to dashboard_url
         return
       end
     end
     # else
       @publication = Publication.new()
-      @publication.populate_identifiers_from_identifier(
-        identifier)
+      @publication.populate_identifiers_from_identifiers(
+        related_identifiers)
       @publication.owner = @current_user
 
       @publication.creator = @current_user
 
-      if @publication.save
+      if @publication.save!
         @publication.branch_from_master
 
         # need to remove repeat against publication model
@@ -421,6 +456,10 @@ class PublicationsController < ApplicationController
     if !has_voted 
       @vote.save
       @comment.save
+      
+      #update the change desc for the identifier
+      # @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
+      # @vote.identifier.save
     end #!has_voted
     #do what now? go to review page
     
@@ -467,12 +506,13 @@ class PublicationsController < ApplicationController
     pub_name = @publication.title
     @publication.destroy
 
-
+=begin  no one else should care that someone deleted their own publication    
     e = Event.new
     e.category = "deleted"
     e.target = @publication
     e.owner = @current_user
     e.save!
+=end
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
     respond_to do |format|

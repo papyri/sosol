@@ -18,10 +18,10 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     @bad_leiden = false
     @original_commit_comment = ''
-    if params[:commit] == "Save With Broken Leiden+"
+    if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
-      flash.now[:notice] = "File updated with broken Leiden+"
+      flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
         @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
@@ -33,6 +33,10 @@ class DdbIdentifiersController < IdentifiersController
           @comment.save
         end
         flash[:notice] = "File updated."
+        if %w{new editing}.include?@identifier.publication.status
+          flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+        end
+        
         redirect_to polymorphic_path([@identifier.publication, @identifier],
                                      :action => :edit)
       rescue RXSugar::NonXMLParseError => parse_error

@@ -5,7 +5,8 @@ var diacritical_option = "nopts";
 var tryit_type = "xml2non";
 var valueback = "";
 var xmltopass = "initial";
-var number_type = "valuecontent";
+var number_type = "other";
+var abbrev_type = "expan";
 var elliplang = "Demotic";
 var vestig_type = "character";
 //default definition of what to do on successful ajax call
@@ -58,6 +59,11 @@ function checktypegap(id)
   gap_type = document.getElementById(id).value;
 }
 
+function checktypeabbrev(id)
+{
+  abbrev_type = document.getElementById(id).value;
+}
+
 function checktryit(id)
 {
   tryit_type = document.getElementById(id).value;
@@ -81,6 +87,15 @@ function checktypevestig(id)
 function checktypenum(id)
 {
   number_type = document.getElementById(id).value;
+  if (number_type == "fraction" || number_type == "nested")
+    {
+      document.number.rend_frac_check_n.checked = false;
+      document.number.rend_frac_check_n.disabled = true;
+    }
+  else
+    {
+      document.number.rend_frac_check_n.disabled = false;
+    }
 }
 
 /*###########################################################################################*/
@@ -108,6 +123,13 @@ function isNumericSpecial(isnum)
 {
 //  allows fraction
     if (isnum.toString().match(/^\d+\/?\d*$/)) return true;
+    return false;
+}
+
+function isNumericFraction(isnum) 
+{
+//  fraction only
+    if (isnum.toString().match(/^\d+\/{1}\d+$/)) return true;
     return false;
 }
 
@@ -597,7 +619,8 @@ function insertDivisionSub()
 {
   editpass = "yes";
   
-  divisiontype = document.getElementById("division_value").value.toLowerCase();  //lowercase for grammar
+  divisiontype = document.getElementById("divisionType").value.toLowerCase();  //lowercase for grammar
+  divisionsubtype = document.getElementById("divisionSubtype").value.toLowerCase();  //lowercase for grammar
   
   if (divisiontype.length < 1) //cannot be blank extent text = extent unknown
     {
@@ -614,10 +637,19 @@ function insertDivisionSub()
           editpass = "no";
         }
     }
+  
+  if (divisionsubtype.toString().match(/\s/) || divisionsubtype.length < 1) //subtype empty or spaces
+    {
+      opt_subtype = "";
+    }
+  else
+    {
+      opt_subtype = " subtype=\"" + divisionsubtype + "\"";
+    }
     
   if (editpass == "yes")
     {
-      startxml = "<div n=\"" + divisiontype + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
@@ -638,98 +670,110 @@ function insertDivisionSub()
 
 function insertNum()
 {
-  
   editpass = "yes";
   
   switch (number_type)
   {
-  case "value":
-  {
-    numval = document.getElementById("number_value").value;
-    if (numval.length < 1 || isNumericSpecial(numval) == false) 
-      {
-        alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
-        editpass = "no";
-      }
-    break;
-  }
-  case "content":
-  {
-    numcontent = document.getElementById("number_content").value;
-    if (numcontent.length < 1) 
-      {
-        alert("At least 1 numeric digit needed for number value");
-        editpass = "no";
-      }
-    break;
-  }
-  case "valuecontent":
-  {
-    numval = document.getElementById("number_value").value;
-    if (numval.length < 1 || isNumericSpecial(numval) == false) 
-      {
-        alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
-        editpass = "no";
-      }
-    numcontent = document.getElementById("number_content").value;
-    if (numcontent.length < 1) 
-      {
-        alert("At least 1 character needed for number content");
-        editpass = "no";
-      }
-    break;
-  }
+  
   case "fraction":
-  {
+  
     editpass = "yes";
     break;
-  }
+  
   case "nested":
-  {
+  
     nestnum = document.getElementById("nested_number").value;
     if (nestnum.length < 1 || isNumeric(nestnum) == false) 
       {
         alert("At least 1 numeric digit needed for nested number");
         editpass = "no";
+        break;
       }
     nestwhole = document.getElementById("nested_whole").value;
     if (nestwhole.length < 1 || isNumeric(nestwhole) == false) 
       {
         alert("At least 1 numeric digit needed for nested whole number");
         editpass = "no";
+        break;
       }
     nestwholecontent = document.getElementById("nested_whole_content").value;
     if (nestwholecontent.length < 1) 
       {
         alert("At least 1 character needed for nested whole number content");
         editpass = "no";
+        break;
       }
     nestpart = document.getElementById("nested_partial").value;
     if (nestpart.length < 1 || isNumeric(nestpart) == false) 
       {
         alert("At least 1 numeric digit needed for nested partial number");
         editpass = "no";
+        break;
       }
     nestpartcontent = document.getElementById("nested_partial_content").value;
     if (nestpartcontent.length < 1) 
       {
         alert("At least 1 character needed for nested part number content");
         editpass = "no";
+        break;
       }
-    }
-    break;
+  break; //nested
+  
+  case "other": //this code will change the value of num_type edits passed so finishNum processes correctly
+  
+    numval = document.getElementById("number_value").value;
+    numcontent = document.getElementById("number_content").value;
+    {if (numval.toString().match(/\s/) || numval.length < 1) 
+      {
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value and content both empty
+          {
+            alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
+            editpass = "no";
+          }
+        else //value empty but content has data
+          {
+            if (document.number.rend_frac_check_n.checked == true)
+              {
+                opt_rend_frac = " rend=\"fraction\"";
+              }
+            else
+              {
+                opt_rend_frac = "";
+              }
+            number_type = "content";
+          }
+      }
+    else
+      {
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
+          {  
+            moreNumEdit("value");
+          }
+        else //value and content both have data
+          {
+            moreNumEdit("valuecontent");
+          }
+      }}
+  
+  break; //other
+  
   default:
-  {
-    alert("Invalid number_type - broken view - call support");
+  
+    alert("Invalid number_type - broken view - call support " + number_type);
     editpass = "no";
-  }
-  }
+  
+  } //end switch (number_type)
   
   if (editpass == "yes")
     {
-      finishNum()
+      finishNum();
     }
 } /*########################     end insertNum     ########################*/
+
+
+/*###########################################################################################*/
+/* finishNum                                                                                 */
+/*###########################################################################################*/
   
 function finishNum()
 {
@@ -737,39 +781,75 @@ function finishNum()
   switch (number_type)
   {
   case "value":
-  {
-    startxml = "<num value=\"" + numval + "\"/>";
+  
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
     break;
-  }
+  
   case "content":
-  {
-    startxml = "<num>" + numcontent + "</num>";
+  
+    startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
     break;
-  }
+  
   case "valuecontent":
-  {
-    startxml = "<num value=\"" + numval + "\">" + numcontent + "</num>";
+  
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
     break;
-  }
+  
   case "fraction":
-  {
+  
     startxml = "<num type=\"fraction\"/>";
     break;
-  }
+  
   case "nested":
-  {
+  
     startxml = "<num value=\"" + nestnum + "\">" + "<num value=\"" + nestwhole + "\">" + nestwholecontent + "</num>" + "<num value=\"" + nestpart + "\">" + nestpartcontent + "</num>" + "</num>";
     break;
-  }
+  
   default:
-  {
+  
     startxml = "";
-  }
+  
   }
   
-  convertXML()
+  convertXML();
 
 } /*########################     end finishNum     ########################*/
+
+
+/*###########################################################################################*/
+/* moreNumEdit                                                                               */
+/*###########################################################################################*/
+  
+function moreNumEdit(newType)
+{
+  if (document.number.rend_frac_check_n.checked)
+    {
+      if (isNumericFraction(numval) == true) //validates numeric value input is in fraction format
+        {
+          opt_rend_frac = " rend=\"fraction\"";
+          number_type = newType;
+        }
+      else
+        {
+          alert("Value must be in fraction format (ex. 1/8) when Rend Fraction checked");
+          editpass = "no";
+        }
+    }
+  else
+    {
+      if (isNumericSpecial(numval) == true)
+        {
+          opt_rend_frac = "";
+          number_type = newType;
+        }
+      else
+        {
+          alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
+          editpass = "no";
+        }
+    }
+} /*########################     end moreNumEdit     ########################*/
+
 
 /*###########################################################################################*/
 /* insertAbbrev                                                                              */
@@ -781,42 +861,25 @@ function insertAbbrev()
   
   abbrevtext = document.getElementById("abbrev_value").value;
   
-  /* lp = left paren position, rp = right paren position, qm = question mark position, llp = last left paren position,
-     lrp = last right paren position, lqm = last question mark position - last positions used to see if multiple left/right
-     parens or question marks have been entered */
+  /* lp = left paren position, rp = right paren position, qm = question mark position, 
+     llp = last left paren position, lrp = last right paren position
+  
+  last positions used to see if multiple left/right parens or question marks have been entered */
   
   lp = abbrevtext.indexOf("(");
   rp = abbrevtext.indexOf(")");
   qm = abbrevtext.indexOf("?");
   llp = abbrevtext.lastIndexOf("(");
   lrp = abbrevtext.lastIndexOf(")");
-  lqm = abbrevtext.lastIndexOf("?");
   
-  if (rp < lp)
-    {
-      alert("Right parens must be located after the left parens");
-      editpass = "no";
-    }
-  else
-    {
-      if ((rp - lp) <= 1) 
-        {
-          alert("Must have at least 1 character between left and right parens");
-          editpass = "no";
-        }
-    }
-  
-  if (editpass == "yes")
-    {
 //      alert("between parens " + abbrevtext.substr(lp+1,2));
-      if ((rp - lp) == 3 && abbrevtext.substr(lp+1,2) == "  ") //2 spaces between parens is Leiden+ for abbr tag
-        {
-          insertAbbrTag();
-        }
-      else
-        {
-          insertExpanTag();
-        }
+  if (abbrev_type == "expan") // expan radio button clicked
+    {
+      insertExpanTag();
+    }
+  else // abbr radio button clicked
+    {
+      insertAbbrTag();
     }
 }    
 
@@ -826,26 +889,35 @@ function insertAbbrev()
 
 function insertAbbrTag()
 {
-  if (lp == 0)
+  if (lp > -1 || rp > -1 || qm > -1) //text contains parens or question mark
     {
-      alert("Abbreviation text must be located before left parens");
+      alert("Abbreviation text cannot have parens and/or question marks - text only");
       editpass = "no";
     }
+  
   else
     {
-      if (abbrevtext.substr(rp+1) > " ") 
+      if (abbrevtext.toString().match(/\s/) || abbrevtext.length < 1)
         {
-          alert("No text allowed after right parens for abbr tag");
+          alert("Abbreviation text cannot be blank");
           editpass = "no";
         }
-    }
-  
-  if (editpass == "yes")
-    {
-      startxml = "<abbr>" + abbrevtext.substr(0,lp) + "</abbr>";
+      else //passed edits
+        {
+          if (document.abbrev.abbrevlow_check_n.checked == true) // ask for the cert low attribute
+            {
+              abbrend = "<certainty locus=\"name\" match=\"..\"/></abbr>";
+            }
+          else
+            {
+              abbrend = "</abbr>";
+            }
           
-      convertXML()
-    }
+          startxml = "<abbr>" + abbrevtext + abbrend;
+              
+          convertXML()
+        }
+    } 
 }    
     
 /*###########################################################################################*/
@@ -854,57 +926,54 @@ function insertAbbrTag()
 
 function insertExpanTag()
 {
-  editpass = "yes";
+  //editpass = "yes";
   
-  abbrevtext = document.getElementById("abbrev_value").value;
+  //abbrevtext = document.getElementById("abbrev_value").value;
   
   /* lp = left paren position, rp = right paren position, qm = question mark position, llp = last left paren position,
      lrp = last right paren position, lqm = last question mark position - last positions used to see if multiple left/right
      parens or question marks have been entered */
   
-  lp = abbrevtext.indexOf("(");
+  /*lp = abbrevtext.indexOf("(");
   rp = abbrevtext.indexOf(")");
   qm = abbrevtext.indexOf("?");
   llp = abbrevtext.lastIndexOf("(");
   lrp = abbrevtext.lastIndexOf(")");
-  lqm = abbrevtext.lastIndexOf("?");
+  lqm = abbrevtext.lastIndexOf("?");*/
   
-  if (rp < lp)
+  if (lp == -1 || rp == -1) //text does not contain parens
     {
-      alert("Right parens must be located after the left parens");
+      alert("Text must contain left and right parens indicating ex tag");
       editpass = "no";
     }
   else
     {
-      if ((rp - lp) <= 1) 
+      if (rp < lp)
         {
-          alert("Must have at least 1 character between left and right parens");
+          alert("Right parens must be located after the left parens");
           editpass = "no";
         }
       else
         {
-          if (lp != llp || rp != lrp)
+          if ((rp - lp) <= 1) 
             {
-              alert("Can have only 1 left parens and/or 1 right parens");
+              alert("Must have at least 1 character between left and right parens");
               editpass = "no";
             }
           else
             {
-              if (qm > -1)
+              if (lp != llp || rp != lrp)
                 {
-                  //if (qm != lqm)
-                    //{
+                  alert("Can have only 1 left paren and/or 1 right paren");
+                  editpass = "no";
+                }
+              else
+                {
+                  if (qm > -1)
+                    {
                       alert("Cannot have question mark - use checkbox for precision low");
                       editpass = "no";
-                    //}
-                  //else
-                    //{
-                      //if (qm != rp - 1)
-                        //{
-                          //alert("Question mark must be last character before right parens");
-                          //editpass = "no";
-                        //}
-                    //}
+                    }
                 }
             }
         }
@@ -920,27 +989,26 @@ function insertExpanTag()
 
 function finishAbbrev()
 {
-  if (lp == 0)
+  if (lp == 0) // left paren in first position which means ex only - no expan text
     {
       expandcont = "";
       excont = abbrevtext.slice(1,rp).replace(/\?/, "");
     }
   else
     {
-      if (lp > 0)
+      if (lp > 0) //expan and ex text
         {
           expandcont = abbrevtext.slice(0,lp);
           excont = abbrevtext.slice(lp + 1,rp).replace(/\?/, "");
         }
-      else
+      else // has to be -1 so no parens which means expan text only - no ex
         {
           expandcont = abbrevtext;
           excont = "";
         }
     }
   
-  if (document.abbrev.abbrevlow_check_n.checked == true) /* ask for the cert low attribute */
-//  if (qm > -1) /* ask for the cert low attribute */ 
+  if (document.abbrev.abbrevlow_check_n.checked == true) // check cert low attribute radio button
     {
       extagbeg = "<ex cert=\"low\">";
     }
@@ -949,7 +1017,7 @@ function finishAbbrev()
       extagbeg = "<ex>";
     }
   
-  if (rp < abbrevtext.length)
+  if (rp < abbrevtext.length) //check if text after the ex tag
     {
       other = abbrevtext.slice(rp + 1);
     }
@@ -1031,9 +1099,11 @@ function convertXML()
 
 function insertText(vti)
   {
-//  var element = window.opener.document.getElementById('ddb_identifier_leiden_plus');
-  
-//  element.focus();
+
+  //call function in main window to set variable saying the data was modified to cause
+  //verification question if leave page without saving
+  window.opener.set_conf_true();
+
   if(typeof document.selection != 'undefined') /* means IE browser */
     {
       var range = window.opener.document.selection.createRange();

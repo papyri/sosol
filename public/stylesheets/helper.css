@@ -52,12 +52,12 @@ top:0.63em;
 
 #nestwhole_div {
 position:relative;
-top:2.5em;
+top:1em;
 }
 
 #nestpart_div {
 position:relative;
-top:3em;
+top:1.5em;
 left:8.5em;
 }
 
@@ -130,7 +130,7 @@ width:15em;
 position:relative;
 top:0.63em;
 float:left;
-width:22em;
+width:20em;
 }
 
 #division_type {

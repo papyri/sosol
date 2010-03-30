@@ -25,7 +25,7 @@ ActionController::Routing::Routes.draw do |map|
 	map.help 'help', :controller => 'user', :action => 'help'
 
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
-  
+  map.usage 'usage', :controller => 'user', :action => 'usage_stats'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
  

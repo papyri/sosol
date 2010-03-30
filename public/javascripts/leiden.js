@@ -24,14 +24,13 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "abbrev":
   case "gapellipNT":
   case "gapilleg":
   case "gaplost":
   case "vestig":
   case "division":
     {
-      openconfig = config='height=185, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "ancientdia":
@@ -39,20 +38,25 @@ function helpDialogOpen(view)
       openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
+  case "abbrev":
+    {
+      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
   case "gapelliplang":
     {
-      openconfig = config='height=210, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "appalt":
   case "appsubst":
     {
-      openconfig = config='height=225, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "apporth":
     {
-      openconfig = config='height=350, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
@@ -60,13 +64,13 @@ function helpDialogOpen(view)
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=300, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   default: /* nopts is default and need to clear optional xml values and leave diachar filled in */
@@ -166,23 +170,27 @@ function insertDivisionMain(division_type)
   {
   case "r":
   case "v":
+    //line below for when ready for subtype face on r and v
+    //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
+  case "column": //default n to roman 1
   
-    {
-      startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-      break;
-    }
-  case "column":
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
+  case "document":
+  case "folio":
   case "fragment":
-  case "side":
-  
-    {
-      startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-      break;
-    }
+
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    break;
+
   default:
-    {
+    
       alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.")
-    }
+    
   }
   
   new Ajax.Request(ajaxConvert, 
@@ -201,18 +209,15 @@ function insertDivisionMain(division_type)
 } /*########################     end insertDivisionMain     ########################*/
 
 /*###########################################################################################*/
-/* insert underdot - make character unclear                                                  */
+/* insert special unicode character - char_name passed as \u#### value to insert             */
 /*###########################################################################################*/
 
-function insertUnderdot()
+function insertSpecialCharMain(char_name)
 {
   getFocusMain()
   
-  var underdot = "\u0323"; /* unicode value for combining underdot */
-  
-  insertTextMain(underdot);
+  insertTextMain(char_name);
 }
-
 
 /*###########################################################################################*/
 /* wrapxmlMain function                                                                          */
@@ -248,7 +253,11 @@ function convertXMLMain()
 /*###########################################################################################*/
 
 function insertTextMain(vti)
-{
+{ 
+  //call function to set variable saying the data was modified to cause
+  //verification question if leave page without saving
+  set_conf_true();
+  
   if(typeof document.selection != 'undefined') /* means IE browser */
     {
       var range = document.selection.createRange();

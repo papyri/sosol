@@ -1,4 +1,5 @@
 class Publication < ActiveRecord::Base  
+    
   
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
   
@@ -15,7 +16,7 @@ class Publication < ActiveRecord::Base
  # has_many :votes, :dependent => :destroy
   has_many :comments
   
-  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id]
+  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
   validates_each :branch do |model, attr, value|
@@ -32,21 +33,28 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
+  named_scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND status = 'editing'", title, id] }        }
+  
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
   
-  def populate_identifiers_from_identifier(identifier)
-    self.title = identifier_to_ref(identifier)
+  def populate_identifiers_from_identifiers(identifiers)
     # Coming in from an identifier, build up a publication
-    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
-      NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
+    if identifiers.class == String
+      # have a string, need to build relation
+      identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
+    end
+    
+    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    self.title = original_title
       
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
           self.identifiers << temp_id
-          if self.title == identifier_to_ref(identifier)
+          if self.title == original_title
             self.title = temp_id.titleize
           end
         end
@@ -123,7 +131,7 @@ class Publication < ActiveRecord::Base
       self.save
     end
 =end
-    self.origin.status = "committed" 
+    self.origin.change_status("committed")
     self.save
     
   end
@@ -151,10 +159,10 @@ class Publication < ActiveRecord::Base
         
         boards_copy = copy_to_owner(board)
         boards_copy.status = "voting"
-        boards_copy.save
+        boards_copy.save!
         
         identifier.status = "submitted"
-        self.status = "submitted"
+        self.change_status("submitted")
         
         board.send_status_emails("submitted", self)
        
@@ -163,8 +171,8 @@ class Publication < ActiveRecord::Base
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
       #(from_branch, to_branch, from_repo)
-        self.save
-        identifier.save
+        self.save!
+        identifier.save!
         
         #make the most recent sha for the identifier available...is this the one we want?
         @recent_submit_sha = identifier.get_recent_commit_sha
@@ -225,8 +233,7 @@ class Publication < ActiveRecord::Base
   end
   
   #sets thes origin status for publication identifiers that the publication's board controls
-  def set_origin_identifier_status(status_in)    
-
+  def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
       
       board = self.find_first_board
@@ -276,13 +283,40 @@ class Publication < ActiveRecord::Base
       end
   end
   
+  def change_status(new_status)
+    unless self.status == new_status
+      old_branch_leaf = self.branch.split('/').last
+      new_branch_components = [old_branch_leaf]
+      
+      unless new_status == 'editing'
+        new_branch_components.unshift(new_status, Time.now.strftime("%Y/%m/%d"))
+      end
+      
+      if self.parent && (self.parent.owner.class == Board)
+        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+      end
+      
+      new_branch_name = new_branch_components.join('/')
+
+      # prevent collisions
+      if self.owner.repository.branches.include?(new_branch_name)
+        new_branch_name += Time.now.strftime("-%H.%M.%S")
+      end
+    
+      # branch from the original branch
+      self.owner.repository.create_branch(new_branch_name, self.branch)
+      # delete the original branch
+      self.owner.repository.delete_branch(self.branch)
+      # set to new branch
+      self.branch = new_branch_name
+      # set status to new status
+      self.status = new_status
+      self.save!
+    end
+  end
+  
   def archive
-    #delete the repo
-    self.owner.repository.delete_branch(self.branch)
-    #set status to archved
-    self.status = "archived" 
-    #should we set identifiers status as well?
-    self.save  
+    self.change_status("archived")
   end
   
   def tally_votes(user_votes = nil)
@@ -313,8 +347,7 @@ class Publication < ActiveRecord::Base
     if decree_action == "approve"
       
       #set local publication status to approved
-      self.status = "approved"
-      self.save
+      self.change_status("approved")
       
       #on approval, set the identifier(s) to approved (local and origin)
       self.set_origin_and_local_identifier_status("approved")
@@ -330,7 +363,7 @@ class Publication < ActiveRecord::Base
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
      
-      self.origin.status = "editing"
+      self.origin.change_status("editing")
       self.set_origin_and_local_identifier_status("editing")
       
       self.owner.send_status_emails("rejected", self)
@@ -340,7 +373,7 @@ class Publication < ActiveRecord::Base
       #WARNING since they decided not to let editors edit we don't need to copy back to user 1-28-2010
       #self.copy_repo_to_parent_repo
       
-      self.origin.save
+      self.origin.save!
       
       #what to do with our copy?
      # self.status = "rejected" #reset to unsubmitted       
@@ -504,19 +537,18 @@ class Publication < ActiveRecord::Base
     
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
-    finalizing_publication.status = 'finalizing'
+    finalizing_publication.change_status('finalizing')
     finalizing_publication.save!
   end  
   
   def remove_finalizer
-    #need to find out if there is a finalizer, and take the publication from them
-    #finalizer will point back to this boards publication
-   # Publication.existing_finalizer self.id
+    # need to find out if there is a finalizer, and take the publication from them
+    # finalizer will point back to this board's publication
     current_finalizer_publication = find_finalizer_publication
-    #delete him?
-    #whatch out for cascading comment deltes...???TODO
+
+    # TODO cascading comment deletes?
     if current_finalizer_publication
-      current_finalizer_publication.delete
+      current_finalizer_publication.destroy
     end
   
   end
@@ -578,7 +610,7 @@ class Publication < ActiveRecord::Base
         commit_sha = canon.repo.update_ref('master', publication_sha)
         canon.repo.git.repack({})
       
-        self.status = 'committed'
+        self.change_status('committed')
         self.save!
       else
         # Both the merged commit and HEAD are independent and must be tied 
@@ -636,13 +668,13 @@ class Publication < ActiveRecord::Base
         canon.repo.git.repack({})
       
 
-        self.status = 'committed'
+        self.change_status('committed')
         self.save!
         
       end
     else
       # nothing under canon control, just say it's committed
-      self.status = 'committed'
+      self.change_status('committed')
       self.save!
       
     end

@@ -28,7 +28,7 @@
               %br
               = label_tag "Briefly describe the reason for your submission:"
               %br
-              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 80, :rows => 4
+              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 70, :rows => 4
               %br
               %br
               = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
@@ -54,42 +54,33 @@
       
       
     - for identifier in @publication.identifiers 
-      - image_name = ""       
-      - case identifier
-        - when DDBIdentifier
-          %h3 
-            Text - 
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'ddb.gif'
+      %h3
+        == #{identifier.class::FRIENDLY_NAME} - 
+        = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
 
-        - when HGVMetaIdentifier
-          %h3 
-            Meta -
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'hgv.gif'
-        
-        - when HGVTransIdentifier
-          %h3 
-            Translation - 
-            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-          - image_name = 'hgv.gif'
-        
-      
       %p
-        = image_tag(image_name)  
+        = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : 'hgv.gif')  
       
         = identifier.title
         - if @publication.status != "archived"
           = render :partial => identifier        
 
-    %br
-
     - if @comments != nil  
       %h3 Comments 
       - for comment in @comments
-        = render :partial => comment
+        = render :partial => comment      
+     
+    - if @other_user_publications != nil && @other_user_publications.length > 0
+      %br
+      %h3 This publication is also being edited by:
+      %ul
+        - for other_pub in @other_user_publications
+          %li
+            = other_pub.creator.human_name
+            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{SITE_NAME} - Publication #{other_pub.title}")}>
+            == (last edited #{time_ago_in_words(other_pub.updated_at)} ago)
+      %br
 
-    %br
 
     - if %w{editing new}.include?(@publication.status)
       - for class_type in @creatable_identifiers
