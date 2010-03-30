@@ -9,7 +9,7 @@ class DDBIdentifier < Identifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
-  BROKE_LEIDEN_MESSAGE = "Broke Leiden+ below saved to come back to later\n"
+  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
   
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
