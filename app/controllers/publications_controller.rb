@@ -159,13 +159,8 @@ class PublicationsController < ApplicationController
   end
   
   def become_finalizer
-    #TODO make sure we don't steel it from someone who is working on it
-    
-    
-    
+    # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id])
-    
-    
     @publication.remove_finalizer
     
     #note this can only be called on a board owned publication

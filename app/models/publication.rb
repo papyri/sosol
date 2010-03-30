@@ -538,14 +538,13 @@ class Publication < ActiveRecord::Base
   end  
   
   def remove_finalizer
-    #need to find out if there is a finalizer, and take the publication from them
-    #finalizer will point back to this boards publication
-   # Publication.existing_finalizer self.id
+    # need to find out if there is a finalizer, and take the publication from them
+    # finalizer will point back to this board's publication
     current_finalizer_publication = find_finalizer_publication
-    #delete him?
-    #whatch out for cascading comment deltes...???TODO
+
+    # TODO cascading comment deletes?
     if current_finalizer_publication
-      current_finalizer_publication.delete
+      current_finalizer_publication.destroy
     end
   
   end
