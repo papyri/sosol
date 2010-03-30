@@ -312,6 +312,16 @@ class PublicationsController < ApplicationController
     volume = params[:volume_number]
     document = params[:document_number]
     
+    if volume == 'Volume Number'
+      volume = ''
+    end
+    
+    if (document == 'Document Number') || document.empty?
+      flash[:error] = 'Error creating publication: you must specify a document number'
+      redirect_to dashboard_url
+      return
+    end
+    
     if identifier_class == 'DDBIdentifier'
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
