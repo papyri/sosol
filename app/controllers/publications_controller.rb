@@ -226,22 +226,14 @@ class PublicationsController < ApplicationController
     #as it is set up the finalizer will have a parent that is a board whose status must be set
     #check that parent is board
     if @publication.parent && @publication.parent.owner_type == "Board"              
-      @publication.parent.status = "committed"
-      @publication.parent.save
+      @publication.parent.archive
       @publication.parent.owner.send_status_emails("committed", @publication)
     #else #the user is a super user
     end
-         
-        
-
-    
-    #set the finalizer pub status
-    @publication.status = "committed"
-    @publication.save
-    
     
     #send publication to the next board
     @publication.origin.submit_to_next_board
+    @publication.archive
     
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
@@ -455,8 +447,8 @@ class PublicationsController < ApplicationController
       @comment.save
       
       #update the change desc for the identifier
-      @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
-      @vote.identifier.save
+      # @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
+      # @vote.identifier.save
     end #!has_voted
     #do what now? go to review page
     

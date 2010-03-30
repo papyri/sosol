@@ -131,7 +131,7 @@ class Publication < ActiveRecord::Base
       self.save
     end
 =end
-    self.origin.status = "committed" 
+    self.origin.change_status("committed")
     self.save
     
   end
@@ -233,8 +233,7 @@ class Publication < ActiveRecord::Base
   end
   
   #sets thes origin status for publication identifiers that the publication's board controls
-  def set_origin_identifier_status(status_in)    
-
+  def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
       
       board = self.find_first_board
@@ -284,25 +283,31 @@ class Publication < ActiveRecord::Base
       end
   end
   
-  def archive
-    archived_branch_name = 
-      ["archived", Time.now.strftime("%Y/%m/%d"), self.branch].join('/')
+  def change_status(new_status)
+    unless self.status == new_status
+      old_branch_leaf = self.branch.split('/').last
+      new_branch_name =
+        [new_status, Time.now.strftime("%Y/%m/%d"), old_branch_leaf].join('/')
+
+      # prevent collisions
+      if self.owner.repository.branches.include?(new_branch_name)
+        new_branch_name += Time.now.strftime("-%H.%M.%S")
+      end
     
-    # prevent collisions
-    if self.owner.repository.branches.include?(archived_branch_name)
-      archived_branch_name += Time.now.strftime("-%H.%M.%S")
+      # branch from the original branch
+      self.owner.repository.create_branch(new_branch_name, self.branch)
+      # delete the original branch
+      self.owner.repository.delete_branch(self.branch)
+      # set to new branch
+      self.branch = new_branch_name
+      # set status to new status
+      self.status = new_status
+      self.save!
     end
-    
-    # branch from the original branch
-    self.owner.repository.create_branch(archived_branch_name, self.branch)
-    # delete the original branch
-    self.owner.repository.delete_branch(self.branch)
-    # set to archived branch
-    self.branch = archived_branch_name
-    # set status to archived
-    self.status = "archived" 
-    # should we set identifiers status as well?
-    self.save!
+  end
+  
+  def archive
+    self.change_status("archived")
   end
   
   def tally_votes(user_votes = nil)
@@ -333,8 +338,7 @@ class Publication < ActiveRecord::Base
     if decree_action == "approve"
       
       #set local publication status to approved
-      self.status = "approved"
-      self.save
+      self.change_status("approved")
       
       #on approval, set the identifier(s) to approved (local and origin)
       self.set_origin_and_local_identifier_status("approved")
@@ -350,7 +354,7 @@ class Publication < ActiveRecord::Base
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
      
-      self.origin.status = "editing"
+      self.origin.change_status("editing")
       self.set_origin_and_local_identifier_status("editing")
       
       self.owner.send_status_emails("rejected", self)
@@ -524,7 +528,7 @@ class Publication < ActiveRecord::Base
     
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
-    finalizing_publication.status = 'finalizing'
+    finalizing_publication.change_status('finalizing')
     finalizing_publication.save!
   end  
   
@@ -598,7 +602,7 @@ class Publication < ActiveRecord::Base
         commit_sha = canon.repo.update_ref('master', publication_sha)
         canon.repo.git.repack({})
       
-        self.status = 'committed'
+        self.change_status('committed')
         self.save!
       else
         # Both the merged commit and HEAD are independent and must be tied 
@@ -656,13 +660,13 @@ class Publication < ActiveRecord::Base
         canon.repo.git.repack({})
       
 
-        self.status = 'committed'
+        self.change_status('committed')
         self.save!
         
       end
     else
       # nothing under canon control, just say it's committed
-      self.status = 'committed'
+      self.change_status('committed')
       self.save!
       
     end
