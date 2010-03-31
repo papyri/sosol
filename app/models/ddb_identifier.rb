@@ -5,61 +5,60 @@ class DDBIdentifier < Identifier
   FRIENDLY_NAME = "Text"
   
   IDENTIFIER_NAMESPACE = 'ddbdp'
-  TEMPORARY_COLLECTION = '0500'
+  TEMPORARY_COLLECTION = 'sosol'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
+  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
+  
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
-
-  class CollectionXML
-    include Singleton
-    
-    attr_reader :collection_xml, :rexml_document
-    
-    def initialize
-      canonical_repo = Repository.new
-      @collection_xml = canonical_repo.get_file_from_branch(
-                        COLLECTION_XML_PATH, 'master')
-      @rexml_document = REXML::Document.new(@collection_xml)
-    end
-  end
-  
-  def titleize
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
-
-    # strip leading zeros
-    ddb_document_number.sub!(/^0*/,'')
-
-    title = 
-      [ddb_collection_name, ddb_volume_number, ddb_document_number].join(' ')
-  end
   
   def id_attribute
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
-    ddb_collection_name = 
-      self.class.ddb_series_to_human_collection(ddb_series_number)
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components.last.split(';')
+    
     ddb_collection_name.downcase!
+    
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
   end
   
   def n_attribute
-    return to_components.join(';')
+    return to_components[2..-1].join(';')
   end
   
   def xml_title_text
     id_attribute
   end
   
+  def self.collection_names_hash
+    self.collection_names
+    
+    unless defined? @collection_names_hash
+      @collection_names_hash = {TEMPORARY_COLLECTION => "SoSOL"}
+      response = 
+        NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(
+          "prefix dc: <http://purl.org/dc/terms/> construct { ?ddb dc:bibliographicCitation ?bibl} from <rmi://localhost/papyri.info#pi> where {?ddb dc:isPartOf <http://papyri.info/ddbdp> . ?ddb dc:bibliographicCitation ?bibl}\n&default-graph-uri=rmi://localhost/papyri.info#pi&format=rdfxml"
+        )
+      if response.code == '200'
+        @collection_names.each do |collection_name|
+          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/ns1:bibliographicCitation/text()"
+          human_name = 
+            NumbersRDF::NumbersHelper.process_numbers_server_response_body(
+              response.body, xpath).first
+          @collection_names_hash[collection_name] = human_name unless human_name.nil?
+        end
+      end
+    end
+    
+    return @collection_names_hash
+  end
+  
   def to_path
     path_components = [ PATH_PREFIX ]
     
-    ddb_series_number, ddb_volume_number, ddb_document_number =
-      to_components
+    ddb_collection_name, ddb_volume_number, ddb_document_number =
+      self.to_components[2..-1].join('/').split(';')
       
     # switch commas to dashes
     # e.g. 0001:13:2230,1 => bgu/bgu.13/bgu.13.2230-1.xml 
@@ -68,10 +67,6 @@ class DDBIdentifier < Identifier
     # switch forward slashes to underscores
     # e.g. 0014:2:1964/1967 => o.bodl/o.bodl.2/o.bodl.2.1964_1967.xml
     ddb_document_number.tr!('/','_')
-      
-    # e.g. 0001 => bgu
-    ddb_collection_name = 
-      self.class.ddb_series_to_collection(ddb_series_number)
     
     if ddb_collection_name.nil?
       raise "DDB Collection Name Not Found"
@@ -94,57 +89,6 @@ class DDBIdentifier < Identifier
     return File.join(path_components)
   end
   
-  def self.get_collection_xml
-    CollectionXML.instance.collection_xml
-  end
-
-  # map DDB series number to DDB collection name using collection.xml
-  def self.ddb_series_to_collection(ddb_series_number)
-    # FIXME: put in canonical collection.xml
-    if ddb_series_number.to_i == 500
-      return 'sosol'
-    else
-      # collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/text[1]/text()")
-    
-      return xpath_result.nil? ? nil : xpath_result.to_s
-    end
-  end
-  
-  # map DDB human collection name to DDB series number using collection.xml
-  def self.ddb_human_collection_to_series(ddb_collection_name)
-    # collection_xml = get_collection_xml
-    #[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']
-    xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-      "/rdf:RDF/rdf:Description/dcterms:isVersionOf[@rdf:resource = 'Perseus:abo:pap,#{ddb_collection_name}']/..")
-    xpath_result.attributes['rdf:about'].sub(/^Perseus:text:1999.05./,'')
-  end
-  
-  def self.ddb_series_to_human_collection(ddb_series_number)
-    # FIXME: put in canonical collection.xml
-    if ddb_series_number.to_i == 500
-      return 'SoSOL'
-    else
-      # collection_xml = get_collection_xml
-      xpath_result = REXML::XPath.first(CollectionXML.instance.rexml_document,
-        "/rdf:RDF/rdf:Description[@rdf:about = 'Perseus:text:1999.05.#{ddb_series_number}']/dcterms:isVersionOf")
-      xpath_result.attributes['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
-    end
-  end
-  
-  def self.collection_names
-    collection_names = []
-    collection_xml = get_collection_xml
-    versions = JRubyXML.apply_xpath(collection_xml,
-      "/rdf:RDF/rdf:Description/dcterms:isVersionOf", true)
-    versions.each do |version|
-      collection_names << 
-        version[:attributes]['rdf:resource'].sub(/^Perseus:abo:pap,/,'')
-    end
-    return collection_names.sort
-  end
-  
   def before_commit(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -153,14 +97,28 @@ class DDBIdentifier < Identifier
   end
   
   def leiden_plus
-    abs = DDBIdentifier.preprocess_abs(
-      DDBIdentifier.get_abs_from_edition_div(xml_content))
-    # transform XML to Leiden+ 
-    transformed = DDBIdentifier.xml2nonxml(abs)
-    
-    return transformed
+    repo_xml = xml_content
+    repo_xml_work = REXML::Document.new(repo_xml)
+    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
+    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
+    #otherwise, get broke Leiden+ and display that
+    if brokeleiden_here == nil
+      abs = DDBIdentifier.preprocess_abs(
+        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+      # transform XML to Leiden+ 
+      transformed = DDBIdentifier.xml2nonxml(abs)
+      
+      return transformed
+    else
+      #get the broke Leiden+
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+    end
   end
   
+  # Returns a String of the SHA1 of the commit
   def set_leiden_plus(leiden_plus_content, comment)
     # transform back to XML
     xml_content = self.leiden_plus_to_xml(
@@ -194,6 +152,9 @@ class DDBIdentifier < Identifier
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     
+    #deletes XML with broke Leiden+ if it exists
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
+    
     #pull divs in the text and loop through and delete each - couldn't get xpath to do all at once
     
     div_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/div')
@@ -210,6 +171,11 @@ class DDBIdentifier < Identifier
       original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/ab')
     end
     
+    #this is to put only 1 new line at the end of the edition div - without this several new lines may exist
+    #being left over after multiple ab/div's deleted above and starts adding more and more if do multiple updates
+    loc_nl_original_edition = original_xml_content.elements['/TEI/text/body/div[@type = "edition"]']
+    loc_nl_original_edition.text = "\n"
+    
     # add modified abs to edition
     modified_abs = transformed_xml_content.elements[
       '/wrapab']
@@ -217,12 +183,18 @@ class DDBIdentifier < Identifier
     original_edition =  original_xml_content.elements[
       '/TEI/text/body/div[@type = "edition"]']
     
-    #put loop in because previous did not work with multiple because destructive to array
+    #put loop in because previous did not work with multiple because destructive to array[0]
     #loop through however many need to add and always add the first one in the array which gets deleted
     loop_cnt = 0
     nbr_to_add = modified_abs.length
     until loop_cnt == nbr_to_add 
-      original_edition.add_element(modified_abs[0])
+      
+      if modified_abs[0] == "\n" #means it is a text node not and element
+        original_edition.add_text modified_abs[0]
+      else
+        original_edition.add_element(modified_abs[0])
+      end
+      
       loop_cnt+=1
     end
     
@@ -230,6 +202,33 @@ class DDBIdentifier < Identifier
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
     return modified_xml_content
+  end
+  
+  def save_broken_leiden_plus_to_xml(brokeleiden, commit_comment = '')
+    # fetch the original content
+    original_xml_content = REXML::Document.new(self.xml_content)
+    #deletes XML with broke Leiden+ if it exists already so can add with updated data
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
+    #set in XML where to add new div tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element 'div', {'type'=>'edition', 'subtype'=>'brokeleiden'}
+    #set in XML where to add new note tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element "note"
+    #set in XML where to add broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    brokeleiden = BROKE_LEIDEN_MESSAGE + brokeleiden
+    add_node_here.add_text brokeleiden
+    
+    # write back to a string
+    modified_xml_content = ''
+    original_xml_content.write(modified_xml_content)
+    
+    # commit xml to repo
+    self.set_xml_content(modified_xml_content, :comment => commit_comment)
   end
 
   def preview

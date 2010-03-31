@@ -66,14 +66,20 @@ class Repository
     # referenced objects will disappear, possibly making the repo unusable.
     @canonical.git.repack({})
     
-    FileUtils::rm_r path, :verbose => false, :secure => true
+    canon = Repository.new
+    canon.del_alternates(self)
+    FileUtils::rm_r path, :verbose => false
   end
   
   def get_blob_from_branch(file, branch = 'master')
-    tree = @repo.tree(branch, [File.dirname(file)])
-    subtree = tree.contents.first
-    return nil if subtree.nil?
-    blob = subtree / File.basename(file)
+    begin
+      tree = @repo.tree(branch, [File.dirname(file)])
+      subtree = tree.contents.first
+      return nil if subtree.nil?
+      blob = subtree / File.basename(file)
+    rescue Grit::GitRuby::Repository::NoSuchPath
+      return nil
+    end
   end
   
   def get_file_from_branch(file, branch = 'master')  
@@ -116,7 +122,7 @@ class Repository
   end
   
   def get_log_for_file_from_branch(file, branch = 'master')
-    @repo.log(branch, file).map{|commit| commit.to_hash}
+    @repo.log(branch, file, :follow => true).map{|commit| commit.to_hash}
   end
   
   def update_master_from_canonical
@@ -127,7 +133,9 @@ class Repository
     # We have to abuse git here because Grit::Head doesn't appear to have
     # a facility for writing out a sha1 to refs/heads/name yet
     # Also, we always assume we want to branch from master by default
-    self.update_master_from_canonical
+    if source_name == 'master'
+      self.update_master_from_canonical
+    end
     
     @repo.git.branch({}, name, source_name)
   end
@@ -166,10 +174,39 @@ class Repository
     @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
   end
   
+  def del_alternates(other_repo)
+    @repo.alternates = @repo.alternates() - [ File.join(other_repo.repo.path, "objects") ]
+  end
+  
   def branches
     @repo.branches.map{|b| b.name}
   end
   
+  def rename_file(original_path, new_path, branch, comment, actor)
+    content = get_file_from_branch(original_path, branch)
+    if !content
+      raise "Rename error: Original file '#{original_path}' does not exist on branch '#{branch}'"
+    elsif get_blob_from_branch(new_path, branch)
+      raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
+    end
+    
+    index = @repo.index
+    index.read_tree(branch)
+    # do the rename here, against index.tree
+    # rename is just a simultaneous add/delete
+    # add the new data
+    index.add(new_path, content)
+    # remove the old path from the tree
+    index.rm(original_path)
+
+    index.commit(comment,
+                 @repo.commits(branch,1).first.to_s, # commit parent,
+                 actor,
+                 nil,
+                 branch)
+  end
+  
+  # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
       raise "Cannot commit directly to canonical repository"

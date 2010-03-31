@@ -42,14 +42,18 @@ class HgvTransIdentifiersController < IdentifiersController
   def update
     #raise "contents are: " + params[:content]
     find_identifier
-    @identifier.set_content(params[:editing_trans_xml])
+    commit_sha = @identifier.set_content(params[:editing_trans_xml])
     
     if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => "todo", :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
       @comment.save    
     end
     
     flash[:notice] = "File updated."
+    if %w{new editing}.include?@identifier.publication.status
+      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+    end
+    
     #@identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)

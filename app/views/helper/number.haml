@@ -5,16 +5,13 @@
   .site
     = stylesheet_link_tag 'helper'
     #number_div{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Select Number Type and Enter Associated Values To Insert </h3>
       #numcol1
         #numtype_div
-          %input{ :type => "radio", :class => "number_radio", :id => "value", :name => "number_type", :value => "value", :onclick => "checktypenum(this.id)"}Value Only
+          %input{ :checked => "", :type => "radio", :class => "number_radio", :id => "valuecontent", :name => "number_type", :value => "other", :onclick => "checktypenum(this.id)"}Value &/or Content
           <br/>
-          %input{ :type => "radio", :class => "number_radio", :id => "content", :name => "number_type", :value => "content", :onclick => "checktypenum(this.id)"}Content Only
-          <br/>
-          %input{ :checked => "", :type => "radio", :class => "number_radio", :id => "valuecontent", :name => "number_type", :value => "valuecontent", :onclick => "checktypenum(this.id)"}Value & Content
-          <br/>
-          %input{ :type => "radio", :class => "number_radio", :id => "fraction", :name => "number_type", :value => "fraction", :onclick => "checktypenum(this.id)"}Fraction
+          %input{ :type => "radio", :class => "number_radio", :id => "fraction", :name => "number_type", :value => "fraction", :onclick => "checktypenum(this.id)"}FRAC
           <br/>
           %input{ :type => "radio", :class => "number_radio", :id => "nested", :name => "number_type", :value => "nested", :onclick => "checktypenum(this.id)"}Nested Large
         #numbutton_div
@@ -26,6 +23,10 @@
           %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Value to Insert
           <br/>
           %input{ :type => "text", :class => "choosetext greek", :id => "number_content", :size => "04"}Number Content to Insert
+          <br/>
+          <br/>
+          %form{:name => "number"}
+            %input{ :type => "checkbox", :class => "rend_frac_check_c", :id => "rendfrac", :name => "rend_frac_check_n", :value => "rendfrac", :enabled => "true"}Rend as Fraction
         #nestwhole_div
           %input{ :type => "text", :class => "choosetext", :id => "nested_number", :size => "09"}Number
           &nbsp

@@ -1,4 +1,5 @@
 class Publication < ActiveRecord::Base  
+    
   
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
   
@@ -15,7 +16,7 @@ class Publication < ActiveRecord::Base
  # has_many :votes, :dependent => :destroy
   has_many :comments
   
-  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id]
+  validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
   validates_each :branch do |model, attr, value|
@@ -32,37 +33,52 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
-  def populate_identifiers_from_identifier(identifier)
-    self.title = identifier.tr(':','_')
+  named_scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND status = 'editing'", title, id] }        }
+  
+  #inelegant way to pass this info, but it works
+  attr_accessor :recent_submit_sha
+  
+  def populate_identifiers_from_identifiers(identifiers)
     # Coming in from an identifier, build up a publication
-    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(
-      NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier))
-    if identifiers.has_key?('ddbdp')
-      identifiers['ddbdp'].each do |ddb|
-        d = DDBIdentifier.new(:name => ddb)
-        self.identifiers << d
-        self.title = d.titleize
+    if identifiers.class == String
+      # have a string, need to build relation
+      identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
+    end
+    
+    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    self.title = original_title
+      
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
+      if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
+        identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
+          temp_id = identifier_class.new(:name => identifier_string)
+          self.identifiers << temp_id
+          if self.title == original_title
+            self.title = temp_id.titleize
+          end
+        end
       end
     end
     
     # Use HGV hack for now
-    if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
-      identifiers['trismegistos'].each do |tm|
-        tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
-        self.identifiers << HGVMetaIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}")
-        
-        # Check if there's a trans, if so, add it
-        translation = HGVTransIdentifier.new(
-          :name => "#{identifiers['hgv'].first}",
-          :alternate_name => "hgv#{tm_nr}"
-        )
-        if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
-          self.identifiers << translation
-        end
-      end
-    end
+    # if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
+    #   identifiers['trismegistos'].each do |tm|
+    #     tm_nr = NumbersRDF::NumbersHelper.identifier_to_components(tm).last
+    #     self.identifiers << HGVMetaIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}")
+    #     
+    #     # Check if there's a trans, if so, add it
+    #     translation = HGVTransIdentifier.new(
+    #       :name => "#{identifiers['hgv'].first}",
+    #       :alternate_name => "hgv#{tm_nr}"
+    #     )
+    #     if !(Repository.new.get_file_from_branch(translation.to_path).nil?)
+    #       self.identifiers << translation
+    #     end
+    #   end
+    # end
   end
   
   # If branch hasn't been specified, create it from the title before
@@ -115,44 +131,51 @@ class Publication < ActiveRecord::Base
       self.save
     end
 =end
-    self.origin.status = "committed" 
+    self.origin.change_status("committed")
     self.save
     
   end
   
+  
   def submit_identifier(identifier)
-    #find correct board
+    
+    @recent_submit_sha = "";
+    
+    #find correct board    
     
     boards = Board.find(:all)
     boards.each do |board|
       if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
+        begin
+          submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
+          if submit_comment && submit_comment.comment
+            identifier.add_change_desc(submit_comment.comment)
+          else
+            identifier.add_change_desc()
+          end
+        rescue ActiveRecord::RecordNotFound
+          identifier.add_change_desc()
+        end
         
         boards_copy = copy_to_owner(board)
         boards_copy.status = "voting"
-        boards_copy.save
-        
-        # duplicate = self.clone
-        #duplicate.owner = new_owner
-       # duplicate.creator = self.creator
-     #   duplicate.title = self.owner.name + "/" + self.title
-     #   duplicate.branch = title_to_ref(duplicate.title)
-          
-        
-        # self.owner_id = board.id
-        # self.owner_type = "Board"
+        boards_copy.save!
         
         identifier.status = "submitted"
-        self.status = "submitted"
+        self.change_status("submitted")
         
         board.send_status_emails("submitted", self)
-        
+       
         # self.title = self.creator.name + "/" + self.title
         # self.branch = title_to_ref(self.title)
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
       #(from_branch, to_branch, from_repo)
-        self.save
-        identifier.save
+        self.save!
+        identifier.save!
+        
+        #make the most recent sha for the identifier available...is this the one we want?
+        @recent_submit_sha = identifier.get_recent_commit_sha
         return true
       end
     end
@@ -161,31 +184,6 @@ class Publication < ActiveRecord::Base
   
   def submit
     submit_to_next_board
-    return
-    #note return here to comment out rest of function
-    boards = Board.find(:all)
-    boards.each do |board|
-      board_matches_publication = false
-      identifiers.each do |identifier|
-        if !board.identifier_classes.nil? && board.identifier_classes.include?(identifier.class.to_s)
-          board_matches_publication = true
-          break
-        end
-      end
-      
-      if board_matches_publication
-        copy_to_owner(board)
-      end
-    end
-    
-    self.status = "submitted"
-    self.save!
-    
-    e = Event.new
-    e.category = "submitted"
-    e.target = self
-    e.owner = self.owner
-    e.save!
   end
   
   def self.new_from_templates(creator)
@@ -234,72 +232,8 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-=begin
-  def send_status_emails(when_to_send)
-
-  	#search emailer for status
-  	if self.board == nil || self.board.emailers == nil
-  	  return
-  	end
-    
-  	self.board.emailers.each do |mailer|
-  	
-  		if mailer.when_to_send == when_to_send
-  			#send the email
-  			addresses = Array.new	
-  			#--addresses
-  			mailer.users.each do |user|
-  				if user.email != nil
-  					addresses << user.email
-  				end
-  			end
-  			extras = mailer.extra_addresses.split(" ")
-  			extras.each do |extra|
-  				addresses << extra
-  			end
-  			if mailer.send_to_owner
-  				if self.user.email != nil
-  					addresses << self.user.email
-  				end
-  			end
-  			
-  			#--document content
-  			if mailer.include_document
-  				document_content = self.content 
-  			else
-  				document_content = nil
-  			end
-  			
-  			body = mailer.message
-  			
-  			#TODO parse the message to add local vars
-  			#votes
-  			
-  			#comments
-  			#owner
-  			#status
-  			#who changed status
-  			subject_line = self.publication.title + " " + self.class::FRIENDLY_NAME + "-" + self.status
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
-  			
-  			addresses.each do |address|
-  				if address != nil && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
-  				end
-  			end
-  			
-  		end
-  	end	
-  end
-=end
-  
   #sets thes origin status for publication identifiers that the publication's board controls
-  def set_origin_identifier_status(status_in)    
-
+  def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
       
       board = self.find_first_board
@@ -349,6 +283,41 @@ class Publication < ActiveRecord::Base
       end
   end
   
+  def change_status(new_status)
+    unless self.status == new_status
+      old_branch_leaf = self.branch.split('/').last
+      new_branch_components = [old_branch_leaf]
+      
+      unless new_status == 'editing'
+        new_branch_components.unshift(new_status, Time.now.strftime("%Y/%m/%d"))
+      end
+      
+      if self.parent && (self.parent.owner.class == Board)
+        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+      end
+      
+      new_branch_name = new_branch_components.join('/')
+
+      # prevent collisions
+      if self.owner.repository.branches.include?(new_branch_name)
+        new_branch_name += Time.now.strftime("-%H.%M.%S")
+      end
+    
+      # branch from the original branch
+      self.owner.repository.create_branch(new_branch_name, self.branch)
+      # delete the original branch
+      self.owner.repository.delete_branch(self.branch)
+      # set to new branch
+      self.branch = new_branch_name
+      # set status to new status
+      self.status = new_status
+      self.save!
+    end
+  end
+  
+  def archive
+    self.change_status("archived")
+  end
   
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes
@@ -378,8 +347,7 @@ class Publication < ActiveRecord::Base
     if decree_action == "approve"
       
       #set local publication status to approved
-      self.status = "approved"
-      self.save
+      self.change_status("approved")
       
       #on approval, set the identifier(s) to approved (local and origin)
       self.set_origin_and_local_identifier_status("approved")
@@ -395,7 +363,7 @@ class Publication < ActiveRecord::Base
     elsif decree_action == "reject"
       #@publication.get_category_obj().reject       
      
-      self.origin.status = "editing"
+      self.origin.change_status("editing")
       self.set_origin_and_local_identifier_status("editing")
       
       self.owner.send_status_emails("rejected", self)
@@ -405,7 +373,7 @@ class Publication < ActiveRecord::Base
       #WARNING since they decided not to let editors edit we don't need to copy back to user 1-28-2010
       #self.copy_repo_to_parent_repo
       
-      self.origin.save
+      self.origin.save!
       
       #what to do with our copy?
      # self.status = "rejected" #reset to unsubmitted       
@@ -569,19 +537,18 @@ class Publication < ActiveRecord::Base
     
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
-    finalizing_publication.status = 'finalizing'
+    finalizing_publication.change_status('finalizing')
     finalizing_publication.save!
   end  
   
   def remove_finalizer
-    #need to find out if there is a finalizer, and take the publication from them
-    #finalizer will point back to this boards publication
-   # Publication.existing_finalizer self.id
+    # need to find out if there is a finalizer, and take the publication from them
+    # finalizer will point back to this board's publication
     current_finalizer_publication = find_finalizer_publication
-    #delete him?
-    #whatch out for cascading comment deltes...???TODO
+
+    # TODO cascading comment deletes?
     if current_finalizer_publication
-      current_finalizer_publication.delete
+      current_finalizer_publication.destroy
     end
   
   end
@@ -608,6 +575,11 @@ class Publication < ActiveRecord::Base
   end
   
   def commit_to_canon
+  
+    #commit_sha is just used to return git sha reference point for comment
+    commit_sha = nil
+  
+  
     canon = Repository.new
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
@@ -616,23 +588,97 @@ class Publication < ActiveRecord::Base
     # to find the branch point? Though that may do the same internally...
     # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
     
+    # Commits that are in canonical master but not this branch
+    # Forcing method_missing here to directly call rev-list is much faster
+    commits = self.owner.repository.repo.git.method_missing('rev-list',{}, canonical_sha, "^#{publication_sha}").split("\n")
+    
     # canon.repo.git.merge({:no_commit => true, :stat => true},
       # self.owner.repository.repo.get_head(self.branch).commit.sha)
     
     # get the result of merging canon master into this branch
-    merge = Grit::Merge.new(
-      self.owner.repository.repo.git.merge_tree({},
-        publication_sha, canonical_sha, publication_sha))
+    # merge = Grit::Merge.new(
+    #   self.owner.repository.repo.git.merge_tree({},
+    #     publication_sha, canonical_sha, publication_sha))
     
-    if merge.conflicts == 0
-      if merge.sections == 0
-        # nothing new from canon, trivial merge by updating HEAD
+    
+    if canon_controlled_identifiers.length > 0
+      if commits.length == 0
+        # nothing new from canon, trivial merge by updating HEAD 
+        # e.g. "Fast-forward" merge, HEAD is already contained in the commit
+        # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        canon.repo.update_ref('master', publication_sha)
-        self.status = 'committed'
+        commit_sha = canon.repo.update_ref('master', publication_sha)
+        canon.repo.git.repack({})
+      
+        self.change_status('committed')
         self.save!
+      else
+        # Both the merged commit and HEAD are independent and must be tied 
+        # together by a merge commit that has both of them as its parents.
+      
+        # TODO: DRY from flatten_commits
+        controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
+          self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
+        end
+
+        controlled_paths_blobs = 
+          Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
+
+        Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+        Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+      
+        # roll a tree SHA1 by reading the canonical master tree,
+        # adding controlled path blobs, then writing the modified tree
+        # (happens on the finalizer's repo)
+        self.owner.repository.update_master_from_canonical
+        index = self.owner.repository.repo.index
+        index.read_tree('master')
+        controlled_paths_blobs.each_pair do |path, blob|
+          index.add(path, blob.data)
+        end
+
+        tree_sha1 = index.write_tree(index.tree, index.current_tree)
+        Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+        commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
+      
+        contents = []
+        contents << ['tree', tree_sha1].join(' ')
+        contents << ['parent', canonical_sha].join(' ')
+        contents << ['parent', publication_sha].join(' ')
+
+        contents << ['author', self.owner.git_author_string].join(' ')
+        contents << ['committer', self.owner.git_author_string].join(' ')
+        contents << ''
+        contents << commit_message
+      
+        finalized_commit_sha1 = 
+          self.owner.repository.repo.git.put_raw_object(
+            contents.join("\n"), 'commit')
+      
+        Rails.logger.info("Finalized commit contents:\n#{contents.join("\n")}")
+        Rails.logger.info("Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+      
+        # Update our own head first
+        self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
+      
+        # canon.fetch_objects(self.owner.repository)
+        canon.add_alternates(self.owner.repository)
+        commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
+        canon.repo.git.repack({})
+      
+
+        self.change_status('committed')
+        self.save!
+        
       end
+    else
+      # nothing under canon control, just say it's committed
+      self.change_status('committed')
+      self.save!
+      
     end
+    return commit_sha
   end
   
   
@@ -641,12 +687,14 @@ class Publication < ActiveRecord::Base
   end
   
   def controlled_identifiers
-    if self.owner.class == Board
-      return self.identifiers.select do |i|
+    return self.identifiers.select do |i|
+      if self.owner.class == Board
         self.owner.identifier_classes.include?(i.class.to_s)
+      elsif self.status == 'finalizing'
+        self.parent.owner.identifier_classes.include?(i.class.to_s)
+      else
+        false
       end
-    else
-      return []
     end
   end
   
@@ -656,11 +704,24 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def canon_controlled_identifiers
+    # TODO: implement a class-level var e.g. CANON_CONTROL for this
+    self.controlled_identifiers.select{|i| !([HGVMetaIdentifier, HGVBiblioIdentifier].include?(i.class))}
+  end
+  
+  def canon_controlled_paths
+    self.canon_controlled_identifiers.collect do |i|
+      i.to_path
+    end
+  end
+  
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
-    self.owner.repository.repo.git.diff(
-      {:unified => 5000}, canonical_sha, self.head)
+    diff = self.owner.repository.repo.git.diff(
+      {:unified => 5000}, canonical_sha, self.head,
+      '--', *(self.controlled_paths))
+    return diff || ""
   end
   
   def submission_reason
@@ -748,5 +809,9 @@ class Publication < ActiveRecord::Base
   protected
     def title_to_ref(str)
       str.tr(' ','_')
+    end
+    
+    def identifier_to_ref(str)
+      str.tr(':;','_')
     end
 end

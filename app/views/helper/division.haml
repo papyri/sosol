@@ -5,10 +5,13 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'markup_warn'
       <h3>Enter Type of Division</h3>
-      <h4>Valid values: cannot be blank, cannot have '.' but can have '+'</h4>
+      <h4>Type value cannot be blank, cannot have '.' but can have '+'. &nbsp&nbsp&nbsp Sub-Type same rules except can be left blank.</h4>
       #division_type
-        %input{ :type => "text", :class => "choosetext", :id => "division_value", :size => "25"}Type of Division
+        %input{ :type => "text", :class => "choosetext", :id => "divisionType", :size => "30"}Type
+        <br/>
+        %input{ :type => "text", :class => "choosetext", :id => "divisionSubtype", :size => "30"}Sub-Type
       #button_left
         %button{ :type => "button", :onclick=>"insertDivisionSub()" }Insert
         &nbsp

@@ -13,16 +13,22 @@ class BoardsController < ApplicationController
   def overview
     @board = Board.find(params[:id])
 
-    # below is dangerous since it will expose publications to non owners
-    #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
-    
-    #return only owner publications
-    finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
+    if @board.users.find_by_id(@current_user.id) || @current_user.developer
+      # below is dangerous since it will expose publications to non owners
+      #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
+      
+      #return only owner publications
+      finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
 
-    if finalizing_publications
-      @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+      if finalizing_publications
+        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+      else
+       @finalizing_publications = nil
+      end
     else
-     @finalizing_publications = nil
+      #dont let them have access
+      redirect_to dashboard_url
+      return
     end
     
   end
@@ -81,7 +87,7 @@ class BoardsController < ApplicationController
     @board = Board.new    
     
     #don't let more than one board use the same identifier class
-    @available_identifier_classes = Identifier::IDENTIFIER_SUBCLASSES
+    @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     existing_boards = Board.find(:all)
     existing_boards.each do |b|
       @available_identifier_classes -= b.identifier_classes    
@@ -103,14 +109,18 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(params[:board])
     
-    
     @board.identifier_classes = []
+    
+    #for now just let them choose one identifer class
+    @board.identifier_classes << params[:identifier_class]
+
+=begin    
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
       if params.has_key?(identifier_class) && params[identifier_class] == "1"
         @board.identifier_classes << identifier_class
       end
     end
-
+=end
     if @board.save
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id    
