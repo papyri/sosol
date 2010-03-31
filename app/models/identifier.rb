@@ -339,12 +339,5 @@ class Identifier < ActiveRecord::Base
     
     #delete
   end
-  
-=begin not used
-  def result_action_finalize
-  
-    self.status = "finalized"
-  end
-=end
-  
+
 end
