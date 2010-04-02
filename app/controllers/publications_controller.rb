@@ -427,49 +427,41 @@ class PublicationsController < ApplicationController
       return
     end
     
-    #note that votes go to origin identifier
-    @vote = Vote.new(params[:vote])
-    @vote.user_id = @current_user.id      
-    
-    if @publication.owner_type != "Board"
-      #we have a problem since no one should be voting on a publication if it is not in theirs
-      flash[:error] = "You do not have permission to vote on this publication which you do not own!"
-      #kind a harsh but send em back to their own dashboard
-      redirect_to dashboard_url
-      return
-    else
-      @vote.board_id = @publication.owner_id
-    end
-    
-    @comment = Comment.new()
-    @comment.comment = @vote.choice + " - " + params[:comment][:comment]
-    @comment.user = @current_user
-    @comment.reason = "vote"
-    #use most recent sha from identifier
-    @comment.git_hash = @vote.identifier.get_recent_commit_sha
-    #associate comment with original identifier/publication
-    @comment.identifier = @vote.identifier.origin   
-    @comment.publication = @vote.publication.origin
-
-    #double check that they have not already voted
-    has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
-    if !has_voted 
-      @vote.save
-      @comment.save
+    Vote.transaction do
+      #note that votes go to origin identifier
+      @vote = Vote.new(params[:vote])
+      @vote.user_id = @current_user.id
       
-      #update the change desc for the identifier
-      # @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
-      # @vote.identifier.save
-    end #!has_voted
-    #do what now? go to review page
+      vote_identifier = @vote.identifier.lock!
+      @publication.lock!
     
-    # unsure if following needed due to merge conflict
-    #     if !Publication.exists?(@publication)
-    #       redirect_to url_for(dashboard)
-    #     end
+      if @publication.owner_type != "Board"
+        #we have a problem since no one should be voting on a publication if it is not in theirs
+        flash[:error] = "You do not have permission to vote on this publication which you do not own!"
+        #kind a harsh but send em back to their own dashboard
+        redirect_to dashboard_url
+        return
+      else
+        @vote.board_id = @publication.owner_id
+      end
     
-        #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+      @comment = Comment.new()
+      @comment.comment = @vote.choice + " - " + params[:comment][:comment]
+      @comment.user = @current_user
+      @comment.reason = "vote"
+      #use most recent sha from identifier
+      @comment.git_hash = vote_identifier.get_recent_commit_sha
+      #associate comment with original identifier/publication
+      @comment.identifier = vote_identifier.origin   
+      @comment.publication = @vote.publication.origin
 
+      #double check that they have not already voted
+      has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      if !has_voted 
+        @vote.save!
+        @comment.save!
+      end
+    end
 
     begin
       #see if publication still exists
@@ -481,7 +473,6 @@ class PublicationsController < ApplicationController
       redirect_to dashboard_url
       return
     end
-   
   end
   
   def confirm_archive
