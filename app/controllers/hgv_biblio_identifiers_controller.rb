@@ -12,7 +12,7 @@ class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
     comment = (params[:comment] && (params[:comment].strip.length > 0)) ? params[:comment].strip : 'update bibliographical information'
 
     @identifier.set_epidoc params[:hgv_biblio_identifier][:main], params[:hgv_biblio_identifier][:secondary], comment
-    save_comment comment
+    save_comment comment, 'fix me'
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
