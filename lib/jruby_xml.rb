@@ -25,11 +25,11 @@ module JRubyXML
     def error(e)
       raise ParseError.new(e.getLineNumber, e.getColumnNumber), e.getMessage
     end
-    
+
     def warning(e)
     end
   end
-  
+
   class TransformErrorListener
     include Java::javax.xml.transform.ErrorListener
     
@@ -184,14 +184,17 @@ module JRubyXML
       return xpath_result_to_array(xpath_result)
     end
 
-    def apply_xsl_transform(xml_stream, xsl_stream)
+    def apply_xsl_transform(xml_stream, xsl_stream, parameters = {})
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
-      
+
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
-      
+
       begin
+        parameters.each_pair {|key, value|
+          transformer.setParameter(key, value)
+        }
         transformer.transform(xml_stream, result)
         return string_writer.toString()
       rescue NativeException => java_exception
