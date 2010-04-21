@@ -1,5 +1,6 @@
 en:
   bibliography:
+    language: 'Language'
     signature: 'Signature'
     title: 'Title'
     author: 'Author'
@@ -21,6 +22,7 @@ en:
     conflict:
       message: 'Document contains conflicting bibliographical data'
     help:
+      language: 'Language of the publication medium, e.g. "la" for Latin, "en" for English, "fr" for French, "de" for German, "it" for Italian or "es" for Spanish'
       signature: 'Identifier for the bibliographical item, e.g. doi or zotero id'
       title: 'Title of the article, e.g. "Instruction to track down Murderers"'
       author: 'Author(s) of the article, e.g. "M.C.E. Mineur-van Kassen". If there is more than one author multiple entries may be seperated by comma.'

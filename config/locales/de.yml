@@ -1,5 +1,6 @@
 de:
   bibliography:
+    language: 'Sprache'
     signature: 'Signatur'
     title: 'Titel'
     author: 'Autor'

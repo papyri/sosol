@@ -7,7 +7,7 @@
       <name>Carmen Lanz</name>
       <email>carmen.lanz@zaw.uni-heidelberg.de</email>
       <uri>http://www.uni-heidelberg.de/fakultaeten/philosophie/zaw/papy/index.html</uri> 
-      <uri>http://halsted.vis.uky.edu/protosite/stylesheets/csl/sosol-json.csl</uri>
+      <uri>http://papyri.info/editor/stylesheets/csl/sosol-json.csl</uri>
     </author>
     <summary>Builds jsonlike formatted key value list, uses another string delimiter however</summary>
     <category term="numeric"/>
@@ -16,6 +16,14 @@
     <published>2010-02-11T08:07:24+00:00</published>
   </info>
 
+  <macro name="language">
+    <choose>
+      <if type="book">
+        <text variable="language" prefix="language : |" suffix="|, " />
+      </if>
+    </choose> 
+  </macro>
+  
   <macro name="monograph">
     <choose>
       <if type="book">
@@ -81,6 +89,8 @@
     <text type="value" value="{"/>
 
     <text macro="itemType" />
+
+    <text macro="language" />
 
     <text macro="monograph" />
     

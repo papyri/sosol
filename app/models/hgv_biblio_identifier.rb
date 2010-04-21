@@ -22,6 +22,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     @xpath_secondary = "/TEI/text/body/div[@type='bibliography'][@subtype='citations']/listBibl"
 
     @item_list_main = @item_list_secondary = {
+      :language                => {:multiple => false, :xpath => "@xml:lang"},
       :signature               => {:multiple => false, :xpath => "idno[@type='signature']"},
       :title                   => {:multiple => false, :xpath => "title[@level='a'][@type='main']"},
       :author                  => {:multiple => true,  :xpath => "author"},
@@ -86,23 +87,12 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     formatter = REXML::Formatters::Default.new
     formatter.write doc, modified_xml_content
 
-    #f = File.new '/Users/InstPap/tmp/sosol/tmp.xml', 'w'
-    #f.write modified_xml_content
-    #f.close
-
-    #g = File.new '/Users/InstPap/tmp/sosol/tmpOO.xml', 'r'
-    #modified_xml_content = ''
-    #g.each_line {|line|
-    #  modified_xml_content += line
-    #} 
-    #g.close
-
     self.set_content(modified_xml_content, :comment => comment)
   end
 
   def store_bibliographical_data doc, item_list, data, base_path
     docBibliography = doc.bulldozePath base_path
-    
+
     item_list.each_pair {|key, options|
         path = base_path + '/' + options[:xpath]
         value = data[key.to_s].strip
@@ -117,7 +107,6 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
           splinters.each_index { |i|
             doc.bulldozePath(path + "[@n='" + (i + 1).to_s + "']", splinters[i].strip)
           }
-
         else
           doc.bulldozePath(path, value)
         end
@@ -158,7 +147,6 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     }
 
     prune @bibliography_secondary;
-
   end
 
   def prune bibliography
@@ -244,9 +232,9 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
   def extract_value document, element_path    
     tmp = ''
 
-    if element_path.include? '/@' # i.e. path points to an attribute rather than an element
-      document.elements.each(element_path.slice(0, element_path.index('/@')) ) {|element|      
-        tmp = element.attributes[element_path.slice(element_path.index('/@') + 2, 100)] || ''
+    if attribute = element_path[/\A([\w \[\]\/@:=']*?)(\/?@)([\w:]+)\Z/, 3] # i.e. path points to an attribute rather than an element
+      document.elements.each($1) {|element|      
+        tmp = element.attributes[attribute] || ''
       }
     else
       document.elements.each(element_path) {|element|

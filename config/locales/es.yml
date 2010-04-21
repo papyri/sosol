@@ -1,5 +1,6 @@
 es:
   bibliography:
+    language: 'idioma'
     signature: 'etiqueta'
     title: 'título'
     author: 'autor'
