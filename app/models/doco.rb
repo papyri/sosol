@@ -71,7 +71,7 @@ class Doco < ActiveRecord::Base
   protected
   
   def line_positive_and_gt_zero
-    errors.add(:line, "Line number must be a positive number and greater than 0") if line.blank? || line < 0.01
+    errors.add(:line, "Line number must be a positive number and greater than 0") if line.blank? || line.to_f < 0.01
   end
   
 end
