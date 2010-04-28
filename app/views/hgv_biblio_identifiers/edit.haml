@@ -19,6 +19,10 @@
                     - conflict.last.each_pair do |index, text|
                       %li= text
 
+        %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
+        #bibliographyMeta.bibliographyContainer
+          = render :partial => 'meta', :object => @meta_identifier
+
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMain')"}= I18n.t('bibliography.headings.main').titleize
         #bibliographyMain.bibliographyContainer
           = render :partial => 'bibliography', :collection => @identifier.bibliography_main, :locals => {:type => :main}
@@ -28,9 +32,6 @@
           = render :partial => 'bibliography', :collection => @identifier.bibliography_secondary, :locals => {:type => :secondary}
           = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
           %input.add{:type => 'button', :value => I18n.t('bibliography.button.add_secondary'), :onclick => "addNewBibliographicalRecord(this.parentNode)"}
-
-        %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
-        #bibliographyMeta.bibliographyContainer ...
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
 

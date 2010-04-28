@@ -4,6 +4,7 @@ class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
 
   def edit
     @identifier.retrieve_bibliographical_data # todo: should actually be called implicitly during initialisation time
+    @meta_identifier.get_epidoc_attributes
   end
 
   def update
@@ -13,6 +14,12 @@ class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
 
     @identifier.set_epidoc params[:hgv_biblio_identifier][:main], params[:hgv_biblio_identifier][:secondary], comment
     save_comment comment, 'fix me'
+
+    commit_sha = @meta_identifier.set_epidoc(params[:hgv_meta_identifier_plus], comment)
+    save_comment(params[:comment], commit_sha)
+    
+    generate_flash_message
+    
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
@@ -39,6 +46,7 @@ class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
 
     def find_identifier
       @identifier = HGVBiblioIdentifier.find(params[:id])
+      @meta_identifier = HGVMetaIdentifierPlus.find(params[:id])
     end
 
     def render_quick_help      
