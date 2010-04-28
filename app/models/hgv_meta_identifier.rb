@@ -178,7 +178,7 @@ class HGVMetaIdentifier < HGVIdentifier
         xpath = value.first
         xml_attributes = value.last
       end
-      
+
       if (get_or_set == :set) && !self[self_attribute].empty? && !xpath.index(/\(\d*\)/)
         doc.bulldozePath xpath # assure xpath exists
       end
@@ -189,12 +189,19 @@ class HGVMetaIdentifier < HGVIdentifier
         end
         get_or_set_xml_text(get_or_set, self_attribute, res)
       end
-   end
+    end
+
+    # sort
+    doc = sort doc
 
     # write back to a string
     modified_xml_content = ''
     doc.write modified_xml_content
     return modified_xml_content
+  end
+
+  def sort doc
+    return doc
   end
 
 end
