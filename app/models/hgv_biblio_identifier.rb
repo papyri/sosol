@@ -30,22 +30,22 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
       :monographic_title_short => {:multiple => false, :xpath => "title[@level='m'][@type='short']"},
       :series_title            => {:multiple => false, :xpath => "series/title[@level='s'][@type='main']"},
       :series_number           => {:multiple => false, :xpath => "series/biblScope[@type='volume']"},
-      :journal_title_short     => {:multiple => false, :xpath => "monogr/title[@level='j'][@type='short']"},
-      :journal_number          => {:multiple => false, :xpath => "monogr/biblScope[@type='volume']"},
+      :journal_title_short     => {:multiple => false, :xpath => "series/title[@level='j'][@type='short']"},
+      :journal_number          => {:multiple => false, :xpath => "series/biblScope[@type='issue']"},
       :editor                  => {:multiple => true,  :xpath => "editor"},
       :place_of_publication    => {:multiple => false, :xpath => "pubPlace"},
       :publication_date        => {:multiple => false, :xpath => "date"},
       :pagination              => {:multiple => false, :xpath => "biblScope[@type='page']"},
       :pagination_start        => {:multiple => false, :xpath => "biblScope[@type='page']/@from"},
       :pagination_end          => {:multiple => false, :xpath => "biblScope[@type='page']/@to"},
-      :notes                   => {:multiple => false, :xpath => "notes"},
+      :notes                   => {:multiple => false, :xpath => "note"},
       :reedition               => {:multiple => false, :xpath => "relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']"}
     }
 
     @bibliography_main = {}
     @bibliography_secondary = {}
 
-    @id_list_main = [:sb] # add further bilbiographies by extending the list, such as :xyz
+    @id_list_main = [:sb] # add further bilbiographies by extending this list, such as :xyz
     @bibl_tag_secondary = "bibl"
     @plain_bibl_tags = {}
   end
@@ -197,7 +197,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
 
   def xpath_base type, id = nil
     if type == :main && id
-      "bibl[@id='" + id.to_s + "']"
+      "bibl[@type='" + id.to_s + "']"
     elsif type == :secondary
       @bibl_tag_secondary + (id ? "[@n='" + id.to_s + "']" : '')
     else
