@@ -10,11 +10,8 @@ class HgvMetaIdentifiersController < IdentifiersController
   def update
     find_identifier
     commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
-    
-    flash[:notice] = "File updated."
-    if %w{new editing}.include?@identifier.publication.status
-      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
-    end
+
+    generate_flash_message
     
     save_comment(params[:comment], commit_sha)
     
@@ -23,6 +20,13 @@ class HgvMetaIdentifiersController < IdentifiersController
   end
   
   protected
+    def generate_flash_message
+      flash[:notice] = "File updated."
+      if %w{new editing}.include? @identifier.publication.status
+        flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+      end      
+    end
+
     def save_comment (comment, commit_sha)
       if comment != nil && comment.strip != ""
         @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
