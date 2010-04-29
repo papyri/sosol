@@ -341,6 +341,13 @@ class PublicationsController < ApplicationController
     Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
     
     conflicting_identifiers = []
+    
+    if related_identifiers.nil?
+      flash[:error] = 'Error creating publication: publication not found'
+      redirect_to dashboard_url
+      return
+    end
+    
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
       actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
