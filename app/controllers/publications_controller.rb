@@ -190,7 +190,13 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-    canon_sha = @publication.commit_to_canon
+    begin
+      canon_sha = @publication.commit_to_canon
+    rescue Errno::EACCES => git_permissions_error
+      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+      redirect_to @publication
+      return
+    end
 
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
