@@ -2,7 +2,7 @@
 %h1 Leiden+ Documentation
 %br
 %styled_button_show
-  = link_to "Build Documentation Page", :controller => :docos, :action => "build"
+  = link_to "Build Documentation Page", url_for(:controller=>'docos',:action=>'build')
 %styled_button_show
   = link_to "New Blank Entry", url_for(:controller=>'docos',:action=>'new', :id => 'blank')
 %br
@@ -10,6 +10,6 @@
 = render :partial => "list", :object => @docos
 %br
 %styled_button_show
-  = link_to "Build Documentation Page", :controller => :docos, :action => "build"
+  = link_to "Build Documentation Page", url_for(:controller=>'docos',:action=>'build')
 %styled_button_show
   = link_to "New Blank Entry", url_for(:controller=>'docos',:action=>'new', :id => 'blank')
