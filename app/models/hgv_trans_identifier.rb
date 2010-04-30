@@ -6,6 +6,10 @@ class HGVTransIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Translation"
   
+  # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
+  acts_as_translation
+  
+  
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
@@ -49,4 +53,75 @@ class HGVTransIdentifier < HGVIdentifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         %w{data xslt pn start-divtrans-portlet.xsl})))
   end
+  
+  
+  
+  def leiden_trans
+    repo_xml = xml_content
+    repo_xml_work = REXML::Document.new(repo_xml)
+    body = HGVTransIdentifier.get_body(repo_xml)
+    #return body
+
+      # transform XML to Leiden Trans 
+      transformed = HGVTransIdentifier.xml2nonxml(body.to_s) #via jrubyHelper
+      
+      return transformed
+      
+=begin    
+    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
+    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
+    #otherwise, get broke Leiden+ and display that
+    if brokeleiden_here == nil
+      abs = DDBIdentifier.preprocess_abs(
+        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+      # transform XML to Leiden+ 
+      transformed = DDBIdentifier.xml2nonxml(abs)
+      
+      return transformed
+    else
+      #get the broke Leiden+
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+    end
+=end
+  end
+  
+  # Returns a String of the SHA1 of the commit
+  def set_leiden_translation_content(leiden_translation_content, comment)
+    # transform back to XML
+    xml_content = self.leiden_translation_to_xml(leiden_translation_content)
+    # commit xml to repo
+    self.set_xml_content(xml_content, :comment => comment)
+  end
+  
+  
+  def leiden_translation_to_xml(content)
+    
+    # transform the Leiden Translation to XML
+    nonx2x = HGVTransIdentifier.nonxml2xml(content)
+        
+    nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
+    transformed_xml_content = REXML::Document.new(nonx2x)
+    
+    puts nonx2x
+    puts transformed_xml_content.to_s
+    # fetch the original content
+    original_xml_content = REXML::Document.new(self.xml_content)
+    
+    #rip out the body so we can replace it with the new data
+    original_xml_content.delete_element('/TEI/text/body')
+    
+    #add the new data
+    original_xml_content.elements.each('/TEI/text') { |text_element| text_element.add_element(transformed_xml_content) }
+    
+ 
+    # write back to a string
+    modified_xml_content = ''
+    original_xml_content.write(modified_xml_content)
+    return modified_xml_content
+  end
+  
+  
 end
