@@ -190,7 +190,13 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-    canon_sha = @publication.commit_to_canon
+    begin
+      canon_sha = @publication.commit_to_canon
+    rescue Errno::EACCES => git_permissions_error
+      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+      redirect_to @publication
+      return
+    end
 
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
@@ -341,6 +347,13 @@ class PublicationsController < ApplicationController
     Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
     
     conflicting_identifiers = []
+    
+    if related_identifiers.nil?
+      flash[:error] = 'Error creating publication: publication not found'
+      redirect_to dashboard_url
+      return
+    end
+    
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
       actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
