@@ -26,7 +26,7 @@ class Doco < ActiveRecord::Base
     doco_template = IO.read(File.join(RAILS_ROOT, ['data','templates'],"docotemplate.haml"))
     
     haml_engine = Haml::Engine.new(doco_template)
-    
+        #open(File.join(RAILS_ROOT, ['public'],"documentation.html"),'w') {|file|
     open(File.join(RAILS_ROOT, ['app','views', 'docos'],"documentation.html.erb"),'w') {|file|
              file.write(haml_engine.render(Object.new, :doco_elements => doco_elements)) }
   end
