@@ -4,17 +4,22 @@
     .links
       = link_to 'home', dashboard_url
       \|
-      - if @current_user.developer
-        = link_to 'developer', developer_url
-        \|
-      - if @current_user.admin 
-        = link_to 'boards', boards_url
-        \|
       = link_to 'account', account_url
+      \|
+      = link_to 'Leiden+ Help', documentation_url, :onclick => "window.open(this.href);return false;"
       \|
       = link_to 'help', help_url
       \|
       = link_to 'sign out', signout_url
+      %p
+      - if @current_user.admin 
+        = link_to 'boards', boards_url
+        \|
+        = link_to 'edit leiden+ doco', docos_url
+        \|
+      - if @current_user.developer
+        = link_to 'developer', developer_url
+        
 - else
   #signin
     = link_to 'Sign In', signin_url
