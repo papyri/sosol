@@ -2,12 +2,15 @@ require 'test_helper'
 
 class EmailersControllerTest < ActionController::TestCase
   def setup
+    @admin = Factory(:admin)
+    @request.session[:user_id] = @admin.id
     @board = Factory(:board)
     @emailer = Factory(:emailer, :board => @board)
     @emailer_two = Factory(:emailer, :board => @board)
   end
   
   def teardown
+    @admin.destroy
     @emailer.destroy
     @emailer_two.destroy
     @board.destroy
