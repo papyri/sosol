@@ -1,4 +1,5 @@
 class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
+  before_filter :authorize
   before_filter :find_identifier, :only => [:edit, :update]
   after_filter :render_quick_help, :only => [:edit]
 

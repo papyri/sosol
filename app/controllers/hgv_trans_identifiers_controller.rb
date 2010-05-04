@@ -48,6 +48,13 @@ class HgvTransIdentifiersController < IdentifiersController
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     find_identifier
+    
+    if @identifier.xml_content.to_s.empty?
+      flash[:error] = "XML content is empty, unable to preview."
+      redirect_to polymorphic_url([@identifier.publication, @identifier], :action => :editxml)
+      return
+    end
+    
     @identifier[:html_preview] = @identifier.preview
   end
   

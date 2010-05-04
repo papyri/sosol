@@ -3,6 +3,9 @@
 
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|
+  # Update stylesheets before doing anything
+  Sass::Plugin.update_stylesheets
+  
   # Temporary directory where the application is staged
   # config.staging_dir = "tmp/war"
 
