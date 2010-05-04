@@ -1,5 +1,6 @@
 class UserController < ApplicationController
   layout 'site'
+  before_filter :authorize
   
   def signout
     reset_session
