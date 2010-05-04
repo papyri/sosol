@@ -7,6 +7,10 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     begin
       @identifier[:leiden_plus] = @identifier.leiden_plus
+      if @identifier[:leiden_plus].nil?
+        flash.now[:error] = "File loaded from broken Leiden+"
+        @identifier[:leiden_plus] = @identifier.get_broken_leiden
+      end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_plus] = parse_error.content
