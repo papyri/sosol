@@ -186,6 +186,9 @@ class PublicationsController < ApplicationController
       end      
     end
     @diff = @publication.diff_from_canon
+    if @diff.nil? || @diff.empty?
+      flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+    end
   end
   
   def finalize
