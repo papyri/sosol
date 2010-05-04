@@ -1,0 +1,6 @@
+#main.site
+  = javascript_include_tag 'docos'
+  = render :partial => "common/flash_all"
+  %h1
+    Leiden+ Documentation
+  = render :partial => "viewdoco", :locals => {:doco_elements => Doco.build_doco}

@@ -1,5 +1,6 @@
 class DocosController < ApplicationController
   layout 'site'
+  #caches_page :documentation
   # GET /docos
   # GET /docos.xml
   def index
@@ -106,10 +107,13 @@ class DocosController < ApplicationController
   end
   
   def build
-    Doco.build_doco
+    #Doco.build_doco
     #flash[:notice] = "Documentation Successfully Built"
     #redirect_to docos_url
-    render :template => 'docos/documentation'
+    #expire_page :controller => "docos", :action => "documentation"
+    #render :template => 'docos/documentation'
+    redirect_to :controller => "docos", :action => "documentation"
+    #redirect_to :controller => "docos", :action => "index"
   end
   
   def documentation
