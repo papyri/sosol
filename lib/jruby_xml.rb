@@ -221,8 +221,8 @@ module JRubyXML
       transformer = get_transformer()
       transformer.setOutputProperty(
         javax.xml.transform.OutputKeys.const_get('INDENT'), "yes")
-      transformer.setOutputProperty(
-        "{http://xml.apache.org/xslt}indent-amount", "2")
+      # transformer.setOutputProperty(
+      #   "{http://xml.apache.org/xslt}indent-amount", "2")
       
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)

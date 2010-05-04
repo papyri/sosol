@@ -90,10 +90,14 @@ class DDBIdentifier < Identifier
   end
   
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt ddb handDesc.xsl})))
+    JRubyXML.pretty_print(
+      JRubyXML.stream_from_string(
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb handDesc.xsl})))
+      )
+    )
   end
   
   def get_broken_leiden(original_xml = nil)
