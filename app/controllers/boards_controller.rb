@@ -1,11 +1,12 @@
 class BoardsController < ApplicationController
 
   layout "site"
+  before_filter :authorize
   before_filter :check_admin
 
   
   def check_admin
-    if !@current_user.admin
+    if @current_user.nil? || !@current_user.admin
       render :file => 'public/403.html', :status => '403'
     end
   end

@@ -37,7 +37,11 @@ class Identifier < ActiveRecord::Base
   
   # gives origin and its children, but not self
   def relatives
-    return [self.origin] + self.origin.children - [self]
+    if self.origin.nil?
+      return []
+    else
+      return [self.origin] + self.origin.children - [self]
+    end
   end
   
   def repository
