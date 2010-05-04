@@ -6,6 +6,8 @@ class HGVTransIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Translation"
   
+  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
+  
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_translation
   
@@ -122,6 +124,37 @@ class HGVTransIdentifier < HGVIdentifier
     original_xml_content.write(modified_xml_content)
     return modified_xml_content
   end
+  
+  
+  
+  
+  def save_broken_leiden_trans_to_xml(brokeleiden, commit_comment = '')
+    # fetch the original content
+    original_xml_content = REXML::Document.new(self.xml_content)
+    #deletes XML with broke Leiden+ if it exists already so can add with updated data
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "translation"]/div[@subtype = "brokeleiden"]')
+    #set in XML where to add new div tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "translation"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element 'div', {'type'=>'translation', 'subtype'=>'brokeleiden'}
+    #set in XML where to add new note tag to contain broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "translation"]/div[@subtype = "brokeleiden"]'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    add_node_here.add_element "note"
+    #set in XML where to add broken Leiden+ and add it
+    basepath = '/TEI/text/body/div[@type = "translation"]/div[@subtype = "brokeleiden"]/note'
+    add_node_here = REXML::XPath.first(original_xml_content, basepath)
+    brokeleiden = BROKE_LEIDEN_MESSAGE + brokeleiden
+    add_node_here.add_text brokeleiden
+    
+    # write back to a string
+    modified_xml_content = ''
+    original_xml_content.write(modified_xml_content)
+    
+    # commit xml to repo
+    self.set_xml_content(modified_xml_content, :comment => commit_comment)
+  end
+  
   
   
 end
