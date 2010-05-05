@@ -18,6 +18,16 @@
   <!-- ||||||||||||||    EXCEPTIONS     |||||||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
 
+  <xsl:template match="tei:div[@type='edition']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="xml:space">
+        <xsl:text>preserve</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="tei:handNotes">
     <xsl:if test="//tei:handShift">
       <xsl:call-template name="generate-handnotes"/>
