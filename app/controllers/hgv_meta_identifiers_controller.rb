@@ -1,24 +1,25 @@
 class HgvMetaIdentifiersController < IdentifiersController
   layout 'site'
   before_filter :authorize
-  
+  after_filter :render_quick_help, :only => [:edit]
+
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
   end
-  
+
   def update
     find_identifier
     commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
 
     generate_flash_message
-    
+
     save_comment(params[:comment], commit_sha)
-    
+
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
   end
-  
+
   protected
     def generate_flash_message
       flash[:notice] = "File updated."
