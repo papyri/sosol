@@ -1,0 +1,40 @@
+div#edit p label.meta {
+  width: 210px;
+  float: left;
+  text-align: left;
+  margin-right: 4px;
+  display: block; }
+
+div#edit p input {
+  width: 200px; }
+
+div#edit input.delete {
+  position: absolute;
+  bottom: 0px;
+  right: 8px; }
+
+div#edit input.add {
+  margin: 4px 0 4px 0; }
+
+/* *** quickhelp *** */
+span.quickHelp {
+  position: relative;
+  z-index: 100; }
+
+span.quickHelp span.hook {
+  position: relative;
+  background-color: steelblue;
+  padding: 2px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer; }
+
+span.quickHelp span.message {
+  position: absolute;
+  left: 16px;
+  bottom: 8px;
+  background-color: lightgrey;
+  color: steelblue;
+  border: solid 1px steelblue;
+  padding: 4px;
+  width: 200px; }
