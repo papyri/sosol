@@ -95,7 +95,7 @@ class DDBIdentifier < Identifier
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
           JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-            %w{data xslt ddb handDesc.xsl})))
+            %w{data xslt ddb preprocess.xsl})))
       )
     )
   end
