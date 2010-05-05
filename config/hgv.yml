@@ -1,0 +1,151 @@
+:hgv:
+  :metadata:
+    :titleStmt:
+      :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :publicationTitle:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :publicationVolume:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :publicationNumbers:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :tm_nr:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='TM']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :illustrations:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/p/bibl[@type='illustration']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :contentText:
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='hgv']/term
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :other_publications:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='otherPublications']/listBibl/bibl[@type='publication'][@subtype='other']
+      :multiple: yes
+      voptional: yes
+      :default: ""
+    :translations_de: #tweaked but may need more added to form - may have multiples
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='de']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :translations_en:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='en']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :translations_it:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='it']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :translations_es:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='es']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :translations_la:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='la']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :translations_fr:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='fr']/bibl[@type='translations']
+      :multiple: yes
+      :optional: yes
+      :default: ""
+#    :bl: #works same but may need more added to form
+#      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='corrections']/listBibl/bibl[@type='BL']
+#      :multiple: yes
+#      :optional: yes
+#      :default: ""
+    :notes:
+      :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :mentioned_dates_hdr: #added this one
+      :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/head
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :mentioned_dates:
+      :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/p
+      :multiple: yes
+      :optional: yes
+      :default: ""
+    :material:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
+      :multiple: no
+      :optional: yes
+      :default: Papyrus
+      :default: ""
+    :provenance_ancient_findspot:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/placeName[@type='ancientFindspot']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :provenance_nome:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='nome']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :provenance_ancient_region:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='ancientRegion']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :provenance_modern_findspot: #guessed at this one
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='modernFindspot']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :inventory_number:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno[@type='invNo']
+      :multiple: no
+      :optional: yes
+      :default: ""
+    :planned_for_future_print_release: #does not currently exist in data
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
+      :multiple: no
+      :optional: yes
+      :default: ""
+      :pattern: \A.+?;.+?;.*\Z
+    :textDate:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate[@type='textDate']
+      :multiple: no
+      :optional: yes
+      :default: "0000"
+      :pattern: /\A-?((\d\d-)?\d\d-)?\d\d\d\d\Z/
+      :attributes:      
+        :onDate:
+          :name: when
+          :optional: yes
+          :default: "0000"
+          :pattern: /\A-?((\d\d-)?\d\d-)?\d\d\d\d\Z/
+        :notAfterDate:
+          :name: notAfter
+          :optional: yes
+          :default: "0000"
+          :pattern: /\A-?((\d\d-)?\d\d-)?\d\d\d\d\Z/
+        :notBeforeDate:
+          :name: notBefore
+          :optional: yes
+          :default: "0000"
+          :pattern: /\A-?((\d\d-)?\d\d-)?\d\d\d\d\Z/
