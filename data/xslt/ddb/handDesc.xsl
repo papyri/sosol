@@ -20,8 +20,11 @@
 
   <xsl:template match="tei:div[@type='edition']">
     <xsl:copy>
-      <xsl:attribute name="xml:space">preserve</xsl:attribute>
-      <xsl:apply-templates select="@*|node()"/>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="xml:space">
+        <xsl:text>preserve</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
 
