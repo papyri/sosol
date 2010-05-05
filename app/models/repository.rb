@@ -96,9 +96,8 @@ class Repository
       #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
       data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
       return data
-    rescue
-      Grit::Git.git_timeout *= 2
-      RAILS_DEFAULT_LOGGER.warn "Fetching blob data timed out, increasing timeout to #{Grit::Git.git_timeout}"
+    rescue Grit::Git::GitTimeout
+      self.class.increase_timeout
       get_blob_data(blob)
     end
   end
@@ -163,7 +162,12 @@ class Repository
   
   def fetch_objects(other_repo)
     self.add_remote(other_repo)
-    @repo.remote_fetch(other_repo.name)
+    begin
+      @repo.remote_fetch(other_repo.name)
+    rescue Grit::Git::GitTimeout
+      self.class.increase_timeout
+      fetch_objects(other_repo)
+    end
   end
   
   def name
@@ -220,5 +224,10 @@ class Repository
                  actor,
                  nil,
                  branch)
+  end
+  
+  def self.increase_timeout
+    Grit::Git.git_timeout *= 2
+    RAILS_DEFAULT_LOGGER.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
 end

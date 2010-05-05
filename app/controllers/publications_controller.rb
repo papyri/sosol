@@ -186,11 +186,20 @@ class PublicationsController < ApplicationController
       end      
     end
     @diff = @publication.diff_from_canon
+    if @diff.nil? || @diff.empty?
+      flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+    end
   end
   
   def finalize
     @publication = Publication.find(params[:id])
-    canon_sha = @publication.commit_to_canon
+    begin
+      canon_sha = @publication.commit_to_canon
+    rescue Errno::EACCES => git_permissions_error
+      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+      redirect_to @publication
+      return
+    end
 
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action  
@@ -341,6 +350,13 @@ class PublicationsController < ApplicationController
     Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
     
     conflicting_identifiers = []
+    
+    if related_identifiers.nil?
+      flash[:error] = 'Error creating publication: publication not found'
+      redirect_to dashboard_url
+      return
+    end
+    
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
       actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
@@ -427,49 +443,41 @@ class PublicationsController < ApplicationController
       return
     end
     
-    #note that votes go to origin identifier
-    @vote = Vote.new(params[:vote])
-    @vote.user_id = @current_user.id      
-    
-    if @publication.owner_type != "Board"
-      #we have a problem since no one should be voting on a publication if it is not in theirs
-      flash[:error] = "You do not have permission to vote on this publication which you do not own!"
-      #kind a harsh but send em back to their own dashboard
-      redirect_to dashboard_url
-      return
-    else
-      @vote.board_id = @publication.owner_id
-    end
-    
-    @comment = Comment.new()
-    @comment.comment = @vote.choice + " - " + params[:comment][:comment]
-    @comment.user = @current_user
-    @comment.reason = "vote"
-    #use most recent sha from identifier
-    @comment.git_hash = @vote.identifier.get_recent_commit_sha
-    #associate comment with original identifier/publication
-    @comment.identifier = @vote.identifier.origin   
-    @comment.publication = @vote.publication.origin
-
-    #double check that they have not already voted
-    has_voted = @vote.identifier.votes.find_by_user_id(@current_user.id)
-    if !has_voted 
-      @vote.save
-      @comment.save
+    Vote.transaction do
+      #note that votes go to origin identifier
+      @vote = Vote.new(params[:vote])
+      @vote.user_id = @current_user.id
       
-      #update the change desc for the identifier
-      # @vote.identifier.add_change_desc( "Vote " + @vote.choice + ". " + @comment.comment)
-      # @vote.identifier.save
-    end #!has_voted
-    #do what now? go to review page
+      vote_identifier = @vote.identifier.lock!
+      @publication.lock!
     
-    # unsure if following needed due to merge conflict
-    #     if !Publication.exists?(@publication)
-    #       redirect_to url_for(dashboard)
-    #     end
+      if @publication.owner_type != "Board"
+        #we have a problem since no one should be voting on a publication if it is not in theirs
+        flash[:error] = "You do not have permission to vote on this publication which you do not own!"
+        #kind a harsh but send em back to their own dashboard
+        redirect_to dashboard_url
+        return
+      else
+        @vote.board_id = @publication.owner_id
+      end
     
-        #redirect_to edit_polymorphic_path([@vote.publication, @vote.publication.entry_identifier])
+      @comment = Comment.new()
+      @comment.comment = @vote.choice + " - " + params[:comment][:comment]
+      @comment.user = @current_user
+      @comment.reason = "vote"
+      #use most recent sha from identifier
+      @comment.git_hash = vote_identifier.get_recent_commit_sha
+      #associate comment with original identifier/publication
+      @comment.identifier = vote_identifier.origin   
+      @comment.publication = @vote.publication.origin
 
+      #double check that they have not already voted
+      has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      if !has_voted 
+        @vote.save!
+        @comment.save!
+      end
+    end
 
     begin
       #see if publication still exists
@@ -481,7 +489,6 @@ class PublicationsController < ApplicationController
       redirect_to dashboard_url
       return
     end
-   
   end
   
   def confirm_archive
@@ -505,14 +512,6 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
     @publication.destroy
-
-=begin  no one else should care that someone deleted their own publication    
-    e = Event.new
-    e.category = "deleted"
-    e.target = @publication
-    e.owner = @current_user
-    e.save!
-=end
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
     respond_to do |format|

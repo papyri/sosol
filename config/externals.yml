@@ -3,11 +3,6 @@ vendor/plugins/rxsugar:
   :repository: git://halsted.vis.uky.edu/git/xsugar.git
   :revision: 65cad7bf0537d10956b40685a465c9ffce472d08
 
-# vendor/plugins/render_component:
-#   :type: git
-#   :repository: git://github.com/lackac/render_component.git
-#   :revision: rails-edge
-  
 data/xslt/epidoc:
   :type: subversion
   :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/trunk/example-p5-xslt/

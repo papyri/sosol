@@ -9,7 +9,14 @@ class HgvMetaIdentifiersController < IdentifiersController
   
   def update
     find_identifier
-    commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+    begin
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+    rescue JRubyXML::ParseError => e
+      flash[:error] = "Error updating file: #{e.message}"
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :edit)
+      return
+    end
     
     flash[:notice] = "File updated."
     if %w{new editing}.include?@identifier.publication.status

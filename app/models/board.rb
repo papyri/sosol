@@ -146,7 +146,9 @@ class Board < ActiveRecord::Base
   				#document_content = self.content 
           document_content = ""
           email_identifiers.each do |ec|
-            document_content += ec.content
+            unless ec.nil?
+              document_content += ec.content || ""
+            end
           end
   			else
   				document_content = nil

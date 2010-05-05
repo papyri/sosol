@@ -90,31 +90,44 @@ class DDBIdentifier < Identifier
   end
   
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt ddb handDesc.xsl})))
+    JRubyXML.pretty_print(
+      JRubyXML.stream_from_string(
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb preprocess.xsl})))
+      )
+    )
+  end
+  
+  def get_broken_leiden(original_xml = nil)
+    original_xml_content = original_xml || REXML::Document.new(self.xml_content)
+    brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(original_xml_content, brokeleiden_path)
+    if brokeleiden_here.nil?
+      return nil
+    else
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+    end
   end
   
   def leiden_plus
-    repo_xml = xml_content
-    repo_xml_work = REXML::Document.new(repo_xml)
-    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
-    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
-    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
-    #otherwise, get broke Leiden+ and display that
-    if brokeleiden_here == nil
+    original_xml = self.xml_content
+    original_xml_content = REXML::Document.new(original_xml)
+
+    # if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and return that
+    # otherwise, return nil (client can then get_broken_leiden)
+    if get_broken_leiden(original_xml_content).nil?
       abs = DDBIdentifier.preprocess_abs(
-        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+        DDBIdentifier.get_abs_from_edition_div(original_xml))
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       
       return transformed
     else
-      #get the broke Leiden+
-      brokeleiden = brokeleiden_here.get_text.value
-      
-      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+      return nil
     end
   end
   
