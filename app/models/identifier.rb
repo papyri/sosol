@@ -243,7 +243,7 @@ class Identifier < ActiveRecord::Base
     return commit_sha
   end
   
-  def rename(new_name)
+  def rename(new_name, options = {})
     original_name = self.name
     original_path = self.to_path
     original_relatives = self.relatives
@@ -275,7 +275,11 @@ class Identifier < ActiveRecord::Base
                                         commit_message,
                                         self.owner.grit_actor)
       end
+      self.after_rename(options)
     end
+  end
+  
+  def after_rename(options = {})
   end
   
   #added to speed up dashboard since titleize can be slow

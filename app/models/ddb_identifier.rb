@@ -20,7 +20,7 @@ class DDBIdentifier < Identifier
     
     ddb_collection_name.downcase!
     
-    return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.empty?}.join('.')
   end
   
   def n_attribute
@@ -28,7 +28,7 @@ class DDBIdentifier < Identifier
   end
   
   def xml_title_text
-    id_attribute
+    self.id_attribute
   end
   
   def self.collection_names_hash
@@ -98,6 +98,26 @@ class DDBIdentifier < Identifier
             %w{data xslt ddb preprocess.xsl})))
       )
     )
+  end
+  
+  def after_rename(options = {})
+    # copy back the content to the original name before we update the header
+    if options[:set_dummy_header]
+    end
+    
+    if options[:update_header]
+      rewritten_xml =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb update_header.xsl})),
+          :title_text => self.xml_title_text,
+          :filename_text => self.id_attribute,
+          :ddb_hybrid_text => self.n_attribute
+        )
+    
+      self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
+    end
   end
   
   def get_broken_leiden(original_xml = nil)
