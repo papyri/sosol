@@ -111,13 +111,14 @@ from_century_certainty = /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origi
 
     sort_paths.each_value {|sort_path|
     
-      parent = doc.elements[sort_path[:parent]]
-      sort_path[:children].each {|child_path|
-        parent.elements.each(child_path){|child|
-          parent.delete child
-          parent.add child
+      if parent = doc.elements[sort_path[:parent]]
+        sort_path[:children].each {|child_path|
+          parent.elements.each(child_path){|child|
+            parent.delete child
+            parent.add child
+          }
         }
-      }
+      end
     }
 
    return doc 
