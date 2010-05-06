@@ -184,9 +184,13 @@ module JRubyXML
       return xpath_result_to_array(xpath_result)
     end
 
-    def apply_xsl_transform(xml_stream, xsl_stream)
+    def apply_xsl_transform(xml_stream, xsl_stream, parameters = {})
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
+      
+      parameters.each do |parameter, value|
+        transformer.setParameter(parameter.to_s, value)
+      end
       
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
