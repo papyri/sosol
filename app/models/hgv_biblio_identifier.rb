@@ -180,7 +180,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
       doc.elements.each(path) {|element|
         text = ''
         element.each{|child|
-          if child.type == REXML::Text
+          if child.class == REXML::Text
             text += child.value
           end
         }
