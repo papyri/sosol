@@ -103,6 +103,32 @@ class DDBIdentifier < Identifier
   def after_rename(options = {})
     # copy back the content to the original name before we update the header
     if options[:set_dummy_header]
+      dummy_header =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb dummyize.xsl})),
+          :reprint_in_text => self.title,
+          :ddb_hybrid_ref_attribute => self.n_attribute
+        )
+      original = options[:original]
+      original.save!
+      self.publication.identifiers << original
+      
+      original.set_xml_content(dummy_header, :comment => "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'")
+            
+      # need to do on originals too
+      self.relatives.each do |relative|
+        original_relative = relative.clone
+        original_relative.name = original.name
+        original_relative.title = original.title
+        relative.save!
+        
+        relative.publication.identifiers << original_relative
+        
+        # set the dummy header on the relative
+        original_relative.set_xml_content(dummy_header, :comment => "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'")
+      end
     end
     
     if options[:update_header]

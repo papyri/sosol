@@ -244,6 +244,9 @@ class Identifier < ActiveRecord::Base
   end
   
   def rename(new_name, options = {})
+    original = self.clone
+    options[:original] = original
+    
     original_name = self.name
     original_path = self.to_path
     original_relatives = self.relatives
