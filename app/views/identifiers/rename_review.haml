@@ -13,9 +13,6 @@
         = @identifier.class
         = @identifier.name
       %h3
-        REMINDER: This only renames the file and identifier. You MUST
-        = link_to 'edit the XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-        to update the appropriate metadata to the new identifier so that other processes will have the correct identifier.
         %br
         %br
       - form_for @identifier, :url => { :action => "rename" } do |f|
