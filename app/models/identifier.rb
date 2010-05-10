@@ -123,7 +123,7 @@ class Identifier < ActiveRecord::Base
         document_number.sub!(/^0*/,'')
 
         title = 
-         [collection_name, volume_number, document_number].join(' ')
+         [collection_name, volume_number, document_number].reject{|i| i.empty?}.join(' ')
       else # HGV with no name
         title = "HGV " + self.name.split('/').last
       end
@@ -243,7 +243,10 @@ class Identifier < ActiveRecord::Base
     return commit_sha
   end
   
-  def rename(new_name)
+  def rename(new_name, options = {})
+    original = self.clone
+    options[:original] = original
+    
     original_name = self.name
     original_path = self.to_path
     original_relatives = self.relatives
@@ -275,7 +278,11 @@ class Identifier < ActiveRecord::Base
                                         commit_message,
                                         self.owner.grit_actor)
       end
+      self.after_rename(options)
     end
+  end
+  
+  def after_rename(options = {})
   end
   
   #added to speed up dashboard since titleize can be slow
