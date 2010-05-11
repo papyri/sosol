@@ -67,10 +67,15 @@
     </xslt:element>
   </xsl:template>
   
-  <!-- copy <lb> and attributes -->
+  <!-- convert <lb> to <milestone> -->
   <xsl:template match="tei:lb">
-    <xsl:element name="lb">
-      <xsl:copy-of select="@*"/>
+    <xsl:element name="milestone">
+      <xsl:attribute name="unit">line</xsl:attribute>
+      <xsl:copy-of select="@n"/>
+      <!-- convert lb[@type='inWord'] to @rend='break' for milestone -->
+      <xsl:if test="@type='inWord'">
+        <xsl:attribute name="rend">break</xsl:attribute>
+      </xsl:if>
     </xsl:element>
   </xsl:template>
   
