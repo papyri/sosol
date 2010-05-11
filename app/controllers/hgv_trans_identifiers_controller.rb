@@ -17,12 +17,8 @@ class HgvTransIdentifiersController < IdentifiersController
     
     
     #find text for preview
-    @identifier.publication.identifiers.each do |id|
-      if (id.class.to_s == "DDBIdentifier")
-        @identifier[:text_html_preview] = id.preview
-      end    
-    end
-            
+    @identifier[:text_html_preview] = @identifier.related_text.preview
+    
   end
   
   def update

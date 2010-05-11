@@ -48,6 +48,35 @@ class HGVTransIdentifier < HGVIdentifier
     return true
   end
   
+  def self.new_from_template(publication)
+    new_identifier = super(publication)
+    
+    new_identifier.stub_text_structure('en')
+    
+    return new_identifier
+  end
+  
+  def related_text
+    self.publication.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+  end
+  
+  def stub_text_structure(lang)
+    translation_stub_xsl =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.related_text.content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt translation ddb_to_translation_xsl.xsl})),
+        :lang => 'en'
+      )
+    
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.content),
+        JRubyXML.stream_from_string(translation_stub_xsl)
+      )
+    
+    self.set_xml_content(rewritten_xml, :comment => "Update translation with stub for @xml:lang='#{lang}'")
+  end
   
   def preview
       JRubyXML.apply_xsl_transform(
