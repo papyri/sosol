@@ -65,14 +65,14 @@ class HGVTransIdentifier < HGVIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.related_text.content),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-          %w{data xslt translation ddb_to_translation_xsl.xsl})),
-        :lang => 'en'
+          %w{data xslt translation ddb_to_translation_xsl.xsl}))
       )
     
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.content),
-        JRubyXML.stream_from_string(translation_stub_xsl)
+        JRubyXML.stream_from_string(translation_stub_xsl),
+        :lang => 'en'
       )
     
     self.set_xml_content(rewritten_xml, :comment => "Update translation with stub for @xml:lang='#{lang}'")

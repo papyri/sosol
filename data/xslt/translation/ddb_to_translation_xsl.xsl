@@ -12,6 +12,8 @@
     
       <xslt:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
       
+      <xslt:param name="lang">en</xslt:param>
+      
       <!-- Needed because we may strip divs -->
       <!-- indent="yes" will re-indent afterwards -->
       <xslt:strip-space elements="tei:body"/>
@@ -38,13 +40,14 @@
         </xslt:copy>
       </xslt:template>
       
-      <xslt:template match="tei:div[@type='translation']"/>
+      <xslt:template match="tei:div[@type='translation' and @xml:lang=$lang]"/>
     </xslt:stylesheet>
   </xsl:template>
   
-  <!-- convert <div type='edition' xml:lang='grc'> to <div type='translation' lang='en'> -->
+  <!-- convert <div type='edition' xml:lang='grc'> to <div type='translation' lang='$lang'> -->
   <xsl:template match="tei:div[@type='edition' and @xml:lang='grc']">
-    <div type='translation' xml:lang='en'>
+    <div type='translation'>
+      <xslt:attribute name="xml:lang"><xslt:value-of select="$lang"/></xslt:attribute>
       <xsl:apply-templates select="node()"/>
     </div>
   </xsl:template>
