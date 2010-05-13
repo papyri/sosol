@@ -103,6 +103,7 @@ class DDBIdentifier < Identifier
   def after_rename(options = {})
     # copy back the content to the original name before we update the header
     if options[:set_dummy_header]
+      original = options[:original]
       dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'"
       dummy_header =
         JRubyXML.apply_xsl_transform(
@@ -112,7 +113,6 @@ class DDBIdentifier < Identifier
           :reprint_in_text => self.title,
           :ddb_hybrid_ref_attribute => self.n_attribute
         )
-      original = options[:original]
       original.save!
       self.publication.identifiers << original
       
