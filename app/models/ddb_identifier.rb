@@ -20,7 +20,7 @@ class DDBIdentifier < Identifier
     
     ddb_collection_name.downcase!
     
-    return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.empty?}.join('.')
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.nil? || i.empty?}.join('.')
   end
   
   def n_attribute

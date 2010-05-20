@@ -118,12 +118,16 @@ class Identifier < ActiveRecord::Base
 
         collection_name = 
           self.class.collection_names_hash[collection_name]
-
+        
         # strip leading zeros
         document_number.sub!(/^0*/,'')
 
-        title = 
-         [collection_name, volume_number, document_number].reject{|i| i.empty?}.join(' ')
+        if collection_name.nil?
+          title = self.name.split('/').last
+        else
+          title = 
+           [collection_name, volume_number, document_number].reject{|i| i.nil? || i.empty?}.join(' ')
+         end
       else # HGV with no name
         title = "HGV " + self.name.split('/').last
       end
