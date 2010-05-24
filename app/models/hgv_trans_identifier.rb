@@ -60,6 +60,14 @@ class HGVTransIdentifier < HGVIdentifier
     self.publication.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
   end
   
+  def before_commit(content)
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt translation preprocess.xsl}))
+    )
+  end
+  
   def stub_text_structure(lang)
     translation_stub_xsl =
       JRubyXML.apply_xsl_transform(
