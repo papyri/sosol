@@ -67,8 +67,8 @@
     </xslt:element>
   </xsl:template>
   
-  <!-- convert <lb> to <milestone> -->
-  <xsl:template match="tei:lb">
+  <!-- convert first <lb> to <milestone> -->
+  <xsl:template match="//tei:div/tei:ab/tei:lb[1]">
     <xsl:element name="milestone">
       <xsl:attribute name="unit">line</xsl:attribute>
       <xsl:copy-of select="@n"/>
