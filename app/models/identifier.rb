@@ -118,12 +118,16 @@ class Identifier < ActiveRecord::Base
 
         collection_name = 
           self.class.collection_names_hash[collection_name]
-
+        
         # strip leading zeros
         document_number.sub!(/^0*/,'')
 
-        title = 
-         [collection_name, volume_number, document_number].reject{|i| i.empty?}.join(' ')
+        if collection_name.nil?
+          title = self.name.split('/').last
+        else
+          title = 
+           [collection_name, volume_number, document_number].reject{|i| i.nil? || i.empty?}.join(' ')
+         end
       else # HGV with no name
         title = "HGV " + self.name.split('/').last
       end
@@ -296,38 +300,13 @@ class Identifier < ActiveRecord::Base
 
 
   def add_change_desc(text = "", user_info = self.publication.creator)
-    doc = REXML::Document.new self.xml_content
-    
-    base_path = "/TEI/teiHeader"
-    revision_path = base_path + "/revisionDesc"
-    change_path = revision_path + "/change"
-    
-    who_name = user_info.human_name
-    
-    # get date now
-    when_date = Time.now.xmlschema
-    
-    # make new change node
-    change_node = REXML::Element.new("change")
-    change_node.text = text
-    change_node.add_attribute("when", when_date)
-    change_node.add_attribute("who", who_name )
-    
-    # add change node
-    if REXML::XPath.first(doc, change_path)
-      # want changes with most recent first, so insert before any existing change
-      doc.root.insert_before(change_path, change_node)
-    else # no existing change node, create the first one
-      # if there's no existing change node, that means there's likely no revisionDesc
-      # (don't seem to be able to have an empty revisionDesc)
-      if !REXML::XPath.first(doc, revision_path)
-        header_node = REXML::XPath.first(doc, base_path)
-        # create revision node
-        revision_node = (header_node << REXML::Element.new("revisionDesc"))
-        # add change node
-        revision_node.add_element(change_node)
-      end
-    end
+    doc = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt common add_change.xsl})),
+      :who => user_info.human_name,
+      :comment => text
+    )
     
     self.set_xml_content(doc.to_s, :comment => '')
   end
