@@ -434,7 +434,12 @@ class PublicationsController < ApplicationController
       return
     end
     
-    
+    if params[:vote].nil? || params[:vote][:choice].nil? || params[:vote][:choice].empty?
+      flash[:error] = "You must select a vote choice."
+      
+      redirect_to edit_polymorphic_path([@publication, Identifier.find(params[:vote][:identifier_id])])
+      return
+    end
     
     if @publication.status != "voting" 
       flash[:warning] = "Voting is over for this publication."
