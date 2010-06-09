@@ -34,6 +34,10 @@ class HgvTransIdentifiersController < IdentifiersController
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
         render :template => 'hgv_trans_identifiers/edit'
     
     else #normal save
@@ -60,6 +64,10 @@ class HgvTransIdentifiersController < IdentifiersController
         @identifier[:leiden_trans] = parse_error.content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
         render :template => 'hgv_trans_identifiers/edit'
       
       #invalid xml
@@ -68,6 +76,10 @@ class HgvTransIdentifiersController < IdentifiersController
                         ".  This message because the XML created from Leiden+ below did not pass Relax NG validation.  "
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         #@identifier[:leiden_plus] = parse_error.message
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
         render :template => 'hgv_trans_identifiers/edit'
         
       end#checking for parse error
