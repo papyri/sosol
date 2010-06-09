@@ -10,11 +10,14 @@ class HgvTransIdentifiersController < IdentifiersController
     #get leiden
     begin
       @identifier[:leiden_trans] = @identifier.leiden_trans
+      if @identifier[:leiden_trans].nil?
+        flash.now[:error] = "File loaded from broken Leiden"
+        @identifier[:leiden_trans] = @identifier.get_broken_leiden
+      end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       @identifier[:leiden_trans] = parse_error.content
     end
-    
     
     #find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
