@@ -6,86 +6,24 @@
   .site
     = render :partial => 'identifiers/header'
     = stylesheet_link_tag 'hgv_translation'
-    #edit    
+    #edit  
+    
+      #editing_trans_text_view
+        = @identifier[:text_html_preview]    
+      
       - form_for @identifier, :url => { :action => :update } do |f| 
         = f.error_messages 
 
+        %br
+        = f.label "Leiden Trans"
+        = clippy "hgv_trans_identifier_leiden_trans"
 
-        #info_div
-        #inserting_chooser
-          -# %span{ :class => 'chooser_tab', :id => 'text', :onclick => 'setActiveTab(this.id)' }Text 
-          %span{ :class => 'chooser_tab', :id => 'glossary', :onclick => 'setActiveTab(this.id)' }Term 
-          %span{ :class => 'chooser_tab', :id => 'app', :onclick => 'setActiveTab(this.id)' } App
-          %span{ :class => 'chooser_tab', :id => 'milestone', :onclick => 'setActiveTab(this.id)' } Line
-          %span{ :class => 'chooser_tab', :id => 'language', :onclick => 'setActiveTab(this.id)' } Language
-          %span{ :class => 'chooser_tab', :id => 'missing', :onclick => 'setActiveTab(this.id)' } Missing
-          -# %span{ :class => 'chooser_tab', :id => 'delete', :onclick => 'setActiveTab(this.id)' } Delete
-          %span{ :class => 'chooser_tab', :id => 'hide', :onclick => 'setActiveTab(this.id)' } Hide
-          -# #text_div{:class => "chooser"}
-          -#   %button{ :type => "button", :onclick=>"addText(true, false)"}Add Text Before
-          -#  %button{ :type => "button", :onclick=>"addText(false, true)"}Add Text After
-          #glossary_div{:class => "chooser"}
-            =@glossary
-          #milestone_div{:class => "chooser"}
-            %button{ :type => "button", :onclick=>"insertMilestone('line', 0, 'break')" }Insert Milestone Hard LB
-            %button{ :type => "button", :onclick=>"insertMilestone('line', 0)" }Insert Milestone LB
-            %br
-            %span{ :class => "label" }Line Number
-            %textarea{ :id=> 'milestone_line_number' }
-            -#%button{ :type => "button", :onclick=>"insertEmptyTag('lb')" }Insert LB
-          #app_div{:class => "chooser"}
-            %p
-              %span{ :class => "app_label" }App Type
-              %textarea{ :id => 'app_type' }
-            %p
-              %span{ :class => "app_label" }Lem
-              %textarea{ :id => 'app_lem' }            
-            -#%p
-            -#  %span{ :class => "app_label" }text
-            -#  %textarea{ :id => 'app_text' }
-            
-            %button{ :type => "button", :onclick=>"insertApp()" }Insert
-          #language_div{:class => "chooser"}
-            <h3>Insert New Language</h3>
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('en', 'English')" }English
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('de', 'German')" }German
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('fr', 'French')" }French
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('sp', 'Spanish')" }Spanish
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('la', 'Latin')" }Latin
-            %button{ :type => "button", :class => "new_language_button", :onclick=>"insertNewLanguage('grc', 'Greek')" }Greek          
-          #missing_div{:class => "chooser"}
-            %input{ :checked => "", :type => "radio", :class => "missing_radio", :id => "missing_reason_lost", :name => "missing_reason", :value => "lost" }Lost
-            %input{ :type => "radio", :class => "missing_radio", :id => "missing_reason_illegible", :name => "missing_reason", :value => "illegible" }Illegible
-            <br />
-            %input{ :checked => "", :type => "radio", :class => "missing_radio", :id => "missing_unit_character", :name => "missing_unit", :value => "character" }Character
-            %input{ :type => "radio", :class => "missing_radio", :id => "missing_unit_line", :name => "missing_unit", :value => "line" }Line
-            <br />
-            Count
-            %input{ :type => "text", :id => "missing_count" }
-            %button{ :type => "button", :class => "insert_missing_button", :onclick=>"insertMissing()" }Insert                        
-          -# #delete_div{:class => "chooser"}
-            %button{ :type => "button", :class => "delete_element_button", :onclick=>"deleteElement()" }Delete Element            
-          #hide_div{:class => "chooser"}
-        #trans_and_xml
-          #editing_trans_preview
-          #editing_trans_text_view
-            = @identifier[:text_html_preview]
-          #editing_trans_xml_div       
-            -# added calls to set_conf_true and set_conf_false in translation.js containing the onkeyup function below to make confirm logic work in XML area of screen
-            %textarea{:disabled => !@identifier.mutable?, :name => 'editing_trans_xml', :id => 'editing_trans_xml', :onkeyup => 'transform_xml_to_preview("editing_trans_xml", "editing_trans_preview", "' + "editable_preview_xsl" + '")', :class => 'observechange' }
-              =@identifier.content 
-              -#why? if the =@identifer.content is on the same line as the %textarea then 2 spaces are added before the text, thus the xslt parsing fails!
-          %textarea{ :id => 'editable_preview_xsl'}
-            =@editable_preview_xsl
-          %textarea{ :id => 'glossary_xml'}
-            =@glossary_xml
+        %br
+        = f.text_area :leiden_trans, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :wrap => 'off', :class => 'greek', :onkeyup => 'set_conf_true()'
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment }
+  
+        
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
-        
-        - if !@identifier.mutable?
-          :javascript
-            - DisablePage()
-        
         
 = javascript_include_tag 'confirm'
 

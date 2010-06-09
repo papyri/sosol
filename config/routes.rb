@@ -8,6 +8,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :decrees
 
+  map.resources :docos
+
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
   map.resources :users
@@ -21,8 +23,18 @@ ActionController::Routing::Routes.draw do |map|
   # map.register '/register', :controller => 'users', :action => 'create'
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
-
-	map.help 'help', :controller => 'user', :action => 'help'
+  
+  map.help 'help', 
+    :controller => 'user', 
+    :action => 'help'
+  
+  map.build 'build', 
+    :controller => 'docos', 
+    :action => 'build'
+  
+  map.documentation 'documentation',
+    :controller => "docos",
+    :action => "documentation"
 
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'

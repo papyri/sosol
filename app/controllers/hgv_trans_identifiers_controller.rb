@@ -6,69 +6,90 @@ class HgvTransIdentifiersController < IdentifiersController
   
   def edit
     find_identifier
-		#raise "+" + @identifier.content
-
-    # send xslt to page so it can use it on the fly
-    f = File.open(File.join(RAILS_ROOT, 'data/xslt/translation/editable_preview.xsl'), "r")    
-    @editable_preview_xsl = f.read    
     
-    #send pn xslt to page so it can use it on the fly
-    #pn_file = File.open(File.join(RAILS_ROOT, 'data/xslt/  
-    #@xslt = XML::XSLT.file(File.join(RAILS_ROOT, 'data/xslt/start_edition.xsl'))
-    #raise @xslt.to_s
-    
-    # pass glossary xml so page can find defs on the fly
-    glossary_identifier = HGVTransGlossary.new({:publication => @identifier.publication})
-    @glossary_xml = glossary_identifier.content
-     
-    #create glossary
-    # xslt = XML::XSLT.new()
-    # xslt.xml = REXML::Document.new @glossary_xml
-    # xslt.xsl = REXML::Document.new File.open( File.join(RAILS_ROOT, 'data/xslt/translation/glossary_to_chooser.xsl'), "r")
-    # @glossary = xslt.serve()
-    
-    @glossary = glossary_identifier.to_chooser
-    
-    #find text
-    @identifier.publication.identifiers.each do |id|
-      if (id.class.to_s == "DDBIdentifier")
-        @identifier[:text_html_preview] = id.preview
-      end    
+    #get leiden
+    begin
+      @identifier[:leiden_trans] = @identifier.leiden_trans
+      if @identifier[:leiden_trans].nil?
+        flash.now[:error] = "File loaded from broken Leiden"
+        @identifier[:leiden_trans] = @identifier.get_broken_leiden
+      end
+    rescue RXSugar::XMLParseError => parse_error
+      flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
+      @identifier[:leiden_trans] = parse_error.content
     end
-        
-    #render :template => 'identifiers/editxml'
+    
+    #find text for preview
+    @identifier[:text_html_preview] = @identifier.related_text.preview
+    
   end
   
   def update
-    #raise "contents are: " + params[:content]
     find_identifier
-    commit_sha = @identifier.set_content(params[:editing_trans_xml])
+    @bad_leiden = false
+    @original_commit_comment = ''
+    if params[:commit]== "Save With Broken Leiden+"
+     #broken leiden
+      @identifier.save_broken_leiden_trans_to_xml(params[:hgv_trans_identifier][:leiden_trans], params[:comment])
+      @bad_leiden = true
+      flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
+        @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
+        render :template => 'hgv_trans_identifiers/edit'
     
-    if params[:comment] != nil && params[:comment].strip != ""
-      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
-      @comment.save    
+    else #normal save
+      begin#checking for parse error
+        
+        
+        commit_sha = @identifier.set_leiden_translation_content(params[:hgv_trans_identifier][:leiden_trans], params[:comment])
+        
+        if params[:comment] != nil && params[:comment].strip != ""
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment.save    
+        end
+        
+        flash[:notice] = "File updated."
+        if %w{new editing}.include?@identifier.publication.status
+          flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+        end
+
+        redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
+        
+      #non parsing  
+      rescue RXSugar::NonXMLParseError => parse_error
+        flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}"
+        @identifier[:leiden_trans] = parse_error.content
+        @bad_leiden = true
+        @original_commit_comment = params[:comment]
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
+        render :template => 'hgv_trans_identifiers/edit'
+      
+      #invalid xml
+      rescue JRubyXML::ParseError => parse_error
+        flash[:error] = parse_error.to_str + 
+                        ".  This message because the XML created from Leiden+ below did not pass Relax NG validation.  "
+        @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
+        #@identifier[:leiden_plus] = parse_error.message
+        
+        #find text for preview
+        @identifier[:text_html_preview] = @identifier.related_text.preview
+        
+        render :template => 'hgv_trans_identifiers/edit'
+        
+      end#checking for parse error
     end
     
-    flash[:notice] = "File updated."
-    if %w{new editing}.include?@identifier.publication.status
-      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
-    end
-    
-    #@identifier.set_epidoc(params[:hgv_trans_identifier], params[:comment])
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :edit)
   end
   
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     find_identifier
-    
-   # Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
-   # xslt = XML::XSLT.new()
-   # xslt.xml = REXML::Document.new(@identifier.xml_content)
-   # xslt.xsl = REXML::Document.new File.open('start-divtrans-portlet.xsl')
-    
-   # @identifier[:html_preview] = xslt.serve()
     
     if @identifier.xml_content.to_s.empty?
       flash[:error] = "XML content is empty, unable to preview."

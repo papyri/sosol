@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100205163546) do
+ActiveRecord::Schema.define(:version => 20100424033541) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -49,6 +49,20 @@ ActiveRecord::Schema.define(:version => 20100205163546) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "tally_method"
+  end
+
+  create_table "docos", :force => true do |t|
+    t.decimal  "line",        :precision => 7, :scale => 2
+    t.string   "category"
+    t.string   "description"
+    t.string   "preview"
+    t.string   "leiden"
+    t.string   "xml"
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "urldisplay"
+    t.text     "note"
   end
 
   create_table "emailers", :force => true do |t|
