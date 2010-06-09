@@ -77,6 +77,6 @@
         .identifier_sub_menu#sub_menu_2
           .site
             %ul
-              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               / %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
