@@ -25,7 +25,7 @@ window.onload = init;
 
 function closeHelper()
 {  
-window.close(); 
+  window.close(); 
 }
 
 /*###########################################################################################*/
@@ -91,10 +91,13 @@ function checktypenum(id)
     {
       document.number.rend_frac_check_n.checked = false;
       document.number.rend_frac_check_n.disabled = true;
+      document.number.certainty_check_n.checked = false;
+      document.number.certainty_check_n.disabled = true;
     }
   else
     {
       document.number.rend_frac_check_n.disabled = false;
+      document.number.certainty_check_n.disabled = false;
     }
 }
 
@@ -723,9 +726,9 @@ function insertNum()
   
     numval = document.getElementById("number_value").value;
     numcontent = document.getElementById("number_content").value;
-    {if (numval.toString().match(/\s/) || numval.length < 1) 
+    {if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty
       {
-        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value and content both empty
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content both empty
           {
             alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
             editpass = "no";
@@ -753,7 +756,8 @@ function insertNum()
           {
             moreNumEdit("valuecontent");
           }
-      }}
+      } 
+    }
   
   break; //other
   
@@ -766,6 +770,14 @@ function insertNum()
   
   if (editpass == "yes")
     {
+      if (document.number.certainty_check_n.checked == true)
+        {
+          opt_certainty = "<certainty locus=\"value\" match=\"..\"/>";
+        }
+      else
+        {
+          opt_certainty = "";
+        }
       finishNum();
     }
 } /*########################     end insertNum     ########################*/
@@ -781,18 +793,25 @@ function finishNum()
   switch (number_type)
   {
   case "value":
-  
-    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+    if (document.number.certainty_check_n.checked == true)
+      {
+        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + opt_certainty + "</num>";
+      }
+    else
+      {
+        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+      }
+    //startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
     break;
   
   case "content":
   
-    startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
+    startxml = "<num" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
     break;
   
   case "valuecontent":
   
-    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
     break;
   
   case "fraction":
@@ -1133,7 +1152,7 @@ function insertText(vti)
         {
           element.value = element.value+vti;
         }
-    };
+    }
   } /*########################     end insertText     ########################*/
 
 
