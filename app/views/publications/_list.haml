@@ -1,4 +1,6 @@
 %ul.publications
+  - user_vote = nil
+  - vote_count = 0
   - for publication in list
     %li
       %ul
@@ -22,12 +24,23 @@
             - else
               = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
             
+             
+            - vote_count += identifier.votes.count  
+            - identifier.votes.each do |vt|
+              - if vt.user == @current_user
+                %b
+                  - user_vote = vt.choice
+                  
+                
+                
             - if @current_user.developer
               == (#{identifier.status})
               = "{"
               - identifier.votes.each do |v|
                 = v.choice
               = "}"
+              
+              
         - if @current_user.developer  
           == (#{publication.status})
           -# if !publication.status.nil? && publication.status != ''
@@ -46,6 +59,15 @@
             = "is being finalized by "
             = publication.find_finalizer_user.human_name
           
+        - if publication.status == "voting"
+          == (#{vote_count})
+          - if user_vote
+            %b
+              = user_vote
+        
+        
+        
+        
 / - if @branches.length > 0
 /   %h2 Listing Branches
 /   %ul
