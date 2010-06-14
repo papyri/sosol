@@ -93,38 +93,35 @@ class HGVTransIdentifier < HGVIdentifier
         %w{data xslt pn start-divtrans-portlet.xsl})))
   end
   
-  
-  
-  def leiden_trans
-    repo_xml = xml_content
-    repo_xml_work = REXML::Document.new(repo_xml)
-    body = HGVTransIdentifier.get_body(repo_xml)
-    #return body
-
-      # transform XML to Leiden Trans 
-      transformed = HGVTransIdentifier.xml2nonxml(body.to_s) #via jrubyHelper
-      
-      return transformed
-      
-=begin    
-    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
-    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
-    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
-    #otherwise, get broke Leiden+ and display that
-    if brokeleiden_here == nil
-      abs = DDBIdentifier.preprocess_abs(
-        DDBIdentifier.get_abs_from_edition_div(repo_xml))
-      # transform XML to Leiden+ 
-      transformed = DDBIdentifier.xml2nonxml(abs)
-      
-      return transformed
+  def get_broken_leiden(original_xml = nil)
+    original_xml_content = original_xml || REXML::Document.new(self.xml_content)
+    brokeleiden_path = '/TEI/text/body/div[@type = "translation"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(original_xml_content, brokeleiden_path)
+    if brokeleiden_here.nil?
+      return nil
     else
-      #get the broke Leiden+
       brokeleiden = brokeleiden_here.get_text.value
       
       return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
     end
-=end
+  end
+  
+  def leiden_trans
+    original_xml = self.xml_content
+    original_xml_content = REXML::Document.new(original_xml)
+
+    # if XML does not contain broke Leiden send XML to be converted to Leiden and return that
+    # otherwise, return nil (client can then get_broken_leiden)
+    if get_broken_leiden(original_xml_content).nil?
+      body = HGVTransIdentifier.get_body(original_xml)
+      
+      # transform XML to Leiden+ 
+      transformed = HGVTransIdentifier.xml2nonxml(body.to_s) #via jrubyHelper
+      
+      return transformed
+    else
+      return nil
+    end
   end
   
   # Returns a String of the SHA1 of the commit

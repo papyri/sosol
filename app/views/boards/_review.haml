@@ -25,7 +25,7 @@
       - identifier.publication.owner.decrees.each do |d|
         - d.get_choice_array.each do |c|
           - choices[c] = c
-      = select "vote", "choice", choices
+      = select "vote", "choice", choices, {:include_blank => true}
       %br
       Your Comment Required:
       = text_area :comment, "comment", :onkeyup => "checkForComment(event)"
