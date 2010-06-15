@@ -265,7 +265,8 @@ function insertTextMain(vti)
       range.select();
       range.collapse(false);
     }
-  else 
+  else
+    {
     if(typeof element.selectionStart != 'undefined') /* means Mozilla browser */
       {
         var start = element.selectionStart;
@@ -278,5 +279,6 @@ function insertTextMain(vti)
     else /* not sure what browser */
       {
         element.value = element.value+c;
-      };
+      }
+    }
 } /*########################     end insertTextMain     ########################*/
