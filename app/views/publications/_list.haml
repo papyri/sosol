@@ -29,7 +29,7 @@
             - identifier.votes.each do |vt|
               - if vt.user == @current_user
                 %b
-                  - user_vote = vt.choice
+                  - user_vote = "Your vote is " + vt.choice
                   
                 
                 
