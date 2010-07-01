@@ -1,7 +1,0 @@
-= render :partial => 'identifiers/edit_bar'
-= render :partial => 'identifiers/header'
-#trans_and_xml
-  #editing_trans_preview
-  #editing_trans_xml
-  %textarea#ta{ :rows => "200", :onkeyup => "transform_text_to_preview('ta', 'editing_trans_preview', 'trans.xsl')", :cols => "800", :style => "background-color:blue" }
-    = @identifier.content
