@@ -1,11 +1,13 @@
 #main
 
   = javascript_include_tag 'translation'
+  
     
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
-    = stylesheet_link_tag 'hgv_translation'
+    = render :partial => 'translation_leiden_helpers'
+    -#= stylesheet_link_tag 'hgv_translation'
     #edit  
     
       #editing_trans_text_view
