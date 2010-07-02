@@ -6,11 +6,19 @@
     <div class = "glossary_chooser">               			
       <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title"></xsl:value-of>		
         <dl>
-          <xsl:apply-templates select="/t:TEI/t:text/t:body/t:list"></xsl:apply-templates>
+          <xsl:apply-templates>
+           	<xsl:sort select="t:item"/>
+          </xsl:apply-templates>
         </dl>
     </div>
   </xsl:template>
 
+  <xsl:template match="t:list">
+    <xsl:apply-templates>
+      <xsl:sort select="@xml:id"/>
+    </xsl:apply-templates>
+
+  </xsl:template>
 
   <xsl:template match="t:item">
     <xsl:variable name="id">

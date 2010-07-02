@@ -9,11 +9,10 @@ class TranslationLeidenController < ApplicationController
       #leidenback = TranslationLeiden.xml_leiden_plus(xml2conv)
       leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
       
-      
       render :text => "#{leidenback}"
     rescue RXSugar::XMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
-      parse_error.content.insert((parse_error.column-1), "**cowERROR**")
+      parse_error.content.insert((parse_error.column-1), "**ERROR**")
       render :text => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
     end
   end
@@ -30,7 +29,7 @@ class TranslationLeidenController < ApplicationController
       render :text => "#{xmlback}"
     rescue RXSugar::NonXMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
-      parse_error.content.insert((parse_error.column-1), "**boyERROR**")
+      parse_error.content.insert((parse_error.column-1), "**ERROR**")
       render :text => "Error at column #{parse_error.column} #{parse_error.content}"
     end
     

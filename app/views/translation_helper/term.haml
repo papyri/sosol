@@ -1,0 +1,19 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'translation_helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      <h3>Enter Extent of Lost Gap and Gap Type</h3>
+      <h4>Valid values: e.g. 2 / c.3 / ? or ca.? / 7-11</h4>
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "gaplost_value", :size => "07"}Extent
+      #type_left
+        %input{ :checked => "", :type => "radio", :class => "gaplost_radio", :id => "character", :name => "gaplost_type", :value => "character", :onclick => "checktypegap(this.id)"}Character
+        <br/>
+        %input{ :type => "radio", :class => "gaplost_radio", :id => "line", :name => "gaplost_type", :value => "line", :onclick => "checktypegap(this.id)"}Line
+      #button_left
+        %button{ :type => "button", :onclick=> "insertGap('lost')" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

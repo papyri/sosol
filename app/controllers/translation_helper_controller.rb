@@ -1,6 +1,11 @@
 class TranslationHelperController < ApplicationController
   
 	def terms
+		#get the terms 
+		gloss = HGVTransGlossary.new
+		
+		@glossary = gloss.to_chooser
+		
 	end
 	
 	def new_lang
@@ -8,12 +13,6 @@ class TranslationHelperController < ApplicationController
 	
 	def linebreak
 	end
-	
-#  def ancientdia
-#  end
-  
-#  def number
-#  end
   
   def gaplost
   end
@@ -26,27 +25,6 @@ class TranslationHelperController < ApplicationController
   
   def gapilleg
   end
-  
-#  def vestig
-#  end
-  
-#  def abbrev
-#  end
-  
-#  def appalt
-#  end
-  
-#  def appBL
-#  end
-  
-#  def appedit
-#  end
-  
-#  def apporth
-#  end
-  
-#  def appsubst
-#  end
   
   def division
   end

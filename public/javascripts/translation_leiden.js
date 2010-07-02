@@ -2,6 +2,15 @@
 //Minor changes are being made to make it work with the translation leiden.
 //Perhaps this file and leiden.js can be put back together at a late date.  CSC 6-22-2010
 
+
+//name of textarea where we will be inserting text
+var text_window_id = 'hgv_trans_identifier_leiden_trans';
+	 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
+  var success = function(resp) {
+    leidenh = resp.responseText;
+    insertTextMain(leidenh);
+     }
+
 function init() 
   {
 //stuff below is for the menu bar
@@ -23,7 +32,7 @@ window.onload = init;
 
 
 
-
+//sets dialog size for the helper window and then calls the related view
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
   // as non-IE gets focus again in helper.js in the insertText function
@@ -33,13 +42,14 @@ function helpDialogOpen(view)
   {
   case "gapilleg":
   case "gaplost":
+  case "division":
     {
       openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "linebreak":
     {
-      openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=200, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "terms":
@@ -47,36 +57,14 @@ function helpDialogOpen(view)
       openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  case "gapelliplang":
-    {
-      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
-  case "appalt":
-  case "appsubst":
-    {
-      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
-  case "apporth":
-    {
-      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
+ 
   case "tryit":
-  case "appBL":
-  case "appSoSOL":
-  case "appedit":
     {
       openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
-  case "number":
-    {
-      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
+  
   default: /* nopts is default and need to clear optional xml values and leave diachar filled in */
     {
       alert("Oops, error, this is not a valid helper dialog page " + view);
@@ -93,7 +81,7 @@ function helpDialogOpen(view)
 
 function getFocusMain()
 {
-  element = document.getElementById('hgv_trans_identifier_leiden_trans');
+  element = document.getElementById(text_window_id);
   element.focus();
 }
 
@@ -106,12 +94,6 @@ function insertGaplostMain()
 {
 	 getFocusMain();
 	 startxml = '<gap reason="lost" extent="unknown" unit="character"/>';
-	 
-	 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  success = function(resp) {
-    leidenh = resp.responseText;
-    insertTextMain(leidenh);
-     }
    convertXMLMain();
 }
 
@@ -119,64 +101,12 @@ function insertGapIllegibleMain()
 {
 	 getFocusMain();
 	 startxml = '<gap reason="illegible" extent="unknown" unit="character"/>';
-	 
-	 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  success = function(resp) {
-    leidenh = resp.responseText;
-    insertTextMain(leidenh);
-     }
    convertXMLMain();
 }
 /*########################     end insertGaps    ########################*/
 
 
 
-
-/*###########################################################################################*/
-/* insertDiacriticalMain                                                                      */
-/*###########################################################################################*/
-
-function insertDiacriticalMain(diacritical_type)
-{
-  getFocusMain()
-  
-  /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
-     XML to pass the xsugar grammar - stripped back out when returns */
-  
-  startxml = "<hi rend=\"" + diacritical_type + "\">A</hi>";
-  
-// sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  success = function(resp) {
-    leidenh = resp.responseText;
-//  strips the leading space and default character 'A' to only insert the ancient dicritical
-    textToInsert = leidenh.substr(2);
-    insertTextMain(textToInsert);
-     }
-  
-  convertXMLMain();
-  
-//  textToInsert = leidenh.replace(/A/,"");
-
-} /*########################     end insertDiacriticalMain     ########################*/
-
-/*###########################################################################################*/
-/* insertDeletionMain                                                                          */
-/*###########################################################################################*/
-
-function insertDeletionMain(deletion_type)
-{
-  getFocusMain()
-  
-  startxml = "<del rend=\"" + deletion_type + "\">replace this with actual deletion content</del>";
-  
-// sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  success = function(resp) {
-    leidenh = resp.responseText;
-    insertTextMain(leidenh);
-     }
-  
-  convertXMLMain(); 
-} /*########################     end insertDeletionMain     ########################*/
 
 /*###########################################################################################*/
 /* insertMilestoneMain                                                                          */
@@ -187,13 +117,13 @@ function insertMilestoneMain(milestone_type)
   getFocusMain()
   
   startxml = "<milestone rend=\"" + milestone_type + "\" unit=\"undefined\"/>";
-  
+  /*
 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
   success = function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
      }
-  
+  */
   convertXMLMain();
 } /*########################     end insertMilestoneMain     ########################*/
 
@@ -211,19 +141,19 @@ function insertDivisionMain(division_type)
   case "v":
     //line below for when ready for subtype face on r and v
     //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
     break;
 
   case "column": //default n to roman 1
   
-    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
     break;
 
   case "document":
   case "folio":
   case "fragment":
 
-    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
     break;
 
   default:
@@ -247,6 +177,9 @@ function insertDivisionMain(division_type)
 
 } /*########################     end insertDivisionMain     ########################*/
 
+
+
+
 /*###########################################################################################*/
 /* insert special unicode character - char_name passed as \u#### value to insert             */
 /*###########################################################################################*/
@@ -258,29 +191,18 @@ function insertSpecialCharMain(char_name)
   insertTextMain(char_name);
 }
 
-/*###########################################################################################*/
-/* wrapxmlMain function                                                                          */
-/*###########################################################################################*/
 
-function wrapxmlMain(xml)
-{
-  //temptopass = "<ab>" + xml + "</ab>";
-  temptopass = "<body xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"><div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\"><p>" + xml + "</p></div></body>";
-  return temptopass;
-}
 
 /*###########################################################################################*/
 /* ajax call to server to convert xml to leiden+                                             */
 /*###########################################################################################*/
 
 function convertXMLMain()
-{
-  xmltopass = wrapxmlMain(startxml);
-  
+{ 
   new Ajax.Request(ajaxConvert, 
   {
   method: 'get',
-  parameters : {xml:xmltopass},
+  parameters : {xml:startxml},
   onSuccess : success,
   onFailure : function(resp) {
    alert("Oops, there's been an error (convertXMLMain)." + resp.responseText);   
