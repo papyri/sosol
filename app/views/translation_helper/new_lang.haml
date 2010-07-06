@@ -1,0 +1,34 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'translation_helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    = stylesheet_link_tag 'terms'
+    #gapsize{:class => "helperpop"}
+      %h3 Choose Language
+      
+      - choices = Hash.new
+      - choices['Bulgarian'] = "bg"
+      - choices['German'] = "de"
+      - choices['English'] = "en"
+      - choices['French'] = "fr"
+      - choices['Italien'] = "it"
+      - choices['Spanish'] = "sp"
+      
+      -# choices['Other'] = "other"
+      
+      -# choices = choices.sort {|a,b| a[1] <=> b[1]}
+      
+      %form{:name => "new_language_form"}
+      
+        = select "lang", "choice", choices, {:include_blank => true}
+      
+        %h3 or Enter Language Code
+        %input{ :type => "text", :class => "choosetext", :id => "other_lang", :size => "09"}
+        
+                
+      #button_left
+        %button{ :type => "button", :onclick=> "insertNewLanguage()" }Insert
+      #button_left
+        %button{:type => "button", :onclick => "closeHelper()"}Close
