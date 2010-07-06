@@ -9,7 +9,6 @@ class TranslationLeiden < HGVTransIdentifier
     
 		transformed = HGVTransIdentifier.xml2nonxml(wrapped_content)
  
-    
     #remove <= and => that represents the wrapping
     if (transformed)
     	transformed.slice!(/^<T=.en <=/)
@@ -28,14 +27,8 @@ class TranslationLeiden < HGVTransIdentifier
   	#leiden to xml
   	wrapped_transformed = HGVTransIdentifier.nonxml2xml(wrapped_content)
   	
+  	# pull out wrapped XML 
   	transformed = REXML::XPath.match(REXML::Document.new(wrapped_transformed), '/body/div/p/[not(self::p)]')
-  #	transformed = wrapped_transformed
-  	
- #   abs = "<=" + content + "=>"
-    #call to convert
- #   tempTrans = DDBIdentifier.nonxml2xml(abs)
-    # pull out XML inside the <ab> tag
-  #  transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/ab/[not(self::ab)]')
     
     return transformed
   end
