@@ -69,8 +69,17 @@ class Board < ActiveRecord::Base
   def controls_identifier?(identifier)
    self.identifier_classes.include?(identifier.class.to_s)  
   end
-
-
+  
+  def self.all_poss_identifiers
+    all_poss = []
+    board_idents = Board.find(:all)
+    board_idents.each do |i|
+      i.identifier_classes.each do |ic|
+        all_poss << ic.to_s
+      end
+    end
+    return all_poss
+  end
 
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)

@@ -104,20 +104,29 @@ class Publication < ActiveRecord::Base
     #1 meta
     #2 transcription
     #3 translation    
-    error_text = ""
+    error_text = "" #default to empty for check in controller
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
         if i.modified? && i.class == ic &&  i.status == "editing"
-          #submit it
-          if submit_identifier(i)
-            return
-          else            
-            error_text  += "no board for " + ic.to_s
-            return #for now
+          #check if board exists for this type identifier
+          board_identifiers = Board.all_poss_identifiers
+          if board_identifiers.include?("#{ic}")
+            #submit it
+            if submit_identifier(i)
+              return error_text
+            else            
+              error_text  += "not sure why but " + ic.to_s + " was NOT submitted"
+              return error_text
+            end
+          else
+            #did not find board
+            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted" 
+            return error_text
           end
         end
       end
+      
     end
     
     #if we get to this point, nothing else was submitted therefore we are done with publication
