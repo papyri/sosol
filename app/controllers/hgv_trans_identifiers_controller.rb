@@ -60,7 +60,7 @@ class HgvTransIdentifiersController < IdentifiersController
         
       #non parsing  
       rescue RXSugar::NonXMLParseError => parse_error
-        flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}"
+        flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
         @identifier[:leiden_trans] = parse_error.content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
@@ -73,7 +73,7 @@ class HgvTransIdentifiersController < IdentifiersController
       #invalid xml
       rescue JRubyXML::ParseError => parse_error
         flash[:error] = parse_error.to_str + 
-                        ".  This message because the XML created from Leiden+ below did not pass Relax NG validation.  "
+                        ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED.  "
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         #@identifier[:leiden_plus] = parse_error.message
         
