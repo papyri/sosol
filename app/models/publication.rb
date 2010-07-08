@@ -109,19 +109,11 @@ class Publication < ActiveRecord::Base
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
         if i.modified? && i.class == ic &&  i.status == "editing"
-          #check if board exists for this type identifier
-          board_identifiers = Board.all_poss_identifiers
-          if board_identifiers.include?("#{ic}")
-            #submit it
-            if submit_identifier(i)
-              return error_text
-            else            
-              error_text  += "not sure why but " + ic.to_s + " was NOT submitted"
-              return error_text
-            end
-          else
-            #did not find board
-            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted" 
+          #submit it
+          if submit_identifier(i)
+            return error_text
+          else            
+            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
             return error_text
           end
         end
@@ -142,6 +134,8 @@ class Publication < ActiveRecord::Base
 =end
     self.origin.change_status("committed")
     self.save
+    
+    return error_text # controller checks returned value for empty or not
     
   end
   
@@ -179,7 +173,7 @@ class Publication < ActiveRecord::Base
         # self.branch = title_to_ref(self.title)
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
-      #(from_branch, to_branch, from_repo)
+        #(from_branch, to_branch, from_repo)
         self.save!
         identifier.save!
         
@@ -188,7 +182,7 @@ class Publication < ActiveRecord::Base
         return true
       end
     end
-    return false
+    return false #no board exists for this identifier class
   end
   
   def submit
