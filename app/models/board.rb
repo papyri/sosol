@@ -69,9 +69,7 @@ class Board < ActiveRecord::Base
   def controls_identifier?(identifier)
    self.identifier_classes.include?(identifier.class.to_s)  
   end
-
-
-
+  
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
     # NOTE: assumes board controls one identifier type, and user hasn't made
