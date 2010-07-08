@@ -17,6 +17,22 @@ class TranslationLeidenController < ApplicationController
     end
   end
   
+  
+  
+  #used by ajax
+  def get_language_translation_leiden
+ 	
+    lang = (params[:lang])
+    begin
+      leidenback = TranslationLeiden.get_language_translation_leiden(lang)
+      render :text => "#{leidenback}"
+    rescue RXSugar::XMLParseError => parse_error
+      #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
+      parse_error.content.insert((parse_error.column-1), "**ERROR**")
+      render :text => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
+    end
+  end
+  
   #used by ajax
   def translation_leiden_to_xml
     
