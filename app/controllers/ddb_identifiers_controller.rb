@@ -22,6 +22,10 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     @bad_leiden = false
     @original_commit_comment = ''
+    #if user fills in comment box at top, it overrides the bottom
+    if params[:commenttop] != nil && params[:commenttop].strip != ""
+      params[:comment] = params[:commenttop]
+    end
     if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
