@@ -17,11 +17,9 @@
         = f.error_messages 
 
         %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :type => :top }
         = f.label "Leiden Trans"
         = clippy "hgv_trans_identifier_leiden_trans"
-        = f.submit "Save", :class => 'save3', :disabled => !@identifier.mutable?, :onclick => 'set_conf_false()'
-        - if defined?(@bad_leiden) && @bad_leiden
-          = f.submit "Save With Broken Leiden+", :class => 'save4', :disabled => !@identifier.mutable?, :onclick => 'set_conf_false()'
         %br
         = f.text_area :leiden_trans, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :wrap => 'off', :class => 'greek', :onkeyup => 'set_conf_true()'
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment }
