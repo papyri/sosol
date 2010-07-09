@@ -168,8 +168,22 @@ function isNumericCircaDigit(isnum) //GAPEXTNUM = [c]?[.]?[0-9]+
 function insertTerm(term)
 {
   
- 
-	startxml = '<term target="' + term + '" xml:lang="la">place word here</term>';
+  var lang = " "
+  if ( document.getElementById("la").checked )
+  {
+    lang = 'xml:lang="la"';
+  }
+  else if ( document.getElementById("grc-Latn").checked )
+  {
+    lang = 'xml:lang="grc-Latn"';
+  }
+
+	startxml = '<term target="' + term + '" ' + lang + '>place word here</term>';
+  
+  //startxml = '<term target="' + term + '" xml:lang="la">place word here</term>';
+  
+  //alert (startxml);
+ // alert ('<term target="' + term + '" ' + lang + '>place word here</term>');
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
@@ -177,7 +191,7 @@ function insertTerm(term)
         parameters : {xml:startxml},
         onSuccess : success,
         onFailure : function(resp) {
-        alert("Oops, there's been an error(insertDivisionSub)." + resp.responseText);   
+        alert("Oops, there's been an error(insertTerm)." + resp.responseText);   
           }
       });
     
@@ -363,13 +377,13 @@ function convertXML()
  // xmltopass = wrapxml(startxml);
  // alert (xmltopass);
  
- xmltopass = wrapXml(startxml);
+ //xmltopass = wrapXml(startxml);
  
   new Ajax.Request(
   	window.opener.ajaxConvert, 
 		{
 			method: 'get',
-			parameters : {xml:xmltopass},
+			parameters : {xml:startxml},
 			async : false,
 			onSuccess : success,
 			onFailure : function(resp) {
@@ -386,8 +400,6 @@ function convertXML()
 
 function insertText(vti)
   {
-  	
-
   //call function in main window to set variable saying the data was modified to cause
   //verification question if leave page without saving
   window.opener.set_conf_true();
