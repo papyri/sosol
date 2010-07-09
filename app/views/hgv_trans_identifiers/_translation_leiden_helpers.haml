@@ -43,6 +43,34 @@
       %li#104{ :itemType => "separator"}
       %li#105{ :jsFunction => "helpDialogOpen('new_lang')"}
         %a{ :href => "#"} New Language
+        %ul{ :width => "115"}
+          %li#10701
+            %a
+              =button_to  ("български" , options = { :action => 'add_new_lang_to_xml', :lang => 'bg'}, html_options = { :class => "new_lang_button" } )
+          %li#10702{ :itemType => "separator"}
+          %li#10703
+            %a
+              =button_to  ("Deutsch" , options = { :action => 'add_new_lang_to_xml', :lang => 'de'}, html_options = { :class => "new_lang_button" } )
+          %li#10704{ :itemType => "separator"}
+          %li#10705
+            %a
+              =button_to  ("English" , options = { :action => 'add_new_lang_to_xml', :lang => 'en'}, html_options = { :class => "new_lang_button" } )
+          %li#10706{ :itemType => "separator"}
+          %li#10707
+            %a
+              =button_to  ("Français" , options = { :action => 'add_new_lang_to_xml', :lang => 'fr'}, html_options = { :class => "new_lang_button" } )
+          %li#10708{ :itemType => "separator"}
+          %li#10709
+            %a
+              =button_to  ("Italiano" , options = { :action => 'add_new_lang_to_xml', :lang => 'it'}, html_options = { :class => "new_lang_button" } )
+          %li#10710{ :itemType => "separator"}
+          %li#10711
+            %a
+              =button_to  ("Español" , options = { :action => 'add_new_lang_to_xml', :lang => 'sp'}, html_options = { :class => "new_lang_button" } )
+          %li#10712{ :itemType => "separator"}
+          %li#10713
+            %a
+              =button_to  ("Other" , options = { :action => 'add_new_lang_to_xml', :lang => 'OTHER'}, html_options = { :class => "new_lang_button" } )
       %li#106{ :itemType => "separator"}
       -#%li#107
       -#  %a{ :href => "#"} Ancient Diacriticals

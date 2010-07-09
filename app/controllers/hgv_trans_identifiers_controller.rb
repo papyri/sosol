@@ -24,6 +24,16 @@ class HgvTransIdentifiersController < IdentifiersController
     
   end
   
+
+  def add_new_lang_to_xml
+  	find_identifier
+    @identifier.stub_text_structure(params[:lang])
+    @identifier.save
+    redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
+  end  
+
+
+  
   def update
     find_identifier
     @bad_leiden = false
