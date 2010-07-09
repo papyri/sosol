@@ -43,6 +43,7 @@
       %li#104{ :itemType => "separator"}
       %li#105{ :jsFunction => "helpDialogOpen('new_lang')"}
         %a{ :href => "#"} New Language
+      -# commented out until xslt can be reviewed to prevent wiping out of existing langs
         %ul{ :width => "115"}
           %li#10701
             %a
@@ -72,6 +73,8 @@
             %a
               =button_to  ("Other" , options = { :action => 'add_new_lang_to_xml', :lang => 'OTHER'}, html_options = { :class => "new_lang_button" } )
       %li#106{ :itemType => "separator"}
+      
+      
       -#%li#107
       -#  %a{ :href => "#"} Ancient Diacriticals
       -#  %ul{ :width => "115"}

@@ -26,7 +26,11 @@ class HgvTransIdentifiersController < IdentifiersController
   
 
   def add_new_lang_to_xml
+   raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
   	find_identifier
+  	#must prevent existing lang from being wiped out
+  	
+  	#
     @identifier.stub_text_structure(params[:lang])
     @identifier.save
     redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
