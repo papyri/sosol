@@ -60,6 +60,10 @@ class IdentifiersController < ApplicationController
     find_identifier
     # strip carriage returns
     xml_content = params[@identifier.class.to_s.underscore][:xml_content].gsub(/\r\n?/, "\n")
+    #if user fills in comment box at top, it overrides the bottom
+    if params[:commenttop] != nil && params[:commenttop].strip != ""
+      params[:comment] = params[:commenttop]
+    end
     begin
       commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
