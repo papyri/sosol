@@ -368,7 +368,7 @@ class PublicationsController < ApplicationController
     
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
       conflicting_identifiers += actual_conflicts
     end
     
