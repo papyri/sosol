@@ -245,7 +245,6 @@ function insertNewLanguage()
 
 function insertLinebreak()
 {
-	
   linebreak_number = document.getElementById("linebreak_number").value;
   do_render = document.linebreak.render_checkbox.checked;//document.getElementById("render_checkbox").value;
   
