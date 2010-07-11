@@ -76,7 +76,7 @@ class IdentifiersController < ApplicationController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str
+      flash.now[:error] = parse_error.to_str + " This file was NOT SAVED."
       @identifier[:xml_content] = xml_content
       render :template => 'identifiers/editxml'
     end

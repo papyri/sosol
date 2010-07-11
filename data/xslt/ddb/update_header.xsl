@@ -11,6 +11,10 @@
   <xsl:param name="title_text"/>
   <xsl:param name="filename_text"/>
   <xsl:param name="ddb_hybrid_text"/>
+  
+  <!-- params for reprint -->
+  <xsl:param name="reprint_from_text"/>
+  <xsl:param name="ddb_hybrid_ref_attribute"/>
 
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
@@ -57,5 +61,20 @@
   
   <!-- Suppress <idno type='ddb-perseus-style'> -->
   <xsl:template match="tei:idno[@type='ddb-perseus-style']"/>
+  
+  <!-- Add <ref> to point to reprint-from -->
+  <xsl:template match="/tei:TEI/tei:text/tei:body/tei:head[@xml:lang='en']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates/>
+      <xsl:if test="$ddb_hybrid_ref_attribute != ''">
+        <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
+          <xsl:attribute name="n"><xsl:value-of select="$ddb_hybrid_ref_attribute"/></xsl:attribute>
+          <xsl:attribute name="type">reprint-from</xsl:attribute>
+          <xsl:value-of select="$reprint_from_text"/>
+        </xsl:element>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
 
 </xsl:stylesheet>

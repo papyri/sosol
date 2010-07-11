@@ -104,20 +104,21 @@ class Publication < ActiveRecord::Base
     #1 meta
     #2 transcription
     #3 translation    
-    error_text = ""
+    error_text = "" #default to empty for check in controller
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
         if i.modified? && i.class == ic &&  i.status == "editing"
           #submit it
           if submit_identifier(i)
-            return
+            return error_text
           else            
-            error_text  += "no board for " + ic.to_s
-            return #for now
+            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
+            return error_text
           end
         end
       end
+      
     end
     
     #if we get to this point, nothing else was submitted therefore we are done with publication
@@ -133,6 +134,8 @@ class Publication < ActiveRecord::Base
 =end
     self.origin.change_status("committed")
     self.save
+    
+    return error_text # controller checks returned value for empty or not
     
   end
   
@@ -170,7 +173,7 @@ class Publication < ActiveRecord::Base
         # self.branch = title_to_ref(self.title)
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
-      #(from_branch, to_branch, from_repo)
+        #(from_branch, to_branch, from_repo)
         self.save!
         identifier.save!
         
@@ -179,7 +182,7 @@ class Publication < ActiveRecord::Base
         return true
       end
     end
-    return false
+    return false #no board exists for this identifier class
   end
   
   def submit

@@ -1,0 +1,14 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'translation_helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    = stylesheet_link_tag 'terms'
+    #gapsize{:class => "helperpop"}
+      %h1 Click Term To Insert
+
+      =@glossary
+
+      #button_left
+        %button{:type => "button", :onclick => "closeHelper()"}Close

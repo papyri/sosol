@@ -140,7 +140,9 @@ class DDBIdentifier < Identifier
             %w{data xslt ddb update_header.xsl})),
           :title_text => self.xml_title_text,
           :filename_text => self.id_attribute,
-          :ddb_hybrid_text => self.n_attribute
+          :ddb_hybrid_text => self.n_attribute,
+          :reprint_from_text => options[:set_dummy_header] ? original.title : '',
+          :ddb_hybrid_ref_attribute => options[:set_dummy_header] ? original.n_attribute : ''
         )
     
       self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")

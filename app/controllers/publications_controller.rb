@@ -131,12 +131,18 @@ class PublicationsController < ApplicationController
     @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
     
-    @publication.submit    
-
-    @comment.git_hash = @publication.recent_submit_sha
-    @comment.save
-
-    flash[:notice] = 'Publication submitted.'
+    error_text = @publication.submit
+    if error_text == ""
+      #update comment with git hash when successfully submitted
+      @comment.git_hash = @publication.recent_submit_sha
+      @comment.save
+      flash[:notice] = 'Publication submitted.'
+    else
+      #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
+      cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id], :reason => "submit", :user_id => @current_user.id } )
+      Comment.destroy(cleanup_id)
+      flash[:error] = error_text
+    end
     redirect_to @publication
     # redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
@@ -235,7 +241,10 @@ class PublicationsController < ApplicationController
     end
     
     #send publication to the next board
-    @publication.origin.submit_to_next_board
+    error_text = @publication.origin.submit_to_next_board
+    if error_text != ""
+      flash[:error] = error_text
+    end
     @publication.change_status('finalized')
     
     flash[:notice] = 'Publication finalized.'
@@ -359,7 +368,7 @@ class PublicationsController < ApplicationController
     
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
       conflicting_identifiers += actual_conflicts
     end
     
