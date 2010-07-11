@@ -12,7 +12,7 @@ class TranslationLeiden < HGVTransIdentifier
  
     #remove <= and => that represents the wrapping
     if (transformed)
-    	transformed.slice!(/^<T=.en <=/)
+    	transformed.slice!(/^<T=.en<=/)
     	transformed.slice!(/=>=T>$/)
     end
   
