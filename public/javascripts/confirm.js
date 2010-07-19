@@ -32,7 +32,7 @@
     {set_conf_true();}
   
   //this phrase defined in insert_error_here method in identifiers controller
-  phrase = "*******ERROR HERE*******";
+  phrase = "**POSSIBLE ERROR**";
   
   if(typeof document.selection != 'undefined') // means IE browser 
     {

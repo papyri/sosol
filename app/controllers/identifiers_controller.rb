@@ -105,7 +105,7 @@ class IdentifiersController < ApplicationController
     content.each_char do |i|
       if line_cnt == line
         if col_cnt == column
-          content_error_here << "*******ERROR HERE*******"
+          content_error_here << "**POSSIBLE ERROR**"
         end
         col_cnt += 1
       end
