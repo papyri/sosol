@@ -1,6 +1,6 @@
 module JRubyXML
   class ParseError < ::StandardError
-    attr :line, :column
+    attr_accessor :line, :column
     
     def initialize(line, column)
       @line = line
