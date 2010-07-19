@@ -26,6 +26,7 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
+  	showMatch('hgv_trans_identifier_leiden_trans');
   }
   
 window.onload = init;

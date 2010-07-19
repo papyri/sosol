@@ -13,6 +13,7 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
+  	showMatch('ddb_identifier_leiden_plus');
   }
   
 window.onload = init;
@@ -282,3 +283,4 @@ function insertTextMain(vti)
       }
     }
 } //########################     end insertTextMain     ########################
+

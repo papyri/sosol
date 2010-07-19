@@ -16,7 +16,8 @@ class HgvTransIdentifiersController < IdentifiersController
       end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
-      @identifier[:leiden_trans] = parse_error.content
+      new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+      @identifier[:leiden_trans] = new_content
     end
     
     #find text for preview
@@ -79,7 +80,8 @@ class HgvTransIdentifiersController < IdentifiersController
       #non parsing  
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
-        @identifier[:leiden_trans] = parse_error.content
+        new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+        @identifier[:leiden_trans] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
         
