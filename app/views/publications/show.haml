@@ -86,7 +86,8 @@
       - for class_type in @creatable_identifiers
         - create_type = class_type.constantize::FRIENDLY_NAME
         - create_type = 'Create new ' + create_type
-        = link_to (create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{create_type}", :onclick => "$('#{create_type}').remove();"})
+        - newstyle = 'style="color:blue"'
+        = link_to (create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{create_type}", :onclick => "$('#{create_type}').replace('<b #{newstyle}>creating...</b>');"})
         %br
 
     - if @allow_delete
