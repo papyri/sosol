@@ -1,7 +1,7 @@
 %ul.publications
-  - user_vote = nil
-  - vote_count = 0
   - for publication in list
+    - user_vote = nil
+    - vote_count = 0
     %li
       %ul
         = link_to( image_tag('documents.png', :border => "0") , publication)
