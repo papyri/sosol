@@ -298,7 +298,16 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
 
+  def add_votes_to_change_desc
+    self.parent.votes.each do |v|
+      add_change_desc( "Vote - " + v.choice, v.user )
+    end
+  end
 
+  def add_finalize_to_change_desc(comment_text, user)
+    add_change_desc( "Finalized - " + comment_text, user)
+  end
+  
   def add_change_desc(text = "", user_info = self.publication.creator)
     doc = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
