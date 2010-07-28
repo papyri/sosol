@@ -2,7 +2,7 @@
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
-    = render :partial => 'leiden_helpers'
+    = render :partial => 'leiden_helpers', :locals => { :identifier => @identifier}
 
     #edit
       - form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|

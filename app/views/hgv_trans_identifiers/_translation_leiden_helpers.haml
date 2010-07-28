@@ -198,4 +198,7 @@
     %a{ :href => "#"}Try It
   %li#8{ :itemType => "separator"}
 %p
-  %div#menuDiv
+  -if identifier.mutable?
+    %div#menuDiv
+  -else
+    %div#menuDiv{ :style => "display:none"}
