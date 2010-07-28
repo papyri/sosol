@@ -5,6 +5,16 @@
     set_conf_true();
   });
   
+  // Add a change observer to commenttop with the observechangecomtop CSS class
+  $$('.observechangecomtop').invoke('observe', 'change', function(event) {
+    document.getElementById("comment").disabled = true;
+  });
+  
+  // Add a change observer to comment with the observechangecomment CSS class
+  $$('.observechangecomment').invoke('observe', 'change', function(event) {
+    document.getElementById("commenttop").disabled = true;
+  });
+  
   window.onbeforeunload = askConfirm;
   
   function askConfirm()
