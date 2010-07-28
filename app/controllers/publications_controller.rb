@@ -226,7 +226,7 @@ class PublicationsController < ApplicationController
    
     @identifier.save
     #do we need to save publication before continuing with commit??
-     raise "done"
+
     begin
       canon_sha = @publication.commit_to_canon
     rescue Errno::EACCES => git_permissions_error
