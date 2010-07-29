@@ -9,26 +9,41 @@
       %h3 Choose Language
       
       - choices = Hash.new
-      - choices['Bulgarian'] = "bg"
-      - choices['German'] = "de"
+      
+      -# choices['Bulgarian'] = "bg"
+      - choices['български'] = "bg" 
+      
+      -# choices['German'] = "de"
+      - choices['Deutsch'] = "de"
+      
       - choices['English'] = "en"
-      - choices['French'] = "fr"
-      - choices['Italien'] = "it"
-      - choices['Spanish'] = "sp"
+      
+      -# choices['French'] = "fr"
+      - choices['Français'] = "fr"
+      
+      -# choices['Italain'] = "it"
+      - choices['Italiano'] = "it"      
+      
+      -# choices['Spanish'] = "sp"
+      - choices['Español'] = "sp"
+      
       
       -# choices['Other'] = "other"
       
-      -# choices = choices.sort {|a,b| a[1] <=> b[1]}
+      - choices = choices.sort {|a,b| a[1] <=> b[1]}
       
+
       %form{:name => "new_language_form"}
       
         = select "lang", "choice", choices, {:include_blank => true}
-      
-        %h3 or Enter Language Code
+        %br
+        %br
+        or
+        %h3 Enter Language Code
         %input{ :type => "text", :class => "choosetext", :id => "other_lang", :size => "09"}
         
                 
       #button_left
         %button{ :type => "button", :onclick=> "insertNewLanguage()" }Insert
-      #button_left
+        &nbsp
         %button{:type => "button", :onclick => "closeHelper()"}Close

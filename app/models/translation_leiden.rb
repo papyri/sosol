@@ -4,6 +4,7 @@ class TranslationLeiden < HGVTransIdentifier
  
 	def self.xml_to_translation_leiden(content)
  
+		
 		#wrap so that the sugar grammer can transform
 		wrapped_content = "<body xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"><div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\"><p>" + content + "</p></div></body>";
     
@@ -11,9 +12,19 @@ class TranslationLeiden < HGVTransIdentifier
  
     #remove <= and => that represents the wrapping
     if (transformed)
-    	transformed.slice!(/^<T=.en <=/)
+    	transformed.slice!(/^<T=.en<=/)
     	transformed.slice!(/=>=T>$/)
     end
+  
+    return transformed
+  end
+  
+  def self.get_language_translation_leiden(lang)
+ 	
+		#wrap so that the sugar grammer can transform
+		content = '<body xmlns:xml="http://www.w3.org/XML/1998/namespace"><div xml:lang="' + lang + '" type="translation" xml:space="preserve"><p></p></div></body>'; 		
+    
+		transformed = HGVTransIdentifier.xml2nonxml(content)
   
     return transformed
   end

@@ -45,7 +45,8 @@
   </xsl:template>
   
   <!-- convert <div type='edition' xml:lang='grc'> to <div type='translation' lang='$lang'> -->
-  <xsl:template match="tei:div[@type='edition' and @xml:lang='grc']">
+  <!-- <xsl:template match="tei:div[@type='edition' and @xml:lang='grc']"> -->
+  <xsl:template match="tei:div[@type='edition']">
     <div type='translation'>
       <xslt:attribute name="xml:lang"><xslt:value-of select="$lang"/></xslt:attribute>
       <xsl:apply-templates select="node()"/>
@@ -60,7 +61,10 @@
     </xsl:element>
   </xsl:template>
   
-  <!-- convert <ab> to <p> and copy all children (lb's) -->
+  <!-- convert <ab> to <p> and copy all children (
+         <p>
+            <milestone unit="line" n="2"/>
+         </p>lb's) -->
   <xsl:template match="tei:ab">
     <xslt:element name="p">
       <xsl:apply-templates select="element()"/>

@@ -13,7 +13,8 @@ class DdbIdentifiersController < IdentifiersController
       end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
-      @identifier[:leiden_plus] = parse_error.content
+      new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+      @identifier[:leiden_plus] = new_content
     end
   end
   
@@ -22,6 +23,10 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     @bad_leiden = false
     @original_commit_comment = ''
+    #if user fills in comment box at top, it overrides the bottom
+    if params[:commenttop] != nil && params[:commenttop].strip != ""
+      params[:comment] = params[:commenttop]
+    end
     if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
@@ -45,7 +50,8 @@ class DdbIdentifiersController < IdentifiersController
                                      :action => :edit)
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED. "
-        @identifier[:leiden_plus] = parse_error.content
+        new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+        @identifier[:leiden_plus] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
         render :template => 'ddb_identifiers/edit'
@@ -53,7 +59,6 @@ class DdbIdentifiersController < IdentifiersController
         flash[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
         @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
-        #@identifier[:leiden_plus] = parse_error.message
         render :template => 'ddb_identifiers/edit'
       end #begin
     end #when

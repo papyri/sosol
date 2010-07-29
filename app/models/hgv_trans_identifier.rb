@@ -68,6 +68,21 @@ class HGVTransIdentifier < HGVIdentifier
     )
   end
   
+  def translation_already_in_language?(lang)
+    lang_path = '/TEI/text/body/div[@type = "translation" and @xml:lang = "' + lang + '"]'
+    
+    doc = REXML::Document.new(self.xml_content)
+    result = REXML::XPath.match(doc, lang_path)
+    
+    if result.length > 0
+     return true
+    else
+      return false
+    end
+     
+  end
+  
+  
   def stub_text_structure(lang)
     translation_stub_xsl =
       JRubyXML.apply_xsl_transform(
@@ -80,8 +95,11 @@ class HGVTransIdentifier < HGVIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.content),
         JRubyXML.stream_from_string(translation_stub_xsl),
-        :lang => 'en'
+        #:lang => 'en'
+        #assumed that hard coded 'en' is remnant and should be
+        :lang => lang
       )
+      
     
     self.set_xml_content(rewritten_xml, :comment => "Update translation with stub for @xml:lang='#{lang}'")
   end

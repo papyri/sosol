@@ -18,6 +18,14 @@ var success = function(resp) {
         insertText(leidenh);
         }
 
+var successAtBegining = function(resp) {
+	//alert(resp.responseText);
+        leidenh = resp.responseText;
+        window.close();
+        insertTextAtBegining(leidenh);
+        }
+
+        
 function init() 
   {
   //add anything you need for initial page load here
@@ -160,8 +168,22 @@ function isNumericCircaDigit(isnum) //GAPEXTNUM = [c]?[.]?[0-9]+
 function insertTerm(term)
 {
   
- 
-	startxml = '<term target="' + term + '" xml:lang="la">place word here</term>';
+  var lang = " "
+  if ( document.getElementById("la").checked )
+  {
+    lang = 'xml:lang="la"';
+  }
+  else if ( document.getElementById("grc-Latn").checked )
+  {
+    lang = 'xml:lang="grc-Latn"';
+  }
+
+	startxml = '<term target="' + term + '" ' + lang + '>place word here</term>';
+  
+  //startxml = '<term target="' + term + '" xml:lang="la">place word here</term>';
+  
+  //alert (startxml);
+ // alert ('<term target="' + term + '" ' + lang + '>place word here</term>');
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
@@ -169,12 +191,51 @@ function insertTerm(term)
         parameters : {xml:startxml},
         onSuccess : success,
         onFailure : function(resp) {
-        alert("Oops, there's been an error(insertDivisionSub)." + resp.responseText);   
+        alert("Oops, there's been an error(insertTerm)." + resp.responseText);   
           }
       });
     
 }
 /*########################     end insertDivisionMain     ########################*/
+
+
+
+
+/*###########################################################################################*/
+/* insertNewLang                                                                   */
+/*###########################################################################################*/
+
+function insertNewLanguage()
+{
+	
+  other_lang = document.getElementById("other_lang").value;
+  if (other_lang != "") 
+  {
+  	new_lang = other_lang;
+  }
+  else
+  {
+  	new_lang = document.getElementById("lang_choice").value;
+  }
+  
+  //startxml = '<div xml:lang="xx" type="translation" xml:space="preserve"><p>Stuff here</p></div>';
+ 	
+  //convertXML()
+  
+  new Ajax.Request(
+  	window.opener.ajax_get_new_lang, 
+		{
+			method: 'get',
+			parameters : {lang:new_lang},
+			async : false,
+			onSuccess : successAtBegining,
+			onFailure : function(resp) {
+			 alert("Oops, there's been an error during Ajax call (insert new lang)." + resp.responseText);   
+				 }
+			}
+		);
+
+} /*########################     end insertNewLang  ########################*/
 
 
 
@@ -184,7 +245,6 @@ function insertTerm(term)
 
 function insertLinebreak()
 {
-	
   linebreak_number = document.getElementById("linebreak_number").value;
   do_render = document.linebreak.render_checkbox.checked;//document.getElementById("render_checkbox").value;
   
@@ -276,7 +336,7 @@ function tryitConversion()
   //element = document.getElementById('tryit_input');
   //element.focus();
   convertValue = document.getElementById("tryit_input").value;
-  success = function(resp) 
+  var tryitsuccess = function(resp) 
         {
           valueback = resp.responseText;
           document.getElementById("tryit_output").value = valueback;
@@ -296,7 +356,7 @@ function tryitConversion()
           method: 'get',
           parameters : {leiden:convertValue},
           async : false,
-          onSuccess : success,
+          onSuccess : tryitsuccess,
           onFailure : function(resp) 
           {
             alert("Oops, there's been an error during Ajax call." + resp.responseText);   
@@ -315,6 +375,9 @@ function convertXML()
 {
  // xmltopass = wrapxml(startxml);
  // alert (xmltopass);
+ 
+ //xmltopass = wrapXml(startxml);
+ 
   new Ajax.Request(
   	window.opener.ajaxConvert, 
 		{
@@ -327,6 +390,7 @@ function convertXML()
 				 }
 			}
 		);
+	
 }
 
 /*###########################################################################################*/
@@ -335,8 +399,6 @@ function convertXML()
 
 function insertText(vti)
   {
-  	
-
   //call function in main window to set variable saying the data was modified to cause
   //verification question if leave page without saving
   window.opener.set_conf_true();
@@ -374,5 +436,49 @@ function insertText(vti)
   } /*########################     end insertText     ########################*/
 
   
-  
+  /*###########################################################################################*/
+/* insert value into textbox - vti = value to insert                                         */
+/*###########################################################################################*/
+
+function insertTextAtBegining(vti)
+  {
+  	
+
+  //call function in main window to set variable saying the data was modified to cause
+  //verification question if leave page without saving
+  window.opener.set_conf_true();
+
+  if(typeof document.selection != 'undefined') /* means IE browser */
+    {
+      var range = window.opener.document.selection.createRange();
+      //warning todo This is not tested in IE
+      range.setStart = 0;
+      range.setEnd = 0;
+      range.text = vti;
+      range.select();
+      range.collapse(false);
+    }
+  else 
+    { // need to grab focus of main window textarea again for non-IE browsers only
+      element = window.opener.document.getElementById('hgv_trans_identifier_leiden_trans');
+      element.focus();
+      
+      if(typeof element.selectionStart != 'undefined') /* means Mozilla browser */
+        {
+          var start = 0;//element.selectionStart;
+          var end = 0;//element.selectionEnd;
+          element.value = element.value.substr(0, start) + vti + element.value.substr(end);
+          var pos = start + vti.length;
+          element.selectionStart = pos;
+          element.selectionEnd = pos;
+          //below is to get focus back to textarea in main page - not work in safari - does is ff
+          element = window.opener.document.getElementById('hgv_trans_identifier_leiden_trans');
+          element.focus();
+        }
+      else /* not sure what browser */
+        {
+          element.value = element.value+vti;
+        }
+    }
+  } /*########################     end insertText     ########################*/
 

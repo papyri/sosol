@@ -7,6 +7,8 @@
         = f.error_messages
 
         %p
+          %br
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :type => :top }
           %label XML
           = clippy "#{@identifier.class.to_s.underscore}_xml_content"
           %br
@@ -14,3 +16,5 @@
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
 
 = javascript_include_tag 'confirm'
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content");

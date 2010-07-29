@@ -1,5 +1,9 @@
 /* CSS FOR MENU ITEM OF TYPE "top" */
 
+input.new_lang_button {
+  border-width: 0;
+}
+
 .Custom_menuItem_top_regular,.Custom_menuItem_top_over,.Custom_menuItem_top_click,.Custom_menuItem_top_disabled,.Custom_menuItem_top_active{
 	height:19px;
 }
