@@ -1,7 +1,4 @@
 #main
-
-  = javascript_include_tag 'translation'
-  
     
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -17,12 +14,12 @@
         = f.error_messages 
 
         %br
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :type => :top }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :top }
         = f.label "Leiden Trans"
         = clippy "hgv_trans_identifier_leiden_trans"
         %br
         = f.text_area :leiden_trans, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :wrap => 'off', :class => 'greek  observechange'
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
   
         
 
