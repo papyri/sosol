@@ -16,21 +16,27 @@ class HgvTransIdentifiersController < IdentifiersController
       end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
-      @identifier[:leiden_trans] = parse_error.content
+      new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+      @identifier[:leiden_trans] = new_content
     end
     
     #find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
     
+    
   end
   
 
   def add_new_lang_to_xml
-   raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
+  # raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
+   
   	find_identifier
   	#must prevent existing lang from being wiped out
-  	
-  	#
+    if @identifier.translation_already_in_language?(params[:lang])
+      flash[:warning] = "Language is already present in translation."
+      redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
+      return
+    end
     @identifier.stub_text_structure(params[:lang])
     @identifier.save
     redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
@@ -79,7 +85,8 @@ class HgvTransIdentifiersController < IdentifiersController
       #non parsing  
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
-        @identifier[:leiden_trans] = parse_error.content
+        new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+        @identifier[:leiden_trans] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
         

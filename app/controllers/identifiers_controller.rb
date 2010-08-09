@@ -80,9 +80,40 @@ class IdentifiersController < ApplicationController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str + " This file was NOT SAVED."
-      @identifier[:xml_content] = xml_content
+      flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
+      new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
+      @identifier[:xml_content] = new_content
       render :template => 'identifiers/editxml'
     end
+  end
+  
+  protected
+  
+  def insert_error_here(content, line, column)
+    # this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+    # occurs by taking the line and column from the message and giving the user the place in the content
+    # the parse error occured in xsugars processing - may or may not be where the real error is depending
+    # on what the error is - this processing is by character because there are multiple byte characters
+    # possible in the text and a way to place msg with taking that into account
+    #
+    # line starts at 1 because first character is on first line before incrementing in loop
+    # same logic for column, already on first character before incrementing in loop 
+    # 'col' check has to come before 'new line' check in case error is on last char in the line
+    line_cnt = 1
+    col_cnt = 1
+    content_error_here = ''
+    content.each_char do |i|
+      if line_cnt == line
+        if col_cnt == column
+          content_error_here << "**POSSIBLE ERROR**"
+        end
+        col_cnt += 1
+      end
+      if i == "\n"
+        line_cnt += 1
+      end
+      content_error_here << i
+    end
+    return content_error_here
   end
 end

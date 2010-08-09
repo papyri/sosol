@@ -3,12 +3,31 @@
   %br
   -#the save button and comment box styled differently in editor.sass based on different class on top and bottom
   -if type == :top
-    = text_field_tag :commenttop, defined?(original_commit_comment) ? original_commit_comment : '', :class => :commenttop, :size => '80', :disabled => !identifier.mutable?
+    = text_field_tag :commenttop, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'commenttop observechangecomtop', :size => '80', :disabled => !identifier.mutable?
     = f.submit "Save", :class => 'savetop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
       = f.submit "Save With Broken Leiden+", :class => 'brokentop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
   -else
-    = text_field_tag :comment, defined?(original_commit_comment) ? original_commit_comment : '', :class => :comment, :size => '80', :disabled => !identifier.mutable?
+    = text_field_tag :comment, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'comment observechangecomment', :size => '80', :disabled => !identifier.mutable?
     = f.submit "Save", :class => 'save', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
       = f.submit "Save With Broken Leiden+", :class => 'brokenbottom', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+      :javascript
+        if (document.getElementById('notice_error'))
+          {var forceChangeTrue = true;}
+        else
+          {var forceChangeTrue = false;}
+    -else
+      :javascript
+        // force it to appear change was made when changed XML file was not saved due to parse error
+        err_exist = document.getElementById("notice_error");
+        if (err_exist != null) //if error notice is on page
+          { 
+            get_err_msg = document.getElementById("notice_error").innerHTML;       
+            if (get_err_msg.match("NOT SAVED"))
+              {var forceChangeTrue = true;}
+            else
+              {var forceChangeTrue = false;}
+          }
+        else // error notice is not on page
+          {var forceChangeTrue = false;}

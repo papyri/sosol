@@ -122,9 +122,27 @@ class PublicationsController < ApplicationController
     redirect_to @publication
   end
   
+  
+  def is_theirs?
+    return  @publication.owner_type == "User"  && ( @publication.owner == @current_user )  
+  end
+  
   def submit
     @publication = Publication.find(params[:id])
     
+    #check if it is the owner
+    if ! is_theirs?
+      flash[:error] = 'You do not have permissions to submit this publication.'
+      redirect_to dashboard_url
+      return
+    end
+        
+    #prevent resubmitting...most likely by impatient clicking on submit button
+    if ! %w{editing new}.include?(@publication.status)
+      flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
+      redirect_to @publication
+      return
+    end
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
