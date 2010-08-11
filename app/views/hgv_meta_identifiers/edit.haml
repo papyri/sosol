@@ -12,6 +12,6 @@
             = f.label epidoc_attribute.to_s.underscore
             = f.text_field epidoc_attribute, :disabled => !@identifier.mutable?, :class => 'observechange'
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
 = javascript_include_tag 'confirm'

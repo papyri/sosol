@@ -32,6 +32,6 @@
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
         #bibliographyMeta.bibliographyContainer ...
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
 = javascript_include_tag 'bibliography'

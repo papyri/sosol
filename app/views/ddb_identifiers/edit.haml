@@ -8,11 +8,11 @@
       - form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
         = f.error_messages
         %br
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :type => :top }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :top }
         = f.label "Leiden+"
         = clippy "ddb_identifier_leiden_plus"
         %br
         = f.text_area :leiden_plus, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
 
 = javascript_include_tag 'confirm'
