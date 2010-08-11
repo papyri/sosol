@@ -21,6 +21,9 @@ class Leiden < DDBIdentifier
     #call to convert
     tempTrans = DDBIdentifier.nonxml2xml(abs)
     # pull out XML inside the <ab> tag
+    # remove namespace assignment or REXML barfs
+    tempTrans.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
+
     transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/ab/[not(self::ab)]')
     
     return transformed

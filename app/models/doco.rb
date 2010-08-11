@@ -1,5 +1,5 @@
 class Doco < ActiveRecord::Base
-  validates_presence_of :category, :line, :description, :note, :preview, :url
+  validates_presence_of :category, :line, :description, :note, :preview # remove URL required per Josh :url
   validate :line_positive_and_gt_zero
   
   class DocoNode
