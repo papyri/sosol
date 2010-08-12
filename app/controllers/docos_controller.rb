@@ -174,17 +174,22 @@ class DocosController < ApplicationController
       params[:save_url] = ''
     else #selector  was not used so check if user changed the value using the input field
       if params[:save_url] != params[:doco][:url] #url changed by user so need to update display value
-        if params[:doco][:url].match(/^(papyri.info)\/(ddbdp|hgv)\/[a-z0-9\;]+$/) == nil
-          flash.now[:error] = "Error: '#{params[:doco][:url].downcase}' is not in the correct input format - use either 'papyri.info/ddbdp/bgu;1;154' or 'papyri.info/hgv/80456' format"
-          @doco.url = params[:doco][:url].downcase
-          #redirect_to edit_doco_path
-          render :template => "docos/#{where_return}"
-          return "error"
+        if params[:doco][:url].strip.nil? || params[:doco][:url].strip.empty? #user blanked it out
+          params[:doco][:urldisplay] = ""
+          params[:save_url] = params[:doco][:url] #to keep logic below from trying to validate a blank
         else
-          if params[:doco][:url].include?("/hgv")
-            params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/hgv\//, '')
+          if params[:doco][:url].match(/^(papyri.info)\/(ddbdp|hgv)\/[a-z0-9\;]+$/) == nil
+            flash.now[:error] = "Error: '#{params[:doco][:url].downcase}' is not in the correct input format - use either 'papyri.info/ddbdp/bgu;1;154' or 'papyri.info/hgv/80456' format"
+            @doco.url = params[:doco][:url].downcase
+            #redirect_to edit_doco_path
+            render :template => "docos/#{where_return}"
+            return "error"
           else
-            params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/ddbdp\//, '')
+            if params[:doco][:url].include?("/hgv")
+              params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/hgv\//, '')
+            else
+              params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/ddbdp\//, '')
+            end
           end
         end
       end
