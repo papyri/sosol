@@ -611,8 +611,7 @@ class Publication < ActiveRecord::Base
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', publication_sha)
-        canon.repo.git.repack({})
-      
+        
         self.change_status('committed')
         self.save!
       else
@@ -668,12 +667,16 @@ class Publication < ActiveRecord::Base
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
-        canon.repo.git.repack({})
-      
-
+        
         self.change_status('committed')
         self.save!
-        
+      end
+      
+      # finalized, try to repack
+      begin
+        canon.repo.git.repack({})
+      rescue Grit::Git::GitTimeout
+        Rails.logger.warn("Canonical repository not repacked after finalization!")
       end
     else
       # nothing under canon control, just say it's committed
