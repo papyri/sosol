@@ -132,9 +132,10 @@ class Repository
     # We always assume we want to branch from master by default
     if source_name == 'master'
       self.update_master_from_canonical
+      source_name = @repo.get_head(source_name).commit.id
     end
     
-    @repo.update_ref(name,@canonical.get_head(source_name).commit.id)
+    @repo.update_ref(name, source_name)
   end
   
   def delete_branch(name)
