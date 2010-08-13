@@ -129,18 +129,16 @@ class Repository
   end
   
   def create_branch(name, source_name = 'master')
-    # We have to abuse git here because Grit::Head doesn't appear to have
-    # a facility for writing out a sha1 to refs/heads/name yet
-    # Also, we always assume we want to branch from master by default
+    # We always assume we want to branch from master by default
     if source_name == 'master'
       self.update_master_from_canonical
     end
     
-    @repo.git.branch({}, name, source_name)
+    @repo.update_ref(name,@canonical.get_head(source_name).commit.id)
   end
   
   def delete_branch(name)
-    @repo.git.branch({:D => true}, name)
+    @repo.git.fs_delete("refs/heads/#{name}")
   end
   
   #(from_branch, to_branch, from_repo)
