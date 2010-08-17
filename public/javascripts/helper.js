@@ -1058,24 +1058,24 @@ function finishAbbrev()
 function tryitConversion()
 {
   
-  //element = document.getElementById('tryit_input');
-  //element.focus();
-  convertValue = document.getElementById("tryit_input").value;
-  success = function(resp) 
-        {
-          valueback = resp.responseText;
-          document.getElementById("tryit_output").value = valueback;
-        } 
-  
   if (tryit_type == "xml2non")
     {
-      startxml = convertValue;
-      
+      startxml = document.getElementById("tryit_xml").value;
+      success = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_leiden").value = valueback;
+        }
       convertXML()
     }
   else
     {
-      //startleiden = convertValue;
+      convertValue = document.getElementById("tryit_leiden").value;
+      success = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_xml").value = valueback;
+        } 
       new Ajax.Request(window.opener.convLeiden2XML, 
         {
           method: 'get',
@@ -1087,7 +1087,6 @@ function tryitConversion()
             alert("Oops, there's been an error during Ajax call." + resp.responseText);   
           }
         });
-      //convertLeiden
     }
     
 } //########################     end tryitConversion     ########################

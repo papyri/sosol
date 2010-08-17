@@ -228,6 +228,7 @@ class DocosController < ApplicationController
       else
         #xml must be wrapped in ab tags to parse correctly in xsugar grammar
         xml2conv = "<ab>" + params[:doco][:xml] + "</ab>"
+                
         begin
           leidenback = Leiden.xml_leiden_plus(xml2conv)
           params[:doco][:leiden] = leidenback
@@ -236,7 +237,7 @@ class DocosController < ApplicationController
           @doco.xml = params[:doco][:xml]
           #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
           parse_error.content.insert((parse_error.column-1), "**ERROR**")
-          flash.now[:error] = "Error at column #{parse_error.column} #{parse_error.content}"
+          flash.now[:error] = "Error at column #{parse_error.column} #{CGI.escapeHTML(parse_error.content)}"
           render :template => "docos/#{where_return}"
           return "error"
         end
@@ -260,7 +261,7 @@ class DocosController < ApplicationController
           @doco.leiden = params[:doco][:leiden]
           #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
           parse_error.content.insert((parse_error.column-1), "**ERROR**")
-          flash.now[:error] = "Error at column #{parse_error.column} #{parse_error.content}" 
+          flash.now[:error] = "Error at column #{parse_error.column} #{CGI.escapeHTML(parse_error.content)}" 
           render :template => "docos/#{where_return}"
           return "error"
         end

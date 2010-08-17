@@ -37,7 +37,8 @@ class TranslationLeiden < HGVTransIdentifier
   
   	#leiden to xml
   	wrapped_transformed = HGVTransIdentifier.nonxml2xml(wrapped_content)
-  	
+  	# remove namespace assignment or REXML barfs
+  	wrapped_transformed.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
   	# pull out wrapped XML 
   	transformed = REXML::XPath.match(REXML::Document.new(wrapped_transformed), '/body/div/p/[not(self::p)]')
     

@@ -1,8 +1,8 @@
 //var diacritical_type_one = "acute";
 //var diacritical_type_two = "asper";
-//var gap_type = "character";
+var gap_type = "none";
 //var diacritical_option = "nopts";
-//var tryit_type = "xml2non";
+var tryit_type = "xml2non";
 var valueback = "";
 //var xmltopass = "initial";
 var number_type = "other";
@@ -332,25 +332,26 @@ function insertDivisionSub()
 
 function tryitConversion()
 {
-  
-  //element = document.getElementById('tryit_input');
-  //element.focus();
-  convertValue = document.getElementById("tryit_input").value;
-  var tryitsuccess = function(resp) 
+  if (tryit_type == "xml2non")
+    { 
+      startxml = document.getElementById("tryit_xml").value; 
+      success = function(resp) 
         {
           valueback = resp.responseText;
-          document.getElementById("tryit_output").value = valueback;
-        } 
-  
-  if (tryit_type == "xml2non")
-    {
-      startxml = convertValue;
+          document.getElementById("tryit_leiden").value = valueback;
+        }
       
       convertXML()
     }
   else
     {
-      //startleiden = convertValue;
+      convertValue = document.getElementById("tryit_leiden").value;
+      var tryitsuccess = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_xml").value = valueback;
+        }
+
       new Ajax.Request(window.opener.conv_translation_leiden_to_xml, 
         {
           method: 'get',
@@ -362,7 +363,6 @@ function tryitConversion()
             alert("Oops, there's been an error during Ajax call." + resp.responseText);   
           }
         });
-      //convertLeiden
     }
     
 } /*########################     end tryitConversion     ########################*/
