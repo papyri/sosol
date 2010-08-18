@@ -45,7 +45,7 @@ Rails::Initializer.run do |config|
     config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
-		config.gem "rack", :version => ">= 1.0.1", :lib => false
+		config.gem "rack", :version => ">= 1.1.0", :lib => false
   end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
