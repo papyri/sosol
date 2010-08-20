@@ -35,7 +35,7 @@ Rails::Initializer.run do |config|
   # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
   
   if(RUBY_PLATFORM == 'java')
-    config.gem "json-jruby", :lib => "json"
+    config.gem "json-jruby", :version => ">= 1.4.3.1", :lib => "json"
   else
     config.gem "json"
   end

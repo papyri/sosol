@@ -7,10 +7,21 @@ when 'pure' then require 'json/pure'
 when 'ext'  then require 'json/ext'
 else             require 'json'
 end
-require 'stringio'
 
-class TC_JSON < Test::Unit::TestCase
+class TestJjrbOffsets < Test::Unit::TestCase
+  # Test non-zero ByteList offsets.
+  # Yes, this is a very ad-hoc, copy-pasted test suite.
+
   include JSON
+
+  def o(string, offset = 1)
+    full = "!" * offset + string
+    return full[offset, string.length]
+  end
+
+  def parse(string, *args)
+    return JSON.parse(o(string), *args)
+  end
 
   def setup
     @ary = [1, "foo", 3.14, 4711.0, 2.718, nil, [1,-2,3], false, true].map do
@@ -34,9 +45,10 @@ class TC_JSON < Test::Unit::TestCase
       '"g":"\\"\\u0000\\u001f","h":1.0E3,"i":1.0E-3}'
   end
 
-  def test_construction
-    parser = JSON::Parser.new('test')
+  def test_parser_source_offset
+    parser = JSON::Parser.new(o("test"))
     assert_equal 'test', parser.source
+    assert_equal [], parse("[]")
   end
 
   def assert_equal_float(expected, is)
@@ -150,27 +162,11 @@ class TC_JSON < Test::Unit::TestCase
       , [2718.0E-3 ],\r[ null] , [[1, -2, 3 ]], [false ],[ true]\n ]  }))
   end
 
-  class SubArray < Array; end
-
-  def test_parse_array_custom_class
-    res = parse('[]', :array_class => SubArray)
-    assert_equal([], res)
-    assert_equal(SubArray, res.class)
-  end
-
   def test_parse_object
     assert_equal({}, parse('{}'))
     assert_equal({}, parse('  {  }  '))
     assert_equal({'foo'=>'bar'}, parse('{"foo":"bar"}'))
     assert_equal({'foo'=>'bar'}, parse('    { "foo"  :   "bar"   }   '))
-  end
-
-  class SubHash < Hash; end
-
-  def test_parse_object_custom_class
-    res = parse('{}', :object_class => SubHash)
-    assert_equal({}, res)
-    assert_equal(SubHash, res.class)
   end
 
   def test_parser_reset
@@ -229,11 +225,6 @@ EOT
     json = '["\\\\\""]'
     assert_equal json, JSON.unparse(data)
     assert_equal data, JSON.parse(json)
-    #
-    json = '["\/"]'
-    data = JSON.parse(json)
-    assert_equal ['/'], data
-    assert_equal json, JSON.unparse(data)
     #
     json = '["\""]'
     data = JSON.parse(json)

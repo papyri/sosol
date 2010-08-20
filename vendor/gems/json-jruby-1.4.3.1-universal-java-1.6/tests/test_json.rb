@@ -7,21 +7,24 @@ when 'pure' then require 'json/pure'
 when 'ext'  then require 'json/ext'
 else             require 'json'
 end
+require 'stringio'
 
-class TestJjrbOffsets < Test::Unit::TestCase
-  # Test non-zero ByteList offsets.
-  # Yes, this is a very ad-hoc, copy-pasted test suite.
+unless Array.method_defined?(:permutation)
+  begin
+    require 'enumerator'
+    require 'permutation'
+    class Array
+      def permutation
+        Permutation.for(self).to_enum.map { |x| x.project }
+      end
+    end
+  rescue LoadError
+    warn "Skipping permutation tests."
+  end
+end
 
+class TC_JSON < Test::Unit::TestCase
   include JSON
-
-  def o(string, offset = 1)
-    full = "!" * offset + string
-    return full[offset, string.length]
-  end
-
-  def parse(string, *args)
-    return JSON.parse(o(string), *args)
-  end
 
   def setup
     @ary = [1, "foo", 3.14, 4711.0, 2.718, nil, [1,-2,3], false, true].map do
@@ -45,10 +48,9 @@ class TestJjrbOffsets < Test::Unit::TestCase
       '"g":"\\"\\u0000\\u001f","h":1.0E3,"i":1.0E-3}'
   end
 
-  def test_parser_source_offset
-    parser = JSON::Parser.new(o("test"))
+  def test_construction
+    parser = JSON::Parser.new('test')
     assert_equal 'test', parser.source
-    assert_equal [], parse("[]")
   end
 
   def assert_equal_float(expected, is)
@@ -106,30 +108,24 @@ class TestJjrbOffsets < Test::Unit::TestCase
     assert_equal({ "a" => 0.23 }, parse('  {  "a"  :  0.23  }  '))
   end
 
-  begin
-    require 'permutation'
+  if Array.method_defined?(:permutation)
     def test_parse_more_complex_arrays
       a = [ nil, false, true, "foßbar", [ "n€st€d", true ], { "nested" => true, "n€ßt€ð2" => {} }]
-      perms = Permutation.for a
-      perms.each do |perm|
-        orig_ary = perm.project
-        json = pretty_generate(orig_ary)
-        assert_equal orig_ary, parse(json)
+      a.permutation.each do |perm|
+        json = pretty_generate(perm)
+        assert_equal perm, parse(json)
       end
     end
 
     def test_parse_complex_objects
       a = [ nil, false, true, "foßbar", [ "n€st€d", true ], { "nested" => true, "n€ßt€ð2" => {} }]
-      perms = Permutation.for a
-      perms.each do |perm|
+      a.permutation.each do |perm|
         s = "a"
-        orig_obj = perm.project.inject({}) { |h, x| h[s.dup] = x; s = s.succ; h }
+        orig_obj = perm.inject({}) { |h, x| h[s.dup] = x; s = s.succ; h }
         json = pretty_generate(orig_obj)
         assert_equal orig_obj, parse(json)
       end
     end
-  rescue LoadError
-    warn "Skipping permutation tests."
   end
 
   def test_parse_arrays
@@ -162,11 +158,48 @@ class TestJjrbOffsets < Test::Unit::TestCase
       , [2718.0E-3 ],\r[ null] , [[1, -2, 3 ]], [false ],[ true]\n ]  }))
   end
 
+  class SubArray < Array; end
+
+  def test_parse_array_custom_class
+    res = parse('[]', :array_class => SubArray)
+    assert_equal([], res)
+    assert_equal(SubArray, res.class)
+  end
+
   def test_parse_object
     assert_equal({}, parse('{}'))
     assert_equal({}, parse('  {  }  '))
     assert_equal({'foo'=>'bar'}, parse('{"foo":"bar"}'))
     assert_equal({'foo'=>'bar'}, parse('    { "foo"  :   "bar"   }   '))
+  end
+
+  class SubHash < Hash
+    def to_json(*a)
+      {
+        JSON.create_id => self.class.name,
+      }.merge(self).to_json(*a)
+    end
+
+    def self.json_create(o)
+      o.delete JSON.create_id
+      new.merge(o)
+    end
+  end
+
+  def test_parse_object_custom_class
+    res = parse('{}', :object_class => SubHash)
+    assert_equal({}, res)
+    assert_equal(SubHash, res.class)
+  end
+
+  def test_generation_of_core_subclasses
+    obj = SubHash.new.merge( "foo" => SubHash.new.merge("bar" => true))
+    obj_json = JSON(obj)
+    obj_again = JSON(obj_json)
+    assert_kind_of SubHash, obj_again
+    assert_kind_of SubHash, obj_again['foo']
+    assert obj_again['foo']['bar']
+    assert_equal obj, obj_again
   end
 
   def test_parser_reset
@@ -218,27 +251,27 @@ EOT
   def test_backslash
     data = [ '\\.(?i:gif|jpe?g|png)$' ]
     json = '["\\\\.(?i:gif|jpe?g|png)$"]'
-    assert_equal json, JSON.unparse(data)
+    assert_equal json, JSON.generate(data)
     assert_equal data, JSON.parse(json)
     #
     data = [ '\\"' ]
     json = '["\\\\\""]'
-    assert_equal json, JSON.unparse(data)
+    assert_equal json, JSON.generate(data)
     assert_equal data, JSON.parse(json)
     #
-    json = '["\/"]'
+    json = '["/"]'
     data = JSON.parse(json)
     assert_equal ['/'], data
-    assert_equal json, JSON.unparse(data)
+    assert_equal json, JSON.generate(data)
     #
     json = '["\""]'
     data = JSON.parse(json)
     assert_equal ['"'], data
-    assert_equal json, JSON.unparse(data)
+    assert_equal json, JSON.generate(data)
     json = '["\\\'"]'
     data = JSON.parse(json)
     assert_equal ["'"], data
-    assert_equal '["\'"]', JSON.unparse(data)
+    assert_equal '["\'"]', JSON.generate(data)
   end
 
   def test_wrong_inputs
@@ -290,6 +323,13 @@ EOT
     assert_equal too_deep, ok
   end
 
+  def test_symbolize_names
+    assert_equal({ "foo" => "bar", "baz" => "quux" },
+      JSON.parse('{"foo":"bar", "baz":"quux"}'))
+    assert_equal({ :foo => "bar", :baz => "quux" },
+      JSON.parse('{"foo":"bar", "baz":"quux"}', :symbolize_names => true))
+  end
+
   def test_load_dump
     too_deep = '[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]'
     assert_equal too_deep, JSON.dump(eval(too_deep))
@@ -304,5 +344,18 @@ EOT
     output = StringIO.new
     JSON.dump(eval(too_deep), output, 20)
     assert_equal too_deep, output.string
+  end
+
+  def test_big_integers
+    json1 = JSON([orig = (1 << 31) - 1])
+    assert_equal orig, JSON[json1][0]
+    json2 = JSON([orig = 1 << 31])
+    assert_equal orig, JSON[json2][0]
+    json3 = JSON([orig = (1 << 62) - 1])
+    assert_equal orig, JSON[json3][0]
+    json4 = JSON([orig = 1 << 62])
+    assert_equal orig, JSON[json4][0]
+    json5 = JSON([orig = 1 << 64])
+    assert_equal orig, JSON[json5][0]
   end
 end

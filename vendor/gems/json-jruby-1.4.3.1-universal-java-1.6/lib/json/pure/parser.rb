@@ -60,13 +60,50 @@ module JSON
       # * *allow_nan*: If set to true, allow NaN, Infinity and -Infinity in
       #   defiance of RFC 4627 to be parsed by the Parser. This option defaults
       #   to false.
+      # * *symbolize_names*: If set to true, returns symbols for the names
+      #   (keys) in a JSON object. Otherwise strings are returned, which is also
+      #   the default.
       # * *create_additions*: If set to false, the Parser doesn't create
       #   additions even if a matchin class and create_id was found. This option
       #   defaults to true.
       # * *object_class*: Defaults to Hash
       # * *array_class*: Defaults to Array
       def initialize(source, opts = {})
-        super
+          if defined?(::Encoding)
+            if source.encoding == Encoding::ASCII_8BIT
+              b = source[0, 4].bytes.to_a
+              source = case
+                       when b.size >= 4 && b[0] == 0 && b[1] == 0 && b[2] == 0
+                         source.dup.force_encoding(Encoding::UTF_32BE).encode!(Encoding::UTF_8)
+                       when b.size >= 4 && b[0] == 0 && b[2] == 0
+                         source.dup.force_encoding(Encoding::UTF_16BE).encode!(Encoding::UTF_8)
+                       when b.size >= 4 && b[1] == 0 && b[2] == 0 && b[3] == 0
+                         source.dup.force_encoding(Encoding::UTF_32LE).encode!(Encoding::UTF_8)
+                       when b.size >= 4 && b[1] == 0 && b[3] == 0
+                         source.dup.force_encoding(Encoding::UTF_16LE).encode!(Encoding::UTF_8)
+                       else
+                         source.dup
+                       end
+            else
+              source = source.encode(Encoding::UTF_8)
+            end
+            source.force_encoding(Encoding::ASCII_8BIT)
+          else
+            b = source
+            source = case
+                     when b.size >= 4 && b[0] == 0 && b[1] == 0 && b[2] == 0
+                       JSON.iconv('utf-8', 'utf-32be', b)
+                     when b.size >= 4 && b[0] == 0 && b[2] == 0
+                       JSON.iconv('utf-8', 'utf-16be', b)
+                     when b.size >= 4 && b[1] == 0 && b[2] == 0 && b[3] == 0
+                       JSON.iconv('utf-8', 'utf-32le', b)
+                     when b.size >= 4 && b[1] == 0 && b[3] == 0
+                       JSON.iconv('utf-8', 'utf-16le', b)
+                     else
+                       b
+                     end
+          end
+        super source
         if !opts.key?(:max_nesting) # defaults to 19
           @max_nesting = 19
         elsif opts[:max_nesting]
@@ -75,6 +112,7 @@ module JSON
           @max_nesting = 0
         end
         @allow_nan = !!opts[:allow_nan]
+        @symbolize_names = !!opts[:symbolize_names]
         ca = true
         ca = opts[:create_additions] if opts.key?(:create_additions)
         @create_id = ca ? JSON.create_id : nil
@@ -188,7 +226,7 @@ module JSON
       end
 
       def parse_array
-        raise NestingError, "nesting of #@current_nesting is to deep" if
+        raise NestingError, "nesting of #@current_nesting is too deep" if
           @max_nesting.nonzero? && @current_nesting > @max_nesting
         result = @array_class.new
         delim = false
@@ -220,7 +258,7 @@ module JSON
       end
 
       def parse_object
-        raise NestingError, "nesting of #@current_nesting is to deep" if
+        raise NestingError, "nesting of #@current_nesting is too deep" if
           @max_nesting.nonzero? && @current_nesting > @max_nesting
         result = @object_class.new
         delim = false
@@ -233,7 +271,7 @@ module JSON
             end
             skip(IGNORE)
             unless (value = parse_value).equal? UNPARSED
-              result[string] = value
+              result[@symbolize_names ? string.to_sym : string] = value
               delim = false
               skip(IGNORE)
               if scan(COLLECTION_DELIMITER)
