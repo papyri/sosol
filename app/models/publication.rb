@@ -307,7 +307,8 @@ class Publication < ActiveRecord::Base
       end
     
       # branch from the original branch
-      self.owner.repository.create_branch(new_branch_name, self.branch)
+      self.owner.repository.create_branch(new_branch_name,
+        self.owner.repository.repo.get_head(self.branch).commit.sha)
       # delete the original branch
       self.owner.repository.delete_branch(self.branch)
       # set to new branch
