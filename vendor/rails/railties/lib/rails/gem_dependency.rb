@@ -31,8 +31,14 @@ module Rails
 
     def self.from_directory_name(directory_name, load_spec=true)
       directory_name_parts = File.basename(directory_name).split('-')
-      name    = directory_name_parts[0..-2].join('-')
-      version = directory_name_parts.last
+      # json-jruby throws -universal-java-1.6 on the end which screws things up
+      if File.basename(directory_name) =~ /^json-jruby/
+        name    = directory_name_parts[0..1].join('-')
+        version = directory_name_parts[2]
+      else
+        name    = directory_name_parts[0..-2].join('-')
+        version = directory_name_parts.last
+      end
       result = self.new(name, :version => version)
       spec_filename = File.join(directory_name, '.specification')
       if load_spec
