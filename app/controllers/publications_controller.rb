@@ -215,8 +215,18 @@ class PublicationsController < ApplicationController
     end
   end
   
+  
   def finalize
     @publication = Publication.find(params[:id])
+    
+    #find identifier so we can set the votes into the xml
+    @identifier = Identifier.find(params[:identifier_id])
+    @identifier.add_votes_to_change_desc
+    @identifier.add_finalize_to_change_desc(params[:comment], @current_user)
+   
+    @identifier.save
+    #do we need to save publication before continuing with commit??
+
     begin
       canon_sha = @publication.commit_to_canon
     rescue Errno::EACCES => git_permissions_error
@@ -476,7 +486,7 @@ class PublicationsController < ApplicationController
     end
     
     Vote.transaction do
-      #note that votes go to origin identifier
+      #note that votes go to the publication's identifier
       @vote = Vote.new(params[:vote])
       @vote.user_id = @current_user.id
       

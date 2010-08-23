@@ -2,7 +2,7 @@
   %label Edit summary (Briefly describe the changes you have made):
   %br
   -#the save button and comment box styled differently in editor.sass based on different class on top and bottom
-  -if type == :top
+  -if where_at == :top
     = text_field_tag :commenttop, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'commenttop observechangecomtop', :size => '80', :disabled => !identifier.mutable?
     = f.submit "Save", :class => 'savetop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
