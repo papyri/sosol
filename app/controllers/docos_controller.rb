@@ -4,7 +4,8 @@ class DocosController < ApplicationController
   # GET /docos
   # GET /docos.xml
   def index
-    @docos = Doco.find(:all, :order => "category, line")
+    @docotype = params[:docotype]
+    @docos = Doco.find(:all, :conditions => {:docotype => params[:docotype]}, :order => "category, line")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -36,6 +37,7 @@ class DocosController < ApplicationController
       @doco.description = @fillin.description
       @doco.note = @fillin.note
       @doco.xml = @fillin.xml
+      @doco.docotype = @fillin.docotype
     end
 
     respond_to do |format|
@@ -52,7 +54,6 @@ class DocosController < ApplicationController
   # POST /docos
   # POST /docos.xml
   def create
-    
     @doco = Doco.new(params[:doco]) #to have something to send to template if an error in edit_input
     edit_check = edit_input('new')
     
@@ -74,7 +75,6 @@ class DocosController < ApplicationController
   # PUT /docos/1
   # PUT /docos/1.xml
   def update
-    
     @doco = Doco.find(params[:id])
     edit_check = edit_input('edit')
     
@@ -84,7 +84,7 @@ class DocosController < ApplicationController
         if @doco.update_attributes(params[:doco])
           flash[:notice] = 'Doco was successfully updated.'
           #format.html { redirect_to(@doco) }
-          format.html { redirect_to(docos_url) }
+          format.html { redirect_to(docos_url(:docotype => @doco.docotype)) }
           format.xml  { head :ok }
         else
           format.html { render :action => "edit" }
@@ -101,7 +101,7 @@ class DocosController < ApplicationController
     @doco.destroy
 
     respond_to do |format|
-      format.html { redirect_to(docos_url) }
+      format.html { redirect_to(docos_url(:docotype => @doco.docotype)) }
       format.xml  { head :ok }
     end
   end
@@ -112,11 +112,12 @@ class DocosController < ApplicationController
     #redirect_to docos_url
     #expire_page :controller => "docos", :action => "documentation"
     #render :template => 'docos/documentation'
-    redirect_to :controller => "docos", :action => "documentation"
+    redirect_to(documentation_url(:docotype => params[:docotype]))
     #redirect_to :controller => "docos", :action => "index"
   end
   
   def documentation
+    @docotype = params[:docotype]
   end
   
   private
