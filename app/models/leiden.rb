@@ -18,10 +18,13 @@ class Leiden < DDBIdentifier
       abs = DDBIdentifier.preprocess_abs(content)
       #call to convert
       transformed = DDBIdentifier.xml2nonxml(abs)
-      
-      #remove <= and => that represents <ab> tag added in controller
-      transformed.slice!(/^<=/)
-      transformed.slice!(/=>$/)
+      #some parse errors are not caught (ex. <abbr/> end tag - / in wrong place) so will return a nil result
+      #TODO - not sure exactly what to do but this keeps from crashing
+      if transformed != nil
+        #remove <= and => that represents <ab> tag added in controller
+        transformed.slice!(/^<=/)
+        transformed.slice!(/=>$/)
+      end
     end
     return transformed
   end
