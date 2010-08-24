@@ -4,7 +4,7 @@ class Leiden < DDBIdentifier
  
   def self.xml_leiden_plus(content)
     
-    if content.include?("<ab><div") || content.include?("<ab><ab")
+    if content.include?("<ab><div") || content.include?("<ab><ab>") || content.include?("<ab><ab/>")
       #if user xml content included <div> or <ab> tag, remove the <ab> tag added in controller 
       #also means no need to slice after converted
       content.slice!(/^<ab>/)
