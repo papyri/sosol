@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20100820140941) do
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
-    t.decimal  "trigger",      :precision => 5, :scale => 2
+    t.decimal  "trigger"
     t.string   "choices"
     t.integer  "board_id"
     t.datetime "created_at"
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(:version => 20100820140941) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :null => false
+    t.string   "docotype",                                  :default => "text", :null => false
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
