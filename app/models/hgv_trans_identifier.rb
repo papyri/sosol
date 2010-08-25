@@ -159,8 +159,8 @@ class HGVTransIdentifier < HGVIdentifier
     nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
     transformed_xml_content = REXML::Document.new(nonx2x)
     
-    puts nonx2x
-    puts transformed_xml_content.to_s
+    #puts nonx2x
+    #puts transformed_xml_content.to_s
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     

@@ -97,7 +97,7 @@ class HgvTransIdentifiersController < IdentifiersController
       
       #invalid xml
       rescue JRubyXML::ParseError => parse_error
-        flash[:error] = parse_error.to_str + 
+        flash.now[:error] = parse_error.to_str + 
                         ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED.  "
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         #@identifier[:leiden_plus] = parse_error.message

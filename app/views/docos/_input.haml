@@ -1,6 +1,11 @@
 - form_for @doco, :html => {:name => 'docoform'} do |f|
   = f.error_messages
   %p
+    = f.label :docotype, "Type"
+    %br
+    = f.select("docotype", { "Text" => "text", "Translation" => "translation"})
+  %br
+  %p
     = f.label :category, "Enter category of this example - Required"
     %br
     = f.text_field :category, :size => 20

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100424033541) do
+ActiveRecord::Schema.define(:version => 20100820140941) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -63,7 +63,11 @@ ActiveRecord::Schema.define(:version => 20100424033541) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
+    t.string   "docotype",                                  :default => "text", :null => false
   end
+
+  add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
+  add_index "docos", ["id", "docotype"], :name => "index_docos_on_id_and_docotype"
 
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"

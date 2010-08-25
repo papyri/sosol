@@ -2,7 +2,21 @@
   %h1
     SoSOL Help
   %br
-  = link_to 'Leiden+ Help', documentation_url, :onclick => "window.open(this.href);return false;"
+  = link_to 'Text Leiden+ Help', documentation_url(:docotype => "text")#, :onclick => "window.open(this.href);return false;"
+  %br
+  %br
+  = link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation")
+  %p
+    - if @current_user.admin 
+      %br
+      %br
+      %h1
+        Admin Functions
+      %br
+      = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
+      %br
+      %br
+      = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
 /
   %p
     Current notes:
