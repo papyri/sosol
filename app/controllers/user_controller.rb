@@ -77,10 +77,8 @@ class UserController < ApplicationController
     @boards = @current_user.boards   
     #or do we want to use the creator id?
     #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
-    
-    @events = Event.find(:all, :order => "created_at DESC",
-                         :include => [:owner, :target])[0..25]
-    
+    @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
+                         :include => [:owner, :target])[0..24]
   end
   
   def archives
