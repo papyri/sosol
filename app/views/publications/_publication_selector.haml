@@ -9,13 +9,26 @@
     }
   }
   function reset_selector(select_element) {
-    select_element.disabled = 'true';
     select_element.childElements().each(Element.remove);
     
     select_element.insert("<option></option>");
   }
+  function toggle_availability() {
+    ['IdentifierClass',
+     'HGVIdentifierCollectionSelect',
+     'DDBIdentifierCollectionSelect',
+     'volume_number', 'document_number'].each(function(s) {
+      if($(s).disabled == '') {
+        $(s).disabled = true;
+      }
+      else {
+        $(s).disabled = '';
+      }
+     });
+  }
   function get_allowed_values(select_element, volume_number) {
     reset_selector(select_element);
+    toggle_availability();
     
     request_url = get_collection_prefix();
     if(!(volume_number === undefined)) {
@@ -31,21 +44,77 @@
       onSuccess: function(response) {
         json = response.responseText.evalJSON();
         
+        disable_volume = false;
+        is_hgv_identifier = false;
+        
+        
         parts = json.results.bindings.findAll(function(b) {
           return b.predicate.value == 'http://purl.org/dc/terms/hasPart';
         });
         values = parts.collect(function(p) {
-          elements = p['object']['value'].split(/[;_]/);
-          return elements[elements.length-1].sub(/\/source$/,'');
+          if($F('IdentifierClass') == 'HGVIdentifier') {
+            if(p['object']['value'].match(/\/\d+\D*$/)) {
+              if(!disable_volume && select_element == $('volume_number')) {
+                select_element = $('document_number');
+                reset_selector(select_element);
+                disable_volume = true;
+              }
+              is_hgv_identifier = true;
+              
+              new Ajax.Request("#{url_for :controller => 'numbers_server_proxy', :only_path => true}/" + p['object']['value'].sub(/^http:\/\//,'').sub(/\/source$/,''), {
+                method: 'get',
+                onSuccess: function(response) {
+                  hgv_json = response.responseText.evalJSON();
+                  
+                  hgv_identifiers = hgv_json.results.bindings.findAll(function(b) {
+                    return b.predicate.value == 'http://purl.org/dc/terms/identifier';
+                  });
+                  hgv_component = hgv_identifiers[hgv_identifiers.length-1]['object']['value'].sub(/.*_/,'').sub(/\/source$/,'');
+                  select_element.insert("<option>" + hgv_component + "</option>");
+                  if(select_element.childElements().length == (parts.length + 1) ) {
+                    select_element.childElements()[0].selected = true;
+                    toggle_availability();
+                    if(disable_volume) {
+                      $('volume_number').disabled = true;
+                    }
+                    else if(select_element == $('volume_number')) {
+                      $('document_number').disabled = true;
+                    }
+                  }
+                }
+              });
+            }
+          }
+          else if(!disable_volume && p['object']['value'].match(/;;/)) {
+            select_element = $('document_number');
+            reset_selector(select_element);
+            disable_volume = true;
+          }
+          
+          if(!is_hgv_identifier) {
+            elements = p['object']['value'].split(/[;_]/);
+            return elements[elements.length-1].sub(/\/source$/,'');
+          }
+          else {
+            return null;
+          }
         }).sortBy(function(s) {
           return parseFloat(s);
         });
-
-        values.each(function(v) {
-          select_element.insert("<option>" + v + "</option>");
-        });
-        select_element.childElements()[0].selected = true;
-        select_element.disabled = '';
+        
+        if(!is_hgv_identifier) {
+          values.each(function(v) {
+            select_element.insert("<option>" + v + "</option>");
+          });
+          select_element.childElements()[0].selected = true;
+          toggle_availability();
+          if(disable_volume) {
+            $('volume_number').disabled = true;
+          }
+          else if(select_element == $('volume_number')) {
+            $('document_number').disabled = true;
+          }
+        }
       }
     });
   }
@@ -60,7 +129,7 @@
   - form_tag :controller => 'publications', :action => "create_from_selector" do
     = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})")
     - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
-      = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.sort), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "update_volumes();$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
-    = select_tag 'volume_number', nil, :disabled => true, :style => 'width: 15em;', :onchange => "update_documents();if(this.options[0].value==''){this.remove(0)}"
-    = select_tag 'document_number', nil, :disabled => true, :style => 'width: 15em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.sort), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "reset_selector($('document_number'));$('volume_number').disabled='';update_volumes();$('document_number').disabled=true;$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
+    = select_tag 'volume_number', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "$('document_number').disabled='';update_documents();if(this.options[0].value==''){this.remove(0)}"
+    = select_tag 'document_number', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
     = submit_tag "Emend", :disabled => true, :id => 'emend_button'
