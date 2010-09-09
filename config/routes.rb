@@ -59,6 +59,11 @@ ActionController::Routing::Routes.draw do |map|
     # publication.resources :identifiers
   end
   
+  map.connect 'numbers_server_proxy/:id',
+    :controller => 'numbers_server_proxy',
+    :action => 'proxy',
+    :id => /.*/
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
