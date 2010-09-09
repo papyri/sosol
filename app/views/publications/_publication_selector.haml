@@ -1,9 +1,66 @@
+:javascript
+  function get_collection_prefix() {
+    prefix = "#{url_for :controller => 'numbers_server_proxy', :only_path => true}" + "/papyri.info";
+    if($F('IdentifierClass') == 'DDBIdentifier') {
+      return prefix + '/ddbdp/' + $F('DDBIdentifierCollectionSelect');
+    }
+    else {
+      return prefix + '/hgv/' + $F('HGVIdentifierCollectionSelect');
+    }
+  }
+  function reset_selector(select_element) {
+    select_element.disabled = 'true';
+    select_element.childElements().each(Element.remove);
+    
+    select_element.insert("<option></option>");
+  }
+  function get_allowed_values(select_element, volume_number) {
+    reset_selector(select_element);
+    
+    request_url = get_collection_prefix();
+    if(!(volume_number === undefined)) {
+      if($F('IdentifierClass') == 'DDBIdentifier') {
+        request_url = request_url + ';' + volume_number;
+      }
+      else {
+        request_url = request_url + '_' + volume_number;
+      }
+    }
+    new Ajax.Request(request_url, {
+      method: 'get',
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+        
+        parts = json.results.bindings.findAll(function(b) {
+          return b.predicate.value == 'http://purl.org/dc/terms/hasPart';
+        });
+        values = parts.collect(function(p) {
+          elements = p['object']['value'].split(/[;_]/);
+          return elements[elements.length-1].sub(/\/source$/,'');
+        }).sortBy(function(s) {
+          return parseFloat(s);
+        });
+
+        values.each(function(v) {
+          select_element.insert("<option>" + v + "</option>");
+        });
+        select_element.childElements()[0].selected = true;
+        select_element.disabled = '';
+      }
+    });
+  }
+  function update_volumes() {
+    get_allowed_values($('volume_number'));
+  }
+  function update_documents() {
+    get_allowed_values($('document_number'),$F('volume_number'));
+  }
 - cache do
   %p== Emend existing publication:
   - form_tag :controller => 'publications', :action => "create_from_selector" do
     = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})")
     - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
-      = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.sort), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "$('volume_number').disabled='';$('document_number').disabled='';$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
-    = text_field_tag 'volume_number', "Volume Number", :disabled => true, :onclick => "this.clear()", :size => 15
-    = text_field_tag 'document_number', "Document Number", :disabled => true, :onclick => "this.clear()", :size => 15
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.sort), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "update_volumes();$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
+    = select_tag 'volume_number', nil, :disabled => true, :style => 'width: 15em;', :onchange => "update_documents();if(this.options[0].value==''){this.remove(0)}"
+    = select_tag 'document_number', nil, :disabled => true, :style => 'width: 15em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
     = submit_tag "Emend", :disabled => true, :id => 'emend_button'
