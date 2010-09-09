@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(:version => 20100820140941) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :default => "text", :null => false
+    t.string   "docotype",                                  :default => "text"
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
