@@ -366,7 +366,7 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      if volume.empty?
+      if volume.nil? || volume.empty?
         document_path = [collection, document].join('_')
       else
         document_path = [collection, volume, document].join('_')
