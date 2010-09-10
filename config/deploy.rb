@@ -64,6 +64,8 @@ task :after_update_code, :roles => :app do
   
   secret_config = "#{shared_path}/config/environments/production_secret.rb"
   run "cp #{secret_config} #{release_path}/config/environments/production_secret.rb"
+  
+  run "cp #{shared_path}/config/initializers/hoptoad.rb #{release_path}/config/initializers/hoptoad.rb"
 end
 
 namespace :gems do
