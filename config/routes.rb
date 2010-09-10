@@ -64,6 +64,11 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'proxy',
     :id => /.*/
   
+  map.connect 'numbers_server_proxy/sparql/:query',
+    :controller => 'numbers_server_proxy',
+    :action => 'sparql',
+    :query => /.*/
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
