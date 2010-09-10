@@ -85,8 +85,10 @@
           if(!is_hgv_identifier) {
             elements = p['object']['value'].split(/[;_]/);
             if($F('IdentifierClass') == 'HGVIdentifier') {
-              elements = ( (select_element == $('volume_number') || disable_volume) ? elements.slice(1) : elements.slice(2));
-              lastpart = elements.join('_');
+              lastpart = p['object']['value'].sub(new RegExp('^.*\\/' + $F('HGVIdentifierCollectionSelect') + '_'),'');
+              if(select_element == $('document_number') && !disable_volume) {
+                lastpart = lastpart.sub(new RegExp($F('volume_number')+ '_'),'');
+              }
             }
             else {
               lastpart = elements[elements.length-1];
