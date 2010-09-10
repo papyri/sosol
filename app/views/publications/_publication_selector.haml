@@ -1,6 +1,9 @@
 :javascript
+  function get_proxy_prefix() {
+    return "#{url_for :controller => 'numbers_server_proxy', :only_path => true}/";
+  }
   function get_collection_prefix() {
-    prefix = "#{url_for :controller => 'numbers_server_proxy', :only_path => true}" + "/papyri.info";
+    prefix = get_proxy_prefix() + "papyri.info";
     if($F('IdentifierClass') == 'DDBIdentifier') {
       return prefix + '/ddbdp/' + $F('DDBIdentifierCollectionSelect');
     }
@@ -26,17 +29,23 @@
       }
      });
   }
-  function get_allowed_values(select_element, volume_number) {
+  function construct_hgv_sparql_query(volume_reference) {
+    return get_proxy_prefix() + "sparql/prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%20%7B%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fb%7D%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fa%20.%0A%20%20%3Fa%20dc%3Aidentifier%20%3Fb%0A%20%20filter%20regex%28str%28%3Fb%29%2C%20%22%5Ehttp%3A%2F%2Fpapyri.info%22%29%7D";
+  }
+  function get_allowed_values(select_element, volume_number, request_url, disable_volume) {
     reset_selector(select_element);
     toggle_availability();
     
-    request_url = get_collection_prefix();
+    if(request_url === undefined) {
+      request_url = get_collection_prefix();
+    }
     if(!(volume_number === undefined)) {
       if($F('IdentifierClass') == 'DDBIdentifier') {
         request_url = request_url + ';' + volume_number;
       }
       else {
-        request_url = request_url + '_' + volume_number;
+        volume_reference = request_url.sub(/^.*\//,'') + '_' + volume_number;
+        request_url = construct_hgv_sparql_query(volume_reference);
       }
     }
     new Ajax.Request(request_url, {
@@ -44,45 +53,27 @@
       onSuccess: function(response) {
         json = response.responseText.evalJSON();
         
-        disable_volume = false;
+        if(disable_volume === undefined) {
+          disable_volume = false;
+        }
         is_hgv_identifier = false;
-        
         
         parts = json.results.bindings.findAll(function(b) {
           return b.predicate.value == 'http://purl.org/dc/terms/hasPart';
         });
         values = parts.collect(function(p) {
           if($F('IdentifierClass') == 'HGVIdentifier') {
-            if(p['object']['value'].match(/\/\d+\D*$/)) {
-              if(!disable_volume && select_element == $('volume_number')) {
-                select_element = $('document_number');
-                reset_selector(select_element);
-                disable_volume = true;
-              }
+            // for HGV if we get HGV id's back immediately (i.e. no vols)
+            // we want to re-run the query with SPARQL
+            if((!disable_volume) && p['object']['value'].match(/hgv\/\d+\D*\/source$/)) {
+              disable_volume = true;
+              reset_selector(select_element);
               is_hgv_identifier = true;
-              
-              new Ajax.Request("#{url_for :controller => 'numbers_server_proxy', :only_path => true}/" + p['object']['value'].sub(/^http:\/\//,'').sub(/\/source$/,''), {
-                method: 'get',
-                onSuccess: function(response) {
-                  hgv_json = response.responseText.evalJSON();
-                  
-                  hgv_identifiers = hgv_json.results.bindings.findAll(function(b) {
-                    return b.predicate.value == 'http://purl.org/dc/terms/identifier';
-                  });
-                  hgv_component = hgv_identifiers[hgv_identifiers.length-1]['object']['value'].sub(/.*_/,'').sub(/\/source$/,'');
-                  select_element.insert("<option>" + hgv_component + "</option>");
-                  if(select_element.childElements().length == (parts.length + 1) ) {
-                    select_element.childElements()[0].selected = true;
-                    toggle_availability();
-                    if(disable_volume) {
-                      $('volume_number').disabled = true;
-                    }
-                    else if(select_element == $('volume_number')) {
-                      $('document_number').disabled = true;
-                    }
-                  }
-                }
-              });
+              sparql_query = construct_hgv_sparql_query($F('HGVIdentifierCollectionSelect'));
+              get_allowed_values($('document_number'), undefined,
+                sparql_query,
+                disable_volume);
+              toggle_availability();
             }
           }
           else if(!disable_volume && p['object']['value'].match(/;;/)) {
@@ -93,7 +84,14 @@
           
           if(!is_hgv_identifier) {
             elements = p['object']['value'].split(/[;_]/);
-            return elements[elements.length-1].sub(/\/source$/,'');
+            if($F('IdentifierClass') == 'HGVIdentifier') {
+              elements = ( (select_element == $('volume_number') || disable_volume) ? elements.slice(1) : elements.slice(2));
+              lastpart = elements.join('_');
+            }
+            else {
+              lastpart = elements[elements.length-1];
+            }
+            return lastpart.sub(/\/source$/,'');
           }
           else {
             return null;
@@ -127,7 +125,7 @@
 - cache do
   %p== Emend existing publication:
   - form_tag :controller => 'publications', :action => "create_from_selector" do
-    = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')})")
+    = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')});reset_selector($('volume_number'));reset_selector($('document_number'));$('volume_number').disabled=true;$('document_number').disabled=true;")
     - [DDBIdentifier, HGVIdentifier].each do |identifier_class|
       = select_tag("#{identifier_class}CollectionSelect", options_for_select([['','']] + identifier_class.collection_names_hash.invert.sort), :class => identifier_class == DDBIdentifier ? '' : 'invisible', :onchange => "reset_selector($('document_number'));$('volume_number').disabled='';update_volumes();$('document_number').disabled=true;$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
     = select_tag 'volume_number', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "$('document_number').disabled='';update_documents();if(this.options[0].value==''){this.remove(0)}"
