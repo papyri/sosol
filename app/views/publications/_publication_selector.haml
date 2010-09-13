@@ -93,7 +93,7 @@
             else {
               lastpart = elements[elements.length-1];
             }
-            return lastpart.sub(/\/source$/,'');
+            return unescape(lastpart.sub(/\/source$/,''));
           }
           else {
             return null;
