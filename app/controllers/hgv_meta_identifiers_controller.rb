@@ -11,6 +11,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     begin
       commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+      expire_publication_cache
     rescue JRubyXML::ParseError => e
       flash[:error] = "Error updating file: #{e.message}. This file was NOT SAVED."
       redirect_to polymorphic_path([@identifier.publication, @identifier],
