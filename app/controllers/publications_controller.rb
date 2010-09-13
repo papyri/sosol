@@ -210,7 +210,7 @@ class PublicationsController < ApplicationController
       end      
     end
     @diff = @publication.diff_from_canon
-    if @diff.nil? || @diff.empty?
+    if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
   end
@@ -366,7 +366,7 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      if volume.nil? || volume.empty?
+      if volume.blank?
         document_path = [collection, document].join('_')
       else
         document_path = [collection, volume, document].join('_')
@@ -471,7 +471,7 @@ class PublicationsController < ApplicationController
       return
     end
     
-    if params[:vote].nil? || params[:vote][:choice].nil? || params[:vote][:choice].empty?
+    if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
       redirect_to edit_polymorphic_path([@publication, Identifier.find(params[:vote][:identifier_id])])

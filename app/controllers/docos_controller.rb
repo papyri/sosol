@@ -175,7 +175,7 @@ class DocosController < ApplicationController
       params[:save_url] = ''
     else #selector  was not used so check if user changed the value using the input field
       if params[:save_url] != params[:doco][:url] #url changed by user so need to update display value
-        if params[:doco][:url].strip.nil? || params[:doco][:url].strip.empty? #user blanked it out
+        if params[:doco][:url].strip.blank? #user blanked it out
           params[:doco][:urldisplay] = ""
           params[:save_url] = params[:doco][:url] #to keep logic below from trying to validate a blank
         else
