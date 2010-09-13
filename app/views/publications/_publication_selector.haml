@@ -124,7 +124,7 @@
   function update_documents() {
     get_allowed_values($('document_number'),$F('volume_number'));
   }
-- cache do
+- cache(:action => 'dashboard', :part => 'publication_selector') do
   %p== Emend existing publication:
   - form_tag :controller => 'publications', :action => "create_from_selector" do
     = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier}]), :onchange => "['DDB','HGV'].each(function(i){$(i + 'IdentifierCollectionSelect').toggleClassName('invisible')});reset_selector($('volume_number'));reset_selector($('document_number'));$('volume_number').disabled=true;$('document_number').disabled=true;")

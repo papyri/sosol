@@ -34,6 +34,7 @@ class IdentifiersController < ApplicationController
     
     @identifier = identifier_type.new_from_template(@publication)
     flash[:notice] = "File created."
+    expire_publication_cache
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit) and return
   end
@@ -73,6 +74,7 @@ class IdentifiersController < ApplicationController
       end
       
       flash[:notice] = "File updated."
+      expire_publication_cache
       if %w{new editing}.include?@identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
       end
@@ -88,6 +90,10 @@ class IdentifiersController < ApplicationController
   end
   
   protected
+  
+  def expire_publication_cache
+    expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{@current_user.id}")
+  end
   
   def insert_error_here(content, line, column)
     # this routine is to place the error message below in the Leiden+ or XML returned when a parse error

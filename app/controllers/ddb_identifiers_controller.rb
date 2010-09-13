@@ -31,6 +31,7 @@ class DdbIdentifiersController < IdentifiersController
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
+      expire_publication_cache
         @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
@@ -42,6 +43,7 @@ class DdbIdentifiersController < IdentifiersController
           @comment.save
         end
         flash[:notice] = "File updated."
+        expire_publication_cache
         if %w{new editing}.include?@identifier.publication.status
           flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
         end

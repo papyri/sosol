@@ -2,24 +2,25 @@
   - max_visible_pubs = 5
   = render :partial => "common/flash_all"
   %h2 Your Publications
-  -# render publications without status
-  = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
-  - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
-  - for status in statuses
+  - cache(:action => 'dashboard', :part => "your_publications_#{@current_user.id}") do
+    -# render publications without status
+    = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
+    - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
+    - for status in statuses
+      %br
+      %h3== Your #{status} publications
+      - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
+      = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
+      - if this_publication_set.length > max_visible_pubs
+        %div{:id => "more_user_#{status}", :style => "display:none;"}
+          = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
+        %div{:id => "more_user_link_#{status}"}
+          %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
+            More...
+        %div{:id => "less_user_link_#{status}", :style => "display:none;"}
+          %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
+            Less...  
     %br
-    %h3== Your #{status} publications
-    - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
-    = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
-    - if this_publication_set.length > max_visible_pubs
-      %div{:id => "more_user_#{status}", :style => "display:none;"}
-        = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
-      %div{:id => "more_user_link_#{status}"}
-        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
-          More...
-      %div{:id => "less_user_link_#{status}", :style => "display:none;"}
-        %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
-          Less...  
-  %br
   = render :partial => "publications/publication_selector"
   
   - if @current_user.developer
