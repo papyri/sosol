@@ -6,7 +6,13 @@ class DdbIdentifiersController < IdentifiersController
   def edit
     find_identifier
     begin
-      @identifier[:leiden_plus] = @identifier.leiden_plus
+      # use a fragment cache for cases where we'd need to do a leiden transform
+      if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
+        @identifier[:leiden_plus] = read_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
+      else
+        @identifier[:leiden_plus] = @identifier.leiden_plus
+        write_fragment({:action => 'edit', :part => "leiden_plus_#{@identifier.id}"}, @identifier[:leiden_plus])
+      end
       if @identifier[:leiden_plus].nil?
         flash.now[:error] = "File loaded from broken Leiden+"
         @identifier[:leiden_plus] = @identifier.get_broken_leiden
@@ -31,6 +37,7 @@ class DdbIdentifiersController < IdentifiersController
       @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
+      expire_leiden_cache
       expire_publication_cache
         @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
         render :template => 'ddb_identifiers/edit'
@@ -43,6 +50,7 @@ class DdbIdentifiersController < IdentifiersController
           @comment.save
         end
         flash[:notice] = "File updated."
+        expire_leiden_cache
         expire_publication_cache
         if %w{new editing}.include?@identifier.publication.status
           flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."

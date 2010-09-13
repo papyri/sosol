@@ -74,6 +74,7 @@ class IdentifiersController < ApplicationController
       end
       
       flash[:notice] = "File updated."
+      expire_leiden_cache
       expire_publication_cache
       if %w{new editing}.include?@identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
@@ -93,6 +94,10 @@ class IdentifiersController < ApplicationController
   
   def expire_publication_cache
     expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{@current_user.id}")
+  end
+  
+  def expire_leiden_cache
+    expire_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
   end
   
   def insert_error_here(content, line, column)
