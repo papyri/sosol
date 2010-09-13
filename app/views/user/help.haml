@@ -17,6 +17,16 @@
       %br
       %br
       = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+      %br
+      %br
+      %br
+      %h1
+        Admin Help Videos
+      %br
+      = link_to 'Add Member to Editorial Board', url_for(:controller=>'docovideos',:action=>'ebaddmember'), :onclick => "window.open(this.href);return false;"
+      %br
+      %br
+      = link_to 'Add Decree to Editorial Board', url_for(:controller=>'docovideos',:action=>'ebadddecree'), :onclick => "window.open(this.href);return false;"
 /
   %p
     Current notes:
