@@ -157,6 +157,7 @@ class PublicationsController < ApplicationController
       @comment.git_hash = @publication.recent_submit_sha
       @comment.save
       expire_publication_cache
+      expire_fragment(/board_publications_\d+/)
       flash[:notice] = 'Publication submitted.'
     else
       #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
@@ -233,6 +234,7 @@ class PublicationsController < ApplicationController
     begin
       canon_sha = @publication.commit_to_canon
       expire_publication_cache(@publication.creator.id)
+      expire_fragment(/board_publications_\d+/)
     rescue Errno::EACCES => git_permissions_error
       flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
       redirect_to @publication
@@ -526,6 +528,7 @@ class PublicationsController < ApplicationController
         @comment.save!
         # invalidate their cache since an action may have changed its status
         expire_publication_cache(@publication.creator.id)
+        expire_fragment(/board_publications_\d+/)
       end
     end
 

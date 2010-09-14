@@ -73,13 +73,16 @@ class UserController < ApplicationController
     unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
       @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     end
-    #below selects publications current user is responsible for finalizing to show in board section of dashboard
-    #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
-    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    
+    unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")
+      #below selects publications current user is responsible for finalizing to show in board section of dashboard
+      #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
        
-    @boards = @current_user.boards   
-    #or do we want to use the creator id?
-    #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
+      @boards = @current_user.boards
+      #or do we want to use the creator id?
+      #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
+    end
     
     if !fragment_exist?(:action => 'dashboard', :part => 'events_list_time') || (Time.now > (read_fragment(:action => 'dashboard', :part => 'events_list_time') + 60))
       write_fragment({:action => 'dashboard', :part => 'events_list_time'}, Time.now)
