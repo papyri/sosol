@@ -100,6 +100,7 @@ class PublicationsController < ApplicationController
       e.save!
       
       flash[:notice] = 'Publication was successfully created.'
+      expire_publication_cache
       redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     else
       flash[:notice] = 'Error creating publication'
@@ -119,6 +120,7 @@ class PublicationsController < ApplicationController
     
     flash[:notice] = 'Publication was successfully created.'
     #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    expire_publication_cache
     redirect_to @publication
   end
   
@@ -154,6 +156,7 @@ class PublicationsController < ApplicationController
       #update comment with git hash when successfully submitted
       @comment.git_hash = @publication.recent_submit_sha
       @comment.save
+      expire_publication_cache
       flash[:notice] = 'Publication submitted.'
     else
       #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
@@ -210,7 +213,7 @@ class PublicationsController < ApplicationController
       end      
     end
     @diff = @publication.diff_from_canon
-    if @diff.nil? || @diff.empty?
+    if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
   end
@@ -229,6 +232,7 @@ class PublicationsController < ApplicationController
 
     begin
       canon_sha = @publication.commit_to_canon
+      expire_publication_cache(@publication.creator.id)
     rescue Errno::EACCES => git_permissions_error
       flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
       redirect_to @publication
@@ -366,7 +370,7 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      if volume.empty?
+      if volume.blank?
         document_path = [collection, document].join('_')
       else
         document_path = [collection, volume, document].join('_')
@@ -424,6 +428,7 @@ class PublicationsController < ApplicationController
       if (conflicting_publication.status == "committed")
         # TODO: should set "archived" and take approp action here instead
         #conflicting_publication.destroy
+        expire_publication_cache
         conflicting_publication.archive
       else
         flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
@@ -450,6 +455,7 @@ class PublicationsController < ApplicationController
         e.save!
 
         flash[:notice] = 'Publication was successfully created.'
+        expire_publication_cache
         redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
       else
         flash[:notice] = 'Error creating publication'
@@ -471,7 +477,7 @@ class PublicationsController < ApplicationController
       return
     end
     
-    if params[:vote].nil? || params[:vote][:choice].nil? || params[:vote][:choice].empty?
+    if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
       redirect_to edit_polymorphic_path([@publication, Identifier.find(params[:vote][:identifier_id])])
@@ -518,6 +524,8 @@ class PublicationsController < ApplicationController
       if !has_voted 
         @vote.save!
         @comment.save!
+        # invalidate their cache since an action may have changed its status
+        expire_publication_cache(@publication.creator.id)
       end
     end
 
@@ -540,6 +548,7 @@ class PublicationsController < ApplicationController
   def archive
     @publication = Publication.find(params[:id])
     @publication.archive
+    expire_publication_cache
     redirect_to @publication    
   end
   
@@ -556,6 +565,7 @@ class PublicationsController < ApplicationController
     @publication.destroy
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
+    expire_publication_cache
     respond_to do |format|
       format.html { redirect_to dashboard_url }
       
@@ -571,4 +581,9 @@ class PublicationsController < ApplicationController
     end
   end
   
+  protected
+  
+    def expire_publication_cache(user_id = @current_user.id)
+      expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{user_id}")
+    end
 end

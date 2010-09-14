@@ -25,7 +25,7 @@
               = link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : ''))
             
              
-            - vote_count += identifier.votes.count  
+            - vote_count += identifier.votes.length
             - identifier.votes.each do |vt|
               - if vt.user == @current_user
                 %b
