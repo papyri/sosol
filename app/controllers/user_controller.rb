@@ -80,8 +80,16 @@ class UserController < ApplicationController
     @boards = @current_user.boards   
     #or do we want to use the creator id?
     #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
-    @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
-                         :include => [:owner, :target])[0..24]
+    
+    if !fragment_exist?(:action => 'dashboard', :part => 'events_list_time') || (Time.now > (read_fragment(:action => 'dashboard', :part => 'events_list_time') + 60))
+      write_fragment({:action => 'dashboard', :part => 'events_list_time'}, Time.now)
+      expire_fragment(:action => 'dashboard', :part => 'events_list')
+    end
+    
+    unless fragment_exist?(:action => 'dashboard', :part => 'events_list')
+      @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
+                           :include => [:owner, :target])[0..24]
+    end
   end
   
   def archives
