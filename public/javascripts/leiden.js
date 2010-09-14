@@ -16,7 +16,7 @@ function init()
   	showMatch('ddb_identifier_leiden_plus');
   }
   
-window.onload = init;
+document.observe("dom:loaded", init);
 
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only

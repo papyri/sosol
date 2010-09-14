@@ -29,8 +29,7 @@ function init()
   	showMatch('hgv_trans_identifier_leiden_trans');
   }
   
-window.onload = init;
-
+document.observe("dom:loaded", init);
 
 
 //sets dialog size for the helper window and then calls the related view
