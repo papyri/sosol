@@ -482,7 +482,7 @@ class PublicationsController < ApplicationController
     if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
-      redirect_to edit_polymorphic_path([@publication, Identifier.find(params[:vote][:identifier_id])])
+      redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote][:identifier_id])])
       return
     end
     
