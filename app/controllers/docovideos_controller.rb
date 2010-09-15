@@ -1,12 +1,12 @@
 class DocovideosController < ApplicationController
   
-  def ebtest
-  end
-  
-  def ebaddmember
+  def account
   end
   
   def ebadddecree
+  end
+  
+  def ebaddmember
   end
   
   def ebshow

@@ -6,6 +6,13 @@
   %br
   %br
   = link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation")
+  %br
+  %br
+  %br
+  %h1
+    SoSOL Help Videos
+  %br
+  = link_to 'Add/Change Account Attributes', url_for(:controller=>'docovideos',:action=>'account'), :onclick => "window.open(this.href);return false;"
   %p
     - if @current_user.admin 
       %br
@@ -27,6 +34,9 @@
       %br
       %br
       = link_to 'Add Decree to Editorial Board', url_for(:controller=>'docovideos',:action=>'ebadddecree'), :onclick => "window.open(this.href);return false;"
+      %br
+      %br
+      = link_to 'Show Editorial Board Attributes', url_for(:controller=>'docovideos',:action=>'ebshow'), :onclick => "window.open(this.href);return false;"
 /
   %p
     Current notes:
