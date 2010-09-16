@@ -33,6 +33,16 @@
               - for tran in trans
                 %li
                   = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
+      - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
+        %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
+          = link_to 'Bibliography', edit_biblio_publication_path(@identifier.publication)
+          - biblio = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
+          - if biblio.length > 1
+            %ul
+              - for bib in biblio
+                %li
+                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes('HGVBiblioIdentifier')])
+
 #identifier_sub_menus
   - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
     .identifier_sub_menu_empty

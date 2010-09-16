@@ -1,5 +1,103 @@
 en:
   meta:
+    legend:
+      general: General
+      publication: Publication
+      collection: Collection
+      provenance: Provenance
+      reference: References
+      translation: Translations
+      date: Date
+      mentionedDate: Mentioned Dates
+    label:
+      titleStmt: Title
+      tmNo: TM no.
+      contentText: Keywords
+      notes: Notes
+      material: Material
+      plannedForFuturePrintRelease: Print
+      publicationTitle: Title
+      publicationVolume: Volume
+      publicationNumbers: Number
+      publicationFascicle: Fascicle
+      publicationSide: Side
+      publicationLine: Line
+      publicationPages: Pages
+      publicationParts: Parts
+      collectionPlaceName: Place name
+      collection: Collection
+      collectionInventoryNumber: Inv. no. 
+      collectionTemporaryNotes: Temporary lieu
+      collectionTemporaryInventoryNumber: Temporary no.
+      provenanceAncientFindspot: Ancient findspot
+      provenanceNome: Nome
+      provenanceAncientRegion: Ancient region
+      provenanceModernFindspot: Modern findspot
+      illustrations: Illustrations
+      otherPublications: Other publications
+      bl: BL
+      blVolume: Volume
+      blPage: Pages
+      mentionedDateReference: Reference
+      mentionedDateFrom: Date
+      mentionedDateTo: Second date (if time span)
+      mentionedDateCertainty: Certainty
+      mentionedDateDateId: Date id
+      mentionedDateNote: Note
+      translationsDe: German
+      translationsEn: English
+      translationsIt: Italian
+      translationsEs: Spanish
+      translationsLa: Latin
+      translationsFr: French
+      date: Date
+      id: Date id
+      when: When
+      after: After
+      notBefore: Not before
+      before: before
+      notAfter: Not after
+      from: From
+      to: To
+      century: Century
+      year: Year
+      month: Month
+      day: Day
+      certainty: Certainty
+      specifier: Extra
+      extraDate: Extra
+      onDate: Date
+      fromDate: From
+      toDate: to
+      fromToDate: Date span
+      offset: Offset
+
+      beginning: Beginning
+      firstHalf: First half
+      firstHalfToMiddle: First half to middle
+      middle: Middle
+      middleToSecondHalf: Middle to second half 
+      secondHalf: Second half
+      end: End
+      before: Before
+      after: After
+      certainty09: Probably...
+      certainty05: (?)
+      dayUncertain: Day uncertain
+      monthAndYearUncertain: Month and year uncertain
+      yearUncertain: Year uncertain
+
+    tooltip:
+      multiAdd: Click to add new item
+      multiDelete: Click to delete item
+      multiMove: Click and drag to move item
+      multiMentionedDateReference: Reference (line and column)
+      multiMentionedDateFrom: Date (use -YYYY-MM-DD format)
+      multiMentionedDateTo: Second date (if time span) (use -YYYY-MM-DD format)
+      multiMentionedDateComment: Comment
+      multiMentionedDateCertainty: Certainty
+      multiMentionedDateDateId: Relation to a special date entry
+
     on_date: 'Precise date'
     not_before_date: 'Not before'
     not_after_date: 'Not after'

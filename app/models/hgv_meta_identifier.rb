@@ -1,10 +1,22 @@
+# Achtung Sortierung steht noch aus (siehe Collection, und dies wiederum in HgvMetaIdentifierPlus)!
+# I18N
+# View II
+# View Zieharmonika
+
 class HGVMetaIdentifier < HGVIdentifier
+  attr_accessor :configuration, :valid_epidoc_attributes
+
   PATH_PREFIX = 'HGV_meta_EpiDoc'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   FRIENDLY_NAME = "Meta"
-  
+
+  def after_initialize
+    @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
+    @valid_epidoc_attributes = @configuration.keys
+  end
+
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
@@ -38,156 +50,197 @@ class HGVMetaIdentifier < HGVIdentifier
     return "Description of document"
   end
 
-  def valid_epidoc_attributes
-    return [:onDate, :notAfterDate, :notBeforeDate, :textDate, :titleStmt, 
-      :publicationTitle, :publicationVolume, :publicationNumbers,
-      :tm_nr, :illustrations, :contentText, :other_publications,
-      :translations, :bl, :notes, :mentioned_dates_hdr, :mentioned_dates, :material,
-      :provenance_ancient_findspot, :provenance_nome,
-      :provenance_ancient_region,
-      :provenance_modern_findspot, :inventory_number, :planned_for_future_print_release]
-  end
-  
-  def get_or_set_xml_attribute(get_or_set, self_attribute, xml_node, attribute)
-    if get_or_set == :get
-      self[self_attribute] = xml_node.attributes[attribute]
-    elsif get_or_set == :set
-      xml_node.attributes[attribute] = self[self_attribute]
-    end
+  def get_date_item date_id    
+    self[:textDate].select {|dateItem|
+      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:textDateId) && dateItem[:attributes][:textDateId].include?(date_id)
+    }.first
   end
 
-  def get_or_set_xml_text(get_or_set, self_attribute, xml_node)
-    if get_or_set == :get
-      self[self_attribute] = xml_node.text
-    elsif get_or_set == :set
-      xml_node.text = self[self_attribute]
-    end
-  end
+  # retrieve matadata from xml and store as object attributes
+  #   e.g. title: <title>Instruction to track down murderers</title> will become
+  #   self[:title] = 'Instruction to track down murderers'
+  #   e.g. content text: <keywords><term>a</term><term>b</term></keywords> will become
+  #   self[:contentText] = ['a', 'b']
+  #   e.g. date will become complicated
+  #
 
   def get_epidoc_attributes
-    self.get_or_set_epidoc(:get)
-    
-    # Set nil attrs to empty strings
-    valid_epidoc_attributes.each do |this_attr|
-        if self[this_attr].nil?
-          self[this_attr] = ''
-        end
+    doc = REXML::Document.new self.content
+
+    @configuration.scheme.each_pair do |key, config|
+      if config[:children]
+        self[key] = get_epidoc_attributes_tree doc, config
+      elsif config[:multiple]
+        self[key] = get_epidoc_attributes_list doc, config
+      else 
+        self[key] = get_epidoc_attributes_value doc, config
+      end
     end
   end
-  
+
+  def get_epidoc_attributes_list doc, config
+    list = []
+    doc.elements.each(config[:xpath]){|element|
+      if element.text && !element.text.strip.empty?
+        list << element.text.strip
+      end
+    }
+    list
+  end
+
+  def get_epidoc_attributes_tree doc, config
+    tree = []
+    
+    doc.elements.each(config[:xpath]){|element|
+      node = {:value => '', :attributes => {}, :children => {}}
+
+      if element.text && !element.text.strip.empty?
+        node[:value] = element.text.strip
+      else
+        node[:value] = config[:default]
+      end
+
+      if config[:attributes]
+        config[:attributes].each_pair{|attribute_key, attribute_config|
+          node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
+        }
+      end
+      
+      if config[:children]
+        config[:children].each_pair{|child_key, child_config|
+          node[:children][child_key] = get_epidoc_attributes_tree element, child_config
+        }
+      end
+      
+      tree[tree.length] = node
+    }
+
+    return config[:multiple] ? tree : tree.first
+  end
+
+  def get_epidoc_attributes_value doc, config
+    if element = doc.elements[config[:xpath]]
+      element.text && !element.text.strip.empty? ? element.text.strip : config[:default]
+    else
+      config[:default]
+    end
+  end
+
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
-    self.get_epidoc_attributes_from_params(attributes_hash)
-    epidoc = self.get_or_set_epidoc(:set)
-    
+    populate_epidoc_attributes_from_attributes_hash(attributes_hash)
+    epidoc = set_epidoc_attributes
+
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
     #set_xml_content validates xml
     self.set_xml_content(epidoc, :comment => comment)
   end
 
-  def get_epidoc_attributes_from_params(attributes_hash)
-    attributes_hash.each_pair do |key, value|
-      self[key] = value
-    end
-  end
+  protected
 
-  def self.attributes_xpath_hash
-    # set base to metadata in epidoc
-    basePathBody = "/TEI/text/body/div"
-    basePathHeader = "/TEI/teiHeader/fileDesc/"
+=begin
 
-    publicationPath = "[@type='bibliography'][@subtype='principalEdition']/listBibl/"
-    provenancePath = "[@type='history'][@subtype='locations']/p/"
+:contentText => [
+  'x',
+  'y',
+  'z',
+  ...
+]
 
-    # A hash from attribute symbol to either:
-    # (1) a String containing XPath for text
-    # (2) an array where the first element is (1) and the last is a hash
-    #     of attributes to xml attributes
-    attributes_xpath_hash = {
-      :textDate =>
-        [
-          basePathHeader + "sourceDesc/msDesc/history/origin/origDate[@type='textDate']",
-          {
-            :onDate => "when",
-            :notAfterDate => "notAfter",
-            :notBeforeDate => "notBefore"
-          }
-        ],
-      :titleStmt => basePathHeader + "titleStmt/title",
-      :publicationTitle => 
-        basePathBody + publicationPath + 
-          "bibl[@type='publication'][@subtype='principal']/" + 
-          "title",
-      :publicationVolume =>
-        basePathBody + publicationPath + 
-          "bibl[@type='publication'][@subtype='principal']/" + 
-          "biblScope[@type='volume']",
-      :publicationNumbers => 
-        basePathBody + publicationPath +
-          "bibl[@type='publication'][@subtype='principal']/" +
-          "biblScope[@type='numbers']",
-      :tm_nr => 
-        basePathHeader + 
-          "publicationStmt/idno[@type='TM']",
-      :illustrations => 
-        basePathBody + "[@type='bibliography'][@subtype='illustrations']/p",
-      #not sure what to do about multiples
-      #:contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term(1)",
-      :contentText => "/TEI/teiHeader/profileDesc/textClass/keywords/term[position() = 1]",
-      :other_publications => 
-        basePathBody + "[@type='bibliography'][@subtype='otherPublications']/" + 
-          "bibl[@type='publication'][@subtype='other']",
-      #tweaked but may need more added to form - may have multiples
-      :translations => 
-        basePathBody + "[@type='bibliography'][@subtype='translations']/listBibl/bibl[@type='translations']",
-      #works same but may need more added to form
-      :bl => basePathBody + "[@type='bibliography']/bibl[@type='BL']",
-      :notes => basePathBody + "[@type='commentary'][@subtype='general']/p",
-      #added this one
-      :mentioned_dates_hdr => 
-        basePathBody + "[@type='commentary'][@subtype='mentionedDates']/head",
-      :mentioned_dates => 
-        basePathBody + "[@type='commentary'][@subtype='mentionedDates']/p",
-      :material => basePathHeader + "sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material",
-      :provenance_ancient_findspot => 
-        basePathHeader + "sourceDesc/msDesc/history/origin/p/placeName[@type='ancientFindspot']",
-      :provenance_nome =>
-        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='nome']",
-      :provenance_ancient_region =>
-        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='ancientRegion']",
-      #guessed at this one
-      :provenance_modern_findspot =>
-        basePathHeader + "sourceDesc/msDesc/history/origin/p/geogName[@type='modernFindspot']",
-      :inventory_number =>
-        basePathHeader + "sourceDesc/msDesc/msIdentifier/idno[@type='invNo']", 
-      #does not currently exist in data
-      :planned_for_future_print_release =>
-        basePathHeader + "publicationStmt/idno[@type='futurePrintRelease']"
+:bl => [
+  {:value => nil, :children => {}, :attributes =>{}},
+  {:value => nil, :children => {}, :attributes =>{}},
+  {:value => nil, :children => {}, :attributes =>{}},
+  ...
+]
+
+=end
+
+  def set_epidoc_attributes_tree parent, xpath, data, config
+    child_name = xpath[/\A([\w]+)[\w\/\[\]@:=']*\Z/, 1]
+    child_attributes = xpath.scan /@([\w:]+)='([\w]+)'/
+
+    index = 1
+    data.each { |item|
+
+      hasContent = item.class == String && !item.strip.empty? ? true : (item[:value] && !item[:value].strip.empty? ? true : (item[:attributes] && !item[:attributes].values.join.empty? ? true : (!item[:children].empty? ? true : false)))
+
+      if hasContent
+
+        child = REXML::Element.new child_name
+        child_attributes.each{|name, value|
+          child.attributes[name] = value
+        }
+        if data.length > 1
+          child.attributes['n'] = index.to_s
+          index += 1
+        end
+  
+        if item.class == String && !item.strip.empty?
+          child.text = item.strip
+        else
+          if item[:value] && !item[:value].strip.empty?
+            child.text = item[:value].strip
+          end
+  
+          if config[:attributes]
+            config[:attributes].each_pair{|attribute_key, attribute_config|
+               if item[:attributes] && item[:attributes][attribute_key] && !item[:attributes][attribute_key].strip.empty?
+                 child.attributes[attribute_config[:name]] = item[:attributes][attribute_key].strip
+               elsif attribute_config[:default]
+                 child.attributes[attribute_config[:name]] = attribute_config[:default]
+               end
+            }
+          end
+  
+          if config[:children] && item[:children]
+            config[:children].each_pair{|grandchild_name, grandchild_config|
+              if item[:children][grandchild_name]
+                grandchild_data = item[:children][grandchild_name].class == Array ? item[:children][grandchild_name] : [item[:children][grandchild_name]]
+                grandchild_xpath = grandchild_config[:xpath]
+                set_epidoc_attributes_tree child, grandchild_xpath, grandchild_data, grandchild_config # recursion
+              end
+            }
+          end
+        end
+  
+        parent.add child
+      end
     }
   end
 
-  def get_or_set_epidoc(get_or_set = :get)
+  def set_epidoc_attributes
+    # load xml document
     doc = REXML::Document.new self.content
 
-    self.class.attributes_xpath_hash.each_pair do |self_attribute, value|
-      if value.class == String
-        xpath = value
-        xml_attributes = {}
-      elsif value.class == Array
-        xpath = value.first
-        xml_attributes = value.last
-      end
+    @configuration.scheme.each_pair do |key, config|
+      if config[:multiple]
+        xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
+        xpath_child = $2 
 
-      if (get_or_set == :set) && !self[self_attribute].empty? && !xpath.index(/\(\d*\)/)
-        doc.bulldozePath xpath # assure xpath exists
-      end
+        if self[key].empty?
+          if parent = doc.elements[xpath_parent]
+            parent.elements['..'].delete parent
+          end
+        else
+          if parent = doc.elements[xpath_parent]
+            parent.elements.delete_all xpath_child
+          else
+            parent = doc.bulldozePath xpath_parent
+          end
 
-      REXML::XPath.each(doc, xpath) do |res|
-        xml_attributes.each_pair do |nested_self_attribute, xml_attribute|
-          get_or_set_xml_attribute(get_or_set, nested_self_attribute, res, xml_attribute)
+          set_epidoc_attributes_tree parent, xpath_child, self[key], config
         end
-        get_or_set_xml_text(get_or_set, self_attribute, res)
+
+      else
+        element = doc.bulldozePath config[:xpath]
+        element.text = self[key]
+        if config[:attributes]
+          config[:attributes].each_pair {|attribute_key, attribute_config|
+            element.attributes[attribute_config[:name]] = self[attribute_key]
+          }
+        end
       end
     end
 
@@ -195,13 +248,195 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = sort doc
 
     # write back to a string
+    formatter = REXML::Formatters::Pretty.new
+    formatter.compact = true
+    formatter.width = 512
     modified_xml_content = ''
-    doc.write modified_xml_content
+    formatter.write doc, modified_xml_content
+
+    f = File.new '/Users/InstPap/Desktop/test.xml', 'w'
+    f.puts modified_xml_content
+
     return modified_xml_content
+
   end
 
   def sort doc
     return doc
   end
 
+  def populate_epidoc_attribute key, value, default = nil
+    if !value
+      value = default
+    elsif value.instance_of? String
+      value = !value.strip.empty? ? value.strip : default
+    elsif value.class == Array
+      value = value.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip }
+    elsif value.kind_of? Hash
+      value = value.values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip }
+    end
+    self[key] = value
+  end
+
+  # saves the values stored within a hash object (usually generated via a webbrowser form)
+  def populate_epidoc_attributes_from_attributes_hash attributes_hash
+
+    @configuration.scheme.each_pair do |key, config|
+      if config[:children]
+        result = nil
+        if config[:multiple]
+          result = []
+          if attributes_hash[key.to_s]
+            attributes_hash[key.to_s].each_pair {|index, item|
+              result[result.length] = populate_tree_from_attributes_hash item, config
+            }
+          end
+        else
+          result = populate_tree_from_attributes_hash attributes_hash[key.to_s], config
+        end
+        self[key] = result
+      elsif config[:multiple]
+        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values : []
+      else 
+        self[key] = attributes_hash[key.to_s]
+      end
+    end
+
+  end
+
+  def populate_tree_from_attributes_hash data, config
+
+    result_item = {
+      :value => nil,
+      :attributes => {},
+      :children => {}
+    }
+
+    if data
+
+      if data['value'] && !data['value'].strip.empty?
+        result_item[:value] = data['value'].strip
+      elsif config[:default]
+        result_item[:value] = config[:default]
+      end
+
+      if config[:attributes]
+        config[:attributes].each_pair{|attribute_key, attribute_config|
+          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].strip.empty?
+            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].strip
+          elsif attribute_config[:default]
+            result_item[:attributes][attribute_key] = attribute_config[:default]
+          end
+        }
+      end
+  
+      if config[:children]
+        config[:children].each_pair{|child_key, child_config|
+          if child_config[:multiple]
+            children = []
+            data[:children][child_key.to_s].each_pair{|index, child|
+              children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
+            }
+            result_item[:children][child_key] = children
+          else
+            result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key.to_s], child_config # recursion óla
+          end
+        }
+      end
+
+   end
+
+   result_item
+  end
+
+  class HgvMetaConfiguration
+
+    attr_reader :scheme, :keys;
+
+    def initialize
+      @scheme = YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
+
+      add_meta_information! @scheme
+
+      @keys = @scheme.keys
+      @scheme.each_value {|item|
+        @keys += retrieve_all_keys item
+      }
+  
+    end
+
+    # recursivle retrieves all valid keys (element key, attribute keys, child keys)
+    # configuration is a single element node of the hgv configuration
+    def retrieve_all_keys configuration_node
+      keys = configuration_node[:attributes] ? configuration_node[:attributes].keys : []
+      if configuration_node[:children]
+        configuration_node[:children].each_pair {|key, value|
+          keys += [key]
+          keys += retrieve_all_keys value
+        }
+      end
+      return keys
+    end
+
+    # recursively adds optional attributes to configuration
+    # parameter configuration is initially the complete hgv configuration, during recursion it contains the content of the children attribute
+    def add_meta_information! configuration
+      configuration.each_value {|element|
+
+        add_defaults! element
+
+        if element.keys.include? :attributes
+          element[:attributes].each_value{|attribute|
+            add_defaults! attribute
+          }
+        end
+
+        if element.keys.include? :children
+          add_meta_information! element[:children]
+        end
+
+      }
+    end
+
+    # adds optional attributes (suchs as mulplicity or default value) to a configuration item
+    # parameter item may be an element or an attribute
+    def add_defaults! item
+      if item.keys.include? :multiple
+        item[:multiple] = item[:multiple] ? true : false
+      else
+        item[:multiple] = false
+      end
+
+      if item.keys.include? :optional
+          item[:optional] = !item[:optional] ? false : true
+      else
+        item[:optional] = true
+      end
+
+      if !item.keys.include? :default
+        item[:default] = nil
+      end
+
+      if !item.keys.include? :pattern
+        item[:pattern] = nil
+      end
+
+      #if item.keys.include? :children
+      #  item[:structure] = :recursive
+      #elsif item[:multiple]
+      #  item[:structure] = :multiple
+      #else
+      #  item[:structure] = :simple
+      #end
+    end
+
+    def xpath key
+      if @scheme.keys.include? key
+        @scheme[key][:xpath]
+      else
+        ''
+      end
+    end
+
+  end
 end

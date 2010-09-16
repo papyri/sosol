@@ -1,20 +1,227 @@
-div#edit p label.meta {
-  width: 210px;
+/* *** global *** */
+div#edit fieldset {
+  padding: 8px 0 8px 0;
+  margin: 16px 0 0 0; }
+
+div#edit fieldset legend {
+  font-weight: bold;
+  font-variant: small-caps;
+  padding: 0 4px 0 4px; }
+
+div#edit fieldset label {
+  font-weight: bold;
   float: left;
-  text-align: left;
-  margin-right: 4px;
+  margin: 0 4px 0 4px;
+  width: 100px;
+  overflow: hidden; }
+
+div#edit textarea {
+  width: 530px;
+  height: 60px;
+  border: solid 1px #c0c0c0;
+  float: left;
+  margin: 0 0 4px 0; }
+
+div#edit div.multi {
+  width: 530px;
+  float: left;
+  margin: 0 0 16px 0; }
+
+div#edit input {
+  width: 103px;
+  border: solid 1px #c0c0c0;
+  float: left;
+  margin: 0 0 4px 0; }
+
+/* *** special *** */
+div#edit input#hgv_meta_identifier_titleStmt {
+  width: 320px; }
+
+div#edit input#hgv_meta_identifier_material {
+  width: 100px; }
+
+div#edit input#hgv_meta_identifier_collectionTemporaryNotes {
+  width: 316px; }
+
+/* *** multi general *** */
+div#edit div.multi ul li {
+  background-color: lightsteelblue;
+  list-style-type: none;
+  display: block;
+  width: 528px;
+  padding: 1px;
+  margin: 0 4px 4px 0;
+  height: 16px; }
+
+div#edit div.multi ul.items li input {
+  margin: auto;
+  border: none;
+  height: 16px; }
+
+div#edit div.multi ul.items li span {
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  background-color: lightsteelblue;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 4px 0 4px;
+  cursor: move; }
+
+div#edit div.multi ul.items li span.delete {
+  cursor: pointer; }
+
+div#edit div.multi p.add {
+  clear: both;
+  background-color: lightsteelblue;
+  vertical-align: center;
+  padding: 1px;
+  height: 18px;
+  width: 528px; }
+
+div#edit div.multi p.add input {
+  width: 510px;
+  height: 18px;
+  background-color: white;
+  border: none;
+  margin: auto; }
+
+div#edit div.multi p.add span {
+  width: 16px;
+  height: 16px;
+  padding: 0 4px 0 4px;
+  margin-top: 2px;
+  background-color: lightsteelblue;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer; }
+
+/* *** multi special *** */
+div#edit div.multi ul#multiItems_contentText li {
+  float: left;
+  width: 170px; }
+
+div#edit div.multi ul#multiItems_contentText li input {
+  width: 132px; }
+
+div#edit div.multi ul#multiItems_bl li input {
+  width: 245px; }
+
+div#edit div.multi p#multiPlus_bl input {
+  width: 147px; }
+
+div#edit div.multi ul#multiItems_mentionedDate li {
+  width: 643px; }
+
+div#edit div.multi ul#multiItems_mentionedDate li input {
+  width: 100px;
+  margin: 0 1px 0 0; }
+
+div#edit div.multi ul#multiItems_mentionedDate li input.note {
+  width: 146px; }
+
+div#edit div.multi ul#multiItems_mentionedDate li select {
+  width: 100px;
+  margin: 0 0 0 4px; }
+
+div#edit div.multi ul#multiItems_mentionedDate li select.dateId {
+  width: 42px; }
+
+div#edit div.multi p#multiPlus_mentionedDate {
+  width: 643px; }
+
+div#edit div.multi p#multiPlus_mentionedDate input {
+  width: 100px;
+  margin: 0 1px 0 0; }
+
+div#edit div.multi p#multiPlus_mentionedDate input.note {
+  width: 146px; }
+
+div#edit div.multi p#multiPlus_mentionedDate select {
+  width: 100px;
+  margin: 0 0 0 4px; }
+
+div#edit div.multi p#multiPlus_mentionedDate select.dateId {
+  width: 42px; }
+
+div#edit div.multi ul#multiItems_illustrations li input,
+div#edit div.multi ul#multiItems_otherPublications li input,
+div#edit div.multi ul#multiItems_translationsDe li input,
+div#edit div.multi ul#multiItems_translationsEn li input,
+div#edit div.multi ul#multiItems_translationsIt li input,
+div#edit div.multi ul#multiItems_translationsFr li input,
+div#edit div.multi ul#multiItems_translationsEs li input,
+div#edit div.multi ul#multiItems_translationsLa li input {
+  width: 490px; }
+
+/* *** date *** */
+div#edit div#dateContainer {
+  position: relative;
+  height: 500px;
+  padding: 0;
+  margin: 0;
+  background-color: lightpink; }
+
+div#edit div#dateContainer div.dateItem {
+  position: absolute;
+  top: 42px;
+  background-color: white; }
+
+div#edit div#dateContainer div.dateItem div.dateTab {
+  background-color: lightgrey;
+  color: white;
+  width: 42px;
+  height: 42px;
+  position: absolute;
+  top: -42px;
+  cursor: pointer; }
+
+div#edit div#dateContainer div.dateItemY div.dateTab {
+  left: 42px; }
+
+div#edit div#dateContainer div.dateItemZ div.dateTab {
+  left: 84px; }
+
+div#edit div#dateContainer div.dateItem div.dateTab span {
+  font-weight: bold;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  cursor: pointer; }
+
+div#edit div#dateContainer div.dateItem div.dateInfo {
+  display: none; }
+
+div#edit div#dateContainer div.dateItemActive div.dateTab {
+  background-color: white;
+  color: black; }
+
+div#edit div#dateContainer div.dateItemActive div.dateInfo {
   display: block; }
 
-div#edit p input {
-  width: 200px; }
+div#edit div#dateContainer div.dateItem div.dateInfo div {
+  float: left; }
 
-div#edit input.delete {
-  position: absolute;
-  bottom: 0px;
-  right: 8px; }
+div#edit fieldset.date p {
+  float: none;
+  clear: both; }
 
-div#edit input.add {
-  margin: 4px 0 4px 0; }
+div#edit fieldset.date p input {
+  width: 42px;
+  margin: 0 4px 4px 0; }
+
+div#edit fieldset.date p label {
+  width: 120px;
+  float: left; }
+
+div#edit fieldset.date p select {
+  width: 120px;
+  float: left; }
+
+div#edit fieldset.date p select.offset, div#edit fieldset.date p select.certainty {
+  width: 168px; }
 
 /* *** quickhelp *** */
 span.quickHelp {
@@ -23,7 +230,7 @@ span.quickHelp {
 
 span.quickHelp span.hook {
   position: relative;
-  background-color: steelblue;
+  background-color: lightsteelblue;
   padding: 2px;
   font-weight: bold;
   color: white;
@@ -34,7 +241,7 @@ span.quickHelp span.message {
   left: 16px;
   bottom: 8px;
   background-color: lightgrey;
-  color: steelblue;
-  border: solid 1px steelblue;
+  color: lightsteelblue;
+  border: solid 1px lightsteelblue;
   padding: 4px;
   width: 200px; }

@@ -96,7 +96,7 @@ from_century_certainty = /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origi
           "bibl[@type='publication'][@subtype='principal']/biblScope[@type='parts']",
     })
   end
-  
+
   def sort doc
     sort_paths = {
       :msIdentifier => {

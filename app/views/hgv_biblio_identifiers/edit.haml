@@ -6,13 +6,13 @@
     = render :partial => 'identifiers/header'
 
     #editBibliography
-      - form_for @identifier, :url => { :action => :update }, :html => {:autocomplete => 'off'} do |f| 
+      - form_for @biblio_identifier, :url => { :action => :update }, :html => {:autocomplete => 'off'} do |f| 
         = f.error_messages
-        - if @identifier.contains_plain_bibl_tags?
+        - if @biblio_identifier.contains_plain_bibl_tags?
           .conflict
             %p= I18n.t('bibliography.conflict.message')
             %ul
-              - @identifier.plain_bibl_tags.select{|k, v| !v.empty? }.each do |conflict|
+              - @biblio_identifier.plain_bibl_tags.select{|k, v| !v.empty? }.each do |conflict|
                 %li
                   = conflict.first
                   %ul
@@ -21,18 +21,19 @@
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
         #bibliographyMeta.bibliographyContainer
-          = render :partial => 'meta', :object => @meta_identifier
+          »Under construction«
+          =# render :partial => 'meta', :object => @meta_identifier
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMain')"}= I18n.t('bibliography.headings.main').titleize
         #bibliographyMain.bibliographyContainer
-          = render :partial => 'bibliography', :collection => @identifier.bibliography_main, :locals => {:type => :main}
+          = render :partial => 'bibliography', :collection => @biblio_identifier.bibliography_main, :locals => {:type => :main}
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographySecondary')"}= I18n.t('bibliography.headings.secondary').titleize
         #bibliographySecondary.bibliographyContainer
-          = render :partial => 'bibliography', :collection => @identifier.bibliography_secondary, :locals => {:type => :secondary}
-          = render :partial => 'bibliography', :object => [0, @identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
+          = render :partial => 'bibliography', :collection => @biblio_identifier.bibliography_secondary, :locals => {:type => :secondary}
+          = render :partial => 'bibliography', :object => [0, @biblio_identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
           %input.add{:type => 'button', :value => I18n.t('bibliography.button.add_secondary'), :onclick => "addNewBibliographicalRecord(this.parentNode)"}
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @biblio_identifier }
 
 = javascript_include_tag 'bibliography'
