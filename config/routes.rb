@@ -59,6 +59,11 @@ ActionController::Routing::Routes.draw do |map|
     # publication.resources :identifiers
   end
   
+  map.connect 'publications/create_from_identifier/:id',
+    :controller => 'publications',
+    :action => 'create_from_identifier',
+    :id => /papyri\.info.*/
+  
   map.connect 'numbers_server_proxy/sparql/:query',
     :controller => 'numbers_server_proxy',
     :action => 'sparql',

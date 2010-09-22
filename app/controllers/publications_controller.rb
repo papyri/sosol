@@ -108,6 +108,20 @@ class PublicationsController < ApplicationController
     end
   end
   
+  def create_from_identifier
+    if params[:id].blank?
+      flash[:error] = 'You must specify an identifier.'
+      redirect_to dashboard_url
+      return
+    end
+    
+    identifier = params[:id]
+    
+    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    
+    publication_from_identifier(identifier, related_identifiers)
+  end
+  
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
     
@@ -389,81 +403,7 @@ class PublicationsController < ApplicationController
       related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     end
     
-    Rails.logger.info("Identifier: #{identifier}")
-    Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
-    
-    conflicting_identifiers = []
-    
-    if related_identifiers.nil?
-      flash[:error] = 'Error creating publication: publication not found'
-      redirect_to dashboard_url
-      return
-    end
-    
-    related_identifiers.each do |relid|
-      possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
-      conflicting_identifiers += actual_conflicts
-    end
-    
-    if related_identifiers.length == 0
-      flash[:error] = 'Error creating publication: publication not found'
-      redirect_to dashboard_url
-      return
-    elsif conflicting_identifiers.length > 0
-      Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
-      conflicting_publication = conflicting_identifiers.first.publication
-      conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
-      
-      if conflicting_publications.length > 1
-        flash[:error] = 'Error creating publication: multiple conflicting publications'
-        flash[:error] += '<ul>'
-        conflicting_publications.each do |conf_pub|
-          flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
-        end
-        flash[:error] += '</ul>'
-        
-        redirect_to dashboard_url
-        return
-      end
-      
-      if (conflicting_publication.status == "committed")
-        # TODO: should set "archived" and take approp action here instead
-        #conflicting_publication.destroy
-        expire_publication_cache
-        conflicting_publication.archive
-      else
-        flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
-        redirect_to dashboard_url
-        return
-      end
-    end
-    # else
-      @publication = Publication.new()
-      @publication.populate_identifiers_from_identifiers(
-        related_identifiers)
-      @publication.owner = @current_user
-
-      @publication.creator = @current_user
-
-      if @publication.save!
-        @publication.branch_from_master
-
-        # need to remove repeat against publication model
-        e = Event.new
-        e.category = "started editing"
-        e.target = @publication
-        e.owner = @current_user
-        e.save!
-
-        flash[:notice] = 'Publication was successfully created.'
-        expire_publication_cache
-        redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
-      else
-        flash[:notice] = 'Error creating publication'
-        redirect_to dashboard_url
-      end
-    # end
+    publication_from_identifier(identifier, related_identifiers)
   end
   
   def vote
@@ -585,6 +525,84 @@ class PublicationsController < ApplicationController
   end
   
   protected
+  
+    def publication_from_identifier(identifier, related_identifiers = nil)
+      Rails.logger.info("Identifier: #{identifier}")
+      Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
+
+      conflicting_identifiers = []
+
+      if related_identifiers.nil?
+        flash[:error] = 'Error creating publication: publication not found'
+        redirect_to dashboard_url
+        return
+      end
+
+      related_identifiers.each do |relid|
+        possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+        actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+        conflicting_identifiers += actual_conflicts
+      end
+
+      if related_identifiers.length == 0
+        flash[:error] = 'Error creating publication: publication not found'
+        redirect_to dashboard_url
+        return
+      elsif conflicting_identifiers.length > 0
+        Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
+        conflicting_publication = conflicting_identifiers.first.publication
+        conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
+
+        if conflicting_publications.length > 1
+          flash[:error] = 'Error creating publication: multiple conflicting publications'
+          flash[:error] += '<ul>'
+          conflicting_publications.each do |conf_pub|
+            flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
+          end
+          flash[:error] += '</ul>'
+
+          redirect_to dashboard_url
+          return
+        end
+
+        if (conflicting_publication.status == "committed")
+          # TODO: should set "archived" and take approp action here instead
+          #conflicting_publication.destroy
+          expire_publication_cache
+          conflicting_publication.archive
+        else
+          flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
+          redirect_to dashboard_url
+          return
+        end
+      end
+      # else
+        @publication = Publication.new()
+        @publication.populate_identifiers_from_identifiers(
+          related_identifiers)
+        @publication.owner = @current_user
+
+        @publication.creator = @current_user
+
+        if @publication.save!
+          @publication.branch_from_master
+
+          # need to remove repeat against publication model
+          e = Event.new
+          e.category = "started editing"
+          e.target = @publication
+          e.owner = @current_user
+          e.save!
+
+          flash[:notice] = 'Publication was successfully created.'
+          expire_publication_cache
+          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+        else
+          flash[:notice] = 'Error creating publication'
+          redirect_to dashboard_url
+        end
+      # end
+    end
   
     def expire_publication_cache(user_id = @current_user.id)
       expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{user_id}")
