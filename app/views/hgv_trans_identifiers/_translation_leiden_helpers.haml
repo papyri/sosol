@@ -1,0 +1,204 @@
+:javascript
+  helpView = "#{url_for(:controller => 'translation_helper', :action => 'wheretogo')}";
+  ajaxConvert = "#{url_for(:controller => 'translation_leiden', :action => 'xml_to_translation_leiden')}";
+  ajax_get_new_lang = "#{url_for(:controller => 'translation_leiden', :action => 'get_language_translation_leiden')}";
+  conv_translation_leiden_to_xml = "#{url_for(:controller => 'translation_leiden', :action => 'translation_leiden_to_xml')}";
+= javascript_include_tag 'translation_leiden'
+= javascript_include_tag 'menu-for-applications'
+
+= stylesheet_link_tag 'menu-item'
+= stylesheet_link_tag 'menu-bar'
+/The helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
+/have a smart number associated with them.  It starts off with a 1 digit number (when this level goes to
+/2 digits, no drop down data is associated).  From then on there are 2 digit numbers used e.g 101, 
+/102, etc. meaning the first, second and third level menu items under item 1.  Then the next level
+/continues this with 10101, 10102, 10102 meaning the first, second and third level menu items
+/under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
+/in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
+/javascript.
+%ul#menuModel{ :style => "display:inherit"}
+  %li#1
+    %a{:href => "#", :title => "Leiden+ Input Helpers"} Helpers
+    %ul{ :width => "175"}
+      %li#101
+        %a{ :href => "#"} Gap
+        %ul{ :width => "200"}
+          %li#10101{ :jsFunction => "insertGaplostMain()"}
+            %a{ :href => "#"}Lacuna
+          %li#10102{ :itemType => "separator"}
+          %li#10103{ :jsFunction => "insertGapIllegibleMain()"}
+            %a{ :href => "#"}Illegible
+          -#%li#10104{ :itemType => "separator"}
+          -#%li#10105{ :jsFunction => "helpDialogOpen('vestig')"}
+          -#  %a{ :href => "#"}Vestigia
+          -#%li#10106{ :itemType => "separator"}
+          -#%li#10107{ :jsFunction => "helpDialogOpen('gapelliplang')"}
+          -#  %a{ :href => "#"}Language lines vel sim
+          -#%li#10108{ :itemType => "separator"}
+          -#%li#10109{ :jsFunction => "helpDialogOpen('gapellipNT')"}
+          -#  %a{ :href => "#"}Non-Transcribed
+      %li#102{ :itemType => "separator"}
+      %li#103{ :jsFunction => "helpDialogOpen('terms')"}
+        %a{ :href => "#"} Terms
+      %li#104{ :itemType => "separator"}
+      %li#105
+        -# version using dialog box %li#105{ :jsFunction => "helpDialogOpen('new_lang')"}
+        %a{ :href => "#"} New Language
+        #comment out this section this to use dialog box version
+        %ul{ :width => "115"}
+          %li#10701
+            %a
+              =button_to("български" , options = { :action => 'add_new_lang_to_xml', :lang => 'bg'}, html_options = { :class => "new_lang_button" } )
+          %li#10702{ :itemType => "separator"}
+          %li#10703
+            %a
+              =button_to("Deutsch" , options = { :action => 'add_new_lang_to_xml', :lang => 'de'}, html_options = { :class => "new_lang_button" } )
+          %li#10704{ :itemType => "separator"}
+          %li#10705
+            %a
+              =button_to("English" , options = { :action => 'add_new_lang_to_xml', :lang => 'en'}, html_options = { :class => "new_lang_button" } )
+          %li#10706{ :itemType => "separator"}
+          %li#10707
+            %a
+              =button_to("Français" , options = { :action => 'add_new_lang_to_xml', :lang => 'fr'}, html_options = { :class => "new_lang_button" } )
+          %li#10708{ :itemType => "separator"}
+          %li#10709
+            %a
+              =button_to("Italiano" , options = { :action => 'add_new_lang_to_xml', :lang => 'it'}, html_options = { :class => "new_lang_button" } )
+          %li#10710{ :itemType => "separator"}
+          %li#10711
+            %a
+              =button_to("Español" , options = { :action => 'add_new_lang_to_xml', :lang => 'sp'}, html_options = { :class => "new_lang_button" } )
+          %li#10712{ :itemType => "separator"}
+          %li#10713
+            %a
+              =button_to("Other" , options = { :action => 'add_new_lang_to_xml', :lang => 'OTHER'}, html_options = { :class => "new_lang_button" } )
+      %li#106{ :itemType => "separator"}
+      
+      
+      -#%li#107
+      -#  %a{ :href => "#"} Ancient Diacriticals
+      -#  %ul{ :width => "115"}
+      -#    %li#10701{ :jsFunction => "insertDiacriticalMain('acute')"}
+      -#     %a{ :href => "#"}Acute
+      -#    %li#10702{ :itemType => "separator"}
+      -#    %li#10703{ :jsFunction => "insertDiacriticalMain('asper')"}
+      -#      %a{ :href => "#"}Asper
+      -#    %li#10704{ :itemType => "separator"}
+      -#    %li#10705{ :jsFunction => "insertDiacriticalMain('circumflex')"}
+      -#      %a{ :href => "#"}Circumflex
+      -#    %li#10706{ :itemType => "separator"}
+      -#    %li#10707{ :jsFunction => "insertDiacriticalMain('diaeresis')"}
+      -#      %a{ :href => "#"}Diaeresis
+      -#    %li#10708{ :itemType => "separator"}
+      -#    %li#10709{ :jsFunction => "insertDiacriticalMain('grave')"}
+      -#      %a{ :href => "#"}Grave
+      -#    %li#10710{ :itemType => "separator"}
+      -#    %li#10711{ :jsFunction => "insertDiacriticalMain('lenis')"}
+      -#      %a{ :href => "#"}Lenis
+      -#    %li#10712{ :itemType => "separator"}
+      -#    %li#10713{ :jsFunction => "helpDialogOpen('ancientdia')"}
+      -#      %a{ :href => "#"}Double
+      -#%li#108{ :itemType => "separator"}
+      -#%li#109
+      -#  %a{ :href => "#"} App
+      -#  %ul{ :width => "200"}
+      -#    %li#10901{ :jsFunction => "helpDialogOpen('apporth')"}
+      -#      %a{ :href => "#"}Orthographic correction
+      -#    %li#10902{ :itemType => "separator"}
+      -#    %li#10903{ :jsFunction => "helpDialogOpen('appsubst')"}
+      -#      %a{ :href => "#"}Scribal correction
+      -#    %li#10904{ :itemType => "separator"}
+      -#    %li#10905{ :jsFunction => "helpDialogOpen('appalt')"}
+      -#      %a{ :href => "#"}Alternate readings
+      -#    %li#10906{ :itemType => "separator"}
+      -#    %li#10907{ :jsFunction => "helpDialogOpen('appedit')"}
+      -#      %a{ :href => "#"}Editorial correction
+      -#    %li#10908{ :itemType => "separator"}
+      -#    %li#10909{ :jsFunction => "helpDialogOpen('appBL')"}
+      -#      %a{ :href => "#"}Corrections in BL
+      -#    %li#10910{ :itemType => "separator"}
+      -#    %li#10911{ :jsFunction => "helpDialogOpen('appSoSOL')"}
+      -#      %a{ :href => "#"}SoSOL correction
+      -#%li#110{ :itemType => "separator"}
+      -#%li#111
+      -#  %a{ :href => "#"}Deletion
+      -#  %ul{ :width => "225"}
+      -#    %li#11101{ :jsFunction => "insertDeletionMain('slashes')"}
+      -#      %a{ :href => "#"}Deletion with Slashes
+      -#    %li#11102{ :itemType => "separator"}
+      -#    %li#11103{ :jsFunction => "insertDeletionMain('cross-strokes')"}
+      -#      %a{ :href => "#"}Deletion with Cross-Strokes
+      -#    %li#11104{ :itemType => "separator"}
+      -#    %li#11105{ :jsFunction => "insertDeletionMain('erasure')"}
+      -#      %a{ :href => "#"}Deletion with Erasure
+      -#%li#112{ :itemType => "separator"}
+      %li#113{ :jsFunction => "helpDialogOpen('linebreak')" }
+        %a{ :href => "#"}Linebreak
+      -#  %ul{ :width => "135"}
+      -#    %li#11301{ :jsFunction => "helpDialogOpen('render_linebreak')"}
+      -#      %a{:type => "text", :href => "#"}Render            
+      -#    %li#11302{ :itemType => "separator"}
+      -#    %li#11303{ :jsFunction => "helpDialogOpen('no_render_linebreak')"}
+      -#      %a{ :href => "#"}No render
+      -#    %li#11304{ :itemType => "separator"}
+      %li#114{ :itemType => "separator"}
+      %li#115
+        %a{ :href => "#"}Division
+        %ul{ :width => "100"}
+          %li#11501{ :jsFunction => "insertDivisionMain('r')"}
+            %a{ :href => "#"}Recto
+          %li#11502{ :itemType => "separator"}
+          %li#11503{ :jsFunction => "insertDivisionMain('v')"}
+            %a{ :href => "#"}Verso
+          %li#11504{ :itemType => "separator"}
+          %li#11505{ :jsFunction => "insertDivisionMain('column')"}
+            %a{ :href => "#"}Column
+          %li#11506{ :itemType => "separator"}
+          %li#11507{ :jsFunction => "insertDivisionMain('document')"}
+            %a{ :href => "#"}Document
+          %li#11508{ :itemType => "separator"}
+          %li#11509{ :jsFunction => "insertDivisionMain('folio')"}
+            %a{ :href => "#"}Folio
+          %li#11510{ :itemType => "separator"}
+          %li#11511{ :jsFunction => "insertDivisionMain('fragment')"}
+            %a{ :href => "#"}Fragment
+          %li#11512{ :itemType => "separator"}
+          %li#11513{ :jsFunction => "helpDialogOpen('division')"}
+            %a{ :href => "#"}Other
+      %li#116{ :itemType => "separator"}
+      -#%li#117
+      -#  %a{ :href => "#"} Special Characters
+      -#  %ul{ :width => "155"}
+      -#    -# this is unicode character u10175
+      -#    %li#11701{ :jsFunction => "insertSpecialCharMain('𐅵')"}
+      -#      %a{ :href => "#"}1/2
+      -#    %li#11702{ :itemType => "separator"}
+      -#    -# this is unicode character u10177
+      -#    %li#11703{ :jsFunction => "insertSpecialCharMain('𐅷')"}
+      -#      %a{ :href => "#"}2/3
+      -#    %li#11704{ :itemType => "separator"}
+      -#    -# this is unicode character u10178
+      -#    %li#11705{ :jsFunction => "insertSpecialCharMain('𐅸')"}
+      -#      %a{ :href => "#"}3/4
+      -#    %li#11706{ :itemType => "separator"}
+      -#    %li#11707{ :jsFunction => "insertSpecialCharMain('\\u03DB')"}
+      -#      %a{ :href => "#"}Final Stigma Small
+      -#    %li#11708{ :itemType => "separator"}
+      -#    %li#11709{ :jsFunction => "insertSpecialCharMain('\\u03DA')"}
+      -#      %a{ :href => "#"}Final Stigma Capital
+  %li#2{ :itemType => "separator"}
+  %li#3{ :jsFunction => "window.open('#{documentation_url(:docotype => "translation")}')"}
+    %a{ :href => "#"}Translation Leiden Help
+  %li#4{ :itemType => "separator"}
+  %li#5{ :jsFunction => "insertSpecialCharMain('\\u0323')"}
+    %a{ :href => "#"}UnderDot
+  %li#6{ :itemType => "separator"}
+  %li#7{ :jsFunction => "helpDialogOpen('tryit')"}
+    %a{ :href => "#"}Try It
+  %li#8{ :itemType => "separator"}
+%p
+  -if identifier.mutable?
+    %div#menuDiv
+  -else
+    %div#menuDiv{ :style => "display:none"}

@@ -20,7 +20,7 @@ class DDBIdentifier < Identifier
     
     ddb_collection_name.downcase!
     
-    return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.blank?}.join('.')
   end
   
   def n_attribute
@@ -28,7 +28,7 @@ class DDBIdentifier < Identifier
   end
   
   def xml_title_text
-    id_attribute
+    self.id_attribute
   end
   
   def self.collection_names_hash
@@ -90,31 +90,93 @@ class DDBIdentifier < Identifier
   end
   
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt ddb handDesc.xsl})))
+    JRubyXML.pretty_print(
+      JRubyXML.stream_from_string(
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb preprocess.xsl})))
+      )
+    )
+  end
+  
+  def after_rename(options = {})
+    # copy back the content to the original name before we update the header
+    if options[:set_dummy_header]
+      original = options[:original]
+      dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'"
+      dummy_header =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb dummyize.xsl})),
+          :reprint_in_text => self.title,
+          :ddb_hybrid_ref_attribute => self.n_attribute
+        )
+      original.save!
+      self.publication.identifiers << original
+      
+      original.set_xml_content(dummy_header, :comment => dummy_comment_text)
+            
+      # need to do on originals too
+      self.relatives.each do |relative|
+        original_relative = relative.clone
+        original_relative.name = original.name
+        original_relative.title = original.title
+        relative.save!
+        
+        relative.publication.identifiers << original_relative
+        
+        # set the dummy header on the relative
+        original_relative.set_xml_content(dummy_header, :comment => dummy_comment_text)
+      end
+    end
+    
+    if options[:update_header]
+      rewritten_xml =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb update_header.xsl})),
+          :title_text => self.xml_title_text,
+          :filename_text => self.id_attribute,
+          :ddb_hybrid_text => self.n_attribute,
+          :reprint_from_text => options[:set_dummy_header] ? original.title : '',
+          :ddb_hybrid_ref_attribute => options[:set_dummy_header] ? original.n_attribute : ''
+        )
+    
+      self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
+    end
+  end
+  
+  def get_broken_leiden(original_xml = nil)
+    original_xml_content = original_xml || REXML::Document.new(self.xml_content)
+    brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(original_xml_content, brokeleiden_path)
+    if brokeleiden_here.nil?
+      return nil
+    else
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+    end
   end
   
   def leiden_plus
-    repo_xml = xml_content
-    repo_xml_work = REXML::Document.new(repo_xml)
-    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
-    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
-    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
-    #otherwise, get broke Leiden+ and display that
-    if brokeleiden_here == nil
+    original_xml = self.xml_content
+    original_xml_content = REXML::Document.new(original_xml)
+
+    # if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and return that
+    # otherwise, return nil (client can then get_broken_leiden)
+    if get_broken_leiden(original_xml_content).nil?
       abs = DDBIdentifier.preprocess_abs(
-        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+        DDBIdentifier.get_abs_from_edition_div(original_xml))
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       
       return transformed
     else
-      #get the broke Leiden+
-      brokeleiden = brokeleiden_here.get_text.value
-      
-      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+      return nil
     end
   end
   

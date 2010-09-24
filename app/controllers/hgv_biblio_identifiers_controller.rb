@@ -1,4 +1,7 @@
 class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
+  before_filter :authorize
+  before_filter :find_identifier, :only => [:edit, :update]
+  after_filter :render_quick_help, :only => [:edit]
 
   def edit
     @biblio_identifier.retrieve_bibliographical_data # todo: should actually be called implicitly during initialisation time

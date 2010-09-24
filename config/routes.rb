@@ -8,6 +8,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :decrees
 
+  map.resources :docos
+
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
  
   map.resources :users
@@ -21,8 +23,18 @@ ActionController::Routing::Routes.draw do |map|
   # map.register '/register', :controller => 'users', :action => 'create'
   # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
-
-	map.help 'help', :controller => 'user', :action => 'help'
+  
+  map.help 'help', 
+    :controller => 'user', 
+    :action => 'help'
+  
+  map.build 'build', 
+    :controller => 'docos', 
+    :action => 'build'
+  
+  map.documentation 'documentation',
+    :controller => "docos",
+    :action => "documentation"
 
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
@@ -43,9 +55,24 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
-    publication.resources :hgv_trans_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
+    publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     # publication.resources :identifiers
   end
+  
+  map.connect 'publications/create_from_identifier/:id',
+    :controller => 'publications',
+    :action => 'create_from_identifier',
+    :id => /papyri\.info.*/
+  
+  map.connect 'numbers_server_proxy/sparql/:query',
+    :controller => 'numbers_server_proxy',
+    :action => 'sparql',
+    :query => /.*/
+  
+  map.connect 'numbers_server_proxy/:id',
+    :controller => 'numbers_server_proxy',
+    :action => 'proxy',
+    :id => /papyri\.info.*/
   
   # The priority is based upon order of creation: first created -> highest priority.
 

@@ -1,8 +1,16 @@
-%ul
-  - for event in @events
-    %li
-      = event.owner == @current_user ? "You" : event.owner.human_name
-      = event.category
-      - if event.target && event.target.title
-        = event.target.title
-      == (#{time_ago_in_words(event.created_at)} ago)
+- cache(:action => 'dashboard', :part => 'events_list') do
+  %ul
+    - for event in @events
+      %li
+        %span{:class => "event_owner_#{event.owner.class}_#{event.owner.id}"}
+          = event.owner.human_name
+        = event.category
+        - if event.target && event.target.title
+          = event.target.title
+        == (#{time_ago_in_words(event.created_at)} ago)
+:javascript
+  document.observe("dom:loaded", function() {
+    $$("span.event_owner_User_#{@current_user.id}").each(function(s) {
+      s.replace("You");
+    });
+  });

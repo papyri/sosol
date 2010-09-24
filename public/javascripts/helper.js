@@ -21,26 +21,26 @@ function init()
   //add anything you need for initial page load here
   }
   
-window.onload = init;
+document.observe("dom:loaded", init);
 
 function closeHelper()
 {  
-window.close(); 
+  window.close(); 
 }
 
-/*###########################################################################################*/
-/* begin the check functions                                                                 */
-/*###########################################################################################*/
+//###########################################################################################
+// begin the check functions                                                                 
+//###########################################################################################
 
 function checkelliplang(id)
 {
   elliplang = document.getElementById(id).value;
 }
 
-/*###########################################################################################*/
-/* sets 2 values to be used in insertDiacriticalSub                                          */
-/* accepts 2 parms - 1 = the diacritical html form id, 2= which variable to set (1 or 2)     */
-/*###########################################################################################*/
+//###########################################################################################
+// sets 2 values to be used in insertDiacriticalSub                                          
+// accepts 2 parms - 1 = the diacritical html form id, 2= which variable to set (1 or 2)     
+//###########################################################################################
 
 function checktypedia(id,dia)
 {
@@ -91,16 +91,19 @@ function checktypenum(id)
     {
       document.number.rend_frac_check_n.checked = false;
       document.number.rend_frac_check_n.disabled = true;
+      document.number.certainty_check_n.checked = false;
+      document.number.certainty_check_n.disabled = true;
     }
   else
     {
       document.number.rend_frac_check_n.disabled = false;
+      document.number.certainty_check_n.disabled = false;
     }
 }
 
-/*###########################################################################################*/
-/* wrapxml function                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// wrapxml function                                                                          
+//###########################################################################################
 
 function wrapxml(xml)
 {
@@ -108,9 +111,9 @@ function wrapxml(xml)
   return temptopass;
 }
 
-/*###########################################################################################*/
-/* numeric edit functions                                                                    */
-/*###########################################################################################*/
+//###########################################################################################
+// numeric edit functions                                                                    
+//###########################################################################################
 
 function isNumeric(isnum) 
 {
@@ -154,9 +157,9 @@ function isNumericCircaDigit(isnum) //GAPEXTNUM = [c]?[.]?[0-9]+
     return false;
 }
 
-/*###########################################################################################*/
-/* insertAppAlt                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppAlt                                                                             
+//###########################################################################################
 
 function insertAppAlt()
 {
@@ -173,11 +176,11 @@ function insertAppAlt()
         
       convertXML()
     }
-} /*########################     end insertAppAlt     ########################*/
+} //########################     end insertAppAlt     ########################
 
-/*###########################################################################################*/
-/* insertAppBL                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppBL                                                                             
+//###########################################################################################
 
 function insertAppBL()
 {
@@ -204,11 +207,11 @@ function insertAppBL()
                
       convertXML()
     }
-} /*########################     end insertAppBL     ########################*/
+} //########################     end insertAppBL     ########################
 
-/*###########################################################################################*/
-/* insertAppSoSOL                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppSoSOL                                                                             
+//###########################################################################################
 
 function insertAppSoSOL()
 {
@@ -235,11 +238,11 @@ function insertAppSoSOL()
                
       convertXML()
     }
-} /*########################     end insertAppSoSOL     ########################*/
+} //########################     end insertAppSoSOL     ########################
 
-/*###########################################################################################*/
-/* insertAppEdit                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppEdit                                                                             
+//###########################################################################################
 
 function insertAppEdit()
 {
@@ -266,17 +269,17 @@ function insertAppEdit()
               
       convertXML()
     }
-} /*########################     end insertAppEdit     ########################*/
+} //########################     end insertAppEdit     ########################
 
-/*###########################################################################################*/
-/* insertAppOrth                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppOrth                                                                             
+//###########################################################################################
 
 function insertAppOrth()
 {
   corr = document.getElementById("apporthcorr_value").value;
   sic = document.getElementById("apporthsic_value").value;
-  if (document.apporthcorr.low.checked == true) /* check the cert low attribute */
+  if (document.apporthcorr.low.checked == true) // check the cert low attribute 
     {
       corrstart = "<corr cert=\"low\">";
     }
@@ -284,7 +287,7 @@ function insertAppOrth()
     {
       corrstart = "<corr>";
     }
-  if (document.apporthsic.low.checked == true) /* check the cert low attribute */
+  if (document.apporthsic.low.checked == true) // check the cert low attribute 
     {
       sicstart = "<sic cert=\"low\">";
     }
@@ -297,17 +300,17 @@ function insertAppOrth()
        
   convertXML()
   
-} /*########################     end insertAppOrth     ########################*/
+} //########################     end insertAppOrth     ########################
 
-/*###########################################################################################*/
-/* insertAppSubst                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAppSubst                                                                             
+//###########################################################################################
 
 function insertAppSubst()
 {
   addplace = document.getElementById("appsubstadd_value").value;
   delrend = document.getElementById("appsubstdel_value").value;
-  if (document.appsubstadd.low.checked == true) /* check the cert low attribute */
+  if (document.appsubstadd.low.checked == true) // check the cert low attribute 
     {
       addstart = "<add cert=\"low\" place=\"inline\">";
     }
@@ -320,12 +323,12 @@ function insertAppSubst()
        
   convertXML()
   
-} /*########################     end insertAppSubst     ########################*/
+} //########################     end insertAppSubst     ########################
 
 
-/*###########################################################################################*/
-/* insertDiacriticalSub                                                                      */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDiacriticalSub                                                                      
+//###########################################################################################
 
 function insertDiacriticalSub()
 {
@@ -352,11 +355,11 @@ function insertDiacriticalSub()
       convertXML();
     }
   
-} /*########################     end insertDiacriticalSub     ########################*/
+} //########################     end insertDiacriticalSub     ########################
 
-/*###########################################################################################*/
-/* insert gap lost/illegible                                                                 */
-/*###########################################################################################*/
+//###########################################################################################
+// insert gap lost/illegible                                                                 
+//###########################################################################################
 
 function insertGap(type)
 {
@@ -456,11 +459,11 @@ function insertGap(type)
      
       convertXML()
     }
-} /*########################     end insertGapLost     ########################*/
+} //########################     end insertGapLost     ########################
 
-/*###########################################################################################*/
-/* insert gap ellipsis language                                                              */
-/*###########################################################################################*/
+//###########################################################################################
+// insert gap ellipsis language                                                              
+//###########################################################################################
 
 function insertGapEllipLang(type)
 {
@@ -492,11 +495,11 @@ function insertGapEllipLang(type)
           
       convertXML()
     }
-} /*########################     end insertGapEllipLang     ########################*/
+} //########################     end insertGapEllipLang     ########################
 
-/*###########################################################################################*/
-/* insert gap ellipsis non-transcribed                                                       */
-/*###########################################################################################*/
+//###########################################################################################
+// insert gap ellipsis non-transcribed                                                       
+//###########################################################################################
 
 function insertGapEllipNT()
 {
@@ -546,11 +549,11 @@ function insertGapEllipNT()
           
       convertXML()
     }
-} /*########################     end insertGapEllipNT     ########################*/
+} //########################     end insertGapEllipNT     ########################
 
-/*###########################################################################################*/
-/* insert vestig                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insert vestig                                                                             
+//###########################################################################################
 
 function insertVestig()
 {
@@ -609,11 +612,11 @@ function insertVestig()
     
       convertXML()
     }
-} /*########################     end insertVestig     ########################*/
+} //########################     end insertVestig     ########################
 
-/*###########################################################################################*/
-/* insertDivisionSub                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDivisionSub                                                                             
+//###########################################################################################
 
 function insertDivisionSub()
 {
@@ -661,12 +664,12 @@ function insertDivisionSub()
           }
       });
     }
-  } /*########################     end insertDivisionSub     ########################*/
+  } //########################     end insertDivisionSub     ########################
 
 
-/*###########################################################################################*/
-/* insert number                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insert number                                                                             
+//###########################################################################################
 
 function insertNum()
 {
@@ -723,9 +726,9 @@ function insertNum()
   
     numval = document.getElementById("number_value").value;
     numcontent = document.getElementById("number_content").value;
-    {if (numval.toString().match(/\s/) || numval.length < 1) 
+    {if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty
       {
-        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value and content both empty
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content both empty
           {
             alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
             editpass = "no";
@@ -753,7 +756,8 @@ function insertNum()
           {
             moreNumEdit("valuecontent");
           }
-      }}
+      } 
+    }
   
   break; //other
   
@@ -766,14 +770,22 @@ function insertNum()
   
   if (editpass == "yes")
     {
+      if (document.number.certainty_check_n.checked == true)
+        {
+          opt_certainty = "<certainty locus=\"value\" match=\"..\"/>";
+        }
+      else
+        {
+          opt_certainty = "";
+        }
       finishNum();
     }
-} /*########################     end insertNum     ########################*/
+} //########################     end insertNum     ########################
 
 
-/*###########################################################################################*/
-/* finishNum                                                                                 */
-/*###########################################################################################*/
+//###########################################################################################
+// finishNum                                                                                 
+//###########################################################################################
   
 function finishNum()
 {
@@ -781,18 +793,25 @@ function finishNum()
   switch (number_type)
   {
   case "value":
-  
-    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+    if (document.number.certainty_check_n.checked == true)
+      {
+        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + opt_certainty + "</num>";
+      }
+    else
+      {
+        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+      }
+    //startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
     break;
   
   case "content":
   
-    startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
+    startxml = "<num" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
     break;
   
   case "valuecontent":
   
-    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
+    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
     break;
   
   case "fraction":
@@ -813,12 +832,12 @@ function finishNum()
   
   convertXML();
 
-} /*########################     end finishNum     ########################*/
+} //########################     end finishNum     ########################
 
 
-/*###########################################################################################*/
-/* moreNumEdit                                                                               */
-/*###########################################################################################*/
+//###########################################################################################
+// moreNumEdit                                                                               
+//###########################################################################################
   
 function moreNumEdit(newType)
 {
@@ -848,12 +867,12 @@ function moreNumEdit(newType)
           editpass = "no";
         }
     }
-} /*########################     end moreNumEdit     ########################*/
+} //########################     end moreNumEdit     ########################
 
 
-/*###########################################################################################*/
-/* insertAbbrev                                                                              */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAbbrev                                                                              
+//###########################################################################################
 
 function insertAbbrev()
 {
@@ -883,9 +902,9 @@ function insertAbbrev()
     }
 }    
 
-/*###########################################################################################*/
-/* insertAbbrTag                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// insertAbbrTag                                                                             
+//###########################################################################################
 
 function insertAbbrTag()
 {
@@ -920,9 +939,9 @@ function insertAbbrTag()
     } 
 }    
     
-/*###########################################################################################*/
-/* insertExpanTag                                                                            */
-/*###########################################################################################*/
+//###########################################################################################
+// insertExpanTag                                                                            
+//###########################################################################################
 
 function insertExpanTag()
 {
@@ -984,7 +1003,7 @@ function insertExpanTag()
       finishAbbrev()
     }
   
-} /*########################     end insertExpanTag     ########################*/
+} //########################     end insertExpanTag     ########################
   
 
 function finishAbbrev()
@@ -1030,33 +1049,33 @@ function finishAbbrev()
     
   convertXML()
   
-} /*########################     end finishAbbrev                   ########################*/
+} //########################     end finishAbbrev                   ########################
 
-/*###########################################################################################*/
-/* tryitConversion                                                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// tryitConversion                                                                             
+//###########################################################################################
 
 function tryitConversion()
 {
   
-  //element = document.getElementById('tryit_input');
-  //element.focus();
-  convertValue = document.getElementById("tryit_input").value;
-  success = function(resp) 
-        {
-          valueback = resp.responseText;
-          document.getElementById("tryit_output").value = valueback;
-        } 
-  
   if (tryit_type == "xml2non")
     {
-      startxml = convertValue;
-      
+      startxml = document.getElementById("tryit_xml").value;
+      success = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_leiden").value = valueback;
+        }
       convertXML()
     }
   else
     {
-      //startleiden = convertValue;
+      convertValue = document.getElementById("tryit_leiden").value;
+      success = function(resp) 
+        {
+          valueback = resp.responseText;
+          document.getElementById("tryit_xml").value = valueback;
+        } 
       new Ajax.Request(window.opener.convLeiden2XML, 
         {
           method: 'get',
@@ -1068,14 +1087,13 @@ function tryitConversion()
             alert("Oops, there's been an error during Ajax call." + resp.responseText);   
           }
         });
-      //convertLeiden
     }
     
-} /*########################     end tryitConversion     ########################*/
+} //########################     end tryitConversion     ########################
   
-/*###########################################################################################*/
-/* ajax call to server to convert xml to leiden+                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// ajax call to server to convert xml to leiden+                                             
+//###########################################################################################
 
 function convertXML()
 {
@@ -1093,9 +1111,9 @@ function convertXML()
   });
 }
 
-/*###########################################################################################*/
-/* insert value into textbox - vti = value to insert                                         */
-/*###########################################################################################*/
+//###########################################################################################
+// insert value into textbox - vti = value to insert                                         
+//###########################################################################################
 
 function insertText(vti)
   {
@@ -1104,7 +1122,7 @@ function insertText(vti)
   //verification question if leave page without saving
   window.opener.set_conf_true();
 
-  if(typeof document.selection != 'undefined') /* means IE browser */
+  if(typeof document.selection != 'undefined') // means IE browser 
     {
       var range = window.opener.document.selection.createRange();
      
@@ -1117,7 +1135,7 @@ function insertText(vti)
       element = window.opener.document.getElementById('ddb_identifier_leiden_plus');
       element.focus();
       
-      if(typeof element.selectionStart != 'undefined') /* means Mozilla browser */
+      if(typeof element.selectionStart != 'undefined') // means Mozilla browser 
         {
           var start = element.selectionStart;
           var end = element.selectionEnd;
@@ -1129,11 +1147,11 @@ function insertText(vti)
           element = window.opener.document.getElementById('ddb_identifier_leiden_plus');
           element.focus();
         }
-      else /* not sure what browser */
+      else // not sure what browser 
         {
           element.value = element.value+vti;
         }
-    };
-  } /*########################     end insertText     ########################*/
+    }
+  } //########################     end insertText     ########################
 
 

@@ -28,6 +28,7 @@ class ApplicationController < ActionController::Base
   
   def authorize
     if @current_user.nil?
+      session[:entry_url] = request.url
       flash[:notice] = "Please log in"
       redirect_to signin_url
     end

@@ -13,9 +13,10 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
+  	showMatch('ddb_identifier_leiden_plus');
   }
   
-window.onload = init;
+document.observe("dom:loaded", init);
 
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
@@ -73,7 +74,7 @@ function helpDialogOpen(view)
       openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  default: /* nopts is default and need to clear optional xml values and leave diachar filled in */
+  default: // nopts is default and need to clear optional xml values and leave diachar filled in 
     {
       alert("Oops, error, this is not a valid helper dialog page " + view);
     }
@@ -83,9 +84,9 @@ function helpDialogOpen(view)
   window.open (newWindowURL, '', openconfig); 
 }
 
-/*###########################################################################################*/
-/* getFocusMain - get location for inserting later on before lose it - IE has biggest issue      */
-/*###########################################################################################*/
+//###########################################################################################
+// getFocusMain - get location for inserting later on before lose it - IE has biggest issue      
+//###########################################################################################
 
 function getFocusMain()
 {
@@ -93,9 +94,9 @@ function getFocusMain()
   element.focus();
 }
 
-/*###########################################################################################*/
-/* insertDiacriticalMain                                                                      */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDiacriticalMain                                                                      
+//###########################################################################################
 
 function insertDiacriticalMain(diacritical_type)
 {
@@ -118,11 +119,11 @@ function insertDiacriticalMain(diacritical_type)
   
 //  textToInsert = leidenh.replace(/A/,"");
 
-} /*########################     end insertDiacriticalMain     ########################*/
+} //########################     end insertDiacriticalMain     ########################
 
-/*###########################################################################################*/
-/* insertDeletionMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDeletionMain                                                                          
+//###########################################################################################
 
 function insertDeletionMain(deletion_type)
 {
@@ -137,11 +138,11 @@ function insertDeletionMain(deletion_type)
      }
   
   convertXMLMain(); 
-} /*########################     end insertDeletionMain     ########################*/
+} //########################     end insertDeletionMain     ########################
 
-/*###########################################################################################*/
-/* insertMilestoneMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertMilestoneMain                                                                          
+//###########################################################################################
 
 function insertMilestoneMain(milestone_type)
 {
@@ -156,11 +157,11 @@ function insertMilestoneMain(milestone_type)
      }
   
   convertXMLMain();
-} /*########################     end insertMilestoneMain     ########################*/
+} //########################     end insertMilestoneMain     ########################
 
-/*###########################################################################################*/
-/* insertDivisionMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDivisionMain                                                                          
+//###########################################################################################
 
 function insertDivisionMain(division_type)
 {
@@ -206,11 +207,11 @@ function insertDivisionMain(division_type)
      }
   });
 
-} /*########################     end insertDivisionMain     ########################*/
+} //########################     end insertDivisionMain     ########################
 
-/*###########################################################################################*/
-/* insert special unicode character - char_name passed as \u#### value to insert             */
-/*###########################################################################################*/
+//###########################################################################################
+// insert special unicode character - char_name passed as \u#### value to insert             
+//###########################################################################################
 
 function insertSpecialCharMain(char_name)
 {
@@ -219,9 +220,9 @@ function insertSpecialCharMain(char_name)
   insertTextMain(char_name);
 }
 
-/*###########################################################################################*/
-/* wrapxmlMain function                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// wrapxmlMain function                                                                          
+//###########################################################################################
 
 function wrapxmlMain(xml)
 {
@@ -229,9 +230,9 @@ function wrapxmlMain(xml)
   return temptopass;
 }
 
-/*###########################################################################################*/
-/* ajax call to server to convert xml to leiden+                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// ajax call to server to convert xml to leiden+                                             
+//###########################################################################################
 
 function convertXMLMain()
 {
@@ -248,9 +249,9 @@ function convertXMLMain()
   });
 }
 
-/*###########################################################################################*/
-/* insert value into textbox - vti = value to insert                                         */
-/*###########################################################################################*/
+//###########################################################################################
+// insert value into textbox - vti = value to insert                                         
+//###########################################################################################
 
 function insertTextMain(vti)
 { 
@@ -258,15 +259,16 @@ function insertTextMain(vti)
   //verification question if leave page without saving
   set_conf_true();
   
-  if(typeof document.selection != 'undefined') /* means IE browser */
+  if(typeof document.selection != 'undefined') // means IE browser 
     {
       var range = document.selection.createRange();
       range.text = vti;
       range.select();
       range.collapse(false);
     }
-  else 
-    if(typeof element.selectionStart != 'undefined') /* means Mozilla browser */
+  else
+    {
+    if(typeof element.selectionStart != 'undefined') // means Mozilla browser 
       {
         var start = element.selectionStart;
         var end = element.selectionEnd;
@@ -275,8 +277,10 @@ function insertTextMain(vti)
         element.selectionStart = pos;
         element.selectionEnd = pos;
       }
-    else /* not sure what browser */
+    else // not sure what browser 
       {
         element.value = element.value+c;
-      };
-} /*########################     end insertTextMain     ########################*/
+      }
+    }
+} //########################     end insertTextMain     ########################
+

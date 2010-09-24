@@ -1,0 +1,21 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'translation_helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #number_div{:class => "helperpop"}
+
+      %form{:name => "linebreak"}
+        %input{ :type => "checkbox", :class => "rend_frac_check_c", :name => "render_checkbox", :id => "render_checkbox", :value => "render", :enabled => "true", :checked => "true" }Render Line Break
+        %br
+        %br
+        
+        %input{ :type => "text", :class => "choosetext", :id => "linebreak_number", :size => "09"}Line Number
+   
+        %br
+      #button_left
+        %button{ :type => "button", :onclick=> "insertLinebreak()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close
+   

@@ -35,7 +35,7 @@
             %a{ :href => "#"}Language lines vel sim
           %li#10108{ :itemType => "separator"}
           %li#10109{ :jsFunction => "helpDialogOpen('gapellipNT')"}
-            %a{ :href => "#"}Not Transcribed
+            %a{ :href => "#"}Non-Transcribed
       %li#102{ :itemType => "separator"}
       %li#103{ :jsFunction => "helpDialogOpen('abbrev')"}
         %a{ :href => "#"} Abbreviation
@@ -156,12 +156,21 @@
           %li#11708{ :itemType => "separator"}
           %li#11709{ :jsFunction => "insertSpecialCharMain('\\u03DA')"}
             %a{ :href => "#"}Final Stigma Capital
+          %li#11710{ :itemType => "separator"}
+          %li#11711{ :jsFunction => "insertSpecialCharMain('\\u00AF')"}
+            %a{ :href => "#"}Supraline Spacing Macron
   %li#2{ :itemType => "separator"}
-  %li#3{ :jsFunction => "insertSpecialCharMain('\\u0323')"}
-    %a{ :href => "#"}UnderDot
+  %li#3{ :jsFunction => "window.open('#{documentation_url(:docotype => "text")}')"}
+    %a{ :href => "#"}Leiden+ Help
   %li#4{ :itemType => "separator"}
-  %li#5{ :jsFunction => "helpDialogOpen('tryit')"}
-    %a{ :href => "#"}Try It
+  %li#5{ :jsFunction => "insertSpecialCharMain('\\u0323')"}
+    %a{ :href => "#"}UnderDot
   %li#6{ :itemType => "separator"}
+  %li#7{ :jsFunction => "helpDialogOpen('tryit')"}
+    %a{ :href => "#"}Try It
+  %li#8{ :itemType => "separator"}
 %p
-  %div#menuDiv
+  -if identifier.mutable?
+    %div#menuDiv
+  -else
+    %div#menuDiv{ :style => "display:none"}

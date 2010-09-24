@@ -31,14 +31,18 @@ module NumbersRDF
         return url_paths.join('/')
       end
       
-      def sparql_query_to_path(sparql_query)
-        "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+      def sparql_query_to_path(sparql_query, format = '')
+        path = "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+        if format != ''
+          path += "&format=#{format}"
+        end
+        return path
       end
       
       def identifier_to_url(identifier)
         result = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:references/@rdf:resource", identifier)
-        if result.nil?
+        if result.blank?
           return "http://#{NUMBERS_SERVER_DOMAIN}"
         else
           return result.last
@@ -51,8 +55,8 @@ module NumbersRDF
                                           NUMBERS_SERVER_PORT)
       end
       
-      def sparql_query_to_numbers_server_response(sparql_query)
-        path = sparql_query_to_path(sparql_query)
+      def sparql_query_to_numbers_server_response(sparql_query, format = '')
+        path = sparql_query_to_path(sparql_query, format)
         response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
                                           NUMBERS_SERVER_PORT)
       end

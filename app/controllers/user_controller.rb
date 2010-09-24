@@ -1,5 +1,6 @@
 class UserController < ApplicationController
   layout 'site'
+  before_filter :authorize, :except => [:signin, :signout]
   
   def signout
     reset_session
@@ -68,18 +69,30 @@ class UserController < ApplicationController
     end
     #below selects publications to show in standard user data section of dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
-    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
-    #below selects publications current user is responsible for finalizing to show in board section of dashboard
-    #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
-    @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => :identifiers, :order => "updated_at DESC")
+    
+    unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
+      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    end
+    
+    unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")
+      #below selects publications current user is responsible for finalizing to show in board section of dashboard
+      #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
+      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
        
-    @boards = @current_user.boards   
-    #or do we want to use the creator id?
-    #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
+      @boards = @current_user.boards
+      #or do we want to use the creator id?
+      #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
+    end
     
-    @events = Event.find(:all, :order => "created_at DESC",
-                         :include => [:owner, :target])[0..25]
+    if !fragment_exist?(:action => 'dashboard', :part => 'events_list_time') || (Time.now > (read_fragment(:action => 'dashboard', :part => 'events_list_time') + 60))
+      write_fragment({:action => 'dashboard', :part => 'events_list_time'}, Time.now)
+      expire_fragment(:action => 'dashboard', :part => 'events_list')
+    end
     
+    unless fragment_exist?(:action => 'dashboard', :part => 'events_list')
+      @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
+                           :include => [:owner, :target])[0..24]
+    end
   end
   
   def archives

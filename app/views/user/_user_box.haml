@@ -4,17 +4,26 @@
     .links
       = link_to 'home', dashboard_url
       \|
-      - if @current_user.developer
-        = link_to 'developer', developer_url
-        \|
+      = link_to 'account', account_url
+      \|
+      = link_to 'help', help_url, :onclick => "window.open(this.href);return false;"
+      -# can uncomment lines below to put links directly to text and translation help pages
+      -#= link_to 'Text Leiden+ Help', documentation_url(:docotype => "text"), :onclick => "window.open(this.href);return false;"
+      -#\|
+      -#= link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation"), :onclick => "window.open(this.href);return false;"
+      \|
+      = link_to 'sign out', signout_url
+      %p
       - if @current_user.admin 
         = link_to 'boards', boards_url
         \|
-      = link_to 'account', account_url
-      \|
-      = link_to 'help', help_url
-      \|
-      = link_to 'sign out', signout_url
+        = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
+        \|
+        = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+        \|
+      - if @current_user.developer
+        = link_to 'developer', developer_url
+        
 - else
   #signin
     = link_to 'Sign In', signin_url

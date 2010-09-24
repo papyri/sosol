@@ -110,7 +110,14 @@ class RpxController < ApplicationController
       session[:user_id] = user.id
       #redirect_to :controller => "welcome", :action => "index"
       #redirect to dashboard
-      redirect_to :controller => "user", :action => "dashboard"
+      if !session[:entry_url].blank?
+        redirect_to session[:entry_url]
+        session[:entry_url] = nil
+        return
+      else
+        redirect_to :controller => "user", :action => "dashboard"
+        return
+      end
     else
       session[:identifier] = identifier
       @name = guess_name data
@@ -157,7 +164,14 @@ class RpxController < ApplicationController
 
     session[:user_id] = user.id
     session[:identifier] = nil
-    redirect_to :controller => "welcome", :action => "index"
+    
+    if !session[:entry_url].blank?
+      redirect_to session[:entry_url]
+      session[:entry_url] = nil
+      return
+    else
+      redirect_to :controller => "welcome", :action => "index"
+    end
   end
 
   private

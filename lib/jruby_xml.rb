@@ -1,6 +1,6 @@
 module JRubyXML
   class ParseError < ::StandardError
-    attr :line, :column
+    attr_accessor :line, :column
     
     def initialize(line, column)
       @line = line
@@ -69,7 +69,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "http://www.stoa.org/epidoc/schema/8/tei-epidoc.rng")
+        "http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng")
     end
   end
   
@@ -187,7 +187,11 @@ module JRubyXML
     def apply_xsl_transform(xml_stream, xsl_stream, parameters = {})
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
-
+      
+      parameters.each do |parameter, value|
+        transformer.setParameter(parameter.to_s, value)
+      end
+      
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
 
@@ -224,8 +228,8 @@ module JRubyXML
       transformer = get_transformer()
       transformer.setOutputProperty(
         javax.xml.transform.OutputKeys.const_get('INDENT'), "yes")
-      transformer.setOutputProperty(
-        "{http://xml.apache.org/xslt}indent-amount", "2")
+      # transformer.setOutputProperty(
+      #   "{http://xml.apache.org/xslt}indent-amount", "2")
       
       string_writer = java.io.StringWriter.new()
       result = javax.xml.transform.stream.StreamResult.new(string_writer)
