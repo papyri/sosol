@@ -1,14 +1,17 @@
 var diacritical_type_one = "acute";
 var diacritical_type_two = "asper";
-var gap_type = "character";
+var gap_type = "lost";
+var gap_lang = "Demotic";
+var gap_unit = "character";
+var gap_qty = "given";
+var gap_qtyextent = "quantity";
+var gap_value = "unknown";
 var diacritical_option = "nopts";
 var tryit_type = "xml2non";
 var valueback = "";
 var xmltopass = "initial";
 var number_type = "other";
 var abbrev_type = "expan";
-var elliplang = "Demotic";
-var vestig_type = "character";
 //default definition of what to do on successful ajax call
 var success = function(resp) {
         leidenh = resp.responseText;
@@ -32,11 +35,6 @@ function closeHelper()
 // begin the check functions                                                                 
 //###########################################################################################
 
-function checkelliplang(id)
-{
-  elliplang = document.getElementById(id).value;
-}
-
 //###########################################################################################
 // sets 2 values to be used in insertDiacriticalSub                                          
 // accepts 2 parms - 1 = the diacritical html form id, 2= which variable to set (1 or 2)     
@@ -54,14 +52,108 @@ function checktypedia(id,dia)
     }
 }
 
-function checktypegap(id)
+function checkgapalltype(id)
 {
   gap_type = document.getElementById(id).value;
+
+  if ((gap_type == "ellipsis" && gap_lang != "notspecify") || (gap_qty != "given")) //circa allowed on non-transcribed only
+    {
+      document.gapallform.gapallcirca.checked = false;
+      document.gapallform.gapallcirca.disabled = true;
+    }
+  else
+     {
+      document.gapallform.gapallcirca.checked = false;
+      document.gapallform.gapallcirca.disabled = false;
+     }
+}
+
+function checkgapalllang(id)
+{
+  gap_lang = document.getElementById(id).value;
+  document.gapallform.ellipsis.checked = true;
+  gap_type = "ellipsis";
+  if (gap_lang == "notspecify" && gap_qty == "given") //circa allowed on non-transcribed only
+    {
+      document.gapallform.gapallcirca.checked = false;
+      document.gapallform.gapallcirca.disabled = false;
+    }
+   else
+     {
+      document.gapallform.gapallcirca.checked = false;
+      document.gapallform.gapallcirca.disabled = true;
+     }
+}
+
+function checkgapallunit(id)
+{
+  gap_unit = document.getElementById(id).value;
+}
+
+function checkgapallqty(id)
+{
+  gap_qty = document.getElementById(id).value;
+  if (gap_qty == "given")
+    {
+      document.getElementById("range1").value = "";
+      document.getElementById("range2").value = "";
+      document.gapallform.range1.disabled = true;
+      document.gapallform.range2.disabled = true;
+      if (gap_type == "ellipsis" && gap_lang != "notspecify") //circa only allowed on non-transcribed only
+        {
+          document.gapallform.gapallcirca.checked = false;
+          document.gapallform.gapallcirca.disabled = true;
+        }
+      else
+        {
+          document.gapallform.gapallcirca.checked = false;
+          document.gapallform.gapallcirca.disabled = false;
+        }
+      document.gapallform.given_value.disabled = false;
+    }
+  else
+    if (gap_qty == "range")
+      {
+        document.getElementById("given_value").value = "";
+        document.gapallform.given_value.disabled = true;
+        document.gapallform.gapallcirca.checked = false;
+        document.gapallform.gapallcirca.disabled = true;
+        document.gapallform.range1.disabled = false;
+        document.gapallform.range2.disabled = false;
+      }
+    else //unknown
+      {
+        document.getElementById("range1").value = "";
+        document.getElementById("range2").value = "";
+        document.gapallform.range1.disabled = true;
+        document.gapallform.range2.disabled = true;
+        document.getElementById("given_value").value = "";
+        document.gapallform.given_value.disabled = true;
+        document.gapallform.gapallcirca.checked = false;
+        document.gapallform.gapallcirca.disabled = true;
+      }
 }
 
 function checktypeabbrev(id)
 {
   abbrev_type = document.getElementById(id).value;
+  
+  if (abbrev_type == "expan")
+    {
+      document.abbrev.abbr_text.disabled = true;
+      document.abbrev.expan_text.disabled = false;
+      document.getElementById("abbr_text").value = "";
+      document.abbrev.abbrev2sp_cb.checked = false;
+      document.abbrev.abbrev2sp_cb.disabled = false;
+    }
+  else
+    {
+      document.abbrev.expan_text.disabled = true;
+      document.abbrev.abbr_text.disabled = false;
+      document.getElementById("expan_text").value = "";
+      document.abbrev.abbrev2sp_cb.checked = false;
+      document.abbrev.abbrev2sp_cb.disabled = true;
+    }
 }
 
 function checktryit(id)
@@ -69,25 +161,10 @@ function checktryit(id)
   tryit_type = document.getElementById(id).value;
 }
 
-function checktypevestig(id)
-{
-  vestig_type = document.getElementById(id).value;
-  
-  if (vestig_type == "line")
-    {
-      document.vestig.vestiglow_check_n.disabled = false;
-    }
-  else
-    {
-      document.vestig.vestiglow_check_n.checked = false;
-      document.vestig.vestiglow_check_n.disabled = true;
-    }
-}
-
 function checktypenum(id)
 {
   number_type = document.getElementById(id).value;
-  if (number_type == "fraction" || number_type == "nested")
+  if (number_type == "fraction")
     {
       document.number.rend_frac_check_n.checked = false;
       document.number.rend_frac_check_n.disabled = true;
@@ -172,7 +249,25 @@ function insertAppAlt()
     }
   else
     {
-      startxml = "<app type=\"alternative\"><lem>" + lem + "</lem><rdg>" + rdg + "</rdg></app>";
+      if (document.appaltlem.lemcert.checked == true) // check the lem uncertain attribute 
+        {
+          optlemcert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          optlemcert = "";
+        }
+      
+      if (document.appaltrdg.rdgcert.checked == true) // check the rdg uncertain attribute 
+        {
+          optrdgcert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          optrdgcert = "";
+        }
+      
+      startxml = "<app type=\"alternative\"><lem>" + lem + optlemcert + "</lem><rdg>" + rdg + optrdgcert + "</rdg></app>";
         
       convertXML()
     }
@@ -190,7 +285,7 @@ function insertAppBL()
   
   if (lem.length == 0)
     {
-      alert("Lem cannot be left blank");
+      alert("'Correct form' cannot be left blank");
     }
   else
     {
@@ -221,13 +316,13 @@ function insertAppSoSOL()
   
   if (lem.length == 0)
     {
-      alert("Lem cannot be left blank");
+      alert("'Correct form' cannot be left blank");
     }
   else
     {
       if (resp.length == 0)
         {
-          alert("Resp cannot be left blank - please type in your sir name");
+          alert("'Authority' cannot be left blank - please type in your sir name");
         }
       else
         {
@@ -246,29 +341,37 @@ function insertAppSoSOL()
 
 function insertAppEdit()
 {
-  lem = document.getElementById("appeditlem_value").value;
-  resp = document.getElementById("appeditresp_value").value;
-  rdg = document.getElementById("appeditrdg_value").value;
+  lem = document.getElementById("appeditlem_value").value; //correct form
+  resp = document.getElementById("appeditresp_value").value; //citation
+  rdg = document.getElementById("appeditrdg_value").value; //original form
   
-  if (lem.length == 0  && resp.length == 0 && rdg.length ==  0)
-    {
-      alert("All 3 cannot be left blank - must fill in at least 1");
-    }
-  else
+  if (lem.length == 0 && rdg.length ==  0)
     {
       if (resp.length == 0)
         {
-          lemnode = "<lem>" + lem + "</lem>";
+          alert("All three entries cannot be blank and must have either 'Correct form' or 'Original'");
         }
       else
         {
-          lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
+        
+          alert("Citation is not enough.  Must have 'Correct form', 'Original', or both");
         }
-      
-      startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-              
-      convertXML()
     }
+  else
+      {
+        if (resp.length == 0)
+          {
+            lemnode = "<lem>" + lem + "</lem>";
+          }
+        else
+          {
+            lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
+          }
+      
+        startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
+                
+        convertXML()
+      }
 } //########################     end insertAppEdit     ########################
 
 //###########################################################################################
@@ -279,26 +382,33 @@ function insertAppOrth()
 {
   corr = document.getElementById("apporthcorr_value").value;
   sic = document.getElementById("apporthsic_value").value;
-  if (document.apporthcorr.low.checked == true) // check the cert low attribute 
+  if (corr.length == 0  || sic.length ==  0)
     {
-      corrstart = "<corr cert=\"low\">";
+      alert("Must have 'Normalized form' and 'Non\-standard form' filled in");
     }
   else
     {
-      corrstart = "<corr>";
+      if (document.apporthcorr.low.checked == true) // check the corr uncertain attribute 
+        {
+          corrstart = "<corr cert=\"low\">";
+        }
+      else
+        {
+          corrstart = "<corr>";
+        }
+      if (document.apporthsic.low.checked == true) // check the sic uncertain attribute 
+        {
+          optsiccert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          optsiccert = "";
+        }
+      
+      startxml = "<choice>" + corrstart + corr + "</corr><sic>" + sic + optsiccert + "</sic></choice>";
+           
+      convertXML()
     }
-  if (document.apporthsic.low.checked == true) // check the cert low attribute 
-    {
-      sicstart = "<sic cert=\"low\">";
-    }
-  else
-    {
-      sicstart = "<sic>";
-    }
-  
-  startxml = "<choice>" + corrstart + corr + "</corr>" + sicstart + sic + "</sic></choice>";
-       
-  convertXML()
   
 } //########################     end insertAppOrth     ########################
 
@@ -310,18 +420,33 @@ function insertAppSubst()
 {
   addplace = document.getElementById("appsubstadd_value").value;
   delrend = document.getElementById("appsubstdel_value").value;
-  if (document.appsubstadd.low.checked == true) // check the cert low attribute 
+  if (addplace.length == 0  || delrend.length ==  0)
     {
-      addstart = "<add cert=\"low\" place=\"inline\">";
+      alert("Must have 'Correct form' and 'Original form' filled in");
     }
   else
     {
-      addstart = "<add place=\"inline\">";
+      if (document.appsubstadd.addcert.checked == true) // check the add uncertain attribute 
+        {
+          optaddcert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          optaddcert = "";
+        }
+      if (document.appsubstdel.delcert.checked == true) // check the del uncertain attribute 
+        {
+          optdelcert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          optdelcert = "";
+        }
+      
+      startxml = "<subst><add place=\"inline\">" + addplace + optaddcert + "</add><del rend=\"corrected\">" + delrend + optdelcert + "</del></subst>";
+           
+      convertXML()
     }
-  
-  startxml = "<subst>" + addstart + addplace + "</add><del rend=\"corrected\">" + delrend + "</del></subst>";
-       
-  convertXML()
   
 } //########################     end insertAppSubst     ########################
 
@@ -358,143 +483,144 @@ function insertDiacriticalSub()
 } //########################     end insertDiacriticalSub     ########################
 
 //###########################################################################################
-// insert gap lost/illegible                                                                 
+// insert gap start to do initial edits and determine where to go next                                                                 
 //###########################################################################################
 
-function insertGap(type)
+function insertGapStart()
 {
-  optprecis = "";
-  
   editpass = "yes";
-  
-  if (type == "lost")
+  if (gap_qty == "given")
     {
-      lostextent = document.getElementById("gaplost_value").value.toLowerCase();
-    }
-  else
-    {
-      lostextent = document.getElementById("gapilleg_value").value.toLowerCase();
-    }
-  
-  if (lostextent.length < 1) 
-    {
-      alert("Need 1 character for gap lost/illegible extent");
-      editpass = "no";
-    }
-  else
-    {
-      if (isNumeric(lostextent) == true) // digits 0-9
+      gap_value = document.getElementById("given_value").value;
+      if (gap_value.length < 1) 
         {
-          qtyext = "quantity";
+          alert("Need at least 1 numeric character in given quantity");
+          editpass = "no";
         }
       else
         {
-          if (lostextent == "?")
+          if (isNumeric(gap_value) == true) // digits 0-9
             {
-              qtyext = "extent";
-              lostextent = "unknown";
+              gap_qtyextent = "quantity";
             }
           else
             {
-              if (lostextent == "ca.?")
-                {
-                  qtyext = "extent";
-                  lostextent = "unknown";
-                  optprecis = " precision=\"low\"";
-                }
-              else
-                {
-                  if (isNumericRange(lostextent) == true) // ex. 1-3
-                    {
-                      range = lostextent.split("-",2)
-                      qtyext = "atLeast=\"" + range[0] + "\" atMost";
-                      lostextent = range[1];
-                    }
-                  else
-                    {
-                      if (isNumericCirca(lostextent) == true) // ex. c.3
-                        {
-                          qtyext = "extent";
-                        }
-                      else
-                        {
-                          if (type == "illegible")
-                            {
-                              if (isNumericCircaDigit(lostextent) == true) // ex. ca.3 or ca.c.2
-                                {
-                                  circa = lostextent.split(".")
-                                  if (circa.length == 2)
-                                    {
-                                      qtyext = "quantity";
-                                      lostextent = circa[1];
-                                    }
-                                  else
-                                    {
-                                      qtyext = "extent";
-                                      lostextent = "c." + circa[2];
-                                    }
-                                  optprecis = " precision=\"low\"";
-                                }
-                              else
-                                {
-                                  alert("Invalid characters in gap illegible extent");
-                                  editpass = "no";
-                                }
-                            }
-                          else
-                            {
-                              alert("Invalid characters in gap lost/illegible extent");
-                              editpass = "no";
-                            }
-                        }
-                    }
-                }
+              alert("Invalid characters in given quantity - must be numeric only");
+              editpass = "no";
             }
         }
     }
-  
+  else
+    {
+      if (gap_qty == "range")
+        {
+          gap_range1 = document.getElementById("range1").value;
+          gap_range2 = document.getElementById("range2").value;
+          if (gap_range1.length < 1 || gap_range2.length < 1) 
+            {
+              alert("Need to fill in both range boxes numeric characters");
+              editpass = "no";
+            }
+          else
+            {
+              if (isNumeric(gap_range1) == true && isNumeric(gap_range2) == true) // digits 0-9
+                {
+                  gap_qtyextent = "atLeast=\"" + gap_range1 + "\" atMost";
+                  gap_value = gap_range2 
+                }
+              else
+                {
+                  alert("Invalid characters in 1 or both range quantities - must be numeric only");
+                  editpass = "no";
+                }
+            }
+        }
+      else //checked unknown quantity
+        {
+          gap_qtyextent = "extent";
+          gap_value = "unknown";
+        }
+    }
   if (editpass == "yes")
     {
-      startxml = "<gap reason=\"" + type + "\" " + qtyext + "=\"" + lostextent + "\" unit=\"" + gap_type + "\"" + optprecis + "/>";
-     
-      convertXML()
+      if (gap_type == "lost" || gap_type == "illegible")
+        {
+          insertGap()
+        }
+      else //has to be ellipsis so check if want non-transcribed gap or language
+        {
+          if (gap_lang == "notspecify")
+            {
+              insertGapEllipNT() //non_transcribed
+            }
+          else //had to have checked a language
+            {
+              if (gap_qty == "range")
+                {
+                  alert("Rangy quantity not valid with language - must be given or unknown");
+                }
+              else
+              {
+                insertGapEllipLang() //with language
+              }
+            }
+        }
     }
+} //########################     end insertGapStart     ########################
+
+//###########################################################################################
+// insert gap lost/illegible                                                                 
+//###########################################################################################
+
+function insertGap()
+{
+  if (document.gapallform.gapallcirca.checked == true) // circa checkbox checked
+  {
+    optprecis = " precision=\"low\"";
+  }
+  else
+  {
+    optprecis = "";
+  }
+
+  //editpass = "yes";
+  
+  if (document.gapallform.gapallcert.checked == true) // certainty checkbox checked
+    {
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"" + optprecis + "><certainty match=\"..\" locus=\"name\"/></gap>";
+    }
+  else
+    {
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"" + optprecis + "/>";
+     
+      
+    }
+   
+   convertXML()
+   
 } //########################     end insertGapLost     ########################
 
 //###########################################################################################
 // insert gap ellipsis language                                                              
 //###########################################################################################
 
-function insertGapEllipLang(type)
+function insertGapEllipLang()
 {
-  elliplangextent = document.getElementById("gapelliplang_value").value;
+  //do not check the circa checkbox for language - not valid
   
-  editpass = "yes";
-  
-  if (elliplangextent.length < 1) 
+  if (document.gapallform.gapallcert.checked == true) // certainty checkbox checked
     {
-      qtyext = "extent=\"unknown\""; 
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"><desc>" + gap_lang + "</desc><certainty match=\"..\" locus=\"name\"/></gap>";
     }
   else
     {
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"><desc>" + gap_lang + "</desc></gap>";
+     
       
-      if (isNumeric(elliplangextent) == true) // digits 0-9
-        {
-          qtyext = "quantity=\"" + elliplangextent + "\"";
-        }
-      else
-        {
-          alert("Ellipsis line extent must be blank for unknown or numeric digits only");
-          editpass = "no";
-        }
     }
+   
+   convertXML()
   
-  if (editpass == "yes")
-    {
-      startxml = "<gap reason=\"ellipsis\" " + qtyext + " unit=\"line\"><desc>" + elliplang + "</desc></gap>";
-          
-      convertXML()
-    }
 } //########################     end insertGapEllipLang     ########################
 
 //###########################################################################################
@@ -503,116 +629,31 @@ function insertGapEllipLang(type)
 
 function insertGapEllipNT()
 {
-  editpass = "yes";
-  
-  ellipNTextent = document.getElementById("gapellipNT_value").value;
-  
-  if (gap_type == "line")
-    {
-      if (ellipNTextent.length > 0 && isNumeric(ellipNTextent) == true) // extent not blank and digits 0-9
-        {
-          qtyext = "quantity=\"" + ellipNTextent + "\"";
-          descnode = "";
-        }
-      else
-        {
-          alert("Need 1 or more numeric digits for extent of non-transcribed line");
-          editpass = "no";
-        }
-    }
-  else //character
-    {
-      if (ellipNTextent.length < 1) //blank extent = unknown
-        {
-          qtyext = "extent=\"unknown\"";
-          descnode = "<desc>non transcribed</desc>";
-        }
-      else
-        {
-          if (isNumericRange(ellipNTextent) == true)
-            {
-              range = ellipNTextent.split("-",2)
-              qtyext = "atLeast=\"" + range[0] + "\" atMost=\"" + range[1] + "\"";
-              descnode = "<desc>non transcribed</desc>";
-            }
-          else
-            {
-              alert("Ellipsis character extent must be blank for unknown or a numeric range e.g. 1-3");
-              editpass = "no";
-            }
-        }
-    }
-  
-  if (editpass == "yes")
-    {
-      startxml = "<gap reason=\"ellipsis\" " + qtyext + " unit=\"" + gap_type + "\">" + descnode + "</gap>";
-          
-      convertXML()
-    }
-} //########################     end insertGapEllipNT     ########################
+  if (document.gapallform.gapallcirca.checked == true) // circa checkbox checked
+  {
+    optprecis = " precision=\"low\"";
+  }
+  else
+  {
+    optprecis = "";
+  }
 
-//###########################################################################################
-// insert vestig                                                                             
-//###########################################################################################
-
-function insertVestig()
-{
-  editpass = "yes";
+  //editpass = "yes";
   
-  vestigextent = document.getElementById("vestig_value").value.toLowerCase();  //lowercase for grammar
-  
-  desc = "<desc>vestiges</desc>";  //default - nulled if not needed
-  optprecis = "";
-  if (vestigextent.length < 1) //blank extent text = extent unknown
+  if (document.gapallform.gapallcert.checked == true) // certainty checkbox checked
     {
-      qtyext = "extent=\"unknown\"";
-      if (vestig_type == "line")
-        {
-          desc = "";
-        }
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"" + optprecis + "><desc>non transcribed</desc><certainty match=\"..\" locus=\"name\"/></gap>";
     }
   else
     {
-      if (isNumeric(vestigextent) == true) // digits 0-9
-        {
-          qtyext = "quantity=\"" + vestigextent + "\"";
-        }
-      else
-        {
-          if (isNumericCirca(vestigextent) == true) // ex. c.3
-            {
-              qtyext = "extent=\"" + vestigextent + "\"";
-            }
-          else
-            {
-              alert("Invalid characters in vestig extent - valid e.g 7 or c.7");
-              editpass = "no";
-            }
-        }
+      startxml = "<gap reason=\"" + gap_type + "\" " + gap_qtyextent + "=\"" + gap_value + "\" unit=\"" + gap_unit + "\"" + optprecis + "><desc>non transcribed</desc></gap>";
+     
+      
     }
-  if (editpass == "yes")
-    {  // cert low can only be checked if type is line and valid extent entered
-      if (document.vestig.vestiglow_check_n.checked == true)
-        {
-          if (vestigextent.length > 0)
-            {
-              optprecis = " precision=\"low\"";
-            }
-          else
-            {
-              alert("Cannot have unknown (blank) extent with cert low checked");
-              editpass = "no";
-            }
-        }
-    }
+   
+   convertXML()
   
-  if (editpass == "yes")
-    {
-      startxml = "<gap reason=\"illegible\" " + qtyext + " unit=\"" + vestig_type + "\"" + optprecis + ">" + desc + "</gap>";
-    
-      convertXML()
-    }
-} //########################     end insertVestig     ########################
+} //########################     end insertGapEllipNT     ########################
 
 //###########################################################################################
 // insertDivisionSub                                                                             
@@ -683,52 +724,14 @@ function insertNum()
     editpass = "yes";
     break;
   
-  case "nested":
-  
-    nestnum = document.getElementById("nested_number").value;
-    if (nestnum.length < 1 || isNumeric(nestnum) == false) 
-      {
-        alert("At least 1 numeric digit needed for nested number");
-        editpass = "no";
-        break;
-      }
-    nestwhole = document.getElementById("nested_whole").value;
-    if (nestwhole.length < 1 || isNumeric(nestwhole) == false) 
-      {
-        alert("At least 1 numeric digit needed for nested whole number");
-        editpass = "no";
-        break;
-      }
-    nestwholecontent = document.getElementById("nested_whole_content").value;
-    if (nestwholecontent.length < 1) 
-      {
-        alert("At least 1 character needed for nested whole number content");
-        editpass = "no";
-        break;
-      }
-    nestpart = document.getElementById("nested_partial").value;
-    if (nestpart.length < 1 || isNumeric(nestpart) == false) 
-      {
-        alert("At least 1 numeric digit needed for nested partial number");
-        editpass = "no";
-        break;
-      }
-    nestpartcontent = document.getElementById("nested_partial_content").value;
-    if (nestpartcontent.length < 1) 
-      {
-        alert("At least 1 character needed for nested part number content");
-        editpass = "no";
-        break;
-      }
-  break; //nested
-  
   case "other": //this code will change the value of num_type edits passed so finishNum processes correctly
   
     numval = document.getElementById("number_value").value;
     numcontent = document.getElementById("number_content").value;
-    {if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty
+
+    {if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty or contains space
       {
-        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content both empty
+        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content empty or contains space
           {
             alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
             editpass = "no";
@@ -801,7 +804,7 @@ function finishNum()
       {
         startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
       }
-    //startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+    
     break;
   
   case "content":
@@ -817,11 +820,6 @@ function finishNum()
   case "fraction":
   
     startxml = "<num type=\"fraction\"/>";
-    break;
-  
-  case "nested":
-  
-    startxml = "<num value=\"" + nestnum + "\">" + "<num value=\"" + nestwhole + "\">" + nestwholecontent + "</num>" + "<num value=\"" + nestpart + "\">" + nestpartcontent + "</num>" + "</num>";
     break;
   
   default:
@@ -878,26 +876,29 @@ function insertAbbrev()
 {
   editpass = "yes";
   
-  abbrevtext = document.getElementById("abbrev_value").value;
-  
   /* lp = left paren position, rp = right paren position, qm = question mark position, 
      llp = last left paren position, lrp = last right paren position
   
   last positions used to see if multiple left/right parens or question marks have been entered */
   
-  lp = abbrevtext.indexOf("(");
-  rp = abbrevtext.indexOf(")");
-  qm = abbrevtext.indexOf("?");
-  llp = abbrevtext.lastIndexOf("(");
-  lrp = abbrevtext.lastIndexOf(")");
-  
-//      alert("between parens " + abbrevtext.substr(lp+1,2));
   if (abbrev_type == "expan") // expan radio button clicked
     {
+      abbrevtext = document.getElementById("expan_text").value;
+      lp = abbrevtext.indexOf("(");
+      rp = abbrevtext.indexOf(")");
+      qm = abbrevtext.indexOf("?");
+      llp = abbrevtext.lastIndexOf("(");
+      lrp = abbrevtext.lastIndexOf(")");
       insertExpanTag();
     }
   else // abbr radio button clicked
     {
+      abbrevtext = document.getElementById("abbr_text").value;
+      lp = abbrevtext.indexOf("(");
+      rp = abbrevtext.indexOf(")");
+      qm = abbrevtext.indexOf("?");
+      llp = abbrevtext.lastIndexOf("(");
+      lrp = abbrevtext.lastIndexOf(")");
       insertAbbrTag();
     }
 }    
@@ -945,20 +946,6 @@ function insertAbbrTag()
 
 function insertExpanTag()
 {
-  //editpass = "yes";
-  
-  //abbrevtext = document.getElementById("abbrev_value").value;
-  
-  /* lp = left paren position, rp = right paren position, qm = question mark position, llp = last left paren position,
-     lrp = last right paren position, lqm = last question mark position - last positions used to see if multiple left/right
-     parens or question marks have been entered */
-  
-  /*lp = abbrevtext.indexOf("(");
-  rp = abbrevtext.indexOf(")");
-  qm = abbrevtext.indexOf("?");
-  llp = abbrevtext.lastIndexOf("(");
-  lrp = abbrevtext.lastIndexOf(")");
-  lqm = abbrevtext.lastIndexOf("?");*/
   
   if (lp == -1 || rp == -1) //text does not contain parens
     {
@@ -1020,14 +1007,19 @@ function finishAbbrev()
           expandcont = abbrevtext.slice(0,lp);
           excont = abbrevtext.slice(lp + 1,rp).replace(/\?/, "");
         }
-      else // has to be -1 so no parens which means expan text only - no ex
+      else // has to be -1 so no parens which means expan text only - no ex - should not ever happen due to edit above
         {
           expandcont = abbrevtext;
           excont = "";
         }
     }
   
-  if (document.abbrev.abbrevlow_check_n.checked == true) // check cert low attribute radio button
+  if (document.abbrev.abbrev2sp_cb.checked == true) // checked add 2 spaces checkbox
+    {
+      excont = excont + "  ";
+    }
+    
+  if (document.abbrev.abbrevlow_check_n.checked == true) // check cert low attribute checkbox
     {
       extagbeg = "<ex cert=\"low\">";
     }

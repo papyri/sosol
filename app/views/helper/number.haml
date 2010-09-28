@@ -10,32 +10,20 @@
       #numcol1
         #numtype_div
           %input{ :checked => "", :type => "radio", :class => "number_radio", :id => "valuecontent", :name => "number_type", :value => "other", :onclick => "checktypenum(this.id)"}Value &/or Content
-          <br/>
+          %br
           %input{ :type => "radio", :class => "number_radio", :id => "fraction", :name => "number_type", :value => "fraction", :onclick => "checktypenum(this.id)"}FRAC
-          <br/>
-          %input{ :type => "radio", :class => "number_radio", :id => "nested", :name => "number_type", :value => "nested", :onclick => "checktypenum(this.id)"}Nested Large
         #numbutton_div
           %button{ :type => "button", :onclick=>"insertNum()" }Insert
           &nbsp
           %button{:type => "button", :onclick => "closeHelper()"}Close
       #numcol2
         #numinp_div
-          %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Value to Insert
-          <br/>
-          %input{ :type => "text", :class => "choosetext greek", :id => "number_content", :size => "04"}Number Content to Insert
-          <br/>
-          <br/>
+          %input{ :type => "text", :class => "choosetext greek", :id => "number_content", :size => "04"}Greek/Latin content on papyrus, e.g. κε, γ
+          %br
+          %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Numerical value, e.g. 25, 1/3
+          %br
+          %br
           %form{:name => "number"}
-            %input{ :type => "checkbox", :class => "rend_frac_check_c", :id => "rendfrac", :name => "rend_frac_check_n", :value => "rendfrac", :enabled => "true"}Rend as Fraction
+            %input{ :type => "checkbox", :class => "rend_frac_check_c", :id => "rendfrac", :name => "rend_frac_check_n", :value => "rendfrac", :enabled => "true"}select if scribe indicated fraction with tick (’)
+            &nbsp
             %input{ :type => "checkbox", :class => "certainty_check_c", :id => "certname", :name => "certainty_check_n", :value => "certname", :enabled => "true"}Apply Certainty
-        #nestwhole_div
-          %input{ :type => "text", :class => "choosetext", :id => "nested_number", :size => "09"}Number
-          &nbsp
-          %input{ :type => "text", :class => "choosetext", :id => "nested_whole", :size => "09"}Whole
-          &nbsp
-          %input{ :type => "text", :class => "choosetext greek", :id => "nested_whole_content", :size => "04"}Whole Content
-        #nestpart_div
-          %input{ :type => "text", :class => "choosetext", :id => "nested_partial", :size => "04"}Partial
-          &nbsp &nbsp &nbsp &nbsp
-          %input{ :type => "text", :class => "choosetext greek", :id => "nested_partial_content", :size => "04"}Partial Content
-       

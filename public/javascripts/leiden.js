@@ -25,10 +25,6 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "gapellipNT":
-  case "gapilleg":
-  case "gaplost":
-  case "vestig":
   case "division":
     {
       openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
@@ -41,37 +37,46 @@ function helpDialogOpen(view)
     }
   case "abbrev":
     {
-      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=325, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  case "gapelliplang":
+  case "gapall":
     {
-      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "appalt":
+    {
+      openconfig = config='height=250, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
   case "appsubst":
     {
-      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "apporth":
     {
-      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=370, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
+    {
+      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
+  
   case "appBL":
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=225, width=850, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=225, width=750, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   default: // nopts is default and need to clear optional xml values and leave diachar filled in 
@@ -102,8 +107,8 @@ function insertDiacriticalMain(diacritical_type)
 {
   getFocusMain()
   
-  /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
-     XML to pass the xsugar grammar - stripped back out when returns */
+  // type is parm passed from view javascript call - 'A' is the default character to pass in the 
+  //   XML to pass the xsugar grammar - stripped back out when returns 
   
   startxml = "<hi rend=\"" + diacritical_type + "\">A</hi>";
   
