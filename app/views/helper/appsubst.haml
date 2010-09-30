@@ -13,7 +13,7 @@
             %input{ :type => "checkbox", :class => "addcert", :id => "appsubstaddcert", :name => "addcert", :value => "appsubstaddcert"}Uncertain
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appsubstadd_value", :size => "25"}
-        #app_desc
+        #app_desc.greek
           Correct form, e.g. κ̣λήρου (with diacriticals and full Leiden)
         #app_button
           %button{ :type => "button", :onclick=>"insertAppSubst()" }Insert
@@ -25,5 +25,5 @@
             %input{ :type => "checkbox", :class => "delcert", :id => "appsubstdelcert", :name => "delcert", :value => "appsubstdelcert"}Uncertain
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appsubstdel_value", :size => "25"}
-        #app_desc
+        #app_desc.greek
           Original form, e.g. δ̣ληρου (with full Leiden, but without diacriticals)

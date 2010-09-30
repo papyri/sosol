@@ -35,14 +35,11 @@
     needToConfirm = false;
   }
 
-  function showMatch(elem_id)
+  function showMatch(elem_id, phrase)
   {
   // forceChangeTrue is set in identifiers/_edit_commit partial
   if (forceChangeTrue)
     {set_conf_true();}
-  
-  //this phrase defined in insert_error_here method in identifiers controller
-  phrase = "**POSSIBLE ERROR**";
   
   if(typeof document.selection != 'undefined') // means IE browser 
     {

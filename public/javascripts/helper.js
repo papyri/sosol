@@ -1,16 +1,16 @@
 var diacritical_type_one = "acute";
 var diacritical_type_two = "asper";
 var gap_type = "lost";
-var gap_lang = "Demotic";
+var gap_lang = "Arabic";
 var gap_unit = "character";
-var gap_qty = "given";
+var gap_qty = "known";
 var gap_qtyextent = "quantity";
 var gap_value = "unknown";
 var diacritical_option = "nopts";
 var tryit_type = "xml2non";
 var valueback = "";
 var xmltopass = "initial";
-var number_type = "other";
+var number_type = "value";
 var abbrev_type = "expan";
 //default definition of what to do on successful ajax call
 var success = function(resp) {
@@ -52,20 +52,59 @@ function checktypedia(id,dia)
     }
 }
 
+function disable_gap_langs()
+{
+  document.gapallform.Arabic.disabled = true;
+  document.gapallform.Aramaic.disabled = true;
+  document.gapallform.Coptic.disabled = true;
+  document.gapallform.Demotic.disabled = true;
+  document.gapallform.Hieratic.disabled = true;
+  document.gapallform.Nabatean.disabled = true;
+  document.gapallform.notspecify.disabled = true;
+}
+
+function enable_gap_langs()
+{
+  document.gapallform.Arabic.disabled = false;
+  document.gapallform.Aramaic.disabled = false;
+  document.gapallform.Coptic.disabled = false;
+  document.gapallform.Demotic.disabled = false;
+  document.gapallform.Hieratic.disabled = false;
+  document.gapallform.Nabatean.disabled = false;
+  document.gapallform.notspecify.disabled = false;
+}
+
+function disable_gap_circa()
+{
+  document.gapallform.gapallcirca.checked = false;
+  document.gapallform.gapallcirca.disabled = true;
+}
+
+function enable_gap_circa()
+{
+  document.gapallform.gapallcirca.disabled = false
+}
+
 function checkgapalltype(id)
 {
   gap_type = document.getElementById(id).value;
 
-  if ((gap_type == "ellipsis" && gap_lang != "notspecify") || (gap_qty != "given")) //circa allowed on non-transcribed only
+  if ((gap_type == "ellipsis" && gap_lang != "notspecify") || (gap_qty != "known")) //circa allowed on non-transcribed only
     {
-      document.gapallform.gapallcirca.checked = false;
-      document.gapallform.gapallcirca.disabled = true;
+      disable_gap_circa()
     }
   else
-     {
-      document.gapallform.gapallcirca.checked = false;
-      document.gapallform.gapallcirca.disabled = false;
-     }
+    {
+     enable_gap_circa()
+    }
+  if (gap_type == "ellipsis")
+    {
+      enable_gap_langs();
+    }
+  else
+    {
+      disable_gap_langs();
+    }
 }
 
 function checkgapalllang(id)
@@ -73,16 +112,14 @@ function checkgapalllang(id)
   gap_lang = document.getElementById(id).value;
   document.gapallform.ellipsis.checked = true;
   gap_type = "ellipsis";
-  if (gap_lang == "notspecify" && gap_qty == "given") //circa allowed on non-transcribed only
+  if (gap_lang == "notspecify" && gap_qty == "known") //circa allowed on non-transcribed only
     {
-      document.gapallform.gapallcirca.checked = false;
-      document.gapallform.gapallcirca.disabled = false;
+      enable_gap_circa()
     }
-   else
-     {
-      document.gapallform.gapallcirca.checked = false;
-      document.gapallform.gapallcirca.disabled = true;
-     }
+  else
+    {
+      disable_gap_circa()
+    }
 }
 
 function checkgapallunit(id)
@@ -93,7 +130,7 @@ function checkgapallunit(id)
 function checkgapallqty(id)
 {
   gap_qty = document.getElementById(id).value;
-  if (gap_qty == "given")
+  if (gap_qty == "known")
     {
       document.getElementById("range1").value = "";
       document.getElementById("range2").value = "";
@@ -101,23 +138,20 @@ function checkgapallqty(id)
       document.gapallform.range2.disabled = true;
       if (gap_type == "ellipsis" && gap_lang != "notspecify") //circa only allowed on non-transcribed only
         {
-          document.gapallform.gapallcirca.checked = false;
-          document.gapallform.gapallcirca.disabled = true;
+          disable_gap_circa()
         }
       else
         {
-          document.gapallform.gapallcirca.checked = false;
-          document.gapallform.gapallcirca.disabled = false;
+          enable_gap_circa()
         }
-      document.gapallform.given_value.disabled = false;
+      document.gapallform.known_value.disabled = false;
     }
   else
     if (gap_qty == "range")
       {
-        document.getElementById("given_value").value = "";
-        document.gapallform.given_value.disabled = true;
-        document.gapallform.gapallcirca.checked = false;
-        document.gapallform.gapallcirca.disabled = true;
+        document.getElementById("known_value").value = "";
+        document.gapallform.known_value.disabled = true;
+        disable_gap_circa()
         document.gapallform.range1.disabled = false;
         document.gapallform.range2.disabled = false;
       }
@@ -127,10 +161,9 @@ function checkgapallqty(id)
         document.getElementById("range2").value = "";
         document.gapallform.range1.disabled = true;
         document.gapallform.range2.disabled = true;
-        document.getElementById("given_value").value = "";
-        document.gapallform.given_value.disabled = true;
-        document.gapallform.gapallcirca.checked = false;
-        document.gapallform.gapallcirca.disabled = true;
+        document.getElementById("known_value").value = "";
+        document.gapallform.known_value.disabled = true;
+        disable_gap_circa()
       }
 }
 
@@ -148,8 +181,8 @@ function checktypeabbrev(id)
     }
   else
     {
-      document.abbrev.expan_text.disabled = true;
       document.abbrev.abbr_text.disabled = false;
+      document.abbrev.expan_text.disabled = true;
       document.getElementById("expan_text").value = "";
       document.abbrev.abbrev2sp_cb.checked = false;
       document.abbrev.abbrev2sp_cb.disabled = true;
@@ -159,23 +192,6 @@ function checktypeabbrev(id)
 function checktryit(id)
 {
   tryit_type = document.getElementById(id).value;
-}
-
-function checktypenum(id)
-{
-  number_type = document.getElementById(id).value;
-  if (number_type == "fraction")
-    {
-      document.number.rend_frac_check_n.checked = false;
-      document.number.rend_frac_check_n.disabled = true;
-      document.number.certainty_check_n.checked = false;
-      document.number.certainty_check_n.disabled = true;
-    }
-  else
-    {
-      document.number.rend_frac_check_n.disabled = false;
-      document.number.certainty_check_n.disabled = false;
-    }
 }
 
 //###########################################################################################
@@ -489,12 +505,12 @@ function insertDiacriticalSub()
 function insertGapStart()
 {
   editpass = "yes";
-  if (gap_qty == "given")
+  if (gap_qty == "known")
     {
-      gap_value = document.getElementById("given_value").value;
+      gap_value = document.getElementById("known_value").value;
       if (gap_value.length < 1) 
         {
-          alert("Need at least 1 numeric character in given quantity");
+          alert("Need at least 1 numeric character in known quantity");
           editpass = "no";
         }
       else
@@ -505,7 +521,7 @@ function insertGapStart()
             }
           else
             {
-              alert("Invalid characters in given quantity - must be numeric only");
+              alert("Invalid characters in known quantity - must be numeric only");
               editpass = "no";
             }
         }
@@ -557,7 +573,7 @@ function insertGapStart()
             {
               if (gap_qty == "range")
                 {
-                  alert("Rangy quantity not valid with language - must be given or unknown");
+                  alert("Range quantity not valid with language - must be known or unknown");
                 }
               else
               {
@@ -693,17 +709,24 @@ function insertDivisionSub()
     
   if (editpass == "yes")
     {
-      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with text of division</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
         method: 'get',
         parameters : {xml:startxml},
-        onSuccess : success,
+        onSuccess : function(resp) 
+        {
+        leidenh = resp.responseText;
+        window.close();
+        insertText(leidenh);
+        window.opener.showMatch('ddb_identifier_leiden_plus', 'replace this with text of division');
+        },
         onFailure : function(resp) {
         alert("Oops, there's been an error." + resp.responseText);   
           }
       });
+      
     }
   } //########################     end insertDivisionSub     ########################
 
@@ -716,71 +739,45 @@ function insertNum()
 {
   editpass = "yes";
   
-  switch (number_type)
-  {
+  //this code and moreNumEdit will change the value of num_type so finishNum processes correctly
   
-  case "fraction":
-  
-    editpass = "yes";
-    break;
-  
-  case "other": //this code will change the value of num_type edits passed so finishNum processes correctly
-  
-    numval = document.getElementById("number_value").value;
-    numcontent = document.getElementById("number_content").value;
+  numval = document.getElementById("number_value").value;
+  numcontent = document.getElementById("number_content").value;
 
-    {if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty or contains space
-      {
-        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content empty or contains space
-          {
-            alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
-            editpass = "no";
-          }
-        else //value empty but content has data
-          {
-            if (document.number.rend_frac_check_n.checked == true)
-              {
-                opt_rend_frac = " rend=\"fraction\"";
-              }
-            else
-              {
-                opt_rend_frac = "";
-              }
-            number_type = "content";
-          }
-      }
-    else
-      {
-        if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
-          {  
-            moreNumEdit("value");
-          }
-        else //value and content both have data
-          {
-            moreNumEdit("valuecontent");
-          }
-      } 
+  if (numval.toString().match(/\s/) || numval.length < 1) //check if value is empty or contains space
+    {
+      if (numcontent.toString().match(/\s/) || numcontent.length < 1) //check if content empty or contains space
+        {
+          alert("Must enter 1 character in content and/or 1 digit in value at a minimum (spaces not allowed)");
+          editpass = "no";
+        }
+      else //value empty but content has data
+        {
+          if (document.number.rend_frac_check_n.checked == true)
+            {
+              opt_rend_frac = " rend=\"fraction\"";
+            }
+          else
+            {
+              opt_rend_frac = "";
+            }
+          number_type = "content";
+        }
     }
-  
-  break; //other
-  
-  default:
-  
-    alert("Invalid number_type - broken view - call support " + number_type);
-    editpass = "no";
-  
-  } //end switch (number_type)
+  else
+    {
+      if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
+        {  
+          moreNumEdit("value");
+        }
+      else //value and content both have data
+        {
+          moreNumEdit("valuecontent");
+        }
+    } 
   
   if (editpass == "yes")
     {
-      if (document.number.certainty_check_n.checked == true)
-        {
-          opt_certainty = "<certainty locus=\"value\" match=\"..\"/>";
-        }
-      else
-        {
-          opt_certainty = "";
-        }
       finishNum();
     }
 } //########################     end insertNum     ########################
@@ -796,36 +793,24 @@ function finishNum()
   switch (number_type)
   {
   case "value":
-    if (document.number.certainty_check_n.checked == true)
-      {
-        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + opt_certainty + "</num>";
-      }
-    else
-      {
-        startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
-      }
-    
-    break;
-  
+    {
+      startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+      break;
+    }
   case "content":
-  
-    startxml = "<num" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
-    break;
-  
+    {
+      startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
+      break;
+    }
   case "valuecontent":
-  
-    startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + opt_certainty + "</num>";
-    break;
-  
-  case "fraction":
-  
-    startxml = "<num type=\"fraction\"/>";
-    break;
-  
+    {
+      startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
+      break;
+    }
   default:
-  
-    startxml = "";
-  
+    {
+      startxml = "";
+    }
   }
   
   convertXML();
@@ -848,7 +833,7 @@ function moreNumEdit(newType)
         }
       else
         {
-          alert("Value must be in fraction format (ex. 1/8) when Rend Fraction checked");
+          alert("Value must be in fraction format (ex. 1/8) when 'scribe indicated fraction with tick' is checked");
           editpass = "no";
         }
     }
@@ -1145,5 +1130,4 @@ function insertText(vti)
         }
     }
   } //########################     end insertText     ########################
-
 
