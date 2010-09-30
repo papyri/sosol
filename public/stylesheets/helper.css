@@ -10,6 +10,7 @@ font-size: medium;/*set so that em sizing is consisent*/
 
 .choosetext /* applied to all input text boxes */
 {
+font-size: medium;/*set so that em sizing is consisent*/
 margin-bottom: 3px; /* space between input boxes that are stacked */
 margin-right: 3px; /* move label away */
 }
@@ -23,7 +24,8 @@ margin-right: 3px; /* move label away */
 
 .greek 
 {
-  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma"; 
+font-size: medium;/*set so that em sizing is consisent*/
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma"; 
 }
 
 .markup_warn 
@@ -31,7 +33,7 @@ margin-right: 3px; /* move label away */
 color:white;
 background-color:#005DAA;
 height:2.5em;
-width:29em;
+width:31em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: .1em;
 }
