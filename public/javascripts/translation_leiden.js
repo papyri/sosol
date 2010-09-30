@@ -26,7 +26,8 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
-  	showMatch('hgv_trans_identifier_leiden_trans');
+  	//**POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  	showMatch('hgv_trans_identifier_leiden_trans', '**POSSIBLE ERROR**');
   }
   
 document.observe("dom:loaded", init);

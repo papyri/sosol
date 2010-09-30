@@ -13,7 +13,7 @@
             %input{ :type => "checkbox", :class => "lemcert", :id => "appaltlemcert", :name => "lemcert", :value => "appaltlemcert"} Uncertain
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appaltlem_value", :size => "25"}
-        #app_desc
+        #app_desc.greek
           Preferred reading: e.g. ἐᾶ̣
         #app_button
           %button{ :type => "button", :onclick=>"insertAppAlt()" }Insert
@@ -25,5 +25,5 @@
             %input{ :type => "checkbox", :class => "rdgcert", :id => "appaltrdgcert", :name => "rdgcert", :value => "appaltrdgcert"} Uncertain
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appaltrdg_value", :size => "25"}
-        #app_desc
+        #app_desc.greek
           Other possible reading: e.g. ἐᾶ[ι]

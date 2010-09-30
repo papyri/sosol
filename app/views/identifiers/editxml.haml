@@ -17,4 +17,5 @@
 
 = javascript_include_tag 'confirm'
 :javascript
-  showMatch("#{@identifier.class.to_s.underscore}_xml_content");
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller

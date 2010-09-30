@@ -8,14 +8,13 @@
       = render :partial => 'markup_warn'
       %br
       %br
-      %br
       %form{:name => "abbrev"}
         %input{ :checked => "", :type => "radio", :class => "abbrev_radio", :id => "abbrev_expan", :name => "abbrev_type_n", :value => "expan", :onclick => "checktypeabbrev(this.id)"}Expansion, e.g. στρ(ατηγός) / (ἔτους) / (στρ(ατηγ  )
         %br
         %br
         %input{ :type => "text", :class => "choosetext greek", :id => "expan_text", :size => "25"}: enter στρ(ατηγός) / στρ(ατηγ)
-        &nbsp&nbsp
-        %input{ :type => "checkbox", :class => "abbrev2sp_cb", :id => "abbrev2sp", :name => "abbrev2sp_cb", :value => "abbrev2sp"}Insert 2 spaces
+        #abbrev_incomplete
+          %input{ :type => "checkbox", :class => "abbrev2sp_cb", :id => "abbrev2sp", :name => "abbrev2sp_cb", :value => "abbrev2sp"} Incomplete expansion, e.g. στρ(ατηγ&nbsp&nbsp)
         %br
         %br
         %input{ :type => "radio", :class => "abbrev_radio", :id => "abbrev_abbr", :name => "abbrev_type_n", :value => "abbr", :onclick => "checktypeabbrev(this.id)"}Unexpanded abbreviation, e.g. στρατ(  )
@@ -24,7 +23,8 @@
         %input{ :type => "text", :class => "choosetext greek", :id => "abbr_text", :size => "25", :disabled => "true"}: enter στρατ
         %br
         %br
-        %input{ :type => "checkbox", :class => "abbrevlow_check_c", :id => "abbrevlow", :name => "abbrevlow_check_n", :value => "abbrevlow"}Cert Low/ Certainty
+        %br
+        %input{ :type => "checkbox", :class => "abbrevlow_check_c", :id => "abbrevlow", :name => "abbrevlow_check_n", :value => "abbrevlow"} Uncertain?
         %br
         %br
         %button{ :type => "button", :onclick=>"insertAbbrev()" }Insert
