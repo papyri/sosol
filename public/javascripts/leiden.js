@@ -50,7 +50,7 @@ function helpDialogOpen(view)
   case "apporth":
   case "appsubst":
     {
-      openconfig = config='height=290, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=300, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
