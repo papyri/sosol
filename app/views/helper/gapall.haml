@@ -10,43 +10,43 @@
       %form{:name => "gapallform"}
         %label Type:
         #gapalltyperadio_div
-          %input{ :checked => "", :type => "radio", :class => "gapalltype_radio", :id => "lost", :name => "gapalltype", :value => "lost", :onclick => "checkgapalltype(this.id)"}Lost, “[ . . ]”
+          %input{ :checked => "", :type => "radio", :class => "gapalltype_radio", :id => "lost", :name => "gapalltype", :value => "lost", :onclick => "checkgapalltype(this.id)"} Lost, “[ . . ]”
           %br
-          %input{ :type => "radio", :class => "gapalltype_radio", :id => "illegible", :name => "gapalltype", :value => "illegible", :onclick => "checkgapalltype(this.id)"}Illegible “ . . “
+          %input{ :type => "radio", :class => "gapalltype_radio", :id => "illegible", :name => "gapalltype", :value => "illegible", :onclick => "checkgapalltype(this.id)"} Illegible “ . . “
           %br
-          %input{ :type => "radio", :class => "gapalltype_radio", :id => "ellipsis", :name => "gapalltype", :value => "ellipsis", :onclick => "checkgapalltype(this.id)"}Not transcribed in this edition:
+          %input{ :type => "radio", :class => "gapalltype_radio", :id => "ellipsis", :name => "gapalltype", :value => "ellipsis", :onclick => "checkgapalltype(this.id)"} Not transcribed in this edition:
         #gapalllangradio_div
-          %input{ :checked => "", :type => "radio", :class => "gapalllang_radio", :id => "Arabic", :name => "gapalllang", :value => "Arabic", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Arabic
+          %input{ :checked => "", :type => "radio", :class => "gapalllang_radio", :id => "Arabic", :name => "gapalllang", :value => "Arabic", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Arabic
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Aramaic", :name => "gapalllang", :value => "Aramaic", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Aramaic
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Aramaic", :name => "gapalllang", :value => "Aramaic", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Aramaic
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Coptic", :name => "gapalllang", :value => "Coptic", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Coptic
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Coptic", :name => "gapalllang", :value => "Coptic", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Coptic
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Demotic", :name => "gapalllang", :value => "Demotic", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Demotic
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Demotic", :name => "gapalllang", :value => "Demotic", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Demotic
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Hieratic", :name => "gapalllang", :value => "Hieratic", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Hieratic
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Hieratic", :name => "gapalllang", :value => "Hieratic", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Hieratic
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Nabatean", :name => "gapalllang", :value => "Nabatean", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Nabatean
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "Nabatean", :name => "gapalllang", :value => "Nabatean", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Nabatean
           %br
-          %input{ :type => "radio", :class => "gapalllang_radio", :id => "notspecify", :name => "gapalllang", :value => "notspecify", :disabled => "true", :onclick => "checkgapalllang(this.id)"}Not specified (“non-transcribed”)
+          %input{ :type => "radio", :class => "gapalllang_radio", :id => "notspecify", :name => "gapalllang", :value => "notspecify", :disabled => "true", :onclick => "checkgapalllang(this.id)"} Non-transcribed
         %label Unit:
         #gapallunitradio_div
-          %input{ :checked => "", :type => "radio", :class => "gapallunit_radio", :id => "character", :name => "gapallunit", :value => "character", :onclick => "checkgapallunit(this.id)"}Character
-          %input{ :type => "radio", :class => "gapallunit_radio", :id => "line", :name => "gapallunit", :value => "line", :onclick => "checkgapallunit(this.id)"}Line
+          %input{ :checked => "", :type => "radio", :class => "gapallunit_radio", :id => "character", :name => "gapallunit", :value => "character", :onclick => "checkgapallunit(this.id)"} Character
+          %input{ :type => "radio", :class => "gapallunit_radio", :id => "line", :name => "gapallunit", :value => "line", :onclick => "checkgapallunit(this.id)"} Line
         %label Quantity:
         #gapallqtyradio_div
-          %input{ :checked => "", :type => "radio", :class => "gapallqty_radio", :id => "known", :name => "gapallqty", :value => "known", :onclick => "checkgapallqty(this.id)"}Known
+          %input{ :checked => "", :type => "radio", :class => "gapallqty_radio", :id => "known", :name => "gapallqty", :value => "known", :onclick => "checkgapallqty(this.id)"} Known
           %input{ :type => "text", :class => "choosetext", :id => "known_value", :size => "03"}
-          %input{ :type => "checkbox", :class => "gapallcirca_cb", :id => "circa", :name => "gapallcirca", :value => "circa"}Circa?
+          %input{ :type => "checkbox", :class => "gapallcirca_cb", :id => "circa", :name => "gapallcirca", :value => "circa"} Circa?
           %br
-          %input{ :type => "radio", :class => "gapallqty_radio", :id => "unknown", :name => "gapallqty", :value => "unknown", :onclick => "checkgapallqty(this.id)"}Unknown
+          %input{ :type => "radio", :class => "gapallqty_radio", :id => "unknown", :name => "gapallqty", :value => "unknown", :onclick => "checkgapallqty(this.id)"} Unknown
           %br
-          %input{ :type => "radio", :class => "gapallqty_radio", :id => "range", :name => "gapallqty", :value => "range", :onclick => "checkgapallqty(this.id)"}Range
+          %input{ :type => "radio", :class => "gapallqty_radio", :id => "range", :name => "gapallqty", :value => "range", :onclick => "checkgapallqty(this.id)"} Range
           %input{ :type => "text", :class => "choosetextradio", :id => "range1", :size => "03", :disabled => "true"}
           to
           %input{ :type => "text", :class => "choosetextradio", :id => "range2", :size => "03", :disabled => "true"}
         #gapallcertcb_div
-          %input{ :type => "checkbox", :class => "gapallcert_cb", :id => "certainty", :name => "gapallcert", :value => "certainty"}Check if presence of gap is in doubt
+          %input{ :type => "checkbox", :class => "gapallcert_cb", :id => "certainty", :name => "gapallcert", :value => "certainty"} Select if presence of gap is in doubt
       #gapall_button_left
         %button{ :type => "button", :onclick=>"insertGapStart()" }Insert
         &nbsp
