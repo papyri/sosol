@@ -252,7 +252,7 @@ class DocosController < ApplicationController
         render :template => "docos/#{where_return}"
         return "error"
       else
-        #xml must be wrapped in ab tags to parse correctly in xsugar grammar
+        
         leiden2conv = params[:doco][:leiden]
         begin
           xmlback = Leiden.leiden_plus_xml(leiden2conv)
