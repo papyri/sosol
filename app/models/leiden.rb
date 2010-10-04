@@ -9,20 +9,26 @@ class Leiden < DDBIdentifier
       #also means no need to slice after converted
       content.slice!(/^<ab>/)
       content.slice!(/<\/ab>$/)
-      #add <wrapab> tag
-      abs = DDBIdentifier.preprocess_abs(content)
-      #call to convert
-      transformed = DDBIdentifier.xml2nonxml(abs)
-    else
-      #add <wrapab> tag
+      #add <div type="edition"> tag
       abs = DDBIdentifier.preprocess_abs(content)
       #call to convert
       transformed = DDBIdentifier.xml2nonxml(abs)
       #some parse errors are not caught (ex. <abbr/> end tag - / in wrong place) so will return a nil result
       #TODO - not sure exactly what to do but this keeps from crashing
       if transformed != nil
-        #remove <= and => that represents <ab> tag added in controller
-        transformed.slice!(/^<=/)
+        #remove <S=.grc from <div> tag added above
+        transformed.slice!(/^<S=.grc/)
+      end
+    else
+      #add <div type="edition"> tag
+      abs = DDBIdentifier.preprocess_abs(content)
+      #call to convert
+      transformed = DDBIdentifier.xml2nonxml(abs)
+      #some parse errors are not caught (ex. <abbr/> end tag - / in wrong place) so will return a nil result
+      #TODO - not sure exactly what to do but this keeps from crashing
+      if transformed != nil
+        #remove <S=.grc from <div> tag added above <= and => that represents <ab> tag added in controller
+        transformed.slice!(/^<S=.grc<=/)
         transformed.slice!(/=>$/)
       end
     end
@@ -32,6 +38,7 @@ class Leiden < DDBIdentifier
   def self.leiden_plus_xml(content)
     
     if content.include?("<=") #check if user input contains Leiden+ grammar for <ab> tag
+      content = "<S=.grc" + content
       #call to convert
       tempTrans = DDBIdentifier.nonxml2xml(content)
       
@@ -39,10 +46,11 @@ class Leiden < DDBIdentifier
       tempTrans.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
         
       # pull out XML inside the <wrapab> tag
-      transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/[not(self::wrapab)]')
+      #transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/[not(self::wrapab)]')
+      transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/div[@type = "edition"]/[not(self::div[@type = "edition"])]')
     else
       # add Leiden+ grammar for <ab> tag so will meet minimun xSugar grammar requirement
-      abs = "<=" + content + "=>"
+      abs = "<S=.grc<=" + content + "=>"
     
       #call to convert
       tempTrans = DDBIdentifier.nonxml2xml(abs)
@@ -51,7 +59,8 @@ class Leiden < DDBIdentifier
       tempTrans.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
       
       # pull out XML inside the <ab> tag
-      transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/ab/[not(self::ab)]')
+      #transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/wrapab/ab/[not(self::ab)]')
+      transformed = REXML::XPath.match(REXML::Document.new(tempTrans), '/div[@type = "edition"]/ab/[not(self::ab)]')
     end
     return transformed
   end
