@@ -197,7 +197,7 @@ module JRubyXML
 
       begin
         parameters.each_pair {|key, value|
-          transformer.setParameter(key, value)
+          transformer.setParameter(key.to_s, value)
         }
         transformer.transform(xml_stream, result)
         return string_writer.toString()
