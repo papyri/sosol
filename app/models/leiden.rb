@@ -28,7 +28,9 @@ class Leiden < DDBIdentifier
       #TODO - not sure exactly what to do but this keeps from crashing
       if transformed != nil
         #remove <S=.grc from <div> tag added above <= and => that represents <ab> tag added in controller
-        transformed.slice!(/^<S=.grc<=/)
+        #done separately because all will have the <S= but not all will have the <= next in the Leiden+
+        transformed.slice!(/^<S=.grc/)
+        transformed.slice!(/^<=/)
         transformed.slice!(/=>$/)
       end
     end
