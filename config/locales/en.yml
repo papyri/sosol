@@ -71,6 +71,7 @@ en:
       toDate: to
       fromToDate: Date span
       offset: Offset
+      textDate: HGV format
 
       beginning: Beginning
       firstHalf: First half
