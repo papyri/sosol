@@ -163,7 +163,9 @@ module HgvMetaIdentifierHelper
           'end' => '12'
         }
       }[chron][yq]
-      day_max = m ? (m != 2 ? (m < 8 ? ((m % 2) == 0 ? 30 : 31) : ((m % 2) == 0 ? 31 : 30) ) : (y && ((y % 4) == 0) && ((y % 1000) != 0) ? 29 : 28)) : 31
+      
+      m = m ? m : month_modifier.to_i
+      day_max = m ? (m != 2 ? (m < 8 ? ((m % 2) == 0 ? 30 : 31) : ((m % 2) == 0 ? 31 : 30) ) : (y && ((y % 4) == 0) && (((y % 100) != 0) || ((y % 400) == 0)) ? 29 : 28)) : 31
       day_modifier = {
         :chron => {
           '' => '04',
