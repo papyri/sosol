@@ -6,15 +6,15 @@
     = stylesheet_link_tag 'helper'
     #app2col{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      <h4>Modern editor 'corrects' orthographic variant: γλυκητητος --> γλυκύτητος = <:γλυκύτητος|orth|γλυκητητος:>; may also be used with Leiden <...></h4>
+      %h4 Modern normalization of orthographic variant or correction of error
       #app_col
         #app_low
           %form{:name => "apporthcorr"}
-            %input{ :type => "checkbox", :class => "corrlow", :id => "apporthcorrlow", :name => "low", :value => "apporthcorrlow"}Cert Low
+            %input{ :type => "checkbox", :class => "corrlow", :id => "apporthcorrlow", :name => "low", :value => "apporthcorrlow"} Uncertain
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "apporthcorr_value", :size => "25"}Accepted (corr)
+          %input{ :type => "text", :class => "choosetext greek", :id => "apporthcorr_value", :size => "25"}
         #app_desc
-          regularized form, e.g. 'γλυκύτητος' (P.Matr. 10.2) or 'ὑπερῷ<ο>ν'
+          Normalized/corrected form
         #app_button
           %button{ :type => "button", :onclick=>"insertAppOrth()" }Insert
           &nbsp
@@ -22,10 +22,8 @@
       #app_col
         #app_low
           %form{:name => "apporthsic"}
-            %input{ :type => "checkbox", :class => "siclow", :id => "apporthsiclow", :name => "low", :value => "apporthsiclow"}Cert Low
+            %input{ :type => "checkbox", :class => "siclow", :id => "apporthsiclow", :name => "low", :value => "apporthsiclow"} Uncertain
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "apporthsic_value", :size => "25"}Rejected (sic)
+          %input{ :type => "text", :class => "choosetext greek", :id => "apporthsic_value", :size => "25"}
         #app_desc
-          on papyrus, e.g. 'γλυκητητος' (P.Matr. 10.2) or 'υπερων'
-      #app_clarify_text
-        enter underdots within the &lt;corr&gt; content using the underdot helper after inserting basic form orthographic variant
+          Non-standard/incorrect form

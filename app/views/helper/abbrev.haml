@@ -6,21 +6,27 @@
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      %h3 Valid expansion input values (parens around ex):
-      %pre στρ(ατηγός) / (ἔτους) / στρ(ατηγός)afterex vel sim. - cannot handle multiple sets of parens
-      %h3 Valid abbreviation input values (text only):
-      %pre Ἀθην
-      #abbrevtext_div
-        %input{ :type => "text", :class => "choosetext greek", :id => "abbrev_value", :size => "25"}Input
-      #low_left
-        %form{:name => "abbrev"}
-          %input{ :type => "checkbox", :class => "abbrevlow_check_c", :id => "abbrevlow", :name => "abbrevlow_check_n", :value => "abbrevlow"}Cert Low/ Certainty
-      -#abbrevtype_div
-      #type_left
-        %input{ :checked => "", :type => "radio", :class => "abbrev_radio", :id => "abbrev_expan", :name => "abbrev_type_n", :value => "expan", :onclick => "checktypeabbrev(this.id)"}Expansion
-        <br/>
-        %input{ :type => "radio", :class => "abbrev_radio", :id => "abbrev_abbr", :name => "abbrev_type_n", :value => "abbr", :onclick => "checktypeabbrev(this.id)"}Abbreviation
-      #button_left
+      %br
+      %br
+      %form{:name => "abbrev"}
+        %input{ :checked => "", :type => "radio", :class => "abbrev_radio", :id => "abbrev_expan", :name => "abbrev_type_n", :value => "expan", :onclick => "checktypeabbrev(this.id)"}Expansion, e.g. στρ(ατηγός) / (ἔτους) / (στρ(ατηγ  )
+        %br
+        %br
+        %input{ :type => "text", :class => "choosetext greek", :id => "expan_text", :size => "25"}: enter στρ(ατηγός) / στρ(ατηγ)
+        #abbrev_incomplete
+          %input{ :type => "checkbox", :class => "abbrev2sp_cb", :id => "abbrev2sp", :name => "abbrev2sp_cb", :value => "abbrev2sp"} Incomplete expansion, e.g. στρ(ατηγ&nbsp&nbsp)
+        %br
+        %br
+        %input{ :type => "radio", :class => "abbrev_radio", :id => "abbrev_abbr", :name => "abbrev_type_n", :value => "abbr", :onclick => "checktypeabbrev(this.id)"}Unexpanded abbreviation, e.g. στρατ(  )
+        %br
+        %br
+        %input{ :type => "text", :class => "choosetext greek", :id => "abbr_text", :size => "25", :disabled => "true"}: enter στρατ
+        %br
+        %br
+        %br
+        %input{ :type => "checkbox", :class => "abbrevlow_check_c", :id => "abbrevlow", :name => "abbrevlow_check_n", :value => "abbrevlow"} Uncertain?
+        %br
+        %br
         %button{ :type => "button", :onclick=>"insertAbbrev()" }Insert
         &nbsp
         %button{:type => "button", :onclick => "closeHelper()"}Close

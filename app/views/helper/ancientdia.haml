@@ -5,37 +5,37 @@
   .site
     = stylesheet_link_tag 'helper'
     #diacritical_div{:class => "helperpop"}
-      <h4>Insert Double Diacritical</h4>
+      %h4 Insert Double Diacritical
       #dia_left
         #col1hdr
-          <h5>Pick First Diacritical</h5>
+          %h5 Pick First Diacritical
         %input{ :checked => "", :type => "radio", :class => "diacritical_radio", :id => "acute1", :name => "diacritical_type_one", :value => "acute", :onclick => "checktypedia(this.id,1)"}Acute
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "asper1", :name => "diacritical_type_one", :value => "asper", :onclick => "checktypedia(this.id,1)"}Asper
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "circumflex1", :name => "diacritical_type_one", :value => "circumflex", :onclick => "checktypedia(this.id,1)"}Circumflex
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "diaeresis1", :name => "diacritical_type_one", :value => "diaeresis", :onclick => "checktypedia(this.id,1)"}Diaeresis
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "grave1", :name => "diacritical_type_one", :value => "grave", :onclick => "checktypedia(this.id,1)"}Grave
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "lenis1", :name => "diacritical_type_one", :value => "lenis", :onclick => "checktypedia(this.id,1)"}Lenis
       #dia_left
         #col2hdr
-          <h5>Pick Second Diacritical</h5>
+          %h5 Pick Second Diacritical
         %input{ :type => "radio", :class => "diacritical_radio", :id => "acute2", :name => "diacritical_type_two", :value => "acute", :onclick => "checktypedia(this.id,2)"}Acute
-        <br/>
+        %br
         %input{ :checked => "", :type => "radio", :class => "diacritical_radio", :id => "asper2", :name => "diacritical_type_two", :value => "asper", :onclick => "checktypedia(this.id,2)"}Asper
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "circumflex2", :name => "diacritical_type_two", :value => "circumflex", :onclick => "checktypedia(this.id,2)"}Circumflex
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "diaeresis2", :name => "diacritical_type_two", :value => "diaeresis", :onclick => "checktypedia(this.id,2)"}Diaeresis
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "grave2", :name => "diacritical_type_two", :value => "grave", :onclick => "checktypedia(this.id,2)"}Grave
-        <br/>
+        %br
         %input{ :type => "radio", :class => "diacritical_radio", :id => "lenis2", :name => "diacritical_type_two", :value => "lenis", :onclick => "checktypedia(this.id,2)"}Lenis
       #button_left
-        <br/>
+        %br
         %button{:type => "button", :onclick => "insertDiacriticalSub()"}Insert
         &nbsp
         %button{:type => "button", :onclick => "closeHelper()"}Close

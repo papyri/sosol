@@ -26,7 +26,8 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
-  	showMatch('hgv_trans_identifier_leiden_trans');
+  	//**POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  	showMatch('hgv_trans_identifier_leiden_trans', '**POSSIBLE ERROR**');
   }
   
 document.observe("dom:loaded", init);
@@ -145,19 +146,19 @@ function insertDivisionMain(division_type)
   case "v":
     //line below for when ready for subtype face on r and v
     //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><p>replace this with text of division</p></div>";
     break;
 
   case "column": //default n to roman 1
   
-    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with text of division</p></div>";
     break;
 
   case "document":
   case "folio":
   case "fragment":
 
-    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with actual content</p></div>";
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><p>replace this with text of division</p></div>";
     break;
 
   default:
@@ -173,6 +174,7 @@ function insertDivisionMain(division_type)
   onSuccess : function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
+    showMatch('hgv_trans_identifier_leiden_trans', 'replace this with text of division');
      },
   onFailure : function(resp) {
    alert("Oops, there's been an error. (insertDivMain)" + resp.responseText);   

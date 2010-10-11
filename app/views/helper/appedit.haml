@@ -6,23 +6,23 @@
     = stylesheet_link_tag 'helper'
     #app3col{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      <h4>Correction noted in series 'Correction noted in series 'Corrigenda', not necessarily reflected in BL: φιάλα̣ς̣ τοῦδ̣έ̣ --> Φιλαρέτου <:Φιλαρέτου|ed:|φιάλα̣ς̣ τοῦδ̣έ̣:></h4>
+      %h4 Correction noted in series series Corrigenda or other publication, not necessarily reflected in BL
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appeditlem_value", :size => "25"}Lem (lem)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditlem_value", :size => "25"}
         #app_desc
-          Correct form: e.g.: Φιλαρέτου
+          Correct form
         #app_button
           %button{ :type => "button", :onclick=>"insertAppEdit()"}Insert
           &nbsp
           %button{:type => "button", :onclick => "closeHelper()"}Close
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appeditresp_value", :size => "25"}Editorial (resp)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditresp_value", :size => "25"}
         #app_desc
-          Series corrigenda citation as follows: 'P.Cair.Zen:vol:pg' -- 59021 line 16, corr at ...NEED CITATION
+          Citation, e.g.: J. Doe, ZPE 234 (2015) 3-4
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appeditrdg_value", :size => "25"}Reading (rdg)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditrdg_value", :size => "25"}
         #app_desc
-          original, incorrect form, e.g.: φιάλα̣ς̣ τοῦδ̣έ̣
+          Original, incorrect form

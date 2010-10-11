@@ -107,13 +107,7 @@ class DocosController < ApplicationController
   end
   
   def build
-    #Doco.build_doco
-    #flash[:notice] = "Documentation Successfully Built"
-    #redirect_to docos_url
-    #expire_page :controller => "docos", :action => "documentation"
-    #render :template => 'docos/documentation'
     redirect_to(documentation_url(:docotype => params[:docotype]))
-    #redirect_to :controller => "docos", :action => "index"
   end
   
   def documentation
@@ -123,6 +117,7 @@ class DocosController < ApplicationController
   private
 
   def edit_input(where_return)
+    chk_docotype = params[:doco][:docotype]
     if params[:volume_number] != nil #if selector has values, use it to determine URL
       identifier_class = params[:IdentifierClass]
       collection = params["#{identifier_class}CollectionSelect"]
@@ -211,13 +206,6 @@ class DocosController < ApplicationController
       end
     end
     
-    # if params[:doco][:leiden].blank? && params[:doco][:xml].blank?
-      # flash.now[:error] = "Must supply either the Leiden or XML field and click the corresponding radio button"
-      # #redirect_to edit_doco_path
-      # render :template => "docos/#{where_return}"
-      # return "error"
-    # end
-    
     if params[:leiden_xml_radio] == "xml"  # XML to Leiden radio button clicked
       if params[:doco][:xml].blank?
         @doco.xml = params[:doco][:xml]
@@ -227,11 +215,16 @@ class DocosController < ApplicationController
         render :template => "docos/#{where_return}"
         return "error"
       else
-        #xml must be wrapped in ab tags to parse correctly in xsugar grammar
-        xml2conv = "<ab>" + params[:doco][:xml] + "</ab>"
-                
+        
         begin
-          leidenback = Leiden.xml_leiden_plus(xml2conv)
+          if chk_docotype == 'text'
+            #xml must be wrapped in ab tags to parse correctly in xsugar grammar
+            xml2conv = "<ab>" + params[:doco][:xml] + "</ab>"
+            leidenback = Leiden.xml_leiden_plus(xml2conv)
+          else #translation
+            xml2conv = params[:doco][:xml]
+            leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
+          end
           params[:doco][:leiden] = leidenback
         rescue RXSugar::XMLParseError => parse_error
           @doco.leiden = params[:doco][:leiden]
@@ -252,10 +245,14 @@ class DocosController < ApplicationController
         render :template => "docos/#{where_return}"
         return "error"
       else
-        #xml must be wrapped in ab tags to parse correctly in xsugar grammar
+        
         leiden2conv = params[:doco][:leiden]
         begin
-          xmlback = Leiden.leiden_plus_xml(leiden2conv)
+          if chk_docotype == 'text'
+            xmlback = Leiden.leiden_plus_xml(leiden2conv)
+          else #translation
+            xmlback = TranslationLeiden.translation_leiden_to_xml(leiden2conv)
+          end
           params[:doco][:xml] = "#{xmlback}"
         rescue RXSugar::NonXMLParseError => parse_error
           @doco.xml = params[:doco][:xml]

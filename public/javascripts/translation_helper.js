@@ -189,7 +189,14 @@ function insertTerm(term)
       {
         method: 'get',
         parameters : {xml:startxml},
-        onSuccess : success,
+        onSuccess : function(resp) 
+        {
+        leidenh = resp.responseText;
+  //alert(resp.responseText);
+        window.close();
+        insertText(leidenh);
+        window.opener.showMatch('hgv_trans_identifier_leiden_trans', 'place word here');
+        },
         onFailure : function(resp) {
         alert("Oops, there's been an error(insertTerm)." + resp.responseText);   
           }
@@ -310,13 +317,20 @@ function insertDivisionSub()
     
   if (editpass == "yes")
     {
-      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><p>replace this with actual content</p></div>";
+      startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><p>replace this with text of division</p></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
         method: 'get',
         parameters : {xml:startxml},
-        onSuccess : success,
+        onSuccess : function(resp) 
+        {
+        leidenh = resp.responseText;
+  //alert(resp.responseText);
+        window.close();
+        insertText(leidenh);
+        window.opener.showMatch('hgv_trans_identifier_leiden_trans', 'replace this with text of division');
+        },
         onFailure : function(resp) {
         alert("Oops, there's been an error(insertDivisionSub)." + resp.responseText);   
           }

@@ -272,8 +272,13 @@ class PublicationsController < ApplicationController
     @comment.publication = @publication.origin
     
     @comment.save
-  
-
+    
+    #create an event to show up on dashboard
+    @event = Event.new()
+    @event.owner = @current_user
+    @event.target = @publication.parent #used parent so would match approve event
+    @event.category = "committed"
+    @event.save!
     
     #TODO need to submit to next board
     #need to set status of ids

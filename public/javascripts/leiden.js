@@ -13,7 +13,8 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
-  	showMatch('ddb_identifier_leiden_plus');
+  	//**POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  	showMatch('ddb_identifier_leiden_plus', '**POSSIBLE ERROR**');
   }
   
 document.observe("dom:loaded", init);
@@ -25,53 +26,50 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "gapellipNT":
-  case "gapilleg":
-  case "gaplost":
-  case "vestig":
   case "division":
     {
-      openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "ancientdia":
     {
-      openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "abbrev":
     {
-      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=425, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  case "gapelliplang":
+  case "gapall":
     {
-      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "appalt":
+  case "apporth":
   case "appsubst":
     {
-      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
-  case "apporth":
-    {
-      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=300, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
+    {
+      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
+  
   case "appBL":
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=850, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=285, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   default: // nopts is default and need to clear optional xml values and leave diachar filled in 
@@ -102,8 +100,8 @@ function insertDiacriticalMain(diacritical_type)
 {
   getFocusMain()
   
-  /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
-     XML to pass the xsugar grammar - stripped back out when returns */
+  // type is parm passed from view javascript call - 'A' is the default character to pass in the 
+  //   XML to pass the xsugar grammar - stripped back out when returns 
   
   startxml = "<hi rend=\"" + diacritical_type + "\">A</hi>";
   
@@ -129,12 +127,13 @@ function insertDeletionMain(deletion_type)
 {
   getFocusMain()
   
-  startxml = "<del rend=\"" + deletion_type + "\">replace this with actual deletion content</del>";
+  startxml = "<del rend=\"" + deletion_type + "\">to be deleted</del>";
   
 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
   success = function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
+    showMatch('ddb_identifier_leiden_plus', 'to be deleted');
      }
   
   convertXMLMain(); 
@@ -173,19 +172,19 @@ function insertDivisionMain(division_type)
   case "v":
     //line below for when ready for subtype face on r and v
     //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   case "column": //default n to roman 1
   
-    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   case "document":
   case "folio":
   case "fragment":
 
-    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   default:
@@ -201,12 +200,13 @@ function insertDivisionMain(division_type)
   onSuccess : function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
+    showMatch('ddb_identifier_leiden_plus', 'replace this with text of division');
      },
   onFailure : function(resp) {
    alert("Oops, there's been an error." + resp.responseText);   
      }
   });
-
+  
 } //########################     end insertDivisionMain     ########################
 
 //###########################################################################################
