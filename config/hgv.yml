@@ -19,7 +19,7 @@
     :titleStmt:
       :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
     :publicationTitle:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title[@level='s'][@type='abbreviated']
     :publicationVolume:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
     :publicationNumbers:
@@ -57,22 +57,22 @@
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='otherPublications']/listBibl/bibl[@type='publication'][@subtype='other']
       :multiple: true
     :translationsDe: #tweaked but may need more added to form - may have multiples
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='de']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='de']/bibl[@type='translations']
       :multiple: true
     :translationsEn:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='en']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='en']/bibl[@type='translations']
       :multiple: true
     :translationsIt:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='it']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='it']/bibl[@type='translations']
       :multiple: true
     :translationsEs:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='es']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='es']/bibl[@type='translations']
       :multiple: true
     :translationsLa:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='la']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='la']/bibl[@type='translations']
       :multiple: true
     :translationsFr:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@type='fr']/bibl[@type='translations']
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='fr']/bibl[@type='translations']
       :multiple: true
     :bl: #works same but may need more added to form
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='corrections']/listBibl/bibl[@type='BL']
@@ -108,7 +108,7 @@
         :note:
           :xpath: note
         :date:
-          :xpath:  date[@type='mentioned']
+          :xpath: date[@type='mentioned']
           :attributes:
             :when:
               :name: when
@@ -136,7 +136,7 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
       :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
     :textDate:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/date[@type='textDate']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate[@type='textDate']
       :multiple: true
       :pattern: /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
       :attributes:
