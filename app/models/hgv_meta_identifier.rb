@@ -254,9 +254,6 @@ class HGVMetaIdentifier < HGVIdentifier
     modified_xml_content = ''
     formatter.write doc, modified_xml_content
 
-    f = File.new '/Users/InstPap/Desktop/test.xml', 'w'
-    f.puts modified_xml_content
-
     return modified_xml_content
 
   end
