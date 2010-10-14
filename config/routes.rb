@@ -40,6 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
+  map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
  
   #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 

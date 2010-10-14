@@ -1,0 +1,26 @@
+#main
+  = javascript_include_tag :defaults
+  .site
+    #create_email
+      %h1
+        Email All SoSOL Users With Email Addresses
+      %br
+      = render :partial => "common/flash_all"
+      - form_tag  :controller => "user", :action => "email_everybody"  do
+        %br
+        From Address: SoSOLAdmin---#{@current_user.email}
+        %br
+        %br
+        = label_tag "Email Subject - Required:"
+        %br
+        %br
+        = text_field_tag 'email_subject', "", :size => 105, :class => "greek text_box"
+        %br
+        %br
+        = label_tag "Email Content - Required:"
+        %br
+        %br
+        = text_area_tag 'email_content', "", :onkeyup => "insertGapStart()", :cols => 102, :rows => 20, :class => "greek text_box"
+        %br
+        %br
+        = submit_tag "Send Email", :class => 'submit', :id => "submit_button"
