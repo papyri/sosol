@@ -15,11 +15,13 @@
       = link_to 'sign out', signout_url
       %p
       - if @current_user.admin 
-        = link_to 'boards', boards_url
+        = link_to 'Boards', boards_url
         \|
         = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
         \|
         = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+        \|
+        = link_to 'Email Users', sendmsg_url
         \|
       - if @current_user.developer
         = link_to 'developer', developer_url
