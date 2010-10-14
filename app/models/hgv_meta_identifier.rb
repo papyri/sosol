@@ -12,6 +12,10 @@ class HGVMetaIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Meta"
 
+  def preview
+    '[HGV]'
+  end
+
   def after_initialize
     @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
@@ -130,6 +134,8 @@ class HGVMetaIdentifier < HGVIdentifier
   def set_epidoc(attributes_hash, comment)
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
     epidoc = set_epidoc_attributes
+      
+    #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
 
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
@@ -215,12 +221,13 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
+
       if config[:multiple]
         xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
         xpath_child = $2 
 
         if self[key].empty?
-          if parent = doc.elements[xpath_parent]
+          if (parent = doc.elements[xpath_parent]) && !parent.has_elements? && !parent.has_text?
             parent.elements['..'].delete parent
           end
         else
@@ -234,14 +241,23 @@ class HGVMetaIdentifier < HGVIdentifier
         end
 
       else
-        element = doc.bulldozePath config[:xpath]
-        element.text = self[key]
-        if config[:attributes]
-          config[:attributes].each_pair {|attribute_key, attribute_config|
-            element.attributes[attribute_config[:name]] = self[attribute_key]
-          }
+
+        if self[key] && !self[key].empty? 
+          
+          element = doc.bulldozePath(config[:xpath])
+          element.text = self[key]
+          if config[:attributes]
+            config[:attributes].each_pair {|attribute_key, attribute_config|
+              element.attributes[attribute_config[:name]] = self[attribute_key]
+            }
+          end
+          
+        elsif
+          doc.elements.delete_all config[:xpath]
         end
+
       end
+
     end
 
     # sort
@@ -254,15 +270,34 @@ class HGVMetaIdentifier < HGVIdentifier
     modified_xml_content = ''
     formatter.write doc, modified_xml_content
 
-    f = File.new '/Users/InstPap/Desktop/test.xml', 'w'
-    f.puts modified_xml_content
-
     return modified_xml_content
-
   end
 
   def sort doc
-    return doc
+    sort_paths = {
+      :msIdentifier => {
+        :parent => '/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier',
+        :children => ['placename', 'collection', 'idno', 'altIdentifier']
+      },
+      :altIdentifier => {
+        :parent => "/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier[@type='temporary']",
+        :children => ['placename', 'collection', 'idno', 'note']
+      }
+    }
+
+    sort_paths.each_value {|sort_path|
+    
+      if parent = doc.elements[sort_path[:parent]]
+        sort_path[:children].each {|child_path|
+          parent.elements.each(child_path){|child|
+            parent.delete child
+            parent.add child
+          }
+        }
+      end
+    }
+
+   return doc 
   end
 
   def populate_epidoc_attribute key, value, default = nil
