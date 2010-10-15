@@ -124,6 +124,18 @@
   function update_documents() {
     get_allowed_values($('document_number'),$F('volume_number'));
   }
+  document.observe("dom:loaded", function() {
+    $('IdentifierClass').childElements()[0].selected = true;
+    $('DDBIdentifierCollectionSelect').childElements()[0].selected = true;
+    $('HGVIdentifierCollectionSelect').childElements()[0].selected = true;
+    $('DDBIdentifierCollectionSelect').removeClassName('invisible');
+    $('HGVIdentifierCollectionSelect').addClassName('invisible');
+    reset_selector($('volume_number'));
+    reset_selector($('document_number'));
+    $('volume_number').disabled=true;
+    $('document_number').disabled=true;
+    $('emend_button').disabled=true;
+  });
 - cache(:action => 'dashboard', :part => 'publication_selector') do
   %p== Emend existing publication:
   - form_tag :controller => 'publications', :action => "create_from_selector" do
