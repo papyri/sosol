@@ -41,7 +41,7 @@
             %ul
               - for bib in biblio
                 %li
-                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes('HGVBiblioIdentifier')])
+                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes(HGVBiblioIdentifier)])
 
 #identifier_sub_menus
   - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
