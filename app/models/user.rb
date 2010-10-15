@@ -89,4 +89,22 @@ class User < ActiveRecord::Base
   def before_destroy
     repository.destroy
   end
+  
+  def self.compose_email(fromaddress, subject_line, email_content)
+    #get email addresses from all users that have them
+    #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
+    users = User.find_by_sql("SELECT email From users WHERE email is not null")
+    
+    users.each do |toaddress|
+      if toaddress.email.strip != ""
+        EmailerMailer.deliver_maileverybody(fromaddress, toaddress.email, subject_line, email_content)
+      end
+    end
+    
+    #can use below if want to send to all addresses at once
+    #format 'to' addresses for actionmailer
+    #addresses = users.map{|c| c.email}.join(", ")
+    #EmailerMailer.deliver_maileverybody(fromaddress, addresses, subject_line, email_content)
+    
+  end
 end
