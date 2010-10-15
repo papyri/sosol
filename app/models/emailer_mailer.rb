@@ -28,7 +28,7 @@ class EmailerMailer < ActionMailer::Base
     if fromaddress.blank?
       from "SoSOLAdmin"
     else
-      from "SoSOLAdmin---" + fromaddress
+      from "SoSOLAdmin." + fromaddress.slice(/[\w._]+@/).chop
     end
     recipients toaddress
     subject subject_line
