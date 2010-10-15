@@ -40,12 +40,14 @@ class HgvMetaIdentifiersController < IdentifiersController
       if params[:hgv_meta_identifier]
         params[:hgv_meta_identifier]['textDate'].each_pair{|index, date|
           ['onDate', 'fromDate', 'toDate'].each {|dateType|
-            date['children'][dateType]['children'].delete 'offset' #todocl: remove this
-            if date['children'][dateType]['children']['century']['value'].empty? &&
-               date['children'][dateType]['children']['year']['value'].empty? &&
-               date['children'][dateType]['children']['month']['value'].empty? &&
-               date['children'][dateType]['children']['day']['value'].empty?
-              date['children'].delete dateType
+            if date['children'][dateType]
+              date['children'][dateType]['children'].delete 'offset' #todocl: remove this
+              if date['children'][dateType]['children']['century']['value'].empty? &&
+                 date['children'][dateType]['children']['year']['value'].empty? &&
+                 date['children'][dateType]['children']['month']['value'].empty? &&
+                 date['children'][dateType]['children']['day']['value'].empty?
+                date['children'].delete dateType
+              end
             end
           }
   
