@@ -25,11 +25,12 @@ class EmailerMailer < ActionMailer::Base
     #TODO check that email is creatible, ie has valid addresses
     
     sent_on Time.now
-    if fromaddress.blank?
-      from "SoSOLAdmin"
-    else
-      from "SoSOLAdmin." + fromaddress.slice(/[\w._]+@/).chop
-    end
+    from "SoSOL"
+    #if fromaddress.blank?
+    #  from "SoSOLAdmin"
+    #else
+    #  from "SoSOLAdmin." + fromaddress.slice(/[\w._]+@/).chop
+    #end
     recipients toaddress
     subject subject_line
     body email_content
