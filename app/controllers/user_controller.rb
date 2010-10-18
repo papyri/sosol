@@ -152,7 +152,7 @@ class UserController < ApplicationController
       return
     end
     
-    User.compose_email(@current_user.email, params[:email_subject], params[:email_content])
+    User.compose_email(params[:email_subject], params[:email_content])
     
     flash[:notice] = 'Email to all users was successfully sent.'
     redirect_to dashboard_url

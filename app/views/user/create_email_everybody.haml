@@ -8,10 +8,7 @@
       = render :partial => "common/flash_all"
       - form_tag  :controller => "user", :action => "email_everybody"  do
         %br
-        - if @current_user.email.blank?
-          From Address: SoSOLAdmin
-        - else
-          From Address: SoSOLAdmin.#{@current_user.email.slice(/[\w._]+@/).chop}
+        From Address: SoSOL
         %br
         %br
         = label_tag "Email Subject - Required:"

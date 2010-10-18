@@ -195,17 +195,11 @@ class Board < ActiveRecord::Base
           friendly_name += ec.class::FRIENDLY_NAME
         end
         
-  			#subject_line = publication.title + " " + self.class::FRIENDLY_NAME + "-" + publication.status
         subject_line = publication.title + " " + friendly_name + "-" + when_to_send
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
   			
   			addresses.each do |address|
   				if address && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
+  					EmailerMailer.deliver_send_email_out(address, subject_line, body, document_content)   										
   				end
   			end
   			
