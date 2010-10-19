@@ -1,6 +1,6 @@
 class EmailerMailer < ActionMailer::Base
     
-  def boardmail(addresses, subject_line, body_content, article_content)
+  def send_email_out(addresses, subject_line, body_content, article_content=nil)
               
     #TODO check that email is creatible, ie has valid addresses
     
@@ -20,20 +20,4 @@ class EmailerMailer < ActionMailer::Base
   
   end
   
-  def maileverybody(fromaddress, toaddress, subject_line, email_content)
-              
-    #TODO check that email is creatible, ie has valid addresses
-    
-    sent_on Time.now
-    if fromaddress.blank?
-      from "SoSOLAdmin"
-    else
-      from "SoSOLAdmin---" + fromaddress
-    end
-    recipients toaddress
-    subject subject_line
-    body email_content
-    
-  end
-
 end
