@@ -12,8 +12,8 @@ en:
     label:
       titleStmt: Title
       tmNo: TM no.
-      contentText: Keywords
-      notes: Notes
+      contentText: Keywords / Inhalt
+      notes: Notes / Bemerkungen
       material: Material
       plannedForFuturePrintRelease: Print
       publicationTitle: Title
@@ -33,17 +33,17 @@ en:
       provenanceNome: Nome
       provenanceAncientRegion: Ancient region
       provenanceModernFindspot: Modern findspot
-      illustrations: Illustrations
+      illustrations: Illustrations / Abbildungen
       otherPublications: Other publications
       bl: BL
       blVolume: Volume
       blPage: Pages
       mentionedDateReference: Reference
-      mentionedDateFrom: Date
-      mentionedDateTo: Second date (if time span)
+      mentionedDateFrom: From / When
+      mentionedDateTo: To
       mentionedDateCertainty: Certainty
       mentionedDateDateId: Date id
-      mentionedDateNote: Note
+      mentionedDateNote: Comment
       translationsDe: German
       translationsEn: English
       translationsIt: Italian
@@ -72,7 +72,6 @@ en:
       fromToDate: Date span
       offset: Offset
       textDate: HGV format
-
       beginning: Beginning
       firstHalf: First half
       firstHalfToMiddle: First half to middle
@@ -87,7 +86,7 @@ en:
       dayUncertain: Day uncertain
       monthAndYearUncertain: Month and year uncertain
       yearUncertain: Year uncertain
-
+      multiAdd: add #✓
     tooltip:
       multiAdd: Click to add new item
       multiDelete: Click to delete item
@@ -150,20 +149,26 @@ en:
       collection: 'Collection'
       extra: 'Extra'
     help:
+      date: 'Bla... Please, James, explain what this date thingy is. And do it in <b>bold</b> or <i>italic</i> style if you like.'
       on_date: 'Specific date, use "-"-sign to mark the date before Christ'
       not_before_date: 'Specifies the earliest possible date for the event in standard form, e.g. yyyy-mm-dd.'
       not_after_date: 'Specifies the latest possible date for the event in standard form, e.g. yyyy-mm-dd.'
       text_date: 'Contains any form of date, used to identify the date of origin for a manuscript or manuscript part.'
       title_stmt: 'Title of the content.'
-      publication_title: 'Publication title'
-      publication_volume: 'Volume'
-      publication_numbers: 'Number'
-      publication_fascicle: 'Fascicle'
-      publication_side: 'Side'
-      publication_line: 'Line'
-      publication_pages: 'Pages'
-      publication_parts: 'Parts'
-      tm_nr: 'TM No.'
+      publicationTitle: 'Publication title'
+      publicationVolume: 'Volume'
+      publicationNumbers: 'Number'
+      publicationFascicle: 'Fascicle'
+      publicationSide: 'Side'
+      publicationLine: 'Line'
+      publicationPages: 'Pages'
+      publicationParts: 'Parts'
+      tmNo: 'TM Number'
+      collectionPlaceName: 'Name of the town or region of the collection.'
+      collectionInventoryNumber: 'Write some helpful stuff.'
+      collectionTemporaryNotes: 'Notes about temporary whereabouts of the manuscript.'
+      collectionTemporaryInventoryNumber: 'Temporary inventory number.'
+      collection: 'Name of a collection of manuscripts or of the institution that holds the collection.'
       illustrations: 'Reference to illustrations or photographes.'
       content_text: 'Keywords describing the content.'
       other_publications: 'Other publications.'
@@ -184,10 +189,6 @@ en:
       provenance_ancient_region: 'Ancient region'
       provenance_modern_findspot: 'Modern findspot'
       inventory_number: 'Inventory number'
-      collection_place_name: 'Name of the town or region of the collection.'
-      collection_temporary_notes: 'Notes about temporary whereabouts of the manuscript.'
-      collection_temporary_inventory_number: 'Temporary inventory number.'
-      collection: 'Name of a collection of manuscripts or of the institution that holds the collection.'
       planned_for_future_print_release: 'Printing schedule'
   bibliography:
     language: 'Language'

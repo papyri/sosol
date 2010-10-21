@@ -1,3 +1,32 @@
+/**** quickhelp ****/
+
+span.quickHelp
+  position: relative
+  z-index: 100
+  float: left
+  margin: 0 0 0 4px
+  height: 16px
+
+span.quickHelp span.hook
+  position: relative
+  background-color: lightsteelblue
+  padding: 2px
+  font-weight: bold
+  color: white
+  cursor: pointer
+
+span.quickHelp span.message
+  position: absolute
+  left: 16px
+  bottom: 8px
+  background-color: lightgrey
+  color: steelblue
+  border: solid 1px steelblue
+  padding: 4px
+  width: 200px
+  font-variant: normal
+  font-weight: normal
+
 /**** global ****/
 
 div.metaSite
@@ -38,6 +67,61 @@ div#edit input
   margin: 0 0 4px 0
 
 /**** special ****/
+div#edit fieldset li.label
+  background-color: transparent
+
+div#edit fieldset label.mentionedDateReference,
+div#edit fieldset label.mentionedDateFrom,
+div#edit fieldset label.mentionedDateTo,
+div#edit fieldset label.mentionedDateNote,
+div#edit fieldset label.mentionedDateCertainty,
+div#edit fieldset label.mentionedDateDateId
+  margin: 0 1px 0 0
+div#edit fieldset label.mentionedDateNote
+  width: 146px
+div#edit fieldset label.mentionedDateCertainty
+  width: 111px
+div#edit fieldset label.mentionedDateDateId
+  width: 50px
+
+div#edit input#hgv_meta_identifier_collectionPlaceName,
+div#edit input#hgv_meta_identifier_collection,
+div#edit input#hgv_meta_identifier_collectionInventoryNumber,
+div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber
+  width: 88px
+
+div#edit input#hgv_meta_identifier_collectionTemporaryNotes
+  width: 302px
+
+div#edit fieldset label.provenanceAncientFindspot,
+div#edit fieldset label.provenanceModernFindspot,
+div#edit fieldset label.provenanceNome,
+div#edit fieldset label.provenanceAncientRegion
+  width: 120px
+
+div#edit input#hgv_meta_identifier_provenanceAncientFindspot,
+div#edit input#hgv_meta_identifier_provenanceModernFindspot,
+div#edit input#hgv_meta_identifier_provenanceNome,
+div#edit input#hgv_meta_identifier_provenanceAncientRegion
+  width: 190px
+
+div#edit fieldset label.tmNo
+  margin: 0 4px 0 217px
+
+div#edit input#hgv_meta_identifier_publicationTitle,
+div#edit input#hgv_meta_identifier_tmNo,
+div#edit input#hgv_meta_identifier_publicationVolume,
+div#edit input#hgv_meta_identifier_publicationFascicle,
+div#edit input#hgv_meta_identifier_publicationNumbers,
+div#edit input#hgv_meta_identifier_publicationParts,
+div#edit input#hgv_meta_identifier_publicationSide,
+div#edit input#hgv_meta_identifier_publicationLine,
+div#edit input#hgv_meta_identifier_publicationPages
+  width: 87px
+
+span.quickHelp_meta_help_publicationFascicle,
+span.quickHelp_meta_help_publicationParts
+  margin: 0 113px 4px 4px
 
 div#edit input#hgv_meta_identifier_titleStmt
   width: 320px
@@ -45,8 +129,16 @@ div#edit input#hgv_meta_identifier_titleStmt
 div#edit input#hgv_meta_identifier_material
   width: 100px
 
-div#edit input#hgv_meta_identifier_collectionTemporaryNotes
-  width: 316px
+span.quickHelp_meta_help_publicationVolume,
+span.quickHelp_meta_help_publicationNumbers,
+span.quickHelp_meta_help_publicationSide,
+span.quickHelp_meta_help_collectionPlaceName,
+span.quickHelp_meta_help_collectionTemporaryNotes
+  z-index: 401
+  
+span.quickHelp_meta_help_publicationLine,
+span.quickHelp_meta_help_collection
+  z-index: 400
 
 /**** multi general ****/
 
@@ -58,6 +150,9 @@ div#edit div.multi ul li
   padding: 1px
   margin: 0 4px 4px 0
   height: 16px
+
+div#edit div.multi ul li.label
+  background-color: transparent
 
 div#edit div.multi ul.items li input
   margin: auto
@@ -87,7 +182,7 @@ div#edit div.multi p.add
   width: 528px
 
 div#edit div.multi p.add input
-  width: 510px
+  width: 496px
   height: 18px
   background-color: white
   border: none
@@ -113,11 +208,15 @@ div#edit div.multi ul#multiItems_contentText li
 div#edit div.multi ul#multiItems_contentText li input
   width: 132px 
 
+div#edit div.multi ul#multiItems_bl li
+  float: left
+  width: 85px
+
 div#edit div.multi ul#multiItems_bl li input
-  width: 245px
+  width: 24px
 
 div#edit div.multi p#multiPlus_bl input
-  width: 147px
+  width: 140px
 
 div#edit div.multi ul#multiItems_mentionedDate li
   width: 643px
@@ -232,26 +331,3 @@ div#edit fieldset.date p select
 div#edit fieldset.date p select.offset, div#edit fieldset.date p select.certainty
   width: 168px
 
-/**** quickhelp ****/
-
-span.quickHelp
-  position: relative
-  z-index: 100
-
-span.quickHelp span.hook
-  position: relative
-  background-color: lightsteelblue
-  padding: 2px
-  font-weight: bold
-  color: white
-  cursor: pointer
-
-span.quickHelp span.message
-  position: absolute
-  left: 16px
-  bottom: 8px
-  background-color: lightgrey
-  color: lightsteelblue
-  border: solid 1px lightsteelblue
-  padding: 4px
-  width: 200px
