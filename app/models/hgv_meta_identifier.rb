@@ -169,7 +169,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
     index = 1
     data.each { |item|
-
+      
       hasContent = item.class == String && !item.strip.empty? ? true : (item[:value] && !item[:value].strip.empty? ? true : (item[:attributes] && !item[:attributes].values.join.empty? ? true : (!item[:children].empty? ? true : false)))
 
       if hasContent
@@ -227,8 +227,11 @@ class HGVMetaIdentifier < HGVIdentifier
         xpath_child = $2 
 
         if self[key].empty?
-          if (parent = doc.elements[xpath_parent]) && !parent.has_elements? && !parent.has_text?
-            parent.elements['..'].delete parent
+          if parent = doc.elements[xpath_parent]
+            parent.elements.delete_all xpath_child
+            if !parent.has_elements? && parent.texts.join.strip.empty?
+              parent.elements['..'].delete parent
+            end
           end
         else
           if parent = doc.elements[xpath_parent]
