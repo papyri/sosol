@@ -20,9 +20,9 @@ en:
       publicationVolume: Volume
       publicationNumbers: Number
       publicationFascicle: Fascicle
-      publicationSide: Side
-      publicationLine: Line
-      publicationPages: Pages
+      publicationSide: Side / Seite
+      publicationLine: Line / Zeile
+      publicationPages: Pages / Seiten
       publicationParts: Parts
       collectionPlaceName: Place name
       collection: Collection
@@ -149,27 +149,31 @@ en:
       collection: 'Collection'
       extra: 'Extra'
     help:
-      date: 'Bla... Please, James, explain what this date thingy is. And do it in <b>bold</b> or <i>italic</i> style if you like.'
+      date: '<b>Please do not use this section at present! Still being developed.</b> In the section named EXTRA existing dates are displayed correctly.'
       on_date: 'Specific date, use "-"-sign to mark the date before Christ'
       not_before_date: 'Specifies the earliest possible date for the event in standard form, e.g. yyyy-mm-dd.'
       not_after_date: 'Specifies the latest possible date for the event in standard form, e.g. yyyy-mm-dd.'
       text_date: 'Contains any form of date, used to identify the date of origin for a manuscript or manuscript part.'
       title_stmt: 'Title of the content.'
-      publicationTitle: 'Publication title'
-      publicationVolume: 'Volume'
-      publicationNumbers: 'Number'
-      publicationFascicle: 'Fascicle'
-      publicationSide: 'Side'
-      publicationLine: 'Line'
-      publicationPages: 'Pages'
-      publicationParts: 'Parts'
-      tmNo: 'TM Number'
-      collectionPlaceName: 'Name of the town or region of the collection.'
-      collectionInventoryNumber: 'Write some helpful stuff.'
-      collectionTemporaryNotes: 'Notes about temporary whereabouts of the manuscript.'
-      collectionTemporaryInventoryNumber: 'Temporary inventory number.'
+      publicationTitle: 'Publication title, e.g. BGU, P.Oxy'
+      publicationVolume: 'Volume of the publication'
+      publicationNumbers: 'Number of the document within the volume'
+      publicationFascicle: 'For specification of the volume number, e.g. CPR 17A'
+      publicationSide: 'Indicates which side of the material was used for writing the text, e.g. BGU 1 57 R. Values: R, V, Haarseite, Fleischseite, Innenseite, Aussenseite'
+      publicationLine: 'To indicate a subsection of a text based on line numbering, e.g. CPR 17B 11 Z. 1-5. Use Z. (= Zeile), then numbers'
+      publicationPages: 'For identification of the text based on page numbers in a volume, e.g. P.Flor. 2 227 S. 247. Use S. (= Seite), then numbers'
+      publicationParts: 'For specification of different parts of the document, e.g. SB 1 4512 A, BGU 3 930 Einl. Some values: Kol., Einl., Fol., Fr., Inv.Nr., (a), (b) ..., a, b ...'
+      tmNo: 'TM Number. If unknown or non-existent, this will always be assigned by TM in Leuven.'
+      collectionPlaceName: 'Name of the town or region where the collection is housed.'
+      collectionInventoryNumber: 'Inventory number. To be entered as an unbroken string of text.'
+      collectionTemporaryNotes: 'Notes about temporary whereabouts of the manuscript, e.g. part of an exhibition.'
+      collectionTemporaryInventoryNumber: 'Temporary inventory number, e.g. part of an exhibition.'
       collection: 'Name of a collection of manuscripts or of the institution that holds the collection.'
-      illustrations: 'Reference to illustrations or photographes.'
+      mentionedDateReference: 'Enter the line number(s) in the text, where the date is mentioned. E.g. Z. 2, Kol. II, Z. 11.'
+      mentionedDateFrom: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
+      mentionedDateTo: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
+      mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
+      illustrations: 'Reference to printed illustrations or photographs.'
       content_text: 'Keywords describing the content.'
       other_publications: 'Other publications.'
       translations: 'Translations'

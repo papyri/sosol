@@ -70,17 +70,21 @@ div#edit input
 div#edit fieldset li.label
   background-color: transparent
 
+div#edit fieldset span.label
+  float: left
+
 div#edit fieldset label.mentionedDateReference,
 div#edit fieldset label.mentionedDateFrom,
 div#edit fieldset label.mentionedDateTo,
 div#edit fieldset label.mentionedDateNote,
 div#edit fieldset label.mentionedDateCertainty,
 div#edit fieldset label.mentionedDateDateId
-  margin: 0 1px 0 0
+  margin: 0 1px 4px 0
+  overflow: visible
 div#edit fieldset label.mentionedDateNote
-  width: 146px
+  width: 147px
 div#edit fieldset label.mentionedDateCertainty
-  width: 111px
+  width: 107px
 div#edit fieldset label.mentionedDateDateId
   width: 50px
 
@@ -129,13 +133,18 @@ div#edit input#hgv_meta_identifier_titleStmt
 div#edit input#hgv_meta_identifier_material
   width: 100px
 
+span.quickHelp_meta_help_mentionedDateReference
+  z-index: 402
+
+span.quickHelp_meta_help_mentionedDateFrom,
 span.quickHelp_meta_help_publicationVolume,
 span.quickHelp_meta_help_publicationNumbers,
 span.quickHelp_meta_help_publicationSide,
 span.quickHelp_meta_help_collectionPlaceName,
 span.quickHelp_meta_help_collectionTemporaryNotes
   z-index: 401
-  
+
+span.quickHelp_meta_help_mentionedDateTo,  
 span.quickHelp_meta_help_publicationLine,
 span.quickHelp_meta_help_collection
   z-index: 400

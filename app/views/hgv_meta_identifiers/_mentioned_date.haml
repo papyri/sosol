@@ -2,15 +2,25 @@
 - certaintyOptions = HgvMentionedDate::certaintyOptions
 - dateIdOptions = HgvMentionedDate::dateIdOptions
 
+%p.label
+  %label.mentionedDateReference
+    %span.label=I18n.t('meta.label.mentionedDateReference')
+    %span.quick_help{:id => 'meta.help.mentionedDateReference'}
+  %label.mentionedDateFrom
+    %span.label=I18n.t('meta.label.mentionedDateFrom')
+    %span.quick_help{:id => 'meta.help.mentionedDateFrom'}
+  %label.mentionedDateTo
+    %span.label=I18n.t('meta.label.mentionedDateTo')
+    %span.quick_help{:id => 'meta.help.mentionedDateTo'}
+  %label.mentionedDateNote
+    %span.label=I18n.t('meta.label.mentionedDateNote')
+    %span.quick_help{:id => 'meta.help.mentionedDateNote'}
+  %label.mentionedDateCertainty=I18n.t('meta.label.mentionedDateCertainty')
+  %label.mentionedDateDateId=I18n.t('meta.label.mentionedDateDateId')
+
 .multi#multi_mentiondedDate
   %ul.items#multiItems_mentionedDate
-    %li.label
-      %label.mentionedDateReference=I18n.t('meta.label.mentionedDateReference')
-      %label.mentionedDateFrom=I18n.t('meta.label.mentionedDateFrom')
-      %label.mentionedDateTo=I18n.t('meta.label.mentionedDateTo')
-      %label.mentionedDateNote=I18n.t('meta.label.mentionedDateNote')
-      %label.mentionedDateCertainty=I18n.t('meta.label.mentionedDateCertainty')
-      %label.mentionedDateDateId=I18n.t('meta.label.mentionedDateDateId')
+
     - data.each_index do |index| item = data[index]
       %li
 

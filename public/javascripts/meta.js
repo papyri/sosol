@@ -14,23 +14,16 @@ function openDateTab(dateId)
 
 function toggleMentionedDates(dateId){
   $$('ul#multiItems_mentionedDate > li').each(function(li, index){
-
     if(index > 0){
-      
-
       value = li.select('select.dateId')[0].value;
-      
       if(value == dateId || value == ''){
         li.style.display = 'block';
       }
       else{
         li.style.display = 'none';
       }
-    
     }
-    
   });
-
   $('mentionedDate_dateId').value = dateId;
 }
 
