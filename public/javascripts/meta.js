@@ -217,4 +217,20 @@ function mentionedDateNewCertainty(selectbox)
   }
 }
 
+/**** check ****/
+
+$('hgv_meta_identifier_submit').observe('click', function(){
+  multiAddMentionedDate();
+  multiAdd('contentText');
+  multiAdd('illustrations');
+  multiAdd('otherPublications');
+  multiAddBl();
+  multiAdd('translationsDe');
+  multiAdd('translationsEn');
+  multiAdd('translationsIt');
+  multiAdd('translationsEs');
+  multiAdd('translationsLa');
+  multiAdd('translationsFr');
+});
+
 // todo: if an item has been moved the »observeChange« alert needs to be triggered

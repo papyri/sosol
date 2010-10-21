@@ -26,7 +26,7 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
-        
+
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
 
@@ -136,18 +136,18 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEn }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEn }
+         
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEs }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEs }
+         
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsIt }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsIt }
 
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEs }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEs }
-
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
 
