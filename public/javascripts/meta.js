@@ -220,11 +220,17 @@ function mentionedDateNewCertainty(selectbox)
 /**** check ****/
 
 $('hgv_meta_identifier_submit').observe('click', function(){
-  multiAddMentionedDate();
+  if($('mentionedDate_date').value.match(/-?\d{4}-\d{2}-\d{2}/)){
+    multiAddMentionedDate();
+  }
+
+  if($('bl_volume').match(/[IVXLCDM]+/)){
+    multiAddBl();
+  }
+
   multiAdd('contentText');
   multiAdd('illustrations');
-  multiAdd('otherPublications');
-  multiAddBl();
+  multiAdd('otherPublications');  
   multiAdd('translationsDe');
   multiAdd('translationsEn');
   multiAdd('translationsIt');
