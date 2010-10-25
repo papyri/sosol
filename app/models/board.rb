@@ -141,11 +141,11 @@ class Board < ActiveRecord::Base
   			
   			#--document content
   			if mailer.include_document
-  				#document_content = self.content 
           document_content = ""
           email_identifiers.each do |ec|
             unless ec.nil?
-              document_content += ec.content || ""
+              #document_content += ec.content || ""
+              document_content += Identifier.find(ec[:id]).content || ""
             end
           end
   			else
