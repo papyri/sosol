@@ -65,10 +65,10 @@
         - if @publication.status != "archived"
           = render :partial => identifier        
 
-    - if @comments != nil  
+    - if @xml_comments != nil  
       %h3 Comments 
-      - for comment in @comments
-        = render :partial => comment      
+      - for commentall in @xml_comments
+        = render :partial => "publications/commentall",  :locals => {:commentall => commentall}  
      
     - if @other_user_publications != nil && @other_user_publications.length > 0
       %br
@@ -87,7 +87,7 @@
         - link_type = class_type.constantize::FRIENDLY_NAME
         - create_type = 'Create new ' + link_type
         - newstyle = 'style="color:white; background-color:#005DAA"'
-        = link_to (create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
+        = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
      
         %br
 

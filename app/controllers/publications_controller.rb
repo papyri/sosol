@@ -165,10 +165,11 @@ class PublicationsController < ApplicationController
     @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
     
-    error_text = @publication.submit
+    error_text, identifier_for_comment = @publication.submit
     if error_text == ""
       #update comment with git hash when successfully submitted
       @comment.git_hash = @publication.recent_submit_sha
+      @comment.identifier_id = identifier_for_comment
       @comment.save
       expire_publication_cache
       expire_fragment(/board_publications_\d+/)
@@ -316,7 +317,7 @@ class PublicationsController < ApplicationController
       return
     end
      
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
+    @xml_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?
     
