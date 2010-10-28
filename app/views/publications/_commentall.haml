@@ -1,11 +1,12 @@
 .comment_partial
-  %div{:class => "#{commentall.xmltype.downcase}_comment" }
-    .name
-      = commentall.who
-    .time
-      = commentall.when.strftime("%a %b %d, %Y  %X")
-    .reason 
-      = commentall.why
-    .comment    
-      = commentall.comment
+  - for comment in commentall
+    %div{:class => "#{comment.xmltype.downcase}_comment" }
+      .name
+        = comment.who
+      .time
+        = comment.when.strftime("%a %b %d, %Y  %X")
+      .reason 
+        = comment.why
+      .comment    
+        = comment.comment
 

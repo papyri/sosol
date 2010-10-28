@@ -1,4 +1,5 @@
 #main
+  - max_visible_comments = 10
   :javascript 
     function checkForComment() { comment_text = $('submit_comment').value; $('submit_button').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
   = render :partial => 'identifiers/edit_bar'
@@ -67,8 +68,16 @@
 
     - if @xml_comments != nil  
       %h3 Comments 
-      - for commentall in @xml_comments
-        = render :partial => "publications/commentall",  :locals => {:commentall => commentall}  
+      = render :partial => "publications/commentall",  :object => @xml_comments[0..max_visible_comments-1]
+      - if @xml_comments.length > max_visible_comments
+        %div{:id => "more_comments", :style => "display:none;"}
+          = render :partial => "publications/commentall", :object => @xml_comments[max_visible_comments..-1]
+        %div{:id => "more_comments_link"}
+          %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_comments');Effect.SlideUp('more_comments_link');Effect.SlideDown('less_comments_link');return false;"}
+            More...
+        %div{:id => "less_comments_link", :style => "display:none;"}
+          %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_comments');Effect.SlideDown('more_comments_link');Effect.SlideUp('less_comments_link');return false;"}
+            Less...  
      
     - if @other_user_publications != nil && @other_user_publications.length > 0
       %br
