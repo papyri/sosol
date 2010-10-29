@@ -9,10 +9,10 @@
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add#multiPlus_bl
-    %label= I18n.t('meta.label.blVolume') + ':'
+    %label= I18n.t('meta.label.blVolume')
     %input#bl_volume
-    %label= I18n.t('meta.label.blPage') + ':'
+    %label= I18n.t('meta.label.blPage')
     %input#bl_page
-    %span{:onclick => "multiAddBl()", :title => I18n.t('meta.tooltip.multiAdd')} ✓
+    %span{:onclick => "multiAddBl()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_bl', {overlap: 'horizontal', constraint: false, handle: 'move'});"

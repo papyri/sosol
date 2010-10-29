@@ -130,11 +130,11 @@
                   :name: degree
                   :optional: false
                   :pattern: /\A0(\.\d)?|1\Z/
-    :mentionedDateOriginal:
-      :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='original']
-    :mentionedDateSource:
-      :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
-      :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
+    #:mentionedDateOriginal:
+    #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='original']
+    #:mentionedDateSource:
+    #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
+    #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate[@type='textDate']
       :multiple: true

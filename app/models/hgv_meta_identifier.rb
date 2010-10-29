@@ -170,7 +170,7 @@ class HGVMetaIdentifier < HGVIdentifier
     index = 1
     data.each { |item|
 
-      hasContent = item.class == String && !item.strip.empty? ? true : (item[:value] && !item[:value].strip.empty? ? true : (item[:attributes] && !item[:attributes].values.join.empty? ? true : (!item[:children].empty? ? true : false)))
+      hasContent = (item.class == String) ? (item.strip.empty? ? false : true) : (item[:value] && !item[:value].strip.empty? ? true : (item[:attributes] && !item[:attributes].values.join.empty? ? true : (!item[:children].empty? ? true : false)))
 
       if hasContent
 
@@ -227,8 +227,11 @@ class HGVMetaIdentifier < HGVIdentifier
         xpath_child = $2 
 
         if self[key].empty?
-          if (parent = doc.elements[xpath_parent]) && !parent.has_elements? && !parent.has_text?
-            parent.elements['..'].delete parent
+          if parent = doc.elements[xpath_parent]
+            parent.elements.delete_all xpath_child
+            if !parent.has_elements? && parent.texts.join.strip.empty?
+              parent.elements['..'].delete parent
+            end
           end
         else
           if parent = doc.elements[xpath_parent]
@@ -310,7 +313,7 @@ class HGVMetaIdentifier < HGVIdentifier
     elsif value.kind_of? Hash
       value = value.values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip }
     end
-    self[key] = value
+    self[key] = value    
   end
 
   # saves the values stored within a hash object (usually generated via a webbrowser form)
@@ -331,9 +334,9 @@ class HGVMetaIdentifier < HGVIdentifier
         end
         self[key] = result
       elsif config[:multiple]
-        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values : []
+        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
       else 
-        self[key] = attributes_hash[key.to_s]
+        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].strip : nil
       end
     end
 

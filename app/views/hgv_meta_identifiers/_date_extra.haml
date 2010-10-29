@@ -27,5 +27,5 @@
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.textDate'), :title => @identifier.configuration.xpath(:textDate)
   %span
     = textDate
-  = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][attributes][textDate]', textDate, :disabled => !@identifier.mutable?, :class => 'observechange'
+  = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][value]', textDate, :disabled => !@identifier.mutable?, :class => 'observechange'
   
