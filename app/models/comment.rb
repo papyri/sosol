@@ -10,6 +10,17 @@ class Comment < ActiveRecord::Base
   named_scope :general, :conditions => { :reason => 'general' }
   named_scope :vote, :conditions => { :reason => 'vote' }
   
-  
+  class CombineComment
+    attr_accessor :xmltype, :who, :when, :why, :comment 
+    
+    def initialize
+      @xmltype = ''
+      @who = ''
+      @when = ''
+      @why = ''
+      @comment = ''
+    end
+    
+  end
   
 end
