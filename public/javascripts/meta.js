@@ -13,16 +13,18 @@ function openDateTab(dateId)
 }
 
 function toggleMentionedDates(dateId){
-  $$('ul#multiItems_mentionedDate > li').each(function(li){
-    value = li.select('select.dateId')[0].value;
-    if(value == dateId || value == ''){
-      li.style.display = 'block';
+  $$('ul#multiItems_mentionedDate > li').each(function(li, index){
+    if(index > 0){
+      value = li.select('select.dateId')[0].value;
+      if(value == dateId || value == ''){
+        li.style.display = 'block';
+      }
+      else{
+        li.style.display = 'none';
+      }
     }
-    else{
-      li.style.display = 'none';
-    }
-    $('mentionedDate_dateId').value = dateId;
   });
+  $('mentionedDate_dateId').value = dateId;
 }
 
 toggleMentionedDates('#dateAlternativeX');
@@ -67,7 +69,7 @@ function multiAddBl()
 
   var item = '<li>' +
              '  <input type="text" value="' + volume + '" name="hgv_meta_identifier[bl][' + index + '][children][volume][value]" id="hgv_meta_identifier_bl_' + index + '_children_volume_value" class="observechange">' +
-             '  <input type="text" value="' + page + '" name="hgv_meta_identifier[bl][' + index + '][children][pages][value]" id="hgv_meta_identifier_bl_' + index + '_children_pages_value" class="observechange">' +
+             '  <input type="text" value="' + page + '" name="hgv_meta_identifier[bl][' + index + '][children][page][value]" id="hgv_meta_identifier_bl_' + index + '_children_page_value" class="observechange">' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
@@ -214,5 +216,27 @@ function mentionedDateNewCertainty(selectbox)
     }
   }
 }
+
+/**** check ****/
+
+$('hgv_meta_identifier_submit').observe('click', function(){
+  if($('mentionedDate_date').value.match(/-?\d{4}-\d{2}-\d{2}/)){
+    multiAddMentionedDate();
+  }
+
+  if($('bl_volume').match(/[IVXLCDM]+/)){
+    multiAddBl();
+  }
+
+  multiAdd('contentText');
+  multiAdd('illustrations');
+  multiAdd('otherPublications');  
+  multiAdd('translationsDe');
+  multiAdd('translationsEn');
+  multiAdd('translationsIt');
+  multiAdd('translationsEs');
+  multiAdd('translationsLa');
+  multiAdd('translationsFr');
+});
 
 // todo: if an item has been moved the »observeChange« alert needs to be triggered

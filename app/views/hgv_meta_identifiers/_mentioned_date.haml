@@ -2,8 +2,25 @@
 - certaintyOptions = HgvMentionedDate::certaintyOptions
 - dateIdOptions = HgvMentionedDate::dateIdOptions
 
+%p.label
+  %label.mentionedDateReference
+    %span.label=I18n.t('meta.label.mentionedDateReference')
+    %span.quick_help{:id => 'meta.help.mentionedDateReference'}
+  %label.mentionedDateFrom
+    %span.label=I18n.t('meta.label.mentionedDateFrom')
+    %span.quick_help{:id => 'meta.help.mentionedDateFrom'}
+  %label.mentionedDateTo
+    %span.label=I18n.t('meta.label.mentionedDateTo')
+    %span.quick_help{:id => 'meta.help.mentionedDateTo'}
+  %label.mentionedDateNote
+    %span.label=I18n.t('meta.label.mentionedDateNote')
+    %span.quick_help{:id => 'meta.help.mentionedDateNote'}
+  %label.mentionedDateCertainty=I18n.t('meta.label.mentionedDateCertainty')
+  %label.mentionedDateDateId=I18n.t('meta.label.mentionedDateDateId')
+
 .multi#multi_mentiondedDate
   %ul.items#multiItems_mentionedDate
+
     - data.each_index do |index| item = data[index]
       %li
 
@@ -38,7 +55,7 @@
     = text_field_tag 'mentionedDate_note', '', :title => I18n.t('meta.tooltip.multiMentionedDateComment'), :disabled => !@identifier.mutable?, :class => 'observechange note'
     = select_tag 'mentionedDate_certaintyPicker', options_for_select(certaintyOptions), :title => I18n.t('meta.tooltip.multiMentionedDateCertainty'), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
     = select_tag 'mentionedDate_dateId', options_for_select(dateIdOptions), :title => I18n.t('meta.tooltip.multiMentionedDateDateId'), :disabled => !@identifier.mutable?, :class => 'observechange dateId'
-    %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('meta.tooltip.multiAdd')} ✓
+    %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_mentionedDate', {overlap: 'horizontal', constraint: false, handle: 'move'});"
 
