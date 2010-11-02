@@ -135,7 +135,7 @@ class Publication < ActiveRecord::Base
     self.origin.change_status("committed")
     self.save
     
-    return error_text # controller checks returned value for empty or not
+    return error_text, nil # controller checks returned value for empty or not
     
   end
   
@@ -867,10 +867,22 @@ class Publication < ActiveRecord::Base
         built_comment = Comment::CombineComment.new
         
         built_comment.xmltype = where_from
-        built_comment.who = change.attributes["who"]
+        
+        if change.attributes["who"]
+          built_comment.who = change.attributes["who"]
+        else
+          built_comment.who = "no who attribute"
+        end
+        
         # parse will convert date to local for consistency so work in sort below
-        built_comment.when = Time.parse(change.attributes["when"])
+        if change.attributes["when"]
+          built_comment.when = Time.parse(change.attributes["when"])
+        else
+          built_comment.when = Time.parse("1988-8-8")
+        end
+        
         built_comment.why = "From " + where_from + " XML"
+        
         built_comment.comment = change.text
         
         all_built_comments << built_comment
