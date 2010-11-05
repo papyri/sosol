@@ -815,6 +815,7 @@ class Publication < ActiveRecord::Base
   
   def get_all_comments(title)
     all_built_comments = []
+    xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
                                          FROM comments a, publications b 
@@ -886,10 +887,11 @@ class Publication < ActiveRecord::Base
         built_comment.comment = change.text
         
         all_built_comments << built_comment
+        xml_only_built_comments << built_comment
       end
     end
     # sort in descending date order for display
-    return all_built_comments.sort_by(&:when).reverse
+    return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
   end
   
   protected
