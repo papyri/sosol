@@ -317,7 +317,7 @@ class PublicationsController < ApplicationController
       return
     end
      
-    @xml_comments = @publication.get_all_comments(@publication.title.split("/").last)
+    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?
     
