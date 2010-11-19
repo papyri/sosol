@@ -231,10 +231,11 @@ class DDBIdentifier < Identifier
     self.set_xml_content(modified_xml_content, :comment => commit_comment)
   end
 
-  def preview
+  def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt pn start-div-portlet.xsl})))
+        xsl ? xsl : %w{data xslt pn start-div-portlet.xsl})),
+        parameters)
   end
 end
