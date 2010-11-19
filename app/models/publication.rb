@@ -37,7 +37,50 @@ class Publication < ActiveRecord::Base
   
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
-  
+
+  def print
+    # get preview of each identifier
+    tmp = {}
+    identifiers.each{|identifier|
+      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'ddbdp'}, %w{data xslt epidoc start-odf.xsl})
+    }
+
+    Rails.logger.info('---------------DDB xml ---------------------')
+
+    Rails.logger.info tmp[:DDBIdentifier].to_s
+
+    Rails.logger.info('------------------------------------')
+
+    #merge xml
+    meta = REXML::Document.new tmp[:HGVMetaIdentifier]
+    text = REXML::Document.new tmp[:DDBIdentifier]
+
+    Rails.logger.info('---------------DDB xml document---------------------')
+
+    Rails.logger.info text.elements["//office:document-content/office:body/office:text"].to_s
+    
+    Rails.logger.info('------------------------------------')
+
+    elder = meta.elements["//office:document-content/office:body/office:text/text:p[@text:style-name='Sammelbuch-Kopf']"]
+    text.elements["//office:document-content/office:body/office:text"].each_element {|text_element|
+
+    Rails.logger.info('**** found['+text_element.class.inspect+']')
+
+      meta.elements["//office:document-content/office:body/office:text"].insert_after(elder, text_element)
+      elder = text_element
+
+    }
+    
+    # output string
+    formatter = REXML::Formatters::Default.new
+    #formatter.compact = true
+    #formatter.width = 512
+    xml = ''
+    formatter.write meta, xml
+
+    xml
+  end
+
   def populate_identifiers_from_identifiers(identifiers)
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
