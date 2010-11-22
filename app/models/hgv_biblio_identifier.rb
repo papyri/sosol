@@ -87,7 +87,7 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
     formatter = REXML::Formatters::Default.new
     formatter.write doc, modified_xml_content
 
-    self.set_content(modified_xml_content, :comment => comment)
+    self.set_xml_content(modified_xml_content, :comment => comment)
   end
 
   def store_bibliographical_data doc, item_list, data, base_path
@@ -100,15 +100,19 @@ class HGVBiblioIdentifier < HGVMetaIdentifier
         if options[:multiple]
           doc.elements.delete_all path
 
-          splinters = value.split(',').select{ |splinter|
-            (splinter.class == String) && (!splinter.strip.empty?)
-          }
-
-          splinters.each_index { |i|
-            doc.bulldozePath(path + "[@n='" + (i + 1).to_s + "']", splinters[i].strip)
-          }
+          if !value.empty?
+            splinters = value.split(',').select{ |splinter|
+              (splinter.class == String) && (!splinter.strip.empty?)
+            }
+  
+            splinters.each_index { |i|
+              doc.bulldozePath(path + "[@n='" + (i + 1).to_s + "']", splinters[i].strip)
+            }
+          end
         else
-          doc.bulldozePath(path, value)
+          if !value.empty?
+            doc.bulldozePath(path, value)
+          end
         end
 
       }

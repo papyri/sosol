@@ -224,7 +224,7 @@ $('hgv_meta_identifier_submit').observe('click', function(){
     multiAddMentionedDate();
   }
 
-  if($('bl_volume').match(/[IVXLCDM]+/)){
+  if($('bl_volume').value.match(/[IVXLCDM]+/)){
     multiAddBl();
   }
 
