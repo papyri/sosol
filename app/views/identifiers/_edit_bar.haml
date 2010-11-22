@@ -33,6 +33,7 @@
               - for tran in trans
                 %li
                   = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
+    -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
       - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
           = link_to 'Bibliography', edit_biblio_publication_path(@identifier.publication)

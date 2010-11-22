@@ -135,7 +135,7 @@ class Publication < ActiveRecord::Base
     self.origin.change_status("committed")
     self.save
     
-    return error_text # controller checks returned value for empty or not
+    return error_text, nil # controller checks returned value for empty or not
     
   end
   
@@ -815,6 +815,7 @@ class Publication < ActiveRecord::Base
   
   def get_all_comments(title)
     all_built_comments = []
+    xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
                                          FROM comments a, publications b 
@@ -857,27 +858,43 @@ class Publication < ActiveRecord::Base
     # add comments hash from each of the publication's identifiers XML file to array
     identifiers.each do |i|
       where_from = i.class::FRIENDLY_NAME
+      ident_title = i.title
       
       ident_xml = i.xml_content
-      ident_xml_xpath = REXML::Document.new(ident_xml)
-      comment_path = '/TEI/teiHeader/revisionDesc'
-      comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
-
-      comment_here.each_element('//change') do |change|
-        built_comment = Comment::CombineComment.new
+      if ident_xml
+        ident_xml_xpath = REXML::Document.new(ident_xml)
+        comment_path = '/TEI/teiHeader/revisionDesc'
+        comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
         
-        built_comment.xmltype = where_from
-        built_comment.who = change.attributes["who"]
-        # parse will convert date to local for consistency so work in sort below
-        built_comment.when = Time.parse(change.attributes["when"])
-        built_comment.why = "From " + where_from + " XML"
-        built_comment.comment = change.text
-        
-        all_built_comments << built_comment
-      end
-    end
+        comment_here.each_element('//change') do |change|
+          built_comment = Comment::CombineComment.new
+          
+          built_comment.xmltype = where_from
+          
+          if change.attributes["who"]
+            built_comment.who = change.attributes["who"]
+          else
+            built_comment.who = "no who attribute"
+          end
+          
+          # parse will convert date to local for consistency so work in sort below
+          if change.attributes["when"]
+            built_comment.when = Time.parse(change.attributes["when"])
+          else
+            built_comment.when = Time.parse("1988-8-8")
+          end
+          
+          built_comment.why = "From "  + ident_title + " " + where_from + " XML"
+          
+          built_comment.comment = change.text
+          
+          all_built_comments << built_comment
+          xml_only_built_comments << built_comment
+        end #comment_here
+      end # if ident_xml
+    end #identifiers each
     # sort in descending date order for display
-    return all_built_comments.sort_by(&:when).reverse
+    return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
   end
   
   protected

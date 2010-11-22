@@ -62,7 +62,7 @@ class PublicationsController < ApplicationController
       #cant create trans
       @creatable_identifiers.delete("HGVTransIdentifier")     
     end
-    
+    #TODO - is Biblio needed?
     @creatable_identifiers.delete("HGVBiblioIdentifier")
     
     #only let user create new for non-existing        
@@ -295,7 +295,7 @@ class PublicationsController < ApplicationController
     end
     
     #send publication to the next board
-    error_text = @publication.origin.submit_to_next_board
+    error_text, identifier_for_comment = @publication.origin.submit_to_next_board
     if error_text != ""
       flash[:error] = error_text
     end
@@ -317,7 +317,7 @@ class PublicationsController < ApplicationController
       return
     end
      
-    @xml_comments = @publication.get_all_comments(@publication.title.split("/").last)
+    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?
     
