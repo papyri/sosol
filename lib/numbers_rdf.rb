@@ -40,13 +40,7 @@ module NumbersRDF
       end
       
       def identifier_to_url(identifier)
-        result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:references/@rdf:resource", identifier)
-        if result.blank?
-          return "http://#{NUMBERS_SERVER_DOMAIN}"
-        else
-          return result.last
-        end
+        return "http://#{identifier}"
       end
       
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
