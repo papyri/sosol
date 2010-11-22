@@ -88,7 +88,11 @@ module NumbersRDF
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:hasPart/@rdf:resource", identifier)
-        return results.collect{|r| identifier_url_to_identifier(r)}
+        if results.nil?
+          return nil
+        else
+          return results.collect{|r| identifier_url_to_identifier(r)}
+        end
       end
       
       # Turns e.g. papyri.info/hgv/P.Amh._2_48 into papyri.info/hgv/123
