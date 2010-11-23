@@ -1,8 +1,13 @@
   var needToConfirm = false;
+  var needToConfirmVote = false;
   
   // Add a change observer to each element with the observechange CSS class
   $$('.observechange').invoke('observe', 'change', function(event) {
     set_conf_true();
+  });
+  
+  $$('.observechangevote').invoke('observe', 'change', function(event) { 
+    set_conf_true_vote();
   });
   
   // Add a change observer to commenttop with the observechangecomtop CSS class
@@ -25,6 +30,12 @@
         "Modifications appear to have been made and \n" +
         "will be lost if you leave without saving. \n";
       }
+    if (needToConfirmVote) 
+      { return "\n" + 
+        "You have entered a comment but not clicked the \n" +
+        "'Vote' button.  Are you sure you want to leave \n" +
+        "without clicking the 'Vote' button? \n"; 
+      }
   }
   
   function set_conf_true() {
@@ -34,15 +45,22 @@
   function set_conf_false() {
     needToConfirm = false;
   }
-
-  function showMatch(elem_id)
+  
+  function set_conf_true_vote() 
+  { 
+    needToConfirmVote = true; 
+  }
+  
+  function set_conf_false_vote() 
+  { 
+    needToConfirmVote = false; 
+  }
+  
+  function showMatch(elem_id, phrase)
   {
   // forceChangeTrue is set in identifiers/_edit_commit partial
   if (forceChangeTrue)
     {set_conf_true();}
-  
-  //this phrase defined in insert_error_here method in identifiers controller
-  phrase = "**POSSIBLE ERROR**";
   
   if(typeof document.selection != 'undefined') // means IE browser 
     {

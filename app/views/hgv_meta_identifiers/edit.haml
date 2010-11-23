@@ -1,17 +1,158 @@
+= stylesheet_link_tag 'meta'
+
 #main
   = render :partial => 'identifiers/edit_bar'
-  .site
+  .site.metaSite
     = render :partial => 'identifiers/header'
 
     #edit
-      - form_for @identifier, :url => { :action => :update } do |f| 
+      - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
         = f.error_messages 
 
-        - @identifier.valid_epidoc_attributes.each do |epidoc_attribute|
-          %p
-            = f.label epidoc_attribute.to_s.underscore
-            = f.text_field epidoc_attribute, :disabled => !@identifier.mutable?, :class => 'observechange'
+        %fieldset
+          %legend=I18n.t('meta.legend.date')
+          %span{:class => 'quick_help', :id => 'meta.help.date'}
+          %br
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier }
+          = render :partial => 'hgv_meta_identifiers/date'
 
+        %fieldset
+          %legend=I18n.t('meta.legend.mentionedDate')
+
+          = render :partial => 'hgv_meta_identifiers/mentioned_date'
+
+        %fieldset
+          %legend=I18n.t('meta.legend.general')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
+          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease }
+
+        %fieldset
+          %legend=I18n.t('meta.legend.publication')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationTitle }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationTitle }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationTitle'}
+          
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :tmNo }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
+          %span{:class => 'quick_help', :id => 'meta.help.tmNo'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationVolume }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationVolume'}
+          
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationFascicle }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationFascicle }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationFascicle'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationNumbers }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationNumbers'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationParts }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationParts }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationParts'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationSide }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationSide }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationSide'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationLine }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationLine }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationLine'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationPages }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationPages }
+          %span{:class => 'quick_help', :id => 'meta.help.publicationPages'}
+
+        %fieldset
+          %legend=I18n.t('meta.legend.collection')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName }
+          %span{:class => 'quick_help', :id => 'meta.help.collectionPlaceName'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collection }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collection }
+          %span{:class => 'quick_help', :id => 'meta.help.collection'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionInventoryNumber }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionInventoryNumber }
+          %span{:class => 'quick_help', :id => 'meta.help.collectionInventoryNumber'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryNotes }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryNotes }
+          %span{:class => 'quick_help', :id => 'meta.help.collectionTemporaryNotes'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
+          %span{:class => 'quick_help', :id => 'meta.help.collectionTemporaryInventoryNumber'}
+
+        %fieldset
+          %legend=I18n.t('meta.legend.provenance')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientFindspot }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientFindspot }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceModernFindspot }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceModernFindspot }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceNome }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceNome }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientRegion }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientRegion }
+
+        %fieldset
+          %legend=I18n.t('meta.legend.reference')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :illustrations }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :illustrations }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :otherPublications }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :otherPublications }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl }
+          = render :partial => 'hgv_meta_identifiers/bl'
+
+        %fieldset
+          %legend=I18n.t('meta.legend.translation')
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsDe }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsDe }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEn }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEn }
+         
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEs }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEs }
+         
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsIt }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsIt }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
+
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+
+= javascript_include_tag 'meta'
 = javascript_include_tag 'confirm'

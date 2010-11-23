@@ -6,21 +6,24 @@
     = stylesheet_link_tag 'helper'
     #app2col{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      <h4>Scribe corrects self, e.g. δ̣ληρου --> κ̣λήρου = <:κ̣λήρου|subst|δ̣ληρου:></h4>
+      %h4 Scribal correction
       #app_col
         #app_low
           %form{:name => "appsubstadd"}
-            %input{ :type => "checkbox", :class => "addlow", :id => "appsubstaddlow", :name => "low", :value => "appsubstaddlow"}Cert Low
+            %input{ :type => "checkbox", :class => "addcert", :id => "appsubstaddcert", :name => "addcert", :value => "appsubstaddcert"}Uncertain
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appsubstadd_value", :size => "25"}Inline (add place)
-        #app_desc
-          correct form, e.g. κ̣λήρου
+          %input{ :type => "text", :class => "choosetext greek", :id => "appsubstadd_value", :size => "25"}
+        #app_desc.greek
+          Correct form, e.g. κ̣λήρου (with diacriticals and full Leiden)
         #app_button
           %button{ :type => "button", :onclick=>"insertAppSubst()" }Insert
           &nbsp
           %button{:type => "button", :onclick => "closeHelper()"}Close
       #app_col
-        #app_subst_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appsubstdel_value", :size => "25"}Corrected (del rend)
-        #app_subst_desc
-          original form, e.g. δ̣ληρου'
+        #app_low
+          %form{:name => "appsubstdel"}
+            %input{ :type => "checkbox", :class => "delcert", :id => "appsubstdelcert", :name => "delcert", :value => "appsubstdelcert"}Uncertain
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appsubstdel_value", :size => "25"}
+        #app_desc.greek
+          Original form, e.g. δ̣ληρου (with full Leiden, but without diacriticals)

@@ -1,5 +1,5 @@
 class Doco < ActiveRecord::Base
-  validates_presence_of :category, :line, :description, :note, :preview, :url
+  validates_presence_of :category, :line, :description, :note, :preview # remove URL required per Josh :url
   validate :line_positive_and_gt_zero
   
   class DocoNode
@@ -19,8 +19,8 @@ class Doco < ActiveRecord::Base
     
   end
   
-  def self.build_doco
-    @all_docos = self.find(:all, :order => "category ASC, line ASC")
+  def self.build_doco(docotype)
+    @all_docos = self.find(:all, :conditions => {:docotype => docotype}, :order => "category ASC, line ASC")
     doco_elements = doc_tree
     
     #doco_template = IO.read(File.join(RAILS_ROOT, ['data','templates'],"docotemplate.haml"))

@@ -24,9 +24,12 @@
   %b Url:
   =h @doco.url
 %p.show
-  %b Link to Displayed:
+  %b Link to Display:
   =h @doco.urldisplay
+%p.show
+  %b Leiden+ Type:
+  =h @doco.docotype
 %styled_button_show
   = link_to 'Edit', edit_doco_path(@doco) |
 %styled_button_show
-  = link_to 'Show All Documentation', docos_path
+  = link_to "Show All " + @doco.docotype.capitalize + " Documentation", docos_path(:docotype => "#{@doco.docotype}")

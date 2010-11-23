@@ -4,7 +4,8 @@ class DocosController < ApplicationController
   # GET /docos
   # GET /docos.xml
   def index
-    @docos = Doco.find(:all, :order => "category, line")
+    @docotype = params[:docotype]
+    @docos = Doco.find(:all, :conditions => {:docotype => params[:docotype]}, :order => "category, line")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -36,6 +37,7 @@ class DocosController < ApplicationController
       @doco.description = @fillin.description
       @doco.note = @fillin.note
       @doco.xml = @fillin.xml
+      @doco.docotype = @fillin.docotype
     end
 
     respond_to do |format|
@@ -52,7 +54,6 @@ class DocosController < ApplicationController
   # POST /docos
   # POST /docos.xml
   def create
-    
     @doco = Doco.new(params[:doco]) #to have something to send to template if an error in edit_input
     edit_check = edit_input('new')
     
@@ -74,7 +75,6 @@ class DocosController < ApplicationController
   # PUT /docos/1
   # PUT /docos/1.xml
   def update
-    
     @doco = Doco.find(params[:id])
     edit_check = edit_input('edit')
     
@@ -84,7 +84,7 @@ class DocosController < ApplicationController
         if @doco.update_attributes(params[:doco])
           flash[:notice] = 'Doco was successfully updated.'
           #format.html { redirect_to(@doco) }
-          format.html { redirect_to(docos_url) }
+          format.html { redirect_to(docos_url(:docotype => @doco.docotype)) }
           format.xml  { head :ok }
         else
           format.html { render :action => "edit" }
@@ -101,27 +101,23 @@ class DocosController < ApplicationController
     @doco.destroy
 
     respond_to do |format|
-      format.html { redirect_to(docos_url) }
+      format.html { redirect_to(docos_url(:docotype => @doco.docotype)) }
       format.xml  { head :ok }
     end
   end
   
   def build
-    #Doco.build_doco
-    #flash[:notice] = "Documentation Successfully Built"
-    #redirect_to docos_url
-    #expire_page :controller => "docos", :action => "documentation"
-    #render :template => 'docos/documentation'
-    redirect_to :controller => "docos", :action => "documentation"
-    #redirect_to :controller => "docos", :action => "index"
+    redirect_to(documentation_url(:docotype => params[:docotype]))
   end
   
   def documentation
+    @docotype = params[:docotype]
   end
   
   private
 
   def edit_input(where_return)
+    chk_docotype = params[:doco][:docotype]
     if params[:volume_number] != nil #if selector has values, use it to determine URL
       identifier_class = params[:IdentifierClass]
       collection = params["#{identifier_class}CollectionSelect"]
@@ -174,17 +170,22 @@ class DocosController < ApplicationController
       params[:save_url] = ''
     else #selector  was not used so check if user changed the value using the input field
       if params[:save_url] != params[:doco][:url] #url changed by user so need to update display value
-        if params[:doco][:url].match(/^(papyri.info)\/(ddbdp|hgv)\/[a-z0-9\;]+$/) == nil
-          flash.now[:error] = "Error: '#{params[:doco][:url].downcase}' is not in the correct input format - use either 'papyri.info/ddbdp/bgu;1;154' or 'papyri.info/hgv/80456' format"
-          @doco.url = params[:doco][:url].downcase
-          #redirect_to edit_doco_path
-          render :template => "docos/#{where_return}"
-          return "error"
+        if params[:doco][:url].strip.blank? #user blanked it out
+          params[:doco][:urldisplay] = ""
+          params[:save_url] = params[:doco][:url] #to keep logic below from trying to validate a blank
         else
-          if params[:doco][:url].include?("/hgv")
-            params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/hgv\//, '')
+          if params[:doco][:url].match(/^(papyri.info)\/(ddbdp|hgv)\/[a-z0-9\;]+$/) == nil
+            flash.now[:error] = "Error: '#{params[:doco][:url].downcase}' is not in the correct input format - use either 'papyri.info/ddbdp/bgu;1;154' or 'papyri.info/hgv/80456' format"
+            @doco.url = params[:doco][:url].downcase
+            #redirect_to edit_doco_path
+            render :template => "docos/#{where_return}"
+            return "error"
           else
-            params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/ddbdp\//, '')
+            if params[:doco][:url].include?("/hgv")
+              params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/hgv\//, '')
+            else
+              params[:doco][:urldisplay] = params[:doco][:url].sub(/^papyri.info\/ddbdp\//, '')
+            end
           end
         end
       end
@@ -205,13 +206,6 @@ class DocosController < ApplicationController
       end
     end
     
-    # if params[:doco][:leiden].blank? && params[:doco][:xml].blank?
-      # flash.now[:error] = "Must supply either the Leiden or XML field and click the corresponding radio button"
-      # #redirect_to edit_doco_path
-      # render :template => "docos/#{where_return}"
-      # return "error"
-    # end
-    
     if params[:leiden_xml_radio] == "xml"  # XML to Leiden radio button clicked
       if params[:doco][:xml].blank?
         @doco.xml = params[:doco][:xml]
@@ -221,17 +215,23 @@ class DocosController < ApplicationController
         render :template => "docos/#{where_return}"
         return "error"
       else
-        #xml must be wrapped in ab tags to parse correctly in xsugar grammar
-        xml2conv = "<ab>" + params[:doco][:xml] + "</ab>"
+        
         begin
-          leidenback = Leiden.xml_leiden_plus(xml2conv)
+          if chk_docotype == 'text'
+            #xml must be wrapped in ab tags to parse correctly in xsugar grammar
+            xml2conv = "<ab>" + params[:doco][:xml] + "</ab>"
+            leidenback = Leiden.xml_leiden_plus(xml2conv)
+          else #translation
+            xml2conv = params[:doco][:xml]
+            leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
+          end
           params[:doco][:leiden] = leidenback
         rescue RXSugar::XMLParseError => parse_error
           @doco.leiden = params[:doco][:leiden]
           @doco.xml = params[:doco][:xml]
           #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
           parse_error.content.insert((parse_error.column-1), "**ERROR**")
-          flash.now[:error] = "Error at column #{parse_error.column} #{parse_error.content}"
+          flash.now[:error] = "Error at column #{parse_error.column} #{CGI.escapeHTML(parse_error.content)}"
           render :template => "docos/#{where_return}"
           return "error"
         end
@@ -245,17 +245,21 @@ class DocosController < ApplicationController
         render :template => "docos/#{where_return}"
         return "error"
       else
-        #xml must be wrapped in ab tags to parse correctly in xsugar grammar
+        
         leiden2conv = params[:doco][:leiden]
         begin
-          xmlback = Leiden.leiden_plus_xml(leiden2conv)
+          if chk_docotype == 'text'
+            xmlback = Leiden.leiden_plus_xml(leiden2conv)
+          else #translation
+            xmlback = TranslationLeiden.translation_leiden_to_xml(leiden2conv)
+          end
           params[:doco][:xml] = "#{xmlback}"
         rescue RXSugar::NonXMLParseError => parse_error
           @doco.xml = params[:doco][:xml]
           @doco.leiden = params[:doco][:leiden]
           #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
           parse_error.content.insert((parse_error.column-1), "**ERROR**")
-          flash.now[:error] = "Error at column #{parse_error.column} #{parse_error.content}" 
+          flash.now[:error] = "Error at column #{parse_error.column} #{CGI.escapeHTML(parse_error.content)}" 
           render :template => "docos/#{where_return}"
           return "error"
         end

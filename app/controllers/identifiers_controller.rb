@@ -34,6 +34,7 @@ class IdentifiersController < ApplicationController
     
     @identifier = identifier_type.new_from_template(@publication)
     flash[:notice] = "File created."
+    expire_publication_cache
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit) and return
   end
@@ -73,6 +74,8 @@ class IdentifiersController < ApplicationController
       end
       
       flash[:notice] = "File updated."
+      expire_leiden_cache
+      expire_publication_cache
       if %w{new editing}.include?@identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
       end
@@ -88,32 +91,50 @@ class IdentifiersController < ApplicationController
   end
   
   protected
-  
-  def insert_error_here(content, line, column)
-    # this routine is to place the error message below in the Leiden+ or XML returned when a parse error
-    # occurs by taking the line and column from the message and giving the user the place in the content
-    # the parse error occured in xsugars processing - may or may not be where the real error is depending
-    # on what the error is - this processing is by character because there are multiple byte characters
-    # possible in the text and a way to place msg with taking that into account
-    #
-    # line starts at 1 because first character is on first line before incrementing in loop
-    # same logic for column, already on first character before incrementing in loop 
-    # 'col' check has to come before 'new line' check in case error is on last char in the line
-    line_cnt = 1
-    col_cnt = 1
-    content_error_here = ''
-    content.each_char do |i|
-      if line_cnt == line
-        if col_cnt == column
-          content_error_here << "**POSSIBLE ERROR**"
-        end
-        col_cnt += 1
-      end
-      if i == "\n"
-        line_cnt += 1
-      end
-      content_error_here << i
+
+    def render_quick_help      
+      index = 0
+      response.body = response.body.gsub(/(<span.+?class=["']quick_help["'].+?id=["'])(.+?)(["']>.*?<\/span>)/) {|match|
+        i18n_id = $2
+        element_id = i18n_id + '_' + index.to_s
+        index += 1
+        '<span class="quickHelp quickHelp_' + i18n_id.gsub(/\./, '_') + '"><span class="hook" onmouseover="Effect.Appear(\'' + element_id + '\');" onmouseout="Effect.Fade(\'' + element_id + '\');">?</span><span class="message" id="' + element_id + '" style="display: none;">' + I18n.t(i18n_id) + '</span></span>'
+      }
     end
-    return content_error_here
-  end
+  
+    def expire_publication_cache
+      expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{@current_user.id}")
+    end
+  
+    def expire_leiden_cache
+      expire_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
+    end
+  
+    def insert_error_here(content, line, column)
+      # this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+      # occurs by taking the line and column from the message and giving the user the place in the content
+      # the parse error occured in xsugars processing - may or may not be where the real error is depending
+      # on what the error is - this processing is by character because there are multiple byte characters
+      # possible in the text and a way to place msg with taking that into account
+      #
+      # line starts at 1 because first character is on first line before incrementing in loop
+      # same logic for column, already on first character before incrementing in loop 
+      # 'col' check has to come before 'new line' check in case error is on last char in the line
+      line_cnt = 1
+      col_cnt = 1
+      content_error_here = ''
+      content.each_char do |i|
+        if line_cnt == line
+          if col_cnt == column
+            content_error_here << "**POSSIBLE ERROR**"
+          end
+          col_cnt += 1
+        end
+        if i == "\n"
+          line_cnt += 1
+        end
+        content_error_here << i
+      end
+      return content_error_here
+    end
 end

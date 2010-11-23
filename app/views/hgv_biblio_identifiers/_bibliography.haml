@@ -8,8 +8,8 @@
     - tag_name = parameter_prefix + '[' + key.to_s + ']'
     - tag_id = tag_name.camelcase(:lower).gsub(/(\[|\]\[|\])/, '_')[0..-2]
     %p  
-      %label{:for => tag_name, :title => @identifier.xpath({:type => type, :id => bibliography_id, :key => key})}= I18n.t('bibliography.' + key.to_s).titleize
-      %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@identifier.mutable?}
+      %label{:for => tag_name, :title => @biblio_identifier.xpath({:type => type, :id => bibliography_id, :key => key})}= I18n.t('bibliography.' + key.to_s).titleize
+      %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@biblio_identifier.mutable?}
       %span{:class => 'quick_help', :id => 'bibliography.help.' + key.to_s}
   -if type == :secondary
     %input.delete{:type => 'button', :value => I18n.t('bibliography.button.delete'), :onclick => "removeBibliographicalRecord(this.parentNode)"}
@@ -21,6 +21,6 @@
     .zoteroHook{:onclick => "if($('" + 'zoteroEditor_' + tag_id + "').visible()){Effect.BlindUp('" + 'zoteroEditor_' + tag_id + "');}else{Effect.BlindDown('" + 'zoteroEditor_' + tag_id + "');}"}
       Zotero
     .zoteroEditor{:id => 'zoteroEditor_' + tag_id, :style => 'display: none;'}
-      %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '60', :rows => '5', :disabled => !@identifier.mutable?}
-      %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
-      %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}
+      %textarea{:id => tag_id, :name => tag_name, :class => 'zotero', :cols => '60', :rows => '5', :disabled => !@biblio_identifier.mutable?}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.accept'), :disabled => !@biblio_identifier.mutable?, :onclick => 'applyBiblbiography("' + tag_id + '", "' + tag_id[0..-7] + '"); return false;'}
+      %input{:type => 'button', :value => I18n.t('bibliography.zotero.cancel'), :disabled => !@biblio_identifier.mutable?, :onclick => 'discardBiblbiography("' + tag_id + '"); return false;'}

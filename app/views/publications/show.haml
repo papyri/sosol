@@ -1,6 +1,16 @@
 #main
+  - max_visible_comments = 10
   :javascript 
     function checkForComment() { comment_text = $('submit_comment').value; $('submit_button').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
+    function toggle_div(obj) {
+      var el = document.getElementById(obj);
+      if ( el.style.display != "none" ) {
+        el.style.display = 'none';
+      }
+      else {
+        el.style.display = '';
+      }
+    }
   = render :partial => 'identifiers/edit_bar'
   .site
     %h2 
@@ -65,11 +75,44 @@
         - if @publication.status != "archived"
           = render :partial => identifier        
 
-    - if @comments != nil  
-      %h3 Comments 
-      - for comment in @comments
-        = render :partial => comment      
+    - if @all_comments != nil  
+      %div{:id => "all_comments_div", :style => "display:none;"}
+        %br
+        %div{:class => "toggle_all_div"}
+          %a{:class => 'toggle_all_link', :href => '#', :onclick => "toggle_div('all_comments_div');toggle_div('xml_only_comments_div');"}
+            See XML Comments Only
+        %br
+        %h3 All Comments 
+        = render :partial => "publications/commentall",  :object => @all_comments[0..max_visible_comments-1]
+        - if @all_comments.length > max_visible_comments
+          %div{:id => "more_comments", :style => "display:none;"}
+            = render :partial => "publications/commentall", :object => @all_comments[max_visible_comments..-1]
+          %div{:id => "more_comments_link"}
+            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_comments');Effect.SlideUp('more_comments_link');Effect.SlideDown('less_comments_link');return false;"}
+              More...
+          %div{:id => "less_comments_link", :style => "display:none;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_comments');Effect.SlideDown('more_comments_link');Effect.SlideUp('less_comments_link');return false;"}
+              Less...  
      
+    - if @xml_only_comments != nil
+      %div{:id => "xml_only_comments_div", :style => "display:;"}
+        %br
+        %div{:class => "toggle_xml_only_div"}
+          %a{:class => 'toggle_xml_only_link', :href => '#', :onclick => "toggle_div('all_comments_div');toggle_div('xml_only_comments_div');"}
+            See All Comments
+        %br
+        %h3 XML Comments 
+        = render :partial => "publications/commentall",  :object => @xml_only_comments[0..max_visible_comments-1]
+        - if @xml_only_comments.length > max_visible_comments
+          %div{:id => "more_xml_comments", :style => "display:none;"}
+            = render :partial => "publications/commentall", :object => @xml_only_comments[max_visible_comments..-1]
+          %div{:id => "more_xml_comments_link"}
+            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_xml_comments');Effect.SlideUp('more_xml_comments_link');Effect.SlideDown('less_xml_comments_link');return false;"}
+              More...
+          %div{:id => "less_xml_comments_link", :style => "display:none;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_xml_comments');Effect.SlideDown('more_xml_comments_link');Effect.SlideUp('less_xml_comments_link');return false;"}
+              Less...  
+            
     - if @other_user_publications != nil && @other_user_publications.length > 0
       %br
       %h3 This publication is also being edited by:
@@ -87,7 +130,7 @@
         - link_type = class_type.constantize::FRIENDLY_NAME
         - create_type = 'Create new ' + link_type
         - newstyle = 'style="color:white; background-color:#005DAA"'
-        = link_to (create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
+        = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
      
         %br
 

@@ -4,17 +4,17 @@
     
   .site
     = stylesheet_link_tag 'helper'
-    #app3col{:class => "helperpop"}
-      <h3>Enter the XML or Leiden+ you want to convert in the input field and select the associated radio button</h3>
+    #tryitdiv{:class => "helperpop"}
+      %h3 Enter the Transcription XML or Leiden+ you want to convert in the input field and select the associated radio button
       #app_text
-        %label INPUT 
-        %input{ :type => "text", :class => "choosetext", :id => "tryit_input", :size => "125"}
+        %label LEIDEN+ 
+        %input{ :type => "text", :class => "choosetext", :id => "tryit_leiden", :size => "125"}
       #app_text
-        %label RESULTS
-        %input{ :type => "text", :class => "choosetext", :id => "tryit_output", :size => "125"}
+        %label XML
+        %input{ :type => "text", :class => "choosetext", :id => "tryit_xml", :size => "125"}
       #type_left
         %input{ :checked => "", :type => "radio", :class => "tryit_radio", :id => "character", :name => "tryit_type", :value => "xml2non", :onclick => "checktryit(this.id)"}XML to Leiden+
-        <br/>
+        %br
         %input{ :type => "radio", :class => "tryit_radio", :id => "line", :name => "tryit_type", :value => "non2xml", :onclick => "checktryit(this.id)"}Leiden+ to XML
       #button_left
         %button{ :type => "button", :onclick=> "tryitConversion()" }Convert

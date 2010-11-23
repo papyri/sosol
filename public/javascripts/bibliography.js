@@ -1,3 +1,45 @@
+// ad hoc
+
+document.observe('dom:loaded', function()
+{
+  if(document.forms && document.forms[0] && document.forms[0].id)
+  {
+    Event.observe(document.forms[0].id, 'submit', checkBibliographyForm);
+  }
+});
+
+// save
+
+function checkBibliographyForm(event)
+{
+  if (document.forms[0])
+  {
+    for (var key in document.forms[0])
+    {
+      if ((key.indexOf('language') >= 0) 
+        && (document.forms[0][key].nodeName.toLowerCase() == 'input')
+        && !document.forms[0][key].value.match(/^(la|en|re|de|it|es)$/))
+      {
+        var containerElements = ['monographic_title', 'monographic_title_short', 'series_title', 'series_number', 'journal_title_short', 'journal_number'];
+        var i = 0;
+        for(i = 0; i < containerElements.length; i++)
+        {
+          var containerKey = key.replace(/\[language\]/, '[' + containerElements[i] + ']');
+          if(document.forms[0][containerKey]
+            && (document.forms[0][containerKey].nodeName.toLowerCase() == 'input')
+            && (document.forms[0][containerKey].value != ''))
+          {
+            alert('Some of your bibliographical records lack the mandatory language specification.\nPlease, choose one of the following: la, en, fr, de, it, es.');
+            Event.stop(event);
+            return false;
+          }
+        }        
+      }
+    }
+  }
+  return true;
+}
+
 // little helpers
 
 function toggleBibliographyEditor(editorPartialToShowUp)

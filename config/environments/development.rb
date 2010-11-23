@@ -39,7 +39,7 @@ config.action_mailer.smtp_settings =
 {	
 	:address			=>	'localhost',
 	:port					=>	25,
-	:domain				=>	'charles-jackalope',
+	:domain				=>	'jfox-laptop',
 }
 
 
