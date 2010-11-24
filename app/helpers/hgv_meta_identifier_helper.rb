@@ -77,7 +77,7 @@ module HgvMetaIdentifierHelper
               end
             }
 
-            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.sort.join('_')
+            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.sort.join('_')
             data_item[:certaintyPicker] = !data_item[:certaintyPicker].empty? ? data_item[:certaintyPicker] : data_item[:certainty]
 
           end
