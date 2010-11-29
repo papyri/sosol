@@ -39,6 +39,7 @@ class Publication < ActiveRecord::Base
   attr_accessor :recent_submit_sha
   
   def populate_identifiers_from_identifiers(identifiers)
+    self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
@@ -53,9 +54,12 @@ class Publication < ActiveRecord::Base
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
-          self.identifiers << temp_id
-          if self.title == original_title
-            self.title = temp_id.titleize
+          # make sure we have a path on master before forking it for this publication
+          unless self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+            self.identifiers << temp_id
+            if self.title == original_title
+              self.title = temp_id.titleize
+            end
           end
         end
       end

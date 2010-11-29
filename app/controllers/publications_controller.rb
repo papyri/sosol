@@ -81,9 +81,9 @@ class PublicationsController < ApplicationController
   # POST /publications.xml
   def create
     @publication = Publication.new()
+    @publication.owner = @current_user
     @publication.populate_identifiers_from_identifiers(
       params[:pn_id])
-    @publication.owner = @current_user
     
     @publication.creator = @current_user
     #@publication.creator_type = "User"
@@ -584,11 +584,10 @@ class PublicationsController < ApplicationController
       end
       # else
         @publication = Publication.new()
+        @publication.owner = @current_user
+        @publication.creator = @current_user
         @publication.populate_identifiers_from_identifiers(
           related_identifiers)
-        @publication.owner = @current_user
-
-        @publication.creator = @current_user
 
         if @publication.save!
           @publication.branch_from_master
