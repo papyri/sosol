@@ -19,8 +19,8 @@ class Doco < ActiveRecord::Base
     
   end
   
-  def self.build_doco
-    @all_docos = self.find(:all, :order => "category ASC, line ASC")
+  def self.build_doco(docotype)
+    @all_docos = self.find(:all, :conditions => {:docotype => docotype}, :order => "category ASC, line ASC")
     doco_elements = doc_tree
     
     #doco_template = IO.read(File.join(RAILS_ROOT, ['data','templates'],"docotemplate.haml"))

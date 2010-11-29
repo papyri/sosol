@@ -1,5 +1,6 @@
 fr:
   bibliography:
+    language: 'langue'
     signature: 'étiquette'
     title: 'titre'
     author: 'auteur'

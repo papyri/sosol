@@ -48,9 +48,9 @@ class User < ActiveRecord::Base
          'papyri.info/ddbdp/p.tebt;2;414'
         ].each do |pn_id|
           p = Publication.new
-          p.populate_identifiers_from_identifiers(pn_id)
           p.owner = self
           p.creator = self
+          p.populate_identifiers_from_identifiers(pn_id)
           p.save!
           p.branch_from_master
               
@@ -88,5 +88,23 @@ class User < ActiveRecord::Base
   
   def before_destroy
     repository.destroy
+  end
+  
+  def self.compose_email(subject_line, email_content)
+    #get email addresses from all users that have them
+    #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
+    users = User.find_by_sql("SELECT email From users WHERE email is not null")
+    
+    users.each do |toaddress|
+      if toaddress.email.strip != ""
+        EmailerMailer.deliver_send_email_out(toaddress.email, subject_line, email_content)			
+      end
+    end
+    
+    #can use below if want to send to all addresses in 1 email
+    #format 'to' addresses for actionmailer
+    #addresses = users.map{|c| c.email}.join(", ")
+    #EmailerMailer.deliver_send_email_out(addresses, subject_line, email_content)
+    
   end
 end

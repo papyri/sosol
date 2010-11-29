@@ -10,39 +10,39 @@ font-size: medium;/*set so that em sizing is consisent*/
 
 .choosetext /* applied to all input text boxes */
 {
+font-size: medium;/*set so that em sizing is consisent*/
 margin-bottom: 3px; /* space between input boxes that are stacked */
 margin-right: 3px; /* move label away */
 }
 
+.choosetextradio /* applied to all input text boxes */
+{
+margin-top: 5px; /* space between input boxes that are stacked */
+margin-bottom: 3px; /* space between input boxes that are stacked */
+margin-right: 3px; /* move label away */
+}
+
+.greek 
+{
+font-size: medium;/*set so that em sizing is consisent*/
+font-family: "Lucida Grande", "Cardo", "Arial Unicode MS", "New Athena Unicode", "Athena Unicode", "Lucida Grande", "Verdana", "Tahoma"; 
+}
+
+.markup_warn 
+{
+color:white;
+background-color:#005DAA;
+height:2.5em;
+width:31em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: .1em;
+}
+
 #number_div {
-height:15em;
-width:48em;
+height:11em;
+width:35em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
-}
-
-#numcol1 {
-float:left;
-height:10em;
-width:13em;
-}
-
-#numtype_div {
-position:relative;
-top:0.63em;
-width:12em;
-}
-
-#numbutton_div {
-position:relative;
-top:1.5em;
-width:10em;
-}
-
-#numcol2 {
-float:left;
-height:10em;
-width:34em;
 }
 
 #numinp_div {
@@ -50,20 +50,9 @@ position:relative;
 top:0.63em;
 }
 
-#nestwhole_div {
-position:relative;
-top:1em;
-}
-
-#nestpart_div {
-position:relative;
-top:1.5em;
-left:8.5em;
-}
-
 #diacritical_div {
 height:20em;
-width:20em;
+width:18em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 /*display: "";*/
@@ -78,17 +67,9 @@ width:9em;
 
 #gapsize {
 height:7em;
-width:40em;
+width:36em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
-/*display: "";*/
-}
-
-#extent_left {
-position:relative;
-top:0.63em;
-float:left;
-width:10em;
 }
 
 #type_left {
@@ -112,65 +93,92 @@ float:left;
 width:10em; 
 }
 
-#gapelliplangradio_div {
+#gapall_button_left {
 position:relative;
-top:0.63em;
+top:4em;
 float:left;
-width:10em;
+width:10em; 
 }
 
-#gapelliplangext_div {
+#gapalltyperadio_div {
 position:relative;
-top:0.63em;
-float:left;
+top:-1.2em;
+left: 4em;
+width:17em;
+}
+
+#gapalllangradio_div {
+position:relative;
+top:-1em;
+left: 7em;
+width:20em;
+}
+
+#gapallunitradio_div {
+position:relative;
+top:-1.25em;
+left: 4em;
 width:15em;
 }
 
-#abbrevtext_div {
+#gapallqtyradio_div {
 position:relative;
-top:0.63em;
-float:left;
+top:-.2em;
+left:-16em;
+float:right;
+width:16em;
+}
+
+#gapallcertcb_div {
+position:relative;
+top:4em;
 width:20em;
+}
+
+#abbrev_incomplete {
+position:relative;
+top:0.25em;
+left: 8em;
+width:21em;
 }
 
 #division_type {
 position:relative;
 top:0.63em;
 float:left;
-width:25em;
+width:40em;
 }
 
 #app2col {
 height:10em;
-width:53em;
+width:38em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 }
 
 #app3col {
 height:10em;
-width:80em;
+width:51em;
 font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 }
 
 #app_col {
 float:left;
-height:9em;
-width:26em;
+height:7em;
+width:17em;
 }
 
 #app_low {
 position:relative;
 top:0.63em;
-left:10em;
 width:7em;
 }
 
 #app_text {
 position:relative;
 top:0.63em;
-width:26em;
+width:17em;
 }
 
 #app_desc {
@@ -185,21 +193,9 @@ top:2em;
 width:10em; 
 }
 
-#app_clarify_text {
-position:relative;
-top:4em;
-width:50em;
-clear: both;
-}
-
-#app_subst_text {
-position:relative;
-top:2.9em;
-width:26em;
-}
-
-#app_subst_desc {
-position:relative;
-top:2.9em;
-width:14em;
+#tryitdiv {
+height:10em;
+width:70em;
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
 }

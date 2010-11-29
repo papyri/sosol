@@ -73,13 +73,13 @@ class REXML::XPath
     end
     @@breakXpathIntoLumps[key]
   end
-  
+
   # checks whether xpath is fully qualified from root to tip
   # and whether it is free of functional logic and pattern matching
-  # sth. like would be ok: /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']/@c3
+  # sth. like would be ok: /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3
 
   def self.fully_qualified_and_simple? xpath
-    matchdata = /(\A((\/\w+)(\[@\w+='[\w\.\- ]+'\])*)+(\/@\w+)?\Z)/.match(xpath)
+    matchdata = /(\A((\/\w+)(\[@[\w:]+='[\w\.\- ]+'\])*)+(\/@[\w:]+)?\Z)/.match(xpath)
     matchdata && (matchdata.to_s == xpath)
   end
 

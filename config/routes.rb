@@ -40,6 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
+  map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
  
   #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
@@ -58,6 +59,21 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     # publication.resources :identifiers
   end
+  
+  map.connect 'publications/create_from_identifier/:id',
+    :controller => 'publications',
+    :action => 'create_from_identifier',
+    :id => /papyri\.info.*/
+  
+  map.connect 'numbers_server_proxy/sparql/:query',
+    :controller => 'numbers_server_proxy',
+    :action => 'sparql',
+    :query => /.*/
+  
+  map.connect 'numbers_server_proxy/:id',
+    :controller => 'numbers_server_proxy',
+    :action => 'proxy',
+    :id => /papyri\.info.*/
   
   # The priority is based upon order of creation: first created -> highest priority.
 

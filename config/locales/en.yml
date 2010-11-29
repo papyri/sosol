@@ -1,5 +1,201 @@
 en:
+  meta:
+    legend:
+      general: General
+      publication: Publication
+      collection: Collection
+      provenance: Provenance
+      reference: References
+      translation: Translations
+      date: Date
+      mentionedDate: Mentioned Dates
+    label:
+      titleStmt: Title
+      tmNo: TM no.
+      contentText: Keywords / Inhalt
+      notes: Notes / Bemerkungen
+      material: Material
+      plannedForFuturePrintRelease: Print
+      publicationTitle: Title
+      publicationVolume: Volume
+      publicationNumbers: Number
+      publicationFascicle: Fascicle
+      publicationSide: Side / Seite
+      publicationLine: Line / Zeile
+      publicationPages: Pages / Seiten
+      publicationParts: Parts
+      collectionPlaceName: Place name
+      collection: Collection
+      collectionInventoryNumber: Inv. no. 
+      collectionTemporaryNotes: Temporary lieu
+      collectionTemporaryInventoryNumber: Temporary no.
+      provenanceAncientFindspot: Ancient findspot
+      provenanceNome: Nome
+      provenanceAncientRegion: Ancient region
+      provenanceModernFindspot: Modern findspot
+      illustrations: Illustrations / Abbildungen
+      otherPublications: Other publications
+      bl: BL
+      blVolume: Volume
+      blPage: Pages
+      mentionedDateReference: Reference
+      mentionedDateFrom: From / When
+      mentionedDateTo: To
+      mentionedDateCertainty: Certainty
+      mentionedDateDateId: Date id
+      mentionedDateNote: Comment
+      translationsDe: German
+      translationsEn: English
+      translationsIt: Italian
+      translationsEs: Spanish
+      translationsLa: Latin
+      translationsFr: French
+      date: Date
+      id: Date id
+      when: When
+      after: After
+      notBefore: Not before
+      before: before
+      notAfter: Not after
+      from: From
+      to: To
+      century: Century
+      year: Year
+      month: Month
+      day: Day
+      certainty: Certainty
+      specifier: Extra
+      extraDate: Extra
+      onDate: Date
+      fromDate: From
+      toDate: to
+      fromToDate: Date span
+      offset: Offset
+      textDate: HGV format
+      beginning: Beginning
+      firstHalf: First half
+      firstHalfToMiddle: First half to middle
+      middle: Middle
+      middleToSecondHalf: Middle to second half 
+      secondHalf: Second half
+      end: End
+      before: Before
+      after: After
+      certainty09: Probably...
+      certainty05: (?)
+      dayUncertain: Day uncertain
+      monthAndYearUncertain: Month and year uncertain
+      yearUncertain: Year uncertain
+      multiAdd: add #✓
+    tooltip:
+      multiAdd: Click to add new item
+      multiDelete: Click to delete item
+      multiMove: Click and drag to move item
+      multiMentionedDateReference: Reference (line and column)
+      multiMentionedDateFrom: Date (use -YYYY-MM-DD format)
+      multiMentionedDateTo: Second date (if time span) (use -YYYY-MM-DD format)
+      multiMentionedDateComment: Comment
+      multiMentionedDateCertainty: Certainty
+      multiMentionedDateDateId: Relation to a special date entry
+
+    on_date: 'Precise date'
+    not_before_date: 'Not before'
+    not_after_date: 'Not after'
+    text_date: 'Formatted date'
+    title_stmt: 'Title'
+    publication_title: 'Publication title'
+    publication_volume: 'Volume'
+    publication_numbers: 'Number'
+    publication_fascicle: 'Fascicle'
+    publication_side: 'Side'
+    publication_line: 'Line'
+    publication_pages: 'Pages'
+    publication_parts: 'Parts'
+    tm_nr: 'TM no.'
+    illustrations: 'Illustrations'
+    content_text: 'Keywords'
+    other_publications: 'Other publications'
+    translations: 'Translations'
+    translations_de: 'German translations'
+    translations_en: 'English translations'
+    translations_es: 'Spanish translations'
+    translations_it: 'Italian translations'
+    translations_la: 'Latin translations'
+    translations_fr: 'French translations'
+    bl: 'Bl'
+    notes: 'Notes'
+    mentioned_dates_hdr: 'Mentioned dates header'
+    mentioned_dates: 'Mentioned dates'
+    material: 'Material'
+    provenance_ancient_findspot: 'Ancient findspot'
+    provenance_nome: 'Nome'
+    provenance_ancient_region: 'Ancient region'
+    provenance_modern_findspot: 'Modern findspot'
+    inventory_number: 'Inv. No.'
+    collection_place_name: 'Place'
+    collection_temporary_notes: 'Disposition notes'
+    collection_temporary_inventory_number: 'Temporary inv. no.'
+    collection: 'Collection'
+    planned_for_future_print_release: 'Printing schedule'
+    new_entry: 'New Entry'
+    new: 'New'
+    group:
+      date:  'Date'
+      hgv_date:  'HGV date'
+      general: 'General'
+      publication: 'Publication'
+      provenance: 'Provenance'
+      bibliography: 'Bibliography'
+      collection: 'Collection'
+      extra: 'Extra'
+    help:
+      date: '<b>Please do not use this section at present! Still being developed.</b> In the section named EXTRA existing dates are displayed correctly.'
+      on_date: 'Specific date, use "-"-sign to mark the date before Christ'
+      not_before_date: 'Specifies the earliest possible date for the event in standard form, e.g. yyyy-mm-dd.'
+      not_after_date: 'Specifies the latest possible date for the event in standard form, e.g. yyyy-mm-dd.'
+      text_date: 'Contains any form of date, used to identify the date of origin for a manuscript or manuscript part.'
+      title_stmt: 'Title of the content.'
+      publicationTitle: 'Publication title, e.g. BGU, P.Oxy'
+      publicationVolume: 'Volume of the publication'
+      publicationNumbers: 'Number of the document within the volume'
+      publicationFascicle: 'For specification of the volume number, e.g. CPR 17A'
+      publicationSide: 'Indicates which side of the material was used for writing the text, e.g. BGU 1 57 R. Values: R, V, Haarseite, Fleischseite, Innenseite, Aussenseite'
+      publicationLine: 'To indicate a subsection of a text based on line numbering, e.g. CPR 17B 11 Z. 1-5. Use Z. (= Zeile), then numbers'
+      publicationPages: 'For identification of the text based on page numbers in a volume, e.g. P.Flor. 2 227 S. 247. Use S. (= Seite), then numbers'
+      publicationParts: 'For specification of different parts of the document, e.g. SB 1 4512 A, BGU 3 930 Einl. Some values: Kol., Einl., Fol., Fr., Inv.Nr., (a), (b) ..., a, b ...'
+      tmNo: 'TM Number. If unknown or non-existent, this will always be assigned by TM in Leuven.'
+      collectionPlaceName: 'Name of the town or region where the collection is housed.'
+      collectionInventoryNumber: 'Inventory number. To be entered as an unbroken string of text.'
+      collectionTemporaryNotes: 'Notes about temporary whereabouts of the manuscript, e.g. part of an exhibition.'
+      collectionTemporaryInventoryNumber: 'Temporary inventory number, e.g. part of an exhibition.'
+      collection: 'Name of a collection of manuscripts or of the institution that holds the collection.'
+      mentionedDateReference: 'Enter the line number(s) in the text, where the date is mentioned. E.g. Z. 2, Kol. II, Z. 11.'
+      mentionedDateFrom: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
+      mentionedDateTo: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
+      mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
+      illustrations: 'Reference to printed illustrations or photographs.'
+      content_text: 'Keywords describing the content.'
+      other_publications: 'Other publications.'
+      translations: 'Translations'
+      translations_de: 'German translations'
+      translations_en: 'English translations'
+      translations_fr: 'French translations'
+      translations_it: 'Italian translations'
+      translations_la: 'Latin translations'
+      translations_es: 'Spanish translations'
+      bl: 'Berichtigungslisten'
+      notes: 'Additional notes or annotations.'
+      mentioned_dates_hdr: 'mentioned dates hdr'
+      mentioned_dates: 'mentioned dates'
+      material: 'Word or phrase describing the material of which  a manuscript (or part of a manuscript) is composed.'
+      provenance_ancient_findspot: 'Ancient findspot'
+      provenance_nome: 'Nome'
+      provenance_ancient_region: 'Ancient region'
+      provenance_modern_findspot: 'Modern findspot'
+      inventory_number: 'Inventory number'
+      planned_for_future_print_release: 'Printing schedule'
   bibliography:
+    language: 'Language'
     signature: 'Signature'
     title: 'Title'
     author: 'Author'
@@ -21,6 +217,7 @@ en:
     conflict:
       message: 'Document contains conflicting bibliographical data'
     help:
+      language: 'Language of the publication medium, e.g. "la" for Latin, "en" for English, "fr" for French, "de" for German, "it" for Italian or "es" for Spanish'
       signature: 'Identifier for the bibliographical item, e.g. doi or zotero id'
       title: 'Title of the article, e.g. "Instruction to track down Murderers"'
       author: 'Author(s) of the article, e.g. "M.C.E. Mineur-van Kassen". If there is more than one author multiple entries may be seperated by comma.'

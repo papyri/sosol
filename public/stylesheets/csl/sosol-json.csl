@@ -1,13 +1,12 @@
 <style xmlns="http://purl.org/net/xbiblio/csl" class="note" xml:lang="en"> 
   <info>
     <title>SoSOL (json)</title>
-    <id>http://www.zotero.org/styles/sosol-json</id>
-    <link href="http://www.zotero.org/styles/sosol-json"/>
+    <id>http://papyri.info/editor/stylesheets/csl/sosol-json.csl</id>
+    <link href="http://papyri.info/editor/stylesheets/csl/sosol-json.csl"/>
     <author>
-      <name>Carmen Lanz</name>
+      <name>Institut für Papyrologie - Heidelberg</name>
+      <uri>http://www.uni-hd.de/papy</uri>
       <email>carmen.lanz@zaw.uni-heidelberg.de</email>
-      <uri>http://www.uni-heidelberg.de/fakultaeten/philosophie/zaw/papy/index.html</uri> 
-      <uri>http://halsted.vis.uky.edu/protosite/stylesheets/csl/sosol-json.csl</uri>
     </author>
     <summary>Builds jsonlike formatted key value list, uses another string delimiter however</summary>
     <category term="numeric"/>
@@ -16,6 +15,14 @@
     <published>2010-02-11T08:07:24+00:00</published>
   </info>
 
+  <macro name="language">
+    <choose>
+      <if type="book">
+        <text variable="language" prefix="language : |" suffix="|, " />
+      </if>
+    </choose> 
+  </macro>
+  
   <macro name="monograph">
     <choose>
       <if type="book">
@@ -81,6 +88,8 @@
     <text type="value" value="{"/>
 
     <text macro="itemType" />
+
+    <text macro="language" />
 
     <text macro="monograph" />
     

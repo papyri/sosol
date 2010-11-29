@@ -6,19 +6,7 @@ class HelperController < ApplicationController
   def number
   end
   
-  def gaplost
-  end
-  
-  def gapelliplang
-  end
-  
-  def gapellipNT
-  end
-  
-  def gapilleg
-  end
-  
-  def vestig
+  def gapall
   end
   
   def abbrev

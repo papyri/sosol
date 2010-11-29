@@ -6,7 +6,7 @@ function init()
   //add anything you need for initial page load here
   }
   
-window.onload = init;
+document.observe("dom:loaded", init);
 
 function checkLeidenXML(id)
 {

@@ -18,7 +18,7 @@
         %td=h doco.leiden
         %td=h doco.xml
         %td= link_to(doco.urldisplay, doco.url, :onclick => "window.open(this.href);return false;")
-        %td= link_to "New", url_for(:controller=>'docos',:action=>'new', :id => doco.id)
+        %td= link_to "New", url_for(:controller=>'docos',:action=>'new', :id => doco.id, :docotype => doco.docotype)
         %td= link_to('Show', doco)
         %td= link_to('Edit', edit_doco_path(doco))
         %td= link_to('Delete', doco, :confirm => 'Are you sure?', :method => :delete)

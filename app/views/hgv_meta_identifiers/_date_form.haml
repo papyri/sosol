@@ -1,0 +1,33 @@
+- childBase = HgvDate.childBase date_index, date_type
+- attributeBase = HgvDate.attributeBase date_index, date_type
+- optionsYearCentury = HgvDate.yearOptions
+- optionsMonth = HgvDate.monthOptions
+- optionsOffset = HgvDate.offsetOptions
+- optionsCertainty = HgvDate.certaintyOptions
+- data = HgvDate.dateInformation date_item
+
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.century'), :title => @identifier.configuration.xpath(:textDate)
+  = text_field_tag childBase + '[century][value]', data[:century][:value], :disabled => !@identifier.mutable?, :class => 'observechange'
+  = select_tag childBase + '[century][attributes][extent]', options_for_select(optionsYearCentury, data[:century][:extent]), :disabled => !@identifier.mutable?, :class => 'observechange'
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.year'), :title => @identifier.configuration.xpath(:textDate)
+  = text_field_tag childBase + '[year][value]', data[:year][:value], :disabled => !@identifier.mutable?, :class => 'observechange'
+  = select_tag childBase + '[year][attributes][extent]', options_for_select(optionsYearCentury, data[:year][:extent]), :disabled => !@identifier.mutable?, :class => 'observechange'
+  = hidden_field_tag childBase + '[year][attributes][certainty]', data[:year][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange'
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.month'), :title => @identifier.configuration.xpath(:textDate)
+  = text_field_tag childBase + '[month][value]', data[:month][:value], :disabled => !@identifier.mutable?, :class => 'observechange'
+  = select_tag childBase + '[month][attributes][extent]', options_for_select(optionsMonth, data[:month][:extent]), :disabled => !@identifier.mutable?, :class => 'observechange'
+  = hidden_field_tag childBase + '[month][attributes][certainty]', data[:month][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange'
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.day'), :title => @identifier.configuration.xpath(:textDate)
+  = text_field_tag childBase + '[day][value]', data[:day][:value], :disabled => !@identifier.mutable?, :class => 'observechange'
+  = hidden_field_tag childBase + '[day][attributes][certainty]', data[:day][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange'
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.offset'), :title => @identifier.configuration.xpath(:textDate)
+  = select_tag childBase + '[offset][value]', options_for_select(optionsOffset, data[:offset]), :disabled => !@identifier.mutable?, :class => 'observechange offset'
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.certainty'), :title => @identifier.configuration.xpath(:textDate)
+  = select_tag attributeBase + '[certaintyPicker]', options_for_select(optionsCertainty, data[:certaintyPicker]), :onclick => 'latherUncertainties(this)', :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+  = hidden_field_tag attributeBase + '[certainty]', data[:certainty], :disabled => !@identifier.mutable?, :class => 'observechange'

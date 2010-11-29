@@ -89,6 +89,8 @@ class BoardsController < ApplicationController
     
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    #TODO - is Biblio needed?
+    @available_identifier_classes.delete("HGVBiblioIdentifier")
     existing_boards = Board.find(:all)
     existing_boards.each do |b|
       @available_identifier_classes -= b.identifier_classes    

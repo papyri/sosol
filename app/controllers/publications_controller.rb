@@ -62,7 +62,7 @@ class PublicationsController < ApplicationController
       #cant create trans
       @creatable_identifiers.delete("HGVTransIdentifier")     
     end
-    
+    #TODO - is Biblio needed?
     @creatable_identifiers.delete("HGVBiblioIdentifier")
     
     #only let user create new for non-existing        
@@ -81,9 +81,9 @@ class PublicationsController < ApplicationController
   # POST /publications.xml
   def create
     @publication = Publication.new()
+    @publication.owner = @current_user
     @publication.populate_identifiers_from_identifiers(
       params[:pn_id])
-    @publication.owner = @current_user
     
     @publication.creator = @current_user
     #@publication.creator_type = "User"
@@ -100,11 +100,26 @@ class PublicationsController < ApplicationController
       e.save!
       
       flash[:notice] = 'Publication was successfully created.'
+      expire_publication_cache
       redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     else
       flash[:notice] = 'Error creating publication'
       redirect_to dashboard_url
     end
+  end
+  
+  def create_from_identifier
+    if params[:id].blank?
+      flash[:error] = 'You must specify an identifier.'
+      redirect_to dashboard_url
+      return
+    end
+    
+    identifier = params[:id]
+    
+    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    
+    publication_from_identifier(identifier, related_identifiers)
   end
   
   def create_from_templates
@@ -119,6 +134,7 @@ class PublicationsController < ApplicationController
     
     flash[:notice] = 'Publication was successfully created.'
     #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    expire_publication_cache
     redirect_to @publication
   end
   
@@ -149,11 +165,14 @@ class PublicationsController < ApplicationController
     @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     @comment.save
     
-    error_text = @publication.submit
+    error_text, identifier_for_comment = @publication.submit
     if error_text == ""
       #update comment with git hash when successfully submitted
       @comment.git_hash = @publication.recent_submit_sha
+      @comment.identifier_id = identifier_for_comment
       @comment.save
+      expire_publication_cache
+      expire_fragment(/board_publications_\d+/)
       flash[:notice] = 'Publication submitted.'
     else
       #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
@@ -210,7 +229,7 @@ class PublicationsController < ApplicationController
       end      
     end
     @diff = @publication.diff_from_canon
-    if @diff.nil? || @diff.empty?
+    if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
   end
@@ -229,6 +248,8 @@ class PublicationsController < ApplicationController
 
     begin
       canon_sha = @publication.commit_to_canon
+      expire_publication_cache(@publication.creator.id)
+      expire_fragment(/board_publications_\d+/)
     rescue Errno::EACCES => git_permissions_error
       flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
       redirect_to @publication
@@ -252,8 +273,13 @@ class PublicationsController < ApplicationController
     @comment.publication = @publication.origin
     
     @comment.save
-  
-
+    
+    #create an event to show up on dashboard
+    @event = Event.new()
+    @event.owner = @current_user
+    @event.target = @publication.parent #used parent so would match approve event
+    @event.category = "committed"
+    @event.save!
     
     #TODO need to submit to next board
     #need to set status of ids
@@ -269,7 +295,7 @@ class PublicationsController < ApplicationController
     end
     
     #send publication to the next board
-    error_text = @publication.origin.submit_to_next_board
+    error_text, identifier_for_comment = @publication.origin.submit_to_next_board
     if error_text != ""
       flash[:error] = error_text
     end
@@ -291,7 +317,7 @@ class PublicationsController < ApplicationController
       return
     end
      
-    @comments = Comment.find_all_by_publication_id(@publication.origin.id, :order => 'created_at DESC')
+    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?
     
@@ -366,7 +392,7 @@ class PublicationsController < ApplicationController
       document_path = [collection, volume, document].join(';')
     elsif identifier_class == 'HGVIdentifier'
       collection = collection.tr(' ', '_')
-      if volume.empty?
+      if volume.blank?
         document_path = [collection, document].join('_')
       else
         document_path = [collection, volume, document].join('_')
@@ -383,79 +409,7 @@ class PublicationsController < ApplicationController
       related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
     end
     
-    Rails.logger.info("Identifier: #{identifier}")
-    Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
-    
-    conflicting_identifiers = []
-    
-    if related_identifiers.nil?
-      flash[:error] = 'Error creating publication: publication not found'
-      redirect_to dashboard_url
-      return
-    end
-    
-    related_identifiers.each do |relid|
-      possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-      actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
-      conflicting_identifiers += actual_conflicts
-    end
-    
-    if related_identifiers.length == 0
-      flash[:error] = 'Error creating publication: publication not found'
-      redirect_to dashboard_url
-      return
-    elsif conflicting_identifiers.length > 0
-      Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
-      conflicting_publication = conflicting_identifiers.first.publication
-      conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
-      
-      if conflicting_publications.length > 1
-        flash[:error] = 'Error creating publication: multiple conflicting publications'
-        flash[:error] += '<ul>'
-        conflicting_publications.each do |conf_pub|
-          flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
-        end
-        flash[:error] += '</ul>'
-        
-        redirect_to dashboard_url
-        return
-      end
-      
-      if (conflicting_publication.status == "committed")
-        # TODO: should set "archived" and take approp action here instead
-        #conflicting_publication.destroy
-        conflicting_publication.archive
-      else
-        flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
-        redirect_to dashboard_url
-        return
-      end
-    end
-    # else
-      @publication = Publication.new()
-      @publication.populate_identifiers_from_identifiers(
-        related_identifiers)
-      @publication.owner = @current_user
-
-      @publication.creator = @current_user
-
-      if @publication.save!
-        @publication.branch_from_master
-
-        # need to remove repeat against publication model
-        e = Event.new
-        e.category = "started editing"
-        e.target = @publication
-        e.owner = @current_user
-        e.save!
-
-        flash[:notice] = 'Publication was successfully created.'
-        redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
-      else
-        flash[:notice] = 'Error creating publication'
-        redirect_to dashboard_url
-      end
-    # end
+    publication_from_identifier(identifier, related_identifiers)
   end
   
   def vote
@@ -471,10 +425,10 @@ class PublicationsController < ApplicationController
       return
     end
     
-    if params[:vote].nil? || params[:vote][:choice].nil? || params[:vote][:choice].empty?
+    if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
-      redirect_to edit_polymorphic_path([@publication, Identifier.find(params[:vote][:identifier_id])])
+      redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote][:identifier_id])])
       return
     end
     
@@ -518,6 +472,9 @@ class PublicationsController < ApplicationController
       if !has_voted 
         @vote.save!
         @comment.save!
+        # invalidate their cache since an action may have changed its status
+        expire_publication_cache(@publication.creator.id)
+        expire_fragment(/board_publications_\d+/)
       end
     end
 
@@ -540,6 +497,7 @@ class PublicationsController < ApplicationController
   def archive
     @publication = Publication.find(params[:id])
     @publication.archive
+    expire_publication_cache
     redirect_to @publication    
   end
   
@@ -556,6 +514,7 @@ class PublicationsController < ApplicationController
     @publication.destroy
     
     flash[:notice] = 'Publication ' + pub_name + ' was successfully deleted.'
+    expire_publication_cache
     respond_to do |format|
       format.html { redirect_to dashboard_url }
       
@@ -571,4 +530,86 @@ class PublicationsController < ApplicationController
     end
   end
   
+  protected
+  
+    def publication_from_identifier(identifier, related_identifiers = nil)
+      Rails.logger.info("Identifier: #{identifier}")
+      Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
+
+      conflicting_identifiers = []
+
+      if related_identifiers.nil?
+        flash[:error] = 'Error creating publication: publication not found'
+        redirect_to dashboard_url
+        return
+      end
+
+      related_identifiers.each do |relid|
+        possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+        actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+        conflicting_identifiers += actual_conflicts
+      end
+
+      if related_identifiers.length == 0
+        flash[:error] = 'Error creating publication: publication not found'
+        redirect_to dashboard_url
+        return
+      elsif conflicting_identifiers.length > 0
+        Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
+        conflicting_publication = conflicting_identifiers.first.publication
+        conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
+
+        if conflicting_publications.length > 1
+          flash[:error] = 'Error creating publication: multiple conflicting publications'
+          flash[:error] += '<ul>'
+          conflicting_publications.each do |conf_pub|
+            flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
+          end
+          flash[:error] += '</ul>'
+
+          redirect_to dashboard_url
+          return
+        end
+
+        if (conflicting_publication.status == "committed")
+          # TODO: should set "archived" and take approp action here instead
+          #conflicting_publication.destroy
+          expire_publication_cache
+          conflicting_publication.archive
+        else
+          flash[:error] = "Error creating publication: publication already exists. Please delete the <a href='#{url_for(conflicting_publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
+          redirect_to dashboard_url
+          return
+        end
+      end
+      # else
+        @publication = Publication.new()
+        @publication.owner = @current_user
+        @publication.creator = @current_user
+        @publication.populate_identifiers_from_identifiers(
+          related_identifiers)
+
+        if @publication.save!
+          @publication.branch_from_master
+
+          # need to remove repeat against publication model
+          e = Event.new
+          e.category = "started editing"
+          e.target = @publication
+          e.owner = @current_user
+          e.save!
+
+          flash[:notice] = 'Publication was successfully created.'
+          expire_publication_cache
+          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+        else
+          flash[:notice] = 'Error creating publication'
+          redirect_to dashboard_url
+        end
+      # end
+    end
+  
+    def expire_publication_cache(user_id = @current_user.id)
+      expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{user_id}")
+    end
 end

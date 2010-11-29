@@ -1,0 +1,157 @@
+-# all these fields shall be rearranged into a comfortable layout... soon
+- fields_for meta do |meta_form|
+  %fieldset
+    %legend.metaGroup.publication= I18n.t 'meta.group.publication'
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationTitle.to_s.underscore
+      = meta_form.text_field :publicationTitle
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationTitle.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationVolume.to_s.underscore
+      = meta_form.text_field :publicationVolume
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationVolume.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationNumbers.to_s.underscore
+      = meta_form.text_field :publicationNumbers
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationNumbers.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationFascicle.to_s.underscore
+      = meta_form.text_field :publicationFascicle
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationFascicle.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationSide.to_s.underscore
+      = meta_form.text_field :publicationSide
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationSide.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationLine.to_s.underscore
+      = meta_form.text_field :publicationLine
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationLine.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationPages.to_s.underscore
+      = meta_form.text_field :publicationPages
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationPages.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :publicationParts.to_s.underscore
+      = meta_form.text_field :publicationParts
+      %span{:class => 'quick_help', :id => 'meta.help.' + :publicationParts.to_s.underscore}
+
+  %fieldset.metaGroup.general
+    %legend= I18n.t 'meta.group.general'
+    %p
+      = meta_form.label I18n.t 'meta.' + :material.to_s.underscore
+      = meta_form.text_field :material
+      %span{:class => 'quick_help', :id => 'meta.help.' + :material.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :titleStmt.to_s.underscore
+      = meta_form.text_field :titleStmt
+      %span{:class => 'quick_help', :id => 'meta.help.' + :titleStmt.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :tm_nr.to_s.underscore
+      = meta_form.text_field :tm_nr
+      %span{:class => 'quick_help', :id => 'meta.help.' + :tm_nr.to_s.underscore}
+
+  %fieldset.metaGroup.collection
+    %legend= I18n.t 'meta.group.collection'
+    %p
+      = meta_form.label I18n.t 'meta.' + :collection_place_name.to_s.underscore
+      = meta_form.text_field :collection_place_name
+      %span{:class => 'quick_help', :id => 'meta.help.' + :collection_place_name.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :collection.to_s.underscore
+      = meta_form.text_field :collection
+      %span{:class => 'quick_help', :id => 'meta.help.' + :collection.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :inventory_number.to_s.underscore
+      = meta_form.text_field :inventory_number
+      %span{:class => 'quick_help', :id => 'meta.help.' + :inventory_number.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :collection_temporary_notes.to_s.underscore
+      = meta_form.text_field :collection_temporary_notes
+      %span{:class => 'quick_help', :id => 'meta.help.' + :collection_temporary_notes.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :collection_temporary_inventory_number.to_s.underscore
+      = meta_form.text_field :collection_temporary_inventory_number
+      %span{:class => 'quick_help', :id => 'meta.help.' + :collection_temporary_inventory_number.to_s.underscore}
+
+  %fieldset.metaGroup.date
+    %legend= I18n.t 'meta.group.date'
+    %p
+      = meta_form.label I18n.t 'meta.' + :onDate.to_s.underscore
+      = meta_form.text_field :onDate
+      %span{:class => 'quick_help', :id => 'meta.help.' + :onDate.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :notAfterDate.to_s.underscore
+      = meta_form.text_field :notAfterDate
+      %span{:class => 'quick_help', :id => 'meta.help.' + :notAfterDate.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :notBeforeDate.to_s.underscore
+      = meta_form.text_field :notBeforeDate
+      %span{:class => 'quick_help', :id => 'meta.help.' + :notBeforeDate.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :textDate.to_s.underscore
+      = meta_form.text_field :textDate
+      %span{:class => 'quick_help', :id => 'meta.help.' + :textDate.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :mentioned_dates_hdr.to_s.underscore
+      = meta_form.text_field :mentioned_dates_hdr
+      %span{:class => 'quick_help', :id => 'meta.help.' + :mentioned_dates_hdr.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :mentioned_dates.to_s.underscore
+      = meta_form.text_field :mentioned_dates
+      %span{:class => 'quick_help', :id => 'meta.help.' + :mentioned_dates.to_s.underscore}
+
+  -#%fieldset.metaGroup.hgvDate
+    -#%legend= I18n.t 'meta.group.hgv_date'
+
+  %fieldset.metaGroup.provenance
+    %legend= I18n.t 'meta.group.provenance'
+    %p
+      = meta_form.label I18n.t 'meta.' + :provenance_ancient_region.to_s.underscore
+      = meta_form.text_field :provenance_ancient_region
+      %span{:class => 'quick_help', :id => 'meta.help.' + :provenance_ancient_region.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :provenance_ancient_findspot.to_s.underscore
+      = meta_form.text_field :provenance_ancient_findspot
+      %span{:class => 'quick_help', :id => 'meta.help.' + :provenance_ancient_findspot.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :provenance_nome.to_s.underscore
+      = meta_form.text_field :provenance_nome
+      %span{:class => 'quick_help', :id => 'meta.help.' + :provenance_nome.to_s}
+    %p
+      = meta_form.label I18n.t 'meta.' + :provenance_modern_findspot.to_s.underscore
+      = meta_form.text_field :provenance_modern_findspot
+      %span{:class => 'quick_help', :id => 'meta.help.' + :provenance_modern_findspot.to_s.underscore}
+
+  %fieldset.metaGroup.bibliography
+    %legend= I18n.t 'meta.group.bibliography'
+    %p
+      = meta_form.label I18n.t 'meta.' + :other_publications.to_s.underscore
+      = meta_form.text_field :other_publications
+      %span{:class => 'quick_help', :id => 'meta.help.' + :other_publications.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :illustrations.to_s.underscore
+      = meta_form.text_field :illustrations
+      %span{:class => 'quick_help', :id => 'meta.help.' + :illustrations.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :translations.to_s.underscore
+      = meta_form.text_field :translations
+      %span{:class => 'quick_help', :id => 'meta.help.' + :translations.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :bl.to_s.underscore
+      = meta_form.text_field :bl
+      %span{:class => 'quick_help', :id => 'meta.help.' + :bl.to_s.underscore}
+
+  %fieldset.metaGroup.extra
+    %legend= I18n.t 'meta.group.extra'
+    %p
+      = meta_form.label I18n.t 'meta.' + :contentText.to_s.underscore
+      = meta_form.text_field :contentText
+      %span{:class => 'quick_help', :id => 'meta.help.' + :contentText.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :notes.to_s.underscore
+      = meta_form.text_field :notes
+      %span{:class => 'quick_help', :id => 'meta.help.' + :notes.to_s.underscore}
+    %p
+      = meta_form.label I18n.t 'meta.' + :planned_for_future_print_release.to_s.underscore
+      = meta_form.text_field :planned_for_future_print_release
+      %span{:class => 'quick_help', :id => 'meta.help.' + :planned_for_future_print_release.to_s.underscore}
