@@ -14,8 +14,6 @@ class HgvMetaIdentifiersController < IdentifiersController
 
   def update
     find_identifier
-    prune_params
-    complement_params
 
     commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
 
