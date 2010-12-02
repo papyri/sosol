@@ -11,6 +11,7 @@ config.cache_classes = true
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
+config.log_level = :debug
 # config.cache_store = :file_store, "#{RAILS_ROOT}/public/cache/"
 #config.action_controller.page_cache_directory        = "public/cache"
 #config.action_controller.page_cache_extension        = ".html.erb"

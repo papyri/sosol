@@ -30,7 +30,7 @@
      });
   }
   function construct_hgv_sparql_query(volume_reference) {
-    return get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '/mulgara/sparql/?query=' : '/sparql/'}" +  "prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%20%7B%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fb%7D%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fa%20.%0A%20%20%3Fa%20dc%3Aidentifier%20%3Fb%0A%20%20filter%20regex%28str%28%3Fb%29%2C%20%22%5Ehttp%3A%2F%2Fpapyri.info%22%29%7D";
+    return get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '/mulgara/sparql/?query=' : '/sparql/'}" +  "prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%20%7B%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fb%7D%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fa%20.%0A%20%20%3Fa%20dc%3Aidentifier%20%3Fb%0A%20%20filter%20regex%28str%28%3Fb%29%2C%20%22%5Ehttp%3A%2F%2Fpapyri.info%22%29%7D" + "#{request.domain == 'papyri.info' ? '&format=json' : ''}";
   }
   function get_allowed_values(select_element, volume_number, request_url, disable_volume) {
     reset_selector(select_element);
@@ -41,12 +41,15 @@
     }
     if(!(volume_number === undefined)) {
       if($F('IdentifierClass') == 'DDBIdentifier') {
-        request_url = request_url + ';' + volume_number;
+        request_url = request_url + ';' + volume_number + "#{request.domain == 'papyri.info' ? '/json' : ''}";
       }
       else {
         volume_reference = request_url.sub(/^.*\//,'') + '_' + volume_number;
         request_url = construct_hgv_sparql_query(volume_reference);
       }
+    }
+    else {
+      request_url = request_url + "#{request.domain == 'papyri.info' ? '/json' : ''}";
     }
     new Ajax.Request(request_url, {
       method: 'get',
