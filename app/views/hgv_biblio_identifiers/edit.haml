@@ -19,10 +19,9 @@
                     - conflict.last.each_pair do |index, text|
                       %li= text
 
-        %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
-        #bibliographyMeta.bibliographyContainer
-          »Under construction«
-          =# render :partial => 'meta', :object => @meta_identifier
+        =# %h2{:onclick => "toggleBibliographyEditor('#bibliographyMeta')"}= I18n.t('bibliography.headings.meta').titleize
+        =# #bibliographyMeta.bibliographyContainer
+        =#   =render :partial => 'meta', :object => @meta_identifier
 
         %h2{:onclick => "toggleBibliographyEditor('#bibliographyMain')"}= I18n.t('bibliography.headings.main').titleize
         #bibliographyMain.bibliographyContainer
