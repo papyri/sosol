@@ -5,7 +5,6 @@ class HgvMetaIdentifiersController < IdentifiersController
   before_filter :find_identifier, :only => [:edit, :update]
   before_filter :prune_params, :only => [:update]
   before_filter :complement_params, :only => [:update]
-  after_filter :render_quick_help, :only => [:edit]
 
   def edit
     find_identifier
