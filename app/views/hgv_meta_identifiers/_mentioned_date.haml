@@ -5,16 +5,16 @@
 %p.label
   %label.mentionedDateReference
     %span.label=I18n.t('meta.label.mentionedDateReference')
-    %span.quick_help{:id => 'meta.help.mentionedDateReference'}
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateReference' }
   %label.mentionedDateFrom
     %span.label=I18n.t('meta.label.mentionedDateFrom')
-    %span.quick_help{:id => 'meta.help.mentionedDateFrom'}
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateFrom' }
   %label.mentionedDateTo
     %span.label=I18n.t('meta.label.mentionedDateTo')
-    %span.quick_help{:id => 'meta.help.mentionedDateTo'}
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateTo' }
   %label.mentionedDateNote
     %span.label=I18n.t('meta.label.mentionedDateNote')
-    %span.quick_help{:id => 'meta.help.mentionedDateNote'}
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateNote' }
   %label.mentionedDateCertainty=I18n.t('meta.label.mentionedDateCertainty')
   %label.mentionedDateDateId=I18n.t('meta.label.mentionedDateDateId')
 
