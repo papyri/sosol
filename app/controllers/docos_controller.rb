@@ -193,7 +193,7 @@ class DocosController < ApplicationController
     
     if params[:save_url] != params[:doco][:url] #url changed by selector or user so need to validate, otherwise just save again
       # test the url from selector or the url entered by user to verify gets valid PN link
-      test_url = NumbersRDF::NumbersHelper.identifier_to_url(params[:doco][:url].downcase)
+      test_url = params[:doco][:url].downcase
       
       if test_url == "http://papyri.info" # the default returned when do not get a real match
         flash.now[:error] = "Error: '#{params[:doco][:url].downcase}' is not a valid PN URL - try a different selector class or correct user input format"
