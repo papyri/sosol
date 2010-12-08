@@ -89,18 +89,8 @@ class IdentifiersController < ApplicationController
       render :template => 'identifiers/editxml'
     end
   end
-  
-  protected
 
-    def render_quick_help      
-      index = 0
-      response.body = response.body.gsub(/(<span.+?class=["']quick_help["'].+?id=["'])(.+?)(["']>.*?<\/span>)/) {|match|
-        i18n_id = $2
-        element_id = i18n_id + '_' + index.to_s
-        index += 1
-        '<span class="quickHelp quickHelp_' + i18n_id.gsub(/\./, '_') + '"><span class="hook" onmouseover="Effect.Appear(\'' + element_id + '\');" onmouseout="Effect.Fade(\'' + element_id + '\');">?</span><span class="message" id="' + element_id + '" style="display: none;">' + I18n.t(i18n_id) + '</span></span>'
-      }
-    end
+  protected
   
     def expire_publication_cache
       expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{@current_user.id}")
@@ -137,4 +127,5 @@ class IdentifiersController < ApplicationController
       end
       return content_error_here
     end
+
 end

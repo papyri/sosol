@@ -10,7 +10,7 @@
     %p  
       %label{:for => tag_name, :title => @biblio_identifier.xpath({:type => type, :id => bibliography_id, :key => key})}= I18n.t('bibliography.' + key.to_s).titleize
       %input{:name => tag_name, :id => tag_id, :value => value, :disabled => !@biblio_identifier.mutable?}
-      %span{:class => 'quick_help', :id => 'bibliography.help.' + key.to_s}
+      = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'bibliography.help.' + key.to_s }
   -if type == :secondary
     %input.delete{:type => 'button', :value => I18n.t('bibliography.button.delete'), :onclick => "removeBibliographicalRecord(this.parentNode)"}
 
