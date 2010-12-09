@@ -76,7 +76,8 @@ div#edit fieldset label.mentionedDateFrom,
 div#edit fieldset label.mentionedDateTo,
 div#edit fieldset label.mentionedDateNote,
 div#edit fieldset label.mentionedDateCertainty,
-div#edit fieldset label.mentionedDateDateId {
+div#edit fieldset label.mentionedDateDateId,
+div#edit fieldset label.datemaster {
   margin: 0 1px 4px 0;
   overflow: visible; }
 
@@ -97,6 +98,9 @@ div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber {
 
 div#edit input#hgv_meta_identifier_collectionTemporaryNotes {
   width: 302px; }
+
+div#edit input#datemaster {
+  width: 60px; }
 
 div#edit fieldset label.provenanceAncientFindspot,
 div#edit fieldset label.provenanceModernFindspot,
@@ -124,15 +128,25 @@ div#edit input#hgv_meta_identifier_publicationLine,
 div#edit input#hgv_meta_identifier_publicationPages {
   width: 87px; }
 
-span.quickHelp_meta_help_publicationFascicle,
-span.quickHelp_meta_help_publicationParts {
-  margin: 0 113px 4px 4px; }
-
 div#edit input#hgv_meta_identifier_titleStmt {
   width: 320px; }
 
 div#edit input#hgv_meta_identifier_material {
   width: 100px; }
+
+span.quickHelp_meta_help_tmNo span.message,
+span.quickHelp_meta_help_publicationPages span.message,
+span.quickHelp_meta_help_collectionInventoryNumber span.message,
+span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message {
+  left: -176px;
+  width: 160px; }
+
+span.quickHelp_meta_help_date span.message {
+  width: 300px; }
+
+span.quickHelp_meta_help_publicationFascicle,
+span.quickHelp_meta_help_publicationParts {
+  margin: 0 113px 4px 4px; }
 
 span.quickHelp_meta_help_mentionedDateReference {
   z-index: 402; }
