@@ -1,11 +1,13 @@
 class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
 
   def edit
+    find_identifier
     @biblio_identifier.retrieve_bibliographical_data # todo: should actually be called implicitly during initialisation time
     @identifier.get_epidoc_attributes
   end
 
   def update
+    find_identifier
 
     commit_sha = @biblio_identifier.set_epidoc params[:hgv_biblio_identifier][:main], params[:hgv_biblio_identifier][:secondary], params[:comment]
     save_comment params[:comment], commit_sha

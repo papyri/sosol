@@ -90,9 +90,10 @@ module HgvMetaIdentifierHelper
   end
   
   module HgvFormat
-    def HgvFormat.keyStringToSym hashIn, hashOut = {}
+    def HgvFormat.keyStringToSym hashIn
+      hashOut = {}
       hashIn.each_pair {|k,v|
-        hashOut[k.to_sym] = (v.class == Hash ? keyStringToSym(v) : v)
+        hashOut[k.to_sym] = (v.is_a?(Hash) ? keyStringToSym(v) : v)
       }
       hashOut
     end
@@ -100,7 +101,9 @@ module HgvMetaIdentifierHelper
     
     def HgvFormat.formatDate date1, date2 = nil
       #{:century => {:value => '', :extent => '', :certainty => ''}, :year => {:value => '', :extent => '', :certainty => ''}, :month => {:value => '', :extent => '', :certainty => ''}, :day => {:value => '', :extent => '', :certainty => ''}, :offset => '', :certainty => '', :certaintyPicker => ''}
-      date1 = keyStringToSym date1 
+      
+      date1 = keyStringToSym date1
+      
       if date2
         date2 = keyStringToSym date2
 
@@ -116,7 +119,7 @@ module HgvMetaIdentifierHelper
       end
 
       certainty = formatCertaintyPart date1, date2
-      
+
       date1 = formatDatePart(
         date1[:century][:value],
         date1[:year][:value],
@@ -129,19 +132,21 @@ module HgvMetaIdentifierHelper
         date1[:certainty]
       )
 
-      date2 = formatDatePart(
-        date2[:century][:value],
-        date2[:year][:value],
-        date2[:month][:value],
-        date2[:day][:value],
-        date2[:century][:extent],
-        date2[:year][:extent],
-        date2[:month][:extent],
-        date2[:offset],
-        date2[:certainty]
-      )
+      if date2
+        date2 = formatDatePart(
+          date2[:century][:value],
+          date2[:year][:value],
+          date2[:month][:value],
+          date2[:day][:value],
+          date2[:century][:extent],
+          date2[:year][:extent],
+          date2[:month][:extent],
+          date2[:offset],
+          date2[:certainty]
+        )
+      end
 
-      return (date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
+      return (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
              (date2 && !date2.empty? ? ' - ' + date2 : '') + 
              (!certainty.empty? ? ' ' + certainty : '')
     end
@@ -168,7 +173,7 @@ module HgvMetaIdentifierHelper
               (!c.empty? ? c : '')).strip +
               (certainty && certainty.to_s == 'low' ? ' (?)' : '')
     end
-    
+
     def HgvFormat.formatCertaintyPart date1, date2
       uncertainties = []
       [date1, date2].each{|date|
