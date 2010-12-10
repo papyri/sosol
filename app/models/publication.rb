@@ -82,6 +82,7 @@ class Publication < ActiveRecord::Base
   end
 
   def populate_identifiers_from_identifiers(identifiers)
+    self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
@@ -96,9 +97,12 @@ class Publication < ActiveRecord::Base
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
-          self.identifiers << temp_id
-          if self.title == original_title
-            self.title = temp_id.titleize
+          # make sure we have a path on master before forking it for this publication
+          unless self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+            self.identifiers << temp_id
+            if self.title == original_title
+              self.title = temp_id.titleize
+            end
           end
         end
       end
@@ -147,20 +151,21 @@ class Publication < ActiveRecord::Base
     #1 meta
     #2 transcription
     #3 translation    
-    error_text = ""
+    error_text = "" #default to empty for check in controller
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
       identifiers.each do |i|
         if i.modified? && i.class == ic &&  i.status == "editing"
           #submit it
           if submit_identifier(i)
-            return
+            return error_text, i.id
           else            
-            error_text  += "no board for " + ic.to_s
-            return #for now
+            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
+            return error_text, nil
           end
         end
       end
+      
     end
     
     #if we get to this point, nothing else was submitted therefore we are done with publication
@@ -176,6 +181,8 @@ class Publication < ActiveRecord::Base
 =end
     self.origin.change_status("committed")
     self.save
+    
+    return error_text, nil # controller checks returned value for empty or not
     
   end
   
@@ -213,7 +220,7 @@ class Publication < ActiveRecord::Base
         # self.branch = title_to_ref(self.title)
         # 
         # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
-      #(from_branch, to_branch, from_repo)
+        #(from_branch, to_branch, from_repo)
         self.save!
         identifier.save!
         
@@ -222,7 +229,7 @@ class Publication < ActiveRecord::Base
         return true
       end
     end
-    return false
+    return false #no board exists for this identifier class
   end
   
   def submit
@@ -347,7 +354,8 @@ class Publication < ActiveRecord::Base
       end
     
       # branch from the original branch
-      self.owner.repository.create_branch(new_branch_name, self.branch)
+      self.owner.repository.create_branch(new_branch_name,
+        self.owner.repository.repo.get_head(self.branch).commit.sha)
       # delete the original branch
       self.owner.repository.delete_branch(self.branch)
       # set to new branch
@@ -651,8 +659,7 @@ class Publication < ActiveRecord::Base
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', publication_sha)
-        canon.repo.git.repack({})
-      
+        
         self.change_status('committed')
         self.save!
       else
@@ -708,12 +715,16 @@ class Publication < ActiveRecord::Base
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
-        canon.repo.git.repack({})
-      
-
+        
         self.change_status('committed')
         self.save!
-        
+      end
+      
+      # finalized, try to repack
+      begin
+        canon.repo.git.repack({})
+      rescue Grit::Git::GitTimeout
+        Rails.logger.warn("Canonical repository not repacked after finalization!")
       end
     else
       # nothing under canon control, just say it's committed
@@ -847,6 +858,90 @@ class Publication < ActiveRecord::Base
   # entry point identifier to use when we're just coming in from a publication
   def entry_identifier
     identifiers.first
+  end
+  
+  def get_all_comments(title)
+    all_built_comments = []
+    xml_only_built_comments = []
+    # select all comments associated with a publication title - will include from all users
+    @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
+                                         FROM comments a, publications b 
+                                        WHERE b.title = '#{title}'
+                                          AND a.publication_id = b.id
+                                     ORDER BY a.created_at DESC")
+    # add comments hash to array
+    @arcomments.each do |c|
+      built_comment = Comment::CombineComment.new
+      
+      built_comment.xmltype = "model"
+      
+      if c.user && c.user.name
+        built_comment.who = c.user.human_name
+      else
+        built_comment.who = "user not filled in"
+      end
+      # convert date to local for consistency so work in sort below
+      built_comment.when = c.created_at.getlocal
+      
+      if c.reason
+        built_comment.why = c.reason
+      else
+        built_comment.why = "reason not filled in"
+      end
+      #add identifier name if available
+      if c.identifier
+        built_comment.why = built_comment.why + " " + c.identifier.class::FRIENDLY_NAME
+      end
+      
+      if c.comment
+        built_comment.comment = c.comment
+      else
+        built_comment.comment = "comment not filled in"
+      end
+
+      all_built_comments << built_comment
+    end
+
+    # add comments hash from each of the publication's identifiers XML file to array
+    identifiers.each do |i|
+      where_from = i.class::FRIENDLY_NAME
+      ident_title = i.title
+      
+      ident_xml = i.xml_content
+      if ident_xml
+        ident_xml_xpath = REXML::Document.new(ident_xml)
+        comment_path = '/TEI/teiHeader/revisionDesc'
+        comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
+        
+        comment_here.each_element('//change') do |change|
+          built_comment = Comment::CombineComment.new
+          
+          built_comment.xmltype = where_from
+          
+          if change.attributes["who"]
+            built_comment.who = change.attributes["who"]
+          else
+            built_comment.who = "no who attribute"
+          end
+          
+          # parse will convert date to local for consistency so work in sort below
+          if change.attributes["when"]
+            built_comment.when = Time.parse(change.attributes["when"])
+          else
+            built_comment.when = Time.parse("1988-8-8")
+          end
+          
+          built_comment.why = "From "  + ident_title + " " + where_from + " XML"
+          
+          built_comment.comment = change.text
+          
+          all_built_comments << built_comment
+          xml_only_built_comments << built_comment
+        end #comment_here
+      end # if ident_xml
+    end #identifiers each
+    # sort in descending date order for display
+    return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
   end
   
   protected

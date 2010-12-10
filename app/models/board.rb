@@ -69,9 +69,7 @@ class Board < ActiveRecord::Base
   def controls_identifier?(identifier)
    self.identifier_classes.include?(identifier.class.to_s)  
   end
-
-
-
+  
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   def tally_votes(votes)
     # NOTE: assumes board controls one identifier type, and user hasn't made
@@ -143,10 +141,12 @@ class Board < ActiveRecord::Base
   			
   			#--document content
   			if mailer.include_document
-  				#document_content = self.content 
           document_content = ""
           email_identifiers.each do |ec|
-            document_content += ec.content
+            unless ec.nil?
+              #document_content += ec.content || ""
+              document_content += Identifier.find(ec[:id]).content || ""
+            end
           end
   			else
   				document_content = nil
@@ -195,17 +195,11 @@ class Board < ActiveRecord::Base
           friendly_name += ec.class::FRIENDLY_NAME
         end
         
-  			#subject_line = publication.title + " " + self.class::FRIENDLY_NAME + "-" + publication.status
         subject_line = publication.title + " " + friendly_name + "-" + when_to_send
-  			#if addresses == nil 
-  			#raise addresses.to_s + addresses.size.to_s
-  			#else
-  				#EmailerMailer.deliver_boardmail(addresses, subject_line, body, epidoc)   										
-  			#end
   			
   			addresses.each do |address|
   				if address && address.strip != ""
-  					EmailerMailer.deliver_boardmail(address, subject_line, body, document_content)   										
+  					EmailerMailer.deliver_send_email_out(address, subject_line, body, document_content)   										
   				end
   			end
   			

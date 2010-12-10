@@ -1,0 +1,27 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'translation_helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    = stylesheet_link_tag 'terms'
+    
+    #term_header
+
+   
+      %b Choose Language
+
+      #lang_radio_group
+        %input{ :checked => "checked", :type => "radio", :class => "term_lang", :id => "none", :name => "term_lang", :value => "none", :onclick => "checktypegap(this.id)"}None
+        %input{ :type => "radio", :class => "term_lang", :id => "la", :name => "term_lang", :value => "la", :onclick => "checktypegap(this.id)"}Latin
+        %input{  :type => "radio", :class => "term_lang", :id => "grc-Latn", :name => "term_lang", :value => "grc-Latn", :onclick => "checktypegap(this.id)"}Greek-Latin
+        		 
+      %br
+      then
+      %b Click Term Below To Insert
+    %br
+    %br
+    =@glossary
+
+    #button_left
+      %button{:type => "button", :onclick => "closeHelper()"}Close

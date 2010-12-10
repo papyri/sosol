@@ -95,4 +95,34 @@ class PublicationTest < ActiveSupport::TestCase
       assert @publication.children.include?(@publication_copy)
     end
   end
+  
+  context "a publication with unicode in its title/branch" do
+    setup do
+      @user = Factory(:user)
+      
+      @unicode_title = "P.Über βρεκεκεκέξ"
+      @publication = Factory(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
+      @publication.branch_from_master
+      
+      @new_ddb = DDBIdentifier.new_from_template(@publication)
+    end
+    
+    teardown do
+      @publication.destroy unless !Publication.exists? @publication.id
+      @user.destroy
+    end
+    
+    should "have content" do
+      assert @new_ddb.content
+    end
+    
+    should "have the branch" do
+      assert @user.repository.branches.include?(@publication.branch)
+    end
+    
+    should "only have the master branch after deletion" do
+      @publication.destroy
+      assert_equal ['master'],@user.repository.branches
+    end
+  end
 end

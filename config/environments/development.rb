@@ -12,6 +12,10 @@ config.whiny_nils = true
 config.action_controller.consider_all_requests_local = true
 config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = false
+#below lines for testing page caching for documentation
+#config.action_controller.perform_caching             = true
+#config.action_controller.page_cache_directory        = "public/cache"
+#config.action_controller.page_cache_extension        = ".html.erb"
 
 # Don't care if the mailer can't send
 #config.action_mailer.raise_delivery_errors = false
@@ -35,7 +39,7 @@ config.action_mailer.smtp_settings =
 {	
 	:address			=>	'localhost',
 	:port					=>	25,
-	:domain				=>	'charles-jackalope',
+	:domain				=>	'jfox-laptop',
 }
 
 

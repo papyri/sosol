@@ -1,16 +1,17 @@
 .diff
-  - diff.split("\n")[3..-1].each do |diff_line|
-    - unless diff_line.empty?
-      - diff_line_text = h diff_line[1..diff_line.length-1]
-      - case diff_line[0,1]
-        - when "+"
-          %ins
+  - unless (diff.blank?)
+    - diff.split("\n")[3..-1].each do |diff_line|
+      - unless diff_line.empty?
+        - diff_line_text = h diff_line[1..diff_line.length-1]
+        - case diff_line[0,1]
+          - when "+"
+            %ins
+              %pre
+                %code= diff_line_text
+          - when "-"
+            %del
+              %pre
+                %code= diff_line_text
+          - else
             %pre
-              %code= diff_line_text
-        - when "-"
-          %del
-            %pre
-              %code= diff_line_text
-        - else
-          %pre
-            %code= h diff_line[0..diff_line.length-1]
+              %code= h diff_line[0..diff_line.length-1]

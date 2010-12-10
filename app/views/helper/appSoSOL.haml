@@ -6,23 +6,23 @@
     = stylesheet_link_tag 'helper'
     #app3col{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      <h4>Correction indicated in SoSOL: Πατιων --> Πατσών(τεως) = <:<+Πατσών(τεως)+>|SoSOL:sir name|Πατιων:></h4>
+      %h4 Correction proposed directly via SoSOL -- not published elsewhere
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLlem_value", :size => "25"}Lem (lem)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLlem_value", :size => "25"}
         #app_desc
-          correct form: e.g. <+Πατσών(τεως)+>
+          Correct form
         #app_button
           %button{ :type => "button", :onclick=>"insertAppSoSOL()"}Insert
           &nbsp
           %button{:type => "button", :onclick => "closeHelper()"}Close
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLresp_value", :size => "25"}SoSOL (resp)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLresp_value", :size => "25"}
         #app_desc
-          Your sir  name: Sosin
+          Authority, e.g.: M. Smith
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLrdg_value", :size => "25"}Reading (rdg)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appSoSOLrdg_value", :size => "25"}
         #app_desc
-          previous, incorrect, form: e.g. Πατιων
+          Previous, incorrect form

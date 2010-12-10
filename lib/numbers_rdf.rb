@@ -31,18 +31,16 @@ module NumbersRDF
         return url_paths.join('/')
       end
       
-      def sparql_query_to_path(sparql_query)
-        "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+      def sparql_query_to_path(sparql_query, format = '')
+        path = "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+        if format != ''
+          path += "&format=#{format}"
+        end
+        return path
       end
       
       def identifier_to_url(identifier)
-        result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:references/@rdf:resource", identifier)
-        if result.nil?
-          return "http://#{NUMBERS_SERVER_DOMAIN}"
-        else
-          return result.last
-        end
+        return "http://#{identifier}"
       end
       
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
@@ -51,8 +49,8 @@ module NumbersRDF
                                           NUMBERS_SERVER_PORT)
       end
       
-      def sparql_query_to_numbers_server_response(sparql_query)
-        path = sparql_query_to_path(sparql_query)
+      def sparql_query_to_numbers_server_response(sparql_query, format = '')
+        path = sparql_query_to_path(sparql_query, format)
         response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
                                           NUMBERS_SERVER_PORT)
       end
@@ -90,7 +88,11 @@ module NumbersRDF
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:hasPart/@rdf:resource", identifier)
-        return results.collect{|r| identifier_url_to_identifier(r)}
+        if results.nil?
+          return nil
+        else
+          return results.collect{|r| identifier_url_to_identifier(r)}
+        end
       end
       
       # Turns e.g. papyri.info/hgv/P.Amh._2_48 into papyri.info/hgv/123

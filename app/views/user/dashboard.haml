@@ -2,24 +2,25 @@
   - max_visible_pubs = 5
   = render :partial => "common/flash_all"
   %h2 Your Publications
-  -# render publications without status
-  = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
-  - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
-  - for status in statuses
+  - cache(:action => 'dashboard', :part => "your_publications_#{@current_user.id}") do
+    -# render publications without status
+    = render :partial => "publications/list", :object => @publications.collect{|p| p.status.nil? ? p : nil}.compact
+    - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
+    - for status in statuses
+      %br
+      %h3== Your #{status} publications
+      - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
+      = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
+      - if this_publication_set.length > max_visible_pubs
+        %div{:id => "more_user_#{status}", :style => "display:none;"}
+          = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
+        %div{:id => "more_user_link_#{status}"}
+          %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
+            More...
+        %div{:id => "less_user_link_#{status}", :style => "display:none;"}
+          %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
+            Less...  
     %br
-    %h3== Your #{status} publications
-    - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
-    = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
-    - if this_publication_set.length > max_visible_pubs
-      %div{:id => "more_user_#{status}", :style => "display:none;"}
-        = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
-      %div{:id => "more_user_link_#{status}"}
-        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
-          More...
-      %div{:id => "less_user_link_#{status}", :style => "display:none;"}
-        %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
-          Less...  
-  %br
   = render :partial => "publications/publication_selector"
   
   - if @current_user.developer
@@ -36,60 +37,61 @@
     %br
     = form.submit "Create New Publication", :class => 'save'
   %br
-  - if @boards.length > 0
-    %h2
-      Boards
-    - @boards.each do |board| 
-      - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
-      - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
-      -#remove approved publications if in the finalizer list
-      - finalizing_publications.each do |fp|
-        -#remove it from the list of approved publications
-        - approved_publications.each do |ap|
-          - if fp.origin == ap.origin
-            - approved_publications.delete(ap)
-           
+  - cache(:action => 'dashboard', :part => "board_publications_#{@current_user.id}") do
+    - if @boards.length > 0
       %h2
-        #{board.title} 
-        -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
-        Publications 
-      - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
-      - if board_publications.length > 0        
-        %h3== Voting Publications
-        = render :partial => "publications/list", :object => board_publications
-        %br
-        
-      -#- approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
-      - if approved_publications.length > 0        
-        %h3== Approved Publications
-        = render :partial => "publications/list", :object => approved_publications
-        %br
-        
-      -#- finalizing_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
-      - if finalizing_publications.length > 0         
-        %h3== Your Publications to Finalize
-        = render :partial => "publications/list", :object => finalizing_publications
-        %br        
-              
-      - board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
-      - if board_publications.length > 0 
-        - status = "committed"       
-        %h3== Committed Publications
-        %div{:id => "more_board_#{status}_#{board.title}", :style => "display:none;"}          
+        Boards
+      - @boards.each do |board| 
+        - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
+        - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+        -#remove approved publications if in the finalizer list
+        - finalizing_publications.each do |fp|
+          -#remove it from the list of approved publications
+          - approved_publications.each do |ap|
+            - if fp.origin == ap.origin
+              - approved_publications.delete(ap)
+           
+        %h2
+          #{board.title} 
+          -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
+          Publications 
+        - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
+        - if board_publications.length > 0        
+          %h3== Voting Publications
           = render :partial => "publications/list", :object => board_publications
-        %div{:id => "more_board_link_#{status}_#{board.title}"}
-          %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_board_#{status}_#{board.title}');Effect.SlideUp('more_board_link_#{status}_#{board.title}');Effect.SlideDown('less_board_link_#{status}_#{board.title}');return false;"}
-            More...
-        %div{:id => "less_board_link_#{status}_#{board.title}", :style => "display:none;"}
-          %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_board_#{status}_#{board.title}');Effect.SlideDown('more_board_link_#{status}_#{board.title}');Effect.SlideUp('less_board_link_#{status}_#{board.title}');return false;"}
-            Less...                    
-        %br
+          %br
+        
+        -#- approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+        - if approved_publications.length > 0        
+          %h3== Approved Publications
+          = render :partial => "publications/list", :object => approved_publications
+          %br
+        
+        -#- finalizing_publications =  @board_final_pubs.collect{|p| p.parent.owner == board ? p : nil}.compact
+        - if finalizing_publications.length > 0         
+          %h3== Your Publications to Finalize
+          = render :partial => "publications/list", :object => finalizing_publications
+          %br        
+              
+        - board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
+        - if board_publications.length > 0 
+          - status = "committed"       
+          %h3== Committed Publications
+          %div{:id => "more_board_#{status}_#{board.title}", :style => "display:none;"}          
+            = render :partial => "publications/list", :object => board_publications
+          %div{:id => "more_board_link_#{status}_#{board.title}"}
+            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_board_#{status}_#{board.title}');Effect.SlideUp('more_board_link_#{status}_#{board.title}');Effect.SlideDown('less_board_link_#{status}_#{board.title}');return false;"}
+              More...
+          %div{:id => "less_board_link_#{status}_#{board.title}", :style => "display:none;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_board_#{status}_#{board.title}');Effect.SlideDown('more_board_link_#{status}_#{board.title}');Effect.SlideUp('less_board_link_#{status}_#{board.title}');return false;"}
+              Less...                    
+          %br
 
       
-      - archived_publications = board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
-      - if archived_publications.length > 0
-        = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id, :board_id => board.id
-        %br
+        - archived_publications = board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
+        - if archived_publications.length > 0
+          = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id, :board_id => board.id
+          %br
 
   %h2 News Feed
   = render :partial => "events/list", :object => @events

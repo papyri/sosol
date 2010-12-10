@@ -36,7 +36,7 @@ namespace :deploy do
   
   desc "Starts a server running Glassfish Gem"
   task :start, :roles => :app do
-    run "CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
+    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
   end
 
   desc "Stop a server running Glassfish Gem"
@@ -64,6 +64,8 @@ task :after_update_code, :roles => :app do
   
   secret_config = "#{shared_path}/config/environments/production_secret.rb"
   run "cp #{secret_config} #{release_path}/config/environments/production_secret.rb"
+  
+  run "cp #{shared_path}/config/initializers/hoptoad.rb #{release_path}/config/initializers/hoptoad.rb"
 end
 
 namespace :gems do

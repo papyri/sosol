@@ -1,5 +1,5 @@
-:javascript 
-  function checkForComment() { comment_text = $('comment_comment').value; $('vote_submit').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; } 
+:javascript
+  function checkForComment() { comment_text = $('comment_comment').value; $('vote_submit').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
 
 
 %h3 Votes
@@ -25,9 +25,9 @@
       - identifier.publication.owner.decrees.each do |d|
         - d.get_choice_array.each do |c|
           - choices[c] = c
-      = select "vote", "choice", choices
+      = select "vote", "choice", choices, {:include_blank => true}
       %br
       Your Comment Required:
-      = text_area :comment, "comment", :onkeyup => "checkForComment(event)"
+      = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
       -#= f.submit "Vote", :disabled => !publication.mutable?
-      = f.submit "Vote", :disabled => true
+      = f.submit "Vote", :disabled => true, :onclick => 'set_conf_false_vote()'

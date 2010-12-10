@@ -20,7 +20,7 @@ class DDBIdentifier < Identifier
     
     ddb_collection_name.downcase!
     
-    return [ddb_collection_name, ddb_volume_number, ddb_document_number].join('.')
+    return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.blank?}.join('.')
   end
   
   def n_attribute
@@ -28,7 +28,7 @@ class DDBIdentifier < Identifier
   end
   
   def xml_title_text
-    id_attribute
+    self.id_attribute
   end
   
   def self.collection_names_hash
@@ -90,31 +90,93 @@ class DDBIdentifier < Identifier
   end
   
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt ddb handDesc.xsl})))
+    JRubyXML.pretty_print(
+      JRubyXML.stream_from_string(
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb preprocess.xsl})))
+      )
+    )
+  end
+  
+  def after_rename(options = {})
+    # copy back the content to the original name before we update the header
+    if options[:set_dummy_header]
+      original = options[:original]
+      dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'"
+      dummy_header =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb dummyize.xsl})),
+          :reprint_in_text => self.title,
+          :ddb_hybrid_ref_attribute => self.n_attribute
+        )
+      original.save!
+      self.publication.identifiers << original
+      
+      original.set_xml_content(dummy_header, :comment => dummy_comment_text)
+            
+      # need to do on originals too
+      self.relatives.each do |relative|
+        original_relative = relative.clone
+        original_relative.name = original.name
+        original_relative.title = original.title
+        relative.save!
+        
+        relative.publication.identifiers << original_relative
+        
+        # set the dummy header on the relative
+        original_relative.set_xml_content(dummy_header, :comment => dummy_comment_text)
+      end
+    end
+    
+    if options[:update_header]
+      rewritten_xml =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt ddb update_header.xsl})),
+          :title_text => self.xml_title_text,
+          :filename_text => self.id_attribute,
+          :ddb_hybrid_text => self.n_attribute,
+          :reprint_from_text => options[:set_dummy_header] ? original.title : '',
+          :ddb_hybrid_ref_attribute => options[:set_dummy_header] ? original.n_attribute : ''
+        )
+    
+      self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
+    end
+  end
+  
+  def get_broken_leiden(original_xml = nil)
+    original_xml_content = original_xml || REXML::Document.new(self.xml_content)
+    brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
+    brokeleiden_here = REXML::XPath.first(original_xml_content, brokeleiden_path)
+    if brokeleiden_here.nil?
+      return nil
+    else
+      brokeleiden = brokeleiden_here.get_text.value
+      
+      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+    end
   end
   
   def leiden_plus
-    repo_xml = xml_content
-    repo_xml_work = REXML::Document.new(repo_xml)
-    basepath2 = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
-    brokeleiden_here = REXML::XPath.first(repo_xml_work, basepath2)
-    #if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and display that
-    #otherwise, get broke Leiden+ and display that
-    if brokeleiden_here == nil
-      abs = DDBIdentifier.preprocess_abs(
-        DDBIdentifier.get_abs_from_edition_div(repo_xml))
+    original_xml = self.xml_content
+    original_xml_content = REXML::Document.new(original_xml)
+
+    # if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and return that
+    # otherwise, return nil (client can then get_broken_leiden)
+    if get_broken_leiden(original_xml_content).nil?
+      # get div type=edition from XML in string format for conversion
+      abs = DDBIdentifier.get_div_edition(original_xml).to_s
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       
       return transformed
     else
-      #get the broke Leiden+
-      brokeleiden = brokeleiden_here.get_text.value
-      
-      return brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/,'')
+      return nil
     end
   end
   
@@ -142,63 +204,35 @@ class DDBIdentifier < Identifier
   ^ )
   
   def leiden_plus_to_xml(content)
-    # a lot of these changes are to make multiple div/ab docs work
+
     # transform the Leiden+ to XML
     nonx2x = DDBIdentifier.nonxml2xml(content)
-        
+    
+    #remove namespace from XML returned from XSugar
     nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
+      
     transformed_xml_content = REXML::Document.new(
       nonx2x)
+      
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
     
-    #deletes XML with broke Leiden+ if it exists
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
+    #deletes div type=edition in current XML which includes <div> with subtype=brokeLeiden if it exists, 
+    #all <div> type=textpart and/or <ab> tags
+    #the complete <div> type=edition will be replaced with new transformed_xml_content
+    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]')
     
-    #pull divs in the text and loop through and delete each - couldn't get xpath to do all at once
+    #delete \n left after delete div edition so not keep adding newlines to XML content
+    original_xml_content.delete_element('/TEI/text/body/node()[last()]')
     
-    div_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/div')
+    modified_abs = transformed_xml_content.elements['/']
     
-    div_original_edition.each do |div|
-      original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div')
-    end
+    original_edition =  original_xml_content.elements['/TEI/text/body']
     
-    #repeat for abs if file is set up that way
+    # put new div type=edition content in
+    original_edition.add_text modified_abs[0]
     
-    ab_original_edition = original_xml_content.get_elements('/TEI/text/body/div[@type = "edition"]/ab')
-
-    ab_original_edition.each do |ab|
-      original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/ab')
-    end
-    
-    #this is to put only 1 new line at the end of the edition div - without this several new lines may exist
-    #being left over after multiple ab/div's deleted above and starts adding more and more if do multiple updates
-    loc_nl_original_edition = original_xml_content.elements['/TEI/text/body/div[@type = "edition"]']
-    loc_nl_original_edition.text = "\n"
-    
-    # add modified abs to edition
-    modified_abs = transformed_xml_content.elements[
-      '/wrapab']
-    
-    original_edition =  original_xml_content.elements[
-      '/TEI/text/body/div[@type = "edition"]']
-    
-    #put loop in because previous did not work with multiple because destructive to array[0]
-    #loop through however many need to add and always add the first one in the array which gets deleted
-    loop_cnt = 0
-    nbr_to_add = modified_abs.length
-    until loop_cnt == nbr_to_add 
-      
-      if modified_abs[0] == "\n" #means it is a text node not and element
-        original_edition.add_text modified_abs[0]
-      else
-        original_edition.add_element(modified_abs[0])
-      end
-      
-      loop_cnt+=1
-    end
-    
-    # write back to a string
+    # write back to a string and return it to calling 
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
     return modified_xml_content

@@ -1,7 +1,7 @@
 class VotesController < ApplicationController
   
-    layout "site"
-    
+  layout "site"
+  before_filter :authorize
     
   # GET /votes
   # GET /votes.xml

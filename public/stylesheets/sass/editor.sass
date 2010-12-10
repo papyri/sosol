@@ -75,7 +75,7 @@ body
   display: none
 
 .site
-  width: 50em
+  width: 65%
   // center site divs
   margin: 0 auto
   padding: 0 3em
@@ -100,6 +100,9 @@ body
       width: 50em
       height: 6em
 
+styled_button
+  +styled_button
+
 #submit
   margin-top: .5em
   border: 1px solid gray
@@ -120,12 +123,28 @@ body
 input.submit
   +styled_button
   
+p.show
+  margin-top: .25em
+  margin-left: 1em
+  margin-bottom: .25em
+  padding: .5em
+  text-align: left
+  
+styled_button_show
+  +styled_button
+  margin-top: .25em
+  margin-left: 1em
+  margin-bottom: .25em
+  padding: .5em
+  margin-right: 1em
+  text-align: left
+  
 #logo
   width: auto
   float: left
-  padding-top: 1.2em
+  padding-top: 1.5em
   h1
-    font-size: 3em
+    font-size: 2em
   a
     text-decoration: none
     color: black
@@ -137,6 +156,7 @@ input.submit
   +text_box
   float: right
   margin-top: 1.5em
+  margin-bottom: 1em
   .name
     float: left
     font-weight: bold
@@ -155,6 +175,7 @@ input.submit
   font-size: 1.5em
   font-weight: bold
   margin-top: 0.6em
+  margin-bottom: 0.6em
   &:hover
     background = !main_color
   a
@@ -210,13 +231,30 @@ input.submit
       margin-bottom: 1em
     input.comment
       width: 100%
+    input.commenttop
+      width: 89%
+      margin-bottom: .5em
     input.save
       +styled_button
       margin-top: 1em
-    input.save2
+    input.brokenbottom
       +styled_button
       background: #ffaaaa
       margin-top: 1em
+      float: right
+      &:hover
+        background = #ff9999
+      &:active
+        background: #ff7777
+    input.savetop
+      +styled_button
+      margin-bottom: .3em
+      float: right
+    input.brokentop
+      +styled_button
+      background: #ffaaaa
+      margin-right: 10em
+      margin-bottom: .3em
       float: right
       &:hover
         background = #ff9999
@@ -301,14 +339,6 @@ input.submit
         &:hover
           color: black
           text-decoration: none
-
-#edit
-  form
-    textarea
-      width: 100%
-      height: 50em
-    input.comment
-      width: 100%
 
 #rpx_box
   float: left
@@ -416,15 +446,29 @@ ul.publications
   clear: both
   border-style: solid
   border-width: 1px
+  
+  .meta_comment
+    background-color: #99FF99
+  .model_comment
+    background-color: #72FFF4
+  .text_comment
+    background-color: #FFFFC0
+  .translation_comment
+    background-color: #FFCD81
   .name 
     float: left  
   .time
     float: left
+    margin-left: 1em
     font-size: smaller
     font-weight: lightest    
   .reason
     float: right
   .comment
     clear: both
-    background-color: #DDDDDD
+    background-color: #E7E7E7
     
+#editing_trans_text_view
+  border-width: 1px
+
+  border-style: solid

@@ -13,10 +13,17 @@ class HgvMetaIdentifiersController < IdentifiersController
   def update
     find_identifier
 
-    commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
-
-    generate_flash_message
-
+    begin
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+      expire_publication_cache
+      generate_flash_message
+    rescue JRubyXML::ParseError => e
+      flash[:error] = "Error updating file: #{e.message}. This file was NOT SAVED."
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :edit)
+      return
+    end
+    
     save_comment(params[:comment], commit_sha)
 
     redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -168,6 +175,16 @@ end #todocl: remove (date master)
 
     def find_identifier
       @identifier = HGVMetaIdentifier.find(params[:id])
+    end
+
+    def render_quick_help      
+      index = 0
+      response.body = response.body.gsub(/(<span.+?class=["']quick_help["'].+?id=["'])(.+?)(["']>.+?<\/span>)/) {|match|
+        i18n_id = $2
+        element_id = i18n_id + '_' + index.to_s
+        index += 1
+        '<span class="quickHelp"><span class="hook" onmouseover="Effect.Appear(\'' + element_id + '\');" onmouseout="Effect.Fade(\'' + element_id + '\');">?</span><span class="message" id="' + element_id + '" style="display: none;">' + I18n.t(i18n_id) + '</span></span>'
+      }
     end
 
 end

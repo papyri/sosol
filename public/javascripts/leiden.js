@@ -13,9 +13,11 @@ function init()
   	menuBar.setTarget('menuDiv');
 	
   	menuBar.init();
+  	//**POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  	showMatch('ddb_identifier_leiden_plus', '**POSSIBLE ERROR**');
   }
   
-window.onload = init;
+document.observe("dom:loaded", init);
 
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
@@ -24,56 +26,53 @@ function helpDialogOpen(view)
   
   switch (view)
   {
-  case "gapellipNT":
-  case "gapilleg":
-  case "gaplost":
-  case "vestig":
   case "division":
     {
-      openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "ancientdia":
     {
-      openconfig = config='height=375, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "abbrev":
     {
-      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=425, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  case "gapelliplang":
+  case "gapall":
     {
-      openconfig = config='height=250, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "appalt":
+  case "apporth":
   case "appsubst":
     {
-      openconfig = config='height=250, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
-      break;
-    }
-  case "apporth":
-    {
-      openconfig = config='height=370, width=875, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=300, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
   case "tryit":
+    {
+      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      break;
+    }
+  
   case "appBL":
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=850, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=310, width=775, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=285, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
       break;
     }
-  default: /* nopts is default and need to clear optional xml values and leave diachar filled in */
+  default: // nopts is default and need to clear optional xml values and leave diachar filled in 
     {
       alert("Oops, error, this is not a valid helper dialog page " + view);
     }
@@ -83,9 +82,9 @@ function helpDialogOpen(view)
   window.open (newWindowURL, '', openconfig); 
 }
 
-/*###########################################################################################*/
-/* getFocusMain - get location for inserting later on before lose it - IE has biggest issue      */
-/*###########################################################################################*/
+//###########################################################################################
+// getFocusMain - get location for inserting later on before lose it - IE has biggest issue      
+//###########################################################################################
 
 function getFocusMain()
 {
@@ -93,16 +92,16 @@ function getFocusMain()
   element.focus();
 }
 
-/*###########################################################################################*/
-/* insertDiacriticalMain                                                                      */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDiacriticalMain                                                                      
+//###########################################################################################
 
 function insertDiacriticalMain(diacritical_type)
 {
   getFocusMain()
   
-  /* type is parm passed from view javascript call - 'A' is the default character to pass in the 
-     XML to pass the xsugar grammar - stripped back out when returns */
+  // type is parm passed from view javascript call - 'A' is the default character to pass in the 
+  //   XML to pass the xsugar grammar - stripped back out when returns 
   
   startxml = "<hi rend=\"" + diacritical_type + "\">A</hi>";
   
@@ -118,30 +117,31 @@ function insertDiacriticalMain(diacritical_type)
   
 //  textToInsert = leidenh.replace(/A/,"");
 
-} /*########################     end insertDiacriticalMain     ########################*/
+} //########################     end insertDiacriticalMain     ########################
 
-/*###########################################################################################*/
-/* insertDeletionMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDeletionMain                                                                          
+//###########################################################################################
 
 function insertDeletionMain(deletion_type)
 {
   getFocusMain()
   
-  startxml = "<del rend=\"" + deletion_type + "\">replace this with actual deletion content</del>";
+  startxml = "<del rend=\"" + deletion_type + "\">to be deleted</del>";
   
 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
   success = function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
+    showMatch('ddb_identifier_leiden_plus', 'to be deleted');
      }
   
   convertXMLMain(); 
-} /*########################     end insertDeletionMain     ########################*/
+} //########################     end insertDeletionMain     ########################
 
-/*###########################################################################################*/
-/* insertMilestoneMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertMilestoneMain                                                                          
+//###########################################################################################
 
 function insertMilestoneMain(milestone_type)
 {
@@ -156,11 +156,11 @@ function insertMilestoneMain(milestone_type)
      }
   
   convertXMLMain();
-} /*########################     end insertMilestoneMain     ########################*/
+} //########################     end insertMilestoneMain     ########################
 
-/*###########################################################################################*/
-/* insertDivisionMain                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// insertDivisionMain                                                                          
+//###########################################################################################
 
 function insertDivisionMain(division_type)
 {
@@ -172,19 +172,19 @@ function insertDivisionMain(division_type)
   case "v":
     //line below for when ready for subtype face on r and v
     //startxml = "<div n=\"" + division_type + "\" subtype=\"face\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
-    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   case "column": //default n to roman 1
   
-    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"i\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   case "document":
   case "folio":
   case "fragment":
 
-    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with actual ab tag content</ab></div>";
+    startxml = "<div n=\"a\" subtype=\"" + division_type + "\" type=\"textpart\"><ab>replace this with text of division</ab></div>";
     break;
 
   default:
@@ -200,17 +200,18 @@ function insertDivisionMain(division_type)
   onSuccess : function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
+    showMatch('ddb_identifier_leiden_plus', 'replace this with text of division');
      },
   onFailure : function(resp) {
    alert("Oops, there's been an error." + resp.responseText);   
      }
   });
+  
+} //########################     end insertDivisionMain     ########################
 
-} /*########################     end insertDivisionMain     ########################*/
-
-/*###########################################################################################*/
-/* insert special unicode character - char_name passed as \u#### value to insert             */
-/*###########################################################################################*/
+//###########################################################################################
+// insert special unicode character - char_name passed as \u#### value to insert             
+//###########################################################################################
 
 function insertSpecialCharMain(char_name)
 {
@@ -219,9 +220,9 @@ function insertSpecialCharMain(char_name)
   insertTextMain(char_name);
 }
 
-/*###########################################################################################*/
-/* wrapxmlMain function                                                                          */
-/*###########################################################################################*/
+//###########################################################################################
+// wrapxmlMain function                                                                          
+//###########################################################################################
 
 function wrapxmlMain(xml)
 {
@@ -229,9 +230,9 @@ function wrapxmlMain(xml)
   return temptopass;
 }
 
-/*###########################################################################################*/
-/* ajax call to server to convert xml to leiden+                                             */
-/*###########################################################################################*/
+//###########################################################################################
+// ajax call to server to convert xml to leiden+                                             
+//###########################################################################################
 
 function convertXMLMain()
 {
@@ -248,9 +249,9 @@ function convertXMLMain()
   });
 }
 
-/*###########################################################################################*/
-/* insert value into textbox - vti = value to insert                                         */
-/*###########################################################################################*/
+//###########################################################################################
+// insert value into textbox - vti = value to insert                                         
+//###########################################################################################
 
 function insertTextMain(vti)
 { 
@@ -258,15 +259,16 @@ function insertTextMain(vti)
   //verification question if leave page without saving
   set_conf_true();
   
-  if(typeof document.selection != 'undefined') /* means IE browser */
+  if(typeof document.selection != 'undefined') // means IE browser 
     {
       var range = document.selection.createRange();
       range.text = vti;
       range.select();
       range.collapse(false);
     }
-  else 
-    if(typeof element.selectionStart != 'undefined') /* means Mozilla browser */
+  else
+    {
+    if(typeof element.selectionStart != 'undefined') // means Mozilla browser 
       {
         var start = element.selectionStart;
         var end = element.selectionEnd;
@@ -275,8 +277,10 @@ function insertTextMain(vti)
         element.selectionStart = pos;
         element.selectionEnd = pos;
       }
-    else /* not sure what browser */
+    else // not sure what browser 
       {
         element.value = element.value+c;
-      };
-} /*########################     end insertTextMain     ########################*/
+      }
+    }
+} //########################     end insertTextMain     ########################
+

@@ -10,6 +10,11 @@ config.cache_classes = true
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
+config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
+config.log_level = :debug
+# config.cache_store = :file_store, "#{RAILS_ROOT}/public/cache/"
+#config.action_controller.page_cache_directory        = "public/cache"
+#config.action_controller.page_cache_extension        = ".html.erb"
 # config.action_view.cache_template_loading            = true
 
 # Use a different cache store in production

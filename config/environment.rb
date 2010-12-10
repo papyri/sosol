@@ -35,7 +35,7 @@ Rails::Initializer.run do |config|
   # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
   
   if(RUBY_PLATFORM == 'java')
-    config.gem "json-jruby", :lib => "json"
+    config.gem "json-jruby", :version => ">= 1.4.3.1", :lib => "json"
   else
     config.gem "json"
   end
@@ -45,14 +45,14 @@ Rails::Initializer.run do |config|
     config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
-		config.gem "rack", :version => ">= 1.0.1", :lib => false
+		config.gem "rack", :version => ">= 1.1.0", :lib => false
   end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
   
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   
-  config.gem 'hoptoad_notifier'
+  config.gem 'hoptoad_notifier', :version => ">= 2.3.5"
   
   config.gem 'grit',
     :lib     => 'grit',
@@ -81,7 +81,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_protosite_session',
+    :key => '_protosite_session',
     :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6'
   }
 

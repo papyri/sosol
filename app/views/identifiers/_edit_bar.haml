@@ -33,6 +33,7 @@
               - for tran in trans
                 %li
                   = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
+    -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
       - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
           = link_to 'Bibliography', edit_biblio_publication_path(@identifier.publication)
@@ -41,7 +42,7 @@
             %ul
               - for bib in biblio
                 %li
-                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes('HGVBiblioIdentifier')])
+                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes(HGVBiblioIdentifier)])
 
 #identifier_sub_menus
   - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
@@ -87,6 +88,6 @@
         .identifier_sub_menu#sub_menu_2
           .site
             %ul
-              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+              / %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)

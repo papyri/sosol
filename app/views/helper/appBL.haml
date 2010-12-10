@@ -6,23 +6,23 @@
     = stylesheet_link_tag 'helper'
     #app3col{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      <h4>Correction indicated in BL: Πατιων --> Πατσών(τεως) = <:<+Πατσών(τεως)+>|BL:1.171|Πατιων:></h4>
+      %h4 Correction noted in BL
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appBLlem_value", :size => "25"}Lem (lem)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appBLlem_value", :size => "25"}
         #app_desc
-          correct form: e.g. <+Πατσών(τεως)+>
+          Correct form
         #app_button
           %button{ :type => "button", :onclick=>"insertAppBL()"}Insert
           &nbsp
           %button{:type => "button", :onclick => "closeHelper()"}Close
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appBLresp_value", :size => "25"}BL (resp)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appBLresp_value", :size => "25"}
         #app_desc
-          BL citation vol. and pg. num. as follows: 'BL:1.171'; ex. from P.Kar.Goddsp. 59.3
+          BL citation (vol.page), e.g.: 1.171
       #app_col
         #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appBLrdg_value", :size => "25"}Reading (rdg)
+          %input{ :type => "text", :class => "choosetext greek", :id => "appBLrdg_value", :size => "25"}
         #app_desc
-          previous, incorrect, form: e.g. Πατιων
+          Previous, incorrect form

@@ -1,0 +1,14 @@
+class AddTypeToDocos < ActiveRecord::Migration
+  def self.up
+    add_column :docos, :docotype, :string, :null => false, :default => "text"
+  	  add_index :docos, :docotype
+  	  add_index :docos, [:id, :docotype]
+  	  Doco.update_all ["docotype = ?", "text"]
+  end
+
+  def self.down
+    remove_index :docos, [:id, :docotype]
+    remove_index :docos, :docotype
+    remove_column :docos, :docotype
+  end
+end

@@ -96,9 +96,8 @@ class Repository
       #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
       data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
       return data
-    rescue
-      Grit::Git.git_timeout *= 2
-      RAILS_DEFAULT_LOGGER.warn "Fetching blob data timed out, increasing timeout to #{Grit::Git.git_timeout}"
+    rescue Grit::Git::GitTimeout
+      self.class.increase_timeout
       get_blob_data(blob)
     end
   end
@@ -130,18 +129,17 @@ class Repository
   end
   
   def create_branch(name, source_name = 'master')
-    # We have to abuse git here because Grit::Head doesn't appear to have
-    # a facility for writing out a sha1 to refs/heads/name yet
-    # Also, we always assume we want to branch from master by default
+    # We always assume we want to branch from master by default
     if source_name == 'master'
       self.update_master_from_canonical
+      source_name = @repo.get_head(source_name).commit.id
     end
     
-    @repo.git.branch({}, name, source_name)
+    @repo.update_ref(name, source_name)
   end
   
   def delete_branch(name)
-    @repo.git.branch({:D => true}, name)
+    @repo.git.fs_delete("refs/heads/#{name}")
   end
   
   #(from_branch, to_branch, from_repo)
@@ -163,7 +161,12 @@ class Repository
   
   def fetch_objects(other_repo)
     self.add_remote(other_repo)
-    @repo.remote_fetch(other_repo.name)
+    begin
+      @repo.remote_fetch(other_repo.name)
+    rescue Grit::Git::GitTimeout
+      self.class.increase_timeout
+      fetch_objects(other_repo)
+    end
   end
   
   def name
@@ -220,5 +223,10 @@ class Repository
                  actor,
                  nil,
                  branch)
+  end
+  
+  def self.increase_timeout
+    Grit::Git.git_timeout *= 2
+    RAILS_DEFAULT_LOGGER.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
 end

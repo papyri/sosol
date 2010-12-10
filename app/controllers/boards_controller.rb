@@ -1,11 +1,12 @@
 class BoardsController < ApplicationController
 
   layout "site"
+  before_filter :authorize
   before_filter :check_admin
 
   
   def check_admin
-    if !@current_user.admin
+    if @current_user.nil? || !@current_user.admin
       render :file => 'public/403.html', :status => '403'
     end
   end
@@ -88,6 +89,8 @@ class BoardsController < ApplicationController
     
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    #TODO - is Biblio needed?
+    @available_identifier_classes.delete("HGVBiblioIdentifier")
     existing_boards = Board.find(:all)
     existing_boards.each do |b|
       @available_identifier_classes -= b.identifier_classes    
@@ -114,28 +117,10 @@ class BoardsController < ApplicationController
     #for now just let them choose one identifer class
     @board.identifier_classes << params[:identifier_class]
 
-=begin    
-    Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
-      if params.has_key?(identifier_class) && params[identifier_class] == "1"
-        @board.identifier_classes << identifier_class
-      end
-    end
-=end
     if @board.save
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id    
     end         
-#    respond_to do |format|
-#      if @board.save
-#        flash[:notice] = 'Board was successfully created.'
-#        redirect_to :action => "edit", :id => (@board).id
-        #format.html { redirect_to(@board) }
-       # format.xml  { render :xml => @board, :status => :created, :location => @board }
-#      else
-#        format.html { render :action => "new" }
-#        format.xml  { render :xml => @board.errors, :status => :unprocessable_entity }
-#     end
-#    end
   end
 
   # PUT /boards/1
