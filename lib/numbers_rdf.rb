@@ -40,7 +40,11 @@ module NumbersRDF
       end
       
       def identifier_to_url(identifier)
-        return "http://#{identifier}"
+        if !identifier.blank? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
+          return "http://#{identifier}"
+        else
+          return nil
+        end
       end
       
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')

@@ -48,7 +48,7 @@
         request_url = construct_hgv_sparql_query(volume_reference);
       }
     }
-    else {
+    else if(!(($F('IdentifierClass') == 'HGVIdentifier') && (disable_volume == true))) {
       request_url = request_url + "#{request.domain == 'papyri.info' ? '/json' : ''}";
     }
     new Ajax.Request(request_url, {

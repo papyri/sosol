@@ -114,7 +114,7 @@
             .sep
               Example PN Link:
             .filename
-              %a{:href => child.url, :onclick => "window.open(this.href);return false;"}
+              %a{:href => NumbersRDF::NumbersHelper.identifier_to_url(child.url), :onclick => "window.open(this.href);return false;"}
                 = child.urldisplay
             %hr
             .note
@@ -152,7 +152,7 @@
             .sep
               Example PN Link:
             .filename
-              %a{:href => child.url, :onclick => "window.open(this.href);return false;"}
+              %a{:href => NumbersRDF::NumbersHelper.identifier_to_url(child.url), :onclick => "window.open(this.href);return false;"}
                 = child.urldisplay
             %hr
             .note
