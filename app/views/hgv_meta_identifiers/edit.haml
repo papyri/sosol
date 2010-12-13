@@ -149,9 +149,6 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
 
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
-
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
 = javascript_include_tag 'meta'

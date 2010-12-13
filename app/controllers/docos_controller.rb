@@ -112,6 +112,11 @@ class DocosController < ApplicationController
   
   def documentation
     @docotype = params[:docotype]
+    if @docotype.blank?
+      flash[:error] = 'Documentation type must be specified. Redirected to default documentation. If you arrived here from a bookmark or link, please update.'
+      redirect_to :action => 'documentation', :docotype => 'text'
+      return
+    end
   end
   
   private

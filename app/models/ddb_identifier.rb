@@ -139,6 +139,7 @@ class DDBIdentifier < Identifier
           JRubyXML.stream_from_file(File.join(RAILS_ROOT,
             %w{data xslt ddb update_header.xsl})),
           :title_text => self.xml_title_text,
+          :human_title_text => self.titleize,
           :filename_text => self.id_attribute,
           :ddb_hybrid_text => self.n_attribute,
           :reprint_from_text => options[:set_dummy_header] ? original.title : '',

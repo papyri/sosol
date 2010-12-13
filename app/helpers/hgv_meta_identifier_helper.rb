@@ -89,6 +89,148 @@ module HgvMetaIdentifierHelper
     end
   end
   
+  module HgvFormat
+    def HgvFormat.keyStringToSym hashIn
+      hashOut = {}
+      hashIn.each_pair {|k,v|
+        hashOut[k.to_sym] = (v.is_a?(Hash) ? keyStringToSym(v) : v)
+      }
+      hashOut
+    end
+    
+    
+    def HgvFormat.formatDate date1, date2 = nil
+      #{:century => {:value => '', :extent => '', :certainty => ''}, :year => {:value => '', :extent => '', :certainty => ''}, :month => {:value => '', :extent => '', :certainty => ''}, :day => {:value => '', :extent => '', :certainty => ''}, :offset => '', :certainty => '', :certaintyPicker => ''}
+      
+      date1 = keyStringToSym date1
+      
+      if date2
+        date2 = keyStringToSym date2
+
+        [:century, :year, :month].each{|item|
+          if date1[item][:value] == date2[item][:value] 
+            date1[item][:value] =  nil
+            if date1[item][:extent] == date2[item][:extent]
+              date1[item][:extent] =  nil
+            end
+          end
+        }
+
+      end
+
+      certainty = formatCertaintyPart date1, date2
+
+      date1 = formatDatePart(
+        date1[:century][:value],
+        date1[:year][:value],
+        date1[:month][:value],
+        date1[:day][:value],
+        date1[:century][:extent],
+        date1[:year][:extent],
+        date1[:month][:extent],
+        date1[:offset],
+        date1[:certainty]
+      )
+
+      if date2
+        date2 = formatDatePart(
+          date2[:century][:value],
+          date2[:year][:value],
+          date2[:month][:value],
+          date2[:day][:value],
+          date2[:century][:extent],
+          date2[:year][:extent],
+          date2[:month][:extent],
+          date2[:offset],
+          date2[:certainty]
+        )
+      end
+
+      return (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
+             (date2 && !date2.empty? ? ' - ' + date2 : '') + 
+             (!certainty.empty? ? ' ' + certainty : '')
+    end
+
+    def HgvFormat.formatDatePart c = nil, y = nil, m = nil, d = nil, cq = nil, yq = nil, mq = nil, offset = nil, certainty = nil
+
+      offset = formatOffset offset
+      m = formatMonth m
+      d = formatDay d
+      y = formatYear y
+      c = formatCentury c
+      mq = formatMonthQualifier mq
+      yq = formatYearQualifier yq
+      cq = formatCenturyQualifier cq
+
+      return  (certainty && [:high, 'high'].include?(certainty) ? 'ca. ' : '') +
+              ((!offset.empty? ? offset + ' ' : '') +
+              (!d.empty? ? (d + ' ') : '') +
+              (!mq.empty? ? mq + ' ' : '') +
+              (!m.empty? ? m + ' ' : '') +
+              (!yq.empty? ? yq + ' ' : '') +
+              (!y.empty? ? y.to_s + ' ' : '') +
+              (!cq.empty? ? cq + ' ' : '') +
+              (!c.empty? ? c : '')).strip +
+              (certainty && certainty.to_s == 'low' ? ' (?)' : '')
+    end
+
+    def HgvFormat.formatCertaintyPart date1, date2
+      uncertainties = []
+      [date1, date2].each{|date|
+        if date.class == Hash
+          date.each_pair{|k, v|
+            if v.class == Hash
+              v.each_pair{|l, w|
+                if l == :certainty && ['low', :low].include?(w)
+                  uncertainties[uncertainties.length] = k
+                end
+              }
+            end
+          }
+        end
+      }
+
+      uncertainties = uncertainties.uniq.collect{|item|
+        {:century => 'Jahrhundert', :year => 'Jahr', :month => 'Monat', :day => 'Tag'}[item]
+      }.join(', ').sub(/, [^,]+$/) {|match| match.sub(/, /, ' und ')}
+      
+      return !uncertainties.empty? ? '(' + uncertainties + ' unsicher)' : ''
+    end
+
+    def HgvFormat.formatOffset offset
+      offset = {:before => 'vor', :after => 'nach'}[offset.class == Symbol ? offset : (offset.class == String && !offset.empty? ? offset.to_sym : nil)]
+      return  offset ? offset : ''
+    end
+    def HgvFormat.formatDay day
+      return  (day && day.to_i > 0) ? (day.to_i.to_s + '.') : ''
+    end
+    def HgvFormat.formatMonth month
+      months = ['', 'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
+      return month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : ''
+    end
+    def HgvFormat.formatYear year
+      return year && year.to_i != 0 ? year.to_i.abs.to_s + (year.to_i < 0 ? ' v.Chr.' :'') : ''
+    end
+    def HgvFormat.formatCentury century
+      return century && century.to_i != 0 ? century.to_i.abs.roman.to_s + (century.to_i < 0 ? ' v.Chr.' :'') : ''
+    end
+    def HgvFormat.formatMonthQualifier q
+      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
+      map = {:beginning => 'Anfang', :middle => 'Mitte', :end => 'Ende'}
+      return map.has_key?(q) ? map[q] : '' 
+    end
+    def HgvFormat.formatYearQualifier q
+      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
+      map = {:beginning => 'Anfang', :first_half => '1. Hälfte', :first_half_to_middle => 'Mitte', :middle => 'Mitte', :middle_to_second_half => 'Mitte', :second_half => '2. Hälfte', :end => 'Ende'}
+      return map.has_key?(q) ? map[q] : '' 
+    end
+    def HgvFormat.formatCenturyQualifier q
+      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
+      map = {:beginning => 'Anfang', :first_half => '1. Hälfte', :first_half_to_middle => 'Mitte', :middle => 'Mitte', :middle_to_second_half => 'Mitte', :second_half => '2. Hälfte', :end => 'Ende'}
+      return map.has_key?(q) ? map[q] : '' 
+    end
+  end
+
   module HgvFuzzy
     def HgvFuzzy.getChron c, y, m, d, cq, yq, mq, chron = :chron
       c = c.to_i != 0 ? c.to_i : nil
@@ -226,3 +368,31 @@ module HgvMetaIdentifierHelper
   end
 
 end
+
+class Integer # ruby.brian-amberg.de
+  # Used for Integer to Roman conversion. (#roman)
+  @@roman_values_assoc = %w(I IV V IX X XL L XC C CD D CM M).zip([1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]).reverse
+
+  # Used for Roman to Integer conversion. (Integer#roman)
+  @@roman_values = @@roman_values_assoc.inject({}) { |h, (r,a)| h[r] = a; h }
+
+  # Spits out the number as a roman number
+  def roman
+    return "-#{(-self).roman}" if self < 0
+    return "" if self == 0
+    @@roman_values_assoc.each do | (i, v) | return(i+(self-v).roman) if v <= self end
+  end
+
+  # Returns a roman number string
+  def Integer.roman(roman)
+    last = roman[-1,1]
+    roman.reverse.split('').inject(0) { | result, c |
+      if @@roman_values[c] < @@roman_values[last]
+        result -= @@roman_values[c]
+      else
+        last = c
+        result += @@roman_values[c]
+      end
+    }
+  end
+end # ruby.brian-amberg.de

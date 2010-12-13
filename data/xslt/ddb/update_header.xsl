@@ -9,6 +9,7 @@
   <xsl:strip-space elements="tei:publicationStmt"/>
   
   <xsl:param name="title_text"/>
+  <xsl:param name="human_title_text"/>
   <xsl:param name="filename_text"/>
   <xsl:param name="ddb_hybrid_text"/>
   
@@ -61,6 +62,15 @@
   
   <!-- Suppress <idno type='ddb-perseus-style'> -->
   <xsl:template match="tei:idno[@type='ddb-perseus-style']"/>
+  
+  <!-- Update <sourceDesc> bibl -->
+  <xsl:template match="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:p">
+    <xsl:element name="p" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:element name="bibl" namespace="http://www.tei-c.org/ns/1.0">
+        <xsl:value-of select="$human_title_text"/>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
   
   <!-- Add <ref> to point to reprint-from -->
   <xsl:template match="/tei:TEI/tei:text/tei:body/tei:head[@xml:lang='en']">
