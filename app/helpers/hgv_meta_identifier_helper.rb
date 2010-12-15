@@ -232,6 +232,23 @@ module HgvMetaIdentifierHelper
   end
 
   module HgvFuzzy
+    def HgvFuzzy.getChronSimple c, y, m, d, cq, yq, mq, chron = :chron
+      if chron == :chron && c.to_i != 0
+        ''
+      else
+        intelligent_date = getChron c, y, m, d, cq, yq, mq, chron
+  
+        # throw away month and day if they were not explicitely set by the user      
+        if m.to_i == 0
+          intelligent_date[0..-7]
+        elsif d.to_i == 0
+          intelligent_date[0..-4]
+        else
+          intelligent_date
+        end
+      end
+    end
+
     def HgvFuzzy.getChron c, y, m, d, cq, yq, mq, chron = :chron
       c = c.to_i != 0 ? c.to_i : nil
       y = y.to_i != 0 ? y.to_i : nil
