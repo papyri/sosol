@@ -19,19 +19,21 @@ class Identifier < ActiveRecord::Base
                          :in => IDENTIFIER_SUBCLASSES
   
   require 'jruby_xml'
-  
+
+  #added ''&& i.type == self.type' to origin, parent, and children methods because name for meta and trans are
+  #the same and was returning the meta instead of trans when processing translations
   def origin
-    self.publication.origin.identifiers.detect {|i| i.name == self.name}
+    self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
   def parent
-    self.publication.parent.identifiers.detect {|i| i.name == self.name}
+    self.publication.parent.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
   def children
     child_identifiers = []
     self.publication.children.each do |child_pub|
-      child_identifiers << child_pub.identifiers.detect{|i| i.name == self.name}
+      child_identifiers << child_pub.identifiers.detect{|i| i.name == self.name && i.type == self.type}
     end
     return child_identifiers
   end
