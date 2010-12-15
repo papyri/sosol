@@ -8,18 +8,33 @@
     - statuses = @publications.collect{|p| p.status}.uniq.compact.sort_by{|s| ["new","editing","submitted","voting","approved","finalizing","committed", "archived"].index(s) }
     - for status in statuses
       %br
-      %h3== Your #{status} publications
-      - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
-      = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
-      - if this_publication_set.length > max_visible_pubs
-        %div{:id => "more_user_#{status}", :style => "display:none;"}
-          = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
-        %div{:id => "more_user_link_#{status}"}
-          %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
-            More...
-        %div{:id => "less_user_link_#{status}", :style => "display:none;"}
-          %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
-            Less...  
+      -#broke into separate partial to add vote/status data for user publications in 'submitted' status only
+      - if status == "submitted"
+        %h3== Your #{status} publications new submitted
+        - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
+        = render :partial => "publications/submitlist", :object => this_publication_set[0..max_visible_pubs-1]
+        - if this_publication_set.length > max_visible_pubs
+          %div{:id => "more_user_#{status}", :style => "display:none;"}
+            = render :partial => "publications/submitlist", :object => this_publication_set[max_visible_pubs..-1]
+          %div{:id => "more_user_link_#{status}"}
+            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
+              More...
+          %div{:id => "less_user_link_#{status}", :style => "display:none;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
+              Less...
+      - else
+        %h3== Your #{status} publications
+        - this_publication_set = @publications.collect{|p| p.status == status ? p : nil}.compact
+        = render :partial => "publications/list", :object => this_publication_set[0..max_visible_pubs-1]
+        - if this_publication_set.length > max_visible_pubs
+          %div{:id => "more_user_#{status}", :style => "display:none;"}
+            = render :partial => "publications/list", :object => this_publication_set[max_visible_pubs..-1]
+          %div{:id => "more_user_link_#{status}"}
+            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_user_#{status}');Effect.SlideUp('more_user_link_#{status}');Effect.SlideDown('less_user_link_#{status}');return false;"}
+              More...
+          %div{:id => "less_user_link_#{status}", :style => "display:none;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
+              Less...
     %br
   = render :partial => "publications/publication_selector"
   
@@ -72,22 +87,22 @@
           %h3== Your Publications to Finalize
           = render :partial => "publications/list", :object => finalizing_publications
           %br        
-              
-        - board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
-        - if board_publications.length > 0 
-          - status = "committed"       
-          %h3== Committed Publications
-          %div{:id => "more_board_#{status}_#{board.title}", :style => "display:none;"}          
-            = render :partial => "publications/list", :object => board_publications
-          %div{:id => "more_board_link_#{status}_#{board.title}"}
-            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_board_#{status}_#{board.title}');Effect.SlideUp('more_board_link_#{status}_#{board.title}');Effect.SlideDown('less_board_link_#{status}_#{board.title}');return false;"}
-              More...
-          %div{:id => "less_board_link_#{status}_#{board.title}", :style => "display:none;"}
-            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_board_#{status}_#{board.title}');Effect.SlideDown('more_board_link_#{status}_#{board.title}');Effect.SlideUp('less_board_link_#{status}_#{board.title}');return false;"}
-              Less...                    
-          %br
+        -#this is all commented out because board publication no longer go to committed status - straight from approved to archived
+        -#left in just in case this changes
+        -#- board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
+        -#- if board_publications.length > 0
+        -#  - status = "committed"
+        -#  %h3== Committed Publications
+        -#  %div{:id => "more_board_#{status}_#{board.title}", :style => "display:none;"}
+        -#    = render :partial => "publications/list", :object => board_publications
+        -#  %div{:id => "more_board_link_#{status}_#{board.title}"}
+        -#    %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_board_#{status}_#{board.title}');Effect.SlideUp('more_board_link_#{status}_#{board.title}');Effect.SlideDown('less_board_link_#{status}_#{board.title}');return false;"}
+        -#      More...
+        -#  %div{:id => "less_board_link_#{status}_#{board.title}", :style => "display:none;"}
+        -#    %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_board_#{status}_#{board.title}');Effect.SlideDown('more_board_link_#{status}_#{board.title}');Effect.SlideUp('less_board_link_#{status}_#{board.title}');return false;"}
+        -#      Less...
+        -#  %br
 
-      
         - archived_publications = board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
         - if archived_publications.length > 0
           = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id, :board_id => board.id

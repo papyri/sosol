@@ -239,7 +239,7 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-  #sets thes origin status for publication identifiers that the publication's board controls
+  #sets the origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
       
@@ -769,7 +769,33 @@ class Publication < ActiveRecord::Base
     end
     return board_publication      
   end
-  
+
+  #total votes for the publication children in voting status
+  def children_votes
+    vote_total = 0
+    vote_ddb = 0
+    vote_meta = 0
+    vote_trans = 0
+    self.children.each do|x|
+      if x.status == 'voting'
+        x.identifiers.each do |y|
+          case y
+            when DDBIdentifier
+              vote_ddb += y.votes.length
+              vote_total += vote_ddb
+            when HGVMetaIdentifier
+              vote_meta += y.votes.length
+              vote_total += vote_meta
+            when HGVTransIdentifier
+              vote_trans += y.votes.length
+              vote_total += vote_trans
+          end #case
+        end # identifiers do
+      end #if
+    end #children do
+    return vote_total, vote_ddb, vote_meta, vote_trans
+  end
+
   def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
