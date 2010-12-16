@@ -83,6 +83,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           # chronMin, chronMax and chron
 
           tasks = {}
+          shave_date = false
           if date['children']['onDate'] && date['children']['onDate']['children']['offset']['value'].empty? # @when attribute will only be used if there is a single date
             tasks[:chron] = date['children']['onDate']
           else
@@ -93,6 +94,7 @@ class HgvMetaIdentifiersController < IdentifiersController
             tasks[:chronMin] = date['children']['fromDate']
           elsif date['children']['onDate'] && (date['children']['onDate']['children']['offset']['value'] != 'before')
             tasks[:chronMin] = date['children']['onDate']
+            shave_date = true
           elsif
             tasks[:chronMin] = nil
           end
@@ -101,6 +103,7 @@ class HgvMetaIdentifiersController < IdentifiersController
             tasks[:chronMax] = date['children']['toDate']
           elsif date['children']['onDate'] && (date['children']['onDate']['children']['offset']['value'] != 'after')
             tasks[:chronMax] = date['children']['onDate']
+            shave_date = true
           elsif
             tasks[:chronMax] = nil
           end
@@ -121,6 +124,15 @@ if params[:date][:master] == 'yes' #todocl: remove (date master)
             else
               date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = nil
             end
+            
+            if shave_date
+              [date['attributes']['textDateFrom'], date['attributes']['textDateTo']].each{ |minmax|
+                if minmax
+                  minmax.replace minmax[0, minmax[0,1] == '-' ? 5 : 4]
+                end
+              }
+            end
+          
 end #todocl: remove (date master)
           }
 
