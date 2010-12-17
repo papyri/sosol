@@ -65,9 +65,12 @@ class Publication < ActiveRecord::Base
     text.elements["//office:document-content/office:body/office:text"].each_element {|text_element|
 
     Rails.logger.info('**** found['+text_element.class.inspect+']')
-
-      meta.elements["//office:document-content/office:body/office:text"].insert_after(elder, text_element)
-      elder = text_element
+      if text_element.attributes['text:style-name'] == 'Sammelbuch-Textapparat'
+        meta.elements["//office:document-content/office:body/office:text"].add(text_element)
+      else
+        meta.elements["//office:document-content/office:body/office:text"].insert_after(elder, text_element)
+        elder = text_element
+      end
 
     }
     
