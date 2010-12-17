@@ -134,8 +134,12 @@ module NumbersRDF
       end
     
       def process_numbers_server_response_body(rdf_xml, xpath)
-        JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
-          xpath_result[:value]
+        begin
+          return JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
+            xpath_result[:value]
+          end
+        rescue NativeException
+          return nil
         end
       end
     end
