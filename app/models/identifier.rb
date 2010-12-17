@@ -132,7 +132,7 @@ class Identifier < ActiveRecord::Base
            [collection_name, volume_number, document_number].reject{|i| i.blank?}.join(' ')
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last
+        title = "HGV " + self.name.split('/').last.tr(';',' ')
       end
     end
     return title
