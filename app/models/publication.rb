@@ -156,12 +156,14 @@ class Publication < ActiveRecord::Base
         begin
           submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
           if submit_comment && submit_comment.comment
-            identifier.add_change_desc(submit_comment.comment)
+            identifier.set_xml_content(
+              identifier.add_change_desc(submit_comment.comment),
+              :comment => '')
           else
-            identifier.add_change_desc()
+            identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
           end
         rescue ActiveRecord::RecordNotFound
-          identifier.add_change_desc()
+          identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
         end
         
         boards_copy = copy_to_owner(board)
