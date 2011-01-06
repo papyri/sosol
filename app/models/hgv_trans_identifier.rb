@@ -1,6 +1,6 @@
 class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
-  IDENTIFIER_NAMESPACE = 'hgv'
+  IDENTIFIER_NAMESPACE = 'hgvtrans'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   

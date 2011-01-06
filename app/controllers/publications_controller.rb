@@ -382,7 +382,7 @@ class PublicationsController < ApplicationController
       volume = ''
     end
     
-    if (document == 'Document Number') || document.empty?
+    if (document == 'Document Number') || document.blank?
       flash[:error] = 'Error creating publication: you must specify a document number'
       redirect_to dashboard_url
       return
