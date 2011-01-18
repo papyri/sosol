@@ -38,11 +38,11 @@ class Publication < ActiveRecord::Base
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
 
-  def print
+  def print parameters = {}
     # get preview of each identifier
     tmp = {}
     identifiers.each{|identifier|
-      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'ddbdp'}, %w{data xslt epidoc start-odf.xsl})
+      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'ddbdp'}.merge(parameters), %w{data xslt epidoc start-odf.xsl})
     }
 
     Rails.logger.info('---------------DDB xml ---------------------')
@@ -62,11 +62,12 @@ class Publication < ActiveRecord::Base
     Rails.logger.info('------------------------------------')
 
     elder = meta.elements["//office:document-content/office:body/office:text/text:p[@text:style-name='Sammelbuch-Kopf']"]
+    tail  = meta.elements["//office:document-content/office:body/office:text/text:p[@text:style-name='Sammelbuch-Endsatz']"]
     text.elements["//office:document-content/office:body/office:text"].each_element {|text_element|
 
     Rails.logger.info('**** found['+text_element.class.inspect+']')
       if text_element.attributes['text:style-name'] == 'Sammelbuch-Textapparat'
-        meta.elements["//office:document-content/office:body/office:text"].add(text_element)
+        meta.elements["//office:document-content/office:body/office:text"].insert_before(tail, text_element)
       else
         meta.elements["//office:document-content/office:body/office:text"].insert_after(elder, text_element)
         elder = text_element
