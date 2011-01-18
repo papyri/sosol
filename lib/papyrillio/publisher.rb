@@ -2,14 +2,14 @@ module Papyrillio
   class Publisher < Papyrillio::PapyrillioBase
     attr_accessor :collector, :organiser, :transformer, :aggregator, :decorator, :printer
 
-    def initialize collector = nil, organiser = nil, transformer = nil, aggregator = nil, decorator = nil, printer = nil
+    def initialize params = []
       super()
-      @collector   = collector   ? collector   : Papyrillio::Collector.new
-      @organiser   = organiser   ? organiser   : Papyrillio::Organiser.new
-      @transformer = transformer ? transformer : Papyrillio::Transformer.new
-      @aggregator  = aggregator  ? aggregator  : Papyrillio::Aggregator.new
-      @decorator   = decorator   ? decorator   : Papyrillio::Decorator.new
-      @printer     = printer     ? printer     : Papyrillio::Printer.new
+      @collector   = params[:collector]   ? params[:collector]   : Papyrillio::Collector.new
+      @organiser   = params[:organiser]   ? params[:organiser]   : Papyrillio::Organiser.new
+      @transformer = params[:transformer] ? params[:transformer] : Papyrillio::Transformer.new
+      @aggregator  = params[:aggregator]  ? params[:aggregator]  : Papyrillio::Aggregator.new
+      @decorator   = params[:decorator]   ? params[:decorator]   : Papyrillio::Decorator.new
+      @printer     = params[:printer]     ? params[:printer]     : Papyrillio::Printer.new
     end
 
     def release

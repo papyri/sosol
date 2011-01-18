@@ -17,7 +17,7 @@ module Papyrillio
 
   class PapyrillioBase
     def initialize
-      @start = Time.new      
+      @start = Time.new
     end
 
     def to_s
@@ -27,7 +27,7 @@ module Papyrillio
     def log message
       now = Time.new
       elapse = @start.class == Time ? ((now - @start) / 60).round().to_s : '???'
-      puts now.to_s + '> ' + message.to_s + ' (' + elapse + ' minutes)'
+      puts now.strftime('%a %b %d %H:%M:%S> ' + message.to_s + ' (' + elapse + ' minutes)') 
     end
 
     def log_progress value, unit = ' %'

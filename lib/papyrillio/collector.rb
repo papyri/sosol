@@ -3,84 +3,28 @@ module Papyrillio
   #
   # Collector
   #
-  # simply loads the first files it comes across
+  # simply loads all files from all user repositories
   #
 
   class Collector < Papyrillio::PapyrillioBase
-
-    def initialize
-      super()
-      @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
-    end
 
     def get
       @publishees ? @publishees : retrieve;
     end
 
     protected
-    
-    def retrieve_corresponding_ddb_file hgv_document
-      if hgv_document.class != REXML::Document
-        hgv_document = REXML::Document.new hgv_document
-      end
-
-      ddb_file = nil
-
-      hgv_document.elements.each("/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='ddb-hybrid']") {|element|
-        if element.get_text
-          ddb_file_name_elements = element.get_text.value.strip.split ';'
-          
-          collection = ddb_file_name_elements[0] 
-          volume = ddb_file_name_elements[1]
-          document = ddb_file_name_elements[2]
-
-          ddb_file_path = 'DDB_EpiDoc_XML/' + collection + '/' + # collection title like bgu or chrest.wilck
-            (volume.length > 0 ? collection + '.' + volume + '/' : '') + # volume number or empty string
-            collection + '.' + (volume.length > 0 ? volume + '.' : '') + document + '.xml' # document number
-
-          ddb_file = @canonical.commits.first.tree / ddb_file_path
-        end   
-      }
-      
-      ddb_file
-    end
 
     def retrieve
+      log '--> Collector'
+
       @publishees = []
-      count = 10.0
-
-      
-      hgv = @canonical.commits.first.tree / 'HGV_meta_EpiDoc'
-
-      index = 1
-
-      hgv.contents.select{|x|x.class == Grit::Tree}.each do |hgv_folder|
-
-        hgv_folder.contents{|x|x.class == Grit::Blob}.each do |hgv_file|
-          p = Publishee.new
-          p.label = hgv_folder.name + '/' + hgv_file.name
-          p.hgv_folder = hgv_folder
-          p.hgv_file = hgv_file
-          p.ddb_file = retrieve_corresponding_ddb_file hgv_file.data
-          p.file_index = p.print_index = index
-          @publishees[@publishees.length] = p
-  
-          log_progress (index / count * 100).round
-          index += 1
-          
-          if index > count
-            break
-          end
-
-        end
-
-        if index > count
-          break
-        end
-
-      end
-
-      puts ''
+      User.find(:all).each {|user|
+        log '| user ' + user.name
+        Publication.find_all_by_owner_id(user.id).each{|publication|
+          log '|__ publication ' + publication.title
+          @publishees[@publishees.length]  = Publishee.new :publication => publication, :user => user.name, :label => publication.title
+        }
+      }
 
       @publishees
     end
@@ -89,67 +33,68 @@ module Papyrillio
   #
   # CollectorXpathPattern
   #
-  # looks for a special pattern within a given xpath
+  # looks for a special pattern within a given EpiDoc attribute
   #
- 
-  class CollectorXpathPattern < Papyrillio::Collector
-    attr_accessor :xpath, :pattern
 
-    def initialize xpath, pattern
+  class CollectorXpathPattern < Papyrillio::Collector
+    attr_accessor :attribute, :pattern
+
+    def initialize attribute, pattern
       super()
-      @xpath = xpath
+      @attribute = attribute
       @pattern = pattern
     end
 
     def to_s
-      self.class.to_s + ': pattern[' + @pattern.to_s + '] xpath[' + @xpath.to_s + ']'
+      self.class.to_s + ': pattern[' + @pattern.to_s + '] attribute[' + @attribute.to_s + ']'
     end
 
     protected
 
     def retrieve
-      @publishees = []
+      @publishees = super()
 
-      canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
-      hgv = canonical.commits.first.tree / 'HGV_meta_EpiDoc'
+      log '--> CollectorXpathPattern'
 
-      index = 1
+      if @publishees.length > 0
+        index = 1.0
+        total = @publishees.length
 
-      hgv.contents.select{|x|x.class == Grit::Tree}.each do |hgv_folder|
-
-        hgv_folder.contents{|x|x.class == Grit::Blob}.each do |hgv_file|
-
-          document = REXML::Document.new hgv_file.data
-          document.elements.each(@xpath) {|element|
-            if element.get_text
-              result = element.get_text.value[@pattern, 1]
-
-              if  result != nil
-                p = Publishee.new
-                p.label = result
-                p.hgv_folder = hgv_folder
-                p.hgv_file = hgv_file
-                p.ddb_file = retrieve_corresponding_ddb_file document
-                p.file_index = index
-                p.print_index = result.to_i
-                @publishees[@publishees.length] = p
-              end
-
-            end
-          }
-
-          log_progress (index / 56000.0  * 100.0).round()
+        @publishees.delete_if{|publishee|
+          log_progress (index / total  * 100).round()
           index += 1
-        end
+          if publishee.hgv_meta_identifier
+            publishee.hgv_meta_identifier[@attribute].to_s[@pattern] ? false : true
+          else
+            true
+          end
+        }
 
+        log_progress 100
+        puts ''
+        @publishees.each{|p| log 'publication  ' + p.label }
+      else
+        log 'nothing to do'
       end
 
-      log_progress 100
-      puts ''
-
-      @publishees
     end
+  end
 
+  #
+  # FakeCollector
+  #
+  # loads hard coded publication ids
+  #
+
+  class FakeCollector < Papyrillio::Collector
+
+    protected
+
+    def retrieve
+      log '--> FakeCollector'
+
+      [Publishee.new(:publication => Publication.find_by_id(76))]
+    end
   end
 
 end
