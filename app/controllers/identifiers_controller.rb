@@ -89,6 +89,10 @@ class IdentifiersController < ApplicationController
       render :template => 'identifiers/editxml'
     end
   end
+  
+  def show_commit
+    find_identifier
+  end
 
   protected
   
