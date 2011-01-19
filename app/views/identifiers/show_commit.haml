@@ -2,7 +2,9 @@
   = render :partial => 'identifiers/edit_bar'
   .site
     %h1
-      Commit for 
+      Commit
+      = @commit[:id][0..6]
+      for
       = @identifier.title
       from publication
       = @identifier.publication.title
@@ -10,3 +12,4 @@
     %h3
       = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
     #edit
+      = render :partial => 'common/diff', :object => @diff

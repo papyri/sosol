@@ -92,6 +92,9 @@ class IdentifiersController < ApplicationController
   
   def show_commit
     find_identifier
+    @commit = @identifier.owner.repository.repo.commit(params[:commit_id]).to_hash
+    
+    @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id],"--",@identifier.to_path)
     
     render :template => 'identifiers/show_commit'
   end
