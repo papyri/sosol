@@ -42,7 +42,7 @@ class Publication < ActiveRecord::Base
     # get preview of each identifier
     tmp = {}
     identifiers.each{|identifier|
-      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'ddbdp'}.merge(parameters), %w{data xslt epidoc start-odf.xsl})
+      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'sammelbuch'}.merge(parameters), %w{data xslt epidoc start-odf.xsl})
     }
 
     Rails.logger.info('---------------DDB xml ---------------------')
