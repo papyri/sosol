@@ -1,0 +1,12 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    %h1
+      Commit for 
+      = @identifier.title
+      from publication
+      = @identifier.publication.title
+      %br
+    %h3
+      = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
+    #edit

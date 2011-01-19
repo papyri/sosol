@@ -92,6 +92,8 @@ class IdentifiersController < ApplicationController
   
   def show_commit
     find_identifier
+    
+    render :template => 'identifiers/show_commit'
   end
 
   protected
