@@ -92,10 +92,22 @@ class IdentifiersController < ApplicationController
   
   def show_commit
     find_identifier
-    @commit = @identifier.owner.repository.repo.commit(params[:commit_id]).to_hash
+    @identifier.get_commits
+    commit_index = @identifier[:commits].find_index {|c| c[:id] == params[:commit_id]}
+    @commit = @identifier[:commits][commit_index]
+    @prev_commit = commit_index > 0 ? @identifier[:commits][commit_index-1] : nil
+    @next_commit = commit_index < (@identifier[:commits].length - 1) ? @identifier[:commits][commit_index+1] : nil
     
     @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id],"--",@identifier.to_path)
-    
+    if @diff.blank?
+      # empty diff, probably pre-rename; go ahead and show the whole diff
+      # TODO: actually track down renames? If an identifier is modified by
+      # a repo-wide commit and then renamed, this will currently load the
+      # entire (giant) commit. But most of our renames will be from new
+      # texts coming in with no prior history.
+      @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id])
+    end
+    Rails.logger.info(@commit.inspect)
     render :template => 'identifiers/show_commit'
   end
 

@@ -11,5 +11,8 @@
       %br
     %h3
       = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
+    %br
+    = render :partial => "common/commit_box", :locals => {:identifier => @identifier, :commit => @commit, :prev_commit => @prev_commit, :next_commit => @next_commit}
+    %br
     #edit
       = render :partial => 'common/diff', :object => @diff
