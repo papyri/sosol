@@ -83,7 +83,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           # chronMin, chronMax and chron
 
           tasks = {}
-          shave_date = false
+
           if date['children']['onDate'] && date['children']['onDate']['children']['offset']['value'].empty? # @when attribute will only be used if there is a single date
             tasks[:chron] = date['children']['onDate']
           else
@@ -94,7 +94,6 @@ class HgvMetaIdentifiersController < IdentifiersController
             tasks[:chronMin] = date['children']['fromDate']
           elsif date['children']['onDate'] && (date['children']['onDate']['children']['offset']['value'] != 'before')
             tasks[:chronMin] = date['children']['onDate']
-            shave_date = true
           elsif
             tasks[:chronMin] = nil
           end
@@ -103,7 +102,6 @@ class HgvMetaIdentifiersController < IdentifiersController
             tasks[:chronMax] = date['children']['toDate']
           elsif date['children']['onDate'] && (date['children']['onDate']['children']['offset']['value'] != 'after')
             tasks[:chronMax] = date['children']['onDate']
-            shave_date = true
           elsif
             tasks[:chronMax] = nil
           end
@@ -111,6 +109,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           tasks.each_pair{|chron, value|
 if params[:date][:master] == 'yes' #todocl: remove (date master)
             if value
+
               date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = HgvFuzzy.getChronSimple(
                 value['children']['century']['value'],
                 value['children']['year']['value'],
@@ -124,15 +123,7 @@ if params[:date][:master] == 'yes' #todocl: remove (date master)
             else
               date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = nil
             end
-            
-            if shave_date
-              [date['attributes']['textDateFrom'], date['attributes']['textDateTo']].each{ |minmax|
-                if minmax
-                  minmax.replace minmax[0, minmax[0,1] == '-' ? 5 : 4]
-                end
-              }
-            end
-          
+
 end #todocl: remove (date master)
           }
 
@@ -181,16 +172,6 @@ end #todocl: remove (date master)
 
     def find_identifier
       @identifier = HGVMetaIdentifier.find(params[:id])
-    end
-
-    def render_quick_help      
-      index = 0
-      response.body = response.body.gsub(/(<span.+?class=["']quick_help["'].+?id=["'])(.+?)(["']>.+?<\/span>)/) {|match|
-        i18n_id = $2
-        element_id = i18n_id + '_' + index.to_s
-        index += 1
-        '<span class="quickHelp"><span class="hook" onmouseover="Effect.Appear(\'' + element_id + '\');" onmouseout="Effect.Fade(\'' + element_id + '\');">?</span><span class="message" id="' + element_id + '" style="display: none;">' + I18n.t(i18n_id) + '</span></span>'
-      }
     end
 
 end

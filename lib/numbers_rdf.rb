@@ -40,7 +40,11 @@ module NumbersRDF
       end
       
       def identifier_to_url(identifier)
-        return "http://#{identifier}"
+        if !identifier.blank? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
+          return "http://#{identifier}"
+        else
+          return nil
+        end
       end
       
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
@@ -130,8 +134,12 @@ module NumbersRDF
       end
     
       def process_numbers_server_response_body(rdf_xml, xpath)
-        JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
-          xpath_result[:value]
+        begin
+          return JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
+            xpath_result[:value]
+          end
+        rescue NativeException
+          return nil
         end
       end
     end

@@ -440,6 +440,35 @@ ul.publications
       text-decoration: none
       background-color = !main_color_darken_medium
 
+.commit
+  background-color = !main_color_fade
+  border-color = !main_color_darken
+  border-style: solid
+  border-width: .16em
+  display: block
+  overflow: hidden
+  
+  .ids
+    min-width: 7.5em
+    width: 25%
+    float: right
+    ul
+      padding: 1em
+      li
+        list-style-type: none
+  .body
+    padding: 1em
+    width: 70%
+    float: left
+    border-right-color = !main_color_darken
+    border-right-style: solid
+    border-right-width: .16em
+    .author
+      margin-top: 1em
+      span.type
+        color = !main_color_darken_full
+    .date
+      color = !main_color_darken_full
 
 .comment_partial
   background-color: #BBBBBB
