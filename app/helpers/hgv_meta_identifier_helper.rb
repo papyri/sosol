@@ -2,16 +2,16 @@ module HgvMetaIdentifierHelper
 
   module HgvDate
     def HgvDate.monthOptions
-      [['', ''], ['beginning', 'beginning'], ['middle', 'middle'], ['end', 'end']]
+      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.end'), 'end']]
     end
     def HgvDate.yearOptions
-      [['', ''], ['beginning', 'beginning'], ['first half', 'first_half'], ['first half to middle', 'first_half_to_middle'], ['middle', 'middle'], ['middle to second half', 'middle_to_second_half'], ['second half', 'second_half'], ['end', 'end']]
+      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.firstHalf'), 'first_half'], [I18n.t('date.firstHalfToMiddle'), 'firstHalfToMiddle'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.middleToSecondHalf'), 'middle_to_second_half'], [I18n.t('date.secondHalf'), 'second_half'], [I18n.t('date.end'), 'end']]
     end
     def HgvDate.offsetOptions
-      [['', ''], ['before', 'before'], ['after', 'after']]
+      [['', ''], [I18n.t('date.before'), 'before'], [I18n.t('date.after'), 'after']]
     end
     def HgvDate.certaintyOptions
-      [['', ''], ['Probably...', 'high'], ['(?)', 'low'], ['Day uncertain', 'day'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
+      [['', ''], [I18n.t('date.certaintyHigh'), 'high'], [I18n.t('date.certaintyLow'), 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
     end
     def HgvDate.childBase date_index, date_type
       'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][children]'
