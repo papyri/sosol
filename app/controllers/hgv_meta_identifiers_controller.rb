@@ -108,6 +108,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           tasks.each_pair{|chron, value|
 if params[:date][:master] == 'yes' #todocl: remove (date master)
             if value
+
               date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = HgvFuzzy.getChronSimple(
                 value['children']['century']['value'],
                 value['children']['year']['value'],
@@ -136,6 +137,7 @@ if params[:date][:master] == 'yes' #todocl: remove (date master)
           end
 end #todocl: remove (date master)
           date['children'] = {} #todocl: remove this line when nesting dates into origDate and when the offset tag is allowed within EpiDoc
+
         }
       end
     end
@@ -169,16 +171,6 @@ end #todocl: remove (date master)
 
     def find_identifier
       @identifier = HGVMetaIdentifier.find(params[:id])
-    end
-
-    def render_quick_help      
-      index = 0
-      response.body = response.body.gsub(/(<span.+?class=["']quick_help["'].+?id=["'])(.+?)(["']>.+?<\/span>)/) {|match|
-        i18n_id = $2
-        element_id = i18n_id + '_' + index.to_s
-        index += 1
-        '<span class="quickHelp"><span class="hook" onmouseover="Effect.Appear(\'' + element_id + '\');" onmouseout="Effect.Fade(\'' + element_id + '\');">?</span><span class="message" id="' + element_id + '" style="display: none;">' + I18n.t(i18n_id) + '</span></span>'
-      }
     end
 
 end

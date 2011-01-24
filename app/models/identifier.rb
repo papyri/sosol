@@ -19,19 +19,21 @@ class Identifier < ActiveRecord::Base
                          :in => IDENTIFIER_SUBCLASSES
   
   require 'jruby_xml'
-  
+
+  #added ''&& i.type == self.type' to origin, parent, and children methods because name for meta and trans are
+  #the same and was returning the meta instead of trans when processing translations
   def origin
-    self.publication.origin.identifiers.detect {|i| i.name == self.name}
+    self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
   def parent
-    self.publication.parent.identifiers.detect {|i| i.name == self.name}
+    self.publication.parent.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
   def children
     child_identifiers = []
     self.publication.children.each do |child_pub|
-      child_identifiers << child_pub.identifiers.detect{|i| i.name == self.name}
+      child_identifiers << child_pub.identifiers.detect{|i| i.name == self.name && i.type == self.type}
     end
     return child_identifiers
   end
@@ -130,7 +132,7 @@ class Identifier < ActiveRecord::Base
            [collection_name, volume_number, document_number].reject{|i| i.blank?}.join(' ')
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last
+        title = "HGV " + self.name.split('/').last.tr(';',' ')
       end
     end
     return title
@@ -299,28 +301,32 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
 
-  def add_votes_to_change_desc
-    self.parent.votes.each do |v|
-      add_change_desc( "Vote - " + v.choice, v.user )
-    end
-  end
-
-  def add_finalize_to_change_desc(comment_text, user)
-    add_change_desc( "Finalized - " + comment_text, user)
-  end
-  
-  def add_change_desc(text = "", user_info = self.publication.creator)
+  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
     doc = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         %w{data xslt common add_change.xsl})),
       :who => user_info.human_name,
       :comment => text
     )
     
-    self.set_xml_content(doc.to_s, :comment => '')
+    return doc.to_s
   end
 
+  def update_revision_desc(comment_text, user)
+    commit_message = "Update revisionDesc\n\n"
+    change_desc_content = self.xml_content
+    
+    self.parent.votes.each do |v|
+      change_desc_content = add_change_desc( "Vote - " + v.choice, v.user, change_desc_content )
+      commit_message += " - Vote - #{v.choice} (#{v.user.human_name})\n"
+    end
+    
+    change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)
+    commit_message += " - Finalized - #{comment_text} (#{user.human_name})"
+    
+    self.set_xml_content(change_desc_content, :comment => commit_message)
+  end
 
   #standard result actions 
   #NOTE none of this is currently used except for creating board

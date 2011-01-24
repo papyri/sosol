@@ -60,6 +60,11 @@ ActionController::Routing::Routes.draw do |map|
     # publication.resources :identifiers
   end
   
+  map.connect 'publications/:publication_id/:controller/:id/show_commit/:commit_id',
+    :controller => /.*_?identifiers/,
+    :action => 'show_commit',
+    :commit_id => /[0-9a-fA-F]{40}/
+  
   map.connect 'publications/create_from_identifier/:id',
     :controller => 'publications',
     :action => 'create_from_identifier',

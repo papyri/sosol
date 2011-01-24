@@ -8,8 +8,11 @@ class LeidenController < ApplicationController
       render :text => "#{leidenback}"
     rescue RXSugar::XMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
-      parse_error.content.insert((parse_error.column-1), "**ERROR**")
-      render :text => "Error at column #{parse_error.column} #{parse_error.content}"
+      #added 68 to above because of "xml:" in 'div edition being replaced twice during the
+      #normalize xml process in xsugar processing in rxsugar.xml_to_non_xml with {http://www.w3.org/XML/1998/namespace}
+      # this is (38 chars - 4) * 2 = 68. removed 68 in error message also not offset.
+      parse_error.content.insert((parse_error.column-69), "**ERROR**")
+      render :text => "Error at column #{parse_error.column-68} #{parse_error.content}"
     end
   end
   
