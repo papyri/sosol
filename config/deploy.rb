@@ -4,7 +4,7 @@ set :scm, "git"
 set :user, "idp2"
 set :scm_verbose, true
 set :git_enable_submodules, true
-set :branch, "master"
+set :branch, "metadata_integration"
 
 # If you aren't deploying to /u/apps/#{application} on the target
 # servers (which is the default), you can specify the actual location
