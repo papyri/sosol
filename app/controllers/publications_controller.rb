@@ -6,50 +6,8 @@ class PublicationsController < ApplicationController
   
   def new
   end
-
-  def print
-    @publication = Publication.find(params[:id])
-    @ddb_identifier = DDBIdentifier.find_by_publication_id(@publication.id)
-    @hgv_identifier = HGVIdentifier.find_by_publication_id(@publication.id)
-    
-    template_file = File.join(RAILS_ROOT, 'data', 'OOo', 'Sammelbuch.odt')
-    working_directory = File.join(RAILS_ROOT, 'tmp', 'print', session[:session_id])
-    working_file = File.join(working_directory, 'Sammelbuch' + '' + '.odt')
-    content_file = File.join(working_directory, 'content.xml')
-    delivery_file = @publication.branch + '.odt'
-
-    # delete previous working directory
-    execute 'rm -rf ' + working_directory
-
-    # setup new working directory
-    execute 'mkdir ' + working_directory
-    execute 'cp ' + template_file + ' ' + working_directory + '/'
-
-    # generate xml
-    xml = @publication.print
-
-    # write content.xml
-    File.open(content_file, 'w') {|f| f.write(xml) }
-
-    # zip content file into office document
-    execute 'zip -j ' + working_file + ' ' + content_file
-
-    # CL: anti cache hack, please kill the following three lines, if there is an neater way to avoid rails' caching paranoia
-    hack_file = working_file[0..-5] + Time.new.to_i.to_s + working_file[-4..-1]
-    execute 'mv ' + working_file + ' ' + hack_file
-    working_file = hack_file
-
-    # send file
-    #render :text => xml + ' ('+delivery_file+' / '+working_file+')'
-    # CL: why doesn't it accept the filename?
-    render :file => working_file, :content_type => 'application/vnd.oasis.opendocument.text', :filename => 'x' + delivery_file, :disposition => 'attachment', :content_disposition => 'attachment; filename="' + delivery_file + '"'
-  end
-
-  def execute command
-    Rails.logger.info('execute command »' + command + '«')
-    `#{command}`
-  end
-
+  
+  
   def allow_submit?
     #check if publication has been changed by user
     allow = @publication.modified?
