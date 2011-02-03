@@ -28,6 +28,22 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="tei:lb">
+    <xsl:variable name="div-loc">
+       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
+          <xsl:text>t</xsl:text>
+          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
+          <xsl:text>-</xsl:text>
+       </xsl:for-each>
+    </xsl:variable>
+    <xsl:copy>
+      <xsl:copy-of select ="@*"/>
+      <xsl:attribute name="xml:id">
+        <xsl:value-of select="$div-loc"/><xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+      </xsl:attribute>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="processing-instruction('oxygen')">
     <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
   </xsl:template>
