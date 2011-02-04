@@ -74,6 +74,10 @@ class DdbIdentifiersController < IdentifiersController
     end #when
   end
   
+  def commentary
+    find_identifier
+  end
+  
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     find_identifier
