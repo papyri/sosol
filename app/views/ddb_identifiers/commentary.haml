@@ -3,12 +3,19 @@
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
   });
   
+  function generateCommentaryForm(id,nval) {
+    return '<div id="form-'+id+'" style="display:none;"><div class="form"><form action="/" method="post"><label>Line(s): </label><input type="text" size="5" value="'+nval+'"/><textarea rows="4" cols="20"></textarea><input class="save" type="submit" value="Save"/></form></div></div>';
+  }
+  
   function addCommentary(event) {
     var element = Event.element(event);
     nval = $("n-" + element.id).childNodes(0).nodeValue;
     element.insert({
-      after: "<li/>Stuff for line " + nval + " goes here."
+      after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
     });
+    Effect.SlideDown("form-"+element.id);
+    element.stopObserving('click');
+    element.removeClassName('clickable');
   }
 
 #main
