@@ -37,19 +37,30 @@ class Publication < ActiveRecord::Base
   
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
-  
+
+  #Populates the publication's list of identifiers.
+  #Input identifiers can be in the form of
+  # * an array of strings such as: papyri.info/ddbdp/bgu;7;1504
+  # * a single string such as: papyri.info/ddbdp/bgu;7;1504
+  #publication title is named using first identifier
   def populate_identifiers_from_identifiers(identifiers)
+
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
       identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
     end
-    
+
+    #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    #identifiers is now a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+
+
+    #title is first identifier in list
     original_title = identifier_to_ref(identifiers.values.flatten.first)
     self.title = original_title
-      
+
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
@@ -98,7 +109,7 @@ class Publication < ActiveRecord::Base
       return false
     end
   end
-  
+
   def after_destroy
     self.owner.repository.delete_branch(self.branch)
   end
@@ -930,10 +941,12 @@ class Publication < ActiveRecord::Base
   end
   
   protected
+    #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
       str.tr(' ','_')
     end
-    
+
+    #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
       str.tr(':;','_')
     end
