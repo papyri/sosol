@@ -440,6 +440,25 @@ ul.publications
       text-decoration: none
       background-color = !main_color_darken_medium
 
+.commentary.textpart
+  padding: 1em
+  margin: 1em
+  border-style: solid
+  border-width: .16em
+  border-color = !main_color_darken
+  
+  .textpart
+    margin-left: 1em
+
+.commentary#edition
+  ul
+  
+    li
+      list-style-type: none
+      &:hover
+        background = !main_color
+        cursor: pointer
+
 .commit
   background-color = !main_color_fade
   border-color = !main_color_darken

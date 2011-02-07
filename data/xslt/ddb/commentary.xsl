@@ -6,7 +6,7 @@
   
   <!-- Text edition div -->
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
-     <div id="edition">
+     <div class="commentary" id="edition">
         <!-- Found in htm-tpl-lang.xsl -->
         <xsl:call-template name="attr-lang"/>
         <xsl:apply-templates/>
@@ -19,7 +19,15 @@
 
      </div>
   </xsl:template>
-
+  
+  <!-- Anonymous blocks -->
+  <xsl:template match="tei:ab">
+      <div class="textpart">
+         <ul>
+           <xsl:apply-templates/>
+         </ul>
+      </div>
+  </xsl:template>
 
   <!-- Textpart div -->
   <xsl:template match="tei:div[@type='textpart']" priority="1">
@@ -29,33 +37,24 @@
            <xsl:text>-</xsl:text>
         </xsl:for-each>
      </xsl:variable>
-     <span class="textpartnumber" id="ab{$div-loc}{@n}">
-        <!-- add ancestor textparts -->
-        <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and @subtype">
-           <xsl:value-of select="@subtype"/>
-           <xsl:text> </xsl:text>
-        </xsl:if>
-        <xsl:if test="@n">
-           <xsl:value-of select="@n"/>
-        </xsl:if>
-     </span>
-     <!--<xsl:element name="br"/>-->
-     <xsl:apply-templates/>
+     <div class="commentary textpart">
+       <span class="textpartnumber" id="ab{$div-loc}{@n}">
+          <!-- add ancestor textparts -->
+          <xsl:if test="($leiden-style = 'ddbdp' or $leiden-style = 'sammelbuch') and @subtype">
+             <xsl:value-of select="@subtype"/>
+             <xsl:text> </xsl:text>
+          </xsl:if>
+          <xsl:if test="@n">
+             <xsl:value-of select="@n"/>
+          </xsl:if>
+       </span>
+       <xsl:apply-templates/>
+     </div>
   </xsl:template>
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <xsl:choose>
-      <xsl:when test="generate-id(self::tei:lb) = generate-id(ancestor::tei:div[1]//tei:lb[1])">
-        <br class="first" id="{@xml:id}"/>
-      </xsl:when>
-      <xsl:when test="generate-id(self::tei:lb) = generate-id(ancestor::tei:div[1]//tei:lb[last()])">
-        <br class="last" id="{@xml:id}"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <br class="middle" id="{@xml:id}"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <li id="{@xml:id}"/>
   </xsl:template>
   
 </xsl:stylesheet>
