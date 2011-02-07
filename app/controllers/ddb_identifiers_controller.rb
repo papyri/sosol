@@ -76,6 +76,8 @@ class DdbIdentifiersController < IdentifiersController
   
   def commentary
     find_identifier
+    
+    @identifier[:html_preview] = @identifier.preview({},%w{data xslt ddb commentary.xsl})
   end
   
   # GET /publications/1/ddb_identifiers/1/preview
