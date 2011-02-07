@@ -1,3 +1,16 @@
+:javascript
+  document.observe("dom:loaded", function() {
+    $$('.commentary#edition li').invoke('observe','click',addCommentary);
+  });
+  
+  function addCommentary(event) {
+    var element = Event.element(event);
+    nval = $("n-" + element.id).childNodes(0).nodeValue;
+    element.insert({
+      after: "<li/>Stuff for line " + nval + " goes here."
+    });
+  }
+
 #main
   = render :partial => 'identifiers/edit_bar'
 

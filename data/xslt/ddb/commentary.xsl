@@ -54,7 +54,7 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <li id="{@xml:id}"/>
+    <li id="{@xml:id}"/><span class="hidden" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
   </xsl:template>
   
 </xsl:stylesheet>
