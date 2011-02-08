@@ -6,7 +6,7 @@
   
   function loadExistingCommentary(commentary_li) {
     existing_comments = $$(".comment-on-" + commentary_li.id);
-    existing_comments.each(function (comment) {
+    existing_comments.reverse().each(function (comment) {
       comment.addClassName('clickable');
       comment.addClassName('existing_comment');
       comment.observe('click',transformExistingCommentary);
@@ -29,11 +29,11 @@
     nval_node.remove();
     
     comment_on = comment_li.classNames().toArray().first().replace(/comment-on-/,'');
-    content = comment_div.innerHTML;
+    content = comment_div.innerHTML.strip();
     
     Effect.SlideUp(comment_div_container.id, {duration: 0.5});
     
-    $(comment_on).insert({
+    $(comment_li).insert({
       after: '<li class="input"/>' + generateCommentaryForm(comment_on,nval,content)
     });
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
@@ -42,7 +42,7 @@
   
   function generateCommentaryForm(id,nval,content) {
     if(content === undefined) {content = "";}
-    return '<div id="form-'+id+'" style="display:none;"><div class="form"><form action="/" method="post"><label>Line(s): </label><input type="text" size="5" value="'+nval+'"/><textarea rows="5" cols="20">'+content+'</textarea><input class="save" type="submit" value="Save"/></form></div></div>';
+    return '<div id="form-'+id+'" style="display:none;"><div class="form"><form action="/" method="post"><label>Line(s): </label><input type="text" size="5" value="'+nval+'"/><textarea rows="5" cols="20">'+content+'</textarea><input class="save" type="submit" value="Save"/> or <a href="" style="color:red">cancel</a></form></div></div>';
   }
   
   function addCommentary(event) {
