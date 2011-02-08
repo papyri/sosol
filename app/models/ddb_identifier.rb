@@ -150,6 +150,23 @@ class DDBIdentifier < Identifier
     end
   end
   
+  def update_commentary(line_id, reference, comment_content = '', original_comment_content = '')
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt ddb update_commentary.xsl})),
+        :line_id => line_id,
+        :reference => reference,
+        :content => comment_content,
+        :original_content => original_comment_content
+      )
+    
+    Rails.logger.info(rewritten_xml)
+  
+    self.set_xml_content(rewritten_xml, :comment => '')
+  end
+  
   def get_broken_leiden(original_xml = nil)
     original_xml_content = original_xml || REXML::Document.new(self.xml_content)
     brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'

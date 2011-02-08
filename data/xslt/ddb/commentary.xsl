@@ -78,7 +78,7 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <li class="line clickable" id="{@xml:id}"/><span class="invisible" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
+    <li class="line clickable" id="{@xml:id}"/><span class="linenumber" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
   </xsl:template>
   
 </xsl:stylesheet>

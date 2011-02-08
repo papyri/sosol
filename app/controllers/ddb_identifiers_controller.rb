@@ -80,6 +80,18 @@ class DdbIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview({},%w{data xslt ddb commentary.xsl})
   end
   
+  def update_commentary
+    find_identifier
+    Rails.logger.info(params)
+    
+    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_content])
+    
+    flash[:notice] = "File updated with new commentary."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     find_identifier
