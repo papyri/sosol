@@ -1,10 +1,48 @@
 :javascript
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
+    $$('.commentary#edition li').each(loadExistingCommentary);
   });
   
-  function generateCommentaryForm(id,nval) {
-    return '<div id="form-'+id+'" style="display:none;"><div class="form"><form action="/" method="post"><label>Line(s): </label><input type="text" size="5" value="'+nval+'"/><textarea rows="4" cols="20"></textarea><input class="save" type="submit" value="Save"/></form></div></div>';
+  function loadExistingCommentary(commentary_li) {
+    existing_comments = $$(".comment-on-" + commentary_li.id);
+    existing_comments.each(function (comment) {
+      comment.addClassName('clickable');
+      comment.addClassName('existing_comment');
+      comment.observe('click',transformExistingCommentary);
+      commentary_li.removeClassName('clickable');
+      commentary_li.stopObserving('click');
+      commentary_li.insert({
+        after: comment
+      });
+    });
+  }
+  
+  function transformExistingCommentary(event) {
+    var comment_li = Event.element(event).up('li.input');  
+    comment_div_container = comment_li.childElements().first();
+    
+    comment_div = comment_div_container.childElements().first();
+    
+    nval_node = comment_div.childElements().first();
+    nval = nval_node.innerHTML;
+    nval_node.remove();
+    
+    comment_on = comment_li.classNames().toArray().first().replace(/comment-on-/,'');
+    content = comment_div.innerHTML;
+    
+    Effect.SlideUp(comment_div_container.id, {duration: 0.5});
+    
+    $(comment_on).insert({
+      after: '<li class="input"/>' + generateCommentaryForm(comment_on,nval,content)
+    });
+    Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+    
+  }
+  
+  function generateCommentaryForm(id,nval,content) {
+    if(content === undefined) {content = "";}
+    return '<div id="form-'+id+'" style="display:none;"><div class="form"><form action="/" method="post"><label>Line(s): </label><input type="text" size="5" value="'+nval+'"/><textarea rows="5" cols="20">'+content+'</textarea><input class="save" type="submit" value="Save"/></form></div></div>';
   }
   
   function addCommentary(event) {
@@ -27,6 +65,6 @@
       - form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
         
-        %label Preview
+        %label Commentary
         .PContent
           = @identifier[:html_preview]

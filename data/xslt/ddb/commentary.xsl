@@ -28,6 +28,30 @@
          </ul>
       </div>
   </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary']">
+    <div id="originalcommentary" class="invisible">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="tei:div[@type='commentary']//tei:item">
+    <li class="{replace(@corresp, '^#', 'comment-on-')} input">
+      <div class="comment_container">
+        <xsl:attribute name="id">
+          <xsl:value-of select='generate-id(.)'/>
+        </xsl:attribute>
+        <div class="form">
+          <xsl:apply-templates/>
+        </div>
+      </div>
+    </li>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary']//tei:item/tei:ref">
+    <span class="reference"><xsl:value-of select="text()"/></span>
+  </xsl:template>
+  
 
   <!-- Textpart div -->
   <xsl:template match="tei:div[@type='textpart']" priority="1">
@@ -54,7 +78,7 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <li class="line clickable" id="{@xml:id}"/><span class="hidden" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
+    <li class="line clickable" id="{@xml:id}"/><span class="invisible" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
   </xsl:template>
   
 </xsl:stylesheet>

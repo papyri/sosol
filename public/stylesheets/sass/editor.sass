@@ -465,10 +465,6 @@ ul.publications
         background = !main_color
         cursor: pointer
     
-    li
-      span.hidden
-        display: none
-    
     li.input
       list-style-type: none
       
@@ -478,6 +474,13 @@ ul.publications
         border-top: none
         background = !main_color_fade
         padding: 1em
+        margin-bottom: 1em
+        
+        span.reference
+          color = !main_color_darken_full
+        
+        input.save
+          margin-top: 0em
         
       textarea
         height: auto
