@@ -121,7 +121,7 @@ class PublicationsController < ApplicationController
     
     publication_from_identifier(identifier, related_identifiers)
   end
-  
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
     
@@ -137,8 +137,17 @@ class PublicationsController < ApplicationController
     expire_publication_cache
     redirect_to @publication
   end
-  
-  
+
+  def create_from_list
+    flash[:error] = 'Aint done yet'
+    id_list = params[:pn_id_list].split(/\r\n?/)
+    publication_from_identifiers(id_list)
+    #id_list.each do |id|
+     # flash[:error] += id + ":"
+    #end
+    #redirect_to dashboard_url
+  end
+
   def is_theirs?
     return  @publication.owner_type == "User"  && ( @publication.owner == @current_user )  
   end
@@ -371,6 +380,28 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
+  def edit_next
+    @publication = Publication.find(params[:pub_id])
+    next_id = params[:id_id].to_i + 1
+
+    begin
+      @identifier = Identifier.find(next_id)
+    rescue
+      #probably overan the number of identifiers
+      redirect_to @publication
+      return
+    end
+
+    if @identifier.publication.id.to_s != params[:pub_id]
+      #need to loop back since we have over run the pubication identifiers
+      #for now go to overview
+      redirect_to @publication
+      return
+    end
+
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
+
   def create_from_selector
     identifier_class = params[:IdentifierClass]
     collection = params["#{identifier_class}CollectionSelect".intern]
@@ -530,8 +561,46 @@ class PublicationsController < ApplicationController
   end
   
   protected
-  
-    def publication_from_identifier(identifier, related_identifiers = nil)
+
+    def publication_from_identifiers(identifiers)
+      new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M")
+      publication_from_identifier("unused_place_holder", identifiers, new_title)
+
+
+=begin
+      #do we need to check for conflicts with the batches?
+      #might be able to modify publication_from_identifier
+      #where to get title? make them up based on time for now
+      new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M") #12Jan2011_2359
+      puts new_title
+        @publication = Publication.new()
+        @publication.owner = @current_user
+        @publication.creator = @current_user
+
+        @publication.populate_identifiers_from_identifiers(
+          identifiers, new_title)
+
+        if @publication.save!
+          @publication.branch_from_master
+
+          # need to remove repeat against publication model
+          e = Event.new
+          e.category = "started editing"
+          e.target = @publication
+          e.owner = @current_user
+          e.save!
+
+          flash[:notice] = 'Publication was successfully created.'
+          expire_publication_cache
+          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+        else
+          flash[:notice] = 'Error creating publication'
+          redirect_to dashboard_url
+        end
+=end
+    end
+
+    def publication_from_identifier(identifier, related_identifiers = nil, optional_title = nil)
       Rails.logger.info("Identifier: #{identifier}")
       Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
 
@@ -586,7 +655,7 @@ class PublicationsController < ApplicationController
         @publication.owner = @current_user
         @publication.creator = @current_user
         @publication.populate_identifiers_from_identifiers(
-          related_identifiers)
+          related_identifiers, optional_title)
 
         if @publication.save!
           @publication.branch_from_master

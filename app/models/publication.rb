@@ -43,7 +43,7 @@ class Publication < ActiveRecord::Base
   # * an array of strings such as: papyri.info/ddbdp/bgu;7;1504
   # * a single string such as: papyri.info/ddbdp/bgu;7;1504
   #publication title is named using first identifier
-  def populate_identifiers_from_identifiers(identifiers)
+  def populate_identifiers_from_identifiers(identifiers, original_title = nil)
 
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
@@ -58,7 +58,12 @@ class Publication < ActiveRecord::Base
 
 
     #title is first identifier in list
-    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    #but added the option to set the title to whatever the caller wants
+    if nil == original_title
+      original_title = identifier_to_ref(identifiers.values.flatten.first)
+    else
+      original_was_nil = true;
+    end
     self.title = original_title
 
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
@@ -75,7 +80,11 @@ class Publication < ActiveRecord::Base
         end
       end
     end
-    
+
+    #reset the title to what the caller wants
+    if original_was_nil
+      self.title = original_title
+    end
     # Use HGV hack for now
     # if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
     #   identifiers['trismegistos'].each do |tm|

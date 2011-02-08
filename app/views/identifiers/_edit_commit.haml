@@ -31,3 +31,6 @@
           }
         else // error notice is not on page
           {var forceChangeTrue = false;}
+
+%p
+  = link_to 'Next', :controller => 'publications', :action => 'edit_next', :pub_id => identifier.publication.id, :id_id => identifier.id
