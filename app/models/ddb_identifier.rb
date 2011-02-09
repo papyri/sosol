@@ -150,7 +150,7 @@ class DDBIdentifier < Identifier
     end
   end
   
-  def update_commentary(line_id, reference, comment_content = '', original_comment_content = '')
+  def update_commentary(line_id, reference, comment_content = '', original_item_id = '', original_comment_content = '')
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(content),
@@ -159,6 +159,7 @@ class DDBIdentifier < Identifier
         :line_id => line_id,
         :reference => reference,
         :content => comment_content,
+        :original_item_id => original_item_id,
         :original_content => original_comment_content
       )
     

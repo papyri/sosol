@@ -35,7 +35,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="tei:div[@type='commentary']//tei:item">
+  <xsl:template match="tei:div[@type='commentary']//tei:list/tei:item">
     <li class="{replace(@corresp, '^#', 'comment-on-')} input">
       <div class="comment_container">
         <xsl:attribute name="id">

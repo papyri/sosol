@@ -8,6 +8,7 @@
   <xsl:param name="reference"/>
   <xsl:param name="content"/>
   <!-- optional, but currently needed to correctly update an existing comment -->
+  <xsl:param name="original_item_id"/>
   <xsl:param name="original_content"/>
   
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
@@ -50,39 +51,34 @@
           </xsl:when>
           <!-- existing commentary: copy it all, and insert/update at the correct item -->
           <xsl:otherwise>
-            <xsl:for-each select="tei:list/tei:item">
-              <xsl:variable name="item-ref">
-                <xsl:value-of select="replace(@corresp,'^#','')"/>
+            <!-- iterate over all text lb's -->
+            <xsl:for-each select="//tei:div[@type='edition']//tei:lb">
+              <xsl:variable name="this-line-id">
+                <xsl:value-of select="concat('#',@xml:id)"/>
               </xsl:variable>
-              <xsl:variable name="next-item-ref">
-                <xsl:value-of select="replace(following-sibling::tei:item[1]/@corresp,'^#','')"/>
-              </xsl:variable>
-              <xsl:choose>
-                <!-- generated element needs to replace this item -->
-                <xsl:when test="(@corresp = concat('#',$line_id)) and (text() = $original_content)">
-                  <xsl:call-template name="generate-commentary-item"/>
-                </xsl:when>
-                <!-- generated element needs to go before this item -->
-                <xsl:when test="//tei:lb[@xml:id = $line_id]/@xml:id = //tei:lb[@xml:id = $item-ref]/preceding-sibling::tei:lb[1]/@xml:id">
-                  <xsl:call-template name="generate-commentary-item"/>
-                  <xsl:copy>
-                    <xsl:apply-templates select="@*|node()"/>
-                  </xsl:copy>
-                </xsl:when>
-                <!-- generated element needs to go after this item -->
-                <xsl:when test="(//tei:lb[@xml:id = $line_id]/@xml:id = //tei:lb[@xml:id = $item-ref]/following-sibling::tei:lb[1]/@xml:id) and not(//tei:lb[@xml:id = $line_id]/@xml:id = //tei:lb[@xml:id = $next-item-ref]/preceding-sibling::tei:lb[1]/@xml:id)">
-                  <xsl:copy>
-                    <xsl:apply-templates select="@*|node()"/>
-                  </xsl:copy>
-                  <xsl:call-template name="generate-commentary-item"/>
-                </xsl:when>
-                <!-- simple copy -->
-                <xsl:otherwise>
-                  <xsl:copy>
-                    <xsl:apply-templates select="@*|node()"/>
-                  </xsl:copy>
-                </xsl:otherwise>
-              </xsl:choose>
+              <!-- for each existing comment which refers to this lb -->
+              <xsl:for-each select="//tei:div[@type='commentary']//tei:list/tei:item[@corresp = $this-line-id]">
+                <xsl:choose>
+                  <!-- generated element needs to replace this item -->
+                  <xsl:when test="(substring-after(generate-id(.),'e') = substring-after($original_item_id,'e'))">
+                    <xsl:call-template name="generate-commentary-item"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:copy>
+                      <!--
+                      <xsl:attribute name="xml:id">
+                        <xsl:value-of select="generate-id(.)"/>
+                      </xsl:attribute>
+                      -->
+                      <xsl:apply-templates select="@*|node()"/>
+                    </xsl:copy>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:for-each>
+              <!-- add in new comment at the end for now -->
+              <xsl:if test="($original_item_id = '') and (@xml:id = $line_id)">
+                <xsl:call-template name="generate-commentary-item"/>
+              </xsl:if>
             </xsl:for-each>
           </xsl:otherwise>
         </xsl:choose>
@@ -98,7 +94,7 @@
       <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:value-of select="$reference"/>
       </xsl:element>
-      <xsl:value-of select="$content"/>
+      <xsl:text> </xsl:text><xsl:value-of select="$content"/>
     </xsl:element>
   </xsl:template>
   

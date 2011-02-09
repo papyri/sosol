@@ -34,21 +34,25 @@
     Effect.SlideUp(comment_div_container.id, {duration: 0.5});
     
     $(comment_li).insert({
-      after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content)
+      after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
     
   }
   
-  function generateCommentaryForm(id,nval,content) {
+  function generateCommentaryForm(id,nval,content,original_item_id) {
     if(content === undefined) {content = "";}
+    if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
       '#{form_tag({:action => :update_commentary}, :method => :put).chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
         '<input type="hidden" name="original_content" value="' + content + '"/>' +
+        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
         '<textarea rows="5" cols="20" name="content">'+content+'</textarea>' +
-        '<input class="save" type="submit" value="Save"/> or <a href="" style="color:red">cancel</a>' +
+        '<input class="save" type="submit" value="Save"/>' + 
+        ' or <a href="" style="color:red">cancel</a>' +
+        '<span style="float:right"><a href="" style="color:red">delete</a></span>' +
       '</form></div></div>';
   }
   

@@ -84,7 +84,7 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
     Rails.logger.info(params)
     
-    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_content])
+    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
     
     flash[:notice] = "File updated with new commentary."
     
