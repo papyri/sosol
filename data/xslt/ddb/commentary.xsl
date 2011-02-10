@@ -78,7 +78,18 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <li class="line clickable" id="{@xml:id}"/><span class="linenumber" id="n-{@xml:id}"><xsl:value-of select="@n"/></span>
+    <!-- this MUST match between commentary.xsl and update_commentary.xsl
+         TODO: split into shared import? -->
+    <xsl:variable name="lb-id">
+       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
+          <xsl:text>t</xsl:text>
+          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
+          <xsl:text>-</xsl:text>
+       </xsl:for-each>
+       <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+    </xsl:variable>
+    
+    <li class="line clickable" id="{$lb-id}"/><span class="linenumber" id="n-{$lb-id}"><xsl:value-of select="@n"/></span>
   </xsl:template>
   
 </xsl:stylesheet>

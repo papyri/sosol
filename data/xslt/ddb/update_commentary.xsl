@@ -43,6 +43,25 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- generate lb id's when saving commentary -->
+  <xsl:template match="tei:lb">
+    <xsl:variable name="lb-id">
+       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
+          <xsl:text>t</xsl:text>
+          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
+          <xsl:text>-</xsl:text>
+       </xsl:for-each>
+       <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+    </xsl:variable>
+    
+    <xsl:copy>
+      <xsl:copy-of select ="@*"/>
+      <xsl:attribute name="xml:id">
+        <xsl:value-of select="$lb-id"/>
+      </xsl:attribute>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template name="generate-commentary">
     <xsl:element name="div" namespace="http://www.tei-c.org/ns/1.0">
       <xsl:attribute name="type">commentary</xsl:attribute>
@@ -56,18 +75,27 @@
           <xsl:otherwise>
             <!-- iterate over all text lb's -->
             <xsl:for-each select="//tei:div[@type='edition']//tei:lb">
-              <xsl:variable name="this-line-id">
-                <xsl:value-of select="concat('#',@xml:id)"/>
+              <xsl:variable name="lb-id">
+                 <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
+                    <xsl:text>t</xsl:text>
+                    <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
+                    <xsl:text>-</xsl:text>
+                 </xsl:for-each>
+                 <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+              </xsl:variable>
+              
+              <xsl:variable name="this-line-ref">
+                <xsl:value-of select="concat('#',$lb-id)"/>
               </xsl:variable>
               <!-- for each existing comment which refers to this lb -->
-              <xsl:for-each select="//tei:div[@type='commentary']//tei:list/tei:item[@corresp = $this-line-id]">
+              <xsl:for-each select="//tei:div[@type='commentary']//tei:list/tei:item[@corresp = $this-line-ref]">
                 <xsl:choose>
                   <!-- generated element needs to replace this item -->
                   <!-- FIXME: figure out why the id we get in commentary.xsl
                        doesn't match the id we get here, necessitating
                        the substring-after hack (e.g. d54e289 vs. d1e289) -->
                   <xsl:when test="(substring-after(generate-id(.),'e') = substring-after($original_item_id,'e'))">
-                    <xsl:if test="$delete_comment != 'true'">
+                    <xsl:if test="not($delete_comment = 'true')">
                       <xsl:call-template name="generate-commentary-item"/>
                     </xsl:if>
                   </xsl:when>
@@ -84,7 +112,7 @@
                 </xsl:choose>
               </xsl:for-each>
               <!-- add in new comment at the end for now -->
-              <xsl:if test="($original_item_id = '') and (@xml:id = $line_id)">
+              <xsl:if test="($original_item_id = '') and ($lb-id = $line_id)">
                 <xsl:call-template name="generate-commentary-item"/>
               </xsl:if>
             </xsl:for-each>

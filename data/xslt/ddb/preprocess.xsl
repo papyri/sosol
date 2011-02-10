@@ -18,6 +18,21 @@
   <!-- ||||||||||||||    EXCEPTIONS     |||||||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
 
+  <!-- enforce ordering of /tei:TEI/tei:text/tei:body
+         - tei:head
+         - tei:div[@type='edition']
+         - tei:div[@type='commentary']
+         - everything else gets copied here -->
+  <xsl:template match="/tei:TEI/tei:text/tei:body">
+    <xsl:copy>
+      <xsl:apply-templates select="tei:head"/>
+      <xsl:apply-templates select="tei:div[@type='edition']"/>
+      <xsl:apply-templates select="tei:div[@type='commentary']"/>
+      <xsl:apply-templates select="*[not(self::tei:head)][not(self::tei:div[@type='edition'])][not(self::tei:div[@type='commentary'])]"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- set xml:space="preserve" on edition div -->
   <xsl:template match="tei:div[@type='edition']">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
@@ -28,26 +43,12 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="tei:lb">
-    <xsl:variable name="div-loc">
-       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
-          <xsl:text>t</xsl:text>
-          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
-          <xsl:text>-</xsl:text>
-       </xsl:for-each>
-    </xsl:variable>
-    <xsl:copy>
-      <xsl:copy-of select ="@*"/>
-      <xsl:attribute name="xml:id">
-        <xsl:value-of select="$div-loc"/><xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
-      </xsl:attribute>
-    </xsl:copy>
-  </xsl:template>
-  
+  <!-- set oxygen RNGSchema processing instruction -->
   <xsl:template match="processing-instruction('oxygen')">
     <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
   </xsl:template>
 
+  <!-- always generate handNotes from content -->
   <xsl:template match="tei:handNotes">
     <xsl:if test="//tei:handShift">
       <xsl:call-template name="generate-handnotes"/>
