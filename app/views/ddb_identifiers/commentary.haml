@@ -37,7 +37,21 @@
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
-    
+  }
+  
+  function generateDeleteForm(id,original_item_id) {
+    if(original_item_id == '') {
+      return '';
+    }
+    else {
+    return '#{form_tag({:action => :delete_commentary}, :method => :delete, :id => "delete_form").chomp()}' +
+        '<input type="hidden" name="line_id" value="' + id + '"/>' +
+        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+        '<span style="float:right;position:relative;top:-1.5em">' +
+          '<a href="#{url_for({:action => :delete_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete this commentary entry?\')) {$(\'delete_form\').submit();};return false;">delete</a>'
+        '</span>' +
+      '</form>';
+    }
   }
   
   function generateCommentaryForm(id,nval,content,original_item_id) {
@@ -52,8 +66,9 @@
         '<textarea rows="5" cols="20" name="content">'+content+'</textarea>' +
         '<input class="save" type="submit" value="Save"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
-        '<span style="float:right"><a href="" style="color:red">delete</a></span>' +
-      '</form></div></div>';
+      '</form>' +
+      generateDeleteForm(id,original_item_id) +
+      '</div></div>';
   }
   
   function addCommentary(event) {
