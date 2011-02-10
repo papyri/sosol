@@ -182,6 +182,13 @@ class DDBIdentifier < Identifier
   
   def leiden_plus
     original_xml = self.xml_content
+    
+    # strip xml:id from lb's
+    original_xml = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(original_xml),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb strip_lb_ids.xsl})))
+    
     original_xml_content = REXML::Document.new(original_xml)
 
     # if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and return that
