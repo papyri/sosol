@@ -84,7 +84,7 @@
     removeAllClickable();
   
     var element = Event.element(event);
-    nval = $("n-" + element.id).childNodes(0).nodeValue;
+    nval = $("n-" + element.id).innerHTML;
     element.insert({
       after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
     });
