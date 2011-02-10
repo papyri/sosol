@@ -18,7 +18,16 @@
     });
   }
   
+  function removeAllClickable() {
+    $$(".clickable").each(function (clickable) {
+      clickable.stopObserving('click');
+      clickable.removeClassName('clickable');
+    });
+  }
+  
   function transformExistingCommentary(event) {
+    removeAllClickable();
+    
     var comment_li = Event.element(event).up('li.input');  
     comment_div_container = comment_li.childElements().first();
     
@@ -72,6 +81,8 @@
   }
   
   function addCommentary(event) {
+    removeAllClickable();
+  
     var element = Event.element(event);
     nval = $("n-" + element.id).childNodes(0).nodeValue;
     element.insert({
