@@ -76,7 +76,11 @@ class PublicationsController < ApplicationController
     
     
   end
-  
+
+
+  def advanced_create()
+    
+  end
   # POST /publications
   # POST /publications.xml
   def create
