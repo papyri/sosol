@@ -32,6 +32,28 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- generate lb id's when saving commentary -->
+  <xsl:template match="tei:lb">
+    <xsl:variable name="lb-id">
+       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
+          <xsl:text>t</xsl:text>
+          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
+          <xsl:text>-</xsl:text>
+       </xsl:for-each>
+       <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+    </xsl:variable>
+    
+    <xsl:copy>
+      <xsl:copy-of select ="@*"/>
+      <!-- only set the xml:id if there's a commentary div -->
+      <xsl:if test="/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']">
+        <xsl:attribute name="xml:id">
+          <xsl:value-of select="$lb-id"/>
+        </xsl:attribute>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- set xml:space="preserve" on edition div -->
   <xsl:template match="tei:div[@type='edition']">
     <xsl:copy>
