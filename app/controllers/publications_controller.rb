@@ -384,9 +384,35 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
-  def edit_next
+  def edit_adjacent
+
     @publication = Publication.find(params[:pub_id])
-    next_id = params[:id_id].to_i + 1
+
+    if params[:direction] == 'prev'
+      direction = -1
+    else #assume next
+      direction = 1
+    end
+
+    @identifier = Identifier.find(params[:id_id])
+    current_index = @publication.identifiers.index(@identifier)
+
+    #uncomment redirects to prevent loop over
+    return_index = current_index + direction
+    if (return_index < 0)
+      #redirect_to @publication
+     # return
+      return_index = @publication.identifiers.length - 1
+    elsif (return_index >= @publication.identifiers.length)
+     # redirect_to @publication
+     # return
+      return_index = 0
+    end
+
+
+    @identifier = @publication.identifiers[return_index]
+=begin
+    next_id = params[:id_id].to_i + direction
 
     begin
       @identifier = Identifier.find(next_id)
@@ -402,9 +428,11 @@ class PublicationsController < ApplicationController
       redirect_to @publication
       return
     end
-
+=end
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
+
+
 
   def create_from_selector
     identifier_class = params[:IdentifierClass]

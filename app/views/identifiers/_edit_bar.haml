@@ -33,6 +33,14 @@
               - for tran in trans
                 %li
                   = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
+
+      - if controller.action_name != 'show'
+        %li{ :class => 'nav_control' }
+          = link_to '>', :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id
+    
+        %li{ :class => 'nav_control' }
+          = link_to '<', :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id
+
     -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
       - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
@@ -43,7 +51,8 @@
               - for bib in biblio
                 %li
                   = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes(HGVBiblioIdentifier)])
-
+      
+      
 #identifier_sub_menus
   - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
     .identifier_sub_menu_empty
