@@ -395,6 +395,7 @@ class PublicationsController < ApplicationController
     end
 
     @identifier = Identifier.find(params[:id_id])
+    current_identifier_class = @identifier.class
     current_index = @publication.identifiers.index(@identifier)
 
     #uncomment redirects to prevent loop over
@@ -411,6 +412,13 @@ class PublicationsController < ApplicationController
 
 
     @identifier = @publication.identifiers[return_index]
+    if (@identifier.class != current_identifier_class)
+      #if no longer the same class, we can't assume that the next class as the same edit methods
+      redirect_to edit_polymorphic_path([@publication, @identifier])
+    else
+      #
+      redirect_to :controller => params[:ncontroller], :action => params[:naction], :id => @identifier.id, :pub_id => params[:pub_id]
+    end
 =begin
     next_id = params[:id_id].to_i + direction
 
@@ -429,7 +437,9 @@ class PublicationsController < ApplicationController
       return
     end
 =end
-    redirect_to edit_polymorphic_path([@publication, @identifier])
+   # redirect_to edit_polymorphic_path([@publication, @identifier])
+
+    #redirect_to :controller => params[:ncontroller], :action => params[:naction], :id => params[:id], :pub_id => params[:pub_id]
   end
 
 
