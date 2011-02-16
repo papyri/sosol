@@ -1,14 +1,19 @@
 %h1 Start A Publication
 
-%h3 From Existing Material
-%p
-  = render :partial => "publications/publication_selector"
-%h3 Create New Publication
-%p
-  = render :partial => "publications/create_from_templates_form"
-%h3 From PN ID
-%p
-  = render :partial => "publications/create_from_pn_id_form"
-%h3 Batch From PN IDs, one per line
-%p
-  = render :partial => "publications/create_from_batch_form"
+.advanced_create
+  %h3 From Existing Material
+  %p
+    = render :partial => "publications/publication_selector"
+.advanced_create
+  %h3 Create New Publication
+  %p
+    Create a new publication record and text.
+    = render :partial => "publications/create_from_templates_form"
+.advanced_create
+  %h3 From PN ID
+  %p
+    = render :partial => "publications/create_from_pn_id_form"
+.advanced_create
+  %h3 Batch From PN IDs, one per line
+  %p
+    = render :partial => "publications/create_from_batch_form"
