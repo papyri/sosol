@@ -70,10 +70,12 @@
 
       %p
         = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : 'hgv.gif')  
-      
+
         = identifier.title
+        - if identifier.modified? && @publication .status == "voting" && @publication.owner_type == "Board" && @publication.owner.controls_identifier?(identifier)
+          Needs Reviewing
         - if @publication.status != "archived"
-          = render :partial => identifier        
+          = render :partial => identifier
 
     - if @all_comments != nil  
       %div{:id => "all_comments_div", :style => "display:none;"}
