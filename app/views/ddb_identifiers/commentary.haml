@@ -83,7 +83,8 @@
   function addCommentary(event) {
     removeAllClickable();
   
-    var element = Event.element(event);
+    var element = Event.element(event)
+    if (!element.hasClassName('line')) {element = element.up('li.line');}
     nval = $("n-" + element.id).innerHTML;
     element.insert({
       after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
