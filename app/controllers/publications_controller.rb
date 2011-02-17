@@ -416,8 +416,8 @@ class PublicationsController < ApplicationController
       #if no longer the same class, we can't assume that the next class as the same edit methods
       redirect_to edit_polymorphic_path([@publication, @identifier])
     else
-      #
-      redirect_to :controller => params[:ncontroller], :action => params[:naction], :id => @identifier.id, :pub_id => params[:pub_id]
+      #/publications/1/identifiers/1/action
+      redirect_to :controller => params[:current_controller_name], :action => params[:current_action_name], :id => @identifier.id, :publication_id => params[:pub_id]
     end
 =begin
     next_id = params[:id_id].to_i + direction

@@ -36,10 +36,10 @@
 
       - if controller.action_name != 'show'
         %li{ :class => 'nav_control' }
-          = link_to ">" , :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :ncontroller => controller_name, :naction => action_name
+          = link_to ">" , :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
 
         %li{ :class => 'nav_control' }
-          = link_to "<" , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :ncontroller => controller_name, :naction => action_name
+          = link_to "<" , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
 
     -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
       - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
