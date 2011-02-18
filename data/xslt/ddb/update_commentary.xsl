@@ -50,7 +50,7 @@
     </xsl:variable>
     
     <xsl:copy>
-      <xsl:copy-of select ="@*"/>
+      <xsl:copy-of select ="@*[not(name()='xml:id')]"/>
       <xsl:attribute name="xml:id">
         <xsl:value-of select="$lb-id"/>
       </xsl:attribute>

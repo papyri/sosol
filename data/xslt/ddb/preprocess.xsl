@@ -41,7 +41,7 @@
     </xsl:variable>
     
     <xsl:copy>
-      <xsl:copy-of select ="@*"/>
+      <xsl:copy-of select ="@*[not(name()='xml:id')]"/>
       <!-- only set the xml:id if there's a commentary div -->
       <xsl:if test="/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']">
         <xsl:attribute name="xml:id">
