@@ -42,8 +42,8 @@
     
     <xsl:copy>
       <xsl:copy-of select ="@*[not(name()='xml:id')]"/>
-      <!-- only set the xml:id if there's a commentary div -->
-      <xsl:if test="/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']">
+      <!-- only set the xml:id if there's a corresponding commentary item -->
+      <xsl:if test="/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']/tei:list/tei:item[@corresp=concat('#',$lb-id)]">
         <xsl:attribute name="xml:id">
           <xsl:value-of select="$lb-id"/>
         </xsl:attribute>

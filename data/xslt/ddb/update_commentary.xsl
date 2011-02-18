@@ -51,9 +51,11 @@
     
     <xsl:copy>
       <xsl:copy-of select ="@*[not(name()='xml:id')]"/>
-      <xsl:attribute name="xml:id">
-        <xsl:value-of select="$lb-id"/>
-      </xsl:attribute>
+      <xsl:if test="((/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']/tei:list/tei:item[@corresp=concat('#',$lb-id)]) or ($lb-id = $line_id)) and not(($delete_comment = 'true') and ($lb-id = $line_id))">
+        <xsl:attribute name="xml:id">
+          <xsl:value-of select="$lb-id"/>
+        </xsl:attribute>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
   
