@@ -3,6 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
   
   <xsl:import href="../pn/start-div-portlet.xsl"/>
+  <xsl:import href="lb_id.xsl"/>
   
   <!-- Text edition div -->
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
@@ -78,15 +79,8 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <!-- this MUST match between commentary.xsl and update_commentary.xsl
-         TODO: split into shared import? -->
     <xsl:variable name="lb-id">
-       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
-          <xsl:text>t</xsl:text>
-          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
-          <xsl:text>-</xsl:text>
-       </xsl:for-each>
-       <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+      <xsl:call-template name="generate-lb-id"/>
     </xsl:variable>
     
     <li class="line clickable" id="{$lb-id}"/><span class="linenumber" id="n-{$lb-id}"><xsl:value-of select="@n"/></span>

@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
-
+  
+  <xsl:import href="lb_id.xsl"/>
+  
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-
+  
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
@@ -35,12 +37,7 @@
   <!-- generate lb id's when saving commentary -->
   <xsl:template match="tei:lb">
     <xsl:variable name="lb-id">
-       <xsl:for-each select="ancestor::tei:div[@type= 'textpart']">
-          <xsl:text>t</xsl:text>
-          <xsl:value-of select="count(preceding::tei:div[@type= 'textpart']) + 1"/>
-          <xsl:text>-</xsl:text>
-       </xsl:for-each>
-       <xsl:text>l</xsl:text><xsl:value-of select="count(preceding-sibling::tei:lb) + 1"/>
+      <xsl:call-template name="generate-lb-id"/>
     </xsl:variable>
     
     <xsl:copy>
