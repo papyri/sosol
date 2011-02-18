@@ -2,16 +2,16 @@ module HgvMetaIdentifierHelper
 
   module HgvDate
     def HgvDate.monthOptions
-      [['', ''], ['beginning', 'beginning'], ['middle', 'middle'], ['end', 'end']]
+      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.end'), 'end']]
     end
     def HgvDate.yearOptions
-      [['', ''], ['beginning', 'beginning'], ['first half', 'first_half'], ['first half to middle', 'first_half_to_middle'], ['middle', 'middle'], ['middle to second half', 'middle_to_second_half'], ['second half', 'second_half'], ['end', 'end']]
+      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.firstHalf'), 'first_half'], [I18n.t('date.firstHalfToMiddle'), 'firstHalfToMiddle'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.middleToSecondHalf'), 'middle_to_second_half'], [I18n.t('date.secondHalf'), 'second_half'], [I18n.t('date.end'), 'end']]
     end
     def HgvDate.offsetOptions
-      [['', ''], ['before', 'before'], ['after', 'after']]
+      [['', ''], [I18n.t('date.before'), 'before'], [I18n.t('date.after'), 'after']]
     end
     def HgvDate.certaintyOptions
-      [['', ''], ['Probably...', 'high'], ['(?)', 'low'], ['Day uncertain', 'day'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
+      [['', ''], [I18n.t('date.certaintyHigh'), 'high'], [I18n.t('date.certaintyLow'), 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
     end
     def HgvDate.childBase date_index, date_type
       'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][children]'
@@ -232,6 +232,23 @@ module HgvMetaIdentifierHelper
   end
 
   module HgvFuzzy
+    def HgvFuzzy.getChronSimple c, y, m, d, cq, yq, mq, chron = :chron
+      if chron == :chron && c.to_i != 0
+        ''
+      else
+        intelligent_date = getChron c, y, m, d, cq, yq, mq, chron
+  
+        # throw away month and day if they were not explicitely set by the user      
+        if m.to_i == 0
+          intelligent_date[0..-7]
+        elsif d.to_i == 0
+          intelligent_date[0..-4]
+        else
+          intelligent_date
+        end
+      end
+    end
+
     def HgvFuzzy.getChron c, y, m, d, cq, yq, mq, chron = :chron
       c = c.to_i != 0 ? c.to_i : nil
       y = y.to_i != 0 ? y.to_i : nil

@@ -150,6 +150,23 @@ class DDBIdentifier < Identifier
     end
   end
   
+  def update_commentary(line_id, reference, comment_content = '', original_item_id = '', original_comment_content = '', delete_comment = false)
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt ddb update_commentary.xsl})),
+        :line_id => line_id,
+        :reference => reference,
+        :content => comment_content,
+        :original_item_id => original_item_id,
+        :original_content => original_comment_content,
+        :delete_comment => (delete_comment ? 'true' : '')
+      )
+    
+    self.set_xml_content(rewritten_xml, :comment => '')
+  end
+  
   def get_broken_leiden(original_xml = nil)
     original_xml_content = original_xml || REXML::Document.new(self.xml_content)
     brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
@@ -165,6 +182,13 @@ class DDBIdentifier < Identifier
   
   def leiden_plus
     original_xml = self.xml_content
+    
+    # strip xml:id from lb's
+    original_xml = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(original_xml),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb strip_lb_ids.xsl})))
+    
     original_xml_content = REXML::Document.new(original_xml)
 
     # if XML does not contain broke Leiden+ send XML to be converted to Leiden+ and return that
@@ -266,10 +290,11 @@ class DDBIdentifier < Identifier
     self.set_xml_content(modified_xml_content, :comment => commit_comment)
   end
 
-  def preview
+  def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt pn start-div-portlet.xsl})))
+        xsl ? xsl : %w{data xslt pn start-div-portlet.xsl})),
+        parameters)
   end
 end

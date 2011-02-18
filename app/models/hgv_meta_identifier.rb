@@ -12,8 +12,12 @@ class HGVMetaIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Meta"
 
-  def preview
-    '[HGV]'
+  def preview parameters = {}, xsl = nil
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
+        parameters)
   end
 
   def after_initialize
