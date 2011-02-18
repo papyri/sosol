@@ -319,7 +319,7 @@ class Identifier < ActiveRecord::Base
     
     Comment.find_all_by_git_hash(self.parent.get_recent_commit_sha).each do |c|
       if(c.reason == "vote")
-        change_desc_content = add_change_desc( c.comment, c.user, change_desc_content )
+        change_desc_content = add_change_desc( "Vote - " + c.comment, c.user, change_desc_content )
         commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
       end
     end
