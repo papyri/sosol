@@ -60,7 +60,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   def get_date_item date_id    
     self[:textDate].select {|dateItem|
-      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:textDateId) && dateItem[:attributes][:textDateId].include?(date_id)
+      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:id) && dateItem[:attributes][:id].include?(date_id)
     }.first
   end
 
@@ -103,7 +103,13 @@ class HGVMetaIdentifier < HGVIdentifier
       node = {:value => '', :attributes => {}, :children => {}}
 
       if element.text && !element.text.strip.empty?
-        node[:value] = element.text.strip
+
+        if element.name.to_s == 'origDate' # CL: CROMULATE DATE HACK
+          node[:value] = element.to_s.strip.gsub(/<\/?[^>]*>/, "")
+        elsif
+          node[:value] = element.text.strip
+        end
+        
       else
         node[:value] = config[:default]
       end

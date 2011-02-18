@@ -7,24 +7,14 @@
       .dateInfo
         - date_item = @identifier.get_date_item date_id
 
-        %fieldset.date.dateExtra
+        =#debug(date_item)
+        =#debug(HgvDate.dateInformation date_item)
+
+        %fieldset.date
           %legend=I18n.t('meta.label.extraDate')
           .extra
             = render :partial => 'hgv_meta_identifiers/date_extra', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item }
-        %fieldset.date.dateOn
-          %legend=I18n.t('meta.label.onDate')
-          .on
-            = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item && date_item[:children] && date_item[:children][:onDate] ? date_item[:children][:onDate] : nil, :date_type => 'on' }
-        %fieldset.date.dateFromTo
-          %legend=I18n.t('meta.label.fromToDate')
-          .from
-            = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item && date_item[:children] && date_item[:children][:fromDate] ? date_item[:children][:fromDate] : nil, :date_type => 'from' }
-          .to
-            = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item && date_item[:children] && date_item[:children][:toDate] ? date_item[:children][:toDate] : nil, :date_type => 'to' }
-
-%br
-= check_box('date', 'master', {:value => 'no', :id => 'datemaster'}, 'yes', 'no')
-%label.datemaster{:title => 'check this to have your entries propagated to the origDate attributes and value'}
-  %span.label
-    Date master
-  = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.datemaster' }
+        %fieldset.date
+          %legend=I18n.t('meta.label.date')
+          =#debug(date_item)
+          = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => HgvDate.dateInformation(date_item)}

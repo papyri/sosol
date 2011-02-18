@@ -8,6 +8,323 @@ class DateTest < ActiveSupport::TestCase
 
   end
 
+  def test_date_information
+    assert_equal({:c => 3, :cx => :middle, :ca => false, :c2 => 5, :cx2 => :beginningCirca, :ca2 => true, :certainty => :low},
+    HgvDate.dateInformation({
+      :value => 'Mitte III - Anfang (?) V (?)',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '0226',
+        :notAfter   => '0425',
+        :certainty  => 'low',
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [
+          {:value => nil,
+          :attributes => {:match => '../@notBefore'},
+          :children => {}},
+          {:value => nil,
+          :attributes => {:match => '../@notAfter', :degree => '0.1'},
+          :children => {}} 
+        ],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:c => 3, :ca => true, :c2 => 5, :ca2 => true, :precision => :ca, :precision2 => :ca},
+    HgvDate.dateInformation({
+      :value => 'ca. III - ca. V',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '0201',
+        :notAfter   => '0500',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [
+          {:value => nil,
+          :attributes => {:match => nil, :degree => '0.1'},
+          :children => {}} 
+        ],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :beginning, :ca => false, :ca2 => false, :certainty => :year},
+    HgvDate.dateInformation({
+      :value => 'Anfang 1884 (Jahr unsicher)',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-01',
+        :notAfter   => '1884-03',
+        :certainty  => nil,
+        :precision  => 'low'}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => [
+          {:value => nil, :attributes => {:match => '../year-from-date(@notBefore)'}, :children => {}},
+          {:value => nil, :attributes => {:match => '../year-from-date(@notAfter)'}, :children => {}}
+          ]}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :summer, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Sommer 1884',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-05',
+        :notAfter   => '1884-08',
+        :certainty  => nil,
+        :precision  => 'low'}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :end, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Ende 1884',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-10',
+        :notAfter   => '1884-12',
+        :certainty  => nil,
+        :precision  => 'low'}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :end, :y2 => 1976, :yx2 => :beginning, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Ende 1884 - Anfang 1976',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-10',
+        :notAfter   => '1976-03',
+        :certainty  => nil,
+        :precision  => 'low'}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :end, :y2 => 1976, :m2 => 3, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Ende 1884 - März 1976',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-10',
+        :notAfter   => '1976-03',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [{:value => nil, :attributes => {:match => '../@notBefore'}, :children => {}}],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :end, :y2 => 1976, :m2 => 3, :d2 => 5, :ca => false, :ca2 => false, :certainty => :month_year},
+    HgvDate.dateInformation({
+      :value => 'Ende 1884 - 5. März 1976 (Jahr und Monat unsicher)',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-10',
+        :notAfter   => '1976-03-05',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [{:value => nil, :attributes => {:match => '../@notBefore'}, :children => {}}],
+        :certainty => [
+          {:value => nil, :attributes => {:match => '../year-from-date(@notAfter)'}, :children => {}},
+          {:value => nil, :attributes => {:match => '../month-from-date(@notAfter)'}, :children => {}}
+        ]}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :y2 => 1976, :yx2 => :beginning, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => '1884 - Anfang 1976',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884',
+        :notAfter   => '1976-03',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [{:value => nil, :attributes => {:match => '../@notAfter'}, :children => {}}],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :y2 => 1976, :m2 => 3, :mx2 => :beginning, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => '1884 - Anfang März 1976',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884',
+        :notAfter   => '1976-03-10',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [{:value => nil, :attributes => {:match => '../@notAfter'}, :children => {}}],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.dateInformation()')
+
+    assert_equal({:y => 1884, :yx => :end, :y2 => 1976, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Ende 1884 - 1976',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => nil,
+        :notBefore  => '1884-10',
+        :notAfter   => '1976',
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [
+          {:value => nil,
+          :attributes => {:match => '../@notBefore'},
+          :children => {}} 
+        ],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.getCentury()')
+
+    assert_equal({:y => 1884, :m => 8, :d => 28, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => '28. Aug. 1884',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => '1884-08-28',
+        :notBefore  => nil,
+        :notAfter   => nil,
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.getCentury()')
+
+    assert_equal({:y => 1884, :m => 8, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => 'Aug. 1884',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => '1884-08',
+        :notBefore  => nil,
+        :notAfter   => nil,
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.getCentury()')
+
+    assert_equal({:y => 1884, :ca => false, :ca2 => false},
+    HgvDate.dateInformation({
+      :value => '1884',
+      :attributes => {
+        :textDateId => 'dateAlternativeX',
+        :when       => '1884',
+        :notBefore  => nil,
+        :notAfter   => nil,
+        :certainty  => nil,
+        :precision  => nil}, 
+      :children => {
+        :offset => [],
+        :precision => [],
+        :certainty => []}}).delete_if{|k,v| v == nil },
+    'HgvDate.getCentury()')
+
+  end
+
+  def test_get_century
+    
+    assert_equal 1, HgvDate.getCentury(1), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(2), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(3), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(49), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(50), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(51), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(98), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(99), 'HgvDate.getCentury()'
+    assert_equal 1, HgvDate.getCentury(100), 'HgvDate.getCentury()'
+    
+    assert_equal 2, HgvDate.getCentury(101), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(102), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(103), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(149), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(150), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(151), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(198), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(199), 'HgvDate.getCentury()'
+    assert_equal 2, HgvDate.getCentury(200), 'HgvDate.getCentury()'
+    
+    assert_equal 20, HgvDate.getCentury(1901), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1902), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1903), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1949), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1950), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1951), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1998), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(1999), 'HgvDate.getCentury()'
+    assert_equal 20, HgvDate.getCentury(2000), 'HgvDate.getCentury()'
+    
+    assert_equal -1, HgvDate.getCentury(-1), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-2), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-3), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-49), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-50), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-51), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-98), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-99), 'HgvDate.getCentury()'
+    assert_equal -1, HgvDate.getCentury(-100), 'HgvDate.getCentury()'
+    
+    assert_equal -2, HgvDate.getCentury(-101), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-102), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-103), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-149), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-150), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-151), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-198), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-199), 'HgvDate.getCentury()'
+    assert_equal -2, HgvDate.getCentury(-200), 'HgvDate.getCentury()'
+    
+    assert_equal -20, HgvDate.getCentury(-1901), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1902), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1903), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1949), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1950), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1951), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1998), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-1999), 'HgvDate.getCentury()'
+    assert_equal -20, HgvDate.getCentury(-2000), 'HgvDate.getCentury()'
+        
+  end
+
+  def test_get_century_qualifier
+    assert_equal :middle, HgvDate.getCenturyQualifier(126, 175), 'HgvDate.getCenturyQualifier()'
+    assert_equal [:middle, :middle], HgvDate.getCenturyQualifier(126, 275), 'HgvDate.getCenturyQualifier()'
+  end
+
   def test_format_date
     testCasesFormatDate(
       {:century => {:value => '', :extent => '', :certainty => ''}, :year => {:value => '', :extent => '', :certainty => ''}, :month => {:value => '', :extent => '', :certainty => ''}, :day => {:value => '', :extent => '', :certainty => ''}, :offset => '', :certainty => '', :certaintyPicker => ''},
