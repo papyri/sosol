@@ -241,7 +241,7 @@ class PublicationsController < ApplicationController
     #find identifier so we can set the votes into the xml
     @identifier = Identifier.find(params[:identifier_id])
     @identifier.update_revision_desc(params[:comment], @current_user)
-   
+    
     @identifier.save
     #do we need to save publication before continuing with commit??
 
