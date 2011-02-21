@@ -56,18 +56,35 @@ de:
       when: Wann
       notBefore: Nicht vor
       notAfter: Nicht nach
-      before: Nicht nach
-      after: Nicht vor
+      from: Von
+      to: Bis
       century: Jhdt.
       year: Jahr
       month: Monat
       day: Tag
       certainty: Sicherheit
-      precision: Genauigkeit
       specifier: Extra
       extraDate: Generiertes Datum. Nur zur Anzeige. Keine Eingabe möglich.
+      onDate: Datum
+      fromDate: Von
+      toDate: bis
+      fromToDate: Zeitspanne
       offset: Zusatz
       textDate: HGV-Format
+      beginning: Anfang
+      firstHalf: Erste Hälfte
+      firstHalfToMiddle: Erste Hälfte bis Mitte
+      middle: Mitte
+      middleToSecondHalf: Mitte bis zweite Hälfte 
+      secondHalf: Zweite Hälfte
+      end: Ende
+      before: Nicht nach
+      after: Nicht vor
+      certainty09: Wohl...
+      certainty05: (?)
+      dayUncertain: Tag unsicher
+      monthAndYearUncertain: Monat und Jahr unsicher
+      yearUncertain: Jahr unsicher
       multiAdd: ✓
 
     tooltip:
@@ -136,46 +153,14 @@ de:
     secondHalf: Zweite Hälfte
     firstHalfToMiddle: Erste Hälfte bis Mitte
     middleToSecondHalf: Mitte bis zweite Hälfte
-    beginningToMiddle: Anfang bis Mitte
-    middleToEnd: Mitte bis Ende
-    spring: Frühjahr
-    summer: Sommer
-    autumn: Herbst
-    winter: Winter
-    earlyWinter: Frühwinter
-    lateWinter: Spätwinter    
-    beginningCircaCirca: Anfang (?)
-    middleCirca: Mitte (?)
-    endCirca: Ende (?)
-    firstHalfCirca: Erste Hälfte (?)
-    secondHalfCirca: Zweite Hälfte (?)
-    firstHalfToMiddleCirca: Erste Hälfte bis Mitte (?)
-    middleToSecondHalfCirca: Mitte bis zweite Hälfte (?)
-    beginningToMiddleCirca: Anfang bis Mitte (?)
-    middleToEndCirca: Mitte bis Ende (?)
-    springCirca: Frühjahr (?)
-    summerCirca: Sommer (?)
-    autumnCirca: Herbst (?)
-    winterCirca: Winter (?)
-    earlyWinterCirca: Frühwinter (?)
-    lateWinterCirca: Spätwinter (?)
     before: vor
     after: nach
-    beforeUncertain: vor (?)
-    afterUncertain: nach (?)
-    ca: ca.
-    
     certaintyHigh: Wohl...
     certaintyLow: (?)
     dayUncertain: Tag unsicher
-    monthUncertain: Monat unsicher
+    monthAndYearUncertain: Monat und Jahr unsicher
     yearUncertain: Jahr unsicher
-    dayAndMonthUncertain: Monat und Tag unsicher
-    monthAndYearUncertain: Jahr und Monat unsicher
-    dayAndYearUncertain: Jahr und Tag unsicher
-    monthMonthAndYearUncertain: Jahr, Monat und Tag unsicher
     
-
   bibliography:
     language: 'Sprache'
     signature: 'Signatur'

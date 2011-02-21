@@ -1,7 +1,7 @@
 - textDateId = 'dateAlternative' + date_id
-- textDateWhen = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:when) ? date_item[:attributes][:when] : '' 
-- textDateFrom = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:notBefore) ? date_item[:attributes][:notBefore] : ''
-- textDateTo = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:notAfter) ? date_item[:attributes][:notAfter] : ''
+- textDateWhen = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:textDateWhen) ? date_item[:attributes][:textDateWhen] : '' 
+- textDateFrom = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:textDateFrom) ? date_item[:attributes][:textDateFrom] : ''
+- textDateTo = date_item && date_item.keys.include?(:attributes) && date_item[:attributes].keys.include?(:textDateTo) ? date_item[:attributes][:textDateTo] : ''
 - textDate = date_item && date_item.keys.include?(:value) && date_item[:value] ? date_item[:value] : ''
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.id'), :title => @identifier.configuration.xpath(:textDate)
@@ -28,3 +28,4 @@
   %span
     = textDate
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][value]', textDate, :disabled => !@identifier.mutable?, :class => 'observechange'
+  
