@@ -1,27 +1,430 @@
 module HgvMetaIdentifierHelper
 
   module HgvDate
+    def HgvDate.precisionOptions
+      [['', ''], 
+        [I18n.t('date.ca'), :ca]]
+    end
     def HgvDate.monthOptions
-      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.end'), 'end']]
+      [['', ''], 
+        [I18n.t('date.beginning'), :beginning],
+        [I18n.t('date.beginningCirca'), :beginningCirca],
+        [I18n.t('date.middle'), :middle], 
+        [I18n.t('date.middleCirca'), :middleCirca],
+        [I18n.t('date.end'), :end], 
+        [I18n.t('date.endCirca'), :endCirca]]
     end
     def HgvDate.yearOptions
-      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.firstHalf'), 'first_half'], [I18n.t('date.firstHalfToMiddle'), 'firstHalfToMiddle'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.middleToSecondHalf'), 'middle_to_second_half'], [I18n.t('date.secondHalf'), 'second_half'], [I18n.t('date.end'), 'end']]
+      [['', ''], 
+        [I18n.t('date.beginning'), :beginning], 
+        [I18n.t('date.beginningCirca'), :beginningCirca], 
+        [I18n.t('date.firstHalf'), :firstHalf], 
+        [I18n.t('date.firstHalfCirca'), :firstHalfCirca], 
+        [I18n.t('date.firstHalfToMiddle'), :firstHalfToMiddle], 
+        [I18n.t('date.firstHalfToMiddleCirca'), :firstHalfToMiddleCirca], 
+        [I18n.t('date.middle'), :middle], 
+        [I18n.t('date.middleCirca'), :middleCirca], 
+        [I18n.t('date.middleToSecondHalf'), :middleToSecondHalf], 
+        [I18n.t('date.middleToSecondHalfCirca'), :middleToSecondHalfCirca], 
+        [I18n.t('date.secondHalf'), :secondHalf], 
+        [I18n.t('date.secondHalfCirca'), :secondHalfCirca], 
+        [I18n.t('date.end'), :end],
+        [I18n.t('date.endCirca'), :endCirca]]
+    end
+    def HgvDate.centuryOptions
+      [['', ''], 
+        [I18n.t('date.beginning'), :beginning], 
+        [I18n.t('date.beginningCirca'), :beginningCirca], 
+        [I18n.t('date.beginningToMiddle'), :beginningToMiddle], 
+        [I18n.t('date.beginningToMiddleCirca'), :beginningToMiddleCirca], 
+        [I18n.t('date.firstHalf'), :firstHalf], 
+        [I18n.t('date.firstHalfCirca'), :firstHalfCirca], 
+        [I18n.t('date.firstHalfToMiddle'), :firstHalfToMiddle], 
+        [I18n.t('date.firstHalfToMiddleCirca'), :firstHalfToMiddleCirca], 
+        [I18n.t('date.middle'), :middle], 
+        [I18n.t('date.middleCirca'), :middleCirca], 
+        [I18n.t('date.middleToSecondHalf'), :middleToSecondHalf], 
+        [I18n.t('date.middleToSecondHalfCirca'), :middleToSecondHalfCirca], 
+        [I18n.t('date.secondHalf'), :secondHalf], 
+        [I18n.t('date.secondHalfCirca'), :secondHalfCirca], 
+        [I18n.t('date.middleToEnd'), :middleToEnd], 
+        [I18n.t('date.middleToEndCirca'), :middleToEndCirca], 
+        [I18n.t('date.end'), :end], 
+        [I18n.t('date.endCirca'), :endCirca]]
     end
     def HgvDate.offsetOptions
-      [['', ''], [I18n.t('date.before'), 'before'], [I18n.t('date.after'), 'after']]
+      [['', ''], 
+        [I18n.t('date.before'), :before], 
+        [I18n.t('date.after'), :after], 
+        [I18n.t('date.beforeUncertain'), :beforeUncertain], 
+        [I18n.t('date.afterUncertain'), :afterUncertain]]
     end
     def HgvDate.certaintyOptions
-      [['', ''], [I18n.t('date.certaintyHigh'), 'high'], [I18n.t('date.certaintyLow'), 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
-    end
-    def HgvDate.childBase date_index, date_type
-      'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][children]'
+      [['', ''], 
+        [I18n.t('date.certaintyLow'), :low], 
+        [I18n.t('date.dayUncertain'), :day], 
+        [I18n.t('date.monthUncertain'), :month], 
+        [I18n.t('date.yearUncertain'), :year],
+        [I18n.t('date.dayAndMonthUncertain'), :day_month],
+        [I18n.t('date.monthAndYearUncertain'), :month_year],
+        [I18n.t('date.dayAndYearUncertain'), :day_year],
+        [I18n.t('date.dayMonthAndYearUncertain'), :day_month_year]]
     end
     def HgvDate.attributeBase date_index, date_type
       'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][attributes]'
-    end  
-    def HgvDate.dateInformation date_item
+    end
+    def HgvDate.getCentury year
+      if !year
+        nil
+      else
+        (year.abs / 100 + ((year.abs % 100) == 0 ? 0 : 1)) * (year > 0 ? 1 : -1)
+      end
+    end
+    def HgvDate.getCenturyQualifier year, year2
+      if !year || !year2
+        return nil
+      end
+
+      century = HgvDate.getCentury year
+      century2 = HgvDate.getCentury year2
+      tens = year.abs.to_s.rjust(2, '0')[-2..-1].to_i * (year.abs / year)
+      tens2 = year2.abs.to_s.rjust(2, '0')[-2..-1].to_i * (year2.abs / year2)
+
+      if century == century2
+        return {
+          [1, 25] => :beginning,
+          [26, 50] => :firstHalfToMiddle,
+          [51, 75] => :middleToSecondHalf,
+          [76, 0] => :end,
+          [1, 50] => :firstHalf,
+          [26, 75] => :middle,
+          [51, 0] => :secondHalf,
+          [1, 75] => :beginningToMiddle,
+          [26, 0] => :middleToEnd,
+
+          [0, -76] => :beginning,
+          [-75, -51] => :firstHalfToMiddle,
+          [-50, -26] => :middleToSecondHalf,
+          [-25, -1] => :end,
+          [0, -51] => :firstHalf,
+          [-75, -26] => :middle,
+          [-50, -1] => :secondHalf,
+          [0, -26] => :beginningToMiddle,
+          [-75, -1] => :middleToEnd
+        }[[tens, tens2]]
+      else
+        return [
+          {
+            #1 => :beginning,
+            26 => :middle,
+            51 => :secondHalf,
+            76 => :end,
+            
+            #0 => :beginning,
+            -75 => :middle,
+            -50 => :secondHalf,
+            -25 => :end
+          }[tens],
+          {
+            25 => :beginning,
+            50 => :fisrtHalf,
+            75 => :middle,
+            #0 => :end,
+            
+            -76 => :beginning,
+            -51 => :firstHalf,
+            -26 => :middle,
+            #-1 => :end
+          }[tens2]
+        ]
+      end
+    end
+    
+    def HgvDate.getYearQualifier month = nil, month2 = nil
+      if month && month2
+        return {
+          [1, 2] => :lateWinter,
+          [2, 5] => :spring,
+          [5, 8] => :summer,
+          [8, 11] => :autumn,
+          [11, 12] => :earlyWinter,
+          [1, 6] => :firstHalf,
+          [4, 9] => :middle,
+          [7, 12] => :secondHalf,
+          [1, 3] => :beginning,
+          [4, 6] => :fistHalfToMiddle,
+          [7, 9] => :middleToFirstHalf,
+          [10, 12] => :end
+        }[[month, month2]]
+      elsif month
+        return {
+          1 => :beginning,
+          2 => :spring,
+          4 => :middle,
+          5 => :summer,
+          7 => :secondHalf,
+          8 => :autumn,
+          10 => :end,
+          11 => :earlyWinter
+        }[month]
+      elsif month2
+        return {
+          2 => :lateWinter,
+          3 => :beginning,
+          5 => :spring,
+          6 => :firstHalf,
+          8 => :summer,
+          9 => :middle,
+          11 => :autumn,
+          12 => :end,
+        }[month2]
+      else
+        return nil
+      end
+    end
+    
+    def HgvDate.getMonthQualifier day = nil, day2 = nil
+      if day && day2
+        return {
+          [1, 10] => :beginning,
+          [11, 20] => :middle,
+          [21, 28] => :end # CL
+        }[[day, day2]]
+      elsif day
+        return {
+          1 => :beginning,
+          11 => :middle,
+          21 => :end
+        }[day]
+      elsif day2
+        return {
+          10 => :beginning,
+          20 => :middle,
+          28 => :end # CL
+        }[day2]
+      else
+        return nil
+      end
+    end
+
+    def HgvDate.dateInformation date_item      
+      t = {
+        :c => nil, :y => nil, :m => nil, :d => nil, :cx => nil, :yx => nil, :mx => nil, :offset => nil, :precision => nil, :ca => false,
+        :c2 => nil, :y2 => nil, :m2 => nil, :d2 => nil, :cx2 => nil, :yx2 => nil, :mx2 => nil, :offset2 => nil, :precision2 => nil, :ca2 => false,
+        :certainty => nil,
+        :unknown => nil,
+        :error => nil,
+        :empty => nil}
+      
+      if date_item == nil # simple case: no date
+        t[:empty] = true
+        return t
+      end
+      
+      if date_item[:value] == 'unbekannt' # simple case: date is specified as unknown
+        t[:unknown] = true
+        return t
+      end
+
+      begin # complex case: process date information
+        
+        if date_item && date_item[:attributes]
+
+          # date1
+          dateIso = date_item[:attributes][:when] ? date_item[:attributes][:when] : (date_item[:attributes][:notBefore] ? date_item[:attributes][:notBefore] : date_item[:attributes][:notAfter])
+          if dateIso
+
+            regexYear  = /\A(-?\d\d\d\d)/
+            regexMonth = /\A-?\d\d\d\d-(\d\d)/
+            regexDay   = /\A-?\d\d\d\d-\d\d-(\d\d)\Z/
+
+            t[:y] = dateIso =~ regexYear  ? dateIso[regexYear, 1].to_i  : nil
+            t[:m] = dateIso =~ regexMonth ? dateIso[regexMonth, 1].to_i : nil
+            t[:d] = dateIso =~ regexDay   ? dateIso[regexDay, 1].to_i   : nil
+
+            # date2
+            dateIso2 = date_item[:attributes][:notAfter]
+            if dateIso2
+              t[:y2] = dateIso2 =~ regexYear  ? dateIso2[regexYear, 1].to_i  : nil
+              t[:m2] = dateIso2 =~ regexMonth ? dateIso2[regexMonth, 1].to_i : nil
+              t[:d2] = dateIso2 =~ regexDay   ? dateIso2[regexDay, 1].to_i   : nil
+            end
+
+            if date_item[:children]
+              # ca.
+              if date_item[:attributes][:precision] == 'medium'
+                t[:ca] = t[:ca2] = true
+              elsif date_item[:children][:precision]
+                date_item[:children][:precision].each {|precision|
+                  if precision[:attributes] && precision[:attributes][:degree] && ['0.1', '0.5'].include?(precision[:attributes][:degree])
+                    if precision[:attributes][:match]
+                      if precision[:attributes][:match].include?('notBefore')
+                        t[:ca] = true
+                      elsif precision[:attributes][:match].include?('notAfter')
+                        t[:ca2] = true
+                      end
+                    else
+                      t[:ca] = t[:ca2] = true
+                    end
+                  end
+                }
+              end
+
+              # qualifier
+              isVague = isVague2 = false
+              if date_item[:attributes][:precision] == 'low'
+                isVague = isVague2 = true
+              elsif date_item[:children][:precision]
+                date_item[:children][:precision].each {|precision|
+                  if precision[:attributes] && (!precision[:attributes][:degree] || (precision[:attributes][:degree] && ['0.1', '0.3'].include?(precision[:attributes][:degree])))
+                    if precision[:attributes][:match]
+                      if precision[:attributes][:match].include?('notBefore')
+                        isVague = true
+                      elsif precision[:attributes][:match].include?('notAfter')
+                        isVague2 = true
+                      end
+                    else
+                      isVague = isVague2 = true
+                    end
+                  end
+                }
+              end
+
+              if isVague || isVague2
+                
+                # century
+                if isVague && t[:y] && !t[:m] && !t[:t]
+                 
+                  t[:c] = HgvDate.getCentury t[:y] # century no. 1
+
+                  if isVague2 && t[:y2] && !t[:m2] && !t[:t2]
+                    t[:c2] = HgvDate.getCentury t[:y2] # century no. 2
+                  end
+
+                  cx = HgvDate.getCenturyQualifier t[:y], t[:y2]  # century qualifier (beginning, middle, end)
+                  if cx.instance_of? Array
+                    t[:cx], t[:cx2] = cx
+                  else
+                    t[:cx] = cx
+                  end
+
+                  if t[:c] == t[:c2]
+                    t[:c2] = nil # combine century no.1 and no.2
+                  end
+
+                  t[:y] = t[:y2] = nil # kill years                  
+                end
+                
+                # year
+                if isVague && t[:y] && t[:m] && !t[:t]
+                  if isVague2 &&  t[:y2] && t[:m2] && !t[:t2]
+                    if t[:y] == t[:y2]
+                      t[:yx] = HgvDate.getYearQualifier t[:m], t[:m2] # combine date no. 1 and date no. 2
+                      t[:y2] = t[:m] = t[:m2] = nil
+                    else
+                      t[:yx] = HgvDate.getYearQualifier t[:m]
+                      t[:yx2] = HgvDate.getYearQualifier nil, t[:m2]
+                      t[:m] = t[:m2] = nil
+                    end
+                  else
+                    t[:yx] = HgvDate.getYearQualifier t[:m]
+                    t[:m] = nil
+                  end
+                elsif isVague2 &&  t[:y2] && t[:m2] && !t[:d2]
+                  t[:yx2] = HgvDate.getYearQualifier nil, t[:m2]
+                  t[:m2] = nil
+                end
+                
+                #month
+                if isVague && t[:y] && t[:m] && t[:t]
+                  if isVague2 &&  t[:y2] && t[:m2] && t[:t2]
+                    if t[:y] == t[:y2] && t[:m] == t[:m2]
+                      t[:mx] = HgvDate.getMonthQualifier t[:d], t[:d2] # combine date no. 1 and date no. 2
+                      t[:y2] = t[:m2] = t[:t] = t[:t2] = nil
+                    else
+                      t[:mx] = HgvDate.getMonthQualifier t[:d]
+                      t[:mx2] = HgvDate.getMonthQualifier nil, t[:d2]
+                      t[:d] = t[:d2] = nil
+                    end
+                  else
+                    t[:mx] = HgvDate.getMonthQualifier t[:d]
+                    t[:d] = nil
+                  end
+                elsif isVague2 && t[:y2] && t[:m2] && t[:d2]
+                  t[:mx2] = HgvDate.getMonthQualifier nil, t[:d2]
+                  t[:d2] = nil
+                end
+
+                # ...(?)
+                t.each_pair {|k,v|
+                  if k.to_s.include?('x') && v
+                    if k.to_s.include?('2') ? t[:ca2] : t[:ca]
+                      t[k] = (v.to_s + 'Circa').to_sym
+                    end
+                  end
+                }
+              end #isVague
+
+              # precision
+              t[:precision] = !t.reject{|k,v| k.to_s.include?('2') || v == nil }.keys.join.include?('x') && t[:ca] ? :ca : nil
+              t[:precision2] = (!t.reject{|k,v| !k.to_s.include?('2') || v == nil }.keys.join.include?('x') && t[:ca2] && (t[:c2] || t[:y2] || t[:m2] || t[:d2])) ? :ca : nil
+
+              # offset
+              if date_item[:children][:offset]
+                date_item[:children][:offset].each_index{|i|
+                   offset = date_item[:children][:offset][i][:attributes][:type]
+                   attribute = ('offset' + (i == 1 ? '2' : '')).to_sym
+                   
+                   t[attribute] = offset.to_sym
+                   
+                   if date_item[:children][:certainty]
+                     date_item[:children][:certainty].each {|certainty|
+                       if certainty[:attributes] && certainty[:attributes][:match] && certainty[:attributes][:match] == "../offset[@type='" + offset + "']"
+                         t[attribute] = (t[attribute].to_s + 'Uncertain').to_sym
+                       end
+                     }
+                   end
+                }
+              end
+
+              # certainties
+
+              if date_item[:attributes][:certainty]
+                t[:certainty] = date_item[:attributes][:certainty].to_sym
+              elsif date_item[:children][:certainty]
+                cert = {:days => 0, :months => 0, :years => 0}
+                date_item[:children][:certainty].each {|certainty|
+                  if certainty[:attributes] && certainty[:attributes][:match]
+                    cert.keys.each {|key|
+                      if certainty[:attributes][:match].include? key.to_s[0..-2]
+                        cert[key] += 1
+                      end
+                    }
+                  end
+                }
+                if cert.values.join.to_i > 0
+                  t[:certainty] = cert.delete_if{|k,v| v == 0}.keys.collect{|i| i.to_s[0..-2] }.join('_').to_sym # CL support for plurals goes here
+                end
+              end
+
+            end
+
+          end
+        end
+      
+      rescue => e
+        t[:error] =  e.class.to_s + ': ' + e.message + ' (' + e.backtrace.inspect + ')' # $!, $ERROR_INFO
+      end
+  
+      t
+    end
+    def HgvDate.BACKUPdateInformation date_item
 
       data = {:century => {:value => '', :extent => '', :certainty => ''}, :year => {:value => '', :extent => '', :certainty => ''}, :month => {:value => '', :extent => '', :certainty => ''}, :day => {:value => '', :extent => '', :certainty => ''}, :offset => '', :certainty => '', :certaintyPicker => ''}
+      
+      
+      
+      
       data[:certainty] = date_item && date_item[:attributes] && date_item[:attributes][:certainty] ? date_item[:attributes][:certainty] : ''
 
       if date_item && date_item[:children]
