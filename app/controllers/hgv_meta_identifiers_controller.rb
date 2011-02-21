@@ -83,6 +83,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           # chronMin, chronMax and chron
 
           tasks = {}
+
           if date['children']['onDate'] && date['children']['onDate']['children']['offset']['value'].empty? # @when attribute will only be used if there is a single date
             tasks[:chron] = date['children']['onDate']
           else
@@ -108,7 +109,8 @@ class HgvMetaIdentifiersController < IdentifiersController
           tasks.each_pair{|chron, value|
 if params[:date][:master] == 'yes' #todocl: remove (date master)
             if value
-              date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = HgvFuzzy.getChron(
+
+              date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = HgvFuzzy.getChronSimple(
                 value['children']['century']['value'],
                 value['children']['year']['value'],
                 value['children']['month']['value'],
@@ -121,6 +123,7 @@ if params[:date][:master] == 'yes' #todocl: remove (date master)
             else
               date['attributes'][{:chron => 'textDateWhen', :chronMin => 'textDateFrom', :chronMax => 'textDateTo'}[chron]] = nil
             end
+
 end #todocl: remove (date master)
           }
 
@@ -136,12 +139,6 @@ if params[:date][:master] == 'yes' #todocl: remove (date master)
           end
 end #todocl: remove (date master)
           date['children'] = {} #todocl: remove this line when nesting dates into origDate and when the offset tag is allowed within EpiDoc
-          #date['children'][dateType]['children'].delete 'offset' #todocl: remove this line 
-          ['textDateFrom', 'textDateTo'].each{|chron| #todocl: remove this whole instruction when notBefor and notAfter will become full dates instead of only years
-            if date['attributes'][chron].class == String and date['attributes'][chron].size >= 10
-              date['attributes'][chron] = date['attributes'][chron][0..-7]
-            end
-          } 
         }
       end
     end

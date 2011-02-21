@@ -1,0 +1,31 @@
+.commit
+  .body
+    .message
+      = simple_format(commit[:message])
+    .author
+      = commit[:author_name]
+      %span.type
+        (author)
+    .date
+      = commit[:authored_date] > 1.week.ago ? "#{time_ago_in_words(commit[:authored_date])} ago" : commit[:authored_date].strftime("%B %d, %Y")
+    - if commit[:author_name] != commit[:committer_name]
+      .author
+        = commit[:committer_name]
+        %span.type
+          (committer)
+      .date
+        = commit[:committed_date] > 1.week.ago ? "#{time_ago_in_words(commit[:committed_date])} ago" : commit[:committed_date].strftime("%B %d, %Y")
+  .ids
+    %ul
+      - unless prev_commit.nil?
+        %li
+          prev
+          = link_to prev_commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => prev_commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
+      -# %li
+      -#   commit
+      -#   = link_to commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
+      - unless next_commit.nil?
+        %li
+          next
+          = link_to next_commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => next_commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
+    

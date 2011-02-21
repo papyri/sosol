@@ -391,42 +391,80 @@ function insertAppEdit()
 } //########################     end insertAppEdit     ########################
 
 //###########################################################################################
-// insertAppOrth                                                                             
+// insertAppCorr                                                                             
 //###########################################################################################
 
-function insertAppOrth()
+function insertAppCorr()
 {
-  corr = document.getElementById("apporthcorr_value").value;
-  sic = document.getElementById("apporthsic_value").value;
+  corr = document.getElementById("appcorr_corr_value").value;
+  sic = document.getElementById("appcorr_sic_value").value;
   if (corr.length == 0  || sic.length ==  0)
     {
-      alert("Must have 'Normalized form' and 'Non\-standard form' filled in");
+      alert("Must have 'Corrected form' and 'Incorrect form' filled in");
     }
   else
     {
-      if (document.apporthcorr.low.checked == true) // check the corr uncertain attribute 
+      if (document.appcorr_corr.low.checked == true) // check the corr uncertain attribute 
         {
-          corrstart = "<corr cert=\"low\">";
+          corr_start = "<corr cert=\"low\">";
         }
       else
         {
-          corrstart = "<corr>";
+          corr_start = "<corr>";
         }
-      if (document.apporthsic.low.checked == true) // check the sic uncertain attribute 
+      if (document.appcorr_sic.low.checked == true) // check the sic uncertain attribute 
         {
-          optsiccert = "<certainty match=\"..\" locus=\"value\"/>";
+          opt_sic_cert = "<certainty match=\"..\" locus=\"value\"/>";
         }
       else
         {
-          optsiccert = "";
+          opt_sic_cert = "";
         }
       
-      startxml = "<choice>" + corrstart + corr + "</corr><sic>" + sic + optsiccert + "</sic></choice>";
+      startxml = "<choice>" + corr_start + corr + "</corr><sic>" + sic + opt_sic_cert + "</sic></choice>";
            
       convertXML()
     }
   
-} //########################     end insertAppOrth     ########################
+} //########################     end insertAppCorr     ########################
+
+//###########################################################################################
+// insertAppReg                                                                             
+//###########################################################################################
+
+function insertAppReg()
+{
+  reg = document.getElementById("appreg_reg_value").value;
+  orig = document.getElementById("appreg_orig_value").value;
+  if (reg.length == 0  || orig.length ==  0)
+    {
+      alert("Must have 'Regularized form' and 'Non\-standard form' filled in");
+    }
+  else
+    {
+      if (document.appreg_reg.low.checked == true) // check the reg uncertain attribute 
+        {
+          reg_start = "<reg cert=\"low\">";
+        }
+      else
+        {
+          reg_start = "<reg>";
+        }
+      if (document.appreg_orig.low.checked == true) // check the orig uncertain attribute 
+        {
+          opt_orig_cert = "<certainty match=\"..\" locus=\"value\"/>";
+        }
+      else
+        {
+          opt_orig_cert = "";
+        }
+      
+      startxml = "<choice>" + reg_start + reg + "</reg><orig>" + orig + opt_orig_cert + "</orig></choice>";
+           
+      convertXML()
+    }
+  
+} //########################     end insertAppReg     ########################
 
 //###########################################################################################
 // insertAppSubst                                                                             

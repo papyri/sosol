@@ -136,153 +136,54 @@
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
     #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
     :textDate:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate[@type='textDate']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
       :multiple: true
       :pattern: /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
       :attributes:
-        :textDateId:
+        :id:
           :name: xml:id
           :default: "dateAlternativeX"
           :pattern: /\AdateAlternative[XYZ]\Z/
-        :textDateWhen:
+        :when:
           :name: when
           :pattern: /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
-        :textDateFrom:
+        :notBefore:
           :name: notBefore
           :pattern: /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
-        :textDateTo:
+        :notAfter:
           :name: notAfter
           :pattern: /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
+        :certainty:
+          :name: cert
+          :pattern: /\A(high|medium|low)\Z/
+        :precision:
+          :name: precision
+          :pattern: /\A(high|medium|low)\Z/
       :children:
-        :onDate:
-          :xpath: date[@type='on']
+        :offset:
+          :xpath: offset
+          :multiple: true
           :attributes:
-            :certainty:
-              :name: cert
-              :pattern: /\A0(\.\d)?|1\Z/
-          :children:
-            :offset:
-              :xpath: offset
-              :pattern: /\Abefore|after\Z/
-            :century:
-              :xpath: date[@type='century']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-            :year:
-              :xpath: date[@type='year']
-              :pattern: /\A\d{{1,4}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :month:
-              :xpath: date[@type='month']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :day:
-              :xpath: date[@type='day']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-        :fromDate:
-          :xpath: date[@type='from']
+            :type:
+              :name: type
+              :pattern: /\A(befor|after)\Z/
+        :precision:
+          :xpath: precision
+          :multiple: true
           :attributes:
-            :certainty:
-              :name: cert
-              :pattern: /\A0(\.\d)?|1\Z/
-          :children:
-            :offset:
-              :xpath: offset
-              :pattern: /\Abefore|after\Z/
-            :century:
-              :xpath: date[@type='century']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-            :year:
-              :xpath: date[@type='year']
-              :pattern: /\A\d{{1,4}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :month:
-              :xpath: date[@type='month']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :day:
-              :xpath: date[@type='day']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-        :toDate:
-          :xpath: date[@type='to']
+            :match:
+              :name: match
+              :pattern: /\A..\/@(when|notBefore|notAfter))\Z/
+            :degree:
+              :name: degree
+              :pattern: /\A0\.[15]\Z/ # 0.3 for low is not accepted
+        :certainty:
+          :xpath: certainty
+          :multiple: true
           :attributes:
-            :certainty:
-              :name: cert
-              :pattern: /\A0(\.\d)?|1\Z/
-          :children:
-            :offset:
-              :xpath: offset
-              :pattern: /\Abefore|after\Z/
-            :century:
-              :xpath: date[@type='century']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-            :year:
-              :xpath: date[@type='year']
-              :pattern: /\A\d{{1,4}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :month:
-              :xpath: date[@type='month']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :extent:
-                  :name: extent
-                  :pattern: /\Abeginning|middle|end\Z/
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
-            :day:
-              :xpath: date[@type='day']
-              :pattern: /\A\d{{1,2}}\Z/
-              :attributes:
-                :certainty:
-                  :name: cert
-                  :pattern: /\A0(\.\d)?|1\Z/
+            :match:
+              :name: match
+              :pattern: /\A..\/(((day|month|year)-from-date\()?@(when|notBefore|notAfter)(\)?)|offset\[@type='(after|before)'\])\Z/
+            :degree:
+              :name: degree
+              :pattern: /\A0\.7]\Z/ # only 0.7 for »Wohl...« / »Probably...« ist accepted, 0.3 for (?) / »low« is not accepted

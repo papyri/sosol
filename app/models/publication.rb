@@ -37,19 +37,73 @@ class Publication < ActiveRecord::Base
   
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
-  
+
+  def print
+    # get preview of each identifier
+    tmp = {}
+    identifiers.each{|identifier|
+      tmp[identifier.class.to_s.to_sym] = identifier.preview({'meta-style' => 'sammelbuch', 'leiden-style' => 'ddbdp'}, %w{data xslt epidoc start-odf.xsl})
+    }
+
+    Rails.logger.info('---------------DDB xml ---------------------')
+
+    Rails.logger.info tmp[:DDBIdentifier].to_s
+
+    Rails.logger.info('------------------------------------')
+
+    #merge xml
+    meta = REXML::Document.new tmp[:HGVMetaIdentifier]
+    text = REXML::Document.new tmp[:DDBIdentifier]
+
+    Rails.logger.info('---------------DDB xml document---------------------')
+
+    Rails.logger.info text.elements["//office:document-content/office:body/office:text"].to_s
+    
+    Rails.logger.info('------------------------------------')
+
+    elder = meta.elements["//office:document-content/office:body/office:text/text:p[@text:style-name='Sammelbuch-Kopf']"]
+    text.elements["//office:document-content/office:body/office:text"].each_element {|text_element|
+
+    Rails.logger.info('**** found['+text_element.class.inspect+']')
+
+      meta.elements["//office:document-content/office:body/office:text"].insert_after(elder, text_element)
+      elder = text_element
+
+    }
+    
+    # output string
+    formatter = REXML::Formatters::Default.new
+    #formatter.compact = true
+    #formatter.width = 512
+    xml = ''
+    formatter.write meta, xml
+
+    xml
+  end
+
+  #Populates the publication's list of identifiers.
+  #Input identifiers can be in the form of
+  # * an array of strings such as: papyri.info/ddbdp/bgu;7;1504
+  # * a single string such as: papyri.info/ddbdp/bgu;7;1504
+  #publication title is named using first identifier
   def populate_identifiers_from_identifiers(identifiers)
+
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
       identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
     end
-    
+
+    #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    #identifiers is now a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+
+
+    #title is first identifier in list
     original_title = identifier_to_ref(identifiers.values.flatten.first)
     self.title = original_title
-      
+
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
@@ -98,7 +152,7 @@ class Publication < ActiveRecord::Base
       return false
     end
   end
-  
+
   def after_destroy
     self.owner.repository.delete_branch(self.branch)
   end
@@ -156,12 +210,14 @@ class Publication < ActiveRecord::Base
         begin
           submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
           if submit_comment && submit_comment.comment
-            identifier.add_change_desc(submit_comment.comment)
+            identifier.set_xml_content(
+              identifier.add_change_desc(submit_comment.comment),
+              :comment => '')
           else
-            identifier.add_change_desc()
+            identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
           end
         rescue ActiveRecord::RecordNotFound
-          identifier.add_change_desc()
+          identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
         end
         
         boards_copy = copy_to_owner(board)
@@ -239,7 +295,7 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-  #sets thes origin status for publication identifiers that the publication's board controls
+  #sets the origin status for publication identifiers that the publication's board controls
   def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
       
@@ -717,7 +773,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVMetaIdentifier, HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
   end
   
   def canon_controlled_paths
@@ -769,7 +825,33 @@ class Publication < ActiveRecord::Base
     end
     return board_publication      
   end
-  
+
+  #total votes for the publication children in voting status
+  def children_votes
+    vote_total = 0
+    vote_ddb = 0
+    vote_meta = 0
+    vote_trans = 0
+    self.children.each do|x|
+      if x.status == 'voting'
+        x.identifiers.each do |y|
+          case y
+            when DDBIdentifier
+              vote_ddb += y.votes.length
+              vote_total += vote_ddb
+            when HGVMetaIdentifier
+              vote_meta += y.votes.length
+              vote_total += vote_meta
+            when HGVTransIdentifier
+              vote_trans += y.votes.length
+              vote_total += vote_trans
+          end #case
+        end # identifiers do
+      end #if
+    end #children do
+    return vote_total, vote_ddb, vote_meta, vote_trans
+  end
+
   def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
@@ -902,10 +984,12 @@ class Publication < ActiveRecord::Base
   end
   
   protected
+    #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
       str.tr(' ','_')
     end
-    
+
+    #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
       str.tr(':;','_')
     end
