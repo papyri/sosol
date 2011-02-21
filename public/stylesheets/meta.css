@@ -287,7 +287,7 @@ div#edit div.multi ul#multiItems_translationsLa li input {
 /* *** date *** */
 div#edit div#dateContainer {
   position: relative;
-  height: 350px;
+  height: 400px;
   padding: 0;
   margin: 0;
   background-color: lightpink; }

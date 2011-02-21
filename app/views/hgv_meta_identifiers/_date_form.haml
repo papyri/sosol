@@ -29,3 +29,7 @@
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.certainty'), :title => @identifier.configuration.xpath(:textDate)
   = select_tag base + '[certainty]', options_for_select(HgvDate.certaintyOptions, date_item[:certainty]), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+
+%p
+  -if date_item[:error]
+    .flash.error{:title => date_item[:error]} Date could not be parsed properly...

@@ -12,9 +12,7 @@
 
         %fieldset.date
           %legend=I18n.t('meta.label.extraDate')
-          .extra
-            = render :partial => 'hgv_meta_identifiers/date_extra', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item }
+          = render :partial => 'hgv_meta_identifiers/date_extra', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item }
         %fieldset.date
           %legend=I18n.t('meta.label.date')
-          =#debug(date_item)
           = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => HgvDate.dateInformation(date_item)}

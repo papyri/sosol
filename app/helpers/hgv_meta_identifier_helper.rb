@@ -74,9 +74,17 @@ module HgvMetaIdentifierHelper
       'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][attributes]'
     end
     def HgvDate.getCentury year
-      return (year.abs / 100 + ((year.abs % 100) == 0 ? 0 : 1)) * (year > 0 ? 1 : -1)
+      if !year
+        nil
+      else
+        (year.abs / 100 + ((year.abs % 100) == 0 ? 0 : 1)) * (year > 0 ? 1 : -1)
+      end
     end
     def HgvDate.getCenturyQualifier year, year2
+      if !year || !year2
+        return nil
+      end
+
       century = HgvDate.getCentury year
       century2 = HgvDate.getCentury year2
       tens = year.abs.to_s.rjust(2, '0')[-2..-1].to_i * (year.abs / year)
@@ -204,12 +212,22 @@ module HgvMetaIdentifierHelper
         :c => nil, :y => nil, :m => nil, :d => nil, :cx => nil, :yx => nil, :mx => nil, :offset => nil, :precision => nil, :ca => false,
         :c2 => nil, :y2 => nil, :m2 => nil, :d2 => nil, :cx2 => nil, :yx2 => nil, :mx2 => nil, :offset2 => nil, :precision2 => nil, :ca2 => false,
         :certainty => nil,
-        :unknown => nil}
-          
-      if date_item[:value] != 'unbekannt'
+        :unknown => nil,
+        :error => nil,
+        :empty => nil}
+      
+      if date_item == nil # simple case: no date
+        t[:empty] = true
+        return t
+      end
+      
+      if date_item[:value] == 'unbekannt' # simple case: date is specified as unknown
+        t[:unknown] = true
+        return t
+      end
 
-        # when="-YYYY-MM-DD" notBefore="-YYYY-MM-DD" notAfter="-YYYY-MM-DD" precision offset
-
+      begin # complex case: process date information
+        
         if date_item && date_item[:attributes]
 
           # date1
@@ -271,9 +289,7 @@ module HgvMetaIdentifierHelper
                   end
                 }
               end
-puts '*********************************'
-puts isVague.inspect
-puts isVague2.inspect
+
               if isVague || isVague2
                 
                 # century
@@ -395,8 +411,9 @@ puts isVague2.inspect
 
           end
         end
-      else
-        t[:unknown] = true
+      
+      rescue => e
+        t[:error] =  e.class.to_s + ': ' + e.message + ' (' + e.backtrace.inspect + ')' # $!, $ERROR_INFO
       end
   
       t
