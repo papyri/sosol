@@ -102,14 +102,10 @@ class HGVMetaIdentifier < HGVIdentifier
     doc.elements.each(config[:xpath]){|element|
       node = {:value => '', :attributes => {}, :children => {}}
 
-      if element.text && !element.text.strip.empty?
-
-        if element.name.to_s == 'origDate' # CL: CROMULATE DATE HACK
-          node[:value] = element.to_s.strip.gsub(/<\/?[^>]*>/, "")
-        elsif
-          node[:value] = element.text.strip
-        end
-        
+      if element.name.to_s == 'origDate' # CL: CROMULATE DATE HACK
+        node[:value] = element.to_s.gsub(/[\s]+/, ' ').gsub(/<\/?[^>]*>/, "").strip
+      elsif element.text && !element.text.strip.empty?
+        node[:value] = element.text.strip
       else
         node[:value] = config[:default]
       end
