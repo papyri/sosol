@@ -1,0 +1,29 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #app2col{:class => "helperpop"}
+      = render :partial => 'markup_warn'
+      %h4 Modern correction of ancient error
+      #app_col
+        #app_low
+          %form{:name => "appcorr_corr"}
+            %input{ :type => "checkbox", :class => "corrlow", :id => "appcorr_corr_low", :name => "low", :value => "appcorr_corr_low"} Uncertain
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appcorr_corr_value", :size => "25"}
+        #app_desc
+          Corrected form
+        #app_button
+          %button{ :type => "button", :onclick=>"insertAppCorr()" }Insert
+          &nbsp
+          %button{:type => "button", :onclick => "closeHelper()"}Close
+      #app_col
+        #app_low
+          %form{:name => "appcorr_sic"}
+            %input{ :type => "checkbox", :class => "siclow", :id => "appcorr_sic_low", :name => "low", :value => "appcorr_sic_low"} Uncertain
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appcorr_sic_value", :size => "25"}
+        #app_desc
+          Incorrect form
