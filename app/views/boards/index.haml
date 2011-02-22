@@ -5,13 +5,14 @@
     %th
       Title
     %th
-      Category
+      Rank
   - for board in @boards
     %tr
       %td
         = h board.title
       %td
-        = h board.category
+        = h board.rank
+
       %td
         = link_to 'Show', board
       %td

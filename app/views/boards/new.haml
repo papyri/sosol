@@ -8,13 +8,23 @@
       = f.label :title
       %br
       = f.text_field :title
+      %br
+    %p
+      = f.label :rank
+      %br
+      = f.text_field :rank
+      %br
     %br
     %p
       = f.label "Identifier classes"
       %br
       - @available_identifier_classes.each do |identifier_class|
+        / show all choices
+        = check_box_tag identifier_class
+
         / limit to one choice
-        = radio_button_tag "identifier_class", "#{identifier_class}", "#{identifier_class}"
+        /= check_box_tag  "#{identifier_class}", "#{identifier_class}", false
+
         = identifier_class.sub(/Identifier$/,'')
         %br
     %br

@@ -63,7 +63,8 @@ class BoardsController < ApplicationController
   # GET /boards
   # GET /boards.xml
   def index
-    @boards = Board.find(:all)
+    #@boards = Board.find(:all)
+    @boards = Board.ranked
 
     respond_to do |format|
       format.html # index.html.erb
@@ -90,11 +91,11 @@ class BoardsController < ApplicationController
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     #TODO - is Biblio needed?
-    @available_identifier_classes.delete("HGVBiblioIdentifier")
-    existing_boards = Board.find(:all)
-    existing_boards.each do |b|
-      @available_identifier_classes -= b.identifier_classes    
-    end
+    #@available_identifier_classes.delete("HGVBiblioIdentifier")
+    #existing_boards = Board.find(:all)
+    #existing_boards.each do |b|
+    #  @available_identifier_classes -= b.identifier_classes
+    #end
      
     respond_to do |format|
       format.html # new.html.erb
@@ -113,9 +114,17 @@ class BoardsController < ApplicationController
     @board = Board.new(params[:board])
     
     @board.identifier_classes = []
-    
-    #for now just let them choose one identifer class
-    @board.identifier_classes << params[:identifier_class]
+
+    #let them choose as many ids as they want
+    Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
+      if params.has_key?(identifier_class) && params[identifier_class] == "1"
+        @board.identifier_classes << identifier_class
+      end
+    end
+
+    #just let them choose one identifer class
+    #@board.identifier_classes << params[:identifier_class]
+
 
     if @board.save
       flash[:notice] = 'Board was successfully created.'
