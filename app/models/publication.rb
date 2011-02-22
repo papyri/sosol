@@ -124,10 +124,73 @@ class Publication < ActiveRecord::Base
   end
   
   def submit_to_next_board
+
+    #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
+    @recent_submit_sha = ''
+
+    #determine which ids are ready to be submitted (modified, editing...)
+    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
+
+    #check each board in order by priority rank
+    boards = Board.ranked
+    boards.each do |board|
+
+      #if board.community == publication.community
+        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+        if boards_identifiers.length > 0
+          #submit to that board
+
+
+
+          #find the comment text made on submission
+          comment_text = '' #if no comment found, default to nothing. This should never happen.
+          begin
+            submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
+            if submit_comment && submit_comment.comment
+              comment_text = submit_comment.comment
+            end
+          rescue ActiveRecord::RecordNotFound
+            #comment_text already = ''
+            #TODO raise warning? add error logging
+          end
+
+          #update the change_desc of each submitted identifier
+          boards_identifiers.each do |submitting_identifier|
+            submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(), :comment => comment_text)
+            submitting_identifier.status = "submitted"
+            submitting_identifier.save!
+
+            #make the most recent sha for the identifier available...is this the one we want?
+            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+          end
+
+          #copy the repo, models, etc... to the board
+          boards_copy = copy_to_owner(board)
+          boards_copy.status = "voting"
+          boards_copy.save!
+
+
+
+          #trigger emails
+          board.send_status_emails("submitted", self)
+
+          #update status on user copy
+          self.change_status("submitted")
+          self.save!
+
+          #problem here in that comment will be added to the returned id, but there may be many ids.....
+          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+          return '', boards_identifiers[0]
+        end
+      #end
+    end
+
+
+=begin
     #horrible hack here to specifiy board order, change later with workflow engine
     #1 meta
     #2 transcription
-    #3 translation    
+    #3 translation
     error_text = "" #default to empty for check in controller
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
@@ -136,15 +199,15 @@ class Publication < ActiveRecord::Base
           #submit it
           if submit_identifier(i)
             return error_text, i.id
-          else            
+          else
             error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
             return error_text, nil
           end
         end
       end
-      
+
     end
-    
+=end
     #if we get to this point, nothing else was submitted therefore we are done with publication
     #can this be reached without a commit actually taking place?
 =begin
@@ -152,18 +215,17 @@ class Publication < ActiveRecord::Base
       flash[:warning] = error_text
       # couldnt submit to non exiting board so send back to user?
       #TODO check this
-      self.origin.status = "editing" 
+      self.origin.status = "editing"
       self.save
     end
 =end
     self.origin.change_status("committed")
     self.save
-    
-    return error_text, nil # controller checks returned value for empty or not
-    
+
   end
   
-  
+
+  #nolonger in use 2-22-2010
   def submit_identifier(identifier)
     
     @recent_submit_sha = "";
