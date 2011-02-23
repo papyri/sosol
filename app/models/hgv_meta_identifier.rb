@@ -138,11 +138,6 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
-    
-    puts '....................................'
-    puts attributes_hash.inspect
-    puts '....................................'
-    
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
     epidoc = set_epidoc_attributes
       
@@ -363,16 +358,16 @@ class HGVMetaIdentifier < HGVIdentifier
 
     if data
 
-      if data['value'] && !data['value'].strip.empty?
-        result_item[:value] = data['value'].strip
+      if data['value'] && !data['value'].to_s.strip.empty?
+        result_item[:value] = data['value'].to_s.strip
       elsif config[:default]
         result_item[:value] = config[:default]
       end
 
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
-          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].strip.empty?
-            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].strip
+          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
+            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].to_s.strip
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
