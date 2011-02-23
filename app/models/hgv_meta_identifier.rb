@@ -138,6 +138,11 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
+    
+    puts '....................................'
+    puts attributes_hash.inspect
+    puts '....................................'
+    
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
     epidoc = set_epidoc_attributes
       
@@ -378,7 +383,7 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
-            data[:children][child_key.to_s].each_pair{|index, child|
+            data[:children][child_key.to_s].each{|child|
               children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
             }
             result_item[:children][child_key] = children
