@@ -47,7 +47,8 @@ function helpDialogOpen(view)
       break;
     }
   case "appalt":
-  case "apporth":
+  case "appcorr":
+  case "appreg":
   case "appsubst":
     {
       openconfig = config='height=300, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';

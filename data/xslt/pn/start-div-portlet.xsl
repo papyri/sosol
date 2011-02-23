@@ -10,6 +10,7 @@
   <xsl:include href="../epidoc/htm-teidiv.xsl"/>
   <xsl:include href="../epidoc/htm-teidivedition.xsl"/>
   <xsl:include href="../epidoc/htm-teiforeign.xsl"/>
+  <xsl:include href="../epidoc/htm-teifigure.xsl"/>
   <xsl:include href="../epidoc/htm-teig.xsl"/>
   <xsl:include href="../epidoc/htm-teigap.xsl"/>
   <xsl:include href="../epidoc/htm-teihead.xsl"/>
@@ -32,19 +33,23 @@
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:include href="../epidoc/teiabbrandexpan.xsl"/>
   <xsl:include href="../epidoc/teiaddanddel.xsl"/>
+  <xsl:include href="../epidoc/teicertainty.xsl"/>
   <xsl:include href="../epidoc/teichoice.xsl"/>
   <xsl:include href="../epidoc/teihandshift.xsl"/>
   <xsl:include href="../epidoc/teiheader.xsl"/>
   <xsl:include href="../epidoc/teimilestone.xsl"/>
   <xsl:include href="../epidoc/teiorig.xsl"/>
+  <xsl:include href="../epidoc/teiorigandreg.xsl"/>
   <xsl:include href="../epidoc/teiq.xsl"/>
   <xsl:include href="../epidoc/teisicandcorr.xsl"/>
   <xsl:include href="../epidoc/teispace.xsl"/>
   <xsl:include href="../epidoc/teisupplied.xsl"/>
+  <xsl:include href="../epidoc/teisurplus.xsl"/>
   <xsl:include href="../epidoc/teiunclear.xsl"/>
 
   <!-- html related stylesheets for named templates -->
   <xsl:include href="../epidoc/htm-tpl-lang.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
   
   <xsl:include href="htm-tpl-scripts.xsl"/>
   <xsl:include href="htm-tpl-apparatus-portlet.xsl"/>
@@ -54,6 +59,7 @@
   <!-- global named templates with no html, also used by start-txt -->
   <xsl:include href="../epidoc/tpl-reasonlost.xsl"/>
   <xsl:include href="../epidoc/tpl-certlow.xsl"/>
+  <xsl:include href="../epidoc/tpl-text.xsl"/>
 
 
 
