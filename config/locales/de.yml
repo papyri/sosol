@@ -71,20 +71,7 @@ de:
       fromToDate: Zeitspanne
       offset: Zusatz
       textDate: HGV-Format
-      beginning: Anfang
-      firstHalf: Erste Hälfte
-      firstHalfToMiddle: Erste Hälfte bis Mitte
-      middle: Mitte
-      middleToSecondHalf: Mitte bis zweite Hälfte 
-      secondHalf: Zweite Hälfte
-      end: Ende
-      before: Nicht nach
-      after: Nicht vor
-      certainty09: Wohl...
-      certainty05: (?)
-      dayUncertain: Tag unsicher
-      monthAndYearUncertain: Monat und Jahr unsicher
-      yearUncertain: Jahr unsicher
+      unknown: Unbekannt
       multiAdd: ✓
 
     tooltip:

@@ -70,20 +70,7 @@ en:
       fromToDate: Date span
       offset: Offset
       textDate: HGV format
-      beginning: Beginning
-      firstHalf: First half
-      firstHalfToMiddle: First half to middle
-      middle: Middle
-      middleToSecondHalf: Middle to second half 
-      secondHalf: Second half
-      end: End
-      before: Not after
-      after: Not before
-      certainty09: Probably...
-      certainty05: (?)
-      dayUncertain: Day uncertain
-      monthAndYearUncertain: Month and year uncertain
-      yearUncertain: Year uncertain
+      unknown: Unknown
       multiAdd: add #✓
     tooltip:
       multiAdd: Click to add new item
