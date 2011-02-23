@@ -358,16 +358,16 @@ class HGVMetaIdentifier < HGVIdentifier
 
     if data
 
-      if data['value'] && !data['value'].strip.empty?
-        result_item[:value] = data['value'].strip
+      if data['value'] && !data['value'].to_s.strip.empty?
+        result_item[:value] = data['value'].to_s.strip
       elsif config[:default]
         result_item[:value] = config[:default]
       end
 
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
-          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].strip.empty?
-            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].strip
+          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
+            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].to_s.strip
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
@@ -378,7 +378,7 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
-            data[:children][child_key.to_s].each_pair{|index, child|
+            data[:children][child_key.to_s].each{|child|
               children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
             }
             result_item[:children][child_key] = children

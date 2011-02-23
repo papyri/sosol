@@ -1,6 +1,6 @@
 - base = 'hgv_meta_identifier[textDate][' + date_index.to_s + ']'  
 
-=#debug(date_item)
+=#date_item.inspect
 
 - ['', '2'].each do |i|
   %div
@@ -29,6 +29,10 @@
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.certainty'), :title => @identifier.configuration.xpath(:textDate)
   = select_tag base + '[certainty]', options_for_select(HgvDate.certaintyOptions, date_item[:certainty]), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+
+%p
+  = label_tag 'hgv_meta_identifier', I18n.t('meta.label.unknown'), :title => @identifier.configuration.xpath(:textDate)
+  = check_box_tag base + '[unknown]', 'unknown', date_item[:unknown], :disabled => !@identifier.mutable?, :class => 'observechange unknown'
 
 %p
   -if date_item[:error]

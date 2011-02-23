@@ -67,6 +67,7 @@ en:
       extraDate: Date generation. Display only. No entry possible.
       offset: Offset
       textDate: HGV format
+      unknown: Unknown
       multiAdd: add #✓
     tooltip:
       multiAdd: Click to add new item

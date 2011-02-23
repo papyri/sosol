@@ -68,6 +68,7 @@ de:
       extraDate: Generiertes Datum. Nur zur Anzeige. Keine Eingabe möglich.
       offset: Zusatz
       textDate: HGV-Format
+      unknown: Unbekannt
       multiAdd: ✓
 
     tooltip:

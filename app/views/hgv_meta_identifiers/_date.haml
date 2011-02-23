@@ -7,12 +7,11 @@
       .dateInfo
         - date_item = @identifier.get_date_item date_id
 
-        =#debug(date_item)
-        =#debug(HgvDate.dateInformation date_item)
+        =#date_item.inspect
 
         %fieldset.date
           %legend=I18n.t('meta.label.extraDate')
           = render :partial => 'hgv_meta_identifiers/date_extra', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item }
         %fieldset.date
           %legend=I18n.t('meta.label.date')
-          = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => HgvDate.dateInformation(date_item)}
+          = render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => HgvDate.epidocToHgv(date_item)}
