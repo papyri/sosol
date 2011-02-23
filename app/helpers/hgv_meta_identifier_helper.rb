@@ -7,7 +7,13 @@ module HgvMetaIdentifierHelper
     end
 
     def HgvDate.monthOptions
-      [['', ''], [I18n.t('date.beginning'), 'beginning'], [I18n.t('date.middle'), 'middle'], [I18n.t('date.end'), 'end']]
+      [['', ''], 
+        [I18n.t('date.beginning'), :beginning],
+        [I18n.t('date.beginningCirca'), :beginningCirca],
+        [I18n.t('date.middle'), :middle], 
+        [I18n.t('date.middleCirca'), :middleCirca],
+        [I18n.t('date.end'), :end], 
+        [I18n.t('date.endCirca'), :endCirca]]
     end
 
     def HgvDate.yearOptions
@@ -51,14 +57,23 @@ module HgvMetaIdentifierHelper
     end
 
     def HgvDate.offsetOptions
-      [['', ''], [I18n.t('date.before'), 'before'], [I18n.t('date.after'), 'after']]
+      [['', ''], 
+        [I18n.t('date.before'), :before], 
+        [I18n.t('date.after'), :after], 
+        [I18n.t('date.beforeUncertain'), :beforeUncertain], 
+        [I18n.t('date.afterUncertain'), :afterUncertain]]
     end
 
     def HgvDate.certaintyOptions
-      [['', ''], [I18n.t('date.certaintyHigh'), 'high'], [I18n.t('date.certaintyLow'), 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
-    end
-    def HgvDate.childBase date_index, date_type
-      'hgv_meta_identifier[textDate][' + date_index.to_s + '][children][' + date_type + 'Date][children]'
+      [['', ''], 
+        [I18n.t('date.certaintyLow'), :low], 
+        [I18n.t('date.dayUncertain'), :day], 
+        [I18n.t('date.monthUncertain'), :month], 
+        [I18n.t('date.yearUncertain'), :year],
+        [I18n.t('date.dayAndMonthUncertain'), :day_month],
+        [I18n.t('date.monthAndYearUncertain'), :month_year],
+        [I18n.t('date.dayAndYearUncertain'), :day_year],
+        [I18n.t('date.dayMonthAndYearUncertain'), :day_month_year]]
     end
 
     def HgvDate.getYearIso century, centuryQualifier, chron
