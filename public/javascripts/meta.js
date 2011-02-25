@@ -14,7 +14,6 @@ function openDateTab(dateId)
 
 function toggleMentionedDates(dateId){
   $$('ul#multiItems_mentionedDate > li').each(function(li, index){
-    if(index > 0){
       value = li.select('select.dateId')[0].value;
       if(value == dateId || value == ''){
         li.style.display = 'block';
@@ -22,26 +21,11 @@ function toggleMentionedDates(dateId){
       else{
         li.style.display = 'none';
       }
-    }
   });
   $('mentionedDate_dateId').value = dateId;
 }
 
 toggleMentionedDates('#dateAlternativeX');
-
-function latherUncertainties(selectBox)
-{
-  var value = selectBox.value;
-  var path = selectBox.id.substring(0, selectBox.id.indexOf('_attributes_certaintyPicker'));
-  var certainties = ['day', 'month', 'year'];
-
-  $(path + '_attributes_certainty').value = value == 'high' || value == 'low' ? value : '';
-
-  for(i = 0; i < certainties.length; i++){
-    var certainty = certainties[i];
-    $(path + '_children_' + certainty + '_attributes_certainty').value = value.indexOf(certainty) >= 0 ? 'low' : '';
-  }
-}
 
 /**** multi ****/
 
@@ -62,8 +46,8 @@ function multiAdd(id)
 
 function multiAddBl()
 {
-  var volume = $$('#multiPlus_bl > input')[0].value;
-  var page = $$('#multiPlus_bl > input')[1].value;
+  var volume = $$('#multiPlus_bl > select')[0].value;
+  var page = $$('#multiPlus_bl > input')[0].value;
 
   var index = multiGetNextIndex('bl');
 
@@ -75,6 +59,21 @@ function multiAddBl()
              '</li>';
 
   multiUpdate('bl', item);
+}
+
+function multiAddFigures()
+{
+  var url = $$('#multiPlus_figures > input')[0].value;
+
+  var index = multiGetNextIndex('figures');
+
+  var item = '<li>' +
+             '  <input type="text" value="' + url + '" name="hgv_meta_identifier[figures][' + index + '][children][graphic][attributes][url]" id="hgv_meta_identifier_figures_' + index + '_children_graphic_attributes_url" class="observechange">' +
+             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '  <span class="move">o</span>' +
+             '</li>';
+
+  multiUpdate('figures', item);
 }
 
 function multiAddMentionedDate()
@@ -224,8 +223,12 @@ $('hgv_meta_identifier_submit').observe('click', function(){
     multiAddMentionedDate();
   }
 
-  if($('bl_volume').value.match(/[IVXLCDM]+/)){
+  if($('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
     multiAddBl();
+  }
+  
+  if($('figures_url').value.match(/http:\/\/.+/)){
+    multiAddFigures();
   }
 
   multiAdd('contentText');
