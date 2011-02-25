@@ -283,6 +283,7 @@ class HGVMetaIdentifier < HGVIdentifier
   end
 
   def sort doc
+    # general
     sort_paths = {
       :msIdentifier => {
         :parent => '/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier',
@@ -303,6 +304,44 @@ class HGVMetaIdentifier < HGVIdentifier
             parent.add child
           }
         }
+      end
+    }
+    
+    # date
+
+    doc.elements.each(@configuration.scheme[:textDate][:xpath]){|date|
+      if date.elements['offset']
+
+        hgvFormat = ''
+        date.texts.each{|text|
+          hgvFormat += text.value
+          date.delete text  
+        }
+        hgvFormat = hgvFormat.gsub(/(vor|nach)( \(\?\))?/, '').strip
+        
+        offset = date.elements['offset[position()=1]']
+        offset2 = date.elements['offset[position()=2]']
+        
+        date.delete offset
+        date.delete offset2        
+        
+        if offset
+          date.add_element offset
+          date.add_text REXML::Text.new(' ')
+        end
+        
+        if hgvFormat.include? ' - '
+          hgvFormat = hgvFormat.split ' - '
+          date.add_text REXML::Text.new(hgvFormat[0] + ' - ')
+          if offset2
+            date.add_element offset2
+            date.add_text REXML::Text.new(' ')
+          end
+          date.add_text REXML::Text.new(hgvFormat[1])
+        else
+          date.add_text REXML::Text.new(hgvFormat)
+        end
+
       end
     }
 
