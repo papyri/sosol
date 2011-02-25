@@ -703,6 +703,9 @@ module HgvMetaIdentifierHelper
           }
         end
       end
+      
+      # hgv format
+      t[:value] = HgvFormat.formatDate date_item
 
       t
     end
@@ -756,16 +759,10 @@ module HgvMetaIdentifierHelper
   end
   
   module HgvFormat
-    def HgvFormat.keyStringToSym hashIn
-      hashOut = {}
-      hashIn.each_pair {|k,v|
-        hashOut[k.to_sym] = (v.is_a?(Hash) ? keyStringToSym(v) : v)
-      }
-      hashOut
-    end
 
-    def HgvFormat.formatHgv date_item
-      certainty = ''
+    def HgvFormat.formatDate date_item
+      precision = HgvFormat.formatPrecision date_item[:precision]
+      certainty = HgvFormat.formatCertainty date_item[:certainty]
       
       date1 = formatDatePart(
         date_item[:c],
@@ -775,8 +772,7 @@ module HgvMetaIdentifierHelper
         date_item[:cx],
         date_item[:yx],
         date_item[:mx],
-        date_item[:offset],
-        date_item[:certainty]
+        date_item[:offset]
       )
 
       date2 = formatDatePart(
@@ -787,144 +783,142 @@ module HgvMetaIdentifierHelper
         date_item[:cx2],
         date_item[:yx2],
         date_item[:mx2],
-        date_item[:offset2],
-        date_item[:certainty2]
+        date_item[:offset2]
       )
 
-      return (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
-             (date2 && !date2.empty? ? ' - ' + date2 : '') + 
-             (!certainty.empty? ? ' ' + certainty : '')
-    end
-    
-    def HgvFormat.formatDate date1, date2 = nil
-      #{:century => {:value => '', :extent => '', :certainty => ''}, :year => {:value => '', :extent => '', :certainty => ''}, :month => {:value => '', :extent => '', :certainty => ''}, :day => {:value => '', :extent => '', :certainty => ''}, :offset => '', :certainty => '', :certaintyPicker => ''}
-      
-      date1 = keyStringToSym date1
-      
-      if date2
-        date2 = keyStringToSym date2
-
-        [:century, :year, :month].each{|item|
-          if date1[item][:value] == date2[item][:value] 
-            date1[item][:value] =  nil
-            if date1[item][:extent] == date2[item][:extent]
-              date1[item][:extent] =  nil
-            end
-          end
-        }
-
-      end
-
-      certainty = formatCertaintyPart date1, date2
-
-      date1 = formatDatePart(
-        date1[:century][:value],
-        date1[:year][:value],
-        date1[:month][:value],
-        date1[:day][:value],
-        date1[:century][:extent],
-        date1[:year][:extent],
-        date1[:month][:extent],
-        date1[:offset],
-        date1[:certainty]
-      )
-
-      if date2
-        date2 = formatDatePart(
-          date2[:century][:value],
-          date2[:year][:value],
-          date2[:month][:value],
-          date2[:day][:value],
-          date2[:century][:extent],
-          date2[:year][:extent],
-          date2[:month][:extent],
-          date2[:offset],
-          date2[:certainty]
-        )
-      end
-
-      return (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
-             (date2 && !date2.empty? ? ' - ' + date2 : '') + 
-             (!certainty.empty? ? ' ' + certainty : '')
+      (precision ? precision + ' ' : '') +
+        (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) + 
+        (date2 && !date2.empty? ? ' - ' + date2 : '') + 
+        (certainty ? ' ' + certainty : '')
     end
 
-    def HgvFormat.formatDatePart c = nil, y = nil, m = nil, d = nil, cq = nil, yq = nil, mq = nil, offset = nil, certainty = nil
+    def HgvFormat.formatDatePart c = nil, y = nil, m = nil, d = nil, cq = nil, yq = nil, mq = nil, offset = nil
 
       offset = formatOffset offset
-      m = formatMonth m
-      d = formatDay d
-      y = formatYear y
-      c = formatCentury c
-      mq = formatMonthQualifier mq
-      yq = formatYearQualifier yq
-      cq = formatCenturyQualifier cq
+      m      = formatMonth m
+      d      = formatDay d
+      y      = formatYear y
+      c      = formatCentury c
+      mq     = formatMonthQualifier mq
+      yq     = formatYearQualifier yq
+      cq     = formatCenturyQualifier cq
 
-      return  (certainty && [:high, 'high'].include?(certainty) ? 'ca. ' : '') +
-              ((!offset.empty? ? offset + ' ' : '') +
-              (!d.empty? ? (d + ' ') : '') +
-              (!mq.empty? ? mq + ' ' : '') +
-              (!m.empty? ? m + ' ' : '') +
-              (!yq.empty? ? yq + ' ' : '') +
-              (!y.empty? ? y.to_s + ' ' : '') +
-              (!cq.empty? ? cq + ' ' : '') +
-              (!c.empty? ? c : '')).strip +
-              (certainty && certainty.to_s == 'low' ? ' (?)' : '')
-    end
-
-    def HgvFormat.formatCertaintyPart date1, date2
-      uncertainties = []
-      [date1, date2].each{|date|
-        if date.class == Hash
-          date.each_pair{|k, v|
-            if v.class == Hash
-              v.each_pair{|l, w|
-                if l == :certainty && ['low', :low].include?(w)
-                  uncertainties[uncertainties.length] = k
-                end
-              }
-            end
-          }
-        end
-      }
-
-      uncertainties = uncertainties.uniq.collect{|item|
-        {:century => 'Jahrhundert', :year => 'Jahr', :month => 'Monat', :day => 'Tag'}[item]
-      }.join(', ').sub(/, [^,]+$/) {|match| match.sub(/, /, ' und ')}
-      
-      return !uncertainties.empty? ? '(' + uncertainties + ' unsicher)' : ''
+      ((offset ? offset + ' ' : '') +
+        (d ? (d + ' ') : '') +
+        (mq ? mq + ' ' : '') +
+        (m ? m + ' ' : '') +
+        (yq ? yq + ' ' : '') +
+        (y ? y.to_s + ' ' : '') +
+        (cq ? cq + ' ' : '') +
+        (c ? c : '')).strip
     end
 
     def HgvFormat.formatOffset offset
-      offset = {:before => 'vor', :after => 'nach'}[offset.class == Symbol ? offset : (offset.class == String && !offset.empty? ? offset.to_sym : nil)]
-      return  offset ? offset : ''
+      HgvFormat.format offset, {
+        :before => 'vor',
+        :after => 'nach',
+        :beforeUncertain => 'vor (?)',
+        :afterUncertain => 'nach (?)'
+      }
     end
+    
+    def HgvFormat.formatCertainty certainty
+      HgvFormat.format certainty, {
+        :low            => '(?)',
+        :day            => '(Tag unsicher)',
+        :month          => '(Monat unsicher)',
+        :year           => '(Jahr unsicher)',
+        :day_month      => '(Monat und Tag unsicher)',
+        :month_year     => '(Jahr und Monat unsicher)',
+        :day_year       => '(Jahr und Tag unsicher)',
+        :day_month_year => '(Jahr, Monat und Tag unsicher)'
+      }
+    end
+    
+    def HgvFormat.formatPrecision precision
+      HgvFormat.format precision, {
+        :ca => 'ca.'
+      }
+    end
+
     def HgvFormat.formatDay day
-      return  (day && day.to_i > 0) ? (day.to_i.to_s + '.') : ''
+      (day && day.to_i > 0) ? (day.to_i.to_s + '.') : nil
     end
+    
     def HgvFormat.formatMonth month
       months = ['', 'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
-      return month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : ''
+      month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : nil
     end
+    
     def HgvFormat.formatYear year
-      return year && year.to_i != 0 ? year.to_i.abs.to_s + (year.to_i < 0 ? ' v.Chr.' :'') : ''
+      year && year.to_i != 0 ? year.to_i.abs.to_s + (year.to_i < 0 ? ' v.Chr.' : '') : nil
     end
+    
     def HgvFormat.formatCentury century
-      return century && century.to_i != 0 ? century.to_i.abs.roman.to_s + (century.to_i < 0 ? ' v.Chr.' :'') : ''
+      century && century.to_i != 0 ? century.to_i.abs.roman.to_s + (century.to_i < 0 ? ' v.Chr.' : '') : nil
     end
+    
     def HgvFormat.formatMonthQualifier q
-      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
-      map = {:beginning => 'Anfang', :middle => 'Mitte', :end => 'Ende'}
-      return map.has_key?(q) ? map[q] : '' 
+      HgvFormat.format q, {
+        :beginning => 'Anfang', 
+        :middle    => 'Mitte', 
+        :end       => 'Ende',
+        :beginningCirca => 'Anfang (?)', 
+        :middleCirca    => 'Mitte (?)', 
+        :endCirca       => 'Ende (?)'
+      }
     end
+    
     def HgvFormat.formatYearQualifier q
-      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
-      map = {:beginning => 'Anfang', :first_half => '1. Hälfte', :first_half_to_middle => 'Mitte', :middle => 'Mitte', :middle_to_second_half => 'Mitte', :second_half => '2. Hälfte', :end => 'Ende'}
-      return map.has_key?(q) ? map[q] : '' 
+      HgvFormat.format q, {
+        :beginning          => 'Anfang', 
+        :firstHalf          => '1. Hälfte', 
+        :firstHalfToMiddle  => '1. Hälfte - Mitte', 
+        :middle             => 'Mitte', 
+        :middleToSecondHalf => 'Mitte - 2. Hälfte',
+        :secondHalf         => '2. Hälfte',
+        :end                => 'Ende',
+        :beginningCirca          => 'Anfang (?)', 
+        :firstHalfCirca          => '1. Hälfte (?)', 
+        :firstHalfToMiddleCirca  => '1. Hälfte - Mitte (?)', 
+        :middleCirca             => 'Mitte (?)', 
+        :middleToSecondHalfCirca => 'Mitte - 2. Hälfte (?)',
+        :secondHalfCirca         => '2. Hälfte (?)',
+        :endCirca                => 'Ende (?)'
+      }
     end
+
     def HgvFormat.formatCenturyQualifier q
-      q = q.class == Symbol ? q : q.class == String && !q.empty? ? q.to_sym : nil
-      map = {:beginning => 'Anfang', :first_half => '1. Hälfte', :first_half_to_middle => 'Mitte', :middle => 'Mitte', :middle_to_second_half => 'Mitte', :second_half => '2. Hälfte', :end => 'Ende'}
-      return map.has_key?(q) ? map[q] : '' 
+      HgvFormat.format q, {
+        :beginning          => 'Anfang',
+        :beginningToMiddle  => 'Anfang - Mitte',
+        :firstHalf          => '1. Hälfte',
+        :firstHalfToMiddle  => '1. Hälfte - Mitte',
+        :middle             => 'Mitte',
+        :middleToSecondHalf => 'Mitte - 2. Hälfte',
+        :secondHalf         => '2. Hälfte',
+        :middleToEnd        => 'Mitte - Ende',
+        :end                => 'Ende',
+        :beginningCirca          => 'Anfang (?)',
+        :beginningToMiddleCirca  => 'Anfang - Mitte (?)',
+        :firstHalfCirca          => '1. Hälfte (?)',
+        :firstHalfToMiddleCirca  => '1. Hälfte - Mitte (?)',
+        :middleCirca             => 'Mitte (?)',
+        :middleToSecondHalfCirca => 'Mitte - 2. Hälfte (?)',
+        :secondHalfCirca         => '2. Hälfte (?)',
+        :middleToEndCirca        => 'Mitte - Ende (?)',
+        :endCirca                => 'Ende (?)'
+      } 
+    end
+    
+    def HgvFormat.format key, list
+      begin
+        key = key.to_sym
+      rescue
+        key = nil
+      end
+
+      list[key]
     end
   end
 
