@@ -60,8 +60,8 @@ function multiAdd(id)
 
 function multiAddBl()
 {
-  var volume = $$('#multiPlus_bl > input')[0].value;
-  var page = $$('#multiPlus_bl > input')[1].value;
+  var volume = $$('#multiPlus_bl > select')[0].value;
+  var page = $$('#multiPlus_bl > input')[0].value;
 
   var index = multiGetNextIndex('bl');
 
@@ -222,7 +222,7 @@ $('hgv_meta_identifier_submit').observe('click', function(){
     multiAddMentionedDate();
   }
 
-  if($('bl_volume').value.match(/[IVXLCDM]+/)){
+  if($('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
     multiAddBl();
   }
 
