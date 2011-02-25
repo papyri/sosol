@@ -50,6 +50,15 @@
     :illustrations:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/p/bibl[@type='illustration']
       :multiple: true
+    :figures:
+      :xpath: /TEI/text/body/div[@type='figure']/p/figure
+      :children:
+        :graphic:
+          :xpath: graphic
+          :attributes:
+            :url:
+              :name: url
+      :multiple: true
     :contentText:
       :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='hgv']/term
       :multiple: true
