@@ -291,7 +291,7 @@ div#edit div.multi ul#multiItems_translationsLa li input {
 /* *** date *** */
 div#edit div#dateContainer {
   position: relative;
-  height: 500px;
+  height: 400px;
   padding: 0;
   margin: 0;
   background-color: lightpink; }
@@ -352,5 +352,7 @@ div#edit fieldset.date p select {
   width: 120px;
   float: left; }
 
-div#edit fieldset.date p select.offset, div#edit fieldset.date p select.certainty {
+div#edit fieldset.date p select.offset,
+div#edit fieldset.date p select.precision,
+div#edit fieldset.date p select.certainty {
   width: 168px; }
