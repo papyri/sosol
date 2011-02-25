@@ -119,6 +119,11 @@
         %fieldset
           %legend=I18n.t('meta.legend.reference')
 
+          =#debug( @identifier[:figures])
+          
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
+          = render :partial => 'hgv_meta_identifiers/figures'
+          
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :illustrations }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :illustrations }
 
