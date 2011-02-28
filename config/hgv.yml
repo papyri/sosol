@@ -98,13 +98,13 @@
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
     :provenanceAncientFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/placeName[@type='ancientFindspot']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
     :provenanceNome:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='nome']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='nome']
     :provenanceAncientRegion:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='ancientRegion']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='ancientRegion']
     :provenanceModernFindspot: #guessed at this one
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='modernFindspot']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='modernFindspot']
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/
