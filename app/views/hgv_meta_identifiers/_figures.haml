@@ -9,7 +9,7 @@
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add#multiPlus_figures
 
-    %input#figures_url
+    %input#figures_url.observechange
 
     %span{:onclick => "multiAddFigures()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
 
