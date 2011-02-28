@@ -550,7 +550,7 @@ module HgvMetaIdentifierHelper
               t[:y2] = (t[:y2] == t[:y] ? nil : t[:y2])
               t[:m2] = (t[:m2] == t[:m] ? nil : t[:m2])
               t[:d2] = (t[:d2] == t[:d] ? nil : t[:d2])
-              t[:precision2] = (!t[:d2]  && !t[:m2]  && !t[:y2] ? nil : t[:precision2])
+              t[:precision2] = (!t[:d2]  && !t[:m2]  && !t[:y2]  && !t[:c2]  ? nil : t[:precision2])
 
             end
 
