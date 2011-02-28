@@ -2,12 +2,16 @@
 = render :partial => "common/flash_all"  
 %h1
   = @board.title
-edit board for 
+%b Editorial Board for
+%br
 - @board.identifier_classes.each do |ic|
   = ic
-  <br />
-  
-<br /><br />
+  %br
+%b
+  = 'Rank is '
+=@board.rank.to_s
+%br
+%br
 
 - form_for(@board) do |f|
   = f.error_messages 

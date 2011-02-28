@@ -1,29 +1,30 @@
-= stylesheet_link_tag "board"
-= render :partial => "common/flash_all"  
+#main.site
+	= stylesheet_link_tag "board"
+	= render :partial => "common/flash_all"  
 
-%h1
-  Listing boards
-%table
-  %tr
-    %th
-      Title
-    %th
-      Rank
-  - for board in @boards
-    %tr
-      %td
-        = h board.title
-      %td
-        = h board.rank
+	%h1
+		Listing boards
+	%table
+		%tr
+			%th
+				Title
+			-#%th
+				Rank
+		- for board in @boards
+			%tr
+				%td
+					= h board.title
+				-#%td
+					= h board.rank
 
-      %td
-        = link_to 'Show', board
-      %td
-        = link_to 'Edit', edit_board_path(board)
-      %td
-        = link_to 'Destroy', board, :confirm => 'Are you sure?', :method => :delete
-%br
-%p
-  = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
-%p
-  = link_to 'New board', new_board_path
+				%td
+					= link_to 'Show', board
+				%td
+					= link_to 'Edit', edit_board_path(board)
+				%td
+					= link_to 'Destroy', board, :confirm => 'Are you sure?', :method => :delete
+	%br
+	%p
+		= link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
+	%p
+		= link_to 'New board', new_board_path
