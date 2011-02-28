@@ -545,11 +545,12 @@ module HgvMetaIdentifierHelper
                 end
               end
               
-              # kill doublets
+              # kill doublets and left overs
 
               t[:y2] = (t[:y2] == t[:y] ? nil : t[:y2])
               t[:m2] = (t[:m2] == t[:m] ? nil : t[:m2])
               t[:d2] = (t[:d2] == t[:d] ? nil : t[:d2])
+              t[:precision2] = (!t[:d2]  && !t[:m2]  && !t[:y2] ? nil : t[:precision2])
 
             end
 
@@ -656,16 +657,15 @@ module HgvMetaIdentifierHelper
         # precision
         precision = HgvDate.getPrecision(date_item[:precision], date_item[:cx], date_item[:yx], date_item[:mx])
         precision2 = HgvDate.getPrecision(date_item[:precision2], date_item[:cx2], date_item[:yx2], date_item[:mx2])
-  
+
         if precision && ((precision == precision2) || ([t[:attributes][:when], t[:attributes][:notBefore], t[:attributes][:notAfter]].compact.length == 1))
           if precision == :lowlow
             t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem '0.1'
           else
             t[:attributes][:precision] = precision
           end
-        end
-        if precision
-          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision == :low ? nil : (precision == :medium ? '0.5' : '0.1'), t[:attributes][:when] ? '../@when' : '../@notBefore')
+        elsif precision
+           t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision == :low ? nil : (precision == :medium ? '0.5' : '0.1'), t[:attributes][:when] ? '../@when' : '../@notBefore')
         end
         if precision2
           t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision2 == :low ? nil : (precision2 == :medium ? '0.5' : '0.1'), '../@notAfter')
