@@ -145,9 +145,9 @@ class Repository
   #(from_branch, to_branch, from_repo)
   def copy_branch_from_repo(branch, new_branch, other_repo)
     # Lightweight (but have to watch out for side-effects of repo deletion):
-    # self.add_alternates(other_repo)
+    self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
-    self.fetch_objects(other_repo)
+    # self.fetch_objects(other_repo)
     
     head_ref = other_repo.repo.get_head(branch).commit.sha
     self.create_branch(new_branch, head_ref)
