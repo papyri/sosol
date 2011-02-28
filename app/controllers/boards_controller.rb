@@ -160,4 +160,30 @@ class BoardsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+
+  def rank
+    @boards = Board.ranked;
+  end
+
+  def update_rankings
+
+    @boards = Board.find(:all)
+    rankings = params[:ranking].split(',')
+
+    rank_count = 1
+    rankings.each do |rank_title|
+      @boards.each do |board|
+        if (board.title == rank_title)
+          board.rank = rank_count
+          board.save!
+          break;
+        end
+      end
+      rank_count+= 1
+    end
+    redirect_to :action => "index"
+  end
+
+
 end

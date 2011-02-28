@@ -20,4 +20,7 @@
       %td
         = link_to 'Destroy', board, :confirm => 'Are you sure?', :method => :delete
 %br
-= link_to 'New board', new_board_path
+%p
+  = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
+%p
+  = link_to 'New board', new_board_path

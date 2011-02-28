@@ -10,7 +10,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :docos
 
-  map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get} 
+  map.resources :boards, :collection => { :rank => :get, :update_rankings => :post } 
+  map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
+  
  
   map.resources :users
  	
