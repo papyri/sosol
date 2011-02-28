@@ -668,7 +668,7 @@ module HgvMetaIdentifierHelper
           t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision == :low ? nil : (precision == :medium ? '0.5' : '0.1'), t[:attributes][:when] ? '../@when' : '../@notBefore')
         end
         if precision2
-          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision2 == :low ? nil : (precision2 == :medium ? '0.5' : '0.1'), '../@notAfer')
+          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision2 == :low ? nil : (precision2 == :medium ? '0.5' : '0.1'), '../@notAfter')
         end
 
         
