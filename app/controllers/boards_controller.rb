@@ -111,6 +111,8 @@ class BoardsController < ApplicationController
   # POST /boards
   # POST /boards.xml
   def create
+
+
     @board = Board.new(params[:board])
     
     @board.identifier_classes = []
@@ -125,6 +127,9 @@ class BoardsController < ApplicationController
     #just let them choose one identifer class
     #@board.identifier_classes << params[:identifier_class]
 
+    #put the new board in last rank
+    #TODO add count for community
+    @board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
 
     if @board.save
       flash[:notice] = 'Board was successfully created.'
