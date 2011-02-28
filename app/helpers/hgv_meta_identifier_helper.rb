@@ -763,11 +763,11 @@ module HgvMetaIdentifierHelper
     def HgvFormat.formatDate date_item
       precision = HgvFormat.formatPrecision date_item[:precision]
       certainty = HgvFormat.formatCertainty date_item[:certainty]
-      
+
       date1 = formatDatePart(
         date_item[:c],
-        date_item[:y],
-        date_item[:m],
+        date_item[:y2] ==  nil && (date_item[:m2] || date_item[:d2]) ? nil : date_item[:y],
+        date_item[:m2] ==  nil && date_item[:d2] ? nil : date_item[:m],
         date_item[:d],
         date_item[:cx],
         date_item[:yx],
@@ -777,8 +777,8 @@ module HgvMetaIdentifierHelper
 
       date2 = formatDatePart(
         date_item[:c2],
-        date_item[:y2],
-        date_item[:m2],
+        date_item[:y2] ==  nil && (date_item[:m2] || date_item[:d2]) ? date_item[:y] : date_item[:y2],
+        date_item[:m2] ==  nil && date_item[:d2] ? date_item[:m] : date_item[:m2],
         date_item[:d2],
         date_item[:cx2],
         date_item[:yx2],
