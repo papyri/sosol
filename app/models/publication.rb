@@ -180,7 +180,7 @@ class Publication < ActiveRecord::Base
 
           #problem here in that comment will be added to the returned id, but there may be many ids.....
           #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-          return '', boards_identifiers[0]
+          return '', boards_identifiers[0].id
         end
       #end
     end
