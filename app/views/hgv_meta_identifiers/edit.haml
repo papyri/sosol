@@ -4,26 +4,28 @@
   = render :partial => 'identifiers/edit_bar'
   .site.metaSite
     = render :partial => 'identifiers/header'
+    .expandAll#expandAll=I18n.t('meta.label.expandAll')
 
     #edit
       - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
-        = f.error_messages 
+        = f.error_messages
 
-        %fieldset
-          %legend=I18n.t('meta.legend.date')
+        %h4.category=I18n.t('meta.legend.date')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.date' }
           %br
-
           = render :partial => 'hgv_meta_identifiers/date'
-
-        %fieldset
-          %legend=I18n.t('meta.legend.mentionedDate')
-
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
+          
+        %h4.category=I18n.t('meta.legend.mentionedDate')
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/mentioned_date'
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.general')
-
+        %h4.category=I18n.t('meta.legend.general')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
 
@@ -38,10 +40,11 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease }
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.publication')
-
+        %h4.category=I18n.t('meta.legend.publication')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationTitle }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationTitle }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' }
@@ -77,10 +80,11 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationPages }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationPages }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationPages' }
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.collection')
-
+        %h4.category=I18n.t('meta.legend.collection')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' }
@@ -100,10 +104,11 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' }
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.provenance')
-
+        %h4.category=I18n.t('meta.legend.provenance')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientFindspot }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientFindspot }
 
@@ -115,12 +120,11 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientRegion }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientRegion }
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.reference')
-
-          =#debug( @identifier[:figures])
-          
+        %h4.category=I18n.t('meta.legend.reference')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'hgv_meta_identifiers/figures'
           
@@ -132,10 +136,11 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl }
           = render :partial => 'hgv_meta_identifiers/bl'
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %div.quickSave=I18n.t('meta.label.quickSave')
 
-        %fieldset
-          %legend=I18n.t('meta.legend.translation')
-
+        %h4.category=I18n.t('meta.legend.translation')
+        .editbox
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsDe }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsDe }
 
@@ -153,6 +158,8 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
+          %div{:style => 'float: none; clear: both; display: block;'}      
+          %div.quickSave=I18n.t('meta.label.quickSave')    
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
