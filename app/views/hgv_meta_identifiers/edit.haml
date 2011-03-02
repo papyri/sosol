@@ -4,7 +4,8 @@
   = render :partial => 'identifiers/edit_bar'
   .site.metaSite
     = render :partial => 'identifiers/header'
-    .expandAll#expandAll=I18n.t('meta.label.expandAll')
+    %span.expandAll#expandAll=I18n.t('meta.label.expandAll')
+    %span.collapseAll#collapseAll=I18n.t('meta.label.collapseAll')
 
     #edit
       - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 

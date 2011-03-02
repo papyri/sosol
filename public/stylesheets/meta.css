@@ -1,5 +1,6 @@
 /* *** quicksave / expand / collapse *** */
 .expandAll,
+.collapseAll,
 .quickSave {
   cursor: pointer;
   cursor: hand;

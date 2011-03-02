@@ -72,6 +72,7 @@ en:
       unknown: Unknown
       multiAdd: add #✓
       expandAll: expand all
+      collapseAll: collapse all
       quickSave: quick save
     tooltip:
       multiAdd: Click to add new item

@@ -257,6 +257,7 @@ Event.observe(window, 'load', function() {
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
   $$('.category').each(function(e){e.next().hide();});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
+  $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
   $$('.quickSave').each(function(e){e.observe('click', function(e){$$('form.edit_hgv_meta_identifier')[0].submit();});});
 });
 

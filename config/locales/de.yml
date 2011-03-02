@@ -73,6 +73,7 @@ de:
       unknown: Unbekannt
       multiAdd: ✓
       expandAll: alles aufklappen
+      collapseAll: alles zuklappen
       quickSave: schnell alles speichern
 
     tooltip:
