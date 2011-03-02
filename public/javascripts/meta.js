@@ -1,5 +1,17 @@
 /**** date ****/
 
+function hideDateTabs(){
+
+  if($('hgv_meta_identifier_textDate_1_attributes_id').value.indexOf('(') < 0 &&
+     $('hgv_meta_identifier_textDate_2_attributes_id').value.indexOf('(') < 0){
+    //alert('all hide!!!');
+  }
+}
+
+function showDateTabs(){
+  
+}
+
 function openDateTab(dateId)
 {
   $$('div#edit div#dateContainer div.dateItem').each(function(dateItem){
@@ -218,7 +230,7 @@ function mentionedDateNewCertainty(selectbox)
 
 /**** check ****/
 
-$('hgv_meta_identifier_submit').observe('click', function(){
+function checkNotAddedMultiples(){
   if($('mentionedDate_date').value.match(/-?\d{4}-\d{2}-\d{2}/)){
     multiAddMentionedDate();
   }
@@ -240,7 +252,7 @@ $('hgv_meta_identifier_submit').observe('click', function(){
   multiAdd('translationsEs');
   multiAdd('translationsLa');
   multiAdd('translationsFr');
-});
+}
 
 /**** toggle view ****/
 
@@ -285,10 +297,12 @@ function showExpansions(){
 
 Event.observe(window, 'load', function() {
   showExpansions();
+  hideDateTabs();
+  $('hgv_meta_identifier_submit').observe('click', checkNotAddedMultiples);
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
-  $$('.quickSave').each(function(e){e.observe('click', function(e){rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
 });
 
 // todo: if an item has been moved the »observeChange« alert needs to be triggered
