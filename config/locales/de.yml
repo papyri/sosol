@@ -74,7 +74,7 @@ de:
       multiAdd: ✓
       expandAll: alles aufklappen
       collapseAll: alles zuklappen
-      quickSave: schnell alles speichern
+      quickSave: alle Daten speichern
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen
@@ -89,10 +89,6 @@ de:
 
     help:
       date: 'Datumseingaben werden generiert, indem die entsprechenden Werte im Abschnitt "Datum" für einfache Daten oder im Abschnitt "Zeitspanne" für Daten, die eine zeitliche Periode umfassen, ausgewertet werden. Nachdem die Werte eingegeben wurden, muss das Kontrollkästchen "Date master" aktiviert und der Speichern-Knopf gedrückt werden, um das HGV-Format zu generieren. Die Werte selbst, die in den entsprechenden Feldern eingegeben wurden, werden verworfen und nicht mehr angezeigt. Dies ist eine vorübergehend notwendige Maßnahme, während die Konzeptualisierungsarbeiten und Programmierarbeiten am Datumsformat andauern. Um ein vorchristliches Datum einzugeben, das "-"-Zeichen (Minus) verwenden, z.B. -146 im Feld "Jahr" erstellt "146 v.Chr." Wenn Änderungen gemacht werden, bezieht sich dies immer auf <b>ALLE</b> Teile und Alternativen der Datumskomponente. Es müssen immer alle Felder des Datums gefüllt werden, bevor "Date master" angehakt und der Speichern-Knopf gedrückt werden sollte, ansonsten wird das HGV-Format leer angezeigt.'
-      datemaster: '<b>NUR</b> benutzen, falls Änderungen im Datumsfeld getätigt wurden. Wurde das Datum eingegeben, dieses Kontrollfeld anhaken und den Speichern-Knopf klicken. Dies stellt sicher, dass das Datum in das HGV-Format umgewandelt wird. Zugleich löscht es alle bisherigen Einträge aus den Datumsfeldern. Dies ist eine vorübergehend notwendige Maßnahme, während die Konzeptualisierungsarbeiten und Programmierarbeiten am Datumsformat andauern.'
-      on_date: 'Angabe eines genauen Zeitpunkts, für die Angabe eines vorchristlichen Datums ein "-"-Zeichen verwenden'
-      not_before_date: 'Angabe des frühest möglichen Zeitpunkts eines Ereignisses im Standardformat, z.B. yyyy-mm-dd.'
-      not_after_date: 'Angabe des spätest möglichen Zeitpunkts eines Ereignisses im Standardformat, z.B. yyyy-mm-dd.'
       text_date: 'Enthält ein beliebiges Datumsformat, wird verwendet um das Geburtsdatum eine Manuskripts oder Teil eines Manuskripts anzugeben.'
       title_stmt: 'Titel des Inhalts.'
       publicationTitle: 'Titel der Publikation, z.B. BGU, P.Oxy'
