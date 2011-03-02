@@ -25,6 +25,8 @@ class HgvMetaIdentifiersController < IdentifiersController
     end
     
     save_comment(params[:comment], commit_sha)
+    
+    flash[:expansionSet] = params[:expansionSet]
 
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)

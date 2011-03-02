@@ -246,20 +246,49 @@ $('hgv_meta_identifier_submit').observe('click', function(){
 
 function toggleCatgory(event) {
   if(!this.next().visible()){
-    $$('.category').each(function(e){e.next().hide();});
     $(this).next().show();
   } else {
     $(this).next().hide();
   }
 }
 
+function rememberToggledView(){
+  var expansionSet = '';
+
+  $$('.category').each(function(e){
+
+    if(e.next().visible()){
+      expansionSet += e.classNames().reject(function(item){
+        return item == 'category' ? true : false;
+      })[0] + ';';
+    }
+  });
+  
+  $('expansionSet').value = expansionSet;
+}
+
+function showExpansions(){
+  var expansionSet = $('expansionSet').value;
+  $$('.category').each(function(e){
+    
+    var classy = e.classNames().reject(function(item){
+        return item == 'category' ? true : false;
+      })[0];
+
+    if(expansionSet.indexOf(classy) < 0){
+      e.next().hide();
+    }
+  });
+  $('expansionSet').value = '';
+}
+
+
 Event.observe(window, 'load', function() {
+  showExpansions();
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
-  $$('.category').each(function(e){e.next().hide();});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
-  $$('.quickSave').each(function(e){e.observe('click', function(e){$$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
 });
-
 
 // todo: if an item has been moved the »observeChange« alert needs to be triggered
