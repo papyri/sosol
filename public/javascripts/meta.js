@@ -242,4 +242,23 @@ $('hgv_meta_identifier_submit').observe('click', function(){
   multiAdd('translationsFr');
 });
 
+/**** toggle view ****/
+
+function toggleCatgory(event) {
+  if(!this.next().visible()){
+    $$('.category').each(function(e){e.next().hide();});
+    $(this).next().show();
+  } else {
+    $(this).next().hide();
+  }
+}
+
+Event.observe(window, 'load', function() {
+  $$('.category').each(function(e){e.observe('click', toggleCatgory);});
+  $$('.category').each(function(e){e.next().hide();});
+  $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){$$('form.edit_hgv_meta_identifier')[0].submit();});});
+});
+
+
 // todo: if an item has been moved the »observeChange« alert needs to be triggered
