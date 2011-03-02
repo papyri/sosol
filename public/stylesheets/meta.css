@@ -1,11 +1,17 @@
-/* *** quicksave / expand / collapse *** */
+/* *** quicksave / expand / collapse / showDateTabs *** */
 .expandAll,
 .collapseAll,
+.showDateTabs,
 .quickSave {
   cursor: pointer;
   cursor: hand;
   color: #c0c0c0;
   text-decoration: underline; }
+
+.showDateTabs {
+  position: absolute;
+  right: 2em;
+  top: 2em; }
 
 /* *** quickhelp *** */
 span.quickHelp {

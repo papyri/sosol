@@ -75,6 +75,7 @@ en:
       expandAll: expand all
       collapseAll: collapse all
       quickSave: save entire file
+      showDateTabs: add further dates
 
     tooltip:
       multiAdd: Click to add new item
@@ -88,7 +89,7 @@ en:
       multiMentionedDateDateId: Relation to a special date entry
 
     help:
-      date: 'Enter the appropriate values for year, month and day in the section "Date" making use of the drop down menus and additional fields to add relevant information where necessary. To enter a BCE date use the "-" (minus) character, as appropriate, e.g. -146 in the box "Year" will generate "146 v.Chr." By clicking "quick save" the changes made can be observed in the HGV format section.'
+      date: 'Enter the appropriate values for year, month and day in the section "Date" making use of the drop down menus and additional fields to add relevant information where necessary. To enter a BCE date use the "-" (minus) character, as appropriate, e.g. -146 in the box "Year" will generate "146 v.Chr." By clicking "save entire file" the changes made can be observed in the HGV format section.'
       on_date: 'Specific date, use "-"-sign to mark the date before Christ'
       text_date: 'Contains any form of date, used to identify the date of origin for a manuscript or manuscript part.'
       title_stmt: 'Title of the content.'

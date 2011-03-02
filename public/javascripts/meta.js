@@ -1,15 +1,24 @@
 /**** date ****/
 
 function hideDateTabs(){
+  if($($('hgv_meta_identifier_textDate_1_attributes_id').parentNode).getElementsBySelector('span')[0].innerHTML.indexOf('(') >= 0){
+    
+    // hide date tabs
+    $$('div#dateContainer div.dateItem div.dateTab').each(function(e){e.hide();});
+    
+    // activate show-button
+    $$('.showDateTabs').each(function(e){e.observe('click', function(ev){showDateTabs();});});
 
-  if($('hgv_meta_identifier_textDate_1_attributes_id').value.indexOf('(') < 0 &&
-     $('hgv_meta_identifier_textDate_2_attributes_id').value.indexOf('(') < 0){
-    //alert('all hide!!!');
+  } else {
+
+    // hide show-button
+    $$('.showDateTabs').each(function(e){e.hide();});
   }
 }
 
 function showDateTabs(){
-  
+  $$('div#dateContainer div.dateItem div.dateTab').each(function(e){e.show();});
+  $$('.showDateTabs').each(function(e){e.hide();});
 }
 
 function openDateTab(dateId)
@@ -298,6 +307,7 @@ function showExpansions(){
 Event.observe(window, 'load', function() {
   showExpansions();
   hideDateTabs();
+
   $('hgv_meta_identifier_submit').observe('click', checkNotAddedMultiples);
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});

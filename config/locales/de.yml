@@ -75,6 +75,7 @@ de:
       expandAll: alles aufklappen
       collapseAll: alles zuklappen
       quickSave: alle Daten speichern
+      showDateTabs: weitere Datumseinträge vornehmen
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen
