@@ -38,5 +38,5 @@
   - @board.emailers.each do |email|
     = render :partial => email, :locals =>  {:hide_edit_link=> 'true'}
 
-
-= link_to 'Edit', edit_board_path(@board)  
+%br
+= link_to 'Edit This Board', edit_board_path(@board)
