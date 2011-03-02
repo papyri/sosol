@@ -71,6 +71,8 @@ de:
       textDate: HGV-Format
       unknown: Unbekannt
       multiAdd: ✓
+      expandAll: alles aufklappen
+      quickSave: schnell alles speichern
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen

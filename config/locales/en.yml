@@ -70,6 +70,8 @@ en:
       textDate: HGV format
       unknown: Unknown
       multiAdd: add #✓
+      expandAll: expand all
+      quickSave: quick save
     tooltip:
       multiAdd: Click to add new item
       multiDelete: Click to delete item
