@@ -70,10 +70,13 @@
 
       %p
         = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : 'hgv.gif')  
-
+        - if identifier.needs_reviewing?
+          %b !
         = identifier.title
-        - if identifier.modified? && @publication .status == "voting" && @publication.owner_type == "Board" && @publication.owner.controls_identifier?(identifier)
+        -# if identifier.modified? && @publication .status == "voting" && @publication.owner_type == "Board" && @publication.owner.controls_identifier?(identifier)
+        -# if identifier.needs_reviewing?
           Needs Reviewing
+
         - if @publication.status != "archived"
           = render :partial => identifier
 

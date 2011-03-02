@@ -346,4 +346,8 @@ class Identifier < ActiveRecord::Base
     #delete
   end
 
+  def needs_reviewing?
+    return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self)
+  end
+
 end
