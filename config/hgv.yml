@@ -97,6 +97,8 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
+    :provenanceUnknown:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
     :provenanceAncientFindspot:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
     :provenanceNome:

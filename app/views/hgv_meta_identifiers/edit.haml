@@ -120,6 +120,9 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientRegion }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientRegion }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceUnknown }
+          = render :partial => 'hgv_meta_identifiers/check_box', :locals => { :key => :provenanceUnknown, :value => 'unbekannt' }
           %div{:style => 'float: none; clear: both; display: block;'}
           %div.quickSave=I18n.t('meta.label.quickSave')
 
