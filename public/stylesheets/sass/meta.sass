@@ -47,11 +47,13 @@ span.quickHelp span.message
 div.metaSite
   width: 50em
 
-div#edit fieldset legend
+div#edit h5
   margin: 0.4em 0 0
   padding: 0.4em
   font-weight: bold
+  font-size: 10pt
   font-variant: small-caps
+  position: relative
 
 div#edit h4
   background: url("/images/menu_strip_down_arrow.png") no-repeat scroll right top #C0C0C0
@@ -373,24 +375,37 @@ div#edit div#dateContainer div.dateItemActive div.dateInfo
 div#edit div#dateContainer div.dateItem div.dateInfo div
   float: left
 
-div#edit fieldset.date p 
+div#edit div.dateItem div.dateInfo p 
   float: none
   clear: both
 
-div#edit fieldset.date p input
+div#edit div.dateItem div.dateInfo p input
   width: 4em
   margin: 0 0.4em 0.4em 0
 
-div#edit fieldset.date p label
+div#edit div.dateItem div.dateInfo p label
   width: 8em
   float: left
 
-div#edit fieldset.date p select
+div#edit div.dateItem div.dateInfo p select
   width: 12em
   float: left
   
-div#edit fieldset.date p select.offset,
-div#edit fieldset.date p select.precision,
-div#edit fieldset.date p select.certainty
+div#edit div.dateItem div.dateInfo p select.offset,
+div#edit div.dateItem div.dateInfo p select.precision,
+div#edit div.dateItem div.dateInfo p select.certainty
   width: 16em
 
+div#edit div.dateItem div.dateInfo hr
+  border: 0
+  color: #c0c0c0
+  background-color: #c0c0c0
+  height: 0.1em
+  margin: 0.8em 0 0.8em 0
+  width: 624px
+  clear: left
+
+div#edit div.dateItem div.dateInfo h5 span.quickHelp_meta_help_date
+  float: none
+  position: absolute
+  top: 0.3em

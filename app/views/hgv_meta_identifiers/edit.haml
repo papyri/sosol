@@ -13,8 +13,6 @@
 
         %h4.category.date=I18n.t('meta.legend.date')
         .editbox
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.date' }
-          %br
           = render :partial => 'hgv_meta_identifiers/date'
           %div{:style => 'float: none; clear: both; display: block;'}
           %div.quickSave=I18n.t('meta.label.quickSave')
