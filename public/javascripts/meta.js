@@ -46,8 +46,6 @@ function toggleMentionedDates(dateId){
   $('mentionedDate_dateId').value = dateId;
 }
 
-toggleMentionedDates('#dateAlternativeX');
-
 /**** multi ****/
 
 function multiAdd(id)
@@ -168,32 +166,35 @@ function multiRemove(item)
   };
 }
 
+/**** mentioned dates ****/
+
 function mentionedDateNewDate(dateinput)
 {
   var index = dateinput.id.match(/\d+/)[0];
   var date1 = $('hgv_meta_identifier_mentionedDate_' + index + '_date1').value;
   var date2 = $('hgv_meta_identifier_mentionedDate_' + index + '_date2').value;
-  var when = from = to = '';
-  if(date2 && date2 != ''){
-    from = date1;
-    to = date2;
-  } else {
-    when = date1;
-  }
-  $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_when').value = when;
-  $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_from').value = from;
-  $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_to').value = to;
   
+  if(date2 && date2 != ''){
+    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_when').value      = '';
+    $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notBefore').value = date1;
+    $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notAfter').value  = date2;
+  } else {
+    $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_when').value      = date1;
+    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notBefore').value = '';
+    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notAfter').value  = '';
+  }
+
   mentionedDateNewCertainty($('hgv_meta_identifier_mentionedDate_' + index + '_certaintyPicker')); // update certainties as well
 }
 
 function mentionedDateGetDateTyes(index){
-  var dateTypes = ['when', 'from', 'to'];
+  var dateTypes = ['when', 'notBefore', 'notAfter'];
   var result = [];
 
   var dateTypeIndex = 0;
   for(dateTypeIndex = 0; dateTypeIndex < dateTypes.length; dateTypeIndex++){
-    if($('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_' +  dateTypes[dateTypeIndex]).value != ''){
+    var dateType = $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_' +  dateTypes[dateTypeIndex]);
+    if(dateType && dateType.value && dateType.value.length){
       result[result.length] = dateTypes[dateTypeIndex];
     }
   }
@@ -215,23 +216,25 @@ function mentionedDateNewCertainty(selectbox)
       }
     }
   });
-  
+
   // add
-  if(value == '0.7'){ // global
-    $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][1][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_1_attributes_degree">');
-  } else { // specific
-    var certaintyIndex = 2;
-    var dateBits = value.split('_');
-    var i = 0;
-    for(i = 0; i < dateBits.length; i++){
-      var dateBitCode = {day: '9, 2', month: '6, 2', year: '1, 4'}[dateBits[i]];
-      var dateTypes = mentionedDateGetDateTyes(index);
-      var j = 0;
-      for(j = 0; j < dateTypes.length; j++){
-        var dateType = dateTypes[j];
-        $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_degree">');
-        $(selectbox).parentNode.insert('<input type="hidden" value="../date/substring(@' + dateType + ', ' + dateBitCode + ')" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][target]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_target">');
-        certaintyIndex++;
+  if (value.length) {
+    if (value == '0.7') { // global
+      $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][1][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_1_attributes_degree">');
+    }
+    else { // specific
+      var certaintyIndex = 2;
+      var dateBits = value.split('_');
+      var i = 0;
+      for (i = 0; i < dateBits.length; i++) {
+        var dateTypes = mentionedDateGetDateTyes(index); // [when, notBefore, notAfter]
+        var j = 0;
+        for (j = 0; j < dateTypes.length; j++) {
+          var dateType = dateTypes[j];
+          $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_degree">');
+          $(selectbox).parentNode.insert('<input type="hidden" value="../date/' + dateBits[i] + '-from-date(@' + dateType + ')" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][target]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_target">');
+          certaintyIndex++;
+        }
       }
     }
   }
@@ -291,13 +294,13 @@ function rememberToggledView(){
 function showExpansions(){
   var expansionSet = $('expansionSet').value;
   $$('.category').each(function(e){
-    
+
     var classy = e.classNames().reject(function(item){
         return item == 'category' ? true : false;
       })[0];
 
-    if(expansionSet.indexOf(classy) < 0){
-      e.next().hide();
+    if(expansionSet.indexOf(classy) >= 0){
+      e.next().show();
     }
   });
   $('expansionSet').value = '';
@@ -306,7 +309,9 @@ function showExpansions(){
 
 Event.observe(window, 'load', function() {
   showExpansions();
+  toggleMentionedDates('#dateAlternativeX');
   hideDateTabs();
+  
 
   $('hgv_meta_identifier_submit').observe('click', checkNotAddedMultiples);
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});

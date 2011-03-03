@@ -12,7 +12,7 @@
         = f.error_messages
 
         %h4.category.date=I18n.t('meta.legend.date')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/date'
           %div{:style => 'float: none; clear: both; display: block;'}
           %div.quickSave=I18n.t('meta.label.quickSave')
@@ -24,7 +24,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.general=I18n.t('meta.legend.general')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
 
@@ -43,7 +43,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.publication=I18n.t('meta.legend.publication')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationTitle }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationTitle }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' }
@@ -83,7 +83,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.collection=I18n.t('meta.legend.collection')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' }
@@ -107,7 +107,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.provenance=I18n.t('meta.legend.provenance')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientFindspot }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientFindspot }
 
@@ -126,7 +126,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.reference=I18n.t('meta.legend.reference')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'hgv_meta_identifiers/figures'
           
@@ -142,7 +142,7 @@
           %div.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.translation=I18n.t('meta.legend.translation')
-        .editbox
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsDe }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsDe }
 

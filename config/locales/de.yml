@@ -42,8 +42,8 @@ de:
       blVolume: Band
       blPage: Seiten
       mentionedDateReference: Bezug
-      mentionedDateFrom: Von / Wann
-      mentionedDateTo: Bis
+      mentionedDateNotBefore: Von / Wann
+      mentionedDateNotAfter: Bis
       mentionedDateCertainty: Sicherheit
       mentionedDateDateId: Datums-Id
       mentionedDateNote: Kommentar
@@ -82,8 +82,8 @@ de:
       multiDelete: Klicken, um Element zu löschen
       multiMove: Klicken und ziehen, um Element zu verschieben
       multiMentionedDateReference: Bezug zum Text (Zeile und Spalte)
-      multiMentionedDateFrom: Datum (im -YYYY-MM-DD-Format)
-      multiMentionedDateTo: Zweites Datum (wenn es sich um eine Zeitspanne handelt) (im -YYYY-MM-DD-Format)
+      multiMentionedDateNotBefore: Datum (im -YYYY-MM-DD-Format)
+      multiMentionedDateNotAfter: Zweites Datum (wenn es sich um eine Zeitspanne handelt) (im -YYYY-MM-DD-Format)
       multiMentionedDateComment: Kommentar
       multiMentionedDateCertainty: Sicherheit
       multiMentionedDateDateId: Bezug zu einem bestimmten Datumseintrag
@@ -107,8 +107,8 @@ de:
       collectionTemporaryInventoryNumber: 'Vorübergehende Inventarnummer, z.B. als Teil einer Ausstellung.'
       collection: 'Name der Manuskriptsammlung oder des Instituts, das die Sammlung beherbergt.'
       mentionedDateReference: 'Eingabe der Zeilen(nummern) im Text, wo das Datum erwähnt wird. Z.B. "Z. 2, Kol. II, Z. 11".'
-      mentionedDateFrom: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
-      mentionedDateTo: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
+      mentionedDateNotBefore: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
+      mentionedDateNotAfter: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
       mentionedDateNote: 'Optionale Beschreibung des Datums. Z.B. "Abschrift eines Dokuments vom:".'
       illustrations: 'Verweis auf gedruckte Illustrationen oder Fotos'
       content_text: 'Beschreibung des Inhalts in Stichworten'

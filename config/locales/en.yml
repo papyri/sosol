@@ -42,8 +42,8 @@ en:
       blVolume: Volume
       blPage: Pages
       mentionedDateReference: Reference
-      mentionedDateFrom: From / When
-      mentionedDateTo: To
+      mentionedDateNotBefore: From / When
+      mentionedDateNotAfter: To
       mentionedDateCertainty: Certainty
       mentionedDateDateId: Date id
       mentionedDateNote: Comment
@@ -82,8 +82,8 @@ en:
       multiDelete: Click to delete item
       multiMove: Click and drag to move item
       multiMentionedDateReference: Reference (line and column)
-      multiMentionedDateFrom: Date (use -YYYY-MM-DD format)
-      multiMentionedDateTo: Second date (if time span) (use -YYYY-MM-DD format)
+      multiMentionedDateNotBefore: Date (use -YYYY-MM-DD format)
+      multiMentionedDateNotAfter: Second date (if time span) (use -YYYY-MM-DD format)
       multiMentionedDateComment: Comment
       multiMentionedDateCertainty: Certainty
       multiMentionedDateDateId: Relation to a special date entry
@@ -108,8 +108,8 @@ en:
       collectionTemporaryInventoryNumber: 'Temporary inventory number, e.g. part of an exhibition.'
       collection: 'Name of a collection of manuscripts or of the institution that holds the collection.'
       mentionedDateReference: 'Enter the line number(s) in the text, where the date is mentioned. E.g. Z. 2, Kol. II, Z. 11.'
-      mentionedDateFrom: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
-      mentionedDateTo: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
+      mentionedDateNotBefore: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
+      mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
       illustrations: 'Reference to printed illustrations or photographs.'
       content_text: 'Keywords describing the content.'

@@ -123,10 +123,10 @@
           :attributes:
             :when:
               :name: when
-            :from:
-              :name: from
-            :to:
-              :name: to
+            :notBefore:
+              :name: notBefore
+            :notAfter:
+              :name: notAfter
           :children:
             :certainty:
               :xpath: certainty[@locus='value']

@@ -722,7 +722,7 @@ module HgvMetaIdentifierHelper
       data = []
 
       mentioned_date.each { |item|
-        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :from => '', :fromDayCertainty => '', :fromMonthCertainty => '', :fromYearCertainty => '', :to => '', :toDayCertainty => '',:toMonthCertainty => '',:toYearCertainty => ''}
+        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
         if item[:children]
           item[:children].each_pair{|key, value|
             data_item[key] = value && value[:value] ? value[:value] : ''
@@ -738,7 +738,7 @@ module HgvMetaIdentifierHelper
                 if certainty[:attributes][:relation]
                   data_item[:dateId] = certainty[:attributes][:relation]
                 elsif certainty[:attributes][:target] && certainty[:attributes][:degree]
-                  key = certainty[:attributes][:target][/@(when|from|to),/, 1] + {1 => :Year, 6 => :Month, 9 => :Day}[certainty[:attributes][:target][/,.*(\d).*,/, 1].to_i].to_s + 'Certainty'
+                  key = certainty[:attributes][:target][/@(when|notBefore|notAfter)/, 1] + certainty[:attributes][:target][/(year|month|day)-from-date/, 1].capitalize + 'Certainty'
                   data_item[key.to_sym] = certainty[:attributes][:degree]
                 elsif certainty[:attributes][:degree]
                   data_item[:certainty] = certainty[:attributes][:degree]

@@ -6,12 +6,12 @@
   %label.mentionedDateReference
     %span.label=I18n.t('meta.label.mentionedDateReference')
     = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateReference' }
-  %label.mentionedDateFrom
-    %span.label=I18n.t('meta.label.mentionedDateFrom')
-    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateFrom' }
-  %label.mentionedDateTo
-    %span.label=I18n.t('meta.label.mentionedDateTo')
-    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateTo' }
+  %label.mentionedDateNotBefore
+    %span.label=I18n.t('meta.label.mentionedDateNotBefore')
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateNotBefore' }
+  %label.mentionedDateNotAfter
+    %span.label=I18n.t('meta.label.mentionedDateNotAfter')
+    = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateNotAfter' }
   %label.mentionedDateNote
     %span.label=I18n.t('meta.label.mentionedDateNote')
     = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.mentionedDateNote' }
@@ -25,11 +25,11 @@
       %li
 
         = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][ref][value]', item[:ref], :disabled => !@identifier.mutable?, :class => 'observechange'
-        = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][date1]', !item[:from].empty? ? item[:from] : item[:when], :onchange => 'mentionedDateNewDate(this)', :disabled => !@identifier.mutable?, :class => 'observechange'
-        = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][date2]', item[:to], :onchange => 'mentionedDateNewDate(this)', :disabled => !@identifier.mutable?, :class => 'observechange'
+        = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][date1]', !item[:notBefore].empty? ? item[:notBefore] : item[:when], :onchange => 'mentionedDateNewDate(this)', :disabled => !@identifier.mutable?, :class => 'observechange'
+        = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][date2]', item[:notAfter], :onchange => 'mentionedDateNewDate(this)', :disabled => !@identifier.mutable?, :class => 'observechange'
         = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][attributes][when]', item[:when]
-        = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][attributes][from]', item[:from]
-        = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][attributes][to]', item[:to]
+        = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][attributes][notBefore]', item[:notBefore]
+        = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][attributes][notAfter]', item[:notAfter]
         = text_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][note][value]', item[:note], :disabled => !@identifier.mutable?, :class => 'observechange note'
         = select_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][certaintyPicker]', options_for_select(certaintyOptions, item[:certaintyPicker]), :onchange => 'mentionedDateNewCertainty(this)', :disabled => !@identifier.mutable?, :class => 'observechange certainty'
         = select_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][0][attributes][relation]', options_for_select(dateIdOptions, item[:dateId]), :disabled => !@identifier.mutable?, :class => 'observechange dateId'
@@ -40,18 +40,18 @@
           = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][degree]', '0.7'
         - elsif !item[:certaintyPicker].empty?
           - item[:certaintyPicker].split('_').each do |dateBit|
-            - [:when, :from, :to].each do |dateType|
+            - [:when, :notBefore, :notAfter].each do |dateType|
               - if !item[dateType].empty?
                 - certaintyIndex += 1
-                = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][target]', '../date/substring(@' + dateType.to_s + ', ' + {'day' => '9, 2', 'month' => '6, 2', 'year' => '1, 4'}[dateBit] + ')'
+                = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][target]', '../date/' + dateBit + '-from-date(@' + dateType.to_s + ')'
                 = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][degree]', '0.7'
 
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add#multiPlus_mentionedDate
     = text_field_tag 'mentionedDate_reference', '', :title => I18n.t('meta.tooltip.multiMentionedDateReference'), :disabled => !@identifier.mutable?, :class => 'observechange'
-    = text_field_tag 'mentionedDate_date', '', :title => I18n.t('meta.tooltip.multiMentionedDateFrom'), :disabled => !@identifier.mutable?, :class => 'observechange'
-    = text_field_tag 'mentionedDate_date2', '', :title => I18n.t('meta.tooltip.multiMentionedDateTo'), :disabled => !@identifier.mutable?, :class => 'observechange'
+    = text_field_tag 'mentionedDate_date', '', :title => I18n.t('meta.tooltip.multiMentionedDateNotBefore'), :disabled => !@identifier.mutable?, :class => 'observechange'
+    = text_field_tag 'mentionedDate_date2', '', :title => I18n.t('meta.tooltip.multiMentionedDateNotAfter'), :disabled => !@identifier.mutable?, :class => 'observechange'
     = text_field_tag 'mentionedDate_note', '', :title => I18n.t('meta.tooltip.multiMentionedDateComment'), :disabled => !@identifier.mutable?, :class => 'observechange note'
     = select_tag 'mentionedDate_certaintyPicker', options_for_select(certaintyOptions), :title => I18n.t('meta.tooltip.multiMentionedDateCertainty'), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
     = select_tag 'mentionedDate_dateId', options_for_select(dateIdOptions), :title => I18n.t('meta.tooltip.multiMentionedDateDateId'), :disabled => !@identifier.mutable?, :class => 'observechange dateId'
