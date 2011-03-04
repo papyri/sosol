@@ -488,7 +488,7 @@ class PublicationsController < ApplicationController
     #note that votes will go with the boards copy of the pub and identifiers
     #  vote history will also be recorded in the comment of the origin pub and identifier
     
-    #if not pub found ie race condition of voting on reject or graffiti    
+    #fails - if not pub found ie race condition of voting on reject or graffiti
     begin
       @publication = Publication.find(params[:id])  
     rescue    
@@ -496,17 +496,18 @@ class PublicationsController < ApplicationController
       redirect_to (dashboard_url)
       return
     end
-    
+
+    #fails - vote choice not given
     if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
       redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote][:identifier_id])])
       return
     end
-    
+
+    #fails - voting is over
     if @publication.status != "voting" 
       flash[:warning] = "Voting is over for this publication."
-      
       redirect_to @publication
       return
     end
@@ -518,7 +519,8 @@ class PublicationsController < ApplicationController
       
       vote_identifier = @vote.identifier.lock!
       @publication.lock!
-    
+
+      #fails - publication not in correct ownership
       if @publication.owner_type != "Board"
         #we have a problem since no one should be voting on a publication if it is not in theirs
         flash[:error] = "You do not have permission to vote on this publication which you do not own!"

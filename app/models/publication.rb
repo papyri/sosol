@@ -423,10 +423,10 @@ class Publication < ActiveRecord::Base
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
       return "" #another check to make sure only the board is voting on its copy
     else
-      decree_action = self.owner.tally_votes(user_votes)
+      decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
    
-    
+
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
       e = Event.new
@@ -494,7 +494,10 @@ class Publication < ActiveRecord::Base
       #self.submit_to_next_board
       
     else
-      #unknown action or no action    
+      #unknown action or no action
+      #TODO allow board to return any action, and then call that action on the identifier, board or wherever it makes sense to allow the user to add to the class
+      #if publication has comunity name, then it may make sense for that name to be linked to a mixin or such that contains custom methods
+      #parse action name
     end
     
     return decree_action
