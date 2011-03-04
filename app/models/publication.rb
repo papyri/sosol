@@ -736,9 +736,6 @@ class Publication < ActiveRecord::Base
       # finalized, try to repack
       begin
         canon.repo.git.repack({})
-        # if we haven't thrown by this point, it should be safe to
-        # remove ourselves from alternates
-        canon.del_alternates(self.owner.repository)
       rescue Grit::Git::GitTimeout
         Rails.logger.warn("Canonical repository not repacked after finalization!")
       end
