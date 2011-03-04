@@ -110,7 +110,7 @@ class UserController < ApplicationController
   end  
 
   def update_personal
-  #TODO don't let any bozo change this data
+    #only let current user change this data
     if @current_user.id != params[:id].to_i()
       flash[:warning] = "Invalid Access."
 
