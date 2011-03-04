@@ -736,6 +736,9 @@ class Publication < ActiveRecord::Base
       # finalized, try to repack
       begin
         canon.repo.git.repack({})
+        # if we haven't thrown by this point, it should be safe to
+        # remove ourselves from alternates
+        canon.del_alternates(self.owner.repository)
       rescue Grit::Git::GitTimeout
         Rails.logger.warn("Canonical repository not repacked after finalization!")
       end
@@ -773,7 +776,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVMetaIdentifier, HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
   end
   
   def canon_controlled_paths

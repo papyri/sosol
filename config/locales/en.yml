@@ -34,6 +34,7 @@ en:
       provenanceAncientRegion: Ancient region
       provenanceModernFindspot: Modern findspot
       illustrations: Illustrations / Abbildungen
+      figures: Digital images
       otherPublications: Other publications
       bl: BL
       blVolume: Volume
@@ -55,35 +56,19 @@ en:
       when: When
       notBefore: Not before
       notAfter: Not after
-      from: From
-      to: To
+      before: Not after
+      after: Not before
       century: Century
       year: Year
       month: Month
       day: Day
       certainty: Certainty
+      precision: Precision
       specifier: Extra
       extraDate: Date generation. Display only. No entry possible.
-      onDate: Date
-      fromDate: From
-      toDate: to
-      fromToDate: Date span
       offset: Offset
       textDate: HGV format
-      beginning: Beginning
-      firstHalf: First half
-      firstHalfToMiddle: First half to middle
-      middle: Middle
-      middleToSecondHalf: Middle to second half 
-      secondHalf: Second half
-      end: End
-      before: Not after
-      after: Not before
-      certainty09: Probably...
-      certainty05: (?)
-      dayUncertain: Day uncertain
-      monthAndYearUncertain: Month and year uncertain
-      yearUncertain: Year uncertain
+      unknown: Unknown
       multiAdd: add #✓
     tooltip:
       multiAdd: Click to add new item
@@ -151,13 +136,45 @@ en:
     secondHalf: second half
     firstHalfToMiddle: first half to middle
     middleToSecondHalf: middle to second half
+    beginningToMiddle: beginning to middle
+    middleToEnd: middle to end
+    spring: spring
+    summer: summer
+    autumn: autumn
+    winter: winter
+    earlyWinter: early winter
+    lateWinter: late winter
+    beginningCirca: beginning (?)
+    firstHalfCirca: first half (?)
+    firstHalfToMiddleCirca: first half to middle (?)
+    middleCirca: middle (?)
+    middleToSecondHalfCirca: middle to second half (?) 
+    secondHalfCirca: second half (?)
+    endCirca: end (?)
+    beginningToMiddleCirca: beginning to middle (?)
+    middleToEndCirca: middle to end (?)
+    springCirca: spring (?)
+    summerCirca: summer (?)
+    autumnCirca: autumn (?)
+    winterCirca: winter (?)
+    earlyWinterCirca: early winter (?)
+    lateWinterCirca: late winter (?)
     before: before
     after: after
+    beforeUncertain: before (?)
+    afterUncertain: after (?)
+    ca: ca.
+
     certaintyHigh: Probably...
     certaintyLow: (?)
     dayUncertain: day uncertain
-    monthAndYearUncertain: month and year uncertain
+    monthUncertain: month uncertain
     yearUncertain: year uncertain
+    dayAndMonthUncertain: month and day uncertain
+    monthAndYearUncertain: year and month uncertain
+    dayAndYearUncertain: year and day uncertain
+    dayMonthAndYearUncertain: year, month and day uncertain
+    
 
   bibliography:
     language: 'Language'

@@ -4,7 +4,7 @@
   
   <xsl:import href="lb_id.xsl"/>
   
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
   
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
@@ -65,6 +65,8 @@
   <!-- set oxygen RNGSchema processing instruction -->
   <xsl:template match="processing-instruction('oxygen')">
     <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
+    <xsl:text>
+</xsl:text>
   </xsl:template>
 
   <!-- always generate handNotes from content -->

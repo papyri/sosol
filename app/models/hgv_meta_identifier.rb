@@ -60,7 +60,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   def get_date_item date_id    
     self[:textDate].select {|dateItem|
-      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:textDateId) && dateItem[:attributes][:textDateId].include?(date_id)
+      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:id) && dateItem[:attributes][:id].include?(date_id)
     }.first
   end
 
@@ -102,7 +102,9 @@ class HGVMetaIdentifier < HGVIdentifier
     doc.elements.each(config[:xpath]){|element|
       node = {:value => '', :attributes => {}, :children => {}}
 
-      if element.text && !element.text.strip.empty?
+      if element.name.to_s == 'origDate' # CL: CROMULATE DATE HACK
+        node[:value] = element.to_s.gsub(/[\s]+/, ' ').gsub(/<\/?[^>]*>/, "").strip
+      elsif element.text && !element.text.strip.empty?
         node[:value] = element.text.strip
       else
         node[:value] = config[:default]
@@ -281,6 +283,7 @@ class HGVMetaIdentifier < HGVIdentifier
   end
 
   def sort doc
+    # general
     sort_paths = {
       :msIdentifier => {
         :parent => '/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier',
@@ -301,6 +304,44 @@ class HGVMetaIdentifier < HGVIdentifier
             parent.add child
           }
         }
+      end
+    }
+    
+    # date
+
+    doc.elements.each(@configuration.scheme[:textDate][:xpath]){|date|
+      if date.elements['offset']
+
+        hgvFormat = ''
+        date.texts.each{|text|
+          hgvFormat += text.value
+          date.delete text  
+        }
+        hgvFormat = hgvFormat.gsub(/(vor|nach)( \(\?\))?/, '').strip
+        
+        offset = date.elements['offset[position()=1]']
+        offset2 = date.elements['offset[position()=2]']
+        
+        date.delete offset
+        date.delete offset2        
+        
+        if offset
+          date.add_element offset
+          date.add_text REXML::Text.new(' ')
+        end
+        
+        if hgvFormat.include? ' - '
+          hgvFormat = hgvFormat.split ' - '
+          date.add_text REXML::Text.new(hgvFormat[0] + ' - ')
+          if offset2
+            date.add_element offset2
+            date.add_text REXML::Text.new(' ')
+          end
+          date.add_text REXML::Text.new(hgvFormat[1])
+        else
+          date.add_text REXML::Text.new(hgvFormat)
+        end
+
       end
     }
 
@@ -356,16 +397,16 @@ class HGVMetaIdentifier < HGVIdentifier
 
     if data
 
-      if data['value'] && !data['value'].strip.empty?
-        result_item[:value] = data['value'].strip
+      if data['value'] && !data['value'].to_s.strip.empty?
+        result_item[:value] = data['value'].to_s.strip
       elsif config[:default]
         result_item[:value] = config[:default]
       end
 
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
-          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].strip.empty?
-            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].strip
+          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
+            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].to_s.strip
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
@@ -376,7 +417,10 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
-            data[:children][child_key.to_s].each_pair{|index, child|
+            
+            x = data[:children][child_key.to_s].kind_of?(Hash) ? data[:children][child_key.to_s].values : data[:children][child_key.to_s]
+            
+            x.each{|child|
               children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
             }
             result_item[:children][child_key] = children

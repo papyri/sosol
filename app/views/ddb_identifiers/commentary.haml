@@ -2,6 +2,7 @@
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
+    if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
   
   function loadExistingCommentary(commentary_li) {
