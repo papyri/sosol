@@ -3,7 +3,7 @@
 
 - if identifier.modified?
   %h3 Votes
-  - user_has_voted = false
+  - user_has_voted = identifier.user_has_voted?(@current_user)#false
   %ul
     - if identifier.votes.length == 0
       %li No votes yet.
@@ -12,7 +12,7 @@
         %li
           = vote.choice
           = vote.user.name
-          - if vote.user.name == @current_user.name
+          -# if vote.user.name == @current_user.name
             - user_has_voted = true
   %br
   - if !user_has_voted && identifier.publication.status == "voting"

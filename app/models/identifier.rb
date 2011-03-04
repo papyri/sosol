@@ -346,8 +346,20 @@ class Identifier < ActiveRecord::Base
     #delete
   end
 
-  def needs_reviewing?
-    return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self)
+  def needs_reviewing?(user_id)
+    return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self) && !self.user_has_voted?(user_id)
+  end
+
+  def user_has_voted?(user_id)
+    if self.votes
+      self.votes.each do |vote|
+        if vote.user_id == user_id
+          return true #user has a vote on record for this identifier
+        end
+      end
+    end
+    #no vote found
+    return false
   end
 
 end

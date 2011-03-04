@@ -70,8 +70,9 @@
 
       %p
         = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : 'hgv.gif')  
-        - if identifier.needs_reviewing?
-          %b !
+        - if identifier.needs_reviewing?(@current_user.id)
+          -#%b !
+          = image_tag('review_flag.png')
         = identifier.title
         -# if identifier.modified? && @publication .status == "voting" && @publication.owner_type == "Board" && @publication.owner.controls_identifier?(identifier)
         -# if identifier.needs_reviewing?

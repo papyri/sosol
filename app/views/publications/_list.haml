@@ -17,8 +17,9 @@
                 = image_tag('hgv.gif')
               - when HGVTransIdentifier
                 = image_tag('hgv.gif')            
-            - if identifier.needs_reviewing?
-              %b !
+            - if identifier.needs_reviewing?(@current_user.id)
+              -#%b !
+              = image_tag('review_flag.png')
             - if publication.status == 'finalizing'
               = link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : ''))                        
             - elsif publication.status == 'archived'
