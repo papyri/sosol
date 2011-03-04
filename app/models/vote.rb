@@ -15,7 +15,8 @@ class Vote < ActiveRecord::Base
       #should only be voting while the publication is owned by the correct board
       related_votes = self.identifier.votes
       #todo add check to ensure board is correct
-      decree_action = self.publication.tally_votes(related_votes)
+      #decree_action = self.publication.tally_votes(related_votes)
+      self.publication.tally_votes(related_votes)
     end    
     return nil
   end
