@@ -445,6 +445,55 @@ ul.publications
       text-decoration: none
       background-color = !main_color_darken_medium
 
+.commentary.textpart
+  padding: 1em
+  margin: 1em
+  border-style: solid
+  border-width: .16em
+  border-color = !main_color_darken
+  
+  .textpart
+    margin-left: 1em
+
+.commentary#edition
+  ul
+  
+    li.line
+      list-style-type: none
+      border-bottom: 1px dotted
+      border-bottom-color = !main_color_darken
+      padding-top: .5em
+      padding-bottom: .5em
+      
+    li.clickable
+      &:hover
+        background = !main_color
+        cursor: pointer
+      
+      div.form
+        &:hover
+          background = !main_color
+    
+    li.input
+      list-style-type: none
+      
+      div.form
+        border: 1px solid 
+        border-color = !main_color_darken
+        border-top: none
+        background = !main_color_fade
+        padding: 1em
+        margin-bottom: 1em
+        
+        span.reference
+          color = !main_color_darken_full
+        
+        input.save
+          margin-top: 0em
+        
+      textarea
+        height: auto
+
 .commit
   background-color = !main_color_fade
   border-color = !main_color_darken

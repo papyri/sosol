@@ -1,0 +1,109 @@
+:javascript
+  document.observe("dom:loaded", function() {
+    $$('.commentary#edition li').invoke('observe','click',addCommentary);
+    $$('.commentary#edition li').each(loadExistingCommentary);
+    if (#{!@identifier.mutable?}) {removeAllClickable();}
+  });
+  
+  function loadExistingCommentary(commentary_li) {
+    existing_comments = $$(".comment-on-" + commentary_li.id);
+    existing_comments.reverse().each(function (comment) {
+      comment.addClassName('clickable');
+      comment.addClassName('existing_comment');
+      comment.observe('click',transformExistingCommentary);
+      commentary_li.removeClassName('clickable');
+      commentary_li.stopObserving('click');
+      commentary_li.insert({
+        after: comment
+      });
+    });
+  }
+  
+  function removeAllClickable() {
+    $$(".clickable").each(function (clickable) {
+      clickable.stopObserving('click');
+      clickable.removeClassName('clickable');
+    });
+  }
+  
+  function transformExistingCommentary(event) {
+    removeAllClickable();
+    
+    var comment_li = Event.element(event).up('li.input');  
+    comment_div_container = comment_li.childElements().first();
+    
+    comment_div = comment_div_container.childElements().first();
+    
+    nval_node = comment_div.childElements().first();
+    nval = nval_node.innerHTML;
+    nval_node.remove();
+    
+    comment_on = comment_li.classNames().toArray().first().replace(/comment-on-/,'');
+    content = comment_div.innerHTML.strip();
+    
+    Effect.SlideUp(comment_div_container.id, {duration: 0.5});
+    
+    $(comment_li).insert({
+      after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
+    });
+    Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+  }
+  
+  function generateDeleteForm(id,original_item_id) {
+    if(original_item_id == '') {
+      return '';
+    }
+    else {
+    return '#{form_tag({:action => :delete_commentary}, :method => :delete, :id => "delete_form").chomp()}' +
+        '<input type="hidden" name="line_id" value="' + id + '"/>' +
+        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+        '<span style="float:right;position:relative;top:-1.5em">' +
+          '<a href="#{url_for({:action => :delete_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete this commentary entry?\')) {$(\'delete_form\').submit();};return false;">delete</a>'
+        '</span>' +
+      '</form>';
+    }
+  }
+  
+  function generateCommentaryForm(id,nval,content,original_item_id) {
+    if(content === undefined) {content = "";}
+    if(original_item_id === undefined) {original_item_id = "";}
+    return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
+      '#{form_tag({:action => :update_commentary}, :method => :put).chomp()}' +
+        '<input type="hidden" name="line_id" value="' + id + '"/>' +
+        '<input type="hidden" name="original_content" value="' + content + '"/>' +
+        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+        '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
+        '<textarea rows="5" cols="20" name="content">'+content+'</textarea>' +
+        '<input class="save" type="submit" value="Save"/>' + 
+        ' or <a href="" style="color:red">cancel</a>' +
+      '</form>' +
+      generateDeleteForm(id,original_item_id) +
+      '</div></div>';
+  }
+  
+  function addCommentary(event) {
+    removeAllClickable();
+  
+    var element = Event.element(event)
+    if (!element.hasClassName('line')) {element = element.up('li.line');}
+    nval = $("n-" + element.id).innerHTML;
+    element.insert({
+      after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
+    });
+    Effect.SlideDown("form-"+element.id);
+    element.stopObserving('click');
+    element.removeClassName('clickable');
+  }
+
+#main
+  = render :partial => 'identifiers/edit_bar'
+  
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages
+        
+        %label Commentary
+        .PContent
+          = @identifier[:html_preview]

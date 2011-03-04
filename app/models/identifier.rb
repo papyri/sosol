@@ -317,9 +317,11 @@ class Identifier < ActiveRecord::Base
     commit_message = "Update revisionDesc\n\n"
     change_desc_content = self.xml_content
     
-    self.parent.votes.each do |v|
-      change_desc_content = add_change_desc( "Vote - " + v.choice, v.user, change_desc_content )
-      commit_message += " - Vote - #{v.choice} (#{v.user.human_name})\n"
+    Comment.find_all_by_git_hash(self.parent.get_recent_commit_sha).each do |c|
+      if(c.reason == "vote")
+        change_desc_content = add_change_desc( "Vote - " + c.comment, c.user, change_desc_content )
+        commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
+      end
     end
     
     change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)

@@ -1,0 +1,29 @@
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'helper'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #app2col{:class => "helperpop"}
+      = render :partial => 'markup_warn'
+      %h4 Modern regularization of ancient reading
+      #app_col
+        #app_low
+          %form{:name => "appreg_reg"}
+            %input{ :type => "checkbox", :class => "corrlow", :id => "appreg_reg_low", :name => "low", :value => "appreg_reg_low"} Uncertain
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appreg_reg_value", :size => "25"}
+        #app_desc
+          Regularized form
+        #app_button
+          %button{ :type => "button", :onclick=>"insertAppReg()" }Insert
+          &nbsp
+          %button{:type => "button", :onclick => "closeHelper()"}Close
+      #app_col
+        #app_low
+          %form{:name => "appreg_orig"}
+            %input{ :type => "checkbox", :class => "siclow", :id => "appreg_orig_low", :name => "low", :value => "appreg_orig_low"} Uncertain
+        #app_text
+          %input{ :type => "text", :class => "choosetext greek", :id => "appreg_orig_value", :size => "25"}
+        #app_desc
+          Non-standard form

@@ -33,6 +33,6 @@
           = render :partial => 'bibliography', :object => [0, @biblio_identifier.generate_empty_template_secondary], :locals => {:type => :secondary}
           %input.add{:type => 'button', :value => I18n.t('bibliography.button.add_secondary'), :onclick => "addNewBibliographicalRecord(this.parentNode)"}
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @biblio_identifier }
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @biblio_identifier, :where_at => :bottom }
 
 = javascript_include_tag 'bibliography'
