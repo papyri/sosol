@@ -7,9 +7,11 @@
       == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
+    - if controller.controller_name == 'hgv_meta_identifiers'
+      = stylesheet_link_tag 'meta'
     = javascript_include_tag :defaults
   %body
-    #header{ :class => (['edit','editxml','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
+    #header{ :class => (['edit','editxml','preview','history','finalize_review','rename_review','show','update'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
           %h1= link_to SITE_NAME, root_url

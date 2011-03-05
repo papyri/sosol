@@ -1,3 +1,14 @@
+div.metaSite {
+  width: 50em;
+  font-size: 1em; }
+
+div.metaSite select,
+div.metaSite input {
+  font-size: 0.846em; }
+
+input[type=checkbox] {
+  border: none; }
+
 /* *** quicksave / expand / collapse / showDateTabs *** */
 .expandAll,
 .collapseAll,
@@ -42,9 +53,6 @@ span.quickHelp span.message {
   font-weight: normal; }
 
 /* *** global *** */
-div.metaSite {
-  width: 50em; }
-
 div#edit h5 {
   margin: 0.4em 0 0;
   padding: 0.4em;
@@ -77,7 +85,8 @@ div#edit div.editbox label {
   float: left;
   margin: 0 0.4em 0 0.4em;
   width: 7.5em;
-  overflow: hidden; }
+  overflow: hidden;
+  line-height: 1.077em; }
 
 div#edit textarea {
   width: 40em;
@@ -108,8 +117,8 @@ div#edit div.editbox span.label {
   float: left; }
 
 div#edit div.editbox label.mentionedDateReference,
-div#edit div.editbox label.mentionedDateFrom,
-div#edit div.editbox label.mentionedDateTo,
+div#edit div.editbox label.mentionedDateNotBefore,
+div#edit div.editbox label.mentionedDateNotAfter,
 div#edit div.editbox label.mentionedDateNote,
 div#edit div.editbox label.mentionedDateCertainty,
 div#edit div.editbox label.mentionedDateDateId {
@@ -130,10 +139,10 @@ div#edit input#hgv_meta_identifier_collectionPlaceName,
 div#edit input#hgv_meta_identifier_collection,
 div#edit input#hgv_meta_identifier_collectionInventoryNumber,
 div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber {
-  width: 7.8em; }
+  width: 7.55em; }
 
 div#edit input#hgv_meta_identifier_collectionTemporaryNotes {
-  width: 27em; }
+  width: 26.5em; }
 
 div#edit div.editbox label.provenanceAncientFindspot,
 div#edit div.editbox label.provenanceModernFindspot,
@@ -159,7 +168,7 @@ div#edit input#hgv_meta_identifier_publicationParts,
 div#edit input#hgv_meta_identifier_publicationSide,
 div#edit input#hgv_meta_identifier_publicationLine,
 div#edit input#hgv_meta_identifier_publicationPages {
-  width: 7.8em; }
+  width: 7.5em; }
 
 div#edit input#hgv_meta_identifier_titleStmt {
   width: 27em; }
@@ -324,7 +333,7 @@ div#edit div.multi ul#multiItems_translationsLa li input {
 /* *** date *** */
 div#edit div#dateContainer {
   position: relative;
-  height: 32em;
+  height: 36em;
   padding: 0;
   margin: 0; }
 
