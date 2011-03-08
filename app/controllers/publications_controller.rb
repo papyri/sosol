@@ -251,11 +251,22 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
     
-    #find identifier so we can set the votes into the xml
-    @identifier = Identifier.find(params[:identifier_id])
-    @identifier.update_revision_desc(params[:comment], @current_user)
     
-    @identifier.save
+    #find identifier so we can set the votes into the xml
+    #@identifier = Identifier.find(params[:identifier_id])
+    #@identifier.update_revision_desc(params[:comment], @current_user)
+    #@identifier.save
+    
+    #find all modified identiers in the publication so we can set the votes into the xml
+    @publication.identifiers.each do |id|
+      #board controls this id and it has been modified
+      if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+        id.update_revision_desc(params[:comment], @current_user);
+        id.save
+      end
+    end
+    
+    
     #do we need to save publication before continuing with commit??
 
     begin
@@ -542,7 +553,8 @@ class PublicationsController < ApplicationController
       @comment.publication = @vote.publication.origin
 
       #double check that they have not already voted
-      has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      #has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      has_voted = @publication.user_has_voted?(@current_user.id)
       if !has_voted 
         @vote.save!
         @comment.save!

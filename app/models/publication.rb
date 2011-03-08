@@ -13,7 +13,7 @@ class Publication < ActiveRecord::Base
   
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
- # has_many :votes, :dependent => :destroy
+  has_many :votes, :dependent => :destroy
   has_many :comments
   
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
@@ -264,7 +264,8 @@ class Publication < ActiveRecord::Base
 =end
     self.origin.change_status("committed")
     self.save
-
+    #TODO need to return something here to prevent flash error from showing true?
+    return "", nil
   end
   
 
@@ -453,6 +454,20 @@ class Publication < ActiveRecord::Base
   def archive
     self.change_status("archived")
   end
+  
+  
+  def user_has_voted?(user_id)
+    if self.votes
+      self.votes.each do |vote|
+        if vote.user_id == user_id
+          return true #user has a vote on record for this publication
+        end
+      end
+    end
+    #no vote found
+    return false
+  end
+  
   
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes

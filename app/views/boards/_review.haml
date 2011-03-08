@@ -3,12 +3,13 @@
 
 - if identifier.modified?
   %h3 Votes
-  - user_has_voted = identifier.user_has_voted?(@current_user)#false
+  -# user_has_voted = identifier.user_has_voted?(@current_user)#false
+  - user_has_voted = identifier.publication.user_has_voted?(@current_user)
   %ul
-    - if identifier.votes.length == 0
+    - if identifier.publication.votes.length == 0
       %li No votes yet.
     - else
-      - identifier.votes.each do |vote|
+      - identifier.publication.votes.each do |vote|
         %li
           = vote.choice
           = vote.user.name
