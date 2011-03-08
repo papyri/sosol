@@ -3,7 +3,7 @@
 #edit_header
   %h1
     - if @identifier.publication.owner_type == "Board"
-      = @identifier.publication.owner.title + " review "
+      = "Review " + @identifier.publication.owner.friendly_name + " - "
       - else
         = "Editing "
     = @identifier.title

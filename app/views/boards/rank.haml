@@ -22,7 +22,7 @@
 %ul#board_elements
   -for board in @boards
     %li{:id => "board_element_#{board.title}", :class => 'sortable_board' }
-      = board.title
+      =  board.title + "( " + board.friendly_name + " )"
 
 
 

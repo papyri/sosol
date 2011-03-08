@@ -59,7 +59,7 @@
               - approved_publications.delete(ap)
            
         %h2
-          #{board.title} 
+          #{board.friendly_name} 
           -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
           Publications 
         - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
