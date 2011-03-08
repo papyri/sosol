@@ -2,7 +2,10 @@
 
 #edit_header
   %h1
-    = "Editing "
+    - if @identifier.publication.owner_type == "Board"
+      = @identifier.publication.owner.title + " review "
+      - else
+        = "Editing "
     = @identifier.title
     = " from publication "
     = link_to @identifier.publication.title, @identifier.publication
