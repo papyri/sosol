@@ -212,8 +212,25 @@ class Board < ActiveRecord::Base
   end
 
 
+  #since this is an feature added, the existing boards will not have this data, so we may need to make it up
+  #could be removed after initail deploy
+  def friendly_name=(fn)
+    if fn && (fn.strip != "")
+      self[:friendly_name] = fn
+    else
+      self[:friendly_name] = self[:title]
+    end
+    
+  end
   
-  
+  def friendly_name
+    fn = self[:friendly_name]
+    if fn && (fn.strip != "")
+      return fn
+    else
+      return self[:title]
+    end
+  end
   
   
 end
