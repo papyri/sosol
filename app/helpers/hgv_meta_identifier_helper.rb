@@ -713,7 +713,7 @@ module HgvMetaIdentifierHelper
 
   module HgvMentionedDate
     def HgvMentionedDate.certaintyOptions
-      [['', ''], ['(?)', 'low'], ['Day uncertain', 'day'], ['Day and month uncertain', 'day_month'], ['Month uncertain', 'month'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
+      [['', ''], ['(?)', 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.dayAndMonthUncertain'), 'day_month'], [I18n.t('date.monthUncertain'), 'month'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
     end
     def HgvMentionedDate.dateIdOptions
       [['', ''], ['X', '#dateAlternativeX'], ['Y', '#dateAlternativeY'], ['Z', '#dateAlternativeZ']]
