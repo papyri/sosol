@@ -78,7 +78,8 @@ module NumbersRDF
         response = identifier_to_numbers_server_response(identifier, decorator)
         apply_xpath_to_numbers_server_response(xpath, response)
       end
-      
+
+      #Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/ns1:relation/@rdf:resource", identifier)
@@ -117,7 +118,9 @@ module NumbersRDF
         )
         return result.nil? ? nil : result.first
       end
-    
+
+      #Takes an array of identifiers and
+      #Returns a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the identifier as the value.
       def identifiers_to_hash(identifiers)
         identifiers_hash = Hash.new
         unless identifiers.nil?

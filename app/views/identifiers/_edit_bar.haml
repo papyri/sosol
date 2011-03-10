@@ -53,7 +53,7 @@
         .joiner
         %ul
           - if params[:controller] != 'publications'
-            %li{ :class => %w{edit editxml preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+            %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
             - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
               %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
@@ -77,6 +77,7 @@
             %ul
               %li{ :class => %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'commentary' ? 'active' : ''}= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
       - when HGVMetaIdentifier
         .identifier_sub_menu#sub_menu_2

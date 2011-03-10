@@ -74,6 +74,34 @@ class DdbIdentifiersController < IdentifiersController
     end #when
   end
   
+  def commentary
+    find_identifier
+    
+    @identifier[:html_preview] = @identifier.preview({},%w{data xslt ddb commentary.xsl})
+  end
+  
+  def update_commentary
+    find_identifier
+    
+    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
+    
+    flash[:notice] = "File updated with new commentary."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
+  def delete_commentary
+    find_identifier
+    
+    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content], true)
+    
+    flash[:notice] = "Commentary entry removed."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
   # GET /publications/1/ddb_identifiers/1/preview
   def preview
     find_identifier

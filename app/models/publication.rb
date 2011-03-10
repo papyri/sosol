@@ -81,18 +81,29 @@ class Publication < ActiveRecord::Base
     xml
   end
 
+  #Populates the publication's list of identifiers.
+  #Input identifiers can be in the form of
+  # * an array of strings such as: papyri.info/ddbdp/bgu;7;1504
+  # * a single string such as: papyri.info/ddbdp/bgu;7;1504
+  #publication title is named using first identifier
   def populate_identifiers_from_identifiers(identifiers)
+
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
       identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
     end
-    
+
+    #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
     identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    #identifiers is now a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+
+
+    #title is first identifier in list
     original_title = identifier_to_ref(identifiers.values.flatten.first)
     self.title = original_title
-      
+
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
@@ -141,7 +152,7 @@ class Publication < ActiveRecord::Base
       return false
     end
   end
-  
+
   def after_destroy
     self.owner.repository.delete_branch(self.branch)
   end
@@ -725,6 +736,9 @@ class Publication < ActiveRecord::Base
       # finalized, try to repack
       begin
         canon.repo.git.repack({})
+        # if we haven't thrown by this point, it should be safe to
+        # remove ourselves from alternates
+        canon.del_alternates(self.owner.repository)
       rescue Grit::Git::GitTimeout
         Rails.logger.warn("Canonical repository not repacked after finalization!")
       end
@@ -762,7 +776,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVMetaIdentifier, HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
   end
   
   def canon_controlled_paths
@@ -973,10 +987,12 @@ class Publication < ActiveRecord::Base
   end
   
   protected
+    #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
       str.tr(' ','_')
     end
-    
+
+    #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
       str.tr(':;','_')
     end
