@@ -114,11 +114,11 @@ function multiAddMentionedDate()
              '  <input type="text" value="' + date1 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date1]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date1" class="observechange">' +
              '  <input type="text" value="' + date2 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date2]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date2" class="observechange">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][when]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_when">' +
-             '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][from]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_from">' +
-             '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][to]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_to">' +
+             '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notBefore]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notBefore">' +
+             '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notAfter]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notAfter">' +
              '  <input type="text" value="' + note +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][note][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_note_value" class="observechange note">' +
              '  <select onchange="mentionedDateNewCertainty(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][certaintyPicker]" id="hgv_meta_identifier_mentionedDate_' + index +  '_certaintyPicker" class="observechange certainty"><option value=""></option>' +
-             '  <option value="0.7" ' + (certainty == '0.7' ? 'selected="selected"' : '') +  '>(?)</option>' +
+             '  <option value="low" ' + (certainty == 'low' ? 'selected="selected"' : '') +  '>(?)</option>' +
              '  <option value="day" ' + (certainty == 'day' ? 'selected="selected"' : '') +  '>Day uncertain</option>' +
              '  <option value="day_month" ' + (certainty == 'day_month' ? 'selected="selected"' : '') +  '>Day and month uncertain</option>' +
              '  <option value="month" ' + (certainty == 'month' ? 'selected="selected"' : '') +  '>Month uncertain</option>' +
@@ -134,6 +134,9 @@ function multiAddMentionedDate()
              '</li>';
 
   multiUpdate('mentionedDate', item);
+  
+  $('mentionedDate_dateId').value = dateId;
+  
   mentionedDateNewDate($('hgv_meta_identifier_mentionedDate_' + index +  '_date1'));
 }
 
@@ -175,13 +178,10 @@ function mentionedDateNewDate(dateinput)
   var date2 = $('hgv_meta_identifier_mentionedDate_' + index + '_date2').value;
   
   if(date2 && date2 != ''){
-    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_when').value      = '';
     $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notBefore').value = date1;
     $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notAfter').value  = date2;
   } else {
     $('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_when').value      = date1;
-    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notBefore').value = '';
-    //$('hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_notAfter').value  = '';
   }
 
   mentionedDateNewCertainty($('hgv_meta_identifier_mentionedDate_' + index + '_certaintyPicker')); // update certainties as well
@@ -209,6 +209,7 @@ function mentionedDateNewCertainty(selectbox)
 
   // remove
   $(selectbox.parentNode).select('input[type=hidden]').each(function(item){
+    //console.log(item.id + ' = ' + item.value);
     if(item.id.indexOf('certainty') > 0){
       var certaintyIndex = item.id.match(/\d+/g)[1] * 1;
       if(certaintyIndex){
@@ -219,19 +220,19 @@ function mentionedDateNewCertainty(selectbox)
 
   // add
   if (value.length) {
-    if (value == '0.7') { // global
-      $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][1][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_1_attributes_degree">');
+    if (value == 'low') { // global    
+      $(selectbox).parentNode.insert('<input type="hidden" value="low" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][attributes][certainty]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_attributes_certainty">');
     }
     else { // specific
-      var certaintyIndex = 2;
+      var certaintyIndex = 1;
       var dateBits = value.split('_');
+      
       var i = 0;
       for (i = 0; i < dateBits.length; i++) {
         var dateTypes = mentionedDateGetDateTyes(index); // [when, notBefore, notAfter]
         var j = 0;
         for (j = 0; j < dateTypes.length; j++) {
           var dateType = dateTypes[j];
-          $(selectbox).parentNode.insert('<input type="hidden" value="0.7" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][degree]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_degree">');
           $(selectbox).parentNode.insert('<input type="hidden" value="../date/' + dateBits[i] + '-from-date(@' + dateType + ')" name="hgv_meta_identifier[mentionedDate][' + index + '][children][date][children][certainty][' + certaintyIndex + '][attributes][match]" id="hgv_meta_identifier_mentionedDate_' + index + '_children_date_children_certainty_' + certaintyIndex + '_attributes_match">');
           certaintyIndex++;
         }
@@ -243,7 +244,7 @@ function mentionedDateNewCertainty(selectbox)
 /**** check ****/
 
 function checkNotAddedMultiples(){
-  if($('mentionedDate_date').value.match(/-?\d{4}-\d{2}-\d{2}/)){
+  if($('mentionedDate_date').value.match(/-?\d{4}(-\d{2}(-\d{2})?)?/)){
     multiAddMentionedDate();
   }
 

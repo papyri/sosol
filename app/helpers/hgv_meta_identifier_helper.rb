@@ -713,7 +713,7 @@ module HgvMetaIdentifierHelper
 
   module HgvMentionedDate
     def HgvMentionedDate.certaintyOptions
-      [['', ''], ['(?)', '0.7'], ['Day uncertain', 'day'], ['Day and month uncertain', 'day_month'], ['Month uncertain', 'month'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
+      [['', ''], ['(?)', 'low'], ['Day uncertain', 'day'], ['Day and month uncertain', 'day_month'], ['Month uncertain', 'month'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
     end
     def HgvMentionedDate.dateIdOptions
       [['', ''], ['X', '#dateAlternativeX'], ['Y', '#dateAlternativeY'], ['Z', '#dateAlternativeZ']]
@@ -737,16 +737,14 @@ module HgvMetaIdentifierHelper
               if certainty[:attributes]
                 if certainty[:attributes][:relation]
                   data_item[:dateId] = certainty[:attributes][:relation]
-                elsif certainty[:attributes][:match] && certainty[:attributes][:degree]
+                elsif certainty[:attributes][:match]
                   key = certainty[:attributes][:match][/@(when|notBefore|notAfter)/, 1] + certainty[:attributes][:match][/(year|month|day)-from-date/, 1].capitalize + 'Certainty'
-                  data_item[key.to_sym] = certainty[:attributes][:degree]
-                elsif certainty[:attributes][:degree]
-                  data_item[:certainty] = certainty[:attributes][:degree]
+                  data_item[key.to_sym] = 'low'
                 end
               end
             }
 
-            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.sort.join('_')
+            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.uniq.sort.join('_')
             data_item[:certaintyPicker] = !data_item[:certaintyPicker].empty? ? data_item[:certaintyPicker] : data_item[:certainty]
 
           end

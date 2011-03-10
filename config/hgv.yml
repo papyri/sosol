@@ -127,6 +127,8 @@
               :name: notBefore
             :notAfter:
               :name: notAfter
+            :certainty:
+              :name: cert
           :children:
             :certainty:
               :xpath: certainty[@locus='value']
