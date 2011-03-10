@@ -43,7 +43,7 @@
             - [:when, :notBefore, :notAfter].each do |dateType|
               - if !item[dateType].empty?
                 - certaintyIndex += 1
-                = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][target]', '../date/' + dateBit + '-from-date(@' + dateType.to_s + ')'
+                = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][match]', '../date/' + dateBit + '-from-date(@' + dateType.to_s + ')'
                 = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][degree]', '0.7'
 
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x

@@ -132,8 +132,8 @@
               :xpath: certainty[@locus='value']
               :multiple: true
               :attributes:
-                :target:
-                  :name: target
+                :match:
+                  :name: match
                 :relation:
                   :name: given
                   :pattern: /\A#dateAlternative[XYZ]\Z/

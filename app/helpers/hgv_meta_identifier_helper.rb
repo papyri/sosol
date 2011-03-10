@@ -737,8 +737,8 @@ module HgvMetaIdentifierHelper
               if certainty[:attributes]
                 if certainty[:attributes][:relation]
                   data_item[:dateId] = certainty[:attributes][:relation]
-                elsif certainty[:attributes][:target] && certainty[:attributes][:degree]
-                  key = certainty[:attributes][:target][/@(when|notBefore|notAfter)/, 1] + certainty[:attributes][:target][/(year|month|day)-from-date/, 1].capitalize + 'Certainty'
+                elsif certainty[:attributes][:match] && certainty[:attributes][:degree]
+                  key = certainty[:attributes][:match][/@(when|notBefore|notAfter)/, 1] + certainty[:attributes][:match][/(year|month|day)-from-date/, 1].capitalize + 'Certainty'
                   data_item[key.to_sym] = certainty[:attributes][:degree]
                 elsif certainty[:attributes][:degree]
                   data_item[:certainty] = certainty[:attributes][:degree]
