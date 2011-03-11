@@ -2,14 +2,34 @@ include HgvMetaIdentifierHelper
 class HgvMetaIdentifiersController < IdentifiersController
   layout 'site'
   before_filter :authorize
-  before_filter :prune_params, :only => [:update]
-  before_filter :complement_params, :only => [:update]
+  before_filter :prune_params, :only => [:update, :get_date_preview]
+  before_filter :complement_params, :only => [:update, :get_date_preview]
 
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
   end
 
+  def get_date_preview
+    @updates = {}
+
+    [:X, :Y, :Z].each{|dateId|
+     index = ('X'[0] - dateId.to_s[0]).abs.to_s
+       if params[:hgv_meta_identifier][:textDate][index]
+         @updates[dateId] = {
+           :when      => params[:hgv_meta_identifier][:textDate][index][:attributes][:when],
+           :notBefore => params[:hgv_meta_identifier][:textDate][index][:attributes][:notBefore],
+           :notAfter  => params[:hgv_meta_identifier][:textDate][index][:attributes][:notAfter],
+           :format   => params[:hgv_meta_identifier][:textDate][index][:value]
+         }
+       end
+    }
+        
+    respond_to do |format|
+      format.js
+    end
+  end
+  
   def update
     find_identifier
 

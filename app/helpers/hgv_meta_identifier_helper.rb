@@ -77,7 +77,7 @@ module HgvMetaIdentifierHelper
     end
 
     def HgvDate.getYearIso century, centuryQualifier, chron
-      century = century.to_i != 0 ? century.to_i : nil
+      century = century.to_i
       
       yearModifier = {
         :chronMin => {

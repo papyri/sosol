@@ -76,6 +76,7 @@ en:
       collapseAll: collapse all
       quickSave: save entire file
       showDateTabs: add alternative dates
+      datePreview: show date preview
 
     tooltip:
       multiAdd: Click to add new item

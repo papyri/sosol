@@ -13,11 +13,15 @@ input[type=checkbox] {
 .expandAll,
 .collapseAll,
 .showDateTabs,
-.quickSave {
+.quickSave,
+.datePreview {
   cursor: pointer;
   cursor: hand;
   color: #c0c0c0;
   text-decoration: underline; }
+
+.datePreview {
+  padding: 0 0 0 0.8em; }
 
 .showDateTabs {
   position: absolute;
