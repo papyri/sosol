@@ -1,0 +1,6 @@
+div#preview table tbody tr th {
+  vertical-align: top;
+  padding: 0 0.8em 0 0; }
+
+div#preview table tbody tr td ul li {
+  list-style-type: none; }

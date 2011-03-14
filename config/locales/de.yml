@@ -11,6 +11,13 @@ de:
       mentionedDate: Erwähnte Daten
 
     label:
+      images: Digitale Bildnachweise
+      collectionInventoryId: Inv. Nr.
+      printIllustrations: Gedrucktes Bildgut
+      commentary: Kommentar
+      subjects: Inhaltsbeschreibung
+      publications: Publikationen
+      bls: Berichtigungslisten
       titleStmt: Titel
       tmNo: TM Nr.
       contentText: Inhalt

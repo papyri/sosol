@@ -10,6 +10,33 @@ class HgvMetaIdentifiersController < IdentifiersController
     @identifier.get_epidoc_attributes
   end
 
+  def update
+    find_identifier
+
+    begin
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+      expire_publication_cache
+      generate_flash_message
+    rescue JRubyXML::ParseError => e
+      flash[:error] = "Error updating file: #{e.message}. This file was NOT SAVED."
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :edit)
+      return
+    end
+    
+    save_comment(params[:comment], commit_sha)
+    
+    flash[:expansionSet] = params[:expansionSet]
+
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit)
+  end
+  
+  def preview
+    find_identifier
+    @identifier.get_epidoc_attributes
+  end
+
   def autocomplete
     filename = {:provenanceAncientFindspot => 'ancientFindspot.xml', :provenanceNome => 'nomeList.xml'}[params[:key].to_sym]
     xpath    = {:provenanceAncientFindspot => '/TEI/body/list/item/placeName[@type="ancientFindspot"]', :provenanceNome => '/nomeList/nome/name'}[params[:key].to_sym]    
@@ -46,28 +73,6 @@ class HgvMetaIdentifiersController < IdentifiersController
     respond_to do |format|
       format.js
     end
-  end
-  
-  def update
-    find_identifier
-
-    begin
-      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
-      expire_publication_cache
-      generate_flash_message
-    rescue JRubyXML::ParseError => e
-      flash[:error] = "Error updating file: #{e.message}. This file was NOT SAVED."
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                   :action => :edit)
-      return
-    end
-    
-    save_comment(params[:comment], commit_sha)
-    
-    flash[:expansionSet] = params[:expansionSet]
-
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :edit)
   end
 
   protected

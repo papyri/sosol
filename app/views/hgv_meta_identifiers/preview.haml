@@ -1,0 +1,114 @@
+= stylesheet_link_tag 'meta_preview'
+
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site.metaSite
+    = render :partial => 'identifiers/header'
+
+    #preview
+      %table
+        %tbody
+          - if @identifier[:titleStmt]
+            %tr
+              %th=I18n.t('meta.label.titleStmt')
+              %td=@identifier[:titleStmt]
+          - if @identifier[:publicationTitle]
+            %tr
+              %th=I18n.t('meta.label.publications')
+              %td
+                = @identifier[:publicationTitle]
+                = @identifier[:publicationVolume] ? @identifier[:publicationVolume] : ''
+                = @identifier[:publicationFascicle] ? @identifier[:publicationFascicle] : ''
+                = @identifier[:publicationNumbers] ? @identifier[:publicationNumbers] : ''
+                = @identifier[:publicationParts] ? @identifier[:publicationParts] : ''
+                = @identifier[:publicationSide] ? @identifier[:publicationSide] : ''
+                = @identifier[:publicationPages] ? @identifier[:publicationPages] : ''
+                = @identifier[:publicationLine] ? @identifier[:publicationLine] : ''
+                = @identifier[:tmNo] ? '(TM ' + @identifier[:tmNo] + ')' : ''
+                - if !@identifier[:otherPublications].empty?
+                  %ul
+                    - @identifier[:otherPublications].each do |other|
+                      %li=other
+          - if @identifier[:collectionInventoryNumber]
+            %tr
+              %th=I18n.t('meta.label.collectionInventoryId')
+              %td
+                = @identifier[:collectionPlaceName] ? @identifier[:collectionPlaceName] : ''
+                = @identifier[:collection] ? @identifier[:collection] : ''
+                = @identifier[:collectionInventoryNumber]
+                = @identifier[:collectionTemporaryInventoryNumber] ? '(' + (@identifier[:collectionTemporaryNotes] ? @identifier[:collectionTemporaryNotes] + ' ' : '') + @identifier[:collectionTemporaryInventoryNumber] + ')' : ''
+          - if !@identifier[:translationsDe].empty? || !@identifier[:translationsEn].empty? || !@identifier[:translationsIt].empty? || !@identifier[:translationsEs].empty? || !@identifier[:translationsLa].empty? || !@identifier[:translationsFr].empty?
+            %tr
+              %th=I18n.t('meta.legend.translation')
+              %td
+                %ul
+                  - [@identifier[:translationsDe], @identifier[:translationsEn], @identifier[:translationsIt], @identifier[:translationsEs], @identifier[:translationsLa], @identifier[:translationsFr]].each do |translation|
+                    - if translation
+                      - translation.each do |trans|
+                        %li=trans
+                
+          - if !@identifier[:bl].empty?
+            %tr
+              %th=I18n.t('meta.label.bls')
+              %td
+                %ul
+                  -@identifier[:bl].each do |bl|
+                    %li
+                      = bl[:children][:volume][:value] ? bl[:children][:volume][:value] + ',' : ''
+                      = bl[:children][:page][:value] ? 'S. ' + bl[:children][:page][:value] : ''
+          - if @identifier[:provenanceUnknown] || @identifier[:provenanceAncientFindspot]
+            %tr
+              %th=I18n.t('meta.legend.provenance')
+              %td
+                - if @identifier[:provenanceUnknown]
+                  = @identifier[:provenanceUnknown]
+                - else
+                  = @identifier[:provenanceAncientFindspot] ? @identifier[:provenanceAncientFindspot] : ''
+                  = @identifier[:provenanceModernFindspot] ? '(=  ' + @identifier[:provenanceModernFindspot] + ')' : ''
+                  = @identifier[:provenanceAncientRegion] ? '(' + @identifier[:provenanceAncientRegion] + ')' : ''
+                  = @identifier[:provenanceNome] ? ', ' + @identifier[:provenanceNome] : ''
+          - if @identifier[:material]
+            %tr
+              %th=I18n.t('meta.label.material')
+              %td=@identifier[:material]
+          - if @identifier[:textDate]
+            %tr
+              %th=I18n.t('meta.legend.date')
+              %td=@identifier[:textDate].collect{|item| item[:value] ? item[:value] : nil}.compact.join('<br />')
+          - if @identifier[:notes]
+            %tr
+              %th=I18n.t('meta.label.commentary')
+              %td=@identifier[:notes]
+          - if !@identifier[:illustrations].empty?
+            %tr
+              %th=I18n.t('meta.label.printIllustrations')
+              %td=@identifier[:illustrations].join('; ')
+          - if !@identifier[:contentText].empty?
+            %tr
+              %th=I18n.t('meta.label.subjects')
+              %td=@identifier[:contentText].join('; ')
+          - if !@identifier[:figures].empty?
+            %tr
+              %th=I18n.t('meta.label.images')
+              %td
+                %ul
+                  - @identifier[:figures].collect{|f| f= f[:children][:graphic][:attributes][:url]; '<a href="' + f + '" title="' + f + '">' + f[/^http:\/\/[^\/]+/] + '</a>'}.each do |figure|
+                    %li=figure
+          -# NOT IN PN
+          - if !@identifier[:mentionedDate].empty?
+            %tr
+              %th=I18n.t('meta.legend.mentionedDate')
+              %td
+                = @identifier[:mentionedDate].collect{|md| (md[:children][:ref] && md[:children][:ref][:value] ? md[:children][:ref][:value] + ' ' : '') + (md[:children][:note] && md[:children][:note][:value] ? md[:children][:note][:value] + ' ' : '') + (md[:children][:date][:value] ? md[:children][:date][:value] : '') }.reject{|md| md.empty? }.compact.join('; ')
+          - if @identifier[:plannedForFuturePrintRelease]
+            %tr
+              %th=I18n.t('meta.label.plannedForFuturePrintRelease')
+              %td=@identifier[:plannedForFuturePrintRelease]
+                  
+                  
+
+
+
+
+
+

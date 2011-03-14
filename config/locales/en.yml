@@ -11,6 +11,13 @@ en:
       mentionedDate: Mentioned Dates
 
     label:
+      images: Images
+      collectionInventoryId: Inv. Id
+      printIllustrations: Print Illustrations
+      commentary: Commentary
+      subjects: Subjects
+      publications: Publications
+      bls: Post-Concordance BL Entries
       titleStmt: Title
       tmNo: TM no.
       contentText: Keywords / Inhalt
@@ -91,9 +98,6 @@ en:
 
     help:
       date: 'Enter the appropriate values for year, month and day in the section "Date" making use of the drop down menus and additional fields to add relevant information where necessary. To enter a BCE date use the "-" (minus) character, as appropriate, e.g. -146 in the box "Year" will generate "146 v.Chr." By clicking "save entire file" the changes made can be observed in the HGV format section.'
-      on_date: 'Specific date, use "-"-sign to mark the date before Christ'
-      text_date: 'Contains any form of date, used to identify the date of origin for a manuscript or manuscript part.'
-      title_stmt: 'Title of the content.'
       publicationTitle: 'Publication title, e.g. BGU, P.Oxy'
       publicationVolume: 'Volume of the publication'
       publicationNumbers: 'Number of the document within the volume'
@@ -112,27 +116,6 @@ en:
       mentionedDateNotBefore: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
-      illustrations: 'Reference to printed illustrations or photographs.'
-      content_text: 'Keywords describing the content.'
-      other_publications: 'Other publications.'
-      translations: 'Translations'
-      translations_de: 'German translations'
-      translations_en: 'English translations'
-      translations_fr: 'French translations'
-      translations_it: 'Italian translations'
-      translations_la: 'Latin translations'
-      translations_es: 'Spanish translations'
-      bl: 'Berichtigungslisten'
-      notes: 'Additional notes or annotations.'
-      mentioned_dates_hdr: 'mentioned dates hdr'
-      mentioned_dates: 'mentioned dates'
-      material: 'Word or phrase describing the material of which  a manuscript (or part of a manuscript) is composed.'
-      provenance_ancient_findspot: 'Ancient findspot'
-      provenance_nome: 'Nome'
-      provenance_ancient_region: 'Ancient region'
-      provenance_modern_findspot: 'Modern findspot'
-      inventory_number: 'Inventory number'
-      planned_for_future_print_release: 'Printing schedule'
 
   date:
     beginning: beginning
