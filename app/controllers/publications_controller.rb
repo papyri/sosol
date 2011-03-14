@@ -142,14 +142,14 @@ class PublicationsController < ApplicationController
     redirect_to @publication
   end
 
+  #list is in the form of pn id's separated by returns
+  # such as
+  #papyri.info/ddbdp/bgu;7;1504
+  #papyri.info/ddbdp/bgu;7;1505
+  #papyri.info/ddbdp/bgu;7;1506
   def create_from_list
-    flash[:error] = 'Aint done yet'
     id_list = params[:pn_id_list].split(/\r\n?/)
     publication_from_identifiers(id_list)
-    #id_list.each do |id|
-     # flash[:error] += id + ":"
-    #end
-    #redirect_to dashboard_url
   end
 
   def is_theirs?
