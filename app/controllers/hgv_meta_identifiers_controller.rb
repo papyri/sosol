@@ -10,6 +10,24 @@ class HgvMetaIdentifiersController < IdentifiersController
     @identifier.get_epidoc_attributes
   end
 
+  def autocomplete
+    filename = {:provenanceAncientFindspot => 'ancientFindspot.xml', :provenanceNome => 'nomeList.xml'}[params[:key].to_sym]
+    xpath    = {:provenanceAncientFindspot => '/TEI/body/list/item/placeName[@type="ancientFindspot"]', :provenanceNome => '/nomeList/nome/name'}[params[:key].to_sym]    
+    pattern  = params[:hgv_meta_identifier][params[:key]]
+    max      = 10
+
+    @autocompleter_list = []
+      
+    doc = REXML::Document.new (File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
+    doc.elements.each(xpath) {|element|
+      if (@autocompleter_list.length < max) && (element.text =~ Regexp.new('\A' + pattern)) 
+        @autocompleter_list[@autocompleter_list.length] = element.text
+      end
+    }  
+
+    render :layout => false
+  end
+
   def get_date_preview
     @updates = {}
 
