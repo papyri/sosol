@@ -470,7 +470,13 @@ class Publication < ActiveRecord::Base
   
   
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes
+    user_votes ||= self.votes #use the publication's votes
+    #here is where the action is for deciding how votes are organized and what happens for vote results
+    #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
+    #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
+    #vote action is determined by votes on the publication
+    #any modified identifiers that the board controlls will have the change desc added.
+    #Future changes may be made here if the voting logic is to be separated per identifier
     
     #check that we are still taking votes
     if self.status != "voting"
