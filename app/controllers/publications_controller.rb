@@ -725,7 +725,8 @@ class PublicationsController < ApplicationController
 
           flash[:notice] = 'Publication was successfully created.'
           expire_publication_cache
-          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+          #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+          redirect_to @publication
         else
           flash[:notice] = 'Error creating publication'
           redirect_to dashboard_url
