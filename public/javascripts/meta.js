@@ -319,6 +319,10 @@ Event.observe(window, 'load', function() {
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  
+  new Ajax.Autocompleter('hgv_meta_identifier_provenanceAncientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceAncientFindspot'});
+  new Ajax.Autocompleter('hgv_meta_identifier_provenanceNome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceNome'});
+  
 });
 
 // todo: if an item has been moved the »observeChange« alert needs to be triggered

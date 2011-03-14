@@ -109,12 +109,14 @@
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientFindspot }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientFindspot }
+          .autocompleter#autocompleter_provenanceAncientFindspot
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceModernFindspot }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceModernFindspot }
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceNome }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceNome }
+          .autocompleter#autocompleter_provenanceNome
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientRegion }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientRegion }
