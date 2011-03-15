@@ -148,7 +148,7 @@ class PublicationsController < ApplicationController
   #papyri.info/ddbdp/bgu;7;1505
   #papyri.info/ddbdp/bgu;7;1506
   def create_from_list
-    id_list = params[:pn_id_list].split(/\r\n?/)
+    id_list = params[:pn_id_list].split(/\s+/) #(/\r\n?/)
     publication_from_identifiers(id_list)
   end
 
