@@ -77,7 +77,7 @@ module HgvMetaIdentifierHelper
     end
 
     def HgvDate.getYearIso century, centuryQualifier, chron
-      century = century.to_i != 0 ? century.to_i : nil
+      century = century.to_i
       
       yearModifier = {
         :chronMin => {
@@ -545,11 +545,12 @@ module HgvMetaIdentifierHelper
                 end
               end
               
-              # kill doublets
+              # kill doublets and left overs
 
               t[:y2] = (t[:y2] == t[:y] ? nil : t[:y2])
               t[:m2] = (t[:m2] == t[:m] ? nil : t[:m2])
               t[:d2] = (t[:d2] == t[:d] ? nil : t[:d2])
+              t[:precision2] = (!t[:d2]  && !t[:m2]  && !t[:y2]  && !t[:c2]  ? nil : t[:precision2])
 
             end
 
@@ -656,19 +657,18 @@ module HgvMetaIdentifierHelper
         # precision
         precision = HgvDate.getPrecision(date_item[:precision], date_item[:cx], date_item[:yx], date_item[:mx])
         precision2 = HgvDate.getPrecision(date_item[:precision2], date_item[:cx2], date_item[:yx2], date_item[:mx2])
-  
+
         if precision && ((precision == precision2) || ([t[:attributes][:when], t[:attributes][:notBefore], t[:attributes][:notAfter]].compact.length == 1))
           if precision == :lowlow
             t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem '0.1'
           else
             t[:attributes][:precision] = precision
           end
-        end
-        if precision
-          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision == :low ? nil : (precision == :medium ? '0.5' : '0.1'), t[:attributes][:when] ? '../@when' : '../@notBefore')
+        elsif precision
+           t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision == :low ? nil : (precision == :medium ? '0.5' : '0.1'), t[:attributes][:when] ? '../@when' : '../@notBefore')
         end
         if precision2
-          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision2 == :low ? nil : (precision2 == :medium ? '0.5' : '0.1'), '../@notAfer')
+          t[:children][:precision][t[:children][:precision].length] = HgvDate.getPrecisionItem(precision2 == :low ? nil : (precision2 == :medium ? '0.5' : '0.1'), '../@notAfter')
         end
 
         
@@ -713,7 +713,7 @@ module HgvMetaIdentifierHelper
 
   module HgvMentionedDate
     def HgvMentionedDate.certaintyOptions
-      [['', ''], ['(?)', '0.7'], ['Day uncertain', 'day'], ['Day and month uncertain', 'day_month'], ['Month uncertain', 'month'], ['Month and year uncertain', 'month_year'], ['Year uncertain', 'year']]
+      [['', ''], ['(?)', 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.dayAndMonthUncertain'), 'day_month'], [I18n.t('date.monthUncertain'), 'month'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
     end
     def HgvMentionedDate.dateIdOptions
       [['', ''], ['X', '#dateAlternativeX'], ['Y', '#dateAlternativeY'], ['Z', '#dateAlternativeZ']]
@@ -722,7 +722,7 @@ module HgvMetaIdentifierHelper
       data = []
 
       mentioned_date.each { |item|
-        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :from => '', :fromDayCertainty => '', :fromMonthCertainty => '', :fromYearCertainty => '', :to => '', :toDayCertainty => '',:toMonthCertainty => '',:toYearCertainty => ''}
+        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
         if item[:children]
           item[:children].each_pair{|key, value|
             data_item[key] = value && value[:value] ? value[:value] : ''
@@ -737,16 +737,14 @@ module HgvMetaIdentifierHelper
               if certainty[:attributes]
                 if certainty[:attributes][:relation]
                   data_item[:dateId] = certainty[:attributes][:relation]
-                elsif certainty[:attributes][:target] && certainty[:attributes][:degree]
-                  key = certainty[:attributes][:target][/@(when|from|to),/, 1] + {1 => :Year, 6 => :Month, 9 => :Day}[certainty[:attributes][:target][/,.*(\d).*,/, 1].to_i].to_s + 'Certainty'
-                  data_item[key.to_sym] = certainty[:attributes][:degree]
-                elsif certainty[:attributes][:degree]
-                  data_item[:certainty] = certainty[:attributes][:degree]
+                elsif certainty[:attributes][:match]
+                  key = certainty[:attributes][:match][/@(when|notBefore|notAfter)/, 1] + certainty[:attributes][:match][/(year|month|day)-from-date/, 1].capitalize + 'Certainty'
+                  data_item[key.to_sym] = 'low'
                 end
               end
             }
 
-            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.sort.join('_')
+            data_item[:certaintyPicker] = data_item.select{|k,v| k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?}.collect{|v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil}.compact.uniq.sort.join('_')
             data_item[:certaintyPicker] = !data_item[:certaintyPicker].empty? ? data_item[:certaintyPicker] : data_item[:certainty]
 
           end
@@ -763,11 +761,11 @@ module HgvMetaIdentifierHelper
     def HgvFormat.formatDate date_item
       precision = HgvFormat.formatPrecision date_item[:precision]
       certainty = HgvFormat.formatCertainty date_item[:certainty]
-      
+
       date1 = formatDatePart(
         date_item[:c],
-        date_item[:y],
-        date_item[:m],
+        date_item[:y2] ==  nil && (date_item[:m2] || date_item[:d2]) ? nil : date_item[:y],
+        date_item[:m2] ==  nil && date_item[:d2] ? nil : date_item[:m],
         date_item[:d],
         date_item[:cx],
         date_item[:yx],
@@ -777,8 +775,8 @@ module HgvMetaIdentifierHelper
 
       date2 = formatDatePart(
         date_item[:c2],
-        date_item[:y2],
-        date_item[:m2],
+        date_item[:y2] ==  nil && (date_item[:m2] || date_item[:d2]) ? date_item[:y] : date_item[:y2],
+        date_item[:m2] ==  nil && date_item[:d2] ? date_item[:m] : date_item[:m2],
         date_item[:d2],
         date_item[:cx2],
         date_item[:yx2],

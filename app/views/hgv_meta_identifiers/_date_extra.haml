@@ -10,21 +10,21 @@
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][attributes][id]', textDateId, :disabled => !@identifier.mutable?, :class => 'observechange'
 %p  
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.when'), :title => @identifier.configuration.xpath(:textDate)
-  %span
+  %span{:id => 'when' + date_id}
     = textDateWhen
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][attributes][when]', textDateWhen, :disabled => !@identifier.mutable?, :class => 'observechange'
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.after'), :title => @identifier.configuration.xpath(:textDate)
-  %span
+  %span{:id => 'notBefore' + date_id}
     = textDateFrom
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][attributes][notBefore]', textDateFrom, :disabled => !@identifier.mutable?, :class => 'observechange'
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.before'), :title => @identifier.configuration.xpath(:textDate)
-  %span
+  %span{:id => 'notAfter' + date_id}
     = textDateTo
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][attributes][notAfter]', textDateTo, :disabled => !@identifier.mutable?, :class => 'observechange'
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.textDate'), :title => @identifier.configuration.xpath(:textDate)
-  %span
+  %span{:id => 'format' + date_id}
     = textDate
   = hidden_field_tag 'hgv_meta_identifier[textDate][' + date_index.to_s + '][value]', textDate, :disabled => !@identifier.mutable?, :class => 'observechange'

@@ -11,6 +11,13 @@ de:
       mentionedDate: Erwähnte Daten
 
     label:
+      images: Digitale Bildnachweise
+      collectionInventoryId: Inv. Nr.
+      printIllustrations: Gedrucktes Bildgut
+      commentary: Kommentar
+      subjects: Inhaltsbeschreibung
+      publications: Publikationen
+      bls: Berichtigungslisten
       titleStmt: Titel
       tmNo: TM Nr.
       contentText: Inhalt
@@ -30,6 +37,7 @@ de:
       collectionInventoryNumber: Inv. Nr. 
       collectionTemporaryNotes: Ort z.Z.
       collectionTemporaryInventoryNumber: Inv. Nr. z.Z.
+      provenanceUnknown: Unbekannt
       provenanceAncientFindspot: Fundort (alt)
       provenanceNome: Nome
       provenanceAncientRegion: Region (alt)
@@ -41,8 +49,8 @@ de:
       blVolume: Band
       blPage: Seiten
       mentionedDateReference: Bezug
-      mentionedDateFrom: Von / Wann
-      mentionedDateTo: Bis
+      mentionedDateNotBefore: Von / Wann
+      mentionedDateNotAfter: Bis
       mentionedDateCertainty: Sicherheit
       mentionedDateDateId: Datums-Id
       mentionedDateNote: Kommentar
@@ -71,24 +79,25 @@ de:
       textDate: HGV-Format
       unknown: Unbekannt
       multiAdd: ✓
+      expandAll: alles aufklappen
+      collapseAll: alles zuklappen
+      quickSave: alle Daten speichern
+      showDateTabs: weitere Datumseinträge vornehmen
+      datePreview: Datumsvorschau anzeigen
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen
       multiDelete: Klicken, um Element zu löschen
       multiMove: Klicken und ziehen, um Element zu verschieben
       multiMentionedDateReference: Bezug zum Text (Zeile und Spalte)
-      multiMentionedDateFrom: Datum (im -YYYY-MM-DD-Format)
-      multiMentionedDateTo: Zweites Datum (wenn es sich um eine Zeitspanne handelt) (im -YYYY-MM-DD-Format)
+      multiMentionedDateNotBefore: Datum (im -YYYY-MM-DD-Format)
+      multiMentionedDateNotAfter: Zweites Datum (wenn es sich um eine Zeitspanne handelt) (im -YYYY-MM-DD-Format)
       multiMentionedDateComment: Kommentar
       multiMentionedDateCertainty: Sicherheit
       multiMentionedDateDateId: Bezug zu einem bestimmten Datumseintrag
 
     help:
       date: 'Datumseingaben werden generiert, indem die entsprechenden Werte im Abschnitt "Datum" für einfache Daten oder im Abschnitt "Zeitspanne" für Daten, die eine zeitliche Periode umfassen, ausgewertet werden. Nachdem die Werte eingegeben wurden, muss das Kontrollkästchen "Date master" aktiviert und der Speichern-Knopf gedrückt werden, um das HGV-Format zu generieren. Die Werte selbst, die in den entsprechenden Feldern eingegeben wurden, werden verworfen und nicht mehr angezeigt. Dies ist eine vorübergehend notwendige Maßnahme, während die Konzeptualisierungsarbeiten und Programmierarbeiten am Datumsformat andauern. Um ein vorchristliches Datum einzugeben, das "-"-Zeichen (Minus) verwenden, z.B. -146 im Feld "Jahr" erstellt "146 v.Chr." Wenn Änderungen gemacht werden, bezieht sich dies immer auf <b>ALLE</b> Teile und Alternativen der Datumskomponente. Es müssen immer alle Felder des Datums gefüllt werden, bevor "Date master" angehakt und der Speichern-Knopf gedrückt werden sollte, ansonsten wird das HGV-Format leer angezeigt.'
-      datemaster: '<b>NUR</b> benutzen, falls Änderungen im Datumsfeld getätigt wurden. Wurde das Datum eingegeben, dieses Kontrollfeld anhaken und den Speichern-Knopf klicken. Dies stellt sicher, dass das Datum in das HGV-Format umgewandelt wird. Zugleich löscht es alle bisherigen Einträge aus den Datumsfeldern. Dies ist eine vorübergehend notwendige Maßnahme, während die Konzeptualisierungsarbeiten und Programmierarbeiten am Datumsformat andauern.'
-      on_date: 'Angabe eines genauen Zeitpunkts, für die Angabe eines vorchristlichen Datums ein "-"-Zeichen verwenden'
-      not_before_date: 'Angabe des frühest möglichen Zeitpunkts eines Ereignisses im Standardformat, z.B. yyyy-mm-dd.'
-      not_after_date: 'Angabe des spätest möglichen Zeitpunkts eines Ereignisses im Standardformat, z.B. yyyy-mm-dd.'
       text_date: 'Enthält ein beliebiges Datumsformat, wird verwendet um das Geburtsdatum eine Manuskripts oder Teil eines Manuskripts anzugeben.'
       title_stmt: 'Titel des Inhalts.'
       publicationTitle: 'Titel der Publikation, z.B. BGU, P.Oxy'
@@ -106,8 +115,8 @@ de:
       collectionTemporaryInventoryNumber: 'Vorübergehende Inventarnummer, z.B. als Teil einer Ausstellung.'
       collection: 'Name der Manuskriptsammlung oder des Instituts, das die Sammlung beherbergt.'
       mentionedDateReference: 'Eingabe der Zeilen(nummern) im Text, wo das Datum erwähnt wird. Z.B. "Z. 2, Kol. II, Z. 11".'
-      mentionedDateFrom: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
-      mentionedDateTo: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
+      mentionedDateNotBefore: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
+      mentionedDateNotAfter: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
       mentionedDateNote: 'Optionale Beschreibung des Datums. Z.B. "Abschrift eines Dokuments vom:".'
       illustrations: 'Verweis auf gedruckte Illustrationen oder Fotos'
       content_text: 'Beschreibung des Inhalts in Stichworten'
