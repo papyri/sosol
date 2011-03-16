@@ -293,7 +293,12 @@ function rememberToggledView(){
 }
 
 function showExpansions(){
-  var expansionSet = $('expansionSet').value;
+  var flash = $('expansionSet').value;
+  var anchor = document.URL.match(/#[A-Za-z]+/)[0];
+  anchor = anchor.substr(1,1).toLowerCase() + anchor.substr(2);
+
+  var expansionSet = flash + ';' + anchor;
+  
   $$('.category').each(function(e){
 
     var classy = e.classNames().reject(function(item){
