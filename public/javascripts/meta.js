@@ -294,7 +294,8 @@ function rememberToggledView(){
 
 function showExpansions(){
   var flash = $('expansionSet').value;
-  var anchor = document.URL.match(/#[A-Za-z]+/)[0];
+  var anchor_match = document.URL.match(/#[A-Za-z]+/);
+  var anchor = anchor_match ? anchor_match[0] : '';
   anchor = anchor.substr(1,1).toLowerCase() + anchor.substr(2);
 
   var expansionSet = flash + ';' + anchor;
