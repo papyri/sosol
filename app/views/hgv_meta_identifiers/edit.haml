@@ -15,7 +15,7 @@
           = render :partial => 'hgv_meta_identifiers/date'
           %div{:style => 'float: none; clear: both; display: block;'}
           %span.quickSave=I18n.t('meta.label.quickSave')
-          %span.datePreview{:onclick => "new Ajax.Request('/hgv_meta_identifiers/get_date_preview?bla=BLUB' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
+          %span.datePreview{:onclick => "new Ajax.Request('/hgv_meta_identifiers/get_date_preview' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
           
         %h4.category.mentionedDate
           %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
