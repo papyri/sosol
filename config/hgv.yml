@@ -101,12 +101,24 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
     :provenanceAncientFindspot:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
     :provenanceNome:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='nome']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
     :provenanceAncientRegion:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='ancientRegion']
-    :provenanceModernFindspot: #guessed at this one
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/geogName[@type='modernFindspot']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
+    :provenanceModernFindspot:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/

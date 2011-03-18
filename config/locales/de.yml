@@ -98,8 +98,6 @@ de:
 
     help:
       date: 'Datumseingaben werden generiert, indem die entsprechenden Werte im Abschnitt "Datum" für einfache Daten oder im Abschnitt "Zeitspanne" für Daten, die eine zeitliche Periode umfassen, ausgewertet werden. Nachdem die Werte eingegeben wurden, muss das Kontrollkästchen "Date master" aktiviert und der Speichern-Knopf gedrückt werden, um das HGV-Format zu generieren. Die Werte selbst, die in den entsprechenden Feldern eingegeben wurden, werden verworfen und nicht mehr angezeigt. Dies ist eine vorübergehend notwendige Maßnahme, während die Konzeptualisierungsarbeiten und Programmierarbeiten am Datumsformat andauern. Um ein vorchristliches Datum einzugeben, das "-"-Zeichen (Minus) verwenden, z.B. -146 im Feld "Jahr" erstellt "146 v.Chr." Wenn Änderungen gemacht werden, bezieht sich dies immer auf <b>ALLE</b> Teile und Alternativen der Datumskomponente. Es müssen immer alle Felder des Datums gefüllt werden, bevor "Date master" angehakt und der Speichern-Knopf gedrückt werden sollte, ansonsten wird das HGV-Format leer angezeigt.'
-      text_date: 'Enthält ein beliebiges Datumsformat, wird verwendet um das Geburtsdatum eine Manuskripts oder Teil eines Manuskripts anzugeben.'
-      title_stmt: 'Titel des Inhalts.'
       publicationTitle: 'Titel der Publikation, z.B. BGU, P.Oxy'
       publicationVolume: 'Publikationsband'
       publicationNumbers: 'Nummer des Dokuments innerhalb eines Bandes'
@@ -118,27 +116,16 @@ de:
       mentionedDateNotBefore: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
       mentionedDateNotAfter: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
       mentionedDateNote: 'Optionale Beschreibung des Datums. Z.B. "Abschrift eines Dokuments vom:".'
-      illustrations: 'Verweis auf gedruckte Illustrationen oder Fotos'
-      content_text: 'Beschreibung des Inhalts in Stichworten'
-      other_publications: 'Andere Publikationen'
-      translations: 'Übersetzungen'
-      translations_de: 'Deutsche Übersetzungen'
-      translations_en: 'Englische Übersetzungen'
-      translations_fr: 'Französische Übersetzungen'
-      translations_it: 'Italienische Übersetzungen'
-      translations_la: 'Lateinische Übersetzungen'
-      translations_es: 'Spanische Übersetzungen'
-      bl: 'Berichtigungslisten'
-      notes: 'Weitere Bemerkungen oder Hinweise'
-      mentioned_dates: 'Erwähnte Daten'
-      material: 'Beschreibung des Materials, aus dem das Manuskript (oder ein Teil davon) besteht'
-      provenance_ancient_findspot: 'Altertümliche Bezeichung des Fundorts'
-      provenance_nome: 'Nome'
-      provenance_ancient_region: 'Altertümliche Bezeichnung der Region'
-      provenance_modern_findspot: 'Moderner Name des Fundorts'
-      inventory_number: 'Inventarnummer'
-      planned_for_future_print_release: 'Druckvorhaben'
 
+  provenance:
+    ancientFindspotUncertain: Funort unsicher
+    nomeUncertain: Gau unsicher
+    ancientRegionUncertain: Region unsicher
+    ancientFindspotAndNomeUncertain: Fundort und Gau unsicher
+    ancientFindspotAndAncientRegionUncertain: Fundort und Region unsicher
+    nomeAndAncientRegionUncertain: Gau und Region unsicher
+    ancientFindspotNomeAndAncientRegionUncertain: Fundort, Gau und Regio unsicher 
+  
   date:
     beginning: Anfang
     middle: Mitte

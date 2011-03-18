@@ -53,7 +53,7 @@ span.quickHelp span.message
   color: steelblue
   border: solid 0.1em steelblue
   padding: 0.4em
-  width: 20em
+  width: 16em
   font-variant: normal
   font-weight: normal
 
@@ -163,14 +163,19 @@ div#edit input#hgv_meta_identifier_collectionTemporaryNotes
 div#edit div.editbox label.provenanceAncientFindspot,
 div#edit div.editbox label.provenanceModernFindspot,
 div#edit div.editbox label.provenanceNome,
-div#edit div.editbox label.provenanceAncientRegion
+div#edit div.editbox label.provenanceAncientRegion,
+div#edit div.editbox label.provenanceCertainty,
+div#edit div.editbox label.provenanceUnknown
   width: 9em
 
-div#edit input#hgv_meta_identifier_provenanceAncientFindspot,
+div#edit input#hgv_meta_identifier_provenanceAncientFindspot_value,
 div#edit input#hgv_meta_identifier_provenanceModernFindspot,
-div#edit input#hgv_meta_identifier_provenanceNome,
-div#edit input#hgv_meta_identifier_provenanceAncientRegion
+div#edit input#hgv_meta_identifier_provenanceNome_value,
+div#edit input#hgv_meta_identifier_provenanceAncientRegion_value
   width: 17em
+
+div#edit select#provenanceCertaintyPicker
+  width: 17.2em
 
 div#edit div.editbox label.tmNo
   margin: 0 0 0 17em
@@ -196,8 +201,8 @@ span.quickHelp_meta_help_tmNo span.message,
 span.quickHelp_meta_help_publicationPages span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
 span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message
-  left: -17em
-  width: 16em
+  left: -14.5em
+  width: 13em
 
 
 span.quickHelp_meta_help_date span.message
@@ -210,7 +215,7 @@ span.quickHelp_meta_help_publicationParts
 span.quickHelp_meta_help_mentionedDateReference
   z-index: 402
 
-span.quickHelp_meta_help_mentionedDateFrom,
+span.quickHelp_meta_help_mentionedDateNotBefore,
 span.quickHelp_meta_help_publicationVolume,
 span.quickHelp_meta_help_publicationNumbers,
 span.quickHelp_meta_help_publicationSide,
@@ -218,7 +223,7 @@ span.quickHelp_meta_help_collectionPlaceName,
 span.quickHelp_meta_help_collectionTemporaryNotes
   z-index: 401
 
-span.quickHelp_meta_help_mentionedDateTo,  
+span.quickHelp_meta_help_mentionedDateNotAfter,  
 span.quickHelp_meta_help_publicationLine,
 span.quickHelp_meta_help_collection
   z-index: 400

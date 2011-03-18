@@ -75,10 +75,10 @@
                 - if @identifier[:provenanceUnknown]
                   = @identifier[:provenanceUnknown]
                 - else
-                  = @identifier[:provenanceAncientFindspot] ? @identifier[:provenanceAncientFindspot] : ''
+                  = @identifier[:provenanceAncientFindspot].kind_of?(Hash)  && @identifier[:provenanceAncientFindspot][:value] ? @identifier[:provenanceAncientFindspot][:value] : ''
                   = @identifier[:provenanceModernFindspot] ? '(=  ' + @identifier[:provenanceModernFindspot] + ')' : ''
-                  = @identifier[:provenanceAncientRegion] ? '(' + @identifier[:provenanceAncientRegion] + ')' : ''
-                  = @identifier[:provenanceNome] ? ', ' + @identifier[:provenanceNome] : ''
+                  = @identifier[:provenanceAncientRegion].kind_of?(Hash)  && @identifier[:provenanceAncientRegion][:value] ? '(' + @identifier[:provenanceAncientRegion][:value] + ')' : ''
+                  = @identifier[:provenanceNome].kind_of?(Hash)  && @identifier[:provenanceNome][:value] ? ', ' + @identifier[:provenanceNome][:value] : ''
           - if @identifier[:material]
             %tr
               %th=I18n.t('meta.label.material')
