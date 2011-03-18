@@ -7,10 +7,14 @@
   }
   function getRankings() {
   //put the ranking into a csv list
+  
   var new_rankings =  Sortable.serialize('board_elements');
   new_rankings = new_rankings.replace(/board_elements\[\]=/g, '');
   new_rankings = new_rankings.replace(/&/g, ',');
-  form_board_rankings.value = new_rankings;
+  
+  var rankings_node = document.getElementById('form_board_rankings);
+  rankings_node.value = new_rankings;
+  //$(form_board_rankings).value = new_rankings;
   }
 
 %h1
