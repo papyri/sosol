@@ -1,123 +1,179 @@
+div.metaSite
+  width: 50em
+  font-size: 1em
+
+div.metaSite select,
+div.metaSite input
+  font-size: 0.846em
+
+input[type=checkbox]
+  border: none
+
+/**** quicksave / expand / collapse / showDateTabs ****/
+.expandAll,
+.collapseAll,
+.showDateTabs,
+.quickSave,
+.datePreview
+  cursor: pointer
+  cursor: hand
+  color: #c0c0c0
+  text-decoration: underline
+
+.datePreview
+  padding: 0 0 0 0.8em
+
+.showDateTabs
+  position: absolute
+  right: 2em
+  top: 2em
+
 /**** quickhelp ****/
 
 span.quickHelp
   position: relative
   z-index: 100
   float: left
-  margin: 0 0 0 4px
-  height: 16px
+  margin: 0 0 0 0.4em
+  height: 1.6em
 
 span.quickHelp span.hook
   position: relative
   background-color: lightsteelblue
-  padding: 2px
+  padding: 0.1em
   font-weight: bold
   color: white
   cursor: pointer
 
 span.quickHelp span.message
   position: absolute
-  left: 16px
-  bottom: 8px
+  left: 1.6em
+  bottom: 0.8em
   background-color: lightgrey
   color: steelblue
-  border: solid 1px steelblue
-  padding: 4px
-  width: 200px
+  border: solid 0.1em steelblue
+  padding: 0.4em
+  width: 20em
   font-variant: normal
   font-weight: normal
 
+/**** autocomleter ****/
+
+ul.autocompleter_list
+  border: solid 0.1em #c0c0c0
+  background-color: white
+
+ul.autocompleter_list,
+ul.autocompleter_list li
+  list-style-type: none
+
+ul.autocompleter_list li.selected
+  background-color: lightsteelblue
+
 /**** global ****/
 
-div.metaSite
-  width: 50em
+div#edit h5
+  margin: 0.4em 0 0
+  padding: 0.4em
+  font-weight: bold
+  font-size: 10pt
+  font-variant: small-caps
+  position: relative
 
-div#edit fieldset
-  padding: 8px 0 8px 0
-  margin: 16px 0 0 0
-
-div#edit fieldset legend
+div#edit h4
+  background: url("/images/menu_strip_down_arrow.png") no-repeat scroll right top #C0C0C0
+  border-bottom: 0.1em solid #A0A0A0
+  border-top: 0.1em solid #000000
+  cursor: pointer
+  margin: 0.4em 0 0
+  padding: 0.4em
   font-weight: bold
   font-variant: small-caps
-  padding: 0 4px 0 4px
+  background-color: lightgrey
+  
+div#edit div.editbox
+  border-right: 0.1em solid #A0A0A0
+  border-bottom: 0.1em solid #A0A0A0
+  border-left: 0.1em solid #A0A0A0
+  padding: 0.4em
+  height: auto
+  overflow: visible
 
-div#edit fieldset label
+div#edit div.editbox label
   font-weight: bold
   float: left
-  margin: 0 4px 0 4px
-  width: 100px
+  margin: 0 0.4em 0 0.4em
+  width: 7.5em
   overflow: hidden
+  line-height: 1.077em
 
 div#edit textarea
-  width: 530px
-  height: 60px
-  border: solid 1px #c0c0c0
+  width: 40em
+  height: 6em
+  border: solid 0.1em #c0c0c0
   float: left
-  margin: 0 0 4px 0
+  margin: 0 0 0.4em 0
 
 div#edit div.multi
-  width: 530px
+  width: 36em
   float: left
-  margin: 0 0 16px 0 
+  margin: 0 0 1.6em 0 
 
 div#edit input,
 div#edit select
-  width: 103px
+  width: 10.3em
   float: left
-  margin: 0 0 4px 0
+  margin: 0 0 0.4em 0
 
 div#edit input
-  border: solid 1px #c0c0c0
+  border: solid 0.1em #c0c0c0
 
 /**** special ****/
-div#edit fieldset li.label
+div#edit div.editbox li.label
   background-color: transparent
 
-div#edit fieldset span.label
+div#edit div.editbox span.label
   float: left
 
-div#edit fieldset label.mentionedDateReference,
-div#edit fieldset label.mentionedDateFrom,
-div#edit fieldset label.mentionedDateTo,
-div#edit fieldset label.mentionedDateNote,
-div#edit fieldset label.mentionedDateCertainty,
-div#edit fieldset label.mentionedDateDateId,
-div#edit fieldset label.datemaster
-  margin: 0 1px 4px 0
+div#edit div.editbox label.mentionedDateReference,
+div#edit div.editbox label.mentionedDateNotBefore,
+div#edit div.editbox label.mentionedDateNotAfter,
+div#edit div.editbox label.mentionedDateNote,
+div#edit div.editbox label.mentionedDateCertainty,
+div#edit div.editbox label.mentionedDateDateId
+  margin: 0 0.1em 0.4em 0
   overflow: visible
-div#edit fieldset label.mentionedDateNote
-  width: 147px
-div#edit fieldset label.mentionedDateCertainty
-  width: 107px
-div#edit fieldset label.mentionedDateDateId
-  width: 50px
+  width: 7.7em
+div#edit div.editbox label.mentionedDateNote
+  width: 11em
+div#edit div.editbox label.mentionedDateCertainty
+  width: 8em
+div#edit div.editbox label.mentionedDateDateId
+  width: 5em
 
 div#edit input#hgv_meta_identifier_collectionPlaceName,
 div#edit input#hgv_meta_identifier_collection,
 div#edit input#hgv_meta_identifier_collectionInventoryNumber,
 div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber
-  width: 88px
+  width: 7.55em
 
 div#edit input#hgv_meta_identifier_collectionTemporaryNotes
-  width: 302px
+  width: 26.5em
 
-div#edit input#datemaster
-  width: 60px
-
-div#edit fieldset label.provenanceAncientFindspot,
-div#edit fieldset label.provenanceModernFindspot,
-div#edit fieldset label.provenanceNome,
-div#edit fieldset label.provenanceAncientRegion
-  width: 120px
+div#edit div.editbox label.provenanceAncientFindspot,
+div#edit div.editbox label.provenanceModernFindspot,
+div#edit div.editbox label.provenanceNome,
+div#edit div.editbox label.provenanceAncientRegion
+  width: 9em
 
 div#edit input#hgv_meta_identifier_provenanceAncientFindspot,
 div#edit input#hgv_meta_identifier_provenanceModernFindspot,
 div#edit input#hgv_meta_identifier_provenanceNome,
 div#edit input#hgv_meta_identifier_provenanceAncientRegion
-  width: 190px
+  width: 17em
 
-div#edit fieldset label.tmNo
-  margin: 0 4px 0 217px
+div#edit div.editbox label.tmNo
+  margin: 0 0 0 17em
 
 div#edit input#hgv_meta_identifier_publicationTitle,
 div#edit input#hgv_meta_identifier_tmNo,
@@ -128,28 +184,28 @@ div#edit input#hgv_meta_identifier_publicationParts,
 div#edit input#hgv_meta_identifier_publicationSide,
 div#edit input#hgv_meta_identifier_publicationLine,
 div#edit input#hgv_meta_identifier_publicationPages
-  width: 87px
+  width: 7.5em
 
 div#edit input#hgv_meta_identifier_titleStmt
-  width: 320px
+  width: 27em
 
 div#edit input#hgv_meta_identifier_material
-  width: 100px
+  width: 10em
 
 span.quickHelp_meta_help_tmNo span.message,
 span.quickHelp_meta_help_publicationPages span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
 span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message
-  left: -176px
-  width: 160px
+  left: -17em
+  width: 16em
 
 
 span.quickHelp_meta_help_date span.message
-  width: 300px
+  width: 30em
 
 span.quickHelp_meta_help_publicationFascicle,
 span.quickHelp_meta_help_publicationParts
-  margin: 0 113px 4px 4px
+  margin: 0 11em 0.4em 0.4em
 
 span.quickHelp_meta_help_mentionedDateReference
   z-index: 402
@@ -167,15 +223,17 @@ span.quickHelp_meta_help_publicationLine,
 span.quickHelp_meta_help_collection
   z-index: 400
 
+/**** toggle ****/
+
 /**** multi general ****/
 
 div#edit div.multi ul li
   background-color: lightsteelblue
   list-style-type: none
   display: block
-  width: 528px
+  width: 40em
   padding: 1px
-  margin: 0 4px 4px 0
+  margin: 0 0.4em 0.4em 0
   height: 16px
 
 div#edit div.multi ul li.label
@@ -187,14 +245,13 @@ div#edit div.multi ul.items li input
   height: 16px
 
 div#edit div.multi ul.items li span
-  width: 16px
-  height: 16px
+  width: 1.6em
   overflow: hidden
   background-color: lightsteelblue
   color: white
   font-weight: bold
   text-align: center
-  padding: 0 4px 0 4px
+  padding: 0 0.3em 0 0.3em
   cursor: move
 
 div#edit div.multi ul.items li span.delete
@@ -205,21 +262,21 @@ div#edit div.multi p.add
   background-color: lightsteelblue
   vertical-align: center
   padding: 1px
-  height: 18px
-  width: 528px
+  height: 16px
+  width: 40em
 
 div#edit div.multi p.add input
-  width: 496px
-  height: 18px
+  width: 44em
+  height: 16px
   background-color: white
   border: none
   margin: auto
 
 div#edit div.multi p.add span
-  width: 16px
-  height: 16px
-  padding: 0 4px 0 4px
-  margin-top: 2px
+  width: 1.6em
+  height: 1.6em
+  padding: 0 0.4em 0 0.4em
+  margin-top: 0.2em
   background-color: lightsteelblue
   color: white
   font-weight: bold
@@ -230,54 +287,57 @@ div#edit div.multi p.add span
 
 div#edit div.multi ul#multiItems_contentText li
   float: left
-  width: 170px
+  width: 14em
 
 div#edit div.multi ul#multiItems_contentText li input
-  width: 132px 
+  width: 13em 
 
 div#edit div.multi ul#multiItems_bl li
   float: left
-  width: 85px
+  width: 8em
 
-div#edit div.multi ul#multiItems_bl li input
-  width: 24px
+div#edit div.multi ul#multiItems_bl li input.volume
+  width: 2em
+
+div#edit div.multi ul#multiItems_bl li input.page
+  width: 4em
 
 div#edit div.multi p#multiPlus_bl input
-  width: 140px
+  width: 14em
 
 div#edit div.multi ul#multiItems_mentionedDate li
-  width: 643px
+  width: 48.8em
 
 div#edit div.multi ul#multiItems_mentionedDate li input
-  width: 100px
-  margin: 0 1px 0 0
+  width: 9em
+  margin: 0 0.1em 0 0
 
 div#edit div.multi ul#multiItems_mentionedDate li input.note
-  width: 146px
+  width: 13em
 
 div#edit div.multi ul#multiItems_mentionedDate li select
-  width: 100px
-  margin: 0 0 0 4px
+  width: 9em
+  margin: 0 0 0 0.4em
 
 div#edit div.multi ul#multiItems_mentionedDate li select.dateId
-  width: 42px
+  width: 4em
 
 div#edit div.multi p#multiPlus_mentionedDate
-  width: 643px
+  width: 48.8em
 
 div#edit div.multi p#multiPlus_mentionedDate input
-  width: 100px
-  margin: 0 1px 0 0
+  width: 9em
+  margin: 0 0.1em 0 0
 
 div#edit div.multi p#multiPlus_mentionedDate input.note
-  width: 146px
+  width: 13em
 
 div#edit div.multi p#multiPlus_mentionedDate select
-  width: 100px
-  margin: 0 0 0 4px
+  width: 9em
+  margin: 0 0 0 0.4em
 
 div#edit div.multi p#multiPlus_mentionedDate select.dateId
-  width: 42px
+  width: 4em
 
 div#edit div.multi ul#multiItems_figures li input,
 div#edit div.multi ul#multiItems_illustrations li input,
@@ -288,50 +348,51 @@ div#edit div.multi ul#multiItems_translationsIt li input,
 div#edit div.multi ul#multiItems_translationsFr li input,
 div#edit div.multi ul#multiItems_translationsEs li input,
 div#edit div.multi ul#multiItems_translationsLa li input
-  width: 490px
+  width: 44em
 
 /**** date ****/
 
 div#edit div#dateContainer
   position: relative
-  height: 400px
+  height: 36em
   padding: 0
   margin: 0
-  background-color: lightpink
 
 div#edit div#dateContainer div.dateItem
   position: absolute
-  top: 42px
-  background-color: white
+  top: 4em
 
 div#edit div#dateContainer div.dateItem div.dateTab
-  background-color: lightgrey
-  color: white
-  width: 42px
-  height: 42px
+  border-top: solid 0.1em #c0c0c0
+  border-right: solid 0.1em #c0c0c0
+  border-left: solid 0.1em #c0c0c0
+  width: 3em
+  height: 3em
   position: absolute
-  top: -42px
+  top: -3em
   cursor: pointer
 
 div#edit div#dateContainer div.dateItemY div.dateTab
-  left: 42px
+  left: 3.2em
 
 div#edit div#dateContainer div.dateItemZ div.dateTab
-  left: 84px
+  left: 6.45em
 
 div#edit div#dateContainer div.dateItem div.dateTab span
   font-weight: bold
   position: absolute
-  top: 14px
-  left: 14px
+  top: 1.1em
+  left: 1.1em
   cursor: pointer
 
 div#edit div#dateContainer div.dateItem div.dateInfo
   display: none
+  border: solid 0.1em #c0c0c0
+  padding: 0.4em
+  width: 48em
 
 div#edit div#dateContainer div.dateItemActive div.dateTab
-  background-color: white
-  color: black
+  background-color: #c0c0c0
 
 div#edit div#dateContainer div.dateItemActive div.dateInfo
   display: block
@@ -340,24 +401,46 @@ div#edit div#dateContainer div.dateItemActive div.dateInfo
 div#edit div#dateContainer div.dateItem div.dateInfo div
   float: left
 
-div#edit fieldset.date p 
+div#edit div.dateItem div.dateInfo p 
   float: none
   clear: both
 
-div#edit fieldset.date p input
-  width: 42px
-  margin: 0 4px 4px 0
+div#edit div.dateItem div.dateInfo p input
+  width: 4em
+  margin: 0 0.4em 0.4em 0
 
-div#edit fieldset.date p label
-  width: 120px
+div#edit div.dateItem div.dateInfo p label
+  width: 8em
   float: left
 
-div#edit fieldset.date p select
-  width: 120px
+div#edit div.dateItem div.dateInfo p select
+  width: 12em
   float: left
   
-div#edit fieldset.date p select.offset,
-div#edit fieldset.date p select.precision,
-div#edit fieldset.date p select.certainty
-  width: 168px
+div#edit div.dateItem div.dateInfo p select.offset,
+div#edit div.dateItem div.dateInfo p select.precision,
+div#edit div.dateItem div.dateInfo p select.certainty
+  width: 16em
 
+div#edit div.dateItem div.dateInfo hr
+  border: 0
+  color: #c0c0c0
+  background-color: #c0c0c0
+  height: 0.1em
+  margin: 0.8em 0 0.8em 0
+  width: 624px
+  clear: left
+
+div#edit div.dateItem div.dateInfo h5 span.quickHelp_meta_help_date
+  float: none
+  position: absolute
+  top: 0.3em
+  
+/**** flash hack ****/
+#notice_expansionSet
+  display: none
+  width: 0
+  height: 0
+  position: absolute
+  left: -1000px
+  top: -1000px
