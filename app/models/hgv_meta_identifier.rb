@@ -1,8 +1,3 @@
-# Achtung Sortierung steht noch aus (siehe Collection, und dies wiederum in HgvMetaIdentifierPlus)!
-# I18N
-# View II
-# View Zieharmonika
-
 class HGVMetaIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
@@ -76,7 +71,7 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
-      if config[:children]
+      if config[:children] || config[:attributes]
         self[key] = get_epidoc_attributes_tree doc, config
       elsif config[:multiple]
         self[key] = get_epidoc_attributes_list doc, config
@@ -139,6 +134,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
+    
     epidoc = set_epidoc_attributes
       
     #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
@@ -227,7 +223,6 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
-
       if config[:multiple]
         xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
         xpath_child = $2 
@@ -252,12 +247,11 @@ class HGVMetaIdentifier < HGVIdentifier
       else
 
         if self[key] && !self[key].empty? 
-          
           element = doc.bulldozePath(config[:xpath])
-          element.text = self[key]
+          element.text = config[:children] || config[:attributes] ? self[key][:value] : self[key]
           if config[:attributes]
             config[:attributes].each_pair {|attribute_key, attribute_config|
-              element.attributes[attribute_config[:name]] = self[attribute_key]
+              element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key] #self[attribute_key]
             }
           end
           
@@ -283,6 +277,7 @@ class HGVMetaIdentifier < HGVIdentifier
   end
 
   def sort doc
+    # general
     sort_paths = {
       :msIdentifier => {
         :parent => '/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier',
@@ -303,6 +298,44 @@ class HGVMetaIdentifier < HGVIdentifier
             parent.add child
           }
         }
+      end
+    }
+    
+    # date
+
+    doc.elements.each(@configuration.scheme[:textDate][:xpath]){|date|
+      if date.elements['offset']
+
+        hgvFormat = ''
+        date.texts.each{|text|
+          hgvFormat += text.value
+          date.delete text  
+        }
+        hgvFormat = hgvFormat.gsub(/(vor|nach)( \(\?\))?/, '').strip
+        
+        offset = date.elements['offset[position()=1]']
+        offset2 = date.elements['offset[position()=2]']
+        
+        date.delete offset
+        date.delete offset2        
+        
+        if offset
+          date.add_element offset
+          date.add_text REXML::Text.new(' ')
+        end
+        
+        if hgvFormat.include? ' - '
+          hgvFormat = hgvFormat.split ' - '
+          date.add_text REXML::Text.new(hgvFormat[0] + ' - ')
+          if offset2
+            date.add_element offset2
+            date.add_text REXML::Text.new(' ')
+          end
+          date.add_text REXML::Text.new(hgvFormat[1])
+        else
+          date.add_text REXML::Text.new(hgvFormat)
+        end
+
       end
     }
 
@@ -326,7 +359,7 @@ class HGVMetaIdentifier < HGVIdentifier
   def populate_epidoc_attributes_from_attributes_hash attributes_hash
 
     @configuration.scheme.each_pair do |key, config|
-      if config[:children]
+      if config[:children] || config[:attributes]
         result = nil
         if config[:multiple]
           result = []
@@ -336,16 +369,15 @@ class HGVMetaIdentifier < HGVIdentifier
             }
           end
         else
-          result = populate_tree_from_attributes_hash attributes_hash[key.to_s], config
+          result = populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
         end
-        self[key] = result
+        self[key] = result  
       elsif config[:multiple]
         self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
       else 
         self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].strip : nil
       end
     end
-
   end
 
   def populate_tree_from_attributes_hash data, config
@@ -378,7 +410,10 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
-            data[:children][child_key.to_s].each{|child|
+            
+            x = data[:children][child_key.to_s].kind_of?(Hash) ? data[:children][child_key.to_s].values : data[:children][child_key.to_s]
+            
+            x.each{|child|
               children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
             }
             result_item[:children][child_key] = children

@@ -1,33 +1,34 @@
 :javascript
   function checkForComment() { comment_text = $('comment_comment').value; $('vote_submit').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
 
-
-%h3 Votes
-- user_has_voted = false
-%ul
-  - if identifier.votes.length == 0
-    %li No votes yet.
-  - else
-    - identifier.votes.each do |vote|
-      %li
-        = vote.choice
-        = vote.user.name
-        - if vote.user.name == @current_user.name
-          - user_has_voted = true
-%br
-- if !user_has_voted && identifier.publication.status == "voting"
-  - form_for :vote, Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
-    #submit
-      = f.hidden_field :publication_id
-      = f.hidden_field :identifier_id
-      Your Vote:
-      - choices = Hash.new
-      - identifier.publication.owner.decrees.each do |d|
-        - d.get_choice_array.each do |c|
-          - choices[c] = c
-      = select "vote", "choice", choices, {:include_blank => true}
-      %br
-      Your Comment Required:
-      = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
-      -#= f.submit "Vote", :disabled => !publication.mutable?
-      = f.submit "Vote", :disabled => true, :onclick => 'set_conf_false_vote()'
+- if identifier.modified?
+  %h3 Votes
+  -# user_has_voted = identifier.user_has_voted?(@current_user)#false
+  - user_has_voted = identifier.publication.user_has_voted?(@current_user)
+  %ul
+    - if identifier.publication.votes.length == 0
+      %li No votes yet.
+    - else
+      - identifier.publication.votes.each do |vote|
+        %li
+          = vote.choice
+          = vote.user.name
+          -# if vote.user.name == @current_user.name
+            - user_has_voted = true
+  %br
+  - if !user_has_voted && identifier.publication.status == "voting"
+    - form_for :vote, Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
+      #submit
+        = f.hidden_field :publication_id
+        = f.hidden_field :identifier_id
+        Your Vote:
+        - choices = Hash.new
+        - identifier.publication.owner.decrees.each do |d|
+          - d.get_choice_array.each do |c|
+            - choices[c] = c
+        = select "vote", "choice", choices, {:include_blank => true}
+        %br
+        Your Comment Required:
+        = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
+        -#= f.submit "Vote", :disabled => !publication.mutable?
+        = f.submit "Vote", :disabled => true, :onclick => 'set_conf_false_vote()'

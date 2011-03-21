@@ -317,8 +317,11 @@ class Identifier < ActiveRecord::Base
     commit_message = "Update revisionDesc\n\n"
     change_desc_content = self.xml_content
     
-    Comment.find_all_by_git_hash(self.parent.get_recent_commit_sha).each do |c|
-      if(c.reason == "vote")
+    # assume context is from finalizing publication, so parent is board's copy
+    parent_classes = self.parent.owner.identifier_classes
+    
+    Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
+      if((c.reason == "vote") && (parent_classes.include?(c.identifier.class.to_s)))
         change_desc_content = add_change_desc( "Vote - " + c.comment, c.user, change_desc_content )
         commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
       end
@@ -346,6 +349,22 @@ class Identifier < ActiveRecord::Base
   def result_action_graffiti
     
     #delete
+  end
+
+  def needs_reviewing?(user_id)
+    return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self) && !self.publication.user_has_voted?(user_id) #!self.user_has_voted?(user_id)
+  end
+
+  def user_has_voted?(user_id)
+    if self.votes
+      self.votes.each do |vote|
+        if vote.user_id == user_id
+          return true #user has a vote on record for this identifier
+        end
+      end
+    end
+    #no vote found
+    return false
   end
 
 end

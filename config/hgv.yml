@@ -50,6 +50,15 @@
     :illustrations:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/p/bibl[@type='illustration']
       :multiple: true
+    :figures:
+      :xpath: /TEI/text/body/div[@type='figure']/p/figure
+      :children:
+        :graphic:
+          :xpath: graphic
+          :attributes:
+            :url:
+              :name: url
+      :multiple: true
     :contentText:
       :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='hgv']/term
       :multiple: true
@@ -88,14 +97,28 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
+    :provenanceUnknown:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
     :provenanceAncientFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/placeName[@type='ancientFindspot']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
     :provenanceNome:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='nome']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
     :provenanceAncientRegion:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='ancientRegion']
-    :provenanceModernFindspot: #guessed at this one
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/p/geogName[@type='modernFindspot']
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
+      :attributes:
+        :certainty:
+          :name: cert
+          :pattern: /low/
+    :provenanceModernFindspot:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/
@@ -112,17 +135,19 @@
           :attributes:
             :when:
               :name: when
-            :from:
-              :name: from
-            :to:
-              :name: to
+            :notBefore:
+              :name: notBefore
+            :notAfter:
+              :name: notAfter
+            :certainty:
+              :name: cert
           :children:
             :certainty:
               :xpath: certainty[@locus='value']
               :multiple: true
               :attributes:
-                :target:
-                  :name: target
+                :match:
+                  :name: match
                 :relation:
                   :name: given
                   :pattern: /\A#dateAlternative[XYZ]\Z/

@@ -1,0 +1,2 @@
+- form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create_from_templates" } do |form|
+  = form.submit "Create New Publication", :class => 'save'

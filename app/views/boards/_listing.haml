@@ -1,0 +1,6 @@
+%b
+  = listing.title + " ( " + listing.friendly_name + " ) "
+
+= link_to 'Show', listing
+= link_to 'Edit', edit_board_path(listing)
+= link_to 'Destroy', listing, :confirm => 'Are you sure?', :method => :delete

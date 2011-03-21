@@ -791,22 +791,38 @@ function insertNum()
         }
       else //value empty but content has data
         {
-          if (document.number.rend_frac_check_n.checked == true)
+          if (document.number.rend_tick_check_n.checked == true)
             {
-              opt_rend_frac = " rend=\"fraction\"";
+              opt_rend_tick = " rend=\"tick\"";
             }
           else
             {
-              opt_rend_frac = "";
+              opt_rend_tick = "";
             }
-          number_type = "content";
+          if (document.number.type_frac_check_n.checked == true)
+            {
+              number_type = "type_rend_content";
+            }
+          else
+            {
+              number_type = "content";
+            }
         }
     }
   else
     {
       if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
         {  
-          moreNumEdit("value");
+          if (isNumericSpecial(numval) == true) //validates numeric value in fraction or digits
+            {
+              opt_rend_tick = "";
+              number_type = "value";
+            }
+          else
+            {
+              alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
+              editpass = "no";
+            }
         }
       else //value and content both have data
         {
@@ -832,17 +848,22 @@ function finishNum()
   {
   case "value":
     {
-      startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + "/>";
+      startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + "/>";
       break;
     }
   case "content":
     {
-      startxml = "<num" + opt_rend_frac + ">" + numcontent + "</num>";
+      startxml = "<num" + opt_rend_tick + ">" + numcontent + "</num>";
       break;
     }
-  case "valuecontent":
+  case "value_rend_content":
     {
-      startxml = "<num value=\"" + numval + "\"" + opt_rend_frac + ">" + numcontent + "</num>";
+      startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + ">" + numcontent + "</num>";
+      break;
+    }
+  case "type_rend_content": //ignores a value if it was input
+    {
+      startxml = "<num type=\"fraction\"" + opt_rend_tick + ">" + numcontent + "</num>";
       break;
     }
   default:
@@ -862,25 +883,32 @@ function finishNum()
   
 function moreNumEdit(newType)
 {
-  if (document.number.rend_frac_check_n.checked)
+  if (document.number.type_frac_check_n.checked) //ignores a value if it was input
     {
-      if (isNumericFraction(numval) == true) //validates numeric value input is in fraction format
+      if (document.number.rend_tick_check_n.checked == true)
         {
-          opt_rend_frac = " rend=\"fraction\"";
-          number_type = newType;
+          opt_rend_tick = " rend=\"tick\"";
+          
         }
       else
         {
-          alert("Value must be in fraction format (ex. 1/8) when 'scribe indicated fraction with tick' is checked");
-          editpass = "no";
+          opt_rend_tick = "";
         }
+      number_type = "type_rend_content";
     }
   else
     {
-      if (isNumericSpecial(numval) == true)
+      if (isNumericSpecial(numval) == true) //validates numeric value in fraction or digits
         {
-          opt_rend_frac = "";
-          number_type = newType;
+          if (document.number.rend_tick_check_n.checked == true)
+            {
+              opt_rend_tick = " rend=\"tick\"";
+            }
+          else
+            {
+              opt_rend_tick = "";
+            }
+          number_type = "value_rend_content";
         }
       else
         {

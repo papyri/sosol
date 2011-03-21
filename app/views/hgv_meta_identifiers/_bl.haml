@@ -4,15 +4,19 @@
     - volume = @identifier[:bl][index][:children] && @identifier[:bl][index][:children][:volume] && @identifier[:bl][index][:children][:volume][:value] ? @identifier[:bl][index][:children][:volume][:value] : ''
     - page = @identifier[:bl][index][:children] && @identifier[:bl][index][:children][:page] && @identifier[:bl][index][:children][:page][:value] ? @identifier[:bl][index][:children][:page][:value] : ''
       %li
-        = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][volume][value]', volume, :disabled => !@identifier.mutable?, :class => 'observechange'
-        = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][page][value]', page, :disabled => !@identifier.mutable?, :class => 'observechange'
+        = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][volume][value]', volume, :disabled => !@identifier.mutable?, :class => 'observechange volume'
+        = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][page][value]', page, :disabled => !@identifier.mutable?, :class => 'observechange page'
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add#multiPlus_bl
     %label= I18n.t('meta.label.blVolume')
-    %input#bl_volume
+    =#%input#bl_volume
+      
+    = select_tag '', options_for_select(['', 'I', 'II 1', 'II 2', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']), :id => 'bl_volume', :class => 'observechange'
+      
+      
     %label= I18n.t('meta.label.blPage')
-    %input#bl_page
+    %input#bl_page.observechange
     %span{:onclick => "multiAddBl()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_bl', {overlap: 'horizontal', constraint: false, handle: 'move'});"

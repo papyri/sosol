@@ -4,7 +4,7 @@
   
   <xsl:import href="lb_id.xsl"/>
   
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
   
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
@@ -65,6 +65,8 @@
   <!-- set oxygen RNGSchema processing instruction -->
   <xsl:template match="processing-instruction('oxygen')">
     <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
+    <xsl:text>
+</xsl:text>
   </xsl:template>
 
   <!-- always generate handNotes from content -->
@@ -92,6 +94,33 @@
           </xsl:attribute>
         </xsl:element>
       </xsl:for-each-group>
+    </xsl:element>
+  </xsl:template>
+  
+  <!-- convert numbers, from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/numtick.xsl -->
+  <xsl:template match="tei:num[@rend='fraction']">
+    <xsl:element name="num" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:copy-of select="@*[not(local-name() = 'rend')]"/>
+      <xsl:choose>
+        <xsl:when test="@value=('1/2','2/3','3/4')"></xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="rend">
+            <xsl:text>tick</xsl:text>
+          </xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="tei:num/tei:certainty">
+    <xsl:element name="certainty" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:attribute name="match">
+        <xsl:text>../@value</xsl:text>
+      </xsl:attribute>
+      <xsl:attribute name="locus">
+        <xsl:text>value</xsl:text>
+      </xsl:attribute>
     </xsl:element>
   </xsl:template>
 

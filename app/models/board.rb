@@ -10,7 +10,10 @@ class Board < ActiveRecord::Base
   
   has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner
-  
+
+
+  named_scope :ranked, :order => 'rank ASC'
+
   # :identifier_classes is an array of identifier classes this board has
   # commit control over. This isn't done relationally because it's not a
   # relation to instances of identifiers but rather to identifier classes
@@ -209,8 +212,25 @@ class Board < ActiveRecord::Base
   end
 
 
+  #since this is an feature added, the existing boards will not have this data, so we may need to make it up
+  #could be removed after initail deploy
+  def friendly_name=(fn)
+    if fn && (fn.strip != "")
+      self[:friendly_name] = fn
+    else
+      self[:friendly_name] = self[:title]
+    end
+    
+  end
   
-  
+  def friendly_name
+    fn = self[:friendly_name]
+    if fn && (fn.strip != "")
+      return fn
+    else
+      return self[:title]
+    end
+  end
   
   
 end
