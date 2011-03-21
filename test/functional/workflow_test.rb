@@ -43,7 +43,7 @@ class WorkflowTest < ActiveSupport::TestCase
     
     def generate_board_vote_for_decree(board, decree, identifier, user)
       Factory(:vote,
-              :publication => identifier.publication,
+              :publication_id => identifier.publication.id,
               :identifier_id => identifier.id,
               :user => user,
               :choice => (decree.get_choice_array)[rand(
