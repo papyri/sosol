@@ -1,5 +1,42 @@
 module HgvMetaIdentifierHelper
 
+  module HgvProvenance
+    def HgvProvenance.certainty provenance
+      if provenance.kind_of?(Hash) && 
+         provenance[:attributes] && 
+         provenance[:attributes][:certainty] && 
+         provenance[:attributes][:certainty] == 'low'
+        provenance[:attributes][:certainty]
+      else
+        nil
+      end
+    end
+    
+    def HgvProvenance.currentCertaintyOption hgvMetaIdentifier
+      uncertainties = [] 
+      [:provenanceAncientFindspot, :provenanceNome, :provenanceAncientRegion].each{|key|
+        if HgvProvenance.certainty hgvMetaIdentifier[key]
+           uncertainty = key.to_s[/^provenance(.+)\Z/, 1]
+           uncertainty[0,1] = uncertainty[0,1].downcase
+           uncertainties[uncertainties.length] = uncertainty
+        end
+      }
+      uncertainties = uncertainties.join('_')
+      !uncertainties.empty? ? uncertainties.to_sym : nil
+    end
+
+    def HgvProvenance.certaintyOptions
+      [['', ''],  
+        [I18n.t('provenance.ancientFindspotUncertain'), :ancientFindspot],
+        [I18n.t('provenance.nomeUncertain'), :nome],
+        [I18n.t('provenance.ancientRegionUncertain'), :ancientRegion],
+        [I18n.t('provenance.ancientFindspotAndNomeUncertain'), :ancientFindspot_nome],
+        [I18n.t('provenance.ancientFindspotAndAncientRegionUncertain'), :ancientFindspot_ancientRegion],
+        [I18n.t('provenance.nomeAndAncientRegionUncertain'), :nome_ancientRegion],
+        [I18n.t('provenance.ancientFindspotNomeAndAncientRegionUncertain'), :ancientFindspot_nome_ancientRegion]]
+    end
+  end
+  
   module HgvDate
     def HgvDate.precisionOptions
       [['', ''], 

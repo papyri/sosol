@@ -1,1 +1,4 @@
-= text_field_tag 'hgv_meta_identifier[' + key.to_s + ']', @identifier[key], :disabled => !@identifier.mutable?, :class => 'observechange'
+- name = 'hgv_meta_identifier[' + key.to_s + ']' + (@identifier.configuration.scheme[key][:children] || @identifier.configuration.scheme[key][:attributes] ? '[value]' : '')
+- value = @identifier[key].kind_of?(Hash) && @identifier[key][:value] ? @identifier[key][:value] : @identifier[key]
+
+= text_field_tag name, value, :disabled => !@identifier.mutable?, :class => 'observechange'
