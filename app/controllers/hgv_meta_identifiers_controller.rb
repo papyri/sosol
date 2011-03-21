@@ -45,7 +45,7 @@ class HgvMetaIdentifiersController < IdentifiersController
 
     @autocompleter_list = []
       
-    doc = REXML::Document.new (File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
+    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
     doc.elements.each(xpath) {|element|
       if (@autocompleter_list.length < max) && (element.text =~ Regexp.new('\A' + pattern)) 
         @autocompleter_list[@autocompleter_list.length] = element.text
