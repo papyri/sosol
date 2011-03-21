@@ -174,12 +174,13 @@ class BoardsController < ApplicationController
   def update_rankings
 
     @boards = Board.find(:all)
-    rankings = params[:ranking].split(',')
 
+    rankings = params[:ranking].split(',');
+    
     rank_count = 1
-    rankings.each do |rank_title|
+    rankings.each do |rank_id|
       @boards.each do |board|
-        if (board.title == rank_title)
+        if (board.id == rank_id.to_i)
           board.rank = rank_count
           board.save!
           break;

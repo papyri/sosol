@@ -13,8 +13,13 @@
         %input{ :type => "text", :class => "choosetext", :id => "number_value", :size => "04"}Numerical value, e.g. 25, 1/3
         %br
         %br
+        Both checkboxes below are ignored if only value is entered above
+        %br
+        %br
         %form{:name => "number"}
-          %input{ :type => "checkbox", :class => "rend_frac_check_c", :id => "rendfrac", :name => "rend_frac_check_n", :value => "rendfrac", :enabled => "true"}Select if scribe indicated fraction with tick (’)
+          %input{ :type => "checkbox", :class => "rend_tick_check_c", :id => "rendtick", :name => "rend_tick_check_n", :value => "rendtick", :enabled => "true"}Select if scribe marked number with a tick (’)
+          %br
+          %input{ :type => "checkbox", :class => "type_frac_check_c", :id => "typefrac", :name => "type_frac_check_n", :value => "typefrac", :enabled => "true"}Select if number type is fraction (value entered above will be ignored if this box checked)
       #button_left
         %button{ :type => "button", :onclick=>"insertNum()" }Insert
         &nbsp
