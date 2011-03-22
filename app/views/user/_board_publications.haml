@@ -1,0 +1,24 @@
+= stylesheet_link_tag "publication_list"
+- if boards.length > 0
+
+  - boards.each do |board| 
+    - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
+    - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+    -#remove approved publications if in the finalizer list
+    - finalizing_publications.each do |fp|
+      -#remove it from the list of approved publications
+      - approved_publications.each do |ap|
+        - if fp.origin == ap.origin
+          - approved_publications.delete(ap)
+       
+    - board.publications.each do |publication|
+      - if publication.status != 'archived'
+        %div{:class => "publication_holder", :id => "publication_holder_" + board.friendly_name }
+          %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
+            = publication.title
+          
+          
+          - publication.identifiers.each do |identifier|
+            %div{:class => "identifier status_" + identifier.status +  " controlled_" + (board.controls_identifier?(identifier)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + identifier.id.to_s}
+              = identifier.class::FRIENDLY_NAME
+      
