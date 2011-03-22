@@ -19,15 +19,20 @@
           
           - id_set = Set.new(publication.identifiers)
           - id_hash = id_set.classify { |id| id.class::FRIENDLY_NAME }
-          - id_hash.each do |hash_item|
+          -# id_hash.each do |hash_item|
             = hash_item[0] #classified value (ie name)
             = hash_item[1].count #number of items found
             = hash_item[1].each do |hashed_id|
               = hashed_id.title #why the # sign?
-
+              
+          - id_hash.each_pair do |k,v|
+            %div{:class => "identifier_holder " + k}
+              - v.each do |vv|
+                %div{:class => "identifier status_" + vv.status +  " controlled_" + (board.controls_identifier?(vv)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + vv.id.to_s}
+                  = vv.title
 
           
-          - publication.identifiers.each do |identifier|
+          -# publication.identifiers.each do |identifier|
             %div{:class => "identifier status_" + identifier.status +  " controlled_" + (board.controls_identifier?(identifier)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + identifier.id.to_s}
               = identifier.class::FRIENDLY_NAME
           
