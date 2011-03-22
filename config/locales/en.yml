@@ -117,6 +117,15 @@ en:
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
 
+  provenance:
+    ancientFindspotUncertain: ancient findspot uncertain
+    nomeUncertain: nome uncertain
+    ancientRegionUncertain: ancient region uncertain
+    ancientFindspotAndNomeUncertain: ancient findspot and nome uncertain
+    ancientFindspotAndAncientRegionUncertain: ancient findspot and ancient region uncertain
+    nomeAndAncientRegionUncertain: nome and ancient region uncertain
+    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain 
+  
   date:
     beginning: beginning
     middle: middle

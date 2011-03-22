@@ -1,3 +1,16 @@
+/**** provenance ****/
+
+function provenanceUpdateUncertainties(uncertainty){
+  $$('input.provenanceCertainty').each(function(element){ element.clear();});
+  if(uncertainty.length){
+    var uncertainties = uncertainty.split('_');
+    var i = 0;
+    for(i = 0; i < uncertainties.length; i++){
+      $('hgv_meta_identifier_provenance' + uncertainties[i].substr(0,1).toUpperCase() + uncertainties[i].substr(1) + '_attributes_certainty').value = 'low';
+    }
+  }
+}
+
 /**** date ****/
 
 function hideDateTabs(){
@@ -326,8 +339,8 @@ Event.observe(window, 'load', function() {
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
   
-  new Ajax.Autocompleter('hgv_meta_identifier_provenanceAncientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceAncientFindspot'});
-  new Ajax.Autocompleter('hgv_meta_identifier_provenanceNome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceNome'});
+  new Ajax.Autocompleter('hgv_meta_identifier_provenanceAncientFindspot_value', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceAncientFindspot'});
+  new Ajax.Autocompleter('hgv_meta_identifier_provenanceNome_value', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceNome'});
   
 });
 
