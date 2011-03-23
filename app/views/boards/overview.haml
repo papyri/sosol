@@ -5,12 +5,17 @@
 
   -# ----------board set-up info-------------
   %h1
-    = @board.title 
+    = @board.title + "( " + @board.friendly_name + " )"
   = "controls "     
   - @board.identifier_classes.each do |ic| 
     = ic  
   %br
-  
+
+  %b
+    Rank
+  = @board.rank
+  %br
+
   .member
     %h3
       Members

@@ -76,7 +76,11 @@ class PublicationsController < ApplicationController
     
     
   end
-  
+
+
+  def advanced_create()
+    
+  end
   # POST /publications
   # POST /publications.xml
   def create
@@ -121,7 +125,7 @@ class PublicationsController < ApplicationController
     
     publication_from_identifier(identifier, related_identifiers)
   end
-  
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
     
@@ -137,8 +141,62 @@ class PublicationsController < ApplicationController
     expire_publication_cache
     redirect_to @publication
   end
-  
-  
+
+  #list is in the form of pn id's separated by returns
+  # such as
+  #papyri.info/ddbdp/bgu;7;1504
+  #papyri.info/ddbdp/bgu;7;1505
+  #papyri.info/ddbdp/bgu;7;1506
+  def create_from_list
+    id_list = params[:pn_id_list].split(/\s+/) #(/\r\n?/)
+    list_is_good = true
+    
+    #get rid of any blank lines, etc
+    id_list = id_list.compact.reject { |s| s.strip.empty? }
+    
+    #check that the list is in the correct form
+    #clean up the ids
+    id_list.map! do |id|
+      id.chomp!('/');
+      pos = id.index('papyri.info');
+      if pos
+        id = id[pos..id.length-1]
+      end
+      #check if there is a good response from the number server
+      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
+      
+      #puts id + " returned " + response.code # + response.body
+      if response.code != '200'
+        
+        #bad format most likely
+        id = "Numbers Server Error, Check format--> " + id
+        list_is_good = false
+        
+      elsif !response.body.index('rdf:Description')
+        
+        #item does not exist most likely
+        #puts "text is bad"
+        id = "Not Found--> " + id
+        list_is_good = false
+        
+      end
+      id
+    end
+    
+    if !list_is_good
+      #recreate list
+      error_str  = "Unable to create Publication.<br />"
+      id_list.each do |id|
+       error_str = error_str + id + "<br />"
+      end
+      flash[:error] = error_str
+      redirect_to :action => 'advanced_create'
+      return
+    end
+    
+    publication_from_identifiers(id_list)
+  end
+
   def is_theirs?
     return  @publication.owner_type == "User"  && ( @publication.owner == @current_user )  
   end
@@ -238,11 +296,22 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
     
-    #find identifier so we can set the votes into the xml
-    @identifier = Identifier.find(params[:identifier_id])
-    @identifier.update_revision_desc(params[:comment], @current_user)
     
-    @identifier.save
+    #find identifier so we can set the votes into the xml
+    #@identifier = Identifier.find(params[:identifier_id])
+    #@identifier.update_revision_desc(params[:comment], @current_user)
+    #@identifier.save
+    
+    #find all modified identiers in the publication so we can set the votes into the xml
+    @publication.identifiers.each do |id|
+      #board controls this id and it has been modified
+      if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+        id.update_revision_desc(params[:comment], @current_user);
+        id.save
+      end
+    end
+    
+    
     #do we need to save publication before continuing with commit??
 
     begin
@@ -371,6 +440,66 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
+  def edit_adjacent
+
+    @publication = Publication.find(params[:pub_id])
+
+    if params[:direction] == 'prev'
+      direction = -1
+    else #assume next
+      direction = 1
+    end
+
+    @identifier = Identifier.find(params[:id_id])
+    current_identifier_class = @identifier.class
+    current_index = @publication.identifiers.index(@identifier)
+
+    #uncomment redirects to prevent loop over
+    return_index = current_index + direction
+    if (return_index < 0)
+      #redirect_to @publication
+     # return
+      return_index = @publication.identifiers.length - 1
+    elsif (return_index >= @publication.identifiers.length)
+     # redirect_to @publication
+     # return
+      return_index = 0
+    end
+
+
+    @identifier = @publication.identifiers[return_index]
+    if (@identifier.class != current_identifier_class)
+      #if no longer the same class, we can't assume that the next class as the same edit methods
+      redirect_to edit_polymorphic_path([@publication, @identifier])
+    else
+      #/publications/1/identifiers/1/action
+      redirect_to :controller => params[:current_controller_name], :action => params[:current_action_name], :id => @identifier.id, :publication_id => params[:pub_id]
+    end
+=begin
+    next_id = params[:id_id].to_i + direction
+
+    begin
+      @identifier = Identifier.find(next_id)
+    rescue
+      #probably overan the number of identifiers
+      redirect_to @publication
+      return
+    end
+
+    if @identifier.publication.id.to_s != params[:pub_id]
+      #need to loop back since we have over run the pubication identifiers
+      #for now go to overview
+      redirect_to @publication
+      return
+    end
+=end
+   # redirect_to edit_polymorphic_path([@publication, @identifier])
+
+    #redirect_to :controller => params[:ncontroller], :action => params[:naction], :id => params[:id], :pub_id => params[:pub_id]
+  end
+
+
+
   def create_from_selector
     identifier_class = params[:IdentifierClass]
     collection = params["#{identifier_class}CollectionSelect".intern]
@@ -415,7 +544,7 @@ class PublicationsController < ApplicationController
     #note that votes will go with the boards copy of the pub and identifiers
     #  vote history will also be recorded in the comment of the origin pub and identifier
     
-    #if not pub found ie race condition of voting on reject or graffiti    
+    #fails - if not pub found ie race condition of voting on reject or graffiti
     begin
       @publication = Publication.find(params[:id])  
     rescue    
@@ -423,17 +552,18 @@ class PublicationsController < ApplicationController
       redirect_to (dashboard_url)
       return
     end
-    
+
+    #fails - vote choice not given
     if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
       redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote][:identifier_id])])
       return
     end
-    
+
+    #fails - voting is over
     if @publication.status != "voting" 
       flash[:warning] = "Voting is over for this publication."
-      
       redirect_to @publication
       return
     end
@@ -445,7 +575,8 @@ class PublicationsController < ApplicationController
       
       vote_identifier = @vote.identifier.lock!
       @publication.lock!
-    
+
+      #fails - publication not in correct ownership
       if @publication.owner_type != "Board"
         #we have a problem since no one should be voting on a publication if it is not in theirs
         flash[:error] = "You do not have permission to vote on this publication which you do not own!"
@@ -467,7 +598,8 @@ class PublicationsController < ApplicationController
       @comment.publication = @vote.publication.origin
 
       #double check that they have not already voted
-      has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      #has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
+      has_voted = @publication.user_has_voted?(@current_user.id)
       if !has_voted 
         @vote.save!
         @comment.save!
@@ -530,8 +662,46 @@ class PublicationsController < ApplicationController
   end
   
   protected
-  
-    def publication_from_identifier(identifier, related_identifiers = nil)
+
+    def publication_from_identifiers(identifiers)
+      new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M")
+      publication_from_identifier("unused_place_holder", identifiers, new_title)
+
+
+=begin
+      #do we need to check for conflicts with the batches?
+      #might be able to modify publication_from_identifier
+      #where to get title? make them up based on time for now
+      new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M") #12Jan2011_2359
+      puts new_title
+        @publication = Publication.new()
+        @publication.owner = @current_user
+        @publication.creator = @current_user
+
+        @publication.populate_identifiers_from_identifiers(
+          identifiers, new_title)
+
+        if @publication.save!
+          @publication.branch_from_master
+
+          # need to remove repeat against publication model
+          e = Event.new
+          e.category = "started editing"
+          e.target = @publication
+          e.owner = @current_user
+          e.save!
+
+          flash[:notice] = 'Publication was successfully created.'
+          expire_publication_cache
+          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+        else
+          flash[:notice] = 'Error creating publication'
+          redirect_to dashboard_url
+        end
+=end
+    end
+
+    def publication_from_identifier(identifier, related_identifiers = nil, optional_title = nil)
       Rails.logger.info("Identifier: #{identifier}")
       Rails.logger.info("Related identifiers: #{related_identifiers.inspect}")
 
@@ -586,7 +756,7 @@ class PublicationsController < ApplicationController
         @publication.owner = @current_user
         @publication.creator = @current_user
         @publication.populate_identifiers_from_identifiers(
-          related_identifiers)
+          related_identifiers, optional_title)
 
         if @publication.save!
           @publication.branch_from_master
@@ -600,7 +770,8 @@ class PublicationsController < ApplicationController
 
           flash[:notice] = 'Publication was successfully created.'
           expire_publication_cache
-          redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+          #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+          redirect_to @publication
         else
           flash[:notice] = 'Error creating publication'
           redirect_to dashboard_url

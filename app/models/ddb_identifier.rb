@@ -90,14 +90,14 @@ class DDBIdentifier < Identifier
   end
   
   def before_commit(content)
-    JRubyXML.pretty_print(
-      JRubyXML.stream_from_string(
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-            %w{data xslt ddb preprocess.xsl})))
-      )
-    )
+    preprocess(content)
+  end
+  
+  def preprocess(content)
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb preprocess.xsl})))
   end
   
   def after_rename(options = {})
@@ -181,7 +181,7 @@ class DDBIdentifier < Identifier
   end
   
   def leiden_plus
-    original_xml = self.xml_content
+    original_xml = preprocess(self.xml_content)
     
     # strip xml:id from lb's
     original_xml = JRubyXML.apply_xsl_transform(

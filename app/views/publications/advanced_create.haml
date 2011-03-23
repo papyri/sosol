@@ -1,0 +1,21 @@
+= render :partial => "common/flash_all"
+%h1 Start A Publication
+
+.advanced_create
+  %h3 From Existing Material
+  %p
+    = render :partial => "publications/publication_selector"
+.advanced_create
+  %h3 Create New Publication
+  %p
+    Create a new publication record and text.
+    = render :partial => "publications/create_from_templates_form"
+.advanced_create
+  %h3 From PN ID
+  %p A PN ID example is "papyri.info/ddbdp/bgu;7;1510"
+  %p
+    = render :partial => "publications/create_from_pn_id_form"
+.advanced_create
+  %h3 Batch From PN IDs, one per line
+  %p
+    = render :partial => "publications/create_from_batch_form"

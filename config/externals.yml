@@ -1,9 +1,9 @@
 vendor/plugins/rxsugar:
   :type: git
   :repository: git://halsted.vis.uky.edu/git/xsugar.git
-  :revision: 583024ea250375417e4b1d60ec6da9657c52d5ce
+  :revision: 8b32d1394f13f1a28f5c598cb3393b64c282157a
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/trunk/example-p5-xslt/
-  :revision: 1348
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/r-8-7/example-p5-xslt/
+  :revision: 1381

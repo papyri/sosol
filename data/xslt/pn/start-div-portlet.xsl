@@ -27,12 +27,12 @@
   <xsl:include href="../epidoc/htm-teispace.xsl"/>
   <xsl:include href="../epidoc/htm-teisupplied.xsl"/>
   <xsl:include href="../epidoc/htm-teiterm.xsl"/>
+  <xsl:include href="../epidoc/htm-teiaddanddel.xsl"/>
   
   <xsl:include href="htm-teixref.xsl"/>
 
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:include href="../epidoc/teiabbrandexpan.xsl"/>
-  <xsl:include href="../epidoc/teiaddanddel.xsl"/>
   <xsl:include href="../epidoc/teicertainty.xsl"/>
   <xsl:include href="../epidoc/teichoice.xsl"/>
   <xsl:include href="../epidoc/teihandshift.xsl"/>

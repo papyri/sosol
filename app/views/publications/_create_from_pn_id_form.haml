@@ -1,0 +1,4 @@
+- form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
+  = label_tag 'pn_id', 'Create publication from PN ID:'
+  = text_field_tag 'pn_id', '', :size => 40
+  = form.submit "Create", :class => ''

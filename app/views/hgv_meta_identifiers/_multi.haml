@@ -6,7 +6,7 @@
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + key.to_s}
-    %input
+    %input.observechange
     %span{:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

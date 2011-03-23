@@ -13,7 +13,7 @@ class Publication < ActiveRecord::Base
   
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
- # has_many :votes, :dependent => :destroy
+  has_many :votes, :dependent => :destroy
   has_many :comments
   
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
@@ -86,7 +86,7 @@ class Publication < ActiveRecord::Base
   # * an array of strings such as: papyri.info/ddbdp/bgu;7;1504
   # * a single string such as: papyri.info/ddbdp/bgu;7;1504
   #publication title is named using first identifier
-  def populate_identifiers_from_identifiers(identifiers)
+  def populate_identifiers_from_identifiers(identifiers, original_title = nil)
 
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
@@ -101,7 +101,12 @@ class Publication < ActiveRecord::Base
 
 
     #title is first identifier in list
-    original_title = identifier_to_ref(identifiers.values.flatten.first)
+    #but added the option to set the title to whatever the caller wants
+    if nil == original_title
+      original_title = identifier_to_ref(identifiers.values.flatten.first)
+    else
+      original_was_nil = true;
+    end
     self.title = original_title
 
     [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
@@ -118,7 +123,11 @@ class Publication < ActiveRecord::Base
         end
       end
     end
-    
+
+    #reset the title to what the caller wants
+    if original_was_nil
+      self.title = original_title
+    end
     # Use HGV hack for now
     # if identifiers.has_key?('hgv') && identifiers.has_key?('trismegistos')
     #   identifiers['trismegistos'].each do |tm|
@@ -158,10 +167,73 @@ class Publication < ActiveRecord::Base
   end
   
   def submit_to_next_board
+
+    #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
+    @recent_submit_sha = ''
+
+    #determine which ids are ready to be submitted (modified, editing...)
+    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
+
+    #check each board in order by priority rank
+    boards = Board.ranked
+    boards.each do |board|
+
+      #if board.community == publication.community
+        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+        if boards_identifiers.length > 0
+          #submit to that board
+
+
+
+          #find the comment text made on submission
+          comment_text = '' #if no comment found, default to nothing. This should never happen.
+          begin
+            submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
+            if submit_comment && submit_comment.comment
+              comment_text = submit_comment.comment
+            end
+          rescue ActiveRecord::RecordNotFound
+            #comment_text already = ''
+            #TODO raise warning? add error logging
+          end
+
+          #update the change_desc of each submitted identifier
+          boards_identifiers.each do |submitting_identifier|
+            submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(comment_text), :comment => comment_text)
+            submitting_identifier.status = "submitted"
+            submitting_identifier.save!
+
+            #make the most recent sha for the identifier available...is this the one we want?
+            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+          end
+
+          #copy the repo, models, etc... to the board
+          boards_copy = copy_to_owner(board)
+          boards_copy.status = "voting"
+          boards_copy.save!
+
+
+
+          #trigger emails
+          board.send_status_emails("submitted", self)
+
+          #update status on user copy
+          self.change_status("submitted")
+          self.save!
+
+          #problem here in that comment will be added to the returned id, but there may be many ids.....
+          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+          return '', boards_identifiers[0].id
+        end
+      #end
+    end
+
+
+=begin
     #horrible hack here to specifiy board order, change later with workflow engine
     #1 meta
     #2 transcription
-    #3 translation    
+    #3 translation
     error_text = "" #default to empty for check in controller
     # find all unsubmitted meta ids, then text ids, then translation ids
     [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
@@ -170,15 +242,15 @@ class Publication < ActiveRecord::Base
           #submit it
           if submit_identifier(i)
             return error_text, i.id
-          else            
+          else
             error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
             return error_text, nil
           end
         end
       end
-      
+
     end
-    
+=end
     #if we get to this point, nothing else was submitted therefore we are done with publication
     #can this be reached without a commit actually taking place?
 =begin
@@ -186,18 +258,18 @@ class Publication < ActiveRecord::Base
       flash[:warning] = error_text
       # couldnt submit to non exiting board so send back to user?
       #TODO check this
-      self.origin.status = "editing" 
+      self.origin.status = "editing"
       self.save
     end
 =end
     self.origin.change_status("committed")
     self.save
-    
-    return error_text, nil # controller checks returned value for empty or not
-    
+    #TODO need to return something here to prevent flash error from showing true?
+    return "", nil
   end
   
-  
+
+  #nolonger in use 2-22-2010
   def submit_identifier(identifier)
     
     @recent_submit_sha = "";
@@ -383,8 +455,28 @@ class Publication < ActiveRecord::Base
     self.change_status("archived")
   end
   
+  
+  def user_has_voted?(user_id)
+    if self.votes
+      self.votes.each do |vote|
+        if vote.user_id == user_id
+          return true #user has a vote on record for this publication
+        end
+      end
+    end
+    #no vote found
+    return false
+  end
+  
+  
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes
+    user_votes ||= self.votes #use the publication's votes
+    #here is where the action is for deciding how votes are organized and what happens for vote results
+    #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
+    #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
+    #vote action is determined by votes on the publication
+    #any modified identifiers that the board controlls will have the change desc added.
+    #Future changes may be made here if the voting logic is to be separated per identifier
     
     #check that we are still taking votes
     if self.status != "voting"
@@ -395,10 +487,10 @@ class Publication < ActiveRecord::Base
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
       return "" #another check to make sure only the board is voting on its copy
     else
-      decree_action = self.owner.tally_votes(user_votes)
+      decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
    
-    
+
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
       e = Event.new
@@ -466,7 +558,10 @@ class Publication < ActiveRecord::Base
       #self.submit_to_next_board
       
     else
-      #unknown action or no action    
+      #unknown action or no action
+      #TODO allow board to return any action, and then call that action on the identifier, board or wherever it makes sense to allow the user to add to the class
+      #if publication has comunity name, then it may make sense for that name to be linked to a mixin or such that contains custom methods
+      #parse action name
     end
     
     return decree_action

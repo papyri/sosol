@@ -37,20 +37,12 @@
               Less...
     %br
   = render :partial => "publications/publication_selector"
-  
-  - if @current_user.developer
-    #developer
-      %br
-      - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create" } do |form|
-        = label_tag 'pn_id', 'Create publication from PN ID:'
-        = text_field_tag 'pn_id', '', :size => 40
-        = form.submit "Create", :class => ''
-  
+  %p
+    or create new publication:
+    = render :partial => "publications/create_from_templates_form"
   %br
-  - form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create_from_templates" } do |form|
-    = "or create a new publication:"
-    %br
-    = form.submit "Create New Publication", :class => 'save'
+  = link_to "Advanced Publication Creation", :controller => "publications", :action => "advanced_create"
+
   %br
   - cache(:action => 'dashboard', :part => "board_publications_#{@current_user.id}") do
     - if @boards.length > 0
@@ -67,7 +59,7 @@
               - approved_publications.delete(ap)
            
         %h2
-          #{board.title} 
+          #{board.friendly_name} 
           -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
           Publications 
         - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
@@ -110,3 +102,4 @@
 
   %h2 News Feed
   = render :partial => "events/list", :object => @events
+

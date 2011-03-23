@@ -1,22 +1,31 @@
 = stylesheet_link_tag "board"
 = render :partial => "common/flash_all"  
 %h1
-  = @board.title
-edit board for 
+  = @board.title + " ( " + @board.friendly_name + " )"
+%b Editorial Board for
+%br
 - @board.identifier_classes.each do |ic|
   = ic
-  <br />
-  
-<br /><br />
+  %br
+%b
+  = 'Rank is '
+=@board.rank.to_s
+%br
+%br
 
 - form_for(@board) do |f|
   = f.error_messages 
+  = f.label :friendly_name
+  = f.text_field :friendly_name
+  = f.submit "Update Name"
 
   -# dont let them change the name of the board...repositories depend on it 1-2010
   -#= f.label :title
   -#= f.text_field :title
   -#= f.submit "Save"
-
+  -#= f.label :rank
+    = f.text_field :rank
+    = f.submit "Update rank"
   .member
     %h3{'style' => "display:inline;"}
       Members
