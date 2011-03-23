@@ -149,6 +149,51 @@ class PublicationsController < ApplicationController
   #papyri.info/ddbdp/bgu;7;1506
   def create_from_list
     id_list = params[:pn_id_list].split(/\s+/) #(/\r\n?/)
+    list_is_good = true
+    
+    #get rid of any blank lines, etc
+    id_list = id_list.compact.reject { |s| s.strip.empty? }
+    
+    #check that the list is in the correct form
+    #clean up the ids
+    id_list.map! do |id|
+      id.chomp!('/');
+      pos = id.index('papyri.info');
+      if pos
+        id = id[pos..id.length-1]
+      end
+      #check if there is a good response from the number server
+      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
+      
+      #puts id + " returned " + response.code # + response.body
+      if response.code != '200'
+        
+        #bad format most likely
+        id = "Numbers Server Error, Check format--> " + id
+        list_is_good = false
+        
+      elsif !response.body.index('rdf:Description')
+        
+        #item does not exist most likely
+        #puts "text is bad"
+        id = "Not Found--> " + id
+        list_is_good = false
+        
+      end
+      id
+    end
+    
+    if !list_is_good
+      #recreate list
+      error_str  = "Unable to create Publication.<br />"
+      id_list.each do |id|
+       error_str = error_str + id + "<br />"
+      end
+      flash[:error] = error_str
+      redirect_to :action => 'advanced_create'
+      return
+    end
+    
     publication_from_identifiers(id_list)
   end
 
