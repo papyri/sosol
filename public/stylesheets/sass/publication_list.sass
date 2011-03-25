@@ -1,60 +1,135 @@
+=clip
+  overflow: visible
+  
+  
+  
 .publication_holder
+  position: relative
+  +clip
   background-color: white
-  width: 100%
-  height: 2em
+  width: 600px
+  height: 50px
   border-width: 2px
   border-style: solid
-  border-color:black
+  border-color: black
+  margin: 2px
 
 .publication
-  background-color: red
-
-  border-width: 2px
-  border-style: solid
-  border-color:lightgreen
-  float: left
+  +clip
+  position: absolute
+  #background-color: red
+  #width: 200px
+  #border-width: 2px
+  #border-style: solid
+  #border-color: lightgreen
+  position: 2px 2px
+  margin: 2px
   
 .identifier_holder
+  +clip
+  position: absolute
   background-color: lightgray
-  min_width: 10px
+  width: 100px
+  height: 40px
   
   border-width: 2px
   border-style: solid
-  border-color:darkgreen
-  float: right
+  border-color: darkgreen
+  
 
+.HGVMetaIdentifier
+  
+  top: 0px
+  left: 200px
 
+.DDBIdentifier
+  
+  top: 0px
+  left: 300px
+  
+.HGVTransIdentifier
+  
+  top: 0px
+  left: 400px
+  
+.HGVBiblioIdentifier
+
+  top: 0px
+  left: 500px
+
+  
 .identifier
+  +clip
   background-color: gray
-  min_width: 10px
   
   border-width: 2px
   border-style: solid
   border-color:darkgreen
-  float: right
+  
+  width: 96px
+  height: 36px
 
+  
+
+.offset
+  position: relative
 
 .status_new 
-  background-color: lightgreen
+  background-color: white
 
 .status_editing
-  background-color: lightgreen
-  
-.status_approved
-  background-color: pink
+  background-color: white
   
 .status_submitted
-  background-color: brown
+  background-color: white
+
+.status_approved
+  background-color: white
   
 .status_voting
-  background-image: green
+  background-color: white
 
 .status_committed
-  background-color: blue
+  background-color: white
   
 .status_archived
   background-color: white
   
 .controlled_yes
-  border-color: white
+  border-color: red
   
+=status_bar
+  +clip
+  width: 100px
+  height: 10px
+  background-image: url("http://www.mybit.net/test.jpg")
+  background-repeat: no-repeat
+  background-color: coral
+  
+
+.identifier_holder_status_new
+  +status_bar
+  background-position: 0px 0px
+
+.identifier_holder_status_editing
+  +status_bar
+  background-position: 0px 0px
+
+.identifier_holder_status_submitted
+  +status_bar
+  background-position: 20px 0px
+  
+.identifier_holder_status_approved
+  +status_bar
+  background-position: 40px 0px
+
+.identifier_holder_status_committed
+  +status_bar
+  background-position: 60px 0px
+  
+.identifier_holder_status_archived
+  +status_bar
+  background-position: 80px 0px
+  
+.needs_review
+  background-color: red

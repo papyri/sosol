@@ -1,4 +1,27 @@
+:javascript
+  function showOffsets(node)
+  {
+    var dnode = $(node).parentNode;
+    var offset_nodes = dnode.select('div[class~=offset]');
+    for (var i=0; i< offset_nodes.length; i++)
+    {
+      if (offset_nodes[i].style.display == 'none')
+      {
+        offset_nodes[i].style.display = 'block';
+        offset_nodes[i].style.zIndex = "5";
+      }
+      else
+      {
+        offset_nodes[i].style.display = 'none';
+      }
+    }
+
+  }
+
 = stylesheet_link_tag "publication_list"
+
+
+
 - if boards.length > 0
 
   - boards.each do |board| 
@@ -18,19 +41,38 @@
             = publication.title
           
           - id_set = Set.new(publication.identifiers)
-          - id_hash = id_set.classify { |id| id.class::FRIENDLY_NAME }
+          - id_hash = id_set.classify { |id| id.class.name }
           -# id_hash.each do |hash_item|
             = hash_item[0] #classified value (ie name)
             = hash_item[1].count #number of items found
             = hash_item[1].each do |hashed_id|
               = hashed_id.title #why the # sign?
-              
+          
+          - identifiers_to_show = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
           - id_hash.each_pair do |k,v|
+            - identifiers_to_show.delete(k)
+            
+            
             %div{:class => "identifier_holder " + k}
-              - v.each do |vv|
-                %div{:class => "identifier status_" + vv.status +  " controlled_" + (board.controls_identifier?(vv)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + vv.id.to_s}
+              -# find status..for multiples id do what?
+              -# if v.length > 0 #if only one, show status
+                %div{:class => "identifier_holder_status_" + v.first.status }
+            
+              
+              - if v.length > 1
+                %span{:class => "expand_identifier_offsets", :onclick => "showOffsets(this)"}
+                  expand
+              
+              - offset_class = ""
+              - v.each do |vv| #add count? for offsetting?
+                - needs_review = (vv.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
+                %div{:class => "identifier status_" + vv.status +  " controlled_" + (board.controls_identifier?(vv)  ? 'yes' : 'no') + needs_review + offset_class, :id => "identifier_" + vv.id.to_s}
+                  %div{:class => "identifier_holder_status_" + vv.status }
                   = vv.title
-
+                - offset_class = " offset "
+                  
+          - identifiers_to_show.each do |is|
+            %div{:class => "identifier_holder " + is}
           
           -# publication.identifiers.each do |identifier|
             %div{:class => "identifier status_" + identifier.status +  " controlled_" + (board.controls_identifier?(identifier)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + identifier.id.to_s}
