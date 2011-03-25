@@ -1,3 +1,23 @@
+:javascript
+  document.observe("dom:loaded", function() {
+    if (#{XSUGAR_STANDALONE_ENABLED}) {
+      Form.Element.disable('ddb_identifier_leiden_plus');
+      
+      request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
+      
+      new Ajax.Request(request_url, {
+        method: 'post',
+        parameters: $H({content: $F('ddb_identifier_leiden_plus'), type: 'epidoc', direction: 'xml2nonxml'}),
+        onSuccess: function(response) {
+          json = response.responseText.evalJSON();
+          Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
+          Form.Element.enable('ddb_identifier_leiden_plus');
+          Form.Element.focus('ddb_identifier_leiden_plus');
+        }
+      });
+    }
+  });
+
 #main
   = render :partial => 'identifiers/edit_bar'
   .site

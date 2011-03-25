@@ -93,7 +93,7 @@ class DDBIdentifier < Identifier
     preprocess(content)
   end
   
-  def preprocess(content)
+  def self.preprocess(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,

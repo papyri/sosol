@@ -10,7 +10,22 @@ class DdbIdentifiersController < IdentifiersController
       if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
         @identifier[:leiden_plus] = read_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
       else
-        @identifier[:leiden_plus] = @identifier.leiden_plus
+        if(defined?(XSUGAR_STANDALONE_ENABLED) && XSUGAR_STANDALONE_ENABLED)
+          original_xml = DDBIdentifier.preprocess(@identifier.xml_content)
+
+          # strip xml:id from lb's
+          original_xml = JRubyXML.apply_xsl_transform(
+            JRubyXML.stream_from_string(original_xml),
+            JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              %w{data xslt ddb strip_lb_ids.xsl})))
+
+          # get div type=edition from XML in string format for conversion
+          abs = DDBIdentifier.get_div_edition(original_xml).to_s
+            
+          @identifier[:leiden_plus] = abs
+        else
+          @identifier[:leiden_plus] = @identifier.leiden_plus
+        end
         write_fragment({:action => 'edit', :part => "leiden_plus_#{@identifier.id}"}, @identifier[:leiden_plus])
       end
       if @identifier[:leiden_plus].nil?
