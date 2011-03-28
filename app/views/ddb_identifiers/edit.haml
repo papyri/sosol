@@ -3,6 +3,8 @@
     if (#{XSUGAR_STANDALONE_ENABLED}) {
       Form.Element.disable('ddb_identifier_leiden_plus');
       
+      $('ddb_identifier_leiden_plus').toggleClassName('loading');
+
       request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
       
       new Ajax.Request(request_url, {
@@ -12,11 +14,22 @@
           json = response.responseText.evalJSON();
           Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
           Form.Element.enable('ddb_identifier_leiden_plus');
+          $('ddb_identifier_leiden_plus').toggleClassName('loading');
           Form.Element.focus('ddb_identifier_leiden_plus');
         }
       });
     }
   });
+
+%style(type="text/css")
+  :sass
+    .loading
+      background = gray + 90
+      background-image: url('#{image_path("ajax_loader.gif")}')
+      background-repeat: no-repeat
+      background-position: center center
+      -webkit-background-size: 128px 128px
+      opacity: .5
 
 #main
   = render :partial => 'identifiers/edit_bar'
