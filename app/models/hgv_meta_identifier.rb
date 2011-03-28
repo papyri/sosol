@@ -245,10 +245,11 @@ class HGVMetaIdentifier < HGVIdentifier
         end
 
       else
-
-        if self[key] && !self[key].empty? 
+        value = self[key] && !self[key].empty? ? (config[:children] || config[:attributes] ? self[key][:value] : self[key]) : nil
+        
+        if value && !value.empty? 
           element = doc.bulldozePath(config[:xpath])
-          element.text = config[:children] || config[:attributes] ? self[key][:value] : self[key]
+          element.text = value
           if config[:attributes]
             config[:attributes].each_pair {|attribute_key, attribute_config|
               element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key] #self[attribute_key]
