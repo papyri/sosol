@@ -7,7 +7,7 @@
   position: relative
   +clip
   background-color: white
-  width: 600px
+  width: 700px
   height: 50px
   border-width: 2px
   border-style: solid
@@ -29,12 +29,13 @@
   +clip
   position: absolute
   background-color: lightgray
-  width: 100px
+  width: 120px
   height: 40px
   
   border-width: 2px
   border-style: solid
   border-color: darkgreen
+
   
 
 .HGVMetaIdentifier
@@ -45,17 +46,17 @@
 .DDBIdentifier
   
   top: 0px
-  left: 300px
+  left: 326px
   
 .HGVTransIdentifier
   
   top: 0px
-  left: 400px
+  left: 452px
   
 .HGVBiblioIdentifier
 
   top: 0px
-  left: 500px
+  left: 578px
 
   
 .identifier
@@ -66,7 +67,7 @@
   border-style: solid
   border-color:darkgreen
   
-  width: 96px
+  width: 116px
   height: 36px
 
   
@@ -100,36 +101,61 @@
   
 =status_bar
   +clip
-  width: 100px
-  height: 10px
-  background-image: url("http://www.mybit.net/test.jpg")
+  width: 112px
+  height: 16px
+  background-image: url("../images/status_back.png")
   background-repeat: no-repeat
   background-color: coral
-  
+  position: absolute
+  overflow: hidden
 
+  img
+    position: absolute
+    top: 0px
+    left: 0px
+
+.status_icon
+  width: 16px
+  height: 16px
+  display: inline
+  overflow: hidden
+  position: relative
+  
+.identifier_title
+  #need to move below status bar
+  position: absolute
+  top: 16px
+  left: 0px
+.expand_identifers
+  width: 16px
+  height: 16px
+  position: absolute
+  top: 16px
+  left: 84px
+  
 .identifier_holder_status_new
   +status_bar
-  background-position: 0px 0px
+  background-position: -96px 0px
 
 .identifier_holder_status_editing
   +status_bar
-  background-position: 0px 0px
+  background-position: -80px 0px
 
 .identifier_holder_status_submitted
   +status_bar
-  background-position: 20px 0px
+  background-position: -64px 0px
   
 .identifier_holder_status_approved
   +status_bar
-  background-position: 40px 0px
+  background-position: -48px 0px
 
 .identifier_holder_status_committed
   +status_bar
-  background-position: 60px 0px
+  background-position: -32px 0px
   
 .identifier_holder_status_archived
   +status_bar
-  background-position: 80px 0px
+  background-position: -16px 0px
   
 .needs_review
   background-color: red
