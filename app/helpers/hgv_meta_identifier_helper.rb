@@ -548,7 +548,8 @@ module HgvMetaIdentifierHelper
               if date_item[:children][:offset]
                 date_item[:children][:offset].each_index{|i|
                    offset = date_item[:children][:offset][i][:attributes][:type]
-                   attribute = ('offset' + (i == 1 ? '2' : '')).to_sym
+                   position = date_item[:children][:offset][i][:attributes][:position]
+                   attribute = ('offset' + (position == '2' ? '2' : '')).to_sym
                    
                    t[attribute] = offset.to_sym
                    
@@ -622,13 +623,14 @@ module HgvMetaIdentifierHelper
       }   
     end
     
-    def  HgvDate.getOffsetItem offset
+    def  HgvDate.getOffsetItem offset, position
       offset = offset.to_sym
       {
         :value => {:before => 'vor', :after => 'nach', :beforeUncertain => 'vor (?)', :afterUncertain => 'nach (?)'}[offset],
         :children => {},
         :attributes => {
-          :type => offset.to_s.sub('Uncertain', '')
+          :type => offset.to_s.sub('Uncertain', ''),
+          :position => position
         }
       }
     end
@@ -713,11 +715,11 @@ module HgvMetaIdentifierHelper
             
       # offset
       if date_item[:offset]
-        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset]
+        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset], 1
       end
 
       if date_item[:offset2]
-        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset2]
+        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset2], 2
       end
 
       # offset certainty

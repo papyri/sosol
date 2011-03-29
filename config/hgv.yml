@@ -189,6 +189,9 @@
           :xpath: offset
           :multiple: true
           :attributes:
+            :position:
+              :name: n
+              :pattern: /\A[12]\Z/
             :type:
               :name: type
               :pattern: /\A(befor|after)\Z/
