@@ -1,8 +1,6 @@
 :javascript
   function showOffsets(node)
   {
-    //sortByNeedsReview();
-    //return;
     var dnode = $(node).parentNode.parentNode;
     var offset_nodes = dnode.select('div[class~=offset]');
     for (var i=0; i< offset_nodes.length; i++)
@@ -24,21 +22,78 @@
   {
     //remove needs review divs
     var list_node = $('board_publication_list_holder');
-    var review_nodes = list_node.select('div[class=~needs_review]');
-    for (var i=0;i<review_nodes.length; i++)
+    var review_nodes = list_node.select('div[class~=needs_review]');
+    var new_list = new Array();
+    for (var i=0; i < review_nodes.length; i++)
     {
-      list_node.remove(review_nodes[i]);
-      alert('removed');
+      review_nodes[i].parentNode.parentNode.remove;
+      new_list.push(review_nodes[i].parentNode.parentNode);
+      new_list[i].remove;
     }
-    //add to top
-  
+        
+    //for (var i=0;i<new_list.length; i++)
+    {
+    //  list_node.insert( {'top': new_list[i] } );
+    }
+    
+    for (var i= new_list.length - 1; i >=0;i--)
+    {
+      list_node.insert( {'top': new_list[i] } );
+    }
+
   }
+  
+
+  function sortByBoard(board_name)
+  {
+    
+    var list_node = $('board_publication_list_holder');
+    var select_statement = 'div[class~=publication_holder ' + board_name + ']';
+    var board_nodes = list_node.select(select_statement);//'div[class~=publication_holder Text]');
+    var new_list = new Array();
+    for (var i=0; i < board_nodes.length; i++)
+    {
+      board_nodes[i].remove;//dont need to do
+      new_list.push(board_nodes[i]);
+      new_list[i].remove;
+    }
+        
+    //for (var i=0;i<new_list.length; i++)
+    {
+    //  list_node.insert( {'top': new_list[i] } );
+    }
+    
+    for (var i= new_list.length - 1; i >=0;i--)
+    {
+      list_node.insert( {'top': new_list[i] } );
+    }
+
+  }
+  
+  window.onload = function foo()
+  {
+     
+    var offset_nodes = $$('div[class~=offset]');
+    for (var i=0; i< offset_nodes.length; i++)
+    {
+     
+        offset_nodes[i].style.display = 'none';
+     
+    }
+
+  }
+  
 
 = stylesheet_link_tag "publication_list"
 
 
 
 - if boards.length > 0
+  %div{:onclick => "sortByNeedsReview()" }
+    Needs Review
+  - boards.each do |b|
+    %div{:onclick => "sortByBoard( '#{b.friendly_name}' )" }
+      = b.friendly_name
   %div{:class => "publication_list_holder", :id => "board_publication_list_holder" }
     - boards.each do |board| 
       - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
@@ -52,7 +107,9 @@
          
       - board.publications.each do |publication|
         - if publication.status != 'archived'
-          %div{:class => "publication_holder", :id => "publication_holder_" + board.friendly_name }
+          %div{:class => "publication_holder " + board.friendly_name, :id => "publication_holder_" + board.friendly_name }
+            %div{:class => "publication_board_name"}
+              = board.friendly_name
             %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
               = publication.title
             
