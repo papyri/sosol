@@ -103,4 +103,5 @@
   %h2 News Feed
   = render :partial => "events/list", :object => @events
   
+  = render :partial => "user_publications", :locals => {:publications => @publications }
   = render :partial => "board_publications", :locals => {:boards => @boards }

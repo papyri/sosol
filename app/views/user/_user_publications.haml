@@ -1,0 +1,130 @@
+:javascript
+  function showOffsets(node)
+  {
+    var dnode = $(node).parentNode.parentNode;
+    var offset_nodes = dnode.select('div[class~=offset]');
+    for (var i=0; i< offset_nodes.length; i++)
+    {
+      if (offset_nodes[i].style.display == 'none')
+      {
+        offset_nodes[i].style.display = 'block';
+        offset_nodes[i].style.zIndex = "5";
+      }
+      else
+      {
+        offset_nodes[i].style.display = 'none';
+      }
+    }
+
+  }
+  
+  function sortByNeedsReview()
+  {
+    //remove needs review divs
+    var list_node = $('board_publication_list_holder');
+    var review_nodes = list_node.select('div[class~=needs_review]');
+    var new_list = new Array();
+    for (var i=0; i < review_nodes.length; i++)
+    {
+      review_nodes[i].parentNode.parentNode.remove;
+      new_list.push(review_nodes[i].parentNode.parentNode);
+      new_list[i].remove;
+    }
+        
+    //for (var i=0;i<new_list.length; i++)
+    {
+    //  list_node.insert( {'top': new_list[i] } );
+    }
+    
+    for (var i= new_list.length - 1; i >=0;i--)
+    {
+      list_node.insert( {'top': new_list[i] } );
+    }
+
+  }
+  
+
+  function sortByIdentifier(identifier_name)
+  {
+    
+    var list_node = $('user_publication_list_holder');
+    //var select_statement = 'div[class~=identifier_holder ' + identifier_name + ']';
+    var select_statement = 'div[class~=identifier_holder ' + identifier_name + '] div[class~=identifier]';
+    
+    var identifier_nodes = list_node.select(select_statement);
+    
+    
+    var new_list = new Array();
+    for (var i=0; i < identifier_nodes.length; i++)
+    {
+      new_list.push(identifier_nodes[i].parentNode.parentNode);
+      new_list[i].remove;
+    }
+        
+    for (var i= new_list.length - 1; i >=0;i--)
+    {
+      list_node.insert( {'top': new_list[i] } );
+    }
+
+  }
+  
+  window.onload = function foo()
+  {
+     
+    var offset_nodes = $$('div[class~=offset]');
+    for (var i=0; i< offset_nodes.length; i++)
+    {
+     
+        offset_nodes[i].style.display = 'none';
+     
+    }
+
+  }
+  
+
+= stylesheet_link_tag "publication_list"
+
+
+- possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+- if possible_identifiers.length > 0
+  
+  - possible_identifiers.each do |pi|
+    %div{:onclick => "sortByIdentifier( '#{pi}' )" }
+      = pi
+      
+    
+%div{:class => "publication_list_holder", :id => "user_publication_list_holder" }
+
+  - publications.each do |publication|
+    - if publication.status != 'archived'
+      %div{:class => "publication_holder ", :id => "publication_holder_" + publication.id.to_s }
+        
+        %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
+          = publication.title
+        
+        - id_set = Set.new(publication.identifiers)
+        - id_hash = id_set.classify { |id| id.class.name }
+        
+        - identifiers_to_show = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+        - id_hash.each_pair do |k,v|
+          - identifiers_to_show.delete(k)              
+          
+          %div{:class => "identifier_holder " + k}
+          
+            -# find status..for multiples id do what?
+            
+            - offset_class = ""
+            - v.each do |vv| #add count? for offsetting?
+              %div{:class => "identifier status_" + vv.status  + offset_class, :id => "identifier_" + vv.id.to_s}
+                %div{:class => "identifier_holder_status_" + vv.status }
+                  = image_tag('status_icons.png')
+                %div{:class=> "identifier_title"}
+                  = vv.title.strip
+                - if offset_class == "" && v.length > 1
+                  %div{:class => "expand_identifers", :onclick => "showOffsets(this)" }
+                    = "+"
+              - offset_class = " offset "
+                
+        - identifiers_to_show.each do |is|
+          %div{:class => "identifier_holder " + is + " no_data "}
+        

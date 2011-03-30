@@ -1,43 +1,199 @@
 .publication_holder {
-  background-color: blue;
-  width: 100%;
-  height: 2em;
+  position: relative;
+  overflow: visible;
+  background-color: white;
+  width: 700px;
+  height: 42px;
   border-width: 2px;
-  border-style: solid; }
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
 
 .publication {
-  background-color: red;
-  border-width: 2px;
+  overflow: visible;
+  position: absolute;
+  #background-color: red;
+  #width: 200px;
+  #border-width: 2px;
+  #border-style: solid;
+  #border-color: lightgreen;
+  position: 2px 2px;
+  margin: 2px; }
+
+.publication_board_name {
+  font-size: xx-small; }
+
+.identifier_holder {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 40px;
+  border-width: 1px;
   border-style: solid;
-  float: left; }
+  border-color: black; }
+
+.HGVMetaIdentifier {
+  top: 0px;
+  left: 200px; }
+
+.DDBIdentifier {
+  top: 0px;
+  left: 326px; }
+
+.HGVTransIdentifier {
+  top: 0px;
+  left: 452px; }
+
+.HGVBiblioIdentifier {
+  top: 0px;
+  left: 578px; }
 
 .identifier {
+  overflow: visible;
   background-color: gray;
-  min_width: 10px;
-  border-width: 2px;
+  border-width: 1px;
   border-style: solid;
-  float: right; }
+  border-color: black;
+  width: 118px;
+  height: 38px; }
+
+.offset {
+  position: relative; }
 
 .status_new {
-  background-color: lightgreen; }
+  background-color: white; }
 
 .status_editing {
-  background-color: lightgreen; }
-
-.status_approved {
-  background-color: pink; }
+  background-color: white; }
 
 .status_submitted {
-  background-color: brown; }
+  background-color: white; }
+
+.status_approved {
+  background-color: white; }
 
 .status_voting {
-  background-image: green; }
+  background-color: white; }
 
 .status_committed {
-  background-color: blue; }
+  background-color: white; }
 
 .status_archived {
   background-color: white; }
 
 .controlled_yes {
-  border-color: white; }
+  border-color: red; }
+
+.status_icon {
+  width: 16px;
+  height: 16px;
+  display: inline;
+  overflow: hidden;
+  position: relative; }
+
+.identifier_title {
+  position: absolute;
+  top: 16px;
+  left: 0px;
+  padding: 2px; }
+
+.expand_identifers {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 16px;
+  left: 84px; }
+
+.identifier_holder_status_new {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -96px 0px; }
+  .identifier_holder_status_new img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.identifier_holder_status_editing {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -96px 0px; }
+  .identifier_holder_status_editing img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.identifier_holder_status_submitted {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -64px 0px; }
+  .identifier_holder_status_submitted img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.identifier_holder_status_approved {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -48px 0px; }
+  .identifier_holder_status_approved img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.identifier_holder_status_committed {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -32px 0px; }
+  .identifier_holder_status_committed img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.identifier_holder_status_archived {
+  overflow: visible;
+  width: 118px;
+  height: 16px;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -16px 0px; }
+  .identifier_holder_status_archived img {
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+
+.needs_review {
+  background-color: darkgray; }
