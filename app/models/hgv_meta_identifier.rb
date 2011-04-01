@@ -137,7 +137,7 @@ class HGVMetaIdentifier < HGVIdentifier
     
     epidoc = set_epidoc_attributes
       
-    #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
+    File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
 
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
@@ -223,9 +223,9 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
+      xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
+      xpath_child = $2 
       if config[:multiple]
-        xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
-        xpath_child = $2 
 
         if self[key].empty?
           if parent = doc.elements[xpath_parent]
@@ -258,6 +258,11 @@ class HGVMetaIdentifier < HGVIdentifier
           
         elsif
           doc.elements.delete_all config[:xpath]
+          if parent = doc.elements[xpath_parent]
+            if !parent.has_elements? && parent.texts.join.strip.empty?
+              parent.elements['..'].delete parent
+            end
+          end
         end
 
       end
