@@ -1195,7 +1195,9 @@ DHTMLSuite.menuItem.prototype =
 	*	@param menuModelItem menuModelItemObj = An object of class menuModelItem
 	*/
 	createItem : function(menuModelItemObj){
-		DHTMLSuite.commonObj.loadCSS(this.layoutCSS);	// Load css
+		//jfox commented out the line below to keep error occurring on server and
+		//because did not need because loaded css via linktag in view
+		//DHTMLSuite.commonObj.loadCSS(this.layoutCSS);	// Load css
 
 		DHTMLSuite.variableStorage.arrayDSObjects[this.objectIndex] = this;
 
@@ -1631,7 +1633,9 @@ DHTMLSuite.menuBar.prototype = {
 	 */
 	init : function(){
 
-		DHTMLSuite.commonObj.loadCSS(this.layoutCSS);
+		//jfox commented out the line below to keep error occurring on server and
+		//because did not need because loaded css via linktag in view
+		//DHTMLSuite.commonObj.loadCSS(this.layoutCSS);
 		this.__createMainMenuDiv();	// Create general divs
 		this.__createMenuItems();	// Create menu items
 		this.__setBasicEvents();	// Set basic events.
