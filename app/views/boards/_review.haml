@@ -1,10 +1,10 @@
 :javascript
   function checkForComment() { comment_text = $('comment_comment').value; $('vote_submit').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
-
+  function preventDoubleVote() { set_conf_false_vote();  $('vote_submit').hide();  }
 - if identifier.modified?
   %h3 Votes
   -# user_has_voted = identifier.user_has_voted?(@current_user)#false
-  - user_has_voted = identifier.publication.user_has_voted?(@current_user)
+  - user_has_voted = identifier.publication.user_has_voted?(@current_user.id)
   %ul
     - if identifier.publication.votes.length == 0
       %li No votes yet.
@@ -31,4 +31,4 @@
         Your Comment Required:
         = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
         -#= f.submit "Vote", :disabled => !publication.mutable?
-        = f.submit "Vote", :disabled => true, :onclick => 'set_conf_false_vote()'
+        = f.submit "Vote", :disabled => true, :onclick => 'preventDoubleVote()'
