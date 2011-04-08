@@ -124,8 +124,9 @@ en:
     ancientFindspotAndNomeUncertain: ancient findspot and nome uncertain
     ancientFindspotAndAncientRegionUncertain: ancient findspot and ancient region uncertain
     nomeAndAncientRegionUncertain: nome and ancient region uncertain
-    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain 
-  
+    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain
+    offsetNear: near 
+
   date:
     beginning: beginning
     middle: middle

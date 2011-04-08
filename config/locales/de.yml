@@ -124,7 +124,8 @@ de:
     ancientFindspotAndNomeUncertain: Fundort und Gau unsicher
     ancientFindspotAndAncientRegionUncertain: Fundort und Region unsicher
     nomeAndAncientRegionUncertain: Gau und Region unsicher
-    ancientFindspotNomeAndAncientRegionUncertain: Fundort, Gau und Regio unsicher 
+    ancientFindspotNomeAndAncientRegionUncertain: Fundort, Gau und Regio unsicher
+    offsetNear: bei
   
   date:
     beginning: Anfang
