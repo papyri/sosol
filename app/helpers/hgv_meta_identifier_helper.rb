@@ -1,6 +1,55 @@
 module HgvMetaIdentifierHelper
 
   module HgvProvenance
+    def HgvProvenance.format provenance
+      result = ''
+      provenanceList = HgvProvenance.epidocToHgv provenance
+
+      provenanceList.each_index {|indexProvenance|
+        provenance = provenanceList[indexProvenance]
+
+        if indexProvenance > 0
+          if indexProvenance == provenanceList.length - 1
+            result << ' oder '
+          else
+            result << ', '
+          end
+        end
+
+        if provenance[:value] == 'unbekannt'
+          result << provenance[:value]
+        else
+
+          if provenance[:ancientFindspot][:value]
+            result << (provenance[:ancientFindspot][:offset] == 'bei' ? 'bei ' : '')
+            result << provenance[:ancientFindspot][:value]
+            result << (provenance[:ancientFindspot][:certainty] == 'low' ? ' (?)' : '')
+          end
+          if provenance[:modernFindspot][:value]
+            result <<  (provenance[:ancientFindspot][:value] ? ' (= ' : '')
+            result <<  provenance[:modernFindspot][:value]
+            result <<  (provenance[:ancientFindspot][:value] ? ')' : '')
+          end
+          if provenance[:nome][:value]
+             result << ' ('
+             result << provenance[:nome][:value]
+             result << (provenance[:nome][:certainty] == 'low' ? ' ?' : '')
+             result << (provenance[:ancientRegion][:value] ? ', ' + provenance[:ancientRegion][:value] : '')
+             result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
+             result << ')'
+          end
+          if !provenance[:nome][:value] && provenance[:ancientRegion][:value]
+            result << ' ('
+            result << provenance[:ancientRegion][:value]
+            result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
+            result << ')'
+          end
+
+        end
+      }
+      result
+    end
+
     def HgvProvenance.certainty provenance
       if provenance.kind_of?(Hash) && 
          provenance[:attributes] && 
@@ -34,6 +83,45 @@ module HgvMetaIdentifierHelper
         [I18n.t('provenance.ancientFindspotAndAncientRegionUncertain'), :ancientFindspot_ancientRegion],
         [I18n.t('provenance.nomeAndAncientRegionUncertain'), :nome_ancientRegion],
         [I18n.t('provenance.ancientFindspotNomeAndAncientRegionUncertain'), :ancientFindspot_nome_ancientRegion]]
+    end
+    
+    def HgvProvenance.offsetOptions
+      [['', ''],  
+        [I18n.t('provenance.offsetNear'), 'bei']]
+    end
+    
+    def HgvProvenance.unknown? provenance
+      provenance && provenance.length > 0 && provenance[0][:value] && provenance[0][:value] == 'unbekannt' ? true : false
+    end
+
+    def HgvProvenance.epidocToHgv provenance
+      t = []
+
+      provenance.each{|prov|
+        tnew = {:ancientFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :modernFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :nome => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :ancientRegion => {:certainty => nil, :offset => nil, :value => nil, :key => nil}}
+
+        if prov[:children] && prov[:children][:place]
+          prov[:children][:place].each {|place|
+            if place[:attributes] && place[:attributes][:type]
+              key = place[:attributes][:type].to_sym
+              tnew[key][:certainty] = place[:attributes][:certainty] && place[:attributes][:certainty] == 'low' ? 'low' : nil;
+              tnew[key][:offset] = place[:children] && place[:children][:offset] && place[:children][:offset][:value] == 'bei' ? 'bei' : nil;
+              tnew[key][:value] = place[:children] && place[:children][:location] && place[:children][:location][:value] ? place[:children][:location][:value] : nil;
+              tnew[key][:key] = place[:children] && place[:children][:location] && place[:children][:location][:attributes] && place[:children][:location][:attributes][:key] ? place[:children][:location][:attributes][:key] : nil;
+            end
+          }
+
+          certaintyPicker = tnew.to_a.collect{|item| item[1][:certainty] == 'low' ? item[0] : nil}.compact.join('_')
+          tnew[:certaintyPicker] = !certaintyPicker.empty? ? certaintyPicker.to_sym : nil  
+          
+        end
+        t[t.length] = tnew
+      }
+
+      t
     end
   end
   

@@ -57,17 +57,20 @@ span.quickHelp span.message
   font-variant: normal
   font-weight: normal
 
-/**** autocomleter ****/
+/**** autocompleter ****/
 
-ul.autocompleter_list
+div#edit div.multi ul.autocompleter_list
   border: solid 0.1em #c0c0c0
   background-color: white
 
-ul.autocompleter_list,
-ul.autocompleter_list li
+div#edit div.multi ul.autocompleter_list li
+  margin: 0 0.4em 0 0.4em
+  width: auto
+  height: auto
   list-style-type: none
+  background-color: white
 
-ul.autocompleter_list li.selected
+div#edit div.multi ul.autocompleter_list li.selected
   background-color: lightsteelblue
 
 /**** global ****/
@@ -129,6 +132,7 @@ div#edit input
   border: solid 0.1em #c0c0c0
 
 /**** special ****/
+
 div#edit div.editbox li.label
   background-color: transparent
 
@@ -160,22 +164,8 @@ div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber
 div#edit input#hgv_meta_identifier_collectionTemporaryNotes
   width: 26.5em
 
-div#edit div.editbox label.provenanceAncientFindspot,
-div#edit div.editbox label.provenanceModernFindspot,
-div#edit div.editbox label.provenanceNome,
-div#edit div.editbox label.provenanceAncientRegion,
-div#edit div.editbox label.provenanceCertainty,
-div#edit div.editbox label.provenanceUnknown
+div#edit div.editbox label.provenance
   width: 9em
-
-div#edit input#hgv_meta_identifier_provenanceAncientFindspot_value,
-div#edit input#hgv_meta_identifier_provenanceModernFindspot,
-div#edit input#hgv_meta_identifier_provenanceNome_value,
-div#edit input#hgv_meta_identifier_provenanceAncientRegion_value
-  width: 17em
-
-div#edit select#provenanceCertaintyPicker
-  width: 17.2em
 
 div#edit div.editbox label.tmNo
   margin: 0 0 0 17em
@@ -262,7 +252,8 @@ div#edit div.multi ul.items li span
 div#edit div.multi ul.items li span.delete
   cursor: pointer
 
-div#edit div.multi p.add
+div#edit div.multi p.add,
+div#edit div.multi div.add
   clear: both
   background-color: lightsteelblue
   vertical-align: center
@@ -270,14 +261,16 @@ div#edit div.multi p.add
   height: 16px
   width: 40em
 
-div#edit div.multi p.add input
+div#edit div.multi p.add input,
+div#edit div.multi div.add input
   width: 44em
   height: 16px
   background-color: white
   border: none
   margin: auto
 
-div#edit div.multi p.add span
+div#edit div.multi p.add span,
+div#edit div.multi div.add span
   width: 1.6em
   height: 1.6em
   padding: 0 0.4em 0 0.4em
@@ -289,6 +282,37 @@ div#edit div.multi p.add span
   cursor: pointer
 
 /**** multi special ****/
+
+div#edit div#multi_provenance
+  float: none
+  clear: both
+
+div#edit div#multi_provenance ul#multiItems_provenance li,
+div#edit div#multi_provenance div
+  width: 49em
+  height: 4em
+  padding: 0.4em 0 0.4em 0
+
+div#edit div#multi_provenance ul#multiItems_provenance li
+  width: 48.8em
+  height: 4.4em
+  background-color: white
+  border: solid 1px lightsteelblue
+  
+div#edit div#multi_provenance input
+  border: solid 1px lightsteelblue
+  width: 16.8em
+  margin: 0 0 1px
+
+div#edit div#multi_provenance input.provenanceAncientFindspot
+  width: 11.8em
+
+div#edit div#multi_provenance select.provenanceOffset
+  width: 5em
+  margin: 0
+
+div#edit div#multi_provenance select.certainty
+  width: 29em
 
 div#edit div.multi ul#multiItems_contentText li
   float: left

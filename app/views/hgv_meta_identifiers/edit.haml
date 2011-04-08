@@ -112,29 +112,7 @@
         %h4.category.provenance
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientFindspot }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientFindspot }
-          .autocompleter#autocompleter_provenanceAncientFindspot
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceModernFindspot }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceModernFindspot }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceNome }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceNome }
-          .autocompleter#autocompleter_provenanceNome
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceAncientRegion }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :provenanceAncientRegion }
-
-          = label_tag 'hgv_meta_identifier', I18n.t('meta.label.certainty'), :class => 'provenanceCertainty', :title => 'set @cert attribute of respective tag to low'
-          = select_tag 'provenanceCertaintyPicker', options_for_select(HgvProvenance.certaintyOptions, HgvProvenance.currentCertaintyOption(@identifier)), :onchange => 'provenanceUpdateUncertainties(this.value);', :disabled => !@identifier.mutable?, :class => 'observechange certainty'
-          
-          - [:provenanceAncientFindspot, :provenanceNome, :provenanceAncientRegion].each do |key|
-            = hidden_field_tag 'hgv_meta_identifier[' + key.to_s + '][attributes][certainty]', HgvProvenance.certainty(@identifier[key]) , :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceUnknown }
-          = render :partial => 'hgv_meta_identifiers/check_box', :locals => { :key => :provenanceUnknown, :value => 'unbekannt' }
-          
+          = render :partial => 'hgv_meta_identifiers/provenance'
           %div{:style => 'float: none; clear: both; display: block;'}
           .quickSave=I18n.t('meta.label.quickSave')
 

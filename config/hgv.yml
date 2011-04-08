@@ -97,28 +97,30 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
-    :provenanceUnknown:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
-    :provenanceAncientFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceNome:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceAncientRegion:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceModernFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
+
+    #:provenanceUnknown:
+    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
+    #:provenanceAncientFindspot:
+    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
+    #  :attributes:
+    #    :certainty:
+    #      :name: cert
+    #      :pattern: /low/
+    #:provenanceNome:
+    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
+    #  :attributes:
+    #    :certainty:
+    #      :name: cert
+    #      :pattern: /low/
+    #:provenanceAncientRegion:
+    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
+    #  :attributes:
+    #    :certainty:
+    #      :name: cert
+    #      :pattern: /low/
+    #:provenanceModernFindspot:
+    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
+
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/
@@ -160,6 +162,36 @@
     #:mentionedDateSource:
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
     #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
+
+
+
+    :provenance:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
+      :pattern: /\Aunbekannt\Z/
+      :multiple: true
+      :children:
+        :place:
+          :xpath: placeName
+          :multiple: true
+          :attributes:
+            :type:
+              :name: type
+              :pattern: /\AancientFindspot|nome|ancientRegion|modernFindspot\Z/
+              :optional: false
+            :certainty:
+              :name: cert
+              :pattern: /\Alow\Z/
+          :children:
+            :offset:
+              :xpath: offset
+              :pattern: /\Abei\Z/
+            :location:
+              :xpath: placeName
+              :attributes:
+                :key:
+                  :name: key
+
+
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
       :multiple: true
@@ -167,7 +199,6 @@
       :attributes:
         :id:
           :name: xml:id
-          :default: "dateAlternativeX"
           :pattern: /\AdateAlternative[XYZ]\Z/
         :when:
           :name: when

@@ -66,19 +66,13 @@
                     %li
                       = bl[:children][:volume][:value] ? bl[:children][:volume][:value] + ',' : ''
                       = bl[:children][:page][:value] ? 'S. ' + bl[:children][:page][:value] : ''
-          - if @identifier[:provenanceUnknown] || @identifier[:provenanceAncientFindspot]
+          - if @identifier[:provenance] && @identifier[:provenance].kind_of?(Array)
             %tr
               %th=I18n.t('meta.legend.provenance')
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Provenance'
               %td
-                - if @identifier[:provenanceUnknown]
-                  = @identifier[:provenanceUnknown]
-                - else
-                  = @identifier[:provenanceAncientFindspot].kind_of?(Hash)  && @identifier[:provenanceAncientFindspot][:value] ? @identifier[:provenanceAncientFindspot][:value] : ''
-                  = @identifier[:provenanceModernFindspot] ? '(=  ' + @identifier[:provenanceModernFindspot] + ')' : ''
-                  = @identifier[:provenanceAncientRegion].kind_of?(Hash)  && @identifier[:provenanceAncientRegion][:value] ? '(' + @identifier[:provenanceAncientRegion][:value] + ')' : ''
-                  = @identifier[:provenanceNome].kind_of?(Hash)  && @identifier[:provenanceNome][:value] ? ', ' + @identifier[:provenanceNome][:value] : ''
+                = HgvProvenance.format @identifier[:provenance]
           - if @identifier[:material]
             %tr
               %th=I18n.t('meta.label.material')
