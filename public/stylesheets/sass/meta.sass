@@ -172,13 +172,10 @@ div#edit div.editbox label.tmNo
 
 div#edit input#hgv_meta_identifier_publicationTitle,
 div#edit input#hgv_meta_identifier_tmNo,
-div#edit input#hgv_meta_identifier_publicationVolume,
-div#edit input#hgv_meta_identifier_publicationFascicle,
-div#edit input#hgv_meta_identifier_publicationNumbers,
-div#edit input#hgv_meta_identifier_publicationParts,
-div#edit input#hgv_meta_identifier_publicationSide,
-div#edit input#hgv_meta_identifier_publicationLine,
-div#edit input#hgv_meta_identifier_publicationPages
+div#edit input#hgv_meta_identifier_publicationExtra_0_value,
+div#edit input#hgv_meta_identifier_publicationExtra_1_value,
+div#edit input#hgv_meta_identifier_publicationExtra_2_value,
+div#edit input#hgv_meta_identifier_publicationExtra_3_value
   width: 7.5em
 
 div#edit input#hgv_meta_identifier_titleStmt
@@ -187,8 +184,20 @@ div#edit input#hgv_meta_identifier_titleStmt
 div#edit input#hgv_meta_identifier_material
   width: 10em
 
+
+div#edit hr
+  background-color: #C0C0C0
+  border: 0 none
+  clear: left
+  color: #C0C0C0
+  height: 0.1em
+  margin: 0.8em 0
+  width: 624px
+
+div#edit div.editbox label#publicationExtraFullTitle
+  width: auto
+
 span.quickHelp_meta_help_tmNo span.message,
-span.quickHelp_meta_help_publicationPages span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
 span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message
   left: -14.5em
@@ -198,8 +207,7 @@ span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message
 span.quickHelp_meta_help_date span.message
   width: 30em
 
-span.quickHelp_meta_help_publicationFascicle,
-span.quickHelp_meta_help_publicationParts
+span.quickHelp_meta_help_publicationFascicle
   margin: 0 11em 0.4em 0.4em
 
 span.quickHelp_meta_help_mentionedDateReference
@@ -208,13 +216,11 @@ span.quickHelp_meta_help_mentionedDateReference
 span.quickHelp_meta_help_mentionedDateNotBefore,
 span.quickHelp_meta_help_publicationVolume,
 span.quickHelp_meta_help_publicationNumbers,
-span.quickHelp_meta_help_publicationSide,
 span.quickHelp_meta_help_collectionPlaceName,
 span.quickHelp_meta_help_collectionTemporaryNotes
   z-index: 401
 
-span.quickHelp_meta_help_mentionedDateNotAfter,  
-span.quickHelp_meta_help_publicationLine,
+span.quickHelp_meta_help_mentionedDateNotAfter,
 span.quickHelp_meta_help_collection
   z-index: 400
 
@@ -320,6 +326,16 @@ div#edit div.multi ul#multiItems_contentText li
 
 div#edit div.multi ul#multiItems_contentText li input
   width: 13em 
+
+div#edit div.multi ul#multiItems_publicationExtra li
+  float: left
+  width: 8em
+
+div#edit div.multi ul#multiItems_publicationExtra li input
+  width: 6em
+
+div#edit div.multi p#multiPlus_publicationExtra input
+  width: 14em
 
 div#edit div.multi ul#multiItems_bl li
   float: left

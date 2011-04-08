@@ -256,7 +256,13 @@ class HGVMetaIdentifier < HGVIdentifier
             }
           end
           
-        elsif
+        else
+          
+          puts '............................'
+          puts config[:xpath]
+          puts '............................'
+          
+          
           doc.elements.delete_all config[:xpath]
           if parent = doc.elements[xpath_parent]
             if !parent.has_elements? && parent.texts.join.strip.empty?

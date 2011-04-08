@@ -1,5 +1,57 @@
 module HgvMetaIdentifierHelper
 
+  module HgvPublication
+    def HgvPublication.getTypeOptions
+      [['',             :generic],  
+        ['S. …',        :pages],
+        ['(S. …)',      :pages],
+        ['Z. …',        :lines],
+        ['(Z. …)',      :lines],
+        ['Fr. …',       :fragments],
+        ['Fol. …',      :folio],
+        ['inv. …',      :inventory],
+        ['Inv. Nr. …',  :pages],
+        ['Nr. …',       :number],
+        ['Kol. …',      :columns]]
+    end
+    
+    def HgvPublication.getVolume publicationExtra
+      HgvPublication.get :volume, publicationExtra
+    end
+    def HgvPublication.getFascicle publicationExtra
+      HgvPublication.get :fascicle, publicationExtra
+    end
+    def HgvPublication.getNumbers publicationExtra
+      HgvPublication.get :numbers, publicationExtra
+    end
+    def HgvPublication.getSide publicationExtra
+      HgvPublication.get :side, publicationExtra
+    end
+    
+    def HgvPublication.get type, publicationExtra
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:attributes] && biblScope[:attributes][:type] && biblScope[:attributes][:type].to_s == type.to_s
+            return biblScope[:value]
+          end
+        }
+      end
+      return nil
+    end
+    
+    def HgvPublication.getExtras publicationExtra
+      extras = []
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:attributes] && biblScope[:attributes][:type] && ![:volume, :fascicle, :numbers, :side].include?(biblScope[:attributes][:type].to_sym)
+            extras[extras.length] = {:type => biblScope[:attributes][:type], :value => biblScope[:value]}
+          end
+        }
+      end
+      extras
+    end
+    
+   end
   module HgvProvenance
     def HgvProvenance.format provenance
       result = ''

@@ -1,3 +1,22 @@
+/**** publication ****/
+
+function publicationPreview(){
+  preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
+            $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_4_value').getValue() + ' ';
+  
+  $('multiItems_publicationExtra').select('input').each(function(input){
+   
+    if(input.type.toLowerCase() != 'hidden'){
+      preview += input.getValue() + ' ';
+    }
+  });
+  
+  $('publicationExtraFullTitle').innerHTML = preview;
+}
+
 /**** provenance ****/
 
 function provenanceUnknown(){  
@@ -109,6 +128,40 @@ function multiAddBl()
              '</li>';
 
   multiUpdate('bl', item);
+}
+
+function multiAddPublicationExtra()
+{
+  var type = $$('#multiPlus_publicationExtra > select')[0].getValue();
+  var value = $$('#multiPlus_publicationExtra > input')[0].getValue();
+
+  var index = multiGetNextIndex('publicationExtra');
+  if((index * 1) == 0){ // the first four index numbers are reserved for vol, fasc, num and side
+    index = 4
+  }
+  
+  var pattern = '';
+  $$('#multiPlus_publicationExtra > select')[0].select('option').each(function(option){
+    if(option.selected){
+      pattern = option.text.replace(/<.+>/, '');
+    }
+  });
+  
+  if(pattern != ''){
+    value = pattern.replace(/…/, value);
+  }
+
+  //console.log('type = '+type+'| pattern = '+pattern+'| value = '+value+'| index = '+index+'');
+
+  var item = '<li>' +
+             '  <input class="observechange publicationExtra" id="hgv_meta_identifier_publicationExtra_' + index + '_value" name="hgv_meta_identifier[publicationExtra][' + index + '][value]" type="text" value="' + value + '" />' + 
+             '  <input class="observechange publicationExtra" id="hgv_meta_identifier_publicationExtra_' + index + '_attributes_type" name="hgv_meta_identifier[publicationExtra][' + index + '][attributes][type]" type="hidden" value="' + type + '" />' +
+             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '  <span class="move">o</span>' +
+             '</li>';
+
+  multiUpdate('publicationExtra', item);
+  publicationPreview();
 }
 
 function multiAddProvenance()
@@ -417,6 +470,8 @@ Event.observe(window, 'load', function() {
   new Ajax.Autocompleter('provenance_modernFindspot', 'autocompleter_provenanceModernFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_modernFindspot'});
   new Ajax.Autocompleter('provenance_nome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_nome'});
   new Ajax.Autocompleter('provenance_ancientRegion', 'autocompleter_provenanceAncientRegion', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientRegion'});
+  
+  publicationPreview()
   
 });
 

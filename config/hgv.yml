@@ -20,20 +20,30 @@
       :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
     :publicationTitle:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title[@level='s'][@type='abbreviated']
-    :publicationVolume:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
-    :publicationNumbers:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']
-    :publicationFascicle:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='fascicle']
-    :publicationSide:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='side']
-    :publicationLine:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='lines']
-    :publicationPages:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='pages']
-    :publicationParts:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='parts']
+    #:publicationVolume:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
+    #:publicationFascicle:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='fascicle']
+    #:publicationNumbers:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']
+    #:publicationSide:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='side']
+    :publicationExtra:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope
+      :multiple: true
+      :attributes:
+        #:position:
+        #  :name: n
+        #  :pattern: /\A\d+\Z/
+        :type:
+          :name: type
+          :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragments|folio|inventory|number|columns|generic|parts\Z/
+    #:publicationLine:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='lines']
+    #:publicationPages:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='pages']
+    #:publicationParts:
+    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='parts']
     :collectionPlaceName:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/placeName/settlement
     :collection:
@@ -97,30 +107,6 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
-
-    #:provenanceUnknown:
-    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
-    #:provenanceAncientFindspot:
-    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
-    #  :attributes:
-    #    :certainty:
-    #      :name: cert
-    #      :pattern: /low/
-    #:provenanceNome:
-    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
-    #  :attributes:
-    #    :certainty:
-    #      :name: cert
-    #      :pattern: /low/
-    #:provenanceAncientRegion:
-    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
-    #  :attributes:
-    #    :certainty:
-    #      :name: cert
-    #      :pattern: /low/
-    #:provenanceModernFindspot:
-    #  :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
-
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/
@@ -162,9 +148,6 @@
     #:mentionedDateSource:
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
     #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
-
-
-
     :provenance:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
       :pattern: /\Aunbekannt\Z/
@@ -190,8 +173,6 @@
               :attributes:
                 :key:
                   :name: key
-
-
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
       :multiple: true
