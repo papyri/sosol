@@ -32,6 +32,9 @@ en:
       publicationLine: Line / Zeile
       publicationPages: Pages / Seiten
       publicationParts: Parts
+      publicationExtra: Extra
+      publicationExtraType: Type / Pattern
+      publicationExtraValue: Value
       collectionPlaceName: Place name
       collection: Collection
       collectionInventoryNumber: Inv. no. 

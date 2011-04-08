@@ -32,6 +32,9 @@ de:
       publicationLine: Zeile
       publicationPages: Seiten
       publicationParts: Teile
+      publicationExtra: Extra
+      publicationExtraType: Typ / Vorlage
+      publicationExtraValue: Wert
       collectionPlaceName: Ort
       collection: Sammlung
       collectionInventoryNumber: Inv. Nr. 
