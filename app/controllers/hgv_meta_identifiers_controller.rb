@@ -112,22 +112,13 @@ class HgvMetaIdentifiersController < IdentifiersController
         # get rid of empty (invalid) provenance items
         if params[:hgv_meta_identifier][:provenance]
           params[:hgv_meta_identifier][:provenance].delete_if{|index, provenance|
-          
-          puts '##########################################################################'
-                puts provenance.inspect
-                puts '##########################################################################'
-
-          
             if provenance[:value] != 'unbekannt'
-              puts '--------------here1---------------'
               if !provenance[:children]
-                puts '--------------here2---------------'
                 true
               elsif !provenance[:children][:place]
-                puts '--------------here3---------------'
+
                 true
               else
-                puts '--------------here4---------------'
                 provenance[:children][:place].delete_if {|indexPlace, place|
                   if !place[:children]
                     true
@@ -139,16 +130,7 @@ class HgvMetaIdentifiersController < IdentifiersController
                     place[:children][:location][:value].empty? ? true : false
                   end
                 }
-                
                 provenance[:children][:place].empty? ? true : false
-                
-                #valueCollection = '';
-                #provenance[:children][:place][:children][:location].each {|location|
-                #  valueCollection << location[value]
-                #}
-                #valueCollection.strip.empty? ? true : false
-                
-                
               end
             end
           }
