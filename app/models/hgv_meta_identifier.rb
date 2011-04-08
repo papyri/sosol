@@ -137,7 +137,7 @@ class HGVMetaIdentifier < HGVIdentifier
     
     epidoc = set_epidoc_attributes
       
-    File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
+    #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
 
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
