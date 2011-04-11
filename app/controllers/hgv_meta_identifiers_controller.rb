@@ -89,7 +89,13 @@ class HgvMetaIdentifiersController < IdentifiersController
 
       if params[:hgv_meta_identifier]
 
-        
+        # get rid of empty publication parts
+        if params[:hgv_meta_identifier][:publicationExtra]
+          params[:hgv_meta_identifier][:publicationExtra].delete_if{|index, extra|
+            extra[:value].empty?
+          }
+        end
+
         if params[:hgv_meta_identifier][:textDate]
           
           # get rid of empty (invalid) date items
