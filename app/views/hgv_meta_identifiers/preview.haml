@@ -21,13 +21,7 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Publication'
               %td
                 = @identifier[:publicationTitle]
-                = @identifier[:publicationVolume] ? @identifier[:publicationVolume] : ''
-                = @identifier[:publicationFascicle] ? @identifier[:publicationFascicle] : ''
-                = @identifier[:publicationNumbers] ? @identifier[:publicationNumbers] : ''
-                = @identifier[:publicationParts] ? @identifier[:publicationParts] : ''
-                = @identifier[:publicationSide] ? @identifier[:publicationSide] : ''
-                = @identifier[:publicationPages] ? @identifier[:publicationPages] : ''
-                = @identifier[:publicationLine] ? @identifier[:publicationLine] : ''
+                = HgvPublication.getTitleTail @identifier[:publicationExtra]
                 = @identifier[:tmNo] ? '(TM ' + @identifier[:tmNo] + ')' : ''
                 - if !@identifier[:otherPublications].empty?
                   %ul

@@ -51,7 +51,20 @@ module HgvMetaIdentifierHelper
       extras
     end
     
-   end
+    def HgvPublication.getTitleTail publicationExtra
+      title = ''
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:value]
+            title += biblScope[:value] + ' '
+          end
+        }
+      end
+      title
+    end
+    
+  end
+
   module HgvProvenance
     def HgvProvenance.format provenance
       result = ''
