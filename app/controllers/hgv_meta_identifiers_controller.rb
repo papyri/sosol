@@ -89,11 +89,18 @@ class HgvMetaIdentifiersController < IdentifiersController
 
       if params[:hgv_meta_identifier]
 
-        # get rid of empty (invalid) date items
+        
         if params[:hgv_meta_identifier][:textDate]
+          
+          # get rid of empty (invalid) date items
           params[:hgv_meta_identifier][:textDate].delete_if{|index, date|
             date[:c].empty? && date[:y].empty? && !date[:unknown]
           }
+
+          # get rid of unnecessary date attribute @xml:id if there is only one date
+          if params[:hgv_meta_identifier][:textDate].length == 1
+            params[:hgv_meta_identifier][:textDate]['0'][:attributes][:id] = nil
+          end
         end
 
         # get rid of empty certainties for mentioned dates (X, Y, Z)

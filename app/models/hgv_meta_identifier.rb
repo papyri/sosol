@@ -54,9 +54,14 @@ class HGVMetaIdentifier < HGVIdentifier
   end
 
   def get_date_item date_id    
-    self[:textDate].select {|dateItem|
-      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:id) && dateItem[:attributes][:id].include?(date_id)
-    }.first
+    self[:textDate].each{|dateItem|
+      if dateItem[:attributes] && dateItem[:attributes][:id] && dateItem[:attributes][:id].include?(date_id)
+        return dateItem
+      elsif date_id.include?('X') && self[:textDate].first == dateItem
+        return dateItem
+      end
+    }
+    return nil    
   end
 
   # retrieve matadata from xml and store as object attributes
