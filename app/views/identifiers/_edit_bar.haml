@@ -17,7 +17,7 @@
                   = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
       - if @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}
-          = link_to 'Metadata', edit_meta_publication_path(@identifier.publication)
+          = link_to 'HGV', edit_meta_publication_path(@identifier.publication)
           - metas = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
           - if metas.length > 1
             %ul
@@ -92,7 +92,7 @@
         .identifier_sub_menu#sub_menu_2
           .site
             %ul
-              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Metadata', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'HGV', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
       - when HGVTransIdentifier

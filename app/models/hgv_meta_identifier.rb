@@ -5,7 +5,7 @@ class HGVMetaIdentifier < HGVIdentifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
-  FRIENDLY_NAME = "Meta"
+  FRIENDLY_NAME = "HGV"
 
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
