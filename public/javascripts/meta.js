@@ -5,8 +5,8 @@ function publicationPreview(){
             $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
             $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
             $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_4_value').getValue() + ' ';
-  
+            $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
+
   $('multiItems_publicationExtra').select('input').each(function(input){
    
     if(input.type.toLowerCase() != 'hidden'){
