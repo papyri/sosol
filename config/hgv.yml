@@ -20,30 +20,13 @@
       :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
     :publicationTitle:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title[@level='s'][@type='abbreviated']
-    #:publicationVolume:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
-    #:publicationFascicle:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='fascicle']
-    #:publicationNumbers:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']
-    #:publicationSide:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='side']
     :publicationExtra:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope
       :multiple: true
       :attributes:
-        #:position:
-        #  :name: n
-        #  :pattern: /\A\d+\Z/
         :type:
           :name: type
           :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragments|folio|inventory|number|columns|generic|parts\Z/
-    #:publicationLine:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='lines']
-    #:publicationPages:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='pages']
-    #:publicationParts:
-    #  :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='parts']
     :collectionPlaceName:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/placeName/settlement
     :collection:
@@ -93,7 +76,7 @@
     :translationsFr:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='fr']/bibl[@type='translations']
       :multiple: true
-    :bl: #works same but may need more added to form
+    :bl:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='corrections']/listBibl/bibl[@type='BL']
       :multiple: true
       :children:
@@ -224,6 +207,3 @@
             :match:
               :name: match
               :pattern: /\A..\/(((day|month|year)-from-date\()?@(when|notBefore|notAfter)(\)?)|offset\[@type='(after|before)'\])\Z/
-            #:degree:
-            #  :name: degree
-            #  :pattern: /\A0\.7]\Z/ # only 0.7 for »Wohl...« / »Probably...« ist accepted, 0.3 for (?) / »low« is not accepted
