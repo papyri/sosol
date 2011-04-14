@@ -21,8 +21,14 @@ class DdbIdentifiersController < IdentifiersController
 
           # get div type=edition from XML in string format for conversion
           abs = DDBIdentifier.get_div_edition(original_xml).to_s
-            
-          @identifier[:leiden_plus] = abs
+          
+          if @identifier.get_broken_leiden.nil?  
+            @identifier[:leiden_plus] = abs
+          else
+            @identifier[:leiden_plus] = nil
+            @bad_leiden = true
+          end
+          
         else
           @identifier[:leiden_plus] = @identifier.leiden_plus
         end
