@@ -1,6 +1,6 @@
 :javascript
   document.observe("dom:loaded", function() {
-    if (#{XSUGAR_STANDALONE_ENABLED}) {
+    if (#{XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
       Form.Element.disable('ddb_identifier_leiden_plus');
       
       $('ddb_identifier_leiden_plus').toggleClassName('loading');
