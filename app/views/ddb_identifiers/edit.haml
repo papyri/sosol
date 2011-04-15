@@ -5,7 +5,12 @@
       
       $('ddb_identifier_leiden_plus').toggleClassName('loading');
 
-      request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
+      if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+        request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
+      }
+      else {
+        request_url = "#{XSUGAR_STANDALONE_URL}";
+      }
       
       new Ajax.Request(request_url, {
         method: 'post',
