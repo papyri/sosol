@@ -96,18 +96,18 @@ module HgvMetaIdentifierHelper
             result <<  (provenance[:ancientFindspot][:value] ? ')' : '')
           end
           if provenance[:nome][:value]
-             result << ' ('
+             result << (provenance[:ancientFindspot][:value] ? ' (' : '')
              result << provenance[:nome][:value]
              result << (provenance[:nome][:certainty] == 'low' ? ' ?' : '')
              result << (provenance[:ancientRegion][:value] ? ', ' + provenance[:ancientRegion][:value] : '')
              result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
-             result << ')'
+             result << (provenance[:ancientFindspot][:value] ? ')' : '')
           end
           if !provenance[:nome][:value] && provenance[:ancientRegion][:value]
-            result << ' ('
+            result << (provenance[:ancientFindspot][:value] ? ' (' : '')
             result << provenance[:ancientRegion][:value]
             result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
-            result << ')'
+            result << (provenance[:ancientFindspot][:value] ? ')' : '')
           end
 
         end
