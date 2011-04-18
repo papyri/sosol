@@ -99,8 +99,8 @@
       :children:
         :ref:
           :xpath: ref
-        :note:
-          :xpath: note
+        :comment:
+          :xpath: note[@type='comment']
         :date:
           :xpath: date[@type='mentioned']
           :attributes:
@@ -126,6 +126,8 @@
                   :name: degree
                   :optional: false
                   :pattern: /\A0(\.\d)?|1\Z/
+        :annotation:
+          :xpath: note[@type='annotation']
     #:mentionedDateOriginal:
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='original']
     #:mentionedDateSource:

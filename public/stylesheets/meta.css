@@ -136,17 +136,18 @@ div#edit div.editbox span.label {
   float: left; }
 
 div#edit div.editbox label.mentionedDateReference,
+div#edit div.editbox label.mentionedDateComment,
 div#edit div.editbox label.mentionedDateNotBefore,
 div#edit div.editbox label.mentionedDateNotAfter,
-div#edit div.editbox label.mentionedDateNote,
+div#edit div.editbox label.mentionedDateAnnotation,
 div#edit div.editbox label.mentionedDateCertainty,
 div#edit div.editbox label.mentionedDateDateId {
   margin: 0 0.1em 0.4em 0;
   overflow: visible;
-  width: 7.7em; }
+  width: 7em; }
 
-div#edit div.editbox label.mentionedDateNote {
-  width: 11em; }
+div#edit div.editbox label.mentionedDateReference {
+  width: 5em; }
 
 div#edit div.editbox label.mentionedDateCertainty {
   width: 8em; }
@@ -208,6 +209,9 @@ span.quickHelp_meta_help_publicationFascicle {
   margin: 0 11em 0.4em 0.4em; }
 
 span.quickHelp_meta_help_mentionedDateReference {
+  z-index: 403; }
+
+span.quickHelp_meta_help_mentionedDateComment {
   z-index: 402; }
 
 span.quickHelp_meta_help_mentionedDateNotBefore,
@@ -348,11 +352,11 @@ div#edit div.multi ul#multiItems_mentionedDate li {
   width: 48.8em; }
 
 div#edit div.multi ul#multiItems_mentionedDate li input {
-  width: 9em;
+  width: 8.2em;
   margin: 0 0.1em 0 0; }
 
-div#edit div.multi ul#multiItems_mentionedDate li input.note {
-  width: 13em; }
+div#edit div.multi ul#multiItems_mentionedDate li input.reference {
+  width: 6em; }
 
 div#edit div.multi ul#multiItems_mentionedDate li select {
   width: 9em;
@@ -365,11 +369,11 @@ div#edit div.multi p#multiPlus_mentionedDate {
   width: 48.8em; }
 
 div#edit div.multi p#multiPlus_mentionedDate input {
-  width: 9em;
+  width: 8.2em;
   margin: 0 0.1em 0 0; }
 
-div#edit div.multi p#multiPlus_mentionedDate input.note {
-  width: 13em; }
+div#edit div.multi p#multiPlus_mentionedDate input.reference {
+  width: 6em; }
 
 div#edit div.multi p#multiPlus_mentionedDate select {
   width: 9em;

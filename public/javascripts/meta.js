@@ -231,23 +231,25 @@ function multiAddMentionedDate()
   var inputfields = $$('#multiPlus_mentionedDate > input');  
   var selectboxes = $$('#multiPlus_mentionedDate > select');
 
-  var reference = inputfields[0].value;
-  var date1     = inputfields[1].value;
-  var date2     = inputfields[2].value;
-  var note      = inputfields[3].value;
-  var certainty = selectboxes[0].value;
-  var dateId    = selectboxes[1].value;
+  var reference  = inputfields[0].value;
+  var comment    = inputfields[1].value;
+  var date1      = inputfields[2].value;
+  var date2      = inputfields[3].value;
+  var annotation = inputfields[4].value;
+  var certainty  = selectboxes[0].value;
+  var dateId     = selectboxes[1].value;
 
   var index = multiGetNextIndex('mentionedDate');
 
   var item = '<li>' +
-             '  <input type="text" value="' + reference +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][ref][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_ref_value" class="observechange">' +
+             '  <input type="text" value="' + reference +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][ref][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_ref_value" class="observechange reference">' +
+             '  <input type="text" value="' + comment +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][comment][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_comment_value" class="observechange comment">' +
              '  <input type="text" value="' + date1 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date1]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date1" class="observechange">' +
              '  <input type="text" value="' + date2 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date2]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date2" class="observechange">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][when]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_when">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notBefore]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notBefore">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notAfter]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notAfter">' +
-             '  <input type="text" value="' + note +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][note][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_note_value" class="observechange note">' +
+             '  <input type="text" value="' + annotation +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][annotation][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_annotation_value" class="observechange annotation">' +
              '  <select onchange="mentionedDateNewCertainty(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][certaintyPicker]" id="hgv_meta_identifier_mentionedDate_' + index +  '_certaintyPicker" class="observechange certainty"><option value=""></option>' +
              '  <option value="low" ' + (certainty == 'low' ? 'selected="selected"' : '') +  '>(?)</option>' +
              '  <option value="day" ' + (certainty == 'day' ? 'selected="selected"' : '') +  '>Day uncertain</option>' +

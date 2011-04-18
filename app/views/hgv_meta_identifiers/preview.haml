@@ -104,7 +104,8 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Reference'
               %td
                 %ul
-                  - @identifier[:figures].collect{|f| f= f[:children][:graphic][:attributes][:url]; '<a href="' + f + '" title="' + f + '">' + f[/^http:\/\/[^\/]+/] + '</a>'}.each do |figure|
+                  =# debug @identifier[:figures]
+                  - @identifier[:figures].collect{|f| f= f[:children][:graphic][:attributes][:url]; '<a href="' + f + '" title="' + f + '">' + (f[/^http:\/\/[^\/]+/] ? f[/^http:\/\/[^\/]+/] : f) + '</a>'}.each do |figure|
                     %li=figure
           -# NOT IN PN
           - if !@identifier[:mentionedDate].empty?

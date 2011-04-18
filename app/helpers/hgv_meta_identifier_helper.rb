@@ -914,7 +914,7 @@ module HgvMetaIdentifierHelper
       data = []
 
       mentioned_date.each { |item|
-        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
+        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :comment => '', :annotation => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
         if item[:children]
           item[:children].each_pair{|key, value|
             data_item[key] = value && value[:value] ? value[:value] : ''
@@ -949,6 +949,29 @@ module HgvMetaIdentifierHelper
   end
   
   module HgvFormat
+
+    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter
+      date_item = {}
+      
+      date1 = isoWhen && !isoWhen.empty? ? isoWhen : (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)
+
+      if date1
+        date_item[:y] = date1[/^(-?\d\d\d\d)/, 1]
+        date_item[:m] = date1[/^-?\d\d\d\d-(\d\d)/, 1]
+        date_item[:d] = date1[/^-?\d\d\d\d-\d\d-(\d\d)/, 1]
+        
+        date2 = isoNotAfter && !isoNotAfter.empty? ? isoNotAfter : nil
+        
+        if date2
+          date_item[:y2] = date2[/^(-?\d\d\d\d)/, 1]
+          date_item[:m2] = date2[/^-?\d\d\d\d-(\d\d)/, 1]
+          date_item[:d2] = date2[/^-?\d\d\d\d-\d\d-(\d\d)/, 1]
+        end
+      end
+      
+      HgvFormat.formatDate date_item
+      
+    end
 
     def HgvFormat.formatDate date_item
       precision = HgvFormat.formatPrecision date_item[:precision]
