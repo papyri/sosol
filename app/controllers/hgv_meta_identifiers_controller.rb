@@ -125,7 +125,12 @@ class HgvMetaIdentifiersController < IdentifiersController
         # get rid of empty (invalid) provenance items
         if params[:hgv_meta_identifier][:provenance]
           params[:hgv_meta_identifier][:provenance].delete_if{|index, provenance|
-            if provenance[:value] != 'unbekannt'
+            if provenance[:value] == 'unbekannt'
+              if provenance[:children] && provenance[:children][:place]
+                provenance[:children][:place] = {}
+              end
+              false
+            else
               if !provenance[:children]
                 true
               elsif !provenance[:children][:place]
