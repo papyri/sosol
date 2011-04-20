@@ -88,6 +88,7 @@ en:
       quickSave: save entire file
       showDateTabs: add alternative dates
       datePreview: show date preview
+      addAlternativePlace: add alternative location
 
     tooltip:
       multiAdd: Click to add new item

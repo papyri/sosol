@@ -88,6 +88,7 @@ de:
       quickSave: alle Daten speichern
       showDateTabs: weitere Datumseinträge vornehmen
       datePreview: Datumsvorschau anzeigen
+      addAlternativePlace: weitere Ortsangaben hinzufügen
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen

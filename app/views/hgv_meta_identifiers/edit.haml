@@ -22,7 +22,7 @@
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/mentioned_date'
           %div{:style => 'float: none; clear: both; display: block;'}
-          %div.quickSave=I18n.t('meta.label.quickSave')
+          %span.quickSave=I18n.t('meta.label.quickSave')
 
         %h4.category.general
           %a{:name => 'General<'}=I18n.t('meta.legend.general')
@@ -85,17 +85,6 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationExtra }
           = render :partial => 'hgv_meta_identifiers/publicationExtra'
 
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationParts }
-          =# render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationParts }
-          =# render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationParts' }
-
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationLine }
-          =# render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationLine }
-          =# render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationLine' }
-
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationPages }
-          =# render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationPages }
-          =# render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationPages' }
           %div{:style => 'float: none; clear: both; display: block;'}
           .quickSave=I18n.t('meta.label.quickSave')
 
@@ -128,7 +117,8 @@
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/provenance'
           %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
+          %span.quickSave=I18n.t('meta.label.quickSave')
+          %span#addAlternativePlace.addAlternativePlace=I18n.t('meta.label.addAlternativePlace')
 
         %h4.category.reference
           %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
