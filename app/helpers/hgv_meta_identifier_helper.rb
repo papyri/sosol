@@ -950,7 +950,7 @@ module HgvMetaIdentifierHelper
   
   module HgvFormat
 
-    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter
+    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter, certainty = nil
       date_item = {}
       
       date1 = isoWhen && !isoWhen.empty? ? isoWhen : (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)
@@ -969,6 +969,10 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      if certainty
+        date_item[:certainty] = certainty
+      end
+
       HgvFormat.formatDate date_item
       
     end

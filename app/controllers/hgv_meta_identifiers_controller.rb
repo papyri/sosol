@@ -173,7 +173,7 @@ class HgvMetaIdentifiersController < IdentifiersController
         if params[:hgv_meta_identifier][:mentionedDate]
           params[:hgv_meta_identifier][:mentionedDate].each{|index, date|
             if date[:children] && date[:children][:date] && date[:children][:date][:attributes]
-              date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter])
+              date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
             end
           }
         end
