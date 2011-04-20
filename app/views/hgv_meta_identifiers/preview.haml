@@ -114,7 +114,7 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#MentionedDates'
               %td
-                = @identifier[:mentionedDate].collect{|md| (md[:children][:ref] && md[:children][:ref][:value] ? md[:children][:ref][:value] + ' ' : '') + (md[:children][:note] && md[:children][:note][:value] ? md[:children][:note][:value] + ' ' : '') + (md[:children][:date][:value] ? md[:children][:date][:value] : '') }.reject{|md| md.empty? }.compact.join('; ')
+                = @identifier[:mentionedDate].collect{|md| (md[:children][:ref] && md[:children][:ref][:value] ? md[:children][:ref][:value] + ': ' : '') + (md[:children][:comment] && md[:children][:comment][:value] ? md[:children][:comment][:value] + ' ' : '') + (md[:children][:date] && md[:children][:date][:value] ? md[:children][:date][:value] : '') + (md[:children][:annotation] && md[:children][:annotation][:value] ? ' (' + md[:children][:annotation][:value] + ')' : '') }.reject{|md| md.empty? }.compact.join('; ')
           - if @identifier[:plannedForFuturePrintRelease]
             %tr
               %th=I18n.t('meta.label.plannedForFuturePrintRelease')
