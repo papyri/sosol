@@ -21,6 +21,12 @@
           Form.Element.enable('ddb_identifier_leiden_plus');
           $('ddb_identifier_leiden_plus').toggleClassName('loading');
           Form.Element.focus('ddb_identifier_leiden_plus');
+        },
+        onFailure: function(response) {
+          if(500 == response.status) {
+            // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+            setTimeout("window.location.reload()",10000);
+          }
         }
       });
     }
