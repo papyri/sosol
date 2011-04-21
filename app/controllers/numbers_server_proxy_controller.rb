@@ -18,4 +18,18 @@ class NumbersServerProxyController < ApplicationController
     
     render :template => 'numbers_server_proxy/proxy'
   end
+  
+  def xsugar
+    response = Net::HTTP.post_form(URI.parse(XSUGAR_STANDALONE_URL),
+      {
+        :content => params[:content],
+        :type => params[:type],
+        :direction => params[:direction]
+      }
+    )
+    
+    @response = response.body
+    
+    render :template => 'numbers_server_proxy/proxy'
+  end
 end

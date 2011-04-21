@@ -4,12 +4,12 @@
   -#the save button and comment box styled differently in editor.sass based on different class on top and bottom
   -if where_at == :top
     = text_field_tag :commenttop, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'commenttop observechangecomtop', :size => '80', :disabled => !identifier.mutable?
-    = f.submit "Save", :class => 'savetop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+    = f.submit "Save", :id => 'identifier_submit_top', :class => 'savetop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
       = f.submit "Save With Broken Leiden+", :class => 'brokentop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
   -else
     = text_field_tag :comment, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'comment observechangecomment', :size => '80', :disabled => !identifier.mutable?
-    = f.submit "Save", :class => 'save', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+    = f.submit "Save", :id => 'identifier_submit', :class => 'save', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
       = f.submit "Save With Broken Leiden+", :class => 'brokenbottom', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
       :javascript

@@ -78,6 +78,11 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'sparql',
     :query => /.*/
   
+  map.connect 'numbers_server_proxy/xsugar/',
+    :controller => 'numbers_server_proxy',
+    :action => 'xsugar',
+    :conditions => { :method => :post }
+  
   map.connect 'numbers_server_proxy/:id',
     :controller => 'numbers_server_proxy',
     :action => 'proxy',
