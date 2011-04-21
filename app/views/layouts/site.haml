@@ -10,11 +10,11 @@
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
       = stylesheet_link_tag 'meta'
     = javascript_include_tag :defaults
-    = javascript_include_tag 'setbackground'
+    %style(type="text/css")
+      :sass
+        #header
+          background: #{defined?(ENVIRONMENT_BACKGROUND) ? ENVIRONMENT_BACKGROUND : '#EAEAEA'}
   %body
-    :javascript
-      setBackGroundColor("#{ENVIRONMENT_BACKGROUND}");
-      // #{ENVIRONMENT_BACKGROUND} defined in secret file for environment under config/environments directory
     #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
