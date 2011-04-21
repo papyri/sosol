@@ -44,16 +44,6 @@
     }
   });
 
-%style(type="text/css")
-  :sass
-    .loading
-      background = gray + 90
-      background-image: url('#{image_path("ajax_loader.gif")}')
-      background-repeat: no-repeat
-      background-position: center center
-      -webkit-background-size: 128px 128px
-      opacity: .5
-
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
