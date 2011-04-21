@@ -1,0 +1,56 @@
+- provenance = HgvProvenance.epidocToHgv @identifier[:provenance]
+- unknown = HgvProvenance.unknown? @identifier[:provenance]
+
+=# debug @identifier[:provenance]
+=# debug provenance
+
+.multi#multi_provenance
+  %ul.items#multiItems_provenance
+    - provenance.each_index do |index|
+      %li
+        %label.provenance.ancientFindspot=I18n.t('meta.label.provenanceAncientFindspot')
+        = select_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][0][children][offset][value]', options_for_select(HgvProvenance.offsetOptions, provenance[index][:ancientFindspot][:offset]), :disabled => !@identifier.mutable?, :class => 'observechange provenanceOffset'        
+        = text_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][0][children][location][value]', provenance[index][:ancientFindspot][:value], :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientFindspot'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][0][attributes][type]', 'ancientFindspot', :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientFindspot'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][0][attributes][certainty]', provenance[index][:ancientFindspot][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
+        %label.provenance.modernFindspot=I18n.t('meta.label.provenanceModernFindspot')
+        = text_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][1][children][location][value]', provenance[index][:modernFindspot][:value], :disabled => !@identifier.mutable?, :class => 'observechange provenanceModernFindspot'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][1][attributes][type]', 'modernFindspot', :disabled => !@identifier.mutable?, :class => 'observechange provenanceModernFindspot'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][1][attributes][certainty]', provenance[index][:modernFindspot][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
+        %label.provenance.nome=I18n.t('meta.label.provenanceNome')
+        = text_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][2][children][location][value]', provenance[index][:nome][:value], :disabled => !@identifier.mutable?, :class => 'observechange provenanceNome'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][2][attributes][type]', 'nome', :disabled => !@identifier.mutable?, :class => 'observechange provenanceNome'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][2][attributes][certainty]', provenance[index][:nome][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
+        %label.provenance.ancientRegion=I18n.t('meta.label.provenanceAncientRegion')
+        = text_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][3][children][location][value]', provenance[index][:ancientRegion][:value], :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientRegion'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][3][attributes][type]', 'ancientRegion', :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientRegion'
+        = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][3][attributes][certainty]', provenance[index][:ancientRegion][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
+        %label.provenance.certainty=I18n.t('meta.label.certainty')
+        = select_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][provenanceCertaintyPicker]', options_for_select(HgvProvenance.certaintyOptions, provenance[index][:certaintyPicker]), :onchange => 'provenanceUpdateUncertainties(this);', :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+
+  .add#multiPlus_provenance
+    %label.provenance#ancientFindspot=I18n.t('meta.label.provenanceAncientFindspot')
+    = select_tag :provenance_ancientFindspotOffset, options_for_select(HgvProvenance.offsetOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceOffset'
+    = text_field_tag :provenance_ancientFindspot, nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientFindspot'
+    .autocompleter#autocompleter_provenanceAncientFindspot
+    %label.provenance#modernFindspot=I18n.t('meta.label.provenanceModernFindspot')
+    = text_field_tag :provenance_modernFindspot, nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceModernFindspot'
+    .autocompleter#autocompleter_provenanceModernFindspot
+    %label.provenance#nome=I18n.t('meta.label.provenanceNome')
+    = text_field_tag :provenance_nome, nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceNome'
+    .autocompleter#autocompleter_provenanceNome
+    %label.provenance#ancientRegion=I18n.t('meta.label.provenanceAncientRegion')
+    = text_field_tag :provenance_ancientRegion, nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceAncientRegion'
+    .autocompleter#autocompleter_provenanceAncientRegion
+    %label.provenance#ancientRegion=I18n.t('meta.label.certainty')
+    = select_tag :provenance_certaintyPicker, options_for_select(HgvProvenance.certaintyOptions), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+    %span{:onclick => "multiAddProvenance()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+
+  = javascript_tag "Sortable.create('multiItems_provenance', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :provenanceUnknown }
+= check_box_tag 'hgv_meta_identifier[provenance][0][value]', :unbekannt, unknown, :disabled => !@identifier.mutable?, :class => 'observechange unknown'
+
+
