@@ -50,6 +50,10 @@
 
       ajax_xml_to_leiden(was_disabled);
     }
+    else if (#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+      Form.Element.setValue('ddb_identifier_leiden_plus',
+        $('original_leiden_plus').innerHTML.unescapeHTML().strip());
+    }
   });
 
 #main
