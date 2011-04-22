@@ -463,7 +463,7 @@ Event.observe(window, 'load', function() {
   $('multiPlus_provenance').hide();
   $('addAlternativePlace').observe('click', function(e){ $('multiPlus_provenance').show(); this.hide(); });
 
-  $('hgv_meta_identifier_submit').observe('click', checkNotAddedMultiples);
+  $('identifier_submit').observe('click', checkNotAddedMultiples);
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
