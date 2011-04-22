@@ -1,4 +1,39 @@
 :javascript
+  function ajax_xml_to_leiden() {
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{XSUGAR_STANDALONE_URL}";
+    }
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: $F('ddb_identifier_leiden_plus'), type: 'epidoc', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+        $('ddb_identifier_leiden_plus').toggleClassName('loading');
+        
+        if ("exception" in json) {
+          $$('div#main > div.site').first().insert({
+            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+          });
+        }
+        else {
+          Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
+          Form.Element.enable('ddb_identifier_leiden_plus');
+          Form.Element.enable('identifier_submit_top');
+          Form.Element.enable('identifier_submit');
+          Form.Element.focus('ddb_identifier_leiden_plus');
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("ajax_xml_to_leiden()",10000);
+      }
+    });
+  }
+  
   document.observe("dom:loaded", function() {
     if (#{XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
       Form.Element.disable('ddb_identifier_leiden_plus');
@@ -7,40 +42,7 @@
       
       $('ddb_identifier_leiden_plus').toggleClassName('loading');
 
-      if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
-        request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
-      }
-      else {
-        request_url = "#{XSUGAR_STANDALONE_URL}";
-      }
-      
-      new Ajax.Request(request_url, {
-        method: 'post',
-        parameters: $H({content: $F('ddb_identifier_leiden_plus'), type: 'epidoc', direction: 'xml2nonxml'}),
-        onSuccess: function(response) {
-          json = response.responseText.evalJSON();
-          $('ddb_identifier_leiden_plus').toggleClassName('loading');
-          
-          if ("exception" in json) {
-            $$('div#main > div.site').first().insert({
-              top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
-            });
-          }
-          else {
-            Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
-            Form.Element.enable('ddb_identifier_leiden_plus');
-            Form.Element.enable('identifier_submit_top');
-            Form.Element.enable('identifier_submit');
-            Form.Element.focus('ddb_identifier_leiden_plus');
-          }
-        },
-        onFailure: function(response) {
-          if(500 == response.status) {
-            // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
-            setTimeout("window.location.reload()",10000);
-          }
-        }
-      });
+      ajax_xml_to_leiden();
     }
   });
 
