@@ -1,5 +1,5 @@
 :javascript
-  function ajax_xml_to_leiden() {
+  function ajax_xml_to_leiden(was_disabled) {
     if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
       request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
     }
@@ -21,21 +21,25 @@
         }
         else {
           Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
-          Form.Element.enable('ddb_identifier_leiden_plus');
-          Form.Element.enable('identifier_submit_top');
-          Form.Element.enable('identifier_submit');
-          Form.Element.focus('ddb_identifier_leiden_plus');
+          if (!was_disabled) {
+            Form.Element.enable('ddb_identifier_leiden_plus');
+            Form.Element.enable('identifier_submit_top');
+            Form.Element.enable('identifier_submit');
+            Form.Element.focus('ddb_identifier_leiden_plus');
+          }
         }
       },
       onFailure: function(response) {
         // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
-        setTimeout("ajax_xml_to_leiden()",10000);
+        setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
       }
     });
   }
   
   document.observe("dom:loaded", function() {
     if (#{XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+      was_disabled = $('ddb_identifier_leiden_plus').disabled;
+      
       Form.Element.disable('ddb_identifier_leiden_plus');
       Form.Element.disable('identifier_submit_top');
       Form.Element.disable('identifier_submit');
@@ -44,7 +48,7 @@
       Form.Element.setValue('ddb_identifier_leiden_plus',
         $('original_leiden_plus').innerHTML.unescapeHTML().strip());
 
-      ajax_xml_to_leiden();
+      ajax_xml_to_leiden(was_disabled);
     }
   });
 
