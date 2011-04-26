@@ -33,13 +33,13 @@ class DateTest < ActiveSupport::TestCase
     )
     
     assert_equal(
-      {:value=>'vor 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'vor 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :offset => 'before'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'nach 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'nach 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :offset => 'after'} ),
       'HgvDate.hgvToEpiDoc'
     )
@@ -51,13 +51,13 @@ class DateTest < ActiveSupport::TestCase
     )
     
     assert_equal(
-      {:value=>'vor Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'vor Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :m => '8', :offset => 'before'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'nach Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884-08', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'nach Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884-08', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :m => '8', :offset => 'after'} ),
       'HgvDate.hgvToEpiDoc'
     )
@@ -69,13 +69,13 @@ class DateTest < ActiveSupport::TestCase
     )
     
     assert_equal(
-      {:value=>'vor 28. Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884-08-28', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'vor 28. Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'1884-08-28', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :m => '8', :d => '28', :offset => 'before'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'nach 28. Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'nach 28. Aug. 1884', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '1884', :m => '8', :d => '28', :offset => 'after'} ),
       'HgvDate.hgvToEpiDoc'
     )
@@ -87,26 +87,26 @@ class DateTest < ActiveSupport::TestCase
     )
     
     assert_equal(
-      {:value=>'vor Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'vor Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor', :attributes => {:type => 'before', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '-1884', :m => '8', :offset => 'before'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'nach 28. Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'-1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after'}, :children => {}}], :precision=>[], :certainty=>[]}},
+      {:value=>'nach 28. Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'-1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach', :attributes => {:type => 'after', :position => 1}, :children => {}}], :precision=>[], :certainty=>[]}},
       HgvDate.hgvToEpidoc({:y => '-1884', :m => '8', :d => '28', :offset => 'after'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'vor (?) Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor (?)', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :children => {}, :attributes => {:match => "../offset[@type='before']"}}]}},
+      {:value=>'vor (?) Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor (?)', :attributes => {:type => 'before', :position => 1}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :children => {}, :attributes => {:match => "../offset[@type='before']"}}]}},
                              #{:value=>'', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor (?)', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :attribtues => {:match => "../offset[@type='before']"}, :children => {}}]}},
       HgvDate.hgvToEpidoc({:y => '-1884', :m => '8', :offset => 'beforeUncertain'} ),
       'HgvDate.hgvToEpiDoc'
     )
     
     assert_equal(
-      {:value=>'nach (?) 28. Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'-1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach (?)', :attributes => {:type => 'after'}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :children => {}, :attributes => {:match => "../offset[@type='after']"}}]}},
+      {:value=>'nach (?) 28. Aug. 1884 v.Chr.', :attributes=>{:id=>nil, :when=>nil, :notBefore=>'-1884-08-28', :notAfter=>nil, :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'nach (?)', :attributes => {:type => 'after', :position => 1}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :children => {}, :attributes => {:match => "../offset[@type='after']"}}]}},
       HgvDate.hgvToEpidoc({:y => '-1884', :m => '8', :d => '28', :offset => 'afterUncertain'} ),
       'HgvDate.hgvToEpiDoc'
     )
