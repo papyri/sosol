@@ -4,7 +4,7 @@
       request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{XSUGAR_STANDALONE_URL}";
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
     }
     
     new Ajax.Request(request_url, {
@@ -37,7 +37,7 @@
   }
   
   document.observe("dom:loaded", function() {
-    if (#{XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+    if (#{(!defined?(XSUGAR_STANDALONE_ENABLED).nil?) && XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
       was_disabled = $('ddb_identifier_leiden_plus').disabled;
       
       Form.Element.disable('ddb_identifier_leiden_plus');
@@ -50,7 +50,7 @@
 
       ajax_xml_to_leiden(was_disabled);
     }
-    else if (#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (defined?(XSUGAR_STANDALONE_ENABLED).nil? || !XSUGAR_STANDALONE_ENABLED)}) {
       Form.Element.setValue('ddb_identifier_leiden_plus',
         $('original_leiden_plus').innerHTML.unescapeHTML().strip());
     }
