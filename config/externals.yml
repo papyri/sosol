@@ -1,7 +1,7 @@
 vendor/plugins/rxsugar:
   :type: git
   :repository: git://halsted.vis.uky.edu/git/xsugar.git
-  :revision: standalone_split_jcs
+  :revision: 1f6945c978bf204043fc349ce89b6012bfbe416b
 
 data/xslt/epidoc:
   :type: subversion
