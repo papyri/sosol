@@ -32,6 +32,9 @@ en:
       publicationLine: Line / Zeile
       publicationPages: Pages / Seiten
       publicationParts: Parts
+      publicationExtra: Extra
+      publicationExtraType: Type / Pattern
+      publicationExtraValue: Value
       collectionPlaceName: Place name
       collection: Collection
       collectionInventoryNumber: Inv. no. 
@@ -48,12 +51,13 @@ en:
       bl: BL
       blVolume: Volume
       blPage: Pages
-      mentionedDateReference: Reference
-      mentionedDateNotBefore: From / When
+      mentionedDateReference: Ref.
+      mentionedDateNotBefore: From / On
       mentionedDateNotAfter: To
       mentionedDateCertainty: Certainty
       mentionedDateDateId: Date id
-      mentionedDateNote: Comment
+      mentionedDateComment: Comment
+      mentionedDateAnnotation: Annotation
       translationsDe: German
       translationsEn: English
       translationsIt: Italian
@@ -84,6 +88,7 @@ en:
       quickSave: save entire file
       showDateTabs: add alternative dates
       datePreview: show date preview
+      addAlternativePlace: add alternative location
 
     tooltip:
       multiAdd: Click to add new item
@@ -93,6 +98,7 @@ en:
       multiMentionedDateNotBefore: Date (use -YYYY-MM-DD format)
       multiMentionedDateNotAfter: Second date (if time span) (use -YYYY-MM-DD format)
       multiMentionedDateComment: Comment
+      multiMentionedDateAnnotation: Annotation
       multiMentionedDateCertainty: Certainty
       multiMentionedDateDateId: Relation to a special date entry
 
@@ -115,7 +121,8 @@ en:
       mentionedDateReference: 'Enter the line number(s) in the text, where the date is mentioned. E.g. Z. 2, Kol. II, Z. 11.'
       mentionedDateNotBefore: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
-      mentionedDateNote: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
+      mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
+      mentionedDateAnnoation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
 
   provenance:
     ancientFindspotUncertain: ancient findspot uncertain
@@ -124,8 +131,9 @@ en:
     ancientFindspotAndNomeUncertain: ancient findspot and nome uncertain
     ancientFindspotAndAncientRegionUncertain: ancient findspot and ancient region uncertain
     nomeAndAncientRegionUncertain: nome and ancient region uncertain
-    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain 
-  
+    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain
+    offsetNear: near 
+
   date:
     beginning: beginning
     middle: middle

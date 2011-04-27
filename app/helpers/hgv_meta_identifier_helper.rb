@@ -1,6 +1,120 @@
 module HgvMetaIdentifierHelper
 
+  module HgvPublication
+    def HgvPublication.getTypeOptions
+      [['',             :generic],  
+        ['S. …',        :pages],
+        ['(S. …)',      :pages],
+        ['Z. …',        :lines],
+        ['(Z. …)',      :lines],
+        ['Fr. …',       :fragments],
+        ['Fol. …',      :folio],
+        ['inv. …',      :inventory],
+        ['Inv. Nr. …',  :pages],
+        ['Nr. …',       :number],
+        ['Kol. …',      :columns]]
+    end
+    
+    def HgvPublication.getVolume publicationExtra
+      HgvPublication.get :volume, publicationExtra
+    end
+    def HgvPublication.getFascicle publicationExtra
+      HgvPublication.get :fascicle, publicationExtra
+    end
+    def HgvPublication.getNumbers publicationExtra
+      HgvPublication.get :numbers, publicationExtra
+    end
+    def HgvPublication.getSide publicationExtra
+      HgvPublication.get :side, publicationExtra
+    end
+    
+    def HgvPublication.get type, publicationExtra
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:attributes] && biblScope[:attributes][:type] && biblScope[:attributes][:type].to_s == type.to_s
+            return biblScope[:value]
+          end
+        }
+      end
+      return nil
+    end
+    
+    def HgvPublication.getExtras publicationExtra
+      extras = []
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:attributes] && biblScope[:attributes][:type] && ![:volume, :fascicle, :numbers, :side].include?(biblScope[:attributes][:type].to_sym)
+            extras[extras.length] = {:type => biblScope[:attributes][:type], :value => biblScope[:value]}
+          end
+        }
+      end
+      extras
+    end
+    
+    def HgvPublication.getTitleTail publicationExtra
+      title = ''
+      if publicationExtra
+        publicationExtra.each {|biblScope|
+          if biblScope[:value]
+            title += biblScope[:value] + ' '
+          end
+        }
+      end
+      title
+    end
+    
+  end
+
   module HgvProvenance
+    def HgvProvenance.format provenance
+      result = ''
+      provenanceList = HgvProvenance.epidocToHgv provenance
+
+      provenanceList.each_index {|indexProvenance|
+        provenance = provenanceList[indexProvenance]
+
+        if indexProvenance > 0
+          if indexProvenance == provenanceList.length - 1
+            result << ' oder '
+          else
+            result << ', '
+          end
+        end
+
+        if provenance[:value] == 'unbekannt'
+          result << provenance[:value]
+        else
+
+          if provenance[:ancientFindspot][:value]
+            result << (provenance[:ancientFindspot][:offset] == 'bei' ? 'bei ' : '')
+            result << provenance[:ancientFindspot][:value]
+            result << (provenance[:ancientFindspot][:certainty] == 'low' ? ' (?)' : '')
+          end
+          if provenance[:modernFindspot][:value]
+            result <<  (provenance[:ancientFindspot][:value] ? ' (= ' : '')
+            result <<  provenance[:modernFindspot][:value]
+            result <<  (provenance[:ancientFindspot][:value] ? ')' : '')
+          end
+          if provenance[:nome][:value]
+             result << (provenance[:ancientFindspot][:value] ? ' (' : '')
+             result << provenance[:nome][:value]
+             result << (provenance[:nome][:certainty] == 'low' ? ' ?' : '')
+             result << (provenance[:ancientRegion][:value] ? ', ' + provenance[:ancientRegion][:value] : '')
+             result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
+             result << (provenance[:ancientFindspot][:value] ? ')' : '')
+          end
+          if !provenance[:nome][:value] && provenance[:ancientRegion][:value]
+            result << (provenance[:ancientFindspot][:value] ? ' (' : '')
+            result << provenance[:ancientRegion][:value]
+            result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
+            result << (provenance[:ancientFindspot][:value] ? ')' : '')
+          end
+
+        end
+      }
+      result
+    end
+
     def HgvProvenance.certainty provenance
       if provenance.kind_of?(Hash) && 
          provenance[:attributes] && 
@@ -34,6 +148,45 @@ module HgvMetaIdentifierHelper
         [I18n.t('provenance.ancientFindspotAndAncientRegionUncertain'), :ancientFindspot_ancientRegion],
         [I18n.t('provenance.nomeAndAncientRegionUncertain'), :nome_ancientRegion],
         [I18n.t('provenance.ancientFindspotNomeAndAncientRegionUncertain'), :ancientFindspot_nome_ancientRegion]]
+    end
+    
+    def HgvProvenance.offsetOptions
+      [['', ''],  
+        [I18n.t('provenance.offsetNear'), 'bei']]
+    end
+    
+    def HgvProvenance.unknown? provenance
+      provenance && provenance.length > 0 && provenance[0][:value] && provenance[0][:value] == 'unbekannt' ? true : false
+    end
+
+    def HgvProvenance.epidocToHgv provenance
+      t = []
+
+      provenance.each{|prov|
+        tnew = {:ancientFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :modernFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :nome => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
+        :ancientRegion => {:certainty => nil, :offset => nil, :value => nil, :key => nil}}
+
+        if prov[:children] && prov[:children][:place]
+          prov[:children][:place].each {|place|
+            if place[:attributes] && place[:attributes][:type]
+              key = place[:attributes][:type].to_sym
+              tnew[key][:certainty] = place[:attributes][:certainty] && place[:attributes][:certainty] == 'low' ? 'low' : nil;
+              tnew[key][:offset] = place[:children] && place[:children][:offset] && place[:children][:offset][:value] == 'bei' ? 'bei' : nil;
+              tnew[key][:value] = place[:children] && place[:children][:location] && place[:children][:location][:value] ? place[:children][:location][:value] : nil;
+              tnew[key][:key] = place[:children] && place[:children][:location] && place[:children][:location][:attributes] && place[:children][:location][:attributes][:key] ? place[:children][:location][:attributes][:key] : nil;
+            end
+          }
+
+          certaintyPicker = tnew.to_a.collect{|item| item[1][:certainty] == 'low' ? item[0] : nil}.compact.join('_')
+          tnew[:certaintyPicker] = !certaintyPicker.empty? ? certaintyPicker.to_sym : nil  
+          
+        end
+        t[t.length] = tnew
+      }
+
+      t
     end
   end
   
@@ -548,7 +701,8 @@ module HgvMetaIdentifierHelper
               if date_item[:children][:offset]
                 date_item[:children][:offset].each_index{|i|
                    offset = date_item[:children][:offset][i][:attributes][:type]
-                   attribute = ('offset' + (i == 1 ? '2' : '')).to_sym
+                   position = date_item[:children][:offset][i][:attributes][:position]
+                   attribute = ('offset' + (position == '2' ? '2' : '')).to_sym
                    
                    t[attribute] = offset.to_sym
                    
@@ -622,13 +776,14 @@ module HgvMetaIdentifierHelper
       }   
     end
     
-    def  HgvDate.getOffsetItem offset
+    def  HgvDate.getOffsetItem offset, position
       offset = offset.to_sym
       {
         :value => {:before => 'vor', :after => 'nach', :beforeUncertain => 'vor (?)', :afterUncertain => 'nach (?)'}[offset],
         :children => {},
         :attributes => {
-          :type => offset.to_s.sub('Uncertain', '')
+          :type => offset.to_s.sub('Uncertain', ''),
+          :position => position
         }
       }
     end
@@ -713,11 +868,11 @@ module HgvMetaIdentifierHelper
             
       # offset
       if date_item[:offset]
-        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset]
+        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset], 1
       end
 
       if date_item[:offset2]
-        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset2]
+        t[:children][:offset][t[:children][:offset].length] = HgvDate.getOffsetItem date_item[:offset2], 2
       end
 
       # offset certainty
@@ -759,7 +914,7 @@ module HgvMetaIdentifierHelper
       data = []
 
       mentioned_date.each { |item|
-        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :note => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
+        data_item = {:date => '', :ref => '', :certainty => '', :certaintyPicker => '', :dateId => '', :comment => '', :annotation => '', :when => '', :whenDayCertainty => '',:whenMonthCertainty => '',:whenYearCertainty => '', :notBefore => '', :notBeforeDayCertainty => '', :notBeforeMonthCertainty => '', :notBeforeYearCertainty => '', :notAfter => '', :notAfterDayCertainty => '',:notAfterMonthCertainty => '',:notAfterYearCertainty => ''}
         if item[:children]
           item[:children].each_pair{|key, value|
             data_item[key] = value && value[:value] ? value[:value] : ''
@@ -794,6 +949,33 @@ module HgvMetaIdentifierHelper
   end
   
   module HgvFormat
+
+    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter, certainty = nil
+      date_item = {}
+      
+      date1 = isoWhen && !isoWhen.empty? ? isoWhen : (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)
+
+      if date1
+        date_item[:y] = date1[/^(-?\d\d\d\d)/, 1]
+        date_item[:m] = date1[/^-?\d\d\d\d-(\d\d)/, 1]
+        date_item[:d] = date1[/^-?\d\d\d\d-\d\d-(\d\d)/, 1]
+        
+        date2 = isoNotAfter && !isoNotAfter.empty? ? isoNotAfter : nil
+        
+        if date2
+          date_item[:y2] = date2[/^(-?\d\d\d\d)/, 1]
+          date_item[:m2] = date2[/^-?\d\d\d\d-(\d\d)/, 1]
+          date_item[:d2] = date2[/^-?\d\d\d\d-\d\d-(\d\d)/, 1]
+        end
+      end
+      
+      if certainty
+        date_item[:certainty] = certainty
+      end
+
+      HgvFormat.formatDate date_item
+      
+    end
 
     def HgvFormat.formatDate date_item
       precision = HgvFormat.formatPrecision date_item[:precision]

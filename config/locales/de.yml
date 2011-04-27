@@ -32,6 +32,9 @@ de:
       publicationLine: Zeile
       publicationPages: Seiten
       publicationParts: Teile
+      publicationExtra: Extra
+      publicationExtraType: Typ / Vorlage
+      publicationExtraValue: Wert
       collectionPlaceName: Ort
       collection: Sammlung
       collectionInventoryNumber: Inv. Nr. 
@@ -53,7 +56,8 @@ de:
       mentionedDateNotAfter: Bis
       mentionedDateCertainty: Sicherheit
       mentionedDateDateId: Datums-Id
-      mentionedDateNote: Kommentar
+      mentionedDateComment: Kommentar
+      mentionedDateAnnotation: Anmerkung
       translationsDe: Deutsch
       translationsEn: Englisch
       translationsIt: Italienisch
@@ -84,6 +88,7 @@ de:
       quickSave: alle Daten speichern
       showDateTabs: weitere Datumseinträge vornehmen
       datePreview: Datumsvorschau anzeigen
+      addAlternativePlace: weitere Ortsangaben hinzufügen
 
     tooltip:
       multiAdd: Klicken, um neues Element hinzuzufügen
@@ -93,6 +98,7 @@ de:
       multiMentionedDateNotBefore: Datum (im -YYYY-MM-DD-Format)
       multiMentionedDateNotAfter: Zweites Datum (wenn es sich um eine Zeitspanne handelt) (im -YYYY-MM-DD-Format)
       multiMentionedDateComment: Kommentar
+      multiMentionedDateAnnotation: Anmerkung
       multiMentionedDateCertainty: Sicherheit
       multiMentionedDateDateId: Bezug zu einem bestimmten Datumseintrag
 
@@ -115,7 +121,8 @@ de:
       mentionedDateReference: 'Eingabe der Zeilen(nummern) im Text, wo das Datum erwähnt wird. Z.B. "Z. 2, Kol. II, Z. 11".'
       mentionedDateNotBefore: 'Eingabe des vollständigen Datums oder des ersten Teils eines Datums, falls es sich um eine Zeitspanne handelt. Z.B. 0138-10-22, d.h. im yyyy-mm-dd-Format.'
       mentionedDateNotAfter: 'Falls zutreffend: zweiter Teil einer Zeitspanne. Z.B. "0079", d.h. im yyyy-mm-dd-Format.'
-      mentionedDateNote: 'Optionale Beschreibung des Datums. Z.B. "Abschrift eines Dokuments vom:".'
+      mentionedDateComment: 'Optionale Beschreibung des Datums. Z.B. "Abschrift eines Dokuments vom:".'
+      mentionedDateAnnotation: 'Zusätzliche optionale Beschreibung des Datums. Z.B. "vgl. BL IV, S. 44".'
 
   provenance:
     ancientFindspotUncertain: Funort unsicher
@@ -124,7 +131,8 @@ de:
     ancientFindspotAndNomeUncertain: Fundort und Gau unsicher
     ancientFindspotAndAncientRegionUncertain: Fundort und Region unsicher
     nomeAndAncientRegionUncertain: Gau und Region unsicher
-    ancientFindspotNomeAndAncientRegionUncertain: Fundort, Gau und Regio unsicher 
+    ancientFindspotNomeAndAncientRegionUncertain: Fundort, Gau und Regio unsicher
+    offsetNear: bei
   
   date:
     beginning: Anfang

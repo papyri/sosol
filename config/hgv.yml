@@ -20,20 +20,13 @@
       :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
     :publicationTitle:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/title[@level='s'][@type='abbreviated']
-    :publicationVolume:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='volume']
-    :publicationNumbers:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='numbers']
-    :publicationFascicle:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='fascicle']
-    :publicationSide:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='side']
-    :publicationLine:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='lines']
-    :publicationPages:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='pages']
-    :publicationParts:
-      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope[@type='parts']
+    :publicationExtra:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl[@type='publication'][@subtype='principal']/biblScope
+      :multiple: true
+      :attributes:
+        :type:
+          :name: type
+          :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragments|folio|inventory|number|columns|generic|parts\Z/
     :collectionPlaceName:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/placeName/settlement
     :collection:
@@ -83,7 +76,7 @@
     :translationsFr:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='translations']/listBibl[@xml:lang='fr']/bibl[@type='translations']
       :multiple: true
-    :bl: #works same but may need more added to form
+    :bl:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='corrections']/listBibl/bibl[@type='BL']
       :multiple: true
       :children:
@@ -97,28 +90,6 @@
       :xpath: /TEI/text/body/div[@type='commentary'][@subtype='general']/p
     :material:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/material
-    :provenanceUnknown:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
-    :provenanceAncientFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientFindspot']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceNome:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='nome']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceAncientRegion:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='ancientRegion']
-      :attributes:
-        :certainty:
-          :name: cert
-          :pattern: /low/
-    :provenanceModernFindspot:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace/placeName[@type='modernFindspot']
     :plannedForFuturePrintRelease: #does not currently exist in data
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='futurePrintRelease']
       :pattern: /\A.+?;.+?;.*\Z/
@@ -128,8 +99,8 @@
       :children:
         :ref:
           :xpath: ref
-        :note:
-          :xpath: note
+        :comment:
+          :xpath: note[@type='comment']
         :date:
           :xpath: date[@type='mentioned']
           :attributes:
@@ -155,11 +126,38 @@
                   :name: degree
                   :optional: false
                   :pattern: /\A0(\.\d)?|1\Z/
+        :annotation:
+          :xpath: note[@type='annotation']
     #:mentionedDateOriginal:
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='original']
     #:mentionedDateSource:
     #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
     #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
+    :provenance:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
+      :pattern: /\Aunbekannt\Z/
+      :multiple: true
+      :children:
+        :place:
+          :xpath: placeName
+          :multiple: true
+          :attributes:
+            :type:
+              :name: type
+              :pattern: /\AancientFindspot|nome|ancientRegion|modernFindspot\Z/
+              :optional: false
+            :certainty:
+              :name: cert
+              :pattern: /\Alow\Z/
+          :children:
+            :offset:
+              :xpath: offset
+              :pattern: /\Abei\Z/
+            :location:
+              :xpath: placeName
+              :attributes:
+                :key:
+                  :name: key
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
       :multiple: true
@@ -167,7 +165,6 @@
       :attributes:
         :id:
           :name: xml:id
-          :default: "dateAlternativeX"
           :pattern: /\AdateAlternative[XYZ]\Z/
         :when:
           :name: when
@@ -189,6 +186,9 @@
           :xpath: offset
           :multiple: true
           :attributes:
+            :position:
+              :name: n
+              :pattern: /\A[12]\Z/
             :type:
               :name: type
               :pattern: /\A(befor|after)\Z/
@@ -209,6 +209,3 @@
             :match:
               :name: match
               :pattern: /\A..\/(((day|month|year)-from-date\()?@(when|notBefore|notAfter)(\)?)|offset\[@type='(after|before)'\])\Z/
-            #:degree:
-            #  :name: degree
-            #  :pattern: /\A0\.7]\Z/ # only 0.7 for »Wohl...« / »Probably...« ist accepted, 0.3 for (?) / »low« is not accepted

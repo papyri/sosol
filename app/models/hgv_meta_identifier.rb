@@ -5,7 +5,7 @@ class HGVMetaIdentifier < HGVIdentifier
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
-  FRIENDLY_NAME = "Meta"
+  FRIENDLY_NAME = "HGV"
 
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
@@ -54,9 +54,14 @@ class HGVMetaIdentifier < HGVIdentifier
   end
 
   def get_date_item date_id    
-    self[:textDate].select {|dateItem|
-      dateItem.keys.include?(:attributes) && dateItem[:attributes].keys.include?(:id) && dateItem[:attributes][:id].include?(date_id)
-    }.first
+    self[:textDate].each{|dateItem|
+      if dateItem[:attributes] && dateItem[:attributes][:id] && dateItem[:attributes][:id].include?(date_id)
+        return dateItem
+      elsif date_id.include?('X') && self[:textDate].first == dateItem
+        return dateItem
+      end
+    }
+    return nil    
   end
 
   # retrieve matadata from xml and store as object attributes
@@ -223,9 +228,9 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
+      xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
+      xpath_child = $2 
       if config[:multiple]
-        xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
-        xpath_child = $2 
 
         if self[key].empty?
           if parent = doc.elements[xpath_parent]
@@ -256,8 +261,19 @@ class HGVMetaIdentifier < HGVIdentifier
             }
           end
           
-        elsif
+        else
+          
+          puts '............................'
+          puts config[:xpath]
+          puts '............................'
+          
+          
           doc.elements.delete_all config[:xpath]
+          if parent = doc.elements[xpath_parent]
+            if !parent.has_elements? && parent.texts.join.strip.empty?
+              parent.elements['..'].delete parent
+            end
+          end
         end
 
       end
@@ -399,24 +415,26 @@ class HGVMetaIdentifier < HGVIdentifier
 
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
-          if data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
+          if data['attributes'] && data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
             result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].to_s.strip
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
         }
       end
-  
+
       if config[:children]
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
             
-            x = data[:children][child_key.to_s].kind_of?(Hash) ? data[:children][child_key.to_s].values : data[:children][child_key.to_s]
-            
-            x.each{|child|
-              children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
-            }
+            if data[:children]
+              x = data[:children][child_key.to_s].kind_of?(Hash) ? data[:children][child_key.to_s].values : data[:children][child_key.to_s]
+              
+              x.each{|child|
+                children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
+              }
+            end
             result_item[:children][child_key] = children
           else
             result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key.to_s], child_config # recursion óla

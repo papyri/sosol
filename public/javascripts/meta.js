@@ -1,14 +1,51 @@
+/**** publication ****/
+
+function publicationPreview(){
+  preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
+            $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
+            $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
+
+  $('multiItems_publicationExtra').select('input').each(function(input){
+   
+    if(input.type.toLowerCase() != 'hidden'){
+      preview += input.getValue() + ' ';
+    }
+  });
+  
+  $('publicationExtraFullTitle').innerHTML = preview;
+}
+
 /**** provenance ****/
 
-function provenanceUpdateUncertainties(uncertainty){
-  $$('input.provenanceCertainty').each(function(element){ element.clear();});
-  if(uncertainty.length){
-    var uncertainties = uncertainty.split('_');
-    var i = 0;
-    for(i = 0; i < uncertainties.length; i++){
-      $('hgv_meta_identifier_provenance' + uncertainties[i].substr(0,1).toUpperCase() + uncertainties[i].substr(1) + '_attributes_certainty').value = 'low';
+function provenanceUnknown(){  
+  if($('hgv_meta_identifier_provenance_0_value').getValue() == 'unbekannt'){
+    if($$('#multiItems_provenance li').length){
+      if(confirm('Do you really want to discard all provenance information?')){
+        $('multiItems_provenance').update('');
+      }
+      else{
+        $('hgv_meta_identifier_provenance_0_value').setValue(false);
+      }
     }
   }
+}
+
+function provenanceUpdateUncertainties(picker){
+  var id = picker.id.match(/\d+/)[0];
+  var uncertainties = picker.value.length ? picker.value.split('_') : [];
+
+  $$('input.provenanceCertainty').each(function(element){ if(element.id.indexOf('provenance_' + id + '_') > 0){ element.clear(); }});
+
+  var i = 0;
+  for(i = 0; i < uncertainties.length; i++){
+    var placeIndex = $(['ancientFindspot', 'modernFindspot', 'nome', 'ancientRegion']).indexOf(uncertainties[i]);
+    $('hgv_meta_identifier_provenance_' + id + '_children_place_' + placeIndex + '_attributes_certainty').value = 'low';
+  }
+  
+  $$('input.provenanceCertainty').each(function(element){ if(element.id.indexOf('provenance_' + id + '_') > 0){ console.log('certainty = ' + element.value); }});
+
 }
 
 /**** date ****/
@@ -93,6 +130,87 @@ function multiAddBl()
   multiUpdate('bl', item);
 }
 
+function multiAddPublicationExtra()
+{
+  var type = $$('#multiPlus_publicationExtra > select')[0].getValue();
+  var value = $$('#multiPlus_publicationExtra > input')[0].getValue();
+
+  var index = multiGetNextIndex('publicationExtra');
+  if((index * 1) == 0){ // the first four index numbers are reserved for vol, fasc, num and side
+    index = 4
+  }
+  
+  var pattern = '';
+  $$('#multiPlus_publicationExtra > select')[0].select('option').each(function(option){
+    if(option.selected){
+      pattern = option.text.replace(/<.+>/, '');
+    }
+  });
+  
+  if(pattern != ''){
+    value = pattern.replace(/…/, value);
+  }
+
+  //console.log('type = '+type+'| pattern = '+pattern+'| value = '+value+'| index = '+index+'');
+
+  var item = '<li>' +
+             '  <input class="observechange publicationExtra" id="hgv_meta_identifier_publicationExtra_' + index + '_value" name="hgv_meta_identifier[publicationExtra][' + index + '][value]" type="text" value="' + value + '" />' + 
+             '  <input class="observechange publicationExtra" id="hgv_meta_identifier_publicationExtra_' + index + '_attributes_type" name="hgv_meta_identifier[publicationExtra][' + index + '][attributes][type]" type="hidden" value="' + type + '" />' +
+             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '  <span class="move">o</span>' +
+             '</li>';
+
+  multiUpdate('publicationExtra', item);
+  publicationPreview();
+}
+
+function multiAddProvenance()
+{
+  var ancientFindspot = $$('#multiPlus_provenance > input')[0].value;
+  var modernFindspot  = $$('#multiPlus_provenance > input')[1].value;
+  var nome            = $$('#multiPlus_provenance > input')[2].value;
+  var ancientRegion   = $$('#multiPlus_provenance > input')[3].value;
+  var offset          = $$('#multiPlus_provenance > select')[0].value;
+  var certaintyPicker = $$('#multiPlus_provenance > select')[1].value;
+
+  var index = multiGetNextIndex('provenance');
+
+  var item = '<li id="" style="position: relative;">' + 
+              '<label class="provenance ancientFindspot">Ancient findspot</label>' +
+              '<select class="observechange provenanceOffset" id="hgv_meta_identifier_provenance_' + index + '_children_place_0_children_offset_value" name="hgv_meta_identifier[provenance][' + index + '][children][place][0][children][offset][value]"><option value=""></option><option value="bei"' + (offset == 'bei' ? ' selected="selected"' : '') + '>near</option></select>' +
+              '<input type="text" value="' + ancientFindspot + '" name="hgv_meta_identifier[provenance][' + index + '][children][place][0][children][location][value]" id="hgv_meta_identifier_provenance_' + index + '_children_place_0_children_location_value" class="observechange provenanceAncientFindspot">' +
+              '<input type="hidden" value="ancientFindspot" name="hgv_meta_identifier[provenance][' + index + '][children][place][0][attributes][type]" id="hgv_meta_identifier_provenance_' + index + '_children_place_0_attributes_type" class="observechange provenanceAncientFindspot">' +
+              '<input type="hidden" name="hgv_meta_identifier[provenance][' + index + '][children][place][0][attributes][certainty]" id="hgv_meta_identifier_provenance_' + index + '_children_place_0_attributes_certainty" class="observechange provenanceAncientFindspot">' +
+              '<label class="provenance modernFindspot">Modern findspot</label>' +
+              '<input type="text" value="' + modernFindspot + '" name="hgv_meta_identifier[provenance][' + index + '][children][place][1][children][location][value]" id="hgv_meta_identifier_provenance_' + index + '_children_place_1_children_location_value" class="observechange provenanceModernFindspot">' +
+              '<input type="hidden" value="modernFindspot" name="hgv_meta_identifier[provenance][' + index + '][children][place][1][attributes][type]" id="hgv_meta_identifier_provenance_' + index + '_children_place_1_attributes_type" class="observechange provenanceModernFindspot">' +
+              '<input type="hidden" name="hgv_meta_identifier[provenance][' + index + '][children][place][1][attributes][certainty]" id="hgv_meta_identifier_provenance_' + index + '_children_place_1_attributes_certainty" class="observechange provenanceModernFindspot">' +
+              '<label class="provenance nome">Nome</label>' +
+              '<input type="text" value="' + nome + '" name="hgv_meta_identifier[provenance][' + index + '][children][place][2][children][location][value]" id="hgv_meta_identifier_provenance_' + index + '_children_place_2_children_location_value" class="observechange provenanceNome">' +
+              '<input type="hidden" value="nome" name="hgv_meta_identifier[provenance][' + index + '][children][place][2][attributes][type]" id="hgv_meta_identifier_provenance_' + index + '_children_place_2_attributes_type" class="observechange provenanceNome">' +
+              '<input type="hidden" name="hgv_meta_identifier[provenance][' + index + '][children][place][2][attributes][certainty]" id="hgv_meta_identifier_provenance_' + index + '_children_place_2_attributes_certainty" class="observechange provenanceNome">' +
+              '<label class="provenance ancientRegion">Ancient region</label>' +
+              '<input type="text" value="' + ancientRegion + '" name="hgv_meta_identifier[provenance][' + index + '][children][place][3][children][location][value]" id="hgv_meta_identifier_provenance_' + index + '_children_place_3_children_location_value" class="observechange provenanceAncientRegion">' +
+              '<input type="hidden" value="ancientRegion" name="hgv_meta_identifier[provenance][' + index + '][children][place][3][attributes][type]" id="hgv_meta_identifier_provenance_' + index + '_children_place_3_attributes_type" class="observechange provenanceAncientRegion">' +
+              '<input type="hidden" name="hgv_meta_identifier[provenance][' + index + '][children][place][3][attributes][certainty]" id="hgv_meta_identifier_provenance_' + index + '_children_place_3_attributes_certainty" class="observechange provenanceAncientRegion">' +
+              '<label class="provenance certainty">Certainty</label>' +
+              '<select onchange="provenanceUpdateUncertainties(this);" name="hgv_meta_identifier[provenance][' + index + '][provenanceCertaintyPicker]" id="hgv_meta_identifier_provenance_' + index + '_provenanceCertaintyPicker" class="observechange certainty"><option value=""></option>' +
+              '<option ' + (certaintyPicker == 'ancientFindspot' ? 'selected="selected"' : '') + ' value="ancientFindspot">ancient findspot uncertain</option>' +
+              '<option ' + (certaintyPicker == 'nome' ? 'selected="selected"' : '') + ' value="nome">nome uncertain</option>' +
+              '<option ' + (certaintyPicker == 'ancientRegion' ? 'selected="selected"' : '') + ' value="ancientRegion">ancient region uncertain</option>' +
+              '<option ' + (certaintyPicker == 'ancientFindspot_nome' ? 'selected="selected"' : '') + ' value="ancientFindspot_nome">ancient findspot and nome uncertain</option>' +
+              '<option ' + (certaintyPicker == 'ancientFindspot_ancientRegion' ? 'selected="selected"' : '') + ' value="ancientFindspot_ancientRegion">ancient findspot and ancient region uncertain</option>' +
+              '<option ' + (certaintyPicker == 'nome_ancientRegion' ? 'selected="selected"' : '') + ' value="nome_ancientRegion">nome and ancient region uncertain</option>' +
+              '<option ' + (certaintyPicker == 'ancientFindspot_nome_ancientRegion' ? 'selected="selected"' : '') + ' value="ancientFindspot_nome_ancientRegion">ancient findspot, nome and ancient region uncertain</option></select>' +
+              '<span title="Click to delete item" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+              '<span title="Click and drag to move item" class="move">o</span>' +
+              '</li>';
+
+  multiUpdate('provenance', item);
+
+  provenanceUpdateUncertainties($('hgv_meta_identifier_provenance_' + index + '_provenanceCertaintyPicker'));
+}
+
 function multiAddFigures()
 {
   var url = $$('#multiPlus_figures > input')[0].value;
@@ -113,23 +231,25 @@ function multiAddMentionedDate()
   var inputfields = $$('#multiPlus_mentionedDate > input');  
   var selectboxes = $$('#multiPlus_mentionedDate > select');
 
-  var reference = inputfields[0].value;
-  var date1     = inputfields[1].value;
-  var date2     = inputfields[2].value;
-  var note      = inputfields[3].value;
-  var certainty = selectboxes[0].value;
-  var dateId    = selectboxes[1].value;
+  var reference  = inputfields[0].value;
+  var comment    = inputfields[1].value;
+  var date1      = inputfields[2].value;
+  var date2      = inputfields[3].value;
+  var annotation = inputfields[4].value;
+  var certainty  = selectboxes[0].value;
+  var dateId     = selectboxes[1].value;
 
   var index = multiGetNextIndex('mentionedDate');
 
   var item = '<li>' +
-             '  <input type="text" value="' + reference +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][ref][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_ref_value" class="observechange">' +
+             '  <input type="text" value="' + reference +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][ref][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_ref_value" class="observechange reference">' +
+             '  <input type="text" value="' + comment +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][comment][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_comment_value" class="observechange comment">' +
              '  <input type="text" value="' + date1 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date1]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date1" class="observechange">' +
              '  <input type="text" value="' + date2 +  '" onchange="mentionedDateNewDate(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][date2]" id="hgv_meta_identifier_mentionedDate_' + index +  '_date2" class="observechange">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][when]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_when">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notBefore]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notBefore">' +
              '  <input type="hidden" value="" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][date][attributes][notAfter]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_date_attributes_notAfter">' +
-             '  <input type="text" value="' + note +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][note][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_note_value" class="observechange note">' +
+             '  <input type="text" value="' + annotation +  '" name="hgv_meta_identifier[mentionedDate][' + index +  '][children][annotation][value]" id="hgv_meta_identifier_mentionedDate_' + index +  '_children_annotation_value" class="observechange annotation">' +
              '  <select onchange="mentionedDateNewCertainty(this)" name="hgv_meta_identifier[mentionedDate][' + index +  '][certaintyPicker]" id="hgv_meta_identifier_mentionedDate_' + index +  '_certaintyPicker" class="observechange certainty"><option value=""></option>' +
              '  <option value="low" ' + (certainty == 'low' ? 'selected="selected"' : '') +  '>(?)</option>' +
              '  <option value="day" ' + (certainty == 'day' ? 'selected="selected"' : '') +  '>Day uncertain</option>' +
@@ -261,6 +381,14 @@ function checkNotAddedMultiples(){
     multiAddMentionedDate();
   }
 
+  if($('provenance_ancientFindspot').value.length ||
+     $('provenance_modernFindspot').value.length ||
+     $('provenance_nome').value.length ||
+     $('provenance_ancientRegion').value.length){
+
+    multiAddProvenance();
+  }
+
   if($('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
     multiAddBl();
   }
@@ -332,15 +460,23 @@ Event.observe(window, 'load', function() {
   toggleMentionedDates('#dateAlternativeX');
   hideDateTabs();
   
+  $('multiPlus_provenance').hide();
+  $('addAlternativePlace').observe('click', function(e){ $('multiPlus_provenance').show(); this.hide(); });
 
-  $('hgv_meta_identifier_submit').observe('click', checkNotAddedMultiples);
+  $('identifier_submit').observe('click', checkNotAddedMultiples);
   $$('.category').each(function(e){e.observe('click', toggleCatgory);});
   $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
   $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
   
-  new Ajax.Autocompleter('hgv_meta_identifier_provenanceAncientFindspot_value', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceAncientFindspot'});
-  new Ajax.Autocompleter('hgv_meta_identifier_provenanceNome_value', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenanceNome'});
+  $('hgv_meta_identifier_provenance_0_value').observe('click', function(event){provenanceUnknown();});
+  
+  new Ajax.Autocompleter('provenance_ancientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientFindspot'});
+  new Ajax.Autocompleter('provenance_modernFindspot', 'autocompleter_provenanceModernFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_modernFindspot'});
+  new Ajax.Autocompleter('provenance_nome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_nome'});
+  new Ajax.Autocompleter('provenance_ancientRegion', 'autocompleter_provenanceAncientRegion', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientRegion'});
+  
+  publicationPreview()
   
 });
 
