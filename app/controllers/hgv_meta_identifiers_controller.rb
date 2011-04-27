@@ -15,9 +15,6 @@ class HgvMetaIdentifiersController < IdentifiersController
 
     begin
       commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
-      
-      @identifier.publication.save_friendly_name
-
       expire_publication_cache
       generate_flash_message
     rescue JRubyXML::ParseError => e
