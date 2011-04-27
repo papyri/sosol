@@ -1,53 +1,32 @@
 module Papyrillio
 
   class Transformer < Papyrillio::PapyrillioBase
-    attr_accessor :transformation_file, :parameters
-
-    def initialize transformation_file = nil, parameters = {}
+    attr_accessor :base_index
+    
+    def initialize start_index = 1
       super()
-      @transformation_file = transformation_file
-      @parameters = parameters
+      @base_index = start_index.to_i # number of first article
     end
 
     def convert publishees
-      index = 1
-      publishees.each{|publishee|
+      log '--> Transformer'
+      if publishees.length
 
-        head = body = apparatus = tail = ''
+        index = 1.0
+        total = publishees.length
+        publishees.each{|publishee|
+          publishee.html = publishee.publication.print({'sammelbuchIndex' => (@base_index + index -1).to_i.to_s})
+          log_progress (index / total * 100).round()
+          index += 1          
+        }
 
-        head = transform publishee.hgv_file, @transformation_file, @parameters.merge({'meta-style' => 'sammelbuch_header', 'scaffolding'  => 'off'})
-        body = transform publishee.ddb_file, @transformation_file, @parameters.merge({'meta-style' => 'sammelbuch', 'scaffolding'  => 'off'})
-        apparatus = ''
-        tail = transform publishee.hgv_file, @transformation_file, @parameters.merge({'meta-style' => 'sammelbuch_footer', 'scaffolding'  => 'off'})
-
-        log_progress (index.to_f / publishees.length * 100).round
-
-        index += 1
-        publishee.html = '<div class="article" style="border-bottom: solid 1px #c0c0c0;">' + head + body + tail + apparatus + '</div>'
-
-      }
-
-      puts ''
-      
-      publishees
-
-    end
-
-    protected
-
-    def transform transformee, transformator, transformables
-
-      if transformee && transformator
-          JRubyXML.apply_xsl_transform(
-            JRubyXML.stream_from_string(transformee.data),
-            JRubyXML.stream_from_file(transformator),
-            transformables).gsub(/\<\?xml.+\?\>/, '')
+        log_progress 100
+        puts ''
       else
-        ''
+        log 'nothing to do'
       end
-
+      publishees
     end
-
   end
 
 end

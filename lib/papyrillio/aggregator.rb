@@ -1,13 +1,25 @@
 module Papyrillio
 
+  #
+  # Aggregator
+  #
+  # glues all body parts together
+  #
+
   class Aggregator < Papyrillio::PapyrillioBase
 
     def combine publishees
-      html = ''
+      head = tail = content = ''
+
       publishees.each {|publishee|
-        html += publishee.html
+        if head.empty? && tail.empty?
+          head = publishee.html[/.+<office:text>/m]
+          tail = publishee.html[/<\/office:text>.+/m]
+        end
+        content += publishee.html[/.*<office:text>(.+)<\/office:text>.*/m, 1]
       }
-      html
+
+      head + content + tail
     end
 
   end
