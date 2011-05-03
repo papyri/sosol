@@ -207,9 +207,12 @@ class DDBIdentifier < Identifier
   
   # Returns a String of the SHA1 of the commit
   def set_leiden_plus(leiden_plus_content, comment)
+    
+    pp_leiden = preprocess_leiden(leiden_plus_content)
+    
     # transform back to XML
     xml_content = self.leiden_plus_to_xml(
-      leiden_plus_content)
+      pp_leiden)
     # commit xml to repo
     self.set_xml_content(xml_content, :comment => comment)
   end
@@ -296,5 +299,41 @@ class DDBIdentifier < Identifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt pn start-div-portlet.xsl})),
         parameters)
+  end
+  
+  def preprocess_leiden(preprocessed_leiden)
+    # mass substitute alternate keyboard characters for Leiden+ grammar characters
+    
+    # consistent LT symbol (<)
+    # \u2039 \u2329 \u27e8 \u3008 to \u003c')
+    preprocessed_leiden.gsub!(/[‹〈⟨〈]{1}/,'<')
+    
+    # consistent GT symbol (>)
+    # \u203a \u232a \u27e9 \u3009 to \u003e')
+    preprocessed_leiden.gsub!(/[›〉⟩〉]{1}/,'>')
+    
+    # consistent Left square bracket (〚)
+    # \u27e6 to \u301a')
+    preprocessed_leiden.gsub!(/⟦/,'〚')
+    
+    # consistent Right square bracket (〛)
+    # \u27e7 to \u301b')
+    preprocessed_leiden.gsub!(/⟧/,'〛')
+    
+    # consistent macron (¯)
+    # \u02c9 to \u00af')
+    preprocessed_leiden.gsub!(/ˉ/,'¯')
+    
+    # consistent hyphen in linenumbers (-)
+    # immediately preceded by a period 
+    # \u2010 \u2011 \u2012 \u2013 \u2212 \u10191 to \u002d')
+    preprocessed_leiden.gsub!(/\.{1}[‐‑‒–−𐆑]{1}/,'.-')
+    
+    # consistent hyphen in gap ranges (-)
+    # between 2 numbers 
+    # \u2010 \u2011 \u2012 \u2013 \u2212 \u10191 to \u002d')
+    preprocessed_leiden.gsub!(/(\d+)([‐‑‒–−𐆑]{1})(\d+)/,'\1-\3')
+    
+    return preprocessed_leiden
   end
 end

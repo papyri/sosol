@@ -55,16 +55,16 @@ class DdbIdentifiersController < IdentifiersController
       params[:comment] = params[:commenttop]
     end
     if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
-      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier][:leiden_plus], params[:comment])
+      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier_leiden_plus], params[:comment])
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_leiden_cache
       expire_publication_cache
-        @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
+        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
       begin
-        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier][:leiden_plus],
+        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier_leiden_plus],
                                     params[:comment])
         if params[:comment] != nil && params[:comment].strip != ""
           @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
@@ -89,7 +89,7 @@ class DdbIdentifiersController < IdentifiersController
       rescue JRubyXML::ParseError => parse_error
         flash[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
-        @identifier[:leiden_plus] = params[:ddb_identifier][:leiden_plus]
+        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
         render :template => 'ddb_identifiers/edit'
       end #begin
     end #when
