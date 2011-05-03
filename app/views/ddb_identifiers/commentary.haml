@@ -56,10 +56,12 @@
     $(comment_li).insert({
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
+
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
 
     //translate the xml to commentary sugar
     getSugar(originalxml);
+    
   }
   
   function generateDeleteForm(id,original_item_id) {
@@ -82,12 +84,14 @@
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_commentary}, :method => :put).chomp()}' +
+      '#{form_tag({:action => :update_commentary}, :onsubmit => "return validateSugar()", :method => :put).chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
         '<input type="hidden" name="original_content" value="' + content + '"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-        '<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
+        //'<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
+        //show no content since it will be updated with getsugar call
+        '<textarea rows="5" cols="20" name="content" id="sugar_content"></textarea>' +
         '<input class="save" type="submit" value="Save"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
       '</form>' +
@@ -96,6 +100,10 @@
  
   }
   
+  function validateSugar()
+  {
+    //alert ("validating");
+  }
   
   function getSugar(originalxml)
   {
@@ -113,7 +121,6 @@
       method:'get',
       onSuccess: function(transport) 
       {
-        alert("call returned ok");
         var response = transport.responseText || "no response from server";
         //insert response in text input
         $(sugar_content).value = response;
