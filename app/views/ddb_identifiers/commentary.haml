@@ -29,10 +29,20 @@
   function transformExistingCommentary(event) {
     removeAllClickable();
     
+    
     var comment_li = Event.element(event).up('li.input');  
     comment_div_container = comment_li.childElements().first();
     
     comment_div = comment_div_container.childElements().first();
+    
+    //get the original xml fragment
+    var originalxmls = $(comment_div).select('div.originalxml');
+    var originalxml = "";
+    if (originalxmls.length > 0)
+    {
+      originalxml = originalxmls[0].innerHTML;
+    }
+    
     
     nval_node = comment_div.childElements().first();
     nval = nval_node.innerHTML;
@@ -47,6 +57,9 @@
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+
+    //translate the xml to commentary sugar
+    getSugar(originalxml);
   }
   
   function generateDeleteForm(id,original_item_id) {
@@ -65,6 +78,7 @@
   }
   
   function generateCommentaryForm(id,nval,content,original_item_id) {
+
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
@@ -73,12 +87,43 @@
         '<input type="hidden" name="original_content" value="' + content + '"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-        '<textarea rows="5" cols="20" name="content">'+content+'</textarea>' +
+        '<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
         '<input class="save" type="submit" value="Save"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
       '</form>' +
       generateDeleteForm(id,original_item_id) +
       '</div></div>';
+ 
+  }
+  
+  
+  function getSugar(originalxml)
+  {
+ 
+  //remove  namespaces that break sugar
+  var xmlnsPattern = new RegExp("xmlns[^\"]*\"[^\"]*\"", "gi");
+  originalxml = originalxml.replace(xmlnsPattern, "");
+  
+
+  //create url call
+   var url_call = "http://localhost:3000/commentary_xml_to_sugar?commentary_xml=" +  encodeURIComponent( originalxml ); //need server urls
+   //alert (url_call);
+    new Ajax.Request(url_call, 
+    {
+      method:'get',
+      onSuccess: function(transport) 
+      {
+        alert("call returned ok");
+        var response = transport.responseText || "no response from server";
+        //insert response in text input
+        $(sugar_content).value = response;
+      },
+      onFailure: function() 
+      {
+        alert("Failed to connect to server");
+      }
+    });
+  
   }
   
   function addCommentary(event) {

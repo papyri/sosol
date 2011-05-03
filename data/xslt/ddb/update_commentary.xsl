@@ -125,7 +125,7 @@
       <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:value-of select="$reference"/>
       </xsl:element>
-      <xsl:text> </xsl:text><xsl:value-of select="$content"/>
+      <xsl:text> </xsl:text><xsl:value-of select="$content" disable-output-escaping="yes"/>
     </xsl:element>
   </xsl:template>
   

@@ -20,6 +20,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :events
   
+  map.commentary_xml_to_sugar '/commentary_xml_to_sugar/', :controller => 'ddb_identifiers', :action => 'commentary_xml_to_sugar'
+  
   # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   # map.login '/login', :controller => 'sessions', :action => 'new'
   # map.register '/register', :controller => 'users', :action => 'create'

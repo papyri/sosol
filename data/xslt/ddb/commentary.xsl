@@ -43,12 +43,21 @@
           <xsl:value-of select='generate-id(.)'/>
         </xsl:attribute>
         <div class="form">
+        	
           <xsl:apply-templates/>
+					<div class = "originalxml" style="display:none">
+		
+					
+				    <xsl:copy-of select="node()[name() != 'ref']"/>
+				  
+					</div>
         </div>
       </div>
     </li>
   </xsl:template>
   
+
+	
   <xsl:template match="tei:div[@type='commentary']//tei:item/tei:ref">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
