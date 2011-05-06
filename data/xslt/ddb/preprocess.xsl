@@ -65,6 +65,18 @@
     </xsl:copy>
   </xsl:template>
   
+	  <!-- set xml:space="preserve" on edition div -->
+  <xsl:template match="tei:div[@type='commentary']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="xml:space">
+        <xsl:text>preserve</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+	
+	
   <!-- set oxygen RNGSchema processing instruction -->
   <xsl:template match="processing-instruction('oxygen')">
     <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
