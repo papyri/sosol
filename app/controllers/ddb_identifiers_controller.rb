@@ -128,16 +128,33 @@ class DdbIdentifiersController < IdentifiersController
   
   
   def commentary_xml_to_sugar()
+    #puts "----commentary_xml_to_sugar begin-----"
     xsugar = RXSugar::JRubyHelper::CommentaryRXSugarProxy.new();   
     #puts "incomming is" + params[:commentary_xml]
      
     wrapped_xml = xsugar.wrap_commentary_xml(params[:commentary_xml])
     #puts "wrapped xml is: " + wrapped_xml
-    wrapped_sugar_text = xsugar.xml_to_non_xml( wrapped_xml )
-    #puts "wrapped sugar text is: " + wrapped_sugar_text
-    sugar_text = xsugar.unwrap_commentary_sugar(wrapped_sugar_text)
-    #puts "sugar text is: " + sugar_text
     
+    begin
+      wrapped_sugar_text = xsugar.xml_to_non_xml( wrapped_xml )
+
+    rescue => e
+      wrapped_sugar_text = e.message
+      render :text => "Failed to parse xml to grammar. To edit you must go to the XML view.\n" + e.message + "\nxml is:\n" + params[:commentary_xml]
+      return
+    end
+    puts "wrapped sugar text is: " + wrapped_sugar_text
+    
+    
+    begin
+      sugar_text = xsugar.unwrap_commentary_sugar(wrapped_sugar_text)
+    rescue
+      sugar_text = "error"
+    end
+  
+    puts "sugar text is: " + sugar_text
+    
+    puts "====commentary_xml_to_sugar end====="
     render :text => sugar_text
   end
   
