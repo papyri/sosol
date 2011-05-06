@@ -38,21 +38,21 @@
 
   <xsl:template match="tei:div[@type='commentary']//tei:list/tei:item">
     <li class="{replace(@corresp, '^#', 'comment-on-')} input">
+
       <div class="comment_container">
         <xsl:attribute name="id">
           <xsl:value-of select='generate-id(.)'/>
         </xsl:attribute>
-        <div class="form">
-        	
+        <div class="form">        	
           <xsl:apply-templates/>
-					<div class = "originalxml" style="display:none">
-		
 					
-				    <xsl:copy-of select="node()[name() != 'ref']"/>
-				  
-					</div>
         </div>
       </div>
+			     <textarea class = "originalxml" style="display:none">
+			     	
+            <xsl:copy-of select="node()[name() != 'ref']"/>
+						
+          </textarea>
     </li>
   </xsl:template>
   

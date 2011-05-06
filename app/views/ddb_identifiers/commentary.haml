@@ -31,18 +31,22 @@
     
     
     var comment_li = Event.element(event).up('li.input');  
+    
+        //get the original xml fragment
+    var originalxmls = $(comment_li).select('textarea.originalxml');
+    var originalxml = "";
+    if (originalxmls.length > 0)
+    {
+      //originalxml = originalxmls[0].innerHTML;
+      originalxml = originalxmls[0].value;
+    }
+    
+    
     comment_div_container = comment_li.childElements().first();
     
     comment_div = comment_div_container.childElements().first();
     
-    //get the original xml fragment
-    var originalxmls = $(comment_div).select('div.originalxml');
-    var originalxml = "";
-    if (originalxmls.length > 0)
-    {
-      originalxml = originalxmls[0].innerHTML;
-    }
-    
+
     
     nval_node = comment_div.childElements().first();
     nval = nval_node.innerHTML;
@@ -86,7 +90,9 @@
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
       '#{form_tag({:action => :update_commentary}, :onsubmit => "return validateSugar()", :method => :put).chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
-        '<input type="hidden" name="original_content" value="' + content + '"/>' +
+        //'<input type="hidden" name="original_content" value="' + content + '"/>' +
+        //original value no longer in use, test here ignoring it
+        '<input type="hidden" name="original_content" value="not used"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
         //'<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
@@ -109,7 +115,7 @@
   {
  
   //remove  namespaces that break sugar
-  var xmlnsPattern = new RegExp("xmlns[^\"]*\"[^\"]*\"", "gi");
+  var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
   originalxml = originalxml.replace(xmlnsPattern, "");
   
 
