@@ -98,7 +98,14 @@ class DdbIdentifiersController < IdentifiersController
   def commentary
     find_identifier
     
-    @identifier[:html_preview] = @identifier.preview({},%w{data xslt ddb commentary.xsl})
+    @identifier[:html_preview] = 
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(
+        DDBIdentifier.preprocess(@identifier.xml_content)),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb commentary.xsl})),
+        {})
+    @identifier.preview({},%w{data xslt ddb commentary.xsl})
   end
   
   def update_commentary
