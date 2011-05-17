@@ -45,13 +45,35 @@
         </xsl:attribute>
         <div class="form">
           <xsl:apply-templates/>
-          
         </div>
       </div>
       <textarea class = "originalxml" style="display:none">
         <xsl:copy-of select="node()[name() != 'ref']"/>
       </textarea>
     </li>
+  </xsl:template>
+  
+  <!-- replace newlines with br's -->
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item//text()">
+     <xsl:call-template name="break"/>
+  </xsl:template>
+  
+  <!-- from http://www.dpawson.co.uk/xsl/sect2/replace.html#d8766e19 -->
+  <xsl:template name="break">
+     <xsl:param name="text" select="."/>
+     <xsl:choose>
+     <xsl:when test="contains($text, '&#xa;')">
+        <xsl:value-of select="substring-before($text, '&#xa;')"/>
+        <br/>
+        <xsl:call-template name="break">
+            <xsl:with-param name="text" select="substring-after($text,
+  '&#xa;')"/>
+        </xsl:call-template>
+     </xsl:when>
+     <xsl:otherwise>
+  	<xsl:value-of select="$text"/>
+     </xsl:otherwise>
+     </xsl:choose>
   </xsl:template>
   
   <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref">
