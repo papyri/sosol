@@ -75,18 +75,18 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
   
-  map.connect 'numbers_server_proxy/sparql/:query',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/sparql/:query',
+    :controller => 'ajax_proxy',
     :action => 'sparql',
     :query => /.*/
   
-  map.connect 'numbers_server_proxy/xsugar/',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/xsugar/',
+    :controller => 'ajax_proxy',
     :action => 'xsugar',
     :conditions => { :method => :post }
   
-  map.connect 'numbers_server_proxy/:id',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/:id',
+    :controller => 'ajax_proxy',
     :action => 'proxy',
     :id => /papyri\.info.*/
   
