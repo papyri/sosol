@@ -1,4 +1,4 @@
-class NumbersServerProxyController < ApplicationController
+class AjaxProxyController < ApplicationController
   def proxy
     response = NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(params[:id], 'json')
     if response.code != '200'
@@ -16,7 +16,7 @@ class NumbersServerProxyController < ApplicationController
       @response = response.body
     end
     
-    render :template => 'numbers_server_proxy/proxy'
+    render :template => 'ajax_proxy/proxy'
   end
   
   def xsugar
