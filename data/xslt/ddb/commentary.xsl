@@ -80,6 +80,13 @@
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='bold']">
+    <b><xsl:apply-templates/></b>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='italics']">
+    <i><xsl:apply-templates/></i>
+  </xsl:template>
 
   <!-- Textpart div -->
   <xsl:template match="tei:div[@type='textpart']" priority="1">
