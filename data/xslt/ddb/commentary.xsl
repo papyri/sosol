@@ -48,11 +48,9 @@
           
         </div>
       </div>
-           <textarea class = "originalxml" style="display:none">
-            
-            <xsl:copy-of select="node()[name() != 'ref']"/>
-            
-          </textarea>
+      <textarea class = "originalxml" style="display:none">
+        <xsl:copy-of select="node()[name() != 'ref']"/>
+      </textarea>
     </li>
   </xsl:template>
   
