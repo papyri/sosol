@@ -7,6 +7,9 @@
   
   <!-- Text edition div -->
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
+     <xsl:if test="not(tei:div[@type='commentary' and @subtype='frontmatter'])">
+       <a href=""><b>Add front matter commentary</b></a>
+     </xsl:if>
      <div class="commentary" id="edition">
         <!-- Found in htm-tpl-lang.xsl -->
         <xsl:call-template name="attr-lang"/>
