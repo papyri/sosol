@@ -133,6 +133,17 @@ class DdbIdentifiersController < IdentifiersController
                                  :action => :commentary)
   end
   
+  def update_frontmatter_commentary
+    find_identifier
+    
+    @identifier.update_frontmatter_commentary(params[:content])
+    
+    flash[:notice] = "File updated with new commentary."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
   
   def commentary_xml_to_sugar()
     #puts "----commentary_xml_to_sugar begin-----"
@@ -165,6 +176,16 @@ class DdbIdentifiersController < IdentifiersController
     render :text => sugar_text
   end
   
+  def delete_frontmatter_commentary
+    find_identifier
+    
+    @identifier.update_frontmatter_commentary('',true)
+    
+    flash[:notice] = "Front matter commentary entry removed."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
   
   def delete_commentary
     find_identifier

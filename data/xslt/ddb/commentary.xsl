@@ -7,8 +7,10 @@
   
   <!-- Text edition div -->
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
-     <xsl:if test="not(tei:div[@type='commentary' and @subtype='frontmatter'])">
-       <a href=""><b>Add front matter commentary</b></a>
+     <xsl:if test="not(//tei:div[@type='commentary' and @subtype='frontmatter'])">
+       <div id="frontmatter_commentary_container">
+         <a id="frontmatter_commentary" href="#" class="clickable"><b>Add front matter commentary</b></a>
+       </div>
      </xsl:if>
      <div class="commentary" id="edition">
         <!-- Found in htm-tpl-lang.xsl -->
@@ -31,6 +33,18 @@
            <xsl:apply-templates/>
          </ul>
       </div>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']">
+    <div id="frontmatter_commentary_container" class="frontmatter_container">
+      <textarea class="originalxml" style="display:none">
+        <xsl:copy-of select="tei:ab/node()"/>
+      </textarea>
+      <div id="frontmatter_commentary" class="form clickable">
+        <p class="label">Front matter:</p>
+        <xsl:value-of select="tei:ab/text()"/>
+      </div>
+    </div>
   </xsl:template>
   
   <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']">

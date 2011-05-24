@@ -2,6 +2,7 @@
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
+    $('frontmatter_commentary').observe('click',addFrontmatterCommentary);
     if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
   
@@ -83,6 +84,19 @@
     }
   }
   
+  function generateDeleteFrontmatterForm(content) {
+    if(content == '') {
+      return '';
+    }
+    else {
+      return '#{form_tag({:action => :delete_frontmatter_commentary}, :method => :delete, :id => "delete_frontmatter_form").chomp()}' +
+          '<span style="float:right;position:relative;top:-1.5em">' +
+            '<a href="#{url_for({:action => :delete_frontmatter_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete the front matter commentary?\')) {$(\'delete_frontmatter_form\').submit();};return false;">delete</a>'
+          '</span>' +
+        '</form>';
+    }
+  }
+  
   function generateCommentaryForm(id,nval,content,original_item_id) {
 
     if(content === undefined) {content = "";}
@@ -104,6 +118,19 @@
       generateDeleteForm(id,original_item_id) +
       '</div></div>';
  
+  }
+  
+  function generateFrontmatterCommentaryForm(content) {
+    if(content === undefined) {content = "";}
+    return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
+      '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put).chomp()}' +
+        '<label>Front matter:</label><br/>' +
+        '<textarea rows="10" cols="20" name="content" style="height: auto">' + content + '</textarea>' +
+        '<input class="save" type="submit" value="Save"/>' + 
+        ' or <a href="" style="color:red">cancel</a>' +
+      '</form>' +
+      generateDeleteFrontmatterForm(content) +
+      '</div></div>';
   }
   
   function validateSugar()
@@ -151,6 +178,35 @@
     Effect.SlideDown("form-"+element.id);
     element.stopObserving('click');
     element.removeClassName('clickable');
+  }
+
+  function addFrontmatterCommentary(event) {
+    removeAllClickable();
+    
+    var element = Event.element(event);
+    
+    var original_content = $$('#frontmatter_commentary_container textarea');
+    if(original_content.size() == 0) {
+      original_content = '';
+    }
+    else {
+      original_content = original_content[0].value;
+    }
+
+    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    $("frontmatter_commentary_container").insert({
+      after: generateFrontmatterCommentaryForm(original_content)
+    });
+        
+    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+    
+    element.stopObserving('click');
+    event.stop();
+  }
+  
+  function transformExistingFrontmatterCommentary(event) {
+    removeAllClickable();
   }
 
 #main

@@ -493,6 +493,26 @@ ul.publications
       textarea
         height: auto
 
+.frontmatter_container
+  .clickable
+    &:hover
+      background = !main_color
+      cursor: pointer
+  
+  p.label
+    text-decoration: underline
+  
+  div.form
+    border: 1px solid 
+    border-color = !main_color_darken
+    background = !main_color_fade
+    padding: 1em
+    margin-top: 1em
+    margin-bottom: 1em
+    
+    input.save
+      margin-top: 0em
+
 .commit
   background-color = !main_color_fade
   border-color = !main_color_darken

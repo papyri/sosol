@@ -39,11 +39,13 @@
   </xsl:template>
   
   <xsl:template name="generate-commentary">
-    <xsl:if test="not($delete_comment = 'true')">
+    <xsl:if test="not($delete_commentary = 'true')">
       <xsl:element name="div" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:attribute name="type">commentary</xsl:attribute>
         <xsl:attribute name="subtype">frontmatter</xsl:attribute>
-        <xsl:value-of select="$content" disable-output-escaping="yes"/>
+        <xsl:element name="ab" namespace="http://www.tei-c.org/ns/1.0">
+          <xsl:value-of select="$content" disable-output-escaping="yes"/>
+        </xsl:element>
       </xsl:element>
     </xsl:if>
   </xsl:template>

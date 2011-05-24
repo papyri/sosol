@@ -168,6 +168,20 @@ class DDBIdentifier < Identifier
     self.set_xml_content(rewritten_xml, :comment => '')
   end
   
+  def update_frontmatter_commentary(commentary_content, delete_commentary = false)
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(self.xml_content)),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt ddb update_frontmatter_commentary.xsl})),
+        :content => commentary_content,
+        :delete_commentary => (delete_commentary ? 'true' : '')
+      )
+    
+    self.set_xml_content(rewritten_xml, :comment => '')
+  end
+  
   def get_broken_leiden(original_xml = nil)
     original_xml_content = original_xml || REXML::Document.new(self.xml_content)
     brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
