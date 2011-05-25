@@ -18,4 +18,25 @@ class NumbersServerProxyController < ApplicationController
     
     render :template => 'numbers_server_proxy/proxy'
   end
+  
+  def xsugar
+    response = get_xsugar_response(params)
+    
+    render :text => response.body, :status => response.code
+  end
+  
+  protected
+    def get_xsugar_response(params)
+      begin
+        return Net::HTTP.post_form(URI.parse(XSUGAR_STANDALONE_URL),
+          {
+            :content => params[:content],
+            :type => params[:type],
+            :direction => params[:direction]
+          }
+        )
+      rescue EOFError
+        get_xsugar_response(params)
+      end
+    end
 end

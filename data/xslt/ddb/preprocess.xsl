@@ -10,15 +10,18 @@
   <!-- |||||||||  copy all existing elements ||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
 
-  <xsl:template match="@*|node()">
+  <xsl:template match="@*|node()" priority="-1">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
-
+  
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- ||||||||||||||    EXCEPTIONS     |||||||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
+  
+  <!-- strip comments -->
+  <xsl:template match="comment()"/>
 
   <!-- enforce ordering of /tei:TEI/tei:text/tei:body
          - tei:head

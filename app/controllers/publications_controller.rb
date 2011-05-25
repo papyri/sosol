@@ -149,6 +149,51 @@ class PublicationsController < ApplicationController
   #papyri.info/ddbdp/bgu;7;1506
   def create_from_list
     id_list = params[:pn_id_list].split(/\s+/) #(/\r\n?/)
+    list_is_good = true
+    
+    #get rid of any blank lines, etc
+    id_list = id_list.compact.reject { |s| s.strip.empty? }
+    
+    #check that the list is in the correct form
+    #clean up the ids
+    id_list.map! do |id|
+      id.chomp!('/');
+      pos = id.index('papyri.info');
+      if pos
+        id = id[pos..id.length-1]
+      end
+      #check if there is a good response from the number server
+      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
+      
+      #puts id + " returned " + response.code # + response.body
+      if response.code != '200'
+        
+        #bad format most likely
+        id = "Numbers Server Error, Check format--> " + id
+        list_is_good = false
+        
+      elsif !response.body.index('rdf:Description')
+        
+        #item does not exist most likely
+        #puts "text is bad"
+        id = "Not Found--> " + id
+        list_is_good = false
+        
+      end
+      id
+    end
+    
+    if !list_is_good
+      #recreate list
+      error_str  = "Unable to create Publication.<br />"
+      id_list.each do |id|
+       error_str = error_str + id + "<br />"
+      end
+      flash[:error] = error_str
+      redirect_to :action => 'advanced_create'
+      return
+    end
+    
     publication_from_identifiers(id_list)
   end
 
@@ -395,13 +440,26 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
+ 
   def edit_adjacent
-
+  
+    #if they are on show, then need to goto first or last identifers
+    if params[:current_action_name] == "show"
+      @publication = Publication.find(params[:id])
+      if params[:direction] == 'prev'
+        @identifier = @publication.identifiers.last
+      else
+        @identifier = @publication.identifiers.first
+      end
+      redirect_to edit_polymorphic_path([@publication, @identifier])
+      return
+    end
+    
     @publication = Publication.find(params[:pub_id])
 
     if params[:direction] == 'prev'
       direction = -1
-    else #assume next
+    else #assume next params[:direction] == 'next'
       direction = 1
     end
 
@@ -409,18 +467,18 @@ class PublicationsController < ApplicationController
     current_identifier_class = @identifier.class
     current_index = @publication.identifiers.index(@identifier)
 
-    #uncomment redirects to prevent loop over
     return_index = current_index + direction
     if (return_index < 0)
-      #redirect_to @publication
-     # return
-      return_index = @publication.identifiers.length - 1
+      redirect_to @publication
+      return
+      #or for loop over without overview
+      #return_index = @publication.identifiers.length - 1
     elsif (return_index >= @publication.identifiers.length)
-     # redirect_to @publication
-     # return
-      return_index = 0
+      redirect_to @publication
+      return
+      #or for loop over without overview
+      #return_index = 0
     end
-
 
     @identifier = @publication.identifiers[return_index]
     if (@identifier.class != current_identifier_class)
@@ -430,27 +488,6 @@ class PublicationsController < ApplicationController
       #/publications/1/identifiers/1/action
       redirect_to :controller => params[:current_controller_name], :action => params[:current_action_name], :id => @identifier.id, :publication_id => params[:pub_id]
     end
-=begin
-    next_id = params[:id_id].to_i + direction
-
-    begin
-      @identifier = Identifier.find(next_id)
-    rescue
-      #probably overan the number of identifiers
-      redirect_to @publication
-      return
-    end
-
-    if @identifier.publication.id.to_s != params[:pub_id]
-      #need to loop back since we have over run the pubication identifiers
-      #for now go to overview
-      redirect_to @publication
-      return
-    end
-=end
-   # redirect_to edit_polymorphic_path([@publication, @identifier])
-
-    #redirect_to :controller => params[:ncontroller], :action => params[:naction], :id => params[:id], :pub_id => params[:pub_id]
   end
 
 

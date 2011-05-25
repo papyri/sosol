@@ -8,17 +8,18 @@
       </titleStmt>
       <publicationStmt>
         <idno type="filename"><%= id %></idno>
-        <idno type="TM">TM Nr</idno>
-        <idno type="HGV"><%= id %></idno>
-        <idno type="ddb-perseus-style">DDbDP Perseus-style</idno>
-        <idno type="ddb-filename">DDbDP filename-style</idno>
+        <idno type="TM"><%= id %></idno>
+        <idno type="HGV"><%= id %></idno><!-- deprecated ??? -->
         <idno type="ddb-hybrid"><%= n %></idno>
-        <idno type="futurePrintRelease">optional</idno>
+        <!--idno type="ddb-perseus-style"></idno>
+        <idno type="ddb-filename"></idno-->
       </publicationStmt>
       <sourceDesc>
         <msDesc>
           <msIdentifier>
-            <idno type="invNo">optional</idno>
+            <placeName>
+               <settlement>unbekannt</settlement>
+            </placeName>
           </msIdentifier>
           <physDesc>
             <objectDesc>
@@ -31,8 +32,8 @@
           </physDesc>
           <history>
             <origin>
-              <p><placeName type="ancientFindspot">Ancient Findspot</placeName> (<geogName type="nome">Nome</geogName>), <geogName type="ancientRegion" key="Aegyptus">Region</geogName><geogName type="modernFindspot">optional</geogName></p>
-              <origDate type="textDate" notAfter="0001" notBefore="0001" when="0001">change</origDate>
+              <origPlace>unbekannt</origPlace>
+              <origDate>unbekannt</origDate>
             </origin>
           </history>
         </msDesc>
@@ -51,48 +52,21 @@
         <language ident="la">Latein</language>
         <language ident="el">Griechisch</language>
       </langUsage>
-      <textClass>
-        <keywords scheme="hgv">
-          <term>Content text</term>
-          <term>Content text</term>
-          <term>Content text</term>
-        </keywords>
-      </textClass>
     </profileDesc>
     <revisionDesc>
-      <change when="<%= Time.now.xmlschema %>" who="SoSOL">
-        Automated creation from template
-      </change>
+      <change when="<%= Time.now.xmlschema %>" who="SoSOL">Automated creation from template</change>
     </revisionDesc>
   </teiHeader>
   <text>
     <body>
-      <div type="commentary" subtype="general">
-        <p>commentary</p>
-      </div>
-      <div type="commentary" subtype="mentionedDates">
-        <head>Erwähnte Daten</head>        
-        <p>mentioned dates</p>
-      </div>
       <div type="bibliography" subtype="principalEdition">
         <listBibl>
           <bibl type="publication" subtype="principal">
-            <title level="s" type="abbreviated">SoSOL</title>
-            <biblScope type="volume">1</biblScope>
-            <biblScope type="numbers">2</biblScope>
+            <title level="s" type="abbreviated">SoSOL</title><!-- provide meaningful data -->
+            <biblScope type="volume">1</biblScope><!-- provide meaningful data -->
+            <biblScope type="numbers">2</biblScope><!-- provide meaningful data -->
           </bibl>
         </listBibl>
-        <bibl type="BL">BL reference</bibl>
-      </div>
-      <div type="bibliography" subtype="corrections">
-        <p>change</p>
-      </div>
-      <div type="bibliography" subtype="otherPublications">
-        <head>Andere Publikation</head>
-        <bibl type="publication" subtype="other">change</bibl>
-      </div>
-      <div type="bibliography" subtype="illustrations">
-        <p>change</p>
       </div>
     </body>
   </text>

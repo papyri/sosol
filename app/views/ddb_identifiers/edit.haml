@@ -1,3 +1,62 @@
+:javascript
+  function ajax_xml_to_leiden(was_disabled) {
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'numbers_server_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: $F('ddb_identifier_leiden_plus'), type: 'epidoc', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+        $('ddb_identifier_leiden_plus').toggleClassName('loading');
+        
+        if ("exception" in json) {
+          $$('div#main > div.site').first().insert({
+            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+          });
+        }
+        else {
+          Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
+          if (!was_disabled) {
+            Form.Element.enable('ddb_identifier_leiden_plus');
+            Form.Element.enable('identifier_submit_top');
+            Form.Element.enable('identifier_submit');
+            Form.Element.focus('ddb_identifier_leiden_plus');
+          }
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
+      }
+    });
+  }
+  
+  document.observe("dom:loaded", function() {
+    if (#{(!defined?(XSUGAR_STANDALONE_ENABLED).nil?) && XSUGAR_STANDALONE_ENABLED} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+      was_disabled = $('ddb_identifier_leiden_plus').disabled;
+      
+      Form.Element.disable('ddb_identifier_leiden_plus');
+      Form.Element.disable('identifier_submit_top');
+      Form.Element.disable('identifier_submit');
+      
+      $('ddb_identifier_leiden_plus').toggleClassName('loading');
+      Form.Element.setValue('ddb_identifier_leiden_plus',
+        $('original_leiden_plus').innerHTML.unescapeHTML().strip());
+
+      ajax_xml_to_leiden(was_disabled);
+    }
+    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (defined?(XSUGAR_STANDALONE_ENABLED).nil? || !XSUGAR_STANDALONE_ENABLED)}) {
+      Form.Element.setValue('ddb_identifier_leiden_plus',
+        $('original_leiden_plus').innerHTML.unescapeHTML().strip());
+    }
+  });
+
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -12,7 +71,10 @@
         = f.label "Leiden+"
         = clippy "ddb_identifier_leiden_plus"
         %br
-        = f.text_area :leiden_plus, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
+        = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
+      #original_leiden_plus.invisible
+        :preserve
+          #{h(@identifier[:leiden_plus])}
 
 = javascript_include_tag 'confirm'

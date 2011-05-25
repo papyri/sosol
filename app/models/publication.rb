@@ -199,7 +199,7 @@ class Publication < ActiveRecord::Base
 
           #update the change_desc of each submitted identifier
           boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(), :comment => comment_text)
+            submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(comment_text), :comment => comment_text)
             submitting_identifier.status = "submitted"
             submitting_identifier.save!
 
