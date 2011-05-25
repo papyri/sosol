@@ -89,11 +89,31 @@
 
 
 - if boards.length > 0
-  %div{:onclick => "sortByNeedsReview()" }
-    Needs Review
+  %div{:class => "board_publications_header_review", :onclick => "sortByNeedsReview()" }
+    Sort by Needs Review
   - boards.each do |b|
     %div{:onclick => "sortByBoard( '#{b.friendly_name}' )" }
-      = b.friendly_name
+      = "Sort by " + b.friendly_name  + " board."
+      
+
+  %div{:class => "board_publications_header_holder" }
+    %div{:class => "board_publications_header_title", :onclick => "" }
+      Title
+    %div{:class => "board_publications_header_overview"}
+      Overview
+    - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    - if possible_identifiers.length > 0
+    
+      - possible_identifiers.each do |pi|
+        %div{:onclick => "", :class => "board_publications_header_" + pi }
+          = pi
+          
+    
+  
+  
+  
+    
+
   %div{:class => "publication_list_holder", :id => "board_publication_list_holder" }
     - boards.each do |board| 
       - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
@@ -113,6 +133,10 @@
             %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
               = publication.title
             
+            %div{:class => "overview_holder"}
+              = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
+            
+            
             - id_set = Set.new(publication.identifiers)
             - id_hash = id_set.classify { |id| id.class.name }
             -# id_hash.each do |hash_item|
@@ -121,6 +145,7 @@
               = hash_item[1].each do |hashed_id|
                 = hashed_id.title #why the # sign?
             
+           
             - identifiers_to_show = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
             - id_hash.each_pair do |k,v|
               - identifiers_to_show.delete(k)
@@ -141,8 +166,12 @@
                 - v.each do |vv| #add count? for offsetting?
                   - needs_review = (vv.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
                   %div{:class => "identifier status_" + vv.status +  " controlled_" + (board.controls_identifier?(vv)  ? 'yes' : 'no') + needs_review + offset_class, :id => "identifier_" + vv.id.to_s}
-                    %div{:class => "identifier_holder_status_" + vv.status }
-                      = image_tag('status_icons.png')
+                    - if vv.modified
+                      %div{:class => "identifier_holder_status_" + vv.status }
+                        = image_tag('status_icons.png')
+                    - else
+                      %div{:class => "identifier_holder_status_" }
+                        = image_tag('status_icons.png')                    
                     %div{:class=> "identifier_title"}
                       = vv.title.strip
                     - if offset_class == "" && v.length > 1

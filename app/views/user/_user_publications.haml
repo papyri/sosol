@@ -53,7 +53,7 @@
     
     var identifier_nodes = list_node.select(select_statement);
     
-    
+    //just pull them out of the list, then reinsert them at the top
     var new_list = new Array();
     for (var i=0; i < identifier_nodes.length; i++)
     {
@@ -61,11 +61,58 @@
       new_list[i].remove;
     }
         
+    //could sort here
+    
+        
     for (var i= new_list.length - 1; i >=0;i--)
     {
       list_node.insert( {'top': new_list[i] } );
     }
 
+  }
+  
+  var title_direction = 1;
+  function sortByTitle()
+  {
+    
+    var list_node = $('user_publication_list_holder');
+    
+    var select_statement = 'div[class~=publication]';
+    
+    var publication_nodes = list_node.select(select_statement);
+    
+    var new_list = new Array();
+    for (var i=0; i < publication_nodes.length; i++)
+    {
+      new_list.push(publication_nodes[i].parentNode);
+      new_list[i].remove;
+    }
+        
+    if (title_direction % 2)    
+      new_list.sort(titleSort);   
+    else
+      new_list.sort(titleSortReverse);
+      
+    title_direction = title_direction + 1;
+       
+    for (var i= new_list.length - 1; i >=0;i--)
+    {
+      list_node.insert( {'top': new_list[i] } );
+    }
+
+  }
+  
+  function titleSortReverse(a,b)
+  {
+    return -1 * titleSort(a,b);
+  }
+  
+  function titleSort(a,b)
+  {
+    var atitle = a.select('div[class~=publication]')[0].firstChild.nodeValue;
+    var btitle = b.select('div[class~=publication]')[0].firstChild.nodeValue;
+    //alert (atitle + " " + btitle);
+    return ((atitle < btitle) ? -1 : ((atitle > btitle) ? 1 : 0));
   }
   
   window.onload = function foo()
@@ -85,13 +132,19 @@
 = stylesheet_link_tag "publication_list"
 
 
-- possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-- if possible_identifiers.length > 0
+
+%div{:class => "user_publications_header_holder" }
+  %div{:class => "user_publications_header_title", :onclick => "sortByTitle()" }
+    Title
+  %div{:class => "user_publications_header_overview"}
+    Overview
+  - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+  - if possible_identifiers.length > 0
   
-  - possible_identifiers.each do |pi|
-    %div{:onclick => "sortByIdentifier( '#{pi}' )" }
-      = pi
-      
+    - possible_identifiers.each do |pi|
+      %div{:onclick => "sortByIdentifier( '#{pi}' )", :class => "user_publications_header_" + pi }
+        = pi
+        
     
 %div{:class => "publication_list_holder", :id => "user_publication_list_holder" }
 
@@ -102,6 +155,9 @@
         %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
           = publication.title
         
+          %div{:class => "overview_holder"}
+            = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
+            -#= link_to "Overview", publication
         - id_set = Set.new(publication.identifiers)
         - id_hash = id_set.classify { |id| id.class.name }
         
@@ -116,13 +172,18 @@
             - offset_class = ""
             - v.each do |vv| #add count? for offsetting?
               %div{:class => "identifier status_" + vv.status  + offset_class, :id => "identifier_" + vv.id.to_s}
-                %div{:class => "identifier_holder_status_" + vv.status }
-                  = image_tag('status_icons.png')
+                - if vv.modified
+                  %div{:class => "identifier_holder_status_" + vv.status }
+                    = image_tag('status_icons.png')
+                - else
+                  %div{:class => "identifier_holder_status_" }
+                    = image_tag('status_icons.png')
                 %div{:class=> "identifier_title"}
-                  = vv.title.strip
-                - if offset_class == "" && v.length > 1
-                  %div{:class => "expand_identifers", :onclick => "showOffsets(this)" }
-                    = "+"
+                  -#= vv.title.strip
+                  = link_to vv.title.strip, edit_polymorphic_path([publication, vv])
+              - if offset_class == "" && v.length > 1
+                %div{:class => "expand_identifers", :onclick => "showOffsets(this)" }
+                  = "+"
               - offset_class = " offset "
                 
         - identifiers_to_show.each do |is|

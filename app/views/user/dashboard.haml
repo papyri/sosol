@@ -36,7 +36,7 @@
             %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
               Less...
     %br
-  = render :partial => "publications/publication_selector"
+  -#= render :partial => "publications/publication_selector"
   %p
     or create new publication:
     = render :partial => "publications/create_from_templates_form"

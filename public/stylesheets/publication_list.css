@@ -23,6 +23,13 @@
 .publication_board_name {
   font-size: xx-small; }
 
+.overview_holder {
+  position: absolute;
+  width: 20px;
+  height: 40px;
+  top: 0px;
+  left: 180px; }
+
 .identifier_holder {
   overflow: visible;
   position: absolute;
@@ -49,6 +56,224 @@
   top: 0px;
   left: 578px; }
 
+
+.user_publications_header_holder {
+  position: relative;
+  overflow: visible;
+  background-color: white;
+  width: 700px;
+  height: 22px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
+
+.user_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.user_publications_header_overview {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 100px; }
+
+.user_publications_header_HGVMetaIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 200px; }
+
+.user_publications_header_DDBIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 326px; }
+
+.user_publications_header_HGVTransIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 452px; }
+
+.user_publications_header_HGVBiblioIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 578px; }
+
+
+
+.board_publications_header_holder {
+  position: relative;
+  overflow: visible;
+  background-color: white;
+  width: 700px;
+  height: 22px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
+
+.board_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_title {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_overview {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 100px; }
+
+.board_publications_header_HGVMetaIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 200px; }
+
+.board_publications_header_DDBIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 326px; }
+
+.board_publications_header_HGVTransIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 452px; }
+
+.board_publications_header_HGVBiblioIdentifier {
+  overflow: visible;
+  position: absolute;
+  background-color: lightgray;
+  width: 120px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 578px; }
+
+
 .identifier {
   overflow: visible;
   background-color: gray;
@@ -68,7 +293,8 @@
   background-color: white; }
 
 .status_submitted {
-  background-color: white; }
+  background-color: white;
+  color: gray; }
 
 .status_approved {
   background-color: white; }
@@ -96,13 +322,14 @@
   position: absolute;
   top: 16px;
   left: 0px;
-  padding: 2px; }
+  padding: 2px;
+  color: black; }
 
 .expand_identifers {
   width: 16px;
   height: 16px;
   position: absolute;
-  top: 16px;
+  top: 0px;
   left: 84px; }
 
 .identifier_holder_status_new {
@@ -144,7 +371,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
-  background-position: -64px 0px; }
+  background-position: -80px 0px; }
   .identifier_holder_status_submitted img {
     position: absolute;
     top: 0px;
@@ -159,7 +386,8 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
-  background-position: -48px 0px; }
+  background-position: -64px 0px;
+  #background-position: -48px 0px; }
   .identifier_holder_status_approved img {
     position: absolute;
     top: 0px;
@@ -174,7 +402,8 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
-  background-position: -32px 0px; }
+  background-position: -48px 0px;
+  #background-position: -32px 0px; }
   .identifier_holder_status_committed img {
     position: absolute;
     top: 0px;
@@ -189,11 +418,12 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
-  background-position: -16px 0px; }
+  background-position: -32px 0px;
+  #background-position: -16px 0px; }
   .identifier_holder_status_archived img {
     position: absolute;
     top: 0px;
     left: 0px; }
 
 .needs_review {
-  background-color: darkgray; }
+  background-color: indianred; }

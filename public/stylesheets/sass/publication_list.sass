@@ -13,7 +13,7 @@
   border-style: solid
   border-color: black
   margin: 2px
-
+  
 .publication
   +clip
   position: absolute
@@ -28,6 +28,14 @@
 .publication_board_name  
   font-size: xx-small
   
+.overview_holder
+  position: absolute
+  
+  width: 20px
+  height: 40px
+  top: 0px
+  left: 180px
+  
 .identifier_holder
   +clip
   position: absolute
@@ -39,29 +47,137 @@
   border-style: solid
   border-color: black
 
-  
-
 .HGVMetaIdentifier
-  
   top: 0px
   left: 200px
 
 .DDBIdentifier
-  
   top: 0px
   left: 326px
   
 .HGVTransIdentifier
-  
   top: 0px
   left: 452px
   
 .HGVBiblioIdentifier
-
   top: 0px
   left: 578px
 
+#----- user publicaitons header--------
+
+.user_publications_header_holder
+  position: relative
+  +clip
+  background-color: white
+  width: 700px
+  height: 22px
+  border-width: 2px
+  border-style: solid
+  border-color: black
+  margin: 2px
+
+
+=user_publication_header
+  +clip
+  position: absolute
+  background-color: lightgray
+  width: 120px
+  height: 20px
   
+  border-width: 1px
+  border-style: solid
+  border-color: black
+  
+  top: 0px
+  
+  
+.user_publications_header_title
+  +user_publication_header
+  left: 0px
+  
+.user_publications_header_overview
+  +user_publication_header
+  left: 100px
+  
+.user_publications_header_HGVMetaIdentifier
+  +user_publication_header
+  left: 200px
+
+.user_publications_header_DDBIdentifier
+  +user_publication_header
+  left: 326px
+
+.user_publications_header_HGVTransIdentifier
+  +user_publication_header
+  left: 452px
+  
+.user_publications_header_HGVBiblioIdentifier
+  +user_publication_header
+  left: 578px
+
+#-----end user publicaitons header--------
+
+
+#-----board publicaitons header--------
+
+.board_publications_header_holder
+  position: relative
+  +clip
+  background-color: white
+  width: 700px
+  height: 22px
+  border-width: 2px
+  border-style: solid
+  border-color: black
+  margin: 2px
+
+.board_publications_header_title
+  +user_publication_header
+  left: 0px
+  
+.board_publications_header_title
+  +user_publication_header
+  left: 0px
+
+.board_publications_header_title
+  +user_publication_header
+  left: 0px
+
+.board_publications_header_title
+  +user_publication_header
+  left: 0px
+  
+  
+  
+  
+.board_publications_header_title
+  +user_publication_header
+  left: 0px
+  
+.board_publications_header_overview
+  +user_publication_header
+  left: 100px
+  
+.board_publications_header_HGVMetaIdentifier
+  +user_publication_header
+  left: 200px
+
+.board_publications_header_DDBIdentifier
+  +user_publication_header
+  left: 326px
+
+.board_publications_header_HGVTransIdentifier
+  +user_publication_header
+  left: 452px
+  
+.board_publications_header_HGVBiblioIdentifier
+  +user_publication_header
+  left: 578px  
+  
+  
+
+#-----end board publicaitons header--------
+
 .identifier
   +clip
   background-color: gray
@@ -72,8 +188,6 @@
   
   width: 118px
   height: 38px
-
-  
 
 .offset
   position: relative
@@ -86,6 +200,7 @@
   
 .status_submitted
   background-color: white
+  color: gray
 
 .status_approved
   background-color: white
@@ -98,6 +213,8 @@
   
 .status_archived
   background-color: white
+  
+
   
 .controlled_yes
   border-color: red
@@ -130,11 +247,12 @@
   top: 16px
   left: 0px
   padding: 2px
+  color: black
 .expand_identifers
   width: 16px
   height: 16px
   position: absolute
-  top: 16px
+  top: 0px
   left: 84px
   
 .identifier_holder_status_new
@@ -147,19 +265,22 @@
 
 .identifier_holder_status_submitted
   +status_bar
-  background-position: -64px 0px
+  background-position: -80px 0px
   
 .identifier_holder_status_approved
   +status_bar
-  background-position: -48px 0px
+  background-position: -64px 0px
+  #background-position: -48px 0px
 
 .identifier_holder_status_committed
   +status_bar
-  background-position: -32px 0px
+  background-position: -48px 0px
+  #background-position: -32px 0px
   
 .identifier_holder_status_archived
   +status_bar
-  background-position: -16px 0px
+  background-position: -32px 0px
+  #background-position: -16px 0px
   
 .needs_review
-  background-color: darkgray
+  background-color: indianred
