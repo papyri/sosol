@@ -43,6 +43,9 @@
       <xsl:element name="div" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:attribute name="type">commentary</xsl:attribute>
         <xsl:attribute name="subtype">frontmatter</xsl:attribute>
+        <xsl:attribute name="xml:space">
+          <xsl:text>preserve</xsl:text>
+        </xsl:attribute>
         <xsl:element name="ab" namespace="http://www.tei-c.org/ns/1.0">
           <xsl:value-of select="$content" disable-output-escaping="yes"/>
         </xsl:element>

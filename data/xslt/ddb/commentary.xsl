@@ -42,7 +42,7 @@
       </textarea>
       <div id="frontmatter_commentary" class="form clickable">
         <p class="label">Front matter:</p>
-        <xsl:value-of select="tei:ab/text()"/>
+        <xsl:apply-templates select="tei:ab"/>
       </div>
     </div>
   </xsl:template>
@@ -72,6 +72,10 @@
   
   <!-- replace newlines with br's -->
   <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item//text()">
+     <xsl:call-template name="break"/>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab//text()">
      <xsl:call-template name="break"/>
   </xsl:template>
   
