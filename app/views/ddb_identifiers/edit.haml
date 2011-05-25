@@ -5,6 +5,7 @@
     }
     else {
       request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
     new Ajax.Request(request_url, {
