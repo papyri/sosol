@@ -140,30 +140,42 @@
   
   function getSugar(originalxml)
   {
- 
-  //remove  namespaces that break sugar
-  var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
-  originalxml = originalxml.replace(xmlnsPattern, "");
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
+    originalxml = originalxml.replace(xmlnsPattern, "");
   
 
-  //create url call
-   var url_call = "http://localhost:3000/commentary_xml_to_sugar?commentary_xml=" +  encodeURIComponent( originalxml ); //need server urls
-   //alert (url_call);
-    new Ajax.Request(url_call, 
-    {
-      method:'get',
-      onSuccess: function(transport) 
-      {
-        var response = transport.responseText || "no response from server";
-        //insert response in text input
-        $(sugar_content).value = response;
+    //create url call
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    wrapped_content = "<wrap>" + originalxml + "</wrap>";
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          $$('div#main > div.site').first().insert({
+            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+          });
+        }
+        else {
+          $(sugar_content).value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+        }
       },
-      onFailure: function() 
-      {
-        alert("Failed to connect to server");
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getSugar(" + originalxml + ")",10000);
       }
     });
-  
   }
   
   function addCommentary(event) {
