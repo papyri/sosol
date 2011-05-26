@@ -20,6 +20,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :events
   
+  map.commentary_xml_to_sugar '/commentary_xml_to_sugar/', :controller => 'ddb_identifiers', :action => 'commentary_xml_to_sugar'
+  
   # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   # map.login '/login', :controller => 'sessions', :action => 'new'
   # map.register '/register', :controller => 'users', :action => 'create'
@@ -56,7 +58,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :publications, :collection => { :advanced_create => :get }
   map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
   map.resources :publications do |publication|
-    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :delete_commentary => :delete }
+    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
@@ -73,18 +75,18 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
   
-  map.connect 'numbers_server_proxy/sparql/:query',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/sparql/:query',
+    :controller => 'ajax_proxy',
     :action => 'sparql',
     :query => /.*/
   
-  map.connect 'numbers_server_proxy/xsugar/',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/xsugar/',
+    :controller => 'ajax_proxy',
     :action => 'xsugar',
     :conditions => { :method => :post }
   
-  map.connect 'numbers_server_proxy/:id',
-    :controller => 'numbers_server_proxy',
+  map.connect 'ajax_proxy/:id',
+    :controller => 'ajax_proxy',
     :action => 'proxy',
     :id => /papyri\.info.*/
   

@@ -2,6 +2,7 @@
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
+    $('frontmatter_commentary').observe('click',addFrontmatterCommentary);
     if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
   
@@ -29,10 +30,24 @@
   function transformExistingCommentary(event) {
     removeAllClickable();
     
+    
     var comment_li = Event.element(event).up('li.input');  
+    
+        //get the original xml fragment
+    var originalxmls = $(comment_li).select('textarea.originalxml');
+    var originalxml = "";
+    if (originalxmls.length > 0)
+    {
+      //originalxml = originalxmls[0].innerHTML;
+      originalxml = originalxmls[0].value;
+    }
+    
+    
     comment_div_container = comment_li.childElements().first();
     
     comment_div = comment_div_container.childElements().first();
+    
+
     
     nval_node = comment_div.childElements().first();
     nval = nval_node.innerHTML;
@@ -46,7 +61,12 @@
     $(comment_li).insert({
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
+
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+
+    //translate the xml to commentary sugar
+    getSugar(originalxml);
+    
   }
   
   function generateDeleteForm(id,original_item_id) {
@@ -64,21 +84,98 @@
     }
   }
   
+  function generateDeleteFrontmatterForm(content) {
+    if(content == '') {
+      return '';
+    }
+    else {
+      return '#{form_tag({:action => :delete_frontmatter_commentary}, :method => :delete, :id => "delete_frontmatter_form").chomp()}' +
+          '<span style="float:right;position:relative;top:-1.5em">' +
+            '<a href="#{url_for({:action => :delete_frontmatter_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete the front matter commentary?\')) {$(\'delete_frontmatter_form\').submit();};return false;">delete</a>'
+          '</span>' +
+        '</form>';
+    }
+  }
+  
   function generateCommentaryForm(id,nval,content,original_item_id) {
+
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_commentary}, :method => :put).chomp()}' +
+      '#{form_tag({:action => :update_commentary}, :onsubmit => "return validateSugar()", :method => :put).chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
-        '<input type="hidden" name="original_content" value="' + content + '"/>' +
+        //'<input type="hidden" name="original_content" value="' + content + '"/>' +
+        //original value no longer in use, test here ignoring it
+        '<input type="hidden" name="original_content" value="not used"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-        '<textarea rows="5" cols="20" name="content">'+content+'</textarea>' +
+        //'<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
+        //show no content since it will be updated with getsugar call
+        '<textarea rows="5" cols="20" name="content" id="sugar_content"></textarea>' +
         '<input class="save" type="submit" value="Save"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
       '</form>' +
       generateDeleteForm(id,original_item_id) +
       '</div></div>';
+ 
+  }
+  
+  function generateFrontmatterCommentaryForm(content) {
+    if(content === undefined) {content = "";}
+    return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
+      '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put).chomp()}' +
+        '<label>Front matter:</label><br/>' +
+        '<textarea rows="10" cols="20" name="content" style="height: auto">' + content + '</textarea>' +
+        '<input class="save" type="submit" value="Save"/>' + 
+        ' or <a href="" style="color:red">cancel</a>' +
+      '</form>' +
+      generateDeleteFrontmatterForm(content) +
+      '</div></div>';
+  }
+  
+  function validateSugar()
+  {
+    //alert ("validating");
+  }
+  
+  function getSugar(originalxml)
+  {
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
+    originalxml = originalxml.replace(xmlnsPattern, "");
+  
+
+    //create url call
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    wrapped_content = "<wrap>" + originalxml + "</wrap>";
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          $$('div#main > div.site').first().insert({
+            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+          });
+        }
+        else {
+          $(sugar_content).value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getSugar(" + originalxml + ")",10000);
+      }
+    });
   }
   
   function addCommentary(event) {
@@ -95,15 +192,43 @@
     element.removeClassName('clickable');
   }
 
+  function addFrontmatterCommentary(event) {
+    removeAllClickable();
+    
+    var element = Event.element(event);
+    
+    var original_content = $$('#frontmatter_commentary_container textarea');
+    if(original_content.size() == 0) {
+      original_content = '';
+    }
+    else {
+      original_content = original_content[0].value;
+    }
+
+    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    $("frontmatter_commentary_container").insert({
+      after: generateFrontmatterCommentaryForm(original_content)
+    });
+        
+    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+    
+    element.stopObserving('click');
+    event.stop();
+  }
+  
+  function transformExistingFrontmatterCommentary(event) {
+    removeAllClickable();
+  }
+
 #main
   = render :partial => 'identifiers/edit_bar'
   
   .site
     = render :partial => 'identifiers/header'
     #edit
-      - form_for @identifier, :url => { :action => :update }  do |f|
-        = f.error_messages
         
-        %label Commentary
-        .PContent
-          = @identifier[:html_preview]
+      %label Commentary
+      .PContent
+        :preserve
+          #{@identifier[:html_preview]}

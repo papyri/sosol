@@ -4,7 +4,7 @@ set :scm, "git"
 set :user, "idp2"
 set :scm_verbose, true
 set :git_enable_submodules, true
-set :branch, "master"
+set :branch, `git name-rev HEAD 2> /dev/null | awk '{ print $2 }'`.chomp
 
 # If you aren't deploying to /u/apps/#{application} on the target
 # servers (which is the default), you can specify the actual location
@@ -16,8 +16,8 @@ role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
-# Variables for production server running Glassfish
-set :context_root, "protosite"
+# Variables for production server running Trinidad
+set :context_root, "/protosite"
 set :jruby_location, "/opt/jruby/"
 set :gf_port, "3000"
 set :environment, "production"
@@ -28,18 +28,18 @@ set :rake, "/opt/jruby/bin/jruby -S rake"
 
 # Tasks adapted from Glassfish Capistrano recipes http://tinyurl.com/yhu8jdw
 namespace :deploy do
-  desc "Start Glassfish Gem from a shutdown state"
+  desc "Start Trinidad Gem from a shutdown state"
   task :cold , :roles => :app do
     update
     start
   end
   
-  desc "Starts a server running Glassfish Gem"
+  desc "Starts a server running Trinidad Gem"
   task :start, :roles => :app do
-    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
+    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --dir #{release_path} -t --ajp --load daemon --daemonize #{shared_path}/capistrano-#{application}"
   end
 
-  desc "Stop a server running Glassfish Gem"
+  desc "Stop a server running Trinidad Gem"
   task :stop, :roles => :app do
     run "kill -INT $(cat #{shared_path}/capistrano-#{application})"  
   end

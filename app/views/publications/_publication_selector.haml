@@ -1,6 +1,6 @@
 :javascript
   function get_proxy_prefix() {
-    return "#{request.domain == 'papyri.info' ? '' : url_for(:controller => 'numbers_server_proxy', :only_path => true)}";
+    return "#{request.domain == 'papyri.info' ? '' : url_for(:controller => 'ajax_proxy', :only_path => true)}";
   }
   function get_collection_prefix() {
     prefix = get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '' : '/papyri.info'}";

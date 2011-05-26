@@ -45,14 +45,14 @@ Rails::Initializer.run do |config|
     config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
-		config.gem "rack", :version => ">= 1.1.0", :lib => false
+		config.gem "rack", :version => ">= 1.3.0", :lib => false
   end
   
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
   
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   
-  config.gem 'hoptoad_notifier', :version => ">= 2.3.5"
+  config.gem 'hoptoad_notifier', :version => ">= 2.4.10"
   
   config.gem 'grit',
     :lib     => 'grit',

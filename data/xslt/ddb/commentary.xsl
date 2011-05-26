@@ -7,6 +7,11 @@
   
   <!-- Text edition div -->
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
+     <xsl:if test="not(//tei:div[@type='commentary' and @subtype='frontmatter'])">
+       <div id="frontmatter_commentary_container">
+         <a id="frontmatter_commentary" href="#" class="clickable"><b>Add front matter commentary</b></a>
+       </div>
+     </xsl:if>
      <div class="commentary" id="edition">
         <!-- Found in htm-tpl-lang.xsl -->
         <xsl:call-template name="attr-lang"/>
@@ -30,14 +35,27 @@
       </div>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary']">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']">
+    <div id="frontmatter_commentary_container" class="frontmatter_container">
+      <textarea class="originalxml" style="display:none">
+        <xsl:copy-of select="tei:ab/node()"/>
+      </textarea>
+      <div id="frontmatter_commentary" class="form clickable">
+        <p class="label">Front matter:</p>
+        <xsl:apply-templates select="tei:ab"/>
+      </div>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']">
     <div id="originalcommentary" class="invisible">
       <xsl:apply-templates/>
     </div>
   </xsl:template>
 
-  <xsl:template match="tei:div[@type='commentary']//tei:list/tei:item">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item">
     <li class="{replace(@corresp, '^#', 'comment-on-')} input">
+
       <div class="comment_container">
         <xsl:attribute name="id">
           <xsl:value-of select='generate-id(.)'/>
@@ -46,13 +64,50 @@
           <xsl:apply-templates/>
         </div>
       </div>
+      <textarea class = "originalxml" style="display:none">
+        <xsl:copy-of select="node()[name() != 'ref']"/>
+      </textarea>
     </li>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary']//tei:item/tei:ref">
+  <!-- replace newlines with br's -->
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item//text()">
+     <xsl:call-template name="break"/>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab//text()">
+     <xsl:call-template name="break"/>
+  </xsl:template>
+  
+  <!-- from http://www.dpawson.co.uk/xsl/sect2/replace.html#d8766e19 -->
+  <xsl:template name="break">
+     <xsl:param name="text" select="."/>
+     <xsl:choose>
+     <xsl:when test="contains($text, '&#xa;')">
+        <xsl:value-of select="substring-before($text, '&#xa;')"/>
+        <br/>
+        <xsl:call-template name="break">
+            <xsl:with-param name="text" select="substring-after($text,
+  '&#xa;')"/>
+        </xsl:call-template>
+     </xsl:when>
+     <xsl:otherwise>
+  	<xsl:value-of select="$text"/>
+     </xsl:otherwise>
+     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='bold']">
+    <b><xsl:apply-templates/></b>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='italics']">
+    <i><xsl:apply-templates/></i>
+  </xsl:template>
 
   <!-- Textpart div -->
   <xsl:template match="tei:div[@type='textpart']" priority="1">
