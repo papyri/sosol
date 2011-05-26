@@ -36,7 +36,7 @@ namespace :deploy do
   
   desc "Starts a server running Trinidad Gem"
   task :start, :roles => :app do
-    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --dir #{release_path} -t --load daemon --daemonize #{shared_path}/capistrano-#{application}"
+    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --dir #{release_path} -t --ajp --load daemon --daemonize #{shared_path}/capistrano-#{application}"
   end
 
   desc "Stop a server running Trinidad Gem"
