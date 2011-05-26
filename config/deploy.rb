@@ -16,7 +16,7 @@ role :app, "halsted.vis.uky.edu"
 role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
-# Variables for production server running Glassfish
+# Variables for production server running Trinidad
 set :context_root, "protosite"
 set :jruby_location, "/opt/jruby/"
 set :gf_port, "3000"
@@ -28,18 +28,18 @@ set :rake, "/opt/jruby/bin/jruby -S rake"
 
 # Tasks adapted from Glassfish Capistrano recipes http://tinyurl.com/yhu8jdw
 namespace :deploy do
-  desc "Start Glassfish Gem from a shutdown state"
+  desc "Start Trinidad Gem from a shutdown state"
   task :cold , :roles => :app do
     update
     start
   end
   
-  desc "Starts a server running Glassfish Gem"
+  desc "Starts a server running Trinidad Gem"
   task :start, :roles => :app do
-    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S glassfish --contextroot #{context_root} --port #{gf_port} --environment #{environment} --runtimes #{jruby_runtimes} --runtimes-min #{jruby_min_runtimes} --runtimes-max #{jruby_max_runtimes} -P #{shared_path}/capistrano-#{application} --daemon #{release_path}"
+    run "cd #{release_path} && JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --daemonize #{shared_path}/capistrano-#{application}"
   end
 
-  desc "Stop a server running Glassfish Gem"
+  desc "Stop a server running Trinidad Gem"
   task :stop, :roles => :app do
     run "kill -INT $(cat #{shared_path}/capistrano-#{application})"  
   end
