@@ -1,0 +1,38 @@
+= stylesheet_link_tag 'header_footer'
+
+
+#header_box
+  #header_top
+    #header_title
+      #logo
+        %h1= link_to SITE_NAME, root_url
+    
+    #header_selector
+      = render :partial => "publications/publication_selector", :locals => {:hide_text => true}
+    
+    #header_user_box
+      = link_to @current_user.name, account_url
+      \|
+      = link_to 'sign out', signout_url
+      
+  #header_tab_holder
+    - if (defined? active_tab) && (active_tab == "edit")
+      #header_edit_tab{ :class => "header_tab header_tab_active" }
+        Edit
+    - else
+      #header_edit_tab{ :class => "header_tab" }
+        = link_to 'Edit', :controller => "user", :action => "dashboard", :dashboard_type => "user"
+        
+    - if (defined? active_tab) && (active_tab == "board")
+      #header_board_tab{ :class => "header_tab header_tab_active" }
+        Board
+    - else
+      #header_board_tab{ :class => "header_tab"}
+        = link_to 'Board', :controller => "user", :action => "dashboard", :dashboard_type => "board"
+      
+   
+  
+  
+  
+  
+
