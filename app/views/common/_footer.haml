@@ -12,6 +12,7 @@
 
       
       - if @current_user.admin 
+        \|
         = link_to 'Boards', boards_url
         \|
         = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
