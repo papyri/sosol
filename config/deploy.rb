@@ -17,7 +17,7 @@ role :web, "halsted.vis.uky.edu"
 role :db,  "halsted.vis.uky.edu", :primary => true
 
 # Variables for production server running Trinidad
-set :context_root, "protosite"
+set :context_root, "/protosite"
 set :jruby_location, "/opt/jruby/"
 set :gf_port, "3000"
 set :environment, "production"
@@ -36,7 +36,7 @@ namespace :deploy do
   
   desc "Starts a server running Trinidad Gem"
   task :start, :roles => :app do
-    run "cd #{release_path} && JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --load daemon --daemonize #{shared_path}/capistrano-#{application}"
+    run "JAVA_TOOL_OPTIONS='-Dcom.sun.grizzly.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true' CLASSPATH='#{release_path}/lib/java/*' #{jruby_location}bin/jruby -S trinidad --context #{context_root} --port #{gf_port} --env #{environment} --dir #{release_path} -t --load daemon --daemonize #{shared_path}/capistrano-#{application}"
   end
 
   desc "Stop a server running Trinidad Gem"
