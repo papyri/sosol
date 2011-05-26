@@ -134,7 +134,7 @@
 
 
 %div{:class => "user_publications_header_holder" }
-  %div{:class => "user_publications_header_title", :onclick => "sortByTitle()" }
+  %div{:class => "user_publications_header_title" + " sort_header", :onclick => "sortByTitle()" }
     Title
   %div{:class => "user_publications_header_overview"}
     Overview
@@ -142,7 +142,7 @@
   - if possible_identifiers.length > 0
   
     - possible_identifiers.each do |pi|
-      %div{:onclick => "sortByIdentifier( '#{pi}' )", :class => "user_publications_header_" + pi }
+      %div{:onclick => "sortByIdentifier( '#{pi}' )", :class => "user_publications_header_" + pi  + " sort_header"}
         = pi
         
     

@@ -1,3 +1,8 @@
+#content_body {
+  width: 700px;
+  margin-left: auto;
+  margin-right: auto; }
+
 .publication_holder {
   position: relative;
   overflow: visible;
@@ -21,7 +26,8 @@
   margin: 2px; }
 
 .publication_board_name {
-  font-size: xx-small; }
+  font-size: xx-small;
+  text-align: left; }
 
 .overview_holder {
   position: absolute;
@@ -427,3 +433,22 @@
 
 .needs_review {
   background-color: indianred; }
+
+.sort_header {
+  background-color: gray; }
+
+.sort_header:hover {
+  background-color: #d25f00; }
+
+.sort_button {
+  display: inline;
+  width: 100px;
+  background-color: gray;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  margin: 5px; }
+
+.sort_button:hover {
+  background-color: #d25f00;
+  cursor: pointer; }

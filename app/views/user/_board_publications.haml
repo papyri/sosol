@@ -89,25 +89,26 @@
 
 
 - if boards.length > 0
-  %div{:class => "board_publications_header_review", :onclick => "sortByNeedsReview()" }
-    Sort by Needs Review
-  - boards.each do |b|
-    %div{:onclick => "sortByBoard( '#{b.friendly_name}' )" }
-      = "Sort by " + b.friendly_name  + " board."
+  %div
+    %div{:class => "board_publications_header_review" + " sort_button", :onclick => "sortByNeedsReview()" }
+      Sort by Needs Review
+    - boards.each do |b|
+      %div{:class => "sort_button", :onclick => "sortByBoard( '#{b.friendly_name}' )" }
+        = "Sort by " + b.friendly_name  + " board."
+        
+  
+    %div{:class => "board_publications_header_holder" }
+      %div{:class => "board_publications_header_title", :onclick => "" }
+        Title
+      %div{:class => "board_publications_header_overview"}
+        Overview
+      - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+      - if possible_identifiers.length > 0
       
-
-  %div{:class => "board_publications_header_holder" }
-    %div{:class => "board_publications_header_title", :onclick => "" }
-      Title
-    %div{:class => "board_publications_header_overview"}
-      Overview
-    - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-    - if possible_identifiers.length > 0
-    
-      - possible_identifiers.each do |pi|
-        %div{:onclick => "", :class => "board_publications_header_" + pi }
-          = pi
-          
+        - possible_identifiers.each do |pi|
+          %div{:onclick => "", :class => "board_publications_header_" + pi }
+            = pi
+            
     
   
   
