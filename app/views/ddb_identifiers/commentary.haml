@@ -143,8 +143,7 @@
     //remove  namespaces that break sugar
     var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
     originalxml = originalxml.replace(xmlnsPattern, "");
-  
-
+    
     //create url call
     if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
@@ -168,7 +167,7 @@
           });
         }
         else {
-          $(sugar_content).value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          $('sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
         }
       },
       onFailure: function(response) {
