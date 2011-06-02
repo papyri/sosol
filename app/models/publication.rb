@@ -453,6 +453,9 @@ class Publication < ActiveRecord::Base
   
   def archive
     self.change_status("archived")
+    
+    self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+    self.save!
   end
   
   
