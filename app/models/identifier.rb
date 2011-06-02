@@ -132,7 +132,7 @@ class Identifier < ActiveRecord::Base
            [collection_name, volume_number, document_number].reject{|i| i.blank?}.join(' ')
          end
          
-         if self.is_reprinted?
+         if self.respond_to?("is_reprinted?") && self.is_reprinted?
            title += " (reprinted)"
          end
       else # HGV with no name
