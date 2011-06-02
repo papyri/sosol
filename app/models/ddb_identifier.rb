@@ -232,10 +232,13 @@ class DDBIdentifier < Identifier
     self.set_xml_content(xml_content, :comment => comment)
   end
   
+  def reprinted_in
+    return REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/body/head/ref[@type='reprint-in']/@n")
+  end
+  
   def is_reprinted?
-    xpath_result = REXML::XPath.first(REXML::Document.new(self.xml_content),
-      "/TEI/text/body/head/ref[@type='reprint-in']")
-    return xpath_result.nil? ? false : true
+    return reprinted_in.nil? ? false : true
   end
   
   # Override REXML::Attribute#to_string so that attributes are defined
