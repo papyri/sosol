@@ -153,7 +153,8 @@ class DDBIdentifier < Identifier
   def update_commentary(line_id, reference, comment_content = '', original_item_id = '', original_comment_content = '', delete_comment = false)
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(self.xml_content)),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
           %w{data xslt ddb update_commentary.xsl})),
         :line_id => line_id,
@@ -162,6 +163,20 @@ class DDBIdentifier < Identifier
         :original_item_id => original_item_id,
         :original_content => original_comment_content,
         :delete_comment => (delete_comment ? 'true' : '')
+      )
+    
+    self.set_xml_content(rewritten_xml, :comment => '')
+  end
+  
+  def update_frontmatter_commentary(commentary_content, delete_commentary = false)
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(self.xml_content)),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt ddb update_frontmatter_commentary.xsl})),
+        :content => commentary_content,
+        :delete_commentary => (delete_commentary ? 'true' : '')
       )
     
     self.set_xml_content(rewritten_xml, :comment => '')

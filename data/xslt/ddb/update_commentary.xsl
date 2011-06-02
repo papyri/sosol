@@ -29,7 +29,7 @@
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   
   <!-- use the generator to copy + update an existing commentary div -->
-  <xsl:template match="tei:div[@type='commentary']">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']">
     <xsl:call-template name="generate-commentary"/>
   </xsl:template>
   
@@ -37,7 +37,7 @@
   <xsl:template match="tei:text/tei:body">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
-      <xsl:if test="not(tei:div[@type='commentary'])">
+      <xsl:if test="not(tei:div[@type='commentary' and @subtype='linebyline'])">
         <xsl:call-template name="generate-commentary"/>
       </xsl:if>
     </xsl:copy>
@@ -51,7 +51,7 @@
     
     <xsl:copy>
       <xsl:copy-of select ="@*[not(name()='xml:id')]"/>
-      <xsl:if test="((/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']/tei:list/tei:item[@corresp=concat('#',$lb-id)]) or ($lb-id = $line_id)) and not(($delete_comment = 'true') and ($lb-id = $line_id))">
+      <xsl:if test="((/tei:TEI/tei:text/tei:body/tei:div[@type='commentary' and @subtype='linebyline']/tei:list/tei:item[@corresp=concat('#',$lb-id)]) or ($lb-id = $line_id)) and not(($delete_comment = 'true') and ($lb-id = $line_id))">
         <xsl:attribute name="xml:id">
           <xsl:value-of select="$lb-id"/>
         </xsl:attribute>
@@ -61,13 +61,14 @@
   
   <xsl:template name="generate-commentary">
     <!-- if we're deleting with one item, just don't generate anything -->
-    <xsl:if test="not(($delete_comment = 'true') and (count(/tei:TEI/tei:text/tei:body/tei:div[@type='commentary']/tei:list/tei:item) = 1))">
+    <xsl:if test="not(($delete_comment = 'true') and (count(/tei:TEI/tei:text/tei:body/tei:div[@type='commentary' and @subtype='linebyline']/tei:list/tei:item) = 1))">
       <xsl:element name="div" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:attribute name="type">commentary</xsl:attribute>
+        <xsl:attribute name="subtype">linebyline</xsl:attribute>
         <xsl:element name="list" namespace="http://www.tei-c.org/ns/1.0">
           <xsl:choose>
             <!-- simple case: no existing commentary -->
-            <xsl:when test="not(//tei:div[@type='commentary'])">
+            <xsl:when test="not(//tei:div[@type='commentary' and @subtype='linebyline'])">
               <xsl:call-template name="generate-commentary-item"/>
             </xsl:when>
             <!-- existing commentary: copy it all, and insert/update at the correct item -->
@@ -82,7 +83,7 @@
                   <xsl:value-of select="concat('#',$lb-id)"/>
                 </xsl:variable>
                 <!-- for each existing comment which refers to this lb -->
-                <xsl:for-each select="//tei:div[@type='commentary']//tei:list/tei:item[@corresp = $this-line-ref]">
+                <xsl:for-each select="//tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item[@corresp = $this-line-ref]">
                   <xsl:choose>
                     <!-- generated element needs to replace this item -->
                     <!-- FIXME: figure out why the id we get in commentary.xsl
@@ -122,10 +123,13 @@
       <xsl:attribute name="corresp">
         <xsl:value-of select="concat('#',$line_id)"/>
       </xsl:attribute>
+      <xsl:attribute name="xml:space">
+        <xsl:text>preserve</xsl:text>
+      </xsl:attribute>
       <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
         <xsl:value-of select="$reference"/>
       </xsl:element>
-      <xsl:text> </xsl:text><xsl:value-of select="$content"/>
+      <xsl:text> </xsl:text><xsl:value-of select="$content" disable-output-escaping="yes"/>
     </xsl:element>
   </xsl:template>
   
