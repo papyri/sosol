@@ -194,7 +194,7 @@
     - if publication.status != 'archived'
       %div{:class => "publication_holder ", :id => "publication_holder_" + publication.id.to_s }
         
-        %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
+        %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
           = publication.title
         
         %div{:class => "overview_holder"}

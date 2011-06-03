@@ -4,16 +4,56 @@
 !publication_box_content_width = 1000px
 !publication_box_content_height = 22px 
 
+!publication_board_name_width = 50px
+!overview_width = 20px
+!publication_title_width = 200px
+!publication_title_height = 20px
+
 !identifier_box_content_width = 150px
 !identifier_box_content_height = 20px
 
 !identifier_box_width = 150px 
 
-!identifier_box_start_left = 200px
+!identifier_box_start_left = !publication_title_width + !overview_width
+
+!votes_width = 20px
 
 =clip
   overflow: overflow
+
+=publication_board_name_position
+  top: 0px
+  left: -50px
   
+=publication_title_position
+  top: 0px
+  left: 0px
+  
+=overview_position
+  top: 0px
+  left = !publication_title_width
+  
+=HGVMetaIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 0 * !identifier_box_width
+
+=DDBIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 1 * !identifier_box_width
+  
+=HGVTransIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 2 * !identifier_box_width
+  
+=HGVBiblioIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 3 * !identifier_box_width
+
+=votes_position
+  //left = !identifier_box_width - ( !votes_width * 2)
+  left: 0px
+  top: 4px
+
   
 #content_body
   //holds the stuff between the header and the footer
@@ -26,34 +66,37 @@
   +clip
   background-color: white
   width = !publication_box_content_width
-  //height: 42px
-  //height: 22px
   height = !publication_box_content_height
+  
   border-width: 2px
   border-style: solid
   border-color: black
   margin: 2px
   
-.publication
+.publication_title
   +clip
+  +publication_title_position
+  width = !publication_title_width
+  height = !publication_title_height
   position: absolute
-  position: 2px 2px
+  //position: 2px 2px
   margin: 2px
   
 .publication_board_name  
   position: absolute
-  top: 0px
-  left: -40px
-  width: 40px
+  +publication_board_name_position
+
   
 .overview_holder
   position: absolute
-  
-  width: 20px
+  width = !overview_width
+  height = !publication_box_content_height
+  +overview_position
+  //width: 20px
   //height: 40px
-  height: 20px
-  top: 2px
-  left: 180px
+  //height: 20px
+  //top: 2px
+  //left: 180px
   //left: 60px
 
   
@@ -71,47 +114,18 @@
   border-color: black
 
 
-
-=HGVMetaIdentifier_position
-  top: 0px
-  left = !identifier_box_start_left + 0 * !identifier_box_width
-
-=DDBIdentifier_position
-  top: 0px
-  left = !identifier_box_start_left + 1 * !identifier_box_width
-  
-=HGVTransIdentifier_position
-  top: 0px
-  left = !identifier_box_start_left + 2 * !identifier_box_width
-  
-=HGVBiblioIdentifier_position
-  top: 0px
-  left = !identifier_box_start_left + 3 * !identifier_box_width
-
-
 .HGVMetaIdentifier
   +HGVMetaIdentifier_position
-  //top: 0px
-  //left: 200px
-  //left = !identifier_box_start_left + 0 * !identifier_box_width
 
 .DDBIdentifier
   +DDBIdentifier_position
-  //top: 0px
-  //left: 326px
-  //left = !identifier_box_start_left + 1 * !identifier_box_width
   
 .HGVTransIdentifier
   +HGVTransIdentifier_position
-  //top: 0px
-  //left: 452px
-  //left = !identifier_box_start_left + 2 * !identifier_box_width
-  
+
 .HGVBiblioIdentifier
   +HGVBiblioIdentifier_position
-  //top: 0px
-  //left: 578px
-  //left = !identifier_box_start_left + 3 * !identifier_box_width
+  
 
 #----- user publicaitons header--------
 
@@ -201,27 +215,27 @@
   
 .board_publications_header_title
   +user_publication_header
-  left: 0px
+  +publication_title_position
   
 .board_publications_header_overview
   +user_publication_header
-  left: 100px
+  +overview_position 
   
 .board_publications_header_HGVMetaIdentifier
   +user_publication_header
-  left: 200px
+  +HGVMetaIdentifier_position
 
 .board_publications_header_DDBIdentifier
   +user_publication_header
-  left: 326px
+  +DDBIdentifier_position
 
 .board_publications_header_HGVTransIdentifier
   +user_publication_header
-  left: 452px
+  +HGVTransIdentifier_position
   
 .board_publications_header_HGVBiblioIdentifier
   +user_publication_header
-  left: 578px  
+  +HGVBiblioIdentifier_position  
   
   
 
@@ -268,6 +282,8 @@
 .status_archived
   background-color: white
   
+.status_finalizing
+  background-color: indianred
 
   
 .controlled_yes
@@ -307,8 +323,11 @@
   position: absolute
   //top: 16px
   top: 4px
-  left: 0px
-  padding: 2px
+  left = !votes_width
+  
+  
+  
+  //padding: 2px
   color: black
   
 .expand_identifers
@@ -408,5 +427,25 @@
   width: 20px
   height: 20px
 
-
+=votes_and_finalizer
+  position: absolute
+  +votes_position
   
+  width = !votes_width
+  height: 20px
+  //z-index: 100
+  //background-color: green
+  
+  overflow: hidden
+  
+  
+  &:hover
+    width: 200px
+    z-index: 100
+    background-color: red
+  
+.votes
+  +votes_and_finalizer
+    
+.finalizer
+  +votes_and_finalizer

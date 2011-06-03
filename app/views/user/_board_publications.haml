@@ -101,6 +101,7 @@
 
 = stylesheet_link_tag "publication_list"
 
+- extra_id_count = 0
 
 - if boards.length > 0
   %div
@@ -150,25 +151,42 @@
       
 
     
+    
+    
+  
 
   %div{:class => "publication_list_holder", :id => "board_publication_list_holder" }
     - boards.each do |board| 
+
       - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
       - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
       -#remove approved publications if in the finalizer list
-      - finalizing_publications.each do |fp|
+      -# finalizing_publications.each do |fp|
         -#remove it from the list of approved publications
         - approved_publications.each do |ap|
           - if fp.origin == ap.origin
             - approved_publications.delete(ap)
          
-      - board.publications.each do |publication|
+      - board_publications = board.publications.clone
+      - finalizing_publications.each do |fp|
+        - board_publications.each do |bp|
+          - if fp.origin == bp.origin
+            - board_publications.delete(bp)
+        
+      - board_and_finalizing_publications = board_publications + finalizing_publications
+      
+         
+      - board_and_finalizing_publications.each do |publication|
         - if publication.status != 'archived' && publication.status != 'committed'
           %div{:class => "publication_holder " + board.friendly_name, :id => "publication_holder_" + board.friendly_name }
             %div{:class => "publication_board_name"}
               = board.friendly_name
-            %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
-              = publication.title
+            %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
+              - if publication.status == 'finalizing'
+                = link_to publication.title , :controller => "publications", :action => 'finalize_review', :id => publication.id
+              - else
+                = publication.title
+              
             
             %div{:class => "overview_holder"}
               = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
@@ -191,95 +209,72 @@
    
    
    
-            -#/////////////////
    
-              %div{:class => "identifier_holder " + k}
-            
-              -# find status..for multiples id do what?
-              
-              - if v.count == 1
-                -# ouput the only thing
-                - needs_review = (v.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
-                %div{:class => "identifier" + " status_" + v.status +  " controlled_" + (board.controls_identifier?(v)  ? 'yes' : 'no') + needs_review, :id => "identifier_" + v.id.to_s}
-                  
-                  - if v.first.modified
-                    %div{:class => "identifier_holder_status_" + v.first.status }
-                      = image_tag('status_icons.png')
-                  - else
-                    %div{:class => "identifier_holder_status_not_modified" }
-                      = image_tag('status_icons.png')
-                  %div{:class=> "identifier_title"}                  
-                    = link_to v.first.title.strip, edit_polymorphic_path([publication, v.first])
-            
-              
-              - elsif v.count > 1
-                - extra_id_count = extra_id_count + 1;
-                
-                
-                -v.each do |possible_modified|
-                  - if possible_modified.modified
-                    %div{:class => "identifier_holder_status_" + possible_modified.status }
-                      = image_tag('status_icons.png')
-                    %div{:class=> "identifier_title"}                  
-                      = link_to possible_modified.title.strip, edit_polymorphic_path([publication,possible_modified])
-                    - break
-                
-                %div{:class => "show_more_ids", :onclick => "showExtraIds( '#{extra_id_count}', this)" }
-                  = image_tag('show_more_ids.png')
-                
-           
-                -# make popup for all the ids
-                %div{:class => "extra_ids", :id => "extra_ids_" + extra_id_count.to_s}
-                
-                  
-                  - v.each do |extra_id|
-                    %div{:class => "identifier"}
-                      
-                      - if extra_id.modified
-                        %div{:class => "identifier_holder_status_" + extra_id.status }
-                          = image_tag('status_icons.png')
-                      - else
-                        %div{:class => "identifier_holder_status_not_modified" }
-                          = image_tag('status_icons.png')
-                      %div{:class=> "identifier_title"}                  
-                        = link_to extra_id.title.strip, edit_polymorphic_path([publication, extra_id])
-                
-      
-    
-            -#/////////////////  
-            -#         
               %div{:class => "identifier_holder " + k}
               
                 -# find status..for multiples id do what?
-                -# if v.length > 0 #if only one, show status
-                  %div{:class => "identifier_holder_status_" + v.first.status }
-
-                      
-                -# if v.length > 1
-                  %div{:class => "expand_identifier_offsets", :onclick => "showOffsets(this)"}
-                    expand
                 
-                - offset_class = ""
-                - v.each do |vv| #add count? for offsetting?
-                  - needs_review = (vv.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
-                  %div{:class => "identifier status_" + vv.status +  " controlled_" + (board.controls_identifier?(vv)  ? 'yes' : 'no') + needs_review + offset_class, :id => "identifier_" + vv.id.to_s}
-                    - if vv.modified
-                      %div{:class => "identifier_holder_status_" + vv.status }
+                - if v.count == 1
+                  -# ouput the only thing
+                  - needs_review = (v.first.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
+                  %div{:class => "identifier" + " status_" + v.first.status +  " controlled_" + (board.controls_identifier?(v.first)  ? 'yes' : 'no') + needs_review, :id => "identifier_" + v.first.id.to_s}
+                    
+                    - if v.first.modified
+                      %div{:class => "identifier_holder_status_" + v.first.status }
                         = image_tag('status_icons.png')
                     - else
-                      %div{:class => "identifier_holder_status_" }
-                        = image_tag('status_icons.png')                    
-                    %div{:class=> "identifier_title"}
-                      = vv.title.strip
-                    - if offset_class == "" && v.length > 1
-                      %div{:class => "expand_identifers", :onclick => "showOffsets(this)" }
-                        = "+"
-                  - offset_class = " offset "
+                      %div{:class => "identifier_holder_status_not_modified" }
+                        = image_tag('status_icons.png')
                     
-            - identifiers_to_show.each do |is|
-              %div{:class => "identifier_holder " + is}
+                    - if v.first.votes.count > -1
+                      - if v.first.status == "approved"
+                        %div{:class => "finalizer" }
+                          = "F"
+                          - if v.first.find_finalizer_user
+                            = v.first.find_finalizer_user.human_name
+                            = " is finalizing. "
             
-            -# publication.identifiers.each do |identifier|
-              %div{:class => "identifier status_" + identifier.status +  " controlled_" + (board.controls_identifier?(identifier)  ? 'yes' : 'no') + " needs_review_" + "no" , :id => "identifier_" + identifier.id.to_s}
-                = identifier.class::FRIENDLY_NAME
+                      - elsif v.first.status == "submitted"     
+                        %div{:class => "votes" }
+                          = v.first.votes.count
+                          vote count goes here
+                    %div{:class => "identifier_title"}   
+                      = link_to v.first.title.strip, edit_polymorphic_path([publication, v.first])
+                        
+                
+                - elsif v.count > 1
+                  - extra_id_count = extra_id_count + 1;
+                  
+                  
+                  -v.each do |possible_modified|
+                    - if possible_modified.modified
+                      %div{:class => "identifier_holder_status_" + possible_modified.status }
+                        = image_tag('status_icons.png')
+                      %div{:class=> "identifier_title"}                  
+                        = link_to possible_modified.title.strip, edit_polymorphic_path([publication,possible_modified])
+                      - break
+                  
+                  %div{:class => "show_more_ids", :onclick => "showExtraIds( '#{extra_id_count}', this)" }
+                    = image_tag('show_more_ids.png')
+                  
+             
+                  -# make popup for all the ids
+                  %div{:class => "extra_ids", :id => "extra_ids_" + extra_id_count.to_s}
+                  
+                    
+                    - v.each do |extra_id|
+                      %div{:class => "identifier"}
+                        
+                        - if extra_id.modified
+                          %div{:class => "identifier_holder_status_" + extra_id.status }
+                            = image_tag('status_icons.png')
+                        - else
+                          %div{:class => "identifier_holder_status_not_modified" }
+                            = image_tag('status_icons.png')
+                        %div{:class=> "identifier_title"}                  
+                          = link_to extra_id.title.strip, edit_polymorphic_path([publication, extra_id])
+                  
+        
+    
+          
             

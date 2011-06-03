@@ -14,24 +14,26 @@
   border-color: black;
   margin: 2px; }
 
-.publication {
+.publication_title {
   overflow: overflow;
+  top: 0px;
+  left: 0px;
+  width: 200px;
+  height: 20px;
   position: absolute;
-  position: 2px 2px;
   margin: 2px; }
 
 .publication_board_name {
   position: absolute;
   top: 0px;
-  left: -40px;
-  width: 40px; }
+  left: -50px; }
 
 .overview_holder {
   position: absolute;
   width: 20px;
-  height: 20px;
-  top: 2px;
-  left: 180px; }
+  height: 22px;
+  top: 0px;
+  left: 200px; }
 
 .identifier_holder {
   overflow: overflow;
@@ -45,19 +47,19 @@
 
 .HGVMetaIdentifier {
   top: 0px;
-  left: 200px; }
+  left: 220px; }
 
 .DDBIdentifier {
   top: 0px;
-  left: 350px; }
+  left: 370px; }
 
 .HGVTransIdentifier {
   top: 0px;
-  left: 500px; }
+  left: 520px; }
 
 .HGVBiblioIdentifier {
   top: 0px;
-  left: 650px; }
+  left: 670px; }
 
 
 .user_publications_header_holder {
@@ -106,7 +108,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 200px; }
+  left: 220px; }
 
 .user_publications_header_DDBIdentifier {
   overflow: overflow;
@@ -119,7 +121,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 350px; }
+  left: 370px; }
 
 .user_publications_header_HGVTransIdentifier {
   overflow: overflow;
@@ -132,7 +134,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 500px; }
+  left: 520px; }
 
 .user_publications_header_HGVBiblioIdentifier {
   overflow: overflow;
@@ -145,7 +147,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 650px; }
+  left: 670px; }
 
 
 
@@ -183,6 +185,7 @@
   border-style: solid;
   border-color: black;
   top: 0px;
+  top: 0px;
   left: 0px; }
 
 .board_publications_header_overview {
@@ -195,7 +198,8 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 100px; }
+  top: 0px;
+  left: 200px; }
 
 .board_publications_header_HGVMetaIdentifier {
   overflow: overflow;
@@ -207,7 +211,8 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 200px; }
+  top: 0px;
+  left: 220px; }
 
 .board_publications_header_DDBIdentifier {
   overflow: overflow;
@@ -219,7 +224,8 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 326px; }
+  top: 0px;
+  left: 370px; }
 
 .board_publications_header_HGVTransIdentifier {
   overflow: overflow;
@@ -231,7 +237,8 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 452px; }
+  top: 0px;
+  left: 520px; }
 
 .board_publications_header_HGVBiblioIdentifier {
   overflow: overflow;
@@ -243,7 +250,8 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 578px; }
+  top: 0px;
+  left: 670px; }
 
 
 .identifier {
@@ -282,6 +290,9 @@
 .status_archived {
   background-color: white; }
 
+.status_finalizing {
+  background-color: indianred; }
+
 .controlled_yes {
   border-color: red; }
 
@@ -295,8 +306,7 @@
 .identifier_title {
   position: absolute;
   top: 4px;
-  left: 0px;
-  padding: 2px;
+  left: 20px;
   color: black; }
 
 .expand_identifers {
@@ -482,3 +492,27 @@
   float: right;
   width: 20px;
   height: 20px; }
+
+.votes {
+  position: absolute;
+  left: 0px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  overflow: hidden; }
+  .votes:hover {
+    width: 200px;
+    z-index: 100;
+    background-color: red; }
+
+.finalizer {
+  position: absolute;
+  left: 0px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  overflow: hidden; }
+  .finalizer:hover {
+    width: 200px;
+    z-index: 100;
+    background-color: red; }
