@@ -71,7 +71,7 @@
         = f.label "Leiden+"
         = clippy "ddb_identifier_leiden_plus"
         %br
-        = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => (!@identifier.mutable? || @identifier.is_reprinted?), :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
+        = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
       #original_leiden_plus.invisible
         :preserve

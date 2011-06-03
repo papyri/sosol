@@ -113,9 +113,11 @@ class DDBIdentifier < Identifier
           :reprint_in_text => self.title,
           :ddb_hybrid_ref_attribute => self.n_attribute
         )
+      
       original.save!
       self.publication.identifiers << original
       
+      dummy_header = self.add_change_desc(dummy_comment_text, self.publication.owner, dummy_header)
       original.set_xml_content(dummy_header, :comment => dummy_comment_text)
             
       # need to do on originals too
