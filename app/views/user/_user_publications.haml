@@ -1,4 +1,31 @@
 :javascript
+
+  function showExtraIds(ref_number, icon_node)
+  {
+    var node_name = "extra_ids_" + ref_number;
+    //alert(node_name);
+    //$(node_name).style.top = "0px";
+    //$(node_name).style.left = "0px";
+    $(node_name).style.zIndex = "99";
+    //$(node_name).show;
+    
+    
+    //.visibility = "hidden"
+    var img_node = $(icon_node).select('img');
+    
+    if ( $(node_name).style.visibility == "hidden" )
+    {
+      $(node_name).style.visibility = "visible"
+      img_node[0].src = '../images/hide_more_ids.png';
+    }
+    else
+    {
+      $(node_name).style.visibility = "hidden"
+      img_node[0].src = '../images/show_more_ids.png';
+    }
+  }
+  
+  
   function showOffsets(node)
   {
     var dnode = $(node).parentNode.parentNode;
@@ -115,25 +142,32 @@
     return ((atitle < btitle) ? -1 : ((atitle > btitle) ? 1 : 0));
   }
   
-  window.onload = function foo()
+  
+  function hideExtraIds()
   {
-     
-    var offset_nodes = $$('div[class~=offset]');
-    for (var i=0; i< offset_nodes.length; i++)
+    var extra_nodes = $$('div[class~=extra_ids]');
+    for (var i=0; i< extra_nodes.length; i++)
     {
      
-        offset_nodes[i].style.display = 'none';
+        extra_nodes[i].style.visibility = 'hidden';
      
     }
+  
+  }
+  
 
+  window.onload = function local_load()
+  {
+    hideExtraIds();  
   }
   
 
 = stylesheet_link_tag "publication_list"
 
-
+- extra_id_count = 1
 
 %div{:class => "user_publications_header_holder" }
+
   %div{:class => "user_publications_header_title" + " sort_header", :onclick => "sortByTitle()" }
     Title
   %div{:class => "user_publications_header_overview"}
@@ -142,9 +176,17 @@
   - if possible_identifiers.length > 0
   
     - possible_identifiers.each do |pi|
-      %div{:onclick => "sortByIdentifier( '#{pi}' )", :class => "user_publications_header_" + pi  + " sort_header"}
-        = pi
+      %div{:class => "user_publications_header_" + pi }
         
+        
+        %div{:onclick => "sortByStatus('#{pi}', 'editing')", :class => "status_sort_button"}
+          = image_tag('status_editing.png')
+        %div{:onclick => "sortByStatus('#{pi}', 'submitted')", :class => "status_sort_button"}
+          = image_tag('status_submitted.png')        
+        %div{:onclick => "sortByStatus('#{pi}', 'approved')", :class => "status_sort_button"}
+          = image_tag('status_approved.png')        
+        %div{:onclick => "sortByStatus('#{pi}', 'finalized')", :class => "status_sort_button"}
+          = image_tag('status_committed.png')        
     
 %div{:class => "publication_list_holder", :id => "user_publication_list_holder" }
 
@@ -155,9 +197,9 @@
         %div{:class => "publication " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
           = publication.title
         
-          %div{:class => "overview_holder"}
-            = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
-            -#= link_to "Overview", publication
+        %div{:class => "overview_holder"}
+          = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
+          
         - id_set = Set.new(publication.identifiers)
         - id_hash = id_set.classify { |id| id.class.name }
         
@@ -169,22 +211,54 @@
           
             -# find status..for multiples id do what?
             
-            - offset_class = ""
-            - v.each do |vv| #add count? for offsetting?
-              %div{:class => "identifier status_" + vv.status  + offset_class, :id => "identifier_" + vv.id.to_s}
-                - if vv.modified
-                  %div{:class => "identifier_holder_status_" + vv.status }
+            - if v.count == 1
+              -# ouput the only thing
+              %div{:class => "identifier"}
+                
+                - if v.first.modified
+                  %div{:class => "identifier_holder_status_" + v.first.status }
                     = image_tag('status_icons.png')
                 - else
-                  %div{:class => "identifier_holder_status_" }
+                  %div{:class => "identifier_holder_status_not_modified" }
                     = image_tag('status_icons.png')
-                %div{:class=> "identifier_title"}
-                  -#= vv.title.strip
-                  = link_to vv.title.strip, edit_polymorphic_path([publication, vv])
-              - if offset_class == "" && v.length > 1
-                %div{:class => "expand_identifers", :onclick => "showOffsets(this)" }
-                  = "+"
-              - offset_class = " offset "
+                %div{:class=> "identifier_title"}                  
+                  = link_to v.first.title.strip, edit_polymorphic_path([publication, v.first])
+          
+            
+            - elsif v.count > 1
+              - extra_id_count = extra_id_count + 1;
+              
+              
+              -v.each do |possible_modified|
+                - if possible_modified.modified
+                  %div{:class => "identifier_holder_status_" + possible_modified.status }
+                    = image_tag('status_icons.png')
+                  %div{:class=> "identifier_title"}                  
+                    = link_to possible_modified.title.strip, edit_polymorphic_path([publication,possible_modified])
+                  - break
+              
+              %div{:class => "show_more_ids", :onclick => "showExtraIds( '#{extra_id_count}', this)" }
+                = image_tag('show_more_ids.png')
+              
+         
+              -# make popup for all the ids
+              %div{:class => "extra_ids", :id => "extra_ids_" + extra_id_count.to_s}
+              
+                
+                - v.each do |extra_id|
+                  %div{:class => "identifier"}
+                    
+                    - if extra_id.modified
+                      %div{:class => "identifier_holder_status_" + extra_id.status }
+                        = image_tag('status_icons.png')
+                    - else
+                      %div{:class => "identifier_holder_status_not_modified" }
+                        = image_tag('status_icons.png')
+                    %div{:class=> "identifier_title"}                  
+                      = link_to extra_id.title.strip, edit_polymorphic_path([publication, extra_id])
+              
+    
+                
                 
         - identifiers_to_show.each do |is|
           %div{:class => "identifier_holder " + is + " no_data "}

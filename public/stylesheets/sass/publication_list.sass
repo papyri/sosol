@@ -1,13 +1,23 @@
 !active_button_color = #D25F00
 !button_color = gray
 
+!publication_box_content_width = 1000px
+!publication_box_content_height = 22px 
+
+!identifier_box_content_width = 150px
+!identifier_box_content_height = 20px
+
+!identifier_box_width = 150px 
+
+!identifier_box_start_left = 200px
 
 =clip
-  overflow: visible
+  overflow: overflow
+  
   
 #content_body
   //holds the stuff between the header and the footer
-  width: 700px
+  width = !publication_box_content_width
   margin-left: auto
   margin-right: auto
   
@@ -15,8 +25,10 @@
   position: relative
   +clip
   background-color: white
-  width: 700px
-  height: 42px
+  width = !publication_box_content_width
+  //height: 42px
+  //height: 22px
+  height = !publication_box_content_height
   border-width: 2px
   border-style: solid
   border-color: black
@@ -25,52 +37,81 @@
 .publication
   +clip
   position: absolute
-  #background-color: red
-  #width: 200px
-  #border-width: 2px
-  #border-style: solid
-  #border-color: lightgreen
   position: 2px 2px
   margin: 2px
   
 .publication_board_name  
-  font-size: xx-small
-  text-align: left
+  position: absolute
+  top: 0px
+  left: -40px
+  width: 40px
   
 .overview_holder
   position: absolute
   
   width: 20px
-  height: 40px
-  top: 0px
+  //height: 40px
+  height: 20px
+  top: 2px
   left: 180px
+  //left: 60px
+
   
 .identifier_holder
   +clip
   position: absolute
   background-color: lightgray
-  width: 120px
-  height: 40px
+  //width: 120px
+  //height: 22px
+  width = !identifier_box_content_width
+  height = !identifier_box_content_height
   
   border-width: 1px
   border-style: solid
   border-color: black
 
-.HGVMetaIdentifier
+
+
+=HGVMetaIdentifier_position
   top: 0px
-  left: 200px
+  left = !identifier_box_start_left + 0 * !identifier_box_width
+
+=DDBIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 1 * !identifier_box_width
+  
+=HGVTransIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 2 * !identifier_box_width
+  
+=HGVBiblioIdentifier_position
+  top: 0px
+  left = !identifier_box_start_left + 3 * !identifier_box_width
+
+
+.HGVMetaIdentifier
+  +HGVMetaIdentifier_position
+  //top: 0px
+  //left: 200px
+  //left = !identifier_box_start_left + 0 * !identifier_box_width
 
 .DDBIdentifier
-  top: 0px
-  left: 326px
+  +DDBIdentifier_position
+  //top: 0px
+  //left: 326px
+  //left = !identifier_box_start_left + 1 * !identifier_box_width
   
 .HGVTransIdentifier
-  top: 0px
-  left: 452px
+  +HGVTransIdentifier_position
+  //top: 0px
+  //left: 452px
+  //left = !identifier_box_start_left + 2 * !identifier_box_width
   
 .HGVBiblioIdentifier
-  top: 0px
-  left: 578px
+  +HGVBiblioIdentifier_position
+  //top: 0px
+  //left: 578px
+  //left = !identifier_box_start_left + 3 * !identifier_box_width
 
 #----- user publicaitons header--------
 
@@ -78,20 +119,27 @@
   position: relative
   +clip
   background-color: white
-  width: 700px
-  height: 22px
+  //width: 700px
+  //height: 22px
+  
+  width = !publication_box_content_width
+  height = !publication_box_content_height
+  
   border-width: 2px
   border-style: solid
   border-color: black
   margin: 2px
 
 
-=user_publication_header
+=publication_header
   +clip
   position: absolute
   background-color: lightgray
-  width: 120px
-  height: 20px
+  //width: 120px
+  //height: 20px
+  
+  width = !identifier_box_content_width
+  height = !identifier_box_content_height
   
   border-width: 1px
   border-style: solid
@@ -99,6 +147,8 @@
   
   top: 0px
   
+=user_publication_header
+  +publication_header
   
 .user_publications_header_title
   +user_publication_header
@@ -110,19 +160,23 @@
   
 .user_publications_header_HGVMetaIdentifier
   +user_publication_header
-  left: 200px
+  +HGVMetaIdentifier_position
+  //left: 200px
 
 .user_publications_header_DDBIdentifier
   +user_publication_header
-  left: 326px
+  //left: 326px
+  +DDBIdentifier_position
 
 .user_publications_header_HGVTransIdentifier
   +user_publication_header
-  left: 452px
+  //left: 452px
+  +HGVTransIdentifier_position
   
 .user_publications_header_HGVBiblioIdentifier
   +user_publication_header
-  left: 578px
+  //left: 578px
+  +HGVBiblioIdentifier_position
 
 #-----end user publicaitons header--------
 
@@ -140,24 +194,10 @@
   border-color: black
   margin: 2px
 
-.board_publications_header_title
+.board_publications_header_board
   +user_publication_header
-  left: 0px
-  
-.board_publications_header_title
-  +user_publication_header
-  left: 0px
-
-.board_publications_header_title
-  +user_publication_header
-  left: 0px
-
-.board_publications_header_title
-  +user_publication_header
-  left: 0px
-  
-  
-  
+  width: 40px
+  left: -40px
   
 .board_publications_header_title
   +user_publication_header
@@ -189,14 +229,19 @@
 
 .identifier
   +clip
-  background-color: gray
+  background-color: white
   
   border-width: 1px
   border-style: solid
   border-color: black
   
-  width: 118px
-  height: 38px
+  //width: 118px
+  width = !identifier_box_content_width
+  //height: 38px
+  height: 20px
+  
+  position: relative
+  top: -2px //clean up boarders
 
 .offset
   position: relative
@@ -231,7 +276,9 @@
 =status_bar
   +clip
   width: 118px
-  height: 16px
+  //height: 16px
+  height: 4px
+  z-index: 20
   background-image: url("../images/status_back.png")
   background-repeat: no-repeat
   #background-color: coral
@@ -240,8 +287,12 @@
 
   img
     position: absolute
-    top: 0px
+    //top: 0px
+    top: 4px
     left: 0px
+    
+  &:hover
+    height: 22px
 
 .status_icon
   width: 16px
@@ -250,19 +301,27 @@
   overflow: hidden
   position: relative
   
+
 .identifier_title
-  #need to move below status bar
+  //need to move below status bar
   position: absolute
-  top: 16px
+  //top: 16px
+  top: 4px
   left: 0px
   padding: 2px
   color: black
+  
 .expand_identifers
   width: 16px
   height: 16px
   position: absolute
-  top: 0px
-  left: 84px
+  top: 4px
+  left: 96px
+  
+  
+.identifier_holder_status_not_modified
+  +status_bar
+  background-position: -118px 0px
   
 .identifier_holder_status_new
   +status_bar
@@ -299,6 +358,19 @@
   background-color = !button_color
 .sort_header:hover
   background-color = !active_button_color
+  
+    
+.status_sort_button
+  width: 16px
+  height: 20px
+  display: inline
+  overflow: hidden
+  float: left
+  
+  &:hover
+    background-color = !active_button_color
+
+    
 .sort_button
   
   display: inline
@@ -313,3 +385,28 @@
 .sort_button:hover
   background-color = !active_button_color
   cursor: pointer
+  
+.extra_ids
+  position: absolute
+  top: 0px
+  left: -50px
+  border-width: 10px
+  border-style: solid
+  border-color = !active_button_color
+  border-radius: 10px
+  
+  background-color: white
+  padding: 5px
+  margin: 5px
+  
+.show_more_ids
+  //position: absolute
+  //top: 10px
+  //left: 100px
+  //!identifier_box_content_width
+  float: right
+  width: 20px
+  height: 20px
+
+
+  

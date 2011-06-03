@@ -1,22 +1,30 @@
 :javascript
-  function showOffsets(node)
-  {
-    var dnode = $(node).parentNode.parentNode;
-    var offset_nodes = dnode.select('div[class~=offset]');
-    for (var i=0; i< offset_nodes.length; i++)
-    {
-      if (offset_nodes[i].style.display == 'none')
-      {
-        offset_nodes[i].style.display = 'block';
-        offset_nodes[i].style.zIndex = "5";
-      }
-      else
-      {
-        offset_nodes[i].style.display = 'none';
-      }
-    }
 
+  function showExtraIds(ref_number, icon_node)
+  {
+    var node_name = "extra_ids_" + ref_number;
+    //alert(node_name);
+    //$(node_name).style.top = "0px";
+    //$(node_name).style.left = "0px";
+    $(node_name).style.zIndex = "99";
+    //$(node_name).show;
+    
+    
+    //.visibility = "hidden"
+    var img_node = $(icon_node).select('img');
+    
+    if ( $(node_name).style.visibility == "hidden" )
+    {
+      $(node_name).style.visibility = "visible"
+      img_node[0].src = '../images/hide_more_ids.png';
+    }
+    else
+    {
+      $(node_name).style.visibility = "hidden"
+      img_node[0].src = '../images/show_more_ids.png';
+    }
   }
+  
   
   function sortByNeedsReview()
   {
@@ -70,22 +78,28 @@
 
   }
   
-  window.onload = function foo()
+  
+  function hideExtraIds()
   {
-     
-    var offset_nodes = $$('div[class~=offset]');
-    for (var i=0; i< offset_nodes.length; i++)
+    var extra_nodes = $$('div[class~=extra_ids]');
+    for (var i=0; i< extra_nodes.length; i++)
     {
      
-        offset_nodes[i].style.display = 'none';
+      extra_nodes[i].style.visibility = 'hidden';
      
     }
-
+  
   }
   
 
-= stylesheet_link_tag "publication_list"
+  window.onload = function local_load()
+  {
+    hideExtraIds();  
+  }
+  
+  
 
+= stylesheet_link_tag "publication_list"
 
 
 - if boards.length > 0
@@ -96,23 +110,45 @@
       %div{:class => "sort_button", :onclick => "sortByBoard( '#{b.friendly_name}' )" }
         = "Sort by " + b.friendly_name  + " board."
         
-  
     %div{:class => "board_publications_header_holder" }
+     
       %div{:class => "board_publications_header_title", :onclick => "" }
         Title
       %div{:class => "board_publications_header_overview"}
         Overview
       - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
       - if possible_identifiers.length > 0
-      
+
         - possible_identifiers.each do |pi|
           %div{:onclick => "", :class => "board_publications_header_" + pi }
             = pi
             
+   
+  %div{:class => "user_publications_header_holder" }
+    %div{:class => "board_publications_header_board" + " sort_header", :onclick => "sortByBoard()" }
+      Board
+    %div{:class => "user_publications_header_title" + " sort_header", :onclick => "sortByTitle()" }
+      Title
+    %div{:class => "user_publications_header_overview"}
+      Overview
+    - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    - if possible_identifiers.length > 0
     
-  
-  
-  
+      - possible_identifiers.each do |pi|
+        %div{:class => "user_publications_header_" + pi }
+          
+          
+          %div{:onclick => "sortByStatus('#{pi}', 'editing')", :class => "status_sort_button"}
+            = image_tag('status_editing.png')
+          %div{:onclick => "sortByStatus('#{pi}', 'submitted')", :class => "status_sort_button"}
+            = image_tag('status_submitted.png')        
+          %div{:onclick => "sortByStatus('#{pi}', 'approved')", :class => "status_sort_button"}
+            = image_tag('status_approved.png')        
+          %div{:onclick => "sortByStatus('#{pi}', 'finalized')", :class => "status_sort_button"}
+            = image_tag('status_committed.png')        
+          = eval pi + "::FRIENDLY_NAME"
+      
+
     
 
   %div{:class => "publication_list_holder", :id => "board_publication_list_holder" }
@@ -127,7 +163,7 @@
             - approved_publications.delete(ap)
          
       - board.publications.each do |publication|
-        - if publication.status != 'archived'
+        - if publication.status != 'archived' && publication.status != 'committed'
           %div{:class => "publication_holder " + board.friendly_name, :id => "publication_holder_" + board.friendly_name }
             %div{:class => "publication_board_name"}
               = board.friendly_name
@@ -151,7 +187,67 @@
             - id_hash.each_pair do |k,v|
               - identifiers_to_show.delete(k)
               
+   
+   
+   
+   
+            -#/////////////////
+   
+              %div{:class => "identifier_holder " + k}
+            
+              -# find status..for multiples id do what?
               
+              - if v.count == 1
+                -# ouput the only thing
+                - needs_review = (v.needs_reviewing?(@current_user)  ? ' needs_review ' : '')
+                %div{:class => "identifier" + " status_" + v.status +  " controlled_" + (board.controls_identifier?(v)  ? 'yes' : 'no') + needs_review, :id => "identifier_" + v.id.to_s}
+                  
+                  - if v.first.modified
+                    %div{:class => "identifier_holder_status_" + v.first.status }
+                      = image_tag('status_icons.png')
+                  - else
+                    %div{:class => "identifier_holder_status_not_modified" }
+                      = image_tag('status_icons.png')
+                  %div{:class=> "identifier_title"}                  
+                    = link_to v.first.title.strip, edit_polymorphic_path([publication, v.first])
+            
+              
+              - elsif v.count > 1
+                - extra_id_count = extra_id_count + 1;
+                
+                
+                -v.each do |possible_modified|
+                  - if possible_modified.modified
+                    %div{:class => "identifier_holder_status_" + possible_modified.status }
+                      = image_tag('status_icons.png')
+                    %div{:class=> "identifier_title"}                  
+                      = link_to possible_modified.title.strip, edit_polymorphic_path([publication,possible_modified])
+                    - break
+                
+                %div{:class => "show_more_ids", :onclick => "showExtraIds( '#{extra_id_count}', this)" }
+                  = image_tag('show_more_ids.png')
+                
+           
+                -# make popup for all the ids
+                %div{:class => "extra_ids", :id => "extra_ids_" + extra_id_count.to_s}
+                
+                  
+                  - v.each do |extra_id|
+                    %div{:class => "identifier"}
+                      
+                      - if extra_id.modified
+                        %div{:class => "identifier_holder_status_" + extra_id.status }
+                          = image_tag('status_icons.png')
+                      - else
+                        %div{:class => "identifier_holder_status_not_modified" }
+                          = image_tag('status_icons.png')
+                      %div{:class=> "identifier_title"}                  
+                        = link_to extra_id.title.strip, edit_polymorphic_path([publication, extra_id])
+                
+      
+    
+            -#/////////////////  
+            -#         
               %div{:class => "identifier_holder " + k}
               
                 -# find status..for multiples id do what?
