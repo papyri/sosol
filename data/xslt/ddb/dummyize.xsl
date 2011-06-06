@@ -40,6 +40,9 @@
   
   <xsl:template match="tei:div[@type='edition']"/>
   
+  <!-- Delete all commentary divs -->
+  <xsl:template match="tei:div[@type='commentary']"/>
+  
   <!-- Add <ref> to point to reprint -->
   <xsl:template match="/tei:TEI/tei:text/tei:body/tei:head[@xml:lang='en']">
     <xsl:copy>

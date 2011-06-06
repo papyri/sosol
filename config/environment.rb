@@ -52,7 +52,7 @@ Rails::Initializer.run do |config|
   
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   
-  config.gem 'hoptoad_notifier', :version => ">= 2.3.5"
+  config.gem 'hoptoad_notifier', :version => ">= 2.4.10"
   
   config.gem 'grit',
     :lib     => 'grit',

@@ -113,9 +113,11 @@ class DDBIdentifier < Identifier
           :reprint_in_text => self.title,
           :ddb_hybrid_ref_attribute => self.n_attribute
         )
+      
       original.save!
       self.publication.identifiers << original
       
+      dummy_header = self.add_change_desc(dummy_comment_text, self.publication.owner, dummy_header)
       original.set_xml_content(dummy_header, :comment => dummy_comment_text)
             
       # need to do on originals too
@@ -153,7 +155,8 @@ class DDBIdentifier < Identifier
   def update_commentary(line_id, reference, comment_content = '', original_item_id = '', original_comment_content = '', delete_comment = false)
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(self.xml_content)),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
           %w{data xslt ddb update_commentary.xsl})),
         :line_id => line_id,
@@ -162,6 +165,20 @@ class DDBIdentifier < Identifier
         :original_item_id => original_item_id,
         :original_content => original_comment_content,
         :delete_comment => (delete_comment ? 'true' : '')
+      )
+    
+    self.set_xml_content(rewritten_xml, :comment => '')
+  end
+  
+  def update_frontmatter_commentary(commentary_content, delete_commentary = false)
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(self.xml_content)),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt ddb update_frontmatter_commentary.xsl})),
+        :content => commentary_content,
+        :delete_commentary => (delete_commentary ? 'true' : '')
       )
     
     self.set_xml_content(rewritten_xml, :comment => '')
@@ -207,17 +224,23 @@ class DDBIdentifier < Identifier
   
   # Returns a String of the SHA1 of the commit
   def set_leiden_plus(leiden_plus_content, comment)
+    
+    pp_leiden = preprocess_leiden(leiden_plus_content)
+    
     # transform back to XML
     xml_content = self.leiden_plus_to_xml(
-      leiden_plus_content)
+      pp_leiden)
     # commit xml to repo
     self.set_xml_content(xml_content, :comment => comment)
   end
   
+  def reprinted_in
+    return REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/body/head/ref[@type='reprint-in']/@n")
+  end
+  
   def is_reprinted?
-    xpath_result = REXML::XPath.first(REXML::Document.new(self.xml_content),
-      "/TEI/text/body/head/ref[@type='reprint-in']")
-    return xpath_result.nil? ? false : true
+    return reprinted_in.nil? ? false : true
   end
   
   # Override REXML::Attribute#to_string so that attributes are defined
@@ -296,5 +319,41 @@ class DDBIdentifier < Identifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt pn start-div-portlet.xsl})),
         parameters)
+  end
+  
+  def preprocess_leiden(preprocessed_leiden)
+    # mass substitute alternate keyboard characters for Leiden+ grammar characters
+    
+    # consistent LT symbol (<)
+    # \u2039 \u2329 \u27e8 \u3008 to \u003c')
+    preprocessed_leiden.gsub!(/[‹〈⟨〈]{1}/,'<')
+    
+    # consistent GT symbol (>)
+    # \u203a \u232a \u27e9 \u3009 to \u003e')
+    preprocessed_leiden.gsub!(/[›〉⟩〉]{1}/,'>')
+    
+    # consistent Left square bracket (〚)
+    # \u27e6 to \u301a')
+    preprocessed_leiden.gsub!(/⟦/,'〚')
+    
+    # consistent Right square bracket (〛)
+    # \u27e7 to \u301b')
+    preprocessed_leiden.gsub!(/⟧/,'〛')
+    
+    # consistent macron (¯)
+    # \u02c9 to \u00af')
+    preprocessed_leiden.gsub!(/ˉ/,'¯')
+    
+    # consistent hyphen in linenumbers (-)
+    # immediately preceded by a period 
+    # \u2010 \u2011 \u2012 \u2013 \u2212 \u10191 to \u002d')
+    preprocessed_leiden.gsub!(/\.{1}[‐‑‒–−𐆑]{1}/,'.-')
+    
+    # consistent hyphen in gap ranges (-)
+    # between 2 numbers 
+    # \u2010 \u2011 \u2012 \u2013 \u2212 \u10191 to \u002d')
+    preprocessed_leiden.gsub!(/(\d+)([‐‑‒–−𐆑]{1})(\d+)/,'\1-\3')
+    
+    return preprocessed_leiden
   end
 end
