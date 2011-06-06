@@ -1,0 +1,31 @@
+#biblio
+  - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
+    = f.error_messages
+    = debug(f)
+    = f.text_field :title
+    = f.text_field :type
+    = f.text_field :subtype
+    = f.text_field :language
+    = f.text_field :bp
+    = f.text_field :bpOld
+    = f.text_field :idp
+    = f.text_field :isbn
+    = f.text_field :sd
+    = f.text_field :date
+    = f.text_field :edition
+    = f.text_field :paginationFrom
+    = f.text_field :paginationTo
+    = f.text_field :paginationTotal
+    = f.text_field :paginationPreface
+    = f.text_field :illustration
+    = f.text_field :note
+    = f.text_field :reedition
+    = debug(@identifier[:authorList])
+    = debug(@identifier[:editorList])
+    = debug(@identifier[:publisherList])
+    = debug(@identifier[:revueCritiqueList])
+    = debug(@identifier[:relatedArticleList])
+
+
+= javascript_include_tag 'biblio'
+= javascript_include_tag 'confirm'
