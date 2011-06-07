@@ -5,5 +5,5 @@ vendor/plugins/rxsugar:
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/r-8-8/example-p5-xslt/
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/r-8-9/example-p5-xslt/
   :revision: 1391
