@@ -104,6 +104,22 @@ class HGVTransIdentifier < HGVIdentifier
     self.set_xml_content(rewritten_xml, :comment => "Update translation with stub for @xml:lang='#{lang}'")
   end
   
+  def after_rename(options = {})
+    if options[:update_header]
+      rewritten_xml =
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(content),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            %w{data xslt translation update_header.xsl})),
+          :filename_text => self.to_components.last,
+          :reprint_from_text => options[:set_dummy_header] ? original.title : '',
+          :reprint_ref_attribute => options[:set_dummy_header] ? original.to_components.last : ''
+        )
+    
+      self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
+    end
+  end
+  
   def preview
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
