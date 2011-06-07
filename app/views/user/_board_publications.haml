@@ -51,32 +51,179 @@
 
   }
   
-
+  var board_sort_id = 0;
   function sortByBoard(board_name)
+  {
+    //---get all the existing board names
+    var list_node = $('board_publication_list_holder');
+    //var select_statement = 'div[class~=publication_holder ' + board_name + ']';
+    //var board_nodes = list_node.select(select_statement);//'div[class~=publication_holder Text]');
+    
+    var select_statement = 'div[class~=publication_holder] div[class~=publication_board_name]';
+    var board_nodes = list_node.select(select_statement);
+    
+    var board_ids = new Array();
+    for (var i=0; i < board_nodes.length; i++)
+    {
+      var class_name = board_nodes[i].getAttribute("class");
+      var board_id = class_name.match(/board_id_[^"' ]*/);
+
+      board_ids.push( board_id[0] );
+    }
+    
+    var id_exists = false;
+    var unique_board_ids = new Array();
+    //---determine unique board names
+    for (var i=0; i< board_ids.length; i++)
+    {
+      id_exist = false;
+      for (id in unique_board_ids)
+      {
+        if (id == board_ids[i])
+        {
+          id_exist = true;
+        }
+      }
+      if (!id_exist)
+      {
+        unique_board_ids.push( board_ids[i] );
+      }
+   
+    }
+    
+    unique_board_ids.sort();
+    board_sort_id++;
+    if (board_sort_id >= unique_board_ids.length)
+    {
+      board_sort_id = 0;
+    }
+    var resort_array = new Array();
+    for (var i=0; i<unique_board_ids.length; i++)
+    {
+      var index = board_sort_id + unique_board_ids.length;
+      if (index >= unique_board_ids.length)
+      {
+        index = index - unique_board_ids.length;
+      }
+      resort_array.push( unique_board_ids[index] );
+    }
+    unique_board_ids = resort_array;
+    //pull out each id in some type of order
+    //sort unique board ids in numerical order
+    //use count to determine the possible sort order
+    
+    
+    //grab board names and put back in list in reverse order
+    for (var id_index=0; id_index < unique_board_ids.length; id_index++)
+    {
+        var board_id = unique_board_ids[id_index];
+        select_statement = 'div[class~=publication_holder] div[class~=publication_board_name ' + board_id +']';
+        board_nodes = list_node.select(select_statement);
+
+  
+        var new_list = new Array();
+    
+        for (var i=0; i < board_nodes.length; i++)
+        {
+          new_list.push(board_nodes[i].parentNode);
+          new_list[i].remove;
+        }
+    
+        for (var i= new_list.length - 1; i >=0;i--)
+        {
+          list_node.insert( {'top': new_list[i] } );
+        }
+    
+    }
+
+  }
+  
+
+
+
+  /////////////////////
+  //TODO same as in user publications, should combine
+  var title_direction = 1;
+  function sortByTitle()
   {
     
     var list_node = $('board_publication_list_holder');
-    var select_statement = 'div[class~=publication_holder ' + board_name + ']';
-    var board_nodes = list_node.select(select_statement);//'div[class~=publication_holder Text]');
+    
+    var select_statement = 'div[class~=publication_holder]';
+    
+    var publication_nodes = list_node.select(select_statement);
+    
     var new_list = new Array();
-    for (var i=0; i < board_nodes.length; i++)
+    for (var i=0; i < publication_nodes.length; i++)
     {
-      board_nodes[i].remove;//dont need to do
-      new_list.push(board_nodes[i]);
+      new_list.push(publication_nodes[i]);
       new_list[i].remove;
     }
         
-    //for (var i=0;i<new_list.length; i++)
-    {
-    //  list_node.insert( {'top': new_list[i] } );
-    }
-    
+    if (title_direction % 2)    
+      new_list.sort(titleSort);   
+    else
+      new_list.sort(titleSortReverse);
+      
+    title_direction = title_direction + 1;
+       
     for (var i= new_list.length - 1; i >=0;i--)
     {
       list_node.insert( {'top': new_list[i] } );
     }
 
   }
+  
+  function titleSortReverse(a,b)
+  {
+    return -1 * titleSort(a,b);
+  }
+  
+  function titleSort(a,b)
+  {
+    var atitle = a.select('div[class~=publication_title]')[0].firstChild.nodeValue;
+    var btitle = b.select('div[class~=publication_title]')[0].firstChild.nodeValue;
+    //alert (atitle + " " + btitle);
+    return ((atitle < btitle) ? -1 : ((atitle > btitle) ? 1 : 0));
+  }
+  /////////
+
+
+  function sortByStatus(identifier_name, status)
+  {
+    
+    var list_node = $('board_publication_list_holder');
+
+    var select_statement = 'div[class~=identifier_holder ' + identifier_name + '] div[class~=identifier status_' + status + ']';
+    
+    var identifier_nodes = list_node.select(select_statement);
+    
+    //alert(status + " found " + identifier_nodes.length);
+    //just pull them out of the list, then reinsert them at the top
+    var new_list = new Array();
+    for (var i=0; i < identifier_nodes.length; i++)
+    {
+   //identifier_nodes[i].parentNode.remove() ;
+      new_list.push(identifier_nodes[i].parentNode.parentNode);
+      new_list[i].remove();
+    }
+        
+        
+    //could sort here
+     
+    
+    
+        
+    for (var i= new_list.length - 1; i >=0;i--)
+    { 
+      list_node.insert( {'top': new_list[i] } );
+    }
+    
+    
+    
+
+  }
+
   
   
   function hideExtraIds()
@@ -104,26 +251,7 @@
 - extra_id_count = 0
 
 - if boards.length > 0
-  %div
-    %div{:class => "board_publications_header_review" + " sort_button", :onclick => "sortByNeedsReview()" }
-      Sort by Needs Review
-    - boards.each do |b|
-      %div{:class => "sort_button", :onclick => "sortByBoard( '#{b.friendly_name}' )" }
-        = "Sort by " + b.friendly_name  + " board."
-        
-    %div{:class => "board_publications_header_holder" }
-     
-      %div{:class => "board_publications_header_title", :onclick => "" }
-        Title
-      %div{:class => "board_publications_header_overview"}
-        Overview
-      - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-      - if possible_identifiers.length > 0
 
-        - possible_identifiers.each do |pi|
-          %div{:onclick => "", :class => "board_publications_header_" + pi }
-            = pi
-            
    
   %div{:class => "user_publications_header_holder" }
     %div{:class => "board_publications_header_board" + " sort_header", :onclick => "sortByBoard()" }
@@ -145,7 +273,7 @@
             = image_tag('status_submitted.png')        
           %div{:onclick => "sortByStatus('#{pi}', 'approved')", :class => "status_sort_button"}
             = image_tag('status_approved.png')        
-          %div{:onclick => "sortByStatus('#{pi}', 'finalized')", :class => "status_sort_button"}
+          %div{:onclick => "sortByStatus('#{pi}', 'committed')", :class => "status_sort_button"}
             = image_tag('status_committed.png')        
           = eval pi + "::FRIENDLY_NAME"
       
@@ -179,7 +307,7 @@
       - board_and_finalizing_publications.each do |publication|
         - if publication.status != 'archived' && publication.status != 'committed'
           %div{:class => "publication_holder " + board.friendly_name, :id => "publication_holder_" + board.friendly_name }
-            %div{:class => "publication_board_name"}
+            %div{:class => "publication_board_name board_id_" + board.id.to_s }
               = board.friendly_name
             %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
               - if publication.status == 'finalizing'

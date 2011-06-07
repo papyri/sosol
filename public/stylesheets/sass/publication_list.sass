@@ -5,7 +5,9 @@
 !publication_box_content_height = 22px 
 
 !publication_board_name_width = 50px
+
 !overview_width = 20px
+
 !publication_title_width = 200px
 !publication_title_height = 20px
 
@@ -14,7 +16,7 @@
 
 !identifier_box_width = 150px 
 
-!identifier_box_start_left = !publication_title_width + !overview_width
+!identifier_box_start_left = !publication_board_name_width + !publication_title_width + !overview_width
 
 !votes_width = 20px
 
@@ -23,16 +25,22 @@
 
 =publication_board_name_position
   top: 0px
-  left: -50px
+  left: 0px
   
 =publication_title_position
   top: 0px
-  left: 0px
+  left = !publication_board_name_width 
   
 =overview_position
   top: 0px
-  left = !publication_title_width
+  left = !publication_board_name_width + !publication_title_width
   
+  
+=overview_header_position
+  top: 0px
+  left = !publication_board_name_width + !identifier_box_content_width
+  
+
 =HGVMetaIdentifier_position
   top: 0px
   left = !identifier_box_start_left + 0 * !identifier_box_width
@@ -166,12 +174,15 @@
   
 .user_publications_header_title
   +user_publication_header
-  left: 0px
+  //left: 0px
+  left = !publication_board_name_width
   
 .user_publications_header_overview
-  +user_publication_header
-  left: 100px
-  
+  width = !overview_width
+  height = !publication_box_content_height
+  +overview_header_position 
+  position: absolute
+
 .user_publications_header_HGVMetaIdentifier
   +user_publication_header
   +HGVMetaIdentifier_position
@@ -209,16 +220,21 @@
   margin: 2px
 
 .board_publications_header_board
-  +user_publication_header
-  width: 40px
-  left: -40px
+  //+user_publication_header
+  width = !publication_board_name_width
+  height = !publication_box_content_height
+  +publication_board_name_position
   
 .board_publications_header_title
-  +user_publication_header
+  //+user_publication_header
+  width = !publication_title_width
+  height = !publication_box_content_height
   +publication_title_position
   
 .board_publications_header_overview
-  +user_publication_header
+  //+user_publication_header
+  width = !overview_width
+  height = !publication_box_content_height
   +overview_position 
   
 .board_publications_header_HGVMetaIdentifier
@@ -432,17 +448,19 @@
   +votes_position
   
   width = !votes_width
-  height: 20px
+  height: 18px
   //z-index: 100
   //background-color: green
   
   overflow: hidden
-  
+  color: white
+  background-color: black
   
   &:hover
     width: 200px
     z-index: 100
-    background-color: red
+    color: black
+    background-color: white
   
 .votes
   +votes_and_finalizer

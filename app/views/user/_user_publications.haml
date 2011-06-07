@@ -26,25 +26,6 @@
   }
   
   
-  function showOffsets(node)
-  {
-    var dnode = $(node).parentNode.parentNode;
-    var offset_nodes = dnode.select('div[class~=offset]');
-    for (var i=0; i< offset_nodes.length; i++)
-    {
-      if (offset_nodes[i].style.display == 'none')
-      {
-        offset_nodes[i].style.display = 'block';
-        offset_nodes[i].style.zIndex = "5";
-      }
-      else
-      {
-        offset_nodes[i].style.display = 'none';
-      }
-    }
-
-  }
-  
   function sortByNeedsReview()
   {
     //remove needs review divs
@@ -104,14 +85,14 @@
     
     var list_node = $('user_publication_list_holder');
     
-    var select_statement = 'div[class~=publication]';
+    var select_statement = 'div[class~=publication_holder]';
     
     var publication_nodes = list_node.select(select_statement);
     
     var new_list = new Array();
     for (var i=0; i < publication_nodes.length; i++)
     {
-      new_list.push(publication_nodes[i].parentNode);
+      new_list.push(publication_nodes[i]);
       new_list[i].remove;
     }
         
@@ -136,11 +117,35 @@
   
   function titleSort(a,b)
   {
-    var atitle = a.select('div[class~=publication]')[0].firstChild.nodeValue;
-    var btitle = b.select('div[class~=publication]')[0].firstChild.nodeValue;
+    var atitle = a.select('div[class~=publication_title]')[0].firstChild.nodeValue;
+    var btitle = b.select('div[class~=publication_title]')[0].firstChild.nodeValue;
     //alert (atitle + " " + btitle);
     return ((atitle < btitle) ? -1 : ((atitle > btitle) ? 1 : 0));
   }
+  
+  
+  function sortByStatus(identifier_name, status)
+  {
+    var list_node = $('user_publication_list_holder');
+    var select_statement = 'div[class~=identifier_holder ' + identifier_name + '] div[class~=identifier status_' + status + ']';
+    var identifier_nodes = list_node.select(select_statement);
+  
+    //just pull them out of the list, then reinsert them at the top
+    var new_list = new Array();
+    for (var i=0; i < identifier_nodes.length; i++)
+    {
+      new_list.push(identifier_nodes[i].parentNode.parentNode);
+      new_list[i].remove();
+    }
+
+    //could sort here
+        
+    for (var i= new_list.length - 1; i >=0;i--)
+    { 
+      list_node.insert( {'top': new_list[i] } );
+    }
+  }
+  
   
   
   function hideExtraIds()
@@ -185,7 +190,7 @@
           = image_tag('status_submitted.png')        
         %div{:onclick => "sortByStatus('#{pi}', 'approved')", :class => "status_sort_button"}
           = image_tag('status_approved.png')        
-        %div{:onclick => "sortByStatus('#{pi}', 'finalized')", :class => "status_sort_button"}
+        %div{:onclick => "sortByStatus('#{pi}', 'committed')", :class => "status_sort_button"}
           = image_tag('status_committed.png')        
     
 %div{:class => "publication_list_holder", :id => "user_publication_list_holder" }
@@ -213,8 +218,13 @@
             
             - if v.count == 1
               -# ouput the only thing
-              %div{:class => "identifier"}
+              - if v.first.modified
+                - div_status = " status_" + v.first.status
+              - else
+                - div_status = "_status_not_modified"
                 
+              %div{:class => "identifier" + div_status }
+             
                 - if v.first.modified
                   %div{:class => "identifier_holder_status_" + v.first.status }
                     = image_tag('status_icons.png')
