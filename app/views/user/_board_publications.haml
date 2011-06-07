@@ -365,7 +365,9 @@
                       - elsif v.first.status == "submitted"     
                         %div{:class => "votes" }
                           = v.first.votes.count
-                          vote count goes here
+                          = " votes: "
+                          - v.first.votes.each do |vote|
+                            = vote.choice + " " 
                     %div{:class => "identifier_title"}   
                       = link_to v.first.title.strip, edit_polymorphic_path([publication, v.first])
                         
