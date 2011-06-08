@@ -17,7 +17,7 @@
 .publication_title {
   overflow: overflow;
   top: 0px;
-  left: 0px;
+  left: 50px;
   width: 200px;
   height: 20px;
   position: absolute;
@@ -26,14 +26,14 @@
 .publication_board_name {
   position: absolute;
   top: 0px;
-  left: -50px; }
+  left: 0px; }
 
 .overview_holder {
   position: absolute;
   width: 20px;
   height: 22px;
   top: 0px;
-  left: 200px; }
+  left: 250px; }
 
 .identifier_holder {
   overflow: overflow;
@@ -47,19 +47,19 @@
 
 .HGVMetaIdentifier {
   top: 0px;
-  left: 220px; }
+  left: 270px; }
 
 .DDBIdentifier {
   top: 0px;
-  left: 370px; }
+  left: 420px; }
 
 .HGVTransIdentifier {
   top: 0px;
-  left: 520px; }
+  left: 570px; }
 
 .HGVBiblioIdentifier {
   top: 0px;
-  left: 670px; }
+  left: 720px; }
 
 
 .user_publications_header_holder {
@@ -83,19 +83,14 @@
   border-style: solid;
   border-color: black;
   top: 0px;
-  left: 0px; }
+  left: 50px; }
 
 .user_publications_header_overview {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
+  width: 20px;
+  height: 22px;
   top: 0px;
-  left: 100px; }
+  left: 200px;
+  position: absolute; }
 
 .user_publications_header_HGVMetaIdentifier {
   overflow: overflow;
@@ -108,7 +103,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 220px; }
+  left: 270px; }
 
 .user_publications_header_DDBIdentifier {
   overflow: overflow;
@@ -121,7 +116,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 370px; }
+  left: 420px; }
 
 .user_publications_header_HGVTransIdentifier {
   overflow: overflow;
@@ -134,7 +129,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 520px; }
+  left: 570px; }
 
 .user_publications_header_HGVBiblioIdentifier {
   overflow: overflow;
@@ -147,7 +142,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 670px; }
+  left: 720px; }
 
 
 
@@ -163,43 +158,22 @@
   margin: 2px; }
 
 .board_publications_header_board {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
-  top: 0px;
-  width: 40px;
-  left: -40px; }
-
-.board_publications_header_title {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
-  top: 0px;
+  width: 50px;
+  height: 22px;
   top: 0px;
   left: 0px; }
 
+.board_publications_header_title {
+  width: 200px;
+  height: 22px;
+  top: 0px;
+  left: 50px; }
+
 .board_publications_header_overview {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
+  width: 20px;
+  height: 22px;
   top: 0px;
-  top: 0px;
-  left: 200px; }
+  left: 250px; }
 
 .board_publications_header_HGVMetaIdentifier {
   overflow: overflow;
@@ -212,7 +186,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 220px; }
+  left: 270px; }
 
 .board_publications_header_DDBIdentifier {
   overflow: overflow;
@@ -225,7 +199,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 370px; }
+  left: 420px; }
 
 .board_publications_header_HGVTransIdentifier {
   overflow: overflow;
@@ -238,7 +212,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 520px; }
+  left: 570px; }
 
 .board_publications_header_HGVBiblioIdentifier {
   overflow: overflow;
@@ -251,7 +225,7 @@
   border-color: black;
   top: 0px;
   top: 0px;
-  left: 670px; }
+  left: 720px; }
 
 
 .identifier {
@@ -498,21 +472,27 @@
   left: 0px;
   top: 4px;
   width: 20px;
-  height: 20px;
-  overflow: hidden; }
+  height: 18px;
+  overflow: hidden;
+  color: white;
+  background-color: black; }
   .votes:hover {
     width: 200px;
     z-index: 100;
-    background-color: red; }
+    color: black;
+    background-color: white; }
 
 .finalizer {
   position: absolute;
   left: 0px;
   top: 4px;
   width: 20px;
-  height: 20px;
-  overflow: hidden; }
+  height: 18px;
+  overflow: hidden;
+  color: white;
+  background-color: black; }
   .finalizer:hover {
     width: 200px;
     z-index: 100;
-    background-color: red; }
+    color: black;
+    background-color: white; }
