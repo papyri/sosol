@@ -128,21 +128,27 @@ class DdbIdentifiersController < IdentifiersController
     wrapped_commentary =  @xsugar.wrap_commentary_sugar(params[:content])
     #puts "wrapped sugar " + wrapped_commentary
     
-    new_content = @xsugar.non_xml_to_xml(wrapped_commentary)
-    #puts "wrapped xml" + new_content
-    
-    new_content = @xsugar.unwrap_commentary_xml(new_content)
-    
-    #@identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
-    #puts "xml to insert " + new_content
-    
-    @identifier.update_commentary(params[:line_id], params[:reference], new_content, params[:original_item_id], params[:original_content])
-    
-    
-    flash[:notice] = "File updated with new commentary."
-    
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :commentary)
+    begin
+      new_content = @xsugar.non_xml_to_xml(wrapped_commentary)
+      
+      new_content = @xsugar.unwrap_commentary_xml(new_content)
+
+      #@identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
+      #puts "xml to insert " + new_content
+
+      @identifier.update_commentary(params[:line_id], params[:reference], new_content, params[:original_item_id], params[:original_content])
+
+
+      flash[:notice] = "File updated with new commentary."
+
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :commentary)
+    rescue RXSugar::NonXMLParseError => parse_error
+      flash[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
+      
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :commentary)
+    end
   end
   
   def update_frontmatter_commentary
@@ -154,38 +160,6 @@ class DdbIdentifiersController < IdentifiersController
     
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :commentary)
-  end
-  
-  
-  def commentary_xml_to_sugar()
-    #puts "----commentary_xml_to_sugar begin-----"
-    xsugar = RXSugar::JRubyHelper::CommentaryRXSugarProxy.new();   
-    #puts "incomming is" + params[:commentary_xml]
-     
-    wrapped_xml = xsugar.wrap_commentary_xml(params[:commentary_xml])
-    #puts "wrapped xml is: " + wrapped_xml
-    
-    begin
-      wrapped_sugar_text = xsugar.xml_to_non_xml( wrapped_xml )
-
-    rescue => e
-      wrapped_sugar_text = e.message
-      render :text => "Failed to parse xml to grammar. To edit you must go to the XML view.\n" + e.message + "\nxml is:\n" + params[:commentary_xml]
-      return
-    end
-    puts "wrapped sugar text is: " + wrapped_sugar_text
-    
-    
-    begin
-      sugar_text = xsugar.unwrap_commentary_sugar(wrapped_sugar_text)
-    rescue
-      sugar_text = "error"
-    end
-  
-    puts "sugar text is: " + sugar_text
-    
-    puts "====commentary_xml_to_sugar end====="
-    render :text => sugar_text
   end
   
   def delete_frontmatter_commentary
