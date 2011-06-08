@@ -177,7 +177,7 @@ class Board < ActiveRecord::Base
                   comment_text += comment.reason 
                 end
                 if comment.identifier
-                  comment_text += " on " + comment.identifier.class::FRIENDLY_NAME
+                  comment_text += " on #{comment.identifier.title} (#{comment.identifier.class::FRIENDLY_NAME})"
                 end
                 if comment.user && comment.user.name
                   comment_text += " by " + comment.user.name 
@@ -193,12 +193,9 @@ class Board < ActiveRecord::Base
         end
   			#owner
   			#status
-        friendly_name = ""
-        email_identifiers.each do |ec|
-          friendly_name += ec.class::FRIENDLY_NAME
-        end
+        identifier_titles = email_identifiers.collect{|ei| ei.title}.join('; ')
         
-        subject_line = publication.title + " " + friendly_name + "-" + when_to_send
+        subject_line = publication.title + " " + identifier_titles + "-" + when_to_send
   			
   			addresses.each do |address|
   				if address && address.strip != ""
