@@ -7,9 +7,11 @@
   <xsl:template name="type">
     <xsl:param name="type" />
     <xsl:param name="subtype" />
+    <xsl:param name="language" />
     
     <xsl:variable name="typeSanitised" select="normalize-space($type)" />
     <xsl:variable name="subtypeSanitised" select="normalize-space($subtype)" />
+    <xsl:variable name="languageSanitised" select="normalize-space($language)" />
     
     <xsl:if test="string($typeSanitised)">
       <small>
@@ -18,6 +20,10 @@
           <xsl:if test="string($subtypeSanitised)">
             <xsl:text>/</xsl:text>
             <xsl:value-of select="$subtypeSanitised" />
+          </xsl:if>
+          <xsl:if test="string($languageSanitised)">
+            <xsl:text> - </xsl:text>
+            <xsl:value-of select="string($languageSanitised)" />
           </xsl:if>
           <xsl:text> </xsl:text>
         </small>

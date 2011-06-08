@@ -54,9 +54,23 @@
     <xsl:variable name="d" select="normalize-space($ddbId)" />
     <xsl:variable name="i" select="normalize-space($inventory)" />
     
-    <xsl:if test="string($i)">
-      <xsl:value-of select="$i" />
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="string($i)">
+        <xsl:value-of select="$i" />
+      </xsl:when>
+      <xsl:when test="string($s) or string($v) or string($n)">
+        <xsl:value-of select="$s" />
+        <xsl:text>;</xsl:text>
+        <xsl:value-of select="$v" />
+        <xsl:text>;</xsl:text>
+        <xsl:value-of select="$n" />
+        <xsl:if test="string($d)">
+          <xsl:text> (</xsl:text>
+          <xsl:value-of select="$d" />
+          <xsl:text>)</xsl:text>
+        </xsl:if>
+      </xsl:when>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
