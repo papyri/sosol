@@ -15,6 +15,10 @@ class BiblioIdentifier < HGVIdentifier
         parameters)
   end
   
+  def mutable?
+    true
+  end
+  
   def after_initialize
     # retrieve data from xml or set empty defaults 
     
