@@ -138,7 +138,7 @@ class BiblioIdentifier < HGVIdentifier
     def populateFromEpiDocPublisher
       @epiDoc.elements.each("/TEI/text/body/div/bibl/publisher"){|publisher|
         place = publisher.elements["placeName"] ? publisher.elements["placeName"].text : ''
-        name = publisher.elements["orgName"] ? publisher.elements["orgName"] : ''
+        name = publisher.elements["orgName"] ? publisher.elements["orgName"].text : ''
         self[:publisherList][self[:publisherList].length] = Publisher.new(place, name)
       }
     end
