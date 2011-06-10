@@ -20,7 +20,7 @@
         = f.text_field :isbn
         = f.text_field :sd
         .clear
-        .quickSave=I18n.t('meta.label.quickSave')
+        .quickSave=I18n.t('label.quickSave')
 
       %h4.category.analytic
         %a{:name => 'Analytic'}=I18n.t('biblio.legend.analytic')
@@ -30,7 +30,7 @@
         = f.label :authorList
         = render :partial => 'biblio_identifiers/authorList'
         .clear
-        .quickSave=I18n.t('meta.label.quickSave')
+        .quickSave=I18n.t('label.quickSave')
 
       %h4.category.editorial
         %a{:name => 'Editorial'}=I18n.t('biblio.legend.editorial')
@@ -44,7 +44,7 @@
         = f.label :publisherList
         = render :partial => 'biblio_identifiers/publisherList'
         .clear
-        .quickSave=I18n.t('meta.label.quickSave')
+        .quickSave=I18n.t('label.quickSave')
 
       %h4.category.extra
         %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
@@ -59,7 +59,7 @@
         .clear
         = f.text_area :note
         .clear
-        .quickSave=I18n.t('meta.label.quickSave')
+        .quickSave=I18n.t('label.quickSave')
 
       %h4.category.reference
         %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
@@ -70,7 +70,7 @@
         = f.label :relatedArticleList
         = render :partial => 'biblio_identifiers/relatedArticleList'
         .clear
-        .quickSave=I18n.t('meta.label.quickSave')
+        .quickSave=I18n.t('label.quickSave')
 
       = hidden_field_tag 'expansionSet', flash[:expansionSet]
 

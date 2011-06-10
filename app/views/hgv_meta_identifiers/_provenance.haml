@@ -27,8 +27,8 @@
         = hidden_field_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][children][place][3][attributes][certainty]', provenance[index][:ancientRegion][:certainty], :disabled => !@identifier.mutable?, :class => 'observechange provenanceCertainty'
         %label.provenance.certainty=I18n.t('meta.label.certainty')
         = select_tag 'hgv_meta_identifier[provenance][' + index.to_s + '][provenanceCertaintyPicker]', options_for_select(HgvProvenance.certaintyOptions, provenance[index][:certaintyPicker]), :onchange => 'provenanceUpdateUncertainties(this);', :disabled => !@identifier.mutable?, :class => 'observechange certainty'
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
 
   .add#multiPlus_provenance
     %label.provenance#ancientFindspot=I18n.t('meta.label.provenanceAncientFindspot')
@@ -46,7 +46,7 @@
     .autocompleter#autocompleter_provenanceAncientRegion
     %label.provenance#ancientRegion=I18n.t('meta.label.certainty')
     = select_tag :provenance_certaintyPicker, options_for_select(HgvProvenance.certaintyOptions), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
-    %span{:onclick => "multiAddProvenance()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddProvenance()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_provenance', {overlap: 'horizontal', constraint: false, handle: 'move'});"
 

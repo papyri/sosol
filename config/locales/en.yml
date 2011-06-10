@@ -1,11 +1,12 @@
 en:
   tooltip:
-    multiDelete: x
-    multiMove: o
-    multiAdd: add
+    multiDelete: delete
+    multiMove: move
+    multiAdd: ✓
   label:
     expandAll: Expland all
     collapseAll: Collapse all
+    quickSave: save entire file
     multiAdd: add
   language:
     fr: French
@@ -153,18 +154,11 @@ en:
       offset: Offset
       textDate: HGV format
       unknown: Unknown
-      multiAdd: add #✓
-      expandAll: expand all
-      collapseAll: collapse all
-      quickSave: save entire file
       showDateTabs: add alternative dates
       datePreview: show date preview
       addAlternativePlace: add alternative location
 
     tooltip:
-      multiAdd: Click to add new item
-      multiDelete: Click to delete item
-      multiMove: Click and drag to move item
       multiMentionedDateReference: Reference (line and column)
       multiMentionedDateNotBefore: Date (use -YYYY-MM-DD format)
       multiMentionedDateNotAfter: Second date (if time span) (use -YYYY-MM-DD format)
@@ -193,7 +187,7 @@ en:
       mentionedDateNotBefore: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
-      mentionedDateAnnoation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
+      mentionedDateAnnotation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
 
   provenance:
     ancientFindspotUncertain: ancient findspot uncertain

@@ -98,21 +98,6 @@ function toggleMentionedDates(dateId){
 
 /**** multi ****/
 
-function multiAdd(id)
-{
-  var value = $$('#multiPlus_' + id + ' > input')[0].value;
-
-  var index = multiGetNextIndex(id);
-
-  var item = '<li>' +
-             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']" id="hgv_meta_identifier_' + id + '_' + index + '" class="observechange">' +
-             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-             '  <span class="move">o</span>' +
-             '</li>';
-
-  multiUpdate(id, item);
-}
-
 function multiAddBl()
 {
   var volume = $$('#multiPlus_bl > select')[0].value;
@@ -273,35 +258,6 @@ function multiAddMentionedDate()
   mentionedDateNewDate($('hgv_meta_identifier_mentionedDate_' + index +  '_date1'));
 }
 
-function multiGetNextIndex(id)
-{
-  var index = 0;
-  $$('#multiItems_' + id + ' > li > input').each(function(item){
-    var itemIndex = item.id.match(/\d+/)[0] * 1;
-    if(index <= itemIndex){
-      index = itemIndex + 1;
-    }
-  });
-  return index;
-}
-
-function multiUpdate(id, newItem)
-{
-  $('multiItems_' + id).insert(newItem);
-
-  $$('#multiPlus_' + id + ' > input').each(function(item){item.clear();});
-  $$('#multiPlus_' + id + ' > select').each(function(item){item.clear();});
-
-  Sortable.create('multiItems_' + id, {overlap: 'horizontal', constraint: false, handle: 'move'});
-}
-
-function multiRemove(item)
-{
-  if(confirm('Do you really want to delete me?')){
-    item.parentNode.removeChild(item);
-  };
-}
-
 /**** mentioned dates ****/
 
 function mentionedDateNewDate(dateinput)
@@ -408,55 +364,7 @@ function checkNotAddedMultiples(){
   multiAdd('translationsFr');
 }
 
-/**** toggle view ****/
-
-function toggleCatgory(event) {
-  if(!this.next().visible()){
-    $(this).next().show();
-  } else {
-    $(this).next().hide();
-  }
-}
-
-function rememberToggledView(){
-  var expansionSet = '';
-
-  $$('.category').each(function(e){
-
-    if(e.next().visible()){
-      expansionSet += e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0] + ';';
-    }
-  });
-  
-  $('expansionSet').value = expansionSet;
-}
-
-function showExpansions(){
-  var flash = $('expansionSet').value;
-  var anchor_match = document.URL.match(/#[A-Za-z]+/);
-  var anchor = anchor_match ? anchor_match[0] : '';
-  anchor = anchor.substr(1,1).toLowerCase() + anchor.substr(2);
-
-  var expansionSet = flash + ';' + anchor;
-  
-  $$('.category').each(function(e){
-
-    var classy = e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0];
-
-    if(expansionSet.indexOf(classy) >= 0){
-      e.next().show();
-    }
-  });
-  $('expansionSet').value = '';
-}
-
-
 Event.observe(window, 'load', function() {
-  showExpansions();
   toggleMentionedDates('#dateAlternativeX');
   hideDateTabs();
   
@@ -464,9 +372,7 @@ Event.observe(window, 'load', function() {
   $('addAlternativePlace').observe('click', function(e){ $('multiPlus_provenance').show(); this.hide(); });
 
   $('identifier_submit').observe('click', checkNotAddedMultiples);
-  $$('.category').each(function(e){e.observe('click', toggleCatgory);});
-  $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
-  $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
+
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
   
   $('hgv_meta_identifier_provenance_0_value').observe('click', function(event){provenanceUnknown();});
