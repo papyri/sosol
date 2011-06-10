@@ -1,31 +1,79 @@
-#biblio
-  - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
-    = f.error_messages
-    = debug(f)
-    = f.text_field :title
-    = f.text_field :type
-    = f.text_field :subtype
-    = f.text_field :language
-    = f.text_field :bp
-    = f.text_field :bpOld
-    = f.text_field :idp
-    = f.text_field :isbn
-    = f.text_field :sd
-    = f.text_field :date
-    = f.text_field :edition
-    = f.text_field :paginationFrom
-    = f.text_field :paginationTo
-    = f.text_field :paginationTotal
-    = f.text_field :paginationPreface
-    = f.text_field :illustration
-    = f.text_field :note
-    = f.text_field :reedition
-    = debug(@identifier[:authorList])
-    = debug(@identifier[:editorList])
-    = debug(@identifier[:publisherList])
-    = debug(@identifier[:revueCritiqueList])
-    = debug(@identifier[:relatedArticleList])
+.site.biblioSite
+  %span.expandAll#expandAll=I18n.t('label.expandAll')
+  %span.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
+  #edit
+    - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
+      = f.error_messages
 
-=# javascript_include_tag 'biblio'
-=# javascript_include_tag 'confirm'
+      %h4.category.meta
+        %a{:name => 'Meta'}=I18n.t('biblio.legend.meta')
+      .editbox{:style => 'display: none;'}
+        = f.select :type, options_for_select([])
+        = f.text_field :subtype
+        = f.select :language
+        .clear
+        = f.text_field :bp
+        = f.text_field :bpOld
+        = f.text_field :idp
+        .clear
+        = f.text_field :isbn
+        = f.text_field :sd
+        .clear
+        .quickSave=I18n.t('meta.label.quickSave')
+
+      %h4.category.analytic
+        %a{:name => 'Analytic'}=I18n.t('biblio.legend.analytic')
+      .editbox
+        = f.text_field :title
+        = f.text_field :reedition
+        = f.label :authorList
+        = render :partial => 'biblio_identifiers/authorList'
+        .clear
+        .quickSave=I18n.t('meta.label.quickSave')
+
+      %h4.category.editorial
+        %a{:name => 'Editorial'}=I18n.t('biblio.legend.editorial')
+      .editbox{:style => 'display: none;'}
+        = f.text_field :date
+        = f.text_field :edition
+        .clear
+        = f.label :editorList
+        = render :partial => 'biblio_identifiers/editorList'
+        .clear
+        = f.label :publisherList
+        = render :partial => 'biblio_identifiers/publisherList'
+        .clear
+        .quickSave=I18n.t('meta.label.quickSave')
+
+      %h4.category.extra
+        %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
+      .editbox{:style => 'display: none;'}
+        = f.text_field :paginationPreface
+        = f.text_field :paginationTotal
+        .clear
+        = f.text_field :paginationFrom
+        = f.text_field :paginationTo
+        .clear
+        = f.text_area :illustration
+        .clear
+        = f.text_area :note
+        .clear
+        .quickSave=I18n.t('meta.label.quickSave')
+
+      %h4.category.reference
+        %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
+      .editbox{:style => 'display: none;'}
+        = f.label :revueCritiqueList
+        = render :partial => 'biblio_identifiers/revueCritiqueList'
+        .clear
+        = f.label :relatedArticleList
+        = render :partial => 'biblio_identifiers/relatedArticleList'
+        .clear
+        .quickSave=I18n.t('meta.label.quickSave')
+
+      = hidden_field_tag 'expansionSet', flash[:expansionSet]
+
+= javascript_include_tag 'edit_mask'
+= javascript_include_tag 'biblio'
+= javascript_include_tag 'confirm'

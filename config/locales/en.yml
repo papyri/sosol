@@ -1,4 +1,75 @@
 en:
+  tooltip:
+    multiDelete: x
+    multiMove: o
+    multiAdd: add
+  label:
+    expandAll: Expland all
+    collapseAll: Collapse all
+    multiAdd: add
+  language:
+    fr: French
+    en: English
+    de: German
+    it: Italian
+    es: Spanish
+    la: Latin
+    el: Greek
+  biblio:
+    legend:
+      meta: Meta Information
+      analytic: Analytic
+      editorial: Editorial
+      extra: Extra
+      reference: Reference
+    label:
+      title: Title
+      type: Type
+      subtype: Subtype
+      language: Language
+      bp: BP
+      bpOld: BP old
+      idp: IDP
+      isbn: ISBN
+      sd: SD
+      date: Date
+      edition: Number
+      paginationFrom: Page From
+      paginationTo: Page To
+      paginationTotal: Pages Total
+      paginationPreface: Preface Total
+      illustration: Illustrations
+      note: Annoation
+      reedition: Reedition
+      authorList: Authors    
+      editorList: Editors
+      publisherList: Publisher 
+      revueCritiqueList: Revue Critique
+      relatedArticleList: Related Articles
+      firstName: First Name
+      lastName: Last Name
+      name: Name
+      placeOfPublication: Place of Publication
+      orgName: Organisation
+      pagination: Pagination
+      place: Place
+      name: Name
+      author: Author
+      page: Page
+      year: Year
+      ddb: DDB
+      inventory: Inv. No.
+      series: Series
+      volume: Volume
+      number: Number
+      
+      
+    type:
+      monograph: Monograph
+      journal: Journal
+      bookSection: Book Section
+      journalArticle: Journal Article
+
   meta:
     legend:
       general: General
