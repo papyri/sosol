@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :communities, :member => { :find_member => :get, :add_member => :get } 
+
   #map.resources :glossaries
   map.resources :hgv_trans_glossaries, :member => { :update => :put }
 

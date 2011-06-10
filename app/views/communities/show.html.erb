@@ -1,0 +1,40 @@
+<p>
+  <b>Name:</b>
+  <%=h @community.name %>
+</p>
+
+<p>
+  <b>Friendly name:</b>
+  <%=h @community.friendly_name %>
+</p>
+
+<p>
+  <b>Abbreviation:</b>
+  <%=h @community.abbreviation %>
+</p>
+
+<p>
+	
+	
+<p>
+<% @community.members.each do |m|%>
+<%=h m.name %>
+
+<% end %>
+
+</p>
+
+
+<p>
+  <b>Description:</b>
+  <%=h @community.description %>
+</p>
+
+<p>
+  <b>Logo:</b>
+  <%=h @community.logo %>
+</p>
+
+
+<%= link_to 'Edit', edit_community_path(@community) %> |
+<%= link_to 'Back', communities_path %>
