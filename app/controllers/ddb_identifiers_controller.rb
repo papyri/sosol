@@ -5,6 +5,18 @@ class DdbIdentifiersController < IdentifiersController
   # GET /publications/1/ddb_identifiers/1/edit
   def edit
     find_identifier
+    
+    if @identifier.is_reprinted?
+      reprint_identifier_string = [NumbersRDF::NAMESPACE_IDENTIFIER, @identifier.class::IDENTIFIER_NAMESPACE, @identifier.reprinted_in.to_s].join('/')
+      reprint_identifier = @identifier.publication.identifiers.to_ary.find {|i| i.name == reprint_identifier_string}
+      if !reprint_identifier.nil?
+        reprint_identifier_path = polymorphic_path([@identifier.publication, reprint_identifier], :action => :edit)
+        flash.now[:notice] = "This text is reprinted in <a href='#{reprint_identifier_path}'>#{reprint_identifier.title}</a>. Please <a href='#{reprint_identifier_path}'>edit the text there</a>, or <a href='#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}'>edit this text's XML</a> to reflect the correct reprint relationship."
+      else
+        flash.now[:notice] = "This text is reprinted in #{reprint_identifier_string}, which is not associated with this publication (possibly a bug). Please edit the text there, or  <a href='#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}'>edit this text's XML</a> to reflect the correct reprint relationship."
+      end
+    end
+    
     begin
       # use a fragment cache for cases where we'd need to do a leiden transform
       if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
@@ -98,15 +110,90 @@ class DdbIdentifiersController < IdentifiersController
   def commentary
     find_identifier
     
-    @identifier[:html_preview] = @identifier.preview({},%w{data xslt ddb commentary.xsl})
+    @identifier[:html_preview] = 
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(
+        DDBIdentifier.preprocess(@identifier.xml_content)),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt ddb commentary.xsl})),
+        {})
+    @identifier.preview({},%w{data xslt ddb commentary.xsl})
   end
   
   def update_commentary
     find_identifier
     
-    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
+    
+    @xsugar = RXSugar::JRubyHelper::CommentaryRXSugarProxy.new()
+    wrapped_commentary =  @xsugar.wrap_commentary_sugar(params[:content])
+    #puts "wrapped sugar " + wrapped_commentary
+    
+    new_content = @xsugar.non_xml_to_xml(wrapped_commentary)
+    #puts "wrapped xml" + new_content
+    
+    new_content = @xsugar.unwrap_commentary_xml(new_content)
+    
+    #@identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], params[:original_content])
+    #puts "xml to insert " + new_content
+    
+    @identifier.update_commentary(params[:line_id], params[:reference], new_content, params[:original_item_id], params[:original_content])
+    
     
     flash[:notice] = "File updated with new commentary."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
+  def update_frontmatter_commentary
+    find_identifier
+    
+    @identifier.update_frontmatter_commentary(params[:content])
+    
+    flash[:notice] = "File updated with new commentary."
+    
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :commentary)
+  end
+  
+  
+  def commentary_xml_to_sugar()
+    #puts "----commentary_xml_to_sugar begin-----"
+    xsugar = RXSugar::JRubyHelper::CommentaryRXSugarProxy.new();   
+    #puts "incomming is" + params[:commentary_xml]
+     
+    wrapped_xml = xsugar.wrap_commentary_xml(params[:commentary_xml])
+    #puts "wrapped xml is: " + wrapped_xml
+    
+    begin
+      wrapped_sugar_text = xsugar.xml_to_non_xml( wrapped_xml )
+
+    rescue => e
+      wrapped_sugar_text = e.message
+      render :text => "Failed to parse xml to grammar. To edit you must go to the XML view.\n" + e.message + "\nxml is:\n" + params[:commentary_xml]
+      return
+    end
+    puts "wrapped sugar text is: " + wrapped_sugar_text
+    
+    
+    begin
+      sugar_text = xsugar.unwrap_commentary_sugar(wrapped_sugar_text)
+    rescue
+      sugar_text = "error"
+    end
+  
+    puts "sugar text is: " + sugar_text
+    
+    puts "====commentary_xml_to_sugar end====="
+    render :text => sugar_text
+  end
+  
+  def delete_frontmatter_commentary
+    find_identifier
+    
+    @identifier.update_frontmatter_commentary('',true)
+    
+    flash[:notice] = "Front matter commentary entry removed."
     
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :commentary)
