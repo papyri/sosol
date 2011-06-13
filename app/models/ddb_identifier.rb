@@ -323,6 +323,9 @@ class DDBIdentifier < Identifier
   
   def preprocess_leiden(preprocessed_leiden)
     # mass substitute alternate keyboard characters for Leiden+ grammar characters
+
+    # strip tabs
+    preprocessed_leiden.tr!("\t",'')
     
     # consistent LT symbol (<)
     # \u2039 \u2329 \u27e8 \u3008 to \u003c')
