@@ -1,6 +1,6 @@
 class CreateCommunityMembers < ActiveRecord::Migration
   def self.up
-    create_table :communities_members do |t|
+    create_table :communities_members , :id => false do |t|
       t.integer :community_id
       t.integer :user_id
 
@@ -9,6 +9,6 @@ class CreateCommunityMembers < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :community_members
+    drop_table :communities_members
   end
 end

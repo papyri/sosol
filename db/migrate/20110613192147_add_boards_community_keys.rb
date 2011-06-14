@@ -6,6 +6,6 @@ class AddBoardsCommunityKeys < ActiveRecord::Migration
 
   def self.down
     remove_column :boards, :community_id
-    remvoe_column :communities, :board_id
+    remove_column :communities, :board_id
   end
 end

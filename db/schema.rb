@@ -57,14 +57,14 @@ ActiveRecord::Schema.define(:version => 20110613192147) do
     t.integer  "board_id"
   end
 
-  create_table "communities_admins", :force => true do |t|
+  create_table "communities_admins", :id => false, :force => true do |t|
     t.integer  "community_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "communities_members", :force => true do |t|
+  create_table "communities_members", :id => false, :force => true do |t|
     t.integer  "community_id"
     t.integer  "user_id"
     t.datetime "created_at"
