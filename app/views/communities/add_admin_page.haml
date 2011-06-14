@@ -1,0 +1,16 @@
+
+- if @community
+
+  %h1 
+    Existing Admins
+    
+  - @community.admins.each do |admin|
+    = admin.name 
+    = link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id
+    %br
+    
+  %h1
+    Potential Admins
+    
+         
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_admin", @community.id ) }

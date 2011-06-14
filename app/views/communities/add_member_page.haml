@@ -1,0 +1,19 @@
+
+%h1
+  Existing Community Members
+
+- if @community
+
+  %h1 
+    Existing Members
+    
+  - @community.members.each do |member|
+    = member.name 
+    = link_to "X", :controller => "communities", :action => "remove_member", :member_id => member.id
+    %br
+    
+  %h1
+    Potential Members
+    
+         
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_member", @community.id ) }

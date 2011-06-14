@@ -1,0 +1,43 @@
+%b
+  Name:
+= @community.name
+%br 
+
+%b
+  Friendly name:
+= @community.friendly_name 
+%br 
+
+%b
+  Abbreviation:
+= @community.abbreviation
+%br 
+
+%b
+  Admins
+  %br 
+- @community.admins.each do |a|
+  = a.name
+  %br
+%br 
+	
+%b
+  Members
+  %br 
+- @community.members.each do |m|
+  = m.name
+  %br 
+%br 
+
+%b
+  Description:
+= @community.description
+%br 
+
+%b
+  Logo:
+= @community.logo
+%br 
+
+= link_to 'Edit', edit_community_path(@community) | 
+= link_to 'Back', communities_path

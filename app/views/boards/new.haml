@@ -2,8 +2,11 @@
   = render :partial => "common/flash_all"  
   %h1
     New board
+    - if @board.community
+      = " for community " + @board.community.name
   - form_for(@board) do |f|
     = f.error_messages
+    = f.hidden_field :community_id
     %p
       = f.label :title
       %br

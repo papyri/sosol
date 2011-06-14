@@ -86,7 +86,14 @@ class BoardsController < ApplicationController
   # GET /boards/new
   # GET /boards/new.xml
   def new
+    
+    
     @board = Board.new    
+    
+    if params[:community_id]
+      @board.community_id = params[:community_id]
+
+    end
     
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
@@ -168,12 +175,26 @@ class BoardsController < ApplicationController
 
 
   def rank
-    @boards = Board.ranked;
+    if params[:community_id]
+      @boards = Board.ranked_by_community_id( params[:community_id] )
+      @community_id = params[:community_id] 
+    else
+      #default to sosol boards
+      @boards = Board.ranked;  
+    end
+    
   end
 
   def update_rankings
 
-    @boards = Board.find(:all)
+    if params[:community_id]
+      @boards = Board.ranked_by_community_id( params[:community_id] )
+    else
+      #default to sosol boards
+      @boards = Board.ranked;  
+    end
+    
+    #@boards = Board.find(:all)
 
     rankings = params[:ranking].split(',');
     
@@ -188,7 +209,17 @@ class BoardsController < ApplicationController
       end
       rank_count+= 1
     end
-    redirect_to :action => "index"
+    
+    
+    if params[:community_id]
+      redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id]
+      return
+    else
+      #default to sosol boards
+      redirect_to :action => "index"
+      return
+    end
+    
   end
 
 

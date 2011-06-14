@@ -4,6 +4,11 @@
   = stylesheet_link_tag "board"
 
   -# ----------board set-up info-------------
+  - if @board.community
+    %h1
+      Community:
+    = @board.community.name
+    
   %h1
     = @board.title + "( " + @board.friendly_name + " )"
   = "controls "     

@@ -88,11 +88,16 @@ class CommunitiesController < ApplicationController
     @community = Community.find(params[:id])
     
   end
+  
+  def add_member_page
+    @community = Community.find(params[:id])
+    
+  end
 
   def add_member
     
     @community = Community.find(params[:id])
-    user = User.find_by_name(params[:user_name])
+    user = User.find_by_id(params[:user_id])
 
 
     if nil == @community.members.find_by_id(user.id) 
@@ -105,11 +110,42 @@ class CommunitiesController < ApplicationController
   end
 
   def remove_member
-    user = User.find(params[:user_id])
+    user = User.find(params[:member_id])
 
     @community = Community.find(params[:id])
     
-    @community.users.delete(user)
+    @community.members.delete(user)
+    @community.save
+
+    redirect_to :action => "edit", :id => (@community).id
+  end
+
+
+  def add_admin_page
+    @community = Community.find(params[:id])
+    
+  end
+
+  def add_admin
+    
+    @community = Community.find(params[:id])
+    user = User.find_by_id(params[:user_id])
+
+    if nil == @community.admins.find_by_id(user.id) 
+    
+      @community.admins << user
+      @community.save
+    end
+
+    redirect_to :action => "edit", :id => (@community).id
+  end
+
+  def remove_admin
+    user = User.find(params[:admin_id])
+
+    @community = Community.find(params[:id])
+    
+    @community.admins.delete(user)
     @community.save
 
     redirect_to :action => "edit", :id => (@community).id

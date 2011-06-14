@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110609195354) do
+ActiveRecord::Schema.define(:version => 20110613192147) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20110609195354) do
     t.text     "identifier_classes"
     t.decimal  "rank"
     t.string   "friendly_name"
+    t.integer  "community_id"
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
@@ -53,6 +54,7 @@ ActiveRecord::Schema.define(:version => 20110609195354) do
     t.string   "logo"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "board_id"
   end
 
   create_table "communities_admins", :force => true do |t|
@@ -167,7 +169,7 @@ ActiveRecord::Schema.define(:version => 20110609195354) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "has_repository", :default => false
+    t.boolean  "has_repository",            :default => false
     t.string   "language_prefs"
     t.boolean  "admin"
     t.boolean  "developer"
@@ -175,6 +177,8 @@ ActiveRecord::Schema.define(:version => 20110609195354) do
     t.string   "email"
     t.integer  "emailer_id"
     t.string   "full_name"
+    t.boolean  "is_community_master_admin", :default => false
+    t.boolean  "is_master_admin",           :default => false
   end
 
   create_table "votes", :force => true do |t|

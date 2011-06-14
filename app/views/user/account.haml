@@ -3,6 +3,10 @@
 
   %h1
     == #{@current_user.name}'s Account Info
+  %h2 
+    - @current_user.community_memberships.each do |cm|
+      = cm.name
+    
   %h3
     Personal
   - form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|

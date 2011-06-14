@@ -1,5 +1,11 @@
 = stylesheet_link_tag "board"
 = render :partial => "common/flash_all"  
+
+- if @board.community
+  %p
+    %b 
+      Community:
+    = @board.community.name
 %p
   %b 
     Title:
@@ -8,7 +14,6 @@
   %b 
     Name:
   = @board.friendly_name
-
 
 %p
   %b

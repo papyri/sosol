@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :communities, :member => { :find_member => :get, :add_member => :get } 
+  map.resources :communities, :member => { :find_member => :get, :add_member => :get, :add_member_page => :get, :remove_member => :get, :add_admin => :get, :add_admin_page => :get, :remove_admin => :get } 
 
   #map.resources :glossaries
   map.resources :hgv_trans_glossaries, :member => { :update => :put }
@@ -17,6 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   
  
   map.resources :users
+  map.resources :users, :collection => { :index_user_admins => :get }
  	
   map.resources :comments, :member => { :ask_for => :get }
 

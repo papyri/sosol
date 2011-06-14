@@ -130,6 +130,48 @@ class UserController < ApplicationController
     end
   end
   
+  def current_user_is_master_admin?
+    if !@current_user.is_master_admin
+      flash[:warning] = "Invalid Access."
+      redirect_to ( dashboard_url ) #just send them back to their own dashboard...side effects here?
+      return false
+    end
+    
+    return true
+  end
+  
+   def index_user_admins
+    if current_user_is_master_admin?
+      @users = User.find(:all)
+    end
+   end
+   
+   def edit_user_admins
+     if current_user_is_master_admin?
+      @user = User.find_by_id(params[:user_id])
+     end
+   end
+    
+  
+  def update_admins
+    if current_user_is_master_admin?
+      @user = User.find(params[:id])
+  
+      begin 
+        @user.update_attributes(params[:user])
+        flash[:notice] = 'User was successfully updated.'
+        redirect_to :controller => "user", :action => "index_user_admins"
+      rescue Exception => e
+        flash[:error] = 'Error occured - user was not updated.'
+        redirect_to :controller => "user", :action => "index_user_admins"
+      end
+    end
+  
+   
+  end
+  
+  
+  
   def create_email_everybody
     if !@current_user.admin
       flash[:error] = "Only Admin Users can send an email to all SoSOL users."
@@ -159,4 +201,5 @@ class UserController < ApplicationController
   end
   
   
+
 end
