@@ -358,8 +358,8 @@
                       - if v.first.status == "approved"
                         %div{:class => "finalizer" }
                           = "F"
-                          - if v.first.find_finalizer_user
-                            = v.first.find_finalizer_user.human_name
+                          - if v.first.publication.find_finalizer_user
+                            = v.first.publication.find_finalizer_user.human_name
                             = " is finalizing. "
             
                       - elsif v.first.status == "submitted"     
