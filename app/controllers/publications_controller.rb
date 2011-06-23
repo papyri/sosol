@@ -204,6 +204,7 @@ class PublicationsController < ApplicationController
   def submit
     @publication = Publication.find(params[:id])
     
+
     #check if it is the owner
     if ! is_theirs?
       flash[:error] = 'You do not have permissions to submit this publication.'
@@ -217,6 +218,14 @@ class PublicationsController < ApplicationController
       redirect_to @publication
       return
     end
+    
+    #check if we are submitting to a community
+    community_id = params[:community_id]
+    community_id.strip
+    if !community_id.empty?
+      @publication.community_id = community_id
+    end
+    
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc

@@ -8,6 +8,8 @@ class Publication < ActiveRecord::Base
   belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
   
+  belongs_to :community
+  
   has_many :children, :class_name => 'Publication', :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => 'Publication'
   
@@ -174,8 +176,14 @@ class Publication < ActiveRecord::Base
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
 
+    #check if we are part of a community
+    if !self.community_id.empty?
+      boards = Board.ranked_by_community_id( self.community.id )
+    else
+      boards = Board.ranked  
+    end
+    
     #check each board in order by priority rank
-    boards = Board.ranked
     boards.each do |board|
 
       #if board.community == publication.community

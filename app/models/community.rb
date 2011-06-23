@@ -7,5 +7,6 @@ class Community < ActiveRecord::Base
   has_and_belongs_to_many :admins, :class_name => "User",  :association_foreign_key => "user_id", :foreign_key => "community_id", :join_table => "communities_admins"
   
   has_many :boards
+  has_many :publications
   
 end

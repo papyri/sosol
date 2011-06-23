@@ -1,7 +1,22 @@
 #main
   - max_visible_comments = 10
   :javascript 
-    function checkForComment() { comment_text = $('submit_comment').value; $('submit_button').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
+    function checkForComment() 
+    { 
+      comment_text = $('submit_comment').value; 
+      var submits = $$('input.submit')
+      for (var i=0;i<submits.length;i++)
+      {
+        $(submits[i]).disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; 
+      }
+      
+    }
+    
+    function setCommunityId(id)
+    {
+      $('community_id').value = id;
+    }  
+    
     function toggle_div(obj) {
       var el = document.getElementById(obj);
       if ( el.style.display != "none" ) {
@@ -32,7 +47,8 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            - form_tag  :controller => 'publications', :action => "submit"  do
+            - form_tag :controller => 'publications', :action => "submit"  do
+              = hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br
               %br
@@ -41,7 +57,9 @@
               = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 70, :rows => 4
               %br
               %br
-              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button",  :onclick => "setCommunityId(\'\')"
+              - @current_user.community_memberships.each do |community|
+                = submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
         - else
           %b
             Publication may not be submitted at this time.
