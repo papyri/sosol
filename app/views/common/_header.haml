@@ -22,11 +22,14 @@
     - else
       #header_edit_tab{ :class => "header_tab" }
         = link_to 'Edit', :controller => "user", :action => "dashboard", :dashboard_type => "user"
+     
+    = render :partial => "common/board_tabs" 
         
-    - if (defined? active_tab) && (active_tab == "board")
+    -#    
+    -# if (defined? active_tab) && (active_tab == "board")
       #header_board_tab{ :class => "header_tab header_tab_active" }
         Board
-    - else
+    -# else
       #header_board_tab{ :class => "header_tab"}
         = link_to 'Board', :controller => "user", :action => "dashboard", :dashboard_type => "board"
       

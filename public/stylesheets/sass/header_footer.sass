@@ -117,7 +117,7 @@
   //height: 32px
   height: 16px
   display: inline
-  position: absolute
+  position: relative
   //top: 6px
   top: 20px
   
@@ -134,13 +134,18 @@
   
   a
     text-decoration: none
-  
+ 
 #header_edit_tab
-  +base_header_tab
-  left: 100px
-#header_board_tab
+  float: left
+  //+base_header_tab
+  //left: 100px
+#xxheader_board_tab
   +base_header_tab
   left: 154px
+
+.header_tab
+  float: left
+  +base_header_tab   
    
 #footer_box
   
