@@ -1,0 +1,126 @@
+#logo a {
+  color: white; }
+
+#header_box {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 90px;
+  position: relative; }
+
+#header_top {
+  position: relative;
+  height: 60px;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  background-color: #d25f00;
+  border-radius: 15px;
+  position: absolute;
+  height: 60px;
+  width: 100%;
+  top: 0px;
+  left: 0px; }
+
+#header_user_box {
+  position: absolute;
+  top: 20px;
+  right: 10px; }
+
+#header_title {
+  position: absolute;
+  top: 0px;
+  left: 0px; }
+
+#header_selector {
+  width: 100%;
+  position: absolute;
+  top: 20px;
+  left: 100px; }
+  #header_selector form {
+    width: 400px; }
+
+#header_tab_holder {
+  background-color: gray;
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  width: 100%;
+  z-index: 0;
+  height: 40px; }
+
+.header_tab {
+  background-color: white;
+  border-color: #d25f00; }
+
+.header_tab_active {
+  background-color: #d25f00;
+  border-color: white; }
+  .header_tab_active a link {
+    color: white; }
+  .header_tab_active a visited {
+    color: white; }
+  .header_tab_active a hover {
+    color: #d25f00; }
+
+.header_tab:hover {
+  background-color: #d25f00;
+  border-color: white; }
+  .header_tab:hover a link {
+    color: white; }
+  .header_tab:hover a visited {
+    color: white; }
+  .header_tab:hover a hover {
+    color: #d25f00; }
+
+#header_edit_tab {
+  width: 50px;
+  height: 16px;
+  display: inline;
+  position: absolute;
+  top: 20px;
+  border-width: 2px;
+  #border-style: solid;
+  #border-top-style: dotted;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  text-align: center;
+  left: 100px; }
+  #header_edit_tab a {
+    text-decoration: none; }
+
+#header_board_tab {
+  width: 50px;
+  height: 16px;
+  display: inline;
+  position: absolute;
+  top: 20px;
+  border-width: 2px;
+  #border-style: solid;
+  #border-top-style: dotted;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  text-align: center;
+  left: 154px; }
+  #header_board_tab a {
+    text-decoration: none; }
+
+#footer_box {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  position: relative;
+  height: 2em;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+  background-color: gray; }
+  #footer_box .links {
+    float: left;
+    margin-left: 3em; }
+    #footer_box .links a {
+      color: white;
+      text-decoration: none; }
+      #footer_box .links a:hover {
+        text-decoration: underline; }

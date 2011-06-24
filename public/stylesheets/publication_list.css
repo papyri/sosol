@@ -1,0 +1,498 @@
+#content_body {
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto; }
+
+.publication_holder {
+  position: relative;
+  overflow: overflow;
+  background-color: white;
+  width: 1000px;
+  height: 22px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
+
+.publication_title {
+  overflow: overflow;
+  top: 0px;
+  left: 50px;
+  width: 200px;
+  height: 20px;
+  position: absolute;
+  margin: 2px; }
+
+.publication_board_name {
+  position: absolute;
+  top: 0px;
+  left: 0px; }
+
+.overview_holder {
+  position: absolute;
+  width: 20px;
+  height: 22px;
+  top: 0px;
+  left: 250px; }
+
+.identifier_holder {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black; }
+
+.HGVMetaIdentifier {
+  top: 0px;
+  left: 270px; }
+
+.DDBIdentifier {
+  top: 0px;
+  left: 420px; }
+
+.HGVTransIdentifier {
+  top: 0px;
+  left: 570px; }
+
+.HGVBiblioIdentifier {
+  top: 0px;
+  left: 720px; }
+
+
+.user_publications_header_holder {
+  position: relative;
+  overflow: overflow;
+  background-color: white;
+  width: 1000px;
+  height: 22px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
+
+.user_publications_header_title {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  left: 50px; }
+
+.user_publications_header_overview {
+  width: 20px;
+  height: 22px;
+  top: 0px;
+  left: 200px;
+  position: absolute; }
+
+.user_publications_header_HGVMetaIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 270px; }
+
+.user_publications_header_DDBIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 420px; }
+
+.user_publications_header_HGVTransIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 570px; }
+
+.user_publications_header_HGVBiblioIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 720px; }
+
+
+
+.board_publications_header_holder {
+  position: relative;
+  overflow: overflow;
+  background-color: white;
+  width: 700px;
+  height: 22px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px; }
+
+.board_publications_header_board {
+  width: 50px;
+  height: 22px;
+  top: 0px;
+  left: 0px; }
+
+.board_publications_header_title {
+  width: 200px;
+  height: 22px;
+  top: 0px;
+  left: 50px; }
+
+.board_publications_header_overview {
+  width: 20px;
+  height: 22px;
+  top: 0px;
+  left: 250px; }
+
+.board_publications_header_HGVMetaIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 270px; }
+
+.board_publications_header_DDBIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 420px; }
+
+.board_publications_header_HGVTransIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 570px; }
+
+.board_publications_header_HGVBiblioIdentifier {
+  overflow: overflow;
+  position: absolute;
+  background-color: lightgray;
+  width: 150px;
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  top: 0px;
+  top: 0px;
+  left: 720px; }
+
+
+.identifier {
+  overflow: overflow;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  width: 150px;
+  height: 20px;
+  position: relative;
+  top: -2px //clean up boarders; }
+
+.offset {
+  position: relative; }
+
+.status_new {
+  background-color: white; }
+
+.status_editing {
+  background-color: white; }
+
+.status_submitted {
+  background-color: white;
+  color: gray; }
+
+.status_approved {
+  background-color: white; }
+
+.status_voting {
+  background-color: white; }
+
+.status_committed {
+  background-color: white; }
+
+.status_archived {
+  background-color: white; }
+
+.status_finalizing {
+  background-color: indianred; }
+
+.controlled_yes {
+  border-color: red; }
+
+.status_icon {
+  width: 16px;
+  height: 16px;
+  display: inline;
+  overflow: hidden;
+  position: relative; }
+
+.identifier_title {
+  position: absolute;
+  top: 4px;
+  left: 20px;
+  color: black; }
+
+.expand_identifers {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 4px;
+  left: 96px; }
+
+.identifier_holder_status_not_modified {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -118px 0px; }
+  .identifier_holder_status_not_modified img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_not_modified:hover {
+    height: 22px; }
+
+.identifier_holder_status_new {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -96px 0px; }
+  .identifier_holder_status_new img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_new:hover {
+    height: 22px; }
+
+.identifier_holder_status_editing {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -96px 0px; }
+  .identifier_holder_status_editing img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_editing:hover {
+    height: 22px; }
+
+.identifier_holder_status_submitted {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -80px 0px; }
+  .identifier_holder_status_submitted img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_submitted:hover {
+    height: 22px; }
+
+.identifier_holder_status_approved {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -64px 0px;
+  #background-position: -48px 0px; }
+  .identifier_holder_status_approved img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_approved:hover {
+    height: 22px; }
+
+.identifier_holder_status_committed {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -48px 0px;
+  #background-position: -32px 0px; }
+  .identifier_holder_status_committed img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_committed:hover {
+    height: 22px; }
+
+.identifier_holder_status_archived {
+  overflow: overflow;
+  width: 118px;
+  height: 4px;
+  z-index: 20;
+  background-image: url("../images/status_back.png");
+  background-repeat: no-repeat;
+  #background-color: coral;
+  position: absolute;
+  overflow: hidden;
+  background-position: -32px 0px;
+  #background-position: -16px 0px; }
+  .identifier_holder_status_archived img {
+    position: absolute;
+    top: 4px;
+    left: 0px; }
+  .identifier_holder_status_archived:hover {
+    height: 22px; }
+
+.needs_review {
+  background-color: indianred; }
+
+.sort_header {
+  background-color: gray; }
+
+.sort_header:hover {
+  background-color: #d25f00; }
+
+.status_sort_button {
+  width: 16px;
+  height: 20px;
+  display: inline;
+  overflow: hidden;
+  float: left; }
+  .status_sort_button:hover {
+    background-color: #d25f00; }
+
+.sort_button {
+  display: inline;
+  width: 100px;
+  background-color: gray;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  margin: 5px; }
+
+.sort_button:hover {
+  background-color: #d25f00;
+  cursor: pointer; }
+
+.extra_ids {
+  position: absolute;
+  top: 0px;
+  left: -50px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #d25f00;
+  border-radius: 10px;
+  background-color: white;
+  padding: 5px;
+  margin: 5px; }
+
+.show_more_ids {
+  float: right;
+  width: 20px;
+  height: 20px; }
+
+.votes {
+  position: absolute;
+  left: 0px;
+  top: 4px;
+  width: 20px;
+  height: 18px;
+  overflow: hidden;
+  color: white;
+  background-color: black; }
+  .votes:hover {
+    width: 200px;
+    z-index: 100;
+    color: black;
+    background-color: white; }
+
+.finalizer {
+  position: absolute;
+  left: 0px;
+  top: 4px;
+  width: 20px;
+  height: 18px;
+  overflow: hidden;
+  color: white;
+  background-color: black; }
+  .finalizer:hover {
+    width: 200px;
+    z-index: 100;
+    color: black;
+    background-color: white; }

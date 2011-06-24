@@ -93,6 +93,21 @@ class UserController < ApplicationController
       @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
                            :include => [:owner, :target])[0..24]
     end
+    
+    dashboard_type = params[:dashboard_type]
+    if (dashboard_type)
+      puts dashboard_type
+      if dashboard_type == "user"
+        render "dashboard_user" 
+        return
+      end
+      if dashboard_type == "board"
+        render "dashboard_board"
+        return
+      end
+    end
+    
+    #render "dashboard_user"
   end
   
   def archives

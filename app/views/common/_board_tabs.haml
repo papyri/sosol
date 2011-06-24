@@ -1,0 +1,9 @@
+- sosol_boards = @current_user.boards.ranked
+
+- sosol_boards.each do |sb|
+  #header_board_tab{ :class => "header_tab" }
+    = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
+  
+ 
+  
+  

@@ -1,0 +1,4 @@
+= render :partial => "common/header", :locals => {:active_tab => "board"}
+#content_body
+  = render :partial => "board_publications", :locals => {:boards => @boards }
+= render :partial => "common/footer"
