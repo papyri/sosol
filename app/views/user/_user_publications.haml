@@ -26,30 +26,6 @@
   }
   
   
-  function sortByNeedsReview()
-  {
-    //remove needs review divs
-    var list_node = $('board_publication_list_holder');
-    var review_nodes = list_node.select('div[class~=needs_review]');
-    var new_list = new Array();
-    for (var i=0; i < review_nodes.length; i++)
-    {
-      review_nodes[i].parentNode.parentNode.remove;
-      new_list.push(review_nodes[i].parentNode.parentNode);
-      new_list[i].remove;
-    }
-        
-    //for (var i=0;i<new_list.length; i++)
-    {
-    //  list_node.insert( {'top': new_list[i] } );
-    }
-    
-    for (var i= new_list.length - 1; i >=0;i--)
-    {
-      list_node.insert( {'top': new_list[i] } );
-    }
-
-  }
   
 
   function sortByIdentifier(identifier_name)
