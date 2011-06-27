@@ -1,4 +1,5 @@
 :javascript
+  var forceChangeTrue = false; //declared to make showmatch function work
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
@@ -48,13 +49,10 @@
       //originalxml = originalxmls[0].innerHTML;
       originalxml = originalxmls[0].value;
     }
-
     
     comment_div_container = comment_li.childElements().first();
     
     comment_div = comment_div_container.childElements().first();
-    
-
     
     nval_node = comment_div.childElements().first();
     nval = nval_node.innerHTML;
@@ -105,7 +103,7 @@
   }
   
   function generateCommentaryForm(id,nval,content,original_item_id) {
-
+    
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
@@ -130,11 +128,12 @@
   function generateFrontmatterCommentaryForm(content) {
     if(content === undefined) {content = "";}
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put).chomp()}' +
+      '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
         '<label>Front matter:</label><br/>' +
         '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
-        '<input class="save" type="submit" value="Save"/>' + 
+        '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateSugar()"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
+        ' or <a  href="#" style="color:blue" onclick ="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">Find the Error</a>' +
       '</form>' +
       generateDeleteFrontmatterForm(content) +
       '</div></div>';
@@ -142,7 +141,77 @@
   
   function validateSugar()
   {
-    //alert ("validating");
+    //disable form for ajax call to server
+    Form.Element.disable('fm_sugar_content');
+    Form.Element.disable('save_fm');
+    $('fm_sugar_content').toggleClassName('loading');
+
+    originalleiden = $('fm_sugar_content').value;
+    //alert ("originalleiden" + originalleiden);
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    wrapped_content = "<W" + originalleiden + "W>";
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          if ($('flasherror')) //update if already there, add if not
+          {
+            $('flasherror').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+            });
+            $('flasherror').addClassName('flash error');
+          }
+          //add class after the original insert to get the flash highlighting to work in IE browser
+         
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          $('fm_sugar_content').value = error_content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          
+          //enable form after error
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.enable('fm_sugar_content');
+          Form.Element.enable('save_fm');
+
+          //showMatch function in confirm.js included at the bottom
+          showMatch("fm_sugar_content", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
+        }
+        else 
+        {
+          //temporarily enable so can set the are to the XML value for the form submit to pick up
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.enable('fm_sugar_content');
+
+          //remove wrap tags and namespace before call action to save to XML
+          $('fm_sugar_content').value = json.content.replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+
+          $('update_frontmatter_form').submit();
+          
+          //disable form again while server processes the new XML - will automatically reset on return from server
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.disable('fm_sugar_content');
+          Form.Element.disable('save_fm');
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("validateSugar(" + wrapped_content + ")",10000);
+      }
+    });
   }
   
   function getSugar(originalxml, wherefrom)
@@ -232,7 +301,11 @@
   
   function transformExistingFrontmatterCommentary(event) {
     removeAllClickable();
-    
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
     var original_content = $$('#frontmatter_commentary_container textarea');
     if(original_content.size() == 0) {
       original_content = '';
@@ -252,6 +325,39 @@
     //translate the xml to commentary sugar
     getSugar(original_content, 'FM');
   }
+  
+  function insert_error_here(content, line, column){
+      //copied this function/logic from identifiers_controller.rb
+      // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+      // occurs by taking the line and column from the message and giving the user the place in the content
+      // the parse error occured in xsugars processing - may or may not be where the real error is depending
+      // on what the error is - this processing is by character because there are multiple byte characters
+      // possible in the text and a way to place msg with taking that into account
+      //
+      // line starts at 1 because first character is on first line before incrementing in loop
+      // same logic for column, already on first character before incrementing in loop 
+      // 'col' check has to come before 'new line' check in case error is on last char in the line
+      var line_cnt = 1;
+      var col_cnt = 1;
+      var content_error_here = new Array();
+      
+      for (i=0;i<=content.length;i++){
+
+        if (line_cnt == line){
+          if (col_cnt == column) {
+            content_error_here.push("**POSSIBLE ERROR**");
+          }
+          col_cnt++;
+        }
+        
+        if (content.charAt(i) == "\n"){
+          line_cnt++;
+        }
+        content_error_here.push(content.charAt(i));
+      }
+
+      return content_error_here.join("");
+  }
 
 #main
   = render :partial => 'identifiers/edit_bar'
@@ -264,3 +370,5 @@
       .PContent
         :preserve
           #{@identifier[:html_preview]}
+
+= javascript_include_tag 'confirm'

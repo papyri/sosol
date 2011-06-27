@@ -139,24 +139,17 @@ class DdbIdentifiersController < IdentifiersController
   def update_frontmatter_commentary
     find_identifier
     
-    @xsugar = RXSugar::JRubyHelper::CommentaryRXSugarProxy.new()
-    wrapped_commentary =  @xsugar.wrap_commentary_sugar(params[:content])
-    
     begin
-    
-      new_content = @xsugar.non_xml_to_xml(wrapped_commentary)
-      
-      new_content = @xsugar.unwrap_commentary_xml(new_content)
-      
-      @identifier.update_frontmatter_commentary(new_content)
+
+      @identifier.update_frontmatter_commentary(params[:content])
 
       flash[:notice] = "File updated with new commentary."
 
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    :action => :commentary)
-    rescue RXSugar::NonXMLParseError => parse_error
-      flash[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
-      
+    rescue JRubyXML::ParseError => parse_error
+      flash[:error] = parse_error.to_str + 
+          ".  This message is because the XML created from Front Matter Leiden below did not pass Relax NG validation.  This file was NOT SAVED. "
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    :action => :commentary)
     end
