@@ -2,7 +2,14 @@
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
-    $('frontmatter_commentary').observe('click',addFrontmatterCommentary);
+    if ($('frontmatter_commentary_add')) //only one or the other will exist
+      {
+        $('frontmatter_commentary_add').observe('click',addFrontmatterCommentary);
+      }
+    else 
+      {
+        $('frontmatter_commentary').observe('click',transformExistingFrontmatterCommentary);
+      }
     if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
   
@@ -41,7 +48,7 @@
       //originalxml = originalxmls[0].innerHTML;
       originalxml = originalxmls[0].value;
     }
-    
+
     
     comment_div_container = comment_li.childElements().first();
     
@@ -63,9 +70,9 @@
     });
 
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
-
+    
     //translate the xml to commentary sugar
-    getSugar(originalxml);
+    getSugar(originalxml, 'LBL');
     
   }
   
@@ -125,7 +132,7 @@
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
       '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put).chomp()}' +
         '<label>Front matter:</label><br/>' +
-        '<textarea rows="10" cols="20" name="content" style="height: auto">' + content + '</textarea>' +
+        '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
         '<input class="save" type="submit" value="Save"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
       '</form>' +
@@ -138,7 +145,7 @@
     //alert ("validating");
   }
   
-  function getSugar(originalxml)
+  function getSugar(originalxml, wherefrom)
   {
     //remove  namespaces that break sugar
     var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
@@ -167,7 +174,14 @@
           });
         }
         else {
-          $('sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          if (wherefrom == "FM")
+            {
+              $('fm_sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+            }
+          else
+            {
+              $('sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+            }
         }
       },
       onFailure: function(response) {
@@ -218,6 +232,25 @@
   
   function transformExistingFrontmatterCommentary(event) {
     removeAllClickable();
+    
+    var original_content = $$('#frontmatter_commentary_container textarea');
+    if(original_content.size() == 0) {
+      original_content = '';
+    }
+    else {
+      original_content = original_content[0].value;
+    }
+    
+    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    $("frontmatter_commentary_container").insert({
+      after: generateFrontmatterCommentaryForm(original_content)
+    });
+        
+    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+
+    //translate the xml to commentary sugar
+    getSugar(original_content, 'FM');
   }
 
 #main
