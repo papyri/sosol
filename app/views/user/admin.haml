@@ -1,0 +1,64 @@
+
+
+
+
+-# -----Communities-----
+
+- if @current_user.is_community_master_admin
+  -#they can create destroy communities, pick community admins
+  %h2
+    Communities
+  = link_to "Edit All Communities", :controller => "communities"
+  %br
+
+  %br
+  %br
+  
+-#can edit their communities
+- if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
+  %h2
+    Your Communities
+  
+  - @current_user.community_admins.each do |comm| 
+    = link_to comm.friendly_name, comm
+    %br
+  
+  %br
+  %br
+    
+-# -----Boards-----
+
+
+- if @current_user.admin
+  -#can setup boards
+  %h2
+    Boards
+  = link_to 'Edit Boards', boards_url
+  %br
+
+  %br
+  %br
+
+-# -----Master Admin-----
+
+- if @current_user.is_master_admin
+  %h2 
+    Site Permissions
+  -#they can set other users as anything, 
+  = link_to 'Set User Admins', :controller => "user", :action => "index_user_admins"
+  %br
+
+  %br
+  %br
+
+-# -----Developer-----
+
+- if @current_user.developer
+  %h2
+    You are a developer
+  Warning, your views may differ from users view.
+  -#see debuging info
+
+
+
+

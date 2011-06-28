@@ -10,6 +10,8 @@
       \|
       = link_to 'help', help_url, :onclick => "window.open(this.href);return false;"
 
+      \|
+      = link_to 'admin', :controller => 'user', :action => 'admin' 
       
       - if @current_user.admin 
         \|

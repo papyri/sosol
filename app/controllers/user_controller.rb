@@ -94,6 +94,15 @@ class UserController < ApplicationController
                            :include => [:owner, :target])[0..24]
     end
     
+    
+    if params[:board_id]
+      #@boards = @current_user.boards.ranked_by_community_id(params[:board_id])
+      @boards = Board.find(params[:board_id])
+     
+      render "dashboard_board"
+      return
+    end
+    
     dashboard_type = params[:dashboard_type]
     if (dashboard_type)
       puts dashboard_type
@@ -155,6 +164,13 @@ class UserController < ApplicationController
     return true
   end
   
+  
+  def admin
+    #shows whatever they have the right to administer
+    
+    
+  end
+  
    def index_user_admins
     if current_user_is_master_admin?
       @users = User.find(:all)
@@ -164,7 +180,11 @@ class UserController < ApplicationController
    def edit_user_admins
      if current_user_is_master_admin?
       @user = User.find_by_id(params[:user_id])
+    else
+      flash[:warning] = "You do not have permission to edit user admins."
+      redirect_to dashboard_url
      end
+    
    end
     
   
