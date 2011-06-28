@@ -3,7 +3,23 @@
 - sosol_boards.each do |sb|
   #header_board_tab{ :class => "header_tab" }
     = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
-  
+
+-# need list of community board ids
+- community_ids = @current_user.boards.collect{ |b| b.community_id }
+- community_ids.uniq!
+- community_ids.compact!
+
+
+
+- community_ids.each do |next_id|
  
+  - community_boards = @current_user.boards.ranked_by_community_id(next_id)
+  - current_name = Community.find(next_id).friendly_name
   
+  .header_spacer_tab
+    
+  - community_boards.each do |cb|
+    #header_board_tab{ :class => "header_tab" }
+      = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
+      
   
