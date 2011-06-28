@@ -37,7 +37,11 @@
   
   function transformExistingCommentary(event) {
     removeAllClickable();
-    
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
     
     var comment_li = Event.element(event).up('li.input');  
     
@@ -107,18 +111,15 @@
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_commentary}, :onsubmit => "return validateSugar()", :method => :put).chomp()}' +
+      '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
-        //'<input type="hidden" name="original_content" value="' + content + '"/>' +
-        //original value no longer in use, test here ignoring it
-        '<input type="hidden" name="original_content" value="not used"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-        //'<textarea rows="5" cols="20" name="content" id="sugar_content">'+content+'</textarea>' +
         //show no content since it will be updated with getsugar call
-        '<textarea rows="5" cols="20" name="content" id="sugar_content"></textarea>' +
-        '<input class="save" type="submit" value="Save"/>' + 
+        '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
+        '<input class="save" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
+        ' or <a  href="#" style="color:blue" onclick ="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">Find the Error</a>' +
       '</form>' +
       generateDeleteForm(id,original_item_id) +
       '</div></div>';
@@ -131,7 +132,7 @@
       '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
         '<label>Front matter:</label><br/>' +
         '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
-        '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateSugar()"/>' + 
+        '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
         ' or <a href="" style="color:red">cancel</a>' +
         ' or <a  href="#" style="color:blue" onclick ="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">Find the Error</a>' +
       '</form>' +
@@ -139,7 +140,82 @@
       '</div></div>';
   }
   
-  function validateSugar()
+  function validateComSugar()
+  {
+    //disable form for ajax call to server
+    Form.Element.disable('com_sugar_content');
+    Form.Element.disable('save_com');
+    $('com_sugar_content').toggleClassName('loading');
+
+    originalleiden = $('com_sugar_content').value;
+    //alert ("originalleiden" + originalleiden);
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    wrapped_content = "<W" + originalleiden + "W>";
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          if ($('flasherror')) //update if already there, add if not
+          {
+            $('flasherror').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+            });
+            $('flasherror').addClassName('flash error');
+          }
+          //add class after the original insert to get the flash highlighting to work in IE browser
+         
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          $('com_sugar_content').value = error_content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          
+          //enable form after error
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.enable('com_sugar_content');
+          Form.Element.enable('save_com');
+
+          //showMatch function in confirm.js included at the bottom
+          showMatch("com_sugar_content", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
+        }
+        else 
+        {
+          //temporarily enable so can set the are to the XML value for the form submit to pick up
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.enable('com_sugar_content');
+
+          //remove wrap tags and namespace before call action to save to XML
+          $('com_sugar_content').value = json.content.replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+
+          $('update_commentary_form').submit();
+          
+          //disable form again while server processes the new XML - will automatically reset on return from server
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.disable('com_sugar_content');
+          Form.Element.disable('save_com');
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("validateComSugar(" + wrapped_content + ")",10000);
+      }
+    });
+  }
+
+  function validateFMSugar()
   {
     //disable form for ajax call to server
     Form.Element.disable('fm_sugar_content');
@@ -209,7 +285,7 @@
       },
       onFailure: function(response) {
         // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
-        setTimeout("validateSugar(" + wrapped_content + ")",10000);
+        setTimeout("validateFMSugar(" + wrapped_content + ")",10000);
       }
     });
   }
@@ -249,7 +325,7 @@
             }
           else
             {
-              $('sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+              $('com_sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
             }
         }
       },
@@ -262,6 +338,11 @@
   
   function addCommentary(event) {
     removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
   
     var element = Event.element(event)
     if (!element.hasClassName('line')) {element = element.up('li.line');}
@@ -276,6 +357,11 @@
 
   function addFrontmatterCommentary(event) {
     removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
     
     var element = Event.element(event);
     
