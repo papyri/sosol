@@ -151,6 +151,18 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "edit", :id => (@community).id
   end
 
-
-
+  def edit_end_user
+    @community = Community.find(params[:id])
+  end
+  
+  def set_end_user
+    @community = Community.find(params[:id])
+    user = User.find_by_id(params[:user_id])
+    
+    @community.end_user_id = user.id
+    @community.save
+    
+    redirect_to :action => "edit", :id => (@community).id
+  end
+  
 end
