@@ -9,6 +9,8 @@
         %h3= user.affiliation
       %br
       Member since #{user.created_at.to_date.to_s(:long_ordinal)}
+      - if user.boards.length > 0
+        %br Member of: #{user.boards.collect{|b| b.friendly_name}.join(', ')} 
       %br
       %br
       - votes = Comment.vote.find_all_by_user_id(user.id)
