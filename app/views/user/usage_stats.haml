@@ -10,6 +10,7 @@
       %br
       Member since #{user.created_at.to_date.to_s(:long_ordinal)}
       %br
+      %br
       - votes = Comment.vote.find_all_by_user_id(user.id)
       - if votes.length > 0
         %h3 Votes
