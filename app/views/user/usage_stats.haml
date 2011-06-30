@@ -4,9 +4,12 @@
  
   #usage_stats
     - @users.each do |user|
-      - if @users.length > 1 && user.name
-        %h2
-          = user.name
+      %h2= user.human_name
+      - if user.affiliation
+        %h3= user.affiliation
+      %br
+      Member since #{user.created_at.to_date.to_s(:long_ordinal)}
+      %br
       - votes = Comment.vote.find_all_by_user_id(user.id)
       - if votes.length > 0
         %h3 Votes
