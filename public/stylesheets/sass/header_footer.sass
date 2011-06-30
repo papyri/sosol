@@ -113,7 +113,7 @@
 
 
 =base_header_tab
-  width: 50px
+  //min-width: 50px
   //height: 32px
   height: 16px
   display: inline
@@ -146,7 +146,15 @@
 .header_tab
   float: left
   +base_header_tab   
-   
+  min-width: 50px
+  
+.header_spacer_tab
+  +base_header_tab
+  float: left
+  width: 10px
+  min_width: 10px
+  
+  
 #footer_box
   
   margin-left: auto

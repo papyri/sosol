@@ -250,17 +250,21 @@
 
 - extra_id_count = 0
 
+
+
+- boards = Array(boards)
 - if boards.length > 0
 
    
   %div{:class => "user_publications_header_holder" }
-    %div{:class => "board_publications_header_board" + " sort_header", :onclick => "sortByBoard()" }
+    -#%div{:class => "board_publications_header_board" + " sort_header", :onclick => "sortByBoard()" }
       Board
     %div{:class => "user_publications_header_title" + " sort_header", :onclick => "sortByTitle()" }
       Title
     %div{:class => "user_publications_header_overview"}
       Overview
     - possible_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    - possible_identifiers.delete 'HGVBiblioIdentifier'
     - if possible_identifiers.length > 0
     
       - possible_identifiers.each do |pi|
@@ -307,7 +311,7 @@
       - board_and_finalizing_publications.each do |publication|
         - if publication.status != 'archived' && publication.status != 'committed'
           %div{:class => "publication_holder " + board.friendly_name, :id => "publication_holder_" + board.friendly_name }
-            %div{:class => "publication_board_name board_id_" + board.id.to_s }
+            -#%div{:class => "publication_board_name board_id_" + board.id.to_s }
               = board.friendly_name
             %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
               - if publication.status == 'finalizing'

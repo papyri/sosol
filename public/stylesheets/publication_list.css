@@ -10,7 +10,7 @@
   width: 1000px;
   height: 22px;
   border-width: 2px;
-  border-style: solid;
+  border-style: none;
   border-color: black;
   margin: 2px; }
 
@@ -42,7 +42,7 @@
   width: 150px;
   height: 20px;
   border-width: 1px;
-  border-style: solid;
+  border-style: none;
   border-color: black; }
 
 .HGVMetaIdentifier {
@@ -232,7 +232,7 @@
   overflow: overflow;
   background-color: white;
   border-width: 1px;
-  border-style: solid;
+  border-style: none;
   border-color: black;
   width: 150px;
   height: 20px;
