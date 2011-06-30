@@ -3,7 +3,7 @@
     - for event in @events
       %li
         %span{:class => "event_owner_#{event.owner.class}_#{event.owner.id}"}
-          = event.owner.human_name
+          = link_to event.owner.human_name, {:controller => 'user', :action => 'show', :user_name => event.owner.name}
         = event.category
         - if event.target && event.target.title
           = event.target.title
