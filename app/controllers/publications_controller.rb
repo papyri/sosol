@@ -202,6 +202,8 @@ class PublicationsController < ApplicationController
   end
   
   def submit
+    
+   
     @publication = Publication.find(params[:id])
     
 
@@ -220,12 +222,16 @@ class PublicationsController < ApplicationController
     end
     
     #check if we are submitting to a community
-    community_id = params[:community_id]
-    community_id.strip
-    if !community_id.empty?
-      @publication.community_id = community_id
+    #community_id = params[:community_id]
+    if params[:community] && params[:community][:id]
+      community_id = params[:community][:id]
+      community_id.strip
+      if !community_id.empty? && community_id != 0
+        @publication.community_id = community_id
+      end
     end
-    
+  
+    #raise community_id
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
@@ -322,15 +328,23 @@ class PublicationsController < ApplicationController
     
     
     #do we need to save publication before continuing with commit??
-
-    begin
-      canon_sha = @publication.commit_to_canon
-      expire_publication_cache(@publication.creator.id)
-      expire_fragment(/board_publications_\d+/)
-    rescue Errno::EACCES => git_permissions_error
-      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-      redirect_to @publication
-      return
+    
+    #if it is a community pub, we don't commit to canon
+    if @publication.is_community_publication?
+      #need to copy somewhere?
+      #no this is done in publication.submit
+      @publication.copy_repo_to_parent_repo
+      
+    else #commit to canon
+      begin
+        canon_sha = @publication.commit_to_canon
+        expire_publication_cache(@publication.creator.id)
+        expire_fragment(/board_publications_\d+/)
+      rescue Errno::EACCES => git_permissions_error
+        flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+        redirect_to @publication
+        return
+      end    
     end
 
 

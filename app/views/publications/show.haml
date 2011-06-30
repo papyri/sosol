@@ -3,19 +3,31 @@
   :javascript 
     function checkForComment() 
     { 
-      comment_text = $('submit_comment').value; 
-      var submits = $$('input.submit')
-      for (var i=0;i<submits.length;i++)
-      {
-        $(submits[i]).disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; 
-      }
+      //comment_text = $('submit_comment').value; 
+      //var submits = $$('input.submit')
+      //for (var i=0;i<submits.length;i++)
+      //{
+      //  $(submits[i]).disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; 
+      //}
       
+  
+      var comment_text = $('submit_comment').value;
+      
+      if ($('community_id') != null)
+      {
+        var selected_submit = $('community_id').value;
+        $('submit_button').disabled = (selected_submit == "")  ||  ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
+      }
+      else
+      {
+        $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
+      }
     }
     
-    function setCommunityId(id)
-    {
-      $('community_id').value = id;
-    }  
+    // function setCommunityId(id)
+    // {
+    //   $('community_id').value = id;
+    // }  
     
     function toggle_div(obj) {
       var el = document.getElementById(obj);
@@ -48,18 +60,28 @@
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
             - form_tag :controller => 'publications', :action => "submit"  do
-              = hidden_field_tag 'community_id'
+              -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br
               %br
               = label_tag "Briefly describe the reason for your submission:"
               %br
-              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 70, :rows => 4
+              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
               %br
-              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button",  :onclick => "setCommunityId(\'\')"
-              - @current_user.community_memberships.each do |community|
-                = submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
+              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+              
+              - if @current_user.community_memberships.count > 0
+                - community_hash = Hash.new
+                - community_hash["SOSOL"] = 0
+                - @current_user.community_memberships.each do |community|
+                
+                  - community_hash[community.friendly_name] = community.id
+                  -#= submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
+                = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => 'checkForComment()' }
+                
+                        
+                
         - else
           %b
             Publication may not be submitted at this time.

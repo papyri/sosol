@@ -177,7 +177,8 @@ class Publication < ActiveRecord::Base
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
 
     #check if we are part of a community
-    if !self.community_id.empty?
+   
+    if is_community_publication?
       boards = Board.ranked_by_community_id( self.community.id )
     else
       boards = Board.ranked  
@@ -270,13 +271,28 @@ class Publication < ActiveRecord::Base
       self.save
     end
 =end
-    self.origin.change_status("committed")
-    self.save
+
+    #if we get to this point, there are no more boards to submit to, thus we are done
+    if is_community_publication?
+      #copy to  space
+    else
+      #mark as committed
+      self.origin.change_status("committed")
+      self.save    
+    end
+    
+    #self.origin.change_status("committed")
+    #self.save
+    
+    
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
   end
   
-
+  def  is_community_publication?
+    return (self.community_id != nil)  &&  (self.community_id != 0)      
+  end
+   
   #nolonger in use 2-22-2010
   def submit_identifier(identifier)
     
