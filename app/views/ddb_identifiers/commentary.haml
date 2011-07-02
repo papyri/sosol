@@ -1,5 +1,12 @@
+= javascript_include_tag 'menu-for-applications'
+
+= stylesheet_link_tag 'menu-item'
+= stylesheet_link_tag 'menu-bar'
+
 :javascript
+  helpComView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
   var forceChangeTrue = false; //declared to make showmatch function work
+
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
     $$('.commentary#edition li').each(loadExistingCommentary);
@@ -70,6 +77,8 @@
     $(comment_li).insert({
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
     });
+    
+    menuInit();
 
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
     
@@ -114,12 +123,35 @@
       '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+        '<div id="com-helper-menu" class="com-helper-menu-c">' +
+        '<ul id="menuModel" style="display:inherit">' +
+        '  <li id="1">' +
+        '    <a href="#" title="Front Matter Input Markup">FM Markup</a>' +
+        '    <ul width="255">' +
+        '      <li id="101" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+        '        <a href="#">Find Error</a>' +
+        '      </li>' +
+        '    </ul>' +
+        '  </li>' +
+        '  <li id="2" itemType="separator"></li>' +
+        '  <li id="3" jsFunction="helpComOpen(\'insertLinkPN\', \'com_sugar_content\')">' +
+        '    <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+        '  <li id="4" itemType="separator"></li>' +
+        '  <li id="5" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
+        '    <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+        '  <li id="6" itemType="separator"></li>' +
+        '  <li id="7" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+        '    <a href="#" title="Find Possible Error">Find Error</a>' +
+        '  <li id="8" itemType="separator"></li>' +
+        '</ul>' +
+        '</div>' +
+        '<div id="menuDiv"></div>' +
+        '<br/>' +
         '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
         //show no content since it will be updated with getsugar call
         '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
         '<input class="save" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
-        ' or <a href="" style="color:red">cancel</a>' +
-        ' or <a  href="#" style="color:blue" onclick ="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">Find the Error</a>' +
+        ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
       '</form>' +
       generateDeleteForm(id,original_item_id) +
       '</div></div>';
@@ -130,11 +162,34 @@
     if(content === undefined) {content = "";}
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
       '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
+        '<div id="fm-helper-menu" class="fm-helper-menu-c">' +
+        '<ul id="menuModel" style="display:inherit">' +
+        '  <li id="1">' +
+        '    <a href="#" title="Front Matter Input Markup">FM Markup</a>' +
+        '    <ul width="255">' +
+        '      <li id="101" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+        '        <a href="#">Find Error</a>' +
+        '      </li>' +
+        '    </ul>' +
+        '  </li>' +
+        '  <li id="2" itemType="separator"></li>' +
+        '  <li id="3" jsFunction="helpComOpen(\'insertLinkPN\', \'fm_sugar_content\')">' +
+        '    <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+        '  <li id="4" itemType="separator"></li>' +
+        '  <li id="5" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
+        '    <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+        '  <li id="6" itemType="separator"></li>' +
+        '  <li id="7" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+        '    <a href="#" title="Find Possible Error">Find Error</a>' +
+        '  <li id="8" itemType="separator"></li>' +
+        '</ul>' +
+        '</div>' +
+        '<div id="menuDiv"></div>' +
+        '<br/>' +
         '<label>Front matter:</label><br/>' +
         '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
         '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
-        ' or <a href="" style="color:red">cancel</a>' +
-        ' or <a  href="#" style="color:blue" onclick ="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">Find the Error</a>' +
+        ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
       '</form>' +
       generateDeleteFrontmatterForm(content) +
       '</div></div>';
@@ -165,16 +220,16 @@
         json = response.responseText.evalJSON();
       
         if ("exception" in json) {
-          if ($('flasherror')) //update if already there, add if not
+          if ($('notice_notice')) //update if already there, add if not
           {
-            $('flasherror').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
           }
           else
           {
             $$('div#main > div.site').first().insert({
-              top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
             });
-            $('flasherror').addClassName('flash error');
+            $('notice_notice').addClassName('flash error');
           }
           //add class after the original insert to get the flash highlighting to work in IE browser
          
@@ -240,16 +295,16 @@
         json = response.responseText.evalJSON();
       
         if ("exception" in json) {
-          if ($('flasherror')) //update if already there, add if not
+          if ($('notice_notice')) //update if already there, add if not
           {
-            $('flasherror').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
           }
           else
           {
             $$('div#main > div.site').first().insert({
-              top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
             });
-            $('flasherror').addClassName('flash error');
+            $('notice_notice').addClassName('flash error');
           }
           //add class after the original insert to get the flash highlighting to work in IE browser
          
@@ -350,6 +405,9 @@
     element.insert({
       after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
     });
+
+    menuInit();
+    
     Effect.SlideDown("form-"+element.id);
     element.stopObserving('click');
     element.removeClassName('clickable');
@@ -379,6 +437,8 @@
       after: generateFrontmatterCommentaryForm(original_content)
     });
         
+    menuInit();
+
     Effect.SlideDown("form-frontmatter",{queue: 'end'});
     
     element.stopObserving('click');
@@ -405,6 +465,8 @@
     $("frontmatter_commentary_container").insert({
       after: generateFrontmatterCommentaryForm(original_content)
     });
+
+    menuInit();
         
     Effect.SlideDown("form-frontmatter",{queue: 'end'});
 
@@ -412,38 +474,98 @@
     getSugar(original_content, 'FM');
   }
   
+  function menuInit(){
+    //stuff below is for the menu bar
+    var menuModel = new DHTMLSuite.menuModel();
+  	menuModel.addItemsFromMarkup('menuModel');
+    	menuModel.setMainMenuGroupWidth(00);	
+  	menuModel.init();
+	
+  	var menuBar = new DHTMLSuite.menuBar();
+  	menuBar.addMenuItems(menuModel);
+  	menuBar.setMenuItemCssPrefix('Custom_');
+  	menuBar.setCssPrefix('Custom_');
+  	menuBar.setTarget('menuDiv');
+	
+  	menuBar.init();
+  }
+  
   function insert_error_here(content, line, column){
-      //copied this function/logic from identifiers_controller.rb
-      // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
-      // occurs by taking the line and column from the message and giving the user the place in the content
-      // the parse error occured in xsugars processing - may or may not be where the real error is depending
-      // on what the error is - this processing is by character because there are multiple byte characters
-      // possible in the text and a way to place msg with taking that into account
-      //
-      // line starts at 1 because first character is on first line before incrementing in loop
-      // same logic for column, already on first character before incrementing in loop 
-      // 'col' check has to come before 'new line' check in case error is on last char in the line
-      var line_cnt = 1;
-      var col_cnt = 1;
-      var content_error_here = new Array();
-      
-      for (i=0;i<=content.length;i++){
+    //copied this function/logic from identifiers_controller.rb
+    // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+    // occurs by taking the line and column from the message and giving the user the place in the content
+    // the parse error occured in xsugars processing - may or may not be where the real error is depending
+    // on what the error is - this processing is by character because there are multiple byte characters
+    // possible in the text and a way to place msg with taking that into account
+    //
+    // line starts at 1 because first character is on first line before incrementing in loop
+    // same logic for column, already on first character before incrementing in loop 
+    // 'col' check has to come before 'new line' check in case error is on last char in the line
+    var line_cnt = 1;
+    var col_cnt = 1;
+    var content_error_here = new Array();
 
-        if (line_cnt == line){
-          if (col_cnt == column) {
-            content_error_here.push("**POSSIBLE ERROR**");
-          }
-          col_cnt++;
+    for (i=0;i<=content.length;i++){
+
+      if (line_cnt == line){
+        if (col_cnt == column) {
+          content_error_here.push("**POSSIBLE ERROR**");
         }
-        
-        if (content.charAt(i) == "\n"){
-          line_cnt++;
-        }
-        content_error_here.push(content.charAt(i));
+        col_cnt++;
       }
 
-      return content_error_here.join("");
+      if (content.charAt(i) == "\n"){
+        line_cnt++;
+      }
+      content_error_here.push(content.charAt(i));
+    }
+
+    return content_error_here.join("");
   }
+
+  function helpComOpen(view, wherefrom){
+
+    //set textarea to the value the window opened will insert to - either the frontmatter or commentary
+    $('fm_or_com').value = wherefrom;
+
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+    
+    // grab focus of main window textarea before open new window for IE browser only
+    // as non-IE gets focus again in commentary.js in the insertMarkUp function
+    getFocus(wherefrom);
+
+    switch (view)
+    {
+    case "insertLinkPN":
+    case "insertlink":
+      {
+        openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    default: // nopts is default and need to clear optional xml values and leave diachar filled in 
+      {
+        alert("Oops, error, this is not a valid helper dialog page " + view);
+      }
+    };
+    //helpComView is global variable defined with Ruby url_for in inline javascript at the top 
+    newWindowURL = helpComView.replace("wheretogo", view);
+    window.open (newWindowURL, '', openconfig); 
+  }
+
+  //###########################################################################################
+  // getFocusMain - get location for inserting later on before lose it - IE has biggest issue      
+  //###########################################################################################
+
+  function getFocus(focusthis){
+  
+    element = document.getElementById(focusthis);
+    element.focus();
+  }
+
 
 #main
   = render :partial => 'identifiers/edit_bar'
@@ -456,5 +578,5 @@
       .PContent
         :preserve
           #{@identifier[:html_preview]}
-
+%textarea{:id => "fm_or_com", :style => "display:none"}
 = javascript_include_tag 'confirm'
