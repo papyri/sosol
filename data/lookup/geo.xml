@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml" ?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+   <body>
+     <list type="geo">
+       <item>
+         <placeName type="ancient" subtype="settlement">A (ancient settlement)</placeName>
+         <placeName type="modern" subtype="settlement">A (modern settlement)</placeName>
+         <placeName type="ancient" subtype="nome">A (ancient nome)</placeName>
+         <placeName type="ancient" subtype="region">A (ancient region)</placeName>
+       </item>
+       <item>
+         <placeName type="ancient" subtype="settlement">Å (ancient settlement)</placeName>
+         <placeName type="modern" subtype="settlement">Å (modern settlement)</placeName>
+         <placeName type="ancient" subtype="nome">A (ancient nome)</placeName>
+         <placeName type="ancient" subtype="region">A (ancient region)</placeName>
+       </item>
+       <item>
+         <placeName type="ancient" subtype="settlement">ἄλφα (ancient settlement)</placeName>
+         <placeName type="modern" subtype="settlement">ἄλφα (modern settlement)</placeName>
+         <placeName type="ancient" subtype="nome">ἄλφα (ancient nome)</placeName>
+         <placeName type="ancient" subtype="region">A (ancient region)</placeName>
+       </item>
+       <item>
+         <placeName type="ancient" subtype="settlement">B (ancient settlement)</placeName>
+         <placeName type="modern" subtype="settlement">B (modern settlement)</placeName>
+         <placeName type="ancient" subtype="nome">B (ancient nome)</placeName>
+         <placeName type="ancient" subtype="region">B (ancient region)</placeName>
+       </item>
+       <item>
+         <placeName type="ancient" subtype="settlement">B2 (ancient settlement)</placeName>
+         <placeName type="modern" subtype="settlement">B2 (modern settlement)</placeName>
+         <placeName type="ancient" subtype="nome">B2 (ancient nome)</placeName>
+         <placeName type="ancient" subtype="region">B2 (ancient region)</placeName>
+       </item>
+    </list>
+  </body>
+</TEI>
