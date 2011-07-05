@@ -1,6 +1,6 @@
 class UserController < ApplicationController
   layout 'site'
-  before_filter :authorize, :except => [:signin, :signout, :show]
+  before_filter :authorize, :except => [:signin, :signout, :show, :info]
   
   def signout
     reset_session
@@ -21,6 +21,10 @@ class UserController < ApplicationController
       return
     end
     redirect_to dashboard_url
+  end
+
+  def info
+    render :json => @current_user.nil? ? {} : @current_user
   end
 
   def show
