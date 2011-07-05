@@ -318,6 +318,7 @@ function insertDivisionSub()
   if (editpass == "yes")
     {
       startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><p>replace this with text of division</p></div>";
+      startxml = "<div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\">" + startxml + "</div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
       new Ajax.Request(window.opener.ajaxConvert, 
       {
@@ -326,7 +327,7 @@ function insertDivisionSub()
         onSuccess : function(resp) 
         {
         leidenh = resp.responseText;
-  //alert(resp.responseText);
+        //alert(resp.responseText);
         window.close();
         insertText(leidenh);
         window.opener.showMatch('hgv_trans_identifier_leiden_trans', 'replace this with text of division');

@@ -169,6 +169,9 @@
   %li#9{ :jsFunction => "helpDialogOpen('tryit')"}
     %a{ :href => "#", :title => "Try Leiden+ Conversion"}Try It
   %li#10{ :itemType => "separator"}
+  %li#11{ :jsFunction => "showMatch('ddb_identifier_leiden_plus', \'**POSSIBLE ERROR**\')"}
+    %a{ :href => "#", :title => "Find Possible Error"}Find Error
+  %li#12{ :itemType => "separator"}
 %p
   -if identifier.mutable?
     %div#menuDiv
