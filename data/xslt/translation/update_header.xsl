@@ -8,7 +8,10 @@
   <!-- indent="yes" will re-indent afterwards -->
   <xsl:strip-space elements="tei:publicationStmt"/>
   
+  <xsl:param name="title_text"/>
   <xsl:param name="filename_text"/>
+  <xsl:param name="TM_text"/>
+  <xsl:param name="HGV_text"/>
   
   <!-- params for reprint -->
   <!-- <xsl:param name="reprint_from_text"/>
@@ -35,17 +38,33 @@
   <xsl:template match="/tei:TEI/@xml:id"/>
 
   <!-- Update <title> -->
-  <!-- <xsl:template match="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title">
+  <xsl:template match="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title">
     <xsl:element name="title" namespace="http://www.tei-c.org/ns/1.0">
       <xsl:value-of select="$title_text"/>
     </xsl:element>
-  </xsl:template> -->
+  </xsl:template>
 
   <!-- Update <idno type='filename'> -->
   <xsl:template match="tei:idno[@type='filename']">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:value-of select="$filename_text"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Update <idno type='TM'> -->
+  <xsl:template match="tei:idno[@type='TM']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:value-of select="$TM_text"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <!-- Update <idno type='HGV'> -->
+  <xsl:template match="tei:idno[@type='HGV']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:value-of select="$HGV_text"/>
     </xsl:copy>
   </xsl:template>
   
