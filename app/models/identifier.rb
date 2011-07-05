@@ -131,6 +131,10 @@ class Identifier < ActiveRecord::Base
           title = 
            [collection_name, volume_number, document_number].reject{|i| i.blank?}.join(' ')
          end
+         
+         if self.respond_to?("is_reprinted?") && self.is_reprinted?
+           title += " (reprinted)"
+         end
       else # HGV with no name
         title = "HGV " + self.name.split('/').last.tr(';',' ')
       end

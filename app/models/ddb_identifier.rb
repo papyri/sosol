@@ -113,9 +113,11 @@ class DDBIdentifier < Identifier
           :reprint_in_text => self.title,
           :ddb_hybrid_ref_attribute => self.n_attribute
         )
+      
       original.save!
       self.publication.identifiers << original
       
+      dummy_header = self.add_change_desc(dummy_comment_text, self.publication.owner, dummy_header)
       original.set_xml_content(dummy_header, :comment => dummy_comment_text)
             
       # need to do on originals too
@@ -231,10 +233,13 @@ class DDBIdentifier < Identifier
     self.set_xml_content(xml_content, :comment => comment)
   end
   
+  def reprinted_in
+    return REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/body/head/ref[@type='reprint-in']/@n")
+  end
+  
   def is_reprinted?
-    xpath_result = REXML::XPath.first(REXML::Document.new(self.xml_content),
-      "/TEI/text/body/head/ref[@type='reprint-in']")
-    return xpath_result.nil? ? false : true
+    return reprinted_in.nil? ? false : true
   end
   
   # Override REXML::Attribute#to_string so that attributes are defined
@@ -317,6 +322,9 @@ class DDBIdentifier < Identifier
   
   def preprocess_leiden(preprocessed_leiden)
     # mass substitute alternate keyboard characters for Leiden+ grammar characters
+
+    # strip tabs
+    preprocessed_leiden.tr!("\t",'')
     
     # consistent LT symbol (<)
     # \u2039 \u2329 \u27e8 \u3008 to \u003c')

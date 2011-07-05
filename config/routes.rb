@@ -13,14 +13,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :boards, :collection => { :rank => :get, :update_rankings => :post } 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
   
- 
-  map.resources :users
- 	
   map.resources :comments, :member => { :ask_for => :get }
 
   map.resources :events
-  
-  map.commentary_xml_to_sugar '/commentary_xml_to_sugar/', :controller => 'ddb_identifiers', :action => 'commentary_xml_to_sugar'
   
   # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   # map.login '/login', :controller => 'sessions', :action => 'new'
@@ -64,6 +59,11 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     # publication.resources :identifiers
   end
+
+  map.connect 'users/:user_name',
+    :controller => 'user',
+    :action => 'show',
+    :user_name => /[^\/]*/
   
   map.connect 'publications/:publication_id/:controller/:id/show_commit/:commit_id',
     :controller => /.*_?identifiers/,

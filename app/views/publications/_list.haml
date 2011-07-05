@@ -49,11 +49,9 @@
           -# if !publication.status.nil? && publication.status != ''
           -#  == (#{publication.status})
         - if @current_user != publication.creator
-          -#- if publication.owner_type && publication.owner_type == "Board"
           = " by "
           - if !publication.creator.nil?
-            = publication.creator.name
-            == (#{publication.creator.human_name})
+            = link_to "#{publication.creator.name} (#{publication.creator.human_name})", {:controller => 'user', :action => 'show', :user_name => publication.creator.name}
           - else
             "?"
         - if publication.status == "approved"

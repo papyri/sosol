@@ -5,6 +5,18 @@ class DdbIdentifiersController < IdentifiersController
   # GET /publications/1/ddb_identifiers/1/edit
   def edit
     find_identifier
+    
+    if @identifier.is_reprinted?
+      reprint_identifier_string = [NumbersRDF::NAMESPACE_IDENTIFIER, @identifier.class::IDENTIFIER_NAMESPACE, @identifier.reprinted_in.to_s].join('/')
+      reprint_identifier = @identifier.publication.identifiers.to_ary.find {|i| i.name == reprint_identifier_string}
+      if !reprint_identifier.nil?
+        reprint_identifier_path = polymorphic_path([@identifier.publication, reprint_identifier], :action => :edit)
+        flash.now[:notice] = "This text is reprinted in <a href='#{reprint_identifier_path}'>#{reprint_identifier.title}</a>. Please <a href='#{reprint_identifier_path}'>edit the text there</a>, or <a href='#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}'>edit this text's XML</a> to reflect the correct reprint relationship."
+      else
+        flash.now[:notice] = "This text is reprinted in #{reprint_identifier_string}, which is not associated with this publication (possibly a bug). Please edit the text there, or  <a href='#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}'>edit this text's XML</a> to reflect the correct reprint relationship."
+      end
+    end
+    
     begin
       # use a fragment cache for cases where we'd need to do a leiden transform
       if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
@@ -114,8 +126,6 @@ class DdbIdentifiersController < IdentifiersController
     begin
 
       @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id])
-
-
       flash[:notice] = "File updated with new commentary."
 
       redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -124,11 +134,10 @@ class DdbIdentifiersController < IdentifiersController
     rescue JRubyXML::ParseError => parse_error
       flash[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Front Matter Leiden below did not pass Relax NG validation.  This file was NOT SAVED. "
-      
+     
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    :action => :commentary)
     end
-
   end
   
   def update_frontmatter_commentary
