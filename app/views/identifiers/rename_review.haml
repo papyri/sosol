@@ -12,8 +12,12 @@
       %h2
         = @identifier.class
         = @identifier.name
+      %br
+      %p Other identifiers currently associated with this publication:
+      %ul
+        - (@identifier.publication.identifiers - [@identifier]).each do |i|
+          %li= i.name
       %h3
-        %br
         %br
       - form_for @identifier, :url => { :action => "rename" } do |f|
         = f.error_messages
