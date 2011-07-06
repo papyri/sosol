@@ -36,14 +36,34 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     @identifier.get_epidoc_attributes
   end
+  
+  def complement
+    filename = 'geo.xml'
+    xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"][text()="' + params[:value] + '"]/..'
+    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
+    
+    @complementer_list = {}
+    
+    if element = doc.elements[xpath]
+      {:provenance_ancientFindspot => ['ancient', 'settlement'], :provenance_modernFindspot => ['modern', 'settlement'], :provenance_nome => ['ancient', 'nome'], :provenance_ancientRegion => ['ancient', 'region']}.each_pair {|key, taxonomy|
+        if place = element.elements['placeName[@type="' + taxonomy[0] + '"][@subtype="' + taxonomy[1] + '"]']
+          @complementer_list[key] = place.text
+        end
+      }
+    end
+
+    render :layout => false, :json => @complementer_list
+    #render :layout => false, :text => @complementer_list.inspect
+  end
 
   def autocomplete
     filename = 'geo.xml'
     xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"]'
-    pattern  = params[params[:key]]
+    pattern  = params[params[:key]].gsub(/(\(|\))/, '\\\\\1')
     max      = 10
 
     @autocompleter_list = []
+     
 
     doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
 
@@ -53,6 +73,7 @@ class HgvMetaIdentifiersController < IdentifiersController
       end
     }  
 
+    #render :layout => false, :text => @autocompleter_list.inspect
     render :layout => false
 
   end

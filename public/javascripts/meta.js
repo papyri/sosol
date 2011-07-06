@@ -44,7 +44,7 @@ function provenanceUpdateUncertainties(picker){
     $('hgv_meta_identifier_provenance_' + id + '_children_place_' + placeIndex + '_attributes_certainty').value = 'low';
   }
   
-  $$('input.provenanceCertainty').each(function(element){ if(element.id.indexOf('provenance_' + id + '_') > 0){ console.log('certainty = ' + element.value); }});
+  //$$('input.provenanceCertainty').each(function(element){ if(element.id.indexOf('provenance_' + id + '_') > 0){ console.log('certainty = ' + element.value); }});
 
 }
 
@@ -454,6 +454,24 @@ function showExpansions(){
   $('expansionSet').value = '';
 }
 
+function complementPlace(key, data){
+  keyMap = [
+    'provenance_ancientFindspot',
+    'provenance_modernFindspot',
+    'provenance_ancientFindspot',
+    'provenance_nome',
+    'provenance_ancientRegion' 
+  ];
+
+  var i = keyMap.indexOf(key) + 1;
+  for(i; i < keyMap.length; i++){
+    if(data[keyMap[i]]){
+      $(keyMap[i]).value = data[keyMap[i]];
+    }
+  }
+
+}
+
 
 Event.observe(window, 'load', function() {
   showExpansions();
@@ -471,12 +489,36 @@ Event.observe(window, 'load', function() {
   
   $('hgv_meta_identifier_provenance_0_value').observe('click', function(event){provenanceUnknown();});
   
-  new Ajax.Autocompleter('provenance_ancientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientFindspot&type=ancient&subtype=settlement'});
-  new Ajax.Autocompleter('provenance_modernFindspot', 'autocompleter_provenanceModernFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_modernFindspot&type=modern&subtype=settlement'});
-  new Ajax.Autocompleter('provenance_nome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_nome&type=ancient&subtype=nome'});
+  new Ajax.Autocompleter('provenance_ancientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientFindspot&type=ancient&subtype=settlement', afterUpdateElement: function(input, li){
+    
+    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=ancient&subtype=settlement&value=' + $('provenance_ancientFindspot').value, evalJSON : true, onSuccess : function(t){
+    
+      complementPlace('provenance_ancientFindspot', t.responseJSON);
+  }});
+    
+  }});
+  
+  new Ajax.Autocompleter('provenance_modernFindspot', 'autocompleter_provenanceModernFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_modernFindspot&type=modern&subtype=settlement', afterUpdateElement: function(input, li){
+    
+    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=modern&subtype=settlement&value=' + $('provenance_modernFindspot').value, evalJSON : true, onSuccess : function(t){
+    
+      complementPlace('provenance_modernFindspot', t.responseJSON);
+  }});
+  
+  }});
+  
+  new Ajax.Autocompleter('provenance_nome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_nome&type=ancient&subtype=nome', afterUpdateElement: function(input, li){
+    
+    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=ancient&subtype=nome&value=' + $('provenance_nome').value, evalJSON : true, onSuccess : function(t){
+    
+      complementPlace('provenance_nome', t.responseJSON);
+  }});
+  
+  }});
+  
   new Ajax.Autocompleter('provenance_ancientRegion', 'autocompleter_provenanceAncientRegion', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientRegion&type=ancient&subtype=region'});
   
-  publicationPreview()
+  publicationPreview();
   
 });
 
