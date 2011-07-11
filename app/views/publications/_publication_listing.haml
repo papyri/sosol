@@ -1,0 +1,76 @@
+
+%div{:class => "publication_list_holder", :id => "publication_list_holder" }
+  - publications.each do |publication|
+
+    %div{:class => "publication_holder ", :id => "publication_holder_" + publication.id.to_s }
+    
+      %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
+        = publication.title
+      
+      %div{:class => "overview_holder"}
+        = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
+        
+      - id_set = Set.new(publication.identifiers)
+      - id_hash = id_set.classify { |id| id.class.name }
+      
+      - identifiers_to_show = Array.new(Identifier::IDENTIFIER_MAIN_SUBCLASSES)
+      
+      - id_hash.each_pair do |k,v|
+        - identifiers_to_show.delete(k)              
+       
+        %div{:class => "identifier_holder " + k}
+            
+          -# v.each do |possible_modified|
+          - if true
+            - possible_modified = v.first
+            %div{:class => "identifier"  }
+              
+              - if possible_modified.modified
+                - id_status =  possible_modified.status
+              - else
+                - id_status = "not_modified"
+                
+              %div{:class => "identifier_holder_status_" + id_status }
+                = image_tag('status_icons.png')
+              %div{:class=> "identifier_title"}                  
+                = link_to possible_modified.title.strip, edit_polymorphic_path([publication,possible_modified])
+
+              - if v.count > 1
+                %div{:class => "show_more_ids", :onclick => "showExtraIds( '#{publication.id}', this)" }
+                  = image_tag('show_more_ids.png')
+
+          -# make popup for all the ids if we have more than can be viewed
+          - if v.count > 1
+            %div{:class => "extra_ids", :id => "extra_ids_" + publication.id.to_s}
+              - v.each do |extra_id|
+                %div{:class => "identifier"}
+                  - if extra_id.modified
+                    - id_status =  extra_id.status
+                  - else
+                    - id_status = "not_modified"
+                        
+                  %div{:class => "identifier_holder_status_" + id_status }
+                    = image_tag('status_icons.png')
+                  %div{:class=> "identifier_title"}                  
+                    = link_to extra_id.title.strip, edit_polymorphic_path([publication,extra_id])
+                    
+      -# create the holders for missing identifiers        
+      - identifiers_to_show.each do |is|
+        %div{:class => "identifier_holder " + is + " no_data "}
+      
+      - if defined?(view_type) && view_type == "board"
+        %div{:class => "board_info identifier_holder"}  
+          - if publication.find_finalizer_user
+            = publication.find_finalizer_user.human_name
+            = " is finalizing. "
+            
+          - elsif publication.votes.count > 0
+            = publication.votes.count
+            = "votes: "
+            - publication.votes.each do |vote|
+              %br
+                = vote.user.human_name + "-" + vote.choice + " " 
+             
+
+      
+ 

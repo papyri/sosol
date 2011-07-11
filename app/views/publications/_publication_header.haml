@@ -1,0 +1,20 @@
+
+
+%div{:class => "publications_header_holder" }
+
+  %div{:class => "publications_header_title" }
+    = status
+  %div{:class => "publications_header_overview"}
+    Overview
+  - possible_identifiers = Array.new(Identifier::IDENTIFIER_MAIN_SUBCLASSES)
+  
+  - if possible_identifiers.length > 0
+  
+    - possible_identifiers.each do |pi|
+      %div{:class => "publications_header_" + pi }
+        = eval pi + "::FRIENDLY_NAME"  
+
+  - if defined?(view_type) && view_type == "board"
+    %div{:class => "publications_header_info"}
+      Info
+
