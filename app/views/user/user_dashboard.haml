@@ -1,0 +1,21 @@
+= stylesheet_link_tag "publication_list"
+= javascript_include_tag "extra_ids"
+ 
+- if @new_publications && @new_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "New"}
+  = render :partial => "publications/publication_listing", :locals => {:publications => @new_publications}
+
+- if @editing_publications && @editing_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Editing"}  
+  = render :partial => "publications/publication_listing", :locals => {:publications => @editing_publications }
+
+- if @submitted_publications && @submitted_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Submitted"}  
+  = render :partial => "publications/publication_listing", :locals => {:publications => @submitted_publications }
+ 
+- if @committed_publications && @committed_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Committed"}  
+  = render :partial => "publications/publication_listing", :locals => {:publications => @committed_publications }
+
+
+
