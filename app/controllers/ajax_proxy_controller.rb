@@ -19,6 +19,18 @@ class AjaxProxyController < ApplicationController
     render :template => 'ajax_proxy/proxy'
   end
   
+  def hgvnum
+
+    related_identifiers = NumbersRDF::NumbersHelper.collection_identifier_to_identifiers(params[:identifier])
+
+    if related_identifiers.nil?
+      render :text => "no related identifiers" 
+    else
+      render :text => "#{related_identifiers.first}"
+    end
+
+  end
+  
   def xsugar
     response = get_xsugar_response(params)
     

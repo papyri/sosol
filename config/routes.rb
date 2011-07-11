@@ -14,9 +14,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :boards, :collection => { :rank => :get, :update_rankings => :post } 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
-  
  
-  map.resources :users
   map.resources :users, :collection => { :index_user_admins => :get }
  	
   map.resources :comments, :member => { :ask_for => :get }
@@ -65,6 +63,11 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     # publication.resources :identifiers
   end
+
+  map.connect 'users/:user_name',
+    :controller => 'user',
+    :action => 'show',
+    :user_name => /[^\/]*/
   
   map.connect 'publications/:publication_id/:controller/:id/show_commit/:commit_id',
     :controller => /.*_?identifiers/,
@@ -84,6 +87,11 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'ajax_proxy/xsugar/',
     :controller => 'ajax_proxy',
     :action => 'xsugar',
+    :conditions => { :method => :post }
+    
+    map.connect 'ajax_proxy/hgvnum/',
+    :controller => 'ajax_proxy',
+    :action => 'hgvnum',
     :conditions => { :method => :post }
   
   map.connect 'ajax_proxy/:id',

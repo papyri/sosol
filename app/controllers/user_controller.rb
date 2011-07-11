@@ -1,6 +1,6 @@
 class UserController < ApplicationController
   layout 'site'
-  before_filter :authorize, :except => [:signin, :signout]
+  before_filter :authorize, :except => [:signin, :signout, :show, :info]
   
   def signout
     reset_session
@@ -22,7 +22,21 @@ class UserController < ApplicationController
     end
     redirect_to dashboard_url
   end
-  
+
+  def info
+    render :json => @current_user.nil? ? {} : @current_user
+  end
+
+  def show
+    @users = [User.find_by_name(params[:user_name])]
+    if !@users.compact.empty?
+      render "usage_stats"
+      return
+    else
+      flash[:error] = "User not found."
+      redirect_to dashboard_url
+    end
+  end
   
   def account
     if @current_user
