@@ -5,26 +5,26 @@
   %p
     - form_for(@user, :url => { :action => "update_admins", :id => @user.id }) do |f|
       = f.error_messages
-      %p
-        %h2
+      .user_admins
+        .user_name
           = @user.name + " - " + @user.full_name
         
-        %checkbox_container
+        .checkbox_container
           = f.check_box :is_master_admin
           = f.label "Master"
         
         
-        %checkbox_container
+        .checkbox_container
           = f.check_box :is_community_master_admin
           = f.label "Community Master"
         
           
-        %checkbox_container  
+        .checkbox_container  
           = f.check_box :admin
           = f.label :admin
         
           
-        %checkbox_container
+        .checkbox_container
           = f.check_box :developer
           = f.label :developer
         
