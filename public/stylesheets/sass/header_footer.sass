@@ -2,7 +2,7 @@
 !back_color = gray
 !inactive_color = white
 
-!text_color = white
+!text_color = black
 !active_button_color = !active_color
 !button_color = !back_color
 
@@ -21,17 +21,21 @@
   
   //width: 90%
   width = !header_footer_percent
-  height: 90px
+  height: 80px
   position: relative
-
+  
+  background-image: url("/images/pn_header.jpg")
+  
 #header_top
   position: relative
   height: 60px
   top: 0px
   left: 0px
   z-index: 1
-  background-color = !active_color
-  border-radius: 15px
+  //background-color = !active_color
+  //border-radius: 15px
+  
+  //background-image: url("/images/pn_header.jpg")
   
   position: absolute
   height: 60px
@@ -74,14 +78,14 @@
   
 
 #header_tab_holder
-  background-color = !back_color
+  //background-color = !back_color
   position: absolute
   top: 40px
   left: 0px
   width: 100%
   z-index: 0
   
-  height: 40px
+  height: 20px
   
 .header_tab
   background-color = !inactive_color
@@ -150,6 +154,7 @@
   
 .header_spacer_tab
   +base_header_tab
+  border-style: none
   float: left
   width: 10px
   min_width: 10px

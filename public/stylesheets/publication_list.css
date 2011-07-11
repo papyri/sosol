@@ -3,25 +3,21 @@
   margin-left: auto;
   margin-right: auto; }
 
+
 .publication_holder {
   position: relative;
-  overflow: overflow;
   background-color: white;
   width: 1000px;
-  height: 22px;
-  border-width: 2px;
-  border-style: none;
-  border-color: black;
-  margin: 2px; }
+  height: 22px; }
 
 .publication_title {
-  overflow: overflow;
   top: 0px;
-  left: 50px;
+  left: 0px;
   width: 200px;
   height: 20px;
   position: absolute;
-  margin: 2px; }
+  margin: 2px;
+  text-align: left; }
 
 .publication_board_name {
   position: absolute;
@@ -33,211 +29,145 @@
   width: 20px;
   height: 22px;
   top: 0px;
-  left: 250px; }
+  left: 200px; }
 
 .identifier_holder {
-  overflow: overflow;
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: none;
-  border-color: black; }
+  height: 20px; }
+  .identifier_holder:hover {
+    overflow: visible;
+    background-color: white; }
 
 .HGVMetaIdentifier {
   top: 0px;
-  left: 270px; }
+  left: 220px; }
 
 .DDBIdentifier {
   top: 0px;
-  left: 420px; }
+  left: 370px; }
 
 .HGVTransIdentifier {
   top: 0px;
-  left: 570px; }
+  left: 520px; }
 
 .HGVBiblioIdentifier {
   top: 0px;
-  left: 720px; }
+  left: 670px; }
+
+.board_info {
+  top: 0px;
+  left: 670px;
+  width: 330px; }
+  .board_info:hover {
+    overflow: visible;
+    background-color: white;
+    z-index: 1000; }
 
 
-.user_publications_header_holder {
+.publications_header_holder {
   position: relative;
-  overflow: overflow;
+  overflow: hidden;
   background-color: white;
   width: 1000px;
-  height: 22px;
+  height: 30px;
   border-width: 2px;
-  border-style: solid;
+  border-bottom-style: solid;
   border-color: black;
   margin: 2px; }
 
-.user_publications_header_title {
-  overflow: overflow;
+.publications_header_title {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
-  left: 50px; }
+  font-size: 125%;
+  text-align: center;
+  left: 0px;
+  text-align: left;
+  font-weight: bold; }
 
-.user_publications_header_overview {
+.publications_header_overview {
+  overflow: hidden;
+  position: absolute;
+  width: 150px;
+  height: 20px;
+  top: 0px;
+  font-size: 125%;
+  text-align: center;
+  overflow: visible;
   width: 20px;
   height: 22px;
   top: 0px;
-  left: 200px;
+  left: 150px;
   position: absolute; }
 
-.user_publications_header_HGVMetaIdentifier {
-  overflow: overflow;
+.publications_header_HGVMetaIdentifier {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
+  font-size: 125%;
+  text-align: center;
   top: 0px;
-  left: 270px; }
+  left: 220px; }
 
-.user_publications_header_DDBIdentifier {
-  overflow: overflow;
+.publications_header_DDBIdentifier {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
+  font-size: 125%;
+  text-align: center;
   top: 0px;
-  left: 420px; }
+  left: 370px; }
 
-.user_publications_header_HGVTransIdentifier {
-  overflow: overflow;
+.publications_header_HGVTransIdentifier {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
+  font-size: 125%;
+  text-align: center;
   top: 0px;
-  left: 570px; }
+  left: 520px; }
 
-.user_publications_header_HGVBiblioIdentifier {
-  overflow: overflow;
+.publications_header_HGVBiblioIdentifier {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
+  font-size: 125%;
+  text-align: center;
   top: 0px;
-  left: 720px; }
+  left: 670px; }
 
-
-
-.board_publications_header_holder {
-  position: relative;
-  overflow: overflow;
-  background-color: white;
-  width: 700px;
-  height: 22px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: black;
-  margin: 2px; }
-
-.board_publications_header_board {
-  width: 50px;
-  height: 22px;
-  top: 0px;
-  left: 0px; }
-
-.board_publications_header_title {
-  width: 200px;
-  height: 22px;
-  top: 0px;
-  left: 50px; }
-
-.board_publications_header_overview {
-  width: 20px;
-  height: 22px;
-  top: 0px;
-  left: 250px; }
-
-.board_publications_header_HGVMetaIdentifier {
-  overflow: overflow;
+.publications_header_info {
+  overflow: hidden;
   position: absolute;
-  background-color: lightgray;
   width: 150px;
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
   top: 0px;
+  font-size: 125%;
+  text-align: center;
   top: 0px;
-  left: 270px; }
-
-.board_publications_header_DDBIdentifier {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
-  top: 0px;
-  top: 0px;
-  left: 420px; }
-
-.board_publications_header_HGVTransIdentifier {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
-  top: 0px;
-  top: 0px;
-  left: 570px; }
-
-.board_publications_header_HGVBiblioIdentifier {
-  overflow: overflow;
-  position: absolute;
-  background-color: lightgray;
-  width: 150px;
-  height: 20px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
-  top: 0px;
-  top: 0px;
-  left: 720px; }
+  left: 670px; }
 
 
 .identifier {
-  overflow: overflow;
+  overflow: hidden;
   background-color: white;
-  border-width: 1px;
   border-style: none;
   border-color: black;
   width: 150px;
   height: 20px;
-  position: relative;
-  top: -2px //clean up boarders; }
+  position: relative; }
 
 .offset {
   position: relative; }
@@ -265,7 +195,7 @@
   background-color: white; }
 
 .status_finalizing {
-  background-color: indianred; }
+  background-color: white; }
 
 .controlled_yes {
   border-color: red; }
@@ -281,6 +211,7 @@
   position: absolute;
   top: 4px;
   left: 20px;
+  text-align: left;
   color: black; }
 
 .expand_identifers {
@@ -291,7 +222,6 @@
   left: 96px; }
 
 .identifier_holder_status_not_modified {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -300,6 +230,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -118px 0px; }
   .identifier_holder_status_not_modified img {
     position: absolute;
@@ -309,7 +240,6 @@
     height: 22px; }
 
 .identifier_holder_status_new {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -318,6 +248,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -96px 0px; }
   .identifier_holder_status_new img {
     position: absolute;
@@ -327,7 +258,6 @@
     height: 22px; }
 
 .identifier_holder_status_editing {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -336,6 +266,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -96px 0px; }
   .identifier_holder_status_editing img {
     position: absolute;
@@ -345,7 +276,6 @@
     height: 22px; }
 
 .identifier_holder_status_submitted {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -354,6 +284,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -80px 0px; }
   .identifier_holder_status_submitted img {
     position: absolute;
@@ -363,7 +294,6 @@
     height: 22px; }
 
 .identifier_holder_status_approved {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -372,6 +302,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -64px 0px;
   #background-position: -48px 0px; }
   .identifier_holder_status_approved img {
@@ -382,7 +313,6 @@
     height: 22px; }
 
 .identifier_holder_status_committed {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -391,6 +321,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -48px 0px;
   #background-position: -32px 0px; }
   .identifier_holder_status_committed img {
@@ -401,7 +332,6 @@
     height: 22px; }
 
 .identifier_holder_status_archived {
-  overflow: overflow;
   width: 118px;
   height: 4px;
   z-index: 20;
@@ -410,6 +340,7 @@
   #background-color: coral;
   position: absolute;
   overflow: hidden;
+  left: 20px;
   background-position: -32px 0px;
   #background-position: -16px 0px; }
   .identifier_holder_status_archived img {
@@ -457,10 +388,8 @@
   border-width: 10px;
   border-style: solid;
   border-color: #d25f00;
-  border-radius: 10px;
   background-color: white;
-  padding: 5px;
-  margin: 5px; }
+  padding: 5px; }
 
 .show_more_ids {
   float: right;
@@ -496,3 +425,7 @@
     z-index: 100;
     color: black;
     background-color: white; }
+
+.status_section_title {
+  font-size: 200%;
+  text-align: left; }

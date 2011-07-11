@@ -4,7 +4,7 @@
 !publication_box_content_width = 1000px
 !publication_box_content_height = 22px 
 
-!publication_board_name_width = 50px
+!publication_board_name_width = 0px
 
 !overview_width = 20px
 
@@ -21,7 +21,7 @@
 !votes_width = 20px
 
 =clip
-  overflow: overflow
+  overflow: hidden
 
 =publication_board_name_position
   top: 0px
@@ -57,6 +57,10 @@
   top: 0px
   left = !identifier_box_start_left + 3 * !identifier_box_width
 
+=board_info_position
+  top: 0px
+  left = !identifier_box_start_left + 3 * !identifier_box_width
+  
 =votes_position
   //left = !identifier_box_width - ( !votes_width * 2)
   left: 0px
@@ -69,26 +73,34 @@
   margin-left: auto
   margin-right: auto
   
+.publication_list_holder
+  //position: relative
+  
+  //background-color: red
+  
 .publication_holder
   position: relative
-  +clip
+  //+clip
   background-color: white
   width = !publication_box_content_width
   height = !publication_box_content_height
+  //min-height = !publication_box_content_height
+  //max-height = !publication_box_content_height * 3
   
-  border-width: 2px
-  border-style: none
-  border-color: black
-  margin: 2px
+  //border-width: 2px
+  //border-style: solid
+  //border-color: black
+  //margin: 2px
   
 .publication_title
-  +clip
+  //+clip
   +publication_title_position
   width = !publication_title_width
   height = !publication_title_height
   position: absolute
   //position: 2px 2px
   margin: 2px
+  text-align: left
   
 .publication_board_name  
   position: absolute
@@ -100,26 +112,25 @@
   width = !overview_width
   height = !publication_box_content_height
   +overview_position
-  //width: 20px
-  //height: 40px
-  //height: 20px
-  //top: 2px
-  //left: 180px
-  //left: 60px
 
   
 .identifier_holder
   +clip
   position: absolute
-  background-color: lightgray
+  //background-color: lightgray
   //width: 120px
   //height: 22px
   width = !identifier_box_content_width
   height = !identifier_box_content_height
   
-  border-width: 1px
-  border-style: none
-  border-color: black
+  //border-width: 1px
+  //border-style: none
+  //border-color: black
+  
+  &:hover
+    overflow: visible
+    background-color: white
+
 
 
 .HGVMetaIdentifier
@@ -134,10 +145,20 @@
 .HGVBiblioIdentifier
   +HGVBiblioIdentifier_position
   
+.board_info
+  +board_info_position
+  width = !publication_box_content_width - ( !identifier_box_start_left + 3 * !identifier_box_width)
+  
+  &:hover
+    overflow: visible
+    background-color: white
+    z-index: 1000
+  
+  
+  
+#------publicaitons header--------
 
-#----- user publicaitons header--------
-
-.user_publications_header_holder
+.publications_header_holder
   position: relative
   +clip
   background-color: white
@@ -145,10 +166,11 @@
   //height: 22px
   
   width = !publication_box_content_width
-  height = !publication_box_content_height
+  //height = !publication_box_content_height
+  height: 30px
   
   border-width: 2px
-  border-style: solid
+  border-bottom-style: solid
   border-color: black
   margin: 2px
 
@@ -156,112 +178,74 @@
 =publication_header
   +clip
   position: absolute
-  background-color: lightgray
+  //background-color: lightgray
   //width: 120px
   //height: 20px
   
   width = !identifier_box_content_width
   height = !identifier_box_content_height
   
-  border-width: 1px
-  border-style: solid
-  border-color: black
+  //border-width: 1px
+  //border-style: solid
+  //border-color: black
   
   top: 0px
+
+  font-size: 125%
+  text-align: center
   
-=user_publication_header
+.publications_header_title
   +publication_header
-  
-.user_publications_header_title
-  +user_publication_header
   //left: 0px
   left = !publication_board_name_width
+  text-align: left
+  font-weight: bold
+  //font-size: 150%
   
-.user_publications_header_overview
+.publications_header_overview
+  +publication_header
+  overflow: visible
   width = !overview_width
   height = !publication_box_content_height
   +overview_header_position 
   position: absolute
+  
 
-.user_publications_header_HGVMetaIdentifier
-  +user_publication_header
+.publications_header_HGVMetaIdentifier
+  +publication_header
   +HGVMetaIdentifier_position
   //left: 200px
 
-.user_publications_header_DDBIdentifier
-  +user_publication_header
+.publications_header_DDBIdentifier
+  +publication_header
   //left: 326px
   +DDBIdentifier_position
 
-.user_publications_header_HGVTransIdentifier
-  +user_publication_header
+.publications_header_HGVTransIdentifier
+  +publication_header
   //left: 452px
   +HGVTransIdentifier_position
   
-.user_publications_header_HGVBiblioIdentifier
-  +user_publication_header
+.publications_header_HGVBiblioIdentifier
+  +publication_header
   //left: 578px
   +HGVBiblioIdentifier_position
 
-#-----end user publicaitons header--------
 
-
-#-----board publicaitons header--------
-
-.board_publications_header_holder
-  position: relative
-  +clip
-  background-color: white
-  width: 700px
-  height: 22px
-  border-width: 2px
-  border-style: solid
-  border-color: black
-  margin: 2px
-
-.board_publications_header_board
-  //+user_publication_header
-  width = !publication_board_name_width
-  height = !publication_box_content_height
-  +publication_board_name_position
+.publications_header_info
+  +publication_header
+  +board_info_position
+ 
   
-.board_publications_header_title
-  //+user_publication_header
-  width = !publication_title_width
-  height = !publication_box_content_height
-  +publication_title_position
-  
-.board_publications_header_overview
-  //+user_publication_header
-  width = !overview_width
-  height = !publication_box_content_height
-  +overview_position 
-  
-.board_publications_header_HGVMetaIdentifier
-  +user_publication_header
-  +HGVMetaIdentifier_position
+#-----end publications header--------
 
-.board_publications_header_DDBIdentifier
-  +user_publication_header
-  +DDBIdentifier_position
 
-.board_publications_header_HGVTransIdentifier
-  +user_publication_header
-  +HGVTransIdentifier_position
-  
-.board_publications_header_HGVBiblioIdentifier
-  +user_publication_header
-  +HGVBiblioIdentifier_position  
-  
-  
-
-#-----end board publicaitons header--------
 
 .identifier
   +clip
   background-color: white
   
-  border-width: 1px
+  //border-width: 1px
   border-style: none
   border-color: black
   
@@ -271,7 +255,9 @@
   height: 20px
   
   position: relative
-  top: -2px //clean up boarders
+  //top: -2px //clean up boarders
+  
+ 
 
 .offset
   position: relative
@@ -299,14 +285,14 @@
   background-color: white
   
 .status_finalizing
-  background-color: indianred
+  //background-color: indianred
+  background-color: white
 
   
 .controlled_yes
   border-color: red
   
 =status_bar
-  +clip
   width: 118px
   //height: 16px
   height: 4px
@@ -316,6 +302,8 @@
   #background-color: coral
   position: absolute
   overflow: hidden
+  
+  left = !votes_width
 
   img
     position: absolute
@@ -341,6 +329,7 @@
   top: 4px
   left = !votes_width
   
+  text-align: left
   
   
   //padding: 2px
@@ -428,11 +417,11 @@
   border-width: 10px
   border-style: solid
   border-color = !active_button_color
-  border-radius: 10px
+  //border-radius: 10px
   
   background-color: white
   padding: 5px
-  margin: 5px
+  //margin: 5px
   
 .show_more_ids
   //position: absolute
@@ -467,3 +456,9 @@
     
 .finalizer
   +votes_and_finalizer
+  
+  
+.status_section_title
+  font-size: 200%
+  text-align: left
+  

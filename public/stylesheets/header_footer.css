@@ -1,12 +1,13 @@
 #logo a {
-  color: white; }
+  color: black; }
 
 #header_box {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  height: 90px;
-  position: relative; }
+  height: 80px;
+  position: relative;
+  background-image: url("/images/pn_header.jpg"); }
 
 #header_top {
   position: relative;
@@ -14,8 +15,6 @@
   top: 0px;
   left: 0px;
   z-index: 1;
-  background-color: #d25f00;
-  border-radius: 15px;
   position: absolute;
   height: 60px;
   width: 100%;
@@ -41,13 +40,12 @@
     width: 400px; }
 
 #header_tab_holder {
-  background-color: gray;
   position: absolute;
   top: 40px;
   left: 0px;
   width: 100%;
   z-index: 0;
-  height: 40px; }
+  height: 20px; }
 
 .header_tab {
   background-color: white;
@@ -121,6 +119,7 @@
   border-bottom-style: solid;
   border-left-style: solid;
   text-align: center;
+  border-style: none;
   float: left;
   width: 10px;
   min_width: 10px; }
