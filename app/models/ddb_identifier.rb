@@ -42,7 +42,7 @@ class DDBIdentifier < Identifier
         )
       if response.code == '200'
         @collection_names.each do |collection_name|
-          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/ns1:bibliographicCitation/text()"
+          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/dcterms:bibliographicCitation/text()"
           human_name = 
             NumbersRDF::NumbersHelper.process_numbers_server_response_body(
               response.body, xpath).first
