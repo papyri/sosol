@@ -1,7 +1,12 @@
 - sosol_boards = @current_user.boards.ranked
 
+.header_spacer_tab
+  
 - sosol_boards.each do |sb|
-  #header_board_tab{ :class => "header_tab" }
+  - active_class = ""
+  - if sb.id == request.cookies["active_board_tab_id"]
+    - active_class = " active_tab"
+  #header_board_tab{ :class => "header_tab" + active_class }
     = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
 
 -# need list of community board ids
@@ -19,7 +24,10 @@
   .header_spacer_tab
     
   - community_boards.each do |cb|
-    #header_board_tab{ :class => "header_tab" }
+    - active_class = ""
+    - if cb.id == request.cookies["active_board_tab_id"]
+      - active_class = " active_tab"
+    #header_board_tab{ :class => "header_tab" + active_class }
       = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
       
   
