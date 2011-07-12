@@ -8,6 +8,9 @@ margin-bottom: 0.63em;
 font-size: medium;/*set so that em sizing is consisent*/
 }
 
+.invisible {
+  display: none; }
+
 .choosetext /* applied to all input text boxes */
 {
 font-size: medium;/*set so that em sizing is consisent*/

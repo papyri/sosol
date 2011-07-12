@@ -9,6 +9,14 @@ class HelperController < ApplicationController
   def gapall
   end
   
+  #used in commentary
+  def insertLinkPN
+  end
+  
+  #used in commentary
+  def insertlink
+  end
+  
   def abbrev
   end
   

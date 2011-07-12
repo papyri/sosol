@@ -9,7 +9,7 @@
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
      <xsl:if test="not(//tei:div[@type='commentary' and @subtype='frontmatter'])">
        <div id="frontmatter_commentary_container">
-         <a id="frontmatter_commentary" href="#" class="clickable"><b>Add front matter commentary</b></a>
+         <a id="frontmatter_commentary_add" href="#" class="clickable"><b>Add front matter commentary</b></a>
        </div>
      </xsl:if>
      <div class="commentary" id="edition">
@@ -52,7 +52,7 @@
       <xsl:apply-templates/>
     </div>
   </xsl:template>
-
+   
   <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:list/tei:item">
     <li class="{replace(@corresp, '^#', 'comment-on-')} input">
 
@@ -65,7 +65,8 @@
         </div>
       </div>
       <textarea class = "originalxml" style="display:none">
-        <xsl:copy-of select="node()[name() != 'ref']"/>
+        <!-- copy nodes that are not ref and ref nodes with a target attribute -->
+        <xsl:copy-of select="node()[name() != 'ref' or name() = 'ref' and @target]"/>
       </textarea>
     </li>
   </xsl:template>
@@ -97,16 +98,102 @@
      </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref">
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  <!-- |||||||||  these 4 hand to be split to handle both frontmatter and commentary     ||||||||| -->
+  <!-- |||||||||  ref with target and ref without target                                 ||||||||| -->
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref[not(@target)]">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='bold']">
-    <b><xsl:apply-templates/></b>
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab/tei:ref[not(@target)]">
+    <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:emph[@rend='italics']">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref[@target]">
+    <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab/tei:ref[@target]">
+    <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
+  </xsl:template>
+  
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  <!-- |||||||||  below are set up to handle preview for both frontmatter and commentary ||||||||| -->
+  <!-- |||||||||  bibl ref, footnote, bold, italics, underline, quote                    ||||||||| -->
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:ref[@target]">
+    <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts listBibl inside a ul tag and do not want to do that in commentary preview -->
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview -->
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='pp']">
+    <xsl:text> page=</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='ll']">
+    <xsl:text> line=</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='vol']">
+    <xsl:text> vol=</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='issue']">
+    <xsl:text> issue=</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='chap']">
+    <xsl:text> chapter=</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text> </xsl:text>
+  </xsl:template>  
+  
+  <!-- overrides rule in htm-teinote.xsl and teinote.xsl that puts inside a p tag and do not want to do that in commentary preview -->
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:note[@type='footnote']">
+    <xsl:text>(</xsl:text>
+    <xsl:value-of select="text()"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='bold']">
+    <b><xsl:apply-templates/></b>
+  </xsl:template>
+    
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='italics']">
     <i><xsl:apply-templates/></i>
+  </xsl:template>
+
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='underline']">
+    <u><xsl:apply-templates/></u>
+  </xsl:template>
+
+  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='quote']">
+    <q><xsl:apply-templates/></q>
   </xsl:template>
 
   <!-- Textpart div -->
