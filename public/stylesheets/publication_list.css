@@ -59,7 +59,9 @@
 .board_info {
   top: 0px;
   left: 670px;
-  width: 330px; }
+  width: 330px;
+  background-color: white;
+  z-index: 100; }
   .board_info:hover {
     overflow: visible;
     background-color: white;
@@ -69,7 +71,6 @@
 .publications_header_holder {
   position: relative;
   overflow: hidden;
-  background-color: white;
   width: 1000px;
   height: 30px;
   border-width: 2px;
