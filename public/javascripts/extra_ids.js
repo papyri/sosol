@@ -10,7 +10,7 @@
     {
       hideExtraIds();
       $(node_name).style.visibility = "visible"
-      img_node[0].src = '/images/hide_more_ids.png';
+      img_node[0].src = 'http://halsted.vis.uky.edu/protosite/images/hide_more_ids.png';
     }
     else
     {
@@ -33,7 +33,7 @@
     {
       var img_node = $(showMoreImages[i]).select('img');
       
-      img_node[0].src = '/images/show_more_ids.png';
+      img_node[0].src = 'http://halsted.vis.uky.edu/protosite/images/show_more_ids.png';
     }
   }
   
