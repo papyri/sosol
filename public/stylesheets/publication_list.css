@@ -7,7 +7,9 @@
   position: relative;
   background-color: white;
   width: 1000px;
-  height: 22px; }
+  height: 22px;
+  border-width: 1px;
+  border-style: none none dotted none; }
 
 .publication_title {
   top: 0px;
