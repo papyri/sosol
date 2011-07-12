@@ -16,10 +16,10 @@
       \|
       = link_to 'Old Dashboard', :controller => 'user', :action => 'dashboard', :old => true
       
-      \|
-      = link_to 'Advance Create', :controller => 'publications', :action => 'advanced_create'
-      
+     
+  
       - if @current_user.developer
+        \|
         = link_to 'developer', developer_url
       
 

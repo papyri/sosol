@@ -9,7 +9,11 @@
     
     #header_selector
       = render :partial => "publications/publication_selector", :locals => {:hide_text => true, :emend => :showemend}
-    
+      
+    #header_advanced_create
+      = link_to 'Advanced...', :controller => 'publications', :action => 'advanced_create'
+      
+      
     #header_user_box
       = link_to @current_user.name, account_url
       \|

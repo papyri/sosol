@@ -25,12 +25,14 @@
   position: absolute;
   top: 20px;
   right: 10px; }
-  #header_user_box a:link {
-    color: white; }
-  #header_user_box a:visited {
-    color: white; }
-  #header_user_box a:hover {
-    color: white; }
+  #header_user_box a {
+    text-decoration: none; }
+    #header_user_box a:link {
+      color: white; }
+    #header_user_box a:visited {
+      color: white; }
+    #header_user_box a:hover {
+      color: white; }
 
 #header_title {
   position: absolute;
@@ -44,6 +46,19 @@
   left: 100px; }
   #header_selector form {
     width: 400px; }
+
+#header_advanced_create {
+  position: absolute;
+  top: 25px;
+  left: 510px; }
+  #header_advanced_create a {
+    text-decoration: none; }
+    #header_advanced_create a:link {
+      color: white; }
+    #header_advanced_create a:visited {
+      color: white; }
+    #header_advanced_create a:hover {
+      color: white; }
 
 #header_tab_holder {
   position: absolute;
