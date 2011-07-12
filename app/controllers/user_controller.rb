@@ -82,18 +82,11 @@ class UserController < ApplicationController
       return
     end
     
-    unless params[:x]
+    unless params[:old]
       
-   
-    
       if params[:board_id]
-        #@boards = @current_user.boards.ranked_by_community_id(params[:board_id])
-        #@boards = Board.find(params[:board_id])
-       
-        
         redirect_to :action => "board_dashboard", :board_id => params[:board_id]
         return
-        
       else
         redirect_to :action => "user_dashboard"
         return
