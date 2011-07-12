@@ -63,10 +63,14 @@
           - if publication.find_finalizer_user
             = publication.find_finalizer_user.human_name
             = " is finalizing. "
+            = button_to "Make me finalizer", {:controller => 'publications', :action => 'become_finalizer', :id => publication.id }
             
           - elsif publication.votes.count > 0
             = publication.votes.count
-            = "votes: "
+            - if publication.votes.count == 1
+              = "vote: "
+            - else
+              = "votes: "
             - publication.votes.each do |vote|
               %br
               = vote.user.human_name + "  " + vote.choice + " " 
