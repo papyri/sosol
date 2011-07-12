@@ -25,6 +25,12 @@
   position: absolute;
   top: 20px;
   right: 10px; }
+  #header_user_box a:link {
+    color: white; }
+  #header_user_box a:visited {
+    color: white; }
+  #header_user_box a:hover {
+    color: white; }
 
 #header_title {
   position: absolute;
@@ -49,27 +55,33 @@
 
 .header_tab {
   background-color: white;
-  border-color: #d25f00; }
+  border-color: #b0171f; }
+  .header_tab a:link {
+    color: black; }
+  .header_tab a:visited {
+    color: black; }
+  .header_tab a:hover {
+    color: black; }
 
 .header_tab_active {
-  background-color: #d25f00;
+  background-color: #b0171f;
   border-color: white; }
-  .header_tab_active a link {
+  .header_tab_active a:link {
     color: white; }
-  .header_tab_active a visited {
+  .header_tab_active a:visited {
     color: white; }
-  .header_tab_active a hover {
-    color: #d25f00; }
+  .header_tab_active a:hover {
+    color: white; }
 
 .header_tab:hover {
-  background-color: #d25f00;
+  background-color: #b0171f;
   border-color: white; }
-  .header_tab:hover a link {
+  .header_tab:hover a:link {
     color: white; }
-  .header_tab:hover a visited {
+  .header_tab:hover a:visited {
     color: white; }
-  .header_tab:hover a hover {
-    color: #d25f00; }
+  .header_tab:hover a:hover {
+    color: white; }
 
 #header_edit_tab {
   float: left; }

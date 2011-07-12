@@ -357,7 +357,7 @@
   background-color: gray; }
 
 .sort_header:hover {
-  background-color: #d25f00; }
+  background-color: #b0171f; }
 
 .status_sort_button {
   width: 16px;
@@ -366,7 +366,7 @@
   overflow: hidden;
   float: left; }
   .status_sort_button:hover {
-    background-color: #d25f00; }
+    background-color: #b0171f; }
 
 .sort_button {
   display: inline;
@@ -378,7 +378,7 @@
   margin: 5px; }
 
 .sort_button:hover {
-  background-color: #d25f00;
+  background-color: #b0171f;
   cursor: pointer; }
 
 .extra_ids {
@@ -387,7 +387,7 @@
   left: -50px;
   border-width: 10px;
   border-style: solid;
-  border-color: #d25f00;
+  border-color: #b0171f;
   background-color: white;
   padding: 5px; }
 
