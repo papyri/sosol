@@ -63,9 +63,9 @@
   background-color: white;
   z-index: 100; }
   .board_info:hover {
-    overflow: visible;
     background-color: white;
-    z-index: 1000; }
+    z-index: 1000;
+    height: auto; }
 
 
 .publications_header_holder {
