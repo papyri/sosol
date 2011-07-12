@@ -390,13 +390,14 @@
 
 .extra_ids {
   position: absolute;
-  top: 0px;
-  left: -50px;
+  top: 20px;
+  left: -45px;
   border-width: 10px;
   border-style: solid;
   border-color: #b0171f;
   background-color: white;
-  padding: 5px; }
+  padding: 5px;
+  z-index: 2000; }
 
 .show_more_ids {
   float: right;
