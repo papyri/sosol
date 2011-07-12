@@ -97,6 +97,7 @@
   border-right-style: solid;
   border-bottom-style: solid;
   border-left-style: solid;
+  margin-left: 2px;
   text-align: center;
   left: 154px; }
   #xxheader_board_tab a {
@@ -114,6 +115,7 @@
   border-right-style: solid;
   border-bottom-style: solid;
   border-left-style: solid;
+  margin-left: 2px;
   text-align: center;
   min-width: 50px; }
   .header_tab a {
@@ -130,6 +132,7 @@
   border-right-style: solid;
   border-bottom-style: solid;
   border-left-style: solid;
+  margin-left: 2px;
   text-align: center;
   border-style: none;
   float: left;
