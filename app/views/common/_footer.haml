@@ -13,14 +13,12 @@
       \|
       = link_to 'admin', :controller => 'user', :action => 'admin' 
       
-      - if @current_user.admin 
-        \|
-        = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
-        \|
-        = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
-        \|
-        = link_to 'Email Users', sendmsg_url
-        \|
+      \|
+      = link_to 'Old Dashboard', :controller => 'user', :action => 'dashboard', :old => true
+      
+      \|
+      = link_to 'Advance Create', :controller => 'publications', :action => 'advanced_create'
+      
       - if @current_user.developer
         = link_to 'developer', developer_url
       

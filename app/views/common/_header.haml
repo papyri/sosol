@@ -8,7 +8,7 @@
         %h1= link_to SITE_NAME, root_url
     
     #header_selector
-      =# render :partial => "publications/publication_selector", :locals => {:hide_text => true}
+      = render :partial => "publications/publication_selector", :locals => {:hide_text => true, :emend => :showemend}
     
     #header_user_box
       = link_to @current_user.name, account_url
@@ -16,6 +16,10 @@
       = link_to 'sign out', signout_url
       
   #header_tab_holder
+    #header_navigator_tab{ :class => "header_tab"}
+      %a{:href => "http://dev.papyri.info/search"}
+        Navigator
+      
     - if false #if (defined? active_tab) && (active_tab == "edit")
       #header_edit_tab{ :class => "header_tab header_tab_active" }
         Edit
