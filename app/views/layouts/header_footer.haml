@@ -10,8 +10,8 @@
     = javascript_include_tag :defaults
   
   = render :partial => "common/header", :locals => {:active_tab => "edit"}
-  %content_body
-  = yield
+  .content_body
+    = yield
   = render :partial => "common/footer"
 
 
