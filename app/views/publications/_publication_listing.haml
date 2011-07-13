@@ -8,7 +8,9 @@
     %div{:class => "publication_holder ", :id => "publication_holder_" + publication.id.to_s }
     
       %div{:class => "publication_title " + "status_" + publication.status, :id =>  "publication_" + publication.id.to_s}
-        = publication.title
+        = publication.origin.title
+        - if defined?(view_type) && view_type == "board"
+          = "by " + publication.creator.human_name
       
       %div{:class => "overview_holder"}
         = link_to( image_tag('documents.png', :border => "0", :alt => "Publication Overview") , publication)
