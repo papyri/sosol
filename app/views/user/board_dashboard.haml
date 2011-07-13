@@ -18,4 +18,6 @@
   = render :partial => "publications/publication_listing", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
 
 
-= link_to "Archived", :controller => 'user', :action => 'archives', :board_id => @board.id
+%br
+.archive_link
+  = link_to "Archived", :controller => 'user', :action => 'archives', :board_id => @board.id

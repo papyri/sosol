@@ -423,6 +423,10 @@
     .more_less a:hover {
       color: black; }
 
+.archive_link {
+  font-size: 100%;
+  float: left; }
+
 .status_section_title {
   font-size: 200%;
   text-align: left; }
