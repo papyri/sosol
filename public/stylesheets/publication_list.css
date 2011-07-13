@@ -411,6 +411,18 @@
   width: 20px;
   height: 20px; }
 
+.more_less {
+  display: inline;
+  font-size: small; }
+  .more_less a {
+    text-decoration: none; }
+    .more_less a:link {
+      color: black; }
+    .more_less a:visited {
+      color: black; }
+    .more_less a:hover {
+      color: black; }
+
 .status_section_title {
   font-size: 200%;
   text-align: left; }

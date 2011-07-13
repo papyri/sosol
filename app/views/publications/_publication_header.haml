@@ -3,11 +3,17 @@
 %div{:class => "publications_header_holder" }
 
   %div{:class => "publications_header_title" }
-    = status
+    
     - if defined?(list_name)
       - list_id = "publication_list_holder_" + list_name
-      %div{:class => "show_hide", :onclick => "showhide('#{list_id}', this)" } 
-        hide
+      %div{:class => "more_less", :id => 'less_' + list_id}
+        %a{:id => 'less_' + list_id, :class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('#{list_id}'); Effect.SlideUp('less_#{list_id}'); Effect.SlideDown('more_#{list_id}'); return false;"}
+          = "-"  
+      %div{:style => "display:none;", :class => "more_less", :id => 'more_' + list_id}
+        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('#{list_id}'); Effect.SlideUp('more_#{list_id}'); Effect.SlideDown('less_#{list_id}'); return false;"}
+          = "+"
+    = status
+
   %div{:class => "publications_header_overview"}
     Overview
   - possible_identifiers = Array.new(Identifier::IDENTIFIER_MAIN_SUBCLASSES)
