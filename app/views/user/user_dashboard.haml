@@ -18,4 +18,6 @@
   = render :partial => "publications/publication_listing", :locals => {:publications => @committed_publications, :list_name => "committed" }
 
 
+= link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id
+
 
