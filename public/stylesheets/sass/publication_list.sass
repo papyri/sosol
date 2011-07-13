@@ -156,7 +156,7 @@
   +board_info_position
   width = !board_info_width 
   background-color: white
-  z-index: 100
+  //z-index: 100
   
   
   //height: 1em
@@ -461,41 +461,17 @@
   border-style: solid
   border-color = !active_button_color
   width = !board_info_width - 40px
+  //-40 so user can move down list of drop down arrows
   
   background-color: white
   padding: 5px
   z-index: 2000
-  
+
 .show_more_info
   float: right
   width: 20px
   height: 20px
 
-=votes_and_finalizer
-  position: absolute
-  +votes_position
-  
-  width = !votes_width
-  height: 18px
-  //z-index: 100
-  //background-color: green
-  
-  overflow: hidden
-  color: white
-  background-color: black
-  
-  &:hover
-    width: 200px
-    z-index: 100
-    color: black
-    background-color: white
-  
-.votes
-  +votes_and_finalizer
-    
-.finalizer
-  +votes_and_finalizer
-  
   
 .status_section_title
   font-size: 200%

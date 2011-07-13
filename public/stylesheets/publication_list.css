@@ -61,8 +61,7 @@
   top: 0px;
   left: 770px;
   width: 230px;
-  background-color: white;
-  z-index: 100; }
+  background-color: white; }
 
 
 .publications_header_holder {
@@ -411,36 +410,6 @@
   float: right;
   width: 20px;
   height: 20px; }
-
-.votes {
-  position: absolute;
-  left: 0px;
-  top: 4px;
-  width: 20px;
-  height: 18px;
-  overflow: hidden;
-  color: white;
-  background-color: black; }
-  .votes:hover {
-    width: 200px;
-    z-index: 100;
-    color: black;
-    background-color: white; }
-
-.finalizer {
-  position: absolute;
-  left: 0px;
-  top: 4px;
-  width: 20px;
-  height: 18px;
-  overflow: hidden;
-  color: white;
-  background-color: black; }
-  .finalizer:hover {
-    width: 200px;
-    z-index: 100;
-    color: black;
-    background-color: white; }
 
 .status_section_title {
   font-size: 200%;
