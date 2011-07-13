@@ -21,6 +21,8 @@
 
 !votes_width = 20px
 
+!board_info_width = !publication_box_content_width - ( !identifier_box_start_left + 3 * !identifier_box_width)
+
 =clip
   overflow: hidden
 
@@ -152,22 +154,24 @@
   
 .board_info
   +board_info_position
-  width = !publication_box_content_width - ( !identifier_box_start_left + 3 * !identifier_box_width)
+  width = !board_info_width 
   background-color: white
   z-index: 100
-  height: 1em
   
-  &:hover
-    //overflow: visible
-    background-color: white
-    z-index: 1000
-    height: auto
-    //width: auto
-    padding: 1em
-    border-style: solid
-    border-width: 2px
-    border-color = !active_button_color
-
+  
+  //height: 1em
+  
+  //&:hover
+  //  //overflow: visible
+  //  background-color: white
+  //  z-index: 1000
+  //  height: auto
+  //  //width: auto
+  //  padding: 1em
+  //  border-style: solid
+  //  border-width: 2px
+  //  border-color = !active_button_color
+  
   
   
   
@@ -429,7 +433,7 @@
   position: absolute
   top: 20px
   left: -45px
-  border-width: 10px
+  border-width: 5px
   border-style: solid
   border-color = !active_button_color
   //border-radius: 10px
@@ -445,6 +449,24 @@
   //top: 10px
   //left: 100px
   //!identifier_box_content_width
+  float: right
+  width: 20px
+  height: 20px
+
+.extra_info
+  position: absolute
+  top: 20px
+  left: 0px
+  border-width: 5px
+  border-style: solid
+  border-color = !active_button_color
+  width = !board_info_width - 40px
+  
+  background-color: white
+  padding: 5px
+  z-index: 2000
+  
+.show_more_info
   float: right
   width: 20px
   height: 20px

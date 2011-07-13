@@ -1,5 +1,8 @@
-
-%div{:class => "publication_list_holder", :id => "publication_list_holder" }
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+%div{:class => "publication_list_holder", :id => list_id }
   - publications.each do |publication|
 
     %div{:class => "publication_holder ", :id => "publication_holder_" + publication.id.to_s }
@@ -63,18 +66,24 @@
           - if publication.find_finalizer_user
             = publication.find_finalizer_user.human_name
             = " is finalizing. "
-            = button_to "Make me finalizer", {:controller => 'publications', :action => 'become_finalizer', :id => publication.id }
+            %div{:class => "show_more_info" }
+              = image_tag('show_more_ids.png')
+            %div{:class => "extra_info"}
+              = button_to "Make me finalizer", {:controller => 'publications', :action => 'become_finalizer', :id => publication.id }
             
           - elsif publication.votes.count > 0
+            %div{:class => "show_more_info" }
+              = image_tag('show_more_ids.png')
             = publication.votes.count
             - if publication.votes.count == 1
-              = "vote: "
+              = "vote "
             - else
-              = "votes: "
-            - publication.votes.each do |vote|
-              %br
-              = vote.user.human_name + "  " + vote.choice + " " 
-             
+              = "votes "
+            %div{:class => "extra_info"}
+              - publication.votes.each do |vote|
+                = vote.user.human_name + "  " + vote.choice + " "
+                %br 
+               
 
       
  

@@ -62,16 +62,7 @@
   left: 770px;
   width: 230px;
   background-color: white;
-  z-index: 100;
-  height: 1em; }
-  .board_info:hover {
-    background-color: white;
-    z-index: 1000;
-    height: auto;
-    padding: 1em;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #b0171f; }
+  z-index: 100; }
 
 
 .publications_header_holder {
@@ -392,7 +383,7 @@
   position: absolute;
   top: 20px;
   left: -45px;
-  border-width: 10px;
+  border-width: 5px;
   border-style: solid;
   border-color: #b0171f;
   background-color: white;
@@ -400,6 +391,23 @@
   z-index: 2000; }
 
 .show_more_ids {
+  float: right;
+  width: 20px;
+  height: 20px; }
+
+.extra_info {
+  position: absolute;
+  top: 20px;
+  left: 0px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #b0171f;
+  width: 190px;
+  background-color: white;
+  padding: 5px;
+  z-index: 2000; }
+
+.show_more_info {
   float: right;
   width: 20px;
   height: 20px; }
