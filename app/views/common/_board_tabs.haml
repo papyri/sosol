@@ -6,7 +6,9 @@
   - active_class = ""
   - if sb.id == request.cookies["active_board_tab_id"]
     - active_class = " active_tab"
-  #header_board_tab{ :class => "header_tab" + active_class }
+  -# #header_board_tab{ :class => "header_tab" + active_class }
+  - tab_div_id = "header_board_tab_" + sb.id.to_s
+  %div{ :id => tab_div_id,  :class => "header_tab" + active_class }
     = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
 
 -# need list of community board ids
@@ -27,7 +29,9 @@
     - active_class = ""
     - if cb.id == request.cookies["active_board_tab_id"]
       - active_class = " active_tab"
-    #header_board_tab{ :class => "header_tab" + active_class }
+    -# #header_board_tab{ :class => "header_tab" + active_class }
+    - tab_div_id = "header_board_tab_" + cb.id.to_s
+    %div{ :id => tab_div_id,  :class => "header_tab" + active_class }
       = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
       
   

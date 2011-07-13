@@ -19,33 +19,5 @@
       \|
       = link_to 'sign out', signout_url
       
-  #header_tab_holder
-    #header_navigator_tab{ :class => "header_tab"}
-      %a{:href => "http://dev.papyri.info/search"}
-        Navigator
-      
-    - if false #if (defined? active_tab) && (active_tab == "edit")
-      #header_edit_tab{ :class => "header_tab header_tab_active" }
-        Edit
-    - else
-      #header_edit_tab{ :class => "header_tab" }
-        = link_to 'Edit', :controller => "user", :action => "dashboard", :dashboard_type => "user"
-     
-    -#moved to partial to include indvidual boards
-     
-    = render :partial => "common/board_tabs" 
-        
-    -#    
-    -# if (defined? active_tab) && (active_tab == "board")
-      #header_board_tab{ :class => "header_tab header_tab_active" }
-        Board
-    -# else
-      #header_board_tab{ :class => "header_tab"}
-        = link_to 'Board', :controller => "user", :action => "dashboard", :dashboard_type => "board"
-      
-   
+  = render :partial => "common/header_tabs"
   
-  
-  
-  
-
