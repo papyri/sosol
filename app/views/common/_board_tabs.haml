@@ -1,5 +1,5 @@
 - sosol_boards = @current_user.boards.ranked
-
+- board_prefix = "Brd: "
 .header_spacer_tab
   
 - sosol_boards.each do |sb|
@@ -9,7 +9,7 @@
   -# #header_board_tab{ :class => "header_tab" + active_class }
   - tab_div_id = "header_board_tab_" + sb.id.to_s
   %div{ :id => tab_div_id,  :class => "header_tab" + active_class }
-    = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
+    = link_to board_prefix + sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
 
 -# need list of community board ids
 - community_ids = @current_user.boards.collect{ |b| b.community_id }
@@ -32,6 +32,6 @@
     -# #header_board_tab{ :class => "header_tab" + active_class }
     - tab_div_id = "header_board_tab_" + cb.id.to_s
     %div{ :id => tab_div_id,  :class => "header_tab" + active_class }
-      = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
+      = link_to board_prefix + cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
       
   

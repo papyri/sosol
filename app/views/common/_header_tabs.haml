@@ -8,16 +8,16 @@
     
     #header_navigator_tab{ :class => "header_tab"}
       %a{:href => "http://dev.papyri.info/search"}
-        Navigator
+        PN
     
   - else
   
     #header_navigator_tab{ :class => "header_tab"}
       %a{:href => "http://dev.papyri.info/search"}
-        Navigator
+        PN
       
     #header_edit_tab{ :class => "header_tab" }
-      = link_to 'Edit', :controller => "user", :action => "dashboard", :dashboard_type => "user"
+      = link_to 'PE', :controller => "user", :action => "dashboard", :dashboard_type => "user"
     
     = render :partial => "common/board_tabs"
 
