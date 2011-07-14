@@ -163,9 +163,11 @@ function insertDivisionMain(division_type)
 
   default:
     
-      alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.")
+      alert("Oops, there's been an error.  Inside insertDivisionMain function but no division_type set.");
     
   }
+  
+  startxml = "<div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\">" + startxml + "</div>";
   
   new Ajax.Request(ajaxConvert, 
   {

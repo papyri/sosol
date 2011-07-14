@@ -10,7 +10,6 @@
   <xsl:param name="content"/>
   <!-- optional, but currently needed to correctly update an existing comment -->
   <xsl:param name="original_item_id"/>
-  <xsl:param name="original_content"/>
   <!-- set to "true" to delete comment with original_item_id -->
   <xsl:param name="delete_comment"/>
   

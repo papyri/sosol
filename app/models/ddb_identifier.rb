@@ -152,7 +152,7 @@ class DDBIdentifier < Identifier
     end
   end
   
-  def update_commentary(line_id, reference, comment_content = '', original_item_id = '', original_comment_content = '', delete_comment = false)
+  def update_commentary(line_id, reference, comment_content = '', original_item_id = '', delete_comment = false)
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
@@ -163,7 +163,6 @@ class DDBIdentifier < Identifier
         :reference => reference,
         :content => comment_content,
         :original_item_id => original_item_id,
-        :original_content => original_comment_content,
         :delete_comment => (delete_comment ? 'true' : '')
       )
     
@@ -323,6 +322,9 @@ class DDBIdentifier < Identifier
   
   def preprocess_leiden(preprocessed_leiden)
     # mass substitute alternate keyboard characters for Leiden+ grammar characters
+
+    # strip tabs
+    preprocessed_leiden.tr!("\t",'')
     
     # consistent LT symbol (<)
     # \u2039 \u2329 \u27e8 \u3008 to \u003c')
