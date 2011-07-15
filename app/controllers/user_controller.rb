@@ -203,6 +203,8 @@ class UserController < ApplicationController
       @member_already_voted_on = board_voting_publications - @needs_reviewing_publications
       end
      
+     #set so the correct tab will be active
+     @current_board = @board
      render :layout => 'header_footer'
 
   end

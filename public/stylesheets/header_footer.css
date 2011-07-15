@@ -78,14 +78,14 @@
   .header_tab a:hover {
     color: black; }
 
-.header_tab_active {
+.active_tab {
   background-color: #b0171f;
   border-color: white; }
-  .header_tab_active a:link {
+  .active_tab a:link {
     color: white; }
-  .header_tab_active a:visited {
+  .active_tab a:visited {
     color: white; }
-  .header_tab_active a:hover {
+  .active_tab a:hover {
     color: white; }
 
 .header_tab:hover {

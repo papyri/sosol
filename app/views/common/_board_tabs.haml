@@ -1,10 +1,20 @@
 - sosol_boards = @current_user.boards.ranked
 - board_prefix = "Brd: "
+
+- current_board_id  = nil
+
+- if @current_board 
+  - current_board_id = @current_board.id
+- elsif false && @current_publication && @current_publication.owner_type == "Board"
+  - current_board_id = @current_publication.owner.id
+
+ 
+  
 .header_spacer_tab
   
 - sosol_boards.each do |sb|
   - active_class = ""
-  - if sb.id == request.cookies["active_board_tab_id"]
+  - if sb.id == current_board_id
     - active_class = " active_tab"
   -# #header_board_tab{ :class => "header_tab" + active_class }
   - tab_div_id = "header_board_tab_" + sb.id.to_s

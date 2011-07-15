@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :get_user_id
   before_filter :rpx_setup
+  before_filter :tab_setup
   
   protected
   
@@ -52,4 +53,12 @@ class ApplicationController < ActionController::Base
     @rpx = Rpx::RpxHelper.new(RPX_API_KEY, RPX_BASE_URL, RPX_REALM)
     return true
   end
+  
+  
+  def tab_setup
+    @current_board = nil
+    @currrent_identifier = nil
+    
+  end
+  
 end
