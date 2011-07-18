@@ -212,7 +212,7 @@
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
-    wrapped_content = "<W" + originalleiden + "W>";
+    wrapped_content = "<W:" + originalleiden + ":W>";
     new Ajax.Request(request_url, {
       method: 'post',
       parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
@@ -229,13 +229,14 @@
             $$('div#main > div.site').first().insert({
               top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
             });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
             $('notice_notice').addClassName('flash error');
           }
-          //add class after the original insert to get the flash highlighting to work in IE browser
          
           var error_content = ' ';
           error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
-          $('com_sugar_content').value = error_content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          $('com_sugar_content').value = error_content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
           
           //enable form after error
           $('com_sugar_content').toggleClassName('loading');
@@ -278,7 +279,7 @@
     $('fm_sugar_content').toggleClassName('loading');
 
     originalleiden = $('fm_sugar_content').value;
-    //alert ("originalleiden" + originalleiden);
+
     if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
@@ -287,7 +288,7 @@
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
-    wrapped_content = "<W" + originalleiden + "W>";
+    wrapped_content = "<W:" + originalleiden + ":W>";
     new Ajax.Request(request_url, {
       method: 'post',
       parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
@@ -304,13 +305,14 @@
             $$('div#main > div.site').first().insert({
               top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
             });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
             $('notice_notice').addClassName('flash error');
           }
-          //add class after the original insert to get the flash highlighting to work in IE browser
-         
+             
           var error_content = ' ';
           error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
-          $('fm_sugar_content').value = error_content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          $('fm_sugar_content').value = error_content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
           
           //enable form after error
           $('fm_sugar_content').toggleClassName('loading');
@@ -360,8 +362,8 @@
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
-    wrapped_content = "<wrap>" + originalxml + "</wrap>";
-    
+    wrapped_content = "<wrap>" + originalxml.strip() + "</wrap>";
+
     new Ajax.Request(request_url, {
       method: 'post',
       parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
@@ -369,18 +371,61 @@
         json = response.responseText.evalJSON();
       
         if ("exception" in json) {
-          $$('div#main > div.site').first().insert({
-            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
-          });
+          //$$('div#main > div.site').first().insert({
+          //  top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+          //});
+          if ($('notice_notice')) //update if already there, add if not
+          {
+            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+            });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
+            $('notice_notice').addClassName('flash error');
+          }
+         
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          
+          if (wherefrom == "FM")
+            {
+              //$('fm_sugar_content').value = error_content.replace(/^\<wrap\>/,'').replace(/\<\/wrap\>$/,'').strip();
+              $('fm_sugar_content').value = error_content.strip();
+
+              //enable form after error
+              Form.Element.enable('fm_sugar_content');
+              Form.Element.enable('save_fm');
+
+              //showMatch function in confirm.js included at the bottom
+              showMatch("fm_sugar_content", "**POSSIBLE ERROR**");
+              // **POSSIBLE ERROR** defined in insert_error_here function below
+            }
+          else
+            {
+              //$('com_sugar_content').value = error_content.replace(/^\<wrap\>/,'').replace(/\<\/wrap\>$/,'').strip();
+              $('com_sugar_content').value = error_content.strip();
+
+              //enable form after error
+              Form.Element.enable('com_sugar_content');
+              Form.Element.enable('save_com');
+
+              //showMatch function in confirm.js included at the bottom
+              showMatch("com_sugar_content", "**POSSIBLE ERROR**");
+              // **POSSIBLE ERROR** defined in insert_error_here function below
+            }
         }
         else {
           if (wherefrom == "FM")
             {
-              $('fm_sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+              $('fm_sugar_content').value = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'');
             }
           else
             {
-              $('com_sugar_content').value = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+              $('com_sugar_content').value = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'');
             }
         }
       },
@@ -399,7 +444,7 @@
         $('notice_notice').remove();
       }
   
-    var element = Event.element(event)
+    var element = Event.element(event);
     if (!element.hasClassName('line')) {element = element.up('li.line');}
     nval = $("n-" + element.id).innerHTML;
     element.insert({
