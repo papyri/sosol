@@ -4,7 +4,7 @@
 .advanced_create
   %h3 From Existing Material
   %p
-    = render :partial => "publications/publication_selector"
+    = render :partial => "publications/publication_selector", :locals => { :emend => :showemend }
 .advanced_create
   %h3 Create New Publication
   %p

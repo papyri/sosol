@@ -82,7 +82,7 @@ module NumbersRDF
       #Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:relation/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dcterms:relation/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
@@ -92,7 +92,7 @@ module NumbersRDF
       
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:hasPart/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dcterms:hasPart/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
@@ -102,8 +102,9 @@ module NumbersRDF
       
       # Turns e.g. papyri.info/hgv/P.Amh._2_48 into papyri.info/hgv/123
       def collection_identifier_to_identifiers(identifier)
-        results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:identifier/@rdf:resource", identifier
+        results = apply_xpath_to_sparql_query(
+          "//*:uri/text()",
+          'prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <rmi://localhost/papyri.info#pi> where { ?hgvid dc:identifier <http://' + URI.escape(identifier) + '> . filter regex(str(?hgvid), "^http://papyri.info/hgv/")}'
         )
         if results.nil?
           return nil
@@ -114,7 +115,7 @@ module NumbersRDF
       
       def identifier_to_title(identifier)
         result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/ns1:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
+          "/rdf:RDF/rdf:Description/dcterms:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
         )
         return result.nil? ? nil : result.first
       end
