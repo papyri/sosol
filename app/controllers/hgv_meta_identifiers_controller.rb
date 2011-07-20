@@ -12,7 +12,7 @@ class HgvMetaIdentifiersController < IdentifiersController
 
   def update
     find_identifier
-
+    #exit
     begin
       commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
       expire_publication_cache
@@ -137,38 +137,6 @@ class HgvMetaIdentifiersController < IdentifiersController
           }
         end
 
-        # get rid of empty (invalid) provenance items
-        if params[:hgv_meta_identifier][:provenance]
-          params[:hgv_meta_identifier][:provenance].delete_if{|index, provenance|
-            if provenance[:value] == 'unbekannt'
-              if provenance[:children] && provenance[:children][:place]
-                provenance[:children][:place] = {}
-              end
-              false
-            else
-              if !provenance[:children]
-                true
-              elsif !provenance[:children][:place]
-
-                true
-              else
-                provenance[:children][:place].delete_if {|indexPlace, place|
-                  if !place[:children]
-                    true
-                  elsif !place[:children][:location]
-                    true
-                  elsif !place[:children][:location][:value]
-                    true
-                  else
-                    place[:children][:location][:value].empty? ? true : false
-                  end
-                }
-                provenance[:children][:place].empty? ? true : false
-              end
-            end
-          }
-        end
-
       end
 
     end
@@ -189,26 +157,6 @@ class HgvMetaIdentifiersController < IdentifiersController
           params[:hgv_meta_identifier][:mentionedDate].each{|index, date|
             if date[:children] && date[:children][:date] && date[:children][:date][:attributes]
               date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
-            end
-          }
-        end
-
-        if params[:hgv_meta_identifier][:provenance] && params[:hgv_meta_identifier][:provenance].kind_of?(Hash)
-          params[:hgv_meta_identifier] && params[:hgv_meta_identifier][:provenance].each {|index, provenance|
-            if provenance[:children] && provenance[:children][:place] && provenance[:children][:place].kind_of?(Hash)
-              provenance[:children][:place].each{|indexPlace, place|
-                if place[:attributes] && place[:attributes][:type] && place[:attributes][:type] == 'ancientRegion'
-                  if place[:children] && place[:children][:location] && place[:children][:location][:value]
-                    
-                    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', 'ancientRegion.xml'), 'r'))
-                    key = doc.elements['/TEI/body/list[@type="ancientRegion"]/item/placeName[@type="ancientRegion"][text()="' + place[:children][:location][:value] + '"]/@key']
-  
-                    if key && !key.value.empty?
-                      place[:children][:location][:attributes] = {:key => key.value}
-                    end
-                  end
-                end
-              }
             end
           }
         end
