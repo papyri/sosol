@@ -38,11 +38,11 @@
   <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']">
     <div id="frontmatter_commentary_container" class="frontmatter_container">
       <textarea class="originalxml" style="display:none">
-        <xsl:copy-of select="tei:note/node()"/>
+        <xsl:copy-of select="node()"/>
       </textarea>
       <div id="frontmatter_commentary" class="form clickable">
         <p class="label">Front matter:</p>
-        <xsl:apply-templates select="tei:note"/>
+        <xsl:apply-templates/>
       </div>
     </div>
   </xsl:template>
@@ -76,7 +76,7 @@
      <xsl:call-template name="break"/>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:note//text()">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//text()">
      <xsl:call-template name="break"/>
   </xsl:template>
   
@@ -108,7 +108,7 @@
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:note/tei:ref[not(@target)]">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ref[not(@target)]">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
    
@@ -116,7 +116,7 @@
     <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:note//tei:ref[@target]">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ref[@target]">
     <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
   </xsl:template>
   
@@ -177,12 +177,6 @@
     <xsl:text>))</xsl:text>
   </xsl:template>
   
-  <!-- overrides rule in htm-teinote.xsl and teinote.xsl that puts inside a p tag and do not want to do that in commentary preview -->
-  <!-- TODO remove if use a different tag to wrap the front matter commentary or they want it inside parens                        -->
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']/tei:note[@type='frontmatter']">
-    <xsl:apply-templates/>
-  </xsl:template>
-  
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='bold']">
     <b><xsl:apply-templates/></b>
   </xsl:template>
@@ -192,15 +186,35 @@
   </xsl:template>
   
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='underline']">
-    <em style="text-decoration:underline"><xsl:apply-templates/></em>
+    <em style="text-decoration:underline; font-style:normal;"><xsl:apply-templates/></em>
+    <!-- using the above rather than  <u> tag to be HTML5 compliant; had to put in font style to keep from being italics -->
+  </xsl:template>
+  
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  <!-- |||||||||  paragraph display the same for  frontmatter and commentary but the     ||||||||| -->
+  <!-- |||||||||  first tag position is different for each and want to treat it different||||||||| -->
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:p">
+    <xsl:choose>
+     <xsl:when test="position() = 1"> <!-- first p tag inside the FM div -->
+        <xsl:apply-templates/>
+     </xsl:when>
+     <xsl:otherwise>
+        <br/><br/><xsl:apply-templates/>
+     </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <!-- <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='quote']">
-    <q><xsl:apply-templates/></q>
-  </xsl:template> -->
-
-  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:p">
-    <br/><br/><xsl:apply-templates/>
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:p">
+    <xsl:choose>
+     <xsl:when test="position() = 3"> <!-- first p tag inside the item tag for the line -->
+        <xsl:apply-templates/>
+     </xsl:when>
+     <xsl:otherwise>
+        <br/><br/><xsl:apply-templates/>
+     </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Textpart div -->
