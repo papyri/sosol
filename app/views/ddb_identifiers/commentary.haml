@@ -6,6 +6,9 @@
 :javascript
   helpComView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
   var forceChangeTrue = false; //declared to make showmatch function work
+  if(Prototype.Browser.IE){
+    var rangeIE = document.body.createTextRange(); //temporary - selectText sets for real
+  }
 
   document.observe("dom:loaded", function() {
     $$('.commentary#edition li').invoke('observe','click',addCommentary);
@@ -21,6 +24,21 @@
     if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
   
+  document.observe('DOMSubtreeModified', addObsFM);  //for non IE browser to add observer
+
+  function addObsFM() {
+    
+    if ($('fm_sugar_content')) //if added
+      {
+        $('fm_sugar_content').observe('select', selectText);
+
+        if(Prototype.Browser.IE){
+          document.detachEvent('onclick', addObsFM);
+        }
+      }
+    
+  }
+
   function loadExistingCommentary(commentary_li) {
     existing_comments = $$(".comment-on-" + commentary_li.id);
     existing_comments.reverse().each(function (comment) {
@@ -120,79 +138,116 @@
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
-        '<input type="hidden" name="line_id" value="' + id + '"/>' +
-        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
-        '<div id="com-helper-menu" class="com-helper-menu-c">' +
-        '<ul id="menuModel" style="display:inherit">' +
-        '  <li id="1">' +
-        '    <a href="#" title="Front Matter Input Markup">FM Markup</a>' +
-        '    <ul width="255">' +
-        '      <li id="101" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
-        '        <a href="#">Find Error</a>' +
-        '      </li>' +
-        '    </ul>' +
-        '  </li>' +
-        '  <li id="2" itemType="separator"></li>' +
-        '  <li id="3" jsFunction="helpComOpen(\'insertLinkPN\', \'com_sugar_content\')">' +
-        '    <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
-        '  <li id="4" itemType="separator"></li>' +
-        '  <li id="5" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
-        '    <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
-        '  <li id="6" itemType="separator"></li>' +
-        '  <li id="7" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
-        '    <a href="#" title="Find Possible Error">Find Error</a>' +
-        '  <li id="8" itemType="separator"></li>' +
-        '</ul>' +
-        '</div>' +
-        '<div id="menuDiv"></div>' +
-        '<br/>' +
-        '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-        //show no content since it will be updated with getsugar call
-        '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
-        '<input class="save" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
-        ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
-      '</form>' +
-      generateDeleteForm(id,original_item_id) +
-      '</div></div>';
+    '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
+    '<input type="hidden" name="line_id" value="' + id + '"/>' +
+    '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+    '<ul id="menuModel" style="display:inherit">' +
+    '  <li id="1">' +
+    '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
+    '    <ul width="255">' +
+    '      <li id="101" jsFunction="insertEmphasis(\'com_sugar_content\',\'bold\')">' +
+    '        <a href="#" title="Make Selected Text Bold">Bold</a>' +
+    '      </li>' +
+    '      <li id="102" itemType="separator"/>' +
+    '      <li id="103" jsFunction="insertEmphasis(\'com_sugar_content\',\'italics\')">' +
+    '        <a href="#" title="Make Selected Text Italics">Italics</a>' + 
+    '      </li>' +
+    '      <li id="104" itemType="separator"/>' +
+    '      <li id="105" jsFunction="insertEmphasis(\'com_sugar_content\',\'underline\')">' +
+    '        <a href="#" title="Make Selected Text Underlined">Underline</a>' + 
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="2" itemType="separator"/>' +
+    '  <li id="3">' +
+    '    <a href="#" title="Insert Helpers">Insert</a>' +
+    '    <ul width="255">' +
+    '      <li id="301" jsFunction="helpComOpen(\'insertLinkPN\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+    '      </li>' +
+    '      <li id="302" itemType="separator"/>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="304" itemType="separator"/>' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertFootnote\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="4" itemType="separator"/>' +
+    '  <li id="5" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+    '    <a href="#" title="Find Possible Error">Find Error</a>' +
+    '  </li>' +
+    '  <li id="6" itemType="separator"/>' +
+    '</ul>' +
+    '<div id="menuDiv"></div>' +
+    '<br/>' +
+    '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
+    //show no content since it will be updated with getsugar call
+    '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
+    '<input class="save" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
+    ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
+    '</form>' +
+    generateDeleteForm(id,original_item_id) +
+    '</div></div>';
  
   }
   
   function generateFrontmatterCommentaryForm(content) {
     if(content === undefined) {content = "";}
+    
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
-      '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
-        '<div id="fm-helper-menu" class="fm-helper-menu-c">' +
-        '<ul id="menuModel" style="display:inherit">' +
-        '  <li id="1">' +
-        '    <a href="#" title="Front Matter Input Markup">FM Markup</a>' +
-        '    <ul width="255">' +
-        '      <li id="101" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
-        '        <a href="#">Find Error</a>' +
-        '      </li>' +
-        '    </ul>' +
-        '  </li>' +
-        '  <li id="2" itemType="separator"></li>' +
-        '  <li id="3" jsFunction="helpComOpen(\'insertLinkPN\', \'fm_sugar_content\')">' +
-        '    <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
-        '  <li id="4" itemType="separator"></li>' +
-        '  <li id="5" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
-        '    <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
-        '  <li id="6" itemType="separator"></li>' +
-        '  <li id="7" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
-        '    <a href="#" title="Find Possible Error">Find Error</a>' +
-        '  <li id="8" itemType="separator"></li>' +
-        '</ul>' +
-        '</div>' +
-        '<div id="menuDiv"></div>' +
-        '<br/>' +
-        '<label>Front matter:</label><br/>' +
-        '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
-        '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
-        ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
-      '</form>' +
-      generateDeleteFrontmatterForm(content) +
-      '</div></div>';
+    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
+    '<ul id="menuModel" style="display:inherit">' +
+    '  <li id="1">' +
+    '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
+    '    <ul width="255">' +
+    '      <li id="101" jsFunction="insertEmphasis(\'fm_sugar_content\',\'bold\')">' +
+    '        <a href="#" title="Make Selected Text Bold">Bold</a>' +
+    '      </li>' +
+    '      <li id="102" itemType="separator"/>' +
+    '      <li id="103" jsFunction="insertEmphasis(\'fm_sugar_content\',\'italics\')">' +
+    '        <a href="#" title="Make Selected Text Italics">Italics</a>' + 
+    '      </li>' +
+    '      <li id="104" itemType="separator"/>' +
+    '      <li id="105" jsFunction="insertEmphasis(\'fm_sugar_content\',\'underline\')">' +
+    '        <a href="#" title="Make Selected Text Underlined">Underline</a>' + 
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="2" itemType="separator"/>' +
+    '  <li id="3">' +
+    '    <a href="#" title="Insert Helpers">Insert</a>' +
+    '    <ul width="255">' +
+    '      <li id="301" jsFunction="helpComOpen(\'insertLinkPN\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+    '      </li>' +
+    '      <li id="302" itemType="separator"/>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="304" itemType="separator"/>' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertFootnote\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="4" itemType="separator"/>' +
+    '  <li id="5" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+    '    <a href="#" title="Find Possible Error">Find Error</a>' +
+    '  </li>' +
+    '  <li id="6" itemType="separator"/>' +
+    '</ul>' +
+    '<div id="menuDiv"></div>' +
+    '<br/>' +
+    '<label>Front matter:</label><br/>' +
+    '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
+    '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
+    ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
+    '</form>' +
+    generateDeleteFrontmatterForm(content) +
+    '</div></div>';
   }
   
   function validateComSugar()
@@ -212,7 +267,14 @@
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
-    wrapped_content = "<W:" + originalleiden + ":W>";
+    //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
+    if (originalleiden.indexOf("\n\n") == 0){
+      wrapped_content = "<W:" + originalleiden + ":W>";
+    }
+    else{
+      wrapped_content = "<W:\n\n" + originalleiden + ":W>";
+    }
+    
     new Ajax.Request(request_url, {
       method: 'post',
       parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
@@ -287,8 +349,15 @@
       request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
+
+    //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
+    if (originalleiden.indexOf("\n\n") == 0){
+      wrapped_content = "<W:" + originalleiden + ":W>";
+    }
+    else{
+      wrapped_content = "<W:\n\n" + originalleiden + ":W>";
+    }
     
-    wrapped_content = "<W:" + originalleiden + ":W>";
     new Ajax.Request(request_url, {
       method: 'post',
       parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
@@ -419,13 +488,15 @@
             }
         }
         else {
+          // remove the 2 new lines for the first paragraph just to not use up extra screen space
+          // will automatically put back in on a save if a user does not
           if (wherefrom == "FM")
             {
-              $('fm_sugar_content').value = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'');
+              $('fm_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
             }
           else
             {
-              $('com_sugar_content').value = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'');
+              $('com_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
             }
         }
       },
@@ -512,11 +583,15 @@
     });
 
     menuInit();
-        
+
     Effect.SlideDown("form-frontmatter",{queue: 'end'});
 
     //translate the xml to commentary sugar
     getSugar(original_content, 'FM');
+
+    if(Prototype.Browser.IE){
+      document.attachEvent('onclick', addObsFM);  //do get IE browser to add observer
+    }
   }
   
   function menuInit(){
@@ -585,10 +660,15 @@
 
     switch (view)
     {
+    case "insertFootnote":
+      {
+        openconfig = config='height=350, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
     case "insertLinkPN":
     case "insertlink":
       {
-        openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=575, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     default: // nopts is default and need to clear optional xml values and leave diachar filled in 
@@ -611,6 +691,49 @@
     element.focus();
   }
 
+  function selectText(){
+
+    if(Prototype.Browser.IE){
+      rangeIE = document.selection.createRange();
+    }
+  }
+
+  function insertEmphasis(wherefrom, whatdo){
+    
+    switch (whatdo)
+    {
+      case "bold":
+        {markupChar = "*"; break; }
+      case "italics":
+        {markupChar = "|"; break;}
+      case "underline":
+        {markupChar = "_"; break;}
+    }
+
+    if(Prototype.Browser.IE){
+
+      // rangeIE is a global variable created at the top for IE use set in selectText function
+
+      var newtext = markupChar + rangeIE.text + markupChar;
+
+      rangeIE.text = newtext;
+      rangeIE.select();
+      rangeIE.collapse(false);
+    }
+    else {
+      // need to grab focus of window textarea again for non-IE browsers
+      element = document.getElementById(wherefrom);
+      element.focus(); 
+
+      var start = element.selectionStart;
+      var end = element.selectionEnd;
+      var newtext = markupChar + element.value.substring(start, end) + markupChar;
+
+      element.value = element.value.substr(0, start) + newtext + element.value.substr(end);
+      
+      element.focus();
+    }
+  }
 
 #main
   = render :partial => 'identifiers/edit_bar'

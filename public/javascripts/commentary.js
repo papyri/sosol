@@ -1,5 +1,23 @@
 var insertHere = ""; 
 
+function insertFootnote(){
+
+  //get value from page
+  
+  footnoteText = document.getElementById("insertfootnote_text").value;
+  
+  if(!(footnoteText.match(/\S/))){ //check for any non-whitespace character
+    alert("You must provide text for the foot note");
+    return;
+  }
+
+  convertXML = '<note type="footnote" xml:lang="en">' + footnoteText + '<\/note>';
+
+  getMarkUp(convertXML);
+
+}
+
+
 function insertLinkExt(){
 
   insertAsBibl = 'no';
