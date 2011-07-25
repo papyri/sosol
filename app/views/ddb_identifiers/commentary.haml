@@ -7,7 +7,7 @@
   helpComView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
   var forceChangeTrue = false; //declared to make showmatch function work
   if(Prototype.Browser.IE){
-    var rangeIE = document.body.createTextRange(); //temporary - selectText sets for real
+    var rangeIE = document.body.createTextRange(); //temporary - selectText function sets for real
   }
 
   document.observe("dom:loaded", function() {
@@ -23,22 +23,37 @@
       }
     if (#{!@identifier.mutable?}) {removeAllClickable();}
   });
-  
-  document.observe('DOMSubtreeModified', addObsFM);  //for non IE browser to add observer
 
-  function addObsFM() {
+  //###########################################################################################
+  // addObs - add observer for selecting a text highlighted in appropriate form - for IE browser
+  //###########################################################################################
     
-    if ($('fm_sugar_content')) //if added
+  function addObs() {
+    
+    if ($('fm_sugar_content')) //if front matter commentary form is there
       {
         $('fm_sugar_content').observe('select', selectText);
 
-        if(Prototype.Browser.IE){
-          document.detachEvent('onclick', addObsFM);
-        }
+        //if(Prototype.Browser.IE){
+          document.detachEvent('onclick', addObs);
+        //}
+      }
+    
+    if ($('com_sugar_content')) //if line by line commentary form is there
+      {
+        $('com_sugar_content').observe('select', selectText);
+
+        //if(Prototype.Browser.IE){
+          document.detachEvent('onclick', addObs);
+        //}
       }
     
   }
 
+  //###########################################################################################
+  // loadExistingCommentary - load all existing Line by Line Commentary to the page for user
+  //###########################################################################################
+    
   function loadExistingCommentary(commentary_li) {
     existing_comments = $$(".comment-on-" + commentary_li.id);
     existing_comments.reverse().each(function (comment) {
@@ -53,6 +68,10 @@
     });
   }
   
+  //###########################################################################################
+  // removeAllClickable - make nothing on the page available to click for further action
+  //###########################################################################################
+    
   function removeAllClickable() {
     $$(".clickable").each(function (clickable) {
       clickable.stopObserving('click');
@@ -60,6 +79,11 @@
     });
   }
   
+  //###########################################################################################
+  // transformExistingCommentary - transform existing Line by Line Commentary from
+  // XML to Commentary Grammar and place in editable textarea
+  //###########################################################################################
+    
   function transformExistingCommentary(event) {
     removeAllClickable();
     //remove exisiting notification error if it there before loading the new form
@@ -103,8 +127,15 @@
     //translate the xml to commentary sugar
     getSugar(originalxml, 'LBL');
     
+    if(Prototype.Browser.IE){
+      document.attachEvent('onclick', addObs);  //do get IE browser to add observer
+    }
   }
   
+  //###########################################################################################
+  // generateDeleteForm - create link to delete Line by Line Commentary from a text
+  //###########################################################################################
+    
   function generateDeleteForm(id,original_item_id) {
     if(original_item_id == '') {
       return '';
@@ -120,6 +151,10 @@
     }
   }
   
+  //###########################################################################################
+  // generateDeleteFrontmatterForm - create link to delete Front Matter Commentary from a text
+  //###########################################################################################
+    
   function generateDeleteFrontmatterForm(content) {
     if(content == '') {
       return '';
@@ -133,10 +168,16 @@
     }
   }
   
+  //###########################################################################################
+  // generateCommentaryForm - create form to enter Line by Line Commentary Grammar
+  // and the Commentary Helper Menu
+  //###########################################################################################
+    
   function generateCommentaryForm(id,nval,content,original_item_id) {
     
     if(content === undefined) {content = "";}
     if(original_item_id === undefined) {original_item_id = "";}
+
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
     '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
     '<input type="hidden" name="line_id" value="' + id + '"/>' +
@@ -194,6 +235,11 @@
  
   }
   
+  //###########################################################################################
+  // generateFrontmatterCommentaryForm - create form to enter Front matter Commentary Grammar
+  // and the Commentary Helper Menu
+  //###########################################################################################
+    
   function generateFrontmatterCommentaryForm(content) {
     if(content === undefined) {content = "";}
     
@@ -249,7 +295,11 @@
     generateDeleteFrontmatterForm(content) +
     '</div></div>';
   }
-  
+
+  //###########################################################################################
+  // validateComSugar - convert Line by Line Commentary Grammar to XML
+  //###########################################################################################
+    
   function validateComSugar()
   {
     //disable form for ajax call to server
@@ -284,12 +334,12 @@
         if ("exception" in json) {
           if ($('notice_notice')) //update if already there, add if not
           {
-            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+            $('notice_notice').update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.');
           }
           else
           {
             $$('div#main > div.site').first().insert({
-              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.')
             });
             
             //add class after the original insert to get the flash highlighting to work in IE browser
@@ -333,6 +383,10 @@
     });
   }
 
+  //###########################################################################################
+  // validateFMSugar - convert Front Matter Commentary Grammar to XML
+  //###########################################################################################
+  
   function validateFMSugar()
   {
     //disable form for ajax call to server
@@ -367,12 +421,12 @@
         if ("exception" in json) {
           if ($('notice_notice')) //update if already there, add if not
           {
-            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+            $('notice_notice').update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.');
           }
           else
           {
             $$('div#main > div.site').first().insert({
-              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.')
             });
             
             //add class after the original insert to get the flash highlighting to work in IE browser
@@ -415,6 +469,10 @@
       }
     });
   }
+
+  //###########################################################################################
+  // getSugar - convert XML to Commentary Grammar - used for line by line and front matter
+  //###########################################################################################
   
   function getSugar(originalxml, wherefrom)
   {
@@ -440,17 +498,14 @@
         json = response.responseText.evalJSON();
       
         if ("exception" in json) {
-          //$$('div#main > div.site').first().insert({
-          //  top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
-          //});
           if ($('notice_notice')) //update if already there, add if not
           {
-            $('notice_notice').update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+            $('notice_notice').update('Error converting XML to Commentary Grammar approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
           }
           else
           {
             $$('div#main > div.site').first().insert({
-              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Commentary Grammar approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
             });
             
             //add class after the original insert to get the flash highlighting to work in IE browser
@@ -506,6 +561,10 @@
       }
     });
   }
+
+  //###########################################################################################
+  // addCommentary - create editable textarea to add line by line commentary
+  //###########################################################################################
   
   function addCommentary(event) {
     removeAllClickable();
@@ -528,6 +587,10 @@
     element.stopObserving('click');
     element.removeClassName('clickable');
   }
+
+  //###########################################################################################
+  // addFrontmatterCommentary - create editable textarea to add front matter commentary
+  //###########################################################################################
 
   function addFrontmatterCommentary(event) {
     removeAllClickable();
@@ -560,6 +623,11 @@
     element.stopObserving('click');
     event.stop();
   }
+
+  //###########################################################################################
+  // transformExistingFrontmatterCommentary - transform existing Front Matter Commentary from
+  // XML to Commentary Grammar and place in editable textarea
+  //###########################################################################################
   
   function transformExistingFrontmatterCommentary(event) {
     removeAllClickable();
@@ -590,9 +658,13 @@
     getSugar(original_content, 'FM');
 
     if(Prototype.Browser.IE){
-      document.attachEvent('onclick', addObsFM);  //do get IE browser to add observer
+      document.attachEvent('onclick', addObs);  //do get IE browser to add observer
     }
   }
+
+  //###########################################################################################
+  // menuInit - initialize the Commentary Helper
+  //###########################################################################################
   
   function menuInit(){
     //stuff below is for the menu bar
@@ -609,18 +681,23 @@
 	
   	menuBar.init();
   }
+
+  //###########################################################################################
+  // insert_error_here - 
+  // copied this function/logic from identifiers_controller.rb
+  // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+  // occurs by taking the line and column from the message and giving the user the place in the content
+  // the parse error occured in xsugars processing - may or may not be where the real error is depending
+  // on what the error is - this processing is by character because there are multiple byte characters
+  // possible in the text and a way to place msg with taking that into account
+  //
+  // line starts at 1 because first character is on first line before incrementing in loop
+  // same logic for column, already on first character before incrementing in loop 
+  // 'col' check has to come before 'new line' check in case error is on last char in the line
+  //###########################################################################################
   
   function insert_error_here(content, line, column){
-    //copied this function/logic from identifiers_controller.rb
-    // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
-    // occurs by taking the line and column from the message and giving the user the place in the content
-    // the parse error occured in xsugars processing - may or may not be where the real error is depending
-    // on what the error is - this processing is by character because there are multiple byte characters
-    // possible in the text and a way to place msg with taking that into account
-    //
-    // line starts at 1 because first character is on first line before incrementing in loop
-    // same logic for column, already on first character before incrementing in loop 
-    // 'col' check has to come before 'new line' check in case error is on last char in the line
+
     var line_cnt = 1;
     var col_cnt = 1;
     var content_error_here = new Array();
@@ -642,6 +719,10 @@
 
     return content_error_here.join("");
   }
+
+  //###########################################################################################
+  // helpComOpen - open new window for capturing user input to insert Commentary Grammar
+  //###########################################################################################
 
   function helpComOpen(view, wherefrom){
 
@@ -682,7 +763,7 @@
   }
 
   //###########################################################################################
-  // getFocusMain - get location for inserting later on before lose it - IE has biggest issue      
+  // getFocusMain - get focus for where selecting and/or inserting 
   //###########################################################################################
 
   function getFocus(focusthis){
@@ -691,12 +772,20 @@
     element.focus();
   }
 
+  //###########################################################################################
+  // selectText - set range of selected text in IE browser only
+  //###########################################################################################
+
   function selectText(){
 
     if(Prototype.Browser.IE){
       rangeIE = document.selection.createRange();
     }
   }
+
+  //###########################################################################################
+  // insertEmphasis - apply Commentary Grammar to selected text
+  //###########################################################################################
 
   function insertEmphasis(wherefrom, whatdo){
     

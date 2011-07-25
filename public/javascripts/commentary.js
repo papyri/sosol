@@ -1,5 +1,9 @@
 var insertHere = ""; 
 
+//###########################################################################################
+// insertFootnote - insert foot note markup into commentary input form
+//###########################################################################################
+    
 function insertFootnote(){
 
   //get value from page
@@ -17,7 +21,10 @@ function insertFootnote(){
 
 }
 
-
+//###########################################################################################
+// insertLinkExt - insert external link markup into commentary input form
+//###########################################################################################
+    
 function insertLinkExt(){
 
   insertAsBibl = 'no';
@@ -94,6 +101,10 @@ function insertLinkExt(){
 
 }
 
+//###########################################################################################
+// insertLinkPN - insert a link to PN entry markup into commentary input form
+//###########################################################################################
+    
 function insertLinkPN(){
 
     editpass = "yes";
@@ -188,6 +199,10 @@ function insertLinkPN(){
 
   }
 
+//###########################################################################################
+// insertMarkup - insert actual markup into commentary input form
+//###########################################################################################
+    
 function insertMarkUp(vti)
 {
 
@@ -226,6 +241,10 @@ function insertMarkUp(vti)
   }
 }
 
+//###########################################################################################
+// closeHelper - close the helper input window
+//###########################################################################################
+    
 function closeHelper()
 {
   
