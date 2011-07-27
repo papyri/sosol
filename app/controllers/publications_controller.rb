@@ -631,7 +631,19 @@ class PublicationsController < ApplicationController
     redirect_to @publication    
   end
   
-  
+  def confirm_nuke
+   @publication = Publication.find(params[:id])
+  end
+
+  def nuke
+    @publication = Publication.find(params[:id])
+    pub_name = @publication.title
+    @publication.nuke
+
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked from orbit.'
+    expire_publication_cache
+    redirect_to dashboard_url
+  end 
   
   def confirm_delete
     @publication = Publication.find(params[:id])
