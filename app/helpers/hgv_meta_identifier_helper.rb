@@ -1,5 +1,320 @@
 module HgvMetaIdentifierHelper
 
+  def generateRandomId(prefix = '')
+    prefix + (rand * 1000000).floor.to_s.tr('0123456789', 'ABCDEFGHIJ')
+  end
+  
+  module HgvGeo
+
+    class Geo
+      def _initialize
+        @ancient = @modern = []
+      end
+
+      def populateFromXml xml
+      end
+
+      def populateFromPost post
+      end
+      
+      def writeToXml
+        
+      end
+      
+    end # class Geo
+    
+    class OrigPlace
+      @@typeList          = [:composition, :destination, :execution, :receipt, :location, :reuse]
+      @@referenceTypeList = [:findspot, :unknown]
+      @@valueList         = [:Fundort, :unbekannt]
+      
+      attr_accessor :type, :correspondency, :referenceType, :value, :placeList
+
+      def initialize init = nil        
+        # attributes
+        @type           = nil
+        @correspondency = nil
+        
+        # value
+        @value          = nil
+        
+        # children
+        @placeList      = []
+
+        if init && init[:origPlace]
+
+          # attributes
+          if init[:origPlace][:attributes]
+            self.type           = init[:origPlace][:attributes][:type] || nil
+            self.correspondency = init[:origPlace][:attributes][:correspondency] || nil
+          end
+
+          # value
+          if init[:origPlace][:value]
+            self.value = init[:origPlace][:value]
+          end
+
+          # children
+          if init[:origPlace][:children] && init[:origPlace][:children] && init[:origPlace][:children][:place]
+            init[:origPlace][:children][:place].each{|place|
+              self.addPlace(HgvGeo::Place.new(:place => place))
+            }
+          end
+        end
+
+      end
+      
+      def type= value
+        value = value.class == String ? value.to_sym : value
+        if @@typeList.include? value
+          @type = value
+        else
+          @type = nil
+        end
+      end
+      
+      def type
+        if @correspondency
+          return :reference
+        end
+        @type
+      end
+      
+      def value= value
+        value = value.class == String ? value.to_sym : value
+        if @@valueList.include? value
+          @value = value
+        else
+          @value = nil
+        end
+      end
+      
+      def referenceType
+        if @correspondency
+          @value
+        end
+      end
+      
+      def unknown?
+        @value == :unbekannt && !@correspondency
+      end
+      
+      def addPlace place
+        if place.kind_of? Place
+          @placeList[@placeList.length] = place
+        end
+      end
+    end # class OrigPlace
+
+    class Provenance
+      @@typeList          = [:found, :observed, :destroyed, :'not-found', :reused, :moved, :acquired, :sold]
+      @@subtypeList       = [:last]
+      @@atomList          = [:type, :subtype, :id, :date]
+      
+      attr_accessor :type, :subtype, :id, :date, :placeList
+
+      def initialize init = nil        
+        @type    = nil
+        @subtype = nil
+        @id      = nil
+        @date    = nil
+        @placeList = []
+
+        if init
+        
+          if init[:provenance]
+
+            if init[:provenance][:attributes]
+              self.populateAtomFromHash init[:provenance][:attributes]
+            end
+
+            if init[:provenance][:children] && init[:provenance][:children][:paragraph] && init[:provenance][:children][:paragraph][:children] && init[:provenance][:children][:paragraph][:children][:place]
+              init[:provenance][:children][:paragraph][:children][:place].each{|place|
+                self.addPlace(HgvGeo::Place.new(:place => place))
+              }
+            end
+
+          else
+            self.populateAtomFromHash init
+          end
+
+        end
+
+      end
+      
+      def populateAtomFromHash hash
+        @@atomList.each {|member|
+          self.send((member.to_s + '=').to_sym, hash[member] || nil)
+        }
+      end
+      
+      def type= value
+        value = (value.class == String ? value.to_sym : value)
+        if @@typeList.include? value
+          @type = value
+        else
+          @type = nil
+        end
+      end
+      
+      def subtype= value
+        value = value.class == String ? value.to_sym : value
+        if @@subtypeList.include? value
+          @subtype = value
+        else
+          @subtype = nil
+        end
+      end
+      
+      def date= value
+        value = value.class == Symbol ? value.to_s : value
+        if value =~ /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
+          @date = value
+        else
+          @date = nil
+        end
+      end
+      
+      def addPlace place
+        if place.kind_of? Place
+          @placeList[@placeList.length] = place
+        end
+      end
+    end # class Provenance
+    
+    class Place
+      attr_accessor :id, :exclude, :geoList
+      
+      def initialize init = nil
+        @id      = nil
+        @exclude = nil
+        @geoList = []
+        
+        if init
+          if init[:place]
+            if init[:place][:attributes]
+              if init[:place][:attributes][:id]
+                @id = init[:place][:attributes][:id]
+              end
+              if init[:place][:attributes][:exclude]
+                @exclude = init[:place][:attributes][:exclude]
+              end
+            end
+            if init[:place][:children] && init[:place][:children][:geo]
+              init[:place][:children][:geo].each {|geo|
+                self.addGeo(GeoSpot.new(:geo => geo))
+              }
+            end
+          else
+            @id = init[:id] || nil
+            @exclude = init[:exclude] || nil
+          end
+
+        end
+      end
+      
+      def addGeo geo
+        if geo.class == GeoSpot
+          @geoList[@geoList.length] = geo
+        end
+      end
+
+    end
+
+    class GeoSpot
+      @@typeList      = [:ancient, :modern]
+      @@subtypeList   = [:nome, :province, :region]
+      @@offsetList    = [:near]
+      @@certaintyList = [:low]
+      
+      attr_accessor :type, :subtype, :offset, :name, :certainty, :referenceList
+
+      def initialize init = nil
+        @type          = nil
+        @subtype       = nil
+        @offset        = nil
+        @name          = nil
+        @certainty     = nil
+        @referenceList = []
+        
+        if init
+          if init[:geo]
+            if init[:geo][:attributes]
+              [:type, :subtype, :certainty].each{|member|
+                self.send((member.to_s + '=').to_sym, init[:geo][:attributes][member] || nil)
+              }
+              if init[:geo][:attributes][:reference]
+                @referenceList = init[:geo][:attributes][:reference].split
+              end
+            end
+            if init[:geo][:children]
+              if init[:geo][:children][:offset] && init[:geo][:children][:offset][:value]
+                @offset = init[:geo][:children][:offset][:value]
+              end
+            end
+            if init[:geo][:value]
+              @name = init[:geo][:value]
+            end
+          else
+            @type          = init[:type]          || nil
+            @subtype       = init[:subtype]       || nil
+            @offset        = init[:offset]        || nil
+            @name          = init[:name]          || nil
+            @certainty     = init[:certainty]     || nil
+            @referenceList = init[:referenceList] || []
+          end
+        end
+      end
+      
+      def type= value
+        value = value.class == String ? value.to_sym : value
+        if @@typeList.include? value
+          @type = value
+        else
+          @type = nil
+        end
+      end
+      
+      def subtype= value
+        value = value.class == String ? value.to_sym : value
+        if @@subtypeList.include? value
+          @subtype = value
+        else
+          @subtype = nil
+        end
+      end
+      
+      def offset= value
+        value = value.class == String ? value.to_sym : value
+        if @@offsetList.include? value
+          @offset = value
+        else
+          @offset = nil
+        end
+      end
+      
+      def certainty= value
+        value = value.class == String ? value.to_sym : value
+        if @@certaintyList.include? value
+          @certainty = value
+        else
+          @certainty = nil
+        end
+      end
+      
+      def certain?
+        self.certainty && self.certainty.to_sym == :low ? true : false
+      end
+      
+      def addReference value
+        if value.kind_of?(String) && !value.empty? && !@referenceList.include?(value)
+          @referenceList[@referenceList.length] = value
+        end
+      end
+    end # class GeoSpot
+
+  end # module HgvGeo
+
   module HgvPublication
     def HgvPublication.getTypeOptions
       [['',             :generic],  
@@ -66,6 +381,10 @@ module HgvMetaIdentifierHelper
   end
 
   module HgvProvenance
+    def HgvProvenance.format provenance
+      '…'
+    end
+=begin
     def HgvProvenance.format provenance
       result = ''
       provenanceList = HgvProvenance.epidocToHgv provenance
@@ -138,23 +457,78 @@ module HgvMetaIdentifierHelper
       uncertainties = uncertainties.join('_')
       !uncertainties.empty? ? uncertainties.to_sym : nil
     end
-
+=end
     def HgvProvenance.certaintyOptions
-      [['', ''],  
-        [I18n.t('provenance.ancientFindspotUncertain'), :ancientFindspot],
-        [I18n.t('provenance.nomeUncertain'), :nome],
-        [I18n.t('provenance.ancientRegionUncertain'), :ancientRegion],
-        [I18n.t('provenance.ancientFindspotAndNomeUncertain'), :ancientFindspot_nome],
-        [I18n.t('provenance.ancientFindspotAndAncientRegionUncertain'), :ancientFindspot_ancientRegion],
-        [I18n.t('provenance.nomeAndAncientRegionUncertain'), :nome_ancientRegion],
-        [I18n.t('provenance.ancientFindspotNomeAndAncientRegionUncertain'), :ancientFindspot_nome_ancientRegion]]
+      [
+        ['', ''],
+        [I18n.t('provenance.certainty.low'), :low]
+      ]
     end
     
+    def HgvProvenance.typeOptions
+      [
+        ['', ''],
+        [I18n.t('provenance.type.composition'), :composition],
+        [I18n.t('provenance.type.destination'), :destination],
+        [I18n.t('provenance.type.execution'),   :execution],
+        [I18n.t('provenance.type.receipt'),     :receipt],
+        [I18n.t('provenance.type.location'),    :location],
+        [I18n.t('provenance.type.reuse'),       :reuse],
+        [I18n.t('provenance.type.reference'),   :reference]
+      ]
+    end
+    
+    def HgvProvenance.subtypeOptions
+      [
+        ['', ''],
+        [I18n.t('provenance.subtype.last'), :last]
+      ]
+    end
+    
+    def HgvProvenance.eventOptions
+      [
+        [I18n.t('provenance.event.found'),     :found],
+        [I18n.t('provenance.event.observed'),  :observed],
+        [I18n.t('provenance.event.destroyed'), :destroyed],
+        [I18n.t('provenance.event.not-found'), :'not-found'],
+        [I18n.t('provenance.event.reused'),    :reused],
+        [I18n.t('provenance.event.moved'),     :moved ],
+        [I18n.t('provenance.event.acquired'),  :acquired ],
+        [I18n.t('provenance.event.sold'),      :sold ]
+      ]
+    end
+
+    def HgvProvenance.epochOptions
+      [
+        [I18n.t('provenance.epoch.ancient'), :ancient],
+        [I18n.t('provenance.epoch.modern'),  :modern]
+      ]
+    end
+
+    def HgvProvenance.roleOptions
+      [
+        ['', ''],
+        [I18n.t('provenance.role.findspot'), :Fundort],
+        [I18n.t('provenance.role.unknown'),  :unbekannt]
+      ]
+    end
+
+    def HgvProvenance.territoryOptions
+      [
+        ['', ''],
+        [I18n.t('provenance.territory.nome'),     :nome],
+        [I18n.t('provenance.territory.province'), :province],
+        [I18n.t('provenance.territory.region'),   :region]
+      ]
+    end
+
     def HgvProvenance.offsetOptions
-      [['', ''],  
-        [I18n.t('provenance.offsetNear'), 'bei']]
+      [
+        ['', ''],  
+        [I18n.t('provenance.offset.near'), 'bei']
+      ]
     end
-    
+=begin
     def HgvProvenance.unknown? provenance
       provenance && provenance.length > 0 && provenance[0][:value] && provenance[0][:value] == 'unbekannt' ? true : false
     end
@@ -188,6 +562,7 @@ module HgvMetaIdentifierHelper
 
       t
     end
+=end
   end
   
   module HgvDate

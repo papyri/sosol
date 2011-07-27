@@ -15,12 +15,18 @@ input[type=checkbox]
 .showDateTabs,
 .quickSave,
 .datePreview,
-.addAlternativePlace
+div#edit div.multi ul.items li span.addPlace,
+.addProvenance,
+.addOrigPlace,
+.showReferenceList,
+.hideReferenceList
   cursor: pointer
   cursor: hand
   color: #c0c0c0
   text-decoration: underline
   margin: 0 0.8em 0 0
+  font-weight: normal
+  background-color: white
 
 .showDateTabs
   position: absolute
@@ -295,37 +301,6 @@ div#edit div.multi div.add span
 
 /**** multi special ****/
 
-div#edit div#multi_provenance
-  float: none
-  clear: both
-
-div#edit div#multi_provenance ul#multiItems_provenance li,
-div#edit div#multi_provenance div
-  width: 49em
-  height: 4em
-  padding: 0.4em 0 0.4em 0
-
-div#edit div#multi_provenance ul#multiItems_provenance li
-  width: 48.8em
-  height: 4.4em
-  background-color: white
-  border: solid 1px lightsteelblue
-  
-div#edit div#multi_provenance input
-  border: solid 1px lightsteelblue
-  width: 16.8em
-  margin: 0 0 1px
-
-div#edit div#multi_provenance input.provenanceAncientFindspot
-  width: 11.8em
-
-div#edit div#multi_provenance select.provenanceOffset
-  width: 5em
-  margin: 0
-
-div#edit div#multi_provenance select.certainty
-  width: 29em
-
 div#edit div.multi ul#multiItems_contentText li
   float: left
   width: 14em
@@ -400,6 +375,58 @@ div#edit div.multi ul#multiItems_translationsFr li input,
 div#edit div.multi ul#multiItems_translationsEs li input,
 div#edit div.multi ul#multiItems_translationsLa li input
   width: 44em
+
+/**** provenance ****/
+
+.clear
+  float: none
+  clear: both
+  display: block
+
+div#edit div.multi.geoSpot input.provenanceGeoCertainty,
+div#edit div.multi.geoSpot div.add input.provenanceGeoCertainty
+  width: auto
+
+div#edit select.provenanceGeoType,
+div#edit select.provenanceGeoSubtype
+  width: 7em
+
+div#edit select.provenanceGeoOffset
+  width: 5em
+
+div#edit div.multi ul.items li input.provenanceGeoName,
+div#edit div.multi.geoSpot div.add input
+  width: 23em
+  margin: 0 0.2em 0 0.2em
+
+div#edit div.multi.geoSpot p input.provenanceGeoReference,
+div#edit div.multi.geoSpot div.paragraph input.provenanceGeoReference
+  width: 54em
+  background-color: lightgrey
+  boder: none
+
+div#edit div.multi.geoSpot ul li,
+div#edit div.multi.geoSpot div.add
+  width: 46em
+  height: auto
+  clear: both
+
+div#edit div.editbox label.geoSpotUncertain
+  width: 5.2em
+
+div#edit div.multi.geoReference ul li,
+div#edit div.multi.geoReference p
+  width: 36.6em
+  background-color: pink
+
+div#edit div.multi.geoReference ul.items li input,
+div#edit div.multi.geoReference p input,
+div#edit div.multi.geoSpot div.multi.geoReference p input
+  width: 40em
+  margin: 0
+
+
+
 
 /**** date ****/
 

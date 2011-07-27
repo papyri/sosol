@@ -1,0 +1,45 @@
+- key = 'origPlace'
+
+.origPlaceContainer
+  .multi.geoSpot#multi_origPlace
+    %ul.items#multiItems_origPlace
+      - @identifier[:origPlace].each_index do |origPlaceIndex| # provenance (events) or origPlace
+        - origPlace = HgvGeo::OrigPlace.new( :origPlace => @identifier[:origPlace][origPlaceIndex])
+        - base = 'hgv_meta_identifier[origPlace][' + origPlaceIndex.to_s + ']'
+        - baseAttributes = base + '[attributes]'
+        - baseChildren = base + '[children]'
+      
+        %li.origPlace{:id => 'origPlace_' + origPlaceIndex.to_s}
+          %p.clear
+            = text_field_tag base + '[value]', origPlace.value, :disabled => !@identifier.mutable?, :class => 'observechange provenanceValue'
+            = check_box_tag base + '[unknown]', :unknown, origPlace.unknown?, :disabled => !@identifier.mutable?, :class => 'observechange provenanceUnknown', :onchange => 'provenanceOrigPlaceUnknownToggle(' + origPlaceIndex.to_s + ', this.checked)'
+            = label_tag base + '[unknown]', I18n.t('meta.label.unknown'), :class => 'meta provenanceUnknown', :title => @identifier.configuration.xpath(:origPlace)
+            %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+            %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+
+          %div{:id => 'origPlace_' +  origPlaceIndex.to_s + '_data', :style => 'display: ' + (origPlace.unknown? ? 'none' : 'block')}
+            %p.clear
+              = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta provenanceType', :title => @identifier.configuration.xpath(:origPlace)
+              = select_tag baseAttributes + '[type]', options_for_select(HgvProvenance.typeOptions, origPlace.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType', :onchange => 'provenanceOrigPlaceTypeToggle(' + origPlaceIndex.to_s + ', this.value)'
+              
+            %div{:id => 'origPlace_' +  origPlaceIndex.to_s + '_reference', :style => 'display: ' + (origPlace.type == :reference ? 'block' : 'none')}
+              %p.clear
+                = label_tag base + '[referenceType]', I18n.t('meta.label.referenceType'), :class => 'meta provenanceReferenceType', :title => @identifier.configuration.xpath(:origPlace)
+                = select_tag base + '[referenceType]', options_for_select(HgvProvenance.roleOptions, origPlace.referenceType), :disabled => !@identifier.mutable?, :class => 'observechange provenanceReferenceType', :onchange => 'provenanceOrigPlaceReferenceTypeToggle(' + origPlaceIndex.to_s + ', this.value)'
+
+              %p.clear
+                = label_tag baseAttributes + '[correspondency]', I18n.t('meta.label.correspondency'), :class => 'meta provenanceReferenceType', :title => @identifier.configuration.xpath(:origPlace)
+                = text_field_tag baseAttributes + '[correspondency]', origPlace.correspondency, :disabled => !@identifier.mutable?, :class => 'observechange provenanceCorrespondency'
+
+            .placeContainer{:id => 'origPlace_' +  origPlaceIndex.to_s + '_geo', :style => 'display: ' + (origPlace.type == :reference ? 'none' : 'block')}
+              =render :partial => 'hgv_meta_identifiers/geoPlace', :locals => {:placeList => origPlace.placeList, :baseChildren => baseChildren, :type => :origPlace, :provenanceIndex => origPlaceIndex}
+              .clear
+            
+          %p.clear
+            =# debug origPlace
+        
+    = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+
+  .clear
+
+=# debug @identifier[:origPlace]
