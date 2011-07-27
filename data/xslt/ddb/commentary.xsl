@@ -38,11 +38,11 @@
   <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']">
     <div id="frontmatter_commentary_container" class="frontmatter_container">
       <textarea class="originalxml" style="display:none">
-        <xsl:copy-of select="tei:ab/node()"/>
+        <xsl:copy-of select="node()"/>
       </textarea>
       <div id="frontmatter_commentary" class="form clickable">
         <p class="label">Front matter:</p>
-        <xsl:apply-templates select="tei:ab"/>
+        <xsl:apply-templates/>
       </div>
     </div>
   </xsl:template>
@@ -76,7 +76,7 @@
      <xsl:call-template name="break"/>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab//text()">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//text()">
      <xsl:call-template name="break"/>
   </xsl:template>
   
@@ -100,22 +100,23 @@
   
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  these 4 hand to be split to handle both frontmatter and commentary     ||||||||| -->
-  <!-- |||||||||  ref with target and ref without target                                 ||||||||| -->
+  <!-- |||||||||  ref with target and ref without target - no target is for adding a     ||||||||| -->
+  <!-- |||||||||  span class with the line # used to build the update form if needed     ||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-  
+    
   <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref[not(@target)]">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab/tei:ref[not(@target)]">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ref[not(@target)]">
     <span class="reference"><xsl:value-of select="text()"/></span>
   </xsl:template>
-  
-  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item/tei:ref[@target]">
+   
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:item//tei:ref[@target]">
     <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
   </xsl:template>
   
-  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ab/tei:ref[@target]">
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:ref[@target]">
     <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
   </xsl:template>
   
@@ -123,10 +124,6 @@
   <!-- |||||||||  below are set up to handle preview for both frontmatter and commentary ||||||||| -->
   <!-- |||||||||  bibl ref, footnote, bold, italics, underline, quote                    ||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-  
-  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:ref[@target]">
-    <a href="{@target}"><b><xsl:value-of select="text()"/></b></a>
-  </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts listBibl inside a ul tag and do not want to do that in commentary preview -->
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl">
@@ -175,9 +172,9 @@
   
   <!-- overrides rule in htm-teinote.xsl and teinote.xsl that puts inside a p tag and do not want to do that in commentary preview -->
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:note[@type='footnote']">
-    <xsl:text>(</xsl:text>
-    <xsl:value-of select="text()"/>
-    <xsl:text>)</xsl:text>
+    <xsl:text>((</xsl:text>
+    <i><xsl:value-of select="text()"/></i>
+    <xsl:text>))</xsl:text>
   </xsl:template>
   
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='bold']">
@@ -187,13 +184,37 @@
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='italics']">
     <i><xsl:apply-templates/></i>
   </xsl:template>
-
+  
   <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='underline']">
-    <u><xsl:apply-templates/></u>
+    <em style="text-decoration:underline; font-style:normal;"><xsl:apply-templates/></em>
+    <!-- using the above rather than  <u> tag to be HTML5 compliant; had to put in font style to keep from being italics -->
+  </xsl:template>
+  
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  <!-- |||||||||  paragraph display the same for  frontmatter and commentary but the     ||||||||| -->
+  <!-- |||||||||  first tag position is different for each and want to treat it different||||||||| -->
+  <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+  
+  <xsl:template match="tei:div[@type='commentary' and @subtype='frontmatter']//tei:p">
+    <xsl:choose>
+     <xsl:when test="position() = 1"> <!-- first p tag inside the FM div -->
+        <xsl:apply-templates/>
+     </xsl:when>
+     <xsl:otherwise>
+        <br/><br/><xsl:apply-templates/>
+     </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:emph[@rend='quote']">
-    <q><xsl:apply-templates/></q>
+  <xsl:template match="tei:div[@type='commentary' and @subtype='linebyline']//tei:p">
+    <xsl:choose>
+     <xsl:when test="position() = 3"> <!-- first p tag inside the item tag for the line -->
+        <xsl:apply-templates/>
+     </xsl:when>
+     <xsl:otherwise>
+        <br/><br/><xsl:apply-templates/>
+     </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Textpart div -->
@@ -221,8 +242,14 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
+    <!-- count all preceding lb's before current lb's div - 0 if no div textparts -->
+    <xsl:variable name="preced-lb">
+      <xsl:value-of select="count(preceding::*/*//tei:lb)"/>
+    </xsl:variable>
     <xsl:variable name="lb-id">
-      <xsl:call-template name="generate-lb-id"/>
+      <xsl:call-template name="generate-lb-id">
+        <xsl:with-param name="preced-div-lb" select="$preced-lb"/>
+      </xsl:call-template>
     </xsl:variable>
     
     <li class="line clickable" id="{$lb-id}"/><span class="linenumber" id="n-{$lb-id}"><xsl:value-of select="@n"/></span>

@@ -5,6 +5,12 @@ class CommentsController < ApplicationController
   # GET /comments.xml
   def index
     @comments = Comment.find(:all)
+    
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comments.each do |nc|
+      nc.comment = CGI.unescape(nc.comment)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -22,6 +28,12 @@ class CommentsController < ApplicationController
     @identifier_id  = @identifier.origin.id
    
     @comments = Comment.find_all_by_publication_id(@publication_id, :order => 'created_at').reverse
+    
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 - escaping HTML for display if there
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comments.each do |nc|
+      nc.comment = CGI.escapeHTML(CGI.unescape(nc.comment))
+    end
 
   end
 
@@ -29,6 +41,9 @@ class CommentsController < ApplicationController
   # GET /comments/1.xml
   def show
     @comment = Comment.find(params[:id])
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comment.comment = CGI.unescape(@comment.comment)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -50,6 +65,9 @@ class CommentsController < ApplicationController
   # GET /comments/1/edit
   def edit
     @comment = Comment.find(params[:id])
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comment.comment = CGI.unescape(@comment.comment)
   end
 
   # POST /comments
@@ -57,7 +75,11 @@ class CommentsController < ApplicationController
   def create
   
     @comment = Comment.new(params[:comment])
-
+    
+    #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comment.comment = CGI.escape(@comment.comment)
+    
     @comment.user_id = @current_user.id
  #   if params[:reason] != nil
  #     @comment.reason = params[:reason]
@@ -83,8 +105,11 @@ class CommentsController < ApplicationController
   # PUT /comments/1.xml
   def update
     @comment = Comment.find(params[:id])
-
-    respond_to do |format|
+    #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78 
+    params[:comment][:comment] = CGI.escape(params[:comment][:comment])
+    
+    respond_to do |format|    
       if @comment.update_attributes(params[:comment])
         flash[:notice] = 'Comment was successfully updated.'
         format.html { redirect_to(@comment) }

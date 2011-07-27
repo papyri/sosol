@@ -190,7 +190,10 @@ class Publication < ActiveRecord::Base
           begin
             submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
             if submit_comment && submit_comment.comment
-              comment_text = submit_comment.comment
+              #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸
+              #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+              #does not need to be escaped to store in the GIT file
+              comment_text = CGI.unescape(submit_comment.comment)
             end
           rescue ActiveRecord::RecordNotFound
             #comment_text already = ''
@@ -892,6 +895,10 @@ class Publication < ActiveRecord::Base
   def submission_reason
     reason = Comment.find_by_publication_id(self.origin.id,
       :conditions => "reason = 'submit'")
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    reason.comment = CGI.unescape(reason.comment)
+    return reason
   end
   
   def origin
@@ -1057,7 +1064,9 @@ class Publication < ActiveRecord::Base
       end
       
       if c.comment
-        built_comment.comment = c.comment
+        #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 - escaping HTML for display if there
+        #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+        built_comment.comment = CGI.escapeHTML(CGI.unescape(c.comment))
       else
         built_comment.comment = "comment not filled in"
       end
@@ -1096,7 +1105,7 @@ class Publication < ActiveRecord::Base
           
           built_comment.why = "From "  + ident_title + " " + where_from + " XML"
           
-          built_comment.comment = change.text
+          built_comment.comment = CGI.escapeHTML(change.text)
           
           all_built_comments << built_comment
           xml_only_built_comments << built_comment
