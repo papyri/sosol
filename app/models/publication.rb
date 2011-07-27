@@ -190,7 +190,10 @@ class Publication < ActiveRecord::Base
           begin
             submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
             if submit_comment && submit_comment.comment
-              comment_text = submit_comment.comment
+              #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸
+              #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+              #does not need to be escaped to store in the GIT file
+              comment_text = CGI.unescape(submit_comment.comment)
             end
           rescue ActiveRecord::RecordNotFound
             #comment_text already = ''
@@ -404,7 +407,7 @@ class Publication < ActiveRecord::Base
     set_local_identifier_status(status_in)          
   end
 
-#needed to set the finalizer's board identifier status
+  #needed to set the finalizer's board identifier status
   def set_board_identifier_status(status_in)
       pub = self.find_first_board_parent
       if pub            
@@ -892,6 +895,10 @@ class Publication < ActiveRecord::Base
   def submission_reason
     reason = Comment.find_by_publication_id(self.origin.id,
       :conditions => "reason = 'submit'")
+    #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    reason.comment = CGI.unescape(reason.comment)
+    return reason
   end
   
   def origin
@@ -901,6 +908,32 @@ class Publication < ActiveRecord::Base
       origin_publication = origin_publication.parent
     end
     return origin_publication
+  end
+
+  def all_children
+    all_child_publications = []
+    self.children.each do |child_publication|
+      all_child_publications << child_publication
+      all_child_publications = all_child_publications + child_publication.all_children
+    end
+    return all_child_publications
+  end
+
+  def nuke
+    original_origin = self.origin
+    if(original_origin != self)
+      original_origin.all_children.each do |child_publication|
+        child_publication.destroy
+      end
+      original_origin.change_status('editing')
+      original_origin.comments.each do |c|
+        c.destroy
+      end
+      original_origin.identifiers.each do |i|
+        i.status = 'editing'
+        i.save!
+      end
+    end
   end
   
   #finds the closest parent publication whose owner is a board and returns that board
@@ -1031,7 +1064,9 @@ class Publication < ActiveRecord::Base
       end
       
       if c.comment
-        built_comment.comment = c.comment
+        #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸 - escaping HTML for display if there
+        #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+        built_comment.comment = CGI.escapeHTML(CGI.unescape(c.comment))
       else
         built_comment.comment = "comment not filled in"
       end
@@ -1070,7 +1105,7 @@ class Publication < ActiveRecord::Base
           
           built_comment.why = "From "  + ident_title + " " + where_from + " XML"
           
-          built_comment.comment = change.text
+          built_comment.comment = CGI.escapeHTML(change.text)
           
           all_built_comments << built_comment
           xml_only_built_comments << built_comment

@@ -80,6 +80,9 @@ class DdbIdentifiersController < IdentifiersController
                                     params[:comment])
         if params[:comment] != nil && params[:comment].strip != ""
           @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there - not likely here but possible
+          #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+          @comment.comment = CGI.escape(@comment.comment)
           @comment.save
         end
         flash[:notice] = "File updated."
@@ -99,8 +102,9 @@ class DdbIdentifiersController < IdentifiersController
         @original_commit_comment = params[:comment]
         render :template => 'ddb_identifiers/edit'
       rescue JRubyXML::ParseError => parse_error
-        flash[:error] = parse_error.to_str + 
+        flash.now[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
+        @bad_leiden = true #to keep from trying to parse the L+ as XML when render edit template
         @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
         render :template => 'ddb_identifiers/edit'
       end #begin

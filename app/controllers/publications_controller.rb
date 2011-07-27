@@ -221,6 +221,9 @@ class PublicationsController < ApplicationController
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
     @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there
+    #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+    @comment.comment = CGI.escape(@comment.comment)
     @comment.save
     
     error_text, identifier_for_comment = @publication.submit
@@ -329,7 +332,9 @@ class PublicationsController < ApplicationController
     @comment = Comment.new()
   
     if params[:comment] && params[:comment] != ""  
-      @comment.comment = params[:comment]
+      #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there
+      #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+      @comment.comment = CGI.escape(params[:comment])
     else
       @comment.comment = "no comment"
     end
@@ -580,7 +585,9 @@ class PublicationsController < ApplicationController
       end
     
       @comment = Comment.new()
-      @comment.comment = @vote.choice + " - " + params[:comment][:comment]
+      #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there
+      #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
+      @comment.comment = @vote.choice + " - " + CGI.escape(params[:comment][:comment])
       @comment.user = @current_user
       @comment.reason = "vote"
       #use most recent sha from identifier
@@ -624,7 +631,19 @@ class PublicationsController < ApplicationController
     redirect_to @publication    
   end
   
-  
+  def confirm_nuke
+   @publication = Publication.find(params[:id])
+  end
+
+  def nuke
+    @publication = Publication.find(params[:id])
+    pub_name = @publication.title
+    @publication.nuke
+
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked from orbit.'
+    expire_publication_cache
+    redirect_to dashboard_url
+  end 
   
   def confirm_delete
     @publication = Publication.find(params[:id])
