@@ -919,6 +919,9 @@ class Publication < ActiveRecord::Base
         child_publication.destroy
       end
       original_origin.change_status('editing')
+      original_origin.comments.each do |c|
+        c.destroy
+      end
       original_origin.identifiers.each do |i|
         i.status = 'editing'
         i.save!
