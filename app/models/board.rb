@@ -170,7 +170,7 @@ class Board < ActiveRecord::Base
             if comments
               comments.each do |comment|
                 if comment.comment
-                  comment_text += comment.comment 
+                  comment_text += CGI.unescape(comment.comment)
                 end
                 comment_text += "("
                 if comment.reason
