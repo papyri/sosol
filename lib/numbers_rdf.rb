@@ -64,7 +64,7 @@ module NumbersRDF
           return nil
         else
           return process_numbers_server_response_body(
-            Iconv.iconv('UTF-8','LATIN1',response.body).join,
+            response.body,
             xpath)
         end
       end
