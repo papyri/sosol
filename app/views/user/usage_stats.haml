@@ -21,7 +21,7 @@
             - if vote.publication && vote.publication.title    
               = link_to vote.publication.title, vote.publication
               = "(" + vote.identifier.title + ")"
-              = "Vote " + vote.comment 
+              = h "Vote " + CGI.unescape(vote.comment) 
               %span.date 
                 = vote.created_at.to_formatted_s(:long)
           
@@ -36,7 +36,7 @@
             - if submit.publication && submit.publication.title
               = link_to submit.publication.title, submit.publication  
               = "(" + submit.publication.status + ")"  
-              = submit.comment 
+              = h CGI.unescape(submit.comment )
               %span.date 
                 = submit.created_at.to_formatted_s(:long)
           %br
@@ -52,7 +52,7 @@
               = link_to finalizing.publication.title, finalizing.publication
               - if finalizing.identifier && finalizing.identifier.title
                 = finalizing.identifier.title   
-              = finalizing.comment 
+              = h CGI.unescape(finalizing.comment) 
               %span.date 
                 = finalizing.created_at.to_formatted_s(:long)
           %br
