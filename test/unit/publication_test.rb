@@ -123,7 +123,7 @@ class PublicationTest < ActiveSupport::TestCase
     
     should "only have the original branches after deletion" do
       @publication.destroy
-      assert_equal @original_branches,@user.repository.branches
+      assert_equal @original_branches.sort,@user.repository.branches.sort
     end
   end
 end
