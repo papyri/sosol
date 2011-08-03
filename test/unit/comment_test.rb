@@ -15,6 +15,7 @@ class CommentTest < ActiveSupport::TestCase
     end
 
     assert_equal test_string, Comment.last.comment
+    assert_equal CGI.escape(test_string), ActiveRecord::Base.connection.execute('SELECT comment FROM comments ORDER BY id DESC LIMIT 1').first["comment"]
 
     assert_difference('Comment.count', -1) do
       test_comment.destroy
