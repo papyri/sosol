@@ -23,7 +23,7 @@ module JRubyXML
     end
     
     def error(e)
-      raise ParseError.new(e.getLineNumber, e.getColumnNumber), e.getMessage
+      fatalError(e)
     end
     
     def warning(e)
@@ -41,9 +41,7 @@ module JRubyXML
     end
     
     def error(e)
-      locator = e.getLocator()
-      raise ParseError.new(locator.getLineNumber, locator.getColumnNumber), 
-        e.getMessage
+      fatalError(e)
     end
     
     def warning(e)

@@ -175,9 +175,6 @@ class HgvMetaIdentifiersController < IdentifiersController
     def save_comment (comment, commit_sha)
       if comment != nil && comment.strip != ""
         @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
-        #escaping the comment was the only way to get the DB to store special math symbols 𐅵𐅷𐅸 if there - not likely here but possible
-        #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
-        @comment.comment = CGI.escape(@comment.comment)
         @comment.save
       end
     end

@@ -326,10 +326,6 @@ class Identifier < ActiveRecord::Base
     
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
       if((c.reason == "vote") && (parent_classes.include?(c.identifier.class.to_s)))
-        #unescaping the stored comment because of possible special math symbols 𐅵𐅷𐅸
-        #character reference &#x10175; &#x10177; &#x10178; or javacode escape \ud800\udd75 \ud800\udd77 \ud800\udd78
-        #does not need to be escaped to store in the GIT file or GIT commit message
-        c.comment = CGI.unescape(c.comment)
         change_desc_content = add_change_desc( "Vote - " + c.comment, c.user, change_desc_content )
         commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
       end
