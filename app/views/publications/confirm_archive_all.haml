@@ -1,0 +1,16 @@
+
+#main
+  = render :partial => "common/flash_all"    
+  %br
+  %h2
+    Are You Sure You Want to Archive ALL the publications below?  This may take some time, so please be patient.
+  %br
+  %h1
+    = link_to "Archive ALL", :id => @publications,  :controller => "publications", :action => "archive_all"
+    = "or"
+    = link_to "Cancel", dashboard_url
+  %br
+  %h2 
+    - @publications.each do |pub|
+      = pub.title
+      %br
