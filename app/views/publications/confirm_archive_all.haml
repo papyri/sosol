@@ -1,3 +1,8 @@
+:javascript
+  function show_working_image() {
+    $('show_working').toggleClassName('loading');
+    Effect.SlideDown('show_working_div');
+  }
 
 #main
   = render :partial => "common/flash_all"    
@@ -6,10 +11,12 @@
     Are You Sure You Want to Archive ALL the publications below?  This may take some time, so please be patient.
   %br
   %h1
-    = link_to "Archive ALL", :id => @publications,  :controller => "publications", :action => "archive_all"
+    = link_to ("Archive ALL", options = { :id => @publications,  :controller => "publications", :action => "archive_all"}, html_options = {:onclick => "show_working_image();"})
     = "or"
     = link_to "Cancel", dashboard_url
   %br
+  %div{:id => "show_working_div", :style => "display:none;"}
+    = text_area_tag 'show_working', nil, :cols => 40, :rows => 10
   %h2 
     - @publications.each do |pub|
       = pub.title
