@@ -1,6 +1,6 @@
 vendor/plugins/rxsugar:
   :type: git
-  :repository: git://halsted.vis.uky.edu/git/xsugar.git
+  :repository: git://github.com/papyri/xsugar.git
   :revision: 649f2a6f8d2ec9ba0143e8f197a62b7ae255d644
 
 data/xslt/epidoc:

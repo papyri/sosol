@@ -404,7 +404,7 @@ class Publication < ActiveRecord::Base
     set_local_identifier_status(status_in)          
   end
 
-#needed to set the finalizer's board identifier status
+  #needed to set the finalizer's board identifier status
   def set_board_identifier_status(status_in)
       pub = self.find_first_board_parent
       if pub            
@@ -901,6 +901,32 @@ class Publication < ActiveRecord::Base
       origin_publication = origin_publication.parent
     end
     return origin_publication
+  end
+
+  def all_children
+    all_child_publications = []
+    self.children.each do |child_publication|
+      all_child_publications << child_publication
+      all_child_publications = all_child_publications + child_publication.all_children
+    end
+    return all_child_publications
+  end
+
+  def nuke
+    original_origin = self.origin
+    if(original_origin != self)
+      original_origin.all_children.each do |child_publication|
+        child_publication.destroy
+      end
+      original_origin.change_status('editing')
+      original_origin.comments.each do |c|
+        c.destroy
+      end
+      original_origin.identifiers.each do |i|
+        i.status = 'editing'
+        i.save!
+      end
+    end
   end
   
   #finds the closest parent publication whose owner is a board and returns that board
