@@ -645,7 +645,7 @@ class PublicationsController < ApplicationController
     pub_name = @publication.title
     @publication.nuke
 
-    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked from orbit.'
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked.'
     expire_publication_cache
     redirect_to dashboard_url
   end 
