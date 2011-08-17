@@ -98,7 +98,9 @@ class UserController < ApplicationController
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
     
     unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
-      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status != 'archived' AND owner_id = creator_id AND parent_id is null", :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      #could not find valid format for status not equal to 'archive' in below statement so resorted to older format above
+      #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     end
     
     unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")

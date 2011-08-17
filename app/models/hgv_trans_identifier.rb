@@ -116,8 +116,8 @@ class HGVTransIdentifier < HGVIdentifier
           :HGV_text => related_hgv.join(' '),
           :TM_text => related_hgv.collect{|h| h.gsub(/\D/,'')}.uniq.join(' '),
           :title_text => NumbersRDF::NumbersHelper::identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,HGVIdentifier::IDENTIFIER_NAMESPACE,self.to_components.last].join('/')),
-          :reprint_from_text => options[:set_dummy_header] ? original.title : '',
-          :reprint_ref_attribute => options[:set_dummy_header] ? original.to_components.last : ''
+          :reprint_from_text => options[:set_dummy_header] ? options[:original].title : '',
+          :reprint_ref_attribute => options[:set_dummy_header] ? options[:original].to_components.last : ''
         )
     
       self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")

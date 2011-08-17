@@ -1,5 +1,30 @@
 var insertHere = ""; 
 
+//###########################################################################################
+// insertFootnote - insert foot note markup into commentary input form
+//###########################################################################################
+    
+function insertFootnote(){
+
+  //get value from page
+  
+  footnoteText = document.getElementById("insertfootnote_text").value;
+  
+  if(!(footnoteText.match(/\S/))){ //check for any non-whitespace character
+    alert("You must provide text for the foot note");
+    return;
+  }
+
+  convertXML = '<note type="footnote" xml:lang="en">' + footnoteText + '<\/note>';
+
+  getMarkUp(convertXML);
+
+}
+
+//###########################################################################################
+// insertLinkExt - insert external link markup into commentary input form
+//###########################################################################################
+    
 function insertLinkExt(){
 
   insertAsBibl = 'no';
@@ -76,6 +101,10 @@ function insertLinkExt(){
 
 }
 
+//###########################################################################################
+// insertLinkPN - insert a link to PN entry markup into commentary input form
+//###########################################################################################
+    
 function insertLinkPN(){
 
     editpass = "yes";
@@ -170,6 +199,10 @@ function insertLinkPN(){
 
   }
 
+//###########################################################################################
+// insertMarkup - insert actual markup into commentary input form
+//###########################################################################################
+    
 function insertMarkUp(vti)
 {
 
@@ -208,6 +241,10 @@ function insertMarkUp(vti)
   }
 }
 
+//###########################################################################################
+// closeHelper - close the helper input window
+//###########################################################################################
+    
 function closeHelper()
 {
   

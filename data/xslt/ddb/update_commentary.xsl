@@ -44,8 +44,14 @@
   
   <!-- generate lb id's when saving commentary -->
   <xsl:template match="tei:lb">
+    <!-- count all preceding lb's before current lb's div - 0 if no div textparts -->
+    <xsl:variable name="preced-lb">
+      <xsl:value-of select="count(preceding::*/*//tei:lb)"/>
+    </xsl:variable>
     <xsl:variable name="lb-id">
-      <xsl:call-template name="generate-lb-id"/>
+      <xsl:call-template name="generate-lb-id">
+        <xsl:with-param name="preced-div-lb" select="$preced-lb"/>
+      </xsl:call-template>
     </xsl:variable>
     
     <xsl:copy>
@@ -74,8 +80,14 @@
             <xsl:otherwise>
               <!-- iterate over all text lb's -->
               <xsl:for-each select="//tei:div[@type='edition']//tei:lb">
+                <!-- count all preceding lb's before current lb's div - 0 if no div textparts -->
+                <xsl:variable name="preced-lb">
+                  <xsl:value-of select="count(preceding::*/*//tei:lb)"/>
+                </xsl:variable>
                 <xsl:variable name="lb-id">
-                  <xsl:call-template name="generate-lb-id"/>
+                  <xsl:call-template name="generate-lb-id">
+                    <xsl:with-param name="preced-div-lb" select="$preced-lb"/>
+                  </xsl:call-template>
                 </xsl:variable>
               
                 <xsl:variable name="this-line-ref">

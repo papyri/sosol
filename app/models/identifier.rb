@@ -313,7 +313,7 @@ class Identifier < ActiveRecord::Base
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         %w{data xslt common add_change.xsl})),
-      :who => user_info.human_name,
+      :who => ActionController::Integration::Session.new.url_for(:host => NumbersRDF::NAMESPACE_IDENTIFIER, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
       :comment => text
     )
     

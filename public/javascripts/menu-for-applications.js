@@ -258,10 +258,12 @@ DHTMLSuite.common.prototype = {
 	  var returnValue = inputObj.offsetTop;
 	  while((inputObj = inputObj.offsetParent) != null){
 	  	if(inputObj.tagName!='HTML'){
-	  		returnValue += (inputObj.offsetTop - inputObj.scrollTop);
+	  		//jfox changed the line below to get the menus to behave in chrome and safari
+	  		//returnValue += (inputObj.offsetTop - inputObj.scrollTop);
+	  		returnValue += inputObj.offsetTop;
 	  		if(document.all)returnValue+=inputObj.clientTop;
+        }
 	  	}
-	  }
 	  return returnValue;
 	}
 	// }}}
