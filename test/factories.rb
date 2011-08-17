@@ -45,6 +45,7 @@ Factory.define :hgv_trans_board, :parent => :hgv_board do |f|
   f.identifier_classes ['HGVTransIdentifier']
 end
 
+
 Factory.define :user do |f|
   f.name { Factory.next(:name) }
   f.email { Factory.next(:email) }
@@ -81,8 +82,9 @@ end
 Factory.define :vote do |f|
   f.association :user
   f.association :publication
-  f.choice 'MyString'
+  f.choice :choice #'MyString'
 end
+
 
 Factory.define :publication do |f|
   f.association :owner, :factory => :user
@@ -109,4 +111,21 @@ end
 
 Factory.define :DDBIdentifier do |f|
   f.name { Factory.next(:ddb_identifier_string) }
+end
+
+Factory.define :community do |f|
+  f.name :name 
+  f.friendly_name :friendly_name  
+  f.abbreviation :abbreviation 
+  f.description :description
+end
+
+
+Factory.define :comment do |f|
+  f.comment :comment
+  f.user_id :user_id
+  f.identifier_id :identifier_id
+  f.reason :reason
+  f.publication_id :publicaiton_id
+  
 end
