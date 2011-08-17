@@ -37,7 +37,15 @@ class ApplicationController < ActionController::Base
 
   private
   
-  def get_user_id
+  def get_user_id  
+    if ENV['RAILS_ENV'] == "test"
+
+      @current_user = User.find_by_id params[:test_user_id]
+      session[:user_id] == params[:test_user_id]
+
+      return true
+    end
+  
     user_id = session[:user_id]
     if user_id
       @current_user = User.find_by_id user_id
