@@ -332,9 +332,90 @@ class PublicationsController < ApplicationController
     
     #if it is a community pub, we don't commit to canon
     if @publication.is_community_publication?
+      Rails.logger.info "==========COMMUNITY PUBLICATION=========="
+      Rails.logger.info "----Community is " + @publication.community.name
+      Rails.logger.info "----Board is " + @publication.find_first_board.name
+      
       #need to copy somewhere?
       #no this is done in publication.submit
-      @publication.copy_repo_to_parent_repo
+      Rails.logger.info "----Controlled paths for community publication are:"
+      @publication.controlled_paths.each do |cp|
+         Rails.logger.info "-" + cp;
+      end
+      
+      
+      
+      #@publication.owner.repository.update_master_from_canonical
+      
+      #get the controlled blobs from the local branch
+      controlled_blobs = @publication.controlled_paths.collect do |controlled_path|
+        @publication.owner.repository.get_blob_from_branch(controlled_path, @publication.branch)
+      end
+      #controlled_blobs are the files that the board controls and have changed
+      
+      Rails.logger.info "-----Controlled Blobs are:"
+      controlled_blobs.each do |cb|
+        Rails.logger.info "-" + cb.to_s
+      end
+       
+      #combine controlled paths and blobs into a hash
+      controlled_paths_blobs = Hash[*((@publication.controlled_paths.zip(controlled_blobs)).flatten)]
+        
+        
+      #get index for what needs to be committed
+      index = @publication.owner.repository.repo.index
+      #get master tree for users branch
+      index.read_tree('master')
+      
+      
+      #raise_str = raise_str + index.inspect
+      
+      #add dirty blobs to index
+      controlled_paths_blobs.each_pair do |path, blob|
+          index.add(path, blob.data)
+      end
+      
+      Rails.logger.info "=======pub INDEX========"
+      Rails.logger.info index.inspect
+       
+      
+      #goal is to copy final blobs back to user's original publication
+      origin_index = @publication.origin.owner.repository.repo.index
+      origin_index.read_tree('master')
+      
+      controlled_paths_blobs.each_pair do |path, blob|
+          origin_index.add(path, blob.data)
+      end
+      
+      
+      Rails.logger.info "=======origin INDEX========"
+      Rails.logger.info origin_index.inspect
+      
+      
+      com_sha = origin_index.commit("Finalized by community board via Index")
+      
+      Rails.logger.info "=======origin commit sha========"
+      Rails.logger.info com_sha
+      
+      
+      @publication.origin.owner.repository.repo.update_ref(@publication.branch, com_sha)
+      @publication.origin.save
+      
+      
+      #if !@publication.origin.owner.repository.repo.commit_index("Finalized by community board")
+      #  raise "failed to commit index"
+      #end
+      flash[:message] = com_sha 
+      #now do a commit to the original repo
+      
+      #raise_str = raise_str + index.inspect
+      #raise raise_str
+      
+      #controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
+       #   self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
+       # end
+      
+      #@publication.copy_repo_to_parent_repo
       
     else #commit to canon
       begin
