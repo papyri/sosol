@@ -1,5 +1,7 @@
 :javascript
+  var try_counter = 0;
   function ajax_xml_to_leiden(was_disabled) {
+    try_counter = try_counter + 1;
     if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
@@ -17,8 +19,17 @@
         
         if ("exception" in json) {
           $$('div#main > div.site').first().insert({
-            top: new Element('div',{'class': 'flash error'}).update('Error converting XML to Leiden+. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+            top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
           });
+          //add class after the original insert to get the flash highlighting to work in IE browser
+          $('flasherror').addClassName('flash error');
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column)
+          Form.Element.setValue('ddb_identifier_leiden_plus',error_content);
+          Form.Element.enable('ddb_identifier_leiden_plus');
+          //showMatch function in confirm.js included at the bottom
+          showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
         }
         else {
           Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
@@ -32,9 +43,44 @@
       },
       onFailure: function(response) {
         // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        $$('div#main > div.site').first().insert({
+            top: new Element('div',{'class': 'flash error'}).update('ajax onFailure - will try again in 10 seconds - try# ' + try_counter)
+        });
         setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
       }
     });
+  }
+  function insert_error_here(content, line, column){
+      //copied this function/logic from identifiers_controller.rb
+      // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+      // occurs by taking the line and column from the message and giving the user the place in the content
+      // the parse error occured in xsugars processing - may or may not be where the real error is depending
+      // on what the error is - this processing is by character because there are multiple byte characters
+      // possible in the text and a way to place msg with taking that into account
+      //
+      // line starts at 1 because first character is on first line before incrementing in loop
+      // same logic for column, already on first character before incrementing in loop 
+      // 'col' check has to come before 'new line' check in case error is on last char in the line
+      var line_cnt = 1;
+      var col_cnt = 1;
+      var content_error_here = new Array();
+      
+      for (i=0;i<=content.length;i++){
+
+        if (line_cnt == line){
+          if (col_cnt == column) {
+            content_error_here.push("**POSSIBLE ERROR**");
+          }
+          col_cnt++;
+        }
+        
+        if (content.charAt(i) == "\n"){
+          line_cnt++;
+        }
+        content_error_here.push(content.charAt(i));
+      }
+
+      return content_error_here.join("");
   }
   
   document.observe("dom:loaded", function() {
@@ -47,13 +93,14 @@
       
       $('ddb_identifier_leiden_plus').toggleClassName('loading');
       Form.Element.setValue('ddb_identifier_leiden_plus',
-        $('original_leiden_plus').innerHTML.unescapeHTML().strip());
+        $('original_leiden_plus').value);
 
       ajax_xml_to_leiden(was_disabled);
     }
     else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (defined?(XSUGAR_STANDALONE_ENABLED).nil? || !XSUGAR_STANDALONE_ENABLED)}) {
       Form.Element.setValue('ddb_identifier_leiden_plus',
-        $('original_leiden_plus').innerHTML.unescapeHTML().strip());
+        $('original_leiden_plus').value);
+      showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");
     }
   });
 
@@ -73,8 +120,6 @@
         %br
         = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
-      #original_leiden_plus.invisible
-        :preserve
-          #{h(@identifier[:leiden_plus])}
+      = text_area_tag 'original_leiden_plus', @identifier[:leiden_plus], :class => 'invisible'
 
 = javascript_include_tag 'confirm'
