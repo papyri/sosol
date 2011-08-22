@@ -912,7 +912,7 @@ class Publication < ActiveRecord::Base
     return all_child_publications
   end
 
-  def nuke
+  def withdraw
     original_origin = self.origin
     if(original_origin != self)
       original_origin.all_children.each do |child_publication|
