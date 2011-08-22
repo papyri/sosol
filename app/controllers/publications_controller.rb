@@ -636,16 +636,16 @@ class PublicationsController < ApplicationController
     redirect_to dashboard_url 
   end
   
-  def confirm_nuke
+  def confirm_withdraw
    @publication = Publication.find(params[:id])
   end
 
-  def nuke
+  def withdraw
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
-    @publication.nuke
+    @publication.withdraw
 
-    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked.'
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully withdrawn.'
     expire_publication_cache
     redirect_to dashboard_url
   end 
