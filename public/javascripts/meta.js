@@ -312,7 +312,7 @@ function multiAddPlaceRaw(e){
              '         <input type="text" name="' + geoSpotKey + '_name" id="' + geoSpotKey + '_name" class="observechange provenanceGeoName">' +
              '         <input type="checkbox" value="low" name="' + geoSpotKey + '_certainty" id="' + geoSpotKey + '_certainty" class="observechange provenanceGeoCertainty">' +
              '         <label for="' + geoSpotKey + '_certainty" class="geoSpotUncertain">uncertain</label>' +
-             '         <span title="Click to add new item" onclick="multiAddGeoSpot(\'' + geoSpotKey + '\', ' + provenanceIndex + ', ' + placeIndex + ')">add</span>' +
+             '         <span title="Click to add new item" onclick="multiAddGeoSpot(\'' + geoSpotKey + '\', \'' + provenanceIndex + '\', ' + placeIndex + ')">add</span>' +
              '         <div class="paragraph geoReferenceContainer"' + ($('toggleReferenceList').hasClassName('showReferenceList') ? ' style="display: none;"' : '') + '>' +
              '           <input type="text" value="" name="' + geoSpotKey + '_reference" id="' + geoSpotKey + '_reference" class="observechange provenanceGeoReference">' +
              '           <input type="hidden" name="' + geoReferenceKey + '[' + geoSpotKey + '_reference]" id="' + geoReferenceKey + '_' + geoSpotKey + '_reference">' +
