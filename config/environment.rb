@@ -31,7 +31,7 @@ Rails::Initializer.run do |config|
   # config.gem "ruby-xslt", :lib => "xml/xslt"
   # config.gem "libxml-ruby", :lib => "xml/libxml"
   
-  config.gem "haml", :version => "~> 2.2.24"
+  config.gem "haml", :version => "~> 3.0.25"
   # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
   
   if(RUBY_PLATFORM == 'java')
