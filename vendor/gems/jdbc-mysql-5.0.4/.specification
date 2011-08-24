@@ -1,11 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: jdbc-mysql
 version: !ruby/object:Gem::Version 
-  prerelease: false
-  segments: 
-    - 5
-    - 0
-    - 4
+  prerelease: 
   version: 5.0.4
 platform: ruby
 authors: 
@@ -46,25 +42,21 @@ rdoc_options:
 require_paths: 
   - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
   requirements: 
     - - ">"
       - !ruby/object:Gem::Version 
-        segments: 
-          - 0
-          - 0
-          - 0
         version: 0.0.0
 required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
   requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-          - 0
         version: "0"
 requirements: []
 
 rubyforge_project: jruby-extras
-rubygems_version: 1.3.6
+rubygems_version: 1.5.1
 signing_key: 
 specification_version: 1
 summary: MySQL JDBC driver for Java and MySQL/ActiveRecord-JDBC.
