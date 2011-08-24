@@ -36,15 +36,16 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should have max rank default" do
-      post :create, :board => Factory.build(:board).attributes
-     assert assigns(:board).rank == Board.count
-    end
+    post :create, :board => Factory.build(:board).attributes
+    assert assigns(:board).rank == Board.count
+    assigns(:board).destroy
+  end
     
-    test "should have valid rank" do
-      post :create, :board => Factory.build(:board).attributes
-      assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
-      
-    end
+  test "should have valid rank" do
+    post :create, :board => Factory.build(:board).attributes
+    assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
+    assigns(:board).destroy
+  end
     
   test "should show board" do    
     get :show, :id => @board.id

@@ -58,7 +58,7 @@
           alert("Grammar conversion error line " + json.exception.line + " column " + json.exception.column + " of this XML \n" + json.content);
         }
         else {
-          leidenh = json.content.replace(/^\<W/,'').replace(/W\>$/,'').strip();
+          leidenh = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
           window.close();
           
           insertMarkUp(leidenh);
@@ -79,6 +79,7 @@
   .site
     = stylesheet_link_tag 'helper'
     #gapsize{:class => "helperpop"}
+      = render :partial => 'commentary_markup_warn'
       %h3 Create Link to PN Publication
       %h4 Regular or Bibliograpy Style
       = render :partial => "publications/publication_selector", :locals => { :emend => :helper }

@@ -143,7 +143,10 @@
     - if @allow_delete
       = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
       %br
-  
+    - if %w{approved voting finalizing}.include?(@publication.status) 
+      = link_to "Withdraw from Editorial Review", :controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"
+      %br
+    
     - if @publication.status == "committed"
       = link_to "Archive", :controller => 'publications', :id => @publication.id, :action => "confirm_archive"
       %br

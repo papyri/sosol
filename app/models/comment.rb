@@ -9,6 +9,14 @@ class Comment < ActiveRecord::Base
   named_scope :submit, :conditions => { :reason => 'submit' }
   named_scope :general, :conditions => { :reason => 'general' }
   named_scope :vote, :conditions => { :reason => 'vote' }
+
+  def comment=(comment_text)
+    write_attribute(:comment, CGI.escape(comment_text))
+  end
+
+  def comment
+    CGI.unescape(read_attribute(:comment))
+  end
   
   class CombineComment
     attr_accessor :xmltype, :who, :when, :why, :comment 
