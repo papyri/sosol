@@ -14,6 +14,6 @@
 :javascript
   document.observe("dom:loaded", function() {
     $$("span.event_owner_User_#{@current_user.id}").each(function(s) {
-      s.replace("You");
+      s.replace("You ");
     });
   });

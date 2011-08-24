@@ -43,12 +43,12 @@ class RepositoryTest < ActiveSupport::TestCase
     
     should "update master tip before branch creation" do
       # rewind the head first
-      first_canon_commit = Repository.new.repo.log().last
+      prev_canon_commit = Repository.new.repo.commits('master',1,1).first
       original_master = @user.repository.repo.get_head('master').commit
-      @user.repository.repo.update_ref('master', first_canon_commit.id)
+      @user.repository.repo.update_ref('master', prev_canon_commit.id)
       # verify that we rewound the head
       assert_equal @user.repository.repo.get_head('master').commit.id,
-        first_canon_commit.id
+        prev_canon_commit.id
       assert_not_equal @user.repository.repo.get_head('master').commit.id,
         original_master.id
       
@@ -56,7 +56,7 @@ class RepositoryTest < ActiveSupport::TestCase
       @user.repository.create_branch('test')
       # verify that the master head was updated and used for the new branch
       assert_not_equal @user.repository.repo.get_head('master').commit.id,
-        first_canon_commit.id
+        prev_canon_commit.id
       assert_equal @user.repository.repo.get_head('master').commit.id,
         Repository.new.repo.get_head('master').commit.id
       assert_equal @user.repository.repo.get_head('test').commit.id,
