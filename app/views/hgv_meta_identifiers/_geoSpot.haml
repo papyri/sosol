@@ -18,7 +18,8 @@
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
 
         .paragraph.geoReferenceContainer
-          = text_field_tag geoBaseAttributes + '[reference]', geo.referenceList.join(' '), :class => 'observechange provenanceGeoReference'
+          = hidden_field_tag geoBaseAttributes + '[reference]', geo.referenceList.join(' '), :class => 'observechange provenanceGeoReference'
+          .clear
           = label_tag geoBaseAttributes + '[reference]', I18n.t('meta.label.reference')
           = render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => geo.referenceList}
           .clear
@@ -35,7 +36,8 @@
     %span{:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
     
     .paragraph.geoReferenceContainer
-      = text_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference'
+      = hidden_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference'
+      .clear
       = render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => []}
       .clear
 
