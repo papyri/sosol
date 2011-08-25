@@ -168,6 +168,31 @@ class Publication < ActiveRecord::Base
     self.owner.repository.delete_branch(self.branch)
   end
   
+  
+   def log_info
+        Rails.logger.info "-----Publication Info-----"
+        Rails.logger.info "--Owner: " + self.owner.name
+        Rails.logger.info "--Title: " + self.title
+        Rails.logger.info "--Status: " + self.status
+        Rails.logger.info "--content"
+        
+        self.identifiers.each do |id|
+          Rails.logger.info "---ID title: " + id.title
+          Rails.logger.info "---ID class:" + id.class.to_s
+          Rails.logger.info "---ID content:"
+          if id.xml_content
+            Rails.logger.info id.xml_content
+          else
+            Rails.logger.info "NO CONTENT!"
+          end
+          #Rails.logger.info "== end Owner: " + publication.owner.name
+        end
+        Rails.logger.info "==end Owner: " + self.owner.name
+        Rails.logger.info "=====End Publication Info====="
+    end
+      
+
+  
   def submit_to_next_board
 
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
@@ -175,7 +200,13 @@ class Publication < ActiveRecord::Base
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-
+    
+    Rails.logger.info "---Submittable identifiers are: " 
+    submittable_identifiers.each do |log_si|
+      Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
+    end
+    
+    
     #check if we are part of a community
    
     if is_community_publication?
@@ -192,7 +223,10 @@ class Publication < ActiveRecord::Base
         if boards_identifiers.length > 0
           #submit to that board
 
-
+    Rails.logger.info "---Submittable Board identifiers are: " 
+    boards_identifiers.each do |log_sbi|
+      Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
+    end
 
           #find the comment text made on submission
           comment_text = '' #if no comment found, default to nothing. This should never happen.
@@ -272,9 +306,18 @@ class Publication < ActiveRecord::Base
     end
 =end
 
+Rails.logger.info " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
       #copy to  space
+      Rails.logger.info "----end user to get it" 
+      Rails.logger.info self.community.end_user.name
+      
+      community_copy = copy_to_owner( self.community.end_user)
+      community_copy.status = "editing"
+      #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
+      community_copy.save!
+      
     else
       #mark as committed
       self.origin.change_status("committed")
@@ -886,6 +929,9 @@ class Publication < ActiveRecord::Base
       end
     end
   end
+  
+
+  
   
   def controlled_paths
     self.controlled_identifiers.collect do |i|
