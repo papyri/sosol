@@ -16,7 +16,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
     context "sosol testing" do
       setup do
         Rails.logger.level = 0
-        Rails.logger.info "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         #a user to put on the boards
         @board_user = Factory(:user, :name => "board_man_bob")
         @board_user_2 = Factory(:user, :name => "board_man_alice")   
@@ -104,7 +104,7 @@ end
 =end      
       
      should "user creates and submits publication to sosol"  do
-       Rails.logger.info "BEGIN TEST: user creates and submits publication to sosol"
+       Rails.logger.debug "BEGIN TEST: user creates and submits publication to sosol"
 =begin       
        choices = "Choices: "
        @meta_board.decrees.each do |d|
@@ -123,16 +123,16 @@ end
        #create a publication with a session
        open_session do |publication_session|
          #publication_session.data
-         Rails.logger.info "---Create A New Publication---"
+         Rails.logger.debug "---Create A New Publication---"
          #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
          
          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
               
-         Rails.logger.info "--flash is: " + publication_session.flash.inspect
+         Rails.logger.debug "--flash is: " + publication_session.flash.inspect
          
          @publication = @creator_user.publications.first
          
-         output_publication_info(@publication)
+         @publication.log_info
        end
        
 
@@ -141,32 +141,49 @@ end
        
        #create a publication
 
-       #Rails.logger.info "---Create A New Publication---"
+       #Rails.logger.debug "---Create A New Publication---"
        #@publication = Publication.new_from_templates(@creator_user)
        
        #@publication.reload
        
-       Rails.logger.info "---Publication Created---"
-       Rails.logger.info  "--identifier count is: " + @publication.identifiers.count.to_s
+       Rails.logger.debug "---Publication Created---"
+       Rails.logger.debug  "--identifier count is: " + @publication.identifiers.count.to_s
        
        an_array = @publication.identifiers
-       Rails.logger.info  "--identifier length via array is: " + an_array.length.to_s
+       Rails.logger.debug  "--identifier length via array is: " + an_array.length.to_s
        
-       Rails.logger.info "---Identifiers for publication " + @publication.title + " are:"
+       Rails.logger.debug "---Identifiers for publication " + @publication.title + " are:"
        
        @publication.identifiers.each do |pi|
-         Rails.logger.info "-identifier-"
-         Rails.logger.info "title is: " +  pi.title 
-         Rails.logger.info "was it modified?: " + pi.modified?.to_s
-         Rails.logger.info "xml:"
-         Rails.logger.info pi.xml_content
+         Rails.logger.debug "-identifier-"
+         Rails.logger.debug "title is: " +  pi.title 
+         Rails.logger.debug "was it modified?: " + pi.modified?.to_s
+         Rails.logger.debug "xml:"
+         Rails.logger.debug pi.xml_content
        end
        
        #setup controller calls to do this stuff?
 
        #submit to sosol       
       # @publication.reload
-       @publication.submit
+       #@publication.submit
+       
+       
+             
+       open_session do |submit_session|
+
+         submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+              :submit_comment => "I made a new pub"
+              
+         Rails.logger.debug "--flash is: " + submit_session.flash.inspect              
+       end
+       @publication.reload       
+       
+       #Rails.logger.debug "Publication Community is " + @publication.community.name
+       assert_nil @publication.community, "Community is not NIL but should be for a SOSOL publication"
+       #Rails.logger.debug "Community is " + @test_community.name
+        
+       
        
        
        #now meta should have it
@@ -184,7 +201,7 @@ end
        
          
       
-       Rails.logger.info "Meta Board has publication" 
+       Rails.logger.debug "Meta Board has publication" 
        #vote on it
        meta_publication = meta_publications.first 
        
@@ -199,7 +216,7 @@ end
        
        assert_not_nil  meta_identifier, "Did not find the meta identifier"
        
-       Rails.logger.info "Found meta identifier, will vote on it"
+       Rails.logger.debug "Found meta identifier, will vote on it"
    
        
        open_session do |meta_session|
@@ -208,7 +225,7 @@ end
               :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
               
-         Rails.logger.info "--flash is: " + meta_session.flash.inspect              
+         Rails.logger.debug "--flash is: " + meta_session.flash.inspect              
        end
        
        
@@ -220,16 +237,16 @@ end
        meta_publication.votes.each do |v|
          vote_str = vote_str + v.choice
        end
-       Rails.logger.info  vote_str
+       Rails.logger.debug  vote_str
      
        
        #vote should have changed publication to approved and put to finalizer
        assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
-       Rails.logger.info "--Meta publication approved"
+       Rails.logger.debug "--Meta publication approved"
        
        meta_final_publication = meta_publication.find_finalizer_publication
        assert_equal meta_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
-       Rails.logger.info "---Finalizer has publication"
+       Rails.logger.debug "---Finalizer has publication"
        
        #call finalize on publication controller
        
@@ -245,19 +262,19 @@ end
         meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
           :comment => 'I agree meta is great and now it is final'
      
-         Rails.logger.info "--flash is: " + meta_finalize_session.flash.inspect
-         Rails.logger.info "----session data is: " + meta_finalize_session.session.data.inspect       
-         Rails.logger.info meta_finalize_session.body
+         Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
+         Rails.logger.debug "----session data is: " + meta_finalize_session.session.to_hash.inspect       
+         Rails.logger.debug meta_finalize_session.body
 
        end
        
 =begin
-       Rails.logger.info "------------DOING REQUEST-----------"
+       Rails.logger.debug "------------DOING REQUEST-----------"
        @request = ActionController::TestRequest.new
        @request.session[:user_id] = @board_user.id
        
-       Rails.logger.info "BODY"
-       Rails.logger.info @request.body
+       Rails.logger.debug "BODY"
+       Rails.logger.debug @request.body
    
        @current_user = @board_user
         
@@ -271,7 +288,7 @@ end
        assert_equal "finalized", meta_final_publication.status, "Meta final publication not finalized"
        
        
-       Rails.logger.info "Meta committed"
+       Rails.logger.debug "Meta committed"
      
 
 
@@ -279,14 +296,14 @@ end
        #final should have comments and votes
        
        meta_publication.reload
-       output_publication_info(meta_publication)
+       meta_publication.log_info
        meta_final_publication.reload
-       output_publication_info(meta_final_publication)
-       Rails.logger.info "Compare board with board publication"
+       meta_final_publication.log_info
+       Rails.logger.debug "Compare board with board publication"
        compare_publications(meta_publication, meta_publication)
-       Rails.logger.info "Compare board with finalizer publication"
+       Rails.logger.debug "Compare board with finalizer publication"
        compare_publications(meta_publication, meta_final_publication)
-       Rails.logger.info "Compare user with finalizer publication"
+       Rails.logger.debug "Compare user with finalizer publication"
        compare_publications(@creator_user.publications.first, meta_final_publication)
 
 
@@ -320,8 +337,9 @@ end
        
        assert_not_nil  text_identifier, "Did not find the text identifier"
        
-       Rails.logger.info "Found text identifier, will vote on it"
-       
+       Rails.logger.debug "Found text identifier, will vote on it"
+
+=begin
        @text_vote = Factory(:vote,
               :publication_id => text_identifier.publication.id,
               :identifier_id => text_identifier.id,
@@ -329,7 +347,7 @@ end
               :board => @text_board,
               :choice => "ok"
               )
-
+=end
        
        open_session do |text_session|
 
@@ -337,7 +355,7 @@ end
               :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
               
-         Rails.logger.info "--flash is: " + text_session.flash.inspect              
+         Rails.logger.debug "--flash is: " + text_session.flash.inspect              
        end
        
        
@@ -347,7 +365,7 @@ end
        
        #vote should have changed publication to approved and put to finalizer
        assert_equal "approved", text_publication.status, "Text publication not approved after vote"
-       Rails.logger.info "--Text publication approved"
+       Rails.logger.debug "--Text publication approved"
        
        
        #now finalizer should have it, only one person on board so it should be them
@@ -356,7 +374,7 @@ end
 
        text_final_publication = text_publication.find_finalizer_publication
        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
-       Rails.logger.info "---Finalizer has text publication"
+       Rails.logger.debug "---Finalizer has text publication"
 
 
 
@@ -365,35 +383,35 @@ end
         text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
           :comment => 'I agree text is great and now it is final'
      
-         Rails.logger.info "--flash is: " + text_finalize_session.flash.inspect
-         Rails.logger.info "----session data is: " + text_finalize_session.session.data.inspect       
-         Rails.logger.info text_finalize_session.body
+         Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
+         Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect       
+         Rails.logger.debug text_finalize_session.body
 
-         Rails.logger.info "--flash is: " + text_finalize_session.flash.inspect      
+         Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect      
        end
 
         
        text_final_publication.reload
        assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
        
-       Rails.logger.info "---Text publication Finalized"
+       Rails.logger.debug "---Text publication Finalized"
 
       
       current_creator_publication = @creator_user.publications.first
       current_creator_publication.reload
       
-      output_publication_info (current_creator_publication )
+      current_creator_publication.log_info
       
       #meta_final_publication.reload
-      #output_publication_info (meta_final_publication)
+      #meta_final_publication.log_info
       
       text_final_publication.reload
-      output_publication_info (text_final_publication)
+      text_final_publication.log_info
        
        #assert_equal @meta_board.publications.first.origin, @publication, "Meta board does not have publications"
        @publication.destroy
        
-       Rails.logger.info "ENDED TEST: user creates and submits publication to community"
+       Rails.logger.debug "ENDED TEST: user creates and submits publication to community"
      end
       
       def compare_publications(a,b)
@@ -405,18 +423,18 @@ end
             if (aid.class.to_s == bid.class.to_s && aid.title == bid.title)
               if (aid.xml_content == bid.xml_content)
                 id_has_match = true
-                Rails.logger.info "Identifier match found"
+                Rails.logger.debug "Identifier match found"
               else
                 if aid.xml_content == nil
-                  Rails.logger.info a.title + " has nill " + aid.class.to_s + " identifier"
+                  Rails.logger.debug a.title + " has nill " + aid.class.to_s + " identifier"
                 end
                 if bid.xml_content == nil
-                  Rails.logger.info b.title + " has nill " + bid.class.to_s + " identifier"
+                  Rails.logger.debug b.title + " has nill " + bid.class.to_s + " identifier"
                 end
-                Rails.logger.info "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
+                Rails.logger.debug "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
                 log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
-                #Rails.logger.info "full xml a " + aid.xml_content
-                #Rails.logger.info "full xml b " + bid.xml_content
+                #Rails.logger.debug "full xml a " + aid.xml_content
+                #Rails.logger.debug "full xml b " + bid.xml_content
               
               end
             end
@@ -425,7 +443,7 @@ end
           
           if !id_has_match
             pubs_are_matched = false
-            Rails.logger.info "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " is different"
+            Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " is different"
             
           end
         
@@ -433,7 +451,7 @@ end
         
         
         if pubs_are_matched
-          Rails.logger.info "Publications are matched"  
+          Rails.logger.debug "Publications are matched"  
         end
         
       end
@@ -453,32 +471,12 @@ end
           end
         end
         
-        Rails.logger.info "added " + plus_str
-        Rails.logger.info "removed " + minus_str
+        Rails.logger.debug "added " + plus_str
+        Rails.logger.debug "removed " + minus_str
         
       end
       
-      def output_publication_info(publication)
-        Rails.logger.info "-----Publication Info-----"
-        Rails.logger.info "--Owner: " + publication.owner.name
-        Rails.logger.info "--Title: " + publication.title
-        Rails.logger.info "--Status: " + publication.status
-        Rails.logger.info "--content"
-        
-        publication.identifiers.each do |id|
-          Rails.logger.info "---ID title: " + id.title
-          Rails.logger.info "---ID class:" + id.class.to_s
-          Rails.logger.info "---ID content:"
-          if id.xml_content
-            Rails.logger.info id.xml_content
-          else
-            Rails.logger.info "NO CONTENT!"
-          end
-          #Rails.logger.info "== end Owner: " + publication.owner.name
-        end
-        Rails.logger.info "==end Owner: " + publication.owner.name
-        Rails.logger.info "=====End Publication Info====="
-      end
+
       
       
     end
