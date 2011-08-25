@@ -15,9 +15,15 @@ function multiAdd(id) {
 }
 
 function multiGetNextIndex(id) {
+  var path = '#multiItems_' + id + ' > li > input';
+  
+  if(id == 'origPlace'){
+    path = '#multiItems_' + id + ' > li > p > input';
+  }
+  
   var index = 0;
-  $$('#multiItems_' + id + ' > li > input').each(function(item){
-    var itemIndex = item.id.match(/\d+/)[0] * 1;
+  $$(path).each(function(item){
+    var itemIndex = item.id.match(/(\d+)[^\d]*$/)[1] * 1;
     if(index <= itemIndex){
       index = itemIndex + 1;
     }

@@ -76,14 +76,38 @@ en:
       general: General
       publication: Publication
       collection: Collection
-      provenance: Provenance
+      provenance: Geo Information
       reference: References
       translation: Translations
       date: Date
       mentionedDate: Mentioned Dates
 
+
     label:
       images: Images
+      type: Type
+      subtype: Subtype
+      id: ID
+      placeId: Place ID
+      exclude: Exclude
+      geoId: Geo ID
+      origPlace: Place of Origin
+      provenance: Provenance
+      uncertain: uncertain
+      reference: Reference
+      referenceType: Reference Type
+      link: Link
+      addPlace: add place
+      addProvenance: add provenance
+      addOrigPlace: add place of origin
+      showReferenceList: show geo references
+      hideReferenceList: hide geo references
+      provenanceAncientFindspot: Ancient findspot
+      provenanceNome: Nome
+      provenanceAncientRegion: Ancient region
+      provenanceModernFindspot: Modern findspot
+      correspondency: Reference Id
+      
       collectionInventoryId: Inv. Id
       printIllustrations: Print Illustrations
       commentary: Commentary
@@ -112,11 +136,7 @@ en:
       collectionInventoryNumber: Inv. no. 
       collectionTemporaryNotes: Temporary lieu
       collectionTemporaryInventoryNumber: Temporary no.
-      provenanceUnknown: Unknown
-      provenanceAncientFindspot: Ancient findspot
-      provenanceNome: Nome
-      provenanceAncientRegion: Ancient region
-      provenanceModernFindspot: Modern findspot
+
       illustrations: Illustrations / Abbildungen
       figures: Digital images
       otherPublications: Other publications
@@ -137,7 +157,7 @@ en:
       translationsLa: Latin
       translationsFr: French
       date: Date
-      id: Date id
+      dateId: Date id
       when: When
       notBefore: Not before
       notAfter: Not after
@@ -189,16 +209,6 @@ en:
       mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
       mentionedDateAnnotation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
 
-  provenance:
-    ancientFindspotUncertain: ancient findspot uncertain
-    nomeUncertain: nome uncertain
-    ancientRegionUncertain: ancient region uncertain
-    ancientFindspotAndNomeUncertain: ancient findspot and nome uncertain
-    ancientFindspotAndAncientRegionUncertain: ancient findspot and ancient region uncertain
-    nomeAndAncientRegionUncertain: nome and ancient region uncertain
-    ancientFindspotNomeAndAncientRegionUncertain: ancient findspot, nome and ancient region uncertain
-    offsetNear: near 
-
   date:
     beginning: beginning
     middle: middle
@@ -245,8 +255,42 @@ en:
     monthAndYearUncertain: year and month uncertain
     dayAndYearUncertain: year and day uncertain
     dayMonthAndYearUncertain: year, month and day uncertain
-    
 
+  provenance:
+    epoch:
+      ancient: ancient
+      modern: modern
+    role:
+      findspot: findspot
+      unknown: unknown
+    type:
+      composition: composition
+      destination: destination
+      execution: execution
+      receipt: receipt
+      location: location
+      reuse: reuse
+      reference: reference*
+    event:
+      found: found
+      observed: observed
+      destroyed: destroyed
+      not-found: not-found
+      reused: reused
+      moved: moved
+      acquired: acquired
+      sold: sold
+    subtype:
+      last: last
+    territory:
+      nome: nome
+      province: province
+      region: region
+    certainty:
+      low: low
+    offset:
+      near: near
+    
   bibliography:
     language: 'Language'
     signature: 'Signature'

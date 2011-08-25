@@ -115,10 +115,19 @@
         %h4.category.provenance
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
         .editbox{:style => 'display: none;'}
+          %h5=I18n.t('meta.label.origPlace')
+          = render :partial => 'hgv_meta_identifiers/origPlace'
+          
+          %span.addOrigPlace=I18n.t('meta.label.addOrigPlace')
+          %hr
+          %h5=I18n.t('meta.label.provenance')
           = render :partial => 'hgv_meta_identifiers/provenance'
-          .clear
-          %span.quickSave=I18n.t('label.quickSave')
-          %span#addAlternativePlace.addAlternativePlace=I18n.t('meta.label.addAlternativePlace')
+
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %span.quickSave=I18n.t('meta.label.quickSave')
+          %span.addProvenance=I18n.t('meta.label.addProvenance')
+          %span.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
+
 
         %h4.category.reference
           %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
