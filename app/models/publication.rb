@@ -272,12 +272,12 @@ class Publication < ActiveRecord::Base
     end
 
 
-Rails.logger.info " no more parts to submit "
+    Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
       #copy to  space
-      Rails.logger.info "----end user to get it" 
-      Rails.logger.info self.community.end_user.name
+      Rails.logger.debug "----end user to get it" 
+      Rails.logger.debug self.community.end_user.name
       
       community_copy = copy_to_owner( self.community.end_user)
       community_copy.status = "editing"
@@ -299,9 +299,6 @@ Rails.logger.info " no more parts to submit "
       self.origin.change_status("committed")
       self.save    
     end
-    
-    #self.origin.change_status("committed")
-    #self.save
     
     
     #TODO need to return something here to prevent flash error from showing true?
