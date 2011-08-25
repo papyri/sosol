@@ -114,7 +114,7 @@ class Ddiff
       @diffs = []
       @curdiffs = []
       makediff(diffs_or_a, b)
-      @difftype = diffs_or_a.type
+      @difftype = diffs_or_a.class
     end
   end
   
