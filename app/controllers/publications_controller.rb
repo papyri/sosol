@@ -311,12 +311,7 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-    
-    
-    #find identifier so we can set the votes into the xml
-    #@identifier = Identifier.find(params[:identifier_id])
-    #@identifier.update_revision_desc(params[:comment], @current_user)
-    #@identifier.save
+
     
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
@@ -328,20 +323,18 @@ class PublicationsController < ApplicationController
     end
     
     
-    #do we need to save publication before continuing with commit??
-    
     #if it is a community pub, we don't commit to canon
+    #instead we copy changes back to origin
     if @publication.is_community_publication?
+      
+=begin      
       Rails.logger.info "==========COMMUNITY PUBLICATION=========="
       Rails.logger.info "----Community is " + @publication.community.name
       Rails.logger.info "----Board is " + @publication.find_first_board.name
       
       Rails.logger.info "====creators publication begining finalize=="
       @publication.origin.log_info
-      #need to copy somewhere?
-      #no this is done in publication.submit
-
-      
+=end            
         
       #determine where to get data to build the index, 
       # controlled paths are from the finalizer (this) publication
@@ -357,6 +350,7 @@ class PublicationsController < ApplicationController
       controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
       
       #determine existing uncontrolled paths & blobs
+      #uncontrolled are taken from the origin, they have not been changed by board
       origin_identifier_paths = @publication.origin.identifiers.collect do |i|
         i.to_path
       end
@@ -367,60 +361,55 @@ class PublicationsController < ApplicationController
       uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
         
      
-     
-      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect
-      
+=begin     
+      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
       Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
     
       Rails.logger.info "-----Uncontrolled Blobs are:"
       uncontrolled_blobs.each do |cb|
         Rails.logger.info "-" + cb.to_s
-      end
-      
-      
+      end            
       Rails.logger.info "-----Controlled Blobs are:"
       controlled_blobs.each do |cb|
         Rails.logger.info "-" + cb.to_s
       end
-       
+=end
 
-      #goal is to copy final blobs back to user's original publication
+      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
       origin_index = @publication.origin.owner.repository.repo.index
-      
-      
       origin_index.read_tree('master')
       
-      Rails.logger.info "=======orign INDEX before add========"
-      Rails.logger.info origin_index.inspect
+      Rails.logger.debug "=======orign INDEX before add========"
+      Rails.logger.debug origin_index.inspect
       
       
       #add the controlled paths to the index
       controlled_paths_blobs.each_pair do |path, blob|
          origin_index.add(path, blob.data)
-          Rails.logger.info "--Adding controlled path blob: " + path + " " + blob.data
+         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
       end
       
       #need to add exiting tree to index, except for controlled blobs
       uncontrolled_paths_blobs.each_pair do |path, blob|
           origin_index.add(path, blob.data)
-          Rails.logger.info "--Adding uncontrolled path blob: " + path + " " + blob.data
+          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
       end
       
-      
-      Rails.logger.info "=======orign INDEX after add========"
-      Rails.logger.info origin_index.inspect
-      
-      
-      Rails.logger.info origin_index.commit(params[:comment],  @publication.origin.head, @current_user.name , nil, @publication.origin.branch)
-      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-         
 
-    
+      Rails.logger.debug "=======orign INDEX after add========"
+      Rails.logger.debug origin_index.inspect
+      
+      
+      #Rails.logger.info 
+      origin_index.commit(params[:comment],  @publication.origin.head, @current_user.name , nil, @publication.origin.branch)
+      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
+
       @publication.origin.save
       
+=begin      
       Rails.logger.info "====creators publication after finalize=="
       @publication.origin.log_info
-      
+=end      
    
       
     else #commit to canon
