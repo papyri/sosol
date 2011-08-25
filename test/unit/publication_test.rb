@@ -99,6 +99,7 @@ class PublicationTest < ActiveSupport::TestCase
   context "a publication with unicode in its title/branch" do
     setup do
       @user = Factory(:user)
+      @original_branches = @user.repository.branches
       
       @unicode_title = "P.Über βρεκεκεκέξ"
       @publication = Factory(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
@@ -120,9 +121,9 @@ class PublicationTest < ActiveSupport::TestCase
       assert @user.repository.branches.include?(@publication.branch)
     end
     
-    should "only have the master branch after deletion" do
+    should "only have the original branches after deletion" do
       @publication.destroy
-      assert_equal ['master'],@user.repository.branches
+      assert_equal @original_branches.sort,@user.repository.branches.sort
     end
   end
 end

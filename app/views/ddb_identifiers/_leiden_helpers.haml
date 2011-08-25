@@ -151,8 +151,8 @@
       %li#307{ :jsFunction => "insertMilestoneMain('horizontal-rule')"}
         %a{ :href => "#"}Horizontal Rule
       %li#308{ :itemType => "separator"}
-      %li#309{ :jsFunction => "insertMilestoneMain('box')"}
-        %a{ :href => "#"}Box
+      %li#309{ :jsFunction => "insertSpecialCharMain('\\u0304')"}
+        %a{ :href => "#"}Supralinear Stroke
       %li#310{ :itemType => "separator"}
       %li#311{ :jsFunction => "insertSpecialCharMain('\\u0342')"}
         %a{ :href => "#"}Circumflex on short vowel
@@ -169,6 +169,9 @@
   %li#9{ :jsFunction => "helpDialogOpen('tryit')"}
     %a{ :href => "#", :title => "Try Leiden+ Conversion"}Try It
   %li#10{ :itemType => "separator"}
+  %li#11{ :jsFunction => "showMatch('ddb_identifier_leiden_plus', \'**POSSIBLE ERROR**\')"}
+    %a{ :href => "#", :title => "Find Possible Error"}Find Error
+  %li#12{ :itemType => "separator"}
 %p
   -if identifier.mutable?
     %div#menuDiv

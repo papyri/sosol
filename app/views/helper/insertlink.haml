@@ -1,0 +1,81 @@
+:javascript
+  //this funcion has to be in the haml file because of the ruby stuff in it needs to be handled on view load
+  function getMarkUp(originalxml)
+  {
+
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(' xmlns[^\"]*\"[^\"]*\"', 'gi');
+    originalxml = originalxml.replace(xmlnsPattern, '');
+
+    //create url call
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+
+    wrapped_content = "<wrap>" + originalxml + "</wrap>";
+
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+
+        json = response.responseText.evalJSON();
+
+        if ("exception" in json){
+          alert("Grammar conversion error line " + json.exception.line + " column " + json.exception.column + " of this XML \n" + json.content);
+        }
+        else {
+          leidenh = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          window.close();
+
+          insertMarkUp(leidenh);
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getMarkUp(" + originalxml + ")",10000);
+      }
+    });
+  }
+
+#main
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'commentary'
+
+  .site
+    = stylesheet_link_tag 'helper'
+    #gapsize{:class => "helperpop"}
+      = render :partial => 'commentary_markup_warn'
+      %h3 Create Link to External Publication
+      %h4 Regular or Bibliograpy Style
+      #extent_left
+        %h7 External Link URL with or without the http://
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_external", :size => "50"}
+      %br
+      %h7 Free Form Text
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_freetext", :size => "40"}
+      #extent_left
+        %br
+        %form{:name => "bibl_check"}
+          %input{ :type => "checkbox", :class => "insertlink_check_c", :id => "insertlink_bibl", :name => "insertlink_check_n", :value => "insertlink_bibl_v", :enabled => "true"}Check if this is a bibliograpy link but no other data needed
+          %br
+      #extent_left
+        %h4 If any of the text boxes below are filled in, the helper will assume you want a bibliography style link
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_page", :size => "10"}Bibliograpy Page
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_line", :size => "10"}Bibliograpy Line
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_vol", :size => "10"}Bibliograpy Volume
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_issue", :size => "10"}Bibliograpy Issue
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_chapter", :size => "10"}Bibliograpy Chapter
+      #button_left
+        %button{ :type => "button", :onclick=> "insertLinkExt()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close
