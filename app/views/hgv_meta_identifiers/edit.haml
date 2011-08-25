@@ -123,8 +123,8 @@
           %h5=I18n.t('meta.label.provenance')
           = render :partial => 'hgv_meta_identifiers/provenance'
 
-          %div{:style => 'float: none; clear: both; display: block;'}
-          %span.quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          %span.quickSave=I18n.t('label.quickSave')
           %span.addProvenance=I18n.t('meta.label.addProvenance')
           %span.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
 
