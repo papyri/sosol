@@ -272,40 +272,6 @@ class Publication < ActiveRecord::Base
     end
 
 
-=begin
-    #horrible hack here to specifiy board order, change later with workflow engine
-    #1 meta
-    #2 transcription
-    #3 translation
-    error_text = "" #default to empty for check in controller
-    # find all unsubmitted meta ids, then text ids, then translation ids
-    [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
-      identifiers.each do |i|
-        if i.modified? && i.class == ic &&  i.status == "editing"
-          #submit it
-          if submit_identifier(i)
-            return error_text, i.id
-          else
-            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
-            return error_text, nil
-          end
-        end
-      end
-
-    end
-=end
-    #if we get to this point, nothing else was submitted therefore we are done with publication
-    #can this be reached without a commit actually taking place?
-=begin
-    if error_text != ""
-      flash[:warning] = error_text
-      # couldnt submit to non exiting board so send back to user?
-      #TODO check this
-      self.origin.status = "editing"
-      self.save
-    end
-=end
-
 Rails.logger.info " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
