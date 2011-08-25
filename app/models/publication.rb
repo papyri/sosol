@@ -316,6 +316,16 @@ Rails.logger.info " no more parts to submit "
       community_copy = copy_to_owner( self.community.end_user)
       community_copy.status = "editing"
       #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
+      
+      #disconnect the parent/origin connections
+      community_copy.parent_id = nil
+      
+      #reset the community id to be sosol
+      community_copy.community_id = nil
+      
+      #remove the original creator id (that info is now in the git history )
+      community_copy.creator_id = community_copy.owner_id
+      
       community_copy.save!
       
     else
