@@ -618,7 +618,16 @@ class PublicationsController < ApplicationController
   end
   
   def confirm_archive_all
+    if @current_user.id.to_s != params[:id]
+      if @current_user.developer || @current_user.admin
+        flash.now[:warning] = "You are going to archive publications you do not own as either a developer or an admin."
+      else
+        flash[:error] = 'You are only allowed to archive your publications.'
+        redirect_to dashboard_url
+      end
+    end
     @publications = Publication.find_all_by_owner_id(params[:id], :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id], :parent_id => nil }, :order => "updated_at DESC")
+    
   end
   
   def archive
