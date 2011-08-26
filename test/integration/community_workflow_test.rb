@@ -3,6 +3,24 @@ require 'ddiff'
 
 #require File.dirname(__FILE__) + '/session_set_controller'
 
+=begin
+This file tests the community workflow.
+The community workflow is similar to the normal sosol work flow except that the publication/identifiers 
+are not committed to the canon on finalize. Instead the changes made by the finalizer are copied back to the 
+submitters origin publication.
+Once the publication has been vetted by all the community boards, the "committed" version is copied to the 
+communities end_user. The end_user's copy is severed from any connections to the origin publication (all changes
+are still held in the git history) and appears in the end_user's dashboard as an editing publication. Social convention
+should be that the end user is only used for collecting the communities approved publications. That way when the publications
+are submitted to the sosol boards, they will be marked as coming from the end_user associated with the community.
+
+This test creates a new publication and immediately submits it to a community.
+Each community board recieves the submit, votes on it, then sends it to the finalizer.
+The finalizer finalizes it, which copies the changes back to the original submitter.
+
+
+=end
+
 class CommunityWorkflowTest < ActionController::IntegrationTest
   context "for community" do
 
@@ -19,6 +37,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.level = :debug
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         Rails.logger.debug "*************are we in debug mode***************"
+        
+        
         #a user to put on the boards
         @board_user = Factory(:user, :name => "board_man_freaky_bob")
         @board_user_2 = Factory(:user, :name => "board_man_freaky_alice")   
@@ -27,8 +47,10 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #an end user to recieve the "finalized" publication
         @end_user = Factory(:user, :name => "end_freaky_bob")
         
+        #a general member in the community
         @community_user = Factory(:user, :name => "community_freaky_bob")
         
+        #a user to make a publication so we are not testing SOSOL 2011 1 (local bug-this one somehow got added to canonical)
         @trash_user = Factory(:user, :name => "just_to_make_another_publication")
         
         #set up the community
@@ -47,7 +69,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #@meta_board = Factory(:community_meta_board, :title => "meta", :community_id => @test_community.id)
         @meta_board = Factory(:hgv_meta_board, :title => "meta", :community_id => @test_community.id)
 
-        #the board memeber
+        #the board member
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
 
@@ -131,50 +153,37 @@ end
  
 
      should "user creates and submits publication to community"  do
-       Rails.logger.debug "BEGIN TEST: user creates and submits publication to community"      
+        Rails.logger.debug "BEGIN TEST: user creates and submits publication to community"      
 
-Rails.logger.debug "---Meta board controlls: "
-@meta_board.identifier_classes.each do |mic|
-  Rails.logger.debug mic
-end
+        Rails.logger.debug "---Meta board controlls: "
+        @meta_board.identifier_classes.each do |mic|
+          Rails.logger.debug mic
+        end
 
-       assert_not_equal nil, @test_community, "Community not created"
+        assert_not_equal nil, @test_community, "Community not created"
        
-      assert_not_nil @trash_user, "No Trash user created"
+        assert_not_nil @trash_user, "No Trash user created"
         #for testing create a publication so the next one will be another number create a publication with a session
-       open_session do |trash_publication_session|
-        Rails.logger.debug "---Create A New Trash Publication---"
-         trash_publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @trash_user.id.to_s
-              
-         Rails.logger.debug "--flash is: " + trash_publication_session.flash.inspect
-         
-         @trash_publication = @trash_user.publications.first
-         
-         @trash_publication.log_info
-       end
+        open_session do |trash_publication_session|
+          Rails.logger.debug "---Create A New Trash Publication---"
+          trash_publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @trash_user.id.to_s
+          Rails.logger.debug "--flash is: " + trash_publication_session.flash.inspect
+          @trash_publication = @trash_user.publications.first
+          @trash_publication.log_info
+        end
 
+        #create a publication with a session
+        open_session do |publication_session|
+          Rails.logger.debug "---Create A New Publication---"
+          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
+          Rails.logger.debug "--flash is: " + publication_session.flash.inspect
+          @publication = @creator_user.publications.first
+          @publication.log_info
+        end
+       
 
-
-       #create a publication with a session
-       open_session do |publication_session|
-        Rails.logger.debug "---Create A New Publication---"
-         publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
-              
-         Rails.logger.debug "--flash is: " + publication_session.flash.inspect
-         
-         @publication = @creator_user.publications.first
-         
-         @publication.log_info
-       end
        
-       #create a publication
-       
-       #Rails.logger.debug "---Publication Created---"
-       #Rails.logger.debug  "--identifier count is: " + @publication.identifiers.count.to_s
-       
-       #an_array = @publication.identifiers
-       #Rails.logger.debug  "--identifier length via array is: " + an_array.length.to_s
-       
+       Rails.logger.debug "---Publication Created---"
        Rails.logger.debug "---Identifiers for publication " + @publication.title + " are:"
        
        @publication.identifiers.each do |pi|
@@ -185,35 +194,23 @@ end
         # Rails.logger.debug pi.xml_content
        end
        
+  
+        #submit to the community     
+        Rails.logger.debug "---Submit Publication---"
+        open_session do |submit_session|
+          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+              :submit_comment => "I made a new pub", :community => { :id => @test_community.id.to_s }    
+          Rails.logger.debug "--flash is: " + submit_session.flash.inspect              
+        end
+        @publication.reload       
        
-       #submit to community
-       #set community id (this would normally be done via the controller)
-       #@publication.community_id =  @test_community.id
-       #@publication.save
-       
-       #@publication.reload
-       #@publication.submit
-       
-       
-       Rails.logger.debug "---Submit Publication---"
-       open_session do |submit_session|
-
-         submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
-              :submit_comment => "I made a new pub", :community => { :id => @test_community.id.to_s }
-              
-         Rails.logger.debug "--flash is: " + submit_session.flash.inspect              
-       end
-       @publication.reload       
-       
-       Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
-       
-       #Rails.logger.debug "Community is " + @test_community.name
         
-       
+         
        #now meta should have it
        assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
+
+       Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
       
-       Rails.logger.debug "---Publication Submitted---"
        #meta board should have 1 publication, others should have 0
        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
        assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
@@ -223,15 +220,11 @@ end
        
        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
        assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
-       
-         
       
        Rails.logger.debug "Community Meta Board has publication" 
+
        #vote on it
        meta_publication = meta_publications.first 
-       
-       #assert_not_nil @publication.owner.repository.repo.get_head(@publication.branch), "creator repo head is nil"
-       #assert_not_nil meta_publication.owner.repository.repo.get_head(meta_publication.branch), "meta repo head is nil"       
        
        #find meta identifier
        meta_identifier = nil
@@ -242,9 +235,9 @@ end
        end
        
        assert_not_nil  meta_identifier, "Did not find the meta identifier"
-       
        Rails.logger.debug "Found meta identifier, will vote on it"
 
+       #vote on meta publication
        open_session do |meta_session|
 
          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
@@ -253,9 +246,6 @@ end
               
          Rails.logger.debug "--flash is: " + meta_session.flash.inspect              
        end
-              
-       
-       
        
        #reload the publication to get the vote associations to go thru?
        meta_publication.reload
@@ -272,17 +262,13 @@ end
        assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
        Rails.logger.debug "--Meta publication approved"
        
-       
-       #now finalizer should have it, only one person on board so it should be them
-       #finalizer_publications = @board_user.publications
-       #meta_final_publication = finalizer_publications.first
-
+       #now finalizer should have it
        meta_final_publication = meta_publication.find_finalizer_publication
        
        assert_equal meta_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
        Rails.logger.debug "---Meta Finalizer has publication"
        
-
+       #finalize the meta
        open_session do |meta_finalize_session|
 
         meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
@@ -291,7 +277,6 @@ end
          Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
          Rails.logger.debug "----session data is: " + meta_finalize_session.session.to_hash.inspect       
          Rails.logger.debug meta_finalize_session.body
-
        end       
        
        
@@ -300,11 +285,10 @@ end
        
        
        Rails.logger.debug "Meta committed"
-       #meta_final_publication.finalize
-
-
+      
        #compare the publications
-       #final should have comments and votes
+       #you must look at the output to check the results of the comparisons 
+       #final and submitters' copy should have comments and votes
        Rails.logger.debug "++++++++USER PUBLICATION++++++"
        @creator_user.publications.first.log_info
        
@@ -328,8 +312,9 @@ end
 
        end_publication = @end_user.publications.first
        assert_nil end_publication, "--Community end user has a publication before they should (after meta has been finalized)"
-       
-        #=================================TEXT BOARD==========================================
+       #meta testing complete
+
+       #=================================TEXT BOARD==========================================
        #now text board should have it
  
        #meta board should have 1 publication
@@ -359,17 +344,13 @@ end
        assert_not_nil  text_identifier, "Did not find the text identifier"
        
        Rails.logger.debug "Found text identifier, will vote on it"
-       
+       #vote on text
        open_session do |text_session|
-
          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote since I yippppppp agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
-              
          Rails.logger.debug "--flash is: " + text_session.flash.inspect              
        end
-       
-       
        
        #reload the publication to get the vote associations to go thru?
        text_publication.reload
@@ -388,27 +369,24 @@ end
        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
        Rails.logger.debug "---Finalizer has text publication"
 
-       
+       #finalize text
        open_session do |text_finalize_session|
-
         text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
-          :comment => 'I agree woooooooo text is great and now it is final'
+          :comment => 'I agree text is great and now it is final'
      
          Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
          Rails.logger.debug "----session data from text finalize is:" + text_finalize_session.session.to_hash.inspect       
          Rails.logger.debug text_finalize_session.body
-
          Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect      
        end
-       
-       
         
        text_final_publication.reload
        assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
        
+       #text finalized
        Rails.logger.debug "---Text publication Finalized"
 
-      
+      #output results for visual inspection
       current_creator_publication = @creator_user.publications.first
       current_creator_publication.reload
       
@@ -428,7 +406,6 @@ end
        #check that end user now has the publication
        end_publication = @end_user.publications.first
        assert_not_nil end_publication, "--Community end user has no publications"
-       #assert_equal @meta_board.publications.first.origin, @publication, "Meta board does not have publications"
        
        compare_publications(@creator_user.publications.first, @end_user.publications.first)
        @publication.destroy
