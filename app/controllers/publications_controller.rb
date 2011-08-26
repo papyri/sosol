@@ -627,9 +627,11 @@ class PublicationsController < ApplicationController
     redirect_to @publication    
   end
   
+  # - loop thru all the committed publication ids and archive each one
+  # - clear the cache
+  # - go to the dashboard
   def archive_all
-    id_list = params[:id].split(/\//)
-    id_list.each do |id|
+    params[:pub_ids].each do |id|
        archive_pub(id)
     end
     expire_publication_cache

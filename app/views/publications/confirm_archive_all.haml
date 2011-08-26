@@ -11,7 +11,7 @@
     Are You Sure You Want to Archive ALL the publications below?  This may take some time, so please be patient.
   %br
   %h1
-    = link_to ("Archive ALL", options = { :id => @publications,  :controller => "publications", :action => "archive_all"}, html_options = {:onclick => "show_working_image();"})
+    = link_to('Archive ALL', options = {:controller => 'publications', :action => 'archive_all', :pub_ids => @publications}, html_options = {:method => :post, :onclick => "show_working_image();"})
     = "or"
     = link_to "Cancel", dashboard_url
   %br
