@@ -13,6 +13,14 @@
 = @community.abbreviation
 %br 
 
+%br
+%b
+  End User
+  %br 
+= @community.end_user.name
+%br
+%br 
+
 %b
   Admins
   %br 
@@ -43,9 +51,10 @@
 = @community.description
 %br 
 
-%b
-  Logo:
-= @community.logo
-%br 
+-#
+  %b
+    Logo:
+  = @community.logo
+  %br 
 
 = link_to 'Edit', edit_community_path(@community) | 

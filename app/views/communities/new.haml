@@ -1,0 +1,37 @@
+= stylesheet_link_tag "community"
+
+.community
+  %h1
+    = "New community"
+  
+  - form_for(@community) do |f|
+    = f.error_messages
+  
+  
+    = f.label :name 
+    = f.text_field :name
+    %br
+    
+    = f.label :friendly_name 
+    = f.text_field :friendly_name
+    %br
+    
+    -#
+      = f.label :abbreviation 
+      = f.text_field :abbreviation 
+      %br
+     
+    = f.label :description 
+    = f.text_field :description
+    %br
+      
+    -# 
+      = f.label :logo 
+      = f.text_field :logo 
+      %br
+    
+    = f.submit 'Create'
+    %br
+  %br  
+  
+ 
