@@ -1,0 +1,14 @@
+#main.site
+  %h2 
+    = @publication.title
+    - if !@publication.status.nil? && @publication.status != ''
+      == (#{@publication.status})
+      
+  = render :partial => "common/flash_all"    
+
+  %h2
+    Are You Sure You Want to Withdraw this publication? This action will delete every non-canonical copy of this publication except for the original owner's (i.e. every board copy), and cannot be undone.
+  %h1
+    = link_to "Withdraw", :id => @publication.id ,  :controller => "publications", :action => "withdraw"
+    = "or"
+    = link_to "Cancel", @publication

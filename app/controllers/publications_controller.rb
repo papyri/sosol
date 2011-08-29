@@ -718,7 +718,16 @@ class PublicationsController < ApplicationController
   end
   
   def confirm_archive_all
+    if @current_user.id.to_s != params[:id]
+      if @current_user.developer || @current_user.admin
+        flash.now[:warning] = "You are going to archive publications you do not own as either a developer or an admin."
+      else
+        flash[:error] = 'You are only allowed to archive your publications.'
+        redirect_to dashboard_url
+      end
+    end
     @publications = Publication.find_all_by_owner_id(params[:id], :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id], :parent_id => nil }, :order => "updated_at DESC")
+    
   end
   
   def archive
@@ -727,25 +736,27 @@ class PublicationsController < ApplicationController
     redirect_to @publication    
   end
   
+  # - loop thru all the committed publication ids and archive each one
+  # - clear the cache
+  # - go to the dashboard
   def archive_all
-    id_list = params[:id].split(/\//)
-    id_list.each do |id|
+    params[:pub_ids].each do |id|
        archive_pub(id)
     end
     expire_publication_cache
     redirect_to dashboard_url 
   end
   
-  def confirm_nuke
+  def confirm_withdraw
    @publication = Publication.find(params[:id])
   end
 
-  def nuke
+  def withdraw
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
-    @publication.nuke
+    @publication.withdraw
 
-    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked.'
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully withdrawn.'
     expire_publication_cache
     redirect_to dashboard_url
   end 

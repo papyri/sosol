@@ -184,7 +184,7 @@
       = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
       %br
     - if %w{approved voting finalizing}.include?(@publication.status) 
-      = link_to "Nuke", :controller => 'publications', :id => @publication.id, :action => "confirm_nuke"
+      = link_to "Withdraw from Editorial Review", :controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"
       %br
     
     - if @publication.status == "committed"
