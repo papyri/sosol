@@ -2,8 +2,6 @@ class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
   
-  protect_from_forgery :only => []
-  
   def new
   end
   

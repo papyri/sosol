@@ -324,9 +324,9 @@ module ::JdbcSpec
     end
     
     def table_structure(table_name)
-      returning structure = @connection.execute_query("PRAGMA table_info(#{quote_table_name(table_name)})") do
-        raise(ActiveRecord::StatementInvalid, "Could not find table '#{table_name}'") if structure.empty?
-      end
+      structure = @connection.execute_query("PRAGMA table_info(#{quote_table_name(table_name)})")
+      raise ActiveRecord::StatementInvalid, "Could not find table '#{table_name}'" if structure.empty?
+      structure
     end
     
     def columns(table_name, name = nil) #:nodoc:        
