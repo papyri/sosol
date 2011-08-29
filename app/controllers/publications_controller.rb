@@ -1,6 +1,7 @@
 class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy]
   
   def new
   end
@@ -75,10 +76,10 @@ class PublicationsController < ApplicationController
     
   end
 
-
   def advanced_create()
     
   end
+
   # POST /publications
   # POST /publications.xml
   def create
@@ -687,6 +688,19 @@ class PublicationsController < ApplicationController
   end
   
   protected
+    def find_publication
+      @publication ||= Publication.find(params[:id])
+    end
+
+    def ownership_guard
+      find_publication
+      if (((@publication.owner.class == Board) && !(@publication.owner.users.include?(@current_user))) ||
+        (@current_user != @publication.owner)) &&
+        (!(@current_user.developer || @current_user.admin))
+          flash[:error] = 'Operation not permitted.'
+          redirect_to dashboard_url
+      end
+    end
 
     def publication_from_identifiers(identifiers)
       new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M")
