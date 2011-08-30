@@ -694,11 +694,9 @@ class PublicationsController < ApplicationController
 
     def ownership_guard
       find_publication
-      if (((@publication.owner.class == Board) && !(@publication.owner.users.include?(@current_user))) ||
-        (@current_user != @publication.owner)) &&
-        (!(@current_user.developer || @current_user.admin))
-          flash[:error] = 'Operation not permitted.'
-          redirect_to dashboard_url
+      if !@publication.mutable_by?(@current_user)
+        flash[:error] = 'Operation not permitted.'
+        redirect_to dashboard_url
       end
     end
 
