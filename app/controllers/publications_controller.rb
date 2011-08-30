@@ -6,36 +6,7 @@ class PublicationsController < ApplicationController
   def new
   end
   
-  
-  def allow_submit?
-    #check if publication has been changed by user
-    allow = @publication.modified?
-    
-    #only let creator submit
-    allow = allow && @publication.creator_id == @current_user.id 
-    
-    #only let user submit, don't let a board member submit
-    allow = allow && @publication.owner_type == "User"
-    
-    #dont let user submit if already submitted, or committed etc..
-    allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
-    
-    return allow
-    
-    #below bypassed until we have return mechanism in place
-    
-    #check if any part of the publication is still being edited (ie not already submitted)
-    if allow #something has been modified so lets see if they can submit it
-      allow = false #dont let them submit unless something is in edit status
-      @publication.identifiers.each  do |identifier|
-        if identifier.nil? || identifier.status == "editing" 
-          allow = true
-        end        
-      end
-    end
-   allow
-  end
-  
+ 
   def determine_creatable_identifiers
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     
@@ -686,6 +657,36 @@ class PublicationsController < ApplicationController
         redirect_to dashboard_url
       end
     end
+  
+    def allow_submit?
+      #check if publication has been changed by user
+      allow = @publication.modified?
+      
+      #only let creator submit
+      allow = allow && @publication.creator_id == @current_user.id 
+      
+      #only let user submit, don't let a board member submit
+      allow = allow && @publication.owner_type == "User"
+      
+      #dont let user submit if already submitted, or committed etc..
+      allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
+      
+      return allow
+      
+      #below bypassed until we have return mechanism in place
+      
+      #check if any part of the publication is still being edited (ie not already submitted)
+      if allow #something has been modified so lets see if they can submit it
+        allow = false #dont let them submit unless something is in edit status
+        @publication.identifiers.each  do |identifier|
+          if identifier.nil? || identifier.status == "editing" 
+            allow = true
+          end        
+        end
+      end
+     allow
+    end
+ 
 
     def publication_from_identifiers(identifiers)
       new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M")
