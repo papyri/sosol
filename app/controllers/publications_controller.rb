@@ -1,7 +1,7 @@
 class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy]
+  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
   def new
   end
@@ -196,20 +196,7 @@ class PublicationsController < ApplicationController
     publication_from_identifiers(id_list)
   end
 
-  def is_theirs?
-    return  @publication.owner_type == "User"  && ( @publication.owner == @current_user )  
-  end
-  
   def submit
-    @publication = Publication.find(params[:id])
-    
-    #check if it is the owner
-    if ! is_theirs?
-      flash[:error] = 'You do not have permissions to submit this publication.'
-      redirect_to dashboard_url
-      return
-    end
-        
     #prevent resubmitting...most likely by impatient clicking on submit button
     if ! %w{editing new}.include?(@publication.status)
       flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
