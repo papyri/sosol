@@ -1,5 +1,58 @@
 /**** multi ****/
 
+function multiAddNote()
+{
+  var responsibility = $$('#multiPlus_note > textarea')[0].value.replace(/\s+/, '');
+  var annotation     = $$('#multiPlus_note > textarea')[1].value
+
+  var index = multiGetNextIndex('note');
+
+  var item = '<li>' +                
+                  '<textarea class="observechange responsibility" id="biblio_identifier_note_' + index + '_responsibility" name="biblio_identifier[note][' + index + '][responsibility]">' + responsibility + '</textarea>' +
+                  '<textarea class="observechange annotation" id="biblio_identifier_note_' + index + '_annotation" name="biblio_identifier[note][' + index + '][annotation]">' + annotation + '</textarea>' +
+                  '<span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
+                  '<span class="move" title="move">o</span>' +
+              '</li>';
+
+  multiUpdate('note', item);
+}
+
+function multiAddShortTitleList(type)
+{
+  var responsibility = $$('#multiPlus_' + type + ' > input')[0].value.replace(/\s+/, '');
+  var title          = $$('#multiPlus_' + type + ' > input')[1].value.replace(/\s+/, '');
+
+  var index = multiGetNextIndex(type);
+
+  var item = '<li>' +
+                '<input class="observechange responsibility" id="biblio_identifier_' + type + '_' + index + '_responsibility" name="biblio_identifier[' + type + '][' + index + '][responsibility]" value="' + responsibility + '" type="text">' +
+                '<input class="observechange title" id="biblio_identifier_' + type + '_' + index + '_title" name="biblio_identifier[' + type + '][' + index + '][title]" value="' + title + '" type="text">' +
+                '<span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
+                '<span class="move" title="move">o</span>' +
+              '</li>';
+
+  multiUpdate(type, item);
+}
+
+function multiAddRelatedList(type)
+{
+  var pointer = $$('#multiPlus_' + type + ' > input')[0].value.replace(/\s+/, '');
+
+  if(pointer.indexOf('#') != 0){
+    pointer = '#' +  pointer;
+  }
+
+  var index = multiGetNextIndex(type);
+
+  var item = '<li>' +
+                '<input class="observechange pointer" id="biblio_identifier_' + type + '_' + index + '" name="biblio_identifier[' + type + '][' + index + ']" title="" value="' + pointer + '" type="text">' +
+                '<span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
+                '<span class="move" title="move">o</span>' +
+              '</li>';
+
+  multiUpdate(type, item);
+}
+
 function multiAddNameList(type)
 {
   var firstName = $$('#multiPlus_' + type + ' > input')[0].value;
@@ -42,7 +95,8 @@ function multiAddRelatedArticleList()
   var volume    = $$('#multiPlus_relatedArticleList > input')[1].value;
   var number    = $$('#multiPlus_relatedArticleList > input')[2].value;
   var ddb       = $$('#multiPlus_relatedArticleList > input')[3].value;
-  var inventory = $$('#multiPlus_relatedArticleList > input')[4].value;
+  var tm        = $$('#multiPlus_relatedArticleList > input')[4].value;
+  var inventory = $$('#multiPlus_relatedArticleList > input')[5].value;
 
   var index = multiGetNextIndex('relatedArticleList');
 
@@ -51,6 +105,7 @@ function multiAddRelatedArticleList()
              '     <input type="text" value="' + volume + '" name="biblio_identifier[relatedArticleList][' + index + '][volume]" id="biblio_identifier_relatedArticleList_' + index + '_volume" class="observechange volume">' +
              '     <input type="text" value="' + number + '" name="biblio_identifier[relatedArticleList][' + index + '][number]" id="biblio_identifier_relatedArticleList_' + index + '_number" class="observechange number">' +
              '     <input type="text" value="' + ddb + '" name="biblio_identifier[relatedArticleList][' + index + '][ddb]" id="biblio_identifier_relatedArticleList_' + index + '_ddb" class="observechange ddb">' +
+             '     <input type="text" value="' + tm + '" name="biblio_identifier[relatedArticleList][' + index + '][tm]" id="biblio_identifier_relatedArticleList_' + index + '_tm" class="observechange tm">' +
              '     <input type="text" value="' + inventory + '" name="biblio_identifier[relatedArticleList][' + index + '][inventory]" id="biblio_identifier_relatedArticleList_' + index + '_inventory" class="observechange inventory">' +
              '     <span title="x" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '     <span title="o" class="move">o</span>' +
@@ -59,7 +114,7 @@ function multiAddRelatedArticleList()
   multiUpdate('relatedArticleList', item);
 }
 
-function multiAddRevueCritiqueList()
+/*function multiAddRevueCritiqueList()
 {
   var author = $$('#multiPlus_revueCritiqueList > input')[0].value;
   var page   = $$('#multiPlus_revueCritiqueList > input')[1].value;
@@ -78,7 +133,7 @@ function multiAddRevueCritiqueList()
              '   </li>';
 
   multiUpdate('revueCritiqueList', item);
-}
+}*/
 
 /**** check ****/
 

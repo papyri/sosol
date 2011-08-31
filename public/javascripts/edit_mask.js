@@ -36,6 +36,7 @@ function multiUpdate(id, newItem) {
 
   $$('#multiPlus_' + id + ' > input').each(function(item){item.clear();});
   $$('#multiPlus_' + id + ' > select').each(function(item){item.clear();});
+  $$('#multiPlus_' + id + ' > textarea').each(function(item){item.clear();});
 
   Sortable.create('multiItems_' + id, {overlap: 'horizontal', constraint: false, handle: 'move'});
 }

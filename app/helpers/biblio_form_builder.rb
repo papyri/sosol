@@ -30,15 +30,23 @@ class BiblioFormBuilder < ActionView::Helpers::FormBuilder
       ],
       :type => [
         ['', ''],
-        [I18n.t('biblio.type.monograph'), 'monograph'],
+        [I18n.t('biblio.type.book'), 'book'],
         [I18n.t('biblio.type.journal'), 'journal'],
-        [I18n.t('biblio.type.journalArticle'), 'journalArticle'],
-        [I18n.t('biblio.type.bookSection'), 'bookSection']
+        [I18n.t('biblio.type.article'), 'article'],
+        [I18n.t('biblio.type.review'), 'review']
+      ],
+      :subtype => [
+        ['', ''],
+        [I18n.t('biblio.subtype.book'), 'book'],
+        [I18n.t('biblio.subtype.journal'), 'journal'],
+        [I18n.t('biblio.subtype.other'), 'other'],
+        [I18n.t('biblio.subtype.edited'), 'edited'],
+        [I18n.t('biblio.subtype.authored'), 'authored']
       ]
     }[label]
   end
   
   def make_label label
-    @template.content_tag('label', I18n.t('biblio.label.' + label.to_s), :for => @object_name + '_' + label.to_s, :id => 'label_' + @object_name + '_' + label.to_s)
+    @template.content_tag('label', I18n.t('biblio.label.' + label.to_s), :title => BiblioIdentifier.XPATH(label.to_s), :for => @object_name + '_' + label.to_s, :id => 'label_' + @object_name + '_' + label.to_s)
   end
 end

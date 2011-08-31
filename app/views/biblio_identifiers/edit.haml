@@ -10,7 +10,7 @@
         %a{:name => 'Meta'}=I18n.t('biblio.legend.meta')
       .editbox{:style => 'display: none;'}
         = f.select :type, options_for_select([])
-        = f.text_field :subtype
+        = f.select :subtype, options_for_select([])
         = f.select :language
         .clear
         = f.text_field :bp
@@ -19,14 +19,24 @@
         .clear
         = f.text_field :isbn
         = f.text_field :sd
+        = f.text_field :checklist
         .clear
         .quickSave=I18n.t('label.quickSave')
 
-      %h4.category.analytic
-        %a{:name => 'Analytic'}=I18n.t('biblio.legend.analytic')
+      %h4.category.general
+        %a{:name => 'Analytic'}=I18n.t('biblio.legend.general')
       .editbox
         = f.text_field :title
-        = f.text_field :reedition
+        = f.text_field :journalTitle
+        .clear
+        = f.label :journalTitleShort
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :journalTitleShort}
+        .clear
+        = f.text_field :bookTitle
+        .clear
+        = f.label :bookTitleShort
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :bookTitleShort}
+        .clear
         = f.label :authorList
         = render :partial => 'biblio_identifiers/authorList'
         .clear
@@ -37,6 +47,9 @@
       .editbox{:style => 'display: none;'}
         = f.text_field :date
         = f.text_field :edition
+        = f.text_field :issue
+        .clear
+        = f.text_field :distributor
         .clear
         = f.label :editorList
         = render :partial => 'biblio_identifiers/editorList'
@@ -55,17 +68,30 @@
         = f.text_field :paginationFrom
         = f.text_field :paginationTo
         .clear
+        = f.text_field :no
+        = f.text_field :tome
+        .clear
+        = f.text_field :col
+        = f.text_field :link
+        .clear
+        = f.text_field :fasc
+        .clear
         = f.text_area :illustration
         .clear
-        = f.text_area :note
+        = f.label :note
+        = render :partial => 'biblio_identifiers/note'
         .clear
         .quickSave=I18n.t('label.quickSave')
 
       %h4.category.reference
         %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
       .editbox{:style => 'display: none;'}
-        = f.label :revueCritiqueList
-        = render :partial => 'biblio_identifiers/revueCritiqueList'
+        = f.text_field :reedition
+        = f.label :containerList
+        = render :partial => 'biblio_identifiers/containerList'
+        .clear
+        = f.label :revieweeList
+        = render :partial => 'biblio_identifiers/revieweeList'
         .clear
         = f.label :relatedArticleList
         = render :partial => 'biblio_identifiers/relatedArticleList'

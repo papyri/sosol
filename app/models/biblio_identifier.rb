@@ -7,6 +7,63 @@ class BiblioIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Biblio"
 
+  XPATH = {
+    :title => "/TEI/text/body/div/bibl/title[@level='a'][@type='main']",
+    :journalTitle => "/TEI/text/body/div/bibl/title[@level='j'][@type='main']",
+    :bookTitle => "/TEI/text/body/div/bibl/title[@level='m'][@type='main']",
+    :type => "/TEI/text/body/div/bibl/@type",
+    :subtype => "/TEI/text/body/div/bibl/@subtype",
+    :language => "/TEI/text/body/div/bibl/@xml:lang",    
+      
+    :bp => "/TEI/text/body/div/bibl/idno[@type='bp']",
+    :bpOld => "/TEI/text/body/div/bibl/idno[@type='bp_old']",
+    :idp => "/TEI/text/body/div/bibl/@xml:id",
+    :isbn => "/TEI/text/body/div/bibl/idno[@type='isbn']",
+    :sd => "/TEI/text/body/div/bibl/idno[@type='sonderdruck']",
+    :checklist => "/TEI/text/body/div/bibl/idno[@type='checklist']",
+
+    :date => "/TEI/text/body/div/bibl/date",
+    :edition => "/TEI/text/body/div/bibl/edition",
+    :issue => "/TEI/text/body/div/bibl/biblScope[@type='issue']",
+    :distributor => "/TEI/text/body/div/bibl/distributor",
+    :paginationFrom => "/TEI/text/body/div/bibl/biblScope[@type='page']/@from",
+    :paginationTo => "/TEI/text/body/div/bibl/biblScope[@type='page']/@to",
+    :paginationTotal => "/TEI/text/body/div/bibl/note[@type='pageCount']",
+    :paginationPreface => "/TEI/text/body/div/bibl/note[@type='prefacePageCount']",
+    :illustration => "/TEI/text/body/div/bibl/note[@type='illustration']",
+    :no => "/TEI/text/body/div/bibl/biblScope[@type='no']",
+    :col => "/TEI/text/body/div/bibl/biblScope[@type='col']",
+    :tome => "/TEI/text/body/div/bibl/biblScope[@type='tome']",
+    :link => "/TEI/text/body/div/bibl/ptr/@target",
+    :fasc => "/TEI/text/body/div/bibl/biblScope[@type='fasc']",
+    :reedition => "/TEI/text/body/div/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
+
+    :authorList => "/TEI/text/body/div/bibl/author",
+    :editorList => "/TEI/text/body/div/bibl/editor",
+      
+    :journalTitleShort => "/TEI/text/body/div/bibl/title[@level='j'][@type='short']",
+    :bookTitleShort => "/TEI/text/body/div/bibl/title[@level='m'][@type='short']",
+    
+    :publisherList => "/TEI/text/body/div/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
+    :relatedArticleList => "/TEI/text/body/div/bibl/relatedItem[@type='mentions']/bibl",
+    :note => "/TEI/text/body/div/bibl/note[@resp]",
+    
+    :revieweeList => "/TEI/text/body/div/bibl/relatedItem[@type='reviews']/bibl",
+    :containerList => "/TEI/text/body/div/bibl/relatedItem[@type='appearsIn']/bibl"
+  }
+  
+  def self.XPATH key
+    XPATH[key.to_sym] ? XPATH[key.to_sym] : '----'
+  end
+
+  def initialize epiDocXml
+
+    @epiDocXml = epiDocXml
+    @epiDoc = REXML::Document.new(epiDocXml)
+    
+    super()
+  end
+  
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(@epiDocXml),
@@ -23,6 +80,10 @@ class BiblioIdentifier < HGVIdentifier
     # retrieve data from xml or set empty defaults 
     
     self[:title] = ''
+    self[:journalTitle] = ''
+    self[:journalTitleShort] = Array.new
+    self[:bookTitle] = ''
+    self[:bookTitleShort] = Array.new
     self[:type] = ''
     self[:subtype] = ''
     self[:language] = ''    
@@ -32,15 +93,18 @@ class BiblioIdentifier < HGVIdentifier
     self[:idp] = ''
     self[:isbn] = ''
     self[:sd] = ''
+    self[:checklist] = ''
 
     self[:date] = ''
     self[:edition] = ''
+    self[:issue] = ''
+    self[:distributor] = ''
     self[:paginationFrom] = ''
     self[:paginationTo] = ''
     self[:paginationTotal] = ''
     self[:paginationPreface] = ''
     self[:illustration] = ''
-    self[:note] = ''
+    self[:note] = Array.new
     self[:reedition] = ''
     
     self[:monograph] = nil
@@ -49,14 +113,12 @@ class BiblioIdentifier < HGVIdentifier
     self[:publisherList] = Array.new
     
     self[:authorList] = Array.new
-    self[:editorList] = Array.new    
-    self[:revueCritiqueList] = Array.new
+    self[:editorList] = Array.new
+    self[:revieweeList] = Array.new
+    self[:containerList] = Array.new
     self[:relatedArticleList] = Array.new
     
-    @epiDocFile = File.new(File.join(RAILS_ROOT, 'tmp', 'biblioTest.xml'), 'r')
-    @epiDocXml = @epiDocFile.read
-    @epiDocFile.rewind
-    @epiDoc = REXML::Document.new(@epiDocFile)
+   
 
     populateFromEpiDoc
 
@@ -66,34 +128,57 @@ class BiblioIdentifier < HGVIdentifier
 
     def populateFromEpiDoc
 
-      populateFromEpiDocSimple :title, "/TEI/text/body/div/bibl/title[@level='a'][@type='main']"
-      populateFromEpiDocSimple :type, "/TEI/teiHeader/fileDesc/sourceDesc/bibl/@type"
-      populateFromEpiDocSimple :subtype, "/TEI/teiHeader/fileDesc/sourceDesc/bibl/@subtype"
-      populateFromEpiDocSimple :language, "/TEI/text/body/div/bibl/@xml:lang"    
-      populateFromEpiDocSimple :bp, "/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='bp']"
-      populateFromEpiDocSimple :bpOld, "/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='bp_old']"
-      populateFromEpiDocSimple :idp, "/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='filename']"
-      populateFromEpiDocSimple :isbn, "/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='isbn']"
-      populateFromEpiDocSimple :sd, "/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='sonderdruck']"
-      populateFromEpiDocSimple :date, "/TEI/text/body/div/bibl/date"
-      populateFromEpiDocSimple :edition, "/TEI/text/body/div/bibl/edition"
-      populateFromEpiDocSimple :paginationFrom, "/TEI/text/body/div/bibl/biblScope[@type='page']/@from"
-      populateFromEpiDocSimple :paginationTo, "/TEI/text/body/div/bibl/biblScope[@type='page']/@to"
-      populateFromEpiDocSimple :paginationTotal, "/TEI/text/body/div/bibl/biblScope[@type='pageCount']"
-      populateFromEpiDocSimple :paginationPreface, "/TEI/text/body/div/bibl/biblScope[@type='prefacePageCount']"
-      populateFromEpiDocSimple :illustration, "/TEI/text/body/div/bibl/biblScope[@type='illustration']"
-      populateFromEpiDocSimple :note, "/TEI/text/body/div/bibl/note"
-      populateFromEpiDocSimple :reedition, "/TEI/text/body/div/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']"
-      populateFromEpiDocPerson :authorList, "/TEI/text/body/div/bibl/author"
-      populateFromEpiDocPerson :editorList, "/TEI/text/body/div/bibl/editor"
+      populateFromEpiDocSimple :title
+      populateFromEpiDocSimple :journalTitle
+      populateFromEpiDocSimple :bookTitle
+      populateFromEpiDocSimple :type
+      populateFromEpiDocSimple :subtype
+      populateFromEpiDocSimple :language
+      
+      populateFromEpiDocSimple :bp
+      populateFromEpiDocSimple :bpOld
+      populateFromEpiDocSimple :idp
+      populateFromEpiDocSimple :isbn
+      populateFromEpiDocSimple :sd
+      populateFromEpiDocSimple :checklist
+
+      populateFromEpiDocSimple :date
+      populateFromEpiDocSimple :edition
+      populateFromEpiDocSimple :issue
+      populateFromEpiDocSimple :distributor
+      populateFromEpiDocSimple :paginationFrom
+      populateFromEpiDocSimple :paginationTo
+      populateFromEpiDocSimple :paginationTotal
+      populateFromEpiDocSimple :paginationPreface
+      populateFromEpiDocSimple :illustration
+      populateFromEpiDocSimple :no
+      populateFromEpiDocSimple :col
+      populateFromEpiDocSimple :tome
+      populateFromEpiDocSimple :link
+      populateFromEpiDocSimple :fasc
+      populateFromEpiDocSimple :reedition
+
+      populateFromEpiDocPerson :authorList
+      populateFromEpiDocPerson :editorList
+      
+      populateFromEpiDocShortTitle :journalTitleShort
+      populateFromEpiDocShortTitle :bookTitleShort
+      
+      populateFromEpiDocNote
+     
       populateFromEpiDocPublisher
-      populateFromEpiDocRevueCritique
+     
+      populateFromEpiDocReviewee
+      
+      populateFromEpiDocContainer
+     
       populateFromEpiDocRelatedArticle
 
     end
 
-    def populateFromEpiDocSimple key, path
+    def populateFromEpiDocSimple key
       attribute = nil
+      path = XPATH[key]
       if path =~ /(.+)\/@([^\[\]\/]+)\Z/
         path = $1
         attribute = $2
@@ -105,12 +190,13 @@ class BiblioIdentifier < HGVIdentifier
           self[key] = @epiDoc.elements[path].text
         end
       else
-        self[key]='nada'
+        self[key] = ''
       end
     end
 
-    def populateFromEpiDocPerson key, path
+    def populateFromEpiDocPerson key
       list = []
+      path = XPATH[key]
       @epiDoc.elements.each(path){|person|
 
         newbie = PublicationPerson.new
@@ -123,8 +209,8 @@ class BiblioIdentifier < HGVIdentifier
           newbie.lastName = element.text
           indexLast = element.index_in_parent
         end
-        if element = person.elements['persName']
-          newbie.name = element.text
+        if person.text
+          newbie.name = person.text
         end
         if (indexLast != 0) && (indexFirst != 0) && indexLast > indexFirst
           newbie.swap = true
@@ -134,45 +220,75 @@ class BiblioIdentifier < HGVIdentifier
 
       self[key] = list
     end
+    
+    def populateFromEpiDocShortTitle key
+      list = []
+      path = XPATH[key]
+      @epiDoc.elements.each(path){|title|
+        list[list.length] = ShortTitle.new(title.text, title.attributes['resp'] ? title.attributes['resp'] : '')
+      }
+      self[key] = list
+    end
 
     def populateFromEpiDocPublisher
-      @epiDoc.elements.each("/TEI/text/body/div/bibl/publisher"){|publisher|
-        place = publisher.elements["placeName"] ? publisher.elements["placeName"].text : ''
-        name = publisher.elements["orgName"] ? publisher.elements["orgName"].text : ''
-        self[:publisherList][self[:publisherList].length] = Publisher.new(place, name)
+      @epiDoc.elements.each(XPATH[:publisherList]){|element|
+        type = element.name.to_s
+        value = element.text
+        #place = publisher.elements["placeName"] ? publisher.elements["placeName"].text : ''
+        #name = publisher.elements["orgName"] ? publisher.elements["orgName"].text : ''
+        self[:publisherList][self[:publisherList].length] = Publisher.new(type, value)
       }
     end
-    
-    def populateFromEpiDocRevueCritique
-      @epiDoc.elements.each("/TEI/text/body/div/bibl/note[@type='revueCritique']/listBibl/bibl"){|bibl|
-        author = bibl.elements["author"] ? bibl.elements["author"].text : ''
-        title = bibl.elements["title"] ? bibl.elements["title"].text : ''
-        year = bibl.elements["date"] ? bibl.elements["date"].text : ''
-        page = bibl.elements["biblScope[@type='page']"] ? bibl.elements["biblScope[@type='page']"].text : ''
-        self[:revueCritiqueList][self[:revueCritiqueList].length] = RevueCritique.new(author, title, year, page)
+
+    def populateFromEpiDocNote
+      @epiDoc.elements.each(XPATH[:note]){|element|
+        if element.attributes.length == 1
+          self[:note][self[:note].length] = Note.new(element.attributes['resp'], element.text)
+        end
       }
     end
+
+    def populateFromEpiDocReviewee
+      populateFromEpiDocRelatedItem :revieweeList, Reviewee
+    end
+
+    def populateFromEpiDocContainer
+      populateFromEpiDocRelatedItem :containerList, Container
+    end
     
+    def populateFromEpiDocRelatedItem typeX, classX
+      @epiDoc.elements.each(XPATH[typeX]){|bibl|
+        pointer = bibl.elements['ptr'] && bibl.elements['ptr'].attributes && bibl.elements['ptr'].attributes['target'] ? bibl.elements['ptr'].attributes['target'] : ''
+        ignore = {}
+        
+        bibl.elements.each{|child|
+          
+          if child.name != 'ptr'
+            key = child.name.to_s
+            if key == 'idno' && child.attributes && child.attributes['type']
+              key = child.attributes['type']
+            end
+
+            ignore[key] = child.text ? child.text : '?'
+          end
+        }
+
+        self[typeX][self[typeX].length] = classX.new(pointer, ignore)
+      }
+    end
+
     def populateFromEpiDocRelatedArticle
-      @epiDoc.elements.each("/TEI/text/body/div/bibl/note[@type='relatedArticles']/listBibl/bibl"){|bibl|
-        series = bibl.elements["biblScoe[@type='series']"] ? bibl.elements["biblScoe[@type='series']"].text : ''
-        volume = bibl.elements["biblScoe[@type='volume']"] ? bibl.elements["biblScoe[@type='volume']"].text : ''
-        number = bibl.elements["biblScoe[@type='article']"] ? bibl.elements["biblScoe[@type='article']"].text : ''
-        ddb = bibl.elements["idno[@type='ddb']"] ? bibl.elements["idno[@type='ddb']"].text : ''
+      @epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
+        series    = bibl.elements["title[@level='s'][@type='short']"] ? bibl.elements["title[@level='s'][@type='short']"].text : ''
+        volume    = bibl.elements["biblScope[@type='vol']"] ? bibl.elements["biblScoe[@type='vol']"].text : ''
+        number    = bibl.elements["biblScope[@type='number']"] ? bibl.elements["biblScoe[@type='number']"].text : ''
+        ddb       = bibl.elements["idno[@type='ddb']"] ? bibl.elements["idno[@type='ddb']"].text : ''
+        tm        = bibl.elements["idno[@type='tm']"] ? bibl.elements["idno[@type='tm']"].text : ''
         inventory = bibl.elements["idno[@type='invNo']"] ? bibl.elements["idno[@type='invNo']"].text : ''
 
-        self[:relatedArticleList][self[:relatedArticleList].length] = RelatedArticle.new(series, volume, number, ddb, inventory)
+        self[:relatedArticleList][self[:relatedArticleList].length] = RelatedArticle.new(series, volume, number, ddb, tm, inventory)
       }
     end
-
-  class PublicationEntity
-    attr_accessor :title, :titleShort, :number
-    def initialize title = '', titleShort = '', number = ''
-      @title = title
-      @titleShort = titleShort
-      @number = number
-    end
-  end
   
   class PublicationPerson
     attr_accessor :firstName, :lastName, :name, :swap
@@ -183,13 +299,22 @@ class BiblioIdentifier < HGVIdentifier
       @swap = swap
     end
   end
+
+=begin
+  class PublicationEntity
+    attr_accessor :title, :titleShort, :number
+    def initialize title = '', titleShort = '', number = ''
+      @title = title
+      @titleShort = titleShort
+      @number = number
+    end
   
   class Monograph < PublicationEntity
   end
-  
+
   class Journal < PublicationEntity
   end
-  
+
   class Series < PublicationEntity
   end
 
@@ -202,22 +327,64 @@ class BiblioIdentifier < HGVIdentifier
       @page = page
     end
   end
+ 
+=end
+
+  class RelatedItem # appearsIn, reviews
+    attr_accessor :pointer, :ignoreList, :ignored
+    def initialize pointer = '', ignoreList = array()
+      @pointer = pointer
+      @ignoreList = ignoreList
+      
+      @ignored = ''
+      ignoreList.each_pair {|key, value|
+        @ignored += key.titleize + ': ' + value + ', '
+      }
+      @ignored = @ignored[0..-3]
+    end
+  end
   
+  class Reviewee < RelatedItem
+    
+  end
+  
+  class Container < RelatedItem
+    
+  end
+  
+  class ShortTitle
+    attr_accessor :title, :responsibility
+    def initialize title = '', responsibility = ''
+      @title = title
+      @responsibility = responsibility 
+    end
+  end
+  
+  class Note
+    attr_accessor :responsibility, :annotation
+    def initialize responsibility = '', annotation = ''
+      @responsibility = responsibility
+      @annotation = annotation
+    end
+  end
+
   class RelatedArticle
-    attr_accessor :series, :volume, :number, :ddb, :inventory
-    def initialize series = '', volume = '', number = '', ddb = '', inventory = ''
+    attr_accessor :series, :volume, :number, :ddb, :tm, :inventory
+    def initialize series = '', volume = '', number = '', ddb = '', tm = '', inventory = ''
       @series = series
       @volume = volume
       @number = number
+      @tm = tm
       @ddb = ddb
       @inventory = inventory
     end
   end
+
   class Publisher
-    attr_accessor :place, :name
-    def initialize place = '', name = ''
-      @place = place
-      @name = name
+    attr_accessor :type, :value
+    def initialize type = '', value = ''
+      @type = type
+      @value = value
     end
   end
 end
