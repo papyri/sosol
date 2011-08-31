@@ -16,46 +16,67 @@
       - votes = Comment.vote.find_all_by_user_id(user.id)
       - if votes.length > 0
         %h3 Votes
-        - votes.each do |vote| 
-          %span.comment   
-            - if vote.publication && vote.publication.title    
-              = link_to vote.publication.title, vote.publication
-              = "(" + vote.identifier.title + ")"
-              = h "Vote " + vote.comment 
-              %span.date 
-                = vote.created_at.to_formatted_s(:long)
-          
-          %br
-      
+        %div{:id => "show_vote_link", :style => "display:none;"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.Appear('vote_list');Effect.DropOut('show_vote_link');Effect.SlideDown('hide_vote_link');return false;"}
+            Show Votes
+        %div{:id => "hide_vote_link"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.DropOut('vote_list');Effect.SlideDown('show_vote_link');Effect.DropOut('hide_vote_link');return false;"}
+            Hide Votes
+        %div{:id => "vote_list"}
+          - votes.each do |vote| 
+            %span.comment   
+              - if vote.publication && vote.publication.title    
+                = link_to vote.publication.title, vote.publication
+                = "(" + vote.identifier.title + ")"
+                = h "Vote " + vote.comment 
+                %span.date 
+                  = vote.created_at.to_formatted_s(:long)
+            
+            %br
+        
 
       - submits = Comment.submit.find_all_by_user_id(user.id)
       - if submits.length > 0
         %h3 Submissions
-        - submits.each do |submit| 
-          %span.comment     
-            - if submit.publication && submit.publication.title
-              = link_to submit.publication.title, submit.publication  
-              = "(" + submit.publication.status + ")"  
-              = h submit.comment 
-              %span.date 
-                = submit.created_at.to_formatted_s(:long)
-          %br
+        %div{:id => "show_submission_link", :style => "display:none;"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.Appear('submission_list');Effect.DropOut('show_submission_link');Effect.SlideDown('hide_submission_link');return false;"}
+            Show Submissions
+        %div{:id => "hide_submission_link"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.DropOut('submission_list');Effect.SlideDown('show_submission_link');Effect.DropOut('hide_submission_link');return false;"}
+            Hide Submissions
+        %div{:id => "submission_list"}
+          - submits.each do |submit| 
+            %span.comment     
+              - if submit.publication && submit.publication.title
+                = link_to submit.publication.title, submit.publication  
+                = "(" + submit.publication.status + ")"  
+                = h submit.comment 
+                %span.date 
+                  = submit.created_at.to_formatted_s(:long)
+            %br
         
       
       
       - finalizings = Comment.finalizing.find_all_by_user_id(user.id)
       - if finalizings.length > 0  
         %h3 Finalized
-        - finalizings.each do |finalizing|
-          %span.comment 
-            - if finalizing.publication && finalizing.publication.title 
-              = link_to finalizing.publication.title, finalizing.publication
-              - if finalizing.identifier && finalizing.identifier.title
-                = finalizing.identifier.title   
-              = h finalizing.comment 
-              %span.date 
-                = finalizing.created_at.to_formatted_s(:long)
-          %br
+        %div{:id => "show_final_link", :style => "display:none;"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.Appear('final_list');Effect.DropOut('show_final_link');Effect.SlideDown('hide_final_link');return false;"}
+            Show Finalized
+        %div{:id => "hide_final_link"}
+          %a{:class => 'showhidelink', :href => '#', :onclick => "Effect.DropOut('final_list');Effect.SlideDown('show_final_link');Effect.DropOut('hide_final_link');return false;"}
+            Hide Finalized
+        %div{:id => "final_list"}
+          - finalizings.each do |finalizing|
+            %span.comment 
+              - if finalizing.publication && finalizing.publication.title 
+                = link_to finalizing.publication.title, finalizing.publication
+                - if finalizing.identifier && finalizing.identifier.title
+                  = finalizing.identifier.title   
+                = h finalizing.comment 
+                %span.date 
+                  = finalizing.created_at.to_formatted_s(:long)
+            %br
         
       %br
       %br
