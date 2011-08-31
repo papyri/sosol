@@ -17,7 +17,7 @@
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
 
-        .paragraph.geoReferenceContainer
+        .paragraph.geoReferenceContainer{ :style => 'display: none;' }
           = hidden_field_tag geoBaseAttributes + '[reference]', geo.referenceList.join(' '), :class => 'observechange provenanceGeoReference'
           .clear
           = label_tag geoBaseAttributes + '[reference]', I18n.t('meta.label.reference')
@@ -35,9 +35,10 @@
     
     %span{:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
     
-    .paragraph.geoReferenceContainer
+    .paragraph.geoReferenceContainer{ :style => 'display: none;' }
       = hidden_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference'
       .clear
+      = label_tag 'reference', I18n.t('meta.label.reference')
       = render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => []}
       .clear
 

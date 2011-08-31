@@ -788,7 +788,7 @@ function toggleReferenceList(){
     display = 'none';
   }
 
-  $$('div.geoReferenceContainer').each(function(e){ console.log('***'); e.setStyle( {'display' : display } ); });
+  $$('div.geoReferenceContainer').each(function(e){ e.setStyle( {'display' : display } ); });
 
 }
 
