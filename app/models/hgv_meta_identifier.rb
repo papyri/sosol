@@ -102,7 +102,11 @@ class HGVMetaIdentifier < HGVIdentifier
     doc.elements.each(config[:xpath]){|element|
       node = {:value => '', :attributes => {}, :children => {}}
 
-      if element.name.to_s == 'origDate' # CL: CROMULATE DATE HACK
+      if config[:preFlag] && element.previous_element && config[:preFlag] == element.previous_element.name # CL: CROMULENT GEO HACK
+        node[:preFlag] = 'bei';
+      end
+
+      if element.name.to_s == 'origDate' # CL: CROMULENT DATE HACK
         node[:value] = element.to_s.gsub(/[\s]+/, ' ').gsub(/<\/?[^>]*>/, "").strip
       elsif element.text && !element.text.strip.empty?
         node[:value] = element.text.strip
@@ -115,7 +119,7 @@ class HGVMetaIdentifier < HGVIdentifier
           node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
         }
       end
-      
+
       if config[:children]
         config[:children].each_pair{|child_key, child_config|
           node[:children][child_key] = get_epidoc_attributes_tree element, child_config
@@ -139,9 +143,9 @@ class HGVMetaIdentifier < HGVIdentifier
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
-    
+
     epidoc = set_epidoc_attributes
-      
+
     #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
 
     #set_content does not validate xml (which is what epidoc is)
@@ -211,7 +215,7 @@ class HGVMetaIdentifier < HGVIdentifier
           if item[:value] && !item[:value].strip.empty?
             child.text = item[:value].strip
           end
-  
+
           if config[:attributes]
             config[:attributes].each_pair{|attribute_key, attribute_config|
                if item[:attributes] && item[:attributes][attribute_key] && !item[:attributes][attribute_key].strip.empty?
@@ -221,7 +225,7 @@ class HGVMetaIdentifier < HGVIdentifier
                end
             }
           end
-  
+
           if config[:children] && item[:children]
             config[:children].each_pair{|grandchild_name, grandchild_config|
               if item[:children][grandchild_name]
@@ -232,8 +236,16 @@ class HGVMetaIdentifier < HGVIdentifier
             }
           end
         end
-  
+
+        
+        if item[:preFlag] # CL: CROMULENT GEO HACK
+          offset = REXML::Element.new 'offset'
+          offset.add_text 'bei'
+          parent.add offset
+        end
+        
         parent.add child
+
       end
     }
   end
@@ -277,12 +289,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
           
         else
-          
-          puts '............................'
-          puts config[:xpath]
-          puts '............................'
-          
-          
+
           doc.elements.delete_all config[:xpath]
           if parent = doc.elements[xpath_parent]
             if !parent.has_elements? && parent.texts.join.strip.empty?
@@ -392,17 +399,18 @@ class HGVMetaIdentifier < HGVIdentifier
 
     @configuration.scheme.each_pair do |key, config|
       if config[:children] || config[:attributes]
-        result = nil
-        if config[:multiple]
-          result = []
+        result = if config[:multiple]
+          tmp = []
           if attributes_hash[key.to_s]
             attributes_hash[key.to_s].each_pair {|index, item|
-              result[result.length] = populate_tree_from_attributes_hash item, config
+              tmp[tmp.length] = populate_tree_from_attributes_hash item, config
             }
           end
+          tmp
         else
-          result = populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
+          populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
         end
+
         self[key] = result  
       elsif config[:multiple]
         self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
@@ -455,6 +463,10 @@ class HGVMetaIdentifier < HGVIdentifier
             result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key.to_s], child_config # recursion óla
           end
         }
+      end
+      
+      if config[:preFlag] and data[:children][:offset][:value] and  data[:children][:offset][:value] == 'bei' # CL: CROMULENT GEO HACK
+        result_item[:preFlag] = 'bei'
       end
 
    end

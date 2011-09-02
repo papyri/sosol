@@ -197,9 +197,8 @@
                       :name: cert
                     :reference:
                       :name: ref
-                  :children:
-                    :offset:
-                      :xpath: offset
+                  :preFlag: offset # CL: CROMULENT GEO HACK
+
     :origPlace:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
       :multiple: true
@@ -231,9 +230,7 @@
                   :name: cert
                 :reference:
                   :name: ref
-              :children:
-                :offset:
-                  :xpath: offset
+              :preFlag: offset # CL: CROMULENT GEO HACK
 
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate

@@ -247,10 +247,8 @@ module HgvMetaIdentifierHelper
                 @referenceList = init[:geo][:attributes][:reference].split
               end
             end
-            if init[:geo][:children]
-              if init[:geo][:children][:offset] && init[:geo][:children][:offset][:value]
-                @offset = init[:geo][:children][:offset][:value]
-              end
+            if init[:geo][:preFlag] # CL: CROMULENT GEO HACK
+              @offset = init[:geo][:preFlag]
             end
             if init[:geo][:value]
               @name = init[:geo][:value]
