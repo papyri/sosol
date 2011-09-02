@@ -401,7 +401,7 @@ class PublicationsController < ApplicationController
       
       
       #Rails.logger.info 
-      origin_index.commit(params[:comment],  @publication.origin.head, @current_user.name , nil, @publication.origin.branch)
+      origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
       #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
 
       @publication.origin.save
