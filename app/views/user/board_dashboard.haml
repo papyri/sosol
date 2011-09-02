@@ -1,6 +1,11 @@
 = stylesheet_link_tag "publication_list"
 =# javascript_include_tag "extra_ids"
-
+- page_title = ""
+- if @board.community && @board.community.friendly_name
+  - page_title = @board.community.friendly_name + " community "
+- page_title = page_title + @board.friendly_name + " board"
+%h1 
+  = page_title
 - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
   = render :partial => "publications/publication_listing", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
