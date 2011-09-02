@@ -257,6 +257,29 @@ class UserController < ApplicationController
   end
   
   
+=begin
+Admin Settings allow certain rights to these groups.
+
+
+Master Admin:
+  Can set all user admin rights
+
+Community Master Admin:
+  they can create destroy communities, pick community admins
+
+Community Admins: 
+  (note these are set on the commuity page not via user admins)
+  can edit their communities
+
+Admin:
+  Setup etc. boards
+  Can email all users
+
+Developer:
+  Extra views with debugging info.    
+    
+=end
+  
   def admin
     #shows whatever they have the right to administer
     
