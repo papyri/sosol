@@ -5,12 +5,13 @@
     %meta{ 'name' => 'robots', 'content' => 'noindex, nofollow' }
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
+    = stylesheet_link_tag 'header_footer'
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
       = stylesheet_link_tag 'meta'
     = javascript_include_tag :defaults
   
   = render :partial => "common/header", :locals => {:active_tab => "edit"}
-  .content_body
+  #content_box
     = yield
   = render :partial => "common/footer"
 

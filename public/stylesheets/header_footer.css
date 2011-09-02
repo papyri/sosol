@@ -156,6 +156,11 @@
   .header_spacer_tab a {
     text-decoration: none; }
 
+#content_box {
+  position: relative;
+  width: 100%;
+  margin: 1em; }
+
 #footer_box {
   margin-left: auto;
   margin-right: auto;
