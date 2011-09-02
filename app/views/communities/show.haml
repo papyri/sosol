@@ -17,18 +17,20 @@
 %b
   End User
   %br 
-= @community.end_user.name
+- if @community.end_user
+  = @community.end_user.name
 %br
 %br 
 
 %b
   Admins
   %br 
+   
 - @community.admins.each do |a|
   = a.name
   %br
 %br 
-	
+  
 %b
   Members
   %br 

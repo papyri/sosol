@@ -87,13 +87,7 @@ class BoardsController < ApplicationController
   # GET /boards/new.xml
   def new
     
-    
     @board = Board.new    
-    
-    if params[:community_id]
-      @board.community_id = params[:community_id]
-
-    end
     
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
@@ -103,6 +97,10 @@ class BoardsController < ApplicationController
     #existing_boards.each do |b|
     #  @available_identifier_classes -= b.identifier_classes
     #end
+    
+    if params[:community_id]
+      @board.community_id =  params[:community_id]
+    end
      
     respond_to do |format|
       format.html # new.html.erb
@@ -131,16 +129,26 @@ class BoardsController < ApplicationController
       end
     end
 
-    #just let them choose one identifer class
-    #@board.identifier_classes << params[:identifier_class]
+
 
     #put the new board in last rank
-    #TODO add count for community
-    @board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    if @board.community_id
+      @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    else
+      #@board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.  
+      @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    end
+    #just let them choose one identifer class
+    #@board.identifier_classes << params[:identifier_class]
+    
 
     if @board.save
       flash[:notice] = 'Board was successfully created.'
-      redirect_to :action => "edit", :id => (@board).id    
+      redirect_to :action => "edit", :id => (@board).id
+    else
+      #TODO add error check to give meaningfull response to user.
+      flash[:error] = 'Board creation failed. Was your name unique'
+      redirect_to dashboard_url
     end         
   end
 

@@ -1,19 +1,30 @@
 
 %h1
-  Existing Community Members
+  Community Members
+%p
+  = "These are users who are able to submit a publication to the " + @community.name + " ( " + @community.friendly_name + " ) community." 
 
 - if @community
 
-  %h1 
+  %h2
     Existing Members
-    
+  %p
+    click X by name to remove member
   - @community.members.each do |member|
     = member.name 
     = link_to "X", :controller => "communities", :action => "remove_member", :member_id => member.id
     %br
     
-  %h1
+  %h2
     Potential Members
     
+  %p
+    click name to add member
          
   = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_member", @community.id ) }
+
+  
+  
+%br
+%br
+  = link_to 'Edit more of this community', edit_community_path(@community)

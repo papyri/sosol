@@ -275,24 +275,33 @@ class Publication < ActiveRecord::Base
     Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
-      #copy to  space
-      Rails.logger.debug "----end user to get it" 
-      Rails.logger.debug self.community.end_user.name
-      
-      community_copy = copy_to_owner( self.community.end_user)
-      community_copy.status = "editing"
-      #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
-      
-      #disconnect the parent/origin connections
-      community_copy.parent_id = nil
-      
-      #reset the community id to be sosol
-      community_copy.community_id = nil
-      
-      #remove the original creator id (that info is now in the git history )
-      community_copy.creator_id = community_copy.owner_id
-      
-      community_copy.save!
+      if self.community.end_user.nil?
+        #no end user has been set, so warn them and then what?
+        #user can't submit to community if no end user, so this should not happen
+        
+      else
+        
+        
+        #copy to  space
+        Rails.logger.debug "----end user to get it" 
+        Rails.logger.debug self.community.end_user.name
+        
+        community_copy = copy_to_owner( self.community.end_user)
+        community_copy.status = "editing"
+        #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
+        
+        #disconnect the parent/origin connections
+        community_copy.parent_id = nil
+        
+        #reset the community id to be sosol
+        community_copy.community_id = nil
+        
+        #remove the original creator id (that info is now in the git history )
+        community_copy.creator_id = community_copy.owner_id
+        
+        community_copy.save!
+        
+      end
       
     else
       #mark as committed

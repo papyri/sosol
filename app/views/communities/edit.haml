@@ -15,10 +15,10 @@
     = f.label :friendly_name 
     = f.text_field :friendly_name
     %br
-    
-    = f.label :abbreviation 
-    = f.text_field :abbreviation 
-    %br
+    -#
+      = f.label :abbreviation 
+      = f.text_field :abbreviation 
+      %br
      
     = f.label :description 
     = f.text_field :description
@@ -39,7 +39,8 @@
   - if @community.end_user
     = @community.end_user.name
   - else
-    = "No end user set! End user must be set before community can process submissions."
+    %b
+      = "! No end user set! End user must be set before community can process submissions."
 
   %br
   %br

@@ -106,7 +106,7 @@ class CommunitiesController < ApplicationController
       @community.save
     end
 
-    redirect_to :action => "edit", :id => (@community).id
+    redirect_to :action => "add_member_page", :id => @community.id
   end
 
   def remove_member
@@ -117,7 +117,8 @@ class CommunitiesController < ApplicationController
     @community.members.delete(user)
     @community.save
 
-    redirect_to :action => "edit", :id => (@community).id
+    #redirect_to :action => "edit", :id => (@community).id
+    redirect_to :action => "add_member_page", :id => @community.id
   end
 
 
@@ -127,9 +128,11 @@ class CommunitiesController < ApplicationController
   end
 
   def add_admin
-    
+   # raise params.inspect
     @community = Community.find(params[:id])
     user = User.find_by_id(params[:user_id])
+
+    #raise @community.admins.length.to_s
 
     if nil == @community.admins.find_by_id(user.id) 
     
@@ -137,7 +140,7 @@ class CommunitiesController < ApplicationController
       @community.save
     end
 
-    redirect_to :action => "edit", :id => (@community).id
+    redirect_to :action => "add_admin_page", :id => @community.id
   end
 
   def remove_admin
@@ -148,7 +151,7 @@ class CommunitiesController < ApplicationController
     @community.admins.delete(user)
     @community.save
 
-    redirect_to :action => "edit", :id => (@community).id
+    redirect_to :action => "add_admin_page", :id => @community.id
   end
 
   def edit_end_user
@@ -162,7 +165,7 @@ class CommunitiesController < ApplicationController
     @community.end_user_id = user.id
     @community.save
     
-    redirect_to :action => "edit", :id => (@community).id
+    redirect_to :action => "edit", :id => @community.id
   end
   
 end
