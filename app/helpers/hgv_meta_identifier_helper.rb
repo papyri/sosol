@@ -513,43 +513,45 @@ module HgvMetaIdentifierHelper
       
       }
       
-      if !provenanceList || provenanceList.length == 0
+      if provenanceList || provenanceList.length > 0
+
+        provenanceList.each_pair {|id, provenance|
+  
+          begin
+            result << {
+              :found => 'Fundort',
+              :observed => 'gesichtet',
+              :destroyed => 'zerstört',
+              :'not-found' => 'verschollen',
+              :reused => 'wiederverwendet',
+              :moved => 'bewegt',
+              :acquired => 'erworben',
+              :sold => 'verkauft'
+            }[provenance.type]
+            
+            if provenance.subtype == :last
+              result = 'zuletzt ' + result
+            end
+              
+            result << ': '
+          rescue
+          end
+  
+          result << HgvProvenance.formatPlaceList(provenance.placeList)
+          
+          if provenance.date
+            result << ' - '
+            result << HgvFormat.formatDateFromIsoParts(provenance.date)
+          end
+  
+          result << '; '
+        }
+        
+        result = result[0..-3]
+
+      else
         result = result[0..-3]
       end
-
-      provenanceList.each_pair {|id, provenance|
-
-        begin
-          result << {
-            :found => 'Fundort',
-            :observed => 'gesichtet',
-            :destroyed => 'zerstört',
-            :'not-found' => 'verschollen',
-            :reused => 'wiederverwendet',
-            :moved => 'bewegt',
-            :acquired => 'erworben',
-            :sold => 'verkauft'
-          }[provenance.type]
-          
-          if provenance.subtype == :last
-            result = 'zuletzt ' + result
-          end
-            
-          result << ': '
-        rescue
-        end
-
-        result << HgvProvenance.formatPlaceList(provenance.placeList)
-        
-        if provenance.date
-          result << ' - '
-          result << HgvFormat.formatDateFromIsoParts(provenance.date)
-        end
-
-        result << '; '
-      }
-      
-      result = result[0..-3]
 
       result 
     end
