@@ -64,6 +64,14 @@ module HgvMetaIdentifierHelper
 
       end
       
+      def self.getObjectList epiDocList
+        objectList = []
+        epiDocList.each {|epi|
+          objectList[objectList.length] = HgvGeo::OrigPlace.new(:origPlace => epi)
+        }
+        objectList
+      end
+      
       def type= value
         value = value.class == String ? value.to_sym : value
         if @@typeList.include? value
@@ -140,6 +148,15 @@ module HgvMetaIdentifierHelper
 
         end
 
+      end
+      
+      def self.getObjectList epiDocList
+        objectList = {}
+        epiDocList.each {|epi|
+          obi = HgvGeo::Provenance.new(:provenance => epi)
+          objectList[obi.id ? obi.id : objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
+        }
+        objectList
       end
       
       def populateAtomFromHash hash
@@ -379,8 +396,162 @@ module HgvMetaIdentifierHelper
   end
 
   module HgvProvenance
-    def HgvProvenance.format provenance
-      '…'
+    def HgvProvenance.formatPlaceList placeList
+      result = ''
+      
+      placeList.each_index{|placeIndex|
+        result << HgvProvenance.formatGeoList(placeList[placeIndex].geoList)
+
+        result << if placeIndex < placeList.length - 1
+          if placeIndex == placeList.length - 2 
+            ' oder '
+          elsif placeIndex < placeList.length - 2
+            ', '
+          else
+            ''
+          end
+        else
+          ''
+        end
+        
+      }
+
+      result
+    end
+
+    def HgvProvenance.formatGeoList geoList
+      result = ''
+
+      ancient   = geoList.select{|geo| [:settlement, nil].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      modern    = geoList.select{|geo| [:settlement, nil].include?(geo.subtype) && geo.type == :modern ? true : false }.shift
+      province  = geoList.select{|geo| [:province].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      nome      = geoList.select{|geo| [:nome].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      region    = geoList.select{|geo| [:region].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+
+      if ancient && modern
+        if(ancient.offset)
+          result << HgvProvenance.formatGeoSpot(modern)
+          result << ' '
+          result << HgvProvenance.formatGeoSpot(ancient)
+        else 
+          result << HgvProvenance.formatGeoSpot(ancient)
+          result << ' (= '
+          result << HgvProvenance.formatGeoSpot(modern)
+          result << ')'
+        end
+      elsif ancient
+        result << HgvProvenance.formatGeoSpot(ancient)
+      elsif modern
+        result << HgvProvenance.formatGeoSpot(modern)
+      end
+
+      if province || nome || region
+        if ancient || modern
+          result << ' ('
+        end
+        
+        provinceNomeAndRegion = ''
+        [province, nome, region].compact.each {|geoSpot|
+          provinceNomeAndRegion << if geoSpot.offset
+            ' '
+          else
+            ', '
+          end
+          provinceNomeAndRegion << HgvProvenance.formatGeoSpot(geoSpot)
+          
+        }
+
+        result << ( provinceNomeAndRegion =~ /[^, ].*$/ ? provinceNomeAndRegion[/[^, ].*$/] : '')
+
+        if ancient || modern
+          result << ')'
+        end
+      end
+
+      result
+    end
+
+    def HgvProvenance.formatGeoSpot geoSpot
+      result = ''
+      result << (geoSpot.offset ? 'bei ' : '')
+      result << (geoSpot.name ? geoSpot.name : '')
+      result << (geoSpot.certainty ? ' ?' : '')
+      result
+    end
+    
+    def HgvProvenance.format origPlaceList, provenanceList
+      origPlaceList  = HgvGeo::OrigPlace.getObjectList(origPlaceList)
+      provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
+      result = ''
+      
+      origPlaceList.each {|origPlace|
+        begin
+          result << {
+            :composition => 'Schreibort',
+            :destination => 'Zielort',
+            :execution => 'Ort der Ausführung',
+            :receipt => 'Empfangsort',
+            :reuse => 'Wiederverwendung'
+          }[origPlace.type]
+          result << ': '
+        rescue
+        end
+
+        if origPlace.value && [:Fundort, :unbekannt].include?(origPlace.value)
+          result << 'unbekannt'
+          if origPlace.correspondency && provenanceList[origPlace.correspondency[1..-1]]
+            result << ' ('
+            result << HgvProvenance.formatPlaceList(provenanceList[origPlace.correspondency[1..-1]].placeList)
+            result << ')'
+            provenanceList.delete origPlace.correspondency[1..-1]
+          end
+        else
+          result << HgvProvenance.formatPlaceList(origPlace.placeList)
+        end
+        
+        result << '; '
+      
+      }
+      
+      if !provenanceList || provenanceList.length == 0
+        result = result[0..-3]
+      end
+
+      provenanceList.each_pair {|id, provenance|
+
+        begin
+          result << {
+            :found => 'Fundort',
+            :observed => 'gesichtet',
+            :destroyed => 'zerstört',
+            :'not-found' => 'verschollen',
+            :reused => 'wiederverwendet',
+            :moved => 'bewegt',
+            :acquired => 'erworben',
+            :sold => 'verkauft'
+          }[provenance.type]
+          
+          if provenance.subtype == :last
+            result = 'zuletzt ' + result
+          end
+            
+          result << ': '
+        rescue
+        end
+
+        result << HgvProvenance.formatPlaceList(provenance.placeList)
+        
+        if provenance.date
+          result << ' - '
+          result << HgvFormat.formatDateFromIsoParts(provenance.date)
+        end
+
+        result << '; '
+      }
+      
+      result = result[0..-3]
+
+      result 
     end
 =begin
     def HgvProvenance.format provenance
@@ -1323,7 +1494,7 @@ module HgvMetaIdentifierHelper
   
   module HgvFormat
 
-    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter, certainty = nil
+    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore = nil, isoNotAfter = nil, certainty = nil
       date_item = {}
       
       date1 = isoWhen && !isoWhen.empty? ? isoWhen : (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)
