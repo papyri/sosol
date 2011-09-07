@@ -17,19 +17,63 @@ class UserController < ApplicationController
   def all_usage_stats
     if @current_user.admin || @current_user.developer
       @users = User.find(:all)
+      
+      #default to show last 2 weeks activity when showing all users
+      @calc_date = Date.today - 14
+      
+      flash.now[:notice] = "Usage since #{@calc_date}"
       render "usage_stats"
       return
     end
+    flash[:error] = "Only admins and developers are authorized to use this link."
     redirect_to dashboard_url
+  end
+  
+  def all_users_links
+    @users = User.find(:all, :order => "full_name ASC")
   end
 
   def info
     render :json => @current_user.nil? ? {} : @current_user
   end
+  
+  #view of stats for the user id page shown with optional date limitation
+  def refresh_usage
+    @users = [User.find_by_id(params[:save_user_id])]
 
+    #default to 1 year ago if date value not entered
+    if params[:date_value].blank?
+      params[:date_value] = '365'
+    else
+      #if date value not numeric
+      if !params[:date_value].strip.match(/[^\d]+/).nil?
+        @calc_date = Date.tomorrow
+        flash.now[:error] = "Please enter a whole number value for the usage range."
+        render "usage_stats"
+        return
+      end
+    end
+    
+    case params[:date_range]
+      when "day"
+        @calc_date = Date.today - params[:date_value].to_i
+      when "month"
+        @calc_date = Date.today << params[:date_value].to_i
+      when "year"
+        calc_months = params[:date_value].to_i * 12
+        @calc_date = Date.today << calc_months
+    end
+        
+    flash.now[:notice] = "Usage since #{@calc_date}"
+    render "usage_stats"
+  end
+  
+  #default view of stats for the user name entered/linked to
   def show
     @users = [User.find_by_name(params[:user_name])]
     if !@users.compact.empty?
+      @calc_date = ''
+      
       render "usage_stats"
       return
     else
