@@ -67,6 +67,23 @@
   Warning, your views may differ from users view.
   -#see debuging info
 
+-# ------Tell user their rights------
 
-
-
+%h2
+  Your admins
+   
+- admin_list = ""
+- if @current_user.is_master_admin
+  - admin_list = admin_list + "Master Admin <br />"
+- if @current_user.admin
+  - admin_list = admin_list + "Admin <br />"
+- if @current_user.is_community_master_admin
+  - admin_list = admin_list + "Community Master Admin <br />"
+- if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
+  - @current_user.community_admins.each do |comm| 
+    - admin_list = admin_list + "Admin for " + comm.friendly_name + " community<br />"
+      
+- if admin_list == ""
+  - admin_list = "You have no admin rights."
+%p
+  = admin_list
