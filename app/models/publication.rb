@@ -394,7 +394,6 @@ class Publication < ActiveRecord::Base
   end
   
   def modified?
-    
     retval = false
     self.identifiers.each do |i|
       retval = retval || i.modified?
@@ -410,7 +409,16 @@ class Publication < ActiveRecord::Base
       return true
     end
   end
-  
+
+  def mutable_by?(check_user)
+    if (((self.owner.class == Board) && !(self.owner.users.include?(check_user))) ||
+        (check_user != self.owner)) &&
+       (!(check_user.developer || check_user.admin))
+      return false
+    else
+      return true
+    end
+  end 
 
   # TODO: rename actual branch after branch attribute rename
   def after_create
