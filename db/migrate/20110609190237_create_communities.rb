@@ -3,11 +3,9 @@ class CreateCommunities < ActiveRecord::Migration
     create_table :communities do |t|
       t.string :name
       t.string :friendly_name
-      t.string :abbreviation
       t.integer :members
       t.integer :admins
       t.string :description
-      t.string :logo
 
       t.timestamps
     end
