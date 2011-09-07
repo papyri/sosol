@@ -24,6 +24,8 @@ class ApplicationController < ActionController::Base
   before_filter :get_user_id
   before_filter :rpx_setup
   before_filter :tab_setup
+
+  layout "header_footer"
   
   protected
   

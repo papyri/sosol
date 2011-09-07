@@ -1,6 +1,7 @@
 class BoardsController < ApplicationController
 
-  layout "site"
+  #layout "site"
+  #layout "header_footer"
   before_filter :authorize
   before_filter :check_admin
 

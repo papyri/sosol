@@ -1,5 +1,6 @@
 class UserController < ApplicationController
-  layout 'site'
+  #layout 'site'
+  #layout 'header_footer'
   before_filter :authorize, :except => [:signin, :signout, :show, :info]
   
   def signout
@@ -83,6 +84,7 @@ class UserController < ApplicationController
     end
     
     unless params[:old]
+    
       
       if params[:board_id]
         redirect_to :action => "board_dashboard", :board_id => params[:board_id]
@@ -93,6 +95,7 @@ class UserController < ApplicationController
       end
       
     end
+    
     
     #below selects publications to show in standard user data section of dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
@@ -123,6 +126,9 @@ class UserController < ApplicationController
                            :include => [:owner, :target])[0..24]
     end
     
+    
+    render :layout =>'site'
+    return
     
     if params[:board_id]
       #@boards = @current_user.boards.ranked_by_community_id(params[:board_id])
@@ -157,7 +163,7 @@ class UserController < ApplicationController
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     
-    render :layout => 'header_footer'
+    #render :layout => 'header_footer'
   end
   
   def board_dashboard
@@ -207,7 +213,7 @@ class UserController < ApplicationController
      
      #set so the correct tab will be active
      @current_board = @board
-     render :layout => 'header_footer'
+     #render :layout => 'header_footer'
 
   end
   
