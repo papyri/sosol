@@ -55,3 +55,9 @@
   = link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id
   - @board.emailers.each do |emailer| 
     = render :partial => emailer
+
+
+- if @board.community
+  %br
+  = link_to 'Edit ' + @board.community.name + ' community', :controller => 'communities', :action => 'edit', :id => @board.community.id    
+    

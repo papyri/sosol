@@ -49,3 +49,7 @@
 
 %br
 = link_to 'Edit This Board', edit_board_path(@board)
+
+- if @board.community
+  %br
+  = link_to 'Edit ' + @board.community.name + ' community', :controller => 'communities', :action => 'edit', :id => @board.community.id
