@@ -1,53 +1,59 @@
 
 
 
-
 .community
   
   
   %h1
     Listing communities
 
-  %table
-    %tr
-      %th
-        Name
-      %th
-        Friendly name
-      
-      -#
-        %th
-          Abbreviation
+  - if @communities.length <= 0
   
-      %th
-        Description
-      -#
-        %th
-          Logo
+    %p
+      No Communities have been setup.
+    %br
   
-  
-    - @communities.each do |community|
+  - else
+    %table
       %tr
-        %td 
-          = community.name 
-        %td 
-          = community.friendly_name 
+        %th
+          Name
+        %th
+          Friendly name
+        
         -#
-          %td 
-            = community.abbreviation 
+          %th
+            Abbreviation
     
-        %td 
-          = community.description 
+        %th
+          Description
         -#
+          %th
+            Logo
+    
+    
+      - @communities.each do |community|
+        %tr
           %td 
-            = community.logo
-             
-        %td 
-          = link_to 'Show', community 
-        %td 
-          = link_to 'Edit', edit_community_path(community) 
-        %td 
-          = link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete 
+            = community.name 
+          %td 
+            = community.friendly_name 
+          -#
+            %td 
+              = community.abbreviation 
       
+          %td 
+            = community.description 
+          -#
+            %td 
+              = community.logo
+               
+          %td 
+            = link_to 'Show', community 
+          %td 
+            = link_to 'Edit', edit_community_path(community) 
+          %td 
+            = link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete 
+          
 
 = link_to 'New community', new_community_path 
