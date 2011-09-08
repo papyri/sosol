@@ -1,7 +1,7 @@
 class HgvTransGlossariesController < ApplicationController
 
    # FIXME: add a find_hgv_trans_glossary method that uses HGVTransGlossary.new({:publication_id => ???}) to populate @hgv_trans_glossary, then call methods against it instead of HGVTransGlossary.new (which uses canon)
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   
   

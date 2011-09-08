@@ -1,5 +1,5 @@
 class UserController < ApplicationController
-  #layout 'site'
+  ##layout 'site'
   #layout 'header_footer'
   before_filter :authorize, :except => [:signin, :signout, :show, :info]
   

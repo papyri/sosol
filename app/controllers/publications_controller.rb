@@ -1,5 +1,5 @@
 class PublicationsController < ApplicationController
-  #layout 'site'
+  ##layout 'site'
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
