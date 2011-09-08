@@ -9,7 +9,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
 ActiveRecord::Schema.define(:version => 20110811204557) do
 
   create_table "boards", :force => true do |t|
@@ -48,11 +47,9 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
   create_table "communities", :force => true do |t|
     t.string   "name"
     t.string   "friendly_name"
-    t.string   "abbreviation"
     t.integer  "members"
     t.integer  "admins"
     t.string   "description"
-    t.string   "logo"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "board_id"
@@ -96,7 +93,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :default => "text", :null => false
+    t.string   "docotype",                                  :default => "text"
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
