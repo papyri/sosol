@@ -16,7 +16,7 @@ class Board < ActiveRecord::Base
   #left as default for sosol ranks
   named_scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
   
-  named_scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id == ?', id_in ] } }
+  named_scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
 
 
 

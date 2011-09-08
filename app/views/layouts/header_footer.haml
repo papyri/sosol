@@ -9,6 +9,10 @@
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
       = stylesheet_link_tag 'meta'
     = javascript_include_tag :defaults
+    %style(type="text/css")
+      :sass
+        #header_box
+          background-image: url('#{image_path("pn_header.jpg")}')
   
   = render :partial => "common/header", :locals => {:active_tab => "edit"}
   #content_box

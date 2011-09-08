@@ -14,8 +14,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :boards, :collection => { :rank => :get, :update_rankings => :post } 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
- 
-  map.resources :users, :collection => { :index_user_admins => :get }
  	
   map.resources :comments, :member => { :ask_for => :get }
 
@@ -41,6 +39,8 @@ ActionController::Routing::Routes.draw do |map|
 
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
+  map.all_users_links 'all_users_links', :controller => 'user', :action => 'all_users_links'
+  map.index_user_admins 'index_user_admins', :controller => 'user', :action => 'index_user_admins'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
   map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
