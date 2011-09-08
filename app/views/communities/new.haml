@@ -10,10 +10,14 @@
   
     = f.label :name 
     = f.text_field :name
+    %p
+      Name used to define the community, must be unique and cannot be changed after creation.
     %br
     
     = f.label :friendly_name 
     = f.text_field :friendly_name
+    %p
+      Name presented to the members of the community. This name will appear on the submit button for publications. Should be unique. Can be changed at anytime.
     %br
     
     -#
@@ -23,6 +27,8 @@
      
     = f.label :description 
     = f.text_field :description
+    %p
+      Brief description of the purpose of the community and its goals.
     %br
       
     -# 
