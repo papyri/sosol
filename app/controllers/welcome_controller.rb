@@ -1,5 +1,5 @@
 class WelcomeController < ApplicationController
-  layout 'site'
+  #layout 'site'
   
   def index
     if @current_user
