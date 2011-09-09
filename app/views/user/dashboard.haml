@@ -1,6 +1,6 @@
 #main.site
   - max_visible_pubs = 5
-  = render :partial => "common/flash_all"
+  -# render :partial => "common/flash_all"
   %h2 Your Publications
   - cache(:action => 'dashboard', :part => "your_publications_#{@current_user.id}") do
     -# render publications without status

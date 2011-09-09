@@ -56,10 +56,22 @@
                         
                   %div{:class=> "identifier_title"}                  
                     = link_to extra_id.title.strip, edit_polymorphic_path([publication,extra_id])
+                    - if possible_modified.needs_reviewing?(@current_user.id)
+                      = image_tag('review_flag.png')
+
                     
       -# create the holders for missing identifiers        
       - identifiers_to_show.each do |is|
         %div{:class => "identifier_holder " + is + " no_data "}
+          - if defined?(view_type) && view_type == "user"
+            - class_type = is
+            - link_type = is
+            - create_type = 'Create new'
+            - newstyle = 'style="color:blue; background-color:red"'
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
+       
+          
+      
       
       - if defined?(view_type) && view_type == "board"
         %div{:class => "board_info identifier_holder"}  

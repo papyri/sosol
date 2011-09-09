@@ -1,6 +1,6 @@
 include HgvMetaIdentifierHelper
 class HgvMetaIdentifiersController < IdentifiersController
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   before_filter :prune_params, :only => [:update, :get_date_preview]
   before_filter :complement_params, :only => [:update, :get_date_preview]

@@ -2,7 +2,6 @@
   width: 1000px;
   margin: 2em; }
 
-
 .publication_holder {
   position: relative;
   background-color: white;
@@ -66,7 +65,6 @@
   left: 770px;
   width: 230px;
   background-color: white; }
-
 
 .publications_header_holder {
   position: relative;
@@ -159,7 +157,6 @@
   text-align: center;
   top: 0px;
   left: 770px; }
-
 
 .identifier {
   overflow: hidden;
@@ -434,3 +431,6 @@
 .status_section_title {
   font-size: 200%;
   text-align: left; }
+
+.no_data {
+  background-color: lightgray; }
