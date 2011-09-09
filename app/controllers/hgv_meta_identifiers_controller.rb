@@ -12,7 +12,7 @@ class HgvMetaIdentifiersController < IdentifiersController
 
   def update
     find_identifier
-
+    #exit
     begin
       commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
       expire_publication_cache
@@ -36,31 +36,46 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     @identifier.get_epidoc_attributes
   end
+  
+  def complement
+    filename = 'geo.xml'
+    xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"][text()="' + params[:value] + '"]/..'
+    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
+    
+    @complementer_list = {}
+    
+    if element = doc.elements[xpath]
+      {:provenance_ancientFindspot => ['ancient', 'settlement'], :provenance_modernFindspot => ['modern', 'settlement'], :provenance_nome => ['ancient', 'nome'], :provenance_ancientRegion => ['ancient', 'region']}.each_pair {|key, taxonomy|
+        if place = element.elements['placeName[@type="' + taxonomy[0] + '"][@subtype="' + taxonomy[1] + '"]']
+          @complementer_list[key] = place.text
+        end
+      }
+    end
+
+    render :layout => false, :json => @complementer_list
+    #render :layout => false, :text => @complementer_list.inspect
+  end
 
   def autocomplete
-    filename = {
-      :provenance_ancientFindspot => 'ancientFindspot.xml',
-      :provenance_modernFindspot  => 'modernFindspot.xml',
-      :provenance_nome            => 'nomeList.xml',
-      :provenance_ancientRegion   => 'ancientRegion.xml'}[params[:key].to_sym]
-    xpath = {
-      :provenance_ancientFindspot => '/TEI/body/list/item/placeName[@type="ancientFindspot"]',
-      :provenance_modernFindspot  => '/TEI/body/list/item/placeName[@type="modernFindspot"]',
-      :provenance_nome            => '/nomeList/nome/name',
-      :provenance_ancientRegion   => '/TEI/body/list/item/placeName[@type="ancientRegion"]'}[params[:key].to_sym]    
-    pattern  = params[params[:key]]
+    filename = 'geo.xml'
+    xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"]'
+    pattern  = params[params[:key]].gsub(/(\(|\))/, '\\\\\1')
     max      = 10
 
     @autocompleter_list = []
-      
+     
+
     doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
+
     doc.elements.each(xpath) {|element|
-      if (@autocompleter_list.length < max) && (element.text =~ Regexp.new('\A' + pattern)) 
+      if (@autocompleter_list.length < max) && !@autocompleter_list.include?(element.text) && (element.text =~ Regexp.new('\A' + pattern)) 
         @autocompleter_list[@autocompleter_list.length] = element.text
       end
     }  
 
+    #render :layout => false, :text => @autocompleter_list.inspect
     render :layout => false
+
   end
 
   def get_date_preview
@@ -78,6 +93,16 @@ class HgvMetaIdentifiersController < IdentifiersController
        end
     }
         
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def get_geo_preview
+    @identifier = HGVMetaIdentifier.new
+    @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+    @update = HgvProvenance.format @identifier[:origPlace], @identifier[:provenance]
+
     respond_to do |format|
       format.js
     end
@@ -122,38 +147,6 @@ class HgvMetaIdentifiersController < IdentifiersController
           }
         end
 
-        # get rid of empty (invalid) provenance items
-        if params[:hgv_meta_identifier][:provenance]
-          params[:hgv_meta_identifier][:provenance].delete_if{|index, provenance|
-            if provenance[:value] == 'unbekannt'
-              if provenance[:children] && provenance[:children][:place]
-                provenance[:children][:place] = {}
-              end
-              false
-            else
-              if !provenance[:children]
-                true
-              elsif !provenance[:children][:place]
-
-                true
-              else
-                provenance[:children][:place].delete_if {|indexPlace, place|
-                  if !place[:children]
-                    true
-                  elsif !place[:children][:location]
-                    true
-                  elsif !place[:children][:location][:value]
-                    true
-                  else
-                    place[:children][:location][:value].empty? ? true : false
-                  end
-                }
-                provenance[:children][:place].empty? ? true : false
-              end
-            end
-          }
-        end
-
       end
 
     end
@@ -174,26 +167,6 @@ class HgvMetaIdentifiersController < IdentifiersController
           params[:hgv_meta_identifier][:mentionedDate].each{|index, date|
             if date[:children] && date[:children][:date] && date[:children][:date][:attributes]
               date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
-            end
-          }
-        end
-
-        if params[:hgv_meta_identifier][:provenance] && params[:hgv_meta_identifier][:provenance].kind_of?(Hash)
-          params[:hgv_meta_identifier] && params[:hgv_meta_identifier][:provenance].each {|index, provenance|
-            if provenance[:children] && provenance[:children][:place] && provenance[:children][:place].kind_of?(Hash)
-              provenance[:children][:place].each{|indexPlace, place|
-                if place[:attributes] && place[:attributes][:type] && place[:attributes][:type] == 'ancientRegion'
-                  if place[:children] && place[:children][:location] && place[:children][:location][:value]
-                    
-                    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', 'ancientRegion.xml'), 'r'))
-                    key = doc.elements['/TEI/body/list[@type="ancientRegion"]/item/placeName[@type="ancientRegion"][text()="' + place[:children][:location][:value] + '"]/@key']
-  
-                    if key && !key.value.empty?
-                      place[:children][:location][:attributes] = {:key => key.value}
-                    end
-                  end
-                end
-              }
             end
           }
         end
