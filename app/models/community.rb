@@ -14,14 +14,16 @@ class Community < ActiveRecord::Base
   
 
   def end_user
-    return User.find_by_id(self.end_user_id)
+    if self.end_user_id.nil?
+      return nil  
+    end
+      return User.find_by_id(self.end_user_id)
   end
   
   
   #check to see whether or not to allow members to submit to the community
   def is_submittable?
-    
     #if there is nowhere for the final publication to go, don't let them submit
-    return end_user.nil?
+    return !self.end_user.nil?
   end
 end
