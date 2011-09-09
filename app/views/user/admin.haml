@@ -15,16 +15,19 @@
   %br
   
 -#can edit their communities
-- if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
-  %h2
-    Your Communities
+-# if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
+
+%h2
+  Your Communities
+
+= link_to "Create new", :controller => "communities", :action => "new"
+%br
   
-  - @current_user.community_admins.each do |comm| 
-    = link_to comm.friendly_name, comm
-    %br
-  
+- @current_user.community_admins.each do |comm| 
+  = link_to comm.friendly_name, comm
   %br
-  %br
+%br
+%br
     
 -# -----Boards-----
 
