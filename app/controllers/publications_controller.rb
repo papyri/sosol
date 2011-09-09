@@ -617,23 +617,35 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
   end
   
+  def confirm_archive_all
+    @publications = Publication.find_all_by_owner_id(params[:id], :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id], :parent_id => nil }, :order => "updated_at DESC")
+  end
+  
   def archive
-    @publication = Publication.find(params[:id])
-    @publication.archive
+    archive_pub(params[:id])
     expire_publication_cache
     redirect_to @publication    
   end
   
-  def confirm_nuke
+  def archive_all
+    id_list = params[:id].split(/\//)
+    id_list.each do |id|
+       archive_pub(id)
+    end
+    expire_publication_cache
+    redirect_to dashboard_url 
+  end
+  
+  def confirm_withdraw
    @publication = Publication.find(params[:id])
   end
 
-  def nuke
+  def withdraw
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
-    @publication.nuke
+    @publication.withdraw
 
-    flash[:notice] = 'Publication ' + pub_name + ' was successfully nuked from orbit.'
+    flash[:notice] = 'Publication ' + pub_name + ' was successfully withdrawn.'
     expire_publication_cache
     redirect_to dashboard_url
   end 
@@ -785,5 +797,10 @@ class PublicationsController < ApplicationController
   
     def expire_publication_cache(user_id = @current_user.id)
       expire_fragment(:controller => 'user', :action => 'dashboard', :part => "your_publications_#{user_id}")
+    end
+    
+    def archive_pub(pub_id)
+      @publication = Publication.find(pub_id)
+      @publication.archive
     end
 end

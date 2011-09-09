@@ -4,8 +4,8 @@ en:
       general: General
       publication: Publication
       collection: Collection
-      provenance: Geo Information
-      reference: References
+      provenance: Provenance
+      reference: Bibliography
       translation: Translations
       date: Date
       mentionedDate: Mentioned Dates
@@ -65,6 +65,12 @@ en:
       collectionTemporaryNotes: Temporary lieu
       collectionTemporaryInventoryNumber: Temporary no.
 
+      sammelbuchBibliography: Sammelbuch
+      sammelbuchBibliographyTarget: Id
+      sammelbuchBibliographyPagination: Page
+      citedLiterature: Cited Literature
+      citedLiteratureTarget: Id
+      citedLiteraturePagingation: Page
       illustrations: Illustrations / Abbildungen
       figures: Digital images
       otherPublications: Other publications
@@ -108,6 +114,7 @@ en:
       quickSave: save entire file
       showDateTabs: add alternative dates
       datePreview: show date preview
+      geoPreview: update geo preview
       addAlternativePlace: add alternative location
 
     tooltip:

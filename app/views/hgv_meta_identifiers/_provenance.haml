@@ -17,7 +17,7 @@
             = label_tag baseAttributes + '[subtype]', I18n.t('meta.label.subtype'), :class => 'meta provenanceSubtype', :title => @identifier.configuration.xpath(:provenance)
             = select_tag baseAttributes + '[subtype]', options_for_select(HgvProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
             
-            %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+            %span.delete{:onclick => 'multiRemove(this.parentNode.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
             %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
           
           %p.clear

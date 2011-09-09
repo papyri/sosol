@@ -12,4 +12,4 @@
     #edit
       %ul
         - for commit in @identifier[:commits]
-          %li= link_to html_escape(commit[:message].split("\n")).first, url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)
+          %li= link_to html_escape(commit[:message].split("\n").first), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)

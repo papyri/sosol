@@ -14,7 +14,7 @@
             = text_field_tag base + '[value]', origPlace.value, :disabled => !@identifier.mutable?, :class => 'observechange provenanceValue'
             = check_box_tag base + '[unknown]', :unknown, origPlace.unknown?, :disabled => !@identifier.mutable?, :class => 'observechange provenanceUnknown', :onchange => 'provenanceOrigPlaceUnknownToggle(' + origPlaceIndex.to_s + ', this.checked)'
             = label_tag base + '[unknown]', I18n.t('meta.label.unknown'), :class => 'meta provenanceUnknown', :title => @identifier.configuration.xpath(:origPlace)
-            %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+            %span.delete{:onclick => 'multiRemove(this.parentNode.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
             %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
 
           %div{:id => 'origPlace_' +  origPlaceIndex.to_s + '_data', :style => 'display: ' + (origPlace.unknown? ? 'none' : 'block')}
