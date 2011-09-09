@@ -148,7 +148,7 @@ class BoardsController < ApplicationController
       redirect_to :action => "edit", :id => (@board).id
     else
       #TODO add error check to give meaningfull response to user.
-      flash[:error] = 'Board creation failed. Was your name unique'
+      flash[:error] = 'Board creation failed. Was your name unique?'
       redirect_to dashboard_url
     end         
   end
