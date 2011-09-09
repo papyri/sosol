@@ -1,0 +1,14 @@
+#main
+  
+  = render :partial => "common/flash_all"
+  
+  #users_list
+    %h2 Link to Usage Data for Each User
+    %br
+    %br
+    - @users.each do |user|
+      = link_to(user.human_name, options = {:controller => 'user', :action => 'show', :user_name => user.name})
+      = "&nbsp User name: " + user.name
+      = "&nbsp Member since " 
+      #{user.created_at.to_date.to_s(:long)}
+      %br
