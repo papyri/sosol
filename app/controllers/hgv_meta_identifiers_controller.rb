@@ -98,6 +98,16 @@ class HgvMetaIdentifiersController < IdentifiersController
     end
   end
 
+  def get_geo_preview
+    @identifier = HGVMetaIdentifier.new
+    @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+    @update = HgvProvenance.format @identifier[:origPlace], @identifier[:provenance]
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
   protected
 
     def prune_params

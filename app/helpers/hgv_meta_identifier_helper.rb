@@ -6,23 +6,6 @@ module HgvMetaIdentifierHelper
   
   module HgvGeo
 
-    class Geo
-      def _initialize
-        @ancient = @modern = []
-      end
-
-      def populateFromXml xml
-      end
-
-      def populateFromPost post
-      end
-      
-      def writeToXml
-        
-      end
-      
-    end # class Geo
-    
     class OrigPlace
       @@typeList          = [:composition, :destination, :execution, :receipt, :location, :reuse]
       @@referenceTypeList = [:findspot, :unknown]

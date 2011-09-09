@@ -169,6 +169,33 @@ class HGVMetaIdentifier < HGVIdentifier
     end
   end
 
+  # saves the values stored within a hash object (usually generated via a webbrowser form)
+  def populate_epidoc_attributes_from_attributes_hash attributes_hash
+
+    @configuration.scheme.each_pair do |key, config|
+      if config[:children] || config[:attributes]
+        result = if config[:multiple]
+          tmp = []
+          if attributes_hash[key.to_s]
+            attributes_hash[key.to_s].each_pair {|index, item|
+              tmp[tmp.length] = populate_tree_from_attributes_hash item, config
+            }
+          end
+          tmp
+        else
+          populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
+        end
+
+        self[key] = result  
+      elsif config[:multiple]
+        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
+      else 
+        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].strip : nil
+      end
+    end
+  end
+
+
   protected
 
 =begin
@@ -279,7 +306,7 @@ class HGVMetaIdentifier < HGVIdentifier
       else
         value = self[key] && !self[key].empty? ? (config[:children] || config[:attributes] ? self[key][:value] : self[key]) : nil
         
-        if value && !value.empty? 
+        if value && !value.empty? # CL: Biblio here!
           element = doc.bulldozePath(config[:xpath])
           element.text = value
           if config[:attributes]
@@ -392,32 +419,6 @@ class HGVMetaIdentifier < HGVIdentifier
       value = value.values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip }
     end
     self[key] = value    
-  end
-
-  # saves the values stored within a hash object (usually generated via a webbrowser form)
-  def populate_epidoc_attributes_from_attributes_hash attributes_hash
-
-    @configuration.scheme.each_pair do |key, config|
-      if config[:children] || config[:attributes]
-        result = if config[:multiple]
-          tmp = []
-          if attributes_hash[key.to_s]
-            attributes_hash[key.to_s].each_pair {|index, item|
-              tmp[tmp.length] = populate_tree_from_attributes_hash item, config
-            }
-          end
-          tmp
-        else
-          populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
-        end
-
-        self[key] = result  
-      elsif config[:multiple]
-        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
-      else 
-        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].strip : nil
-      end
-    end
   end
 
   def populate_tree_from_attributes_hash data, config
