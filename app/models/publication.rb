@@ -294,7 +294,7 @@ class Publication < ActiveRecord::Base
         community_copy.parent_id = nil
         
         #reset the community id to be sosol
-        community_copy.community_id = nil
+        #leave as is   community_copy.community_id = nil
         
         #remove the original creator id (that info is now in the git history )
         community_copy.creator_id = community_copy.owner_id

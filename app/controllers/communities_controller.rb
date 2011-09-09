@@ -41,10 +41,11 @@ class CommunitiesController < ApplicationController
   # POST /communities.xml
   def create
     @community = Community.new(params[:community])
+    @community.admins << @current_user
 
     respond_to do |format|
       if @community.save
-        format.html { redirect_to(@community, :notice => 'Community was successfully created.') }
+        format.html { redirect_to(:action => 'edit', :id => @community.id, :notice => 'Community was successfully created.') }
         format.xml  { render :xml => @community, :status => :created, :location => @community }
       else
         format.html { render :action => "new" }
@@ -144,14 +145,41 @@ class CommunitiesController < ApplicationController
   end
 
   def remove_admin
+    
     user = User.find(params[:admin_id])
 
     @community = Community.find(params[:id])
-    
+
+
+
+    if user == @current_user
+      #warn them about deleting themselves as admins
+      render "current_user_warning"
+      return
+      if 1 == @community.admins.length
+        #dont let them remove themselves if they are the last admin
+        flash[:error] = "Cannot remove you since you are the only admin for this community."
+        redirect_to :action => "add_admin_page",:id => @community.id
+        return
+      end
+    end
+
     @community.admins.delete(user)
     @community.save
 
     redirect_to :action => "add_admin_page", :id => @community.id
+  end
+
+  def remove_current_user
+        
+
+    @community = Community.find(params[:id])
+
+
+    @community.admins.delete(@current_user)
+    @community.save
+
+    redirect_to :action => "show", :id => @community.id
   end
 
   def edit_end_user
