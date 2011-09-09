@@ -13,6 +13,13 @@
       :sass
         #header_box
           background-image: url('#{image_path("pn_header.jpg")}')
+        .loading
+          background = gray + 90
+          background-image: url('#{image_path("ajax_loader.gif")}')
+          background-repeat: no-repeat
+          background-position: center center
+          -webkit-background-size: 128px 128px
+          opacity: .5
   
   = render :partial => "common/header", :locals => {:active_tab => "edit"}
   #content_box
