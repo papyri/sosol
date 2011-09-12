@@ -2,24 +2,29 @@
 - if @community
 
   %h1 
-    Community Admins
+    = "Community Admins for " + @community.format_name
   
   %p 
-    = "These admins are able to add/remove community members and edit the settings for the "  + @community.name + " ( " + @community.friendly_name + " ) community."
+    = 'These admins are able to add/remove community members and edit the settings for the '  + @community.format_name
+  %br
   %h2
     Existing Admins
     
   %p click X by name to remove
+  %br
   - @community.admins.each do |admin|
-    = admin.name 
-    = link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id
+    .remove_user
+      .user_name
+        = admin.human_name + "  ( " + admin.name + " ) " 
+        = link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id
     %br
+    
     
   %h2
     Potential Admins
   %p 
     click name to add
-         
+  %br       
   = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_admin", @community.id ) }
 
   

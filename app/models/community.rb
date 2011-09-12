@@ -26,4 +26,9 @@ class Community < ActiveRecord::Base
     #if there is nowhere for the final publication to go, don't let them submit
     return !self.end_user.nil?
   end
+  
+  
+  def format_name
+    return  self.name + " ( " + self.friendly_name + " )"
+  end
 end

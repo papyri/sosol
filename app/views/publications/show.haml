@@ -77,7 +77,7 @@
                 - @current_user.community_memberships.each do |community|
                 
                   - if community.is_submittable? #check to see that we can submit to community
-                    - community_hash[community.friendly_name] = community.id
+                    - community_hash[community.format_name] = community.id
                   -#= submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
                 = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => 'checkForComment()' }
                 

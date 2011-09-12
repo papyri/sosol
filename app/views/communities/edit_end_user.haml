@@ -5,7 +5,7 @@
 %h1
   Community End User
 - if @community.end_user
-  = "The current end user for " + @community.name + " ( " + @community.friendly_name + " ) is "
+  = "The current end user for " + @community.format_name + " is "
   %b
     = @community.end_user.name
   %br  
@@ -14,7 +14,7 @@
   %br
 - else
   %h2
-    = "No End User has been set. Community members will not be able to submit to " + @community.name + " ( " + @community.friendly_name + " ) without an end user."  
+    = "No End User has been set. Community members will not be able to submit to " + @community.format_name + " without an end user."  
     = "Click user name to set as end repository for community publications."
 - if @community
   

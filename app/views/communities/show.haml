@@ -1,3 +1,5 @@
+%h1
+  = "Community " + @community.format_name
 %b
   Name:
 = @community.name
@@ -6,14 +8,12 @@
 %b
   Friendly name:
 = @community.friendly_name 
-%br 
-
-
--#
-  %b
-    Abbreviation:
-  = @community.abbreviation
-  %br 
+%br
+   
+%b
+  Description:
+= @community.description
+%br
 
 %br
 %b
@@ -21,6 +21,8 @@
   %br 
 - if @community.end_user
   = @community.end_user.name
+- else
+  = "! No end user set ! Community cannot accept submissions."
 %br
 %br 
 
@@ -29,7 +31,7 @@
   %br 
    
 - @community.admins.each do |a|
-  = a.name
+  = a.human_name + " ( " + a.name + " )"
   %br
 %br 
   
@@ -37,7 +39,7 @@
   Members
   %br 
 - @community.members.each do |m|
-  = m.name
+  = m.human_name + " ( " + m.name + " )"
   %br 
 %br 
 
@@ -48,17 +50,5 @@
   = b.name
   %br
 %br
-
-
-%b
-  Description:
-= @community.description
-%br 
-
--#
-  %b
-    Logo:
-  = @community.logo
-  %br 
 
 = link_to 'Edit', edit_community_path(@community) | 

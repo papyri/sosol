@@ -2,7 +2,7 @@
 
 .community
   %h1
-    = "Editing " + @community.name + "(" + @community.friendly_name + ")" + " community"
+    = "Editing " + @community.format_name + " community"
   
   - form_for(@community) do |f|
     = f.error_messages
@@ -15,19 +15,11 @@
     = f.label :friendly_name 
     = f.text_field :friendly_name
     %br
-    -#
-      = f.label :abbreviation 
-      = f.text_field :abbreviation 
-      %br
-     
+
     = f.label :description 
     = f.text_field :description
     %br
-    -# 
-      = f.label :logo 
-      = f.text_field :logo 
-      %br
-    
+
     = f.submit 'Update Above'
     %br
   %br  
@@ -40,7 +32,7 @@
     = @community.end_user.name
   - else
     %b
-      = "! No end user set! End user must be set before community can process submissions."
+      = "! No end user set ! End user must be set before community can process submissions."
 
   %br
   %br
