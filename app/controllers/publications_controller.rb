@@ -183,9 +183,10 @@ class PublicationsController < ApplicationController
       community_id.strip
       if !community_id.empty? && community_id != 0
         @publication.community_id = community_id
+        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       end
     end
-  
+    
     #raise community_id
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
