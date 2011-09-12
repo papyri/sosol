@@ -32,11 +32,11 @@ class ApplicationController < ActionController::Base
 
   def render_500(e)
     notify_hoptoad(e)
-    flash[:error] = "We're sorry, but something went wrong."
+    flash.now[:error] = "We're sorry, but something went wrong."
     if @current_user.nil?
-      redirect_to signin_url, :status => 500
+      render :controller => 'user', :action => 'signin', :status => 500
     else
-      redirect_to dashboard_url, :status => 500
+      render :controller => 'user', :action => 'dashboard', :status => 500
     end
   end
   
