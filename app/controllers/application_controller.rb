@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
   def render_500(e)
     notify_hoptoad(e)
     flash[:error] = "We're sorry, but something went wrong."
-    render :template => 'common/error_500', :status => 500
+    render :template => 'common/error_500', :layout => false, :status => 500
   end
   
   def authorize
