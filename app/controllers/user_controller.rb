@@ -14,20 +14,21 @@ class UserController < ApplicationController
   end
 
   #TODO who has the right to see this?, will this create any dangerous links to things that a user should not be able to do 
-  def all_usage_stats
-    if @current_user.admin || @current_user.developer
-      @users = User.find(:all)
-      
-      #default to show last 2 weeks activity when showing all users
-      @calc_date = Date.today - 14
-      
-      flash.now[:notice] = "Usage since #{@calc_date}"
-      render "usage_stats"
-      return
-    end
-    flash[:error] = "Only admins and developers are authorized to use this link."
-    redirect_to dashboard_url
-  end
+  # commented out to disable per weekly meeting 9/9/2011
+#  def all_usage_stats
+#    if @current_user.admin || @current_user.developer
+#      @users = User.find(:all)
+#      
+#      #default to show last 2 weeks activity when showing all users
+#      @calc_date = Date.today - 14
+#      
+#      flash.now[:notice] = "Usage since #{@calc_date}"
+#      render "usage_stats"
+#      return
+#    end
+#    flash[:error] = "Only admins and developers are authorized to use this link."
+#    redirect_to dashboard_url
+#  end
   
   def all_users_links
     @users = User.find(:all, :order => "full_name ASC")
