@@ -34,9 +34,9 @@ class ApplicationController < ActionController::Base
     notify_hoptoad(e)
     flash.now[:error] = "We're sorry, but something went wrong."
     if @current_user.nil?
-      render :controller => 'user', :action => 'signin', :status => 500
+      render :template => 'user/signin', :status => 500
     else
-      render :controller => 'user', :action => 'dashboard', :status => 500
+      render :template => 'user/dashboard', :status => 500
     end
   end
   
