@@ -23,8 +23,22 @@ class ApplicationController < ActionController::Base
 
   before_filter :get_user_id
   before_filter :rpx_setup
-  
+
+  unless ActionController::Base.consider_all_requests_local
+    rescue_from Exception, :with => :render_500
+  end
+
   protected
+
+  def render_500(e)
+    notify_hoptoad(e)
+    flash[:error] = "We're sorry, but something went wrong."
+    if @current_user.nil?
+      redirect_to signin_url, :status => 500
+    else
+      redirect_to dashboard_url, :status => 500
+    end
+  end
   
   def authorize
     if @current_user.nil?
