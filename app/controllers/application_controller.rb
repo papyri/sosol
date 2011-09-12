@@ -32,13 +32,8 @@ class ApplicationController < ActionController::Base
 
   def render_500(e)
     notify_hoptoad(e)
-    get_user_id
-    flash.now[:error] = "We're sorry, but something went wrong."
-    if @current_user.nil?
-      render :template => 'user/signin', :status => 500
-    else
-      render :template => 'user/dashboard', :status => 500
-    end
+    flash[:error] = "We're sorry, but something went wrong."
+    render :template => 'common/error_500', :status => 500
   end
   
   def authorize
