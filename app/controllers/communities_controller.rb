@@ -61,7 +61,7 @@ class CommunitiesController < ApplicationController
 
     respond_to do |format|
       if @community.update_attributes(params[:community])
-        format.html { redirect_to(@community, :notice => 'Community was successfully updated.') }
+        format.html { redirect_to(:action => 'edit', :id => @community.id, :notice => 'Community was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
