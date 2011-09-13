@@ -265,6 +265,33 @@ function multiAddProvenanceRaw(e){
   $(addPlaceKey).observe('click', function(ev){ multiAddPlaceRaw(this); });
 }
 
+function geoUpdateExcludeLists(key){
+ 
+  // make sure that every item has an id
+  // build exclude list
+  // clear exclude fields
+  var exclude = '';
+  $$('#multiItems_' + key + ' > li > input.provenancePlaceId').each(function(item){
+    if(!item.value || item.value == ''){
+      item.value = generateRandomId('geo');
+    }
+    exclude += ' #' + item.value;
+    item.parentNode.select('input.provenancePlaceExclude')[0].value = '';
+  });
+  exclude = exclude.replace(/^\s+/, '').replace(/\s+$/, '').replace(/\s+/, ' ');
+  
+  if($$('#multiItems_' + key + ' > li > input.provenancePlaceId').length > 1){
+
+    // write exclude lists to each item
+    $$('#multiItems_' + key + ' > li > input.provenancePlaceExclude').each(function(item){
+       var meMyself = '#' + item.parentNode.select('input.provenancePlaceId')[0].value;
+
+       item.value = exclude.replace(meMyself, '');
+    });
+
+  }
+}
+
 function multiAddPlaceRaw(e){
   var key = e.parentNode.id.substr(e.parentNode.id.indexOf('_') + 1);
   
@@ -278,11 +305,6 @@ function multiAddPlaceRaw(e){
   var geoSpotKey = generateRandomId('geoSpot');
   var geoReferenceKey = generateRandomId('geoReference');
   
-  var id = generateRandomId('geo');
-  var exclude = '';
-
-  $$('#multiItems_' + key + ' > li > input.provenancePlaceId').each(function(item){ exclude += ' #' + item.value; });
-
   var placeIndex = multiGetNextIndex(key);
 
   //console.log(e.parentNode.parentNode);
@@ -298,10 +320,10 @@ function multiAddPlaceRaw(e){
 
   var item = '<li>' +
              '   <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_id">Place ID</label>' +
-             '   <input type="text" value="' + id + '" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][id]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_id" class="observechange provenancePlaceId">' +
+             '   <input type="text" value="" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][id]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_id" class="observechange provenancePlaceId">' +
              '   <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_exclude">Exclude</label>' +
-             '   <input type="text" value="' + exclude + '" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][exclude]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_exclude" class="observechange provenancePlaceExclude">' +
-             '   <span title="Click to delete item" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '   <input type="text" value="" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][exclude]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_exclude" class="observechange provenancePlaceExclude">' +
+             '   <span title="Click to delete item" onclick="multiRemove(this.parentNode); geoUpdateExcludeLists(\'' + key + '\');" class="delete">x</span>' +
              '   <span title="Click and drag to move item" class="move">o</span>' +
              '   <div class="geoContainer">' +
              '     <div id="multi_' + geoSpotKey + '" class="multi geoSpot">' +
@@ -348,6 +370,7 @@ function multiAddPlaceRaw(e){
              '   </div>' +
              '</li>';
   multiUpdate(key, item);
+  geoUpdateExcludeLists(key);
 }
 
 function multiAddGeoSpot(key, provenanceIndex, placeIndex)
