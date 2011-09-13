@@ -6,23 +6,6 @@ module HgvMetaIdentifierHelper
   
   module HgvGeo
 
-    class Geo
-      def _initialize
-        @ancient = @modern = []
-      end
-
-      def populateFromXml xml
-      end
-
-      def populateFromPost post
-      end
-      
-      def writeToXml
-        
-      end
-      
-    end # class Geo
-    
     class OrigPlace
       @@typeList          = [:composition, :destination, :execution, :receipt, :location, :reuse]
       @@referenceTypeList = [:findspot, :unknown]
@@ -62,6 +45,14 @@ module HgvMetaIdentifierHelper
           end
         end
 
+      end
+      
+      def self.getObjectList epiDocList
+        objectList = []
+        epiDocList.each {|epi|
+          objectList[objectList.length] = HgvGeo::OrigPlace.new(:origPlace => epi)
+        }
+        objectList
       end
       
       def type= value
@@ -140,6 +131,15 @@ module HgvMetaIdentifierHelper
 
         end
 
+      end
+      
+      def self.getObjectList epiDocList
+        objectList = {}
+        epiDocList.each {|epi|
+          obi = HgvGeo::Provenance.new(:provenance => epi)
+          objectList[obi.id ? obi.id : objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
+        }
+        objectList
       end
       
       def populateAtomFromHash hash
@@ -247,10 +247,8 @@ module HgvMetaIdentifierHelper
                 @referenceList = init[:geo][:attributes][:reference].split
               end
             end
-            if init[:geo][:children]
-              if init[:geo][:children][:offset] && init[:geo][:children][:offset][:value]
-                @offset = init[:geo][:children][:offset][:value]
-              end
+            if init[:geo][:preFlag] # CL: CROMULENT GEO HACK
+              @offset = init[:geo][:preFlag]
             end
             if init[:geo][:value]
               @name = init[:geo][:value]
@@ -381,8 +379,164 @@ module HgvMetaIdentifierHelper
   end
 
   module HgvProvenance
-    def HgvProvenance.format provenance
-      '…'
+    def HgvProvenance.formatPlaceList placeList
+      result = ''
+      
+      placeList.each_index{|placeIndex|
+        result << HgvProvenance.formatGeoList(placeList[placeIndex].geoList)
+
+        result << if placeIndex < placeList.length - 1
+          if placeIndex == placeList.length - 2 
+            ' oder '
+          elsif placeIndex < placeList.length - 2
+            ', '
+          else
+            ''
+          end
+        else
+          ''
+        end
+        
+      }
+
+      result
+    end
+
+    def HgvProvenance.formatGeoList geoList
+      result = ''
+
+      ancient   = geoList.select{|geo| [:settlement, nil].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      modern    = geoList.select{|geo| [:settlement, nil].include?(geo.subtype) && geo.type == :modern ? true : false }.shift
+      province  = geoList.select{|geo| [:province].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      nome      = geoList.select{|geo| [:nome].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      region    = geoList.select{|geo| [:region].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+
+      if ancient && modern
+        if(ancient.offset)
+          result << HgvProvenance.formatGeoSpot(modern)
+          result << ' '
+          result << HgvProvenance.formatGeoSpot(ancient)
+        else 
+          result << HgvProvenance.formatGeoSpot(ancient)
+          result << ' (= '
+          result << HgvProvenance.formatGeoSpot(modern)
+          result << ')'
+        end
+      elsif ancient
+        result << HgvProvenance.formatGeoSpot(ancient)
+      elsif modern
+        result << HgvProvenance.formatGeoSpot(modern)
+      end
+
+      if province || nome || region
+        if ancient || modern
+          result << ' ('
+        end
+        
+        provinceNomeAndRegion = ''
+        [province, nome, region].compact.each {|geoSpot|
+          provinceNomeAndRegion << if geoSpot.offset
+            ' '
+          else
+            ', '
+          end
+          provinceNomeAndRegion << HgvProvenance.formatGeoSpot(geoSpot)
+          
+        }
+
+        result << ( provinceNomeAndRegion =~ /[^, ].*$/ ? provinceNomeAndRegion[/[^, ].*$/] : '')
+
+        if ancient || modern
+          result << ')'
+        end
+      end
+
+      result
+    end
+
+    def HgvProvenance.formatGeoSpot geoSpot
+      result = ''
+      result << (geoSpot.offset ? 'bei ' : '')
+      result << (geoSpot.name ? geoSpot.name : '')
+      result << (geoSpot.certainty ? ' ?' : '')
+      result
+    end
+    
+    def HgvProvenance.format origPlaceList, provenanceList
+      origPlaceList  = HgvGeo::OrigPlace.getObjectList(origPlaceList)
+      provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
+      result = ''
+      
+      origPlaceList.each {|origPlace|
+        begin
+          result << {
+            :composition => 'Schreibort',
+            :destination => 'Zielort',
+            :execution => 'Ort der Ausführung',
+            :receipt => 'Empfangsort',
+            :reuse => 'Wiederverwendung'
+          }[origPlace.type]
+          result << ': '
+        rescue
+        end
+
+        if origPlace.value && [:Fundort, :unbekannt].include?(origPlace.value)
+          result << 'unbekannt'
+          if origPlace.correspondency && provenanceList[origPlace.correspondency[1..-1]]
+            result << ' ('
+            result << HgvProvenance.formatPlaceList(provenanceList[origPlace.correspondency[1..-1]].placeList)
+            result << ')'
+            provenanceList.delete origPlace.correspondency[1..-1]
+          end
+        else
+          result << HgvProvenance.formatPlaceList(origPlace.placeList)
+        end
+        
+        result << '; '
+      
+      }
+      
+      if provenanceList || provenanceList.length > 0
+
+        provenanceList.each_pair {|id, provenance|
+  
+          begin
+            result << {
+              :found => 'Fundort',
+              :observed => 'gesichtet',
+              :destroyed => 'zerstört',
+              :'not-found' => 'verschollen',
+              :reused => 'wiederverwendet',
+              :moved => 'bewegt',
+              :acquired => 'erworben',
+              :sold => 'verkauft'
+            }[provenance.type]
+            
+            if provenance.subtype == :last
+              result = 'zuletzt ' + result
+            end
+              
+            result << ': '
+          rescue
+          end
+  
+          result << HgvProvenance.formatPlaceList(provenance.placeList)
+          
+          if provenance.date
+            result << ' - '
+            result << HgvFormat.formatDateFromIsoParts(provenance.date)
+          end
+  
+          result << '; '
+        }
+        
+        result = result[0..-3]
+
+      else
+        result = result[0..-3]
+      end
+
+      result 
     end
 =begin
     def HgvProvenance.format provenance
@@ -1325,7 +1479,7 @@ module HgvMetaIdentifierHelper
   
   module HgvFormat
 
-    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore, isoNotAfter, certainty = nil
+    def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore = nil, isoNotAfter = nil, certainty = nil
       date_item = {}
       
       date1 = isoWhen && !isoWhen.empty? ? isoWhen : (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)

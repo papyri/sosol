@@ -159,7 +159,7 @@ function multiAddOrigPlaceRaw(e){
              '    <input type="text" value="" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][value]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value" class="observechange provenanceValue">' + 
              '    <input type="checkbox" value="unknown" onchange="provenanceOrigPlaceUnknownToggle(' + origPlaceIndex + ', this.checked)" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][unknown]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_unknown" class="observechange provenanceUnknown">' + 
              '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace" for="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_unknown" class="meta provenanceUnknown">Unknown</label>' + 
-             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode)" class="delete">x</span>' + 
+             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode.parentNode)" class="delete">x</span>' + 
              '    <span title="Click and drag to move item" class="move">o</span>' + 
              '  </p>' + 
              '  <div id="origPlace_' + origPlaceIndex + '_data">' + 
@@ -224,7 +224,7 @@ function multiAddProvenanceRaw(e){
              '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" class="meta provenanceSubtype">Subtype</label>' +
              '    <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][subtype]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" class="observechange provenanceSubtype"><option value=""></option>' +
              '    <option value="last">last</option></select>' +
-             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode.parentNode)" class="delete">x</span>' +
              '    <span title="Click and drag to move item" class="move">o</span>' +
              '  </p>' +
              '  <p class="clear">' +
@@ -252,8 +252,14 @@ function multiAddProvenanceRaw(e){
 
 function multiAddPlaceRaw(e){
   var key = e.parentNode.id.substr(e.parentNode.id.indexOf('_') + 1);
-  var provenanceIndex = e.parentNode.parentNode.parentNode.id.substr(e.parentNode.parentNode.parentNode.id.indexOf('_') + 1);
-  var provenanceType = e.parentNode.parentNode.parentNode.id.substr(0, e.parentNode.parentNode.parentNode.id.indexOf('_'));
+  
+  var li = e;
+  while(li.nodeName.toLowerCase() != 'li'){
+    li = li.parentNode;
+  }
+  
+  var provenanceIndex = li.id.substr(li.id.indexOf('_') + 1);
+  var provenanceType = li.id.substr(0, li.id.indexOf('_'));
   var geoSpotKey = generateRandomId('geoSpot');
   var geoReferenceKey = generateRandomId('geoReference');
   
@@ -686,7 +692,7 @@ function toggleReferenceList(){
     display = 'none';
   }
 
-  $$('div.geoReferenceContainer').each(function(e){ console.log('***'); e.setStyle( {'display' : display } ); });
+  $$('div.geoReferenceContainer').each(function(e){ e.setStyle( {'display' : display } ); });
 
 }
 

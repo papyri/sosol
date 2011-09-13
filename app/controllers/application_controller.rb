@@ -23,8 +23,26 @@ class ApplicationController < ActionController::Base
 
   before_filter :get_user_id
   before_filter :rpx_setup
-  
+
+  unless ActionController::Base.consider_all_requests_local
+    rescue_from Exception, :with => :render_500
+    rescue_from ActionController::RoutingError, :with => :render_404
+    rescue_from ActionController::UnknownAction, :with => :render_404
+    rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+  end
+
   protected
+
+  def render_500(e)
+    notify_hoptoad(e)
+    flash[:error] = "We're sorry, but something went wrong."
+    render :template => 'common/error_500', :layout => false, :status => 500
+  end
+
+  def render_404(e)
+    flash[:error] = "The page you were looking for doesn't exist."
+    render :template => 'common/error_404', :layout => false, :status => 404
+  end
   
   def authorize
     if @current_user.nil?

@@ -5,6 +5,11 @@ require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc'
+if Gem.loaded_specs['rdoc'].version >= Gem::Version.create('2.4.2')
+  require 'rdoc/task'
+else
+  require 'rake/rdoctask'
+end
 
 require 'tasks/rails'
