@@ -12,7 +12,7 @@
         = text_field_tag placeBaseAttributes + '[id]', place.id, :disabled => !@identifier.mutable?, :class => 'observechange provenancePlaceId'
         = label_tag placeBaseAttributes + '[exclude]', I18n.t('meta.label.exclude')
         = text_field_tag placeBaseAttributes + '[exclude]', place.exclude, :disabled => !@identifier.mutable?, :class => 'observechange provenancePlaceExclude'
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+        %span.delete{:onclick => 'multiRemove(this.parentNode); geoUpdateExcludeLists(\'' + key + '\');', :title => I18n.t('meta.tooltip.multiDelete')} x
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
           
         .geoContainer
