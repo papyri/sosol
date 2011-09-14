@@ -19,7 +19,7 @@ class ERB
       if s.html_safe?
         s
       else
-        s.gsub(/[&"><]/) { |special| HTML_ESCAPE[special] }.html_safe
+        s.to_s.gsub(/&/, "&amp;").gsub(/\"/, "&quot;").gsub(/>/, "&gt;").gsub(/</, "&lt;").html_safe
       end
     end
 
@@ -62,17 +62,6 @@ end
 
 module ActiveSupport #:nodoc:
   class SafeBuffer < String
-    alias safe_concat concat
-
-    def concat(value)
-      if value.html_safe?
-        super(value)
-      else
-        super(ERB::Util.h(value))
-      end
-    end
-    alias << concat
-
     def +(other)
       dup.concat(other)
     end

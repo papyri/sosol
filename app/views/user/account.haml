@@ -31,7 +31,12 @@
       = f.submit "Update"
   %br
   %br
-  = link_to "Usage Stats", usage_url
+  = link_to "Your Usage Stats", usage_url
+  %br
+  %br
+  = link_to "Usage Stats By User", all_users_links_url
+  %br
+  %br
   %h3
     Your OpenIDs
   - if @identifiers.length == 0

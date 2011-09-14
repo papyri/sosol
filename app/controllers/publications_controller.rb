@@ -1,42 +1,12 @@
 class PublicationsController < ApplicationController
   layout 'site'
   before_filter :authorize
-  
-  protect_from_forgery :only => []
+  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
   def new
   end
   
-  
-  def allow_submit?
-    #check if publication has been changed by user
-    allow = @publication.modified?
-    
-    #only let creator submit
-    allow = allow && @publication.creator_id == @current_user.id 
-    
-    #only let user submit, don't let a board member submit
-    allow = allow && @publication.owner_type == "User"
-    
-    #dont let user submit if already submitted, or committed etc..
-    allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
-    
-    return allow
-    
-    #below bypassed until we have return mechanism in place
-    
-    #check if any part of the publication is still being edited (ie not already submitted)
-    if allow #something has been modified so lets see if they can submit it
-      allow = false #dont let them submit unless something is in edit status
-      @publication.identifiers.each  do |identifier|
-        if identifier.nil? || identifier.status == "editing" 
-          allow = true
-        end        
-      end
-    end
-   allow
-  end
-  
+ 
   def determine_creatable_identifiers
     @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     
@@ -77,10 +47,10 @@ class PublicationsController < ApplicationController
     
   end
 
-
   def advanced_create()
     
   end
+
   # POST /publications
   # POST /publications.xml
   def create
@@ -197,20 +167,7 @@ class PublicationsController < ApplicationController
     publication_from_identifiers(id_list)
   end
 
-  def is_theirs?
-    return  @publication.owner_type == "User"  && ( @publication.owner == @current_user )  
-  end
-  
   def submit
-    @publication = Publication.find(params[:id])
-    
-    #check if it is the owner
-    if ! is_theirs?
-      flash[:error] = 'You do not have permissions to submit this publication.'
-      redirect_to dashboard_url
-      return
-    end
-        
     #prevent resubmitting...most likely by impatient clicking on submit button
     if ! %w{editing new}.include?(@publication.status)
       flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
@@ -618,7 +575,16 @@ class PublicationsController < ApplicationController
   end
   
   def confirm_archive_all
+    if @current_user.id.to_s != params[:id]
+      if @current_user.developer || @current_user.admin
+        flash.now[:warning] = "You are going to archive publications you do not own as either a developer or an admin."
+      else
+        flash[:error] = 'You are only allowed to archive your publications.'
+        redirect_to dashboard_url
+      end
+    end
     @publications = Publication.find_all_by_owner_id(params[:id], :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id], :parent_id => nil }, :order => "updated_at DESC")
+    
   end
   
   def archive
@@ -627,9 +593,11 @@ class PublicationsController < ApplicationController
     redirect_to @publication    
   end
   
+  # - loop thru all the committed publication ids and archive each one
+  # - clear the cache
+  # - go to the dashboard
   def archive_all
-    id_list = params[:id].split(/\//)
-    id_list.each do |id|
+    params[:pub_ids].each do |id|
        archive_pub(id)
     end
     expire_publication_cache
@@ -678,6 +646,47 @@ class PublicationsController < ApplicationController
   end
   
   protected
+    def find_publication
+      @publication ||= Publication.find(params[:id])
+    end
+
+    def ownership_guard
+      find_publication
+      if !@publication.mutable_by?(@current_user)
+        flash[:error] = 'Operation not permitted.'
+        redirect_to dashboard_url
+      end
+    end
+  
+    def allow_submit?
+      #check if publication has been changed by user
+      allow = @publication.modified?
+      
+      #only let creator submit
+      allow = allow && @publication.creator_id == @current_user.id 
+      
+      #only let user submit, don't let a board member submit
+      allow = allow && @publication.owner_type == "User"
+      
+      #dont let user submit if already submitted, or committed etc..
+      allow = allow && ((@publication.status == "editing") || (@publication.status == "new"))
+      
+      return allow
+      
+      #below bypassed until we have return mechanism in place
+      
+      #check if any part of the publication is still being edited (ie not already submitted)
+      if allow #something has been modified so lets see if they can submit it
+        allow = false #dont let them submit unless something is in edit status
+        @publication.identifiers.each  do |identifier|
+          if identifier.nil? || identifier.status == "editing" 
+            allow = true
+          end        
+        end
+      end
+     allow
+    end
+ 
 
     def publication_from_identifiers(identifiers)
       new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M")

@@ -1,0 +1,23 @@
+!!!
+%html{html_attrs('en')}
+  %head
+    %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
+    %meta{ 'http-equiv' => 'refresh', 'content' => "5; url=#{dashboard_url}" }
+    %title
+      == #{SITE_NAME} (404 Error)
+    :css
+      body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
+      div.dialog {
+        width: 25em;
+        padding: 0 4em;
+        margin: 4em auto 0 auto;
+        border: 1px solid #ccc;
+        border-right-color: #999;
+        border-bottom-color: #999;
+      }
+      h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+  %body
+    .dialog
+      %h1 The page you were looking for doesn't exist.
+      %p You may have mistyped the address or the page may have moved.
+      %p You should be redirected momentarily.
