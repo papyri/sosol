@@ -286,12 +286,14 @@ class Publication < ActiveRecord::Base
         Rails.logger.debug "----end user to get it" 
         Rails.logger.debug self.community.end_user.name
         
-        community_copy = copy_to_owner( self.community.end_user)
+        #community_copy = copy_to_owner( self.community.end_user)
+        community_copy = copy_to_end_user()
         community_copy.status = "editing"
         #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
         
         #disconnect the parent/origin connections
-        community_copy.parent_id = nil
+        #community_copy.parent_id = nil
+        community_copy.parent = nil
         
         #reset the community id to be sosol
         #leave as is   community_copy.community_id = nil
@@ -1054,6 +1056,25 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
   
+  #added to rename the publication title for the enduser
+   def clone_to_end_user()
+    duplicate = self.clone
+    duplicate.owner = self.community.end_user
+    duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
+    duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
+    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.parent = self
+    duplicate.save!
+    
+    # copy identifiers over to new pub
+    identifiers.each do |identifier|
+      duplicate_identifier = identifier.clone
+      duplicate.identifiers << duplicate_identifier
+    end
+    
+    return duplicate
+  end
+  
   def repository
     return self.owner.repository
   end
@@ -1070,6 +1091,16 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
     
+    
+  #mainly used to create new publiation title/repo name that is indicative of the publications source  
+  def copy_to_end_user()
+    duplicate = self.clone_to_end_user()
+    duplicate.owner.repository.copy_branch_from_repo(
+      self.branch, duplicate.branch, self.owner.repository
+    )
+    
+    return duplicate
+  end
   #copy a child publication repo back to the parent repo
   def copy_repo_to_parent_repo
      #all we need to do is copy the repo back the parents repo
