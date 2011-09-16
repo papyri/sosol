@@ -650,8 +650,8 @@ class PublicationsController < ApplicationController
       #has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
       has_voted = @publication.user_has_voted?(@current_user.id)
       if !has_voted 
-        @vote.save!
         @comment.save!
+        @vote.save!
         # invalidate their cache since an action may have changed its status
         expire_publication_cache(@publication.creator.id)
         expire_fragment(/board_publications_\d+/)
