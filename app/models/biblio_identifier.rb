@@ -7,6 +7,8 @@ class BiblioIdentifier < HGVIdentifier
   
   FRIENDLY_NAME = "Biblio"
 
+  IDENTIFIER_NAMESPACE = 'biblio'
+
   XPATH = {
     :title => "/TEI/text/body/div/bibl/title[@level='a'][@type='main']",
     :journalTitle => "/TEI/text/body/div/bibl/title[@level='j'][@type='main']",
@@ -51,19 +53,30 @@ class BiblioIdentifier < HGVIdentifier
     :revieweeList => "/TEI/text/body/div/bibl/relatedItem[@type='reviews']/bibl",
     :containerList => "/TEI/text/body/div/bibl/relatedItem[@type='appearsIn']/bibl"
   }
+
+  def to_path
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
+      return self.temporary_path
+    else
+      path_components = [ PATH_PREFIX ]
+      # assume the name is e.g. biblio/9237
+      number = self.to_components.last.to_i # 9237
+
+      dir_number = ((number - 1) / 1000) + 1
+      xml_path = number.to_s + '.xml'
+
+      path_components << dir_number.to_s << xml_path
+
+      # e.g. Biblio/10/9237.xml
+      return File.join(path_components)
+    end
+  end
+ 
   
   def self.XPATH key
     XPATH[key.to_sym] ? XPATH[key.to_sym] : '----'
   end
 
-  def initialize epiDocXml
-
-    @epiDocXml = epiDocXml
-    @epiDoc = REXML::Document.new(epiDocXml)
-    
-    super()
-  end
-  
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(@epiDocXml),
@@ -76,7 +89,7 @@ class BiblioIdentifier < HGVIdentifier
     true
   end
   
-  def after_initialize
+  def after_xml_initialize
     # retrieve data from xml or set empty defaults 
     
     self[:title] = ''

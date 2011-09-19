@@ -1,6 +1,6 @@
 class Identifier < ActiveRecord::Base
   #TODO - is Biblio needed?
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier BiblioIdentifier }
   
   FRIENDLY_NAME = "Base Identifier"
   

@@ -109,7 +109,7 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier, BiblioIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
