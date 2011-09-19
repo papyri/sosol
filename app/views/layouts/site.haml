@@ -9,7 +9,11 @@
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
       = stylesheet_link_tag 'meta'
+    - if controller.controller_name == 'biblio_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
+      = stylesheet_link_tag 'biblio'
     = javascript_include_tag :defaults
     %style(type="text/css")
       :sass
@@ -23,10 +27,11 @@
           -webkit-background-size: 128px 128px
           opacity: .5
   %body
-    #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
+    #header{ :style => 'background-color: lightgreen;', :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
           %h1= link_to SITE_NAME, root_url
+          papyrillio (biblio)
         -#= render(:partial => 'master_articles/master_article_box')
         -#= render(:partial => 'user/admin_box')
         = render(:partial => 'user/user_box')

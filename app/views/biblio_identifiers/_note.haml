@@ -1,0 +1,22 @@
+- @identifier[:note]
+.multi#multi_note
+  %h6
+    %label.responsibility= I18n.t('biblio.label.responsibility')
+    %label.annotation= I18n.t('biblio.label.annotation')
+  %ul.items#multiItems_note
+    - @identifier[:note].each_index do |index|
+    - responsibility = @identifier[:note][index].responsibility
+    - annotation     = @identifier[:note][index].annotation
+      %li
+        = text_area_tag 'biblio_identifier[note][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
+        = text_area_tag 'biblio_identifier[note][' + index.to_s + '][annotation]',     annotation,     :disabled => !@identifier.mutable?, :class => 'observechange annotation'
+
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
+  %p.add#multiPlus_note
+    %textarea.observechange.responsibility#note_responsibility
+    %textarea.observechange.annotation#note_annotation
+    
+    %span{:onclick => "multiAddNote()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+
+  = javascript_tag "Sortable.create('multiItems_note', {overlap: 'horizontal', constraint: false, handle: 'move'});"
