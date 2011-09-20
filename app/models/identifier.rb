@@ -136,7 +136,7 @@ class Identifier < ActiveRecord::Base
            title += " (reprinted)"
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last.tr(';',' ')
+        title =  [self.class::FRIENDLY_NAME, self.name.split('/').last.tr(';',' ')].join(' ')
       end
     end
     return title
