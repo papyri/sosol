@@ -140,7 +140,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: grit
-rubygems_version: 1.3.6
+rubygems_version: 1.5.1
 signing_key: 
 specification_version: 3
 summary: Grit is a Ruby library for extracting information from a git repository in an object oriented manner.

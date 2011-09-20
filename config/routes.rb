@@ -37,6 +37,7 @@ ActionController::Routing::Routes.draw do |map|
 
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
+  map.all_users_links 'all_users_links', :controller => 'user', :action => 'all_users_links'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
   map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
@@ -50,6 +51,11 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
   #deleteable map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
 	
+  map.connect 'publications/archive_all',
+    :controller => 'publications',
+    :action => 'archive_all',
+    :conditions => { :method => :post }
+
   map.resources :publications, :collection => { :advanced_create => :get }
   map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
   map.resources :publications do |publication|
@@ -74,7 +80,7 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
-  
+   
   map.connect 'ajax_proxy/sparql/:query',
     :controller => 'ajax_proxy',
     :action => 'sparql',

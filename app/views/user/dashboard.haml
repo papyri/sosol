@@ -36,7 +36,8 @@
             %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_user_#{status}');Effect.SlideDown('more_user_link_#{status}');Effect.SlideUp('less_user_link_#{status}');return false;"}
               Less...
         - if status == "committed"
-          =# link_to "Archive All", :controller => 'publications', :id => @current_user.id, :action => "confirm_archive_all"
+          = link_to "Archive All", :controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id
+          %br
     %br
     .archive_link
       = link_to "See Your Archived Publications", :controller => 'user', :action => 'archives',  :id => @current_user.id

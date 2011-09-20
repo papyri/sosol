@@ -130,12 +130,18 @@ module ActiveSupport
       end
 
       def merge!(other_hash)
-        other_hash.each {|k,v| self[k] = v }
+        if block_given?
+          other_hash.each { |k, v| self[k] = key?(k) ? yield(k, self[k], v) : v }
+        else
+          other_hash.each { |k, v| self[k] = v }
+        end
         self
       end
 
-      def merge(other_hash)
-        dup.merge!(other_hash)
+      alias_method :update, :merge!
+
+      def merge(other_hash, &block)
+        dup.merge!(other_hash, &block)
       end
 
       # When replacing with another hash, the initial order of our keys must come from the other hash -ordered or not.
@@ -143,6 +149,10 @@ module ActiveSupport
         super
         @keys = other.keys
         self
+      end
+
+      def invert
+        OrderedHash[self.to_a.map!{|key_value_pair| key_value_pair.reverse}]
       end
 
       def inspect

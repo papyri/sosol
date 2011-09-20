@@ -1,7 +1,7 @@
 #main
   
   = render :partial => "common/flash_all"
- 
+  
   #usage_stats
     - @users.each do |user|
       %h2= user.human_name
@@ -12,50 +12,35 @@
       - if user.boards.length > 0
         %br Member of: #{user.boards.collect{|b| b.friendly_name}.join(', ')} 
       %br
+      = link_to "Usage Stats By User", all_users_links_url
       %br
-      - votes = Comment.vote.find_all_by_user_id(user.id)
-      - if votes.length > 0
-        %h3 Votes
-        - votes.each do |vote| 
-          %span.comment   
-            - if vote.publication && vote.publication.title    
-              = link_to vote.publication.title, vote.publication
-              = "(" + vote.identifier.title + ")"
-              = h "Vote " + vote.comment 
-              %span.date 
-                = vote.created_at.to_formatted_s(:long)
-          
-          %br
+      %br
+      - form_tag :controller => 'user', :action => "refresh_usage" do
+        = label_tag 'date_value', 'Usage for Last', :style => "font-size: medium;"
+        = text_field_tag 'date_value', nil, :maxlength => 3, :size => 2, :style => "font-size: medium;"
+        = select_tag 'date_range', options_for_select({ "Day(s)" => "day", "Month(s)" => "month", "Year(s)" => "year" }), :style => 'min-width: 5em;font-size: medium;'
+        = submit_tag "Get Usage", :disabled => false, :id => 'styled_button', :class => "submit"
+        = hidden_field_tag 'save_user_id', user.id
       
-
-      - submits = Comment.submit.find_all_by_user_id(user.id)
+      - if user.admin
+        %br
+        - votes = Comment.vote.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
+        %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
+        - if votes.length > 0  
+          = render :partial => "usage_detail", :locals => { :user => user, :comments => votes, :type => 'vote'}
+        
+      %br
+      - submits = Comment.submit.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
+      %a{ :href => "#", :onclick => "Effect.toggle('submission_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Submissions
       - if submits.length > 0
-        %h3 Submissions
-        - submits.each do |submit| 
-          %span.comment     
-            - if submit.publication && submit.publication.title
-              = link_to submit.publication.title, submit.publication  
-              = "(" + submit.publication.status + ")"  
-              = h submit.comment 
-              %span.date 
-                = submit.created_at.to_formatted_s(:long)
-          %br
-        
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => submits, :type => 'submission'}       
       
-      
-      - finalizings = Comment.finalizing.find_all_by_user_id(user.id)
-      - if finalizings.length > 0  
-        %h3 Finalized
-        - finalizings.each do |finalizing|
-          %span.comment 
-            - if finalizing.publication && finalizing.publication.title 
-              = link_to finalizing.publication.title, finalizing.publication
-              - if finalizing.identifier && finalizing.identifier.title
-                = finalizing.identifier.title   
-              = h finalizing.comment 
-              %span.date 
-                = finalizing.created_at.to_formatted_s(:long)
-          %br
-        
+      - if user.admin
+        %br
+        - finalizings = Comment.finalizing.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
+        %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
+        - if finalizings.length > 0 
+          = render :partial => "usage_detail", :locals => { :user => user, :comments => finalizings, :type => 'final'}
+     
       %br
       %br

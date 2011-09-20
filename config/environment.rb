@@ -31,7 +31,7 @@ Rails::Initializer.run do |config|
   # config.gem "ruby-xslt", :lib => "xml/xslt"
   # config.gem "libxml-ruby", :lib => "xml/libxml"
   
-  config.gem "haml"
+  config.gem "haml", :version => "~> 3.0.25"
   # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
   
   if(RUBY_PLATFORM == 'java')
@@ -48,9 +48,9 @@ Rails::Initializer.run do |config|
 		config.gem "rack", :version => ">= 1.1.0", :lib => false
   end
   
-  config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
+  config.gem "shoulda", :version => ">= 2.11.3"
   
-  config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
+  config.gem "factory_girl", :version => "~> 1.2.2"
   
   config.gem 'hoptoad_notifier', :version => ">= 2.4.10"
   
