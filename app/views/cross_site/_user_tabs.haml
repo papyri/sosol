@@ -1,0 +1,17 @@
+- if @current_user
+  %ul{ :class => "nav" }
+    %li
+      = link_to "Main", dashboard_url
+    - @current_user.community_memberships.each do |community|
+      %li
+        = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+      
+    - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+    - if end_communities
+      %li
+        End
+    - end_communities.each do |community|
+      %li
+        = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+        
+    - #should be finding all user pubs, then showing the ones with community ids?

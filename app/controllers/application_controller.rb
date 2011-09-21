@@ -25,7 +25,8 @@ class ApplicationController < ActionController::Base
   before_filter :rpx_setup
   before_filter :tab_setup
 
-  layout "header_footer"
+  #layout "header_footer"
+  layout "pn"
   
   protected
   
