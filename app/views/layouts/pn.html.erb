@@ -101,11 +101,21 @@
             <li><a href="/" title="Project Home">Home</a></li>
             
             <!-- link to sSoSOL -->
-            <li><a href="/help">Help</a></li>
+            <li>
+              <%= link_to "Help", help_url%>
+              
+              </li>
+              
             
             <!-- following links only if logged into SoSOL -->
-            <li><a href="/user/admin">Admin</a></li>
-            <li><a href="/user/account">Account</a></li>
+            <li>
+              <%= link_to 'Admin', :controller => 'User', :action => 'admin'%>
+              
+            </li>
+            <li>
+              <%= link_to 'Account', :controller => 'User', :action => 'account'%>
+              
+              </li>
             
             
             <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
