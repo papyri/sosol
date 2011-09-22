@@ -13,7 +13,7 @@ class BiblioIdentifier < HGVIdentifier
     :title => "/TEI/text/body/div/bibl/title[@level='a'][@type='main']",
     :journalTitle => "/TEI/text/body/div/bibl/title[@level='j'][@type='main']",
     :bookTitle => "/TEI/text/body/div/bibl/title[@level='m'][@type='main']",
-    :type => "/TEI/text/body/div/bibl/@type",
+    :supertype => "/TEI/text/body/div/bibl/@type",
     :subtype => "/TEI/text/body/div/bibl/@subtype",
     :language => "/TEI/text/body/div/bibl/@xml:lang",    
       
@@ -100,7 +100,7 @@ class BiblioIdentifier < HGVIdentifier
     self[:journalTitleShort] = Array.new
     self[:bookTitle] = ''
     self[:bookTitleShort] = Array.new
-    self[:type] = ''
+    self[:supertype] = ''
     self[:subtype] = ''
     self[:language] = ''    
     
@@ -144,7 +144,7 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :title
       populateFromEpiDocSimple :journalTitle
       populateFromEpiDocSimple :bookTitle
-      populateFromEpiDocSimple :type
+      populateFromEpiDocSimple :supertype
       populateFromEpiDocSimple :subtype
       populateFromEpiDocSimple :language
       
@@ -394,10 +394,14 @@ class BiblioIdentifier < HGVIdentifier
   end
 
   class Publisher
-    attr_accessor :type, :value
-    def initialize type = '', value = ''
-      @type = type
+    attr_accessor :publisher_type, :value
+    def initialize publisher_type = '', value = ''
+      @publisher_type = type
       @value = value
+    end
+
+    def type
+      return @publisher_type
     end
   end
 end
