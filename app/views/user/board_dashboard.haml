@@ -1,26 +1,27 @@
-= stylesheet_link_tag "publication_list"
-=# javascript_include_tag "extra_ids"
+
+
 - page_title = ""
 - if @board.community && @board.community.friendly_name
   - page_title = @board.community.friendly_name + " community "
 - page_title = page_title + @board.friendly_name + " board"
-%h1 
+%h2
   = page_title
+  
 - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
-  = render :partial => "publications/publication_listing", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
+  = render :partial => "publications/board_publication_listing", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
 
 - if @finalizing_publications && @finalizing_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
-  = render :partial => "publications/publication_listing", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
+  = render :partial => "publications/board_publication_listing", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
 
 - if @approved_publications && @approved_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
-  = render :partial => "publications/publication_listing", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
+  = render :partial => "publications/board_publication_listing", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
  
 - if @member_already_voted_on && @member_already_voted_on.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Waiting", :view_type => "board", :list_name => "waiting" }
-  = render :partial => "publications/publication_listing", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
+  = render :partial => "publications/board_publication_listing", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
 
 
 %br

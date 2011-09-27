@@ -1,0 +1,97 @@
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+  
+
+%div{:class => "publication_list_holder", :id => list_id }
+  %table{:class=>"results", :width=>"95%"}
+    %tr
+      %td
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+      %td{:width=>"10%"}
+    %tr{:class=>"head"}
+      %td
+        = Publication
+      %td
+        HGV
+      %td
+        Text
+      %td
+        Translation
+      %td
+        Catalog
+      %td
+        Info
+    - publications.each do |publication|
+      
+      %tr
+        %td
+          = link_to publication.title, publication
+        %td{:class=>"identifier_td"}
+          - meta_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "HGVMetaIdentifier"
+              - ids
+          - meta_ids = meta_ids.compact
+          -# if meta_ids.length == 0
+          
+          - meta_ids.each do |mid|
+            
+            -#
+              - if mid.needs_reviewing?(@current_user)
+                = image_tag('review_flag.png')
+                = link_to mid.title, edit_polymorphic_path([publication,mid]), html_options = {:style=>"display:inline;"}
+              - else
+                = link_to mid.title, edit_polymorphic_path([publication,mid])
+                
+            = link_to mid.title, edit_polymorphic_path([publication,mid])
+        %td{:class=>"identifier_td"}
+          - text_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "DDBIdentifier"
+              - ids
+          - text_ids = text_ids.compact
+          - if text_ids.length == 0
+           
+          - text_ids.each do |tid|
+            
+            = link_to tid.title, edit_polymorphic_path([publication,tid])
+  
+        %td{:class=>"identifier_td"}
+          - trans_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "HGVTransIdentifier"
+              - ids
+          - trans_ids = trans_ids.compact
+          - if trans_ids.length == 0
+           
+          - trans_ids.each do |trid|
+            = link_to trid.title, edit_polymorphic_path([publication,trid])
+            
+        %td{:class=>"identifier_td"}
+          = " "    
+        %td
+          -# for efficiency only get extra info for the needed categories
+          - if list_name == "approved"
+            - if publication.find_finalizer_user
+              = publication.find_finalizer_user.human_hame
+              = " is finalizing. "   
+              = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id }
+            - if list_name == "vote" || list_name == "waiting"
+              - if publication.votes.count > 0
+                = publication.votes.count
+                - if publication.votes.count == 1
+                  = " vote"
+                - else
+                  = " votes"
+                - vote_div_id = "votes_" + publication.id
+                %div{:class=>"votes", :id=>vote_div_id, :style=>"display:none;"}
+                  %ul
+                    - publication.votes.each do |vote|
+                      %li
+                        = vote.user.human_name + " " + vote.choice + " "
+                    
