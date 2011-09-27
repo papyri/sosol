@@ -7,24 +7,10 @@
     - if defined?(list_name)
       - list_id = "publication_list_holder_" + list_name
       %div{:class => "more_less", :id => 'less_' + list_id}
-        %a{:id => 'less_' + list_id, :class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('#{list_id}'); Effect.SlideUp('less_#{list_id}'); Effect.SlideDown('more_#{list_id}'); return false;"}
-          = "-"  
+        %a{:id => 'less_' + list_id, :class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('#{list_id}'); $('less_#{list_id}').hide(); $('more_#{list_id}').show(); return false;"}
+          = "-" + status  
       %div{:style => "display:none;", :class => "more_less", :id => 'more_' + list_id}
-        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('#{list_id}'); Effect.SlideUp('more_#{list_id}'); Effect.SlideDown('less_#{list_id}'); return false;"}
-          = "+"
-    = status
-
-  %div{:class => "publications_header_overview"}
-    Overview
-  - possible_identifiers = Array.new(Identifier::IDENTIFIER_MAIN_SUBCLASSES)
+        %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('#{list_id}'); $('more_#{list_id}').hide(); $('less_#{list_id}').show(); return false;"}
+          = "+" + status
   
-  - if possible_identifiers.length > 0
-  
-    - possible_identifiers.each do |pi|
-      %div{:class => "publications_header_" + pi }
-        = eval pi + "::FRIENDLY_NAME"  
-
-  - if defined?(view_type) && view_type == "board"
-    %div{:class => "publications_header_info"}
-      Info
 
