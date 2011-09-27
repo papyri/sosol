@@ -1,5 +1,32 @@
+:javascript
+  function showBoardDialog(e)
+  {
+    
+    var board_list = $('board_list');
+    var body = document.body;
+    var board_menu = $('board_menu');
+    
+    body.appendChild(board_list);
+    
+    if (board_list.style.display == "block")
+    {
+      board_list.style.display = "none";
+    }
+    else
+    {
+      board_list.style.display = "block";
+    }
+    
+    board_list.setStyle({ position: 'absolute', zIndex: '9999'});
+    
+    board_list.style.top = ( e.y + board_menu.getHeight() ) + "px";
+    board_list.style.left = ( e.x - board_menu.getWidth() ) + "px";
+    
+  }
+
+
 - if @current_user
-  - is_first = true
+  
   
   - sosol_boards = @current_user.boards.ranked
 
@@ -9,7 +36,9 @@
   - community_ids.compact!
 
   - if sosol_boards || community_ids
-    
+
+
+        
     - current_board_id  = nil
     
     - if @current_board
@@ -23,29 +52,28 @@
           float: right;
          }
     
-    %ul{:class => "nav right" }
-      %li
-        Boards:
-      - sosol_boards.each do |sb|
-        %li
-          = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
-      
+ 
+    %li{:onclick=>"showBoardDialog(event)",  :id=>"board_menu", :class=>"editor_menu"}
+      = "Boards"
   
-      
-      - community_ids.each do |next_id|
-       
-        - community_boards = @current_user.boards.ranked_by_community_id(next_id)
-        - current_name = Community.find(next_id).friendly_name
-        
-        - if is_first
-          - is_first = false
-        - else
+    %div{:class => "editor_nav", :id=>"board_list"}
+      %ul
+        - sosol_boards.each do |sb|
           %li
-            |
-        %li
-          = current_name    
-        - community_boards.each do |cb|
-          %li
-            = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
-            
+            = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
         
+    
+        
+        - community_ids.each do |next_id|
+         
+          - community_boards = @current_user.boards.ranked_by_community_id(next_id)
+          - current_name = Community.find(next_id).friendly_name
+          
+
+          %li
+            = current_name    
+          - community_boards.each do |cb|
+            %li
+              = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
+              
+          

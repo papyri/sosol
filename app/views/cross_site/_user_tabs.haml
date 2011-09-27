@@ -1,17 +1,51 @@
+:javascript
+  function showCommunityDialog(e)
+  {
+    
+    var community_list = $('community_list');
+    var body = document.body;
+    var community_menu = $('community_menu');
+    
+    body.appendChild(community_list);
+    
+    if (community_list.style.display == "block")
+    {
+      community_list.style.display = "none";
+    }
+    else
+    {
+      community_list.style.display = "block";
+    }
+    
+    community_list.setStyle({ position: 'absolute', zIndex: '9999'});
+    
+    community_list.style.top = ( e.y + community_menu.getHeight() ) + "px";
+    community_list.style.left = ( e.x - community_menu.getWidth() ) + "px";
+    
+  }
+
+
+
 - if @current_user
-  %ul{ :class => "nav" }
-    %li
-      = link_to "Main", dashboard_url
-    - @current_user.community_memberships.each do |community|
+
+  
+  %li{:onclick=>"showCommunityDialog(event)", :id=>"community_menu", :class=>"editor_menu"}
+    = "Communities"
+  
+  %div{:class => "editor_nav", :id=>"community_list"}
+    %ul
       %li
-        = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
-      
-    - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
-    - if end_communities
-      %li
-        End
-    - end_communities.each do |community|
-      %li
-        = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+        = link_to "Main", dashboard_url
+      - @current_user.community_memberships.each do |community|
+        %li
+          = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
         
-    - #should be finding all user pubs, then showing the ones with community ids?
+      - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+      - if end_communities
+        %li
+          End
+      - end_communities.each do |community|
+        %li
+          = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+          
+      - #should be finding all user pubs, then showing the ones with community ids?
