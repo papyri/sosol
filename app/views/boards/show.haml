@@ -1,51 +1,55 @@
 = stylesheet_link_tag "board"
--# render :partial => "common/flash_all"  
+ 
 
 - if @board.community
-  %p
-    %b 
-      Community:
-    = @board.community.name
-%p
-  %b 
-    Title:
-  = @board.title 
-%p
-  %b 
-    Name:
-  = @board.friendly_name
+  %br
+  %b Community
+  %br
+  = @board.community.name + " ( " + @board.community.friendly_name + " ) "
+  %br
+    
 
-%p
-  %b
-    Rank:
-  = @board.rank
-%p
-  %b 
-    Identifiers:
-  - @board.identifier_classes.each do |ic| 
-    = ic   
-
-%p
-  .member
-    %h3
-      Members
-    - @board.users.count
-    - @board.users.each do |user| 
-      %p 
-        = user.name
-
-%p
-  %b
-    Decrees
-  - @board.decrees.each do |decree|
-    = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
+%b 
+  Title is
+= @board.title 
+%br
+  
+%b 
+  Friendly Name
+= @board.friendly_name
+%br 
+ 
+%b 
+  = "Editorial Board for "
+- @board.identifier_classes.each do |ic|
+  = ic + " "
+%br
+  
+%b
+  = 'Rank is '
+=@board.rank.to_s
+%br
+    
+    
 
 
-%p
-  %b
-    E-mails
-  - @board.emailers.each do |email|
-    = render :partial => email, :locals =>  {:hide_edit_link=> 'true'}
+%h3
+  Members
+.member
+  - @board.users.count
+  - @board.users.each do |user|  
+    = user.name
+    %br
+
+%h3
+  Decrees
+- @board.decrees.each do |decree|
+  = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
+
+%h3
+  E-mails
+- @board.emailers.each do |email|
+  = render :partial => email, :locals =>  {:hide_edit_link=> 'true'}
 
 %br
 = link_to 'Edit This Board', edit_board_path(@board)

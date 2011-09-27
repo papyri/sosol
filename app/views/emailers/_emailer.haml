@@ -1,55 +1,57 @@
 .emailer
 
-  %p
-    %b
-      When to send:
-    = h emailer.when_to_send
-    
-  %p
-    %b
-      Include document:
-    = h emailer.include_document
 
-  %p
-    %b
-      Include comments:
-    = h emailer.include_comments
+  %b
+    When to send:
+  = h emailer.when_to_send
+  %br  
+
+  %b
+    Include document:
+  = h emailer.include_document
+  %br
+  
+  %b
+    Include comments:
+  = h emailer.include_comments
+  %br
+
+  %b
+    Send to owner:
+  = h emailer.send_to_owner
+  %br    
     
-  %p
-    %b
-      Send to owner:
-    = h emailer.send_to_owner
-      
-      
-  %p
-    %b
-      Send to all board members:
-    = h emailer.send_to_all_board_members
+
+  %b
+    Send to all board members:
+  = h emailer.send_to_all_board_members
+  %br      
           
-            
-  %p
-    %b
-      Other SoSol Users:
-    - if !defined?(hide_edit_link)  
-      = link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => emailer.id
-    - emailer.users.each do |user|
-      - if user.name != nil
-        = user.name
-        - if user.email == nil
-          (no valid address!)
-        - if !defined?(hide_edit_link)
-          = link_to "x", :controller => "emailers", :action => "remove_member", :id => emailer.id, :user_id => user.id 
-  %p
-    %b
-      Extra addresses:
-    = h emailer.extra_addresses
-    
 
-  %p
-    %b
-      Message:
-    = h emailer.message
+  %b
+    Other SoSol Users:
+  - if !defined?(hide_edit_link)  
+    = link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => emailer.id
+  - emailer.users.each do |user|
+    - if user.name != nil
+      = user.name
+      - if user.email == nil
+        (no valid address!)
+      - if !defined?(hide_edit_link)
+        = link_to "x", :controller => "emailers", :action => "remove_member", :id => emailer.id, :user_id => user.id 
+  %br
     
+  %b
+    Extra addresses:
+  = h emailer.extra_addresses
+  %br 
+
+  
+  %b
+    Message:
+  = h emailer.message
+    
+  %br
   - if !defined?(hide_edit_link)
     = link_to 'Edit', edit_emailer_path(emailer)
     = link_to 'Delete', emailer, :confirm => 'Are you sure?', :method => :delete
