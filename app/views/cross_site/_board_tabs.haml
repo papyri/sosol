@@ -19,9 +19,12 @@
     
     board_list.setStyle({ position: 'absolute', zIndex: '9999'});
     
-    board_list.style.top = ( e.y + board_menu.getHeight() ) + "px";
-    board_list.style.left = ( e.x - board_menu.getWidth() ) + "px";
+    var left_pos = board_menu.cumulativeOffset().left + board_menu.getWidth() - board_list.getWidth() ;
+    var top_pos = board_menu.cumulativeOffset().top + board_menu.getHeight() ;
     
+    board_list.style.top = top_pos + "px";
+    board_list.style.left = left_pos + "px";
+   
   }
 
 

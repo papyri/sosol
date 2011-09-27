@@ -19,8 +19,13 @@
     
     community_list.setStyle({ position: 'absolute', zIndex: '9999'});
     
-    community_list.style.top = ( e.y + community_menu.getHeight() ) + "px";
-    community_list.style.left = ( e.x - community_menu.getWidth() ) + "px";
+    
+    var left_pos = community_menu.cumulativeOffset().left + community_menu.getWidth() - community_list.getWidth() ;
+    var top_pos = community_menu.cumulativeOffset().top + community_menu.getHeight() ;
+    
+    community_list.style.top = top_pos + "px";
+    community_list.style.left = left_pos + "px";
+
     
   }
 
