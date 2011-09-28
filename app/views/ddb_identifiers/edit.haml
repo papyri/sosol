@@ -44,7 +44,7 @@
       onFailure: function(response) {
         // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
         $$('div#main > div.site').first().insert({
-            top: new Element('div',{'class': 'flash error'}).update('ajax onFailure - will try again in 10 seconds - try# ' + try_counter)
+            top: new Element('div',{'class': 'flash error'}).update('Transform has timed out - system will automatically try again in 10 seconds - try# ' + try_counter)
         });
         setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
       }
