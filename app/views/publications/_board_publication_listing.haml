@@ -1,3 +1,5 @@
+
+
 - if defined?(list_name)
   - list_id = "publication_list_holder_" + list_name
 - else
@@ -12,7 +14,7 @@
       %td{:width=>"15%"}
       %td{:width=>"15%"}
       %td{:width=>"15%"}
-      %td{:width=>"10%"}
+      %td{:width=>"15%"}
     %tr{:class=>"head"}
       %td
         = Publication
@@ -31,16 +33,23 @@
       %tr
         %td
           = link_to publication.title, publication
+          
+        -# -------------META---------------------
         %td{:class=>"identifier_td"}
           - meta_ids = publication.identifiers.collect do |ids|
   
             - if ids.type == "HGVMetaIdentifier"
               - ids
           - meta_ids = meta_ids.compact
-          -# if meta_ids.length == 0
           
-          - meta_ids.each do |mid|
+          - if meta_ids.length == 0
+            -# no option to create here
+          - else
+            = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
             
+          - if meta_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
+             
             -#
               - if mid.needs_reviewing?(@current_user)
                 = image_tag('review_flag.png')
@@ -48,50 +57,79 @@
               - else
                 = link_to mid.title, edit_polymorphic_path([publication,mid])
                 
-            = link_to mid.title, edit_polymorphic_path([publication,mid])
+            
+            
+        -# -------------TEXT---------------------
         %td{:class=>"identifier_td"}
           - text_ids = publication.identifiers.collect do |ids|
   
             - if ids.type == "DDBIdentifier"
               - ids
           - text_ids = text_ids.compact
+          
           - if text_ids.length == 0
-           
-          - text_ids.each do |tid|
+            -# no option to create here
+          - else
+            = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
             
-            = link_to tid.title, edit_polymorphic_path([publication,tid])
+          - if text_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
+            
+         
   
+        -# -------------TRANSLATION---------------------
         %td{:class=>"identifier_td"}
           - trans_ids = publication.identifiers.collect do |ids|
   
             - if ids.type == "HGVTransIdentifier"
               - ids
           - trans_ids = trans_ids.compact
+         
+         
           - if trans_ids.length == 0
-           
-          - trans_ids.each do |trid|
-            = link_to trid.title, edit_polymorphic_path([publication,trid])
+            -# no option to create here
+          - else
+            = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
             
+          - if trans_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => trans_ids }
+          
+         
+            
+        -# -------------APIS---------------------    
         %td{:class=>"identifier_td"}
           = " "    
+          
+        -# -------------INFO---------------------  
         %td
           -# for efficiency only get extra info for the needed categories
           - if list_name == "approved"
             - if publication.find_finalizer_user
-              = publication.find_finalizer_user.human_hame
+              - finalizer_div_id = "finalizer_" + publication.id.to_s
+              = publication.find_finalizer_user.human_name
               = " is finalizing. "   
-              = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id }
-            - if list_name == "vote" || list_name == "waiting"
-              - if publication.votes.count > 0
-                = publication.votes.count
-                - if publication.votes.count == 1
-                  = " vote"
-                - else
-                  = " votes"
-                - vote_div_id = "votes_" + publication.id
-                %div{:class=>"votes", :id=>vote_div_id, :style=>"display:none;"}
-                  %ul
-                    - publication.votes.each do |vote|
-                      %li
-                        = vote.user.human_name + " " + vote.choice + " "
-                    
+              -#= image_tag("show_more_ids.png", :onclick=>"showFinalizer(this, '#{finalizer_div_id}', true)" )
+              = image_tag("show_more_ids.png", :onclick=>"toggleFinalizer(this, '#{finalizer_div_id}')" )
+              -#%div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"showFinalizer(this, '#{finalizer_div_id}',false)"}
+              %div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"toggleFinalizer(this, '#{finalizer_div_id}')"}
+                = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id }
+              
+          - if list_name == "needs_review" || list_name == "waiting"
+            - if publication.votes.count > 0
+              = publication.votes.count
+              - if publication.votes.count == 1
+                = " vote"
+              - else
+                = " votes"
+              
+              - vote_div_id = "votes_" + publication.id.to_s
+              = image_tag("show_more_ids.png", :onmouseover=>"showVotes(this, '#{vote_div_id}', true)", :onmouseout=>"showVotes(this, '#{vote_div_id}', false)" )
+              %div{:class=>"votes", :id=>vote_div_id, :style=>"display:none;"}
+                %table
+                  - publication.votes.each do |vote|
+                    %tr
+                      %td
+                        = vote.user.human_name + " (" + vote.user.name + ") "
+                      %td
+                        = vote.choice 
+                  

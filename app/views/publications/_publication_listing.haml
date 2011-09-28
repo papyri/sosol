@@ -1,3 +1,6 @@
+
+
+
 - if defined?(list_name)
   - list_id = "publication_list_holder_" + list_name
 - else
@@ -29,22 +32,27 @@
       %tr
         %td
           = link_to publication.title, publication
+        -# -------------META---------------------
         %td{:class=>"identifier_td"}
           - meta_ids = publication.identifiers.collect do |ids|
-  
             - if ids.type == "HGVMetaIdentifier"
               - ids
+              
           - meta_ids = meta_ids.compact
+          
           - if meta_ids.length == 0
             - class_type = "HGVMetaIdentifier"
             - link_id = "HGVMetaIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-
-          - meta_ids.each do |mid|
-            =# mid.title
-            = link_to mid.title, edit_polymorphic_path([publication,mid])
+          - else
+            = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
+          
+          - if meta_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
+          
             
+        -# -------------TEXT---------------------    
         %td{:class=>"identifier_td"}
           - text_ids = publication.identifiers.collect do |ids|
   
@@ -56,11 +64,14 @@
             - link_id = "DDBIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - else
+            = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
 
-          - text_ids.each do |tid|
-            =# tid.title
-            = link_to tid.title, edit_polymorphic_path([publication,tid])
+          - if text_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
+
   
+        -# -------------TRANSLATIONS---------------------
         %td{:class=>"identifier_td"}
           - trans_ids = publication.identifiers.collect do |ids|
   
@@ -72,9 +83,12 @@
             - link_id = "HGVTransIdentifier_" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - else
+            = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
+
+          - if trans_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => trans_ids }
             
-          - trans_ids.each do |trid|
-            =# trans.title
-            = link_to trid.title, edit_polymorphic_path([publication,trid])
+        -# -------------APIS---------------------
         %td{:class=>"identifier_td"}
           = " "              
