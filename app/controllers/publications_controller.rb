@@ -181,7 +181,7 @@ class PublicationsController < ApplicationController
     if params[:community] && params[:community][:id]
       community_id = params[:community][:id]
       community_id.strip
-      if !community_id.empty? && community_id != 0
+      if !community_id.empty? && community_id != "0" && !community_id.nil?
         @publication.community_id = community_id
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       end
