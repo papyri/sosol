@@ -38,7 +38,7 @@
   - community_ids.uniq!
   - community_ids.compact!
 
-  - if sosol_boards || community_ids
+  - if sosol_boards.length > 0 || community_ids.length > 0
 
 
         
@@ -49,11 +49,7 @@
     - elsif false && @current_publication && @current_publication.owner_type == "Board"
       - current_board_id = @current_publication.owner.id
     
-    %style{:type => "text/css", :media => "screen"}
-      :plain
-        .right {
-          float: right;
-         }
+
     
  
     %li{:onclick=>"showBoardDialog(event)",  :id=>"board_menu", :class=>"editor_menu"}
