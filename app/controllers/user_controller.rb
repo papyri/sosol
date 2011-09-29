@@ -1,7 +1,7 @@
 class UserController < ApplicationController
   ##layout 'site'
   #layout 'header_footer'
-  before_filter :authorize, :except => [:signin, :signout, :show, :info]
+  before_filter :authorize, :except => [:signin, :signout, :show, :info, :help]
   
   def signout
     reset_session
