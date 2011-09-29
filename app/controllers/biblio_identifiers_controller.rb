@@ -14,24 +14,7 @@ class BiblioIdentifiersController < IdentifiersController
   protected
   
   def find_identifier
-    epiDocXml = if params[:id] && /^\d+$/ =~ params[:id]
-      git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
-      biblio = git / getBiblioPath(params[:id])
-      biblio.data
-    else
-      test = case params[:test]
-      when 'journal' then '1.xml'
-      when 'book' then '3001.xml'
-      when 'review' then '32110.xml'
-      else 'biblioTest.xml'
-      end
-
-      epiDocFile = File.new(File.join(RAILS_ROOT, 'tmp/biblioTest', test), 'r')
-      epiDocFile.read
-
-    end
-    
-    @identifier = BiblioIdentifier.new(epiDocXml)
+    @identifier = BiblioIdentifier.find(params[:id])
   end
   
   def getBiblioPath biblioId

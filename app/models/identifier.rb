@@ -136,7 +136,7 @@ class Identifier < ActiveRecord::Base
            title += " (reprinted)"
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last.tr(';',' ')
+        title =  [self.class::FRIENDLY_NAME, self.name.split('/').last.tr(';',' ')].join(' ')
       end
     end
     return title
@@ -298,8 +298,8 @@ class Identifier < ActiveRecord::Base
   
   #added to speed up dashboard since titleize can be slow
   def title
-    if read_attribute(:title) == nil
-      write_attribute(:title,titleize)
+    if read_attribute(:title).blank?
+      write_attribute(:title,self.titleize)
       self.save
     end
     return read_attribute(:title)

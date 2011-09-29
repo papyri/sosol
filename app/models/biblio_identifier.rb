@@ -13,7 +13,7 @@ class BiblioIdentifier < HGVIdentifier
     :title => "/TEI/text/body/div/bibl/title[@level='a'][@type='main']",
     :journalTitle => "/TEI/text/body/div/bibl/title[@level='j'][@type='main']",
     :bookTitle => "/TEI/text/body/div/bibl/title[@level='m'][@type='main']",
-    :type => "/TEI/text/body/div/bibl/@type",
+    :supertype => "/TEI/text/body/div/bibl/@type",
     :subtype => "/TEI/text/body/div/bibl/@subtype",
     :language => "/TEI/text/body/div/bibl/@xml:lang",    
       
@@ -71,7 +71,6 @@ class BiblioIdentifier < HGVIdentifier
       return File.join(path_components)
     end
   end
- 
   
   def self.XPATH key
     XPATH[key.to_sym] ? XPATH[key.to_sym] : '----'
@@ -79,7 +78,7 @@ class BiblioIdentifier < HGVIdentifier
 
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(@epiDocXml),
+      JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt biblio start-html.xsl})),
         parameters)
@@ -88,8 +87,12 @@ class BiblioIdentifier < HGVIdentifier
   def mutable?
     true
   end
+
+  def epiDoc
+    REXML::Document.new(self.xml_content)
+  end
   
-  def after_xml_initialize
+  def after_find
     # retrieve data from xml or set empty defaults 
     
     self[:title] = ''
@@ -97,7 +100,7 @@ class BiblioIdentifier < HGVIdentifier
     self[:journalTitleShort] = Array.new
     self[:bookTitle] = ''
     self[:bookTitleShort] = Array.new
-    self[:type] = ''
+    self[:supertype] = ''
     self[:subtype] = ''
     self[:language] = ''    
     
@@ -131,10 +134,7 @@ class BiblioIdentifier < HGVIdentifier
     self[:containerList] = Array.new
     self[:relatedArticleList] = Array.new
     
-   
-
     populateFromEpiDoc
-
   end
 
   protected
@@ -144,7 +144,7 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :title
       populateFromEpiDocSimple :journalTitle
       populateFromEpiDocSimple :bookTitle
-      populateFromEpiDocSimple :type
+      populateFromEpiDocSimple :supertype
       populateFromEpiDocSimple :subtype
       populateFromEpiDocSimple :language
       
@@ -196,11 +196,11 @@ class BiblioIdentifier < HGVIdentifier
         path = $1
         attribute = $2
       end
-      if @epiDoc.elements[path]
+      if epiDoc.elements[path]
         if attribute
-          self[key] = @epiDoc.elements[path].attributes[attribute]
+          self[key] = epiDoc.elements[path].attributes[attribute]
         else
-          self[key] = @epiDoc.elements[path].text
+          self[key] = epiDoc.elements[path].text
         end
       else
         self[key] = ''
@@ -210,7 +210,7 @@ class BiblioIdentifier < HGVIdentifier
     def populateFromEpiDocPerson key
       list = []
       path = XPATH[key]
-      @epiDoc.elements.each(path){|person|
+      epiDoc.elements.each(path){|person|
 
         newbie = PublicationPerson.new
         indexFirst = indexLast = 0
@@ -237,14 +237,14 @@ class BiblioIdentifier < HGVIdentifier
     def populateFromEpiDocShortTitle key
       list = []
       path = XPATH[key]
-      @epiDoc.elements.each(path){|title|
+      epiDoc.elements.each(path){|title|
         list[list.length] = ShortTitle.new(title.text, title.attributes['resp'] ? title.attributes['resp'] : '')
       }
       self[key] = list
     end
 
     def populateFromEpiDocPublisher
-      @epiDoc.elements.each(XPATH[:publisherList]){|element|
+      epiDoc.elements.each(XPATH[:publisherList]){|element|
         type = element.name.to_s
         value = element.text
         #place = publisher.elements["placeName"] ? publisher.elements["placeName"].text : ''
@@ -254,7 +254,7 @@ class BiblioIdentifier < HGVIdentifier
     end
 
     def populateFromEpiDocNote
-      @epiDoc.elements.each(XPATH[:note]){|element|
+      epiDoc.elements.each(XPATH[:note]){|element|
         if element.attributes.length == 1
           self[:note][self[:note].length] = Note.new(element.attributes['resp'], element.text)
         end
@@ -270,7 +270,7 @@ class BiblioIdentifier < HGVIdentifier
     end
     
     def populateFromEpiDocRelatedItem typeX, classX
-      @epiDoc.elements.each(XPATH[typeX]){|bibl|
+      epiDoc.elements.each(XPATH[typeX]){|bibl|
         pointer = bibl.elements['ptr'] && bibl.elements['ptr'].attributes && bibl.elements['ptr'].attributes['target'] ? bibl.elements['ptr'].attributes['target'] : ''
         ignore = {}
         
@@ -291,7 +291,7 @@ class BiblioIdentifier < HGVIdentifier
     end
 
     def populateFromEpiDocRelatedArticle
-      @epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
+      epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
         series    = bibl.elements["title[@level='s'][@type='short']"] ? bibl.elements["title[@level='s'][@type='short']"].text : ''
         volume    = bibl.elements["biblScope[@type='vol']"] ? bibl.elements["biblScoe[@type='vol']"].text : ''
         number    = bibl.elements["biblScope[@type='number']"] ? bibl.elements["biblScoe[@type='number']"].text : ''
@@ -394,10 +394,14 @@ class BiblioIdentifier < HGVIdentifier
   end
 
   class Publisher
-    attr_accessor :type, :value
-    def initialize type = '', value = ''
-      @type = type
+    attr_accessor :publisher_type, :value
+    def initialize publisher_type = '', value = ''
+      @publisher_type = type
       @value = value
+    end
+
+    def type
+      return @publisher_type
     end
   end
 end
