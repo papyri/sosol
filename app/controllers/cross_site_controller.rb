@@ -7,4 +7,16 @@ class CrossSiteController < ApplicationController
   def advanced_create
     render :partial => "advanced_create"
   end
+
+  def header
+    render :partial => "header"
+  end
+  
+  def footer
+    render :partial => "footer"
+  end
+  
+  
+
+  
 end

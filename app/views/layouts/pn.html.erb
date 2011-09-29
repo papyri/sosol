@@ -51,68 +51,10 @@
 </head>
 
 <body>
-  <div id="d">
-    <div id="hd">
-      <h1>Papyri.info</h1>
-      
-             <!-- sosol side -->
-       <%= render "cross_site/sign_in_out" %>
-       <!-- pn side -->
-       <!-- cross_site/sign_in_out -->
-        
-      </div>
-   </div>
-    <div id="bd">
-      <div class="nav">
-        <!-- left nav -->
-        <form method="get" accept-charset="utf-8" style="display:inline;">
-          <ul class="nav">
-            <li>Browse: </li>
-            <li>
-              <a href="http://papyri.info/browse/ddbdp/">DDbDP</a>
-            </li>
-            <li>
-              <a href="http://papyri.info/browse/hgv/">HGV</a>
-            </li>
-            <li>
-              <a href="http://papyri.info/browse/apis/">APIS</a>
-            </li>
-            <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
-            </li>
-            <li>or</li>
-            <li>
-              <a href="http://papyri.info/search">Search</a>
-            </li>
-            
-            <!-- sosol side -->
-            <%= render "cross_site/advanced_create" %>
-          
-            <!-- pn side -->
-            <!-- cross_site/advanced_create -->
-            
-          </ul>
-        </form>
-        
-        <!-- right nav is for sosol side -->
-        <ul class="nav right">
-        <%= render "cross_site/board_tabs" %>
-     
-        <%= render "cross_site/user_tabs" %>
-        </ul>
-     
- 
-   
-        
-      </div>
-      
-             <% if defined? @is_editor_view %>
-          
-          <%= render "identifiers/edit_bar" %>
-         
-          
-        <% end %>
+  
+  <%= render "cross_site/header" %>
+  
       <div id="main">
-   
         <div class="content">
           
           <!-- sosol side -->
@@ -121,58 +63,9 @@
         </div>
       </div>
    </div>
-    <div id="footer">
-      <div id="footer-left-col">
-        <div id="secondary-nav">
-          <ul class="nav">
-            <li><a href="/" title="Project Home">Home</a></li>
-            
-            <!-- link to sSoSOL -->
-            <li>
-              <%= link_to "Help", help_url%>
-              
-              </li>
-              
-            
-            <!-- following links only if logged into SoSOL -->
-            <li>
-              <%= link_to 'Admin', :controller => 'User', :action => 'admin'%>
-              
-            </li>
-            <li>
-              <%= link_to 'Account', :controller => 'User', :action => 'account'%>
-              
-              </li>
-            
-            
-            <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-            <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
-            <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
-            <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
-          </ul>
-        </div>
-        <div class="spacer"></div>
-      </div>
-      <div id="footer-right-col">
-        <p>Produced by</p>
-        <p><a href="http://dlib.nyu.edu/dlts/">NYU Digital Library Technology Services</a> 
-          <br/>&amp; the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the
-          Ancient World</a></p>
-        <div id="about-nav"> 
-          <ul class="nav">
-            <li><a href="http://www.trismegistos.org/" title="Trismegistos Home">Trismegistos</a></li>
-            <li><a href="http://www.rzuser.uni-heidelberg.de/%7Egv0/" title="Heidelberger Gesamtverzeichnis
-              der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
-            <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP" title="Duke Databank of Documentary Papyri - Home">DDbDp</a></li>
-            <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
-            <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
-          </ul>
-          <h3 id="about-hdr">About:</h3>
-        </div>
-      </div>
-      <div class="spacer"></div>
-    </div>
-  </div>
+   
+   <%= render "cross_site/footer" %>
+  
   <script type="text/javascript" charset="utf-8">
     jQuery("#searchbutton").button();
     jQuery("#editorbutton").button();
