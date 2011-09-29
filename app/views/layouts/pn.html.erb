@@ -5,15 +5,15 @@
   <%= csrf_meta_tag %>
   <title>Papyri.info</title>
    <link rel="stylesheet" href="http://www.papyri.info/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"> 
-  
-  <link rel="stylesheet" href="http://www.papyri.info/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+   <link rel="stylesheet" href="http://www.papyri.info/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
   
  
 
 
-  <%= stylesheet_link_tag 'editor' %>
-  <%= stylesheet_link_tag 'master' %>
   
+  <%= stylesheet_link_tag 'pn' %>
+  <%= stylesheet_link_tag 'master' %>
+  <%= stylesheet_link_tag 'editor' %>
 
    <%= javascript_include_tag :defaults %>
    <%= javascript_include_tag "dashboard" %>
@@ -100,9 +100,19 @@
         <%= render "cross_site/user_tabs" %>
         </ul>
      
+ 
+   
         
       </div>
+      
+             <% if defined? @is_editor_view %>
+          
+          <%= render "identifiers/edit_bar" %>
+         
+          
+        <% end %>
       <div id="main">
+   
         <div class="content">
           
           <!-- sosol side -->

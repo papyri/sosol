@@ -32,6 +32,7 @@ class HgvTransGlossariesController < ApplicationController
   def edit
     @entry = HGVTransGlossary.new.find_item(params[:id])
     @possible_langs = HGVTransGlossary.lang_codes
+    @is_editor_view = true
   end
 
   # POST /hgv_trans_glossaries

@@ -246,6 +246,7 @@ class PublicationsController < ApplicationController
   end
   
   def finalize_review
+    
     @publication = Publication.find(params[:id])
     @identifier = nil#@publication.entry_identifier
     #if we are finalizing then find the board that this pub came from 
@@ -262,6 +263,7 @@ class PublicationsController < ApplicationController
     if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
+    @is_editor_view = true
   end
   
  
@@ -441,7 +443,7 @@ class PublicationsController < ApplicationController
       redirect_to (dashboard_url)
       return
     end
-     
+    @is_editor_view = true 
     @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?

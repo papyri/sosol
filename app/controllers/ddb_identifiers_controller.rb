@@ -55,6 +55,7 @@ class DdbIdentifiersController < IdentifiersController
       new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
       @identifier[:leiden_plus] = new_content
     end
+    @is_editor_view = true
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
@@ -119,6 +120,7 @@ class DdbIdentifiersController < IdentifiersController
         %w{data xslt ddb commentary.xsl})),
         {})
       
+    @is_editor_view = true
   end
   
   def update_commentary
@@ -194,6 +196,8 @@ class DdbIdentifiersController < IdentifiersController
     # xslt.serve()
 
     @identifier[:html_preview] = @identifier.preview
+    
+    @is_editor_view = true
   end
   
   protected

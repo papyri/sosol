@@ -23,7 +23,7 @@ class HgvTransIdentifiersController < IdentifiersController
     #find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
     
-    
+    @is_editor_view = true
   end
   
 
@@ -123,7 +123,7 @@ class HgvTransIdentifiersController < IdentifiersController
       redirect_to polymorphic_url([@identifier.publication, @identifier], :action => :editxml)
       return
     end
-    
+    @is_editor_view = true
     @identifier[:html_preview] = @identifier.preview
   end
   

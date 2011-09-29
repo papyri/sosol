@@ -1,104 +1,105 @@
-#identifier_menu
-  
-  %ul
-    - if @identifier.publication.status == 'finalizing'
-      %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'finalize_review')) ? 'active' : ''}
-        = link_to 'Finalize', finalize_review_publication_path(@identifier.publication)
-    %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}
-      = link_to 'Overview', show_publication_path(@identifier.publication)
-    - if @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}.length > 0
-      %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
-        = link_to 'Text', edit_text_publication_path(@identifier.publication)
-        - texts = @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}
-        - if texts.length > 1
-          %ul
-            - for text in texts
-              %li
-                = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
-    - if @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
-      %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}
-        = link_to 'HGV', edit_meta_publication_path(@identifier.publication)
-        - metas = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
-        - if metas.length > 1
-          %ul
-            - for meta in metas
-              %li
-                = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
-    - if @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}.length > 0
-      %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
-        = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
-        - trans = @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}
-        - if trans.length > 1
-          %ul
-            - for tran in trans
-              %li
-                = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
-
-    -# if controller.action_name != 'show'
-    %li{ :class => 'nav_control' }
-      = link_to image_tag('left_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
-
-    %li{ :class => 'nav_control' }
-      = link_to image_tag('right_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
-
-    -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
-      - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
-        %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
-          = link_to 'Bibliography', edit_biblio_publication_path(@identifier.publication)
-          - biblio = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
-          - if biblio.length > 1
+#edit_bar
+  #identifier_menu
+    
+    %ul
+      - if @identifier.publication.status == 'finalizing'
+        %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'finalize_review')) ? 'active' : ''}
+          = link_to 'Finalize', finalize_review_publication_path(@identifier.publication)
+      %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}
+        = link_to 'Overview', show_publication_path(@identifier.publication)
+      - if @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}.length > 0
+        %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
+          = link_to 'Text', edit_text_publication_path(@identifier.publication)
+          - texts = @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}
+          - if texts.length > 1
             %ul
-              - for bib in biblio
+              - for text in texts
                 %li
-                  = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes(HGVBiblioIdentifier)])
-      
-    
-#identifier_sub_menus
-  - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
-    .identifier_sub_menu_empty
-  - else
-    .identifier_sub_menu
-    
-      .joiner
-      %ul
-        - if params[:controller] != 'publications'
-          %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
-          %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
-          - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
-            %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
-          -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
-          %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
-        - elsif params[:action] == 'finalize_review'
-          %li{ :class => !%w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
-          %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
-          %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
-
-
-        -# another way to do it
-      -# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post
-      -# %a{:href=>"#", :onClick=>"window.open('#{linky}', 'Comment', 'toolbar=0, menubar=0, location=0, status=0')"}=Comment
+                  = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
+      - if @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
+        %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}
+          = link_to 'HGV', edit_meta_publication_path(@identifier.publication)
+          - metas = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
+          - if metas.length > 1
+            %ul
+              - for meta in metas
+                %li
+                  = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
+      - if @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}.length > 0
+        %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
+          = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
+          - trans = @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}
+          - if trans.length > 1
+            %ul
+              - for tran in trans
+                %li
+                  = link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran])
   
-  - if !%w{history rename_review show show_commit}.include?(params[:action])
-    - case @identifier
-      - when DDBIdentifier
-        .identifier_sub_menu#sub_menu_2
-          
-          %ul
-            %li{ :class => %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
-            %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-            %li{ :class => params[:action] == 'commentary' ? 'active' : ''}= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary)
-            %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
-      - when HGVMetaIdentifier
-        .identifier_sub_menu#sub_menu_2
-          
-          %ul
-            %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'HGV', edit_polymorphic_path([@identifier.publication, @identifier])
-            %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-            %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
-      - when HGVTransIdentifier
-        .identifier_sub_menu#sub_menu_2
-
-          %ul
-            %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
-            %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-            %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+      -# if controller.action_name != 'show'
+      %li{ :class => 'nav_control' }
+        = link_to image_tag('left_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
+  
+      %li{ :class => 'nav_control' }
+        = link_to image_tag('right_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
+  
+      -# this is here because it comments the whole if below to eliminate the "Bibliograpy" tab for now
+        - if @current_user.admin && @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
+          %li{ :class => params[:controller] == 'hgv_biblio_identifiers' ? 'active' : ''}
+            = link_to 'Bibliography', edit_biblio_publication_path(@identifier.publication)
+            - biblio = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
+            - if biblio.length > 1
+              %ul
+                - for bib in biblio
+                  %li
+                    = link_to bib.titleize, edit_polymorphic_path([@identifier.publication, bib.becomes(HGVBiblioIdentifier)])
+        
+      
+  #identifier_sub_menus
+    - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
+      .identifier_sub_menu_empty
+    - else
+      .identifier_sub_menu
+      
+        .joiner
+        %ul
+          - if params[:controller] != 'publications'
+            %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
+            %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+            - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
+              %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
+            -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
+            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
+          - elsif params[:action] == 'finalize_review'
+            %li{ :class => !%w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
+            %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
+            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=200, height=400']
+  
+  
+          -# another way to do it
+        -# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post
+        -# %a{:href=>"#", :onClick=>"window.open('#{linky}', 'Comment', 'toolbar=0, menubar=0, location=0, status=0')"}=Comment
+    
+    - if !%w{history rename_review show show_commit}.include?(params[:action])
+      - case @identifier
+        - when DDBIdentifier
+          .identifier_sub_menu#sub_menu_2
+            
+            %ul
+              %li{ :class => %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'commentary' ? 'active' : ''}= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+        - when HGVMetaIdentifier
+          .identifier_sub_menu#sub_menu_2
+            
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'HGV', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+        - when HGVTransIdentifier
+          .identifier_sub_menu#sub_menu_2
+  
+            %ul
+              %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
