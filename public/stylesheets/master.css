@@ -1,78 +1,8 @@
-@import "yui/reset-fonts-grids.css";
-@import "custom-theme/jquery-ui-1.8.5.custom.css";
-@import "jquery.bubblepopup.v2.1.5.css";
-html {
-    background: #F5F5F5;
-}
-body {
-    color: #000000;
-    font-family: "Lucida Grande","Arial Unicode MS",Verdana,Cardo,Arial,Helvetica,sans-serif;
-    font-size: 108%;
-    min-height: 100%;
-}
-strong {
-		font-weight: bold;
-}
-#hd .top{
-		padding: 12px 24px 14px;
-		overflow: hidden;
-		background-color: #5C0303;
-}
-#hd .top ul.app_menu{
-		float:left;
-		overflow: hidden;
-		margin-top: 14px;
-}
-#hd .top ul.app_menu li{
-		float: left;
-		padding-right: 12px;
-		margin-right: 12px;
-		border-right: 1px solid #FFFFFF;
-}
-#hd .top ul.app_menu li.last{
-		border-right: none;
-}
-#hd .top ul.app_menu li a{
-		font-family: Georgia,serif;
-		font-size: 1.1em;
-		color: #b06464;
-		text-decoration: none;
-		font-style: italic;
-}
-#hd .top ul.app_menu li a:hover{
-		text-decoration: underline;
-}
-#hd .top ul.app_menu li.selected a{
-		color:#FFFFFF;
-}
-#hd .top ul.top_menu{
-		float:right;
-		overflow:hidden;
-		margin-top: 13px;
-}
-#hd .top ul.top_menu li{
-		float: left;
-		margin-right:6px;
-		color:#FFFFFF;
-}
-#hd .top ul.top_menu li:before {
-    content: "| ";
-}
-#hd .top ul.top_menu li:first-child:before {
-    content: "";
-}
-#hd .top ul.top_menu li a{
-		color: #FFFFFF;
-		font-size: .8em;
-		text-decoration: none;
-}
-#hd .top ul.top_menu li a:hover{
-		text-decoration: underline;
-}
+
 #hd h1 {
     color: #FFFFFF;
     font-family: Georgia,serif;
-    font-size: 1.9em;
+    font-size: 300%;  <!-- changed to % from hardcoded size of 1.9em -->
     margin-right: 24px;
     margin-bottom: 5px; <!-- since the menu below is moved up for rounded edges -->
     float: left;
@@ -84,6 +14,18 @@ strong {
 #hd h1 a:hover{
 		text-decoration: underline;
 }
+
+<!-- for header link to papyri.info without using jquery -->
+#hd a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+#hd a:hover{
+    
+}
+<!-- end for header link to papyri.info without using jquery -->
+
+
 #hd .bottom{
 	margin: 0;
 	height: 28px;
@@ -136,8 +78,36 @@ strong {
 		text-decoration: none;
 		letter-spacing: 1px;
 }
+
+
+
+ul.nav {
+display: inline;
+background-position: bottom;
+color: black;
+font-size: 80%;
+padding:0;
+
+}
+ul.nav li {
+display: inline;
+padding-left: 0.4em;
+padding-right: 0.4em;
+padding-top:0.2em;
+padding-bottom:0.5em;
+margin-bottom:0;
+margin-top:0;
+}
+ul.nav li.current {
+background:#F8F6F4;
+}
+
+
+
+
+
 div#bd {
-    min-height: 8em;
+    min-height:  8em;
     margin-top: -5px; <!-- to move the rounded edge back over the header background -->
 }
 h2#title {
@@ -561,6 +531,7 @@ table.results{
 table.results tr{
 	border: 1px solid #cccccc;
 	background-color:#FFFFFF;
+  line-height: 2em;
 }
 table.results tr:hover{
 	background-color:#eef6ec;
@@ -584,7 +555,7 @@ table.results td.identifier_td a {
   
   }
 table.results a{
-	display: block;
+	
 	text-decoration: none;
 	color: #000000;
 	padding: 8px 12px;
