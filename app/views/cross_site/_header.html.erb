@@ -1,12 +1,19 @@
 <div id="d">
     <div id="hd">
-      <h1>Papyri.info</h1>
       
+      <% if @current_user %>
+       <a href="/editor">
+      <% else %>
+       <a href="http://papyri.info">
+      <% end %>
+      <h1>Papyri.info</h1> 
+      </a>
              <!-- sosol side -->
+             
        <%= render "cross_site/sign_in_out" %>
        <!-- pn side -->
        <!-- cross_site/sign_in_out -->
-        
+        <!-- <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2> -->
       </div>
    </div>
     <div id="bd">
