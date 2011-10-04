@@ -29,6 +29,16 @@
     
   }
 
+  Event.observe(document.body, 'click',
+    function windowClick(e)
+    {
+      var clicked = $(Event.element(e));
+      if (clicked.id != 'community_menu')
+      { 
+        $('community_list').style.display = "none";
+      }
+    }
+   );
 
 
 - if @current_user
@@ -46,11 +56,11 @@
           = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
         
       - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
-      - if end_communities
+      - if end_communities && end_communities.length > 0
         %li
-          End
-      - end_communities.each do |community|
-        %li
-          = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
-          
+          Completed
+        - end_communities.each do |community|
+          %li
+            = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+            
       - #should be finding all user pubs, then showing the ones with community ids?

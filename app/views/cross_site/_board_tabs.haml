@@ -26,6 +26,19 @@
     board_list.style.left = left_pos + "px";
    
   }
+  
+  
+  Event.observe(document.body, 'click',
+    function windowClick(e)
+    {
+      var clicked = $(Event.element(e));
+      if (clicked.id != 'board_menu')
+      { 
+        $('board_list').style.display = "none";
+      }
+    }
+   );
+  
 
 
 - if @current_user
