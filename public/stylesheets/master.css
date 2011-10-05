@@ -98,7 +98,12 @@ background:#F8F6F4;
 }
 
 
-
+div.nav form {  <!-- firefox positions nav menu after title without this rule -->
+  //background: red;
+  position: absolute;
+  left: 0px;
+  
+}
 
 
 div#bd {
