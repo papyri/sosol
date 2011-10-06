@@ -1,8 +1,12 @@
 <div id="d">
     <div id="hd">
       
-      <% if @current_user %>
-       <a href="/editor">
+      
+      <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+      <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+        <a href="
+        <%=  dashboard_url %>
+        ">
       <% else %>
        <a href="http://papyri.info">
       <% end %>
