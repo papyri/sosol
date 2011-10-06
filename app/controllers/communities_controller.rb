@@ -122,6 +122,17 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_member_page", :id => @community.id
   end
 
+  def remove_current_user_membership
+    
+
+    @community = Community.find(params[:id])
+    
+    @community.members.delete(@current_user)
+    @community.save
+
+    #redirect_to :action => "edit", :id => (@community).id
+    redirect_to :controller => "user", :action => "admin"    
+  end
 
   def add_admin_page
     @community = Community.find(params[:id])
@@ -170,11 +181,8 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_admin_page", :id => @community.id
   end
 
-  def remove_current_user
-        
-
+  def remove_current_user  
     @community = Community.find(params[:id])
-
 
     @community.admins.delete(@current_user)
     @community.save

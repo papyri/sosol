@@ -18,9 +18,10 @@
 -# if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
 
 %h2
-  Your Communities
+  Your Community Admins
 
 = link_to "Create new", :controller => "communities", :action => "new"
+%br
 %br
   
 - @current_user.community_admins.each do |comm| 
@@ -28,6 +29,19 @@
   %br
 %br
 %br
+
+-# let them leave a community
+%h2
+  Your Community Memberships
+  
+- @current_user.community_memberships.each do |comm| 
+  = comm.friendly_name 
+  = link_to "Leave", :controller => "user", :action => "leave_community", :com_id => comm.id
+  
+  %br
+%br
+%br
+
     
 -# -----Boards-----
 

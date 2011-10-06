@@ -8,6 +8,10 @@ class UserController < ApplicationController
     redirect_to :controller => :welcome, :action => "index"
   end
   
+  def leave_community
+    @community = Community.find(params[:com_id])
+    
+  end
   #default view of stats is only for the current user, see below for all users
   def usage_stats    
     @users = Array.new()
