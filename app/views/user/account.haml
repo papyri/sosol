@@ -3,9 +3,12 @@
 
   %h1
     == #{@current_user.name}'s Account Info
-  %h2 
+  - if @current_user.community_memberships.length > 0
+    %h3
+      Communities
     - @current_user.community_memberships.each do |cm|
       = cm.name
+      %br
     
   %h3
     Personal
