@@ -122,7 +122,9 @@ function insertLinkPN(){
 
     collectionType = document.getElementById("IdentifierClass").value;
     
-    if (collectionType == 'DDBIdentifier'){ //check if value is empty or contains space
+    switch(collectionType)
+    {
+    case "DDBIdentifier":
       linkCollection = document.getElementById("DDBIdentifierCollectionSelect").value;
       if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
         alert("You must select a collection and document number at a minimum for the link");
@@ -130,8 +132,8 @@ function insertLinkPN(){
       }
       pnRef = "ddbdp/";
       convertXML = '<ref target="http:\/\/papyri.info\/' + pnRef + linkCollection + ';' + linkVolume + ';' + linkDocNum + '">' + linkFreeText + '<\/ref>';
-    }
-    else{
+      break;
+    case "HGVIdentifier":
       linkCollection = document.getElementById("HGVIdentifierCollectionSelect").value;
       if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
         alert("You must select a collection and document number at a minimum for the link");
@@ -146,6 +148,18 @@ function insertLinkPN(){
       }
 
       convertXML = '<ref target="http:\/\/' + getHGVNumber(identifier) + '">' + linkFreeText + '<\/ref>';
+      break;
+    case "APISIdentifier":
+      linkCollection = document.getElementById("APISIdentifierCollectionSelect").value;
+      if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
+        alert("You must select a collection and document number at a minimum for the link");
+        return;
+      }
+      pnRef = "apis/";
+      convertXML = '<ref target="http:\/\/papyri.info\/' + pnRef + linkCollection + '.apis.' + linkDocNum + '">' + linkFreeText + '<\/ref>';
+      break;
+    default: 
+      alert("The following value needs to be added to the insertLinkPN Javascript function - " + collectionType);
     }
       
         
