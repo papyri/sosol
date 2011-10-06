@@ -991,6 +991,17 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def allow_user_withdrawl?(user)
+    #check any children publications for voting activity
+    vote_count = 0;
+    
+    child_publications = self.all_children
+    child_publications.each do |pub|
+      vote_count += pub.votes.count
+    end
+   return vote_count < 1 && ( user == self.creator )
+  end
+  
   #finds the closest parent publication whose owner is a board and returns that board
   def find_first_board
     board_publication = self
