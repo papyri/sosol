@@ -877,7 +877,7 @@ class Publication < ActiveRecord::Base
      
      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
 
-      @publication.origin.save
+      self.origin.save
       
     
     
