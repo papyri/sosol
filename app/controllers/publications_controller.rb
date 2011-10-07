@@ -286,6 +286,11 @@ class PublicationsController < ApplicationController
     #instead we copy changes back to origin
     if @publication.is_community_publication?
       
+      @publication.copy_back_to_user(params[:comment], @current_user)
+  
+    if false  #moved this to model...
+
+      
 =begin      
       Rails.logger.info "==========COMMUNITY PUBLICATION=========="
       Rails.logger.info "----Community is " + @publication.community.name
@@ -369,6 +374,8 @@ class PublicationsController < ApplicationController
       Rails.logger.info "====creators publication after finalize=="
       @publication.origin.log_info
 =end      
+   
+   end  #moved this to model...
    
       
     else #commit to canon
