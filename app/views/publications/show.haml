@@ -183,7 +183,9 @@
 
 
     - if @publication.allow_user_withdrawl?(@current_user)
-      = button_to "Withdraw from Editorial Review"
+      %br
+      = button_to "Withdraw from Editorial Review",  :controller => 'publications', :id => @publication.id, :action => "withdraw"
+      %br
       
     - if @allow_delete
       = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"

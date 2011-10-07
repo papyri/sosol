@@ -31,16 +31,17 @@
 %br
 
 -# let them leave a community
-%h2
-  Your Community Memberships
+- if @current_user.community_memberships && @current_user.community_memberships.length > 0
+  %h2
+    Your Community Memberships
   
-- @current_user.community_memberships.each do |comm| 
-  = comm.friendly_name 
-  = link_to "Leave", :controller => "user", :action => "leave_community", :com_id => comm.id
-  
+  - @current_user.community_memberships.each do |comm| 
+    = comm.friendly_name 
+    = link_to "Leave", :controller => "user", :action => "leave_community", :com_id => comm.id
+    
+    %br
   %br
-%br
-%br
+  %br
 
     
 -# -----Boards-----
