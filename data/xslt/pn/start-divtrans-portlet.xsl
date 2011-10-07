@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: start-edition.xsl 1510 2008-08-14 15:27:51Z zau $ -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
@@ -67,7 +67,7 @@
         
         <!-- Heading for a ddb style file -->
         <xsl:if test="$leiden-style = 'ddbdp'">
-          <h2 class="apis-portal-title">DDbDP Full Text: 
+          <h2 class="apis-portal-title">Translation: 
             <xsl:value-of select="TEI/@id"/>
           </h2>
         </xsl:if>

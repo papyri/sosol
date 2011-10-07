@@ -77,7 +77,7 @@
         
         <!-- Heading for a ddb style file -->
         <xsl:if test="$leiden-style = 'ddbdp'">
-          <h2 class="apis-portal-title">DDbDP Full Text: 
+          <h2 class="apis-portal-title">Text: 
             <xsl:value-of select="TEI/@id"/>
           </h2>
         </xsl:if>

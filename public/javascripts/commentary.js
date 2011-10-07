@@ -17,7 +17,9 @@ function insertFootnote(){
 
   convertXML = '<note type="footnote" xml:lang="en">' + footnoteText + '<\/note>';
 
-  getMarkUp(convertXML);
+  window.opener.getMarkUp(convertXML);
+  
+  closeHelper();
 
 }
 
@@ -97,8 +99,9 @@ function insertLinkExt(){
     convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
   }
 
-  getMarkUp(convertXML);
-
+  window.opener.getMarkUp(convertXML);
+  
+  closeHelper();
 }
 
 //###########################################################################################
@@ -209,52 +212,11 @@ function insertLinkPN(){
       convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
     }
 
-    getMarkUp(convertXML);
-
-  }
-
-//###########################################################################################
-// insertMarkup - insert actual markup into commentary input form
-//###########################################################################################
+    window.opener.getMarkUp(convertXML);
     
-function insertMarkUp(vti)
-{
-
-  //get where to insert markup from value set before open window
-  insertHere = window.opener.document.getElementById("fm_or_com").value;
-
-  if(typeof document.selection != 'undefined'){ // means IE browser 
-
-    var range = window.opener.document.selection.createRange();
-
-    range.text = vti;
-    range.select();
-    range.collapse(false);
+    closeHelper();
   }
-  else {
-    // need to grab focus of main window textarea again for non-IE browsers only
-    element = window.opener.document.getElementById(insertHere);
-    element.focus();
-
-    if(typeof element.selectionStart != 'undefined'){ // means Mozilla browser 
-
-      var start = element.selectionStart;
-      var end = element.selectionEnd;
-      element.value = element.value.substr(0, start) + vti + element.value.substr(end);
-      var pos = start + vti.length;
-      element.selectionStart = pos;
-      element.selectionEnd = pos;
-      //below is to get focus back to textarea in main page - not work in safari - does is ff
-      element = window.opener.document.getElementById(insertHere);
-      element.focus();
-    }
-    else{ // not sure what browser 
-
-      element.value = element.value+vti;
-    }
-  }
-}
-
+   
 //###########################################################################################
 // closeHelper - close the helper input window
 //###########################################################################################
