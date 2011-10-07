@@ -34,7 +34,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
     
     context "community testing" do
       setup do
-        Rails.logger.level = :debug
+        #Rails.logger.level = :debug
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         Rails.logger.debug "*************are we in debug mode***************"
         
@@ -57,7 +57,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @test_community = Factory(:community, 
                                   :name => "test_freaky_community", 
                                   :friendly_name => "testy", 
-                                  :abbreviation => "tc", 
+                                  #:abbreviation => "tc", 
                                   :description => "a comunity for testing"
                                   )
         @test_community.members << @community_user

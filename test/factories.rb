@@ -116,7 +116,7 @@ end
 Factory.define :community do |f|
   f.name :name 
   f.friendly_name :friendly_name  
-  f.abbreviation :abbreviation 
+  #f.abbreviation :abbreviation 
   f.description :description
 end
 
