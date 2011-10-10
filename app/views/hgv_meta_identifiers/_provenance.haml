@@ -1,9 +1,10 @@
-- key = 'provenance'
-
 .provenanceContainer
-  .multi.geoSpot{:id => 'multi_' + key.to_s}
-    %ul.items{:id => 'multiItems_' + key.to_s}
-      - @identifier[:provenance].each_index do |provenanceIndex| # provenance (events) or origPlace
+  = check_box_tag 'hgv_meta_identifier[provenanceUnknown]', :unknown, @identifier[:origPlace] == 'unbekannt' ? true : false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceUnknown', :onchange => 'provenanceOrigPlaceUnknownToggle(this)'
+  = label_tag     'hgv_meta_identifier[provenanceUnknown]', I18n.t('meta.label.unknown'), :class => 'meta provenanceUnknown', :title => @identifier.configuration.xpath(:origPlace)
+  .clear
+  .multi.geoSpot{:id => 'multi_provenance', :style => 'display: ' + (@identifier[:origPlace] == 'unbekannt' ? 'none' : 'block')}
+    %ul.items{:id => 'multiItems_provenance'}
+      - @identifier[:provenance].each_index do |provenanceIndex|
         - provenance = HgvGeo::Provenance.new( :provenance => @identifier[:provenance][provenanceIndex])
         - base = 'hgv_meta_identifier[provenance][' + provenanceIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
@@ -11,31 +12,23 @@
       
         %li.provenance{:id => 'provenance_' + provenanceIndex.to_s }
           %p.clear
-            = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta provenanceType', :title => @identifier.configuration.xpath(:provenance)
-            = select_tag baseAttributes + '[type]', options_for_select(HgvProvenance.eventOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
+
+          = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta provenanceType', :title => @identifier.configuration.xpath(:provenance)
+          = select_tag baseAttributes + '[type]', options_for_select(HgvProvenance.typeOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
+        
+          = label_tag baseAttributes + '[subtype]', I18n.t('meta.label.subtype'), :class => 'meta provenanceSubtype', :title => @identifier.configuration.xpath(:provenance)
+          = select_tag baseAttributes + '[subtype]', options_for_select(HgvProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
+
+          = label_tag baseAttributes + '[date]', I18n.t('meta.label.date'), :class => 'meta provenanceDate', :title => @identifier.configuration.xpath(:provenance)
+          = text_field_tag baseAttributes + '[date]', provenance.date, :disabled => !@identifier.mutable?, :class => 'observechange provenanceDate'
           
-            = label_tag baseAttributes + '[subtype]', I18n.t('meta.label.subtype'), :class => 'meta provenanceSubtype', :title => @identifier.configuration.xpath(:provenance)
-            = select_tag baseAttributes + '[subtype]', options_for_select(HgvProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
-            
-            %span.delete{:onclick => 'multiRemove(this.parentNode.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-            %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
-          
-          %p.clear
-            = label_tag baseAttributes + '[id]', I18n.t('meta.label.id'), :class => 'meta provenanceId', :title => @identifier.configuration.xpath(:provenance)
-            = text_field_tag baseAttributes + '[id]', provenance.id, :disabled => !@identifier.mutable?, :class => 'observechange provenanceId'
-          
-          %p.clear
-            = label_tag baseAttributes + '[date]', I18n.t('meta.label.date'), :class => 'meta provenanceDate', :title => @identifier.configuration.xpath(:provenance)
-            = text_field_tag baseAttributes + '[date]', provenance.date, :disabled => !@identifier.mutable?, :class => 'observechange provenanceDate'
-            
+          %span.delete{:onclick => 'multiRemove(this.parentNode.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+
           .placeContainer
             =render :partial => 'hgv_meta_identifiers/geoPlace', :locals => {:placeList => provenance.placeList, :baseChildren => baseChildren, :provenanceIndex => provenanceIndex}
             .clear    
         
-    = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    = javascript_tag "Sortable.create('multiItems_provenance', {overlap: 'horizontal', constraint: false, handle: 'move'});"
    
   .clear
-    
-  =# debug provenance 
-
-=# debug @identifier[:provenance]

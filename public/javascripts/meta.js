@@ -1,61 +1,28 @@
 /**** provenance ****/
-function provenanceOrigPlaceUnknownToggle(origPlaceIndex, unknown){
-  if(unknown){
-    // set value
-    $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value').value = 'unbekannt';
+
+function provenanceOrigPlaceUnknownToggle(unknown){
+  if(unknown.checked){
     
-    // hide data pane
-    $('origPlace_' + origPlaceIndex + '_data').hide();
-    
-    // delete data
-    $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_type').value = '';
-    
-    provenanceOrigPlaceGeoDelete(origPlaceIndex);
+    if(($$('#multiItems_provenance li.provenance').length == 0) || confirm('Delete all provenance entries?')){
+      // set value
+      $('geoPreview').innerHMTL = 'unbekannt';
+
+      // hide data pane
+      $('multi_provenance').hide();
+
+      // delete geo data
+      $('multiItems_provenance').innerHTML = '';
+    } else {
+      unknown.checked = false;
+    }
 
   } else {
    // reset value
-   $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value').value = '';
+   $('geoPreview').innerHMTL = '';
    
    // show data pane
-   $('origPlace_' + origPlaceIndex + '_data').show();
+   $('multi_provenance').show();
   }
-}
-
-function provenanceOrigPlaceTypeToggle(origPlaceIndex, type){
-  // reset value
-  $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value').value = '';
-  
-  // delete data
-  provenanceOrigPlaceGeoDelete(origPlaceIndex);
-  
-  if(type == 'reference'){  
-    // show reference pane
-    $('origPlace_' + origPlaceIndex + '_reference').show();
-    
-    // hide geo pane
-    $('origPlace_' + origPlaceIndex + '_geo').hide();
-    
-  } else {
-    // hide reference pane
-    $('origPlace_' + origPlaceIndex + '_reference').hide();
-    
-    // show geo pane
-    $('origPlace_' + origPlaceIndex + '_geo').show();
-  }
-}
-
-function provenanceOrigPlaceReferenceTypeToggle(origPlaceIndex, referenceType){
-  // set value
-  $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value').value = referenceType;
-}
-
-function provenanceOrigPlaceGeoDelete(origPlaceIndex){
-  $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_referenceType').value = '';
-  $('hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_correspondency').value = '';
-  
-  $$('div#origPlace_' + origPlaceIndex + '_geo > div > ul').each(function(ul){
-    ul.innerHTML = '';
-  });
 }
 
 /**** publication ****/
@@ -164,99 +131,45 @@ function generateRandomId(prefix){
   return prefix + ((Math.random() * 1000000).floor() + '').replace('0', 'A').replace('1', 'B').replace('2', 'C').replace('3', 'D').replace('4', 'E').replace('5', 'F').replace('6', 'G').replace('7', 'H').replace('8', 'I').replace('9', 'J');
 }
 
-function multiAddOrigPlaceRaw(e){
-  var origPlaceIndex = multiGetNextIndex('origPlace');
-  var geoPlaceKey = generateRandomId('geoPlace');
-  var addPlaceKey = generateRandomId('addPlace');
-
-  var item = '<li id="origPlace_' + origPlaceIndex + '" class="origPlace">' + 
-             '  <p class="clear">' + 
-             '    <input type="text" value="" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][value]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_value" class="observechange provenanceValue">' + 
-             '    <input type="checkbox" value="unknown" onchange="provenanceOrigPlaceUnknownToggle(' + origPlaceIndex + ', this.checked)" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][unknown]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_unknown" class="observechange provenanceUnknown">' + 
-             '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace" for="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_unknown" class="meta provenanceUnknown">Unknown</label>' + 
-             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode.parentNode)" class="delete">x</span>' + 
-             '    <span title="Click and drag to move item" class="move">o</span>' + 
-             '  </p>' + 
-             '  <div id="origPlace_' + origPlaceIndex + '_data">' + 
-             '    <p class="clear">' + 
-             '      <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace" for="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_type" class="meta provenanceType">Type</label>' + 
-             '      <select onchange="provenanceOrigPlaceTypeToggle(' + origPlaceIndex + ', this.value)" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][attributes][type]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_type" class="observechange provenanceType"><option value=""></option>' + 
-             '      <option value="composition">composition</option>' + 
-             '      <option value="destination">destination</option>' + 
-             '      <option value="execution">execution</option>' + 
-             '      <option value="receipt">receipt</option>' + 
-             '      <option value="location">location</option>' + 
-             '      <option value="reuse">reuse</option>' + 
-             '      <option value="reference">reference*</option></select>' + 
-             '    </p>' + 
-             '    <div style="display: none" id="origPlace_' + origPlaceIndex + '_reference">' + 
-             '      <p class="clear">' + 
-             '        <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace" for="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_referenceType" class="meta provenanceReferenceType">Reference Type</label>' + 
-             '        <select onchange="provenanceOrigPlaceReferenceTypeToggle(' + origPlaceIndex + ', this.value)" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][referenceType]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_referenceType" class="observechange provenanceReferenceType"><option value=""></option>' + 
-             '        <option value="Fundort">findspot</option>' + 
-             '        <option value="unbekannt">unknown</option></select>' + 
-             '      </p>' + 
-             '      <p class="clear">' + 
-             '        <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace" for="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_correspondency" class="meta provenanceReferenceType">Reference Id</label>' + 
-             '        <input type="text" name="hgv_meta_identifier[origPlace][' + origPlaceIndex + '][attributes][correspondency]" id="hgv_meta_identifier_origPlace_' + origPlaceIndex + '_attributes_correspondency" class="observechange provenanceCorrespondency">' + 
-             '      </p>' + 
-             '    </div>' + 
-             '    <div id="origPlace_' + origPlaceIndex + '_geo" class="placeContainer">' + 
-             '    <div id="multi_' + geoPlaceKey + '" class="multi geoSpot">' +
-             '      <ul id="multiItems_' + geoPlaceKey + '" class="items"></ul>' +
-             '      <span id="' + addPlaceKey + '" class="addPlace">add place</span>' +
-             '    </div>' +
-             '    <div class="clear"></div>' +
-             '    </div>' + 
-             '  </div>' + 
-             '  <p class="clear"> </p>' + 
-             '</li>';
-
-  multiUpdate('origPlace', item);
-
-  Sortable.create('multiItems_' + geoPlaceKey, {overlap: 'horizontal', constraint: false, handle: 'move'});
-  $(addPlaceKey).observe('click', function(ev){ multiAddPlaceRaw(this); });
-  
-}
-
 function multiAddProvenanceRaw(e){
   var provenanceIndex = multiGetNextIndex('provenance');
   var geoPlaceKey = generateRandomId('geoPlace');
   var addPlaceKey = generateRandomId('addPlace');
-  var id = generateRandomId('geo');
+  
+  console.log('provenanceIndex: '+provenanceIndex);
 
   var item = '<li id="provenance_' + provenanceIndex + '" class="provenance">' +
-             '  <p class="clear">' +
-             '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_type" class="meta provenanceType">Type</label>' +
-             '    <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][type]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_type" class="observechange provenanceType"><option value="found">found</option>' +
-             '    <option selected="selected" value="observed">observed</option>' +
-             '    <option value="destroyed">destroyed</option>' +
-             '    <option value="not-found">not-found</option>' +
-             '    <option value="reused">reused</option>' +
-             '    <option value="moved">moved</option>' +
-             '    <option value="acquired">acquired</option>' +
-             '    <option value="sold">sold</option></select>' +
-             '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" class="meta provenanceSubtype">Subtype</label>' +
-             '    <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][subtype]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" class="observechange provenanceSubtype"><option value=""></option>' +
-             '    <option value="last">last</option></select>' +
-             '    <span title="Click to delete item" onclick="multiRemove(this.parentNode.parentNode)" class="delete">x</span>' +
-             '    <span title="Click and drag to move item" class="move">o</span>' +
-             '  </p>' +
-             '  <p class="clear">' +
-             '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_id" class="meta provenanceId">ID</label>' +
-             '    <input type="text" value="' + id + '" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][id]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_id" class="observechange provenanceId">' +
-             '  </p>' +
-             '  <p class="clear">' +
-             '    <label title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_date" class="meta provenanceDate">Date</label>' +
-             '    <input type="text" value="" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][date]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_date" class="observechange provenanceDate">' +
-             '  </p>' +
-             '  <div class="placeContainer">' +
-             '    <div id="multi_' + geoPlaceKey + '" class="multi geoSpot">' +
-             '      <ul id="multiItems_' + geoPlaceKey + '" class="items"></ul>' +
-             '      <span id="' + addPlaceKey + '" class="addPlace">add place</span>' +
-             '    </div>' +
-             '    <div class="clear"></div>' +
-             '  </div>' +
+             '   <p class="clear"></p>' +
+             '   <label class="meta provenanceType" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_type" title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance">Type</label>' +
+             '   <select class="observechange provenanceType" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_type" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][type]"><option value=""></option>' +
+             '   <option value=""></option>' +
+             '   <option value="composed">composed</option>' +
+             '   <option value="sent">sent</option>' +
+             '   <option value="executed">executed</option>' +
+             '   <option value="received">received</option>' +
+             '   <option value="located">located</option>' +
+             '   <option value="found">found</option>' +
+             '   <option value="observed">observed</option>' +
+             '   <option value="destroyed">destroyed</option>' +
+             '   <option value="not-found">not-found</option>' +
+             '   <option value="reused">reused</option>' +
+             '   <option value="acquired">acquired</option>' +
+             '   <option value="sold">sold</option>' +
+             '   <option value="moved">moved</option></select>' +
+             '   <label class="meta provenanceSubtype" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance">Subtype</label>' +
+             '   <select class="observechange provenanceSubtype" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_subtype" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][subtype]"><option value=""></option>' +
+             '   <option value="last">last</option></select>' +
+             '   <label class="meta provenanceDate" for="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_date" title="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance">Date</label>' +
+             '   <input class="observechange provenanceDate" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_attributes_date" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][attributes][date]" value="" type="text">' +
+             '   <span class="delete" onclick="multiRemove(this.parentNode.parentNode)" title="Click to delete item">x</span>' +
+             '   <span class="move" title="Click and drag to move item">o</span>' +
+             '   <div class="placeContainer">' +
+             '     <div class="multi geoSpot" id="multi_' + geoPlaceKey + '">' +
+             '       <ul class="items" id="multiItems_' + geoPlaceKey + '"></ul>' +
+             '       <span id="' + addPlaceKey + '" class="addPlace">add place</span>' +
+             '     </div>' +
+             '     <div class="clear"></div>' +
+             '   </div>' +
              '</li>';
 
   multiUpdate('provenance', item);
@@ -301,7 +214,6 @@ function multiAddPlaceRaw(e){
   }
   
   var provenanceIndex = li.id.substr(li.id.indexOf('_') + 1);
-  var provenanceType = li.id.substr(0, li.id.indexOf('_'));
   var geoSpotKey = generateRandomId('geoSpot');
   var geoReferenceKey = generateRandomId('geoReference');
   
@@ -315,14 +227,9 @@ function multiAddPlaceRaw(e){
   //console.log('provenanceIndex = ' + provenanceIndex);
   //console.log(provenanceType);
 
-  var paragraphUnderscore = provenanceType == 'provenance' ? 'paragraph_children_'   : '';
-  var paragraphBrackets   = provenanceType == 'provenance' ? '[paragraph][children]' : '';
-
   var item = '<li>' +
-             '   <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_id">Place ID</label>' +
-             '   <input type="text" value="" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][id]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_id" class="observechange provenancePlaceId">' +
-             '   <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_exclude">Exclude</label>' +
-             '   <input type="text" value="" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][attributes][exclude]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_attributes_exclude" class="observechange provenancePlaceExclude">' +
+             '   <input type="hidden" value="" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][attributes][id]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_attributes_id" class="observechange provenancePlaceId">' +
+             '   <input type="hidden" value="" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][attributes][exclude]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_attributes_exclude" class="observechange provenancePlaceExclude">' +
              '   <span title="Click to delete item" onclick="multiRemove(this.parentNode); geoUpdateExcludeLists(\'' + key + '\');" class="delete">x</span>' +
              '   <span title="Click and drag to move item" class="move">o</span>' +
              '   <div class="geoContainer">' +
@@ -369,6 +276,7 @@ function multiAddPlaceRaw(e){
              '     <div class="clear"></div>' +
              '   </div>' +
              '</li>';
+
   multiUpdate(key, item);
   geoUpdateExcludeLists(key);
 }
@@ -406,8 +314,6 @@ function multiAddGeoSpot(key, provenanceIndex, placeIndex)
   });
   
   var origPlace = $('multi_' + key).parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-  
-  var provenanceType = origPlace.id.substr(0, origPlace.id.indexOf('_'));
 
   //console.log('type = ' + type);
   //console.log('subtype = ' + subtype);
@@ -416,26 +322,23 @@ function multiAddGeoSpot(key, provenanceIndex, placeIndex)
   //console.log('uncertainty = ' + uncertainty);
   //console.log(referenceList);
 
-  var paragraphUnderscore = provenanceType == 'provenance' ? 'paragraph_children_'   : '';
-  var paragraphBrackets   = provenanceType == 'provenance' ? '[paragraph][children]' : '';
-
   var item = '<li>' +
-             '  <select name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][type]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_type" class="observechange provenanceGeoType"><option value="ancient"' + (type == 'ancient' ? ' selected="selected"' : '') + '>ancient</option>' +
+             '  <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][type]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_type" class="observechange provenanceGeoType"><option value="ancient"' + (type == 'ancient' ? ' selected="selected"' : '') + '>ancient</option>' +
              '  <option value="modern"' + (type == 'modern' ? ' selected="selected"' : '') + '>modern</option></select>' +
-             '  <select name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][subtype]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_subtype" class="observechange provenanceGeoSubtype"><option value=""></option>' +
+             '  <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][subtype]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_subtype" class="observechange provenanceGeoSubtype"><option value=""></option>' +
              '  <option value="nome"' + (subtype == 'nome' ? ' selected="selected"' : '') + '>nome</option>' +
              '  <option value="province"' + (subtype == 'province' ? ' selected="selected"' : '') + '>province</option>' +
              '  <option value="region"' + (subtype == 'region' ? ' selected="selected"' : '') + '>region</option></select>' +
-             '  <select name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][children][offset][value]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_children_offset_value" class="observechange provenanceGeoOffset"><option value=""></option>' +
+             '  <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][children][offset][value]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_children_offset_value" class="observechange provenanceGeoOffset"><option value=""></option>' +
              '  <option value="bei"' + (offset == 'bei' ? ' selected="selected"' : '') + '>near</option></select>' +
-             '  <input type="text" value="' + name + '" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][value]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_value" class="observechange provenanceGeoName">' +
-             '  <input type="checkbox" value="low" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][certainty]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_certainty" class="observechange provenanceGeoCertainty"' + (uncertainty ? ' checked="checked"' : '') + '>' +
-             '  <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_certainty" class="geoSpotUncertain">uncertain</label>' +
+             '  <input type="text" value="' + name + '" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][value]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_value" class="observechange provenanceGeoName">' +
+             '  <input type="checkbox" value="low" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][certainty]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_certainty" class="observechange provenanceGeoCertainty"' + (uncertainty ? ' checked="checked"' : '') + '>' +
+             '  <label for="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_certainty" class="geoSpotUncertain">uncertain</label>' +
              '  <span title="Click to delete item" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span title="Click and drag to move item" class="move">o</span>' +
              '  <div class="paragraph geoReferenceContainer"' + ($('toggleReferenceList').hasClassName('showReferenceList') ? ' style="display: none;"' : '') + '>' +
-             '    <input type="text" value="' + referenceString + '" name="hgv_meta_identifier[' + provenanceType + '][' + provenanceIndex + '][children]' + paragraphBrackets + '[place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][reference]" id="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_reference" class="observechange provenanceGeoReference">' +
-             '    <label for="hgv_meta_identifier_' + provenanceType + '_' + provenanceIndex + '_children_' + paragraphUnderscore + 'place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_reference">Reference</label>' +
+             '    <input type="text" value="' + referenceString + '" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][reference]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_reference" class="observechange provenanceGeoReference">' +
+             '    <label for="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_reference">Reference</label>' +
              '    <div id="multi_' + referenceKey + '" class="multi geoReference">' +
              '      <ul id="multiItems_' + referenceKey + '" class="items">';
   var i = 0;
@@ -573,11 +476,7 @@ function multiAddMentionedDate()
 function multiGetNextIndex(id)
 {
   var path = '#multiItems_' + id + ' > li > input';
-  
-  if(id == 'origPlace'){
-    path = '#multiItems_' + id + ' > li > p > input';
-  }
-  
+
   var index = 0;
   $$(path).each(function(item){
     var itemIndex = item.id.match(/(\d+)[^\d]*$/)[1] * 1;
