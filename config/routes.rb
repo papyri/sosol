@@ -94,7 +94,7 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'xsugar',
     :conditions => { :method => :post }
     
-    map.connect 'ajax_proxy/hgvnum/',
+  map.connect 'ajax_proxy/hgvnum/',
     :controller => 'ajax_proxy',
     :action => 'hgvnum',
     :conditions => { :method => :post }

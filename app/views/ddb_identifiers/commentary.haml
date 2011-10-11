@@ -736,20 +736,24 @@
       }
     
     // grab focus of main window textarea before open new window for IE browser only
-    // as non-IE gets focus again in commentary.js in the insertMarkUp function
+    // as non-IE gets focus again in insertMarkUp function
     getFocus(wherefrom);
 
     switch (view)
     {
     case "insertFootnote":
       {
-        openconfig = config='height=350, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=325, width=700, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     case "insertLinkPN":
+      {
+        openconfig = config='height=600, width=600, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
     case "insertlink":
       {
-        openconfig = config='height=575, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=625, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     default: // nopts is default and need to clear optional xml values and leave diachar filled in 
@@ -821,6 +825,91 @@
       element.value = element.value.substr(0, start) + newtext + element.value.substr(end);
       
       element.focus();
+    }
+  }
+  
+  //###########################################################################################
+  // getMarkUp - set up and make ajax call to xsugar to convert XML to non-XML
+  //###########################################################################################
+  
+  function getMarkUp(originalxml)
+  {
+
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(' xmlns[^\"]*\"[^\"]*\"', 'gi');
+    originalxml = originalxml.replace(xmlnsPattern, '');
+
+    //create url call
+    if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
+      request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+
+    wrapped_content = "<wrap>" + originalxml + "</wrap>";
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+
+        json = response.responseText.evalJSON();
+
+        if ("exception" in json){
+          alert("Grammar conversion error line " + json.exception.line + " column " + json.exception.column + " of this XML \n" + json.content);
+        }
+        else {
+          leidenh = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          
+          insertMarkUp(leidenh);
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getMarkUp(" + originalxml + ")",10000);
+      }
+    });
+  }
+  
+  //###########################################################################################
+  // insertMarkup - insert actual markup into commentary input form
+  //###########################################################################################
+
+  function insertMarkUp(vti){
+
+    //get where to insert markup from value set before open window
+    insertHere = document.getElementById("fm_or_com").value;
+    if(typeof document.selection != 'undefined'){ // means IE browser 
+  
+      var range = document.selection.createRange();
+  
+      range.text = vti;
+      range.select();
+      range.collapse(false);
+    }
+    else {
+      // need to grab focus of main window textarea again for non-IE browsers only
+      element = document.getElementById(insertHere);
+      element.focus();
+  
+      if(typeof element.selectionStart != 'undefined'){ // means Mozilla browser 
+  
+        var start = element.selectionStart;
+        var end = element.selectionEnd;
+        element.value = element.value.substr(0, start) + vti + element.value.substr(end);
+        var pos = start + vti.length;
+        element.selectionStart = pos;
+        element.selectionEnd = pos;
+        //below is to get focus back to textarea in main page - not work in safari - does is ff
+        element = document.getElementById(insertHere);
+        element.focus();
+      }
+      else{ // not sure what browser 
+  
+        element.value = element.value+vti;
+      }
     }
   }
 

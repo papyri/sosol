@@ -34,7 +34,10 @@
       var clicked = $(Event.element(e));
       if (clicked.id != 'board_menu')
       { 
-        $('board_list').style.display = "none";
+        if ($('board_list')) 
+          {
+            $('board_list').style.display = "none";
+          }
       }
     }
    );
