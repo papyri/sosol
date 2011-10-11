@@ -27,7 +27,7 @@ class CommunitiesControllerTest < ActionController::TestCase
       post :create, :community => Factory.build(:community).attributes.merge({"admins"=>[],"members"=>[]})
     end
 
-    assert_redirected_to community_path(assigns(:community))
+    assert_redirected_to edit_community_path(assigns(:community))
   end
 
   test "should show community" do
