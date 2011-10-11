@@ -51,4 +51,5 @@
   %br
 %br
 
-= link_to 'Edit', edit_community_path(@community) | 
+= link_to 'Edit', edit_community_path(@community) |  
+= link_to 'Destroy', @community , :confirm => 'Are you sure?', :method => :delete

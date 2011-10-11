@@ -7,10 +7,11 @@ class Community < ActiveRecord::Base
   has_and_belongs_to_many :admins, :class_name => "User",  :association_foreign_key => "user_id", :foreign_key => "community_id", :join_table => "communities_admins"
   
   
-  has_many :boards
+  has_many :boards , :dependent => :destroy 
   has_many :publications
   
-  
+  validates_presence_of :name
+  validates_uniqueness_of :name
   
 
   def end_user

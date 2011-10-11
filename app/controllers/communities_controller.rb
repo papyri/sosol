@@ -74,10 +74,12 @@ class CommunitiesController < ApplicationController
   # DELETE /communities/1.xml
   def destroy
     @community = Community.find(params[:id])
+    community_name = @community.format_name
     @community.destroy
 
     respond_to do |format|
-      format.html { redirect_to(communities_url) }
+      flash[:notice] = community_name + ' community no longer exist.'
+      format.html { redirect_to(:controller=>'user', :action => 'admin') }
       format.xml  { head :ok }
     end
   end
