@@ -74,6 +74,7 @@ class DdbIdentifiersController < IdentifiersController
       expire_leiden_cache
       expire_publication_cache
         @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
+        @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
       begin
@@ -98,12 +99,14 @@ class DdbIdentifiersController < IdentifiersController
         @identifier[:leiden_plus] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
+        @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
       rescue JRubyXML::ParseError => parse_error
         flash.now[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
         @bad_leiden = true #to keep from trying to parse the L+ as XML when render edit template
         @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
+        @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
       end #begin
     end #when
