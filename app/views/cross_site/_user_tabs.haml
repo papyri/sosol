@@ -35,7 +35,10 @@
       var clicked = $(Event.element(e));
       if (clicked.id != 'community_menu')
       { 
-        $('community_list').style.display = "none";
+        if ($('community_list')) 
+          {
+            $('community_list').style.display = "none";
+          }
       }
     }
    );
