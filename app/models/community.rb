@@ -25,7 +25,8 @@ class Community < ActiveRecord::Base
   #check to see whether or not to allow members to submit to the community
   def is_submittable?
     #if there is nowhere for the final publication to go, don't let them submit
-    return !self.end_user.nil?
+    #if there are no boards to review the publication, don't let them submit
+    return !self.end_user.nil? && (self.boards && self.boards.length > 0)
   end
   
   
