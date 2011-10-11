@@ -4,11 +4,15 @@ class CommunitiesControllerTest < ActionController::TestCase
   def setup
     @admin = Factory(:admin)
     @request.session[:user_id] = @admin.id
+    @community = Factory(:community)
+    @community_two = Factory(:community)
   end
   
   def teardown
     @request.session[:user_id] = nil
     @admin.destroy
+    @community.destroy unless !Community.exists? @community.id
+    @community_two.destroy unless !Community.exists? @community_two.id
   end
  
   test "should get index" do
@@ -31,23 +35,23 @@ class CommunitiesControllerTest < ActionController::TestCase
   end
 
   test "should show community" do
-    get :show, :id => communities(:one).to_param
+    get :show, :id => @community.id
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => communities(:one).to_param
+    get :edit, :id => @community.id
     assert_response :success
   end
 
   test "should update community" do
-    put :update, :id => communities(:one).to_param, :community => { }
-    assert_redirected_to community_path(assigns(:community))
+    put :update, :id => @community.id, :community => { }
+    assert_redirected_to edit_community_path(assigns(:community))
   end
 
   test "should destroy community" do
     assert_difference('Community.count', -1) do
-      delete :destroy, :id => communities(:one).to_param
+      delete :destroy, :id => @community.id
     end
 
     assert_redirected_to communities_path
