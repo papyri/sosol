@@ -1,6 +1,16 @@
 require 'test_helper'
 
 class CommunitiesControllerTest < ActionController::TestCase
+  def setup
+    @admin = Factory(:admin)
+    @request.session[:user_id] = @admin.id
+  end
+  
+  def teardown
+    @request.session[:user_id] = nil
+    @admin.destroy
+  end
+ 
   test "should get index" do
     get :index
     assert_response :success
@@ -14,7 +24,7 @@ class CommunitiesControllerTest < ActionController::TestCase
 
   test "should create community" do
     assert_difference('Community.count') do
-      post :create, :community => { }
+      post :create, :community => Factory.build(:community).attributes.merge({"admins"=>[],"members"=>[]})
     end
 
     assert_redirected_to community_path(assigns(:community))

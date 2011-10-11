@@ -44,7 +44,7 @@ class CommunitiesController < ApplicationController
     @community.admins << @current_user
 
     respond_to do |format|
-      if @community.save
+      if @community.save!
         format.html { redirect_to(:action => 'edit', :id => @community.id, :notice => 'Community was successfully created.') }
         format.xml  { render :xml => @community, :status => :created, :location => @community }
       else

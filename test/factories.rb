@@ -114,10 +114,10 @@ Factory.define :DDBIdentifier do |f|
 end
 
 Factory.define :community do |f|
-  f.name :name 
-  f.friendly_name :friendly_name  
-  #f.abbreviation :abbreviation 
-  f.description :description
+  f.name { Factory.next(:name) }
+  f.friendly_name { Factory.next(:name) } 
+  f.description 'description'
+  f.admins Array.new
 end
 
 
