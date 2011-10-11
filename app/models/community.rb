@@ -10,8 +10,8 @@ class Community < ActiveRecord::Base
   has_many :boards
   has_many :publications
   
-  
-  
+  validates_uniqueness_of :name, :case_sensitive => false
+  validates_presence_of :name
 
   def end_user
     if self.end_user_id.nil?
