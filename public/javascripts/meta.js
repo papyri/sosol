@@ -109,6 +109,22 @@ function multiAdd(id)
   multiUpdate(id, item);
 }
 
+function multiAddCitedLiterature(){
+  var target     = $('citedLiterature_target').value;
+  var pagination = $('citedLiterature_pagination').value;
+
+  var index = multiGetNextIndex('citedLiterature');
+
+  var item = '<li>' +
+             '  <input class="observechange target" id="hgv_meta_identifier_citedLiterature_'  + index + '_children_pointer_attributes_target" name="hgv_meta_identifier[citedLiterature]['  + index + '][children][pointer][attributes][target]" value="'  + target + '" type="text">' +
+             '  <input class="observechange pagination" id="hgv_meta_identifier_citedLiterature_'  + index + '_children_pagination_value" name="hgv_meta_identifier[citedLiterature]['  + index + '][children][pagination][value]" value="'  + pagination + '" type="text">' +
+             '  <span class="delete" onclick="multiRemove(this.parentNode)" title="Click to delete item">x</span>' +
+             '  <span class="move" title="Click and drag to move item">o</span>' +
+             '</li>';
+
+  multiUpdate('citedLiterature', item);
+}
+
 function multiAddBl()
 {
   var volume = $$('#multiPlus_bl > select')[0].value;

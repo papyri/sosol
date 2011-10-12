@@ -113,7 +113,7 @@
 
         %h4.category.provenance
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
-        .editbox{:style => 'display: block;'}
+        .editbox{:style => 'display: none;'}
           %p#geoPreview
             = @identifier[:origPlace]
           %span.geoPreview{:onclick => "new Ajax.Request('/hgv_meta_identifiers/get_geo_preview?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
@@ -128,15 +128,15 @@
 
         %h4.category.reference
           %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
-        .editbox{:style => 'display: none;'}
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography }
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget }
-          =# text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pointer] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination }
-          =# text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pagination] && @identifier[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
+        .editbox{:style => 'display: block;'}
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography }
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget }
+          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pointer] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination }
+          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pagination] && @identifier[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
           
-          =# render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :citedLiterature}
-          =# render :partial => 'hgv_meta_identifiers/biblio', :locals => { :key => :citedLiterature}
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :citedLiterature}
+          = render :partial => 'hgv_meta_identifiers/biblio', :locals => { :key => :citedLiterature}
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'hgv_meta_identifiers/figures'

@@ -52,6 +52,33 @@
             :url:
               :name: url
       :multiple: true
+    :sammelbuchBibliography:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/listBibl/bibl[@type='SB']
+      :children:
+        :pointer:
+          :xpath: ptr
+          :optional: false
+          :attributes:
+            :target:
+              :name: target
+              :optional: false
+              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+        :pagination:
+          :xpath: biblScope[@type='pp']
+    :citedLiterature:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='citations']/listBibl/bibl
+      :multiple: true
+      :children:
+        :pointer:
+          :xpath: ptr
+          :optional: false
+          :attributes:
+            :target:
+              :name: target
+              :optional: false
+              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+        :pagination:
+          :xpath: biblScope[@type='pp']
     :contentText:
       :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='hgv']/term
       :multiple: true
