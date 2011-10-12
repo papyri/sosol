@@ -1065,7 +1065,7 @@ class Publication < ActiveRecord::Base
 
   def withdraw
     original_origin = self.origin
-    if(original_origin != self)
+    #if(original_origin != self) #commented out so user can withdraw there own pub, note this should not be called without checking that the pub is withdrawable
       original_origin.all_children.each do |child_publication|
         child_publication.destroy
       end
@@ -1077,7 +1077,7 @@ class Publication < ActiveRecord::Base
         i.status = 'editing'
         i.save!
       end
-    end
+    #end
   end
   
   def allow_user_withdrawl?(user)
