@@ -54,7 +54,11 @@
     %ul
       %li
         = link_to "Home", dashboard_url
-      - @current_user.community_memberships.each do |community|
+        
+      - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+      - user_communities = @current_user.community_memberships
+      - all_communities = end_communities | user_communities
+      - all_communities.each do |community|
         %li
           = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
 
