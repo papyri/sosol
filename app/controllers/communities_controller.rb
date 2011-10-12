@@ -44,8 +44,9 @@ class CommunitiesController < ApplicationController
     @community.admins << @current_user
 
     respond_to do |format|
-      if @community.save
-        format.html { redirect_to(:action => 'edit', :id => @community.id, :notice => 'Community was successfully created.') }
+      if @community.save!
+        flash[:notice] = 'Community was successfully created.'
+        format.html { redirect_to(:action => 'edit', :id => @community.id) }
         format.xml  { render :xml => @community, :status => :created, :location => @community }
       else
         format.html { render :action => "new" }
@@ -61,7 +62,8 @@ class CommunitiesController < ApplicationController
 
     respond_to do |format|
       if @community.update_attributes(params[:community])
-        format.html { redirect_to(:action => 'edit', :id => @community.id, :notice => 'Community was successfully updated.') }
+        flash[:notice] = 'Community was successfully updated.'
+        format.html { redirect_to(:action => 'edit', :id => @community.id) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
