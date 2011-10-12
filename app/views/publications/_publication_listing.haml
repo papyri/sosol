@@ -32,6 +32,10 @@
       %tr
         %td
           = link_to publication.title, publication
+          
+          - if view_type && view_type == "community"
+            = publication.owner.name
+            
         -# -------------META---------------------
         %td{:class=>"identifier_td"}
           - meta_ids = publication.identifiers.collect do |ids|
@@ -51,7 +55,6 @@
           - if meta_ids.length > 1
             = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
           
-            
         -# -------------TEXT---------------------    
         %td{:class=>"identifier_td"}
           - text_ids = publication.identifiers.collect do |ids|
