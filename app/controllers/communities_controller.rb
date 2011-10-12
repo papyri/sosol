@@ -75,6 +75,13 @@ class CommunitiesController < ApplicationController
   def destroy
     @community = Community.find(params[:id])
     community_name = @community.format_name
+    
+    #find all of the publications that belonged to the community and reset them to sosol
+    @community.publications.each do |p|
+      p.community = nil
+      p.save
+    end
+    #this will not affect the boards copies & they will be deleted along with the community
     @community.destroy
 
     respond_to do |format|
