@@ -76,26 +76,11 @@
 
 
 
-ul.nav {
-display: inline;
-background-position: bottom;
-color: black;
-font-size: 80%;
-padding:0;
 
+ul.nav {
+  /* font-size: 80%; */
 }
-ul.nav li {
-display: inline;
-padding-left: 0.4em;
-padding-right: 0.4em;
-padding-top:0.2em;
-padding-bottom:0.5em;
-margin-bottom:0;
-margin-top:0;
-}
-ul.nav li.current {
-background:#F8F6F4;
-}
+
 
 
 div.nav form {  /* firefox positions nav menu after title without this rule */
@@ -109,36 +94,6 @@ div.nav form {  /* firefox positions nav menu after title without this rule */
 div#bd {
     min-height:  8em;
     margin-top: -5px; /* to move the rounded edge back over the header background */
-}
-h2#title {
-    color: #3C2217;
-    font-family: Georgia,serif;
-    position: absolute;
-    text-align: center;
-    top: 1em;
-    width: 100%;
-}
-div.footer {
-    background: none repeat scroll 0 0 #F8F6F4;
-    border: thin solid #426A30;
-    margin-left: 1em;
-    margin-right: 1em;
-    margin-top: 1em;
-    opacity: 0.8;
-    padding: 0.5em;
-    text-align: center;
-}
-div.content {
-    background-color: #F5F5F5;
-    min-width: 900px;
-    padding: 30px 30px;
-    font-size: .8em;
-    overflow:hidden;
-    font-family: Georgia,serif;
-}
-div.content h2{
-		font-size: 1.8em;
-		margin-bottom: 12px;
 }
 
 div.transpecial{ /* this is to get the 'Text:' and text node viewable in preview on translation page */
