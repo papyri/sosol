@@ -46,29 +46,32 @@
 
 - if @current_user
 
-  
-  %li{:onclick=>"showCommunityDialog(event)", :id=>"community_menu", :class=>"editor_menu"}
-    = "Communities"
-  
-  %div{:class => "editor_nav", :id=>"community_list"}
-    %ul
-      %li
-        = link_to "Home", dashboard_url
-        
-      - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
-      - user_communities = @current_user.community_memberships
-      - all_communities = end_communities | user_communities
-      - all_communities.each do |community|
-        %li
-          = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+  - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+  - user_communities = @current_user.community_memberships
+  - all_communities = end_communities | user_communities
 
-      -#there is no real diff between this view and the user view        
-        - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
-        - if end_communities && end_communities.length > 0
+  - if all_communities.length > 0
+    
+    %li{:onclick=>"showCommunityDialog(event)", :id=>"community_menu", :class=>"editor_menu"}
+      = "Communities"
+    
+    %div{:class => "editor_nav", :id=>"community_list"}
+      %ul
+        %li
+          = link_to "Home", dashboard_url
+          
+  
+        - all_communities.each do |community|
           %li
-            Completed
-          - end_communities.each do |community|
+            = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+  
+        -#there is no real diff between this view and the user view        
+          - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+          - if end_communities && end_communities.length > 0
             %li
-              = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
-              
-      - #should be finding all user pubs, then showing the ones with community ids?
+              Completed
+            - end_communities.each do |community|
+              %li
+                = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+                
+        - #should be finding all user pubs, then showing the ones with community ids?
