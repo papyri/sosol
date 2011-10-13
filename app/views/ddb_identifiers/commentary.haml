@@ -227,7 +227,7 @@
     '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
     //show no content since it will be updated with getsugar call
     '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
-    '<input class="save" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
+    '<input class="save_commentary" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
     ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
     '</form>' +
     generateDeleteForm(id,original_item_id) +
@@ -289,7 +289,7 @@
     '<br/>' +
     '<label>Front matter:</label><br/>' +
     '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
-    '<input class="save" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
+    '<input class="save_commentary" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
     ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
     '</form>' +
     generateDeleteFrontmatterForm(content) +
