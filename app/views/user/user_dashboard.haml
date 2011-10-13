@@ -1,7 +1,7 @@
 
 - if @community
   %h2
-    = @community.name + " " + @community.friendly_name + " community publications."
+    = @community.format_name + " community publications."
  
 - if @new_publications && @new_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "New", :view_type => "user", :list_name => "new"}

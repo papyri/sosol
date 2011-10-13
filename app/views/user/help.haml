@@ -14,7 +14,7 @@
   %br
   = link_to 'Add/Change Account Attributes', url_for(:controller=>'docovideos',:action=>'account'), :onclick => "window.open(this.href);return false;"
   %p
-    - if @current_user.admin 
+    - if @current_user && @current_user.admin 
       %br
       %br
       %h1

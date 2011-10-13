@@ -2,14 +2,14 @@
       <div id="footer-left-col">
         <div id="secondary-nav">
           <ul class="nav">
-            <li><a href="/" title="Project Home">Home</a></li>
             
+            <li><%=  link_to "Help", help_url %></li> <% #must be placed here, on one line, to prevent extra space in list %>
             <%= render "cross_site/footer_links" %>
             
             
             <li><a href="http://digitalpapyrology.blogspot.com/" title="Digital Papyrology">Blog</a></li>
-            <li><a href="/resources.html" title="Papyrological tools and resources">Resources</a></li>
-            <li><a href="/feedback.html" title="Feeback">Feedback</a></li>
+            <li><a href="http://papyri.info/resources.html" title="Papyrological tools and resources">Resources</a></li>
+            <li><a href="http://papyri.info/feedback.html" title="Feeback">Feedback</a></li>
             <li><a href="http://epidoc.sourceforge.net/" title="EpiDoc Home">About EpiDoc</a></li>
           </ul>
         </div>
@@ -27,7 +27,7 @@
               der Griechischen Papyrusurkunden Ägyptens - Home ">HGV</a></li>
             <li><a href="http://idp.atlantides.org/trac/idp/wiki/DDBDP" title="Duke Databank of Documentary Papyri - Home">DDbDp</a></li>
             <li><a href="http://www.columbia.edu/cu/lweb/projects/digital/apis/about.html">APIS</a></li>
-            <li class="last-child"><a href="/about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
+            <li class="last-child"><a href="http://papyri.info//about.html" title="Advanced Papyrological Information System">Papyri.info</a></li>    
           </ul>
           <h3 id="about-hdr">About:</h3>
         </div>

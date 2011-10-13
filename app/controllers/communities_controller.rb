@@ -93,7 +93,15 @@ class CommunitiesController < ApplicationController
     end
   end
 
-
+  def list_publications
+    begin
+      @community = Community.find(params[:id])
+    rescue
+      @community = nil
+      return
+    end
+     @publications = Publication.find_all_by_community_id(@community.id, :include => [:identifiers], :order => "updated_at DESC")
+  end
 
   def find_member
 

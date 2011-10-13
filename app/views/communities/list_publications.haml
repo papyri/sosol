@@ -1,0 +1,11 @@
+- if @community
+  %h2
+    = @community.format_name + " community publications."
+ 
+  - if @community.publications && @community.publications.length > 0
+    = render :partial => "publications/publication_header", :locals => {:status => "all", :list_name => "Community"}
+    = render :partial => "publications/publication_listing", :locals => { :view_type => "community", :publications => @publications, :list_name => "Community"}
+
+-else
+  %h2
+    Community not found.
