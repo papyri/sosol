@@ -1,7 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :communities, :member => { :find_member => :get, :add_member => :get, :add_member_page => :get, :remove_member => :get, :add_admin => :get, :add_admin_page => :get, :remove_admin => :get, :remove_current_user_membership => :post, :remove_current_user => :post } 
-
-  #map.resources :glossaries
   map.resources :hgv_trans_glossaries, :member => { :update => :put }
 
   map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
@@ -17,12 +14,10 @@ ActionController::Routing::Routes.draw do |map|
  	
   map.resources :comments, :member => { :ask_for => :get }
 
+  map.resources :communities, :member => { :find_member => :get, :add_member => :get, :add_member_page => :get, :remove_member => :get, :add_admin => :get, :add_admin_page => :get, :remove_admin => :get, :remove_current_user_membership => :post, :remove_current_user => :post } 
+
   map.resources :events
   
-  # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
-  # map.login '/login', :controller => 'sessions', :action => 'new'
-  # map.register '/register', :controller => 'users', :action => 'create'
-  # map.signup '/signup', :controller => 'users', :action => 'new'
   map.resource :session
   
   map.help 'help', 
@@ -37,30 +32,24 @@ ActionController::Routing::Routes.draw do |map|
     :controller => "docos",
     :action => "documentation"
 
-  #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
-  map.usage 'usage', :controller => 'user', :action => 'usage_stats'
-  map.all_users_links 'all_users_links', :controller => 'user', :action => 'all_users_links'
-  map.index_user_admins 'index_user_admins', :controller => 'user', :action => 'index_user_admins'
+  map.resources :user, :member => {
+    :usage => :get,
+    :all_users_links => :get,
+    :index_user_admins => :get,
+    :dashboard => :get,
+    :developer => :get,
+    :create_email_everybody => :get,
+    :admin => :get
+  }
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
-  map.developer 'developer', :controller => 'user', :action => 'developer'
-  map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
  
-  #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
-
-  map.master_list 'master_list', :controller => "publications", :action => "master_list"
-  
-  #deletable map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
-  #deletable map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
-  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
-  #deleteable map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
-	
   map.connect 'publications/archive_all',
     :controller => 'publications',
     :action => 'archive_all',
     :conditions => { :method => :post }
 
   map.resources :publications, :collection => { :advanced_create => :get }
-  map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
+  map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post, :master_list => :get }
   map.resources :publications do |publication|
     publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }

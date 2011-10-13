@@ -38,7 +38,7 @@
       = f.submit "Update"
   %br
   %br
-  = link_to "Your Usage Stats", usage_url
+  = link_to "Your Usage Stats", url_for {:controller => 'user', :action => 'show', :user_name => @current_user}
   %br
   %br
   = link_to "Usage Stats By User", all_users_links_url

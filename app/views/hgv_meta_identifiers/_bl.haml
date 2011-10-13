@@ -10,10 +10,8 @@
         %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add#multiPlus_bl
     %label= I18n.t('meta.label.blVolume')
-    =#%input#bl_volume
       
     = select_tag '', options_for_select(['', 'I', 'II 1', 'II 2', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']), :id => 'bl_volume', :class => 'observechange'
-      
       
     %label= I18n.t('meta.label.blPage')
     %input#bl_page.observechange

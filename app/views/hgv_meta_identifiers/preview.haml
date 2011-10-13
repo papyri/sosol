@@ -66,7 +66,7 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Provenance'
               %td
-                = HgvProvenance.format @identifier[:provenance]
+                = HgvProvenance.format @identifier[:origPlace], @identifier[:provenance]
           - if @identifier[:material]
             %tr
               %th=I18n.t('meta.label.material')
