@@ -303,6 +303,7 @@ input.navButton {
     font-size: 85%;
     font-weight: bold;
 }
+
 select#APIS-Collection {
     border: thin solid gray;
     font-size: 85%;
@@ -484,16 +485,21 @@ table#resources p {
 div#related h4 {
     font-family: "Lucida Grande","Arial Unicode MS",Verdana,Cardo,Arial,Helvetica,sans-serif;
 }
+
+
 #footer {
-    background-color: #CCCCCC;
-    color: #3D3D3D;
-    font-family: Verdana,Helvetica,sans-serif;
-    font-size: .75em;
-    margin-top: 1em;
-    padding: 12px 24px;
-    overflow:hidden;
-    min-width: 900px;
+    /* commented out so as to not override settings in pn's master.css */
+    /* background-color: #CCCCCC; */
+    /* color: #3D3D3D; */
+    /* font-family: Verdana,Helvetica,sans-serif; */
+    /* font-size: .75em; */
+    /* margin-top: 1em; */
+    /* padding: 12px 24px; */
+     overflow:hidden; 
+    /* min-width: 900px; */
 }
+
+/*
 #footer-left-col {
     float: left;
     width: 600px;
@@ -512,6 +518,7 @@ div#related h4 {
 #footer ul.nav li {
     display: block;
 }
+
 #footer a:link, #footer a:visited, #footer a:hover, #footer a:active {
     color: #3D3D3D;
 }
@@ -527,6 +534,7 @@ div#related h4 {
 #secondary-nav ul.nav li:first-child:before {
     content: "";
 }
+
 #footer-left-col #secondary-nav ul.nav li {
     float: left;
     margin-bottom: 5px;
@@ -535,6 +543,8 @@ div#related h4 {
 #footer-right-col p:first-child {
     font-weight: bold;
 }
+*/
+
 /* This section is for elements mocked up but not currently implemented */
 table.results{
 
