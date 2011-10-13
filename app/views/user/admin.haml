@@ -60,7 +60,7 @@
   -#can email all users
   %h2
     Communications
-  = link_to 'Email Users', sendmsg_url
+  = link_to 'Email Users', create_email_everybody_user_path
   
   %br
   %br
@@ -71,7 +71,7 @@
   %h2 
     Site Permissions
   -#they can set other users as anything, 
-  = link_to 'Set User Admins', index_user_admins_url
+  = link_to 'Set User Admins', index_user_admins_user_path
   %br
 
   %br

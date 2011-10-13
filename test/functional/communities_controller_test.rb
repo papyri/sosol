@@ -54,6 +54,6 @@ class CommunitiesControllerTest < ActionController::TestCase
       delete :destroy, :id => @community.id
     end
 
-    assert_redirected_to communities_path
+    assert_redirected_to admin_user_path
   end
 end

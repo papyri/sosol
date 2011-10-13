@@ -15,7 +15,7 @@ class Comment < ActiveRecord::Base
   end
 
   def comment
-    CGI.unescape(read_attribute(:comment))
+    CGI.unescape(read_attribute(:comment) || '')
   end
   
   class CombineComment

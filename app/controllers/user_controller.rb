@@ -18,22 +18,6 @@ class UserController < ApplicationController
     @users << @current_user
   end
 
-  #TODO who has the right to see this?, will this create any dangerous links to things that a user should not be able to do 
-  def all_usage_stats
-    if @current_user.admin || @current_user.developer
-      @users = User.find(:all)
-      
-      #default to show last 2 weeks activity when showing all users
-      @calc_date = Date.today - 14
-      
-      flash.now[:notice] = "Usage since #{@calc_date}"
-      render "usage_stats"
-      return
-    end
-    flash[:error] = "Only admins and developers are authorized to use this link."
-    redirect_to dashboard_url
-  end
-  
   def all_users_links
     @users = User.find(:all, :order => "full_name ASC")
   end
@@ -411,7 +395,7 @@ Developer:
     if params[:email_subject].gsub(/^\s+|\s+$/, '') == "" || params[:email_content].gsub(/^\s+|\s+$/, '') == ""
       flash[:notice] = 'Email subject and content are both required.'
       #redirect_to :controller => "user", :action => "create_email_everybody"
-      redirect_to sendmsg_url
+      redirect_to create_email_everybody_path
       return
     end
     

@@ -3,7 +3,7 @@
 # :xpath (mandatory)
 # :multiple -> true | false (optional, defaults to false)
 # :optional -> true | false (optional, defaults to true)
-# :default -> default value as string, multiple entries reasonable do not support default values (optional)
+# :default -> default value as string, multiple entries do not support default values (optional)
 # :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional)
 # :children -> recursive element structure
 #
@@ -128,36 +128,77 @@
                   :pattern: /\A0(\.\d)?|1\Z/
         :annotation:
           :xpath: note[@type='annotation']
-    #:mentionedDateOriginal:
-    #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='original']
-    #:mentionedDateSource:
-    #  :xpath: /TEI/text/body/div[@type='commentary'][@subtype='mentionedDates']/note[@type='source']
-    #  :pattern: /\AHGV\.fp7|MentionedDates\.fp7\Z/
     :provenance:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
-      :pattern: /\Aunbekannt\Z/
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event
       :multiple: true
+      :attributes:
+        :type:
+          :name: type
+        :subtype:
+          :name: subtype
+        :id:
+          :name: xml:id
+        :date:
+          :name: when
+      :children:
+        :paragraph:
+          :xpath: p
+          :children:
+            :place:
+              :xpath: placeName
+              :multiple: true
+              :attributes:
+                :id:
+                  :name: xml:id
+                :exclude:
+                  :name: exclude
+              :children:
+                :geo:
+                  :xpath: placeName
+                  :multiple: true
+                  :attributes:
+                    :type:
+                      :name: type
+                    :subtype:
+                      :name: subtype
+                    :certainty:
+                      :name: cert
+                    :reference:
+                      :name: ref
+                  :preFlag: offset # CL: CROMULENT GEO HACK
+    :origPlace:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
+      :multiple: true
+      :pattern: /(Unbekannt|Fundort)/
+      :attributes:
+        :type:
+          :name: type
+        :correspondency:
+          :name: corresp
       :children:
         :place:
           :xpath: placeName
           :multiple: true
           :attributes:
-            :type:
-              :name: type
-              :pattern: /\AancientFindspot|nome|ancientRegion|modernFindspot\Z/
-              :optional: false
-            :certainty:
-              :name: cert
-              :pattern: /\Alow\Z/
+            :id:
+              :name: xml:id
+            :exclude:
+              :name: exclude
           :children:
-            :offset:
-              :xpath: offset
-              :pattern: /\Abei\Z/
-            :location:
+            :geo:
               :xpath: placeName
+              :multiple: true
               :attributes:
-                :key:
-                  :name: key
+                :type:
+                  :name: type
+                :subtype:
+                  :name: subtype
+                :certainty:
+                  :name: cert
+                :reference:
+                  :name: ref
+              :preFlag: offset # CL: CROMULENT GEO HACK
+
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
       :multiple: true
