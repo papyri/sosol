@@ -44,7 +44,7 @@ ActionController::Routing::Routes.draw do |map|
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
   map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
- 
+
   #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
   map.master_list 'master_list', :controller => "publications", :action => "master_list"
@@ -83,6 +83,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
+  
+  map.connect 'mulgara/sparql/:query',
+    :controller => 'ajax_proxy',
+    :action => 'sparql',
+    :query => /.*/
    
   map.connect 'ajax_proxy/sparql/:query',
     :controller => 'ajax_proxy',
