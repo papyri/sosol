@@ -2,9 +2,9 @@
 #hd h1 {
     color: #FFFFFF;
     font-family: Georgia,serif;
-    font-size: 300%;  <!-- changed to % from hardcoded size of 1.9em -->
+    font-size: 300%;  /* changed to % from hardcoded size of 1.9em */
     margin-right: 24px;
-    margin-bottom: 5px; <!-- since the menu below is moved up for rounded edges -->
+    margin-bottom: 5px; /* since the menu below is moved up for rounded edges */
     float: left;
 }
 #hd h1 a{
@@ -98,8 +98,8 @@ background:#F8F6F4;
 }
 
 
-div.nav form {  <!-- firefox positions nav menu after title without this rule -->
-  //background: red;
+div.nav form {  /* firefox positions nav menu after title without this rule */
+  /*background: red;*/
   position: absolute;
   left: 0px;
   
@@ -108,7 +108,7 @@ div.nav form {  <!-- firefox positions nav menu after title without this rule --
 
 div#bd {
     min-height:  8em;
-    margin-top: -5px; <!-- to move the rounded edge back over the header background -->
+    margin-top: -5px; /* to move the rounded edge back over the header background */
 }
 h2#title {
     color: #3C2217;
@@ -140,6 +140,15 @@ div.content h2{
 		font-size: 1.8em;
 		margin-bottom: 12px;
 }
+
+div.transpecial{ /* this is to get the 'Text:' and text node viewable in preview on translation page */
+    padding-left: 1.25em;
+}
+
+div#editing_trans_text_view{ /* this is to make the preview div on translation page resizable */
+    resize: both;
+}
+
 div.content h3 {
     font-family: Georgia,serif;
     font-size: 1.3em;
@@ -379,6 +388,11 @@ div.metadata th {
 }
 div#edition {
     margin-left: 3em;
+}
+div#commentary { /* this is to get the commentary stuff in preview to align with the rest */
+    margin-left: 3em;
+    padding-left:15px;
+    position:relative;
 }
 .latinnum {
     border-top: thin solid black;
