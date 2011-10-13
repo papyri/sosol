@@ -395,7 +395,7 @@ Developer:
     if params[:email_subject].gsub(/^\s+|\s+$/, '') == "" || params[:email_content].gsub(/^\s+|\s+$/, '') == ""
       flash[:notice] = 'Email subject and content are both required.'
       #redirect_to :controller => "user", :action => "create_email_everybody"
-      redirect_to create_email_everybody_path
+      redirect_to sendmsg_url
       return
     end
     
