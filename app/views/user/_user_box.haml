@@ -21,10 +21,10 @@
         \|
         = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
         \|
-        = link_to 'Email Users', create_email_everybody_user_path
+        = link_to 'Email Users', sendmsg_url
         \|
       - if @current_user.developer
-        = link_to 'developer', developer_user_path
+        = link_to 'developer', developer_url
       - if @current_user.is_community_master_admin
         = link_to "Community", :controller => "communities"
         
