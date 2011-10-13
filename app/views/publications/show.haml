@@ -1,7 +1,34 @@
 #main
   - max_visible_comments = 10
   :javascript 
-    function checkForComment() { comment_text = $('submit_comment').value; $('submit_button').disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; }
+    function checkForComment() 
+    { 
+      //comment_text = $('submit_comment').value; 
+      //var submits = $$('input.submit')
+      //for (var i=0;i<submits.length;i++)
+      //{
+      //  $(submits[i]).disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; 
+      //}
+      
+  
+      var comment_text = $('submit_comment').value;
+      
+      if ($('community_id') != null)
+      {
+        var selected_submit = $('community_id').value;
+        $('submit_button').disabled = (selected_submit == "")  ||  ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
+      }
+      else
+      {
+        $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
+      }
+    }
+    
+    // function setCommunityId(id)
+    // {
+    //   $('community_id').value = id;
+    // }  
+    
     function toggle_div(obj) {
       var el = document.getElementById(obj);
       if ( el.style.display != "none" ) {
@@ -11,14 +38,14 @@
         el.style.display = '';
       }
     }
-  = render :partial => 'identifiers/edit_bar'
+  =# render :partial => 'identifiers/edit_bar'
   .site
     %h2 
       = @publication.title
       - if !@publication.status.nil? && @publication.status != ''
         == (#{@publication.status})
       
-    = render :partial => "common/flash_all"    
+    -# render :partial => "common/flash_all"    
 
     - if %w{new editing}.include?(@publication.status)
       #submit
@@ -32,16 +59,30 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            - form_tag  :controller => 'publications', :action => "submit"  do
+            - form_tag :controller => 'publications', :action => "submit"  do
+              -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br
               %br
               = label_tag "Briefly describe the reason for your submission:"
               %br
-              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment(event)", :cols => 70, :rows => 4
+              = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
               %br
               = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+              
+              - if @current_user.community_memberships.count > 0
+                - community_hash = Hash.new
+                - community_hash["SOSOL"] = 0
+                - @current_user.community_memberships.each do |community|
+                
+                  - if community.is_submittable? #check to see that we can submit to community
+                    - community_hash[community.format_name] = community.id
+                  -#= submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
+                = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => 'checkForComment()' }
+                
+                        
+                
         - else
           %b
             Publication may not be submitted at this time.
@@ -140,6 +181,12 @@
      
         %br
 
+
+    - if @publication.allow_user_withdrawl?(@current_user)
+      %br
+      = button_to "Withdraw from Editorial Review",  :controller => 'publications', :id => @publication.id, :action => "withdraw"
+      %br
+      
     - if @allow_delete
       = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
       %br

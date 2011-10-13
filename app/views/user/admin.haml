@@ -1,0 +1,107 @@
+
+
+
+
+-# -----Communities-----
+
+- if @current_user.is_community_master_admin
+  -#they can create destroy communities, pick community admins
+  %h2
+    Communities
+  = link_to "Edit All Communities", :controller => "communities"
+  %br
+
+  %br
+  %br
+  
+-#can edit their communities
+-# if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
+
+%h2
+  Your Community Admins
+
+= link_to "Create new", :controller => "communities", :action => "new"
+%br
+%br
+  
+- @current_user.community_admins.each do |comm| 
+  = link_to comm.friendly_name, comm
+  %br
+%br
+%br
+
+-# let them leave a community
+- if @current_user.community_memberships && @current_user.community_memberships.length > 0
+  %h2
+    Your Community Memberships
+  
+  - @current_user.community_memberships.each do |comm| 
+    = comm.friendly_name 
+    = link_to "Leave", :controller => "user", :action => "leave_community", :com_id => comm.id
+    
+    %br
+  %br
+  %br
+
+    
+-# -----Boards-----
+
+
+- if @current_user.admin
+  -#can setup boards
+  %h2
+    Boards
+  = link_to 'Edit Boards', boards_url
+  %br
+  %br
+    
+    
+
+  -#can email all users
+  %h2
+    Communications
+  = link_to 'Email Users', create_email_everybody_user_path
+  
+  %br
+  %br
+
+-# -----Master Admin-----
+
+- if @current_user.is_master_admin
+  %h2 
+    Site Permissions
+  -#they can set other users as anything, 
+  = link_to 'Set User Admins', index_user_admins_user_path
+  %br
+
+  %br
+  %br
+
+-# -----Developer-----
+
+- if @current_user.developer
+  %h2
+    You are a developer
+  Warning, your views may differ from users view.
+  -#see debuging info
+
+-# ------Tell user their rights------
+
+%h2
+  Your admins
+   
+- admin_list = ""
+- if @current_user.is_master_admin
+  - admin_list = admin_list + "Master Admin <br />"
+- if @current_user.admin
+  - admin_list = admin_list + "Admin <br />"
+- if @current_user.is_community_master_admin
+  - admin_list = admin_list + "Community Master Admin <br />"
+- if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0
+  - @current_user.community_admins.each do |comm| 
+    - admin_list = admin_list + "Admin for " + comm.friendly_name + " community<br />"
+      
+- if admin_list == ""
+  - admin_list = "You have no admin rights."
+%p
+  = admin_list

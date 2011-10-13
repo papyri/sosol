@@ -1,0 +1,97 @@
+
+
+
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+  
+- newstyle = 'style="color:blue; background-color:red"'
+
+%div{:class => "publication_list_holder", :id => list_id }
+  %table{:class=>"results", :width=>"95%"}
+    %tr
+      %td
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+      %td{:width=>"15%"}
+    %tr{:class=>"head"}
+      %td
+        = Publication
+      %td
+        HGV
+      %td
+        Text
+      %td
+        Translation
+      %td
+        Catalog
+    - publications.each do |publication|
+      
+      %tr
+        %td
+          = link_to publication.title, publication
+          
+          - if view_type && view_type == "community"
+            = publication.owner.name
+            
+        -# -------------META---------------------
+        %td{:class=>"identifier_td"}
+          - meta_ids = publication.identifiers.collect do |ids|
+            - if ids.type == "HGVMetaIdentifier"
+              - ids
+              
+          - meta_ids = meta_ids.compact
+          
+          - if meta_ids.length == 0
+            - class_type = "HGVMetaIdentifier"
+            - link_id = "HGVMetaIdentifier" + publication.id.to_s
+            - create_type = 'Create new'            
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - else
+            = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
+          
+          - if meta_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
+          
+        -# -------------TEXT---------------------    
+        %td{:class=>"identifier_td"}
+          - text_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "DDBIdentifier"
+              - ids
+          - text_ids = text_ids.compact
+          - if text_ids.length == 0
+            - class_type = "DDBIdentifier"
+            - link_id = "DDBIdentifier" + publication.id.to_s
+            - create_type = 'Create new'            
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - else
+            = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
+
+          - if text_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
+
+  
+        -# -------------TRANSLATIONS---------------------
+        %td{:class=>"identifier_td"}
+          - trans_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "HGVTransIdentifier"
+              - ids
+          - trans_ids = trans_ids.compact
+          - if trans_ids.length == 0
+            - class_type = "HGVTransIdentifier"
+            - link_id = "HGVTransIdentifier_" + publication.id.to_s
+            - create_type = 'Create new'            
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - else
+            = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
+
+          - if trans_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => trans_ids }
+            
+        -# -------------APIS---------------------
+        %td{:class=>"identifier_td"}
+          = " "              

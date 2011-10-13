@@ -1,0 +1,24 @@
+%h1
+  User Admin Privileges
+
+- for user in @users
+  %div{ :class => "user_admins" }
+    
+  
+    .user_name
+      = h user.name
+    .checkbox_container
+      = check_box_tag "name", "1", user.is_master_admin, { :disabled => true }
+      Master Admin
+    .checkbox_container
+      = check_box_tag "name", "1", user.is_community_master_admin, { :disabled => true }
+      Community Master Admin
+    .checkbox_container
+      = check_box_tag "name", "1", user.admin, { :disabled => true }
+      Admin
+    .checkbox_container
+      = check_box_tag "name", "1", user.developer, { :disabled => true }
+      Developer
+    
+    = link_to "Edit", :controller => :user, :action => :edit_user_admins, :user_id => user.id 
+

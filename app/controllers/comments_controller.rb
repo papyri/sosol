@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
   before_filter :authorize
   
+  layout false
   # GET /comments
   # GET /comments.xml
   def index

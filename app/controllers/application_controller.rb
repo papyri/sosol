@@ -24,6 +24,8 @@ class ApplicationController < ActionController::Base
   before_filter :get_user_id
   before_filter :rpx_setup
 
+  before_filter :tab_setup
+
   unless ActionController::Base.consider_all_requests_local
     rescue_from Exception, :with => :render_500
     rescue_from ActionController::RoutingError, :with => :render_404
@@ -31,6 +33,8 @@ class ApplicationController < ActionController::Base
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   end
 
+  layout "pn"
+  
   protected
 
   def render_500(e)
@@ -54,7 +58,15 @@ class ApplicationController < ActionController::Base
 
   private
   
-  def get_user_id
+  def get_user_id  
+    if (ENV['RAILS_ENV'] == "test") && !params[:test_user_id].blank?
+
+      @current_user = User.find_by_id params[:test_user_id]
+      session[:user_id] == params[:test_user_id]
+
+      return true
+    end
+  
     user_id = session[:user_id]
     if user_id
       @current_user = User.find_by_id user_id
@@ -70,4 +82,12 @@ class ApplicationController < ActionController::Base
     @rpx = Rpx::RpxHelper.new(RPX_API_KEY, RPX_BASE_URL, RPX_REALM)
     return true
   end
+  
+  
+  def tab_setup
+    @current_board = nil
+    @currrent_identifier = nil
+    
+  end
+  
 end

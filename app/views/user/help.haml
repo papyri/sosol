@@ -14,7 +14,7 @@
   %br
   = link_to 'Add/Change Account Attributes', url_for(:controller=>'docovideos',:action=>'account'), :onclick => "window.open(this.href);return false;"
   %p
-    - if @current_user.admin 
+    - if @current_user && @current_user.admin 
       %br
       %br
       %h1
@@ -37,7 +37,56 @@
       %br
       %br
       = link_to 'Show Editorial Board Attributes', url_for(:controller=>'docovideos',:action=>'ebshow'), :onclick => "window.open(this.href);return false;"
-/
+
+
+
+      %h1
+        Admin types
+      %p 
+        Admins have the ability to create, edit and destroy different items based on their type. The admin types are:
+      %ul
+        %li
+          %b 
+            Master Admin 
+          can set all admin rights for any user.
+        %li
+          %b
+            Community Master Admin 
+          can create, edit and destroy communities as well as pick community admins.
+        %li
+          %b
+            Community Admins 
+          can edit their communities.
+        %li
+          %b 
+            Admins
+          can create, edit and destroy boards. Can email all users.
+        %li
+          %b
+            Developer 
+          has extra views with debugging info.    
+      %p 
+        = "To check your admins, go to the " 
+        =  link_to 'admin page', :controller=>'user', :action=>'admin'
+      
+       
+      %h1
+        Community Help
+      %br
+      %br
+        %p
+          Communities are separate collections of boards. When a publication is ready to be submittied, the user will be given the option to submit to Sosol or to any community to which they belong.
+          The community boards will vote on and finalize the publications using whatever boards the community has created. The main difference is that instead of being commited to canonical, the publication will be given to the "end user" determined by the community. 
+          The publication will then appear as an editing publication on the "end user's" dashboard. It will contain the history of the changes made by the submitter and the boards.
+        %p
+          Community controls are accessible via the 
+          =  link_to 'admin page', :controller=>'user', :action=>'admin'
+          
+            
+
+
+
+-# /
   %p
     Current notes:
     The boards are now open for anyone to edit. Please do not create any new boards - do not destroy any boards.

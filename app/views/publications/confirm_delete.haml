@@ -4,7 +4,7 @@
     - if !@publication.status.nil? && @publication.status != ''
       == (#{@publication.status})
       
-  = render :partial => "common/flash_all"    
+  -# render :partial => "common/flash_all"    
 
   %h2
     Are You Sure You Want to Delete this publication? This action will only delete your copy of this publication, but cannot be undone.

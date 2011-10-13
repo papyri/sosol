@@ -1,0 +1,28 @@
+
+- if @community
+  %h2
+    = @community.format_name + " community publications."
+ 
+- if @new_publications && @new_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "New", :view_type => "user", :list_name => "new"}
+  = render :partial => "publications/publication_listing", :locals => {:publications => @new_publications, :view_type => "user", :list_name => "new"}
+
+- if @editing_publications && @editing_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Editing", :view_type => "user", :list_name => "editing" }
+  = render :partial => "publications/publication_listing", :locals => {:publications => @editing_publications, :view_type => "user", :list_name => "editing" }
+
+- if @submitted_publications && @submitted_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Submitted", :view_type => "user", :list_name => "submitted" }
+  = render :partial => "publications/publication_listing", :locals => {:publications => @submitted_publications, :view_type => "user", :list_name => "submitted" }
+ 
+- if @committed_publications && @committed_publications.length > 0
+  = render :partial => "publications/publication_header", :locals => {:status => "Committed", :view_type => "user", :list_name => "committed" }
+  = render :partial => "publications/publication_listing", :locals => {:publications => @committed_publications, :view_type => "user", :list_name => "committed" }
+  .archive_link
+    = link_to "Archive All Committed", :controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id
+%br
+%br
+.archive_link
+  = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id
+
+

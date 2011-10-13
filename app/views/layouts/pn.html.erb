@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <%= csrf_meta_tag %>
+  <title>Papyri.info</title>
+   <link rel="stylesheet" href="http://www.papyri.info/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8"> 
+   <link rel="stylesheet" href="http://www.papyri.info/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  
+ 
+
+
+  
+  <%= stylesheet_link_tag 'pn' %>
+  <%= stylesheet_link_tag 'master' %>
+  <%= stylesheet_link_tag 'editor' %>
+
+   <%= javascript_include_tag :defaults %>
+   <%= javascript_include_tag "dashboard" %>
+  
+  
+  <script src="http://www.papyri.info/js/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="http://www.papyri.info/js/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
+ 
+
+  <script language="javascript" type="text/javascript">
+    jQuery.noConflict();
+  </script>
+  <script src="http://www.papyri.info/js/init.js" type="text/javascript" charset="utf-8"></script>
+ 
+
+ 
+ 
+  <script type="text/javascript">
+    <!-- moved from body ib load to ensure it is called -->
+    window.onload = init;
+    
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-19774706-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+    
+  </script>
+
+</head>
+
+<body>
+  
+  <%= render "cross_site/header" %>
+  <br />
+  <%= render "common/flash_all"  %>
+
+      
+        <div class="content">
+          
+          <!-- sosol side -->
+          <%= yield %>
+          
+        </div>
+    
+  
+   
+   <%= render "cross_site/footer" %>
+  
+  <script type="text/javascript" charset="utf-8">
+    jQuery("#searchbutton").button();
+    jQuery("#editorbutton").button();
+  </script>
+</body>
+</html>

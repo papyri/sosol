@@ -1,6 +1,7 @@
 class BoardsController < ApplicationController
 
-  layout "site"
+  #layout "site"
+  #layout "header_footer"
   before_filter :authorize
   before_filter :check_admin
 
@@ -86,6 +87,7 @@ class BoardsController < ApplicationController
   # GET /boards/new
   # GET /boards/new.xml
   def new
+    
     @board = Board.new    
     
     #don't let more than one board use the same identifier class
@@ -96,6 +98,10 @@ class BoardsController < ApplicationController
     #existing_boards.each do |b|
     #  @available_identifier_classes -= b.identifier_classes
     #end
+    
+    if params[:community_id]
+      @board.community_id =  params[:community_id]
+    end
      
     respond_to do |format|
       format.html # new.html.erb
@@ -124,16 +130,26 @@ class BoardsController < ApplicationController
       end
     end
 
-    #just let them choose one identifer class
-    #@board.identifier_classes << params[:identifier_class]
+
 
     #put the new board in last rank
-    #TODO add count for community
-    @board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    if @board.community_id
+      @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    else
+      #@board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.  
+      @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    end
+    #just let them choose one identifer class
+    #@board.identifier_classes << params[:identifier_class]
+    
 
     if @board.save
       flash[:notice] = 'Board was successfully created.'
-      redirect_to :action => "edit", :id => (@board).id    
+      redirect_to :action => "edit", :id => (@board).id
+    else
+      #TODO add error check to give meaningfull response to user.
+      flash[:error] = 'Board creation failed. Was your name unique?'
+      redirect_to dashboard_url
     end         
   end
 
@@ -168,12 +184,26 @@ class BoardsController < ApplicationController
 
 
   def rank
-    @boards = Board.ranked;
+    if params[:community_id]
+      @boards = Board.ranked_by_community_id( params[:community_id] )
+      @community_id = params[:community_id] 
+    else
+      #default to sosol boards
+      @boards = Board.ranked;  
+    end
+    
   end
 
   def update_rankings
 
-    @boards = Board.find(:all)
+    if params[:community_id]
+      @boards = Board.ranked_by_community_id( params[:community_id] )
+    else
+      #default to sosol boards
+      @boards = Board.ranked;  
+    end
+    
+    #@boards = Board.find(:all)
 
     rankings = params[:ranking].split(',');
     
@@ -188,7 +218,17 @@ class BoardsController < ApplicationController
       end
       rank_count+= 1
     end
-    redirect_to :action => "index"
+    
+    
+    if params[:community_id]
+      redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id]
+      return
+    else
+      #default to sosol boards
+      redirect_to :action => "index"
+      return
+    end
+    
   end
 
 

@@ -2,6 +2,13 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
   
   has_many :user_identifiers, :dependent => :destroy
+
+  #worksA has_and_belongs_to_many :community_memberships, :class_name => "Community", :foreign_key => "user_id",    :join_table => "communities_members"
+  #worksA has_and_belongs_to_many :community_admins,  :class_name => "Community", :foreign_key => "user_id", :join_table => "communities_admins"
+ 
+  has_and_belongs_to_many :community_memberships, :class_name => "Community", :association_foreign_key => "community_id", :foreign_key => "user_id",    :join_table => "communities_members"
+  has_and_belongs_to_many :community_admins,  :class_name => "Community", :association_foreign_key => "community_id", :foreign_key => "user_id", :join_table => "communities_admins"
+
   
   has_and_belongs_to_many :boards
   has_many :finalizing_boards, :class_name => 'Board', :foreign_key => 'finalizer_user_id'

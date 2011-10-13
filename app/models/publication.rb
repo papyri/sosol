@@ -8,6 +8,8 @@ class Publication < ActiveRecord::Base
   belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
   
+  belongs_to :community
+  
   has_many :children, :class_name => 'Publication', :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => 'Publication'
   
@@ -166,6 +168,31 @@ class Publication < ActiveRecord::Base
     self.owner.repository.delete_branch(self.branch)
   end
   
+  
+   def log_info
+        Rails.logger.info "-----Publication Info-----"
+        Rails.logger.info "--Owner: " + self.owner.name
+        Rails.logger.info "--Title: " + self.title
+        Rails.logger.info "--Status: " + self.status
+        Rails.logger.info "--content"
+        
+        self.identifiers.each do |id|
+          Rails.logger.info "---ID title: " + id.title
+          Rails.logger.info "---ID class:" + id.class.to_s
+          Rails.logger.info "---ID content:"
+          if id.xml_content
+            Rails.logger.info id.xml_content
+          else
+            Rails.logger.info "NO CONTENT!"
+          end
+          #Rails.logger.info "== end Owner: " + publication.owner.name
+        end
+        Rails.logger.info "==end Owner: " + self.owner.name
+        Rails.logger.info "=====End Publication Info====="
+    end
+      
+
+  
   def submit_to_next_board
 
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
@@ -173,9 +200,22 @@ class Publication < ActiveRecord::Base
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-
+    
+    Rails.logger.info "---Submittable identifiers are: " 
+    submittable_identifiers.each do |log_si|
+      Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
+    end
+    
+    
+    #check if we are part of a community
+   
+    if is_community_publication?
+      boards = Board.ranked_by_community_id( self.community.id )
+    else
+      boards = Board.ranked  
+    end
+    
     #check each board in order by priority rank
-    boards = Board.ranked
     boards.each do |board|
 
       #if board.community == publication.community
@@ -183,7 +223,10 @@ class Publication < ActiveRecord::Base
         if boards_identifiers.length > 0
           #submit to that board
 
-
+    Rails.logger.info "---Submittable Board identifiers are: " 
+    boards_identifiers.each do |log_sbi|
+      Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
+    end
 
           #find the comment text made on submission
           comment_text = '' #if no comment found, default to nothing. This should never happen.
@@ -229,46 +272,54 @@ class Publication < ActiveRecord::Base
     end
 
 
-=begin
-    #horrible hack here to specifiy board order, change later with workflow engine
-    #1 meta
-    #2 transcription
-    #3 translation
-    error_text = "" #default to empty for check in controller
-    # find all unsubmitted meta ids, then text ids, then translation ids
-    [HGVMetaIdentifier, DDBIdentifier, HGVTransIdentifier].each do |ic|
-      identifiers.each do |i|
-        if i.modified? && i.class == ic &&  i.status == "editing"
-          #submit it
-          if submit_identifier(i)
-            return error_text, i.id
-          else
-            error_text  += "no board for " + ic.to_s + " so this publication identifier was NOT submitted"
-            return error_text, nil
-          end
-        end
+    Rails.logger.debug " no more parts to submit "
+    #if we get to this point, there are no more boards to submit to, thus we are done
+    if is_community_publication?
+      if self.community.end_user.nil?
+        #no end user has been set, so warn them and then what?
+        #user can't submit to community if no end user, so this should not happen
+        
+      else
+        
+        
+        #copy to  space
+        Rails.logger.debug "----end user to get it" 
+        Rails.logger.debug self.community.end_user.name
+        
+        #community_copy = copy_to_owner( self.community.end_user)
+        community_copy = copy_to_end_user()
+        community_copy.status = "editing"
+        #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
+        
+        #disconnect the parent/origin connections
+        #community_copy.parent_id = nil
+        community_copy.parent = nil
+        
+        #reset the community id to be sosol
+        #leave as is   community_copy.community_id = nil
+        
+        #remove the original creator id (that info is now in the git history )
+        community_copy.creator_id = community_copy.owner_id
+        
+        community_copy.save!
+        
       end
-
+      
+    else
+      #mark as committed
+      self.origin.change_status("committed")
+      self.save    
     end
-=end
-    #if we get to this point, nothing else was submitted therefore we are done with publication
-    #can this be reached without a commit actually taking place?
-=begin
-    if error_text != ""
-      flash[:warning] = error_text
-      # couldnt submit to non exiting board so send back to user?
-      #TODO check this
-      self.origin.status = "editing"
-      self.save
-    end
-=end
-    self.origin.change_status("committed")
-    self.save
+    
+    
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
   end
   
-
+  def  is_community_publication?
+    return (self.community_id != nil)  &&  (self.community_id != 0)      
+  end
+   
   #nolonger in use 2-22-2010
   def submit_identifier(identifier)
     
@@ -744,6 +795,95 @@ class Publication < ActiveRecord::Base
     self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
   end
   
+  
+  def copy_back_to_user(commit_comment, committer_user)
+       #copies changes made to this (self) publication back to the creator's publication
+       #this is intended to be called from the finalizer's publication copy
+=begin      
+      Rails.logger.info "==========COMMUNITY PUBLICATION=========="
+      Rails.logger.info "----Community is " + self.community.name
+      Rails.logger.info "----Board is " + self.find_first_board.name
+      Rails.logger.info "====creators publication begining finalize=="
+      @publication.origin.log_info
+=end            
+        
+      #determine where to get data to build the index, 
+      # controlled paths are from the finalizer (this) publication
+      # uncontrolled paths are from the origin publication
+   
+      controlled_paths =  Array.new(self.controlled_paths)
+      #get the controlled blobs from the local branch (the finalizer's)
+      #controlled_blobs are the files that the board controls and have changed
+      controlled_blobs = controlled_paths.collect do |controlled_path|
+        self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
+      end
+      #combine controlled paths and blobs into a hash  
+      controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
+      
+      #determine existing uncontrolled paths & blobs
+      #uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = self.origin.identifiers.collect do |i|
+        i.to_path
+      end
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
+        self.origin.repository.get_blob_from_branch(ucp, self.origin.branch)
+      end
+      uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
+        
+     
+=begin     
+      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
+      Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
+    
+      Rails.logger.info "-----Uncontrolled Blobs are:"
+      uncontrolled_blobs.each do |cb|
+        Rails.logger.info "-" + cb.to_s
+      end            
+      Rails.logger.info "-----Controlled Blobs are:"
+      controlled_blobs.each do |cb|
+        Rails.logger.info "-" + cb.to_s
+      end
+=end
+
+      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
+      origin_index = self.origin.owner.repository.repo.index
+      origin_index.read_tree('master')
+      
+      Rails.logger.debug "=======orign INDEX before add========"
+      Rails.logger.debug origin_index.inspect
+      
+      
+      #add the controlled paths to the index
+      controlled_paths_blobs.each_pair do |path, blob|
+         origin_index.add(path, blob.data)
+         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
+      end
+      
+      #need to add exiting tree to index, except for controlled blobs
+      uncontrolled_paths_blobs.each_pair do |path, blob|
+          origin_index.add(path, blob.data)
+          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
+      end
+      
+
+      Rails.logger.debug "=======orign INDEX after add========"
+      Rails.logger.debug origin_index.inspect
+      
+      
+       
+     #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
+      origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
+     
+     #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
+
+      self.origin.save
+      
+    
+    
+  end
+  
+  
   def commit_to_canon
   
     #commit_sha is just used to return git sha reference point for comment
@@ -871,6 +1011,9 @@ class Publication < ActiveRecord::Base
     end
   end
   
+
+  
+  
   def controlled_paths
     self.controlled_identifiers.collect do |i|
       i.to_path
@@ -922,7 +1065,7 @@ class Publication < ActiveRecord::Base
 
   def withdraw
     original_origin = self.origin
-    if(original_origin != self)
+    #if(original_origin != self) #commented out so user can withdraw there own pub, note this should not be called without checking that the pub is withdrawable
       original_origin.all_children.each do |child_publication|
         child_publication.destroy
       end
@@ -934,7 +1077,18 @@ class Publication < ActiveRecord::Base
         i.status = 'editing'
         i.save!
       end
+    #end
+  end
+  
+  def allow_user_withdrawl?(user)
+    #check any children publications for voting activity
+    vote_count = 0;
+    
+    child_publications = self.all_children
+    child_publications.each do |pub|
+      vote_count += pub.votes.count
     end
+   return vote_count < 1 && ( user == self.creator )
   end
   
   #finds the closest parent publication whose owner is a board and returns that board
@@ -1002,6 +1156,25 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
   
+  #added to rename the publication title for the enduser
+   def clone_to_end_user()
+    duplicate = self.clone
+    duplicate.owner = self.community.end_user
+    duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
+    duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
+    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.parent = self
+    duplicate.save!
+    
+    # copy identifiers over to new pub
+    identifiers.each do |identifier|
+      duplicate_identifier = identifier.clone
+      duplicate.identifiers << duplicate_identifier
+    end
+    
+    return duplicate
+  end
+  
   def repository
     return self.owner.repository
   end
@@ -1018,6 +1191,16 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
     
+    
+  #mainly used to create new publiation title/repo name that is indicative of the publications source  
+  def copy_to_end_user()
+    duplicate = self.clone_to_end_user()
+    duplicate.owner.repository.copy_branch_from_repo(
+      self.branch, duplicate.branch, self.owner.repository
+    )
+    
+    return duplicate
+  end
   #copy a child publication repo back to the parent repo
   def copy_repo_to_parent_repo
      #all we need to do is copy the repo back the parents repo
