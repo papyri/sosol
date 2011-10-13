@@ -3,13 +3,12 @@
   =# render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
-    = render :partial => 'translation_leiden_helpers', :locals => { :identifier => @identifier}
     -#= stylesheet_link_tag 'hgv_translation'
     #edit  
     
       #editing_trans_text_view
         = @identifier[:text_html_preview]    
-      
+      = render :partial => 'translation_leiden_helpers', :locals => { :identifier => @identifier}
       - form_for @identifier, :url => { :action => :update } do |f| 
         = f.error_messages 
 

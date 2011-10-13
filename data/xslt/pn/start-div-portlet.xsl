@@ -67,7 +67,7 @@
   <xsl:template match="/">
     <!-- <xsl:param name='leiden-style'>ddbdp</xsl:param> -->
 <div class="pn-ddbdp-data">
-    <div class="greek">
+    <div class="greek transpecial">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
         <xsl:call-template name="css-script"/>
 
