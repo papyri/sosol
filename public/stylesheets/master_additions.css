@@ -497,8 +497,11 @@ div#related h4 {
     /* font-size: .75em; */
     /* margin-top: 1em; */
     /* padding: 12px 24px; */
+   
+   padding-left: 0; /* to remove scroll bar */
+   padding-right: 0;   /* to remove scroll bar */
      overflow:hidden; 
-     width: 95%;
+     width: 100%;
     /* min-width: 900px; */
 }
 
