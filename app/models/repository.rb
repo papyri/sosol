@@ -28,6 +28,11 @@ class Repository
       @path = CANONICAL_REPOSITORY
     else
       @master_class_path = @master.class.to_s.underscore.pluralize
+      if @master.class == Board
+        unless @master.community.nil?
+          @master_class_path = File.join('communities', @master.community.name)
+        end
+      end
       FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
       @path = File.join(REPOSITORY_ROOT,
                         @master_class_path, "#{master.name}.git")
