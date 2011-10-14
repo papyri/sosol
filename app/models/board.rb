@@ -26,7 +26,7 @@ class Board < ActiveRecord::Base
   # themselves.
   serialize :identifier_classes
   
-  validates_uniqueness_of :title, :case_sensitive => false
+  validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
   validates_presence_of :title
   
   has_repository
