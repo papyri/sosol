@@ -7,6 +7,7 @@
 !main_color_darken = !main_color - 10
 !main_color_darken_medium = !main_color - 31
 !main_color_darken_full = !main_color - 67
+!pn_color = #3C2217
 // use a blue-ish color for non-underlined link elements we
 // want to highlight
 !non_underlined_link = #4183c4
@@ -38,6 +39,7 @@
 =styled_button
   +helvetica
   font-size: 1.25em
+  color = !pn_color
   +text_padding_small
   background = !main_color_fade_full
   border-color = !main_color
@@ -48,6 +50,8 @@
   &:active
     background: #c0c0c0
     border-style: inset
+  &:disabled
+    color = !pn_color + 140
 
 
 #main
