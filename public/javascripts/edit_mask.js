@@ -19,6 +19,8 @@ function multiGetNextIndex(id) {
   
   if(id == 'origPlace'){
     path = '#multiItems_' + id + ' > li > p > input';
+  } else if(id == 'note'){
+    path = '#multiItems_' + id + ' > li > textarea';
   }
   
   var index = 0;
