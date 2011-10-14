@@ -97,12 +97,13 @@ ul.nav li.current {
 background:#F8F6F4;
 }
 
-
+div.nav {
+  min-height: 1em;  /* to preserve radius edges if not logged on */
+}
 div.nav form {  /* firefox positions nav menu after title without this rule */
   /*background: red;*/
   position: absolute;
   left: 0px;
-  
 }
 
 
@@ -130,7 +131,8 @@ div.footer {
 }
 div.content {
     background-color: #F5F5F5;
-    min-width: 900px;
+    min-width: none; /* 900px; */
+    width: 90%; /* to get rid of constant scrollbar */
     padding: 30px 30px;
     font-size: .8em;
     overflow:hidden;
@@ -496,6 +498,7 @@ div#related h4 {
     /* margin-top: 1em; */
     /* padding: 12px 24px; */
      overflow:hidden; 
+     width: 95%;
     /* min-width: 900px; */
 }
 
