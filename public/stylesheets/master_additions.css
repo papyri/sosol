@@ -130,7 +130,7 @@ div.footer {
 }
 div.content {
     background-color: #F5F5F5;
-    min-width: 900px;
+    width: 95%;  /* this gets scroll bars to go away */
     padding: 30px 30px;
     font-size: .8em;
     overflow:hidden;
