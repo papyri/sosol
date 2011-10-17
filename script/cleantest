@@ -4,8 +4,10 @@ rm -f db/development.sqlite3
 rm -f db/test.sqlite3
 rm -rf db/test/git/boards/*
 rm -rf db/test/git/users/*
+rm -rf db/test/git/communities/*
 rm -rf db/git/boards/*
 rm -rf db/git/users/*
+rm -rf db/git/communities/*
 echo "" > db/git/canonical.git/objects/info/alternates
 jruby -S rake db:migrate:reset
 jruby -S rake
