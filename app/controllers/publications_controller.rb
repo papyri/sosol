@@ -1,5 +1,5 @@
 class PublicationsController < ApplicationController
-  layout 'site'
+  ##layout 'site'
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
@@ -168,12 +168,26 @@ class PublicationsController < ApplicationController
   end
 
   def submit
+
     #prevent resubmitting...most likely by impatient clicking on submit button
     if ! %w{editing new}.include?(@publication.status)
       flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
       redirect_to @publication
       return
     end
+    
+    #check if we are submitting to a community
+    #community_id = params[:community_id]
+    if params[:community] && params[:community][:id]
+      community_id = params[:community][:id]
+      community_id.strip
+      if !community_id.empty? && community_id != "0" && !community_id.nil?
+        @publication.community_id = community_id
+        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
+      end
+    end
+    
+    #raise community_id
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
@@ -226,11 +240,13 @@ class PublicationsController < ApplicationController
       redirect_to show
     end
     @publication.send_to_finalizer(@current_user)
-    redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
+    #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
+    redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
   
   end
   
   def finalize_review
+    
     @publication = Publication.find(params[:id])
     @identifier = nil#@publication.entry_identifier
     #if we are finalizing then find the board that this pub came from 
@@ -247,17 +263,14 @@ class PublicationsController < ApplicationController
     if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
+    @is_editor_view = true
   end
   
+ 
   
   def finalize
     @publication = Publication.find(params[:id])
-    
-    
-    #find identifier so we can set the votes into the xml
-    #@identifier = Identifier.find(params[:identifier_id])
-    #@identifier.update_revision_desc(params[:comment], @current_user)
-    #@identifier.save
+
     
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
@@ -269,16 +282,112 @@ class PublicationsController < ApplicationController
     end
     
     
-    #do we need to save publication before continuing with commit??
+    #if it is a community pub, we don't commit to canon
+    #instead we copy changes back to origin
+    if @publication.is_community_publication?
+      
+      @publication.copy_back_to_user(params[:comment], @current_user)
+  
+    if false  #moved this to model...
 
-    begin
-      canon_sha = @publication.commit_to_canon
-      expire_publication_cache(@publication.creator.id)
-      expire_fragment(/board_publications_\d+/)
-    rescue Errno::EACCES => git_permissions_error
-      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-      redirect_to @publication
-      return
+      
+=begin      
+      Rails.logger.info "==========COMMUNITY PUBLICATION=========="
+      Rails.logger.info "----Community is " + @publication.community.name
+      Rails.logger.info "----Board is " + @publication.find_first_board.name
+      
+      Rails.logger.info "====creators publication begining finalize=="
+      @publication.origin.log_info
+=end            
+        
+      #determine where to get data to build the index, 
+      # controlled paths are from the finalizer (this) publication
+      # uncontrolled paths are from the origin publication
+   
+      controlled_paths =  Array.new(@publication.controlled_paths)
+      #get the controlled blobs from the local branch (the finalizer's)
+      #controlled_blobs are the files that the board controls and have changed
+      controlled_blobs = controlled_paths.collect do |controlled_path|
+        @publication.owner.repository.get_blob_from_branch(controlled_path, @publication.branch)
+      end
+      #combine controlled paths and blobs into a hash  
+      controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
+      
+      #determine existing uncontrolled paths & blobs
+      #uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = @publication.origin.identifiers.collect do |i|
+        i.to_path
+      end
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
+        @publication.origin.repository.get_blob_from_branch(ucp, @publication.origin.branch)
+      end
+      uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
+        
+     
+=begin     
+      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
+      Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
+    
+      Rails.logger.info "-----Uncontrolled Blobs are:"
+      uncontrolled_blobs.each do |cb|
+        Rails.logger.info "-" + cb.to_s
+      end            
+      Rails.logger.info "-----Controlled Blobs are:"
+      controlled_blobs.each do |cb|
+        Rails.logger.info "-" + cb.to_s
+      end
+=end
+
+      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
+      origin_index = @publication.origin.owner.repository.repo.index
+      origin_index.read_tree('master')
+      
+      Rails.logger.debug "=======orign INDEX before add========"
+      Rails.logger.debug origin_index.inspect
+      
+      
+      #add the controlled paths to the index
+      controlled_paths_blobs.each_pair do |path, blob|
+         origin_index.add(path, blob.data)
+         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
+      end
+      
+      #need to add exiting tree to index, except for controlled blobs
+      uncontrolled_paths_blobs.each_pair do |path, blob|
+          origin_index.add(path, blob.data)
+          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
+      end
+      
+
+      Rails.logger.debug "=======orign INDEX after add========"
+      Rails.logger.debug origin_index.inspect
+      
+      
+      #Rails.logger.info 
+      origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
+      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
+
+      @publication.origin.save
+      
+=begin      
+      Rails.logger.info "====creators publication after finalize=="
+      @publication.origin.log_info
+=end      
+   
+   end  #moved this to model...
+   
+      
+    else #commit to canon
+      begin
+        canon_sha = @publication.commit_to_canon
+        expire_publication_cache(@publication.creator.id)
+        expire_fragment(/board_publications_\d+/)
+      rescue Errno::EACCES => git_permissions_error
+        flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+        redirect_to @publication
+        return
+      end    
     end
 
 
@@ -341,7 +450,7 @@ class PublicationsController < ApplicationController
       redirect_to (dashboard_url)
       return
     end
-     
+    @is_editor_view = true 
     @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
 
     @show_submit = allow_submit?
@@ -550,8 +659,8 @@ class PublicationsController < ApplicationController
       #has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
       has_voted = @publication.user_has_voted?(@current_user.id)
       if !has_voted 
-        @vote.save!
         @comment.save!
+        @vote.save!
         # invalidate their cache since an action may have changed its status
         expire_publication_cache(@publication.creator.id)
         expire_fragment(/board_publications_\d+/)

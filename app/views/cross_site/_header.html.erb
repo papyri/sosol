@@ -1,0 +1,71 @@
+<div id="d">
+    <div id="hd">
+      
+      
+      <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+      <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+        <a href="
+        <%=  dashboard_url %>
+        ">
+      <% else %>
+       <a href="http://papyri.info">
+      <% end %>
+      <h1>Papyri.info</h1> 
+      </a>
+             <!-- sosol side -->
+             
+       <%= render "cross_site/sign_in_out" %>
+       <!-- pn side -->
+       <!-- cross_site/sign_in_out -->
+        <!-- <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2> -->
+      </div>
+   </div>
+    <div id="bd">
+      <div class="nav">
+        <!-- left nav -->
+        <form method="get" accept-charset="utf-8" style="display:inline;">
+          <ul class="nav">
+            <li>Browse: </li>
+            <li>
+              <a href="http://papyri.info/browse/ddbdp/">DDbDP</a>
+            </li>
+            <li>
+              <a href="http://papyri.info/browse/hgv/">HGV</a>
+            </li>
+            <li>
+              <a href="http://papyri.info/browse/apis/">APIS</a>
+            </li>
+            <li class="dialog" id="tm" title="TM Number" ><div id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
+            </li>
+            <li>or</li>
+            <li>
+              <a href="http://papyri.info/search">Search</a>
+            </li>
+            
+            <!-- sosol side -->
+            <%= render "cross_site/advanced_create" %>
+          
+            <!-- pn side -->
+            <!-- cross_site/advanced_create -->
+            
+          </ul>
+        </form>
+        
+        <!-- right nav is for sosol side -->
+        <ul class="nav right">
+        <%= render "cross_site/board_tabs" %>
+     
+        <%= render "cross_site/user_tabs" %>
+        </ul>
+     
+ 
+   
+        
+      </div>
+      <br />
+             <% if defined? @is_editor_view %>
+          
+          <%= render "identifiers/edit_bar" %>
+         
+          
+        <% end %>

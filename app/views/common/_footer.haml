@@ -1,0 +1,25 @@
+-#= stylesheet_link_tag 'header_footer'
+
+#footer_box
+  - if @current_user
+    
+    .links
+      = link_to 'home', dashboard_url
+      \|
+      = link_to 'account', account_url
+      \|
+      = link_to 'help', help_url, :onclick => "window.open(this.href);return false;"
+
+      \|
+      = link_to 'admin', :controller => 'user', :action => 'admin' 
+      
+      \|
+      = link_to 'Old Dashboard', :controller => 'user', :action => 'dashboard', :old => true
+      
+     
+  
+      - if @current_user.developer
+        \|
+        = link_to 'developer', developer_url
+      
+

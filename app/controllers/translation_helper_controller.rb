@@ -1,5 +1,7 @@
 class TranslationHelperController < ApplicationController
   
+  layout false
+  
 	def terms
 		#get the terms 
 		gloss = HGVTransGlossary.new

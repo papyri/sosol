@@ -1,0 +1,13 @@
+- batch_div_id = "batch_box_" + ids.first.class.to_s + "_" + ids.first.publication.id.to_s
+
+
+= image_tag("show_more_ids.png", :onclick=>"toggleBatchDiv(this, '#{batch_div_id}')" )
+
+%div{:class=>"batch_box", :id=>batch_div_id, :style=>"display:none;"}
+  
+  %ul
+    - ids.each do |id|
+      %li 
+        = link_to id.title, edit_polymorphic_path([id.publication,id])
+        
+        

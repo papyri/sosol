@@ -1,0 +1,27 @@
+
+%ul.sign_in_out
+  - if @current_user.nil?
+   
+    %li 
+      = link_to 'sign in', signin_url
+  - else  
+  
+    %li
+      = link_to "home", dashboard_url
+    %li
+      |
+      
+    %li
+      = link_to @current_user.name, account_url
+      
+    %li
+      |
+  
+    %li
+      =link_to 'sign out', signout_url
+    
+  %li
+    |
+  %li
+    = link_to "help", help_url
+      

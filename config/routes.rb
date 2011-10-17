@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :communities, :member => { :find_member => :get, :add_member => :get, :add_member_page => :get, :remove_member => :get, :add_admin => :get, :add_admin_page => :get, :remove_admin => :get, :remove_current_user_membership => :post, :remove_current_user => :post } 
+
   #map.resources :glossaries
   map.resources :hgv_trans_glossaries, :member => { :update => :put }
 
@@ -12,7 +14,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :boards, :collection => { :rank => :get, :update_rankings => :post } 
   map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
-  
+ 	
   map.resources :comments, :member => { :ask_for => :get }
 
   map.resources :events
@@ -38,10 +40,11 @@ ActionController::Routing::Routes.draw do |map|
   #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
   map.usage 'usage', :controller => 'user', :action => 'usage_stats'
   map.all_users_links 'all_users_links', :controller => 'user', :action => 'all_users_links'
+  map.index_user_admins 'index_user_admins', :controller => 'user', :action => 'index_user_admins'
   map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
   map.developer 'developer', :controller => 'user', :action => 'developer'
   map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
- 
+
   #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
 
   map.master_list 'master_list', :controller => "publications", :action => "master_list"
@@ -80,6 +83,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
+  
+  map.connect 'mulgara/sparql/:query',
+    :controller => 'ajax_proxy',
+    :action => 'sparql',
+    :query => /.*/
    
   map.connect 'ajax_proxy/sparql/:query',
     :controller => 'ajax_proxy',
@@ -91,7 +99,7 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'xsugar',
     :conditions => { :method => :post }
     
-    map.connect 'ajax_proxy/hgvnum/',
+  map.connect 'ajax_proxy/hgvnum/',
     :controller => 'ajax_proxy',
     :action => 'hgvnum',
     :conditions => { :method => :post }

@@ -6,6 +6,7 @@ class HgvBiblioIdentifiersController < HgvMetaIdentifiersController
     find_identifier
     @biblio_identifier.retrieve_bibliographical_data # todo: should actually be called implicitly during initialisation time
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
 
   def update

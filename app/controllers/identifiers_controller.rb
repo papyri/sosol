@@ -8,6 +8,7 @@ class IdentifiersController < ApplicationController
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
+    @is_editor_view = true
     render :template => 'identifiers/editxml'
   end
   
@@ -24,6 +25,7 @@ class IdentifiersController < ApplicationController
                       "a=commitdiff",
                       "h=#{commit[:id]}"].join(';')
     end
+    @is_editor_view = true
     render :template => 'identifiers/history'
   end
   
@@ -41,6 +43,7 @@ class IdentifiersController < ApplicationController
   
   def rename_review
     find_identifier
+    @is_editor_view = true
     render :template => 'identifiers/rename_review'
   end
   
@@ -86,6 +89,7 @@ class IdentifiersController < ApplicationController
       flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
+      @is_editor_view = true
       render :template => 'identifiers/editxml'
     end
   end
@@ -108,6 +112,7 @@ class IdentifiersController < ApplicationController
       @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id])
     end
     Rails.logger.info(@commit.inspect)
+    @is_editor_view = true
     render :template => 'identifiers/show_commit'
   end
 

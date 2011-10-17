@@ -7,6 +7,7 @@
 !main_color_darken = !main_color - 10
 !main_color_darken_medium = !main_color - 31
 !main_color_darken_full = !main_color - 67
+!pn_color = #3C2217
 // use a blue-ish color for non-underlined link elements we
 // want to highlight
 !non_underlined_link = #4183c4
@@ -38,6 +39,7 @@
 =styled_button
   +helvetica
   font-size: 1.25em
+  color = !pn_color
   +text_padding_small
   background = !main_color_fade_full
   border-color = !main_color
@@ -48,47 +50,41 @@
   &:active
     background: #c0c0c0
     border-style: inset
+  &:disabled
+    color = !pn_color + 140
 
-body
-  height: 100%
-  +helvetica
-  background-color: white
-  font-size: small
-  text-align: center
-
-#header
-  overflow: hidden
-
-#header.basic
-  margin-bottom: 1.5em
-  border-bottom-color = !main_color
-  border-bottom-style: solid
-  border-bottom-width: 0.5em
 
 #main
 
-  margin: 0 auto -8.6em
+  
+  margin-top: 0
+  margin-bottom: 0
+  margin-left: auto
+  margin-right: auto
   clear: both
 
 .invisible
   display: none
 
 .site
-  width: 65%
+  width: 95%
   // center site divs
-  margin: 0 auto
+  //margin: 0 auto
   padding: 0 3em
   text-align: left
+  //background-color: red
 
 #edit_header
   h1
     float: left
+    font-size: 150%
   h3
     clear: both
 
   #submit
-    float: left
-    margin-left: 1em
+    //float: left
+    //margin-left: 1em
+    width: 95%
 
     select
       +styled_button
@@ -96,7 +92,7 @@ body
     #vote_submit
       +styled_button
     #comment_comment
-      width: 50em
+      width: 100%
       height: 6em
 
 styled_button
@@ -167,7 +163,7 @@ styled_button_show
       text-decoration: none
       &:hover
         text-decoration: underline
-   
+
 #signin
   +text_box
   float: right
@@ -205,11 +201,7 @@ styled_button_show
   color: red
   background: #FFFF99
   border-color: yellow
-
-
-#identifier_menu
-  background: #eaeaea
-
+  
 .site
   form
     input.save
@@ -239,11 +231,14 @@ styled_button_show
     input.comment
       width: 100%
     input.commenttop
+      
       width: 89%
       margin-bottom: .5em
     input.save
       +styled_button
       margin-top: 1em
+      float: left
+
     input.brokenbottom
       +styled_button
       background: #ffaaaa
@@ -257,6 +252,7 @@ styled_button_show
       +styled_button
       margin-bottom: .3em
       float: right
+      width: 10%
     input.brokentop
       +styled_button
       background: #ffaaaa
@@ -279,8 +275,15 @@ styled_button_show
 #signup_explanation
   clear: both
   
+  
+#edit_bar
+  //inherit default instead font-family: Georgia,serif
+  font-size: 75%
+  margin-top: .5em
+  
 #identifier_menu
-  background = !main_color_fade
+  width: 100%
+  background = !main_color
   text-align: left
   clear: both
   // height: 2em
@@ -288,14 +291,14 @@ styled_button_show
 
   ul
     // overflow: hidden
-    height: 2em
-    background = !main_color_fade_full
+    //height: 2em
+    background = !main_color
     border-bottom-width: .2em
     border-bottom-style: solid
-    border-bottom-color = !main_color_fade_max
+    border-bottom-color = !main_color
 
     li.active
-      background = !main_color_fade_max
+      background = !main_color_fade_medium
 
 
     li.nav_control
@@ -331,7 +334,7 @@ styled_button_show
           float: left
 
       &:hover
-        background = !main_color_fade_full
+        background = !main_color_darken_medium
         
         > ul,li
           // clear: both
@@ -340,14 +343,14 @@ styled_button_show
 
         a
           color: black
-
+          text-decoration: none
           // &:hover
           //   color = !main_color_fade_full
       a
         padding: 1em 1.25em .3em 1.25em
         color = black
         font-size: 110%
-
+        text-decoration: none
         &:hover
           color: black
           text-decoration: none
@@ -365,17 +368,20 @@ styled_button_show
 
 #identifier_sub_menus
   clear: both
-  margin-bottom: 1.5em
+  //margin-bottom: 1.5em
+  text-align: left
+  
 
 #sub_menu_2
-  .site
-    background-color: #c0c0c0
-    padding-bottom: .25em
-    
-    a
-      &:hover 
-        text-decoration: none
-        background-color: #aaa
+  //.site
+  background-color: #c0c0c0
+  //padding-bottom: .25em
+  text-align: left
+  
+  a
+    &:hover 
+      text-decoration: none
+      background-color: #aaa
 
 ul.publications
   a.modified
@@ -395,12 +401,12 @@ ul.publications
   background = !main_color
 
 .identifier_sub_menu
-  height: 2.099em
+  //height: 2.099em
   background = !main_color
   line-height: 1.5
 
-  .site
-    padding: .4em 1em 0 1em
+  //.site
+  //  padding: .4em 1em 0 1em
 
   ul
     overflow: hidden
@@ -413,7 +419,7 @@ ul.publications
   li 
     float: left
     position: relative
-          
+       
     ul
       display: none
       position: absolute
@@ -437,7 +443,8 @@ ul.publications
           margin-left: 0
           padding: .1em .3em
           display: block
-
+          text-decoration: none
+          
         &:hover
           ul 
             display: block
@@ -447,7 +454,7 @@ ul.publications
     padding: .3em
     margin-left: 2em
     color: black
-    
+    text-decoration: none
     &:hover 
       text-decoration: none
       background-color = !main_color_darken_medium
@@ -495,7 +502,8 @@ ul.publications
         span.reference
           color = !main_color_darken_full
         
-        input.save
+        input.save_commentary
+          +styled_button
           margin-top: 0em
         
       textarea
@@ -518,7 +526,8 @@ ul.publications
     margin-top: 1em
     margin-bottom: 1em
     
-    input.save
+    input.save_commentary
+      +styled_button
       margin-top: 0em
 
 .commit
@@ -592,3 +601,152 @@ ul.publications
   border-top-color = !main_color
   border-top-style: solid
   border-top-width: 2px
+  
+  
+.user_admins
+  //position: relative
+  //float: left
+  //border-style: solid
+  .user_name
+    position: relative
+    display: inline
+    font-size: 120%
+    width: 200px
+    //height: 50px
+    text-align: left
+    //border-style: solid
+    
+  .checkbox_container
+    display: inline
+    margin: 2em
+    text-align: left
+    min-width: 20em
+
+
+.select_user_name
+  a:link
+    //color: black      
+    text-decoration: none
+
+    &:hover
+      color: red 
+      font-weight: bold
+
+.remove_user
+  .user_name
+    font-weight: bold
+    display: inline
+  a:link
+    //color: black      
+    text-decoration: none
+
+    &:hover
+      color: red 
+      font-weight: bold
+      font-size: 125%
+  
+#content_box
+  text-align: left    
+  
+  
+//added because of pn integration
+//.right
+//  text-align: right
+  
+div.content
+  //padding: 0px 0px
+ 
+
+div#hd 
+  height: auto
+
+div#header
+  height: auto
+  
+  
+div.nav
+
+
+  //position: relative  
+  //left: 0px;
+  top: auto
+  
+  
+div.editor_nav
+  display: none
+  background-color: #cccccc
+  ul
+    text-align: left
+   
+    a
+      //margin: .5em
+      padding-left: 5px
+      text-decoration: none
+      display: block
+      color = #5C0303
+      &:hover
+        background-color: #F8F6F4
+
+li.editor_menu
+  color: #5C0303
+  cursor: pointer  
+  &:hover
+    background-color = !main_color_fade_max
+    
+.right
+  float: right
+   
+.more_less
+  display: inline
+  
+  font-size: 125%
+    
+  a
+    text-decoration: none
+    &:link
+      color = black
+    &:visited
+      color = black
+    &:hover
+      color = black
+ 
+ 
+ul.sign_in_out
+  margin: 5px
+  float: right
+  li
+    display: inline
+    a
+      text-decoration: none
+      &:link
+        color: #F8F6F4
+      &:visited
+        color: #F8F6F4
+      &:hover
+        color = black
+        background-color: #F8F6F4 
+        
+ 
+
+  
+div.votes
+  background-color: #F8F6F4
+  border-style: solid
+  border-color: black
+  border-width: 1px
+  table
+    text-align: left
+    
+div.batch_box
+  background-color: #F8F6F4
+  border-style: solid
+  border-color: black
+  border-width: 1px
+  ul
+    text-align: left
+    
+    a
+      //display: block
+      text-decoration: none
+        
+
