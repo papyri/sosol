@@ -132,8 +132,8 @@ div.footer {
 div.content {
     background-color: #F5F5F5;
     min-width: none; /* 900px; */
-    width: 90%; /* to get rid of constant scrollbar */
-    padding: 30px 30px;
+    width: 100%; 
+    padding: 0 0 0 0;/* to get rid of constant scrollbar */
     font-size: .8em;
     overflow:hidden;
     font-family: Georgia,serif;
@@ -498,10 +498,12 @@ div#related h4 {
     /* margin-top: 1em; */
     /* padding: 12px 24px; */
    
-   padding-left: 0; /* to remove scroll bar */
-   padding-right: 0;   /* to remove scroll bar */
+      padding-left: 0; /* to remove scroll bar */
+      padding-right: 0;   /* to remove scroll bar */
+
      overflow:hidden; 
      width: 100%;
+     
     /* min-width: 900px; */
 }
 
