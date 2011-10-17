@@ -52,6 +52,33 @@
             :url:
               :name: url
       :multiple: true
+    :sammelbuchBibliography:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/listBibl/bibl[@type='SB']
+      :children:
+        :pointer:
+          :xpath: ptr
+          :optional: false
+          :attributes:
+            :target:
+              :name: target
+              :optional: false
+              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+        :pagination:
+          :xpath: biblScope[@type='pp']
+    :citedLiterature:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='citations']/listBibl/bibl
+      :multiple: true
+      :children:
+        :pointer:
+          :xpath: ptr
+          :optional: false
+          :attributes:
+            :target:
+              :name: target
+              :optional: false
+              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+        :pagination:
+          :xpath: biblScope[@type='pp']
     :contentText:
       :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='hgv']/term
       :multiple: true
@@ -129,55 +156,18 @@
         :annotation:
           :xpath: note[@type='annotation']
     :provenance:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/listEvent/event
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance
       :multiple: true
       :attributes:
         :type:
           :name: type
         :subtype:
           :name: subtype
-        :id:
-          :name: xml:id
         :date:
           :name: when
       :children:
-        :paragraph:
-          :xpath: p
-          :children:
-            :place:
-              :xpath: placeName
-              :multiple: true
-              :attributes:
-                :id:
-                  :name: xml:id
-                :exclude:
-                  :name: exclude
-              :children:
-                :geo:
-                  :xpath: placeName
-                  :multiple: true
-                  :attributes:
-                    :type:
-                      :name: type
-                    :subtype:
-                      :name: subtype
-                    :certainty:
-                      :name: cert
-                    :reference:
-                      :name: ref
-                  :preFlag: offset # CL: CROMULENT GEO HACK
-    :origPlace:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
-      :multiple: true
-      :pattern: /(Unbekannt|Fundort)/
-      :attributes:
-        :type:
-          :name: type
-        :correspondency:
-          :name: corresp
-      :children:
         :place:
-          :xpath: placeName
+          :xpath: p
           :multiple: true
           :attributes:
             :id:
@@ -198,6 +188,9 @@
                 :reference:
                   :name: ref
               :preFlag: offset # CL: CROMULENT GEO HACK
+
+    :origPlace:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
 
     :textDate:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
