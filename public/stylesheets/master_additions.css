@@ -131,9 +131,13 @@ div.footer {
 }
 div.content {
     background-color: #F5F5F5;
+
     min-width: none; /* 900px; */
-    width: 100%; 
-    padding: 0 0 0 0;/* to get rid of constant scrollbar */
+
+    width: 95%;  /* this gets scroll bars to go away */
+    /* padding: 30px 30px; */
+   padding: 2% 2%;
+
     font-size: .8em;
     overflow:hidden;
     font-family: Georgia,serif;
@@ -505,6 +509,7 @@ div#related h4 {
      width: 100%;
      
     /* min-width: 900px; */
+     clear: left;
 }
 
 /*
