@@ -182,7 +182,7 @@
         %br
 
 
-    - if @publication.allow_user_withdrawl?(@current_user)
+    - if @publication.allow_user_withdrawal?(@current_user)
       %br
       -#= button_to "Withdraw from Editorial Review",  :controller => 'publications', :id => @publication.id, :action => "withdraw"
       = button_to("Withdraw from Editorial Review", options = {:controller => 'publications', :id => @publication.id, :action => "withdraw"}, html_options = {:class => "submit"})

@@ -1080,7 +1080,7 @@ class Publication < ActiveRecord::Base
     #end
   end
   
-  def allow_user_withdrawl?(user)
+  def allow_user_withdrawal?(user)
     #check any children publications for voting activity
     vote_count = 0;
     
