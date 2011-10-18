@@ -1,3 +1,10 @@
+#Comment represents a comment made on an identifier/publication.
+#Standard reasons for a comment are:
+#- *commit* when an identifier is commited
+#- *submit* when a publication is submitted
+#- *vote* when a vote is cast
+#- *finalizing* when a publication is finalized
+#- *general* other cases, such as an opinion comment on someone else's publication
 class Comment < ActiveRecord::Base
   # belongs_to :article
   belongs_to :user
@@ -5,6 +12,7 @@ class Comment < ActiveRecord::Base
   belongs_to :identifier
   
   #create named scope for each type of reason
+  named_scope :commit, :conditions => { :reason => 'commit' }
   named_scope :finalizing, :conditions => { :reason => 'finalizing' }
   named_scope :submit, :conditions => { :reason => 'submit' }
   named_scope :general, :conditions => { :reason => 'general' }
