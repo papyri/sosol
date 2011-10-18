@@ -92,7 +92,8 @@ class CommunitiesController < ApplicationController
       format.xml  { head :ok }
     end
   end
-
+  
+  #List all the publications that belong to a community. (hidden view as of 10-10-2011)
   def list_publications
     begin
       @community = Community.find(params[:id])
@@ -104,24 +105,19 @@ class CommunitiesController < ApplicationController
   end
 
   def find_member
-
     @community = Community.find(params[:id])
-    
   end
   
   def add_member_page
-    @community = Community.find(params[:id])
-    
+    @community = Community.find(params[:id])  
   end
 
-  def add_member
-    
+  #Adds a member to the community members list. These are the users who can submit to the community.
+  def add_member    
     @community = Community.find(params[:id])
     user = User.find_by_id(params[:user_id])
 
-
     if nil == @community.members.find_by_id(user.id) 
-    
       @community.members << user
       @community.save
     end
@@ -129,6 +125,7 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_member_page", :id => @community.id
   end
 
+  #Removes member from the communities members list.
   def remove_member
     user = User.find(params[:member_id])
 
@@ -141,9 +138,8 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_member_page", :id => @community.id
   end
 
+  #Removes the current user from the community members list. Used to let the user leave a community.
   def remove_current_user_membership
-    
-
     @community = Community.find(params[:id])
     
     @community.members.delete(@current_user)
@@ -155,9 +151,9 @@ class CommunitiesController < ApplicationController
 
   def add_admin_page
     @community = Community.find(params[:id])
-    
   end
 
+  #Adds user to community admin list.
   def add_admin
    # raise params.inspect
     @community = Community.find(params[:id])
@@ -174,13 +170,10 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_admin_page", :id => @community.id
   end
 
+  #Removes user form community admin list.
   def remove_admin
-    
     user = User.find(params[:admin_id])
-
     @community = Community.find(params[:id])
-
-
 
     if user == @current_user
       #warn them about deleting themselves as admins
@@ -200,6 +193,7 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "add_admin_page", :id => @community.id
   end
 
+  #Removes the current user from the community admin list.
   def remove_current_user  
     @community = Community.find(params[:id])
 
@@ -213,6 +207,8 @@ class CommunitiesController < ApplicationController
     @community = Community.find(params[:id])
   end
   
+  #Sets the end_user for the community. 
+  #If this is not set, then publications may not be submitted nor finalized.
   def set_end_user
     @community = Community.find(params[:id])
     user = User.find_by_id(params[:user_id])
