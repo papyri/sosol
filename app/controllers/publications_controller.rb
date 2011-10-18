@@ -271,6 +271,12 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
 
+    #to prevent a community publication from being finalized if there is no end_user to get the final version
+    if @publication.is_community_publication? && @publication.end_user.nil 
+      flash[:error] = "Error finalizing. No End User for the community."
+      redirect_to @publication
+      return
+    end
     
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
