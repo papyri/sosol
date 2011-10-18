@@ -1,6 +1,8 @@
 :javascript
+  // used to form URL to open pop-up window
   helpView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
-  ajaxConvert = "#{url_for(:controller => 'leiden', :action => 'xmlAjax')}";
+  // 2 variables below used in ajax calls for conversion
+  convXML2Leiden = "#{url_for(:controller => 'leiden', :action => 'xml2leiden')}";
   convLeiden2XML = "#{url_for(:controller => 'leiden', :action => 'leiden2xml')}";
 = javascript_include_tag 'leiden'
 = javascript_include_tag 'menu-for-applications'
@@ -15,6 +17,7 @@
 /under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
 /in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
 /javascript.
+-# All the javascript functions called below are in leiden.js other than showMatch which is in confirm.js
 %ul#menuModel{:style => "display:inherit"}
   %li#1
     %a{:href => "#", :title => "Leiden+ Input Markup"} Markup

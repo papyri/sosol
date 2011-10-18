@@ -194,7 +194,7 @@ function insertDivisionMain(division_type)
     
   }
   
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(convXML2Leiden, 
   {
   method: 'get',
   parameters : {xml:startxml},
@@ -239,7 +239,7 @@ function convertXMLMain()
 {
   xmltopass = wrapxmlMain(startxml);
   
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(convXML2Leiden, 
   {
   method: 'get',
   parameters : {xml:xmltopass},
