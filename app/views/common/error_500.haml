@@ -2,7 +2,8 @@
 %html{html_attrs('en')}
   %head
     %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
-    %meta{ 'http-equiv' => 'refresh', 'content' => "5; url=#{dashboard_url}" }
+    - if @redirect
+      %meta{ 'http-equiv' => 'refresh', 'content' => "5; url=#{dashboard_url}" }
     %title
       == #{SITE_NAME} (500 Error)
     :css
@@ -18,6 +19,7 @@
       h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
   %body
     .dialog
-      %h1 We're sorry, but something went wrong.
-      %p We've been notified about this issue and we'll take a look at it shortly.
-      %p You should be redirected momentarily.
+      %h1= flash[:error]
+      %p= @additional_error_information
+      - if @redirect
+        %p You should be redirected momentarily.

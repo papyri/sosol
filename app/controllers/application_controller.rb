@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
     rescue_from ActionController::RoutingError, :with => :render_404
     rescue_from ActionController::UnknownAction, :with => :render_404
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+    rescue_from NumbersRDF::Timeout, :with => :render_numbers_error
   end
 
   layout "pn"
@@ -39,7 +40,17 @@ class ApplicationController < ActionController::Base
 
   def render_500(e)
     notify_hoptoad(e)
+    @redirect = true unless request.referer =~ /dashboard$/
     flash[:error] = "We're sorry, but something went wrong."
+    @additional_error_information = "We've been notified about this issue and we'll take a look at it shortly."
+    render :template => 'common/error_500', :layout => false, :status => 500
+  end
+
+  def render_numbers_error(e)
+    notify_hoptoad(e)
+    @redirect = false
+    flash.now[:error] = "We're sorry, but the Numbers Server appears to be unresponsive."
+    @additional_error_information = "Please contact this site's administrator."
     render :template => 'common/error_500', :layout => false, :status => 500
   end
 
