@@ -60,6 +60,8 @@ class HgvTransIdentifiersController < IdentifiersController
       expire_publication_cache
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         
+        @is_editor_view = true
+        
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
         
@@ -91,6 +93,7 @@ class HgvTransIdentifiersController < IdentifiersController
         @identifier[:leiden_trans] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
+        @is_editor_view = true
         
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
@@ -103,6 +106,8 @@ class HgvTransIdentifiersController < IdentifiersController
                         ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED.  "
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         #@identifier[:leiden_plus] = parse_error.message
+        
+        @is_editor_view = true
         
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
