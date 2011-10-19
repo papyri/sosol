@@ -168,7 +168,7 @@ class Publication < ActiveRecord::Base
     self.owner.repository.delete_branch(self.branch)
   end
   
-  
+  #Outputs publication information and content to the Rails logger.
    def log_info
         Rails.logger.info "-----Publication Info-----"
         Rails.logger.info "--Owner: " + self.owner.name
@@ -192,7 +192,11 @@ class Publication < ActiveRecord::Base
     end
       
 
-  
+  #Examines publication to see which board the publication should be submitted to next.
+  #Boards are sorted by rank. Each board, in order of rank, will check to see if they control any of the publication's modified and editing identifiers. 
+  #If so, then the publication is submitted to that board.
+  #
+  #When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
 
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
@@ -368,6 +372,7 @@ class Publication < ActiveRecord::Base
     return false #no board exists for this identifier class
   end
   
+  #Simply pointer to submit_to_next_board method.
   def submit
     submit_to_next_board
   end
