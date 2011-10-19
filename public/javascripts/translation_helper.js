@@ -185,7 +185,7 @@ function insertTerm(term)
   //alert (startxml);
  // alert ('<term target="' + term + '" ' + lang + '>place word here</term>');
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
-      new Ajax.Request(window.opener.ajaxConvert, 
+      new Ajax.Request(window.opener.conv_xml_to_translation_leiden, 
       {
         method: 'get',
         parameters : {xml:startxml},
@@ -320,7 +320,7 @@ function insertDivisionSub()
       startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><p>replace this with text of division</p></div>";
       startxml = "<div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\">" + startxml + "</div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
-      new Ajax.Request(window.opener.ajaxConvert, 
+      new Ajax.Request(window.opener.conv_xml_to_translation_leiden, 
       {
         method: 'get',
         parameters : {xml:startxml},
@@ -394,7 +394,7 @@ function convertXML()
  //xmltopass = wrapXml(startxml);
  
   new Ajax.Request(
-  	window.opener.ajaxConvert, 
+  	window.opener.conv_xml_to_translation_leiden, 
 		{
 			method: 'get',
 			parameters : {xml:startxml},
