@@ -2,6 +2,7 @@ class TranslationHelperController < ApplicationController
   
   layout false
   
+  # Helper Terms
 	def terms
 		#get the terms 
 		gloss = HGVTransGlossary.new
@@ -13,24 +14,15 @@ class TranslationHelperController < ApplicationController
 	def new_lang
 	end
 	
+  # Helper Linebreak
 	def linebreak
 	end
   
-  def gaplost
-  end
-  
-  def gapelliplang
-  end
-  
-  def gapellipNT
-  end
-  
-  def gapilleg
-  end
-  
+  # Helper Division Other  
   def division
   end
   
+  # Helper Tryit
   def tryit
   end
 
