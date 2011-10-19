@@ -1,3 +1,5 @@
+# - Sub-class of Identifier
+# - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier  
   PATH_PREFIX = 'DDB_EpiDoc_XML'
   COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
@@ -27,6 +29,7 @@ class DDBIdentifier < Identifier
     return to_components[2..-1].join(';')
   end
   
+  # Executes id_attribute
   def xml_title_text
     self.id_attribute
   end
@@ -89,10 +92,18 @@ class DDBIdentifier < Identifier
     return File.join(path_components)
   end
   
+  # Place any actions you always want to perform on DDbDp identifier content prior to it being committed in this method
+  # - *Args*  :
+  #   - +content+ -> DDBIdentifier XML as string
   def before_commit(content)
     DDBIdentifier.preprocess(content)
   end
   
+  # Applies the preprocess XSLT to 'content'
+  # - *Args*  :
+  #   - +content+ -> XML as string
+  # - *Returns* :
+  #   - modified 'content'
   def self.preprocess(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -152,6 +163,19 @@ class DDBIdentifier < Identifier
     end
   end
   
+  # - Updates DDBIdentifier XML with line by line commentary
+  # - Uses update_commentary.xsl
+  # - Saves the XML containg line by line commentary to the repository
+  # 
+  # - *Args*  :
+  #   - +line_id+ -> generated id of this lines 'lb' tag within the XML file to consistently reference this line
+  #     irregardless of the +reference+ value described below. This will become invalid if new 'lb' lines added 
+  #     to the file
+  #   - +reference+ -> the value of the 'n' attribute on the 'lb' tag for the line adding the commentary for
+  #   - +comment_content+ -> the line by line commentary being added in XML format
+  #   - +original_item_id+ -> generated id of the 'item' tag containing the commentary for this line - set
+  #     in commentary.xsl
+  #   - +delete_comment+ -> if set to true, will delete the commentary associated with this line_id
   def update_commentary(line_id, reference, comment_content = '', original_item_id = '', delete_comment = false)
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
@@ -169,6 +193,14 @@ class DDBIdentifier < Identifier
     self.set_xml_content(rewritten_xml, :comment => '')
   end
   
+  # - Updates DDBIdentifier XML with front matter commentary
+  # - Makes use of update_frontmatter_commentary.xsl
+  # - Saves the XML containg front matter commentary to the repository
+  # 
+  # 
+  # - *Args*  :
+  #   - +commentary_content+ -> the front matter commentary being added in XML format
+  #   - +delete_commentary+ -> if set to true, will delete the front matter commentary for this publication
   def update_frontmatter_commentary(commentary_content, delete_commentary = false)
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
@@ -183,6 +215,14 @@ class DDBIdentifier < Identifier
     self.set_xml_content(rewritten_xml, :comment => '')
   end
   
+  # Extracts 'Leiden+ that will not parse' from identifier XML file if it was saved by the user
+  #
+  # - *Args*  :
+  #   - +original_xml+ -> REXML::Document/XML to look for broken Leiden+ in. If nil, will retrieve from the 
+  #     repository based on the the DDBIdentifier currently processing
+  # - *Returns* :
+  #   - +nil+ - if broken Leiden+ is not in the XML file
+  #   - +brokeleiden+ - the broken Leiden+ extracted from the XML
   def get_broken_leiden(original_xml = nil)
     original_xml_content = original_xml || REXML::Document.new(self.xml_content)
     brokeleiden_path = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
@@ -196,6 +236,13 @@ class DDBIdentifier < Identifier
     end
   end
   
+  # - Retrieves the XML for the the DDBIdentifier currently processing from the repository
+  # - Applies preprocessing and cleanup via XSLT
+  # - Checks if XML contains 'broken Leiden+"
+  #
+  # - *Returns* :
+  #   - +nil+ - if broken Leiden+ is in the XML file
+  #   - +transformed+ - Leiden+ transformed from the XML via Xsugar
   def leiden_plus
     original_xml = DDBIdentifier.preprocess(self.xml_content)
     
@@ -221,7 +268,15 @@ class DDBIdentifier < Identifier
     end
   end
   
-  # Returns a String of the SHA1 of the commit
+  # - Preprocesses the Leiden+ for character consistency and Xsugar grammar 
+  # - Transforms Leiden+ to XML
+  # - Saves the newly transformed XML to the repository
+  # 
+  # - *Args*  :
+  #   - +leiden_plus_content+ -> the Leiden+ to transform into XML
+  #   - +comment+ -> the comment from the user to attach to this repository commit and put in the comment table
+  # - *Returns* :
+  #   -  a String of the SHA1 of the commit
   def set_leiden_plus(leiden_plus_content, comment)
     
     pp_leiden = preprocess_leiden(leiden_plus_content)
@@ -250,6 +305,14 @@ class DDBIdentifier < Identifier
     end
   ^ )
   
+  # - Transforms Leiden+ to XML
+  # - Retrieves the current version of XML for this DDBIdentifier
+  # - Replace the 'div type = "edition"' with the newly transformed XML
+  # 
+  # - *Args*  :
+  #   - +content+ -> the Leiden+ to transform into XML
+  # - *Returns* :
+  #   -  +modified_xml_content+ - XML with the 'div type = "edition"' containing the newly transformed XML
   def leiden_plus_to_xml(content)
 
     # transform the Leiden+ to XML
@@ -285,6 +348,13 @@ class DDBIdentifier < Identifier
     return modified_xml_content
   end
   
+  # - Retrieves the current version of XML for this DDBIdentifier
+  # - Delete/Add the 'div type = "edition" subtype = "brokeleiden"' that contains the broken Leiden+
+  # - Saves the XML containing the 'broken Leiden_' to the repository
+  # 
+  # - *Args*  :
+  #   - +brokeleiden+ -> the Leiden+ that will not transform to save in the XML
+  #   - +commit_comment+ -> the comment from the user to attach to this repository commit and put 
   def save_broken_leiden_plus_to_xml(brokeleiden, commit_comment = '')
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
@@ -312,6 +382,11 @@ class DDBIdentifier < Identifier
     self.set_xml_content(modified_xml_content, :comment => commit_comment)
   end
 
+  # - Retrieves the current version of XML for this DDBIdentifier
+  # - Processes XML with start-div-portlet.xsl XSLT
+  # 
+  # - *Returns* :
+  #   -  Preview HTML
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
@@ -320,6 +395,13 @@ class DDBIdentifier < Identifier
         parameters)
   end
   
+  # - Mass substitute alternate keyboard characters for Leiden+ grammar characters
+  # - Mass substitute for consistent characters across the canonical repository (ex. - LT symbol, square brackets, etc)
+  # 
+  # - *Args*  :
+  #   - +preprocessed_leiden+ -> the Leiden+ to perfrom substitutions on
+  # - *Returns* :
+  #   -  +preprocessed_leiden+ - the Leiden+ after substitutions done
   def preprocess_leiden(preprocessed_leiden)
     # mass substitute alternate keyboard characters for Leiden+ grammar characters
 

@@ -1,3 +1,4 @@
+# - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
   #TODO - is Biblio needed?
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
@@ -23,16 +24,23 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
 
-  #added ''&& i.type == self.type' to origin, parent, and children methods because name for meta and trans are
+  #added i.type == self.type' to origin, parent, and children methods because name for meta and trans are
   #the same and was returning the meta instead of trans when processing translations
+  
+  # - *Returns* :
+  #   - the originally created publication of this identifier (publciation with no parent id)
   def origin
     self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
+  # - *Returns* :
+  #   - the parent publication of this identifier
   def parent
     self.publication.parent.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
-  
+    
+  # - *Returns* :
+  #   - all the children of the publication that contains this identifier
   def children
     child_identifiers = []
     self.publication.children.each do |child_pub|
@@ -41,7 +49,8 @@ class Identifier < ActiveRecord::Base
     return child_identifiers
   end
   
-  # gives origin and its children, but not self
+  # - *Returns* :
+  #   - this idenfiers origin publication and the origin children, but not self
   def relatives
     if self.origin.nil?
       return []
@@ -50,14 +59,20 @@ class Identifier < ActiveRecord::Base
     end
   end
   
+  # - *Returns* :
+  #   - the repository for the owner of this identifier
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
   
+  # - *Returns* :
+  #   - the repository branch for this identifier
   def branch
     return self.publication.nil? ? 'master' : self.publication.branch
   end
   
+  # - *Returns* :
+  #   - the file containing this identifier from the repository
   def content
     return self.repository.get_file_from_branch(
       self.to_path, self.branch)

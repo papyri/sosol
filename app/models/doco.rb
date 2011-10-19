@@ -1,7 +1,10 @@
+# Procssing of Docos table records used for Text and Translation Documentation
 class Doco < ActiveRecord::Base
   validates_presence_of :category, :line, :description, :note, :preview # remove URL required per Josh :url
   validate :line_positive_and_gt_zero
   
+  # - to contain detail documentation data
+  # - see Doco.doc_tree for how used
   class DocoNode
     attr_accessor :children, :category, :description, :preview, :leiden, :xml, :url, :urldisplay, :note
     
@@ -19,6 +22,12 @@ class Doco < ActiveRecord::Base
     
   end
   
+  # - selects all the documenation records from the 'docos' table for 'docotype' as @+all_docos+
+  #   - ordered by category, line
+  # - *Args*    :
+  #   - +docotype+ -> type of documentation records to pull from table - either 'text' or 'translation'
+  # - *Returns* :
+  #   - DocoNode for each documentation category using doc_tree
   def self.build_doco(docotype)
     @all_docos = self.find(:all, :conditions => {:docotype => docotype}, :order => "category ASC, line ASC")
     doco_elements = doc_tree
@@ -34,6 +43,14 @@ class Doco < ActiveRecord::Base
     return doco_elements
   end
   
+  # loops through all the 'docos' table records selected in build_doco - ordered by category, line
+  # - creates a DocoNode for each unique documentation category on the 'docos' table
+  #   - each category DocoNode contains children 
+  #     - each child is a DocoNode that contains detail documentation data from each 'docos' record
+  # - *Args*    :
+  #   - @+all_docos+ -> from build_doco
+  # - *Returns* :
+  #   - DocoNode parents(category) and children(each table record)
   def self.doc_tree
     root_elements = Array.new
     categ_test = ""
@@ -73,6 +90,7 @@ class Doco < ActiveRecord::Base
   
   protected
   
+  # line number validation for docos record
   def line_positive_and_gt_zero
     errors.add(:line, "Line number must be a positive number and greater than 0") if line.blank? || line.to_f < 0.01
   end

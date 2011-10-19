@@ -1,3 +1,4 @@
+# Procssing of Docos used for Text and Translation Documentation
 class DocosController < ApplicationController
   #layout 'site'
   #caches_page :documentation
@@ -25,6 +26,7 @@ class DocosController < ApplicationController
 
   # GET /docos/new
   # GET /docos/new.xml
+  # if :id param is blank, start with blank form, otherwise, fill in form with data from documentation record using the :id
   def new
     if params[:id] == "blank"
       @doco = Doco.new
@@ -110,17 +112,33 @@ class DocosController < ApplicationController
     redirect_to(documentation_url(:docotype => params[:docotype]))
   end
   
+  # if param is not blank, calls Doco.build_doco method with param to pull data from DB to pass to the 'viewdoco' partial 
+  # - *Params*    :
+  #   - +docotype+ -> containing the type of documentation to display (currently either text or translation)
   def documentation
     @docotype = params[:docotype]
     if @docotype.blank?
       flash[:error] = 'Documentation type must be specified. Redirected to default documentation. If you arrived here from a bookmark or link, please update.'
       redirect_to :action => 'documentation', :docotype => 'text'
       return
+    else
+      @doco_elements = Doco.build_doco(@docotype)
     end
   end
   
   private
 
+  # edits some data from input form when creating or updating a record
+  # - validates PN link URL format only whether done by selector or typed in - not whether it is a valid link or not
+  # - validates Leiden+ or XML was entered based on radio button clicked and converts it the other way as needed
+  # - *Args*    :
+  #   - +where_return+ -> which method called it - used in 'return' when error is found
+  # - *Returns* :
+  #   - "passed edits" text
+  #   - "error" text and render to calling method with flash message
+  # - *Rescue*  :
+  #   - RXSugar::XMLParseError - formats error message if transform fails
+  #   - RXSugar::NonXMLParseError - formats error message if transform fails
   def edit_input(where_return)
     chk_docotype = params[:doco][:docotype]
     if params[:volume_number] != nil #if selector has values, use it to determine URL

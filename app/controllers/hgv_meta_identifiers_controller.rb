@@ -103,7 +103,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def get_geo_preview
     @identifier = HGVMetaIdentifier.new
     @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
-    @update = HgvProvenance.format @identifier[:origPlace], @identifier[:provenance]
+    @update = HgvProvenance.format @identifier[:provenance]
 
     respond_to do |format|
       format.js
@@ -171,6 +171,15 @@ class HgvMetaIdentifiersController < IdentifiersController
               date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
             end
           }
+        end
+        
+        if params[:hgv_meta_identifier][:provenance]
+          hgv = HGVMetaIdentifier.new
+          hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv[:provenance]
+
+        else
+          params[:hgv_meta_identifier][:origPlace] = 'unbekannt'
         end
 
       end
