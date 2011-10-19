@@ -325,6 +325,7 @@ class Publication < ActiveRecord::Base
   end
    
   #nolonger in use 2-22-2010
+=begin
   def submit_identifier(identifier)
     
     @recent_submit_sha = "";
@@ -371,7 +372,8 @@ class Publication < ActiveRecord::Base
     end
     return false #no board exists for this identifier class
   end
-  
+=end
+ 
   #Simply pointer to submit_to_next_board method.
   def submit
     submit_to_next_board
