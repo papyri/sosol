@@ -3,6 +3,7 @@
   helpView = "#{url_for(:controller => 'translation_helper', :action => 'wheretogo')}";
   // 3 variables below used in ajax calls for conversion stuff
   conv_xml_to_translation_leiden = "#{url_for(:controller => 'translation_leiden', :action => 'xml_to_translation_leiden')}";
+  //below variable not currently in use - but could easily be put back in if needed
   ajax_get_new_lang = "#{url_for(:controller => 'translation_leiden', :action => 'get_language_translation_leiden')}";
   conv_translation_leiden_to_xml = "#{url_for(:controller => 'translation_leiden', :action => 'translation_leiden_to_xml')}";
 = javascript_include_tag 'translation_leiden'

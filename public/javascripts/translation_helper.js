@@ -212,6 +212,8 @@ function insertTerm(term)
 /* insertNewLang                                                                   */
 /*###########################################################################################*/
 
+/* this function not in use currently - used with new_lang view if decide to reinstall */
+
 function insertNewLanguage()
 {
 	

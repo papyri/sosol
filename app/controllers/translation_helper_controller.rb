@@ -11,6 +11,8 @@ class TranslationHelperController < ApplicationController
 		
 	end
 	
+  # Helper - view not in use - using button to and 'add_new_lang_to_xml' method in hgv_trans_identifiers_controller
+  # to limit the languages added to those set up in the system
 	def new_lang
 	end
 	
