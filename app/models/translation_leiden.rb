@@ -47,8 +47,8 @@ class TranslationLeiden < HGVTransIdentifier
     return transformed
   end
   
-  # Get the Leiden to insert a specific new language div in a translation
-  # not in use currently
+  # - Get the Leiden to insert a specific new language div in a translation
+  # - *not* *in* *use* *currently*
   def self.get_language_translation_leiden(lang)
  	
     #wrap so that the sugar grammer can transform

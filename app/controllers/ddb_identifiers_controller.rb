@@ -2,8 +2,8 @@ class DdbIdentifiersController < IdentifiersController
   #layout 'site'
   before_filter :authorize
   
-  # GET /publications/1/ddb_identifiers/1/edit
-  # Edit DDB Text via Leiden+
+  # - GET /publications/1/ddb_identifiers/1/edit
+  # - Edit DDB Text via Leiden+
   def edit
     find_identifier
     
@@ -59,8 +59,8 @@ class DdbIdentifiersController < IdentifiersController
     @is_editor_view = true
   end
   
-  # PUT /publications/1/ddb_identifiers/1/update
-  # Update DDB Text via Leiden+
+  # - PUT /publications/1/ddb_identifiers/1/update
+  # - Update DDB Text via Leiden+
   def update
     find_identifier
     @bad_leiden = false
@@ -227,8 +227,8 @@ class DdbIdentifiersController < IdentifiersController
                                  :action => :commentary)
   end
   
-  # GET /publications/1/ddb_identifiers/1/preview
-  # Provides preview of what the DDB Text XML from the repository will look like with PN Stylesheets applied
+  # - GET /publications/1/ddb_identifiers/1/preview
+  # - Provides preview of what the DDB Text XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
 

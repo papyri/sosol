@@ -165,7 +165,7 @@ class DDBIdentifier < Identifier
   
   # - Updates DDBIdentifier XML with line by line commentary
   # - Uses update_commentary.xsl
-  # - Saves the XML containg line by line commentary to the repository
+  # - Saves the XML containing line by line commentary to the repository
   # 
   # - *Args*  :
   #   - +line_id+ -> generated id of this lines 'lb' tag within the XML file to consistently reference this line
@@ -195,7 +195,7 @@ class DDBIdentifier < Identifier
   
   # - Updates DDBIdentifier XML with front matter commentary
   # - Makes use of update_frontmatter_commentary.xsl
-  # - Saves the XML containg front matter commentary to the repository
+  # - Saves the XML containing front matter commentary to the repository
   # 
   # 
   # - *Args*  :

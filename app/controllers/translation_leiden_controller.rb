@@ -25,8 +25,8 @@ class TranslationLeidenController < ApplicationController
   
   
   
-  # Get the Leiden to insert a specific new language div in a translation
-  # not in use currently
+  # - Get the Leiden to insert a specific new language div in a translation
+  # - *not* *in* *use* *currently*
   def get_language_translation_leiden
  	
     lang = (params[:lang])
