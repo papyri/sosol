@@ -3,6 +3,7 @@ class DdbIdentifiersController < IdentifiersController
   before_filter :authorize
   
   # GET /publications/1/ddb_identifiers/1/edit
+  # Edit DDB Text via Leiden+
   def edit
     find_identifier
     
@@ -59,6 +60,7 @@ class DdbIdentifiersController < IdentifiersController
   end
   
   # PUT /publications/1/ddb_identifiers/1/update
+  # Update DDB Text via Leiden+
   def update
     find_identifier
     @bad_leiden = false
@@ -112,6 +114,13 @@ class DdbIdentifiersController < IdentifiersController
     end #when
   end
   
+  # Pull DDB Text XML file from repository and creates a page set via XSLT up to add, modify, or delete
+  # Front Matter or Line by Line commentary
+  # - *Params*  :
+  #   - +none+
+  # - *Returns* :
+  #   - @identifier[:html_preview] - data for view to display
+  #   - @is_editor_view - tell view to display edit menu at top of page
   def commentary
     find_identifier
 
@@ -126,6 +135,16 @@ class DdbIdentifiersController < IdentifiersController
     @is_editor_view = true
   end
   
+  # Updates a DDB Text with Line by Line commentary
+  # - *Params*  :
+  #   - +line_id+ -> id attribute value of the 'li' tag this commentary is associated with
+  #   - +reference+ -> defaults to numeric portion of 'line_id' - but user changable to reference multiple lines, etc. 
+  #   - +content+ -> contains the commentary 'Leiden' to convert to XML that will be added to the DDB Text XML
+  #   - +original_item_id+ -> XSLT consistently calculated id to reference this 'text' line with
+  # - *Returns* :
+  #   - to commentary view
+  # - *Rescue*  :
+  #   - JRubyXML::ParseError -  if XML does not validate and Relax NG and returns to commentary view with flash error
   def update_commentary
     find_identifier
     
@@ -146,6 +165,13 @@ class DdbIdentifiersController < IdentifiersController
     end
   end
   
+  # Updates a DDB Text with Front Matter commentary
+  # - *Params*  :
+  #   - +content+ -> contains the commentary 'Leiden' to convert to XML that will be added to the DDB Text XML
+  # - *Returns* :
+  #   - to commentary view
+  # - *Rescue*  :
+  #   - JRubyXML::ParseError -  if XML does not validate and Relax NG and returns to commentary view with flash error
   def update_frontmatter_commentary
     find_identifier
     
@@ -166,6 +192,11 @@ class DdbIdentifiersController < IdentifiersController
     end
   end
   
+  # Deletes Front Matter commentary from a DDB Text
+  # - *Params*  :
+  #   - +none+
+  # - *Returns* :
+  #   - to commentary view
   def delete_frontmatter_commentary
     find_identifier
     
@@ -177,6 +208,14 @@ class DdbIdentifiersController < IdentifiersController
                                  :action => :commentary)
   end
   
+  # Deletes Line by Line commentary from a DDB Text
+  # - *Params*  :
+  #   - +line_id+ -> id attribute value of the 'li' tag this commentary is associated with
+  #   - +reference+ -> defaults to numeric portion of 'line_id' - but user changable to reference multiple lines, etc. 
+  #   - +content+ -> contains the commentary 'Leiden' to convert to XML that will be added to the DDB Text XML
+  #   - +original_item_id+ -> XSLT consistently calculated id to reference this 'text' line with
+  # - *Returns* :
+  #   - to commentary view
   def delete_commentary
     find_identifier
     
@@ -189,14 +228,9 @@ class DdbIdentifiersController < IdentifiersController
   end
   
   # GET /publications/1/ddb_identifiers/1/preview
+  # Provides preview of what the DDB Text XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
-    
-    # Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
-    # xslt = XML::XSLT.new()
-    # xslt.xml = REXML::Document.new(@identifier.xml_content)
-    # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
-    # xslt.serve()
 
     @identifier[:html_preview] = @identifier.preview
     
@@ -204,10 +238,17 @@ class DdbIdentifiersController < IdentifiersController
   end
   
   protected
+  
+    # Sets the identifier instance variable values
+    # - *Params*  :
+    #   - +id+ -> id from identifier table of the DDB Text
     def find_identifier
       @identifier = DDBIdentifier.find(params[:id])
     end
   
+    # Sets the publication instance variable values and then calls find_identifier
+    # - *Params*  :
+    #   - +publication_id+ -> id from publication table of the publication containing this DDB Text
     def find_publication_and_identifier
       @publication = Publication.find(params[:publication_id])
       find_identifier
