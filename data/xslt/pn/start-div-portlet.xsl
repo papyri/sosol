@@ -52,7 +52,8 @@
   <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
   
   <xsl:include href="htm-tpl-scripts.xsl"/>
-  <xsl:include href="htm-tpl-apparatus-portlet.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-apparatus.xsl"/>
+  <!-- <xsl:include href="htm-tpl-apparatus-portlet.xsl"/> -->
   <!-- xsl:include href="htm-tpl-metadata.xsl"/ -->
   <xsl:include href="htm-tpl-nav-pn.xsl"/>
 
