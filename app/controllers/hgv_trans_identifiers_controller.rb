@@ -4,6 +4,7 @@ class HgvTransIdentifiersController < IdentifiersController
   # require 'xml'
   # require 'xml/xslt'
   
+  # Edit Translation
   def edit
     find_identifier
     
@@ -26,7 +27,11 @@ class HgvTransIdentifiersController < IdentifiersController
     @is_editor_view = true
   end
   
-
+  # Add new 'div' type="translation" with new language attribute
+  # - *Params*  :
+  #   - +lang+ -> the new language to add (used in 'xml:lang' attribute)
+  # - *Returns* :
+  #   - to Edit Translation view
   def add_new_lang_to_xml
   # raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
    
@@ -43,7 +48,7 @@ class HgvTransIdentifiersController < IdentifiersController
   end  
 
 
-  
+  # Update Translation
   def update
     find_identifier
     @bad_leiden = false
@@ -119,7 +124,8 @@ class HgvTransIdentifiersController < IdentifiersController
     
   end
   
-  # GET /publications/1/ddb_identifiers/1/preview
+  # - GET /publications/1/ddb_identifiers/1/preview
+  # - Provides preview of what the Translation XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
     
@@ -134,6 +140,10 @@ class HgvTransIdentifiersController < IdentifiersController
   
   
   protected
+  
+    # Sets the identifier instance variable values
+    # - *Params*  :
+    #   - +id+ -> id from identifier table of the Translation
     def find_identifier
       @identifier = HGVTransIdentifier.find(params[:id])
     end

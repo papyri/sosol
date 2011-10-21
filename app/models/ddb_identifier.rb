@@ -16,6 +16,7 @@ class DDBIdentifier < Identifier
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
   
+  # Returns value for 'id' attribute in DDB Text template
   def id_attribute
     ddb_collection_name, ddb_volume_number, ddb_document_number =
       self.to_components.last.split(';')
@@ -25,11 +26,12 @@ class DDBIdentifier < Identifier
     return [ddb_collection_name, ddb_volume_number, ddb_document_number].reject{|i| i.blank?}.join('.')
   end
   
+  # Returns value for 'n' attribute in DDB Text template
   def n_attribute
     return to_components[2..-1].join(';')
   end
   
-  # Executes id_attribute
+  # Returns value from id_attribute as value for 'title' attribute in DDB Text template
   def xml_title_text
     self.id_attribute
   end
@@ -57,6 +59,7 @@ class DDBIdentifier < Identifier
     return @collection_names_hash
   end
   
+  # Returns file path to DDB Text XML - e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
   def to_path
     path_components = [ PATH_PREFIX ]
     
@@ -92,7 +95,7 @@ class DDBIdentifier < Identifier
     return File.join(path_components)
   end
   
-  # Place any actions you always want to perform on DDbDp identifier content prior to it being committed in this method
+  # Place any actions you always want to perform on DDB Text identifier content prior to it being committed in this method
   # - *Args*  :
   #   - +content+ -> DDBIdentifier XML as string
   def before_commit(content)
@@ -215,11 +218,11 @@ class DDBIdentifier < Identifier
     self.set_xml_content(rewritten_xml, :comment => '')
   end
   
-  # Extracts 'Leiden+ that will not parse' from identifier XML file if it was saved by the user
+  # Extracts 'Leiden+ that will not parse' from DDB Text XML file if it was saved by the user
   #
   # - *Args*  :
   #   - +original_xml+ -> REXML::Document/XML to look for broken Leiden+ in. If nil, will retrieve from the 
-  #     repository based on the the DDBIdentifier currently processing
+  #     repository based on the the DDB Text Identifier currently processing
   # - *Returns* :
   #   - +nil+ - if broken Leiden+ is not in the XML file
   #   - +brokeleiden+ - the broken Leiden+ extracted from the XML
@@ -236,7 +239,7 @@ class DDBIdentifier < Identifier
     end
   end
   
-  # - Retrieves the XML for the the DDBIdentifier currently processing from the repository
+  # - Retrieves the XML for the the DDB Text identifier currently processing from the repository
   # - Applies preprocessing and cleanup via XSLT
   # - Checks if XML contains 'broken Leiden+"
   #
