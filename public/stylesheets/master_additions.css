@@ -438,9 +438,8 @@ span.textpartnumber {
     margin-left: -2em;
 }
 .linenumberbroken {
-    left: -4em;
-    padding-right: 0.2em;
-    position: absolute;
+    float: left;
+    margin-left: -2em;
     color: red ;
     text-decoration: blink ;
 }
