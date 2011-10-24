@@ -1,14 +1,14 @@
-#No associated views - just call the methods to do Leiden+ and XML conversions
+#No associated views - just call the methods to do DDB Text Leiden+ and XML conversions
 class LeidenController < ApplicationController
   
-  # Transform XML to Leiden+ - used in the DDB Text Helper menu - called from javascript
+  # Transform DDB Text XML to Leiden+ - used in the DDB Text Helper menu - used in javascript ajax call
   # - *Params*  :
-  #   - +xml+ -> XML to transform to Leiden+
+  #   - +xml+ -> DDB Text XML to transform to Leiden+
   # - *Returns* :
   #   - Leiden+
   # - *Rescue*  :
   #   - RXSugar::XMLParseError - formats and returns error message if transform fails
-  def xmlAjax
+  def xml2leiden
     
     xml2conv = (params[:xml])
     begin
@@ -24,9 +24,9 @@ class LeidenController < ApplicationController
     end
   end
   
-  # Transform Leiden+ to XML - used in the DDB Text Helper menu - called from javascript
+  # Transform DDB Text Leiden+ to XML - used in the DDB Text Helper menu - used in javascript ajax call
   # - *Params*  :
-  #   - +leiden+ -> Leiden+ to transform to XML
+  #   - +leiden+ -> DDB Text Leiden+ to transform to XML
   # - *Returns* :
   #   - XML
   # - *Rescue*  :

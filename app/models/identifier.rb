@@ -28,7 +28,7 @@ class Identifier < ActiveRecord::Base
   #the same and was returning the meta instead of trans when processing translations
   
   # - *Returns* :
-  #   - the originally created publication of this identifier (publciation with no parent id)
+  #   - the originally created publication of this identifier (publciation that does not have a parent id)
   def origin
     self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end

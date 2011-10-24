@@ -1,14 +1,14 @@
 #Created as sub-class of DDBIdentifier because it already has the acts_as_leiden_plus
 #
-#Converts Leiden+ and XML
+#Converts DDB Text Leiden+ and XML
 class Leiden < DDBIdentifier  
  
-  # Converts XML to Leiden+
+  # Converts DDB Text XML to Leiden+
   # - uses DDBIdentifier.preprocess_abs to wrap the argument in XML needed to parse in the XSUGAR grammar
   # - uses DDBIdentifier.xml2nonxml to convert the XML to Leiden+
   # - removes any Leiden+ returned due to the XML added for parsing purposes before returning Leiden+
   # - *Args*    :
-  #   - +content+ -> XML to transform to Leiden+
+  #   - +content+ -> DDB Text XML to transform to Leiden+
   # - *Returns* :
   #   - Leiden+
   def self.xml_leiden_plus(content)
@@ -46,12 +46,12 @@ class Leiden < DDBIdentifier
     return transformed
   end
   
-  # Converts Leiden+ to XML
+  # Converts DDB Text Leiden+ to XML
   # - checks argument to see what Leiden+ needs to be added to parse in the XSUGAR grammar
   # - uses DDBIdentifier.nonxml2xml to convert the Leiden+ to XML
   # - removes namespace XML
   # - *Args*    :
-  #   - +content+ -> Leiden+ to transform to XML
+  #   - +content+ -> DDB Text Leiden+ to transform to XML
   # - *Returns* :
   #   - XML
   def self.leiden_plus_xml(content)

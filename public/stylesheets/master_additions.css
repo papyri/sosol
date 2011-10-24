@@ -443,6 +443,12 @@ span.textpartnumber {
     float: left;
     margin-left: -2em;
 }
+.linenumberbroken {
+    float: left;
+    margin-left: -2em;
+    color: red ;
+    text-decoration: blink ;
+}
 .underline {
     text-decoration: underline;
 }

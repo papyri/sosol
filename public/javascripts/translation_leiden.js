@@ -5,11 +5,11 @@
 
 //name of textarea where we will be inserting text
 var text_window_id = 'hgv_trans_identifier_leiden_trans';
-	 // sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
-  var success = function(resp) {
-    leidenh = resp.responseText;
-    insertTextMain(leidenh);
-     }
+// sets the 'success' variable used as the onSuccess function from ajax call to convert the XML
+var success = function(resp) {
+  leidenh = resp.responseText;
+  insertTextMain(leidenh);
+   }
 
 function init() 
   {
@@ -37,7 +37,9 @@ document.observe("dom:loaded", init);
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
   // as non-IE gets focus again in helper.js in the insertText function
-  getFocusMain()
+  getFocusMain();
+  
+  stdOptions = ', toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
   
   switch (view)
   {
@@ -45,27 +47,27 @@ function helpDialogOpen(view)
   case "gaplost":
   case "division":
     {
-      openconfig = config='height=230, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=230, width=675, left=150, top=50' + stdOptions;
       break;
     }
   case "linebreak":
     {
-      openconfig = config='height=200, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=200, width=325, left=600, top=50' + stdOptions;
       break;
     }
   case "terms":
     {
-      openconfig = config='height=300, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=300, width=675, left=150, top=50' + stdOptions;
       break;
     }
   case "new_lang":
     {
-      openconfig = config='height=350, width=300, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=300, left=150, top=50' + stdOptions;
       break;
     }
   case "tryit":
     {
-      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=1225, left=25, top=50' + stdOptions;
       break;
     }
     
@@ -75,7 +77,7 @@ function helpDialogOpen(view)
       alert("Oops, error, this is not a valid helper dialog page " + view);
     }
   }
-  //helpView is global variable defined with Ruby url_for in inline javascript in edit.haml 
+  //helpView is global variable defined with Ruby url_for in inline javascript in partial _translation_leiden_helpers.haml 
   newWindowURL = helpView.replace("wheretogo", view);
   window.open (newWindowURL, '', openconfig); 
 }
@@ -119,7 +121,7 @@ function insertGapIllegibleMain()
 
 function insertMilestoneMain(milestone_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   startxml = "<milestone rend=\"" + milestone_type + "\" unit=\"undefined\"/>";
   /*
@@ -138,7 +140,7 @@ function insertMilestoneMain(milestone_type)
 
 function insertDivisionMain(division_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   switch (division_type)
   {
@@ -169,7 +171,7 @@ function insertDivisionMain(division_type)
   
   startxml = "<div xml:lang=\"en\" type=\"translation\" xml:space=\"preserve\">" + startxml + "</div>";
   
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(conv_xml_to_translation_leiden, 
   {
   method: 'get',
   parameters : {xml:startxml},
@@ -194,7 +196,7 @@ function insertDivisionMain(division_type)
 
 function insertSpecialCharMain(char_name)
 {
-  getFocusMain()
+  getFocusMain();
   
   insertTextMain(char_name);
 }
@@ -207,7 +209,7 @@ function insertSpecialCharMain(char_name)
 
 function convertXMLMain()
 { 
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(conv_xml_to_translation_leiden, 
   {
   method: 'get',
   parameters : {xml:startxml},
