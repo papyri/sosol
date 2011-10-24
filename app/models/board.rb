@@ -100,7 +100,7 @@ class Board < ActiveRecord::Base
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
   #
   #*Args*:
-  #- votes
+  #- +votes+ the publication's votes
   #*Returns*:
   #- nil if no decree has been triggered
   #- decree action if the votes trigger a decree, if multiple decrees could be triggered by the vote count, only the first in the list will be returned.
