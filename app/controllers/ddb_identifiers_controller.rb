@@ -144,7 +144,7 @@ class DdbIdentifiersController < IdentifiersController
   # - *Returns* :
   #   - to commentary view
   # - *Rescue*  :
-  #   - JRubyXML::ParseError -  if XML does not validate and Relax NG and returns to commentary view with flash error
+  #   - JRubyXML::ParseError -  if XML does not validate against tei-epidoc.rng file and returns to commentary view with flash error
   def update_commentary
     find_identifier
     
@@ -171,7 +171,7 @@ class DdbIdentifiersController < IdentifiersController
   # - *Returns* :
   #   - to commentary view
   # - *Rescue*  :
-  #   - JRubyXML::ParseError -  if XML does not validate and Relax NG and returns to commentary view with flash error
+  #   - JRubyXML::ParseError -  if XML does not validate against tei-epidoc.rng file and returns to commentary view with flash error
   def update_frontmatter_commentary
     find_identifier
     
