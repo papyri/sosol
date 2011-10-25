@@ -153,10 +153,18 @@ class IdentifiersController < ApplicationController
       line_cnt = 1
       col_cnt = 1
       content_error_here = ''
+      add_error = false
+      
       content.each_char do |i|
         if line_cnt == line
           if col_cnt == column
             content_error_here << "**POSSIBLE ERROR**"
+            add_error = true
+          end
+          # if on the line with error but at the end without putting in the message, then put the message in
+          if (i == "\n" && add_error == false)
+              content_error_here << "**POSSIBLE ERROR**"
+              add_error = true
           end
           col_cnt += 1
         end
