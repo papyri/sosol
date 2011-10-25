@@ -1,8 +1,15 @@
 #main
-  = render :partial => "common/flash_all"
+  -# render :partial => "common/flash_all"
 
   %h1
     == #{@current_user.name}'s Account Info
+  - if @current_user.community_memberships.length > 0
+    %h3
+      Communities
+    - @current_user.community_memberships.each do |cm|
+      = cm.name
+      %br
+    
   %h3
     Personal
   - form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|

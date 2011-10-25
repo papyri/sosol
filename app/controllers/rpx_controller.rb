@@ -1,7 +1,7 @@
 require 'rpx'
 
 class RpxController < ApplicationController
-  layout 'site'
+  #layout 'site'
   
   protect_from_forgery :except => [:login_return, :associate_return]
   

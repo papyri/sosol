@@ -1,5 +1,7 @@
 class HelperController < ApplicationController
   
+  layout false
+  
   def ancientdia
   end
   

@@ -67,7 +67,7 @@
   <xsl:template match="/">
     <!-- <xsl:param name='leiden-style'>ddbdp</xsl:param> -->
 <div class="pn-ddbdp-data">
-    <div class="greek">
+    <div class="greek transpecial">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
         <xsl:call-template name="css-script"/>
 
@@ -77,7 +77,7 @@
         
         <!-- Heading for a ddb style file -->
         <xsl:if test="$leiden-style = 'ddbdp'">
-          <h2 class="apis-portal-title">DDbDP Full Text: 
+          <h2 class="apis-portal-title">Text: 
             <xsl:value-of select="TEI/@id"/>
           </h2>
         </xsl:if>

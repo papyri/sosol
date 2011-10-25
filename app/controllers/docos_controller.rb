@@ -1,5 +1,5 @@
 class DocosController < ApplicationController
-  layout 'site'
+  #layout 'site'
   #caches_page :documentation
   # GET /docos
   # GET /docos.xml

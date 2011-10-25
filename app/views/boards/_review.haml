@@ -22,6 +22,7 @@
         = f.hidden_field :publication_id
         = f.hidden_field :identifier_id
         Your Vote:
+        %br
         - choices = Hash.new
         - identifier.publication.owner.decrees.each do |d|
           - d.get_choice_array.each do |c|
@@ -29,6 +30,7 @@
         = select "vote", "choice", choices, {:include_blank => true}
         %br
         Your Comment Required:
+        %br
         = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
         -#= f.submit "Vote", :disabled => !publication.mutable?
         = f.submit "Vote", :disabled => true, :onclick => 'preventDoubleVote()'

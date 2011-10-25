@@ -11,8 +11,14 @@ class Board < ActiveRecord::Base
   has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner
 
+  belongs_to :community
 
-  named_scope :ranked, :order => 'rank ASC'
+  #left as default for sosol ranks
+  named_scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
+  
+  named_scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
+
+
 
   # :identifier_classes is an array of identifier classes this board has
   # commit control over. This isn't done relationally because it's not a
@@ -20,7 +26,7 @@ class Board < ActiveRecord::Base
   # themselves.
   serialize :identifier_classes
   
-  validates_uniqueness_of :title, :case_sensitive => false
+  validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
   validates_presence_of :title
   
   has_repository

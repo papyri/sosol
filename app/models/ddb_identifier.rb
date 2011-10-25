@@ -325,6 +325,10 @@ class DDBIdentifier < Identifier
 
     # strip tabs
     preprocessed_leiden.tr!("\t",'')
+
+    # convert multiple underdots (\u0323) to a single underdot
+    underdot = [0x323].pack('U')
+    preprocessed_leiden.gsub!(/#{underdot}+/,underdot)
     
     # consistent LT symbol (<)
     # \u2039 \u2329 \u27e8 \u3008 to \u003c')
