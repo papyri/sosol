@@ -96,12 +96,19 @@
       var line_cnt = 1;
       var col_cnt = 1;
       var content_error_here = new Array();
+      var add_error = false;
       
       for (i=0;i<=content.length;i++){
 
         if (line_cnt == line){
           if (col_cnt == column) {
             content_error_here.push("**POSSIBLE ERROR**");
+            add_error = true;
+          }
+          // if on the line with error but at the end without putting in the message, then put the message in
+          if (content.charAt(i) == "\n" && add_error == false){
+              content_error_here.push("**POSSIBLE ERROR**");
+              add_error = true;
           }
           col_cnt++;
         }

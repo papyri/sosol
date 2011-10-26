@@ -1,12 +1,18 @@
+#No associated views - just call the methods to do Translation Leiden+ and XML conversions for translations
 class TranslationLeidenController < ApplicationController
   
 
-	#used by ajax
+  # Transform Translation XML to Leiden+ - used in the Translation Helper menu - used in javascript ajax call
+  # - *Params*  :
+  #   - +xml+ -> Translation XML to transform to Leiden+
+  # - *Returns* :
+  #   - Leiden+
+  # - *Rescue*  :
+  #   - RXSugar::XMLParseError - formats and returns error message if transform fails
   def xml_to_translation_leiden
     
     xml2conv = (params[:xml])
     begin
-      #leidenback = TranslationLeiden.xml_leiden_plus(xml2conv)
       leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
       
       render :text => "#{leidenback}"
@@ -19,7 +25,8 @@ class TranslationLeidenController < ApplicationController
   
   
   
-  #used by ajax
+  # - Get the Leiden to insert a specific new language div in a translation
+  # - *not* *in* *use* *currently*
   def get_language_translation_leiden
  	
     lang = (params[:lang])
@@ -33,12 +40,17 @@ class TranslationLeidenController < ApplicationController
     end
   end
   
-  #used by ajax
+  # Transform Translation Leiden+ to XML - used in the Translation Helper menu - used in javascript ajax call
+  # - *Params*  :
+  #   - +leiden+ -> Translation Leiden+ to transform to XML
+  # - *Returns* :
+  #   - XML
+  # - *Rescue*  :
+  #   - RXSugar::NonXMLParseError - formats and returns error message if transform fails
   def translation_leiden_to_xml
     
     leiden2conv = (params[:leiden])
     begin
-      #xmlback = TranslationLeiden.leiden_plus_xml(leiden2conv)
       xmlback = TranslationLeiden.translation_leiden_to_xml(leiden2conv)
       
       

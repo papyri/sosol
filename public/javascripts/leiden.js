@@ -22,28 +22,30 @@ document.observe("dom:loaded", init);
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
   // as non-IE gets focus again in helper.js in the insertText function
-  getFocusMain()
+  getFocusMain();
+  
+  stdOptions = ', toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
   
   switch (view)
   {
   case "division":
     {
-      openconfig = config='height=275, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=675, left=150, top=50' + stdOptions;
       break;
     }
   case "ancientdia":
     {
-      openconfig = config='height=350, width=325, left=600, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=325, left=600, top=50' + stdOptions;
       break;
     }
   case "abbrev":
     {
-      openconfig = config='height=425, width=675, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=425, width=675, left=150, top=50' + stdOptions;
       break;
     }
   case "gapall":
     {
-      openconfig = config='height=550, width=595, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=550, width=595, left=150, top=50' + stdOptions;
       break;
     }
   case "appalt":
@@ -51,12 +53,12 @@ function helpDialogOpen(view)
   case "appreg":
   case "appsubst":
     {
-      openconfig = config='height=300, width=650, left=50, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=300, width=650, left=50, top=50' + stdOptions;
       break;
     }
   case "tryit":
     {
-      openconfig = config='height=275, width=1225, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=275, width=1225, left=25, top=50' + stdOptions;
       break;
     }
   
@@ -64,13 +66,13 @@ function helpDialogOpen(view)
   case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=250, width=850, left=25, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=250, width=850, left=25, top=50' + stdOptions;
       break;
     }
     
   case "number":
     {
-      openconfig = config='height=350, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+      openconfig = config='height=350, width=625, left=150, top=50' + stdOptions;
       break;
     }
   default: // nopts is default and need to clear optional xml values and leave diachar filled in 
@@ -78,7 +80,7 @@ function helpDialogOpen(view)
       alert("Oops, error, this is not a valid helper dialog page " + view);
     }
   }
-  //helpView is global variable defined with Ruby url_for in inline javascript in edit.haml 
+  //helpView is global variable defined with Ruby url_for in inline javascript in partial _leiden_helpers.haml 
   newWindowURL = helpView.replace("wheretogo", view);
   window.open (newWindowURL, '', openconfig); 
 }
@@ -99,7 +101,7 @@ function getFocusMain()
 
 function insertDiacriticalMain(diacritical_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   // type is parm passed from view javascript call - 'A' is the default character to pass in the 
   //   XML to pass the xsugar grammar - stripped back out when returns 
@@ -126,7 +128,7 @@ function insertDiacriticalMain(diacritical_type)
 
 function insertDeletionMain(deletion_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   startxml = "<del rend=\"" + deletion_type + "\">to be deleted</del>";
   
@@ -146,7 +148,7 @@ function insertDeletionMain(deletion_type)
 
 function insertMilestoneMain(milestone_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   startxml = "<milestone rend=\"" + milestone_type + "\" unit=\"undefined\"/>";
   
@@ -165,7 +167,7 @@ function insertMilestoneMain(milestone_type)
 
 function insertDivisionMain(division_type)
 {
-  getFocusMain()
+  getFocusMain();
   
   switch (division_type)
   {
@@ -194,7 +196,7 @@ function insertDivisionMain(division_type)
     
   }
   
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(convXML2Leiden, 
   {
   method: 'get',
   parameters : {xml:startxml},
@@ -216,7 +218,7 @@ function insertDivisionMain(division_type)
 
 function insertSpecialCharMain(char_name)
 {
-  getFocusMain()
+  getFocusMain();
   
   insertTextMain(char_name);
 }
@@ -239,7 +241,7 @@ function convertXMLMain()
 {
   xmltopass = wrapxmlMain(startxml);
   
-  new Ajax.Request(ajaxConvert, 
+  new Ajax.Request(convXML2Leiden, 
   {
   method: 'get',
   parameters : {xml:xmltopass},
