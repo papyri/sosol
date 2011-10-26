@@ -179,6 +179,7 @@ class Identifier < ActiveRecord::Base
   def self.collection_names
     unless defined? @collection_names
       parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+      raise NumbersRDF::Timeout if parts.nil?
       @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
     end
     return @collection_names
