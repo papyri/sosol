@@ -185,14 +185,14 @@ class PublicationsController < ApplicationController
         @publication.community_id = community_id
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       else
-        #force community id to 0 for sosol
-        @publication.community_id = 0;        
+        #force community id to nil for sosol
+        @publication.community_id = nil;        
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
       end
       
     else
       #force community id to 0 for sosol
-      @publication.community_id = 0;
+      @publication.community_id = nil;
     end
     
     
