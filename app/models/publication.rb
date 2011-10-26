@@ -310,6 +310,10 @@ class Publication < ActiveRecord::Base
         #community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user()
         community_copy.status = "editing"
+        community_copy.identifiers.each do |id|
+          id.status = "editing"
+          id.save
+        end
         #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
         
         #disconnect the parent/origin connections
@@ -324,6 +328,9 @@ class Publication < ActiveRecord::Base
         
         community_copy.save!
         
+        #mark as committed
+        self.origin.change_status("committed")
+        self.save
       end
       
     else
