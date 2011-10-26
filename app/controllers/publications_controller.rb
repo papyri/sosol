@@ -184,9 +184,19 @@ class PublicationsController < ApplicationController
       if !community_id.empty? && community_id != "0" && !community_id.nil?
         @publication.community_id = community_id
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
+      else
+        #force community id to 0 for sosol
+        @publication.community_id = 0;        
+        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
       end
+      
+    else
+      #force community id to 0 for sosol
+      @publication.community_id = 0;
     end
     
+    
+    #need to set id to 0
     #raise community_id
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
