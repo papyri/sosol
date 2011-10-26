@@ -78,6 +78,11 @@ class Identifier < ActiveRecord::Base
       self.to_path, self.branch)
   end
   
+  # Validation of indentifier XML file against tei-epidoc.rng file
+  # - *Args*  :
+  #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
+  # - *Returns* :
+  #   - true/false
   def is_valid_xml?(content = nil)
     if content.nil?
       content = self.content
@@ -86,6 +91,8 @@ class Identifier < ActiveRecord::Base
       JRubyXML.input_source_from_string(content))
   end
   
+  # Put stuff in here you want to do do all identifiers before a commit is done 
+  # - currently no logic is in here - just returns whatever was passed in
   def before_commit(content)
     return content
   end
@@ -172,6 +179,7 @@ class Identifier < ActiveRecord::Base
   def self.collection_names
     unless defined? @collection_names
       parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+      raise NumbersRDF::Timeout if parts.nil?
       @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
     end
     return @collection_names
