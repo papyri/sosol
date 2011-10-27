@@ -1,20 +1,24 @@
+# - Sub-class of Identifier
+# - This is a superclass for HGVMetaIdentifier and HGVTransIdentifier
+#   shared constants and methods. No instances of HGVIdentifier should be
+#   created.
 class HGVIdentifier < Identifier
-  # This is a superclass for HGVMetaIdentifier and HGVTransIdentifier
-  # shared constants and methods. No instances of HGVIdentifier should be
-  # created. Should probably be modularized and mixed in.
+  # Should probably be modularized and mixed in.
   
   IDENTIFIER_NAMESPACE = 'hgv'
   TEMPORARY_COLLECTION = 'SoSOL'
   
   FRIENDLY_NAME = "HGV Identifier"
   
+  # Path constructor for born-digital temporary SoSOL identifiers
   def temporary_path
-    # path constructor for born-digital temporary SoSOL identifiers
     trimmed_name = name.sub(/papyri.info\/hgv\//, '')
     components = trimmed_name.split(';')
     return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
   end
   
+  # Creates a hash of the names of all the HGV Collections available in SoSOL replacing '_' with space
+  # - used in selector
   def self.collection_names_hash
     self.collection_names
     

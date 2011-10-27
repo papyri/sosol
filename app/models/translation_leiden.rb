@@ -1,7 +1,16 @@
+#Created as sub-class of HGVTransIdentifier because it already has the acts_as_translation
+#
+#Converts Translation Leiden+ and XML
 class TranslationLeiden < HGVTransIdentifier  
  
-  #created as sub-class of HGVTransIdentifier because it already has the acts_as_translation
- 
+  # Converts Translation XML to Leiden+
+  # - wraps the argument in XML needed to parse in the XSUGAR translation grammar
+  # - uses HGVTransIdentifier.xml2nonxml to convert the XML to Leiden+
+  # - removes any Leiden+ returned due to the XML added for parsing purposes before returning Leiden+
+  # - *Args*    :
+  #   - +content+ -> Translation XML to transform to Leiden+
+  # - *Returns* :
+  #   - Leiden+
   def self.xml_to_translation_leiden(content)
     if content.include?("<div")
       #wrap in <body> tag only so that the sugar grammer can transform 
@@ -38,6 +47,8 @@ class TranslationLeiden < HGVTransIdentifier
     return transformed
   end
   
+  # - Get the Leiden to insert a specific new language div in a translation
+  # - *not* *in* *use* *currently*
   def self.get_language_translation_leiden(lang)
  	
     #wrap so that the sugar grammer can transform
@@ -48,6 +59,14 @@ class TranslationLeiden < HGVTransIdentifier
     return transformed
   end
   
+  # Converts Translation Leiden+ to XML
+  # - checks argument to see what Leiden+ needs to be added to parse in the XSUGAR translation grammar
+  # - uses HGVTransIdentifier.nonxml2xml to convert the Leiden+ to XML
+  # - removes namespace XML
+  # - *Args*    :
+  #   - +content+ -> Translation Leiden+ to transform to XML
+  # - *Returns* :
+  #   - XML
   def self.translation_leiden_to_xml(content)
     if content.include?("<T=") #check if user input contains Leiden+ grammar for <div> tag
       #no need to wrap - already meets minimum for sugar grammar

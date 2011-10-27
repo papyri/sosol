@@ -9,6 +9,8 @@ module NumbersRDF
   NUMBERS_SERVER_DOMAIN = 'papyri.info'
   NUMBERS_SERVER_PORT = 80
 
+  class Timeout < ::Timeout::Error; end
+
   # Provides a number of class methods for working with identifiers and the Numbers Server  
   module NumbersHelper
     class << self
@@ -54,19 +56,27 @@ module NumbersRDF
           return nil
         end
       end
+
+      # Gets the HTTP response for a given URL path.
+      def path_to_numbers_server_response(path)
+        begin
+          return Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
+                               NUMBERS_SERVER_PORT)
+        rescue ::Timeout::Error => e
+          raise NumbersRDF::Timeout, e.message, caller
+        end
+      end
       
       # Gets the HTTP response for a given identifier. 
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
         path = identifier_to_path(identifier, decorator)
-        response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
-                                          NUMBERS_SERVER_PORT)
+        response = path_to_numbers_server_response(path)
       end
      
       # Gets the HTTP response for a given SPARQL query. 
       def sparql_query_to_numbers_server_response(sparql_query, format = '')
         path = sparql_query_to_path(sparql_query, format)
-        response = Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
-                                          NUMBERS_SERVER_PORT)
+        response = path_to_numbers_server_response(path)
       end
      
       # Applies XPath to an HTTP response (assumed to be XML). 

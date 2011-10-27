@@ -1,7 +1,16 @@
+#Created as sub-class of DDBIdentifier because it already has the acts_as_leiden_plus
+#
+#Converts DDB Text Leiden+ and XML
 class Leiden < DDBIdentifier  
  
-    #created as sub-class of DDBIdentifier because it already has the acts_as_leiden_plus
- 
+  # Converts DDB Text XML to Leiden+
+  # - uses DDBIdentifier.preprocess_abs to wrap the argument in XML needed to parse in the XSUGAR grammar
+  # - uses DDBIdentifier.xml2nonxml to convert the XML to Leiden+
+  # - removes any Leiden+ returned due to the XML added for parsing purposes before returning Leiden+
+  # - *Args*    :
+  #   - +content+ -> DDB Text XML to transform to Leiden+
+  # - *Returns* :
+  #   - Leiden+
   def self.xml_leiden_plus(content)
     
     if content.include?("<ab><div") || content.include?("<ab><ab>") || content.include?("<ab><ab/>")
@@ -37,6 +46,14 @@ class Leiden < DDBIdentifier
     return transformed
   end
   
+  # Converts DDB Text Leiden+ to XML
+  # - checks argument to see what Leiden+ needs to be added to parse in the XSUGAR grammar
+  # - uses DDBIdentifier.nonxml2xml to convert the Leiden+ to XML
+  # - removes namespace XML
+  # - *Args*    :
+  #   - +content+ -> DDB Text Leiden+ to transform to XML
+  # - *Returns* :
+  #   - XML
   def self.leiden_plus_xml(content)
     
     if content.include?("<=") #check if user input contains Leiden+ grammar for <ab> tag
