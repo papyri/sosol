@@ -411,6 +411,26 @@ end
        @publication.destroy
        
        Rails.logger.debug "ENDED TEST: user creates and submits publication to community"
+       
+       
+       
+       #Check that the end user can submit to sosol
+=begin       
+        #submit to the nobody, thus SoSOL
+        Rails.logger.debug "---Submit Publication To SoSOL---"
+        open_session do |submit_session|
+          submit_session.post 'publications/' + end_publication.id.to_s + '/submit/?test_user_id=' + @end_user.id.to_s, \
+              :submit_comment => "I am submitting a former community pub" #, :community => { :id => @test_community.id.to_s }    
+          Rails.logger.debug "--flash is: " + submit_session.flash.inspect              
+        end
+        @publication.reload       
+       
+=end       
+       
+       
+       
+       
+       
      end
       
       def compare_publications(a,b)

@@ -5,13 +5,14 @@ class BoardsController < ApplicationController
   before_filter :authorize
   before_filter :check_admin
 
-  
+  #Ensures user has admin rights to view page. Otherwise returns 403 error.
   def check_admin
     if @current_user.nil? || !@current_user.admin
       render :file => 'public/403.html', :status => '403'
     end
   end
   
+  #Presents overview for publication.
   def overview
     @board = Board.find(params[:id])
 
@@ -39,6 +40,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id])
   end
 
+  #Adds the user to the board member list.
   def add_member
     @board = Board.find(params[:id])
     user = User.find_by_name(params[:user_name])
@@ -51,6 +53,7 @@ class BoardsController < ApplicationController
     redirect_to :action => "edit", :id => (@board).id
   end
 
+  #Removes a member from the board member list.
   def remove_member
     user = User.find(params[:user_id])
 
@@ -182,7 +185,9 @@ class BoardsController < ApplicationController
     end
   end
 
-
+  #*Returns* array of boards sorted by rank. Lowest rank (highest priority) first.
+  #If community_id is given then the returned boards are only for that community.
+  #If no community_id is given then the "sosol" boards are returned. 
   def rank
     if params[:community_id]
       @boards = Board.ranked_by_community_id( params[:community_id] )
@@ -194,6 +199,7 @@ class BoardsController < ApplicationController
     
   end
 
+  #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
     if params[:community_id]

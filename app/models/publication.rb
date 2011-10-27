@@ -1,3 +1,20 @@
+#A publication is the basic object of the editorial workflow. The publication consists of a collection of identifiers.
+#The publication has a branch which contains the identifiers.
+#A user creates a publication. Modifies the publication and submits it to the boards.
+#Each board will get a copy of the user's publication (the origin publication) to work with.
+#Upon approval, the finalizer will receive a copy of the publication to work with.
+#The finalizer's, and board's copies are all children of the origin copy.
+#
+#This class contains many of the methods that controls the workflow for the publication.
+#Examples are:
+#- publicaiton creation
+#- copying of a publication
+#- changeing the status of a publication
+#- determining which board examines the publication
+#- determining voting outcome
+#- commiting to canon
+
+
 class Publication < ActiveRecord::Base  
     
   
@@ -168,7 +185,7 @@ class Publication < ActiveRecord::Base
     self.owner.repository.delete_branch(self.branch)
   end
   
-  
+  #Outputs publication information and content to the Rails logger.
    def log_info
         Rails.logger.info "-----Publication Info-----"
         Rails.logger.info "--Owner: " + self.owner.name
@@ -192,7 +209,11 @@ class Publication < ActiveRecord::Base
     end
       
 
-  
+  #Examines publication to see which board the publication should be submitted to next.
+  #Boards are sorted by rank. Each board, in order of rank, will check to see if they control any of the publication's modified and editing identifiers. 
+  #If so, then the publication is submitted to that board.
+  #
+  #When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
 
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
@@ -289,6 +310,10 @@ class Publication < ActiveRecord::Base
         #community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user()
         community_copy.status = "editing"
+        community_copy.identifiers.each do |id|
+          id.status = "editing"
+          id.save
+        end
         #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
         
         #disconnect the parent/origin connections
@@ -303,6 +328,9 @@ class Publication < ActiveRecord::Base
         
         community_copy.save!
         
+        #mark as committed
+        self.origin.change_status("committed")
+        self.save
       end
       
     else
@@ -321,6 +349,7 @@ class Publication < ActiveRecord::Base
   end
    
   #nolonger in use 2-22-2010
+=begin
   def submit_identifier(identifier)
     
     @recent_submit_sha = "";
@@ -367,11 +396,19 @@ class Publication < ActiveRecord::Base
     end
     return false #no board exists for this identifier class
   end
-  
+=end
+ 
+  #Simply pointer to submit_to_next_board method.
   def submit
     submit_to_next_board
   end
   
+  #Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier
+  #
+  #*Args*: 
+  #-+creator+ the user who will be the owner of the publication.
+  #
+  #*Returns*: the new publication consiting of a DDBIdentifier and an HGVMetaIdentifier
   def self.new_from_templates(creator)
     new_publication = Publication.new(:owner => creator, :creator => creator)
     
@@ -395,6 +432,9 @@ class Publication < ActiveRecord::Base
     return new_publication
   end
   
+  #*Returns*
+  #- +true+ if any of the identifiers in the publication have been modified.
+  #- +false+ if none of the identifiers in the publication have been modified.
   def modified?
     retval = false
     self.identifiers.each do |i|
@@ -404,9 +444,10 @@ class Publication < ActiveRecord::Base
     retval
   end 
   
-  # Determines if publication is in 'editing' status
-  # - *Returns* :
-  #   - true/false
+  #Determines if publication is in 'editing' status and is able to be changed
+  #*Returns*
+  #- +true+ if the publication should be changed by some user.
+  #- +false+ otherwise.
   def mutable?
     if self.status != "editing" # && self.status != "new"
       return false
@@ -415,6 +456,12 @@ class Publication < ActiveRecord::Base
     end
   end
 
+
+  #*Args*
+  #- +check_user+ see if the publication is mutable by this user.
+  #*Returns*
+  #- +true+ if the publication should be changed by some the user specifed by check_user.
+  #- +false+ otherwise.
   def mutable_by?(check_user)
     if (((self.owner.class == Board) && !(self.owner.users.include?(check_user))) ||
         (check_user != self.owner)) &&
@@ -429,10 +476,12 @@ class Publication < ActiveRecord::Base
   def after_create
   end
   
-  #sets the origin status for publication identifiers that the publication's board controls
+  #Sets the origin status for publication identifiers that this publication's board controls. Sets are made on the origin copy.
+  #
+  #*Args*
+  #- +status_in+ the status to be set
   def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
-      
       board = self.find_first_board
       if board
               
@@ -446,6 +495,11 @@ class Publication < ActiveRecord::Base
       end
   end
 
+
+  #Sets the status for publication identifiers that this publication's board controls. Sets are made on the board's copy. 
+  #
+  #*Args*
+  #- +status_in+ the status to be set
   def set_local_identifier_status(status_in)   
 
       board = self.find_first_board
@@ -461,12 +515,13 @@ class Publication < ActiveRecord::Base
       end
   end
 
+  #Convenience method to combine  set_origin_identifier_status & set_local_identifier_status methods.
   def set_origin_and_local_identifier_status(status_in)
     set_origin_identifier_status(status_in)          
     set_local_identifier_status(status_in)          
   end
 
-  #needed to set the finalizer's board identifier status
+  #Sets the board's publication identifier status. This is used when the finalizer's copy needs to change the board's copy.
   def set_board_identifier_status(status_in)
       pub = self.find_first_board_parent
       if pub            
@@ -476,9 +531,9 @@ class Publication < ActiveRecord::Base
             i.save
           end
         end
-        
       end
   end
+  
   
   def change_status(new_status)
     unless self.status == new_status
@@ -513,6 +568,7 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  #Sets the status to archived and renames the title with the date-time to prevent future title collisions.
   def archive
     self.change_status("archived")
     
@@ -520,7 +576,13 @@ class Publication < ActiveRecord::Base
     self.save!
   end
   
-  
+  #Determines if the user has voted on this publication.
+  #
+  #*Args*
+  #- +user_id+ the id for the user whose voting record we wish to test
+  #*Returns*
+  #- +true+ if the user for the given user_id has voted on this publication
+  #- +false+ if the user for the given user_id has not voted on this publication
   def user_has_voted?(user_id)
     if self.votes
       self.votes.each do |vote|
@@ -533,7 +595,14 @@ class Publication < ActiveRecord::Base
     return false
   end
   
-  
+  #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
+  #
+  #*Args*
+  #- +user_votes+ the votes to be tallied. By default, the publicaiton's own votes are used.
+  #*Returns*
+  #- +decree_action+ determined by the vote tally or +nil+ if no decree is triggered by the tally.
+  #*Effects*
+  #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
     user_votes ||= self.votes #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
@@ -565,48 +634,38 @@ class Publication < ActiveRecord::Base
       e.save!
     end
   
+  #----approve-----
     if decree_action == "approve"
       
-      #set local publication status to approved
+      #set status
       self.change_status("approved")
-      
-      #on approval, set the identifier(s) to approved (local and origin)
       self.set_origin_and_local_identifier_status("approved")
       
       #send emails
-       self.owner.send_status_emails("approved", self)
-      # @publication.send_status_emails(decree_action)          
-      
+      self.owner.send_status_emails("approved", self)
+     
       #set up for finalizing
       self.send_to_finalizer
       
-      
-    elsif decree_action == "reject"
-      #@publication.get_category_obj().reject       
+  #----reject-----    
+    elsif decree_action == "reject"   
      
+      #set status
       self.origin.change_status("editing")
       self.set_origin_and_local_identifier_status("editing")
       
+      #send emails
       self.owner.send_status_emails("rejected", self)
       
-      #do we want to copy ours back to the user? yes
-      #TODO test copy to user
-      #WARNING since they decided not to let editors edit we don't need to copy back to user 1-28-2010
-      #self.copy_repo_to_parent_repo
+      #do we want to copy ours back to the user? 
+      #TODO add copy to user
+      #NOTE since they decided not to let editors edit we don't need to copy back to user 1-28-2010
       
       self.origin.save!
       
-      #what to do with our copy?
-     # self.status = "rejected" #reset to unsubmitted       
-     # self.save
-      
       self.destroy
-      #redirect to dashboard
-     # redirect_to ( dashboard_url )
-     # redirect_to :controller => "user", :action => "dashboard"
-      #TODO send status emails
-      # @publication.send_status_emails(decree_action)
       
+  #----graffiti-----      
     elsif decree_action == "graffiti"               
       # @publication.send_status_emails(decree_action)
       #do destroy after email since the email may need info in the artice
@@ -622,6 +681,7 @@ class Publication < ActiveRecord::Base
       #or
       #self.submit_to_next_board
       
+  #----uknown on none-----      
     else
       #unknown action or no action
       #TODO allow board to return any action, and then call that action on the identifier, board or wherever it makes sense to allow the user to add to the class
@@ -745,7 +805,12 @@ class Publication < ActiveRecord::Base
     # - change parent lineage to flattened commits
   end
   
-  #finalizer is a user
+  #Finalizer is a user who is responsible for preparing the publication for the final commit to canon. They will be given a copy of the publication to edit.
+  #This function sets the finalizer up with a copy of the publicaiton.
+  #
+  #*Args*
+  #- +finalizer+ user who will become the finalizer. If no finalizer given, a board member will be randomly choosen.
+  #
   def send_to_finalizer(finalizer = nil)
     board_members = self.owner.users   
     if !finalizer
@@ -765,6 +830,7 @@ class Publication < ActiveRecord::Base
     finalizing_publication.save!
   end  
   
+  #Destroys this publication's finalizer's copy.
   def remove_finalizer
     # need to find out if there is a finalizer, and take the publication from them
     # finalizer will point back to this board's publication
@@ -774,10 +840,9 @@ class Publication < ActiveRecord::Base
     if current_finalizer_publication
       current_finalizer_publication.destroy
     end
-  
   end
   
-  
+  #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
   def find_finalizer_user
     if find_finalizer_publication
       return find_finalizer_publication.owner    
@@ -785,6 +850,7 @@ class Publication < ActiveRecord::Base
     return nil
   end
   
+  #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
   #returns the finalizer user or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
@@ -798,7 +864,13 @@ class Publication < ActiveRecord::Base
     self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
   end
   
-  
+  #Copies changes made to this publication back to the creator's (origin) publication.
+  #Preserves commit history for changes.
+  #This is intended to be called from the finalizer's publication copy.
+  #
+  #*Args*
+  #- +commit_comment+ comment object for commit
+  #- +committer_user+ the user who is making the commit
   def copy_back_to_user(commit_comment, committer_user)
        #copies changes made to this (self) publication back to the creator's publication
        #this is intended to be called from the finalizer's publication copy
@@ -872,26 +944,19 @@ class Publication < ActiveRecord::Base
 
       Rails.logger.debug "=======orign INDEX after add========"
       Rails.logger.debug origin_index.inspect
-      
-      
-       
+ 
      #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
       origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
      
      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
 
-      self.origin.save
-      
-    
-    
+      self.origin.save 
   end
   
   
   def commit_to_canon
-  
     #commit_sha is just used to return git sha reference point for comment
     commit_sha = nil
-  
   
     canon = Repository.new
     publication_sha = self.head
@@ -1002,6 +1067,11 @@ class Publication < ActiveRecord::Base
     owner.repository.create_branch(branch)
   end
   
+  
+  #Determines which identifiers are controlled by this publication's board.
+  #*Returns* 
+  #- array of identifiers from this publication that are controlled by this publication's board
+  #- empty array if this publication is not owned by a board or a finalizer
   def controlled_identifiers
     return self.identifiers.select do |i|
       if self.owner.class == Board
@@ -1016,7 +1086,10 @@ class Publication < ActiveRecord::Base
   
 
   
-  
+  #Determines paths for identifiers that are controlled by this publication's board.
+  #*Returns* 
+  #- array of paths from this publication that are controlled by this publication's board
+  #- empty array if this publication is not owned by a board or a finalizer
   def controlled_paths
     self.controlled_identifiers.collect do |i|
       i.to_path
@@ -1043,11 +1116,14 @@ class Publication < ActiveRecord::Base
     return diff || ""
   end
   
+  #*Returns* comment object with the publication's submit comment.
   def submission_reason
-    reason = Comment.find_by_publication_id(self.origin.id,
-      :conditions => "reason = 'submit'")
+    reason = Comment.find_by_publication_id(self.origin.id, :conditions => "reason = 'submit'")
   end
   
+  #Finds the publication with no parent. This will be the creators copy.
+  #
+  #*Returns* +publication+ that is the begining of the publication workflow chain.
   def origin
     # walk the parent list until we encounter one with no parent
     origin_publication = self
@@ -1057,6 +1133,7 @@ class Publication < ActiveRecord::Base
     return origin_publication
   end
 
+  #*Returns* +array+ of all of this publication's children.
   def all_children
     all_child_publications = []
     self.children.each do |child_publication|
@@ -1066,6 +1143,8 @@ class Publication < ActiveRecord::Base
     return all_child_publications
   end
 
+  #Destroys all board copies of a publication and resets the origin publication's status back to editing.
+  #This method has two main functions. One is to allow the user to "unsubmit" their submission. The other is to "reset" a publication that is in a confused state.
   def withdraw
     original_origin = self.origin
     #if(original_origin != self) #commented out so user can withdraw there own pub, note this should not be called without checking that the pub is withdrawable
@@ -1083,6 +1162,11 @@ class Publication < ActiveRecord::Base
     #end
   end
   
+  #Checks to see if user should be allowed to withdraw their submitted publication.
+  #
+  #*Returns*
+  #- +true+ if user can withdraw publication. Currently the rule is the user can withdraw before any voting has taken place.
+  #- +false+ if the user can no longer withdraw the publication.
   def allow_user_withdrawal?(user)
     #check any children publications for voting activity
     vote_count = 0;
@@ -1094,7 +1178,11 @@ class Publication < ActiveRecord::Base
    return ( vote_count < 1 ) && ( user == self.creator ) && ( self.status == 'submitted' )
   end
   
-  #finds the closest parent publication whose owner is a board and returns that board
+  #Finds the closest parent(or self) publication whose owner is a board. Returns that board.
+  #
+  #*Returns*
+  #- +board+ that owns the publication.
+  #- +nil+ if no board owned publication found. 
   def find_first_board
     board_publication = self
     while (board_publication.owner_type != "Board" && board_publication != nil) do
@@ -1107,6 +1195,12 @@ class Publication < ActiveRecord::Base
   end
   
   #finds the closest parent publication whose owner is a board and returns that publication
+  
+  #Finds the closest parent(or self) publication whose owner is a board. Returns that publication.
+  #
+  #*Returns*
+  #- +publication+ owned by the board.
+  #- +nil+ if no board owned publication found.
   def find_first_board_parent
     board_publication = self
     while (board_publication.owner_type != "Board" && board_publication != nil) do
@@ -1141,6 +1235,11 @@ class Publication < ActiveRecord::Base
     return vote_total, vote_ddb, vote_meta, vote_trans
   end
 
+  #Creates a new publication for the new_owner that is a separate copy of this publication.
+  #
+  #*Args* +new_owner+ the owner for the cloned copy.
+  #
+  #*Returns* +publication+ that is the new copy.
   def clone_to_owner(new_owner)
     duplicate = self.clone
     duplicate.owner = new_owner
@@ -1159,7 +1258,12 @@ class Publication < ActiveRecord::Base
     return duplicate
   end
   
-  #added to rename the publication title for the enduser
+  
+  #Creates a new publication for the end_user (of a community) that is a separate copy of this publication.
+  #This is similar to clone_to_owner, except the publication title is renamed to reflect the community and creator.
+  #The new owner is the end_user for the publication's community.
+  #
+  #*Returns* +publication+ that is the new copy.
    def clone_to_end_user()
     duplicate = self.clone
     duplicate.owner = self.community.end_user
