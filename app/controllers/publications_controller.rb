@@ -184,9 +184,19 @@ class PublicationsController < ApplicationController
       if !community_id.empty? && community_id != "0" && !community_id.nil?
         @publication.community_id = community_id
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
+      else
+        #force community id to nil for sosol
+        @publication.community_id = nil;        
+        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
       end
+      
+    else
+      #force community id to 0 for sosol
+      @publication.community_id = nil;
     end
     
+    
+    #need to set id to 0
     #raise community_id
     
     #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
@@ -271,6 +281,12 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
 
+    #to prevent a community publication from being finalized if there is no end_user to get the final version
+    if @publication.is_community_publication? && @publication.community.end_user.nil? 
+      flash[:error] = "Error finalizing. No End User for the community."
+      redirect_to @publication
+      return
+    end
     
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|

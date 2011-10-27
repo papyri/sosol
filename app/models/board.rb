@@ -13,7 +13,10 @@ class Board < ActiveRecord::Base
 
   belongs_to :community
 
-  #left as default for sosol ranks
+
+  #board rank determines workflow order for publication
+  #ranked scopes returns the boards for a given community in order of their rank
+  #ranked left as default for sosol ranks
   named_scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
   
   named_scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
@@ -31,7 +34,7 @@ class Board < ActiveRecord::Base
   
   has_repository
   
-  # workaround repository need for owner name for now
+  # Workaround, repository needs owner name for now.
   def name
     return title
   end
@@ -48,6 +51,13 @@ class Board < ActiveRecord::Base
     repository.destroy
   end
   
+  #The original idea was to allow programmers to add whatever functionality they wanted to an identifier.
+  #This functionality would be contained in a method called result_action_*.
+  #When a decree is set up the list of possible result_actions would be parsed from these methods and be presented to the user in a drop down list to choose.
+  #Currently (10-10-2011, CSC) I believe this is only used to make the drop down list when creating a decree. The default values are found in the identifier model.
+  #
+  #*Returns*
+  #- string list of possible actions to be taken on an identifier (a.k.a. decree actions)
   def result_actions
     #return array of possible actions that can be implemented
     retval = []
@@ -64,6 +74,8 @@ class Board < ActiveRecord::Base
     
   end
   
+  #*Returns*:
+  #-result_actions in a capitalized hash list for the select statement
   def result_actions_hash  
     ra = result_actions    
     ret_hash = {}
@@ -75,11 +87,23 @@ class Board < ActiveRecord::Base
     ret_hash
   end
 
+  
+  #*Args*:
+  #- +identifier+ identifier or subclass of identifier
+  #*Returns*:
+  #- true if this board is responsible for the given identifier
+  #- false otherwise 
   def controls_identifier?(identifier)
    self.identifier_classes.include?(identifier.class.to_s)  
   end
   
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.
+  #
+  #*Args*:
+  #- +votes+ the publication's votes
+  #*Returns*:
+  #- nil if no decree has been triggered
+  #- decree action if the votes trigger a decree, if multiple decrees could be triggered by the vote count, only the first in the list will be returned.
   def tally_votes(votes)
     # NOTE: assumes board controls one identifier type, and user hasn't made
     # rules where multiple decrees can be true at once
@@ -94,6 +118,12 @@ class Board < ActiveRecord::Base
   end #tally_votes
   
 
+  #Will genrally be called when the status of a publication is changed.
+  #Emails will be sent according to emailer settings for the board.
+  #
+  #*Args*: 
+  #- +when_to_send+ the new status of the publication.
+  #- +publication+ the publication whose status has just changed.
   def send_status_emails(when_to_send, publication)
 
   	#search emailer for status
@@ -219,8 +249,8 @@ class Board < ActiveRecord::Base
   end
 
 
-  #since this is an feature added, the existing boards will not have this data, so we may need to make it up
-  #could be removed after initail deploy
+  #Since friendly_name is an added feature, the existing boards will not have this data, so for backward compatability we may need to make it up.
+  #This method could be removed after initial deploy.
   def friendly_name=(fn)
     if fn && (fn.strip != "")
       self[:friendly_name] = fn
@@ -230,6 +260,9 @@ class Board < ActiveRecord::Base
     
   end
   
+  #Since board title is used to determine repository names, the title cannot be changed after board creation.
+  #This friendly_name allows the users another name that they can change at will. 
+  #*Returns*:  friendly_name if it has been set. Otherwise returns title.
   def friendly_name
     fn = self[:friendly_name]
     if fn && (fn.strip != "")
