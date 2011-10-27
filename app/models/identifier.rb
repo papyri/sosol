@@ -72,7 +72,7 @@ class Identifier < ActiveRecord::Base
   end
   
   # - *Returns* :
-  #   - the file containing this identifier from the repository
+  #   - the cotent of the file containing this identifier from the repository
   def content
     return self.repository.get_file_from_branch(
       self.to_path, self.branch)
@@ -97,7 +97,12 @@ class Identifier < ActiveRecord::Base
     return content
   end
   
-  # Returns a String of the SHA1 of the commit
+  # Commits identifier XML to the repository
+  # - *Args*  :
+  #   - +content+ -> the XML you want committed to the repository
+  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
+  # - *Returns* :
+  #   - a String of the SHA1 of the commit
   def set_content(content, options = {})
     options.reverse_merge! :comment => ''
     commit_sha = self.repository.commit_content(self.to_path,
@@ -113,6 +118,9 @@ class Identifier < ActiveRecord::Base
     return commit_sha
   end
   
+  # Retrieve the commits made to a file in the repository
+  # - *Returns* :
+  #   - array of commits
   def get_commits
     self[:commits] = 
       self.repository.get_log_for_file_from_branch(
@@ -120,7 +128,9 @@ class Identifier < ActiveRecord::Base
     )
   end
   
-  #parse out most recent sha from log
+  # Parse out most recent sha from log
+  # - *Returns* :
+  #   - id of latest commit as a string
   def get_recent_commit_sha
     commits = get_commits
     if commits && commits.length > 0
@@ -130,6 +140,9 @@ class Identifier < ActiveRecord::Base
     
   end
   
+  # Create consistent title for identifiers
+  # - *Returns* :
+  #   - title of identifier
   def titleize
     title = nil
     if self.class == HGVMetaIdentifier || self.class == HGVBiblioIdentifier
@@ -167,6 +180,9 @@ class Identifier < ActiveRecord::Base
     return title
   end
   
+  # Splits out identifier file path from the identifier model name field into the separate components
+  # - *Returns* :
+  #   - components
   def to_components
     trimmed_name = NumbersRDF::NumbersHelper::identifier_to_local_identifier(self.name)
     # trimmed_name.sub!(/^\/#{self.class::IDENTIFIER_NAMESPACE}\//,'')
@@ -176,6 +192,9 @@ class Identifier < ActiveRecord::Base
     return components
   end
   
+  # Creates an array of all the collection names for the associated identifier class (HGV, DDB, APIS)
+  # - *Returns* :
+  #   - array of collection names
   def self.collection_names
     unless defined? @collection_names
       parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
@@ -184,6 +203,11 @@ class Identifier < ActiveRecord::Base
     return @collection_names
   end
   
+  # Create default XML file and identifier model entry for associated identifier class
+  # - *Args*  :
+  #   - +publication+ -> the publication the new translation is a part of
+  # - *Returns* :
+  #   - new identifier
   def self.new_from_template(publication)
     new_identifier = self.new(:name => self.next_temporary_identifier)
     new_identifier.publication = publication
@@ -196,6 +220,9 @@ class Identifier < ActiveRecord::Base
     return new_identifier
   end
   
+  # Creates ERB file from retrieved default XML file template for the associated identifier class
+  # - *Returns* :
+  #   - template
   def file_template
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
@@ -209,6 +236,10 @@ class Identifier < ActiveRecord::Base
     return template.result(binding)
   end
   
+  # Determines the next 'SoSOL' temporary name for the associated identifier
+  # - starts at '1' each year
+  # - *Returns* :
+  #   - temporary identifier name
   def self.next_temporary_identifier
     year = Time.now.year
     latest = self.find(:all,
@@ -226,15 +257,22 @@ class Identifier < ActiveRecord::Base
                    year, document_number)
   end
   
+  # Determines the user who own's this identifer based on the publication it is a part of
+  # - *Returns* :
+  #   - identifier owner
   def owner
     self.publication.owner
   end
   
+  # Determines who can edit the identifier
+  # - owner can edit any of their stuff if it is not submitted 
+  # - only let the board edit if they own it
+  # - let the finalizer edit the identifier the board owns  
+  #   
+  # - *Returns* :
+  #   - true/false
   def mutable?
-  
-    #determines who can edit the identifier
-    
-    
+ 
     #only let the board edit if they own it
     if self.publication.owner_type == "Board" && self.publication.status == "editing"
       if self.publication.owner.identifier_classes.include?(self.class.to_s)
@@ -252,18 +290,20 @@ class Identifier < ActiveRecord::Base
     
     return false    
 
-
-   # self.publication.mutable?
   end
   
-
-
-  
+  # - *Returns* :
+  #   - the content of the associated identifier's XML file
   def xml_content
     return self.content
   end
   
-  # Returns a String of the SHA1 of the commit
+  # Commits identifier XML to the repository vis set_content
+  # - *Args*  :
+  #   - +content+ -> the XML you want committed to the repository
+  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
+  # - *Returns* :
+  #   - a String of the SHA1 of the commit
   def set_xml_content(content, options)
     options.reverse_merge!(
       :validate => true,
@@ -279,6 +319,13 @@ class Identifier < ActiveRecord::Base
     return commit_sha
   end
   
+  # Used to rename an identifier from the 'SoSOL' temporary name to the correct 'collection' name
+  # - also renames and 'relatives' of the identifier
+  # - *Args*  :
+  #   - +new_name+ -> name the finalizer has provided
+  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
+  # - *Returns* :
+  #   - a String of the SHA1 of the commit
   def rename(new_name, options = {})
     original = self.clone
     options[:original] = original
@@ -318,10 +365,16 @@ class Identifier < ActiveRecord::Base
     end
   end
   
+  # Place anything actions you need performed on all identifiers after a 'rename' has occurred
+  # - nothin in here at this time
   def after_rename(options = {})
   end
   
-  #added to speed up dashboard since titleize can be slow
+  # Added to speed up dashboard since titleize can be slow
+  # - gets the title from the identifier model if it exists, otherwise creates it using titleize and saves
+  #   it in the model
+  # - *Returns* :
+  #   - title from identifer model
   def title
     if read_attribute(:title) == nil
       write_attribute(:title,titleize)
@@ -330,6 +383,14 @@ class Identifier < ActiveRecord::Base
     return read_attribute(:title)
   end
 
+  # Add a 'change' tag into the tei:revisionDesc of the identifer's XML file via XSLT
+  # - does not do a commit - just modifies XML and returns it
+  # - *Args*  :
+  #   - +text+ -> the comment the user/system has provided
+  #   - +user_info+ ->  used in the 'who' attribute of the 'change' tag if give, otherwise uses the publications creator 
+  #   - +input_content+ -> the XML you want this added to, otherwise pulls it from the repository for this identifier
+  # - *Returns* :
+  #   - string of the XML containing the added 'change' tag
   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
     doc = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
@@ -342,6 +403,14 @@ class Identifier < ActiveRecord::Base
     return doc.to_s
   end
 
+  # Add a 'change' tags to the tei:revisionDesc of the identifer's XML file via XSLT during the finalization process
+  # - add a 'change' tag for each vote on the identifier
+  # - add a 'change' tag for finalization message
+  # - build a commit message that contains the voting comments/users and finalzation comment/user
+  # - commits the additions to the repository
+  # - *Args*  :
+  #   - +comment_text+ -> the comment the user has provided
+  #   - +user+ ->  the 'user' that supplied the comment - used in the 'who' attribute of the 'change' tag
   def update_revision_desc(comment_text, user)
     commit_message = "Update revisionDesc\n\n"
     change_desc_content = self.xml_content
@@ -384,6 +453,11 @@ class Identifier < ActiveRecord::Base
     return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self) && !self.publication.user_has_voted?(user_id) #!self.user_has_voted?(user_id)
   end
 
+  # Determines whether a specified user has voted on this identifier or not
+  # - *Args*  :
+  #   - +user_id+ -> the id of the user checking to see if voted or not
+  # - *Returns* :
+  #   - true/false
   def user_has_voted?(user_id)
     if self.votes
       self.votes.each do |vote|

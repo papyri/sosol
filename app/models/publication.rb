@@ -404,6 +404,9 @@ class Publication < ActiveRecord::Base
     retval
   end 
   
+  # Determines if publication is in 'editing' status
+  # - *Returns* :
+  #   - true/false
   def mutable?
     if self.status != "editing" # && self.status != "new"
       return false
