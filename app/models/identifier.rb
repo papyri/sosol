@@ -432,24 +432,29 @@ class Identifier < ActiveRecord::Base
     self.set_xml_content(change_desc_content, :comment => commit_message)
   end
 
-  #standard result actions 
-  #NOTE none of this is currently used except for creating board
+  # See documentation of result_actions method of board model
   def result_action_approve
    
     self.status = "approved"
     self.publication.send_to_finalizer
   end
   
+  # See documentation of result_actions method of board model
   def result_action_reject
    
     self.status = "rejected"
   end
   
+  # See documentation of result_actions method of board model
   def result_action_graffiti
     
     #delete
   end
 
+  # Determines if identifier in board members dashboard needs reviewing by that member
+  # - *Returns*
+  #   - +true+ if the identifier needs reviewing
+  #   - +false+ if does not need reviewing
   def needs_reviewing?(user_id)
     return self.modified? && self.publication.status == "voting" && self.publication.owner_type == "Board" && self.publication.owner.controls_identifier?(self) && !self.publication.user_has_voted?(user_id) #!self.user_has_voted?(user_id)
   end
