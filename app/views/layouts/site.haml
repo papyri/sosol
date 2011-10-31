@@ -15,13 +15,6 @@
       :sass
         #header
           background: #{defined?(ENVIRONMENT_BACKGROUND) ? ENVIRONMENT_BACKGROUND : '#EAEAEA'}
-        .loading
-          background = gray + 90
-          background-image: url('#{image_path("ajax_loader.gif")}')
-          background-repeat: no-repeat
-          background-position: center center
-          -webkit-background-size: 128px 128px
-          opacity: .5
   %body
     #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
@@ -31,4 +24,7 @@
         -#= render(:partial => 'user/admin_box')
         = render(:partial => 'user/user_box')
 
-    = yield
+    .content_body
+      = yield
+      
+

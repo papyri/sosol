@@ -1,6 +1,10 @@
+# - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
   #TODO - is Biblio needed?
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
+  
+  #added for dashboard publication listings because biblio is often not needed
+  IDENTIFIER_MAIN_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
   
   FRIENDLY_NAME = "Base Identifier"
   
@@ -20,16 +24,23 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
 
-  #added ''&& i.type == self.type' to origin, parent, and children methods because name for meta and trans are
+  #added i.type == self.type' to origin, parent, and children methods because name for meta and trans are
   #the same and was returning the meta instead of trans when processing translations
+  
+  # - *Returns* :
+  #   - the originally created publication of this identifier (publciation that does not have a parent id)
   def origin
     self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
   
+  # - *Returns* :
+  #   - the parent publication of this identifier
   def parent
     self.publication.parent.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
-  
+    
+  # - *Returns* :
+  #   - all the children of the publication that contains this identifier
   def children
     child_identifiers = []
     self.publication.children.each do |child_pub|
@@ -38,7 +49,8 @@ class Identifier < ActiveRecord::Base
     return child_identifiers
   end
   
-  # gives origin and its children, but not self
+  # - *Returns* :
+  #   - this idenfiers origin publication and the origin children, but not self
   def relatives
     if self.origin.nil?
       return []
@@ -47,19 +59,30 @@ class Identifier < ActiveRecord::Base
     end
   end
   
+  # - *Returns* :
+  #   - the repository for the owner of this identifier
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
   
+  # - *Returns* :
+  #   - the repository branch for this identifier
   def branch
     return self.publication.nil? ? 'master' : self.publication.branch
   end
   
+  # - *Returns* :
+  #   - the file containing this identifier from the repository
   def content
     return self.repository.get_file_from_branch(
       self.to_path, self.branch)
   end
   
+  # Validation of indentifier XML file against tei-epidoc.rng file
+  # - *Args*  :
+  #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
+  # - *Returns* :
+  #   - true/false
   def is_valid_xml?(content = nil)
     if content.nil?
       content = self.content
@@ -68,6 +91,8 @@ class Identifier < ActiveRecord::Base
       JRubyXML.input_source_from_string(content))
   end
   
+  # Put stuff in here you want to do do all identifiers before a commit is done 
+  # - currently no logic is in here - just returns whatever was passed in
   def before_commit(content)
     return content
   end
@@ -154,6 +179,7 @@ class Identifier < ActiveRecord::Base
   def self.collection_names
     unless defined? @collection_names
       parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+      raise NumbersRDF::Timeout if parts.nil?
       @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
     end
     return @collection_names

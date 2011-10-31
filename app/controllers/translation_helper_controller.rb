@@ -1,5 +1,8 @@
 class TranslationHelperController < ApplicationController
   
+  layout false
+  
+  # Helper Terms
 	def terms
 		#get the terms 
 		gloss = HGVTransGlossary.new
@@ -8,27 +11,20 @@ class TranslationHelperController < ApplicationController
 		
 	end
 	
+  # Helper - view not in use - using button to and 'add_new_lang_to_xml' method in hgv_trans_identifiers_controller
+  # to limit the languages added to those set up in the system
 	def new_lang
 	end
 	
+  # Helper Linebreak
 	def linebreak
 	end
   
-  def gaplost
-  end
-  
-  def gapelliplang
-  end
-  
-  def gapellipNT
-  end
-  
-  def gapilleg
-  end
-  
+  # Helper Division Other  
   def division
   end
   
+  # Helper Tryit
   def tryit
   end
 

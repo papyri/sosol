@@ -1,17 +1,23 @@
+# Superclass of the ddb (Text), hgv_Meta, and hgv_trans controllers
+# - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   # def method_missing(method_name, *args)
   #   identifier = Identifier.find(params[:id])
   #   redirect_to :controller => identifier.class.to_s.pluralize.underscore, :action => method_name
   # end
   
-  # GET /publications/1/xxx_identifiers/1/editxml
+  # - GET /publications/1/xxx_identifiers/1/editxml
+  # - edit the XML file from the repository of the associated identifier
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
+    @is_editor_view = true
     render :template => 'identifiers/editxml'
   end
   
   # GET /publications/1/xxx_identifiers/1/history
+  # - retrieve the history of commits from the repository for the associated identifier and creates a list
+  #   of them with URL's to click to git a 'diff' view of each commit
   def history
     find_identifier
     @identifier.get_commits
@@ -24,6 +30,7 @@ class IdentifiersController < ApplicationController
                       "a=commitdiff",
                       "h=#{commit[:id]}"].join(';')
     end
+    @is_editor_view = true
     render :template => 'identifiers/history'
   end
   
@@ -39,11 +46,17 @@ class IdentifiersController < ApplicationController
                                  :action => :edit) and return
   end
   
+  # GET /publications/1/xxx_identifiers/1/rename_review
+  # Used as entry point to rename a 'SoSOL' temporary identifer to the correct final name - ex. BGU, O.Ber, etc
   def rename_review
+    #TODO - does this need to be locked down somehow so not get to it via URL entry?
     find_identifier
+    @is_editor_view = true
     render :template => 'identifiers/rename_review'
   end
   
+  # PUT /publications/1/xxx_identifiers/1/rename
+  # Executes the actual rename of the 'SoSOL' temporary identifer to the correct final name - ex. BGU, O.Ber, etc
   def rename
     find_identifier
     begin
@@ -56,7 +69,8 @@ class IdentifiersController < ApplicationController
                                  :action => :rename_review) and return
   end
   
-  # PUT /publications/1/xxx_identifiers/1/updatexml
+  # - PUT /publications/1/xxx_identifiers/1/updatexml
+  # - updates the XML file in the repository of the associated identifier
   def updatexml
     find_identifier
     # strip carriage returns
@@ -86,10 +100,13 @@ class IdentifiersController < ApplicationController
       flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
+      @is_editor_view = true
       render :template => 'identifiers/editxml'
     end
   end
   
+  # - PUT /publications/1/xxx_identifiers/1/show_commit/40 char commit id
+  # - Show the diff view of a specific get repository commit
   def show_commit
     find_identifier
     @identifier.get_commits
@@ -108,6 +125,7 @@ class IdentifiersController < ApplicationController
       @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id])
     end
     Rails.logger.info(@commit.inspect)
+    @is_editor_view = true
     render :template => 'identifiers/show_commit'
   end
 
@@ -121,6 +139,7 @@ class IdentifiersController < ApplicationController
       expire_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
     end
   
+    # Used to insert '**POSSIBLE ERROR**' in Leiden+ and XML edit page when there is a parse or validation error
     def insert_error_here(content, line, column)
       # this routine is to place the error message below in the Leiden+ or XML returned when a parse error
       # occurs by taking the line and column from the message and giving the user the place in the content
@@ -134,10 +153,18 @@ class IdentifiersController < ApplicationController
       line_cnt = 1
       col_cnt = 1
       content_error_here = ''
+      add_error = false
+      
       content.each_char do |i|
         if line_cnt == line
           if col_cnt == column
             content_error_here << "**POSSIBLE ERROR**"
+            add_error = true
+          end
+          # if on the line with error but at the end without putting in the message, then put the message in
+          if (i == "\n" && add_error == false)
+              content_error_here << "**POSSIBLE ERROR**"
+              add_error = true
           end
           col_cnt += 1
         end

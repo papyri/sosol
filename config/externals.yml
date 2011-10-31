@@ -1,9 +1,9 @@
 vendor/plugins/rxsugar:
   :type: git
   :repository: git://github.com/papyri/xsugar.git
-  :revision: 485499072b15d92498617659c49c80812d869edf
+  :revision: 16adeda8f22001fa799fd888c3c204df67532345
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-August-release-2/example-p5-xslt/
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-Oct-release-2/example-p5-xslt
   :revision: HEAD

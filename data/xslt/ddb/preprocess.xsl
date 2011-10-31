@@ -48,17 +48,24 @@
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
+
+  <!-- convert <lb type='inWord'/> to <lb break='no'/> -->
+  <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/inWord2breakNo.xsl -->
+  <!-- set to priority 1 so it happens before id generation, which the apply-templates should call -->
+  <xsl:template match="tei:lb[@type='inWord']" priority="1">
+    <xsl:element name="lb" namespace="http://www.tei-c.org/ns/1.0">
+      <xsl:copy-of select="@*[not(local-name()='type')]"/>
+      <xsl:attribute name="break">
+        <xsl:text>no</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
   
   <!-- generate lb id's when saving commentary -->
   <xsl:template match="tei:lb">
-    <!-- count all preceding lb's before current lb's div - 0 if no div textparts -->
-    <xsl:variable name="preced-lb">
-      <xsl:value-of select="count(preceding::*/*//tei:lb)"/>
-    </xsl:variable>
     <xsl:variable name="lb-id">
-      <xsl:call-template name="generate-lb-id">
-        <xsl:with-param name="preced-div-lb" select="$preced-lb"/>
-      </xsl:call-template>
+      <xsl:call-template name="generate-lb-id"/>
     </xsl:variable>
     
     <xsl:copy>

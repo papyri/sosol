@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.text     "identifier_classes"
     t.decimal  "rank"
     t.string   "friendly_name"
+    t.integer  "community_id"
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
@@ -41,6 +42,33 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.string   "git_hash"
     t.integer  "publication_id"
+  end
+
+  create_table "communities", :force => true do |t|
+    t.string   "name"
+    t.string   "friendly_name"
+    t.integer  "members"
+    t.integer  "admins"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "board_id"
+    t.integer  "publication_id"
+    t.integer  "end_user_id"
+  end
+
+  create_table "communities_admins", :id => false, :force => true do |t|
+    t.integer  "community_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "communities_members", :id => false, :force => true do |t|
+    t.integer  "community_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "decrees", :force => true do |t|
@@ -128,6 +156,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.integer  "creator_id"
     t.string   "creator_type"
     t.integer  "parent_id"
+    t.integer  "community_id"
   end
 
   create_table "user_identifiers", :force => true do |t|
@@ -141,7 +170,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "has_repository", :default => false
+    t.boolean  "has_repository",            :default => false
     t.string   "language_prefs"
     t.boolean  "admin"
     t.boolean  "developer"
@@ -149,6 +178,8 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.string   "email"
     t.integer  "emailer_id"
     t.string   "full_name"
+    t.boolean  "is_community_master_admin", :default => false
+    t.boolean  "is_master_admin",           :default => false
   end
 
   create_table "votes", :force => true do |t|

@@ -1,6 +1,6 @@
 class DecreesController < ApplicationController
   
-  layout "site"
+  #layout "site"
   before_filter :authorize
   
   # GET /decrees

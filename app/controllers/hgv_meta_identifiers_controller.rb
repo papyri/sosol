@@ -1,6 +1,6 @@
 include HgvMetaIdentifierHelper
 class HgvMetaIdentifiersController < IdentifiersController
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   before_filter :prune_params, :only => [:update, :get_date_preview]
   before_filter :complement_params, :only => [:update, :get_date_preview]
@@ -8,6 +8,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
 
   def update
@@ -35,6 +36,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def preview
     find_identifier
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
   
   def complement
@@ -101,7 +103,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def get_geo_preview
     @identifier = HGVMetaIdentifier.new
     @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
-    @update = HgvProvenance.format @identifier[:origPlace], @identifier[:provenance]
+    @update = HgvProvenance.format @identifier[:provenance]
 
     respond_to do |format|
       format.js
@@ -169,6 +171,15 @@ class HgvMetaIdentifiersController < IdentifiersController
               date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
             end
           }
+        end
+        
+        if params[:hgv_meta_identifier][:provenance]
+          hgv = HGVMetaIdentifier.new
+          hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv[:provenance]
+
+        else
+          params[:hgv_meta_identifier][:origPlace] = 'unbekannt'
         end
 
       end

@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
   before_filter :authorize
   
+  layout false
   # GET /comments
   # GET /comments.xml
   def index
@@ -13,8 +14,8 @@ class CommentsController < ApplicationController
   end
 
   # GET
+  # - shows current comments and gives form for new comment
   def ask_for
-    #shows current comments and gives form for new comment
     @publication = Publication.find(params[:publication_id])
     @publication_id = @publication.origin.id
     
