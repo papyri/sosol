@@ -1,7 +1,7 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
   #TODO - is Biblio needed?
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier BiblioIdentifier }
   
   #added for dashboard publication listings because biblio is often not needed
   IDENTIFIER_MAIN_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
@@ -174,7 +174,7 @@ class Identifier < ActiveRecord::Base
            title += " (reprinted)"
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last.tr(';',' ')
+        title =  [self.class::FRIENDLY_NAME, self.name.split('/').last.tr(';',' ')].join(' ')
       end
     end
     return title
@@ -377,8 +377,8 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - title from identifer model
   def title
-    if read_attribute(:title) == nil
-      write_attribute(:title,titleize)
+    if read_attribute(:title).blank?
+      write_attribute(:title,self.titleize)
       self.save
     end
     return read_attribute(:title)

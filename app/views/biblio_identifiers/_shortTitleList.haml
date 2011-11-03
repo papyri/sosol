@@ -1,0 +1,23 @@
+- shortTitleList = @identifier[type]
+- type = type.to_s 
+.multi{:id => 'multi_' + type, :class => 'multi_shortTitleList'}
+  %h6
+    %label= I18n.t('biblio.label.responsibility')
+    %label= I18n.t('biblio.label.shortTitle')
+  %ul.items{:id => 'multiItems_' + type}
+    - shortTitleList.each_index do |index|
+    - responsibility = shortTitleList[index].responsibility
+    - title          = shortTitleList[index].title
+      %li
+        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
+        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][title]',          title,          :disabled => !@identifier.mutable?, :class => 'observechange title'
+
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
+  %p.add{:id => 'multiPlus_' + type}
+    %input.observechange{:id => type + '_responsibility'}
+    %input.observechange{:id => type + '_title'}
+    
+    %span{:onclick => "multiAddShortTitleList('" + type + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+
+  = javascript_tag "Sortable.create('multiItems_" + type + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

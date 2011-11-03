@@ -127,28 +127,28 @@ class PublicationsController < ApplicationController
     #check that the list is in the correct form
     #clean up the ids
     id_list.map! do |id|
-      id.chomp!('/');
-      pos = id.index('papyri.info');
-      if pos
-        id = id[pos..id.length-1]
-      end
-      #check if there is a good response from the number server
-      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
-      
-      #puts id + " returned " + response.code # + response.body
-      if response.code != '200'
+      # FIXME: once biblio is loaded into numbers server, remove this unless clause
+      unless id =~ /#{NumbersRDF::NAMESPACE_IDENTIFIER}\/#{BiblioIdentifier::IDENTIFIER_NAMESPACE}/
+        id.chomp!('/');
+        id = NumbersRDF::NumbersHelper.identifier_url_to_identifier(id)
+        #check if there is a good response from the number server
+        response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
         
-        #bad format most likely
-        id = "Numbers Server Error, Check format--> " + id
-        list_is_good = false
-        
-      elsif !response.body.index('rdf:Description')
-        
-        #item does not exist most likely
-        #puts "text is bad"
-        id = "Not Found--> " + id
-        list_is_good = false
-        
+        #puts id + " returned " + response.code # + response.body
+        if response.code != '200'
+          
+          #bad format most likely
+          id = "Numbers Server Error, Check format--> " + id
+          list_is_good = false
+          
+        elsif !response.body.index('rdf:Description')
+          
+          #item does not exist most likely
+          #puts "text is bad"
+          id = "Not Found--> " + id
+          list_is_good = false
+          
+        end
       end
       id
     end
