@@ -1,7 +1,7 @@
 vendor/plugins/rxsugar:
   :type: git
   :repository: git://github.com/papyri/xsugar.git
-  :revision: 16adeda8f22001fa799fd888c3c204df67532345
+  :revision: a867ab0da3374ad87d9ae904cf57c24fceef50e8
 
 data/xslt/epidoc:
   :type: subversion
