@@ -242,14 +242,8 @@
   
   <!-- line breaks -->
   <xsl:template match="tei:lb">
-    <!-- count all preceding lb's before current lb's div - 0 if no div textparts -->
-    <xsl:variable name="preced-lb">
-      <xsl:value-of select="count(preceding::*/*//tei:lb)"/>
-    </xsl:variable>
     <xsl:variable name="lb-id">
-      <xsl:call-template name="generate-lb-id">
-        <xsl:with-param name="preced-div-lb" select="$preced-lb"/>
-      </xsl:call-template>
+      <xsl:call-template name="generate-lb-id"/>
     </xsl:variable>
     
     <li class="line clickable" id="{$lb-id}"/><span class="linenumber" id="n-{$lb-id}"><xsl:value-of select="@n"/></span>
