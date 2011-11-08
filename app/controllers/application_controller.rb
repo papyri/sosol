@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def render_500(e)
-    notify_hoptoad(e)
+    notify_airbrake(e)
     @redirect = true unless request.referer =~ /dashboard$/
     flash[:error] = "We're sorry, but something went wrong."
     @additional_error_information = "We've been notified about this issue and we'll take a look at it shortly."
@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_numbers_error(e)
-    notify_hoptoad(e)
+    notify_airbrake(e)
     @redirect = false
     flash.now[:error] = "We're sorry, but the Numbers Server appears to be unresponsive."
     @additional_error_information = "Please contact this site's administrator."
