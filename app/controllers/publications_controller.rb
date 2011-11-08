@@ -164,6 +164,10 @@ class PublicationsController < ApplicationController
       return
     end
     
+    
+    #clean up any duplicated lines
+    id_list = id_list.uniq
+    
     publication_from_identifiers(id_list)
   end
 
