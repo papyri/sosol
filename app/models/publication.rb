@@ -1373,32 +1373,34 @@ class Publication < ActiveRecord::Base
         ident_xml_xpath = REXML::Document.new(ident_xml)
         comment_path = '/TEI/teiHeader/revisionDesc'
         comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
-        
-        comment_here.each_element('//change') do |change|
-          built_comment = Comment::CombineComment.new
-          
-          built_comment.xmltype = where_from
-          
-          if change.attributes["who"]
-            built_comment.who = change.attributes["who"]
-          else
-            built_comment.who = "no who attribute"
-          end
-          
-          # parse will convert date to local for consistency so work in sort below
-          if change.attributes["when"]
-            built_comment.when = Time.parse(change.attributes["when"])
-          else
-            built_comment.when = Time.parse("1988-8-8")
-          end
-          
-          built_comment.why = "From "  + ident_title + " " + where_from + " XML"
-          
-          built_comment.comment = change.text
-          
-          all_built_comments << built_comment
-          xml_only_built_comments << built_comment
-        end #comment_here
+       
+        unless comment_here.nil?
+          comment_here.each_element('//change') do |change|
+            built_comment = Comment::CombineComment.new
+            
+            built_comment.xmltype = where_from
+            
+            if change.attributes["who"]
+              built_comment.who = change.attributes["who"]
+            else
+              built_comment.who = "no who attribute"
+            end
+            
+            # parse will convert date to local for consistency so work in sort below
+            if change.attributes["when"]
+              built_comment.when = Time.parse(change.attributes["when"])
+            else
+              built_comment.when = Time.parse("1988-8-8")
+            end
+            
+            built_comment.why = "From "  + ident_title + " " + where_from + " XML"
+            
+            built_comment.comment = change.text
+            
+            all_built_comments << built_comment
+            xml_only_built_comments << built_comment
+          end #comment_here
+        end #comment_here.nil?
       end # if ident_xml
     end #identifiers each
     # sort in descending date order for display
