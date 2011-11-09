@@ -32,7 +32,10 @@
       
       %tr
         %td
-          = link_to publication.title, publication
+          - display_title = publication.title.split('/').last + " (" + publication.creator.name + ")"
+          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name
+    
+          -#= link_to publication.title, publication
           
         -# -------------META---------------------
         %td{:class=>"identifier_td"}
