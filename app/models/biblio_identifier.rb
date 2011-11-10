@@ -88,6 +88,37 @@ class BiblioIdentifier < HGVIdentifier
     true
   end
 
+  # Validation of identifier XML file against tei-epidoc.rng file
+  # - *Args*  :
+  #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
+  # - *Returns* :
+  #   - true/false
+  def is_valid_xml?(content = nil)
+    if content.nil?
+      content = self.xml_content
+    end
+    self.class::XML_VALIDATOR.instance.validate(
+      JRubyXML.input_source_from_string(wrap_xml(content)))
+  end
+
+  # Wrap biblio xml stub in biblio xml wrapper to make it valid TEI
+  # - *Args*  :
+  #   - +content+ -> XML to wrap
+  # - *Returns* :
+  #   - wrapped XML content as String
+  def wrap_xml(content)
+    xml_stub = REXML::Document.new(content)
+    xml_wrapper = REXML::Document.new(File.new(File.join(RAILS_ROOT, ['data','templates'], 'biblio_dummy_wrapper.xml')))
+    basepath = '/TEI/text/body/div[@type = "bibliography"]'
+    add_node_here = REXML::XPath.first(xml_wrapper, basepath)
+    add_node_here.add_element xml_stub.root
+
+    wrapped_xml_content = ''
+    xml_wrapper.write(wrapped_xml_content)
+
+    return wrapped_xml_content
+  end
+
   def epiDoc
     REXML::Document.new(self.xml_content)
   end
