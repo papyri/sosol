@@ -2,10 +2,12 @@ include BiblioIdentifierHelper
 class BiblioIdentifiersController < IdentifiersController
   # @RB: please see to that there all the standard actions available, such as update, preview and edit and that they have access to the identifier record as well as the EpiDoc
   def edit
+    @is_editor_view = true
     find_identifier    
   end
   
   def preview
+    @is_editor_view = true
     find_identifier
   end
   
