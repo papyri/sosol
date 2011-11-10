@@ -210,10 +210,12 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostNote
    
     updateFromPostPublisher
+  
+    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Reviewee:0x12983349> 
+    # updateFromPostReviewee
    
-    updateFromPostReviewee
-    
-    updateFromPostContainer
+    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Container:0x2341952a> 
+    # updateFromPostContainer
    
     updateFromPostRelatedArticle
 
@@ -228,7 +230,16 @@ class BiblioIdentifier < HGVIdentifier
     
     modified_xml_content
   end
-  
+ 
+  # Returns a String of the SHA1 of the commit
+  def set_epidoc(attributes_hash, comment)
+    @epiDoc = self.epiDoc
+    epidoc = updateFromPost(attributes_hash)
+
+    Rails.logger.info(epidoc)
+    self.set_xml_content(epidoc, :comment => comment)
+  end
+ 
   def updateFromPostSimple key
     self[key] = @post[key] && @post[key].kind_of?(String) && !@post[key].strip.empty? ? @post[key].strip : nil
   end
@@ -331,10 +342,12 @@ class BiblioIdentifier < HGVIdentifier
       
       if self[key] && !self[key].strip.empty?
         element = @epiDoc.bulldozePath path
-        if attribute
-          element.attributes[attribute] = self[key]
-        else
-          element.text = self[key]
+        unless element.nil?
+          if attribute
+            element.attributes[attribute] = self[key]
+          else
+            element.text = self[key]
+          end
         end
       else
         @epiDoc.elements.delete_all path
@@ -346,18 +359,20 @@ class BiblioIdentifier < HGVIdentifier
       index = 1
       self[key].each{|person|
         element = @epiDoc.bulldozePath XPATH[key] + "[@n='" + index.to_s + "']"
-        if person.name && !person.name.empty?
-          element.text = person.name
-        end
-        if person.firstName && !person.firstName.empty?
-          child = REXML::Element.new 'forename'
-          child.text = person.firstName
-          element.add child
-        end
-        if person.lastName && !person.lastName.empty?
-          child = REXML::Element.new 'surname'
-          child.text = person.lastName
-          element.add child
+        unless element.nil?
+          if person.name && !person.name.empty?
+            element.text = person.name
+          end
+          if person.firstName && !person.firstName.empty?
+            child = REXML::Element.new 'forename'
+            child.text = person.firstName
+            element.add child
+          end
+          if person.lastName && !person.lastName.empty?
+            child = REXML::Element.new 'surname'
+            child.text = person.lastName
+            element.add child
+          end
         end
         index += 1
       }
@@ -473,14 +488,16 @@ class BiblioIdentifier < HGVIdentifier
       index = 1
       self[key].each{|relatedItem|
         element = @epiDoc.bulldozePath xpathBase + "[@n='" + index.to_s + "']" + xpathBibl
-        ptr = REXML::Element.new('ptr')
-        ptr.attributes['target'] = relatedItem.pointer
-        element.add ptr
-        REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', element)
-        getRelatedItemElements(relatedItem.pointer).each{|ignore|
-          element.add ignore
-        }
-        REXML::Comment.new(' ignore - stop ', element)
+        unless element.nil?
+          ptr = REXML::Element.new('ptr')
+          ptr.attributes['target'] = relatedItem.pointer
+          element.add ptr
+          REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', element)
+          getRelatedItemElements(relatedItem.pointer).each{|ignore|
+            element.add ignore
+          }
+          REXML::Comment.new(' ignore - stop ', element)
+        end
         index += 1
       }
     end

@@ -98,7 +98,8 @@
         = render :partial => 'biblio_identifiers/relatedArticleList'
         .clear
         .quickSave=I18n.t('label.quickSave')
-
+      
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
       = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
 = javascript_include_tag 'edit_mask'
