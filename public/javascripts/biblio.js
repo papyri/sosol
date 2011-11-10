@@ -161,7 +161,7 @@ function checkNotAddedMultiples(){
 
 Event.observe(window, 'load', function() {
 
-  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); return 0; $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); return 0; $$('form.edit_biblio_identifier')[0].submit();});});
   //$('identifier_submit').observe('click', checkNotAddedMultiples);
 
 });
