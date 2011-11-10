@@ -85,7 +85,7 @@ class Identifier < ActiveRecord::Base
   #   - true/false
   def is_valid_xml?(content = nil)
     if content.nil?
-      content = self.content
+      content = self.xml_content
     end
     self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content))
