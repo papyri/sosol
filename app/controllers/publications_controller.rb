@@ -741,6 +741,17 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
     @publication.withdraw
+    
+    #send email to the user informing them of the withdraw
+    #EmailerMailer.deliver_send_withdraw_note(@publication.creator.email, @publication.title )
+    address = @publication.creator.email
+    if address && address.strip != ""
+      begin
+        EmailerMailer.deliver_send_withdraw_note(address, @publication.title )                       
+      rescue Exception => e
+        Rails.logger.error("Error sending withdraw email: #{e.class.to_s}, #{e.to_s}")
+      end
+    end
 
     flash[:notice] = 'Publication ' + pub_name + ' was successfully withdrawn.'
     expire_publication_cache
