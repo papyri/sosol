@@ -113,7 +113,7 @@ class Identifier < ActiveRecord::Base
     self.modified = true
     self.save!
     
-    self.publication.update_attribute(:updated_at, Time.now)
+    self.publication.update_attribute(:updated_at, Time.now) unless self.publication.nil?
     
     return commit_sha
   end
