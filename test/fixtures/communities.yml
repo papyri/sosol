@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  friendly_name: MyString
+  abbreviation: MyString
+  member_id: 1
+  admin_id: 1
+  description: MyString
+  logo: MyString
+
+two:
+  name: MyString
+  friendly_name: MyString
+  abbreviation: MyString
+  member_id: 1
+  admin_id: 1
+  description: MyString
+  logo: MyString

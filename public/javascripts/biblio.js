@@ -146,13 +146,17 @@ function checkNotAddedMultiples(){
     multiAddNameList('editorList');
   }
 
-  if($('publisherList_place').value.match(/.+/) || $('publisherList_name').value.match(/.+/)){
-    multiAddPublisherList();
-  }
+  // Commented out, always results in:
+  // TypeError: 'null' is not an object (evaluating '$('publisherList_place').value')
+  //if($('publisherList_place').value.match(/.+/) || $('publisherList_name').value.match(/.+/)){
+  //  multiAddPublisherList();
+  //}
 
-  if($('revueCritiqueList_author').value.match(/.+/) || $('revueCritiqueList_title').value.match(/.+/)){
-    multiAddRevueCritiqueList();
-  }
+  // Commented out, always results in:
+  // TypeError: 'null' is not an object (evaluating '$('revueCritiqueList_author').value')
+  //if($('revueCritiqueList_author').value.match(/.+/) || $('revueCritiqueList_title').value.match(/.+/)){
+  //  multiAddRevueCritiqueList();
+  //}
 
   if($('relatedArticleList_series').value.match(/.+/) || $('relatedArticleList_inventory').value.match(/.+/)){
     multiAddRelatedArticleList();
@@ -161,7 +165,7 @@ function checkNotAddedMultiples(){
 
 Event.observe(window, 'load', function() {
 
-  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); return 0; $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); return 0; $$('form.edit_biblio_identifier')[0].submit();});});
   //$('identifier_submit').observe('click', checkNotAddedMultiples);
 
 });

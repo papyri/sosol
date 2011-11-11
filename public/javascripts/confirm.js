@@ -1,3 +1,7 @@
+// This javascript is included on several pages to use the somewhat generic observe functions to know
+// whether data has been changed and warn users if they try to leave before saving.  Also includes the function
+// used to find '**POSSIBLE ERROR**' when errors occur.
+
   var needToConfirm = false;
   var needToConfirmVote = false;
   

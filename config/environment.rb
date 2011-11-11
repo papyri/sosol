@@ -52,7 +52,7 @@ Rails::Initializer.run do |config|
   
   config.gem "factory_girl", :version => "~> 1.2.2"
   
-  config.gem 'hoptoad_notifier', :version => ">= 2.4.10"
+  config.gem 'airbrake', :version => ">= 3.0.4"
   
   config.gem 'grit',
     :lib     => 'grit',

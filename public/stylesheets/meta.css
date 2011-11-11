@@ -70,6 +70,11 @@ div#edit div.editbox label.provenance {
 div#edit div.editbox label.tmNo {
   margin: 0 0 0 17em; }
 
+div#edit div.editbox label.provenanceType,
+div#edit div.editbox label.provenanceSubtype,
+div#edit div.editbox label.provenanceDate {
+  width: 4.7em; }
+
 div#edit input#hgv_meta_identifier_publicationTitle,
 div#edit input#hgv_meta_identifier_tmNo,
 div#edit input#hgv_meta_identifier_publicationExtra_0_value,

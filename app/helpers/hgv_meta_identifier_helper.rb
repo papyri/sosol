@@ -6,108 +6,16 @@ module HgvMetaIdentifierHelper
   
   module HgvGeo
 
-    class OrigPlace
-      @@typeList          = [:composition, :destination, :execution, :receipt, :location, :reuse]
-      @@referenceTypeList = [:findspot, :unknown]
-      @@valueList         = [:Fundort, :unbekannt]
-      
-      attr_accessor :type, :correspondency, :referenceType, :value, :placeList
-
-      def initialize init = nil        
-        # attributes
-        @type           = nil
-        @correspondency = nil
-        
-        # value
-        @value          = nil
-        
-        # children
-        @placeList      = []
-
-        if init && init[:origPlace]
-
-          # attributes
-          if init[:origPlace][:attributes]
-            self.type           = init[:origPlace][:attributes][:type] || nil
-            self.correspondency = init[:origPlace][:attributes][:correspondency] || nil
-          end
-
-          # value
-          if init[:origPlace][:value]
-            self.value = init[:origPlace][:value]
-          end
-
-          # children
-          if init[:origPlace][:children] && init[:origPlace][:children] && init[:origPlace][:children][:place]
-            init[:origPlace][:children][:place].each{|place|
-              self.addPlace(HgvGeo::Place.new(:place => place))
-            }
-          end
-        end
-
-      end
-      
-      def self.getObjectList epiDocList
-        objectList = []
-        epiDocList.each {|epi|
-          objectList[objectList.length] = HgvGeo::OrigPlace.new(:origPlace => epi)
-        }
-        objectList
-      end
-      
-      def type= value
-        value = value.class == String ? value.to_sym : value
-        if @@typeList.include? value
-          @type = value
-        else
-          @type = nil
-        end
-      end
-      
-      def type
-        if @correspondency
-          return :reference
-        end
-        @type
-      end
-      
-      def value= value
-        value = value.class == String ? value.to_sym : value
-        if @@valueList.include? value
-          @value = value
-        else
-          @value = nil
-        end
-      end
-      
-      def referenceType
-        if @correspondency
-          @value
-        end
-      end
-      
-      def unknown?
-        @value == :unbekannt && !@correspondency
-      end
-      
-      def addPlace place
-        if place.kind_of? Place
-          @placeList[@placeList.length] = place
-        end
-      end
-    end # class OrigPlace
-
     class Provenance
-      @@typeList          = [:found, :observed, :destroyed, :'not-found', :reused, :moved, :acquired, :sold]
+      @@typeList          = [:found, :observed, :destroyed, :'not-found', :reused, :moved, :acquired, :sold, :composed, :sent, :executed, :received, :located]
       @@subtypeList       = [:last]
-      @@atomList          = [:type, :subtype, :id, :date]
-      
-      attr_accessor :type, :subtype, :id, :date, :placeList
+      @@atomList          = [:type, :subtype, :date]
+
+      attr_accessor :type, :subtype, :date, :placeList
 
       def initialize init = nil        
         @type    = nil
         @subtype = nil
-        @id      = nil
         @date    = nil
         @placeList = []
 
@@ -119,8 +27,8 @@ module HgvMetaIdentifierHelper
               self.populateAtomFromHash init[:provenance][:attributes]
             end
 
-            if init[:provenance][:children] && init[:provenance][:children][:paragraph] && init[:provenance][:children][:paragraph][:children] && init[:provenance][:children][:paragraph][:children][:place]
-              init[:provenance][:children][:paragraph][:children][:place].each{|place|
+            if init[:provenance][:children] && init[:provenance][:children][:place]
+              init[:provenance][:children] && init[:provenance][:children][:place].each{|place|
                 self.addPlace(HgvGeo::Place.new(:place => place))
               }
             end
@@ -134,10 +42,9 @@ module HgvMetaIdentifierHelper
       end
       
       def self.getObjectList epiDocList
-        objectList = {}
+        objectList = []
         epiDocList.each {|epi|
-          obi = HgvGeo::Provenance.new(:provenance => epi)
-          objectList[obi.id ? obi.id : objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
+          objectList[objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
         }
         objectList
       end
@@ -174,7 +81,19 @@ module HgvMetaIdentifierHelper
           @date = nil
         end
       end
+
+      def value= value
+        if value && value.to_sym == :unknown
+          @value = :unknown
+        else
+          @value = nil
+        end
+      end
       
+      def unknown?
+        @value == :unbekannt
+      end
+
       def addPlace place
         if place.kind_of? Place
           @placeList[@placeList.length] = place
@@ -462,45 +381,17 @@ module HgvMetaIdentifierHelper
       result
     end
     
-    def HgvProvenance.format origPlaceList, provenanceList
-      origPlaceList  = HgvGeo::OrigPlace.getObjectList(origPlaceList)
+    def HgvProvenance.format provenanceList
       provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
       result = ''
-      
-      origPlaceList.each {|origPlace|
-        begin
-          result << {
-            :composition => 'Schreibort',
-            :destination => 'Zielort',
-            :execution => 'Ort der Ausführung',
-            :receipt => 'Empfangsort',
-            :reuse => 'Wiederverwendung'
-          }[origPlace.type]
-          result << ': '
-        rescue
-        end
 
-        if origPlace.value && [:Fundort, :unbekannt].include?(origPlace.value)
-          result << 'unbekannt'
-          if origPlace.correspondency && provenanceList[origPlace.correspondency[1..-1]]
-            result << ' ('
-            result << HgvProvenance.formatPlaceList(provenanceList[origPlace.correspondency[1..-1]].placeList)
-            result << ')'
-            provenanceList.delete origPlace.correspondency[1..-1]
-          end
-        else
-          result << HgvProvenance.formatPlaceList(origPlace.placeList)
-        end
-        
-        result << '; '
-      
-      }
-      
       if provenanceList || provenanceList.length > 0
 
-        provenanceList.each_pair {|id, provenance|
+        provenanceList.each {|provenance|
   
           begin
+            result << 'zuletzt ' if provenance.subtype == :last
+
             result << {
               :found => 'Fundort',
               :observed => 'gesichtet',
@@ -509,12 +400,18 @@ module HgvMetaIdentifierHelper
               :reused => 'wiederverwendet',
               :moved => 'bewegt',
               :acquired => 'erworben',
-              :sold => 'verkauft'
+              :sold => 'verkauft',
+              :composed => 'Schreibort',
+              :sent => 'Zielort',
+              :executed => 'Ort der Ausführung',
+              :received => 'Empfangsort',
+              #:located => 'Betreffort',
+              :composition => 'Schreibort',
+              :destination => 'Zielort',
+              :execution => 'Ort der Ausführung',
+              :receipt => 'Empfangsort',
+              :reuse => 'Wiederverwendung'
             }[provenance.type]
-            
-            if provenance.subtype == :last
-              result = 'zuletzt ' + result
-            end
               
             result << ': '
           rescue
@@ -528,90 +425,18 @@ module HgvMetaIdentifierHelper
           end
   
           result << '; '
+
         }
         
         result = result[0..-3]
 
       else
-        result = result[0..-3]
+        result = 'unbekannt'
       end
 
       result 
     end
-=begin
-    def HgvProvenance.format provenance
-      result = ''
-      provenanceList = HgvProvenance.epidocToHgv provenance
 
-      provenanceList.each_index {|indexProvenance|
-        provenance = provenanceList[indexProvenance]
-
-        if indexProvenance > 0
-          if indexProvenance == provenanceList.length - 1
-            result << ' oder '
-          else
-            result << ', '
-          end
-        end
-
-        if provenance[:value] == 'unbekannt'
-          result << provenance[:value]
-        else
-
-          if provenance[:ancientFindspot][:value]
-            result << (provenance[:ancientFindspot][:offset] == 'bei' ? 'bei ' : '')
-            result << provenance[:ancientFindspot][:value]
-            result << (provenance[:ancientFindspot][:certainty] == 'low' ? ' (?)' : '')
-          end
-          if provenance[:modernFindspot][:value]
-            result <<  (provenance[:ancientFindspot][:value] ? ' (= ' : '')
-            result <<  provenance[:modernFindspot][:value]
-            result <<  (provenance[:ancientFindspot][:value] ? ')' : '')
-          end
-          if provenance[:nome][:value]
-             result << (provenance[:ancientFindspot][:value] ? ' (' : '')
-             result << provenance[:nome][:value]
-             result << (provenance[:nome][:certainty] == 'low' ? ' ?' : '')
-             result << (provenance[:ancientRegion][:value] ? ', ' + provenance[:ancientRegion][:value] : '')
-             result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
-             result << (provenance[:ancientFindspot][:value] ? ')' : '')
-          end
-          if !provenance[:nome][:value] && provenance[:ancientRegion][:value]
-            result << (provenance[:ancientFindspot][:value] ? ' (' : '')
-            result << provenance[:ancientRegion][:value]
-            result << (provenance[:ancientRegion][:certainty] == 'low' ? ' ?' : '')
-            result << (provenance[:ancientFindspot][:value] ? ')' : '')
-          end
-
-        end
-      }
-      result
-    end
-
-    def HgvProvenance.certainty provenance
-      if provenance.kind_of?(Hash) && 
-         provenance[:attributes] && 
-         provenance[:attributes][:certainty] && 
-         provenance[:attributes][:certainty] == 'low'
-        provenance[:attributes][:certainty]
-      else
-        nil
-      end
-    end
-    
-    def HgvProvenance.currentCertaintyOption hgvMetaIdentifier
-      uncertainties = [] 
-      [:provenanceAncientFindspot, :provenanceNome, :provenanceAncientRegion].each{|key|
-        if HgvProvenance.certainty hgvMetaIdentifier[key]
-           uncertainty = key.to_s[/^provenance(.+)\Z/, 1]
-           uncertainty[0,1] = uncertainty[0,1].downcase
-           uncertainties[uncertainties.length] = uncertainty
-        end
-      }
-      uncertainties = uncertainties.join('_')
-      !uncertainties.empty? ? uncertainties.to_sym : nil
-    end
-=end
     def HgvProvenance.certaintyOptions
       [
         ['', ''],
@@ -622,13 +447,19 @@ module HgvMetaIdentifierHelper
     def HgvProvenance.typeOptions
       [
         ['', ''],
-        [I18n.t('provenance.type.composition'), :composition],
-        [I18n.t('provenance.type.destination'), :destination],
-        [I18n.t('provenance.type.execution'),   :execution],
-        [I18n.t('provenance.type.receipt'),     :receipt],
-        [I18n.t('provenance.type.location'),    :location],
-        [I18n.t('provenance.type.reuse'),       :reuse],
-        [I18n.t('provenance.type.reference'),   :reference]
+        [I18n.t('provenance.type.composed'),  :composed],
+        [I18n.t('provenance.type.sent'),      :sent],
+        [I18n.t('provenance.type.executed'),  :executed],
+        [I18n.t('provenance.type.received'),  :received],
+        [I18n.t('provenance.type.located'),   :located],
+        [I18n.t('provenance.type.found'),     :found],
+        [I18n.t('provenance.type.observed'),  :observed],
+        [I18n.t('provenance.type.destroyed'), :destroyed],
+        [I18n.t('provenance.type.not-found'), :'not-found'],
+        [I18n.t('provenance.type.reused'),    :reused],
+        [I18n.t('provenance.type.acquired'),  :acquired],
+        [I18n.t('provenance.type.sold'),      :sold],
+        [I18n.t('provenance.type.moved'),     :moved]
       ]
     end
     
@@ -638,32 +469,11 @@ module HgvMetaIdentifierHelper
         [I18n.t('provenance.subtype.last'), :last]
       ]
     end
-    
-    def HgvProvenance.eventOptions
-      [
-        [I18n.t('provenance.event.found'),     :found],
-        [I18n.t('provenance.event.observed'),  :observed],
-        [I18n.t('provenance.event.destroyed'), :destroyed],
-        [I18n.t('provenance.event.not-found'), :'not-found'],
-        [I18n.t('provenance.event.reused'),    :reused],
-        [I18n.t('provenance.event.moved'),     :moved ],
-        [I18n.t('provenance.event.acquired'),  :acquired ],
-        [I18n.t('provenance.event.sold'),      :sold ]
-      ]
-    end
 
     def HgvProvenance.epochOptions
       [
         [I18n.t('provenance.epoch.ancient'), :ancient],
         [I18n.t('provenance.epoch.modern'),  :modern]
-      ]
-    end
-
-    def HgvProvenance.roleOptions
-      [
-        ['', ''],
-        [I18n.t('provenance.role.findspot'), :Fundort],
-        [I18n.t('provenance.role.unknown'),  :unbekannt]
       ]
     end
 
@@ -682,41 +492,6 @@ module HgvMetaIdentifierHelper
         [I18n.t('provenance.offset.near'), 'bei']
       ]
     end
-=begin
-    def HgvProvenance.unknown? provenance
-      provenance && provenance.length > 0 && provenance[0][:value] && provenance[0][:value] == 'unbekannt' ? true : false
-    end
-
-    def HgvProvenance.epidocToHgv provenance
-      t = []
-
-      provenance.each{|prov|
-        tnew = {:ancientFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
-        :modernFindspot => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
-        :nome => {:certainty => nil, :offset => nil, :value => nil, :key => nil},
-        :ancientRegion => {:certainty => nil, :offset => nil, :value => nil, :key => nil}}
-
-        if prov[:children] && prov[:children][:place]
-          prov[:children][:place].each {|place|
-            if place[:attributes] && place[:attributes][:type]
-              key = place[:attributes][:type].to_sym
-              tnew[key][:certainty] = place[:attributes][:certainty] && place[:attributes][:certainty] == 'low' ? 'low' : nil;
-              tnew[key][:offset] = place[:children] && place[:children][:offset] && place[:children][:offset][:value] == 'bei' ? 'bei' : nil;
-              tnew[key][:value] = place[:children] && place[:children][:location] && place[:children][:location][:value] ? place[:children][:location][:value] : nil;
-              tnew[key][:key] = place[:children] && place[:children][:location] && place[:children][:location][:attributes] && place[:children][:location][:attributes][:key] ? place[:children][:location][:attributes][:key] : nil;
-            end
-          }
-
-          certaintyPicker = tnew.to_a.collect{|item| item[1][:certainty] == 'low' ? item[0] : nil}.compact.join('_')
-          tnew[:certaintyPicker] = !certaintyPicker.empty? ? certaintyPicker.to_sym : nil  
-          
-        end
-        t[t.length] = tnew
-      }
-
-      t
-    end
-=end
   end
   
   module HgvDate

@@ -749,7 +749,7 @@ function insertDivisionSub()
     {
       startxml = "<div n=\"" + divisiontype + "\"" + opt_subtype + " type=\"textpart\"><ab>replace this with text of division</ab></div>";
       //inline ajax call because cannot use normal 'convertxml' because this xml already contains the ab tab 
-      new Ajax.Request(window.opener.ajaxConvert, 
+      new Ajax.Request(window.opener.convXML2Leiden, 
       {
         method: 'get',
         parameters : {xml:startxml},
@@ -1142,7 +1142,7 @@ function convertXML()
 {
   xmltopass = wrapxml(startxml);
 
-  new Ajax.Request(window.opener.ajaxConvert, 
+  new Ajax.Request(window.opener.convXML2Leiden, 
   {
   method: 'get',
   parameters : {xml:xmltopass},

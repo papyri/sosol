@@ -28,6 +28,7 @@
 
 .Custom_menuBar_sub{
 	position:absolute;
+  font-size:12px;
 	background-color:#FFF;
 	border:1px solid #000;
 	background-image:url('../images/menu-bar-gradient-gray.gif');	/* Background image for sub menu items */

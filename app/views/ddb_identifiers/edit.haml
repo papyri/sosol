@@ -1,5 +1,10 @@
 :javascript
   var try_counter = 0;
+
+  //*******************************************************************
+  //formats and executes ajax call to convert XML to Leiden+
+  //*******************************************************************
+  
   function ajax_xml_to_leiden(was_disabled) {
     try_counter = try_counter + 1;
     if (#{(!defined?(XSUGAR_STANDALONE_USE_PROXY).nil?) && XSUGAR_STANDALONE_USE_PROXY}) {
@@ -18,11 +23,8 @@
         $('ddb_identifier_leiden_plus').toggleClassName('loading');
         
         if ("exception" in json) {
-          $$('div#main > div.site').first().insert({
-            top: new Element('div',{'id': 'flasherror'}).update('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
-          });
-          //add class after the original insert to get the flash highlighting to work in IE browser
-          $('flasherror').addClassName('flash error');
+          insert_flash_error('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+                    
           var error_content = ' ';
           error_content = insert_error_here(json.content, json.exception.line, json.exception.column)
           Form.Element.setValue('ddb_identifier_leiden_plus',error_content);
@@ -32,6 +34,11 @@
           // **POSSIBLE ERROR** defined in insert_error_here function below
         }
         else {
+          //remove exisiting flash error if it is there when successfully completed
+          if ($('flasherror')) 
+            {
+              $('flasherror').remove();
+            }
           Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
           if (!was_disabled) {
             Form.Element.enable('ddb_identifier_leiden_plus');
@@ -43,13 +50,38 @@
       },
       onFailure: function(response) {
         // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
-        $$('div#main > div.site').first().insert({
-            top: new Element('div',{'class': 'flash error'}).update('ajax onFailure - will try again in 10 seconds - try# ' + try_counter)
-        });
+        insert_flash_error('Transform has timed out - system will automatically try again in 10 seconds - try# ' + try_counter);
+                
         setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
       }
     });
   }
+  
+  //*******************************************************************
+  //updates flash error message if it is already there, adds it if not
+  //*******************************************************************
+  
+  function insert_flash_error(msg){
+    
+    if ($('flasherror')) 
+      {
+        $('flasherror').update(msg);
+      }
+      else
+      {
+        $$('div#main > div.site').first().insert({
+          top: new Element('div',{'id': 'flasherror'}).update(msg)
+        });
+
+        //add class after the original insert to get the flash highlighting to work in IE browser
+        $('flasherror').addClassName('flash error');
+      }
+  }
+
+  //*******************************************************************
+  //places '**POSSIBLE ERROR**' in correct location of XML
+  //*******************************************************************
+  
   function insert_error_here(content, line, column){
       //copied this function/logic from identifiers_controller.rb
       // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
@@ -64,12 +96,19 @@
       var line_cnt = 1;
       var col_cnt = 1;
       var content_error_here = new Array();
+      var add_error = false;
       
       for (i=0;i<=content.length;i++){
 
         if (line_cnt == line){
           if (col_cnt == column) {
             content_error_here.push("**POSSIBLE ERROR**");
+            add_error = true;
+          }
+          // if on the line with error but at the end without putting in the message, then put the message in
+          if (content.charAt(i) == "\n" && add_error == false){
+              content_error_here.push("**POSSIBLE ERROR**");
+              add_error = true;
           }
           col_cnt++;
         }
@@ -105,7 +144,7 @@
   });
 
 #main
-  = render :partial => 'identifiers/edit_bar'
+  =# render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
     = render :partial => 'leiden_helpers', :locals => { :identifier => @identifier}

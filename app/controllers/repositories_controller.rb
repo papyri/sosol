@@ -1,5 +1,5 @@
 class RepositoriesController < ApplicationController
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   
   before_filter :find_repository

@@ -298,14 +298,11 @@ en:
       findspot: findspot
       unknown: unknown
     type:
-      composition: composition
-      destination: destination
-      execution: execution
-      receipt: receipt
-      location: location
-      reuse: reuse
-      reference: reference*
-    event:
+      composed: composed
+      sent: sent
+      executed: executed
+      received: received
+      located: located
       found: found
       observed: observed
       destroyed: destroyed

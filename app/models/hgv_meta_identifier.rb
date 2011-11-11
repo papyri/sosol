@@ -2,9 +2,9 @@ class HGVMetaIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
   PATH_PREFIX = 'HGV_meta_EpiDoc'
-  
+
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-  
+
   FRIENDLY_NAME = "HGV"
 
   def preview parameters = {}, xsl = nil
@@ -146,8 +146,6 @@ class HGVMetaIdentifier < HGVIdentifier
 
     epidoc = set_epidoc_attributes
 
-    #File.open('/Users/InstPap/Desktop/sosoltest.xml', 'w') {|f| f.write(epidoc) }
-
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
     #set_xml_content validates xml
@@ -235,7 +233,7 @@ class HGVMetaIdentifier < HGVIdentifier
           child.attributes['n'] = index.to_s
           index += 1
         end
-  
+
         if item.class == String && !item.strip.empty?
           child.text = item.strip
         else
@@ -264,13 +262,12 @@ class HGVMetaIdentifier < HGVIdentifier
           end
         end
 
-        
         if item[:preFlag] # CL: CROMULENT GEO HACK
           offset = REXML::Element.new 'offset'
           offset.add_text 'bei'
           parent.add offset
         end
-        
+
         parent.add child
 
       end
@@ -306,15 +303,25 @@ class HGVMetaIdentifier < HGVIdentifier
       else
         value = self[key] && !self[key].empty? ? (config[:children] || config[:attributes] ? self[key][:value] : self[key]) : nil
         
-        if value && !value.empty? # CL: Biblio here!
+        if attributeLegal? key # value && !value.empty? # CL: Biblio patch
           element = doc.bulldozePath(config[:xpath])
+
           element.text = value
           if config[:attributes]
             config[:attributes].each_pair {|attribute_key, attribute_config|
-              element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key] #self[attribute_key]
+              element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key]
             }
           end
           
+          if config[:children] # CL: Biblio patch
+            config[:children].each_pair {|child_key, child_config|
+              element.elements.delete_all child_config[:xpath]
+              if  self[key][:children] && self[key][:children].kind_of?(Hash) && self[key][:children][child_key]
+                set_epidoc_attributes_tree element, child_config[:xpath], [self[key][:children][child_key]], child_config
+              end
+            }
+          end
+
         else
 
           doc.elements.delete_all config[:xpath]
@@ -340,6 +347,43 @@ class HGVMetaIdentifier < HGVIdentifier
     formatter.write doc, modified_xml_content
 
     return modified_xml_content
+  end
+  
+  # {"children"=>{"pointer"=>{"attributes"=>{"target"=>"http://papyri.info/biblio/12345"}}, "pagination"=>{"value"=>"pp. 12-14"}}}
+  # ["Brief (amtlich)", "Iesus an Vernas", "Mitteilung", "daß eine Säule im Steinbruch vollendet und zu Verladung bereit ist", "neu"]
+  # "Letter from Iesous to Vernas"
+
+  def attributeLegal? key
+   legal? self[key]
+  end
+  
+  def legal? candide
+    if candide
+      if (candide.kind_of?(Array) || candide.kind_of?(String)) &&  !candide.empty?
+        return true
+      elsif candide.kind_of?(Hash)
+        if candide[:value] && candide[:value].kind_of?(String) && !candide[:value].empty?
+          return true
+        end
+
+        if candide[:attributes] && candide[:attributes].kind_of?(Hash)
+          candide[:attributes].each_pair{|key, value|
+            if value && value.kind_of?(String) && !value.empty?
+              return true
+            end
+          }
+        end
+
+        if candide[:children] && candide[:children].kind_of?(Hash)
+          candide[:children].each_pair{|key, child|
+            if legal = legal?(child)
+              return true
+            end
+          }
+        end
+      end
+    end
+    false
   end
 
   def sort doc
@@ -448,6 +492,7 @@ class HGVMetaIdentifier < HGVIdentifier
       end
 
       if config[:children]
+
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
@@ -465,7 +510,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
         }
       end
-      
+
       if config[:preFlag] and data[:children][:offset][:value] and  data[:children][:offset][:value] == 'bei' # CL: CROMULENT GEO HACK
         result_item[:preFlag] = 'bei'
       end

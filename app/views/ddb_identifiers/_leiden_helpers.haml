@@ -1,6 +1,8 @@
 :javascript
+  // used to form URL to open pop-up window
   helpView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
-  ajaxConvert = "#{url_for(:controller => 'leiden', :action => 'xmlAjax')}";
+  // 2 variables below used in ajax calls for conversion
+  convXML2Leiden = "#{url_for(:controller => 'leiden', :action => 'xml2leiden')}";
   convLeiden2XML = "#{url_for(:controller => 'leiden', :action => 'leiden2xml')}";
 = javascript_include_tag 'leiden'
 = javascript_include_tag 'menu-for-applications'
@@ -15,6 +17,7 @@
 /under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
 /in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
 /javascript.
+-# All the javascript functions called below are in leiden.js other than showMatch which is in confirm.js
 %ul#menuModel{:style => "display:inherit"}
   %li#1
     %a{:href => "#", :title => "Leiden+ Input Markup"} Markup
@@ -24,7 +27,7 @@
       %li#102{ :itemType => "separator"}
       %li#103
         %a{ :href => "#"} Apparatus
-        %ul{ :width => "255"}
+        %ul{ :width => "225"}
           %li#10301{ :jsFunction => "helpDialogOpen('appreg')"}
             %a{ :href => "#"}Modern regularization
           %li#10302{ :itemType => "separator"}
@@ -48,7 +51,7 @@
       %li#104{ :itemType => "separator"}
       %li#105
         %a{ :href => "#"}Deletion/cancellation
-        %ul{ :width => "255"}
+        %ul{ :width => "225"}
           %li#10501{ :jsFunction => "insertDeletionMain('slashes')"}
             %a{ :href => "#"}Deletion by slashes (///)
           %li#10502{ :itemType => "separator"}
@@ -60,7 +63,7 @@
       %li#106{ :itemType => "separator"}
       %li#107
         %a{ :href => "#"}Document Divisions
-        %ul{ :width => "255"}
+        %ul{ :width => "225"}
           %li#10701{ :jsFunction => "insertDivisionMain('r')"}
             %a{ :href => "#"}Recto
           %li#10702{ :itemType => "separator"}
@@ -90,10 +93,10 @@
   %li#2{ :itemType => "separator"}
   %li#3
     %a{:href => "#", :title => "Leiden+ Symbols"} Symbols
-    %ul{ :width => "225"}
+    %ul{ :width => "240"}
       %li#301
         %a{ :href => "#"} Numerical Characters
-        %ul{ :width => "200"}
+        %ul{ :width => "135"}
           -# this is unicode character u10175
           %li#30101{ :jsFunction => "insertSpecialCharMain('𐅵')"}
             %a{ :href => "#"}1/2
@@ -123,7 +126,7 @@
       %li#302{ :itemType => "separator"}
       %li#303
         %a{ :href => "#"} Ancient Diacriticals
-        %ul{ :width => "200"}
+        %ul{ :width => "135"}
           %li#30301{ :jsFunction => "insertDiacriticalMain('acute')"}
             %a{ :href => "#"}Acute
           %li#30302{ :itemType => "separator"}

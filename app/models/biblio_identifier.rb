@@ -10,48 +10,48 @@ class BiblioIdentifier < HGVIdentifier
   IDENTIFIER_NAMESPACE = 'biblio'
 
   XPATH = {
-    :title => "/TEI/text/body/div/bibl/title[@level='a'][@type='main']",
-    :journalTitle => "/TEI/text/body/div/bibl/title[@level='j'][@type='main']",
-    :bookTitle => "/TEI/text/body/div/bibl/title[@level='m'][@type='main']",
-    :supertype => "/TEI/text/body/div/bibl/@type",
-    :subtype => "/TEI/text/body/div/bibl/@subtype",
-    :language => "/TEI/text/body/div/bibl/@xml:lang",    
+    :title => "/bibl/title[@level='a'][@type='main']",
+    :journalTitle => "/bibl/title[@level='j'][@type='main']",
+    :bookTitle => "/bibl/title[@level='m'][@type='main']",
+    :supertype => "/bibl/@type",
+    :subtype => "/bibl/@subtype",
+    :language => "/bibl/@xml:lang",    
       
-    :bp => "/TEI/text/body/div/bibl/idno[@type='bp']",
-    :bpOld => "/TEI/text/body/div/bibl/idno[@type='bp_old']",
-    :idp => "/TEI/text/body/div/bibl/@xml:id",
-    :isbn => "/TEI/text/body/div/bibl/idno[@type='isbn']",
-    :sd => "/TEI/text/body/div/bibl/idno[@type='sonderdruck']",
-    :checklist => "/TEI/text/body/div/bibl/idno[@type='checklist']",
+    :bp => "/bibl/idno[@type='bp']",
+    :bpOld => "/bibl/idno[@type='bp_old']",
+    :idp => "/bibl/@xml:id",
+    :isbn => "/bibl/idno[@type='isbn']",
+    :sd => "/bibl/idno[@type='sonderdruck']",
+    :checklist => "/bibl/idno[@type='checklist']",
 
-    :date => "/TEI/text/body/div/bibl/date",
-    :edition => "/TEI/text/body/div/bibl/edition",
-    :issue => "/TEI/text/body/div/bibl/biblScope[@type='issue']",
-    :distributor => "/TEI/text/body/div/bibl/distributor",
-    :paginationFrom => "/TEI/text/body/div/bibl/biblScope[@type='page']/@from",
-    :paginationTo => "/TEI/text/body/div/bibl/biblScope[@type='page']/@to",
-    :paginationTotal => "/TEI/text/body/div/bibl/note[@type='pageCount']",
-    :paginationPreface => "/TEI/text/body/div/bibl/note[@type='prefacePageCount']",
-    :illustration => "/TEI/text/body/div/bibl/note[@type='illustration']",
-    :no => "/TEI/text/body/div/bibl/biblScope[@type='no']",
-    :col => "/TEI/text/body/div/bibl/biblScope[@type='col']",
-    :tome => "/TEI/text/body/div/bibl/biblScope[@type='tome']",
-    :link => "/TEI/text/body/div/bibl/ptr/@target",
-    :fasc => "/TEI/text/body/div/bibl/biblScope[@type='fasc']",
-    :reedition => "/TEI/text/body/div/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
+    :date => "/bibl/date",
+    :edition => "/bibl/edition",
+    :issue => "/bibl/biblScope[@type='issue']",
+    :distributor => "/bibl/distributor",
+    :paginationFrom => "/bibl/biblScope[@type='page']/@from",
+    :paginationTo => "/bibl/biblScope[@type='page']/@to",
+    :paginationTotal => "/bibl/note[@type='pageCount']",
+    :paginationPreface => "/bibl/note[@type='prefacePageCount']",
+    :illustration => "/bibl/note[@type='illustration']",
+    :no => "/bibl/biblScope[@type='no']",
+    :col => "/bibl/biblScope[@type='col']",
+    :tome => "/bibl/biblScope[@type='tome']",
+    :link => "/bibl/ptr/@target",
+    :fasc => "/bibl/biblScope[@type='fasc']",
+    :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
 
-    :authorList => "/TEI/text/body/div/bibl/author",
-    :editorList => "/TEI/text/body/div/bibl/editor",
+    :authorList => "/bibl/author",
+    :editorList => "/bibl/editor",
       
-    :journalTitleShort => "/TEI/text/body/div/bibl/title[@level='j'][@type='short']",
-    :bookTitleShort => "/TEI/text/body/div/bibl/title[@level='m'][@type='short']",
+    :journalTitleShort => "/bibl/title[@level='j'][@type='short']",
+    :bookTitleShort => "/bibl/title[@level='m'][@type='short']",
     
-    :publisherList => "/TEI/text/body/div/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
-    :relatedArticleList => "/TEI/text/body/div/bibl/relatedItem[@type='mentions']/bibl",
-    :note => "/TEI/text/body/div/bibl/note[@resp]",
+    :publisherList => "/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
+    :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl",
+    :note => "/bibl/note[@resp]",
     
-    :revieweeList => "/TEI/text/body/div/bibl/relatedItem[@type='reviews']/bibl",
-    :containerList => "/TEI/text/body/div/bibl/relatedItem[@type='appearsIn']/bibl"
+    :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl",
+    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
   }
 
   def to_path
@@ -86,6 +86,37 @@ class BiblioIdentifier < HGVIdentifier
   
   def mutable?
     true
+  end
+
+  # Validation of identifier XML file against tei-epidoc.rng file
+  # - *Args*  :
+  #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
+  # - *Returns* :
+  #   - true/false
+  def is_valid_xml?(content = nil)
+    if content.nil?
+      content = self.xml_content
+    end
+    self.class::XML_VALIDATOR.instance.validate(
+      JRubyXML.input_source_from_string(wrap_xml(content)))
+  end
+
+  # Wrap biblio xml stub in biblio xml wrapper to make it valid TEI
+  # - *Args*  :
+  #   - +content+ -> XML to wrap
+  # - *Returns* :
+  #   - wrapped XML content as String
+  def wrap_xml(content)
+    xml_stub = REXML::Document.new(content)
+    xml_wrapper = REXML::Document.new(File.new(File.join(RAILS_ROOT, ['data','templates'], 'biblio_dummy_wrapper.xml')))
+    basepath = '/TEI/text/body/div[@type = "bibliography"]'
+    add_node_here = REXML::XPath.first(xml_wrapper, basepath)
+    add_node_here.add_element xml_stub.root
+
+    wrapped_xml_content = ''
+    xml_wrapper.write(wrapped_xml_content)
+
+    return wrapped_xml_content
   end
 
   def epiDoc
@@ -179,10 +210,12 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostNote
    
     updateFromPostPublisher
+  
+    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Reviewee:0x12983349> 
+    # updateFromPostReviewee
    
-    updateFromPostReviewee
-    
-    updateFromPostContainer
+    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Container:0x2341952a> 
+    # updateFromPostContainer
    
     updateFromPostRelatedArticle
 
@@ -197,7 +230,16 @@ class BiblioIdentifier < HGVIdentifier
     
     modified_xml_content
   end
-  
+ 
+  # Returns a String of the SHA1 of the commit
+  def set_epidoc(attributes_hash, comment)
+    @epiDoc = self.epiDoc
+    epidoc = updateFromPost(attributes_hash)
+
+    Rails.logger.info(epidoc)
+    self.set_xml_content(epidoc, :comment => comment)
+  end
+ 
   def updateFromPostSimple key
     self[key] = @post[key] && @post[key].kind_of?(String) && !@post[key].strip.empty? ? @post[key].strip : nil
   end
@@ -300,10 +342,12 @@ class BiblioIdentifier < HGVIdentifier
       
       if self[key] && !self[key].strip.empty?
         element = @epiDoc.bulldozePath path
-        if attribute
-          element.attributes[attribute] = self[key]
-        else
-          element.text = self[key]
+        unless element.nil?
+          if attribute
+            element.attributes[attribute] = self[key]
+          else
+            element.text = self[key]
+          end
         end
       else
         @epiDoc.elements.delete_all path
@@ -315,18 +359,20 @@ class BiblioIdentifier < HGVIdentifier
       index = 1
       self[key].each{|person|
         element = @epiDoc.bulldozePath XPATH[key] + "[@n='" + index.to_s + "']"
-        if person.name && !person.name.empty?
-          element.text = person.name
-        end
-        if person.firstName && !person.firstName.empty?
-          child = REXML::Element.new 'forename'
-          child.text = person.firstName
-          element.add child
-        end
-        if person.lastName && !person.lastName.empty?
-          child = REXML::Element.new 'surname'
-          child.text = person.lastName
-          element.add child
+        unless element.nil?
+          if person.name && !person.name.empty?
+            element.text = person.name
+          end
+          if person.firstName && !person.firstName.empty?
+            child = REXML::Element.new 'forename'
+            child.text = person.firstName
+            element.add child
+          end
+          if person.lastName && !person.lastName.empty?
+            child = REXML::Element.new 'surname'
+            child.text = person.lastName
+            element.add child
+          end
         end
         index += 1
       }
@@ -442,14 +488,16 @@ class BiblioIdentifier < HGVIdentifier
       index = 1
       self[key].each{|relatedItem|
         element = @epiDoc.bulldozePath xpathBase + "[@n='" + index.to_s + "']" + xpathBibl
-        ptr = REXML::Element.new('ptr')
-        ptr.attributes['target'] = relatedItem.pointer
-        element.add ptr
-        REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', element)
-        getRelatedItemElements(relatedItem.pointer).each{|ignore|
-          element.add ignore
-        }
-        REXML::Comment.new(' ignore - stop ', element)
+        unless element.nil?
+          ptr = REXML::Element.new('ptr')
+          ptr.attributes['target'] = relatedItem.pointer
+          element.add ptr
+          REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', element)
+          getRelatedItemElements(relatedItem.pointer).each{|ignore|
+            element.add ignore
+          }
+          REXML::Comment.new(' ignore - stop ', element)
+        end
         index += 1
       }
     end
