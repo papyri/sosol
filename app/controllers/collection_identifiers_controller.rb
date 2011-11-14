@@ -1,10 +1,10 @@
 class CollectionIdentifiersController < ApplicationController
   before_filter :authorize
-  before_filter :check_admin
+  before_filter :check_ddb
 
-  #Ensures user has admin rights to view page. Otherwise returns 403 error.
-  def check_admin
-    if @current_user.nil? || !@current_user.admin
+  # Ensures user has DDB rights to view page. Otherwise returns 403 error.
+  def check_ddb
+    if @current_user.nil? || !(@current_user.boards.select{|b| b.identifier_classes.include?("DDBIdentifier")}.length > 0)
       render :file => 'public/403.html', :status => '403'
     end
   end
