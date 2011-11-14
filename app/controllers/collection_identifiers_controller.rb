@@ -16,12 +16,17 @@ class CollectionIdentifiersController < ApplicationController
     @identifier = DDBIdentifier.find(@entry_identifier_id)
 
     if(@short_name.blank? || @long_name.blank?)
-      flash[:error] = "Required attribute missing. Enter both a short and long name."
+      flash[:error] = "Required attribute missing. You must enter both types of collection name."
+      redirect_to :action => 'update_review', :short_name => params[:short_name],
+        :long_name => params[:long_name], :entry_identifier_id => params[:entry_identifier_id]
+      return
+    elsif(@short_name =~ /\//)
+      flash[:error] = "PN collection name cannot contain slashes. Enter only the collection name, not the full papyri.info URL."
       redirect_to :action => 'update_review', :short_name => params[:short_name],
         :long_name => params[:long_name], :entry_identifier_id => params[:entry_identifier_id]
       return
     elsif(CollectionIdentifier.new.has_collection?(@short_name))
-      flash[:error] = "Collection short name already exists."
+      flash[:error] = "PN collection identifier already exists."
       redirect_to :action => 'update_review', :short_name => params[:short_name],
         :long_name => params[:long_name], :entry_identifier_id => params[:entry_identifier_id]
       return

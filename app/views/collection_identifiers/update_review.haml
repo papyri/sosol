@@ -10,9 +10,10 @@
   Do not make typos. Do not make mistakes.
 %br
 - form_tag("update", :method => "put") do
-  = label_tag "Collection short name:"
+  = label_tag 'short_name', "PN collection identifier, as in <span style='color:gray'>http://papyri.info/ddbdp/</span><b>p.nag.hamm</b><span style='color:gray'>;;1</span>:"
   = text_field_tag :short_name, @short_name, :size => 15
-  = label_tag "Collection long name:"
+  %br
+  = label_tag 'long_name', "Standard abbreviation, as in <b>P.Nag Hamm.</b>:"
   = text_field_tag :long_name, '', :size => 40
   = hidden_field_tag 'entry_identifier_id', @entry_identifier_id
   %br
