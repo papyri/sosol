@@ -10,8 +10,19 @@ class CollectionIdentifiersController < ApplicationController
   end
 
   def update
+    @short_name = params[:short_name]
+    @long_name = params[:long_name]
+    @entry_identifier_id = params[:entry_identifier_id]
+    @identifier = DDBIdentifier.find(@entry_identifier_id)
+    flash[:notice] = "Would have added collection #{@short_name} = #{@long_name}."
+
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :rename_review) and return
+
   end
 
   def update_review
+    @short_name = params[:collection_name]
+    @entry_identifier_id = params[:entry_identifier_id]
   end
 end

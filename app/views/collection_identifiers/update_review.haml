@@ -1,6 +1,19 @@
-%h1= DDB Collection Update
+%h1
+  DDB Collection Update
 %h2
   This will
   %b
     immediately commit
   collection changes to the canonical Git repository.
+
+%h3{:style => 'color:red'}
+  Do not make typos. Do not make mistakes.
+%br
+- form_tag("update", :method => "put") do
+  = label_tag "Collection short name:"
+  = text_field_tag :short_name, @short_name, :size => 15
+  = label_tag "Collection long name:"
+  = text_field_tag :long_name, '', :size => 40
+  = hidden_field_tag 'entry_identifier_id', @entry_identifier_id
+  %br
+  = submit_tag "Add Collection", :class => 'save', :confirm => 'Are you sure?'
