@@ -13,9 +13,11 @@ class CollectionIdentifier < Identifier
   end
 
   def add_collection(short_name, long_name)
-    self.set_xml_content(collection_xml_with_new_collection(short_name, long_name),
-                         :comment => "Add collection #{short_name} = #{long_name}",
-                         :actor => User.first.grit_actor)
+    unless self.has_collection?(short_name)
+      self.set_xml_content(collection_xml_with_new_collection(short_name, long_name),
+                           :comment => "Add collection #{short_name} = #{long_name}",
+                           :actor => User.first.grit_actor)
+    end
   end
 
   def collection_xml_with_new_collection(short_name, long_name)
@@ -31,5 +33,16 @@ class CollectionIdentifier < Identifier
     formatter.write rdf, modified_xml_content
 
     return modified_xml_content
+  end
+
+  def has_collection?(short_name)
+    rdf = REXML::Document.new(self.xml_content)
+
+    xpath = "/rdf:RDF/rdf:Description[@rdf:about = '#{self.class.short_name_to_identifier(short_name)}']"
+    if REXML::XPath.first(rdf, xpath).nil?
+      return false
+    else
+      return true
+    end
   end
 end
