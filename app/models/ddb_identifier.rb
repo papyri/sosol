@@ -2,7 +2,6 @@
 # - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier  
   PATH_PREFIX = 'DDB_EpiDoc_XML'
-  COLLECTION_XML_PATH = 'DDB_SGML/collection.xml'
   
   FRIENDLY_NAME = "Text"
   
