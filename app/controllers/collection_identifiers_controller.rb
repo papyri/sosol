@@ -14,7 +14,22 @@ class CollectionIdentifiersController < ApplicationController
     @long_name = params[:long_name]
     @entry_identifier_id = params[:entry_identifier_id]
     @identifier = DDBIdentifier.find(@entry_identifier_id)
-    flash[:notice] = "Would have added collection #{@short_name} = #{@long_name}."
+
+    if(@short_name.blank? || @long_name.blank?)
+      flash[:error] = "Required attribute missing. Enter both a short and long name."
+      redirect_to :action => 'update_review', :short_name => params[:short_name],
+        :long_name => params[:long_name], :entry_identifier_id => params[:entry_identifier_id]
+      return
+    elsif(CollectionIdentifier.new.has_collection?(@short_name))
+      flash[:error] = "Collection short name already exists."
+      redirect_to :action => 'update_review', :short_name => params[:short_name],
+        :long_name => params[:long_name], :entry_identifier_id => params[:entry_identifier_id]
+      return
+    else
+      CollectionIdentifier.new.add_collection(@short_name, @long_name, @current_user)
+    end
+
+    flash[:notice] = "Added collection #{@short_name} = #{@long_name}."
 
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :rename_review) and return
@@ -22,7 +37,7 @@ class CollectionIdentifiersController < ApplicationController
   end
 
   def update_review
-    @short_name = params[:collection_name]
+    @short_name = params[:short_name]
     @entry_identifier_id = params[:entry_identifier_id]
   end
 end

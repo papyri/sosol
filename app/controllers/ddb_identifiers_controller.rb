@@ -76,7 +76,7 @@ class DdbIdentifiersController < IdentifiersController
                                    :action => :rename_review) and return
     else
       flash[:notice] = "Collection does not exist. Identifier NOT renamed. Create collection first."
-      redirect_to :controller => 'collection_identifiers', :action => 'update_review', :collection_name => collection_name, :entry_identifier_id => @identifier.id
+      redirect_to :controller => 'collection_identifiers', :action => 'update_review', :short_name => collection_name, :entry_identifier_id => @identifier.id
     end
   end
   

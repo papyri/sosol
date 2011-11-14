@@ -57,7 +57,7 @@ class DDBIdentifier < Identifier
     
     return @collection_names_hash
   end
-  
+
   # Returns file path to DDB Text XML - e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
   def to_path
     path_components = [ PATH_PREFIX ]
