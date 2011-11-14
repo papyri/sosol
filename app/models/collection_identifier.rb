@@ -12,11 +12,11 @@ class CollectionIdentifier < Identifier
     return NumbersRDF::NumbersHelper.identifier_to_url([NumbersRDF::NAMESPACE_IDENTIFIER, DDBIdentifier::IDENTIFIER_NAMESPACE, short_name].join('/'))
   end
 
-  def add_collection(short_name, long_name)
+  def add_collection(short_name, long_name, actor)
     unless self.has_collection?(short_name)
       self.set_xml_content(collection_xml_with_new_collection(short_name, long_name),
                            :comment => "Add collection #{short_name} = #{long_name}",
-                           :actor => User.first.grit_actor)
+                           :actor => actor.grit_actor)
     end
   end
 
