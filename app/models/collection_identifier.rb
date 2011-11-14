@@ -45,4 +45,19 @@ class CollectionIdentifier < Identifier
       return true
     end
   end
+
+  def collection_names_hash
+    collections = Hash.new()
+    rdf = REXML::Document.new(self.xml_content)
+    rdf.root.elements.each('rdf:Description') do |description_node|
+      about = description_node.attributes['rdf:about']
+      unless about.nil?
+        citation = REXML::XPath.first(description_node, 'dcterms:bibliographicCitation')
+        unless citation.nil?
+          collections[about.split('/').last] = citation.text
+        end
+      end
+    end
+    return collections
+  end
 end
