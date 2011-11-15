@@ -1,6 +1,6 @@
 include BiblioIdentifierHelper
 class BiblioIdentifiersController < IdentifiersController
-  # @RB: please see to that there all the standard actions available, such as update, preview and edit and that they have access to the identifier record as well as the EpiDoc
+
   def edit
     @is_editor_view = true
     find_identifier    
@@ -13,9 +13,9 @@ class BiblioIdentifiersController < IdentifiersController
   
   def update
     find_identifier
-    #exit
     begin
       commit_sha = @identifier.set_epidoc(params[:biblio_identifier], params[:comment])
+
       expire_publication_cache
       generate_flash_message
     rescue JRubyXML::ParseError => e
@@ -41,6 +41,22 @@ class BiblioIdentifiersController < IdentifiersController
   
   def getBiblioPath biblioId
     'Biblio/' + (biblioId.to_i / 1000.0).ceil.to_s + '/'  + biblioId.to_s + '.xml' 
+  end
+
+  # Copypasted from HgvMetaIdentifiersController
+  def generate_flash_message
+    flash[:notice] = "File updated."
+    if %w{new editing}.include? @identifier.publication.status
+      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+    end      
+  end
+
+  # Copypasted from HgvMetaIdentifiersController
+  def save_comment (comment, commit_sha)
+    if comment != nil && comment.strip != ""
+      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
+      @comment.save
+    end
   end
 
 end

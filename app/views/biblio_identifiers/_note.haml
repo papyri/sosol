@@ -1,7 +1,7 @@
 - @identifier[:note]
 .multi#multi_note
   %h6
-    %label.responsibility= I18n.t('biblio.label.responsibility')
+    %label.responsibility= I18n.t('biblio.label.annotationResponsibility')
     %label.annotation= I18n.t('biblio.label.annotation')
   %ul.items#multiItems_note
     - @identifier[:note].each_index do |index|

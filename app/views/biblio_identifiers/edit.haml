@@ -1,7 +1,7 @@
 .site.biblioSite
   = render :partial => 'identifiers/header'
-  %span.expandAll#expandAll=I18n.t('label.expandAll')
-  %span.collapseAll#collapseAll=I18n.t('label.collapseAll')
+  %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+  %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
   #edit
     - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
@@ -9,8 +9,8 @@
 
       %h4.category.meta
         %a{:name => 'Meta'}=I18n.t('biblio.legend.meta')
-      .editbox{:style => 'display: none;'}
-        = f.select :type, options_for_select([])
+      .editbox.meta{:style => 'display: none;'}
+        = f.select :supertype, options_for_select([])
         = f.select :subtype, options_for_select([])
         = f.select :language
         .clear
@@ -22,12 +22,13 @@
         = f.text_field :sd
         = f.text_field :checklist
         .clear
-        .quickSave=I18n.t('label.quickSave')
+        .swifty.quickSave=I18n.t('label.quickSave')
 
       %h4.category.general
         %a{:name => 'Analytic'}=I18n.t('biblio.legend.general')
-      .editbox
-        = f.text_field :title
+      .editbox.general
+        = f.text_field :articleTitle
+        .clear
         = f.text_field :journalTitle
         .clear
         = f.label :journalTitleShort
@@ -41,11 +42,11 @@
         = f.label :authorList
         = render :partial => 'biblio_identifiers/authorList'
         .clear
-        .quickSave=I18n.t('label.quickSave')
+        .swifty.quickSave=I18n.t('label.quickSave')
 
       %h4.category.editorial
         %a{:name => 'Editorial'}=I18n.t('biblio.legend.editorial')
-      .editbox{:style => 'display: none;'}
+      .editbox.editorial{:style => 'display: none;'}
         = f.text_field :date
         = f.text_field :edition
         = f.text_field :issue
@@ -56,13 +57,13 @@
         = render :partial => 'biblio_identifiers/editorList'
         .clear
         = f.label :publisherList
-        = render :partial => 'biblio_identifiers/publisherList'
+        = render :partial => 'biblio_identifiers/publisherList', :locals => {:publisherTypeOptions => f.make_options(:publisherType)}
         .clear
-        .quickSave=I18n.t('label.quickSave')
+        .swifty.quickSave=I18n.t('label.quickSave')
 
       %h4.category.extra
         %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
-      .editbox{:style => 'display: none;'}
+      .editbox.extra{:style => 'display: none;'}
         = f.text_field :paginationPreface
         = f.text_field :paginationTotal
         .clear
@@ -82,12 +83,13 @@
         = f.label :note
         = render :partial => 'biblio_identifiers/note'
         .clear
-        .quickSave=I18n.t('label.quickSave')
+        .swifty.quickSave=I18n.t('label.quickSave')
 
       %h4.category.reference
         %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
-      .editbox{:style => 'display: none;'}
+      .editbox.reference{:style => 'display: none;'}
         = f.text_field :reedition
+        .clear
         = f.label :containerList
         = render :partial => 'biblio_identifiers/containerList'
         .clear
@@ -97,10 +99,11 @@
         = f.label :relatedArticleList
         = render :partial => 'biblio_identifiers/relatedArticleList'
         .clear
-        .quickSave=I18n.t('label.quickSave')
+        .swifty.quickSave=I18n.t('label.quickSave')
       
-      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-      = hidden_field_tag 'expansionSet', flash[:expansionSet]
+      .controlPanel
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+        = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
 = javascript_include_tag 'edit_mask'
 = javascript_include_tag 'biblio'

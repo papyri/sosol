@@ -28,7 +28,7 @@ class BiblioFormBuilder < ActionView::Helpers::FormBuilder
         [I18n.t('language.la'), 'la'],
         [I18n.t('language.el'), 'el']
       ],
-      :type => [
+      :supertype => [
         ['', ''],
         [I18n.t('biblio.type.book'), 'book'],
         [I18n.t('biblio.type.journal'), 'journal'],
@@ -42,6 +42,10 @@ class BiblioFormBuilder < ActionView::Helpers::FormBuilder
         [I18n.t('biblio.subtype.other'), 'other'],
         [I18n.t('biblio.subtype.edited'), 'edited'],
         [I18n.t('biblio.subtype.authored'), 'authored']
+      ],
+      :publisherType => [
+        [I18n.t('biblio.publisherType.name'), 'publisher'],
+        [I18n.t('biblio.publisherType.place'), 'pubPlace']
       ]
     }[label]
   end

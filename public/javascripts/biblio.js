@@ -2,7 +2,7 @@
 
 function multiAddNote()
 {
-  var responsibility = $$('#multiPlus_note > textarea')[0].value.replace(/\s+/, '');
+  var responsibility = $$('#multiPlus_note > textarea')[0].value;
   var annotation     = $$('#multiPlus_note > textarea')[1].value
 
   var index = multiGetNextIndex('note');
@@ -19,14 +19,14 @@ function multiAddNote()
 
 function multiAddShortTitleList(type)
 {
-  var responsibility = $$('#multiPlus_' + type + ' > input')[0].value.replace(/\s+/, '');
-  var title          = $$('#multiPlus_' + type + ' > input')[1].value.replace(/\s+/, '');
+  var title          = $$('#multiPlus_' + type + ' > input')[0].value;
+  var responsibility = $$('#multiPlus_' + type + ' > input')[1].value;
 
   var index = multiGetNextIndex(type);
 
   var item = '<li>' +
-                '<input class="observechange responsibility" id="biblio_identifier_' + type + '_' + index + '_responsibility" name="biblio_identifier[' + type + '][' + index + '][responsibility]" value="' + responsibility + '" type="text">' +
                 '<input class="observechange title" id="biblio_identifier_' + type + '_' + index + '_title" name="biblio_identifier[' + type + '][' + index + '][title]" value="' + title + '" type="text">' +
+                '<input class="observechange responsibility" id="biblio_identifier_' + type + '_' + index + '_responsibility" name="biblio_identifier[' + type + '][' + index + '][responsibility]" value="' + responsibility + '" type="text">' +
                 '<span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
                 '<span class="move" title="move">o</span>' +
               '</li>';
@@ -38,8 +38,8 @@ function multiAddRelatedList(type)
 {
   var pointer = $$('#multiPlus_' + type + ' > input')[0].value.replace(/\s+/, '');
 
-  if(pointer.indexOf('#') != 0){
-    pointer = '#' +  pointer;
+  if(pointer.indexOf('http://papyri.info/biblio/') != 0){
+    pointer = 'http://papyri.info/biblio/' +  pointer;
   }
 
   var index = multiGetNextIndex(type);
@@ -74,14 +74,14 @@ function multiAddNameList(type)
 
 function multiAddPublisherList()
 {
-  var place = $$('#multiPlus_publisherList > input')[0].value;
-  var name  = $$('#multiPlus_publisherList > input')[1].value;
+  var publisherType  = $$('#multiPlus_publisherList > select')[0].value;
+  var value          = $$('#multiPlus_publisherList > input')[0].value;
 
   var index = multiGetNextIndex('publisherList');
 
   var item = '<li id="" style="position: relative;">' +
-             '     <input type="text" value="' + place + '" name="biblio_identifier[publisherList][' + index + '][place]" id="biblio_identifier_publisherList_' + index + '_place" class="observechange place">' +
-             '     <input type="text" value="' + name + '" name="biblio_identifier[publisherList][' + index + '][name]" id="biblio_identifier_publisherList_' + index + '_name" class="observechange name">' +
+             '     <input type="text" value="' + publisherType + '" name="biblio_identifier[publisherList][' + index + '][publisherType]" id="biblio_identifier_publisherList_' + index + '_publisherType" class="observechange publisherType">' +
+             '     <input type="text" value="' + value + '" name="biblio_identifier[publisherList][' + index + '][value]" id="biblio_identifier_publisherList_' + index + '_value" class="observechange value">' +
              '     <span title="x" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '     <span title="o" class="move">o</span>' +
              '</li>';
@@ -114,49 +114,40 @@ function multiAddRelatedArticleList()
   multiUpdate('relatedArticleList', item);
 }
 
-/*function multiAddRevueCritiqueList()
-{
-  var author = $$('#multiPlus_revueCritiqueList > input')[0].value;
-  var page   = $$('#multiPlus_revueCritiqueList > input')[1].value;
-  var title  = $$('#multiPlus_revueCritiqueList > input')[2].value;
-  var year   = $$('#multiPlus_revueCritiqueList > input')[3].value;
-
-  var index = multiGetNextIndex('revueCritiqueList');
-
-  var item = '<li>' + 
-             '     <input type="text" value="' + author + '" name="biblio_identifier[revueCritiqueList][' + index + '][author]" id="biblio_identifier_revueCritiqueList_' + index + '_author" class="observechange author">' + 
-             '     <input type="text" value="' + page + '" name="biblio_identifier[revueCritiqueList][' + index + '][page]" id="biblio_identifier_revueCritiqueList_' + index + '_page" class="observechange page">' + 
-             '     <input type="text" value="' + title + '" name="biblio_identifier[revueCritiqueList][' + index + '][title]" id="biblio_identifier_revueCritiqueList_' + index + '_title" class="observechange title">' + 
-             '     <input type="text" value="' + year + '" name="biblio_identifier[revueCritiqueList][' + index + '][year]" id="biblio_identifier_revueCritiqueList_' + index + '_year" class="observechange year">' + 
-             '     <span title="x" onclick="multiRemove(this.parentNode)" class="delete">x</span>' + 
-             '    <span title="o" class="move">o</span>' + 
-             '   </li>';
-
-  multiUpdate('revueCritiqueList', item);
-}*/
-
 /**** check ****/
 
 function checkNotAddedMultiples(){
-  if($('authorList_lastName').value.match(/.+/) || $('authorList_name').value.match(/.+/)){
+  if($('authorList_firstName').value.match(/.+/) || $('authorList_lastName').value.match(/.+/) || $('authorList_name').value.match(/.+/)){
     multiAddNameList('authorList');
   }
 
-  if($('editorList_lastName').value.match(/.+/) || $('editorList_name').value.match(/.+/)){
+  if($('editorList_firstName').value.match(/.+/) || $('editorList_lastName').value.match(/.+/) || $('editorList_name').value.match(/.+/)){
     multiAddNameList('editorList');
   }
 
-  // Commented out, always results in:
-  // TypeError: 'null' is not an object (evaluating '$('publisherList_place').value')
-  //if($('publisherList_place').value.match(/.+/) || $('publisherList_name').value.match(/.+/)){
-  //  multiAddPublisherList();
-  //}
+  if($('journalTitleShort_title').value.match(/.+/)){
+    multiAddShortTitleList('journalTitleShort');
+  }
 
-  // Commented out, always results in:
-  // TypeError: 'null' is not an object (evaluating '$('revueCritiqueList_author').value')
-  //if($('revueCritiqueList_author').value.match(/.+/) || $('revueCritiqueList_title').value.match(/.+/)){
-  //  multiAddRevueCritiqueList();
-  //}
+  if($('bookTitleShort_title').value.match(/.+/)){
+    multiAddShortTitleList('bookTitleShort');
+  }
+
+  if($('note_responsibility').value.match(/.+/) && $('note_annotation').value.match(/.+/)){
+    multiAddNote();
+  }
+
+  if($('containerList_pointer').value.match(/.+/)){
+    multiAddRelatedList('containerList');
+  }
+
+  if($('revieweeList_pointer').value.match(/.+/)){
+    multiAddRelatedList('revieweeList');
+  }
+
+  if($('publisherList_publisherType').value.match(/.+/) && $('publisherList_value').value.match(/.+/)){
+    multiAddPublisherList();
+  }
 
   if($('relatedArticleList_series').value.match(/.+/) || $('relatedArticleList_inventory').value.match(/.+/)){
     multiAddRelatedArticleList();
@@ -165,8 +156,8 @@ function checkNotAddedMultiples(){
 
 Event.observe(window, 'load', function() {
 
-  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); return 0; $$('form.edit_biblio_identifier')[0].submit();});});
-  //$('identifier_submit').observe('click', checkNotAddedMultiples);
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); $$('form.edit_biblio_identifier')[0].submit();});});
+  $('identifier_submit').observe('click', checkNotAddedMultiples);
 
 });
 

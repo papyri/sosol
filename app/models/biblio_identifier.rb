@@ -10,7 +10,7 @@ class BiblioIdentifier < HGVIdentifier
   IDENTIFIER_NAMESPACE = 'biblio'
 
   XPATH = {
-    :title => "/bibl/title[@level='a'][@type='main']",
+    :articleTitle => "/bibl/title[@level='a'][@type='main']",
     :journalTitle => "/bibl/title[@level='j'][@type='main']",
     :bookTitle => "/bibl/title[@level='m'][@type='main']",
     :supertype => "/bibl/@type",
@@ -119,14 +119,15 @@ class BiblioIdentifier < HGVIdentifier
     return wrapped_xml_content
   end
 
+  # Creates REXML object model from xml string
   def epiDoc
     REXML::Document.new(self.xml_content)
   end
   
+  # Retrieves data from xml or sets empty defaults
   def after_find
-    # retrieve data from xml or set empty defaults 
-    
-    self[:title] = ''
+
+    self[:articleTitle] = ''
     self[:journalTitle] = ''
     self[:journalTitleShort] = Array.new
     self[:bookTitle] = ''
@@ -167,14 +168,23 @@ class BiblioIdentifier < HGVIdentifier
     
     populateFromEpiDoc
   end
+ 
+  # Returns a String of the SHA1 of the commit
+  def set_epidoc(attributes_hash, comment)
+    epiDocXml = updateFromPost(attributes_hash)
+
+    Rails.logger.info(epiDocXml)
+    self.set_xml_content(epiDocXml, :comment => comment)
+  end
 
   def updateFromPost params
     @post = params
+    @epiDoc = self.epiDoc
 
-    updateFromPostSimple :title
+    updateFromPostSimple :articleTitle
     updateFromPostSimple :journalTitle
     updateFromPostSimple :bookTitle
-    updateFromPostSimple :type
+    updateFromPostSimple :supertype
     updateFromPostSimple :subtype
     updateFromPostSimple :language
     
@@ -212,32 +222,28 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostPublisher
   
     # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Reviewee:0x12983349> 
-    # updateFromPostReviewee
+    updateFromPostReviewee
    
     # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Container:0x2341952a> 
-    # updateFromPostContainer
+    updateFromPostContainer
    
     updateFromPostRelatedArticle
 
     updateEpiDoc
     
     # write back to a string
+    modified_xml_content = toXmlString @epiDoc
+
+    modified_xml_content
+  end
+  
+  def toXmlString xmlObject
     formatter = REXML::Formatters::Pretty.new
     formatter.compact = true
     formatter.width = 512
     modified_xml_content = ''
-    formatter.write @epiDoc, modified_xml_content
-    
+    formatter.write xmlObject, modified_xml_content
     modified_xml_content
-  end
- 
-  # Returns a String of the SHA1 of the commit
-  def set_epidoc(attributes_hash, comment)
-    @epiDoc = self.epiDoc
-    epidoc = updateFromPost(attributes_hash)
-
-    Rails.logger.info(epidoc)
-    self.set_xml_content(epidoc, :comment => comment)
   end
  
   def updateFromPostSimple key
@@ -291,8 +297,8 @@ class BiblioIdentifier < HGVIdentifier
     self[:publisherList] = []
     if @post[:publisherList] && @post[:publisherList].kind_of?(Hash)
       @post[:publisherList].each_pair{|index, publisher|
-        if !publisher[:name].strip.empty? && ['pubPlace', 'publisher'].include?(publisher[:place].strip)
-          self[:publisherList][self[:publisherList].length] = Publisher.new(publisher[:place].strip, publisher[:name].strip)
+        if publisher[:value] && publisher[:publisherType] && !publisher[:value].strip.empty? && ['pubPlace', 'publisher'].include?(publisher[:publisherType].strip)
+          self[:publisherList][self[:publisherList].length] = Publisher.new(publisher[:publisherType].strip, publisher[:value].strip)
         end
       }
     end
@@ -316,6 +322,7 @@ class BiblioIdentifier < HGVIdentifier
   end
 
   def updateFromPostRelatedArticle
+    self[:relatedArticleList] = []
     if @post[:relatedArticleList] && @post[:relatedArticleList].kind_of?(Hash)
       @post[:relatedArticleList].each_pair{|key, article|
         series    = article[:series]
@@ -332,14 +339,13 @@ class BiblioIdentifier < HGVIdentifier
   
   def updateEpiDoc
 
-    [:title, :journalTitle, :bookTitle, :type, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition].each{|key|
+    [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition].each{|key|
       attribute = nil
       path = XPATH[key]
       if path =~ /(.+)\/@([^\[\]\/]+)\Z/
         path = $1
         attribute = $2
       end
-      
       if self[key] && !self[key].strip.empty?
         element = @epiDoc.bulldozePath path
         unless element.nil?
@@ -350,8 +356,11 @@ class BiblioIdentifier < HGVIdentifier
           end
         end
       else
-        @epiDoc.elements.delete_all path
+        if path != '/bibl'
+          @epiDoc.elements.delete_all path
+        end
       end
+
     }
 
     [:authorList, :editorList].each{|key|
@@ -385,9 +394,9 @@ class BiblioIdentifier < HGVIdentifier
       index = {'pubPlace' => 1, 'publisher' => 1}
       self[:publisherList].each{|publisher|
         if publisher.value && !publisher.value.empty?
-          element = @epiDoc.bulldozePath basePath + publisher.type + "[@n='" + index[publisher.type].to_s + "']"
+          element = @epiDoc.bulldozePath basePath + publisher.publisherType + "[@n='" + index[publisher.publisherType].to_s + "']"
           element.text = publisher.value
-          index[publisher.type] += 1
+          index[publisher.publisherType] += 1
         end
       }
     end
@@ -408,7 +417,7 @@ class BiblioIdentifier < HGVIdentifier
      }
      
    }
-   
+
    @epiDoc.elements.delete_all XPATH[:note]
     if self[:note] && self[:note].kind_of?(Array)
       path = XPATH[:note][/\A(.+)\[@resp\]\Z/, 1]
@@ -504,27 +513,31 @@ class BiblioIdentifier < HGVIdentifier
   end
   
   def getRelatedItemElements biblioId
-    biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
-
-    git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
-    biblio = git / getBiblioPath(biblioId)
-    relatedItem = REXML::Document.new(biblio.data)
-
     result = []
-    
-    result[result.length] = if relatedItem.elements["//title[@type='short']"]
-      relatedItem.elements["//title[@type='short']"]
-    else
-      relatedItem.elements["//title"]
-    end
 
-    ["//author", "//pubPlace", "//date", "//editor"].each{|xpath|
-      if relatedItem.elements[xpath]
-        result[result.length] = relatedItem.elements[xpath]
+    begin
+      biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
+  
+      git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
+      biblio = git / getBiblioPath(biblioId)
+      relatedItem = REXML::Document.new(biblio.data)
+
+      result[result.length] = if relatedItem.elements["//title[@type='short']"]
+        relatedItem.elements["//title[@type='short']"]
+      else
+        relatedItem.elements["//title"]
       end
-    }
-
-    result
+  
+      ["//author", "//pubPlace", "//date", "//editor"].each{|xpath|
+        if relatedItem.elements[xpath]
+          result[result.length] = relatedItem.elements[xpath]
+        end
+      }
+      
+      return result
+    rescue
+      return result
+    end
   end
 
   def getBiblioPath biblioId
@@ -541,7 +554,7 @@ class BiblioIdentifier < HGVIdentifier
 
     def populateFromEpiDoc
 
-      populateFromEpiDocSimple :title
+      populateFromEpiDocSimple :articleTitle
       populateFromEpiDocSimple :journalTitle
       populateFromEpiDocSimple :bookTitle
       populateFromEpiDocSimple :supertype
@@ -615,15 +628,15 @@ class BiblioIdentifier < HGVIdentifier
         newbie = PublicationPerson.new
         indexFirst = indexLast = 0
         if element = person.elements['forename']
-          newbie.firstName = element.text
+          newbie.firstName = element.text.strip
           indexFirst = element.index_in_parent
         end
         if element = person.elements['surname']
-          newbie.lastName = element.text
+          newbie.lastName = element.text.strip
           indexLast = element.index_in_parent
         end
         if person.text
-          newbie.name = person.text
+          newbie.name = person.text.strip
         end
         if (indexLast != 0) && (indexFirst != 0) && indexLast > indexFirst
           newbie.swap = true
@@ -647,15 +660,13 @@ class BiblioIdentifier < HGVIdentifier
       epiDoc.elements.each(XPATH[:publisherList]){|element|
         type = element.name.to_s
         value = element.text
-        #place = publisher.elements["placeName"] ? publisher.elements["placeName"].text : ''
-        #name = publisher.elements["orgName"] ? publisher.elements["orgName"].text : ''
         self[:publisherList][self[:publisherList].length] = Publisher.new(type, value)
       }
     end
 
     def populateFromEpiDocNote
       epiDoc.elements.each(XPATH[:note]){|element|
-        if element.attributes.length == 1
+        if element.attributes.include?('resp')
           self[:note][self[:note].length] = Note.new(element.attributes['resp'], element.text)
         end
       }
@@ -693,8 +704,8 @@ class BiblioIdentifier < HGVIdentifier
     def populateFromEpiDocRelatedArticle
       epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
         series    = bibl.elements["title[@level='s'][@type='short']"] ? bibl.elements["title[@level='s'][@type='short']"].text : ''
-        volume    = bibl.elements["biblScope[@type='vol']"] ? bibl.elements["biblScoe[@type='vol']"].text : ''
-        number    = bibl.elements["biblScope[@type='number']"] ? bibl.elements["biblScoe[@type='number']"].text : ''
+        volume    = bibl.elements["biblScope[@type='vol']"] ? bibl.elements["biblScope[@type='vol']"].text : ''
+        number    = bibl.elements["biblScope[@type='number']"] ? bibl.elements["biblScope[@type='number']"].text : ''
         ddb       = bibl.elements["idno[@type='ddb']"] ? bibl.elements["idno[@type='ddb']"].text : ''
         tm        = bibl.elements["idno[@type='tm']"] ? bibl.elements["idno[@type='tm']"].text : ''
         inventory = bibl.elements["idno[@type='invNo']"] ? bibl.elements["idno[@type='invNo']"].text : ''
@@ -745,13 +756,15 @@ class BiblioIdentifier < HGVIdentifier
 
   class RelatedItem # appearsIn, reviews
     attr_accessor :pointer, :ignoreList, :ignored
-    def initialize pointer = '', ignoreList = array()
+    def initialize pointer = '', ignoreList = {}
       @pointer = pointer
       @ignoreList = ignoreList
       
       @ignored = ''
       ignoreList.each_pair {|key, value|
-        @ignored += key.titleize + ': ' + value + ', '
+        if !value.strip.empty?
+          @ignored += key.titleize + ': ' + value.strip + ', '
+        end
       }
       @ignored = @ignored[0..-3]
     end
@@ -794,15 +807,10 @@ class BiblioIdentifier < HGVIdentifier
   end
 
   class Publisher
-    attr_accessor :publisher_type, :value
-    def initialize publisher_type = '', value = ''
-      @publisher_type = type
+    attr_accessor :publisherType, :value
+    def initialize publisherType = '', value = ''
+      @publisherType = publisherType
       @value = value
-    end
-
-    def type
-      return @publisher_type
     end
   end
 end
-# java -jar ~/Desktop/x/saxon/saxonhe9-2-1-1j/saxon9he.jar  ~/tmp/sosol_biblio/tmp/biblioTest.xml ./start-html.xsl
