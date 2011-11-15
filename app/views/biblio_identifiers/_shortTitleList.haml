@@ -2,21 +2,21 @@
 - type = type.to_s 
 .multi{:id => 'multi_' + type, :class => 'multi_shortTitleList'}
   %h6
-    %label= I18n.t('biblio.label.responsibility')
     %label= I18n.t('biblio.label.shortTitle')
+    %label= I18n.t('biblio.label.responsibility')
   %ul.items{:id => 'multiItems_' + type}
     - shortTitleList.each_index do |index|
-    - responsibility = shortTitleList[index].responsibility
     - title          = shortTitleList[index].title
+    - responsibility = shortTitleList[index].responsibility
       %li
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
         = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][title]',          title,          :disabled => !@identifier.mutable?, :class => 'observechange title'
+        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
 
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
         %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + type}
-    %input.observechange{:id => type + '_responsibility'}
     %input.observechange{:id => type + '_title'}
+    %input.observechange{:id => type + '_responsibility'}
     
     %span{:onclick => "multiAddShortTitleList('" + type + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 

@@ -17,7 +17,10 @@
         %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + type}
     - easyList.each do |member|
-      %input.observechange{:id => type + '_' + member}
+      - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
+        = select_tag(type + '_' + member, options_for_select(optionList[member]))
+      - else
+        %input.observechange{:id => type + '_' + member}
     
     %span{:onclick => "multiAdd" + typeBig + "()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
