@@ -34,28 +34,13 @@ class DDBIdentifier < Identifier
   def xml_title_text
     self.id_attribute
   end
+
+  def self.collection_names
+    self.collection_names_hash.keys
+  end
   
   def self.collection_names_hash
-    self.collection_names
-    
-    unless defined? @collection_names_hash
-      @collection_names_hash = {TEMPORARY_COLLECTION => "SoSOL"}
-      response = 
-        NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(
-          "prefix dc: <http://purl.org/dc/terms/> construct { ?ddb dc:bibliographicCitation ?bibl} from <rmi://localhost/papyri.info#pi> where {?ddb dc:isPartOf <http://papyri.info/ddbdp> . ?ddb dc:bibliographicCitation ?bibl}\n&default-graph-uri=rmi://localhost/papyri.info#pi&format=rdfxml"
-        )
-      if response.code == '200'
-        @collection_names.each do |collection_name|
-          xpath = "/rdf:RDF/rdf:Description[@rdf:about=\"http://papyri.info/ddbdp/#{collection_name}\"]/dcterms:bibliographicCitation/text()"
-          human_name = 
-            NumbersRDF::NumbersHelper.process_numbers_server_response_body(
-              response.body, xpath).first
-          @collection_names_hash[collection_name] = human_name unless human_name.nil?
-        end
-      end
-    end
-    
-    return @collection_names_hash
+    CollectionIdentifier.collection_names_hash
   end
 
   # Returns file path to DDB Text XML - e.g. DDB_EpiDoc_XML/bgu/bgu.10/bgu.10.1901.xml
