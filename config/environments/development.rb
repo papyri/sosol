@@ -26,16 +26,6 @@ config.action_controller.perform_caching             = false
 config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = 
-#config.action_mailer.server_settings = 
-#ActionMailer::Base.smtp_settings =
-#{
-#	:address			=>	'smtp.gmail.com',
-#	:port					=>	587,
-#	:domain				=>	"www.mybit.net",
-#	:authentication	=>	:plain,
-#	:user_name			=>	'sosol.site@gmail.com',
-#	:password				=>	'protosite'
-#}
 {	
 	:address			=>	'localhost',
 	:port					=>	25,

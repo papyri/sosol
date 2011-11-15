@@ -111,9 +111,9 @@ class Identifier < ActiveRecord::Base
                                    options[:comment],
                                    options[:actor])
     self.modified = true
-    self.save!
+    self.save! unless self.id.nil?
     
-    self.publication.update_attribute(:updated_at, Time.now)
+    self.publication.update_attribute(:updated_at, Time.now) unless self.publication.nil?
     
     return commit_sha
   end
@@ -262,7 +262,11 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - identifier owner
   def owner
-    self.publication.owner
+    if !self.publication.nil?
+      return self.publication.owner
+    else
+      return nil
+    end
   end
   
   # Determines who can edit the identifier
@@ -306,9 +310,14 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - a String of the SHA1 of the commit
   def set_xml_content(content, options)
+    default_actor = nil
+    if((!self.owner.nil?) && (self.owner.class == User))
+      default_actor = self.owner.grit_actor
+    end
+
     options.reverse_merge!(
       :validate => true,
-      :actor    => ((self.owner.class == User) ? self.owner.grit_actor : nil))
+      :actor    => default_actor)
       
     content = before_commit(content)
 

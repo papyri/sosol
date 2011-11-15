@@ -58,6 +58,27 @@ class DdbIdentifiersController < IdentifiersController
     end
     @is_editor_view = true
   end
+ 
+  # PUT /publications/1/ddb_identifiers/1/rename
+  # Executes the actual rename of the 'SoSOL' temporary identifer to the correct final name - ex. BGU, O.Ber, etc
+  # Overrides base Identifier rename controller to special-case DDB collections
+  def rename
+    find_identifier
+    collection_name = params[:new_name].split('/').last.split(';').first
+    if CollectionIdentifier.new.has_collection?(collection_name)
+      begin
+        @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header])
+        flash[:notice] = "Identifier renamed."
+      rescue RuntimeError => e
+        flash[:error] = e.to_s
+      end
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :rename_review) and return
+    else
+      flash[:notice] = "Collection does not exist. Identifier NOT renamed. Create collection first."
+      redirect_to :controller => 'collection_identifiers', :action => 'update_review', :short_name => collection_name, :entry_identifier_id => @identifier.id
+    end
+  end
   
   # - PUT /publications/1/ddb_identifiers/1/update
   # - Update DDB Text via Leiden+
