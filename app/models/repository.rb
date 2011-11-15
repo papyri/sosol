@@ -221,7 +221,7 @@ class Repository
   # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
-      raise "Cannot commit directly to canonical repository"
+      raise "Cannot commit directly to canonical repository" unless (file == CollectionIdentifier.new.to_path)
     end
     
     index = @repo.index

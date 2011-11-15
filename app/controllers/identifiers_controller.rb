@@ -140,6 +140,7 @@ class IdentifiersController < ApplicationController
     end
   
     # Used to insert '**POSSIBLE ERROR**' in Leiden+ and XML edit page when there is a parse or validation error
+    # - this same logic found in DDBIdentifiers view's commentary.haml and edit.haml - javascript section
     def insert_error_here(content, line, column)
       # this routine is to place the error message below in the Leiden+ or XML returned when a parse error
       # occurs by taking the line and column from the message and giving the user the place in the content

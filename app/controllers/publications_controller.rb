@@ -127,28 +127,28 @@ class PublicationsController < ApplicationController
     #check that the list is in the correct form
     #clean up the ids
     id_list.map! do |id|
-      id.chomp!('/');
-      pos = id.index('papyri.info');
-      if pos
-        id = id[pos..id.length-1]
-      end
-      #check if there is a good response from the number server
-      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
-      
-      #puts id + " returned " + response.code # + response.body
-      if response.code != '200'
+      # FIXME: once biblio is loaded into numbers server, remove this unless clause
+      unless id =~ /#{NumbersRDF::NAMESPACE_IDENTIFIER}\/#{BiblioIdentifier::IDENTIFIER_NAMESPACE}/
+        id.chomp!('/');
+        id = NumbersRDF::NumbersHelper.identifier_url_to_identifier(id)
+        #check if there is a good response from the number server
+        response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
         
-        #bad format most likely
-        id = "Numbers Server Error, Check format--> " + id
-        list_is_good = false
-        
-      elsif !response.body.index('rdf:Description')
-        
-        #item does not exist most likely
-        #puts "text is bad"
-        id = "Not Found--> " + id
-        list_is_good = false
-        
+        #puts id + " returned " + response.code # + response.body
+        if response.code != '200'
+          
+          #bad format most likely
+          id = "Numbers Server Error, Check format--> " + id
+          list_is_good = false
+          
+        elsif !response.body.index('rdf:Description')
+          
+          #item does not exist most likely
+          #puts "text is bad"
+          id = "Not Found--> " + id
+          list_is_good = false
+          
+        end
       end
       id
     end
@@ -163,6 +163,10 @@ class PublicationsController < ApplicationController
       redirect_to :action => 'advanced_create'
       return
     end
+    
+    
+    #clean up any duplicated lines
+    id_list = id_list.uniq
     
     publication_from_identifiers(id_list)
   end
@@ -737,6 +741,17 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
     pub_name = @publication.title
     @publication.withdraw
+    
+    #send email to the user informing them of the withdraw
+    #EmailerMailer.deliver_send_withdraw_note(@publication.creator.email, @publication.title )
+    address = @publication.creator.email
+    if address && address.strip != ""
+      begin
+        EmailerMailer.deliver_send_withdraw_note(address, @publication.title )                       
+      rescue Exception => e
+        Rails.logger.error("Error sending withdraw email: #{e.class.to_s}, #{e.to_s}")
+      end
+    end
 
     flash[:notice] = 'Publication ' + pub_name + ' was successfully withdrawn.'
     expire_publication_cache

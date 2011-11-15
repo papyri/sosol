@@ -12,6 +12,7 @@
   <xsl:param name="filename_text"/>
   <xsl:param name="TM_text"/>
   <xsl:param name="HGV_text"/>
+  <xsl:param name="DDB_text"/>
   
   <!-- params for reprint -->
   <!-- <xsl:param name="reprint_from_text"/>
@@ -67,7 +68,15 @@
       <xsl:value-of select="$HGV_text"/>
     </xsl:copy>
   </xsl:template>
-  
+
+  <!-- Update <idno type='ddb-hybrid'> -->
+  <xsl:template match="tei:idno[@type='ddb-hybrid']">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:value-of select="$DDB_text"/>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- Suppress <idno type='ddb-perseus-style'> -->
   <xsl:template match="tei:idno[@type='ddb-perseus-style']"/>
   

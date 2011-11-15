@@ -1,0 +1,128 @@
+.clear
+  float: none
+  clear: both
+  display: block
+
+.swifty
+  cursor: pointer
+  cursor: hand
+  color: #162A5C
+  background-image: url(../images/menu-bar-right-arrow.png)
+  background-repeat: no-repeat
+  background-position: left
+  margin: 0.4em 0 0 0
+  padding: 0 0.6em 0 0.6em
+
+span.delete
+  cursor: pointer
+  cursor: hand
+  color: #162A5C
+
+span.move
+  cursor: move
+  color: #162A5C
+
+p.add span
+  cursor: default
+  color: #162A5C
+
+div#notice_expansionSet
+  display: none
+  position: absolute
+  width: 0
+  height: 0
+  left: -1000px
+  top: -1000px
+
+h4
+  cursor: pointer
+  cursor: hand
+  background-image: url(../images/menu_strip_down_arrow.png)
+  background-repeat: no-repeat
+  background-position: top right
+  border-top: solid 1px #c0c0c0
+  margin: 0.4em 0 0.4em 0
+
+div#edit h6,
+div#edit ul,
+div#edit p,
+div#edit li
+  display: block
+  float: none
+  clear: both
+
+div.content p.add
+  margin: 0
+
+div#edit label
+  width: 6em
+  float: left
+  display: block
+  margin: 0 0.2em 0 0  
+
+div#edit select,
+div#edit input,
+div#edit textarea
+  float: left
+  margin: 0 0.2em 0 0
+  width: 8em
+
+div#edit input,
+div#edit textarea
+  border: solid 1px #c0c0c0
+
+div#edit div#multi_relatedArticleList input
+  width: 6em
+
+div#edit div#multi_containerList input,
+div#edit div#multi_revieweeList input
+  width: 51%
+
+div#edit div#multi_editorList input,
+div#edit div#multi_authorList input,
+div#edit div#multi_publisherList input,
+div#edit div#multi_journalTitleShort input,
+div#edit div#multi_bookTitleShort input,
+div#edit div#multi_journalTitleShort input
+  width: 28%
+
+div#edit textarea
+  height: 2.4em
+  width: 75%
+
+div#edit div#multi_note textarea.responsibility
+  width: 30%
+
+div#edit div#multi_note textarea.annotation
+  width: 60.6%
+
+div#edit div.controlPanel
+  margin: 0.8em 0 0 0
+
+div#edit div.controlPanel label
+  width: auto
+
+/**** General ****/
+
+div#edit label#label_biblio_identifier_articleTitle,
+div#edit label#label_biblio_identifier_journalTitle,
+div#edit label#label_biblio_identifier_bookTitle,
+div#edit label#label_biblio_identifier_bookTitleShort,
+div#edit label#label_biblio_identifier_journalTitleShort,
+div#edit label#label_biblio_identifier_authorList,
+div#edit label#label_biblio_identifier_reedition,
+div#edit label#label_biblio_identifier_containerList,
+div#edit label#label_biblio_identifier_revieweeList
+  width: 16%
+
+div#edit input#biblio_identifier_articleTitle,
+div#edit input#biblio_identifier_journalTitle,
+div#edit input#biblio_identifier_bookTitle,
+div#edit input#biblio_identifier_reedition,
+div#edit input#biblio_identifier_containerList,
+div#edit input#biblio_identifier_revieweeList
+  width: 82%
+  
+div#edit div.multi
+  float: left
+  width: 82%

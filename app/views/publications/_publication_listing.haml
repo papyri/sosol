@@ -31,7 +31,9 @@
       
       %tr
         %td
-          = link_to publication.title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago"
+          - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")"
+          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago"
+          -# link_to publication.title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago"
           
           - if view_type && view_type == "community"
             = publication.owner.name

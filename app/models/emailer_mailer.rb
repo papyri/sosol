@@ -20,4 +20,18 @@ class EmailerMailer < ActionMailer::Base
   
   end
   
+  
+  def send_withdraw_note(addresses, publication_title) 
+    #send note to publication creator that the pub has been withdrawn
+    #they can checkout the comments to see if there is more info about the withdraw
+    from "SoSOL"
+    sent_on Time.now
+    
+    subject publication_title + " has been withdrawn."
+    recipients addresses
+    
+    body publication_title + " has been withdrawn from editorial review.  If you did not request this withdrawl, please check the publication's comments for more information. This may also represent downstream error. Please resubmit."
+    
+  end
+  
 end
