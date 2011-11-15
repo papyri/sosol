@@ -17,6 +17,7 @@ class CollectionIdentifier < Identifier
       self.set_xml_content(collection_xml_with_new_collection(short_name, long_name),
                            :comment => "Add collection #{short_name} = #{long_name}",
                            :actor => actor.grit_actor)
+      self.class.add_collection_to_collection_names_hash(short_name, long_name)
     end
   end
 
@@ -46,18 +47,25 @@ class CollectionIdentifier < Identifier
     end
   end
 
-  def collection_names_hash
-    collections = Hash.new()
-    rdf = REXML::Document.new(self.xml_content)
-    rdf.root.elements.each('rdf:Description') do |description_node|
-      about = description_node.attributes['rdf:about']
-      unless about.nil?
-        citation = REXML::XPath.first(description_node, 'dcterms:bibliographicCitation')
-        unless citation.nil?
-          collections[about.split('/').last] = citation.text
+  def self.collection_names_hash
+    unless defined? @collection_names_hash
+      @collection_names_hash = Hash.new()
+      rdf = REXML::Document.new(self.new.xml_content)
+      rdf.root.elements.each('rdf:Description') do |description_node|
+        about = description_node.attributes['rdf:about']
+        unless about.nil?
+          citation = REXML::XPath.first(description_node, 'dcterms:bibliographicCitation')
+          unless citation.nil?
+            @collection_names_hash[about.split('/').last] = citation.text
+          end
         end
       end
     end
-    return collections
+    return @collection_names_hash
+  end
+
+  def self.add_collection_to_collection_names_hash(short_name, long_name)
+    self.collection_names_hash
+    @collection_names_hash[short_name] = long_name
   end
 end
