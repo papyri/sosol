@@ -31,6 +31,25 @@ class AjaxProxyController < ApplicationController
 
   end
   
+  # Gets the HTTP response from PN solr query
+  def get_bibliography
+    searchText = (params[:searchText])
+    #replace space with + to match PN search
+    searchText = searchText.split(" ").join("+")
+
+    begin
+      built_uri = 'http://papyri.info/solrbiblio/select/?q=' + searchText + '&wt=json&start=0&rows=999&sort=date+asc,sort+asc'
+
+      response = Net::HTTP.get_response(URI("#{built_uri}"))
+
+      render :text => response.body
+    rescue ::Timeout::Error => e
+      render :text =>  "rescue timeout bibliography call" 
+    rescue
+      render :text =>  "rescue generic bibliography call"
+    end
+  end
+  
   def xsugar
     response = get_xsugar_response(params)
     

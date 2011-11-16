@@ -29,8 +29,6 @@ function insertFootnote(){
     
 function insertLinkExt(){
 
-  insertAsBibl = 'no';
-
   //get values from page
   linkExtURL = document.getElementById("insertlink_external").value;
   if(!(linkExtURL.match(/\S/))){ //check for any non-whitespace character
@@ -52,53 +50,6 @@ function insertLinkExt(){
     convertXML = '<ref target="http:\/\/' + linkExtURL.toLowerCase() + '">' + linkFreeText + '<\/ref>';
   }
 
-
-  if (document.bibl_check.insertlink_check_n.checked == true){
-    insertAsBibl = 'yes';
-  }
-
-  biblScope = '';
-
-  linkBsPage = document.getElementById("insertlink_bs_page").value;
-  if (linkBsPage.match(/\S/)){ //check for any non-whitespace character
-
-    biblScope = biblScope + '<biblScope type="pp">' + linkBsPage + '<\/biblScope>'
-    insertAsBibl = 'yes';
-  }
-
-  linkBsLine = document.getElementById("insertlink_bs_line").value;
-  if (linkBsLine.match(/\S/)){ //check for any non-whitespace character
-
-    biblScope = biblScope + '<biblScope type="ll">' + linkBsLine + '<\/biblScope>'
-    insertAsBibl = 'yes';
-  }
-
-  linkBsVol = document.getElementById("insertlink_bs_vol").value;
-  if (linkBsVol.match(/\S/)){ //check for any non-whitespace character
-
-    biblScope = biblScope + '<biblScope type="vol">' + linkBsVol + '<\/biblScope>'
-    insertAsBibl = 'yes';
-  }
-
-  linkBsIssue = document.getElementById("insertlink_bs_issue").value;
-  if (linkBsIssue.match(/\S/)){ //check for any non-whitespace character
-
-    biblScope = biblScope + '<biblScope type="issue">' + linkBsIssue + '<\/biblScope>'
-    insertAsBibl = 'yes';
-  }
-
-  linkBsChap = document.getElementById("insertlink_bs_chapter").value;
-  if (linkBsChap.match(/\S/)){ //check for any non-whitespace character
-
-    biblScope = biblScope + '<biblScope type="chap">' + linkBsChap + '<\/biblScope>'
-    insertAsBibl = 'yes';
-  }
-
-
-  if (insertAsBibl == 'yes'){
-    convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
-  }
-
   window.opener.getMarkUp(convertXML);
   
   closeHelper();
@@ -109,9 +60,6 @@ function insertLinkExt(){
 //###########################################################################################
     
 function insertLinkPN(){
-
-    editpass = "yes";
-    insertAsBibl = 'no';
 
     //get values from page
     linkVolume = document.getElementById("volume_number").value;
@@ -165,10 +113,30 @@ function insertLinkPN(){
       alert("The following value needs to be added to the insertLinkPN Javascript function - " + collectionType);
     }
       
-        
-    if (document.bibl_check.insertlink_check_n.checked == true){
-      insertAsBibl = 'yes';
+    window.opener.getMarkUp(convertXML);
+    
+    closeHelper();
+  }
+   
+//###########################################################################################
+// insertLinkPN - insert a link to PN entry markup into commentary input form
+//###########################################################################################
+    
+function insertBiblio(){
+
+    linkFreeText = document.getElementById("insertlink_freetext").value;
+    if(!(linkFreeText.match(/\S/))){ //check for any non-whitespace character
+      alert("You must provide text for the link");
+      return;
     }
+    
+    linkBiblioID = document.getElementById("biblio_selected").value;
+    if(!(linkBiblioID.match(/\S/))){ //check for any non-whitespace character
+      alert("You must select a bibliography for the link");
+      return;
+    }
+    pnRef = "biblio/";
+    convertXML = '<ref target="http:\/\/papyri.info\/' + pnRef + linkBiblioID + '">' + linkFreeText + '<\/ref>';
 
     biblScope = '';
     
@@ -176,46 +144,38 @@ function insertLinkPN(){
     if (linkBsPage.match(/\S/)){ //check for any non-whitespace character
       
       biblScope = biblScope + '<biblScope type="pp">' + linkBsPage + '<\/biblScope>'
-      insertAsBibl = 'yes';
     }
 
     linkBsLine = document.getElementById("insertlink_bs_line").value;
     if (linkBsLine.match(/\S/)){ //check for any non-whitespace character
       
       biblScope = biblScope + '<biblScope type="ll">' + linkBsLine + '<\/biblScope>'
-      insertAsBibl = 'yes';
     }
 
     linkBsVol = document.getElementById("insertlink_bs_vol").value;
     if (linkBsVol.match(/\S/)){ //check for any non-whitespace character
       
       biblScope = biblScope + '<biblScope type="vol">' + linkBsVol + '<\/biblScope>'
-      insertAsBibl = 'yes';
     }
 
     linkBsIssue = document.getElementById("insertlink_bs_issue").value;
     if (linkBsIssue.match(/\S/)){ //check for any non-whitespace character
       
       biblScope = biblScope + '<biblScope type="issue">' + linkBsIssue + '<\/biblScope>'
-      insertAsBibl = 'yes';
     }
 
     linkBsChap = document.getElementById("insertlink_bs_chapter").value;
     if (linkBsChap.match(/\S/)){ //check for any non-whitespace character
       
       biblScope = biblScope + '<biblScope type="chap">' + linkBsChap + '<\/biblScope>'
-      insertAsBibl = 'yes';
     }
     
-    
-    if (insertAsBibl == 'yes'){
-      convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
-    }
+    convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
 
     window.opener.getMarkUp(convertXML);
     
     closeHelper();
-  }
+  }   
    
 //###########################################################################################
 // closeHelper - close the helper input window
