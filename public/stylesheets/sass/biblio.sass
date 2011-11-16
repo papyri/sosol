@@ -34,7 +34,7 @@ div#notice_expansionSet
   left: -1000px
   top: -1000px
 
-h4
+div#edit h4
   cursor: pointer
   cursor: hand
   background-image: url(../images/menu_strip_down_arrow.png)
@@ -72,7 +72,12 @@ div#edit textarea
   border: solid 1px #c0c0c0
 
 div#edit div#multi_relatedArticleList input
-  width: 6em
+  width: 12%
+
+div#edit div#multi_relatedArticleList h6 label
+  width: 12%
+  border: solid 1px transparent
+  text-align: center
 
 div#edit div#multi_containerList input,
 div#edit div#multi_revieweeList input
@@ -81,10 +86,18 @@ div#edit div#multi_revieweeList input
 div#edit div#multi_editorList input,
 div#edit div#multi_authorList input,
 div#edit div#multi_publisherList input,
-div#edit div#multi_journalTitleShort input,
 div#edit div#multi_bookTitleShort input,
 div#edit div#multi_journalTitleShort input
   width: 28%
+
+div#edit div#multi_editorList h6 label,
+div#edit div#multi_authorList h6 label,
+div#edit div#multi_publisherList h6 label,
+div#edit div#multi_journalTitleShort h6 label,
+div#edit div#multi_bookTitleShort h6 label
+  width: 28%
+  text-align: center
+  border: solid 1px transparent
 
 div#edit textarea
   height: 2.4em
@@ -95,6 +108,16 @@ div#edit div#multi_note textarea.responsibility
 
 div#edit div#multi_note textarea.annotation
   width: 60.6%
+
+div#edit div#multi_note h6 label.responsibility
+  width: 30%
+  text-align: center
+  border: solid 1px transparent
+
+div#edit div#multi_note h6 label.annotation
+  width: 60.6%
+  text-align: center
+  border: solid 1px transparent
 
 div#edit div.controlPanel
   margin: 0.8em 0 0 0

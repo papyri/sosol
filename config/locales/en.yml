@@ -3,6 +3,7 @@ en:
     multiDelete: delete
     multiMove: move
     multiAdd: ✓
+    thisDataCannotBeEdited: This data cannot be edited
 
   label:
     expandAll: Expland all
@@ -26,6 +27,7 @@ en:
       editorial: Editorial
       extra: Extra
       reference: Reference
+      original: Original BP Record
 
     label:
       articleTitle: Article
