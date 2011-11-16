@@ -165,6 +165,7 @@ class BiblioIdentifier < HGVIdentifier
     self[:revieweeList] = Array.new
     self[:containerList] = Array.new
     self[:relatedArticleList] = Array.new
+    self[:originalBp] = Hash.new
     
     populateFromEpiDoc
   end
@@ -599,6 +600,8 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocContainer
      
       populateFromEpiDocRelatedArticle
+     
+      populateFromEpiDocOriginalBp
 
     end
 
@@ -711,6 +714,23 @@ class BiblioIdentifier < HGVIdentifier
         inventory = bibl.elements["idno[@type='invNo']"] ? bibl.elements["idno[@type='invNo']"].text : ''
 
         self[:relatedArticleList][self[:relatedArticleList].length] = RelatedArticle.new(series, volume, number, ddb, tm, inventory)
+      }
+    end
+
+    def populateFromEpiDocOriginalBp
+      {
+        'Index'         => "/bibl/seg[@type='original'][@subtype='index']",
+        'Index bis'     => "/bibl/seg[@type='original'][@subtype='indexBis']",
+        'Titre'         => "/bibl/seg[@type='original'][@subtype='titre']",
+        'Publication'   => "/bibl/seg[@type='original'][@subtype='publication']",
+        'Resumé'        => "/bibl/note[@resp='#BP']",
+        'S.B. & S.E.G.' => "/bibl/seg[@type='original'][@subtype='sbSeg']",
+        'C.R.'          => "/bibl/seg[@type='original'][@subtype='cr']"
+      }.each_pair{|title, xpath|
+        element = epiDoc.elements[xpath]
+        if element && element.text && !element.text.strip.empty?
+          self[:originalBp][title] = element.text.strip
+        end
       }
     end
   

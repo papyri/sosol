@@ -100,6 +100,17 @@
         = render :partial => 'biblio_identifiers/relatedArticleList'
         .clear
         .swifty.quickSave=I18n.t('label.quickSave')
+
+      - if @identifier[:originalBp] && @identifier[:originalBp].length > 0
+        %h4.category.original
+          %a{:name => 'Original'}=I18n.t('biblio.legend.original')
+        .editbox.original{:style => 'display: none;'}
+          - @identifier[:originalBp].each_pair do |title, value|
+            =title + ': '
+            =value
+            %br
+          %br
+          = '(' + I18n.t('tooltip.thisDataCannotBeEdited') + ')'
       
       .controlPanel
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
