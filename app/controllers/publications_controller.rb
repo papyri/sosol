@@ -14,7 +14,11 @@ class PublicationsController < ApplicationController
     #enforce creation order
     has_meta = false
     has_text = false
+    has_biblio = false
     @publication.identifiers.each do |i|
+      if i.class.to_s == "BiblioIdentifier"
+        has_biblio = true
+      end
       if i.class.to_s == "HGVMetaIdentifier"
         has_meta = true
       end
@@ -34,6 +38,10 @@ class PublicationsController < ApplicationController
     end
     #TODO - is Biblio needed?
     @creatable_identifiers.delete("HGVBiblioIdentifier")
+    @creatable_identifiers.delete("BiblioIdentifier")
+    if has_biblio
+      @creatable_identifiers = []
+    end
     
     #only let user create new for non-existing        
     @publication.identifiers.each do |i|
