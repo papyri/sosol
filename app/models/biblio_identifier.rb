@@ -54,6 +54,18 @@ class BiblioIdentifier < HGVIdentifier
     :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
   }
 
+  def id_attribute
+    return "b#{name}"
+  end
+
+  def n_attribute
+    return ''
+  end
+
+  def xml_title_text
+    return ''
+  end
+
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
