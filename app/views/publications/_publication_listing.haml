@@ -37,7 +37,7 @@
           
           - if view_type && view_type == "community"
             = publication.owner.name
-            
+        
         -# -------------META---------------------
         %td{:class=>"identifier_td"}
           - meta_ids = publication.identifiers.collect do |ids|
@@ -46,12 +46,12 @@
               
           - meta_ids = meta_ids.compact
           
-          - if meta_ids.length == 0
+          - if (meta_ids.length == 0) && publication.creatable_identifiers.include?("HGVMetaIdentifier")
             - class_type = "HGVMetaIdentifier"
             - link_id = "HGVMetaIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-          - else
+          - elsif meta_ids.length > 0
             = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
           
           - if meta_ids.length > 1
@@ -64,12 +64,12 @@
             - if ids.type == "DDBIdentifier"
               - ids
           - text_ids = text_ids.compact
-          - if text_ids.length == 0
+          - if (text_ids.length == 0) && publication.creatable_identifiers.include?("DDBIdentifier")
             - class_type = "DDBIdentifier"
             - link_id = "DDBIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-          - else
+          - elsif text_ids.length > 0
             = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
 
           - if text_ids.length > 1
@@ -83,12 +83,12 @@
             - if ids.type == "HGVTransIdentifier"
               - ids
           - trans_ids = trans_ids.compact
-          - if trans_ids.length == 0
+          - if (trans_ids.length == 0) && publication.creatable_identifiers.include?("HGVTransIdentifier")
             - class_type = "HGVTransIdentifier"
             - link_id = "HGVTransIdentifier_" + publication.id.to_s
             - create_type = 'Create new'            
             = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-          - else
+          - elsif trans_ids.length > 0
             = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
 
           - if trans_ids.length > 1
