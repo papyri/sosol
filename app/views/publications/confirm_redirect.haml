@@ -1,0 +1,16 @@
+#main.site
+  %h2 
+    = @publication.title
+    - if !@publication.status.nil? && @publication.status != ''
+      == (#{@publication.status})
+      
+  -# render :partial => "common/flash_all"    
+
+  %h2
+    Are you sure you want to redirect this bibliographical entry to another one? This action will delete all data of the current record and replace it with a pointer to the other record, which should contain all information that needs to be preserved. The redirection cannot be undone.
+  - form_tag :controller => 'publications', :action => 'remit'  do 
+    = text_field_tag :redirect, @identifier[:redirect]
+    %p{:style => 'color: #3C2217; font: 300% Georgia,serif;'}
+      = submit_tag 'Redirect', :class => 'redirect', :id => 'redirect_button', :disabled => !@identifier.mutable?, :style => 'font-family: Georgia,serif; color: maroon; text-decoration: underline; background: none; border: none; cursor: hand; cursor: pointer;'
+      or
+      = link_to "Cancel", @publication, :style => 'color: maroon;'

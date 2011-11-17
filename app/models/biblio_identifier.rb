@@ -51,7 +51,9 @@ class BiblioIdentifier < HGVIdentifier
     :note => "/bibl/note[@resp]",
     
     :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl",
-    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
+    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl",
+    
+    :redirect => "/bibl/ref[@type='duplicate-of']"
   }
 
   def to_path
@@ -166,16 +168,53 @@ class BiblioIdentifier < HGVIdentifier
     self[:containerList] = Array.new
     self[:relatedArticleList] = Array.new
     self[:originalBp] = Hash.new
+    self[:redirect] = ''
     
     populateFromEpiDoc
   end
- 
+
   # Returns a String of the SHA1 of the commit
   def set_epidoc(attributes_hash, comment)
     epiDocXml = updateFromPost(attributes_hash)
 
     Rails.logger.info(epiDocXml)
     self.set_xml_content(epiDocXml, :comment => comment)
+  end
+
+  # Returns a String of the SHA1 of the commit
+  def set_redirect redirectId, comment
+    redirectId = redirectId[/\A[^\-\d]*([\-\d]+)\Z/, 1]
+
+    if getBiblioRecordFromMaster(redirectId)
+      @epiDoc = self.epiDoc
+  
+      @epiDoc.elements.delete_all '/bibl/*'
+      
+      bibl = @epiDoc.elements['/bibl']
+      
+      ['type', 'subtype', 'lang'].each {|key|
+        bibl.attributes.delete key
+      }
+
+      # build analogously to <ref n="p.louvre;1;4" type="reprint-in">P.Louvre 1.4</ref>
+      ref = REXML::Element.new('ref')
+      ref.attributes['n'] = redirectId
+      ref.attributes['type'] = 'duplicate-of'
+      ref.text = redirectId
+      bibl.add_element ref
+      
+      self[:redirect] = redirectId
+
+      epiDocXml = toXmlString(@epiDoc)
+      Rails.logger.info(epiDocXml)
+      self.set_xml_content(epiDocXml, :comment => comment)
+    else
+      raise 'Error: invalid biblio id #' + redirectId
+    end
+  end
+  
+  def dataRedirect?
+    self[:redirect] && self[:redirect].kind_of?(String) && !self[:redirect].strip.empty?
   end
 
   def updateFromPost params
@@ -188,7 +227,7 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostSimple :supertype
     updateFromPostSimple :subtype
     updateFromPostSimple :language
-    
+
     updateFromPostSimple :bp
     updateFromPostSimple :bpOld
     updateFromPostSimple :idp
@@ -211,27 +250,27 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostSimple :link
     updateFromPostSimple :fasc
     updateFromPostSimple :reedition
-    
+
     updateFromPostPerson :authorList
     updateFromPostPerson :editorList
-    
+
     updateFromPostShortTitle :journalTitleShort
     updateFromPostShortTitle :bookTitleShort
-    
+
     updateFromPostNote
-   
+
     updateFromPostPublisher
-  
+
     # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Reviewee:0x12983349> 
     updateFromPostReviewee
-   
+
     # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Container:0x2341952a> 
     updateFromPostContainer
-   
+
     updateFromPostRelatedArticle
 
     updateEpiDoc
-    
+
     # write back to a string
     modified_xml_content = toXmlString @epiDoc
 
@@ -517,11 +556,7 @@ class BiblioIdentifier < HGVIdentifier
     result = []
 
     begin
-      biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
-  
-      git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
-      biblio = git / getBiblioPath(biblioId)
-      relatedItem = REXML::Document.new(biblio.data)
+      relatedItem = REXML::Document.new(getBiblioRecordFromMaster(biblioId))
 
       result[result.length] = if relatedItem.elements["//title[@type='short']"]
         relatedItem.elements["//title[@type='short']"]
@@ -538,6 +573,18 @@ class BiblioIdentifier < HGVIdentifier
       return result
     rescue
       return result
+    end
+  end
+  
+  def getBiblioRecordFromMaster biblioId
+    biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
+
+    begin
+      git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
+      biblio = git / getBiblioPath(biblioId)
+      return biblio.data
+    rescue
+      return nil
     end
   end
 
@@ -584,6 +631,7 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :link
       populateFromEpiDocSimple :fasc
       populateFromEpiDocSimple :reedition
+      populateFromEpiDocSimple :redirect
 
       populateFromEpiDocPerson :authorList
       populateFromEpiDocPerson :editorList

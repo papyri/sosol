@@ -187,7 +187,10 @@
       -#= button_to "Withdraw from Editorial Review",  :controller => 'publications', :id => @publication.id, :action => "withdraw"
       = button_to("Withdraw from Editorial Review", options = {:controller => 'publications', :id => @publication.id, :action => "withdraw"}, html_options = {:class => "submit"})
       %br
-      
+
+    - if @offer_redirect
+      = link_to "Redirect", :controller => 'publications', :id => @publication.id, :action => "confirm_redirect"
+      %br
     - if @allow_delete
       = link_to "Delete", :controller => 'publications', :id => @publication.id, :action => "confirm_delete"
       %br

@@ -1,120 +1,125 @@
 .site.biblioSite
   = render :partial => 'identifiers/header'
-  %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
-  %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
-
-  #edit
-    - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
-      = f.error_messages
-
-      %h4.category.meta
-        %a{:name => 'Meta'}=I18n.t('biblio.legend.meta')
-      .editbox.meta{:style => 'display: none;'}
-        = f.select :supertype, options_for_select([])
-        = f.select :subtype, options_for_select([])
-        = f.select :language
-        .clear
-        = f.text_field :bp
-        = f.text_field :bpOld
-        = f.text_field :idp
-        .clear
-        = f.text_field :isbn
-        = f.text_field :sd
-        = f.text_field :checklist
-        .clear
-        .swifty.quickSave=I18n.t('label.quickSave')
-
-      %h4.category.general
-        %a{:name => 'Analytic'}=I18n.t('biblio.legend.general')
-      .editbox.general
-        = f.text_field :articleTitle
-        .clear
-        = f.text_field :journalTitle
-        .clear
-        = f.label :journalTitleShort
-        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :journalTitleShort}
-        .clear
-        = f.text_field :bookTitle
-        .clear
-        = f.label :bookTitleShort
-        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :bookTitleShort}
-        .clear
-        = f.label :authorList
-        = render :partial => 'biblio_identifiers/authorList'
-        .clear
-        .swifty.quickSave=I18n.t('label.quickSave')
-
-      %h4.category.editorial
-        %a{:name => 'Editorial'}=I18n.t('biblio.legend.editorial')
-      .editbox.editorial{:style => 'display: none;'}
-        = f.text_field :date
-        = f.text_field :edition
-        = f.text_field :issue
-        .clear
-        = f.text_field :distributor
-        .clear
-        = f.label :editorList
-        = render :partial => 'biblio_identifiers/editorList'
-        .clear
-        = f.label :publisherList
-        = render :partial => 'biblio_identifiers/publisherList', :locals => {:publisherTypeOptions => f.make_options(:publisherType)}
-        .clear
-        .swifty.quickSave=I18n.t('label.quickSave')
-
-      %h4.category.extra
-        %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
-      .editbox.extra{:style => 'display: none;'}
-        = f.text_field :paginationPreface
-        = f.text_field :paginationTotal
-        .clear
-        = f.text_field :paginationFrom
-        = f.text_field :paginationTo
-        .clear
-        = f.text_field :no
-        = f.text_field :tome
-        .clear
-        = f.text_field :col
-        = f.text_field :link
-        .clear
-        = f.text_field :fasc
-        .clear
-        = f.text_area :illustration
-        .clear
-        = f.label :note
-        = render :partial => 'biblio_identifiers/note'
-        .clear
-        .swifty.quickSave=I18n.t('label.quickSave')
-
-      %h4.category.reference
-        %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
-      .editbox.reference{:style => 'display: none;'}
-        = f.text_field :reedition
-        .clear
-        = f.label :containerList
-        = render :partial => 'biblio_identifiers/containerList'
-        .clear
-        = f.label :revieweeList
-        = render :partial => 'biblio_identifiers/revieweeList'
-        .clear
-        = f.label :relatedArticleList
-        = render :partial => 'biblio_identifiers/relatedArticleList'
-        .clear
-        .swifty.quickSave=I18n.t('label.quickSave')
-
-      - if @identifier[:originalBp] && @identifier[:originalBp].length > 0
-        %h4.category.original
-          %a{:name => 'Original'}=I18n.t('biblio.legend.original')
-        .editbox.original{:style => 'display: none;'}
-          - @identifier[:originalBp].each_pair do |title, value|
-            =title + ': '
-            =value
+  - if @identifier.dataRedirect?
+    %p
+      =I18n.t('biblio.message.redirect')
+      %a{:href => 'http://papyri.info/biblio/' + @identifier[:redirect], :title => 'View in PN'}='Biblio ' + @identifier[:redirect]
+  - else
+    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
+  
+    #edit
+      - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
+        = f.error_messages
+  
+        %h4.category.meta
+          %a{:name => 'Meta'}=I18n.t('biblio.legend.meta')
+        .editbox.meta{:style => 'display: none;'}
+          = f.select :supertype, options_for_select([])
+          = f.select :subtype, options_for_select([])
+          = f.select :language
+          .clear
+          = f.text_field :bp
+          = f.text_field :bpOld
+          = f.text_field :idp
+          .clear
+          = f.text_field :isbn
+          = f.text_field :sd
+          = f.text_field :checklist
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+  
+        %h4.category.general
+          %a{:name => 'Analytic'}=I18n.t('biblio.legend.general')
+        .editbox.general
+          = f.text_field :articleTitle
+          .clear
+          = f.text_field :journalTitle
+          .clear
+          = f.label :journalTitleShort
+          = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :journalTitleShort}
+          .clear
+          = f.text_field :bookTitle
+          .clear
+          = f.label :bookTitleShort
+          = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :bookTitleShort}
+          .clear
+          = f.label :authorList
+          = render :partial => 'biblio_identifiers/authorList'
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+  
+        %h4.category.editorial
+          %a{:name => 'Editorial'}=I18n.t('biblio.legend.editorial')
+        .editbox.editorial{:style => 'display: none;'}
+          = f.text_field :date
+          = f.text_field :edition
+          = f.text_field :issue
+          .clear
+          = f.text_field :distributor
+          .clear
+          = f.label :editorList
+          = render :partial => 'biblio_identifiers/editorList'
+          .clear
+          = f.label :publisherList
+          = render :partial => 'biblio_identifiers/publisherList', :locals => {:publisherTypeOptions => f.make_options(:publisherType)}
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+  
+        %h4.category.extra
+          %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
+        .editbox.extra{:style => 'display: none;'}
+          = f.text_field :paginationPreface
+          = f.text_field :paginationTotal
+          .clear
+          = f.text_field :paginationFrom
+          = f.text_field :paginationTo
+          .clear
+          = f.text_field :no
+          = f.text_field :tome
+          .clear
+          = f.text_field :col
+          = f.text_field :link
+          .clear
+          = f.text_field :fasc
+          .clear
+          = f.text_area :illustration
+          .clear
+          = f.label :note
+          = render :partial => 'biblio_identifiers/note'
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+  
+        %h4.category.reference
+          %a{:name => 'Reference'}=I18n.t('biblio.legend.reference')
+        .editbox.reference{:style => 'display: none;'}
+          = f.text_field :reedition
+          .clear
+          = f.label :containerList
+          = render :partial => 'biblio_identifiers/containerList'
+          .clear
+          = f.label :revieweeList
+          = render :partial => 'biblio_identifiers/revieweeList'
+          .clear
+          = f.label :relatedArticleList
+          = render :partial => 'biblio_identifiers/relatedArticleList'
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+  
+        - if @identifier[:originalBp] && @identifier[:originalBp].length > 0
+          %h4.category.original
+            %a{:name => 'Original'}=I18n.t('biblio.legend.original')
+          .editbox.original{:style => 'display: none;'}
+            - @identifier[:originalBp].each_pair do |title, value|
+              =title + ': '
+              =value
+              %br
             %br
-          %br
-          = '(' + I18n.t('tooltip.thisDataCannotBeEdited') + ')'
-      
-      .controlPanel
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-        = hidden_field_tag 'expansionSet', flash[:expansionSet]
+            = '(' + I18n.t('tooltip.thisDataCannotBeEdited') + ')'
+        
+        .controlPanel
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
 = javascript_include_tag 'edit_mask'
 = javascript_include_tag 'biblio'

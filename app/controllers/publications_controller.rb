@@ -1,7 +1,7 @@
 class PublicationsController < ApplicationController
   ##layout 'site'
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
+  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :confirm_redirect, :destroy, :remit, :submit]
   
   def new
   end
@@ -475,6 +475,8 @@ class PublicationsController < ApplicationController
 
     @show_submit = allow_submit?
     
+    # redirect feature is only available for biblio records
+    @offer_redirect = @publication.entry_identifier.class == BiblioIdentifier
     #only let creator delete
     @allow_delete = @current_user.id == @publication.creator.id 
     #only delete new or editing
@@ -762,6 +764,11 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id])
   end
   
+  def confirm_redirect
+    @publication = Publication.find(params[:id])
+    @identifier = @publication.entry_identifier
+  end
+  
   # DELETE 
   def destroy
     @publication = Publication.find(params[:id])
@@ -773,6 +780,30 @@ class PublicationsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to dashboard_url }
       
+    end
+  end
+   
+  def remit
+    begin
+      # retrieve
+      @publication = Publication.find(params[:id])
+      @identifier = @publication.entry_identifier
+      @comment = 'redirect biblio record #' + @identifier[:idp] + ' to #' + params[:redirect]
+      
+      # redirect
+      commit_sha = @identifier.set_redirect(params[:redirect], @comment)
+      
+      # comment
+      Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @publication.id, :comment => @comment, :reason => "commit" } ).save
+
+      expire_publication_cache
+      flash[:notice] = 'Bibliography record ' + @identifier[:idp] + ' was successfully redirected to ' + @identifier[:redirect] + '.'
+    rescue
+      flash[:error] = 'Error: Bibliography record ' + @identifier[:idp] + ' could not be redirected to ' + @identifier[:redirect] + '.'
+    end
+
+    respond_to do |format|
+      format.html { redirect_to dashboard_url }
     end
   end
   

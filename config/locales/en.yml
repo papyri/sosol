@@ -89,6 +89,9 @@ en:
       number: Number
       publisherType: Type
       value: Value
+      redirect: Redirect Id
+    message:
+      redirect: This bibliographic item has been redirected to 
 
     type:
       book: Book
