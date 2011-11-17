@@ -38,6 +38,7 @@
           - if view_type && view_type == "community"
             = publication.owner.name
         
+        - creatable_identifiers = publication.creatable_identifiers
         -# -------------META---------------------
         %td{:class=>"identifier_td"}
           - meta_ids = publication.identifiers.collect do |ids|
@@ -46,7 +47,7 @@
               
           - meta_ids = meta_ids.compact
           
-          - if (meta_ids.length == 0) && publication.creatable_identifiers.include?("HGVMetaIdentifier")
+          - if (meta_ids.length == 0) && creatable_identifiers.include?("HGVMetaIdentifier")
             - class_type = "HGVMetaIdentifier"
             - link_id = "HGVMetaIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
@@ -64,7 +65,7 @@
             - if ids.type == "DDBIdentifier"
               - ids
           - text_ids = text_ids.compact
-          - if (text_ids.length == 0) && publication.creatable_identifiers.include?("DDBIdentifier")
+          - if (text_ids.length == 0) && creatable_identifiers.include?("DDBIdentifier")
             - class_type = "DDBIdentifier"
             - link_id = "DDBIdentifier" + publication.id.to_s
             - create_type = 'Create new'            
@@ -83,7 +84,7 @@
             - if ids.type == "HGVTransIdentifier"
               - ids
           - trans_ids = trans_ids.compact
-          - if (trans_ids.length == 0) && publication.creatable_identifiers.include?("HGVTransIdentifier")
+          - if (trans_ids.length == 0) && creatable_identifiers.include?("HGVTransIdentifier")
             - class_type = "HGVTransIdentifier"
             - link_id = "HGVTransIdentifier_" + publication.id.to_s
             - create_type = 'Create new'            
