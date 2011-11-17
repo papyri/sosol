@@ -1406,6 +1406,54 @@ class Publication < ActiveRecord::Base
     # sort in descending date order for display
     return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
   end
+
+  def creatable_identifiers
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    has_biblio = false
+    self.identifiers.each do |i|
+      if i.class.to_s == "BiblioIdentifier"
+        has_biblio = true
+      end
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    #TODO - is Biblio needed?
+    creatable_identifiers.delete("HGVBiblioIdentifier")
+    creatable_identifiers.delete("BiblioIdentifier")
+    if has_biblio
+      creatable_identifiers = []
+    end
+    
+    #only let user create new for non-existing        
+    self.identifiers.each do |i|
+      creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+
+    return creatable_identifiers
+  end
   
   protected
     #Returns title string in form acceptable to  ".git/refs/"
