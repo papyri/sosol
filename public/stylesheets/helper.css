@@ -75,6 +75,13 @@ font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 }
 
+#bibliosize {
+height:7em;
+width:75em;/*set close to selector size*/
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
 #type_left {
 position:relative;
 top:0.63em;

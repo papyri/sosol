@@ -41,26 +41,11 @@
     #gapsize{:class => "helperpop"}
       = render :partial => 'commentary_markup_warn'
       %h3 Create Link to PN Publication
-      %h4 Regular or Bibliograpy Style
       = render :partial => "publications/publication_selector", :locals => { :emend => :helper }
+      %h7 Free Form Link Text
       #extent_left
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_freetext", :size => "40"}Link Text
-      #extent_left
-        %br
-        %form{:name => "bibl_check"}
-          %input{ :type => "checkbox", :class => "insertlink_check_c", :id => "insertlink_bibl", :name => "insertlink_check_n", :value => "insertlink_bibl_v", :enabled => "true"}Check if this is a bibliograpy link but no other data needed
-          %br
-      #extent_left
-        %h4 If any of the text boxes below are filled in, the helper will assume you want a bibliography style link
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_page", :size => "10"}Bibliograpy Page
-        %br
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_line", :size => "10"}Bibliograpy Line
-        %br
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_vol", :size => "10"}Bibliograpy Volume
-        %br
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_issue", :size => "10"}Bibliograpy Issue
-        %br
-        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_chapter", :size => "10"}Bibliograpy Chapter
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_freetext", :size => "40"}
+      %br
       #button_left
         %button{ :type => "button", :onclick=> "insertLinkPN()" }Insert
         &nbsp
