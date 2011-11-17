@@ -10,8 +10,8 @@ class UserController < ApplicationController
   
   def leave_community
     @community = Community.find(params[:com_id])
-    
   end
+  
   #default view of stats is only for the current user, see below for all users
   def usage_stats    
     @users = Array.new()
@@ -22,6 +22,10 @@ class UserController < ApplicationController
     @users = User.find(:all, :order => "full_name ASC")
   end
 
+  #Gets info for the current user in json format.
+  #*Returns*
+  #- User model for the current user.
+  #- nil if no user is logged in.
   def info
     render :json => @current_user.nil? ? {} : @current_user
   end
@@ -89,25 +93,8 @@ class UserController < ApplicationController
     @boards = Board.find(:all)
   end
   
-#  def index      
-#   if @current_user.admin
-#     @users = User.find(:all)
-#   else
-#     render :file => 'public/403.html', :status => '403'
-#   end
-#  end
   
-#  def ask_language_prefs
-#    @langs = @current_user.language_prefs 
-# end
-
-#  def set_language_prefs
-#    @current_user.language_prefs =  params[:languages]
-#    @current_user.save
-#    
-#    redirect_to :controller => :user, :action => "dashboard"
-#  end  
-  
+  #Entry point for dashboards. Will redirect to board_dashboard if given board_id. Will redirect to user_dashboard if no board_id. Will render old dashboard if given old as parameter.
   def dashboard
     #don't let someone who isn't signed in go to the dashboard
     if @current_user == nil
@@ -115,9 +102,10 @@ class UserController < ApplicationController
       return
     end
     
+    #show the "new" dashboard unless the specfically request the old version
     unless params[:old]
     
-      
+      #redirect to new dashboards
       if params[:board_id]
         redirect_to :action => "board_dashboard", :board_id => params[:board_id]
         return
@@ -128,6 +116,7 @@ class UserController < ApplicationController
       
     end
     
+    #show the old dashboard
     
     #below selects publications to show in standard user data section of dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
@@ -186,25 +175,20 @@ class UserController < ApplicationController
     #render "dashboard_user"
   end
   
+  #Finds publications created by current user and are not part of a community.
   def user_dashboard
-    
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     #assuming 4 find calls faster than the above, then splits
-=begin
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-=end
+
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
         
-    #render :layout => 'header_footer'
     @show_events = true
   end
   
+  #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
     cid = params[:community_id]
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
@@ -218,7 +202,7 @@ class UserController < ApplicationController
   
   
   
-  #shows all publications for a user no matter status(excepting archived) or community 
+  #Shows all publications for the current user (excepting archived status). 
   def user_complete_dashboard
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
@@ -226,9 +210,9 @@ class UserController < ApplicationController
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
        
     render 'user_dashboard'
-    #render :layout => 'header_footer'
   end
   
+  #Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
       @board = Board.find_by_id(params[:board_id])
 
@@ -349,10 +333,24 @@ Developer:
     
 =end
   
+  
+  
+  #Admin Settings allow certain rights to these groups.
+  #- Master Admin:
+  #  Can set all user admin rights
+  #- Community Master Admin:
+  #  Can create, edit & destroy any community, pick community admins
+  #- Community Admins: 
+  #  Can edit & destroy certain communities (note these are set on the commuity page not via user admins)
+  #- Admin:
+  #  Setup etc. boards
+  #  Can email all users
+  #- Developer:
+  #  Extra views with debugging info.    
+   
   def admin
     #shows whatever they have the right to administer
-    
-    
+  
   end
   
    def index_user_admins

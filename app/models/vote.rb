@@ -1,3 +1,4 @@
+#Holds information about a vote.
 class Vote < ActiveRecord::Base
   belongs_to :publication
   belongs_to :identifier
@@ -5,10 +6,12 @@ class Vote < ActiveRecord::Base
   belongs_to :board
   
 
+  #Ensures vote is tallied after it is saved.
   def after_save
     self.tally
   end
   
+  #Ensures vote is tallied for publication.
   def tally
     if self.identifier # && self.identifier.status == "editing"
       #need to tally votes and see if any action will take place

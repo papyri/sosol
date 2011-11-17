@@ -1,3 +1,4 @@
+#Represents a system user.
 class User < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
   
@@ -97,6 +98,10 @@ class User < ActiveRecord::Base
     repository.destroy
   end
   
+  #Sends an email to all users on the system that have an email address.
+  #*Args*
+  #- +subject_line+ the email's subject
+  #- +email_content+ the email's body
   def self.compose_email(subject_line, email_content)
     #get email addresses from all users that have them
     #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
