@@ -8,51 +8,7 @@ class PublicationsController < ApplicationController
   
  
   def determine_creatable_identifiers
-    @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-    
-    #WARNING hardcoded identifier depenency hack  
-    #enforce creation order
-    has_meta = false
-    has_text = false
-    has_biblio = false
-    @publication.identifiers.each do |i|
-      if i.class.to_s == "BiblioIdentifier"
-        has_biblio = true
-      end
-      if i.class.to_s == "HGVMetaIdentifier"
-        has_meta = true
-      end
-      if i.class.to_s == "DDBIdentifier"
-       has_text = true
-      end
-    end
-    if !has_text
-      #cant create trans
-      @creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    if !has_meta
-      #cant create text
-      @creatable_identifiers.delete("DDBIdentifier")
-      #cant create trans
-      @creatable_identifiers.delete("HGVTransIdentifier")     
-    end
-    #TODO - is Biblio needed?
-    @creatable_identifiers.delete("HGVBiblioIdentifier")
-    @creatable_identifiers.delete("BiblioIdentifier")
-    if has_biblio
-      @creatable_identifiers = []
-    end
-    
-    #only let user create new for non-existing        
-    @publication.identifiers.each do |i|
-      @creatable_identifiers.each do |ci|
-        if ci == i.class.to_s
-          @creatable_identifiers.delete(ci)    
-        end
-      end
-    end  
-    
-    
+    @creatable_identifiers = @publication.creatable_identifiers
   end
 
   def advanced_create()
