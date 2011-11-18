@@ -54,11 +54,51 @@ class BiblioIdentifier < HGVIdentifier
     :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
   }
 
-  def to_path
-    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
-      return self.temporary_path
+  def id_attribute
+    return "b#{name.split('/').last}"
+  end
+
+  def n_attribute
+    return ''
+  end
+
+  def xml_title_text
+    return ''
+  end
+
+  # Determines the next 'SoSOL' temporary name for the associated identifier
+  # This overrides the identifier superclass definition so that SoSOL-side biblio
+  # id's will be e.g. papyri.info/biblio/2011-0001 instead of papyri.info/biblio/SoSOL;2011;0001
+  # - starts at '1' each year
+  # - *Returns* :
+  #   - temporary identifier name
+  def self.next_temporary_identifier
+    year = Time.now.year
+    latest = self.find(:all,
+                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{year}-%"],
+                       :order => "name DESC",
+                       :limit => 1).first
+    if latest.nil?
+      # no constructed id's for this year/class
+      document_number = 1
     else
-      path_components = [ PATH_PREFIX ]
+      document_number = latest.to_components.last.split('-').last.to_i + 1
+    end
+    
+    return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/%04d-%04d",
+                   year, document_number)
+  end
+
+  def to_path
+    path_components = [ PATH_PREFIX ]
+    if name.split('-').length > 1
+      document_id = name.split('/').last
+      year, document = document_id.split('-')
+      xml_path = document.to_s + '.xml'
+      
+      # path_components will be e.g. PATH_PREFIX,SoSOL,2011,0001.xml
+      path_components << self.class::TEMPORARY_COLLECTION << year << xml_path
+    else
       # assume the name is e.g. biblio/9237
       number = self.to_components.last.to_i # 9237
 
@@ -66,10 +106,9 @@ class BiblioIdentifier < HGVIdentifier
       xml_path = number.to_s + '.xml'
 
       path_components << dir_number.to_s << xml_path
-
-      # e.g. Biblio/10/9237.xml
-      return File.join(path_components)
     end
+    # e.g. Biblio/10/9237.xml
+    return File.join(path_components)
   end
   
   def self.XPATH key

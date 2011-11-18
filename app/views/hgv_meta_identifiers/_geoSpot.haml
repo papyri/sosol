@@ -33,7 +33,7 @@
     = check_box_tag key + '_certainty', :low, false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty'
     = label_tag key + '_certainty', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain'
     
-    %span{:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('label.multiAdd')
     
     .paragraph.geoReferenceContainer{ :style => 'display: none;' }
       = hidden_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference'
