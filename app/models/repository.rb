@@ -28,6 +28,11 @@ class Repository
       @path = CANONICAL_REPOSITORY
     else
       @master_class_path = @master.class.to_s.underscore.pluralize
+      if @master.class == Board
+        unless @master.community.nil?
+          @master_class_path = File.join('communities', @master.community.name)
+        end
+      end
       FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
       @path = File.join(REPOSITORY_ROOT,
                         @master_class_path, "#{master.name}.git")
@@ -71,11 +76,15 @@ class Repository
     FileUtils::rm_r path, :verbose => false
   end
   
+  #returns the blob that represents the given file
+  #the given file is the filename + path to the file
   def get_blob_from_branch(file, branch = 'master')
     begin
+      #get the tree for the file's directory
       tree = @repo.tree(branch, [File.dirname(file)])
       subtree = tree.contents.first
       return nil if subtree.nil?
+      #get the named object (file's base name) from tree
       blob = subtree / File.basename(file)
     rescue Grit::GitRuby::Repository::NoSuchPath
       return nil
@@ -212,7 +221,7 @@ class Repository
   # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor = nil)
     if @path == CANONICAL_REPOSITORY
-      raise "Cannot commit directly to canonical repository"
+      raise "Cannot commit directly to canonical repository" unless (file == CollectionIdentifier.new.to_path)
     end
     
     index = @repo.index

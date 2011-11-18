@@ -25,6 +25,8 @@
         \|
       - if @current_user.developer
         = link_to 'developer', developer_url
+      - if @current_user.is_community_master_admin
+        = link_to "Community", :controller => "communities"
         
 - else
   #signin

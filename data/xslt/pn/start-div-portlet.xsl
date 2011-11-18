@@ -52,7 +52,8 @@
   <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
   
   <xsl:include href="htm-tpl-scripts.xsl"/>
-  <xsl:include href="htm-tpl-apparatus-portlet.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-apparatus.xsl"/>
+  <!-- <xsl:include href="htm-tpl-apparatus-portlet.xsl"/> -->
   <!-- xsl:include href="htm-tpl-metadata.xsl"/ -->
   <xsl:include href="htm-tpl-nav-pn.xsl"/>
 
@@ -67,7 +68,7 @@
   <xsl:template match="/">
     <!-- <xsl:param name='leiden-style'>ddbdp</xsl:param> -->
 <div class="pn-ddbdp-data">
-    <div class="greek">
+    <div class="greek transpecial">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
         <xsl:call-template name="css-script"/>
 

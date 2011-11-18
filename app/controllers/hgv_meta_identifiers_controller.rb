@@ -1,6 +1,6 @@
 include HgvMetaIdentifierHelper
 class HgvMetaIdentifiersController < IdentifiersController
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   before_filter :prune_params, :only => [:update, :get_date_preview]
   before_filter :complement_params, :only => [:update, :get_date_preview]
@@ -8,6 +8,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
 
   def update
@@ -35,6 +36,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def preview
     find_identifier
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
   
   def complement

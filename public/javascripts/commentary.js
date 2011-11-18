@@ -17,7 +17,9 @@ function insertFootnote(){
 
   convertXML = '<note type="footnote" xml:lang="en">' + footnoteText + '<\/note>';
 
-  getMarkUp(convertXML);
+  window.opener.getMarkUp(convertXML);
+  
+  closeHelper();
 
 }
 
@@ -97,8 +99,9 @@ function insertLinkExt(){
     convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
   }
 
-  getMarkUp(convertXML);
-
+  window.opener.getMarkUp(convertXML);
+  
+  closeHelper();
 }
 
 //###########################################################################################
@@ -122,7 +125,9 @@ function insertLinkPN(){
 
     collectionType = document.getElementById("IdentifierClass").value;
     
-    if (collectionType == 'DDBIdentifier'){ //check if value is empty or contains space
+    switch(collectionType)
+    {
+    case "DDBIdentifier":
       linkCollection = document.getElementById("DDBIdentifierCollectionSelect").value;
       if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
         alert("You must select a collection and document number at a minimum for the link");
@@ -130,8 +135,8 @@ function insertLinkPN(){
       }
       pnRef = "ddbdp/";
       convertXML = '<ref target="http:\/\/papyri.info\/' + pnRef + linkCollection + ';' + linkVolume + ';' + linkDocNum + '">' + linkFreeText + '<\/ref>';
-    }
-    else{
+      break;
+    case "HGVIdentifier":
       linkCollection = document.getElementById("HGVIdentifierCollectionSelect").value;
       if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
         alert("You must select a collection and document number at a minimum for the link");
@@ -146,6 +151,18 @@ function insertLinkPN(){
       }
 
       convertXML = '<ref target="http:\/\/' + getHGVNumber(identifier) + '">' + linkFreeText + '<\/ref>';
+      break;
+    case "APISIdentifier":
+      linkCollection = document.getElementById("APISIdentifierCollectionSelect").value;
+      if(!(linkCollection.match(/\S/)) || (!(linkDocNum.match(/\S/)))){ //check for any non-whitespace character
+        alert("You must select a collection and document number at a minimum for the link");
+        return;
+      }
+      pnRef = "apis/";
+      convertXML = '<ref target="http:\/\/papyri.info\/' + pnRef + linkCollection + '.apis.' + linkDocNum + '">' + linkFreeText + '<\/ref>';
+      break;
+    default: 
+      alert("The following value needs to be added to the insertLinkPN Javascript function - " + collectionType);
     }
       
         
@@ -195,52 +212,11 @@ function insertLinkPN(){
       convertXML = ' <listBibl><bibl>' + convertXML + biblScope + '</bibl></listBibl>';
     }
 
-    getMarkUp(convertXML);
-
-  }
-
-//###########################################################################################
-// insertMarkup - insert actual markup into commentary input form
-//###########################################################################################
+    window.opener.getMarkUp(convertXML);
     
-function insertMarkUp(vti)
-{
-
-  //get where to insert markup from value set before open window
-  insertHere = window.opener.document.getElementById("fm_or_com").value;
-
-  if(typeof document.selection != 'undefined'){ // means IE browser 
-
-    var range = window.opener.document.selection.createRange();
-
-    range.text = vti;
-    range.select();
-    range.collapse(false);
+    closeHelper();
   }
-  else {
-    // need to grab focus of main window textarea again for non-IE browsers only
-    element = window.opener.document.getElementById(insertHere);
-    element.focus();
-
-    if(typeof element.selectionStart != 'undefined'){ // means Mozilla browser 
-
-      var start = element.selectionStart;
-      var end = element.selectionEnd;
-      element.value = element.value.substr(0, start) + vti + element.value.substr(end);
-      var pos = start + vti.length;
-      element.selectionStart = pos;
-      element.selectionEnd = pos;
-      //below is to get focus back to textarea in main page - not work in safari - does is ff
-      element = window.opener.document.getElementById(insertHere);
-      element.focus();
-    }
-    else{ // not sure what browser 
-
-      element.value = element.value+vti;
-    }
-  }
-}
-
+   
 //###########################################################################################
 // closeHelper - close the helper input window
 //###########################################################################################

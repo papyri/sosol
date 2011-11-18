@@ -1,9 +1,10 @@
 class HgvTransIdentifiersController < IdentifiersController
-  layout 'site'
+  #layout 'site'
   before_filter :authorize
   # require 'xml'
   # require 'xml/xslt'
   
+  # Edit Translation
   def edit
     find_identifier
     
@@ -23,10 +24,14 @@ class HgvTransIdentifiersController < IdentifiersController
     #find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
     
-    
+    @is_editor_view = true
   end
   
-
+  # Add new 'div' type="translation" with new language attribute
+  # - *Params*  :
+  #   - +lang+ -> the new language to add (used in 'xml:lang' attribute)
+  # - *Returns* :
+  #   - to Edit Translation view
   def add_new_lang_to_xml
   # raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
    
@@ -43,7 +48,7 @@ class HgvTransIdentifiersController < IdentifiersController
   end  
 
 
-  
+  # Update Translation
   def update
     find_identifier
     @bad_leiden = false
@@ -59,6 +64,8 @@ class HgvTransIdentifiersController < IdentifiersController
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_publication_cache
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
+        
+        @is_editor_view = true
         
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
@@ -91,6 +98,7 @@ class HgvTransIdentifiersController < IdentifiersController
         @identifier[:leiden_trans] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
+        @is_editor_view = true
         
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
@@ -104,6 +112,8 @@ class HgvTransIdentifiersController < IdentifiersController
         @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
         #@identifier[:leiden_plus] = parse_error.message
         
+        @is_editor_view = true
+        
         #find text for preview
         @identifier[:text_html_preview] = @identifier.related_text.preview
         
@@ -114,7 +124,8 @@ class HgvTransIdentifiersController < IdentifiersController
     
   end
   
-  # GET /publications/1/ddb_identifiers/1/preview
+  # - GET /publications/1/ddb_identifiers/1/preview
+  # - Provides preview of what the Translation XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
     
@@ -123,12 +134,16 @@ class HgvTransIdentifiersController < IdentifiersController
       redirect_to polymorphic_url([@identifier.publication, @identifier], :action => :editxml)
       return
     end
-    
+    @is_editor_view = true
     @identifier[:html_preview] = @identifier.preview
   end
   
   
   protected
+  
+    # Sets the identifier instance variable values
+    # - *Params*  :
+    #   - +id+ -> id from identifier table of the Translation
     def find_identifier
       @identifier = HGVTransIdentifier.find(params[:id])
     end

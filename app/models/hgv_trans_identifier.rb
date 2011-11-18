@@ -1,3 +1,5 @@
+# - Sub-class of HGVIdentifier
+# - Includes acts_as_translation defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
   IDENTIFIER_NAMESPACE = 'hgvtrans'
@@ -11,7 +13,7 @@ class HGVTransIdentifier < HGVIdentifier
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_translation
   
-  
+  # Returns file path to Translation XML - e.g. HGV_trans_EpiDoc/8881.xml
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       return self.temporary_path
@@ -30,24 +32,27 @@ class HGVTransIdentifier < HGVIdentifier
     end
   end
   
+  # Returns value for 'id' attribute in Translation template
   def id_attribute
     return "hgv-TEMP"
   end
   
+  # Returns value for 'n' attribute in Translation template
   def n_attribute
     ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
     return ddb.n_attribute
   end
   
+  # Returns value for 'title' attribute in Translation template
   def xml_title_text
     return " HGVTITLE (DDBTITLE) "
   end
-      
-	def is_valid?(content = nil)
-  	#FIXME added here since trans is not P5 validable yet
-    return true
-  end
   
+  # Create empty, default Translation XML file based on the format of the DDB Text file (div's, ab's, etc.)
+  # - *Args*  :
+  #   - +publication+ -> the publication the new translation is a part of
+  # - *Returns* :
+  #   - new translation identifier
   def self.new_from_template(publication)
     new_identifier = super(publication)
     
@@ -56,10 +61,14 @@ class HGVTransIdentifier < HGVIdentifier
     return new_identifier
   end
   
+  # Returns the 'last' DDB Text identifier that is not a reprint in this tranlsations publication
   def related_text
     self.publication.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
   end
   
+  # Place any actions you always want to perform on translation identifier content prior to it being committed in this method
+  # - *Args*  :
+  #   - +content+ -> Translation XML as string
   def before_commit(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -68,6 +77,11 @@ class HGVTransIdentifier < HGVIdentifier
     )
   end
   
+  # Checks for existence of a specific language translation
+  # - *Args*  :
+  #   - +lang+ -> the language you are checking for (language codes defined in translation helper)
+  # - *Returns* :
+  #   - true/false
   def translation_already_in_language?(lang)
     lang_path = '/TEI/text/body/div[@type = "translation" and @xml:lang = "' + lang + '"]'
     
@@ -82,7 +96,10 @@ class HGVTransIdentifier < HGVIdentifier
      
   end
   
-  
+  # Stub in Translation XML for a specific based on the format of the DDB Text file (div's, ab's, etc) and saves it
+  # in the repository
+  # - *Args*  :
+  #   - +lang+ -> the new language to add (used in 'xml:lang' attribute)
   def stub_text_structure(lang)
     translation_stub_xsl =
       JRubyXML.apply_xsl_transform(
@@ -104,9 +121,12 @@ class HGVTransIdentifier < HGVIdentifier
     self.set_xml_content(rewritten_xml, :comment => "Update translation with stub for @xml:lang='#{lang}'")
   end
   
+  # Processing needed after user performs the 'rename' function during finalization.  Performed using XSLT and then
+  # saves it in the repository
   def after_rename(options = {})
     if options[:update_header]
       related_hgv = self.publication.identifiers.collect{|i| i.to_components.last if i.class == HGVMetaIdentifier}.compact
+      related_ddb = self.publication.identifiers.collect{|i| i.to_components.last if i.class == DDBIdentifier}.compact
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
@@ -114,6 +134,7 @@ class HGVTransIdentifier < HGVIdentifier
             %w{data xslt translation update_header.xsl})),
           :filename_text => self.to_components.last,
           :HGV_text => related_hgv.join(' '),
+          :DDB_text => related_ddb.join(' '),
           :TM_text => related_hgv.collect{|h| h.gsub(/\D/,'')}.uniq.join(' '),
           :title_text => NumbersRDF::NumbersHelper::identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,HGVIdentifier::IDENTIFIER_NAMESPACE,self.to_components.last].join('/')),
           :reprint_from_text => options[:set_dummy_header] ? options[:original].title : '',
@@ -124,6 +145,11 @@ class HGVTransIdentifier < HGVIdentifier
     end
   end
   
+  # - Retrieves the current version of XML for this Translation identifier
+  # - Processes XML with start-divtrans-portlet.xsl XSLT
+  # 
+  # - *Returns* :
+  #   -  Preview HTML
   def preview
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
@@ -131,6 +157,14 @@ class HGVTransIdentifier < HGVIdentifier
         %w{data xslt pn start-divtrans-portlet.xsl})))
   end
   
+  # Extracts 'Leiden+ that will not parse' from Translation XML file if it was saved by the user
+  #
+  # - *Args*  :
+  #   - +original_xml+ -> REXML::Document/XML to look for broken Leiden+ in. If nil, will retrieve from the 
+  #     repository based on the the Translation Identifier currently processing
+  # - *Returns* :
+  #   - +nil+ - if broken Leiden+ is not in the XML file
+  #   - +brokeleiden+ - the broken Leiden+ extracted from the XML
   def get_broken_leiden(original_xml = nil)
     original_xml_content = original_xml || REXML::Document.new(self.xml_content)
     brokeleiden_path = '/TEI/text/body/div[@type = "translation"]/div[@subtype = "brokeleiden"]/note'
@@ -144,6 +178,12 @@ class HGVTransIdentifier < HGVIdentifier
     end
   end
   
+  # - Retrieves the XML for the the Translation identifier currently processing from the repository
+  # - Checks if XML contains 'broken Leiden+"
+  #
+  # - *Returns* :
+  #   - +nil+ - if broken Leiden+ is in the XML file
+  #   - +transformed+ - Leiden+ transformed from the XML via Xsugar
   def leiden_trans
     original_xml = self.xml_content
     original_xml_content = REXML::Document.new(original_xml)
@@ -162,6 +202,14 @@ class HGVTransIdentifier < HGVIdentifier
     end
   end
   
+  # - Transforms Translation Leiden+ to XML
+  # - Saves the newly transformed XML to the repository
+  # 
+  # - *Args*  :
+  #   - +leiden_translation_content+ -> the Translation Leiden+ to transform into XML
+  #   - +comment+ -> the comment from the user to attach to this repository commit and put in the comment table
+  # - *Returns* :
+  #   -  a String of the SHA1 of the commit
   # Returns a String of the SHA1 of the commit
   def set_leiden_translation_content(leiden_translation_content, comment)
     # transform back to XML
@@ -170,7 +218,14 @@ class HGVTransIdentifier < HGVIdentifier
     self.set_xml_content(xml_content, :comment => comment)
   end
   
-  
+  # - Transforms Translation Leiden+ to XML
+  # - Retrieves the current version of XML for this DDBIdentifier
+  # - Replace everything after 'body' (div type = "translation") with the newly transformed XML
+  # 
+  # - *Args*  :
+  #   - +content+ -> the Translation Leiden+ to transform into XML
+  # - *Returns* :
+  #   -  +modified_xml_content+ - XML with the 'div type = "edition"' containing the newly transformed XML
   def leiden_translation_to_xml(content)
     
     # transform the Leiden Translation to XML
@@ -197,9 +252,13 @@ class HGVTransIdentifier < HGVIdentifier
     return modified_xml_content
   end
   
-  
-  
-  
+  # - Retrieves the current version of XML for this Translation identifier
+  # - Delete/Add the 'div type = "translation" subtype = "brokeleiden"' that contains the broken Leiden+
+  # - Saves the XML containing the 'broken Leiden_' to the repository
+  # 
+  # - *Args*  :
+  #   - +brokeleiden+ -> the Translation Leiden+ that will not transform to save in the XML
+  #   - +commit_comment+ -> the comment from the user to attach to this repository commit and put 
   def save_broken_leiden_trans_to_xml(brokeleiden, commit_comment = '')
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
