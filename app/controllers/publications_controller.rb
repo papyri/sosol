@@ -486,7 +486,7 @@ class PublicationsController < ApplicationController
 
   def edit_biblio
     @publication = Publication.find(params[:id])
-    @identifier = HGVBiblioIdentifier.find_by_publication_id(@publication.id)
+    @identifier = BiblioIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 

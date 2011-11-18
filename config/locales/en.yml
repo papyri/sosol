@@ -6,7 +6,7 @@ en:
     thisDataCannotBeEdited: This data cannot be edited
 
   label:
-    expandAll: Expland all
+    expandAll: Expand all
     collapseAll: Collapse all
     quickSave: save entire file
     multiAdd: add
