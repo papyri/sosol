@@ -5,5 +5,5 @@ vendor/plugins/rxsugar:
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-Nov-release-1/example-p5-xslt
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-Nov-release-2/example-p5-xslt
   :revision: HEAD
