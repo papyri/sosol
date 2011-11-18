@@ -6,23 +6,35 @@ div.metaSite select,
 div.metaSite input
   font-size: 0.846em
 
-/**** quicksave / expand / collapse / showDateTabs ****/
+/**** ****/
 
-.showDateTabs,
-.datePreview,
-.geoPreview,
-div#edit div.multi ul.items li span.addPlace,
-.addProvenance,
-.addOrigPlace,
-.showReferenceList,
-.hideReferenceList
+span.quickHelp
+  float: left
+  height: 1.6em
+  margin: 0 0 0 0.4em
+  position: relative
+  z-index: 100
+
+span.quickHelp span.hook
+  color: #162A5C
   cursor: pointer
-  cursor: hand
-  color: #c0c0c0
-  text-decoration: underline
-  margin: 0 0.8em 0 0
+  font-weight: bold
+  padding: 0.1em
+  position: relative
+
+span.quickHelp span.message
+  background-color: lightgrey
+  border: 0.1em solid #162A5C
+  bottom: 0.8em
+  color: #162A5C
+  font-variant: normal
   font-weight: normal
-  background-color: white
+  left: 1.6em
+  padding: 0.4em
+  position: absolute
+  width: 16em
+
+/**** quicksave / expand / collapse / showDateTabs ****/
 
 .showDateTabs
   position: absolute
@@ -59,16 +71,16 @@ div#edit input#hgv_meta_identifier_collectionPlaceName,
 div#edit input#hgv_meta_identifier_collection,
 div#edit input#hgv_meta_identifier_collectionInventoryNumber,
 div#edit input#hgv_meta_identifier_collectionTemporaryInventoryNumber
-  width: 7.55em
+  width: 10.55em
 
 div#edit input#hgv_meta_identifier_collectionTemporaryNotes
-  width: 26.5em
+  width: 30.1em
 
 div#edit div.editbox label.provenance
   width: 9em
 
 div#edit div.editbox label.tmNo
-  margin: 0 0 0 17em
+  margin: 0 0 0 22em
 
 div#edit div.editbox label.provenanceType,
 div#edit div.editbox label.provenanceSubtype,
@@ -89,16 +101,6 @@ div#edit input#hgv_meta_identifier_titleStmt
 div#edit input#hgv_meta_identifier_material
   width: 10em
 
-
-div#edit hr
-  background-color: #C0C0C0
-  border: 0 none
-  clear: left
-  color: #C0C0C0
-  height: 0.1em
-  margin: 0.8em 0
-  width: 624px
-
 div#edit div.editbox label#publicationExtraFullTitle
   width: auto
 
@@ -108,12 +110,12 @@ span.quickHelp_meta_help_collectionTemporaryInventoryNumber span.message
   left: -14.5em
   width: 13em
 
-
 span.quickHelp_meta_help_date span.message
   width: 30em
+  left: -31.5em
 
 span.quickHelp_meta_help_publicationFascicle
-  margin: 0 11em 0.4em 0.4em
+  margin: 0 17em 0.4em 0.4em
 
 span.quickHelp_meta_help_mentionedDateReference
   z-index: 403
@@ -137,6 +139,7 @@ span.quickHelp_meta_help_collection
 div#edit div.multi ul#multiItems_contentText li
   float: left
   width: 14em
+  clear: none
 
 div#edit div.multi ul#multiItems_contentText li input
   width: 13em 
@@ -144,6 +147,7 @@ div#edit div.multi ul#multiItems_contentText li input
 div#edit div.multi ul#multiItems_publicationExtra li
   float: left
   width: 8em
+  clear: none
 
 div#edit div.multi ul#multiItems_publicationExtra li input
   width: 6em
@@ -154,16 +158,20 @@ div#edit div.multi p#multiPlus_publicationExtra input
 div#edit div.multi ul#multiItems_citedLiterature li
   float: left
   width: 17em
+  clear: none
 
 div#edit div.multi ul#multiItems_citedLiterature li input
   width: 8.3em
 
-div#edit div.multi p#multiPlus_citedLiterature input
+div#edit div.multi p#multiPlus_citedLiterature input,
+div#edit  input#hgv_meta_identifier_sammelbuchBibliography_children_pointer_attributes_target,
+div#edit  input#hgv_meta_identifier_sammelbuchBibliography_children_pagination_value
   width: 12em
 
 div#edit div.multi ul#multiItems_bl li
   float: left
   width: 8em
+  clear: none
 
 div#edit div.multi ul#multiItems_bl li input.volume
   width: 2em
@@ -216,7 +224,18 @@ div#edit div.multi ul#multiItems_translationsEn li input,
 div#edit div.multi ul#multiItems_translationsIt li input,
 div#edit div.multi ul#multiItems_translationsFr li input,
 div#edit div.multi ul#multiItems_translationsEs li input,
-div#edit div.multi ul#multiItems_translationsLa li input
+div#edit div.multi ul#multiItems_translationsLa li input,
+div#edit p#multiPlus_figures input,
+div#edit p#multiPlus_illustrations input,
+div#edit p#multiPlus_otherPublications input,
+div#edit p#multiPlus_translationsDe input,
+div#edit p#multiPlus_translationsFr input,
+div#edit p#multiPlus_translationsLa input,
+div#edit p#multiPlus_translationsEs input,
+div#edit p#multiPlus_translationsEn input,
+div#edit p#multiPlus_translationsIt input
+
+
   width: 44em
 
 /**** provenance ****/
@@ -260,7 +279,6 @@ div#edit div.editbox label.geoSpotUncertain
 div#edit div.multi.geoReference ul li,
 div#edit div.multi.geoReference p
   width: 36.6em
-  background-color: pink
 
 div#edit div.multi.geoReference ul.items li input,
 div#edit div.multi.geoReference p input,
@@ -343,16 +361,25 @@ div#edit div.dateItem div.dateInfo p select.precision,
 div#edit div.dateItem div.dateInfo p select.certainty
   width: 16em
 
-div#edit div.dateItem div.dateInfo hr
+div#edit div.dateItem div.dateInfo hr,
+div#edit div.editbox hr
   border: 0
   color: #c0c0c0
   background-color: #c0c0c0
   height: 0.1em
   margin: 0.8em 0 0.8em 0
-  width: 624px
+  width: 100%
   clear: left
 
 div#edit div.dateItem div.dateInfo h5 span.quickHelp_meta_help_date
   float: none
   position: absolute
   top: 0.3em
+  left: 49em
+
+div.metaSite div#edit div#dateContainer p
+  margin: 0.2em
+  height: 1em
+  
+div#edit p#multiPlus_publicationExtra label
+  width: 7em

@@ -14,6 +14,6 @@
 
     %label= I18n.t('meta.label.citedLiteraturePagingation')
     %input#citedLiterature_pagination.observechange
-    %span{:onclick => "multiAddCitedLiterature()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddCitedLiterature()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_citedLiterature', {overlap: 'horizontal', constraint: false, handle: 'move'});"
