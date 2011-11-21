@@ -42,7 +42,7 @@ class BiblioIdentifier < HGVIdentifier
 
     :authorList => "/bibl/author",
     :editorList => "/bibl/editor",
-      
+
     :journalTitleShort => "/bibl/title[@level='j'][@type='short']",
     :bookTitleShort => "/bibl/title[@level='m'][@type='short']",
     
@@ -762,7 +762,7 @@ class BiblioIdentifier < HGVIdentifier
         'Index bis'     => "/bibl/seg[@type='original'][@subtype='indexBis']",
         'Titre'         => "/bibl/seg[@type='original'][@subtype='titre']",
         'Publication'   => "/bibl/seg[@type='original'][@subtype='publication']",
-        'Resumé'        => "/bibl/note[@resp='#BP']",
+        'Resumé'        => "/bibl/seg[@type='original'][@subtype='resume']",
         'S.B. & S.E.G.' => "/bibl/seg[@type='original'][@subtype='sbSeg']",
         'C.R.'          => "/bibl/seg[@type='original'][@subtype='cr']"
       }.each_pair{|title, xpath|
@@ -771,6 +771,13 @@ class BiblioIdentifier < HGVIdentifier
           self[:originalBp][title] = element.text.strip
         end
       }
+
+      if self[:bp] && !self[:bp].empty?
+        self[:originalBp]['No'] = self[:bp]
+      elsif self[:bpOld] && !self[:bpOld].empty?
+        self[:originalBp]['Ancien No'] = self[:bpOld]
+      end
+
     end
   
   class PublicationPerson
