@@ -62,6 +62,8 @@
   <xsl:include href="../epidoc/tpl-certlow.xsl"/>
   <xsl:include href="../epidoc/tpl-text.xsl"/>
 
+  <!-- line-by-line commentary overrides -->
+  <xsl:include href="../ddb/commentary_preview.xsl"/>
 
 
   <!-- HTML FILE -->
