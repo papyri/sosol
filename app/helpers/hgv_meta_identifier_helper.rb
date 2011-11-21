@@ -385,7 +385,7 @@ module HgvMetaIdentifierHelper
       provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
       result = ''
 
-      if provenanceList || provenanceList.length > 0
+      if provenanceList && provenanceList.length > 0
 
         provenanceList.each {|provenance|
   
