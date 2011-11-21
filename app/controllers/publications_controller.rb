@@ -274,11 +274,14 @@ class PublicationsController < ApplicationController
     end
     
     
+    #copy back in any case
+    @publication.copy_back_to_user(params[:comment], @current_user)
+  
     #if it is a community pub, we don't commit to canon
     #instead we copy changes back to origin
     if @publication.is_community_publication?
       
-      @publication.copy_back_to_user(params[:comment], @current_user)
+      #@publication.copy_back_to_user(params[:comment], @current_user)
   
       
     else #commit to canon
