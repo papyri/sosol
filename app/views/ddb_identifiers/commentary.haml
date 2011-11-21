@@ -122,6 +122,11 @@
     
     menuInit();
 
+    Form.Element.disable('com_sugar_content');
+    Form.Element.disable('save_com');
+
+    $('com_sugar_content').toggleClassName('loading');
+
     Effect.SlideDown("form-"+comment_on, { queue: 'end'});
     
     //translate the xml to commentary sugar
@@ -225,8 +230,7 @@
     '<div id="menuDiv"></div>' +
     '<br/>' +
     '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
-    //show no content since it will be updated with getsugar call
-    '<textarea rows="5" cols="20" name="content" id="com_sugar_content"></textarea>' +
+    '<textarea rows="5" cols="20" name="content" id="com_sugar_content">' + content + '</textarea>' +
     '<input class="save_commentary" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
     ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
     '</form>' +
@@ -288,7 +292,7 @@
     '<div id="menuDiv"></div>' +
     '<br/>' +
     '<label>Front matter:</label><br/>' +
-    '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto"></textarea>' +
+    '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto">' + content + '</textarea>' +
     '<input class="save_commentary" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
     ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
     '</form>' +
@@ -521,6 +525,7 @@
               $('fm_sugar_content').value = error_content.strip();
 
               //enable form after error
+              $('fm_sugar_content').toggleClassName('loading');
               Form.Element.enable('fm_sugar_content');
               Form.Element.enable('save_fm');
 
@@ -534,6 +539,7 @@
               $('com_sugar_content').value = error_content.strip();
 
               //enable form after error
+              $('com_sugar_content').toggleClassName('loading');
               Form.Element.enable('com_sugar_content');
               Form.Element.enable('save_com');
 
@@ -548,10 +554,16 @@
           if (wherefrom == "FM")
             {
               $('fm_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              $('fm_sugar_content').toggleClassName('loading');
+              Form.Element.enable('fm_sugar_content');
+              Form.Element.enable('save_fm');
             }
           else
             {
               $('com_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              $('com_sugar_content').toggleClassName('loading');
+              Form.Element.enable('com_sugar_content');
+              Form.Element.enable('save_com');
             }
         }
       },
@@ -651,6 +663,11 @@
     });
 
     menuInit();
+
+    Form.Element.disable('fm_sugar_content');
+    Form.Element.disable('save_fm');
+
+    $('fm_sugar_content').toggleClassName('loading');
 
     Effect.SlideDown("form-frontmatter",{queue: 'end'});
 
