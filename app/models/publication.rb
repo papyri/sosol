@@ -842,6 +842,62 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def change_finalizer(new_finalizer)
+    #need to copy finalizer's copy if they have changed anything
+    #copy board pub to new finalizer
+    old_finalizing_publication = self.find_finalizer_publication
+
+    if old_finalizing_publication.nil?
+      #some kind of error should be thrown?
+      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
+      return false
+    end
+#    if old_finalizing_publication
+#      new_finalizing_publication = old_finalizing_publication.copy_to_owner(new_finalizer) #clone_to_owner(new_finalizer)
+#      new_finalizing_publication.parent = old_finalizing_publication.parent
+#      new_finalizing_publication.save!
+#    end
+    
+    #remove former finalizer
+#    old_finalizing_publication.destroy
+   
+   
+   #########
+    #---clone to owner
+    new_finalizing_publication = old_finalizing_publication.clone
+    new_finalizing_publication.owner = new_finalizer
+    new_finalizing_publication.creator = old_finalizing_publication.creator
+    new_finalizing_publication.title = old_finalizing_publication.title
+    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+    new_finalizing_publication.parent = old_finalizing_publication.parent
+    
+    new_finalizing_publication.save!
+    
+    # copy identifiers over to new pub
+    old_finalizing_publication.identifiers.each do |identifier|
+      duplicate_identifier = identifier.clone
+      new_finalizing_publication.identifiers << duplicate_identifier
+    end
+   #===clone to owner
+   
+   new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+   new_finalizing_publication.save!
+   
+   old_finalizing_publication.destroy
+   #######
+   
+   return true
+   
+   
+    #now there are 2 finalizers, any danger in this?
+    #now copy any old changes to new
+    
+    
+    #copy old finalizer's changes to new finalizer
+    #maybe just change owner? creator? but then need to copy over
+    
+  end
+  
   #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
   def find_finalizer_user
     if find_finalizer_publication
@@ -852,7 +908,7 @@ class Publication < ActiveRecord::Base
   
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
-  #returns the finalizer user or nil if finalizer does not exist
+  #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
   end
   
