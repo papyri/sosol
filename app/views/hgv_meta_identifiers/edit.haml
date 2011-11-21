@@ -3,8 +3,8 @@
   =# render :partial => 'identifiers/edit_bar'
   .site.metaSite
     = render :partial => 'identifiers/header'
-    %span.expandAll#expandAll=I18n.t('meta.label.expandAll')
-    %span.collapseAll#collapseAll=I18n.t('meta.label.collapseAll')
+    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
     #edit
       - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
@@ -14,16 +14,16 @@
           %a{:name => 'Date'}=I18n.t('meta.legend.date')
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/date'
-          %div{:style => 'float: none; clear: both; display: block;'}
-          %span.quickSave=I18n.t('meta.label.quickSave')
-          %span.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
 
         %h4.category.mentionedDate
           %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/mentioned_date'
-          %div{:style => 'float: none; clear: both; display: block;'}
-          %span.quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.general
           %a{:name => 'General<'}=I18n.t('meta.legend.general')
@@ -33,6 +33,8 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
+          
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
@@ -42,8 +44,8 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease }
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.publication
           %a{:name => 'Publication'}=I18n.t('meta.legend.publication')
@@ -80,15 +82,16 @@
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
           
-          %div{:style => 'float: none; clear: both; display: block;'}
+          .clear
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationExtra }
           = render :partial => 'hgv_meta_identifiers/publicationExtra'
 
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
 
-        %h4.category.collection=I18n.t('meta.legend.collection')
+        %h4.category.collection
+          %a{:name => 'Collection'}=I18n.t('meta.legend.collection')
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName }
@@ -109,49 +112,57 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' }
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.provenance
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
         .editbox{:style => 'display: none;'}
           %p#geoPreview
             = @identifier[:origPlace]
-          %span.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
+          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
+
           %hr
           = render :partial => 'hgv_meta_identifiers/provenance'
 
-          %div{:style => 'float: none; clear: both; display: block;'}
-
-          %span.addProvenance=I18n.t('meta.label.addProvenance')
-          %span.quickSave=I18n.t('meta.label.quickSave')
-          %span.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addProvenance=I18n.t('meta.label.addProvenance')
+          %span.swifty.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
 
         %h4.category.reference
           %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
-        .editbox{:style => 'display: block;'}
+        .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography }
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget }
           = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pointer] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination }
           = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pagination] && @identifier[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
           
+          .clear
+          
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :citedLiterature}
           = render :partial => 'hgv_meta_identifiers/biblio', :locals => { :key => :citedLiterature}
+          
+          .clear
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'hgv_meta_identifiers/figures'
           
+          .clear
+          
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :illustrations }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :illustrations }
+          
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :otherPublications }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :otherPublications }
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl }
           = render :partial => 'hgv_meta_identifiers/bl'
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.translation
           %a{:name => 'Translation'}=I18n.t('meta.legend.translation')
@@ -173,11 +184,13 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
-          %div{:style => 'float: none; clear: both; display: block;'}      
-          .quickSave=I18n.t('meta.label.quickSave')    
+          .clear      
+          .swifty.quickSave=I18n.t('label.quickSave')    
 
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-        = hidden_field_tag 'expansionSet', flash[:expansionSet]
+        .controlPanel
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
+= javascript_include_tag 'edit_mask'
 = javascript_include_tag 'meta'
 = javascript_include_tag 'confirm'

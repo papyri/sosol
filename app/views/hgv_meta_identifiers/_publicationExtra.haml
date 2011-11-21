@@ -5,8 +5,8 @@
       %li
         = text_field_tag 'hgv_meta_identifier[publicationExtra][' + (index + 4).to_s + '][value]', extras[index][:value], :disabled => !@identifier.mutable?, :class => 'observechange publicationExtra'
         = hidden_field_tag 'hgv_meta_identifier[publicationExtra][' + (index + 4).to_s + '][attributes][type]', extras[index][:type], :disabled => !@identifier.mutable?, :class => 'observechange publicationExtra'
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_publicationExtra
     %label= I18n.t('meta.label.publicationExtraType')
 
@@ -14,6 +14,6 @@
 
     %label= I18n.t('meta.label.publicationExtraValue')
     %input#publicationExtra_value.observechange
-    %span{:onclick => "multiAddPublicationExtra()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddPublicationExtra()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_publicationExtra', {overlap: 'horizontal', constraint: false, handle: 'move'});"

@@ -618,52 +618,6 @@ function checkNotAddedMultiples(){
   multiAdd('translationsFr');
 }
 
-/**** toggle view ****/
-
-function toggleCatgory(event) {
-  if(!this.next().visible()){
-    $(this).next().show();
-  } else {
-    $(this).next().hide();
-  }
-}
-
-function rememberToggledView(){
-  var expansionSet = '';
-
-  $$('.category').each(function(e){
-
-    if(e.next().visible()){
-      expansionSet += e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0] + ';';
-    }
-  });
-  
-  $('expansionSet').value = expansionSet;
-}
-
-function showExpansions(){
-  var flash = $('expansionSet').value;
-  var anchor_match = document.URL.match(/#[A-Za-z]+/);
-  var anchor = anchor_match ? anchor_match[0] : '';
-  anchor = anchor.substr(1,1).toLowerCase() + anchor.substr(2);
-
-  var expansionSet = flash + ';' + anchor;
-  
-  $$('.category').each(function(e){
-
-    var classy = e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0];
-
-    if(expansionSet.indexOf(classy) >= 0){
-      e.next().show();
-    }
-  });
-  $('expansionSet').value = '';
-}
-
 function complementPlace(key, data){
   keyMap = [
     'provenance_ancientFindspot',
@@ -731,7 +685,6 @@ function toggleReferenceList(){
 }
 
 Event.observe(window, 'load', function() {
-  showExpansions();
   toggleMentionedDates('#dateAlternativeX');
   hideDateTabs();
   
@@ -739,13 +692,11 @@ Event.observe(window, 'load', function() {
 
   // submit
   $('identifier_submit').observe('click', checkNotAddedMultiples);
-  $('identifier_submit').observe('click', geoReferenceWizard);
 
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
 
-  $$('.category').each(function(e){e.observe('click', toggleCatgory);});
-  $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
-  $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
+  $('identifier_submit').observe('click', geoReferenceWizard);
+
   $('toggleReferenceList').observe('click', toggleReferenceList);
 
   $$('.addPlace').each(function(el){el.observe('click', function(ev){ multiAddPlaceRaw(el); });});
@@ -753,6 +704,7 @@ Event.observe(window, 'load', function() {
   $$('.addOrigPlace').each(function(el){el.observe('click', function(ev){ multiAddOrigPlaceRaw(el); });});
 
   /* provenance
+
   $('hgv_meta_identifier_provenance_0_value').observe('click', function(event){provenanceUnknown();});
   
   new Ajax.Autocompleter('provenance_ancientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientFindspot&type=ancient&subtype=settlement', afterUpdateElement: function(input, li){

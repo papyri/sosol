@@ -1,4 +1,111 @@
 en:
+  tooltip:
+    multiDelete: delete
+    multiMove: move
+    multiAdd: ✓
+    thisDataCannotBeEdited: This data cannot be edited
+
+  label:
+    expandAll: Expand all
+    collapseAll: Collapse all
+    quickSave: save entire file
+    multiAdd: add
+
+  language:
+    fr: French
+    en: English
+    de: German
+    it: Italian
+    es: Spanish
+    la: Latin
+    el: Greek
+
+  biblio:
+    legend:
+      meta: Meta Information
+      general: General
+      editorial: Editorial
+      extra: Extra
+      reference: Reference
+      original: Original BP Record
+
+    label:
+      articleTitle: Article
+      journalTitle: Journal
+      journalTitleShort: Journal Short
+      bookTitle: Book
+      bookTitleShort: Book Short
+      supertype: Type
+      subtype: Subtype
+      language: Language
+      bp: BP
+      bpOld: BP old
+      idp: IDP
+      isbn: ISBN
+      sd: SD
+      checklist: Checklist
+      date: Date
+      edition: Edition
+      issue: Issue
+      responsibility: Responsibility
+      shortTitle: Short Title
+      distributor: Distributor
+      paginationFrom: Page From
+      paginationTo: Page To
+      'no': Number
+      col: Column
+      tome: Tome
+      link: Link
+      fasc: Fascicle
+      paginationTotal: Pages Total
+      paginationPreface: Preface Total
+      illustration: Illustrations
+      note: Annotation
+      annotation: Annotation
+      annotationResponsibility: Style
+      reedition: Reedition
+      authorList: Authors    
+      editorList: Editors
+      publisherList: Publisher
+      revieweeList: Reviewee List
+      containerList: Appears in
+      relatedArticleList: Related Articles
+      firstName: First Name
+      lastName: Last Name
+      name: Name
+      placeOfPublication: Place of Publication
+      orgName: Organisation
+      pagination: Pagination
+      name: Name
+      place: Place
+      author: Author
+      page: Page
+      year: Year
+      ddb: DDB
+      tm: TM
+      inventory: Inv. No.
+      series: Series
+      volume: Volume
+      number: Number
+      publisherType: Type
+      value: Value
+
+    type:
+      book: Book
+      journal: Journal
+      article: Article
+      review: Review
+
+    subtype:
+      book: Book
+      journal: Journal
+      other: other
+      edited: edited
+      authored: authored
+    publisherType:
+      name: Name
+      place: Place
+
   meta:
     legend:
       general: General
@@ -9,7 +116,6 @@ en:
       translation: Translations
       date: Date
       mentionedDate: Mentioned Dates
-
 
     label:
       images: Images
@@ -108,19 +214,12 @@ en:
       offset: Offset
       textDate: HGV format
       unknown: Unknown
-      multiAdd: add #✓
-      expandAll: expand all
-      collapseAll: collapse all
-      quickSave: save entire file
       showDateTabs: add alternative dates
       datePreview: show date preview
       geoPreview: update geo preview
       addAlternativePlace: add alternative location
 
     tooltip:
-      multiAdd: Click to add new item
-      multiDelete: Click to delete item
-      multiMove: Click and drag to move item
       multiMentionedDateReference: Reference (line and column)
       multiMentionedDateNotBefore: Date (use -YYYY-MM-DD format)
       multiMentionedDateNotAfter: Second date (if time span) (use -YYYY-MM-DD format)
@@ -149,7 +248,7 @@ en:
       mentionedDateNotBefore: 'Enter either the full date or the first part of a span date. E.g. 0138-10-22, i.e. in yyyy-mm-dd format.'
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
-      mentionedDateAnnoation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
+      mentionedDateAnnotation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
 
   date:
     beginning: beginning
