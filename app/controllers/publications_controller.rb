@@ -259,7 +259,7 @@ class PublicationsController < ApplicationController
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
       #board controls this id and it has been modified
-      if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+      if id.modified? && @publication.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
         id.update_revision_desc(params[:comment], @current_user);
         id.save
       end
