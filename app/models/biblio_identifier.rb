@@ -43,7 +43,7 @@ class BiblioIdentifier < HGVIdentifier
     :authorList => "/bibl/author",
     :editorList => "/bibl/editor",
 
-    :journalTitleShort => "/bibl/title[@level='j'][@type='short']",
+    :journalTitleShort => "/bibl/title[@level='j'][@type='short-BP']",
     :bookTitleShort => "/bibl/title[@level='m'][@type='short']",
     
     :publisherList => "/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
