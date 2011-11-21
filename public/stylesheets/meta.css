@@ -192,7 +192,8 @@ div#edit div.multi ul#multiItems_mentionedDate li input.reference {
 
 div#edit div.multi ul#multiItems_mentionedDate li select {
   width: 9em;
-  margin: 0 0 0 0.4em; }
+  height: 1.3em;
+  margin: 0 0.4em 0 0; }
 
 div#edit div.multi ul#multiItems_mentionedDate li select.dateId {
   width: 4em; }
@@ -209,7 +210,8 @@ div#edit div.multi p#multiPlus_mentionedDate input.reference {
 
 div#edit div.multi p#multiPlus_mentionedDate select {
   width: 9em;
-  margin: 0 0 0 0.4em; }
+  height: 1.3em;
+  margin: 0 0.4em 0 0; }
 
 div#edit div.multi p#multiPlus_mentionedDate select.dateId {
   width: 4em; }
@@ -356,7 +358,7 @@ div#edit div.editbox hr {
   border: 0;
   color: silver;
   background-color: silver;
-  height: 0.1em;
+  height: 1px;
   margin: 0.8em 0 0.8em 0;
   width: 100%;
   clear: left; }

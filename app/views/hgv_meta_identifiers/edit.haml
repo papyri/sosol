@@ -33,14 +33,15 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
-          
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
           = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease }
@@ -50,7 +51,8 @@
         %h4.category.publication
           %a{:name => 'Publication'}=I18n.t('meta.legend.publication')
         .editbox{:style => 'display: none;'}
-          %label#publicationExtraFullTitle &nbsp;
+          %p#publicationExtraFullTitle &nbsp;
+          %span.swifty.publicationPreview{:onclick => "publicationPreview()"}=I18n.t('meta.label.publicationPreview')
 
           %hr
           
@@ -61,6 +63,7 @@
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :tmNo }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.tmNo' }
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume }
           = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
@@ -71,6 +74,7 @@
           = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][1][attributes][type]', :fascicle
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers }
           = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
@@ -81,7 +85,6 @@
           = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
-          
           .clear
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationExtra }
@@ -158,6 +161,8 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :otherPublications }
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :otherPublications }
+          
+          .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl }
           = render :partial => 'hgv_meta_identifiers/bl'
