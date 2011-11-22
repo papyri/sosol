@@ -11,7 +11,10 @@
     - easyObject.each_index do |index|
       %li
         - easyList.each do |member|
-          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', easyObject[index].send(member), :disabled => !@identifier.mutable?, :class => 'observechange ' + member
+          - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
+            = select_tag('biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', options_for_select(optionList[member], easyObject[index].send(member)), :disabled => !@identifier.mutable?, :class => 'observechange ' + member)
+          - else
+            = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', easyObject[index].send(member), :disabled => !@identifier.mutable?, :class => 'observechange ' + member
 
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
         %span.move{:title => I18n.t('tooltip.multiMove')} o

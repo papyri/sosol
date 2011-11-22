@@ -43,8 +43,8 @@ class BiblioIdentifier < HGVIdentifier
     :authorList => "/bibl/author",
     :editorList => "/bibl/editor",
 
-    :journalTitleShort => "/bibl/title[@level='j'][@type='short-BP']",
-    :bookTitleShort => "/bibl/title[@level='m'][@type='short']",
+    :journalTitleShort => "/bibl/title[@level='j'][starts-with(@type, 'short')]",
+    :bookTitleShort => "/bibl/title[@level='m'][starts-with(@type, 'short')]",
     
     :publisherList => "/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
     :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl",
@@ -173,7 +173,7 @@ class BiblioIdentifier < HGVIdentifier
     self[:bookTitleShort] = Array.new
     self[:supertype] = ''
     self[:subtype] = ''
-    self[:language] = ''    
+    self[:language] = ''
     
     self[:bp] = ''
     self[:bpOld] = ''
@@ -391,6 +391,9 @@ class BiblioIdentifier < HGVIdentifier
         unless element.nil?
           if attribute
             element.attributes[attribute] = self[key]
+            if key == :paginationTo
+              element.text = self[key] + (self[:paginationFrom] && !self[:paginationFrom].strip.empty? ? '-' + self[:paginationFrom] : '' )
+            end
           else
             element.text = self[key]
           end
@@ -447,10 +450,12 @@ class BiblioIdentifier < HGVIdentifier
      index = 1
      self[key].each{|shorty|
        if shorty.title && !shorty.title.empty?
-         element = @epiDoc.bulldozePath XPATH[key] + "[@n='" + index.to_s + "']"
+         xpath = XPATH[key].sub("[starts-with(@type, 'short')]", "[@type='short']") # make xpath deterministic
+
+         element = @epiDoc.bulldozePath xpath + "[@n='" + index.to_s + "']"
          element.text = shorty.title
          if shorty.responsibility && !shorty.responsibility.empty?
-           element.attributes['resp'] = shorty.responsibility
+           element.attributes['type'] += '-' + shorty.responsibility
          end
          index += 1
        end
@@ -562,8 +567,8 @@ class BiblioIdentifier < HGVIdentifier
       biblio = git / getBiblioPath(biblioId)
       relatedItem = REXML::Document.new(biblio.data)
 
-      result[result.length] = if relatedItem.elements["//title[@type='short']"]
-        relatedItem.elements["//title[@type='short']"]
+      result[result.length] = if relatedItem.elements["//title[starts-with(@type='short')]"]
+        relatedItem.elements["//title[starts-with(@type='short')]"]
       else
         relatedItem.elements["//title"]
       end
@@ -693,7 +698,12 @@ class BiblioIdentifier < HGVIdentifier
       list = []
       path = XPATH[key]
       epiDoc.elements.each(path){|title|
-        list[list.length] = ShortTitle.new(title.text, title.attributes['resp'] ? title.attributes['resp'] : '')
+        
+        responsibility = if title.attributes['type'] && title.attributes['type'].include?('-')
+          title.attributes['type'].partition('-')[2]
+        end
+
+        list[list.length] = ShortTitle.new(title.text, responsibility)
       }
       self[key] = list
     end
@@ -789,36 +799,6 @@ class BiblioIdentifier < HGVIdentifier
       @swap = swap
     end
   end
-
-=begin
-  class PublicationEntity
-    attr_accessor :title, :titleShort, :number
-    def initialize title = '', titleShort = '', number = ''
-      @title = title
-      @titleShort = titleShort
-      @number = number
-    end
-  
-  class Monograph < PublicationEntity
-  end
-
-  class Journal < PublicationEntity
-  end
-
-  class Series < PublicationEntity
-  end
-
-  class RevueCritique
-    attr_accessor :author, :title, :year, :page
-    def initialize author = '', title = '', year = '', page = ''
-      @author = author
-      @title = title
-      @year = year
-      @page = page
-    end
-  end
- 
-=end
 
   class RelatedItem # appearsIn, reviews
     attr_accessor :pointer, :ignoreList, :ignored

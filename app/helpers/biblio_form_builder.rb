@@ -46,6 +46,10 @@ class BiblioFormBuilder < ActionView::Helpers::FormBuilder
       :publisherType => [
         [I18n.t('biblio.publisherType.name'), 'publisher'],
         [I18n.t('biblio.publisherType.place'), 'pubPlace']
+      ],
+      :shortTitleResponsibility => [
+        [I18n.t('biblio.shortTitleResponsibility.bp'), 'BP'],
+        [I18n.t('biblio.shortTitleResponsibility.cl'), 'Checklist']
       ]
     }[label]
   end
