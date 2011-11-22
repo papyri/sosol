@@ -163,6 +163,25 @@
     </xsl:element>
   </xsl:template>
 
+  <!-- sort changes by @when -->
+  <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/app-rationalization.xsl -->
+  <xsl:template match="tei:revisionDesc">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:for-each select="tei:change">
+        <xsl:sort select="@when" order="descending"/>
+        <xsl:text>
+         </xsl:text>
+        <xsl:copy>
+          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates/>
+        </xsl:copy>
+      </xsl:for-each>
+      <xsl:text>
+      </xsl:text>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- convert app type=BL|SoSOL to editorial -->
   <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/app-rationalization.xsl -->
   <xsl:template match="tei:app[@type=('BL','SoSOL')]">
