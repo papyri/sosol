@@ -1,3 +1,4 @@
+# Model class for bibliography records as they reside in the Biblio folder of idp.data's git repository
 class BiblioIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
@@ -9,6 +10,7 @@ class BiblioIdentifier < HGVIdentifier
 
   IDENTIFIER_NAMESPACE = 'biblio'
 
+  # A map (key → xpath) of all relevant xpaths for data lookup and storage
   XPATH = {
     :articleTitle => "/bibl/title[@level='a'][@type='main']",
     :journalTitle => "/bibl/title[@level='j'][@type='main']",
@@ -54,14 +56,17 @@ class BiblioIdentifier < HGVIdentifier
     :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
   }
 
+  # ?
   def id_attribute
     return "b#{name.split('/').last}"
   end
 
+  # ?
   def n_attribute
     return ''
   end
 
+  # ?
   def xml_title_text
     return ''
   end
@@ -89,6 +94,7 @@ class BiblioIdentifier < HGVIdentifier
                    year, document_number)
   end
 
+  # ?
   def to_path
     path_components = [ PATH_PREFIX ]
     if name.split('-').length > 1
@@ -111,10 +117,21 @@ class BiblioIdentifier < HGVIdentifier
     return File.join(path_components)
   end
   
+  # Retrieve xpath for a given key
+  # - *Args*  :
+  #   - +key+ → biblio key, e.g. +:articleTitle+
+  # - *Returns* :
+  #   - xpath as stored within +XPATH+ variable or an empty string if no xpath could be found
   def self.XPATH key
-    XPATH[key.to_sym] ? XPATH[key.to_sym] : '----'
+    XPATH[key.to_sym] ? XPATH[key.to_sym] : ''
   end
 
+  # Generates a preview document by running an xsl transformation on the biblio xml document
+  # - *Args*  :
+  #   - +parameters+ → additional parameters to controll the transformation process (optional), should be given as a +Hash+, e.g. {'citationStyle' => 'Sammelbuch'}
+  #   - +xsl+ → +String+ or +Array+, path to xsl document for the transformation, starting from +RAILS_ROOT+
+  # - *Returns* :
+  #   - +String+, result of xsl transformation
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
@@ -123,6 +140,11 @@ class BiblioIdentifier < HGVIdentifier
         parameters)
   end
   
+  # Checks whether the user may be allowed to edit the content of this biblio record
+  # - *Returns* :
+  #   - true if user may make changes to the data stored within EpiDoc
+  #   - false otherwise
+  # Assumes that there is no restriction to editing biblio files
   def mutable?
     true
   end
@@ -159,11 +181,14 @@ class BiblioIdentifier < HGVIdentifier
   end
 
   # Creates REXML object model from xml string
+  # - *Returns* :
+  #   - +REXML::Document+ with biblio EpiDoc
   def epiDoc
     REXML::Document.new(self.xml_content)
   end
   
   # Retrieves data from xml or sets empty defaults
+  # Side effect on +self+ attributes
   def after_find
 
     self[:articleTitle] = ''
@@ -208,8 +233,14 @@ class BiblioIdentifier < HGVIdentifier
     
     populateFromEpiDoc
   end
- 
-  # Returns a String of the SHA1 of the commit
+
+  # Updates EpiDoc file with values from incoming post string, validates xml and commits it to the user repository
+  # - *Args*  :
+  #   - +attributes_hash+ → post parameters
+  #   - +comment+ → user comment passed in via post
+  # - *Returns* :
+  #   - +String+ of the SHA1 of the commit
+  # Side effect on user's git repository branch, writes altered xml back to file
   def set_epidoc(attributes_hash, comment)
     epiDocXml = updateFromPost(attributes_hash)
 
@@ -217,6 +248,12 @@ class BiblioIdentifier < HGVIdentifier
     self.set_xml_content(epiDocXml, :comment => comment)
   end
 
+  # Updates internal EpiDoc representation from user parameters
+  # - *Args*  :
+  #   - +params+ → post data sent in from the client's form
+  # - *Returns* :
+  #   - +String+ EpiDoc xml containing altered version of the file
+  # Side effect on +@post+ (contains original post data) and +@epiDoc+ (REXML::Document, updated version of the biblio record)
   def updateFromPost params
     @post = params
     @epiDoc = self.epiDoc
@@ -260,13 +297,11 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostNote
    
     updateFromPostPublisher
-  
-    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Reviewee:0x12983349> 
+
     updateFromPostReviewee
-   
-    # Causes e.g.: undefined method `array' for #<BiblioIdentifier::Container:0x2341952a> 
+    
     updateFromPostContainer
-   
+
     updateFromPostRelatedArticle
 
     updateEpiDoc
@@ -277,6 +312,11 @@ class BiblioIdentifier < HGVIdentifier
     modified_xml_content
   end
   
+  # Converts REXML::Document / ::Element into xml string
+  # - *Args*  :
+  #   - +xmlObject+ → REXML::Document / ::Element
+  # - *Returns* :
+  #   - +String+ formatted xml string using +REXML::Formatters::Pretty+
   def toXmlString xmlObject
     formatter = REXML::Formatters::Pretty.new
     formatter.compact = true
@@ -286,10 +326,24 @@ class BiblioIdentifier < HGVIdentifier
     modified_xml_content
   end
  
+  # Updates internal values from post data which are simple strings
+  # - *Args*  :
+  #   - +key+ → key of element of interest, e.g. +:articleTitle+
+  # - *Returns* :
+  #   - the new value of +self[key]+
+  # Assumes +@post+ contains post data entered by the user
+  # Side effect on +self[key]+
   def updateFromPostSimple key
     self[key] = @post[key] && @post[key].kind_of?(String) && !@post[key].strip.empty? ? @post[key].strip : nil
   end
   
+  # Updates internal variables that contains names
+  # - *Args*  :
+  #   - +key+ → key of person category of interest, may be either +:authorList+ or +:editorList+
+  # - *Returns* :
+  #   - the new value of +self[key]+ which is an +Array+ containing all +Person+ objects that could be build from post data information
+  # Assumes that post data is stored in instance variable +@post+
+  # Side effect on +self[key]+
   def updateFromPostPerson key
     list = []
     if @post[key] &&  @post[key].kind_of?(Hash)
@@ -310,6 +364,13 @@ class BiblioIdentifier < HGVIdentifier
     self[key] = list
   end
     
+  # Updates internal variables that deal with short titles, i.e. first name, last name or a conjunction of both (short titles are actually stored as a list, but their names don't tell because they used to be a atoms)
+  # - *Args*  :
+  #   - +key+ → key of respective short title, may be +:journalTitleShort+ or +:bookTitleShort+
+  # - *Returns* :
+  #   - the new value of +self[key]+ which is an +Array+ containing all +ShortTitle+ objects that could be build from post data information
+  # Assumes post data in instance variable +@post+
+  # Side effect on +self[key]+
   def updateFromPostShortTitle key
     list = []
     if @post[key] && @post[key].kind_of?(Hash)
@@ -322,6 +383,9 @@ class BiblioIdentifier < HGVIdentifier
     self[key] = list
   end
 
+  # Writes post data concerning +:note+ to +self[:note]+ (is actually a list, but doesn't say so in its names because it used to be a single value)
+  # Assumes that member variable +@post+ is set
+  # Side effect on +self[:note]+
   def updateFromPostNote
     self[:note] = []
     if @post[:note] && @post[:note].kind_of?(Hash)
@@ -333,6 +397,9 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Writes publisher information (names and places) to +self[:publisherList]+
+  # Assumes that member variable +@post+ contains post data from user form
+  # Side effect on +self[:publisherList]+
   def updateFromPostPublisher
     self[:publisherList] = []
     if @post[:publisherList] && @post[:publisherList].kind_of?(Hash)
@@ -344,14 +411,24 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Adapter method to call +updateFromPostRelatedItem+ for related items of type +Reviewee+ (i.e. articles)
+  # Side effect on +self[:revieweeList]+
   def updateFromPostReviewee
     updateFromPostRelatedItem :revieweeList, Reviewee
   end
 
+  # Adapter method to call +updateFromPostRelatedItem+ for related items of type +Container+ (i.e. journals and books)
+  # Side effect on +self[:containerList]+
   def updateFromPostContainer
     updateFromPostRelatedItem :containerList, Container
   end
 
+  # Method to retrieve post data concerning related items and stored in object variables
+  # - *Args*  :
+  #   - +typeX+ → key, may be +:revieweeList+ or +:containerList+
+  #   - +classX+ → class name, may be +Reviewee+ or +Container+
+  # Assumes valid values in member +@post+
+  # Side effect on +self[:revieweeList]+ or +self[:containerList]+
   def updateFromPostRelatedItem typeX, classX
     self[typeX] = []
     if @post[typeX] && @post[typeX].kind_of?(Hash)
@@ -361,6 +438,9 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Updates related articles from data provided via post parameters
+  # Assumes that @post variable contains user data from biblio form
+  # Side effect on +self[:relatedArticleList]+
   def updateFromPostRelatedArticle
     self[:relatedArticleList] = []
     if @post[:relatedArticleList] && @post[:relatedArticleList].kind_of?(Hash)
@@ -377,6 +457,9 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
   
+  # A lengthy method that is indeed a sequence of updating procedures for all data fields of the biblio record
+  # Assumes that +self[key]+ contains all data (clean, complete and sanitised) necessary to update the underlying EpiDoc document, mainly uses xpaths provided in +XPATH[key]+
+  # Side effect on +@epiDoc+
   def updateEpiDoc
 
     [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition].each{|key|
@@ -534,6 +617,11 @@ class BiblioIdentifier < HGVIdentifier
 
   end
   
+  # Method to avoid replication for related items such as, reviewees and containers, also tries to retrieve biblio record that is bein referred to and loads information from this record into the current one
+  # - *Args*  :
+  #   - +key+ → key of the related item that should be saved to EpiDoc, i.e. +:revieeList+ or +:containerList+
+  # Assumes +@epiDoc+ contains +REXML::Document+ with biblio record
+  # Side effect on +self[:revieeList]+ or +self[:containerList]+
   def updateEpiDocRelatedItem key
     xpathBase = XPATH[key][/\A(.+)(\/bibl)\Z/, 1]
     xpathBibl = $2
@@ -557,6 +645,11 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
   
+  # Grabs another biblio file from +CANONICAL_REPOSITORY+'s master branch and extracts its title, author, date, etc. information
+  # - *Args*  :
+  #   - +biblioId+ → id of biblio record of interest
+  # - *Returns* :
+  #   - +Array+ of +REXML::Element+s or emtpy array if the requested record cannot be found
   def getRelatedItemElements biblioId
     result = []
 
@@ -578,13 +671,18 @@ class BiblioIdentifier < HGVIdentifier
           result[result.length] = relatedItem.elements[xpath]
         end
       }
-      
+
       return result
     rescue
       return result
     end
   end
 
+  # Builds the file path for a given biblio id, e.g. Biblio/1/23.xml
+  # - *Args*  :
+  #   - +biblioId+ → biblioId, e.g. +12345+ for xwalked biblio records or +54321-2012+ for records created via SoSOL interface
+  # - *Returns* :
+  #   - +String+ file path, like +Biblio/13/12345.xml+ or +Biblio/2012/54321.xml+
   def getBiblioPath biblioId
     if biblioId.include?('-')
       biblioId = biblioId[/\A(\d+)-(\d+)\Z/, 1]
@@ -597,6 +695,8 @@ class BiblioIdentifier < HGVIdentifier
 
   protected
 
+    # Retrieves biblio information from EpiDoc fragment and stores in member variables for later and handy access
+    # Side effect on +self[key]+ where key is sth. like +:articleTitle+
     def populateFromEpiDoc
 
       populateFromEpiDocSimple :articleTitle
@@ -649,6 +749,10 @@ class BiblioIdentifier < HGVIdentifier
 
     end
 
+    # Retrieves information from EpiDoc fragmet which are single values (i.e. tags that are not repeated, no lists) and which are accessible via a straightforward xpath, given in variable +XPATH[key]+
+    # - *Args*  :
+    #   - +key+ → key, e.g. +:link+
+    # Side effect on +self[key]+
     def populateFromEpiDocSimple key
       attribute = nil
       path = XPATH[key]
@@ -667,6 +771,10 @@ class BiblioIdentifier < HGVIdentifier
       end
     end
 
+    # Reads author and editor information from EpiDoc and writes as objects of class +PublicationPerson+ to +self[:authorList]+ resp. +self[:editorList]+
+    # - *Args*  :
+    #   - +key+ → +:authorList+ or +:editorList+
+    # Side effect on  +self[:authorList]+ or +self[:editorList]+
     def populateFromEpiDocPerson key
       list = []
       path = XPATH[key]
@@ -694,6 +802,10 @@ class BiblioIdentifier < HGVIdentifier
       self[key] = list
     end
     
+    # Populates short title attributes with objects of class +ShortTitle+ and fills them with all information that can be retrieved from EpiDoc
+    # - *Args*  :
+    #   - +key+ → +:journalTitleShort+ or +:bookTitleShort+
+    # Side effect on +self[:journalTitleShort]+ or +self[:bookTitleShort]+
     def populateFromEpiDocShortTitle key
       list = []
       path = XPATH[key]
@@ -708,6 +820,8 @@ class BiblioIdentifier < HGVIdentifier
       self[key] = list
     end
 
+    # Retrieves publisher information from EpiDoc, i.e. place names as well as names of persons or organisations
+    # Side effect on +self[:publisherList]+
     def populateFromEpiDocPublisher
       epiDoc.elements.each(XPATH[:publisherList]){|element|
         type = element.name.to_s
@@ -716,6 +830,8 @@ class BiblioIdentifier < HGVIdentifier
       }
     end
 
+    # Scans EpiDoc document for remarks and annotation and stores them in member +self[:note]+
+    # Side effect on +self[:note]+
     def populateFromEpiDocNote
       epiDoc.elements.each(XPATH[:note]){|element|
         if element.attributes.include?('resp')
@@ -724,14 +840,23 @@ class BiblioIdentifier < HGVIdentifier
       }
     end
 
+    # Shortcut access to method +populateFromEpiDocRelatedItem+ for reviewees
+    # Side effect on +self[:revieweeList]+
     def populateFromEpiDocReviewee
       populateFromEpiDocRelatedItem :revieweeList, Reviewee
     end
 
+    # Shortcut access to method +populateFromEpiDocRelatedItem+ for container elements (books or journals)
+    # Side effect on +self[:containerList]+
     def populateFromEpiDocContainer
       populateFromEpiDocRelatedItem :containerList, Container
     end
     
+    # Generic method to retrieve EpiDoc data from standard biblio structures of +TEI:relatedItem+ and save it as an +Array+ to respetive member variable
+    # - *Args*  :
+    #   - +typeX+ → +:revieweeList+ or +:containerList+
+    #   - +classX+ → +Reviewee+  or +Container+
+    # Side effect on +self[:revieweeList]+ or +self[:containerList]+
     def populateFromEpiDocRelatedItem typeX, classX
       epiDoc.elements.each(XPATH[typeX]){|bibl|
         pointer = bibl.elements['ptr'] && bibl.elements['ptr'].attributes && bibl.elements['ptr'].attributes['target'] ? bibl.elements['ptr'].attributes['target'] : ''
@@ -753,6 +878,8 @@ class BiblioIdentifier < HGVIdentifier
       }
     end
 
+    # Retrieves related articles (series, volume, number, ddb, tm, inventory) from EpiDoc writes a list of +RelatedArticle+ objects to +self[:relatedArticleList]+
+    # Side effect on +self[:relatedArticleList]+
     def populateFromEpiDocRelatedArticle
       epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
         series    = bibl.elements["title[@level='s'][@type='short']"] ? bibl.elements["title[@level='s'][@type='short']"].text : ''
@@ -766,6 +893,10 @@ class BiblioIdentifier < HGVIdentifier
       }
     end
 
+
+
+    # Gets original BP data from EpiDoc TEI:seg[@type='original'] tags (Index, Index bis, Titre, Publication, Resumé, S.B. & S.E.G., C.R.) as well as from old or new bp id
+    # Side effect on +self[:originalBp]+
     def populateFromEpiDocOriginalBp
       {
         'Index'         => "/bibl/seg[@type='original'][@subtype='index']",
@@ -790,6 +921,7 @@ class BiblioIdentifier < HGVIdentifier
 
     end
   
+  # Data structure for personal information first name, last name, name, swap
   class PublicationPerson
     attr_accessor :firstName, :lastName, :name, :swap
     def initialize firstName = '', lastName = '', name = '', swap = false
@@ -800,6 +932,7 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Data structure for target information pointer, ignoreList and ignored (built upon ignore list, read-only)
   class RelatedItem # appearsIn, reviews
     attr_accessor :pointer, :ignoreList, :ignored
     def initialize pointer = '', ignoreList = {}
@@ -816,14 +949,17 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
   
+  # Specialisation/Facade of class RelatedItem
   class Reviewee < RelatedItem
     
   end
   
+  # Specialisation/Facade of class RelatedItem
   class Container < RelatedItem
     
   end
   
+  # Data structure for short title information (i.e. title and responsibility/style), can be use for journals and books alike
   class ShortTitle
     attr_accessor :title, :responsibility
     def initialize title = '', responsibility = ''
@@ -832,6 +968,7 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
   
+  # Data structure for remarks (i.e. annotation and responsibility)
   class Note
     attr_accessor :responsibility, :annotation
     def initialize responsibility = '', annotation = ''
@@ -840,6 +977,7 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Data structure for related articles, (i.e. series, volume, number, ddb, tm and inventory)
   class RelatedArticle
     attr_accessor :series, :volume, :number, :ddb, :tm, :inventory
     def initialize series = '', volume = '', number = '', ddb = '', tm = '', inventory = ''
@@ -852,6 +990,7 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
 
+  # Data structure for publisher information, (i.e. publisherType which can have the values +publisher+ or +pubPlace+ and value which can be a person name, the name of an organisation or a place name)
   class Publisher
     attr_accessor :publisherType, :value
     def initialize publisherType = '', value = ''

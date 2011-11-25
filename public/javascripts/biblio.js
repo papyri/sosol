@@ -166,5 +166,3 @@ Event.observe(window, 'load', function() {
   $('identifier_submit').observe('click', checkNotAddedMultiples);
 
 });
-
-// todo: if an item has been moved the »observeChange« alert needs to be triggered

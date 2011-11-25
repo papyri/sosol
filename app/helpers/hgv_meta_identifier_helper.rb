@@ -1,19 +1,34 @@
+# Helper functions for complex EpiDoc transformations, date operations and form data for select boxes
 module HgvMetaIdentifierHelper
 
+  # Generates a random six-letter-code
+  # - *Args*  :
+  #   - +prefix+ → a string that should be prepended to the resulting letter code
+  # - *Returns* :
+  #   - +String+ random six letter code, e.g. "JCJIBF"
   def generateRandomId(prefix = '')
     prefix + (rand * 1000000).floor.to_s.tr('0123456789', 'ABCDEFGHIJ')
   end
   
+  # Module for HGV geo data class definitions (provenance, place and geo)
   module HgvGeo
 
+    # Data structure for provenance information
     class Provenance
+      # +Array+ of a valid values for TEI:provenance|@type
       @@typeList          = [:found, :observed, :destroyed, :'not-found', :reused, :moved, :acquired, :sold, :composed, :sent, :executed, :received, :located]
+      # +Array+ of a valid values for TEI:provenance|@subtype
       @@subtypeList       = [:last]
+      # +Array+ of all String member attributes that have a TEI equivalent
       @@atomList          = [:type, :subtype, :date]
 
       attr_accessor :type, :subtype, :date, :placeList
 
-      def initialize init = nil        
+      # Constructor
+      # - *Args*  :
+      #   - +init+ → +Hash+ object containing provenance data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
+      # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
+      def initialize init = nil
         @type    = nil
         @subtype = nil
         @date    = nil
@@ -41,6 +56,11 @@ module HgvMetaIdentifierHelper
 
       end
       
+      # Factory method for batch loading an +Array+ of +Provenance+ objects
+      # - *Args*  :
+      #   - +epiDocList+ → data contained in +BiblioIdentifier+'s +:provenance+ attribute
+      # - *Returns* :
+      #   - +Array+ of +HgvGeo::Provenance+ objects
       def self.getObjectList epiDocList
         objectList = []
         epiDocList.each {|epi|
@@ -49,12 +69,25 @@ module HgvMetaIdentifierHelper
         objectList
       end
       
+      # Updates instance variables from a hash
+      # - *Args*  :
+      #   - +epiDocList+ → data contained in +BiblioIdentifier+'s +:provenance+ attribute
+      # - *Returns* :
+      #   - +Array+ of +HgvGeo::Provenance+ objects
+      # Side effect on all member variables that are declared in +@@atomList+
       def populateAtomFromHash hash
         @@atomList.each {|member|
           self.send((member.to_s + '=').to_sym, hash[member] || nil)
         }
       end
       
+      # Mutator method for member variable +type+
+      # If value for +type+ is invalid +type+ will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable +type+ (+:found+, +:observed+, +:destroyed+, etc.)
+      # - *Returns* :
+      #   - new value of +type+
+      # Side effect on +@type+
       def type= value
         value = (value.class == String ? value.to_sym : value)
         if @@typeList.include? value
@@ -64,6 +97,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +subtype+
+      # If value for +subtype+ is invalid +subtype+ will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable +subtype+ (+:last+)
+      # - *Returns* :
+      #   - new value of +subtype+
+      # Side effect on +@subtype+
       def subtype= value
         value = value.class == String ? value.to_sym : value
         if @@subtypeList.include? value
@@ -73,6 +113,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +date+
+      # If value for +date+ is invalid, +date+ will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable +date+ (YYYY[-MM[-DD]])
+      # - *Returns* :
+      #   - new value of +date+
+      # Side effect on +@date+
       def date= value
         value = value.class == Symbol ? value.to_s : value
         if value =~ /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/
@@ -82,6 +129,13 @@ module HgvMetaIdentifierHelper
         end
       end
 
+      # Mutator method for member variable +value+
+      # If value for member variable +value+ is invalid it will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable (only valid value is +:unknown+)
+      # - *Returns* :
+      #   - new value
+      # Side effect on +@value+
       def value= value
         if value && value.to_sym == :unknown
           @value = :unknown
@@ -89,11 +143,11 @@ module HgvMetaIdentifierHelper
           @value = nil
         end
       end
-      
-      def unknown?
-        @value == :unbekannt
-      end
 
+      # Mutator method for member variable +placeList+
+      # - *Args*  :
+      #   - +place+ → +Place+ object that shall be appended to member variable +placeList+
+      # Side effect on +@placeList+
       def addPlace place
         if place.kind_of? Place
           @placeList[@placeList.length] = place
@@ -101,9 +155,14 @@ module HgvMetaIdentifierHelper
       end
     end # class Provenance
     
+    # Data structure for place information
     class Place
       attr_accessor :id, :exclude, :geoList
       
+      # Constructor
+      # - *Args*  :
+      #   - +init+ → +Hash+ object containing place data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
+      # Side effect on +@id+, +@exclude+ and +@geoList+
       def initialize init = nil
         @id      = nil
         @exclude = nil
@@ -132,6 +191,10 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +geoList+
+      # - *Args*  :
+      #   - +geo+ → +GeoSpot+ object that shall be appended to member variable +geoList+
+      # Side effect on +@geoList+
       def addGeo geo
         if geo.class == GeoSpot
           @geoList[@geoList.length] = geo
@@ -140,6 +203,7 @@ module HgvMetaIdentifierHelper
 
     end
 
+    # Data structure for geo information
     class GeoSpot
       @@typeList      = [:ancient, :modern]
       @@subtypeList   = [:nome, :province, :region]
@@ -148,6 +212,10 @@ module HgvMetaIdentifierHelper
       
       attr_accessor :type, :subtype, :offset, :name, :certainty, :referenceList
 
+      # Constructor
+      # - *Args*  :
+      #   - +init+ → +Hash+ object containing geo data as provided by the model class +BiblioIdentifier+ or a simple +Hash+ structure mapping a symbol of the same name as the member variable to a desired value, used to initialise member variables, defaults to +nil+
+      # Side effect on +@type+, +@subtype+, +@offset+, +@name+, +@certainty+ and +@referenceList+ (+Array+)
       def initialize init = nil
         @type          = nil
         @subtype       = nil
@@ -183,6 +251,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +type+
+      # If value for +type+ is invalid +type+ will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable +type+ (+:ancient+, +:modern+)
+      # - *Returns* :
+      #   - new value of +type+
+      # Side effect on +@type+
       def type= value
         value = value.class == String ? value.to_sym : value
         if @@typeList.include? value
@@ -192,6 +267,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +subtype+
+      # If value for +subtype+ is invalid +subtype+ will be set to +nil+
+      # - *Args*  :
+      #   - +value+ → new value for member variable +subtype+ (+:nome+, +:province+, +:region+)
+      # - *Returns* :
+      #   - new value of +subtype+
+      # Side effect on +@subtype+
       def subtype= value
         value = value.class == String ? value.to_sym : value
         if @@subtypeList.include? value
@@ -201,6 +283,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +offset+
+      # If value for +offset+ is invalid +offset+ will be set to +nil+ instead
+      # - *Args*  :
+      #   - +value+ → new value for member variable +offset+ (+:near+)
+      # - *Returns* :
+      #   - new value of +offset+
+      # Side effect on +@offset+
       def offset= value
         value = value.class == String ? value.to_sym : value
         if @@offsetList.include? value
@@ -210,6 +299,13 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Mutator method for member variable +certainty+
+      # If value for +certainty+ is invalid +certainty+ will be set to +nil+ instead
+      # - *Args*  :
+      #   - +value+ → new value for member variable +certainty+ (+:low+)
+      # - *Returns* :
+      #   - new value of +certainty+
+      # Side effect on +@certainty+
       def certainty= value
         value = value.class == String ? value.to_sym : value
         if @@certaintyList.include? value
@@ -219,10 +315,17 @@ module HgvMetaIdentifierHelper
         end
       end
       
+      # Accessor method for member variable +certainty+
+      # - *Returns* :
+      #   - true if +certainty+ is +:low+, false otherwise
       def certain?
         self.certainty && self.certainty.to_sym == :low ? true : false
       end
       
+      # Mutator method for member variable +referenceList+
+      # - *Args*  :
+      #   - +value+ → +String+ object that shall be appended to member variable +referenceList+
+      # Side effect on +@referenceList+
       def addReference value
         if value.kind_of?(String) && !value.empty? && !@referenceList.include?(value)
           @referenceList[@referenceList.length] = value
@@ -232,7 +335,11 @@ module HgvMetaIdentifierHelper
 
   end # module HgvGeo
 
+  # Module for HGV publication data
   module HgvPublication
+    # Assembles all possible values for publication parts, such as +S. …+ for pages or +Kol. …+ for column numbers
+    # - *Returns* :
+    #   - +Array+ of pairs which again are stored within an +Array+ +[[:pattern, :type], [:pattern, :type], ...]+
     def HgvPublication.getTypeOptions
       [['',             :generic],  
         ['S. …',        :pages],
@@ -247,19 +354,53 @@ module HgvMetaIdentifierHelper
         ['Kol. …',      :columns]]
     end
     
+    # Facade to access a publication's volume information
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ if desired information can be retrieved from current publication data
+    #   - +nil+ otherwise
     def HgvPublication.getVolume publicationExtra
       HgvPublication.get :volume, publicationExtra
     end
+    
+    # Facade to access a publication's fascicle information
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ if desired information can be retrieved from current publication data
+    #   - +nil+ otherwise
     def HgvPublication.getFascicle publicationExtra
       HgvPublication.get :fascicle, publicationExtra
     end
+    
+    # Facade to access a publication's numbers information
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ if desired information can be retrieved from current publication data
+    #   - +nil+ otherwise
     def HgvPublication.getNumbers publicationExtra
       HgvPublication.get :numbers, publicationExtra
     end
+    
+    # Facade to access a publication's side information
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ if desired information can be retrieved from current publication data
+    #   - +nil+ otherwise
     def HgvPublication.getSide publicationExtra
       HgvPublication.get :side, publicationExtra
     end
-    
+
+    # Facade to access a typed bit of information from a publication
+    # - *Args*  :
+    #   - +type+ → type to extract (+:volume+, +fascicle+, +numbers+, +side+)
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ if desired information can be retrieved from current publication data
+    #   - +nil+ otherwise
     def HgvPublication.get type, publicationExtra
       if publicationExtra
         publicationExtra.each {|biblScope|
@@ -271,6 +412,12 @@ module HgvMetaIdentifierHelper
       return nil
     end
     
+    # Populates handy +Array+ from complex EpiDoc structure
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +Array+ containing all publication attributes that are NOT volume, fascicle, numbers or side
+    #   - [{:type => ..., :value => ...}, {:type => ..., :value => ...}, ...]
     def HgvPublication.getExtras publicationExtra
       extras = []
       if publicationExtra
@@ -283,6 +430,11 @@ module HgvMetaIdentifierHelper
       extras
     end
     
+    # Builds a chain of publication features that need to append to a publication's title in order to tell the whole story
+    # - *Args*  :
+    #   - +publicationExtra+ → publication data as provided by HGV metadata model class
+    # - *Returns* :
+    #   - +String+ that concatenates all bits publication attributes by interspersing a blank
     def HgvPublication.getTitleTail publicationExtra
       title = ''
       if publicationExtra
@@ -294,13 +446,20 @@ module HgvMetaIdentifierHelper
       end
       title
     end
-    
+
   end
 
+  # Module for the formatting of HGV geo data, uses data structures that are provided by the +HgvGeo+ module
   module HgvProvenance
+
+    # Formats a given list of +Place+ objects according to HGV style
+    # - *Args*  :
+    #   - +placeList+ → +Array+ of +Place+ objects
+    # - *Returns* :
+    #   - formatted place +String+, +"<ORT1>, <ORT2> oder <ORT3>"+
     def HgvProvenance.formatPlaceList placeList
       result = ''
-      
+
       placeList.each_index{|placeIndex|
         result << HgvProvenance.formatGeoList(placeList[placeIndex].geoList)
 
@@ -315,12 +474,17 @@ module HgvMetaIdentifierHelper
         else
           ''
         end
-        
+
       }
 
       result
     end
 
+    # Formats a given list of +GeoSpot+ objects according to HGV style
+    # - *Args*  :
+    #   - +geoList+ → +Array+ of +GeoSpot+ objects
+    # - *Returns* :
+    #   - formatted geo +String+, +"<MODERN SETTLEMENT> bei <ANCIENT SETTLEMENT>, (<ANCIENT NOME>, <ANCIENT REGION> ?)"+
     def HgvProvenance.formatGeoList geoList
       result = ''
 
@@ -373,6 +537,11 @@ module HgvMetaIdentifierHelper
       result
     end
 
+    # Formats a single +GeoSpot+ object according to HGV style
+    # - *Args*  :
+    #   - +geoSpot+ → +GeoSpot+ object
+    # - *Returns* :
+    #   - formatted geo +String+, +"bei <ORT> ?"+
     def HgvProvenance.formatGeoSpot geoSpot
       result = ''
       result << (geoSpot.offset ? 'bei ' : '')
@@ -381,6 +550,11 @@ module HgvMetaIdentifierHelper
       result
     end
     
+    # Formats a list of +Provenance+ objects according to HGV style
+    # - *Args*  :
+    #   - +provenanceList+ → list +Provenance+ objects
+    # - *Returns* :
+    #   - formatted provenance +String+, +"Fundort: <ORT1>; zuletzt gesichtet: bei <ORT2> ?"+
     def HgvProvenance.format provenanceList
       provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
       result = ''
@@ -437,6 +611,9 @@ module HgvMetaIdentifierHelper
       result 
     end
 
+    # Assembles all valid certainty options for HGV provenance (+low+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.certaintyOptions
       [
         ['', ''],
@@ -444,6 +621,9 @@ module HgvMetaIdentifierHelper
       ]
     end
     
+    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.typeOptions
       [
         ['', ''],
@@ -463,6 +643,9 @@ module HgvMetaIdentifierHelper
       ]
     end
     
+    # Assembles all valid subtype options for HGV provenance (+last+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.subtypeOptions
       [
         ['', ''],
@@ -470,6 +653,9 @@ module HgvMetaIdentifierHelper
       ]
     end
 
+    # Assembles all valid subtype options for HGV geo spot (+ancient+, +modern+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.epochOptions
       [
         [I18n.t('provenance.epoch.ancient'), :ancient],
@@ -477,6 +663,9 @@ module HgvMetaIdentifierHelper
       ]
     end
 
+    # Assembles all valid territory (subtype) options for HGV geo spot (+nome+, +region+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.territoryOptions
       [
         ['', ''],
@@ -486,20 +675,30 @@ module HgvMetaIdentifierHelper
       ]
     end
 
+    # Assembles all valid offset options for HGV geo spot (+near+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvProvenance.offsetOptions
       [
-        ['', ''],  
+        ['', ''],
         [I18n.t('provenance.offset.near'), 'bei']
       ]
     end
   end
-  
+
+  # Module for HGV date transformations and option values
   module HgvDate
+    # Assembles all valid precision options for HGV date (+ca.+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.precisionOptions
       [['', ''], 
         [I18n.t('date.ca'), :ca]]
     end
 
+    # Assembles all valid month qualifiers for HGV date (+beginning+, +middle+, +end+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.monthOptions
       [['', ''], 
         [I18n.t('date.beginning'), :beginning],
@@ -510,6 +709,9 @@ module HgvMetaIdentifierHelper
         [I18n.t('date.endCirca'), :endCirca]]
     end
 
+    # Assembles all valid year qualifiers for HGV date (+beginning+, +middle+, +end+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.yearOptions
       [['', ''], 
         [I18n.t('date.beginning'), :beginning], 
@@ -528,6 +730,9 @@ module HgvMetaIdentifierHelper
         [I18n.t('date.endCirca'), :endCirca]]
     end
 
+    # Assembles all valid century qualifiers for HGV date (+beginning+, +middle+, +end+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.centuryOptions
       [['', ''], 
         [I18n.t('date.beginning'), :beginning], 
@@ -550,6 +755,9 @@ module HgvMetaIdentifierHelper
         [I18n.t('date.endCirca'), :endCirca]]
     end
 
+    # Assembles all valid offset options for HGV date (+before+, +after+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.offsetOptions
       [['', ''], 
         [I18n.t('date.before'), :before], 
@@ -558,6 +766,9 @@ module HgvMetaIdentifierHelper
         [I18n.t('date.afterUncertain'), :afterUncertain]]
     end
 
+    # Assembles all valid certainty options for HGV date (+low+, +day+, +month+, +year+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvDate.certaintyOptions
       [['', ''], 
         [I18n.t('date.certaintyLow'), :low], 
@@ -570,6 +781,14 @@ module HgvMetaIdentifierHelper
         [I18n.t('date.dayMonthAndYearUncertain'), :day_month_year]]
     end
 
+    # Get ISO formatted year ([-]YYYY)
+    # - *Args*  :
+    #   - +century+ → signed integer, e.g. -5
+    #   - +centuryQualifier+ → qualifies which part of the century is of interest, e.g. +:beginning+, may be +nil+
+    #   - +chron+ → +:chronMin+ or +:chronMax+
+    # - *Returns* :
+    #   - +String+, e.g. +-0476+
+    # e.g. HgvDate.getYearIso(-5, :beginning, :chronMax) => "-0476"
     def HgvDate.getYearIso century, centuryQualifier, chron
       century = century.to_i
       
@@ -609,6 +828,14 @@ module HgvMetaIdentifierHelper
       (century < 0 ? '-' : '') + year
     end
     
+    # Get ISO formatted month (MM)
+    # - *Args*  :
+    #   - +month+ +String+, that contains a number, e.g. 5, may be +nil+
+    #   - +yearQualifier+ → qualifies which part of the year is of interest, e.g. +:beginning+, may be +nil+
+    #   - +chron+ → +:chronMin+ or +:chronMax+
+    # - *Returns* :
+    #   - +String+, e.g. +05+
+    # e.g. HgvDate.getMonthIso(nil, :end, :chronMin) => "10"
     def HgvDate.getMonthIso month, yearQualifier, chron
       if month
         month.rjust(2, '0')
@@ -638,6 +865,15 @@ module HgvMetaIdentifierHelper
       end
     end
     
+    # Get ISO formatted month (DD)
+    # - *Args*  :
+    #   - +day+ +String+ or +Integer+, that contains a number, e.g. 31, may be +nil+
+    #   - +month+ +String+ or +Integer+, that contains a number, e.g. 5, may be +nil+
+    #   - +monthQualifier+ → qualifies which part of the year is of interest, e.g. +:beginning+, may be +nil+
+    #   - +chron+ → +:chronMin+ or +:chronMax+
+    # - *Returns* :
+    #   - +String+, e.g. +31+
+    # e.g. HgvDate.getDayIso(nil, 7, :end, :chronMax) => "31"
     def HgvDate.getDayIso day, month, monthQualifier, chron
       if day
         day.to_s.rjust(2, '0')
@@ -662,6 +898,12 @@ module HgvMetaIdentifierHelper
       end
     end
     
+    # Finds the century of a given year
+    # - *Args*  :
+    #   - +year+ +Integer+ value, e.g. -1234
+    # - *Returns* :
+    #   - +Integer+, e.g. +-13+
+    # e.g. HgvDate.getCentury(-1234) => "-13"
     def HgvDate.getCentury year
       if !year
         nil
@@ -670,6 +912,13 @@ module HgvMetaIdentifierHelper
       end
     end
 
+    # Finds the corresponding century qualifier of a given year range
+    # - *Args*  :
+    #   - +year+ +Integer+ value of first year
+    #   - +year2+ +Integer+ value of second year
+    # - *Returns* :
+    #   - +Symbol+, e.g. +:middle+
+    # e.g. HgvDate.getCenturyQualifier(126, 175) => :middle
     def HgvDate.getCenturyQualifier year, year2
       if !year || !year2
         return nil
@@ -730,6 +979,13 @@ module HgvMetaIdentifierHelper
       end
     end
 
+    # Finds the corresponding year qualifier of a given month range
+    # - *Args*  :
+    #   - +month+ +Integer+ value of first month, may be +nil+
+    #   - +month2+ +Integer+ value of second month, may be +nil+
+    # - *Returns* :
+    #   - +Symbol+, e.g. +:middle+, or +nil+ if no match is found
+    # e.g. HgvDate.getYearQualifier(5, 8) => :summer
     def HgvDate.getYearQualifier month = nil, month2 = nil
       if month && month2
         return {
@@ -772,7 +1028,14 @@ module HgvMetaIdentifierHelper
         return nil
       end
     end
-    
+
+    # Finds the corresponding month qualifier of a given day range
+    # - *Args*  :
+    #   - +day+ +Integer+ value of first day, may be +nil+
+    #   - +day2+ +Integer+ value of second day, may be +nil+
+    # - *Returns* :
+    #   - +Symbol+, e.g. +:middle+, or +nil+ if no match is found
+    # e.g. HgvDate.getMonthQualifier(11, 20) => :middle
     def HgvDate.getMonthQualifier day = nil, day2 = nil
       if day && day2
         return {
@@ -797,6 +1060,13 @@ module HgvMetaIdentifierHelper
       end
     end
 
+    # Finds the corresponding month qualifier of a given day range
+    # - *Args*  :
+    #   - +iso+ ISO formatted date +String+
+    #   - +regex+ regular expression
+    # - *Returns* :
+    #   - +Integer+ extract of ISO data, first match of regular expression or nil if no ISO formatted date is given or if no match can be made
+    # e.g. HgvDate.extractFromIso('1884-08-28', /\A(-?\d\d\d\d)/) => 1884
     def HgvDate.extractFromIso iso, regex 
       if iso
         iso =~ regex ? iso[regex, 1].to_i  : nil
@@ -805,18 +1075,39 @@ module HgvMetaIdentifierHelper
       end
     end
     
+    # Facade for HgvDate.extractFromIso
+    # - *Args*  :
+    #   - +iso+ ISO formatted date +String+
+    # - *Returns* :
+    #   - +Integer+ year part of the ISO string
+    # e.g. HgvDate.yearFromIso('1884-08-28') => 1884
     def HgvDate.yearFromIso iso
       HgvDate.extractFromIso iso, /\A(-?\d\d\d\d)/
     end
     
+    # Facade for HgvDate.extractFromIso
+    # - *Args*  :
+    #   - +iso+ ISO formatted date +String+
+    # - *Returns* :
+    #   - +Integer+ month part of the ISO string
+    # e.g. HgvDate.monthFromIso('1884-08-28') => 8
     def HgvDate.monthFromIso iso
       HgvDate.extractFromIso iso, /\A-?\d\d\d\d-(\d\d)/
     end
     
+    # Facade for HgvDate.extractFromIso
+    # - *Args*  :
+    #   - +iso+ ISO formatted date +String+
+    # - *Returns* :
+    #   - +Integer+ day part of the ISO string
+    # e.g. HgvDate.dayFromIso('1884-08-28') => 28
     def HgvDate.dayFromIso iso
       HgvDate.extractFromIso iso, /\A-?\d\d\d\d-\d\d-(\d\d)\Z/
     end
     
+    # Provides an empty HGV date item
+    # - *Returns* :
+    #   - flat +Hash+ structure with all relevant date keys, i.e. century, year, month, day, certainty, offset etc.
     def HgvDate.getEmptyHgvItem
       {
         :c => nil, :y => nil, :m => nil, :d => nil, :cx => nil, :yx => nil, :mx => nil, :offset => nil, :precision => nil, :ca => false,
@@ -827,7 +1118,10 @@ module HgvMetaIdentifierHelper
         :empty => nil
       }
     end
-    
+
+    # Provides an empty HGV EpiDoc date item
+    # - *Returns* :
+    #   - nested +Hash+ structure with all relevant date keys, i.e. century, year, month, day, certainty, offset etc.
     def HgvDate.getEmptyEpidocItem
       {
         :value => nil,
@@ -847,12 +1141,27 @@ module HgvMetaIdentifierHelper
       }
     end
     
+    # Precision making process
+    # - *Args*  :
+    #   - +precision+ → circa
+    #   - +cx+ → century qualifier
+    #   - +yx+ → year qualifier
+    #   - +mx+ → month qualifier
+    # - *Returns* :
+    #   - +Symbol+ of combined precision :low, :medium, :lowlow
+    # HgvDate.getPrecision('ca', nil, nil, nil) => :medium
     def HgvDate.getPrecision precision, cx, yx, mx
       ca = precision || (cx  && cx.to_s.include?('Circa')) || (yx  && yx.to_s.include?('Circa')) || (mx  && mx.to_s.include?('Circa'))
       vague = cx || yx || mx
       ca && vague ? :lowlow : (ca ? :medium : (vague ? :low : nil))
     end
-    
+
+    # Transforms EpiDoc structure provided by +HgvIdentifier+ class (nested values, attributes, children) into a simple +Hash+ structure (flat map of key as and values)
+    # - *Args*  :
+    #   - +date_item+ → date information
+    # - *Returns* :
+    #   - +Hash+ of date information
+    # for examples see unit test for HGV date operations (test/uni/date_test.rb)
     def HgvDate.epidocToHgv date_item      
       t = HgvDate.getEmptyHgvItem
 
@@ -1059,6 +1368,12 @@ module HgvMetaIdentifierHelper
       t
     end
     
+    # Generate HGV EpiDoc like structure for precision information (see config/hgv.yml)
+    # - *Args*  :
+    #   - +degree+ → degree of precision
+    #   - +match+ → qualifier for precision range
+    # - *Returns* :
+    #   - nested +Hash+ set
     def HgvDate.getPrecisionItem degree, match = nil 
       {
         :value => nil,
@@ -1070,7 +1385,12 @@ module HgvMetaIdentifierHelper
       }   
     end
     
-    def HgvDate.getCertaintyItem match 
+    # Generate HGV EpiDoc like structure for certainty information (see config/hgv.yml)
+    # - *Args*  :
+    #   - +match+ → qualifier for certainty range
+    # - *Returns* :
+    #   - nested +Hash+ set
+    def HgvDate.getCertaintyItem match
       {
         :value => nil,
         :children => {},
@@ -1080,6 +1400,12 @@ module HgvMetaIdentifierHelper
       }   
     end
     
+    # Generate HGV EpiDoc like structure for offset information (see config/hgv.yml)
+    # - *Args*  :
+    #   - +offset+ → +:before+, +:after+, +:beforeUncertain+, +:afterUncertain+
+    #   - +position+ → tells whether the offset belongs to the lower part of the date range or to the upper
+    # - *Returns* :
+    #   - nested +Hash+ set
     def  HgvDate.getOffsetItem offset, position
       offset = offset.to_sym
       {
@@ -1092,6 +1418,12 @@ module HgvMetaIdentifierHelper
       }
     end
     
+    # Transforms simple +Hash+ structure (flat map of key as and values) into EpiDoc structure that can be digested by +HgvIdentifier+ class (nested values, attributes, children)
+    # - *Args*  :
+    #   - +date_item+ → date information
+    # - *Returns* :
+    #   - nested +Hash+ of date information
+    # for examples see unit test for HGV date operations (test/uni/date_test.rb)
     def HgvDate.hgvToEpidoc date_item
       t = HgvDate.getEmptyEpidocItem
         
@@ -1207,13 +1539,27 @@ module HgvMetaIdentifierHelper
     end
   end
 
+  # Module for transformations and option values for HGV mentioned date
   module HgvMentionedDate
+    # Assembles all valid uncertainty options for HGV mentioned dates (+dayUncertain+, +dayAndMonthUncertain+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvMentionedDate.certaintyOptions
       [['', ''], ['(?)', 'low'], [I18n.t('date.dayUncertain'), 'day'], [I18n.t('date.dayAndMonthUncertain'), 'day_month'], [I18n.t('date.monthUncertain'), 'month'], [I18n.t('date.monthAndYearUncertain'), 'month_year'], [I18n.t('date.yearUncertain'), 'year']]
     end
+
+    # Assembles all valid date alternatives for HGV mentioned dates (+dateAlternativeX+, +dateAlternativeY+, +dateAlternativeZ+)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def HgvMentionedDate.dateIdOptions
       [['', ''], ['X', '#dateAlternativeX'], ['Y', '#dateAlternativeY'], ['Z', '#dateAlternativeZ']]
     end
+
+    # Transforms EpiDoc structure provided by +HgvIdentifier+ class (nested values, attributes, children) into a simple +Hash+ structure (flat map of key as and values)
+    # - *Args*  :
+    #   - +mentioned_date+ → list of date information
+    # - *Returns* :
+    #   - +Array+ of +Hash+s containing date information
     def HgvMentionedDate.dateInformation mentioned_date
       data = []
 
@@ -1252,8 +1598,18 @@ module HgvMetaIdentifierHelper
     end
   end
   
+  # Module for the generation of HGV stylish date strings
   module HgvFormat
 
+    # Generates pretty date format from a bunch of ISO dates
+    # - *Args*  :
+    #   - +isoWhen+ → ISO date
+    #   - +isoNotBefore+ → ISO date, may be nil
+    #   - +isoNotAfter+ → ISO date, may be nil
+    #   - +certainty+ → may be nil
+    # - *Returns* :
+    #   - format +String+
+    # e.g. HgvFormat.formatDateFromIsoParts('1884-08-28') => "28. Aug. 1884"
     def HgvFormat.formatDateFromIsoParts isoWhen, isoNotBefore = nil, isoNotAfter = nil, certainty = nil
       date_item = {}
       
@@ -1281,6 +1637,12 @@ module HgvMetaIdentifierHelper
       
     end
 
+    # Generates pretty date format from a date item
+    # - *Args*  :
+    #   - +date_item+ → Hash structure with date information
+    # - *Returns* :
+    #   - format +String+
+    # e.g. HgvFormat.formatDate({:y => 1884, :m => 8, :d => 28}) => "28. Aug. 1884"
     def HgvFormat.formatDate date_item
       precision = HgvFormat.formatPrecision date_item[:precision]
       certainty = HgvFormat.formatCertainty date_item[:certainty]
@@ -1313,6 +1675,20 @@ module HgvMetaIdentifierHelper
         (certainty ? ' ' + certainty : '')
     end
 
+    # Generates pretty date format from various bits of information (century, year, month, day, qualifiers and offsets)
+    # - *Args*  :
+    #   - +c+ → century, may be nil
+    #   - +y+ → year, may be nil
+    #   - +m+ → month, may be nil
+    #   - +d+ → day, may be nil
+    #   - +cq+ → century qualifier, may be nil
+    #   - +yq → year qualifier, may be nil
+    #   - +mq+ → month qualifier, may be nil
+    #   - +offset+ → offset, may be nil
+    # - *Returns* :
+    #   - format +String+ (may be empty)
+    # e.g. HgvFormat.formatDatePart(nil, 1884, 8, 28) => "28. Aug. 1884"
+    # e.g. HgvFormat.formatDatePart 5 => "V"
     def HgvFormat.formatDatePart c = nil, y = nil, m = nil, d = nil, cq = nil, yq = nil, mq = nil, offset = nil
 
       offset = formatOffset offset
@@ -1334,6 +1710,12 @@ module HgvMetaIdentifierHelper
         (c ? c : '')).strip
     end
 
+    # Generates pretty format for offset values
+    # - *Args*  :
+    #   - +offset+ → :before, :after, :beforeUncertain or :afterUncertain
+    # - *Returns* :
+    #   - format +String+ or +nil+ if nothing fits
+    # e.g. HgvFormat.formatOffset(:afterUncertain) => "nach (?)"
     def HgvFormat.formatOffset offset
       HgvFormat.format offset, {
         :before => 'vor',
@@ -1343,6 +1725,12 @@ module HgvMetaIdentifierHelper
       }
     end
     
+    # Generates pretty format for offset values
+    # - *Args*  :
+    #   - +offset+ → :before, :after, :beforeUncertain or :afterUncertain
+    # - *Returns* :
+    #   - format +String+ or +nil+ if nothing fits
+    # e.g. HgvFormat.formatOffset(:afterUncertain) => "nach (?)"
     def HgvFormat.formatCertainty certainty
       HgvFormat.format certainty, {
         :low            => '(?)',
@@ -1356,29 +1744,65 @@ module HgvMetaIdentifierHelper
       }
     end
     
+    # Generates pretty format for date precision
+    # - *Args*  :
+    #   - +precision+ → :ca
+    # - *Returns* :
+    #   - format +String+ or +nil+ if nothing fits
+    # e.g. HgvFormat.formatPrecision(:ca) => "ca."
     def HgvFormat.formatPrecision precision
       HgvFormat.format precision, {
         :ca => 'ca.'
       }
     end
 
+    # Generates pretty format for day information
+    # - *Args*  :
+    #   - +day+ → +String+ or +Integer+ number
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g. HgvFormat.formatDay(28) => "28."
     def HgvFormat.formatDay day
       (day && day.to_i > 0) ? (day.to_i.to_s + '.') : nil
     end
     
+    # Generates pretty format for month information
+    # - *Args*  :
+    #   - +month+ → +String+ or +Integer+ number
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g. HgvFormat.formatMonth 8 => "Aug."
     def HgvFormat.formatMonth month
       months = ['', 'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
       month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : nil
     end
     
+    # Generates pretty format for year information
+    # - *Args*  :
+    #   - +year+ → +String+ or +Integer+ number
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g. HgvFormat.formatYear(-1884) => "1884 v.Chr."
     def HgvFormat.formatYear year
       year && year.to_i != 0 ? year.to_i.abs.to_s + (year.to_i < 0 ? ' v.Chr.' : '') : nil
     end
-    
+
+    # Generates pretty format for century information
+    # - *Args*  :
+    #   - +century+ → +String+ or +Integer+ number
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g. HgvFormat.formatCentury(19) => "XIX"
     def HgvFormat.formatCentury century
       century && century.to_i != 0 ? century.to_i.abs.roman.to_s + (century.to_i < 0 ? ' v.Chr.' : '') : nil
     end
-    
+
+    # Generates pretty format for month qualifier
+    # - *Args*  :
+    #   - +q+ → +Symbol+, month qualifier, e.g. +:beginning+, +:middle+ or +:end+
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g.  HgvFormat.formatMonthQualifier(:endCirca) => "Ende (?)"
     def HgvFormat.formatMonthQualifier q
       HgvFormat.format q, {
         :beginning => 'Anfang', 
@@ -1390,6 +1814,12 @@ module HgvMetaIdentifierHelper
       }
     end
     
+    # Generates pretty format for year qualifier
+    # - *Args*  :
+    #   - +q+ → +Symbol+, year qualifier, e.g. +:beginning+, +:middle+ or +:end+
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g.  HgvFormat.formatYearQualifier(:middleToSecondHalfCirca) => "Mitte - 2. Hälfte (?)"
     def HgvFormat.formatYearQualifier q
       HgvFormat.format q, {
         :beginning          => 'Anfang', 
@@ -1409,6 +1839,12 @@ module HgvMetaIdentifierHelper
       }
     end
 
+    # Generates pretty format for century qualifier
+    # - *Args*  :
+    #   - +q+ → +Symbol+, century qualifier, e.g. +:beginning+, +:middle+ or +:end+
+    # - *Returns* :
+    #   - format +String+ or +nil+ if it cannot be converted
+    # e.g.  HgvFormat.formatCenturyQualifier(:beginningToMiddle) => "Anfang - Mitte"
     def HgvFormat.formatCenturyQualifier q
       HgvFormat.format q, {
         :beginning          => 'Anfang',
@@ -1432,6 +1868,13 @@ module HgvMetaIdentifierHelper
       } 
     end
     
+    # Helper function to retrieve a key from a list
+    # - *Args*  :
+    #   - +key+ → +String+ or +Symbol+
+    #   - +list+ → +Hash+
+    # - *Returns* :
+    #   - list item at position of +key+ or nil if this position cannot be accessed
+    # e.g.  HgvFormat.format(:a, {:a => 'A', :b => 'B'}) => "A"
     def HgvFormat.format key, list
       begin
         key = key.to_sym
@@ -1443,13 +1886,27 @@ module HgvMetaIdentifierHelper
     end
   end
 
+  # Module to turn HGV date vague qualifiers (beginning, middle, end, late, early) into hard values
   module HgvFuzzy
+    # Wrapper function for getChron which gets rid of all values for month and day which were not explicitely set by the user
+    # - *Args*  :
+    #   - +c+ → century, may be nil
+    #   - +y+ → year, may be nil
+    #   - +m+ → month, may be nil
+    #   - +d+ → day, may be nil
+    #   - +cq+ → century qualifier, may be nil
+    #   - +yq → year qualifier, may be nil
+    #   - +mq+ → month qualifier, may be nil
+    #   - +chron+ → :chron, :chronMax, :chronMin, defaults to :chron if not specified
+    # - *Returns* :
+    #   - HGV formatted date +String+
+    # e.g. HgvFuzzy.getChronSimple('6', '543', '2', '1', '', '', '', :chronMin) => "0543-02-01"
     def HgvFuzzy.getChronSimple c, y, m, d, cq, yq, mq, chron = :chron
       if chron == :chron && c.to_i != 0
         ''
       else
         intelligent_date = getChron c, y, m, d, cq, yq, mq, chron
-  
+
         # throw away month and day if they were not explicitely set by the user      
         if m.to_i == 0
           intelligent_date[0..-7]
@@ -1461,6 +1918,19 @@ module HgvMetaIdentifierHelper
       end
     end
 
+    # Generates HGV formatted date +String+ from date bits
+    # - *Args*  :
+    #   - +c+ → +Integer+ or +String+ representation of century, may be nil or empty
+    #   - +y+ → +Integer+ or +String+ representation of year, may be nil or empty
+    #   - +m+ → +Integer+ or +String+ representation of month, may be nil or empty
+    #   - +d+ → +Integer+ or +String+ representation of day, may be nil or empty
+    #   - +cq+ → century qualifier +String+, may be nil or empty
+    #   - +yq → year qualifier +String+, may be nil or empty
+    #   - +mq+ → month qualifier +String+, may be nil or empty
+    #   - +chron+ → :chron, :chronMax, :chronMin, defaults to :chron if not specified
+    # - *Returns* :
+    #   - HGV formatted date +String+
+    # e.g. HgvFuzzy.getChron('', '1976', '2', '', '', '', 'end', :chronMax) => "1976-02-29"
     def HgvFuzzy.getChron c, y, m, d, cq, yq, mq, chron = :chron
       c = c.to_i != 0 ? c.to_i : nil
       y = y.to_i != 0 ? y.to_i : nil
@@ -1587,10 +2057,32 @@ module HgvMetaIdentifierHelper
       epoch + year + '-' + month + '-' + day
     end
     
+    # Short cut for HgvFuzzy.getChron ... :chronMin
+    # - *Args*  :
+    #   - +c+ → +Integer+ or +String+ representation of century, may be nil or empty
+    #   - +y+ → +Integer+ or +String+ representation of year, may be nil or empty
+    #   - +m+ → +Integer+ or +String+ representation of month, may be nil or empty
+    #   - +d+ → +Integer+ or +String+ representation of day, may be nil or empty
+    #   - +cq+ → century qualifier +String+, may be nil or empty
+    #   - +yq → year qualifier +String+, may be nil or empty
+    #   - +mq+ → month qualifier +String+, may be nil or empty
+    # - *Returns* :
+    #   - HGV formatted date +String+
     def HgvFuzzy.getChronMin c, y, m, d, cq, yq, mq
       return HgvFuzzy.getChron c, y, m, d, cq, yq, mq, :chronMin
     end
 
+    # Short cut for HgvFuzzy.getChron ... :chronMax
+    # - *Args*  :
+    #   - +c+ → +Integer+ or +String+ representation of century, may be nil or empty
+    #   - +y+ → +Integer+ or +String+ representation of year, may be nil or empty
+    #   - +m+ → +Integer+ or +String+ representation of month, may be nil or empty
+    #   - +d+ → +Integer+ or +String+ representation of day, may be nil or empty
+    #   - +cq+ → century qualifier +String+, may be nil or empty
+    #   - +yq → year qualifier +String+, may be nil or empty
+    #   - +mq+ → month qualifier +String+, may be nil or empty
+    # - *Returns* :
+    #   - HGV formatted date +String+
     def HgvFuzzy.getChronMax c, y, m, d, cq, yq, mq
       return HgvFuzzy.getChron c, y, m, d, cq, yq, mq, :chronMax
     end

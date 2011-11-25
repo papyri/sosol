@@ -1,7 +1,6 @@
 = stylesheet_link_tag 'meta_preview'
 
 #main
-  =# render :partial => 'identifiers/edit_bar'
   .site.metaSite
     = render :partial => 'identifiers/header'
 
@@ -104,7 +103,6 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Reference'
               %td
                 %ul
-                  =# debug @identifier[:figures]
                   - @identifier[:figures].collect{|f| f= f[:children][:graphic][:attributes][:url]; '<a href="' + f + '" title="' + f + '">' + (f[/^http:\/\/[^\/]+/] ? f[/^http:\/\/[^\/]+/] : f) + '</a>'}.each do |figure|
                     %li=figure
           -# NOT IN PN
@@ -121,11 +119,3 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:plannedForFuturePrintRelease]
-                  
-                  
-
-
-
-
-
-

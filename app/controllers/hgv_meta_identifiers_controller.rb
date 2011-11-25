@@ -1,16 +1,29 @@
 include HgvMetaIdentifierHelper
+
+# Controller for all actions concerning the hgv metadata editor, such as edit, update, show preview and some json actions for interactive javascript
 class HgvMetaIdentifiersController < IdentifiersController
-  #layout 'site'
+  # uses standard layout
+  # user must be logged in to access these actions
   before_filter :authorize
+  # before post data is used for further processing unwanted entries are discarded
   before_filter :prune_params, :only => [:update, :get_date_preview]
+  #  before post data is further processed some user entries are decorated with additional information, such as human readable format strings
   before_filter :complement_params, :only => [:update, :get_date_preview]
 
+  # Retrieves hgv identifier object from database and calls up HGV metadata editor
+  # Assumes that incoming post respectively get parameters contain a valid hgv identifier id
+  # Side effect on +@identifier+
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
     @is_editor_view = true
   end
 
+  # Retrieves hgv identifier object from database and updates its values from incoming post data, saves comment
+  # Redirects back to the editor (see action edit)
+  # Assumes that incoming post request contains new values for the hgv record that should be written back to EpiDoc
+  # Side effect on +@identifier+ and +flash+
+  # Writes to database and git repository, clears publication cache
   def update
     find_identifier
     #exit
@@ -33,53 +46,27 @@ class HgvMetaIdentifiersController < IdentifiersController
                                  :action => :edit)
   end
   
+  # Retrieves an hgv identifier record by an incoming identifier id and creates a preview
+  # Side effect on +@identifier+
   def preview
     find_identifier
     @identifier.get_epidoc_attributes
     @is_editor_view = true
   end
   
-  def complement
-    filename = 'geo.xml'
-    xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"][text()="' + params[:value] + '"]/..'
-    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
-    
-    @complementer_list = {}
-    
-    if element = doc.elements[xpath]
-      {:provenance_ancientFindspot => ['ancient', 'settlement'], :provenance_modernFindspot => ['modern', 'settlement'], :provenance_nome => ['ancient', 'nome'], :provenance_ancientRegion => ['ancient', 'region']}.each_pair {|key, taxonomy|
-        if place = element.elements['placeName[@type="' + taxonomy[0] + '"][@subtype="' + taxonomy[1] + '"]']
-          @complementer_list[key] = place.text
-        end
-      }
-    end
+  # Complements geo data, given a certain bit of geo data, it looks up complementary information from an xml reference file
+  # Assumes that the user's request data contain type, subtype and value (e.g. ancient, nome, Arsinoites)
+  # Result is rendered as json, that can be used to update fields of the editor
+  # Side effect on +@complementer_list+
 
-    render :layout => false, :json => @complementer_list
-    #render :layout => false, :text => @complementer_list.inspect
-  end
+  # Retrieves a list of geo entries from an xml lookup file by pattern match at the beginnig of the string
+  # Needs to know what kind of geoinformation should be looked up, i.e. type and subtype (e.g. modern findspot)
+  # Type and subtype need to be passed in by post data
+  # Side effect on +@autocompleter_list+
 
-  def autocomplete
-    filename = 'geo.xml'
-    xpath    = '/TEI/body/list/item/placeName[@type="' + params[:type] + '"][@subtype="' + params[:subtype] + '"]'
-    pattern  = params[params[:key]].gsub(/(\(|\))/, '\\\\\1')
-    max      = 10
-
-    @autocompleter_list = []
-     
-
-    doc = REXML::Document.new(File.open(File.join(RAILS_ROOT, 'data', 'lookup', filename), 'r'))
-
-    doc.elements.each(xpath) {|element|
-      if (@autocompleter_list.length < max) && !@autocompleter_list.include?(element.text) && (element.text =~ Regexp.new('\A' + pattern)) 
-        @autocompleter_list[@autocompleter_list.length] = element.text
-      end
-    }  
-
-    #render :layout => false, :text => @autocompleter_list.inspect
-    render :layout => false
-
-  end
-
+  # Provides a small data preview snippets (values for when, notBefore and notAfter as well as the hgv formatted value) for display within the hgv metadata editor
+  # Assumes that hgv metadata is passed in via post and uses the values containd in hash entry »:textDate« to generate preview snippets for hgv date.
+  # Side effect on +@update+
   def get_date_preview
     @updates = {}
 
@@ -100,6 +87,9 @@ class HgvMetaIdentifiersController < IdentifiersController
     end
   end
 
+  # Takes user's geo data from post stream and generates a hgv formatted preview from it
+  # Assumes that hgv post data (especially all data fields concerning provenance) is passed in
+  # Side effect on +@identifier+ and +@update+
   def get_geo_preview
     @identifier = HGVMetaIdentifier.new
     @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
@@ -112,6 +102,10 @@ class HgvMetaIdentifiersController < IdentifiersController
 
   protected
 
+    # Gets rid of invalid user data that has been passed in, such as empty fields in publication information or dates don't provide enough information to be parsed as hgv dates
+    # Assumes that the hgv metadata editor has been called to action and that its post data is passed in via post
+    # Prunes post parameters for hash entries +:publicationExtra+, +:textDate+ and +:mentionedDate+
+    # Side effect on params variable
     def prune_params
 
       if params[:hgv_meta_identifier]
@@ -153,6 +147,10 @@ class HgvMetaIdentifiersController < IdentifiersController
 
     end
 
+    # Adds additional information to incoming post data (e.g. adds hgv formatted date string for each date records provided by the user)
+    # Assumes that hgv metadata post data is passed in
+    # Complements incoming form data for hash entries +:textDate+, +:mentionedDate+ and +provenance+
+    # Side effect on params variable
     def complement_params
 
       if params[:hgv_meta_identifier]
@@ -186,6 +184,8 @@ class HgvMetaIdentifiersController < IdentifiersController
 
     end
 
+    # Writes some helpful status information for the user, e.g. 'File update' plus some quick links to guide the user's subsequent actions
+    # Side effect on #flash#, i.e. +flash[:notice]+
     def generate_flash_message
       flash[:notice] = "File updated."
       if %w{new editing}.include? @identifier.publication.status
@@ -193,6 +193,12 @@ class HgvMetaIdentifiersController < IdentifiersController
       end      
     end
 
+    # Saves user's comment on a save operation to the database
+    # - *Args*  :
+    #   - +comment+ → comment made by the user and passed in via post parameters
+    #   - +commit_sha+ → hash string of the corresponding git commit
+    # Writes to database
+    # Side effect on +@comment+
     def save_comment (comment, commit_sha)
       if comment != nil && comment.strip != ""
         @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
@@ -200,6 +206,9 @@ class HgvMetaIdentifiersController < IdentifiersController
       end
     end
 
+    # Retrieves hgv identifier from database by id which it takes from the incoming post stream
+    # Assumes that post data contains hgv identifier id
+    # Side effect on +@identifier+
     def find_identifier
       @identifier = HGVMetaIdentifier.find(params[:id])
     end
