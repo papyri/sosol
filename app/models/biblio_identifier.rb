@@ -660,8 +660,8 @@ class BiblioIdentifier < HGVIdentifier
       biblio = git / getBiblioPath(biblioId)
       relatedItem = REXML::Document.new(biblio.data)
 
-      result[result.length] = if relatedItem.elements["//title[starts-with(@type='short')]"]
-        relatedItem.elements["//title[starts-with(@type='short')]"]
+      result[result.length] = if relatedItem.elements["//title[starts-with(@type, 'short')]"]
+        relatedItem.elements["//title[starts-with(@type, 'short')]"]
       else
         relatedItem.elements["//title"]
       end
