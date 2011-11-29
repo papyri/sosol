@@ -163,4 +163,53 @@
     </xsl:element>
   </xsl:template>
 
+  <!-- sort changes by @when -->
+  <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/app-rationalization.xsl -->
+  <xsl:template match="tei:revisionDesc">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:for-each select="tei:change">
+        <xsl:sort select="@when" order="descending"/>
+        <xsl:text>
+          </xsl:text>
+        <xsl:copy>
+          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates/>
+        </xsl:copy>
+      </xsl:for-each>
+      <xsl:text>
+      </xsl:text>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- convert app type=BL|SoSOL to editorial -->
+  <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/app-rationalization.xsl -->
+  <xsl:template match="tei:app[@type=('BL','SoSOL')]">
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(local-name()='type')]"/>
+      <xsl:attribute name="type">
+        <xsl:text>editorial</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="tei:app[@type=('BL','SoSOL')]/tei:lem">
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(local-name()='resp')]"/>
+      <xsl:attribute name="resp">
+        <xsl:choose>
+          <xsl:when test="parent::tei:app[@type='BL']">
+            <xsl:text>BL </xsl:text>
+          </xsl:when>
+          <xsl:when test="parent::tei:app[@type='SoSOL']">
+            <xsl:text>PN </xsl:text>
+          </xsl:when>
+        </xsl:choose>
+        <xsl:value-of select="normalize-space(@resp)"/>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>

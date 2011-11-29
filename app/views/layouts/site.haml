@@ -9,7 +9,11 @@
     = stylesheet_link_tag 'editor'
     = stylesheet_link_tag 'pn'
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
       = stylesheet_link_tag 'meta'
+    - if controller.controller_name == 'biblio_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
+      = stylesheet_link_tag 'biblio'
     = javascript_include_tag :defaults
     %style(type="text/css")
       :sass

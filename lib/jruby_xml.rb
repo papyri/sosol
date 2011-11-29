@@ -60,7 +60,17 @@ module JRubyXML
       verifier.verify(input_source_xml_stream)
     end
   end
-  
+ 
+  class RDFValidator < JARVValidator
+    def initialize
+      @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://relaxng.org/ns/structure/1.0")
+      @schema = verifier_factory.compileSchema(
+        "http://www.w3.org/TR/rdf-syntax-grammar/rdfxml.rng")
+    end
+  end 
+
   class EpiDocP5Validator < JARVValidator
     def initialize
       @verifier_factory = 

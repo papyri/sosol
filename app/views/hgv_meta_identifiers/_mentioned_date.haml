@@ -54,8 +54,8 @@
                 = hidden_field_tag 'hgv_meta_identifier[mentionedDate][' + index.to_s + '][children][date][children][certainty][' + certaintyIndex.to_s + '][attributes][match]', '../date/' + dateBit + '-from-date(@' + dateType.to_s + ')'
                 - certaintyIndex += 1
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_mentionedDate
     = text_field_tag 'mentionedDate_reference', '', :title => I18n.t('meta.tooltip.multiMentionedDateReference'), :disabled => !@identifier.mutable?, :class => 'observechange reference'
     = text_field_tag 'mentionedDate_comment', '', :title => I18n.t('meta.tooltip.multiMentionedDateComment'), :disabled => !@identifier.mutable?, :class => 'observechange comment'
@@ -64,7 +64,7 @@
     = text_field_tag 'mentionedDate_annotation', '', :title => I18n.t('meta.tooltip.multiMentionedDateAnnotation'), :disabled => !@identifier.mutable?, :class => 'observechange annotation'
     = select_tag 'mentionedDate_certaintyPicker', options_for_select(certaintyOptions), :title => I18n.t('meta.tooltip.multiMentionedDateCertainty'), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
     = select_tag 'mentionedDate_dateId', options_for_select(dateIdOptions), :title => I18n.t('meta.tooltip.multiMentionedDateDateId'), :disabled => !@identifier.mutable?, :class => 'observechange dateId'
-    %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_mentionedDate', {overlap: 'horizontal', constraint: false, handle: 'move'});"
 

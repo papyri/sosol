@@ -118,7 +118,7 @@ class Board < ActiveRecord::Base
   end #tally_votes
   
 
-  #Will genrally be called when the status of a publication is changed.
+  #Will generally be called when the status of a publication is changed.
   #Emails will be sent according to emailer settings for the board.
   #
   #*Args*: 
