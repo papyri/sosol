@@ -306,6 +306,8 @@ class BiblioIdentifier < HGVIdentifier
 
     updateEpiDoc
     
+    sortEpiDoc
+    
     # write back to a string
     modified_xml_content = toXmlString @epiDoc
 
@@ -324,6 +326,18 @@ class BiblioIdentifier < HGVIdentifier
     modified_xml_content = ''
     formatter.write xmlObject, modified_xml_content
     modified_xml_content
+  end
+  
+  # Shifts TEI:seg tags and TEI:indo tags down to the bottom of the document
+  # Assumes that @epiDoc variable contains REXML::Document of current biblio record
+  # Side effect on +@epiDoc+ (changes order of elements)
+  def sortEpiDoc
+    ['/bibl/seg', '/bibl/idno'].each{|xpath|
+      @epiDoc.each_element(xpath){|element|
+        @epiDoc.root.delete element
+        @epiDoc.root.add element
+      }
+    }
   end
  
   # Updates internal values from post data which are simple strings
