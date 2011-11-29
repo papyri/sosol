@@ -1,7 +1,7 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
   #TODO - is Biblio needed?
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier BiblioIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier }
   
   #added for dashboard publication listings because biblio is often not needed
   IDENTIFIER_MAIN_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
@@ -145,7 +145,7 @@ class Identifier < ActiveRecord::Base
   #   - title of identifier
   def titleize
     title = nil
-    if self.class == HGVMetaIdentifier || self.class == HGVBiblioIdentifier
+    if self.class == HGVMetaIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(

@@ -1098,7 +1098,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers
   end
   
   def canon_controlled_paths
@@ -1437,7 +1437,6 @@ class Publication < ActiveRecord::Base
       creatable_identifiers.delete("HGVTransIdentifier")     
     end
     #TODO - is Biblio needed?
-    creatable_identifiers.delete("HGVBiblioIdentifier")
     creatable_identifiers.delete("BiblioIdentifier")
     if has_biblio
       creatable_identifiers = []
