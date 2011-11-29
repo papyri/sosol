@@ -171,7 +171,7 @@
       <xsl:for-each select="tei:change">
         <xsl:sort select="@when" order="descending"/>
         <xsl:text>
-         </xsl:text>
+          </xsl:text>
         <xsl:copy>
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates/>
