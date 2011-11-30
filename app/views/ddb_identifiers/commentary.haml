@@ -212,11 +212,15 @@
     '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
     '      </li>' +
     '      <li id="302" itemType="separator"/>' +
-    '      <li id="303" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
-    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertLinkBiblio\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to Bibliography">Insert Bibliography Link</a>' +
     '      </li>' +
     '      <li id="304" itemType="separator"/>' +
-    '      <li id="305" jsFunction="helpComOpen(\'insertFootnote\', \'com_sugar_content\')">' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="306" itemType="separator"/>' +
+    '      <li id="307" jsFunction="helpComOpen(\'insertFootnote\', \'com_sugar_content\')">' +
     '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
     '      </li>' +
     '    </ul>' +
@@ -274,11 +278,15 @@
     '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
     '      </li>' +
     '      <li id="302" itemType="separator"/>' +
-    '      <li id="303" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
-    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertLinkBiblio\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to Bibliography">Insert Bibliography Link</a>' +
     '      </li>' +
     '      <li id="304" itemType="separator"/>' +
-    '      <li id="305" jsFunction="helpComOpen(\'insertFootnote\', \'fm_sugar_content\')">' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="306" itemType="separator"/>' +
+    '      <li id="307" jsFunction="helpComOpen(\'insertFootnote\', \'fm_sugar_content\')">' +
     '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
     '      </li>' +
     '    </ul>' +
@@ -767,17 +775,22 @@
     {
     case "insertFootnote":
       {
-        openconfig = config='height=325, width=700, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=350, width=700, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     case "insertLinkPN":
       {
-        openconfig = config='height=600, width=600, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=350, width=600, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     case "insertlink":
       {
-        openconfig = config='height=625, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        openconfig = config='height=350, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    case "insertLinkBiblio":
+      {
+        openconfig = config='height=750, width=1275, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
         break;
       }
     default: // nopts is default and need to clear optional xml values and leave diachar filled in 
