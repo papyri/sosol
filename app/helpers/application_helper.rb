@@ -51,6 +51,12 @@ class REXML::XPath
 
   @@breakXpathIntoLumps = {}
 
+  # Breaks a given xpath into a sequence of individual tags and attributes
+  # - *Args*  :
+  #   - +xpath+ → sth. like /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3
+  # - *Returns* :
+  #   - +Hash+ +Array+ of xpath bits, e.g. [{:xpath => ..., :element => ..., :attributes => ...}, ...]
+  # e.g. REXML::XPath.breakXpathIntoLumps("/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3") => [{:xpath=>"/abc", :element=>"abc", :attributes=>{}}, {:xpath=>"/abc/a[@a='a']", :element=>"a", :attributes=>{"a"=>"a"}}, {:xpath=>"/abc/a[@a='a']/b[@b='b']", :element=>"b", :attributes=>{"b"=>"b"}}, {:xpath=>"/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']", :element=>"c", :attributes=>{"c1"=>"c1", "xml:c2"=>"c2"}}, {:xpath=>"/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3", :element=>"@c3", :attributes=>{}}]
   def self.breakXpathIntoLumps xpath # todo refactor to underscore
     key = xpath.hash
     
@@ -74,10 +80,13 @@ class REXML::XPath
     @@breakXpathIntoLumps[key]
   end
 
-  # checks whether xpath is fully qualified from root to tip
-  # and whether it is free of functional logic and pattern matching
-  # sth. like would be ok: /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3
-
+  # Checks whether xpath is fully qualified from root to tip and whether it is free of functional logic and pattern matching
+  # - *Args*  :
+  #   - +xpath+ → sth. like /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3
+  # - *Returns* :
+  #   - true if xpath is fully qualified and simple
+  #   - false otherwise
+  # e.g. REXML::XPath.fully_qualified_and_simple?("/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3") => true
   def self.fully_qualified_and_simple? xpath
     matchdata = /(\A((\/\w+)(\[@[\w:]+='[\w\.\- ]+'\])*)+(\/@[\w:]+)?\Z)/.match(xpath)
     matchdata && (matchdata.to_s == xpath)
@@ -89,6 +98,12 @@ class REXML::Document
 
   public
 
+  # Passthrough to class method +bulldoze_path+
+  # - *Args*  :
+  #   - +xpath+ → desired xpath +STRING+
+  #   - +value+ → desired value +STRING+ or +nil+ if no value shall be set
+  # - *Returns* :
+  #   - +REXML::Element+ (newly created or found)
   def bulldozePath xpath, value = nil # todo refactor to underscore and !
     REXML::Element::bulldoze_path self, xpath, value
   end
@@ -99,10 +114,23 @@ class REXML::Element
 
   public
 
+  # Passthrough to class method +bulldoze_path+
+  # - *Args*  :
+  #   - +xpath+ → desired xpath +STRING+
+  #   - +value+ → desired value +STRING+ or +nil+ if no value shall be set
+  # - *Returns* :
+  #   - +REXML::Element+ (newly created or found)
   def bulldozePath xpath, value = nil # todo refactor to underscore and !
     REXML::Element::bulldoze_path self, xpath, value
   end
 
+  # Chisels an xpath into an existing xml document/element, traces that are already there will be used, missing traces will be built
+  # - *Args*  :
+  #   - +element+ → +REXML::Element+ which shall be used a starting point for the xpath trace
+  #   - +xpath+ → that shall be hewn into an existing +REXML+ data structure /abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3
+  #   - +value+ → optional, if specified, value of the xpath's tip element will be set
+  # - *Returns* :
+  #   - +REXML::Element+ tip object of the xpath
   def self.bulldoze_path element, xpath, value = nil
 
     if !REXML::XPath::fully_qualified_and_simple? xpath

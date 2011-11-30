@@ -1436,7 +1436,6 @@ class Publication < ActiveRecord::Base
       #cant create trans
       creatable_identifiers.delete("HGVTransIdentifier")     
     end
-    # Not allowed to create BiblioIdentifier in association with any other record
     creatable_identifiers.delete("BiblioIdentifier")
     # Not allowed to create any other record in association with a BiblioIdentifier publication
     if has_biblio

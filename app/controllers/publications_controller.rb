@@ -490,7 +490,6 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
- 
   def edit_adjacent
   
     #if they are on show, then need to goto first or last identifers
