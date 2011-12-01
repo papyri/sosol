@@ -9,6 +9,9 @@ var gap_value = "unknown";
 var diacritical_option = "nopts";
 var tryit_type = "xml2non";
 var valueback = "";
+var appEditLem = "";
+var appEditRdg = "";
+var appEditType = "Editorial"
 var xmltopass = "initial";
 var number_type = "value";
 var abbrev_type = "expan";
@@ -189,6 +192,44 @@ function checktypeabbrev(id)
     }
 }
 
+function checkEditType(id)
+{
+  appEditType = document.getElementById(id).value;
+  if (appEditType == "Editorial")
+    {
+      document.getElementById("appeditBLvol_value").value = "";
+      document.getElementById("appeditBLpage_value").value = "";
+      document.getElementById("appeditPE_value").value = "";
+      document.appEditForm.appeditBLvol_value.disabled = true;
+      document.appEditForm.appeditBLpage_value.disabled = true;
+      document.appEditForm.appeditPE_value.disabled = true;
+      
+      document.appEditForm.appeditresp_value.disabled = false;
+    }
+  else
+    if (appEditType == "BL")
+      {
+        document.getElementById("appeditresp_value").value = "";
+        document.getElementById("appeditPE_value").value = "";
+        document.appEditForm.appeditresp_value.disabled = true;
+        document.appEditForm.appeditPE_value.disabled = true;
+        
+        document.appEditForm.appeditBLvol_value.disabled = false;
+        document.appEditForm.appeditBLpage_value.disabled = false;
+      }
+    else //PE
+      {
+        document.getElementById("appeditBLvol_value").value = "";
+        document.getElementById("appeditBLpage_value").value = "";
+        document.getElementById("appeditresp_value").value = "";
+        document.appEditForm.appeditBLvol_value.disabled = true;
+        document.appEditForm.appeditBLpage_value.disabled = true;
+        document.appEditForm.appeditresp_value.disabled = true;
+
+        document.appEditForm.appeditPE_value.disabled = false;
+      }
+}
+
 function checktryit(id)
 {
   tryit_type = document.getElementById(id).value;
@@ -295,27 +336,25 @@ function insertAppAlt()
 
 function insertAppBL()
 {
-  lem = document.getElementById("appBLlem_value").value;
-  resp = document.getElementById("appBLresp_value").value;
-  rdg = document.getElementById("appBLrdg_value").value;
+  respVol = document.getElementById("appeditBLvol_value").value;
+  respPage = document.getElementById("appeditBLpage_value").value;
   
-  if (lem.length == 0)
+  if (appEditLem.length == 0)
     {
-      alert("'Correct form' cannot be left blank");
+      alert("'Correct form' cannot be left blank on BL type");
     }
   else
     {
-      if (resp.length == 0)
+      if (respVol.length == 0 && respPage.length ==  0)
         {
-          lemnode = "<lem>" + lem + "</lem>";
+          lemnode = "<lem>" + appEditLem + "</lem>";
         }
-      else
+      else //TODO do we need edit for one of them being left blank and force user to leave both blank or fill in both?
         {
-          lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
+          lemnode = "<lem resp=\"BL " + respVol + "." + respPage + "\">" + appEditLem + "</lem>";
         }
+      startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + appEditRdg + "</rdg></app>";
       
-      startxml = "<app type=\"BL\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-               
       convertXML()
     }
 } //########################     end insertAppBL     ########################
@@ -326,27 +365,24 @@ function insertAppBL()
 
 function insertAppSoSOL()
 {
-  lem = document.getElementById("appSoSOLlem_value").value;
-  resp = document.getElementById("appSoSOLresp_value").value;
-  rdg = document.getElementById("appSoSOLrdg_value").value;
+  resp = document.getElementById("appeditPE_value").value;
   
-  if (lem.length == 0)
+  if (appEditLem.length == 0)
     {
-      alert("'Correct form' cannot be left blank");
+      alert("'Correct form' cannot be left blank on PE type");
     }
   else
     {
       if (resp.length == 0)
         {
-          alert("'Authority' cannot be left blank - please type in your sir name");
+          alert("'Authority' cannot be left blank on PE type - please type in your sir name");
         }
       else
         {
-          lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
+          lemnode = "<lem resp=\"PE " + resp + "\">" + appEditLem + "</lem>";
         }
+      startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + appEditRdg + "</rdg></app>";
       
-      startxml = "<app type=\"SoSOL\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-               
       convertXML()
     }
 } //########################     end insertAppSoSOL     ########################
@@ -357,36 +393,44 @@ function insertAppSoSOL()
 
 function insertAppEdit()
 {
-  lem = document.getElementById("appeditlem_value").value; //correct form
-  resp = document.getElementById("appeditresp_value").value; //citation
-  rdg = document.getElementById("appeditrdg_value").value; //original form
+  appEditLem = document.getElementById("appeditlem_value").value; //correct form
+  appEditRdg = document.getElementById("appeditrdg_value").value; //original form
   
-  if (lem.length == 0 && rdg.length ==  0)
-    {
-      if (resp.length == 0)
-        {
-          alert("All three entries cannot be blank and must have either 'Correct form' or 'Original'");
-        }
-      else
-        {
-        
-          alert("Citation is not enough.  Must have 'Correct form', 'Original', or both");
-        }
-    }
+  if (appEditType == "BL")
+    {insertAppBL()}
   else
+    if (appEditType == "PE")
+      {insertAppSoSOL()}
+    else //Editorial
       {
-        if (resp.length == 0)
+        resp = document.getElementById("appeditresp_value").value;
+        if (appEditLem.length == 0 && appEditRdg.length ==  0)
           {
-            lemnode = "<lem>" + lem + "</lem>";
+            if (resp.length == 0)
+              {
+                alert("All three entries cannot be blank and must have either 'Correct form' or 'Original'");
+              }
+            else
+              {
+
+                alert("Citation is not enough.  Must have 'Correct form', 'Original', or both");
+              }
           }
         else
-          {
-            lemnode = "<lem resp=\"" + resp + "\">" + lem + "</lem>";
-          }
-      
-        startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + rdg + "</rdg></app>";
-                
-        convertXML()
+            {
+              if (resp.length == 0)
+                {
+                  lemnode = "<lem>" + appEditLem + "</lem>";
+                }
+              else
+                {
+                  lemnode = "<lem resp=\"" + resp + "\">" + appEditLem + "</lem>";
+                }
+
+              startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + appEditRdg + "</rdg></app>";
+
+              convertXML()
+            }
       }
 } //########################     end insertAppEdit     ########################
 
@@ -652,7 +696,7 @@ function insertGap()
    
    convertXML()
    
-} //########################     end insertGapLost     ########################
+} //########################     end insertGap     ########################
 
 //###########################################################################################
 // insert gap ellipsis language                                                              

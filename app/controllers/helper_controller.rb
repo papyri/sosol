@@ -15,6 +15,14 @@ class HelperController < ApplicationController
   def gapall
   end
   
+  # Commentary uses to insert footnote markup into front matter or LBL commentary
+  def insertFootnote
+  end
+  
+  # Commentary uses to insert Bibliography links into front matter or LBL commentary
+  def insertLinkBiblio
+  end
+  
   # Commentary uses to insert PN links into front matter or LBL commentary
   def insertLinkPN
   end
