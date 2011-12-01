@@ -322,7 +322,7 @@ class BiblioIdentifier < HGVIdentifier
   def toXmlString xmlObject
     formatter = PrettySsime.new
     formatter.compact = true
-    formatter.width = 0
+    formatter.width = 2**32
     modified_xml_content = ''
     formatter.write xmlObject, modified_xml_content
     modified_xml_content

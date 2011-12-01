@@ -49,9 +49,14 @@ class PrettySsime < REXML::Formatters::Pretty
   # http://stackoverflow.com/questions/4203180
   # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/rexml/rdoc/REXML/Formatters/Pretty.html
   # File rexml/formatters/pretty.rb, line 87
+  # remove leading and trailing whitespaces from text string
+  # wrap text only if wanted (@width > 0)
+  # use member variable @width for text wrapping (not hard coded 80)
+  # don't replace all linebreaks by spaces, just reduce them to at most one linefeed per break
   def write_text node, output
-    s = node.to_s()
-    s.gsub!(/\s/,' ')
+    s = node.to_s().strip()
+    s.gsub!(/(\t| )+/,' ')
+    s.gsub!(/\s*(\r|\n)+\s*/,"\r")
     s.squeeze!(" ")
     if @width > 0
       s = wrap(s, @width - @level)

@@ -405,9 +405,9 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = sort doc
 
     # write back to a string
-    formatter = REXML::Formatters::Pretty.new
+    formatter = PrettySsime.new
     formatter.compact = true
-    formatter.width = 512
+    formatter.width = 2**32
     modified_xml_content = ''
     formatter.write doc, modified_xml_content
 
