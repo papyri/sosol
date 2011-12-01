@@ -45,6 +45,22 @@ end
 
 require 'rexml/document'
 
+class PrettySsime < REXML::Formatters::Pretty
+  # http://stackoverflow.com/questions/4203180
+  # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/rexml/rdoc/REXML/Formatters/Pretty.html
+  # File rexml/formatters/pretty.rb, line 87
+  def write_text node, output
+    s = node.to_s()
+    s.gsub!(/\s/,' ')
+    s.squeeze!(" ")
+    if @width > 0
+      s = wrap(s, @width - @level)
+    end
+    s = indent_text(s, @level, " ", true)
+    output << (' '*@level + s)
+  end
+end
+
 class REXML::XPath
 
   public

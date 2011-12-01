@@ -318,11 +318,11 @@ class BiblioIdentifier < HGVIdentifier
   # - *Args*  :
   #   - +xmlObject+ → REXML::Document / ::Element
   # - *Returns* :
-  #   - +String+ formatted xml string using +REXML::Formatters::Pretty+
+  #   - +String+ formatted xml string using child class PrettySsime of parent class +REXML::Formatters::Pretty+
   def toXmlString xmlObject
-    formatter = REXML::Formatters::Pretty.new
+    formatter = PrettySsime.new
     formatter.compact = true
-    formatter.width = 512
+    formatter.width = 0
     modified_xml_content = ''
     formatter.write xmlObject, modified_xml_content
     modified_xml_content
