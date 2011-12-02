@@ -10,7 +10,7 @@
   <xsl:template match="tei:div[@type = 'edition']" priority="1">
      <xsl:if test="not(//tei:div[@type='commentary' and @subtype='frontmatter'])">
        <div id="frontmatter_commentary_container">
-         <a id="frontmatter_commentary_add" href="#" class="clickable"><b>Add front matter commentary</b></a>
+         <a id="frontmatter_commentary_add" href="#" class="clickable"><b>Add introductory matter</b></a>
        </div>
      </xsl:if>
      <div class="commentary" id="edition">
@@ -42,7 +42,6 @@
         <xsl:copy-of select="node()"/>
       </textarea>
       <div id="frontmatter_commentary" class="form clickable">
-        <p class="label">Front matter:</p>
         <xsl:apply-templates/>
       </div>
     </div>

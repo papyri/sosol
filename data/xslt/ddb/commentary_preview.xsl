@@ -28,7 +28,7 @@
   </xsl:template>
   
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-  <!-- |||||||||  these 4 hand to be split to handle both frontmatter and commentary     ||||||||| -->
+  <!-- |||||||||  these 4 had to be split to handle both frontmatter and commentary      ||||||||| -->
   <!-- |||||||||  ref with target and ref without target - no target is for adding a     ||||||||| -->
   <!-- |||||||||  span class with the line # used to build the update form if needed     ||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
@@ -66,35 +66,35 @@
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='pp']">
-    <xsl:text> page=</xsl:text>
+    <xsl:text> pg.</xsl:text>
     <xsl:value-of select="text()"/>
     <xsl:text> </xsl:text>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='ll']">
-    <xsl:text> line=</xsl:text>
+    <xsl:text> lin.</xsl:text>
     <xsl:value-of select="text()"/>
     <xsl:text> </xsl:text>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='vol']">
-    <xsl:text> vol=</xsl:text>
+    <xsl:text> vol.</xsl:text>
     <xsl:value-of select="text()"/>
     <xsl:text> </xsl:text>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='issue']">
-    <xsl:text> issue=</xsl:text>
+    <xsl:text> issue </xsl:text>
     <xsl:value-of select="text()"/>
     <xsl:text> </xsl:text>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='chap']">
-    <xsl:text> chapter=</xsl:text>
+    <xsl:text> ch.</xsl:text>
     <xsl:value-of select="text()"/>
     <xsl:text> </xsl:text>
   </xsl:template>  
