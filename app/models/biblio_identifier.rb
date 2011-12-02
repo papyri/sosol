@@ -603,7 +603,7 @@ class BiblioIdentifier < HGVIdentifier
         
         if relatedArticle.number && !relatedArticle.number.empty?
           child = REXML::Element.new 'biblScope', element
-          child.attributes['type'] = 'number'
+          child.attributes['type'] = 'num'
           child.text = relatedArticle.number
         end
         
@@ -898,7 +898,7 @@ class BiblioIdentifier < HGVIdentifier
       epiDoc.elements.each(XPATH[:relatedArticleList]){|bibl|
         series    = bibl.elements["title[@level='s'][@type='short']"] ? bibl.elements["title[@level='s'][@type='short']"].text : ''
         volume    = bibl.elements["biblScope[@type='vol']"] ? bibl.elements["biblScope[@type='vol']"].text : ''
-        number    = bibl.elements["biblScope[@type='number']"] ? bibl.elements["biblScope[@type='number']"].text : ''
+        number    = bibl.elements["biblScope[@type='num']"] ? bibl.elements["biblScope[@type='num']"].text : ''
         ddb       = bibl.elements["idno[@type='ddb']"] ? bibl.elements["idno[@type='ddb']"].text : ''
         tm        = bibl.elements["idno[@type='tm']"] ? bibl.elements["idno[@type='tm']"].text : ''
         inventory = bibl.elements["idno[@type='invNo']"] ? bibl.elements["idno[@type='invNo']"].text : ''
