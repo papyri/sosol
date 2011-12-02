@@ -339,19 +339,26 @@ function insertAppBL()
   respVol = document.getElementById("appeditBLvol_value").value;
   respPage = document.getElementById("appeditBLpage_value").value;
   
-  if (appEditLem.length == 0)
+  if (!(appEditLem.match(/\S/)))
     {
       alert("'Correct form' cannot be left blank on BL type");
     }
   else
     {
-      if (respVol.length == 0 && respPage.length ==  0)
+      if (!(respVol.match(/\S/)) && !(respPage.match(/\S/))) // both volume and page DO NOT contain non-whitespace character
         {
           lemnode = "<lem>" + appEditLem + "</lem>";
         }
-      else //TODO do we need edit for one of them being left blank and force user to leave both blank or fill in both?
+      else
         {
-          lemnode = "<lem resp=\"BL " + respVol + "." + respPage + "\">" + appEditLem + "</lem>";
+          if ((respVol.match(/\S/)) && (respPage.match(/\S/))) // both volume and page DO contain non-whitespace character
+            {
+              lemnode = "<lem resp=\"BL " + respVol + "." + respPage + "\">" + appEditLem + "</lem>";
+            }
+          else // volume OR page DO NOT contain non-whitespace character
+            {
+              alert("'Volume' and 'Page' must BOTH be filled in or BOTH left blank on BL type");
+            }
         }
       startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + appEditRdg + "</rdg></app>";
       
@@ -367,13 +374,13 @@ function insertAppSoSOL()
 {
   resp = document.getElementById("appeditPE_value").value;
   
-  if (appEditLem.length == 0)
+  if (!(appEditLem.match(/\S/)))
     {
       alert("'Correct form' cannot be left blank on PE type");
     }
   else
     {
-      if (resp.length == 0)
+      if (!(resp.match(/\S/)))
         {
           alert("'Authority' cannot be left blank on PE type - please type in your sir name");
         }
@@ -404,9 +411,9 @@ function insertAppEdit()
     else //Editorial
       {
         resp = document.getElementById("appeditresp_value").value;
-        if (appEditLem.length == 0 && appEditRdg.length ==  0)
+        if (!(appEditLem.match(/\S/)) && !(appEditRdg.match(/\S/))) // both lem and rdg DO NOT contain non-whitespace character
           {
-            if (resp.length == 0)
+            if (!(resp.match(/\S/)))
               {
                 alert("All three entries cannot be blank and must have either 'Correct form' or 'Original'");
               }
@@ -418,7 +425,7 @@ function insertAppEdit()
           }
         else
             {
-              if (resp.length == 0)
+              if (!(resp.match(/\S/)))
                 {
                   lemnode = "<lem>" + appEditLem + "</lem>";
                 }
