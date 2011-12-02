@@ -2188,7 +2188,7 @@ DHTMLSuite.menuBar.prototype = {
 					}else{
 						document.body.appendChild(div);
 					}
-
+					/* jfox commented out this 'if' because kept from working in IE9 browser - still works in IE8
 					if(DHTMLSuite.clientInfoObj.isMSIE && this.createIframesForOldIeBrowsers){	// Create iframe object in order to conver select boxes in older IE browsers(windows).
 						this.submenuIframes[this.menuItems[indexThis].parentId] = 'DHTMLSuite_menuBarIframe_' + this.menuItems[indexThis].parentId;
 						var iframe = document.createElement('<IFRAME src="about:blank" frameborder=0>');
@@ -2201,7 +2201,7 @@ DHTMLSuite.menuBar.prototype = {
 						}else{
 							document.body.appendChild(iframe);
 						}
-					}
+					}*/
 				}
 				target = document.getElementById(this.submenuGroups[this.menuItems[indexThis].parentId]);	// Change target of newly created menu item. It should be appended to the sub menu div("A group box").
 			}

@@ -62,11 +62,9 @@ function helpDialogOpen(view)
       break;
     }
   
-  case "appBL":
-  case "appSoSOL":
   case "appedit":
     {
-      openconfig = config='height=250, width=850, left=25, top=50' + stdOptions;
+      openconfig = config='height=550, width=850, left=25, top=50' + stdOptions;
       break;
     }
     

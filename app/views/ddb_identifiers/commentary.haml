@@ -677,17 +677,17 @@
   function menuInit(){
     //stuff below is for the menu bar
     var menuModel = new DHTMLSuite.menuModel();
-  	menuModel.addItemsFromMarkup('menuModel');
-    	menuModel.setMainMenuGroupWidth(00);	
-  	menuModel.init();
-	
-  	var menuBar = new DHTMLSuite.menuBar();
-  	menuBar.addMenuItems(menuModel);
-  	menuBar.setMenuItemCssPrefix('Custom_');
-  	menuBar.setCssPrefix('Custom_');
-  	menuBar.setTarget('menuDiv');
-	
-  	menuBar.init();
+    menuModel.addItemsFromMarkup('menuModel');
+    menuModel.setMainMenuGroupWidth(00);	
+    menuModel.init();
+    
+    var menuBar = new DHTMLSuite.menuBar();
+    menuBar.addMenuItems(menuModel);
+    menuBar.setMenuItemCssPrefix('Custom_');
+    menuBar.setCssPrefix('Custom_');
+    menuBar.setTarget('menuDiv');
+    
+    menuBar.init();
   }
 
   //###########################################################################################
