@@ -136,7 +136,7 @@ class BiblioIdentifier < HGVIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        xsl ? xsl : %w{data xslt biblio start-html.xsl})),
+        xsl ? xsl : %w{data xslt biblio pn-preview.xsl})),
         parameters)
   end
   
