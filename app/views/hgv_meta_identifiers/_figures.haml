@@ -5,12 +5,12 @@
     
       %li
         = text_field_tag 'hgv_meta_identifier[figures][' + index.to_s + '][children][graphic][attributes][url]', url, :disabled => !@identifier.mutable?, :class => 'observechange'
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_figures
 
     %input#figures_url.observechange
 
-    %span{:onclick => "multiAddFigures()", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('meta.label.multiAdd')
+    %span{:onclick => "multiAddFigures()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_figures', {overlap: 'horizontal', constraint: false, handle: 'move'});"

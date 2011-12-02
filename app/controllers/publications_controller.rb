@@ -8,43 +8,7 @@ class PublicationsController < ApplicationController
   
  
   def determine_creatable_identifiers
-    @creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-    
-    #WARNING hardcoded identifier depenency hack  
-    #enforce creation order
-    has_meta = false
-    has_text = false
-    @publication.identifiers.each do |i|
-      if i.class.to_s == "HGVMetaIdentifier"
-        has_meta = true
-      end
-      if i.class.to_s == "DDBIdentifier"
-       has_text = true
-      end
-    end
-    if !has_text
-      #cant create trans
-      @creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    if !has_meta
-      #cant create text
-      @creatable_identifiers.delete("DDBIdentifier")
-      #cant create trans
-      @creatable_identifiers.delete("HGVTransIdentifier")     
-    end
-    #TODO - is Biblio needed?
-    @creatable_identifiers.delete("HGVBiblioIdentifier")
-    
-    #only let user create new for non-existing        
-    @publication.identifiers.each do |i|
-      @creatable_identifiers.each do |ci|
-        if ci == i.class.to_s
-          @creatable_identifiers.delete(ci)    
-        end
-      end
-    end  
-    
-    
+    @creatable_identifiers = @publication.creatable_identifiers
   end
 
   def advanced_create()
@@ -127,28 +91,28 @@ class PublicationsController < ApplicationController
     #check that the list is in the correct form
     #clean up the ids
     id_list.map! do |id|
-      id.chomp!('/');
-      pos = id.index('papyri.info');
-      if pos
-        id = id[pos..id.length-1]
-      end
-      #check if there is a good response from the number server
-      response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
-      
-      #puts id + " returned " + response.code # + response.body
-      if response.code != '200'
+      # FIXME: once biblio is loaded into numbers server, remove this unless clause
+      unless id =~ /#{NumbersRDF::NAMESPACE_IDENTIFIER}\/#{BiblioIdentifier::IDENTIFIER_NAMESPACE}/
+        id.chomp!('/');
+        id = NumbersRDF::NumbersHelper.identifier_url_to_identifier(id)
+        #check if there is a good response from the number server
+        response =  NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(id)
         
-        #bad format most likely
-        id = "Numbers Server Error, Check format--> " + id
-        list_is_good = false
-        
-      elsif !response.body.index('rdf:Description')
-        
-        #item does not exist most likely
-        #puts "text is bad"
-        id = "Not Found--> " + id
-        list_is_good = false
-        
+        #puts id + " returned " + response.code # + response.body
+        if response.code != '200'
+          
+          #bad format most likely
+          id = "Numbers Server Error, Check format--> " + id
+          list_is_good = false
+          
+        elsif !response.body.index('rdf:Description')
+          
+          #item does not exist most likely
+          #puts "text is bad"
+          id = "Not Found--> " + id
+          list_is_good = false
+          
+        end
       end
       id
     end
@@ -244,16 +208,24 @@ class PublicationsController < ApplicationController
   end
   
   def become_finalizer
-    # TODO make sure we don't steal it from someone who is working on it
-    @publication = Publication.find(params[:id])
-    @publication.remove_finalizer
     
-    #note this can only be called on a board owned publication
-    if @publication.owner_type != "Board"
-      flash[:error] = "Can't change finalizer on non-board copy of publication."
-      redirect_to show
+    @publication = Publication.find(params[:id])
+    
+    if @publication.change_finalizer(@current_user)
+      # TODO make sure we don't steal it from someone who is working on it
+    else
+      #no finalizer exists so pick one
+      #@publication = Publication.find(params[:id])
+      #@publication.remove_finalizer
+      
+      #note this can only be called on a board owned publication
+      if @publication.owner_type != "Board"
+        flash[:error] = "Can't change finalizer on non-board copy of publication."
+        redirect_to show
+      end
+      @publication.send_to_finalizer(@current_user)
+      
     end
-    @publication.send_to_finalizer(@current_user)
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
   
@@ -295,108 +267,22 @@ class PublicationsController < ApplicationController
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
       #board controls this id and it has been modified
-      if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+      if id.modified? && @publication.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
         id.update_revision_desc(params[:comment], @current_user);
         id.save
       end
     end
     
     
+    #copy back in any case
+    @publication.copy_back_to_user(params[:comment], @current_user)
+  
     #if it is a community pub, we don't commit to canon
     #instead we copy changes back to origin
     if @publication.is_community_publication?
       
-      @publication.copy_back_to_user(params[:comment], @current_user)
+      #@publication.copy_back_to_user(params[:comment], @current_user)
   
-    if false  #moved this to model...
-
-      
-=begin      
-      Rails.logger.info "==========COMMUNITY PUBLICATION=========="
-      Rails.logger.info "----Community is " + @publication.community.name
-      Rails.logger.info "----Board is " + @publication.find_first_board.name
-      
-      Rails.logger.info "====creators publication begining finalize=="
-      @publication.origin.log_info
-=end            
-        
-      #determine where to get data to build the index, 
-      # controlled paths are from the finalizer (this) publication
-      # uncontrolled paths are from the origin publication
-   
-      controlled_paths =  Array.new(@publication.controlled_paths)
-      #get the controlled blobs from the local branch (the finalizer's)
-      #controlled_blobs are the files that the board controls and have changed
-      controlled_blobs = controlled_paths.collect do |controlled_path|
-        @publication.owner.repository.get_blob_from_branch(controlled_path, @publication.branch)
-      end
-      #combine controlled paths and blobs into a hash  
-      controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
-      
-      #determine existing uncontrolled paths & blobs
-      #uncontrolled are taken from the origin, they have not been changed by board
-      origin_identifier_paths = @publication.origin.identifiers.collect do |i|
-        i.to_path
-      end
-      uncontrolled_paths = origin_identifier_paths - controlled_paths
-      uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
-        @publication.origin.repository.get_blob_from_branch(ucp, @publication.origin.branch)
-      end
-      uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
-        
-     
-=begin     
-      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
-      Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
-    
-      Rails.logger.info "-----Uncontrolled Blobs are:"
-      uncontrolled_blobs.each do |cb|
-        Rails.logger.info "-" + cb.to_s
-      end            
-      Rails.logger.info "-----Controlled Blobs are:"
-      controlled_blobs.each do |cb|
-        Rails.logger.info "-" + cb.to_s
-      end
-=end
-
-      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-      origin_index = @publication.origin.owner.repository.repo.index
-      origin_index.read_tree('master')
-      
-      Rails.logger.debug "=======orign INDEX before add========"
-      Rails.logger.debug origin_index.inspect
-      
-      
-      #add the controlled paths to the index
-      controlled_paths_blobs.each_pair do |path, blob|
-         origin_index.add(path, blob.data)
-         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-      end
-      
-      #need to add exiting tree to index, except for controlled blobs
-      uncontrolled_paths_blobs.each_pair do |path, blob|
-          origin_index.add(path, blob.data)
-          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-      end
-      
-
-      Rails.logger.debug "=======orign INDEX after add========"
-      Rails.logger.debug origin_index.inspect
-      
-      
-      #Rails.logger.info 
-      origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-
-      @publication.origin.save
-      
-=begin      
-      Rails.logger.info "====creators publication after finalize=="
-      @publication.origin.log_info
-=end      
-   
-   end  #moved this to model...
-   
       
     else #commit to canon
       begin
@@ -522,11 +408,10 @@ class PublicationsController < ApplicationController
 
   def edit_biblio
     @publication = Publication.find(params[:id])
-    @identifier = HGVBiblioIdentifier.find_by_publication_id(@publication.id)
+    @identifier = BiblioIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
- 
   def edit_adjacent
   
     #if they are on show, then need to goto first or last identifers

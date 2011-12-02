@@ -128,7 +128,7 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier, BiblioIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
@@ -842,6 +842,62 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def change_finalizer(new_finalizer)
+    #need to copy finalizer's copy if they have changed anything
+    #copy board pub to new finalizer
+    old_finalizing_publication = self.find_finalizer_publication
+
+    if old_finalizing_publication.nil?
+      #some kind of error should be thrown?
+      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
+      return false
+    end
+#    if old_finalizing_publication
+#      new_finalizing_publication = old_finalizing_publication.copy_to_owner(new_finalizer) #clone_to_owner(new_finalizer)
+#      new_finalizing_publication.parent = old_finalizing_publication.parent
+#      new_finalizing_publication.save!
+#    end
+    
+    #remove former finalizer
+#    old_finalizing_publication.destroy
+   
+   
+   #########
+    #---clone to owner
+    new_finalizing_publication = old_finalizing_publication.clone
+    new_finalizing_publication.owner = new_finalizer
+    new_finalizing_publication.creator = old_finalizing_publication.creator
+    new_finalizing_publication.title = old_finalizing_publication.title
+    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+    new_finalizing_publication.parent = old_finalizing_publication.parent
+    
+    new_finalizing_publication.save!
+    
+    # copy identifiers over to new pub
+    old_finalizing_publication.identifiers.each do |identifier|
+      duplicate_identifier = identifier.clone
+      new_finalizing_publication.identifiers << duplicate_identifier
+    end
+   #===clone to owner
+   
+   new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+   new_finalizing_publication.save!
+   
+   old_finalizing_publication.destroy
+   #######
+   
+   return true
+   
+   
+    #now there are 2 finalizers, any danger in this?
+    #now copy any old changes to new
+    
+    
+    #copy old finalizer's changes to new finalizer
+    #maybe just change owner? creator? but then need to copy over
+    
+  end
+  
   #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
   def find_finalizer_user
     if find_finalizer_publication
@@ -852,7 +908,7 @@ class Publication < ActiveRecord::Base
   
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
-  #returns the finalizer user or nil if finalizer does not exist
+  #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
   end
   
@@ -1098,7 +1154,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers
   end
   
   def canon_controlled_paths
@@ -1373,36 +1429,85 @@ class Publication < ActiveRecord::Base
         ident_xml_xpath = REXML::Document.new(ident_xml)
         comment_path = '/TEI/teiHeader/revisionDesc'
         comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
-        
-        comment_here.each_element('//change') do |change|
-          built_comment = Comment::CombineComment.new
-          
-          built_comment.xmltype = where_from
-          
-          if change.attributes["who"]
-            built_comment.who = change.attributes["who"]
-          else
-            built_comment.who = "no who attribute"
-          end
-          
-          # parse will convert date to local for consistency so work in sort below
-          if change.attributes["when"]
-            built_comment.when = Time.parse(change.attributes["when"])
-          else
-            built_comment.when = Time.parse("1988-8-8")
-          end
-          
-          built_comment.why = "From "  + ident_title + " " + where_from + " XML"
-          
-          built_comment.comment = change.text
-          
-          all_built_comments << built_comment
-          xml_only_built_comments << built_comment
-        end #comment_here
+       
+        unless comment_here.nil?
+          comment_here.each_element('//change') do |change|
+            built_comment = Comment::CombineComment.new
+            
+            built_comment.xmltype = where_from
+            
+            if change.attributes["who"]
+              built_comment.who = change.attributes["who"]
+            else
+              built_comment.who = "no who attribute"
+            end
+            
+            # parse will convert date to local for consistency so work in sort below
+            if change.attributes["when"]
+              built_comment.when = Time.parse(change.attributes["when"])
+            else
+              built_comment.when = Time.parse("1988-8-8")
+            end
+            
+            built_comment.why = "From "  + ident_title + " " + where_from + " XML"
+            
+            built_comment.comment = change.text
+            
+            all_built_comments << built_comment
+            xml_only_built_comments << built_comment
+          end #comment_here
+        end #comment_here.nil?
       end # if ident_xml
     end #identifiers each
     # sort in descending date order for display
     return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
+  end
+
+  def creatable_identifiers
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    has_biblio = false
+    self.identifiers.each do |i|
+      if i.class.to_s == "BiblioIdentifier"
+        has_biblio = true
+      end
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    creatable_identifiers.delete("BiblioIdentifier")
+    # Not allowed to create any other record in association with a BiblioIdentifier publication
+    if has_biblio
+      creatable_identifiers = []
+    end
+    
+    #only let user create new for non-existing        
+    self.identifiers.each do |i|
+      creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+
+    return creatable_identifiers
   end
   
   protected

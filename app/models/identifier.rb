@@ -1,10 +1,6 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
-  #TODO - is Biblio needed?
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier HGVBiblioIdentifier }
-  
-  #added for dashboard publication listings because biblio is often not needed
-  IDENTIFIER_MAIN_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier }
   
   FRIENDLY_NAME = "Base Identifier"
   
@@ -85,7 +81,7 @@ class Identifier < ActiveRecord::Base
   #   - true/false
   def is_valid_xml?(content = nil)
     if content.nil?
-      content = self.content
+      content = self.xml_content
     end
     self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content))
@@ -145,7 +141,7 @@ class Identifier < ActiveRecord::Base
   #   - title of identifier
   def titleize
     title = nil
-    if self.class == HGVMetaIdentifier || self.class == HGVBiblioIdentifier
+    if self.class == HGVMetaIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(
@@ -174,7 +170,7 @@ class Identifier < ActiveRecord::Base
            title += " (reprinted)"
          end
       else # HGV with no name
-        title = "HGV " + self.name.split('/').last.tr(';',' ')
+        title =  [self.class::FRIENDLY_NAME, self.name.split('/').last.tr(';',' ')].join(' ')
       end
     end
     return title
@@ -386,8 +382,8 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - title from identifer model
   def title
-    if read_attribute(:title) == nil
-      write_attribute(:title,titleize)
+    if read_attribute(:title).blank?
+      write_attribute(:title,self.titleize)
       self.save
     end
     return read_attribute(:title)
