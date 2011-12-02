@@ -9,6 +9,20 @@
      <xsl:call-template name="break"/>
   </xsl:template>
   
+  <!-- overrides rule in htm-teidiv.xsl that puts type and subtype in H2 tag -->
+  <xsl:template priority="1" match="tei:div[@type='commentary' and @subtype='frontmatter']">
+     <xsl:apply-templates/>
+     <p/>
+  </xsl:template>
+  
+  <!-- overrides rule in htm-teidiv.xsl that puts type and subtype in H2 tag -->
+  <xsl:template priority="1" match="tei:div[@type='commentary' and @subtype='linebyline']">
+     <h2>
+       Commentary
+    </h2>
+    <xsl:apply-templates/>
+  </xsl:template>
+  
   <!-- from http://www.dpawson.co.uk/xsl/sect2/replace.html#d8766e19 -->
   <xsl:template name="break">
      <xsl:param name="text" select="."/>
