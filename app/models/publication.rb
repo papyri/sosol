@@ -128,7 +128,7 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier].each do |identifier_class|
+    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier, BiblioIdentifier].each do |identifier_class|
       if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
         identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
           temp_id = identifier_class.new(:name => identifier_string)
@@ -1098,7 +1098,7 @@ class Publication < ActiveRecord::Base
   
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
-    self.controlled_identifiers.select{|i| !([HGVBiblioIdentifier].include?(i.class))}
+    self.controlled_identifiers
   end
   
   def canon_controlled_paths
@@ -1373,36 +1373,85 @@ class Publication < ActiveRecord::Base
         ident_xml_xpath = REXML::Document.new(ident_xml)
         comment_path = '/TEI/teiHeader/revisionDesc'
         comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
-        
-        comment_here.each_element('//change') do |change|
-          built_comment = Comment::CombineComment.new
-          
-          built_comment.xmltype = where_from
-          
-          if change.attributes["who"]
-            built_comment.who = change.attributes["who"]
-          else
-            built_comment.who = "no who attribute"
-          end
-          
-          # parse will convert date to local for consistency so work in sort below
-          if change.attributes["when"]
-            built_comment.when = Time.parse(change.attributes["when"])
-          else
-            built_comment.when = Time.parse("1988-8-8")
-          end
-          
-          built_comment.why = "From "  + ident_title + " " + where_from + " XML"
-          
-          built_comment.comment = change.text
-          
-          all_built_comments << built_comment
-          xml_only_built_comments << built_comment
-        end #comment_here
+       
+        unless comment_here.nil?
+          comment_here.each_element('//change') do |change|
+            built_comment = Comment::CombineComment.new
+            
+            built_comment.xmltype = where_from
+            
+            if change.attributes["who"]
+              built_comment.who = change.attributes["who"]
+            else
+              built_comment.who = "no who attribute"
+            end
+            
+            # parse will convert date to local for consistency so work in sort below
+            if change.attributes["when"]
+              built_comment.when = Time.parse(change.attributes["when"])
+            else
+              built_comment.when = Time.parse("1988-8-8")
+            end
+            
+            built_comment.why = "From "  + ident_title + " " + where_from + " XML"
+            
+            built_comment.comment = change.text
+            
+            all_built_comments << built_comment
+            xml_only_built_comments << built_comment
+          end #comment_here
+        end #comment_here.nil?
       end # if ident_xml
     end #identifiers each
     # sort in descending date order for display
     return all_built_comments.sort_by(&:when).reverse, xml_only_built_comments.sort_by(&:when).reverse
+  end
+
+  def creatable_identifiers
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    
+    #WARNING hardcoded identifier depenency hack  
+    #enforce creation order
+    has_meta = false
+    has_text = false
+    has_biblio = false
+    self.identifiers.each do |i|
+      if i.class.to_s == "BiblioIdentifier"
+        has_biblio = true
+      end
+      if i.class.to_s == "HGVMetaIdentifier"
+        has_meta = true
+      end
+      if i.class.to_s == "DDBIdentifier"
+       has_text = true
+      end
+    end
+    if !has_text
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")
+    end
+    if !has_meta
+      #cant create text
+      creatable_identifiers.delete("DDBIdentifier")
+      #cant create trans
+      creatable_identifiers.delete("HGVTransIdentifier")     
+    end
+    creatable_identifiers.delete("BiblioIdentifier")
+    # Not allowed to create any other record in association with a BiblioIdentifier publication
+    if has_biblio
+      creatable_identifiers = []
+    end
+    
+    #only let user create new for non-existing        
+    self.identifiers.each do |i|
+      creatable_identifiers.each do |ci|
+        if ci == i.class.to_s
+          creatable_identifiers.delete(ci)    
+        end
+      end
+    end  
+
+    return creatable_identifiers
   end
   
   protected

@@ -235,14 +235,6 @@ function multiAddPlaceRaw(e){
   
   var placeIndex = multiGetNextIndex(key);
 
-  //console.log(e.parentNode.parentNode);
-  //console.log('key = ' + key);
-  //console.log('geoSpotKey = ' + geoSpotKey);
-  //console.log('geoReferenceKey = ' + geoReferenceKey);
-  //console.log('placeIndex = ' + placeIndex);
-  //console.log('provenanceIndex = ' + provenanceIndex);
-  //console.log(provenanceType);
-
   var item = '<li>' +
              '   <input type="hidden" value="" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][attributes][id]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_attributes_id" class="observechange provenancePlaceId">' +
              '   <input type="hidden" value="" name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][attributes][exclude]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_attributes_exclude" class="observechange provenancePlaceExclude">' +
@@ -301,11 +293,6 @@ function multiAddGeoSpot(key, provenanceIndex, placeIndex)
 {
   var geoIndex = multiGetNextIndex(key);
 
-  //console.log('key = ' + key);
-  //console.log('provenanceIndex = ' + provenanceIndex);
-  //console.log('placeIndex = ' + placeIndex);
-  //console.log('geoIndex = ' + geoIndex);
-
   var type = $$('#multiPlus_' + key + ' > select')[0].value;
   var subtype = $$('#multiPlus_' + key + ' > select')[1].value;
   var offset = $$('#multiPlus_' + key + ' > select')[2].value;
@@ -330,13 +317,6 @@ function multiAddGeoSpot(key, provenanceIndex, placeIndex)
   });
   
   var origPlace = $('multi_' + key).parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-
-  //console.log('type = ' + type);
-  //console.log('subtype = ' + subtype);
-  //console.log('offset = ' + offset);
-  //console.log('name = ' + name);
-  //console.log('uncertainty = ' + uncertainty);
-  //console.log(referenceList);
 
   var item = '<li>' +
              '  <select name="hgv_meta_identifier[provenance][' + provenanceIndex + '][children][place][' + placeIndex + '][children][geo][' + geoIndex + '][attributes][type]" id="hgv_meta_identifier_provenance_' + provenanceIndex + '_children_place_' + placeIndex + '_children_geo_' + geoIndex + '_attributes_type" class="observechange provenanceGeoType"><option value="ancient"' + (type == 'ancient' ? ' selected="selected"' : '') + '>ancient</option>' +
@@ -413,8 +393,6 @@ function multiAddPublicationExtra()
   if(pattern != ''){
     value = pattern.replace(/…/, value);
   }
-
-  //console.log('type = '+type+'| pattern = '+pattern+'| value = '+value+'| index = '+index+'');
 
   var item = '<li>' +
              '  <input class="observechange publicationExtra" id="hgv_meta_identifier_publicationExtra_' + index + '_value" name="hgv_meta_identifier[publicationExtra][' + index + '][value]" type="text" value="' + value + '" />' + 
@@ -560,7 +538,6 @@ function mentionedDateNewCertainty(selectbox)
 
   // remove
   $(selectbox.parentNode).select('input[type=hidden]').each(function(item){
-    //console.log(item.id + ' = ' + item.value);
     if(item.id.indexOf('certainty') > 0){
       var certaintyIndex = item.id.match(/\d+/g)[1] * 1;
       if(certaintyIndex){
@@ -618,52 +595,6 @@ function checkNotAddedMultiples(){
   multiAdd('translationsFr');
 }
 
-/**** toggle view ****/
-
-function toggleCatgory(event) {
-  if(!this.next().visible()){
-    $(this).next().show();
-  } else {
-    $(this).next().hide();
-  }
-}
-
-function rememberToggledView(){
-  var expansionSet = '';
-
-  $$('.category').each(function(e){
-
-    if(e.next().visible()){
-      expansionSet += e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0] + ';';
-    }
-  });
-  
-  $('expansionSet').value = expansionSet;
-}
-
-function showExpansions(){
-  var flash = $('expansionSet').value;
-  var anchor_match = document.URL.match(/#[A-Za-z]+/);
-  var anchor = anchor_match ? anchor_match[0] : '';
-  anchor = anchor.substr(1,1).toLowerCase() + anchor.substr(2);
-
-  var expansionSet = flash + ';' + anchor;
-  
-  $$('.category').each(function(e){
-
-    var classy = e.classNames().reject(function(item){
-        return item == 'category' ? true : false;
-      })[0];
-
-    if(expansionSet.indexOf(classy) >= 0){
-      e.next().show();
-    }
-  });
-  $('expansionSet').value = '';
-}
-
 function complementPlace(key, data){
   keyMap = [
     'provenance_ancientFindspot',
@@ -696,12 +627,7 @@ function geoReferenceWizard(){
 
     referenceString = referenceString.replace(/\s+$/, '');
     
-    //console.log(geoReferenceKey);
-    //console.log(referenceString);
-    
     var target = $('multi_' + geoReferenceKey).parentNode.select('input')[0];
-    
-    //console.log(target);
     
     target.value = referenceString;
     
@@ -731,63 +657,22 @@ function toggleReferenceList(){
 }
 
 Event.observe(window, 'load', function() {
-  showExpansions();
   toggleMentionedDates('#dateAlternativeX');
   hideDateTabs();
-  
-  //$('multiPlus_provenance').hide(); // provenance
 
   // submit
   $('identifier_submit').observe('click', checkNotAddedMultiples);
-  $('identifier_submit').observe('click', geoReferenceWizard);
 
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
 
-  $$('.category').each(function(e){e.observe('click', toggleCatgory);});
-  $('expandAll').observe('click', function(e){$$('.category').each(function(e){e.next().show();});});
-  $('collapseAll').observe('click', function(e){$$('.category').each(function(e){e.next().hide();});});
+  $('identifier_submit').observe('click', geoReferenceWizard);
+
   $('toggleReferenceList').observe('click', toggleReferenceList);
 
   $$('.addPlace').each(function(el){el.observe('click', function(ev){ multiAddPlaceRaw(el); });});
   $$('.addProvenance').each(function(el){el.observe('click', function(ev){ multiAddProvenanceRaw(el); });});
   $$('.addOrigPlace').each(function(el){el.observe('click', function(ev){ multiAddOrigPlaceRaw(el); });});
 
-  /* provenance
-  $('hgv_meta_identifier_provenance_0_value').observe('click', function(event){provenanceUnknown();});
-  
-  new Ajax.Autocompleter('provenance_ancientFindspot', 'autocompleter_provenanceAncientFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientFindspot&type=ancient&subtype=settlement', afterUpdateElement: function(input, li){
-    
-    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=ancient&subtype=settlement&value=' + $('provenance_ancientFindspot').value, evalJSON : true, onSuccess : function(t){
-    
-      complementPlace('provenance_ancientFindspot', t.responseJSON);
-  }});
-    
-  }});
-  
-  new Ajax.Autocompleter('provenance_modernFindspot', 'autocompleter_provenanceModernFindspot', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_modernFindspot&type=modern&subtype=settlement', afterUpdateElement: function(input, li){
-    
-    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=modern&subtype=settlement&value=' + $('provenance_modernFindspot').value, evalJSON : true, onSuccess : function(t){
-    
-      complementPlace('provenance_modernFindspot', t.responseJSON);
-  }});
-  
-  }});
-  
-  new Ajax.Autocompleter('provenance_nome', 'autocompleter_provenanceNome', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_nome&type=ancient&subtype=nome', afterUpdateElement: function(input, li){
-    
-    new Ajax.Request('/hgv_meta_identifiers/complement', {parameters : 'type=ancient&subtype=nome&value=' + $('provenance_nome').value, evalJSON : true, onSuccess : function(t){
-    
-      complementPlace('provenance_nome', t.responseJSON);
-  }});
-  
-  }});
-  
-  new Ajax.Autocompleter('provenance_ancientRegion', 'autocompleter_provenanceAncientRegion', '/hgv_meta_identifiers/autocomplete', {parameters: 'key=provenance_ancientRegion&type=ancient&subtype=region'});
-  
-  */
-  
   publicationPreview();
   
 });
-
-// todo: if an item has been moved the »observeChange« alert needs to be triggered
