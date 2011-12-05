@@ -11,4 +11,4 @@ data/xslt/epidoc:
 data/xslt/pn/navigator:
   :type: git
   :repository: git://github.com/papyri/navigator.git
-  :revision: master
+  :revision: paplio
