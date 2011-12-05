@@ -4,8 +4,12 @@
 
   <xsl:include href="global-varsandparams.xsl"/>
 
+
+
+
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
   <xsl:include href="../epidoc/htm-teiab.xsl"/>
+  <xsl:include href="../epidoc/htm-teiaddanddel.xsl"/>
   <xsl:include href="../epidoc/htm-teiapp.xsl"/>
   <xsl:include href="../epidoc/htm-teidiv.xsl"/>
   <xsl:include href="../epidoc/htm-teidivedition.xsl"/>
@@ -27,10 +31,8 @@
   <xsl:include href="../epidoc/htm-teispace.xsl"/>
   <xsl:include href="../epidoc/htm-teisupplied.xsl"/>
   <xsl:include href="../epidoc/htm-teiterm.xsl"/>
-  <xsl:include href="../epidoc/htm-teiaddanddel.xsl"/>
+  <xsl:include href="../epidoc/htm-teiref.xsl"/>
   
-  <xsl:include href="htm-teixref.xsl"/>
-
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:include href="../epidoc/teiabbrandexpan.xsl"/>
   <xsl:include href="../epidoc/teicertainty.xsl"/>
@@ -48,17 +50,17 @@
   <xsl:include href="../epidoc/teiunclear.xsl"/>
 
   <!-- html related stylesheets for named templates -->
-  <xsl:include href="../epidoc/htm-tpl-lang.xsl"/>
-  <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
-  
-  <xsl:include href="htm-tpl-scripts.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-cssandscripts.xsl"/>
   <xsl:include href="../epidoc/htm-tpl-apparatus.xsl"/>
-  <!-- <xsl:include href="htm-tpl-apparatus-portlet.xsl"/> -->
-  <!-- xsl:include href="htm-tpl-metadata.xsl"/ -->
-  <xsl:include href="htm-tpl-nav-pn.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-lang.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-metadata.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-structure.xsl"/>
+  <!-- <xsl:include href="htm-tpl-nav-pn.xsl"/> -->
+  <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
+  <xsl:include href="../epidoc/htm-tpl-sqbrackets.xsl"/> 
 
   <!-- global named templates with no html, also used by start-txt -->
-  <xsl:include href="../epidoc/tpl-reasonlost.xsl"/>
+  <!-- <xsl:include href="../epidoc/tpl-reasonlost.xsl"/>--> <!-- Deprecated -->
   <xsl:include href="../epidoc/tpl-certlow.xsl"/>
   <xsl:include href="../epidoc/tpl-text.xsl"/>
 
@@ -72,7 +74,7 @@
 <div class="pn-ddbdp-data">
     <div class="greek transpecial">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
-        <xsl:call-template name="css-script"/>
+        <!-- <xsl:call-template name="css-script"/> -->
 
         <!-- Found in htm-tpl-nav.xsl -->
         <!-- xsl:call-template name="topNavigation"/-->
@@ -99,7 +101,5 @@
     </div>
 </div>
   </xsl:template>
-  <xsl:template name="metadata"></xsl:template>
-
 
 </xsl:stylesheet>
