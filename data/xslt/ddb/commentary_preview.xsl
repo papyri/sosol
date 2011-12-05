@@ -82,36 +82,43 @@
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='pp']">
     <xsl:text> pg.</xsl:text>
     <xsl:value-of select="text()"/>
-    <xsl:text> </xsl:text>
+    <xsl:call-template name="commaHere"/>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='ll']">
     <xsl:text> lin.</xsl:text>
     <xsl:value-of select="text()"/>
-    <xsl:text> </xsl:text>
+    <xsl:call-template name="commaHere"/>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='vol']">
     <xsl:text> vol.</xsl:text>
     <xsl:value-of select="text()"/>
-    <xsl:text> </xsl:text>
+    <xsl:call-template name="commaHere"/>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='issue']">
     <xsl:text> issue </xsl:text>
     <xsl:value-of select="text()"/>
-    <xsl:text> </xsl:text>
+    <xsl:call-template name="commaHere"/>
   </xsl:template>
   
   <!-- overrides rule in htm-teilistbiblandbibl.xsl that puts bibl inside a li tag and do not want to do that in commentary preview --> 
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:listBibl/tei:bibl/tei:biblScope[@type='chap']">
     <xsl:text> ch.</xsl:text>
     <xsl:value-of select="text()"/>
-    <xsl:text> </xsl:text>
+    <xsl:call-template name="commaHere"/>
   </xsl:template>  
+  
+  <!-- insert a comma if another biblScope follows -->
+  <xsl:template name="commaHere">
+     <xsl:if test="following-sibling::tei:biblScope[1]">
+      <xsl:text>,</xsl:text>
+    </xsl:if>
+  </xsl:template>
   
   <!-- overrides rule in htm-teinote.xsl and teinote.xsl that puts inside a p tag and do not want to do that in commentary preview -->
   <xsl:template priority="1" match="tei:div[@type='commentary' and (@subtype='linebyline' or @subtype='frontmatter')]//tei:note[@type='footnote']">
