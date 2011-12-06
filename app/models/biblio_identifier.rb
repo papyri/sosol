@@ -184,7 +184,7 @@ class BiblioIdentifier < HGVIdentifier
   # - *Returns* :
   #   - +REXML::Document+ with biblio EpiDoc
   def epiDoc
-    REXML::Document.new(self.xml_content)
+    @epiDocX ||= REXML::Document.new(self.xml_content)
   end
   
   # Retrieves data from xml or sets empty defaults
@@ -246,6 +246,18 @@ class BiblioIdentifier < HGVIdentifier
 
     Rails.logger.info(epiDocXml)
     self.set_xml_content(epiDocXml, :comment => comment)
+  end
+ 
+  # Commits identifier XML to the repository.
+  # Overrides Identifier#set_content to reset memoized value set in BiblioIdentifier#epiDoc.
+  # - *Args*  :
+  #   - +content+ -> the XML you want committed to the repository
+  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
+  # - *Returns* :
+  #   - a String of the SHA1 of the commit
+  def set_content(content, options = {})
+    @epiDocX = nil
+    super
   end
 
   # Updates internal EpiDoc representation from user parameters
