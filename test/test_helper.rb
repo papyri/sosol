@@ -3,6 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 require 'factory_girl'
 require 'shoulda'
+require 'active_support'
+require 'active_support/test_case'
+require 'test/unit'
 
 class Test::Unit::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
@@ -40,4 +43,20 @@ class Test::Unit::TestCase
   def assert_path_equal(path_array, path_string)
     assert_equal File.join(@path_prefix, path_array), path_string
   end
+end
+
+class ActiveSupport::TestCase
+  def setup_test_repository
+    if (!File.directory?(CANONICAL_REPOSITORY)) && File.directory?(CANONICAL_CANONICAL_REPOSITORY)
+      clone_command = ["git clone --bare",
+                    CANONICAL_CANONICAL_REPOSITORY,
+                    CANONICAL_REPOSITORY].join(' ')
+
+      return system(clone_command)
+    else
+      return true
+    end
+  end
+  
+  setup :setup_test_repository
 end
