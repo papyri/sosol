@@ -173,7 +173,22 @@
         <xsl:text>
           </xsl:text>
         <xsl:copy>
-          <xsl:copy-of select="@*"/>
+          <!-- change SoSOL user names into URI's -->
+          <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/sosol-ids.xsl -->
+          <xsl:copy-of select="@*[not(local-name()='who')]"/>
+          <xsl:attribute name="who">
+            <xsl:choose>
+              <xsl:when test="starts-with(@who,'http://papyri.info/editor/users/')">
+                <xsl:value-of select="@who"/>
+              </xsl:when>
+              <xsl:when test="document('sosol_usernames.xml')//name[(normalize-space(.)=normalize-space(current()/@who))]">
+                <xsl:value-of select="document('sosol_usernames.xml')//name[(normalize-space(.)=normalize-space(current()/@who))]/following-sibling::uri[1]"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="@who"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
           <xsl:apply-templates/>
         </xsl:copy>
       </xsl:for-each>
