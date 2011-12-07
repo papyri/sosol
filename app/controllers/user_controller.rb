@@ -68,11 +68,9 @@ class UserController < ApplicationController
       @calc_date = ''
       
       respond_to do |format|
-        format.html {
-          render "usage_stats"
-          return
-        }
+        format.html { render "usage_stats"; return }
         format.json { render :json => @users.first }
+        format.xml  { render :xml => @users.first }
       end
     else
       flash[:error] = "User not found."
