@@ -428,5 +428,129 @@ Developer:
   end
   
   
+  #Collects and downloads zip file with all of the publications of the given status and community (or PE if no community).
+  def download_by_status
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+    status_wanted = params[:status] || "unknown" #"committed" 
+    #only let them download status that are accessable
+    if ! %w{new editing submitted committed}.include?status_wanted
+      #status_wanted = "committed"
+      flash[:error] = status_wanted + " status is not downloadable."
+      redirect_to dashboard_url 
+      return
+    end
+     
+    cid = params[:community_id] || nil  
+    if cid
+      @community = Community.find_by_id(cid)  
+    end
+    
+    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => status_wanted }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ 
+    t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|
+            #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
+            
+            #simple paths for just this pub
+            #zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+            
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            
+            zos << id.xml_content
+          end 
+        end
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+  #add com name
+    community = "PE"
+    if @community
+      community = @community.format_name
+    end
+    filename = @current_user.name + "_" + community +  "_" + status_wanted + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
+  
+  #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.
+  def download_user_publications
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+ 
+    cid = params[:community_id]
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    
+    @community = Community.find_by_id(cid)
+ 
+    @publications = @submitted_publications + @editing_publications  + @new_publications + @committed_publications
+    t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|         
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            zos << id.xml_content
+          end 
+        end
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+      community = "PE"
+    if @community
+      community = @community.format_name
+    end
+    filename = @current_user.name + "_" + community + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
 
+  #Determines which combos of boards & publication status' exist so we can ask the user which one they want to download.
+  def download_options
+  
+    #has become overkill for current method, really only need to see if any of these publications exists, dont need the whole list
+    cid = nil
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    
+   # @community = Community.find_by_id(cid)
+  
+    @communities = Hash.new
+    if @current_user.community_memberships && @current_user.community_memberships.length > 0  
+        @current_user.community_memberships.each do |community|
+          #raise community.id.to_s
+          cid = community.id
+          #raise community.name
+          @communities[cid] = Hash.new
+          @communities[cid][:id] = cid 
+          @communities[cid][:name] = community.format_name
+          @communities[cid][:submitted_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:editing_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:new_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:committed_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        end
+    end    
+      
+    
+  end
 end
