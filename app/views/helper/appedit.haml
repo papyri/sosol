@@ -8,7 +8,7 @@
       = render :partial => 'markup_warn'
       %h4 Editorial = Correction noted in series Corrigenda or other publication
       %h4 BL = Correction noted in BL
-      %h4 PE = Correction proposed directly via PE -- not published elsewhere
+      %h4 PN = Correction proposed directly via PE and shown in PN -- not published elsewhere
       #app_col
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appeditlem_value", :size => "25"}
@@ -34,9 +34,9 @@
           %input{ :type => "text", :class => "choosetext greek", :id => "appeditBLpage_value", :disabled => "true",  :size => "5"} Page
         %br
         %br
-        %input{ :type => "radio", :class => "choosetextradio", :id => "PE", :name => "appEditType", :value => "PE", :onclick => "checkEditType(this.id)"} PE
+        %input{ :type => "radio", :class => "choosetextradio", :id => "PN", :name => "appEditType", :value => "PN", :onclick => "checkEditType(this.id)"} PN
         #appEditCitationText
-          %input{ :type => "text", :class => "choosetext greek", :id => "appeditPE_value", :disabled => "true",  :size => "25"} Authority, e.g.: M. Smith
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditPN_value", :disabled => "true",  :size => "25"} Authority, e.g.: M. Smith
         %br
     #app_button
       %button{ :type => "button", :onclick=>"insertAppEdit()"}Insert

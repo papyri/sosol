@@ -199,10 +199,10 @@ function checkEditType(id)
     {
       document.getElementById("appeditBLvol_value").value = "";
       document.getElementById("appeditBLpage_value").value = "";
-      document.getElementById("appeditPE_value").value = "";
+      document.getElementById("appeditPN_value").value = "";
       document.appEditForm.appeditBLvol_value.disabled = true;
       document.appEditForm.appeditBLpage_value.disabled = true;
-      document.appEditForm.appeditPE_value.disabled = true;
+      document.appEditForm.appeditPN_value.disabled = true;
       
       document.appEditForm.appeditresp_value.disabled = false;
     }
@@ -210,14 +210,14 @@ function checkEditType(id)
     if (appEditType == "BL")
       {
         document.getElementById("appeditresp_value").value = "";
-        document.getElementById("appeditPE_value").value = "";
+        document.getElementById("appeditPN_value").value = "";
         document.appEditForm.appeditresp_value.disabled = true;
-        document.appEditForm.appeditPE_value.disabled = true;
+        document.appEditForm.appeditPN_value.disabled = true;
         
         document.appEditForm.appeditBLvol_value.disabled = false;
         document.appEditForm.appeditBLpage_value.disabled = false;
       }
-    else //PE
+    else //PN
       {
         document.getElementById("appeditBLvol_value").value = "";
         document.getElementById("appeditBLpage_value").value = "";
@@ -226,7 +226,7 @@ function checkEditType(id)
         document.appEditForm.appeditBLpage_value.disabled = true;
         document.appEditForm.appeditresp_value.disabled = true;
 
-        document.appEditForm.appeditPE_value.disabled = false;
+        document.appEditForm.appeditPN_value.disabled = false;
       }
 }
 
@@ -372,21 +372,21 @@ function insertAppBL()
 
 function insertAppSoSOL()
 {
-  resp = document.getElementById("appeditPE_value").value;
+  resp = document.getElementById("appeditPN_value").value;
   
   if (!(appEditLem.match(/\S/)))
     {
-      alert("'Correct form' cannot be left blank on PE type");
+      alert("'Correct form' cannot be left blank on PN type");
     }
   else
     {
       if (!(resp.match(/\S/)))
         {
-          alert("'Authority' cannot be left blank on PE type - please type in your sir name");
+          alert("'Authority' cannot be left blank on PN type - please type in your sir name");
         }
       else
         {
-          lemnode = "<lem resp=\"PE " + resp + "\">" + appEditLem + "</lem>";
+          lemnode = "<lem resp=\"PN " + resp + "\">" + appEditLem + "</lem>";
         }
       startxml = "<app type=\"editorial\">" + lemnode + "<rdg>" + appEditRdg + "</rdg></app>";
       
@@ -406,7 +406,7 @@ function insertAppEdit()
   if (appEditType == "BL")
     {insertAppBL()}
   else
-    if (appEditType == "PE")
+    if (appEditType == "PN")
       {insertAppSoSOL()}
     else //Editorial
       {

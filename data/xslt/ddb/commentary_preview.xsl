@@ -17,10 +17,12 @@
   
   <!-- overrides rule in htm-teidiv.xsl that puts type and subtype in H2 tag -->
   <xsl:template priority="1" match="tei:div[@type='commentary' and @subtype='linebyline']">
-     <h2>
-       Commentary
-    </h2>
-    <xsl:apply-templates/>
+     <div class="preview_commentary">
+       <h2>
+         Commentary
+       </h2>
+       <xsl:apply-templates/>
+     </div>
   </xsl:template>
   
   <!-- from http://www.dpawson.co.uk/xsl/sect2/replace.html#d8766e19 -->
