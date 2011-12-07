@@ -145,18 +145,7 @@
   </xsl:template>
   
   <xsl:template name="generate-languages">
-    <xsl:variable name="languages">
-      <langUsage>
-        <language ident="en">English</language>
-        <language ident="grc">Ancient Greek</language>
-        <language ident="la">Latin</language>
-        <language ident="fr">French</language>
-        <language ident="de">German</language>
-        <language ident="grc-Latn">Ancient Greek in Latin script</language>
-        <language ident="cop">Coptic</language>
-        <language ident="la-Grek">Latin in Greek script</language>
-      </langUsage>
-    </xsl:variable>
+    <xsl:variable name="languages" select="document('sosol_langs.xml')"/>
     <xsl:element name="langUsage" namespace="http://www.tei-c.org/ns/1.0">
       <!-- for each language present in the document -->
       <xsl:for-each-group select="//*[@xml:lang]" group-by="@xml:lang">
