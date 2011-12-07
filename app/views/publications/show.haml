@@ -202,3 +202,5 @@
     - if @current_user.developer  
       = link_to "developer immediate delete", @publication, :method => :delete 
       %br
+      
+    = link_to "Download Copy", :controller => 'publications', :id => @publication.id, :action => "download"
