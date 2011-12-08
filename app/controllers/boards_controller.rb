@@ -321,6 +321,8 @@ def send_board_reminder_emails
   redirect_to dashboard_url
 end
 
-
+def confirm_destroy
+  @board = Board.find(params[:id])
+end
 
 end
