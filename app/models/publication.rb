@@ -536,7 +536,7 @@ class Publication < ActiveRecord::Base
   
   
   def change_status(new_status)
-    unless self.status == new_status
+    if (self.status != new_status) && !(self.owner.repository.repo.get_head(self.branch).nil?)
       old_branch_leaf = self.branch.split('/').last
       new_branch_components = [old_branch_leaf]
       
