@@ -378,6 +378,7 @@ class DDBIdentifier < Identifier
     parameters.reverse_merge!(
       "leiden-style" => "ddbdp",
       "apparatus-style" => "ddbdp",
+      "edn-structure" => "ddbdp",
       "css-loc" => ""
     )
     JRubyXML.apply_xsl_transform(
