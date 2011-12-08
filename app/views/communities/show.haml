@@ -53,6 +53,7 @@
 = link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id
 
 %br
+%br
 
 = link_to 'Edit', edit_community_path(@community) |  
-= link_to 'Destroy', @community , :confirm => 'Are you sure?', :method => :delete
+= link_to 'Destroy', :controller => "communities", :id => @community.id, :action => "confirm_destroy"
