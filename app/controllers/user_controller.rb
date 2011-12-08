@@ -67,8 +67,11 @@ class UserController < ApplicationController
     if !@users.compact.empty?
       @calc_date = ''
       
-      render "usage_stats"
-      return
+      respond_to do |format|
+        format.html { render "usage_stats"; return }
+        format.json { render :json => @users.first }
+        format.xml  { render :xml => @users.first }
+      end
     else
       flash[:error] = "User not found."
       redirect_to dashboard_url

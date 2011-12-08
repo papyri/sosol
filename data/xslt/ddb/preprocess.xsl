@@ -118,6 +118,9 @@
   <xsl:template match="tei:profileDesc">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
+      <xsl:if test="//*[@xml:lang] and not(tei:langUsage)">
+        <xsl:call-template name="generate-languages"/>
+      </xsl:if>
       <xsl:if test="//tei:handShift and not(tei:handNotes)">
         <xsl:call-template name="generate-handnotes"/>
       </xsl:if>
@@ -132,6 +135,45 @@
             <xsl:value-of select="@new"/>
           </xsl:attribute>
         </xsl:element>
+      </xsl:for-each-group>
+    </xsl:element>
+  </xsl:template>
+  
+  <!-- generate langUsage from xml:lang's present in the document -->
+  <xsl:template match="tei:langUsage">
+    <xsl:call-template name="generate-languages"/>
+  </xsl:template>
+  
+  <xsl:template name="generate-languages">
+    <xsl:variable name="languages" select="document('sosol_langs.xml')"/>
+    <xsl:element name="langUsage" namespace="http://www.tei-c.org/ns/1.0">
+      <!-- for each language present in the document -->
+      <xsl:for-each-group select="//*[@xml:lang]" group-by="@xml:lang">
+        <xsl:variable name="language" select="@xml:lang"/>
+        <xsl:choose>
+          <!-- this language code is in the language list, copy it -->
+          <xsl:when test="$languages//language[@ident = $language]">
+            <xsl:element name="language" namespace="http://www.tei-c.org/ns/1.0">
+              <xsl:attribute name="ident"><xsl:value-of select="@xml:lang"/></xsl:attribute>
+              <xsl:value-of select="$languages//language[@ident = $language]"/>
+            </xsl:element>
+          </xsl:when>
+          <!-- this language code is not in the language list -->
+          <xsl:otherwise>
+            <xsl:choose>
+              <!-- this language code has a language definition in the document, copy it -->
+              <xsl:when test="/tei:TEI/tei:teiHeader/tei:profileDesc/tei:langUsage/tei:language[@ident = $language]">
+                <xsl:copy-of select="/tei:TEI/tei:teiHeader/tei:profileDesc/tei:langUsage/tei:language[@ident = $language]"/>
+              </xsl:when>
+              <!-- this language code doesn't have a language definition, generate a blank -->
+              <xsl:otherwise>
+                <xsl:element name="language" namespace="http://www.tei-c.org/ns/1.0">
+                  <xsl:attribute name="ident"><xsl:value-of select="@xml:lang"/></xsl:attribute>
+                </xsl:element>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:for-each-group>
     </xsl:element>
   </xsl:template>
@@ -173,7 +215,22 @@
         <xsl:text>
           </xsl:text>
         <xsl:copy>
-          <xsl:copy-of select="@*"/>
+          <!-- change SoSOL user names into URI's -->
+          <!-- from http://idp.atlantides.org/svn/idp/idp.optimization/trunk/xslt/sosol-ids.xsl -->
+          <xsl:copy-of select="@*[not(local-name()='who')]"/>
+          <xsl:attribute name="who">
+            <xsl:choose>
+              <xsl:when test="starts-with(@who,'http://papyri.info/editor/users/')">
+                <xsl:value-of select="@who"/>
+              </xsl:when>
+              <xsl:when test="document('sosol_usernames.xml')//name[(normalize-space(.)=normalize-space(current()/@who))]">
+                <xsl:value-of select="document('sosol_usernames.xml')//name[(normalize-space(.)=normalize-space(current()/@who))]/following-sibling::uri[1]"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="@who"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
           <xsl:apply-templates/>
         </xsl:copy>
       </xsl:for-each>

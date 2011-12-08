@@ -52,7 +52,8 @@ class ActiveSupport::TestCase
                     CANONICAL_CANONICAL_REPOSITORY,
                     CANONICAL_REPOSITORY].join(' ')
 
-      return system(clone_command)
+      puts `#{clone_command}`
+      return $?.success?
     else
       return true
     end
