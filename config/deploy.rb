@@ -1,5 +1,5 @@
 set :application, "protosite"
-set :repository,  "ssh://halsted.vis.uky.edu/srv/git/protosite.git"
+set :repository,  "git://github.com/papyri/sosol.git"
 set :scm, "git"
 set :user, "idp2"
 set :scm_verbose, true
