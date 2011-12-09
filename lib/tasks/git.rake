@@ -37,7 +37,7 @@ namespace :git do
       task :clone => :environment do
         require 'config/boot'
         
-        CANONICAL_CLONE_URL = "git://halsted.vis.uky.edu/git/idp.data.git"
+        CANONICAL_CLONE_URL = "git://github.com/papyri/idp.data.git"
         
         clone_command = ["git clone --bare",
                         CANONICAL_CLONE_URL,

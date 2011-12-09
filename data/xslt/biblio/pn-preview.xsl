@@ -8,6 +8,7 @@
 
   <xsl:variable name="path">/tmp</xsl:variable>	
   <xsl:variable name="outbase">/tmp</xsl:variable>
+  <xsl:variable name="resolve-uris" select="true()"/>
 
   <xsl:include href="../pn/navigator/pn-xslt/htm-teibibl.xsl"/>
   
