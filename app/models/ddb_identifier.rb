@@ -439,8 +439,8 @@ class DDBIdentifier < Identifier
     combining_perispomeni = [0x342].pack('U')
     preprocessed_leiden.gsub!(/#{[0x1fc0].pack('U')}/,combining_perispomeni)
 
-    # swap underdot-combining-greek-perispomeni to combining-greek-perispomeni-underdot
-    preprocessed_leiden.gsub!(/#{underdot + combining_perispomeni}/, combining_perispomeni + underdot)
+    # normalize to normalized form C
+    preprocessed_leiden = ActiveSupport::Multibyte::Chars.new(preprocessed_leiden).normalize(:c).to_s
     
     return preprocessed_leiden
   end
