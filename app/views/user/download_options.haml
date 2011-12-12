@@ -1,0 +1,78 @@
+
+%h3 Download your publications
+
+%p
+  Click the Download link to download a zip file containing all of your publications for the given status/community.
+
+
+%table.download_table
+  
+  %tr
+    %td
+      
+    %td
+      %h4 New
+    %td
+      %h4 Editing
+    %td
+      %h4 Submitted
+    %td
+      %h4 Committed
+    %td
+      %h4 Combined
+      
+  %tr
+    - do_combined = false  
+    %td 
+      %h4 PE
+
+    %td  
+      - if @new_publications && @new_publications.length > 0
+        = link_to "Download", {:controller => "user", :action => "download_by_status", :id => @current_user.id, :status => "new"}
+        - do_combined = true
+    %td  
+      - if @editing_publications && @editing_publications.length > 0
+        = link_to "Download", {:controller => "user", :action => "download_by_status", :id => @current_user.id, :status => "editing"}
+        - do_combined = true
+
+    %td  
+      - if @submitted_publications && @submitted_publications.length > 0
+        = link_to "Download", {:controller => "user", :action => "download_by_status", :id => @current_user.id, :status => "submitted"}
+        - do_combined = true
+
+    %td  
+      - if @committed_publications && @committed_publications.length > 0
+        = link_to "Download", {:controller => "user", :action => "download_by_status", :id => @current_user.id, :status => "committed"}
+        - do_combined = true
+    %td
+      - if do_combined
+        = link_to "Download", {:controller => "user", :action => "download_user_publications", :id => @current_user.id }
+       
+  
+  - if @communities && @communities.length > 0
+    - @communities.each_value do |community|
+      %tr
+        - do_combined = false
+        %td
+          %h4 
+            = community[:name]
+        
+        %td
+          - if community[:new_publications] && community[:new_publications].length > 0
+            = link_to "Download", {:controller => "user", :action => "download_by_status", :community_id => community[:id], :id => @current_user.id, :status => "new"}
+            - do_combined = true
+        %td        
+          - if community[:editing_publications] && community[:editing_publications].length > 0
+            = link_to "Download", {:controller => "user", :action => "download_by_status", :community_id => community[:id], :id => @current_user.id, :status => "editing"}
+            - do_combined = true
+        %td  
+          - if community[:submitted_publications] && community[:submitted_publications].length > 0
+            = link_to "Download", {:controller => "user", :action => "download_by_status", :community_id => community[:id], :id => @current_user.id, :status => "submitted"}
+            - do_combined = true
+        %td   
+          - if community[:committed_publications] && community[:committed_publications].length > 0
+            = link_to "Download", {:controller => "user", :action => "download_by_status", :community_id => community[:id], :id => @current_user.id, :status => "committed"}
+            - do_combined = true
+        %td
+          - if do_combined
+            = link_to "Download", {:controller => "user", :action => "download_user_publications", :community_id => community[:id], :id => @current_user.id }

@@ -6,6 +6,39 @@ class PublicationsController < ApplicationController
   def new
   end
   
+  def download
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+    @publication = Publication.find(params[:id])
+    t = Tempfile.new("publication_download_#{@publication.title}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publication.identifiers.each do |id|
+          #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
+          
+          #simple paths for just this pub
+          zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+          
+          #full path as used in repo
+          #zos.put_next_entry( id.to_path)
+          
+          zos << id.xml_content
+        end 
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+    
+    filename = @publication.creator.name + "_" + @publication.title + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
+  
+  
  
   def determine_creatable_identifiers
     @creatable_identifiers = @publication.creatable_identifiers
