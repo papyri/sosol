@@ -94,7 +94,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.5.1
+rubygems_version: 1.6.2
 signing_key: 
 specification_version: 3
 summary: factory_girl provides a framework and DSL for defining and using model instance factories.
