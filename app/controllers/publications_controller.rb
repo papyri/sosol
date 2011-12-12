@@ -6,6 +6,39 @@ class PublicationsController < ApplicationController
   def new
   end
   
+  def download
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+    @publication = Publication.find(params[:id])
+    t = Tempfile.new("publication_download_#{@publication.title}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publication.identifiers.each do |id|
+          #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
+          
+          #simple paths for just this pub
+          zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+          
+          #full path as used in repo
+          #zos.put_next_entry( id.to_path)
+          
+          zos << id.xml_content
+        end 
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+    
+    filename = @publication.creator.name + "_" + @publication.title + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
+  
+  
  
   def determine_creatable_identifiers
     @creatable_identifiers = @publication.creatable_identifiers
@@ -60,10 +93,31 @@ class PublicationsController < ApplicationController
     publication_from_identifier(identifier, related_identifiers)
   end
 
+  def create_from_biblio_template
+    new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+    
+    # fetch a title without creating from template
+    new_publication.title = BiblioIdentifier.new(:name => BiblioIdentifier.next_temporary_identifier).titleize
+    
+    new_publication.status = "new"
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    #create the required meta data and transcriptions
+    new_biblio = BiblioIdentifier.new_from_template(new_publication)
+    @publication = new_publication
+
+    flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
-    
-    # need to remove repeat against publication model
+   
+    # create event
     e = Event.new
     e.category = "created"
     e.target = @publication

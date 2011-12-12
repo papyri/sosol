@@ -536,8 +536,9 @@ class Publication < ActiveRecord::Base
   
   
   def change_status(new_status)
-    unless self.status == new_status
-      old_branch_leaf = self.branch.split('/').last
+    if (self.status != new_status) && !(self.owner.repository.repo.get_head(self.branch).nil?)
+      old_branch_name = self.branch
+      old_branch_leaf = old_branch_name.split('/').last
       new_branch_components = [old_branch_leaf]
       
       unless new_status == 'editing'
@@ -555,16 +556,21 @@ class Publication < ActiveRecord::Base
         new_branch_name += Time.now.strftime("-%H.%M.%S")
       end
     
-      # branch from the original branch
-      self.owner.repository.create_branch(new_branch_name,
-        self.owner.repository.repo.get_head(self.branch).commit.sha)
-      # delete the original branch
-      self.owner.repository.delete_branch(self.branch)
-      # set to new branch
-      self.branch = new_branch_name
-      # set status to new status
-      self.status = new_status
-      self.save!
+      # wrap changes in transaction, so that if git activity raises an exception
+      # the corresponding db changes are rolled back
+      self.transaction do
+        # set to new branch
+        self.branch = new_branch_name
+        # set status to new status
+        self.status = new_status
+        self.save!
+        # save succeeded, so perform actual git change
+        # branch from the original branch
+        self.owner.repository.create_branch(new_branch_name,
+          self.owner.repository.repo.get_head(old_branch_name).commit.sha)
+        # delete the original branch
+        self.owner.repository.delete_branch(old_branch_name)
+      end
     end
   end
   
