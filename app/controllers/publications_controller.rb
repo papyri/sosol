@@ -60,10 +60,31 @@ class PublicationsController < ApplicationController
     publication_from_identifier(identifier, related_identifiers)
   end
 
+  def create_from_biblio_template
+    new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+    
+    # fetch a title without creating from template
+    new_publication.title = BiblioIdentifier.new(:name => BiblioIdentifier.next_temporary_identifier).titleize
+    
+    new_publication.status = "new"
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    #create the required meta data and transcriptions
+    new_biblio = BiblioIdentifier.new_from_template(new_publication)
+    @publication = new_publication
+
+    flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
-    
-    # need to remove repeat against publication model
+   
+    # create event
     e = Event.new
     e.category = "created"
     e.target = @publication
