@@ -536,8 +536,9 @@ class Publication < ActiveRecord::Base
   
   
   def change_status(new_status)
-    unless self.status == new_status
-      old_branch_leaf = self.branch.split('/').last
+    if (self.status != new_status) && !(self.owner.repository.repo.get_head(self.branch).nil?)
+      old_branch_name = self.branch
+      old_branch_leaf = old_branch_name.split('/').last
       new_branch_components = [old_branch_leaf]
       
       unless new_status == 'editing'
@@ -555,16 +556,21 @@ class Publication < ActiveRecord::Base
         new_branch_name += Time.now.strftime("-%H.%M.%S")
       end
     
-      # branch from the original branch
-      self.owner.repository.create_branch(new_branch_name,
-        self.owner.repository.repo.get_head(self.branch).commit.sha)
-      # delete the original branch
-      self.owner.repository.delete_branch(self.branch)
-      # set to new branch
-      self.branch = new_branch_name
-      # set status to new status
-      self.status = new_status
-      self.save!
+      # wrap changes in transaction, so that if git activity raises an exception
+      # the corresponding db changes are rolled back
+      self.transaction do
+        # set to new branch
+        self.branch = new_branch_name
+        # set status to new status
+        self.status = new_status
+        self.save!
+        # save succeeded, so perform actual git change
+        # branch from the original branch
+        self.owner.repository.create_branch(new_branch_name,
+          self.owner.repository.repo.get_head(old_branch_name).commit.sha)
+        # delete the original branch
+        self.owner.repository.delete_branch(old_branch_name)
+      end
     end
   end
   
@@ -842,6 +848,62 @@ class Publication < ActiveRecord::Base
     end
   end
   
+  def change_finalizer(new_finalizer)
+    #need to copy finalizer's copy if they have changed anything
+    #copy board pub to new finalizer
+    old_finalizing_publication = self.find_finalizer_publication
+
+    if old_finalizing_publication.nil?
+      #some kind of error should be thrown?
+      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
+      return false
+    end
+#    if old_finalizing_publication
+#      new_finalizing_publication = old_finalizing_publication.copy_to_owner(new_finalizer) #clone_to_owner(new_finalizer)
+#      new_finalizing_publication.parent = old_finalizing_publication.parent
+#      new_finalizing_publication.save!
+#    end
+    
+    #remove former finalizer
+#    old_finalizing_publication.destroy
+   
+   
+   #########
+    #---clone to owner
+    new_finalizing_publication = old_finalizing_publication.clone
+    new_finalizing_publication.owner = new_finalizer
+    new_finalizing_publication.creator = old_finalizing_publication.creator
+    new_finalizing_publication.title = old_finalizing_publication.title
+    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+    new_finalizing_publication.parent = old_finalizing_publication.parent
+    
+    new_finalizing_publication.save!
+    
+    # copy identifiers over to new pub
+    old_finalizing_publication.identifiers.each do |identifier|
+      duplicate_identifier = identifier.clone
+      new_finalizing_publication.identifiers << duplicate_identifier
+    end
+   #===clone to owner
+   
+   new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+   new_finalizing_publication.save!
+   
+   old_finalizing_publication.destroy
+   #######
+   
+   return true
+   
+   
+    #now there are 2 finalizers, any danger in this?
+    #now copy any old changes to new
+    
+    
+    #copy old finalizer's changes to new finalizer
+    #maybe just change owner? creator? but then need to copy over
+    
+  end
+  
   #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
   def find_finalizer_user
     if find_finalizer_publication
@@ -852,7 +914,7 @@ class Publication < ActiveRecord::Base
   
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
-  #returns the finalizer user or nil if finalizer does not exist
+  #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
   end
   
@@ -1436,7 +1498,6 @@ class Publication < ActiveRecord::Base
       #cant create trans
       creatable_identifiers.delete("HGVTransIdentifier")     
     end
-    # Not allowed to create BiblioIdentifier in association with any other record
     creatable_identifiers.delete("BiblioIdentifier")
     # Not allowed to create any other record in association with a BiblioIdentifier publication
     if has_biblio

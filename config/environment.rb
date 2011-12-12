@@ -59,6 +59,8 @@ Rails::Initializer.run do |config|
     :source  => 'http://gemcutter.org',
     :version => '>= 2.0'
 
+  config.gem 'rubyzip', :lib => 'zip/zip', :version => ">= 0.9.5"
+
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named

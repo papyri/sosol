@@ -32,12 +32,12 @@
         = f.text_field :journalTitle
         .clear
         = f.label :journalTitleShort
-        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :journalTitleShort}
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :journalTitleShort, :f => f}
         .clear
         = f.text_field :bookTitle
         .clear
         = f.label :bookTitleShort
-        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :bookTitleShort}
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :bookTitleShort, :f => f}
         .clear
         = f.label :authorList
         = render :partial => 'biblio_identifiers/authorList'

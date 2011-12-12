@@ -219,4 +219,9 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "edit", :id => @community.id
   end
   
+  
+  def confirm_destroy
+      @community = Community.find(params[:id])
+  end
+  
 end

@@ -10,8 +10,8 @@ class UserController < ApplicationController
   
   def leave_community
     @community = Community.find(params[:com_id])
-    
   end
+  
   #default view of stats is only for the current user, see below for all users
   def usage_stats    
     @users = Array.new()
@@ -22,6 +22,10 @@ class UserController < ApplicationController
     @users = User.find(:all, :order => "full_name ASC")
   end
 
+  #Gets info for the current user in json format.
+  #*Returns*
+  #- User model for the current user.
+  #- nil if no user is logged in.
   def info
     render :json => @current_user.nil? ? {} : @current_user
   end
@@ -63,8 +67,11 @@ class UserController < ApplicationController
     if !@users.compact.empty?
       @calc_date = ''
       
-      render "usage_stats"
-      return
+      respond_to do |format|
+        format.html { render "usage_stats"; return }
+        format.json { render :json => @users.first }
+        format.xml  { render :xml => @users.first }
+      end
     else
       flash[:error] = "User not found."
       redirect_to dashboard_url
@@ -89,25 +96,8 @@ class UserController < ApplicationController
     @boards = Board.find(:all)
   end
   
-#  def index      
-#   if @current_user.admin
-#     @users = User.find(:all)
-#   else
-#     render :file => 'public/403.html', :status => '403'
-#   end
-#  end
   
-#  def ask_language_prefs
-#    @langs = @current_user.language_prefs 
-# end
-
-#  def set_language_prefs
-#    @current_user.language_prefs =  params[:languages]
-#    @current_user.save
-#    
-#    redirect_to :controller => :user, :action => "dashboard"
-#  end  
-  
+  #Entry point for dashboards. Will redirect to board_dashboard if given board_id. Will redirect to user_dashboard if no board_id. Will render old dashboard if given old as parameter.
   def dashboard
     #don't let someone who isn't signed in go to the dashboard
     if @current_user == nil
@@ -115,9 +105,10 @@ class UserController < ApplicationController
       return
     end
     
+    #show the "new" dashboard unless the specfically request the old version
     unless params[:old]
     
-      
+      #redirect to new dashboards
       if params[:board_id]
         redirect_to :action => "board_dashboard", :board_id => params[:board_id]
         return
@@ -128,6 +119,7 @@ class UserController < ApplicationController
       
     end
     
+    #show the old dashboard
     
     #below selects publications to show in standard user data section of dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
@@ -186,25 +178,20 @@ class UserController < ApplicationController
     #render "dashboard_user"
   end
   
+  #Finds publications created by current user and are not part of a community.
   def user_dashboard
-    
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     #assuming 4 find calls faster than the above, then splits
-=begin
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-=end
+
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
         
-    #render :layout => 'header_footer'
     @show_events = true
   end
   
+  #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
     cid = params[:community_id]
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
@@ -218,17 +205,27 @@ class UserController < ApplicationController
   
   
   
-  #shows all publications for a user no matter status(excepting archived) or community 
+  #Shows all publications for the current user (excepting archived status). 
   def user_complete_dashboard
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ #   @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ #   @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ #   @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ #   @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ #   @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id,  :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+       
+       
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :owner_id => @current_user.id, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          
+       
        
     render 'user_dashboard'
-    #render :layout => 'header_footer'
   end
   
+  #Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
       @board = Board.find_by_id(params[:board_id])
 
@@ -349,10 +346,24 @@ Developer:
     
 =end
   
+  
+  
+  #Admin Settings allow certain rights to these groups.
+  #- Master Admin:
+  #  Can set all user admin rights
+  #- Community Master Admin:
+  #  Can create, edit & destroy any community, pick community admins
+  #- Community Admins: 
+  #  Can edit & destroy certain communities (note these are set on the commuity page not via user admins)
+  #- Admin:
+  #  Setup etc. boards
+  #  Can email all users
+  #- Developer:
+  #  Extra views with debugging info.    
+   
   def admin
     #shows whatever they have the right to administer
-    
-    
+  
   end
   
    def index_user_admins
@@ -420,5 +431,129 @@ Developer:
   end
   
   
+  #Collects and downloads zip file with all of the publications of the given status and community (or PE if no community).
+  def download_by_status
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+    status_wanted = params[:status] || "unknown" #"committed" 
+    #only let them download status that are accessable
+    if ! %w{new editing submitted committed}.include?status_wanted
+      #status_wanted = "committed"
+      flash[:error] = status_wanted + " status is not downloadable."
+      redirect_to dashboard_url 
+      return
+    end
+     
+    cid = params[:community_id] || nil  
+    if cid
+      @community = Community.find_by_id(cid)  
+    end
+    
+    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => status_wanted }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+ 
+    t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|
+            #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
+            
+            #simple paths for just this pub
+            #zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+            
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            
+            zos << id.xml_content
+          end 
+        end
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+  #add com name
+    community = "PE"
+    if @community
+      community = @community.format_name
+    end
+    filename = @current_user.name + "_" + community +  "_" + status_wanted + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
+  
+  #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.
+  def download_user_publications
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+     
+ 
+    cid = params[:community_id]
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    
+    @community = Community.find_by_id(cid)
+ 
+    @publications = @submitted_publications + @editing_publications  + @new_publications + @committed_publications
+    t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|         
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            zos << id.xml_content
+          end 
+        end
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+      community = "PE"
+    if @community
+      community = @community.format_name
+    end
+    filename = @current_user.name + "_" + community + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
 
+  #Determines which combos of boards & publication status' exist so we can ask the user which one they want to download.
+  def download_options
+  
+    #has become overkill for current method, really only need to see if any of these publications exists, dont need the whole list
+    cid = nil
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    
+   # @community = Community.find_by_id(cid)
+  
+    @communities = Hash.new
+    if @current_user.community_memberships && @current_user.community_memberships.length > 0  
+        @current_user.community_memberships.each do |community|
+          #raise community.id.to_s
+          cid = community.id
+          #raise community.name
+          @communities[cid] = Hash.new
+          @communities[cid][:id] = cid 
+          @communities[cid][:name] = community.format_name
+          @communities[cid][:submitted_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:editing_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:new_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:committed_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        end
+    end    
+      
+    
+  end
 end

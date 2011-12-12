@@ -1,8 +1,7 @@
 - data = HgvMentionedDate::dateInformation @identifier[:mentionedDate]
 - certaintyOptions = HgvMentionedDate::certaintyOptions
 - dateIdOptions = HgvMentionedDate::dateIdOptions
-=# debug @identifier[:mentionedDate]
-=# debug data
+
 %p.label
   %label.mentionedDateReference
     %span.label=I18n.t('meta.label.mentionedDateReference')
@@ -67,4 +66,3 @@
     %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_mentionedDate', {overlap: 'horizontal', constraint: false, handle: 'move'});"
-

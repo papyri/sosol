@@ -7,3 +7,8 @@ data/xslt/epidoc:
   :type: subversion
   :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-Nov-release-2/example-p5-xslt
   :revision: HEAD
+
+data/xslt/pn/navigator:
+  :type: git
+  :repository: git://github.com/papyri/navigator.git
+  :revision: master

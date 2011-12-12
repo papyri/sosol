@@ -1,0 +1,56 @@
+--- !ruby/object:Gem::Specification 
+name: rubyzip
+version: !ruby/object:Gem::Version 
+  prerelease: 
+  version: 0.9.5
+platform: ruby
+authors: 
+  - Alan Harper
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2011-11-26 00:00:00 -05:00
+default_executable: 
+dependencies: []
+
+description: 
+email: alan@aussiegeek.net
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: []
+
+has_rdoc: true
+homepage: http://github.com/aussiegeek/rubyzip
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+  - lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 1.8.7
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.6.2
+signing_key: 
+specification_version: 3
+summary: rubyzip is a ruby module for reading and writing zip files
+test_files: []
+

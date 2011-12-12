@@ -75,6 +75,13 @@ font-size: medium;/*set so that em sizing is consisent*/
 padding: 5px 5px;
 }
 
+#bibliosize {
+height:7em;
+width:75em;/*set close to selector size*/
+font-size: medium;/*set so that em sizing is consisent*/
+padding: 5px 5px;
+}
+
 #type_left {
 position:relative;
 top:0.63em;
@@ -127,9 +134,9 @@ width:15em;
 #gapallqtyradio_div {
 position:relative;
 top:-.2em;
-left:-16em;
+left:-14em;
 float:right;
-width:16em;
+width:18em;
 }
 
 #gapallcertcb_div {
@@ -169,7 +176,7 @@ padding: 5px 5px;
 #app_col {
 float:left;
 height:7em;
-width:17em;
+width:18em;
 }
 
 #app_low {
@@ -194,6 +201,20 @@ width:14em;
 position:relative;
 top:2em;
 width:10em; 
+}
+
+#appEditCitation {
+clear: both;
+position:relative;
+top:0em;
+width:47em; 
+}
+
+#appEditCitationText {
+position:relative;
+float: right;
+top:0em;
+width:40em;
 }
 
 #tryitdiv {
