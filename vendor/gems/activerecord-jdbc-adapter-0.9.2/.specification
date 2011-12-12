@@ -164,7 +164,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: jruby-extras
-rubygems_version: 1.5.1
+rubygems_version: 1.6.2
 signing_key: 
 specification_version: 3
 summary: JDBC adapter for ActiveRecord, for use within JRuby on Rails.
