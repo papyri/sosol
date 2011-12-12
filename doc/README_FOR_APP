@@ -2,63 +2,61 @@
 
 == Requirements
 
- * Java SE 6 (1.6+)
- * JRuby (1.3.1+) ''tested on 1.3.1 and 1.4.0''
- * Git (1.6.1.3+)
+* Java SE 6 (1.6+)
+* JRuby (1.3.1+) ''tested on 1.3.1 and 1.4.0''
+* Git (1.6.1.3+)
 
 == Initial setup steps for development
 
- * get source from [http://sourceforge.net/projects/sosol/develop SourceForge] or [https://github.com/papyri/sosol GitHub]
- * copy in/create config/environments/*_secret.rb (where * is development, test, production - sets RPX_API_KEY and RPX_REALM, can get these by creating an [http://www.rpxnow.com/ RPX] account)
- {{{
+* get source from [http://sourceforge.net/projects/sosol/develop SourceForge] or [https://github.com/papyri/sosol GitHub]
+* copy in/create config/environments/*_secret.rb (where * is development, test, production - sets RPX_API_KEY and RPX_REALM, can get these by creating an [http://www.rpxnow.com/ RPX] account)
  RPX_API_KEY = '0b13c31190219061...'
  RPX_REALM = 'SoSOL...'
- }}}
- * jruby -S gem install capistrano (may not work in JRuby)
- * cap local externals:setup (pulls in xsugar, EpiDoc XSLT)
- * jruby -S rake db:migrate
- * clone canonical.git (jruby -S rake git:db:canonical:clone)
- * jruby -S rake (run tests, sanity check)
- * jruby script/server
+* jruby -S gem install capistrano (may not work in JRuby)
+* cap local externals:setup (pulls in xsugar, EpiDoc XSLT)
+* jruby -S rake db:migrate
+* clone canonical.git (jruby -S rake git:db:canonical:clone)
+* jruby -S rake (run tests, sanity check)
+* jruby script/server
 
 == WAR-based deployment
 
- * use warbler to bundle as a standard .war (includes JRuby, gems, etc.) to upload to an app server
+* use warbler to bundle as a standard .war (includes JRuby, gems, etc.) to upload to an app server
   * initialize/migrate your production DB using "RAILS_ENV=production jruby -S rake db:migrate" (change production line in config/database.yml for your setup)
   * may want to add "config.logger = Logger.new(STDOUT)" to config/environment.rb to get Rails logging out to servlet container
   * run "cap local externals:setup" to fetch externals
   * use "jruby -S warble war" to build the war
   * need to change REPOSITORY_ROOT in config/environment.rb to an absolute shared path, because packing up the 500MB+ canonical repo in the war will grind things to a halt 
- * war unpacking isn't guaranteed (and multiple deploys would overwrite changes to the unpacked dir structure anyway) so it seems like alternate config will be needed
+* war unpacking isn't guaranteed (and multiple deploys would overwrite changes to the unpacked dir structure anyway) so it seems like alternate config will be needed
   * need a persistent directory for git (overwrite REPOSITORY_ROOT and CANONICAL_REPOSITORY in production)
   * DB migrations seem impossible to run from the deployed war context, so you'll have to run them pre-deploy using the production environment on some checkout of the code (meaning it will also need access to your production DB server credentials)
   * not sure on logs, sessions (may need extra config for new vers of Rails), rollback (probably impossible to get easily in a war context due to also needing to reverse migrations)
 
 == Directory-based deployment
 
- * deploy an unpacked directory and run within JRuby using any variety of servers (e.g. jetty-rails, glassfish - N.B. glassfish gem must have all required jars invoked inside JRuby on the classpath e.g. lib/java/saxon9he.jar) which can be accessed directly or proxied
+* deploy an unpacked directory and run within JRuby using any variety of servers (e.g. jetty-rails, glassfish - N.B. glassfish gem must have all required jars invoked inside JRuby on the classpath e.g. lib/java/saxon9he.jar) which can be accessed directly or proxied
 
 = Repository Setup
 
 == Canonical Repository (from Git)
 
- * Initialize with:
-  * git clone --bare git://halsted.vis.uky.edu/git/idp.data.git CANONICAL_REPOSITORY
+* Initialize with:
+  * git clone --bare git://github.com/papyri/idp.data.git CANONICAL_REPOSITORY
   * where CANONICAL_REPOSITORY is the path defined in config/environment.rb, defaulting to REPOSITORY_ROOT/canonical.git. For WAR-based deploy will want to change REPOSITORY_ROOT to an absolute path as noted.
  * Data now also mirrored [https://github.com/papyri/idp.data on GitHub]
 
 = Administration
 
- * "jruby script/console production" should give you a console for the production environment (keep in mind things like DB/Git access, you'll need to run this from a location that can access those resources, the source, and the correct configs for your production environment)
+* "jruby script/console production" should give you a console for the production environment (keep in mind things like DB/Git access, you'll need to run this from a location that can access those resources, the source, and the correct configs for your production environment)
   * from here you can give users admin privileges by e.g.:
-   * me = User.find_by_name('rfbaumann')
-   * me.admin = true
-   * me.save!
- * can completely reset the database with "jruby -S rake RAILS_ENV=production db:reset"
+    * me = User.find_by_name('rfbaumann')
+    * me.admin = true
+    * me.save!
+* can completely reset the database with "jruby -S rake RAILS_ENV=production db:reset"
   * note that this ''won't'' run AR callbacks, so you need to clear user/board git repos:
-   * if you plan on '''keeping''' canonical (aka repo 3) i.e. not deleting it and recloning from the Git SVN copy, you need to first ensure that it has all finalized objects and remove the user repos you'll delete from its alternates file:
-    * cd REPOSITORY_ROOT/canonical.git && git repack && echo "" > objects/info/alternates
-    * can check integrity afterwards with "git fsck"
-   * rm -rf REPOSITORY_ROOT/boards/*.git REPOSITORY_ROOT/users/*.git
+    * if you plan on '''keeping''' canonical (aka repo 3) i.e. not deleting it and recloning from the Git SVN copy, you need to first ensure that it has all finalized objects and remove the user repos you'll delete from its alternates file:
+      * cd REPOSITORY_ROOT/canonical.git && git repack && echo "" > objects/info/alternates
+      * can check integrity afterwards with "git fsck"
+    * rm -rf REPOSITORY_ROOT/boards/*.git REPOSITORY_ROOT/users/*.git
   * can also delete every model instance from the console with e.g. User.find(:all).each{|u| u.destroy} but this can be tedious if there are loose instances of other models that aren't dependent-destroyed
 

@@ -1,14 +1,18 @@
 #main.site
   = stylesheet_link_tag "board"
-  -# render :partial => "common/flash_all"
-
-  -# TODO sort by community and rank?
+  
+  -# sort by community and rank? - no community boards are shown on different page
   %h1
     Editorial boards
   - for board in @boards
     = render :partial => "listing" , :object => board
-    %br
+    %br   
+    
   %br
+  %p
+    = link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails"
+
+ 
   %p
     = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
   %p

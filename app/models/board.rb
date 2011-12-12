@@ -1,4 +1,5 @@
-#Board represents an editorial review board.
+
+##Board represents an editorial review board.
 class Board < ActiveRecord::Base
   has_many :decrees, :dependent => :destroy
   has_many :emailers, :dependent => :destroy
@@ -75,7 +76,7 @@ class Board < ActiveRecord::Base
   end
   
   #*Returns*:
-  #-result_actions in a capitalized hash list for the select statement
+  #- result_actions in a capitalized hash list for the select statement
   def result_actions_hash  
     ra = result_actions    
     ret_hash = {}
@@ -91,8 +92,8 @@ class Board < ActiveRecord::Base
   #*Args*:
   #- +identifier+ identifier or subclass of identifier
   #*Returns*:
-  #- true if this board is responsible for the given identifier
-  #- false otherwise 
+  #- +true+ if this board is responsible for the given identifier
+  #- +false+ otherwise 
   def controls_identifier?(identifier)
    self.identifier_classes.include?(identifier.class.to_s)  
   end
@@ -262,7 +263,8 @@ class Board < ActiveRecord::Base
   
   #Since board title is used to determine repository names, the title cannot be changed after board creation.
   #This friendly_name allows the users another name that they can change at will. 
-  #*Returns*:  friendly_name if it has been set. Otherwise returns title.
+  #*Returns*:  
+  #- friendly_name if it has been set. Otherwise returns title.
   def friendly_name
     fn = self[:friendly_name]
     if fn && (fn.strip != "")

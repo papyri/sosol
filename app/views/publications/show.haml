@@ -202,3 +202,6 @@
     - if @current_user.developer  
       = link_to "developer immediate delete", @publication, :method => :delete 
       %br
+    
+    - if %w{new editing submitted approved voting committed}.include? @publication.status
+      = link_to "Download Copy", :controller => 'publications', :id => @publication.id, :action => "download"

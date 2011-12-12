@@ -5,6 +5,7 @@ rm -f db/test.sqlite3
 rm -rf db/test/git/boards/*
 rm -rf db/test/git/users/*
 rm -rf db/test/git/communities/*
+rm -rf db/test/git/canonical.git
 rm -rf db/git/boards/*
 rm -rf db/git/users/*
 rm -rf db/git/communities/*

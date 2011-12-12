@@ -4,25 +4,41 @@
     
   .site
     = stylesheet_link_tag 'helper'
-    #app3col{:class => "helperpop"}
+    #app2ol{:class => "helperpop"}
       = render :partial => 'markup_warn'
-      %h4 Correction noted in series series Corrigenda or other publication, not necessarily reflected in BL
+      %h4 Editorial = Correction noted in series Corrigenda or other publication
+      %h4 BL = Correction noted in BL
+      %h4 PN = Correction proposed directly via PE and shown in PN -- not published elsewhere
       #app_col
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appeditlem_value", :size => "25"}
         #app_desc
           Correct form
-        #app_button
-          %button{ :type => "button", :onclick=>"insertAppEdit()"}Insert
-          &nbsp
-          %button{:type => "button", :onclick => "closeHelper()"}Close
-      #app_col
-        #app_text
-          %input{ :type => "text", :class => "choosetext greek", :id => "appeditresp_value", :size => "25"}
-        #app_desc
-          Citation, e.g.: J. Doe, ZPE 234 (2015) 3-4
       #app_col
         #app_text
           %input{ :type => "text", :class => "choosetext greek", :id => "appeditrdg_value", :size => "25"}
         #app_desc
-          Original, incorrect form
+          Original, Previous, incorrect form
+    %form{:name => "appEditForm"}
+      #appEditCitation
+        %h4 Citation
+        %input{ :checked => "", :type => "radio", :class => "choosetextradio", :id => "Editorial", :name => "appEditType", :value => "Editorial", :onclick => "checkEditType(this.id)"} Editorial
+        #appEditCitationText
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditresp_value", :size => "25"} Citation, e.g.: J. Doe, ZPE 234 (2015) 3-4
+        %br
+        %br
+        %input{ :type => "radio", :class => "choosetextradio", :id => "BL", :name => "appEditType", :value => "BL", :onclick => "checkEditType(this.id)"} BL
+        #appEditCitationText
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditBLvol_value", :disabled => "true", :size => "5"} Volume
+          &nbsp
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditBLpage_value", :disabled => "true",  :size => "5"} Page
+        %br
+        %br
+        %input{ :type => "radio", :class => "choosetextradio", :id => "PN", :name => "appEditType", :value => "PN", :onclick => "checkEditType(this.id)"} PN
+        #appEditCitationText
+          %input{ :type => "text", :class => "choosetext greek", :id => "appeditPN_value", :disabled => "true",  :size => "25"} Authority, e.g.: M. Smith
+        %br
+    #app_button
+      %button{ :type => "button", :onclick=>"insertAppEdit()"}Insert
+      &nbsp
+      %button{:type => "button", :onclick => "closeHelper()"}Close

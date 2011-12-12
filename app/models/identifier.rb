@@ -2,9 +2,6 @@
 class Identifier < ActiveRecord::Base
   IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier }
   
-  #added for dashboard publication listings because biblio is often not needed
-  IDENTIFIER_MAIN_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier }
-  
   FRIENDLY_NAME = "Base Identifier"
   
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }

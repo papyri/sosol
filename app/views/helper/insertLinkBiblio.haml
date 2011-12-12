@@ -1,0 +1,93 @@
+:javascript
+  
+  //these funcions have to be in the haml file because of the ruby stuff in them needs to be handled on view load
+  
+  var sendBack = "";
+
+  function reset_selector(select_element) {
+    select_element.childElements().each(Element.remove);
+  }
+
+  function setFulltext(selected) {
+    document.getElementById("fulltext").innerHTML = selected;
+  }
+  
+  function getBiblio(){
+
+    var searchText = document.getElementById("search_freetext").value;
+
+    request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/get_bibliography/';
+
+    new Ajax.Request(request_url, {
+      method: 'get',
+      parameters: $H({searchText: searchText}),
+      asynchronous : false,
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+
+        document.getElementById("numfound").innerHTML = json.response.numFound + " Bibliography Records Found";
+        reset_selector($('biblio_selected'));
+        select_element = $('biblio_selected');
+        if (json.response.numFound == 0) {
+          //select_element.insert("<option value=\"no bibliography records found\" style=\"width:80em\;\">no bibliography records found</option>");
+          select_element.insert("<option value=\"" + "no bibliography records found" + "\" style=\"width:90em\;\">" + "no bibliography records found" + "</option>");
+        }
+        else {
+          json.response.docs.each(function(v) {
+            select_element.insert("<option value=\"" + v.id + "\" style=\"width:90em\;\">" + v.display + "</option>");
+          });
+        }
+        select_element.childElements()[0].selected = true;
+        setFulltext(select_element.childElements()[0].innerHTML);
+        //}
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getBiblio()",10000);
+      }
+    });
+    return sendBack;
+  }
+  
+#main
+  = csrf_meta_tag
+  = javascript_include_tag :defaults
+  = javascript_include_tag 'commentary'
+    
+  .site
+    = stylesheet_link_tag 'helper'
+    #bibliosize{:class => "helperpop"}
+      = render :partial => 'commentary_markup_warn'
+      %h3 Search and Create Link to Bibliography
+      %p{ :id => "numfound"} &nbsp
+      %h7 Bibliograpy Search Text
+      #extent_left
+        %input{ :type => "text", :id => "search_freetext", :size => "40"}
+      #extent_left
+        %br
+        %button{ :type => "button", :onclick=> "getBiblio()" }Search
+      %br
+      %select{ :id => "biblio_selected", :name => "biblio_selected", :style => "width:90em;", :size => "5",  :onchange => "setFulltext(this.options[this.selectedIndex].innerHTML)"}Bibligraphy to Link
+      %p{ :id => "fulltext"} &nbsp
+      %br
+      -#%br
+      %h7 Free Form Link Text
+      #extent_left
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_freetext", :size => "40"}
+      %br
+      #extent_left
+        -#%h4 If any of the text boxes below are filled in, the helper will assume you want a bibliography style link
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_page", :size => "10"}Bibliograpy Page
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_line", :size => "10"}Bibliograpy Line
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_vol", :size => "10"}Bibliograpy Volume
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_issue", :size => "10"}Bibliograpy Issue
+        %br
+        %input{ :type => "text", :class => "choosetext", :id => "insertlink_bs_chapter", :size => "10"}Bibliograpy Chapter
+      %br
+      #button_left
+        %button{ :type => "button", :onclick=> "insertBiblio()" }Insert
+        &nbsp
+        %button{:type => "button", :onclick => "closeHelper()"}Close

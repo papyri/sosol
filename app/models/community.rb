@@ -33,7 +33,8 @@ class Community < ActiveRecord::Base
     return !self.end_user.nil? && (self.boards && self.boards.length > 0)
   end
   
-  #*Returns* a standard format for the community name and friendly_name.
+  #*Returns* 
+  #- a standard format for the community name and friendly_name.
   #Used to ensure consistency throughout pages.
   def format_name
     return  self.name + " ( " + self.friendly_name + " )"
