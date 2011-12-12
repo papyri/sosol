@@ -10,9 +10,13 @@ class PublicationsController < ApplicationController
   
     require 'zip/zip'
     require 'zip/zipfilesystem'
-     
+      
     @publication = Publication.find(params[:id])
-    t = Tempfile.new("publication_download_#{@publication.title}-#{request.remote_ip}")
+    
+    
+    file_friendly_name = @publication.title.gsub(/[\\\/:."*?<>|\s]+/, "-")
+   # raise file_friendly_name
+    t = Tempfile.new("publication_download_#{file_friendly_name}-#{request.remote_ip}")
     
     Zip::ZipOutputStream.open(t.path) do |zos|
         @publication.identifiers.each do |id|
@@ -32,12 +36,15 @@ class PublicationsController < ApplicationController
    
     # The temp file will be deleted some time...
     
-    filename = @publication.creator.name + "_" + @publication.title + "_" + Time.now.to_s + ".zip"
+    filename = @publication.creator.name + "_" + file_friendly_name + "_" + Time.now.strftime("%a%d%b%Y_%H%M")
+    filename = filename.gsub(/[\\\/:."*?<>|\s]+/, "-") + ".zip"
+    #raise filename
     send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
   
     t.close
   end
   
+
   
  
   def determine_creatable_identifiers
