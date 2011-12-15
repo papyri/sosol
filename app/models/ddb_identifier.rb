@@ -375,10 +375,16 @@ class DDBIdentifier < Identifier
   # - *Returns* :
   #   -  Preview HTML
   def preview parameters = {}, xsl = nil
+    parameters.reverse_merge!(
+      "leiden-style" => "ddbdp",
+      "apparatus-style" => "ddbdp",
+      "edn-structure" => "ddbdp",
+      "css-loc" => ""
+    )
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        xsl ? xsl : %w{data xslt pn start-div-portlet.xsl})),
+        xsl ? xsl : %w{data xslt ddb preview.xsl})),
         parameters)
   end
   

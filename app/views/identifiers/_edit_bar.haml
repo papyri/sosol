@@ -51,7 +51,6 @@
   
       %li{ :class => 'nav_control' }
         = link_to image_tag('right_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name
-  
       
   #identifier_sub_menus
     - if ((params[:controller] == 'publications') && (params[:action] == 'show'))
@@ -108,3 +107,4 @@
             %ul
               %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)

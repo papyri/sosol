@@ -10,8 +10,9 @@ class Decree < ActiveRecord::Base
                          
   validates_presence_of :tally_method
   
+  #Hash with friendly name for valid tally methods. Mainly for setting selection on forms.
+  #Methods are Percentage and Absolute Count.
   def self.tally_methods_hash
-  #hash with friendly name for valid tally methods. Mainly for setting selection on forms.
     { "Percentage" => TALLY_METHODS[:percent], "Absolute Count" => TALLY_METHODS[:count]}
   end
   
@@ -20,11 +21,18 @@ class Decree < ActiveRecord::Base
 #    {"Approve" => "approve", "Reject" => "reject", "Graffiti" => "graffiti" } 
 #  end
   
-  #Returns an array of the possible choices that represent this decree.
+  #*Returns*
+  #- an array of the possible choices that represent this decree. 
   def get_choice_array
     self.choices.split(' ')  
   end
   
+
+  #*Args*:
+  #- +votes+ set of votes to be tallied to determine if decree should be triggered
+  #*Returns*:
+  #- +true+ if if the given votes tally to trigger the decree
+  #- +false+ otherwise
   def perform_action?(votes)
     #pull choices out
     decree_choices = self.get_choice_array

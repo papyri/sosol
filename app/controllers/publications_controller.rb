@@ -6,6 +6,46 @@ class PublicationsController < ApplicationController
   def new
   end
   
+  def download
+  
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+      
+    @publication = Publication.find(params[:id])
+    
+    
+    file_friendly_name = @publication.title.gsub(/[\\\/:."*?<>|\s]+/, "-")
+   # raise file_friendly_name
+    t = Tempfile.new("publication_download_#{file_friendly_name}-#{request.remote_ip}")
+    
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publication.identifiers.each do |id|
+          #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
+          
+          #simple paths for just this pub
+          zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+          
+          #full path as used in repo
+          #zos.put_next_entry( id.to_path)
+          
+          zos << id.xml_content
+        end 
+    end    
+    
+    # End of the block  automatically closes the zip? file.
+   
+    # The temp file will be deleted some time...
+    
+    filename = @publication.creator.name + "_" + file_friendly_name + "_" + Time.now.strftime("%a%d%b%Y_%H%M")
+    filename = filename.gsub(/[\\\/:."*?<>|\s]+/, "-") + ".zip"
+    #raise filename
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+  
+    t.close
+  end
+  
+
+  
  
   def determine_creatable_identifiers
     @creatable_identifiers = @publication.creatable_identifiers
@@ -60,10 +100,31 @@ class PublicationsController < ApplicationController
     publication_from_identifier(identifier, related_identifiers)
   end
 
+  def create_from_biblio_template
+    new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+    
+    # fetch a title without creating from template
+    new_publication.title = BiblioIdentifier.new(:name => BiblioIdentifier.next_temporary_identifier).titleize
+    
+    new_publication.status = "new"
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    #create the required meta data and transcriptions
+    new_biblio = BiblioIdentifier.new_from_template(new_publication)
+    @publication = new_publication
+
+    flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
-    
-    # need to remove repeat against publication model
+   
+    # create event
     e = Event.new
     e.category = "created"
     e.target = @publication
@@ -208,16 +269,24 @@ class PublicationsController < ApplicationController
   end
   
   def become_finalizer
-    # TODO make sure we don't steal it from someone who is working on it
-    @publication = Publication.find(params[:id])
-    @publication.remove_finalizer
     
-    #note this can only be called on a board owned publication
-    if @publication.owner_type != "Board"
-      flash[:error] = "Can't change finalizer on non-board copy of publication."
-      redirect_to show
+    @publication = Publication.find(params[:id])
+    
+    if @publication.change_finalizer(@current_user)
+      # TODO make sure we don't steal it from someone who is working on it
+    else
+      #no finalizer exists so pick one
+      #@publication = Publication.find(params[:id])
+      #@publication.remove_finalizer
+      
+      #note this can only be called on a board owned publication
+      if @publication.owner_type != "Board"
+        flash[:error] = "Can't change finalizer on non-board copy of publication."
+        redirect_to show
+      end
+      @publication.send_to_finalizer(@current_user)
+      
     end
-    @publication.send_to_finalizer(@current_user)
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
   
@@ -266,101 +335,15 @@ class PublicationsController < ApplicationController
     end
     
     
+    #copy back in any case
+    @publication.copy_back_to_user(params[:comment], @current_user)
+  
     #if it is a community pub, we don't commit to canon
     #instead we copy changes back to origin
     if @publication.is_community_publication?
       
-      @publication.copy_back_to_user(params[:comment], @current_user)
+      #@publication.copy_back_to_user(params[:comment], @current_user)
   
-    if false  #moved this to model...
-
-      
-=begin      
-      Rails.logger.info "==========COMMUNITY PUBLICATION=========="
-      Rails.logger.info "----Community is " + @publication.community.name
-      Rails.logger.info "----Board is " + @publication.find_first_board.name
-      
-      Rails.logger.info "====creators publication begining finalize=="
-      @publication.origin.log_info
-=end            
-        
-      #determine where to get data to build the index, 
-      # controlled paths are from the finalizer (this) publication
-      # uncontrolled paths are from the origin publication
-   
-      controlled_paths =  Array.new(@publication.controlled_paths)
-      #get the controlled blobs from the local branch (the finalizer's)
-      #controlled_blobs are the files that the board controls and have changed
-      controlled_blobs = controlled_paths.collect do |controlled_path|
-        @publication.owner.repository.get_blob_from_branch(controlled_path, @publication.branch)
-      end
-      #combine controlled paths and blobs into a hash  
-      controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
-      
-      #determine existing uncontrolled paths & blobs
-      #uncontrolled are taken from the origin, they have not been changed by board
-      origin_identifier_paths = @publication.origin.identifiers.collect do |i|
-        i.to_path
-      end
-      uncontrolled_paths = origin_identifier_paths - controlled_paths
-      uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
-        @publication.origin.repository.get_blob_from_branch(ucp, @publication.origin.branch)
-      end
-      uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
-        
-     
-=begin     
-      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
-      Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
-    
-      Rails.logger.info "-----Uncontrolled Blobs are:"
-      uncontrolled_blobs.each do |cb|
-        Rails.logger.info "-" + cb.to_s
-      end            
-      Rails.logger.info "-----Controlled Blobs are:"
-      controlled_blobs.each do |cb|
-        Rails.logger.info "-" + cb.to_s
-      end
-=end
-
-      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-      origin_index = @publication.origin.owner.repository.repo.index
-      origin_index.read_tree('master')
-      
-      Rails.logger.debug "=======orign INDEX before add========"
-      Rails.logger.debug origin_index.inspect
-      
-      
-      #add the controlled paths to the index
-      controlled_paths_blobs.each_pair do |path, blob|
-         origin_index.add(path, blob.data)
-         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-      end
-      
-      #need to add exiting tree to index, except for controlled blobs
-      uncontrolled_paths_blobs.each_pair do |path, blob|
-          origin_index.add(path, blob.data)
-          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-      end
-      
-
-      Rails.logger.debug "=======orign INDEX after add========"
-      Rails.logger.debug origin_index.inspect
-      
-      
-      #Rails.logger.info 
-      origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-
-      @publication.origin.save
-      
-=begin      
-      Rails.logger.info "====creators publication after finalize=="
-      @publication.origin.log_info
-=end      
-   
-   end  #moved this to model...
-   
       
     else #commit to canon
       begin
@@ -490,7 +473,6 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
- 
   def edit_adjacent
   
     #if they are on show, then need to goto first or last identifers

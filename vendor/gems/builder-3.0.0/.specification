@@ -26,50 +26,22 @@ executables: []
 
 extensions: []
 
-extra_rdoc_files: 
-  - CHANGES
-  - Rakefile
-  - README
-  - README.rdoc
-  - TAGS
-  - doc/releases/builder-1.2.4.rdoc
-  - doc/releases/builder-2.0.0.rdoc
-  - doc/releases/builder-2.1.1.rdoc
+extra_rdoc_files: []
+
 files: 
-  - lib/blankslate.rb
-  - lib/builder/blankslate.rb
-  - lib/builder/xchar.rb
-  - lib/builder/xmlbase.rb
-  - lib/builder/xmlevents.rb
-  - lib/builder/xmlmarkup.rb
-  - lib/builder.rb
-  - test/performance.rb
-  - test/preload.rb
   - test/test_blankslate.rb
   - test/test_cssbuilder.rb
   - test/test_eventbuilder.rb
   - test/test_markupbuilder.rb
   - test/test_namecollision.rb
   - test/test_xchar.rb
-  - CHANGES
-  - Rakefile
-  - README
-  - README.rdoc
-  - TAGS
-  - doc/releases/builder-1.2.4.rdoc
-  - doc/releases/builder-2.0.0.rdoc
-  - doc/releases/builder-2.1.1.rdoc
 has_rdoc: true
 homepage: http://onestepback.org
 licenses: []
 
 post_install_message: 
-rdoc_options: 
-  - --title
-  - Builder -- Easy XML Building
-  - --main
-  - README.rdoc
-  - --line-numbers
+rdoc_options: []
+
 require_paths: 
   - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
@@ -87,7 +59,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.5.1
+rubygems_version: 1.6.2
 signing_key: 
 specification_version: 3
 summary: Builders for MarkUp.

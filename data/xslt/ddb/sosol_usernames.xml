@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+        <pair><name>a n</name><uri>http://papyri.info/editor/users/parliamoneancora</uri></pair>
+        <pair><name>Adam Bülow-Jacobsen</name><uri>http://papyri.info/editor/users/adam1943</uri></pair>
+        <pair><name>Ágnes Mihálykó</name><uri>http://papyri.info/editor/users/agi.mihalyko</uri></pair>
+        <pair><name>Alaa Khalel</name><uri>http://papyri.info/editor/users/Alaa</uri></pair>
+        <pair><name>Alain Delattre</name><uri>http://papyri.info/editor/users/Alain%20D.</uri></pair>
+        <pair><name>Alain Martin</name><uri>http://papyri.info/editor/users/amartin</uri></pair>
+        <pair><name>Alan Taylor Farnes</name><uri>http://papyri.info/editor/users/alan.taylor.farnes</uri></pair>
+        <pair><name>Alastair Porter</name><uri>http://papyri.info/editor/users/alastairp</uri></pair>
+        <pair><name>alberto nodar</name><uri>http://papyri.info/editor/users/alberto.nodar</uri></pair>
+        <pair><name>Alejandro Abritta</name><uri>http://papyri.info/editor/users/alejandroabritta</uri></pair>
+        <pair><name>Alessandro Garcea</name><uri>http://papyri.info/editor/users/Alessandro</uri></pair>
+        <pair><name>Alex Gurov</name><uri>http://papyri.info/editor/users/staplerster</uri></pair>
+        <pair><name>Alexander R Jones</name><uri>http://papyri.info/editor/users/aj60</uri></pair>
+        <pair><name>Alexandra Jesenko</name><uri>http://papyri.info/editor/users/AJ</uri></pair>
+        <pair><name>Alia Hanafi</name><uri>http://papyri.info/editor/users/alia.hanafi</uri></pair>
+        <pair><name>Alice Bencivenni</name><uri>http://papyri.info/editor/users/alice.bencivenni3</uri></pair>
+        <pair><name>Amin Benaissa</name><uri>http://papyri.info/editor/users/amin.benaissa</uri></pair>
+        <pair><name>Andrea Bernini</name><uri>http://papyri.info/editor/users/andrea.bernini82</uri></pair>
+        <pair><name>Andrew Hankinson</name><uri>http://papyri.info/editor/users/andrew.hankinson</uri></pair>
+        <pair><name>angela cinalli</name><uri>http://papyri.info/editor/users/angela cinalli</uri></pair>
+        <pair><name>ann ellis hanson</name><uri>http://papyri.info/editor/users/ann.hanson</uri></pair>
+        <pair><name>Anna Blomley</name><uri>http://papyri.info/editor/users/a-blomley</uri></pair>
+        <pair><name>Anna Foka</name><uri>http://papyri.info/editor/users/Umbralunae</uri></pair>
+        <pair><name>Anna Gialdini</name><uri>http://papyri.info/editor/users/anna.gialdini</uri></pair>
+        <pair><name>Anna Kaiser</name><uri>http://papyri.info/editor/users/Anna</uri></pair>
+        <pair><name>Anna Monte</name><uri>http://papyri.info/editor/users/anna-monte</uri></pair>
+        <pair><name>Anna Selander</name><uri>http://papyri.info/editor/users/AS</uri></pair>
+        <pair><name>Anne Boudhors</name><uri>http://papyri.info/editor/users/anne.boudhors</uri></pair>
+        <pair><name>Anton Andonov</name><uri>http://papyri.info/editor/users/avitonii</uri></pair>
+        <pair><name>Apostolos Tsapas</name><uri>http://papyri.info/editor/users/atsapas</uri></pair>
+        <pair><name>Arthur Verhoogt</name><uri>http://papyri.info/editor/users/Arthur</uri></pair>
+        <pair><name>Astrid Rockenbauer</name><uri>http://papyri.info/editor/users/a.rockenbauer</uri></pair>
+        <pair><name>Aurélien Berra</name><uri>http://papyri.info/editor/users/aurelberra</uri></pair>
+        <pair><name>Barbara Maduli</name><uri>http://papyri.info/editor/users/barbaramaduli</uri></pair>
+        <pair><name>Bart Van Beek</name><uri>http://papyri.info/editor/users/Bart</uri></pair>
+        <pair><name>Beatrice Richter</name><uri>http://papyri.info/editor/users/Beatrice</uri></pair>
+        <pair><name>Benjamin Henry</name><uri>http://papyri.info/editor/users/Ben</uri></pair>
+        <pair><name>Benjamin Kantor</name><uri>http://papyri.info/editor/users/bpkantor</uri></pair>
+        <pair><name>Benjamin Kelly</name><uri>http://papyri.info/editor/users/Benjamin%20Kelly</uri></pair>
+        <pair><name>Benjamin Mayer</name><uri>http://papyri.info/editor/users/bmayer4</uri></pair>
+        <pair><name>Bernhard.Palme</name><uri>http://papyri.info/editor/users/phoinix</uri></pair>
+        <pair><name>Bob Metrolight</name><uri>http://papyri.info/editor/users/Bob%20Metrolight</uri></pair>
+        <pair><name>Brad Bitner</name><uri>http://papyri.info/editor/users/bitnerbj</uri></pair>
+        <pair><name>Brian McGing</name><uri>http://papyri.info/editor/users/bmcging</uri></pair>
+        <pair><name>Bridget Almas</name><uri>http://papyri.info/editor/users/balmas</uri></pair>
+        <pair><name>Carmen Lanz</name><uri>http://papyri.info/editor/users/Elemmire</uri></pair>
+        <pair><name>Cassandre Hartenstein</name><uri>http://papyri.info/editor/users/hcassandre</uri></pair>
+        <pair><name>Catherine Dobias-Lalou</name><uri>http://papyri.info/editor/users/catherine.dobias</uri></pair>
+        <pair><name>Catherine Saliou</name><uri>http://papyri.info/editor/users/cathsaliou</uri></pair>
+        <pair><name>Chad Crouch</name><uri>http://papyri.info/editor/users/chadmcrouch</uri></pair>
+        <pair><name>Chang Ruey-Lin</name><uri>http://papyri.info/editor/users/rueylin.chang</uri></pair>
+        <pair><name>charikleia armoni</name><uri>http://papyri.info/editor/users/chara</uri></pair>
+        <pair><name>Charles Bartlett</name><uri>http://papyri.info/editor/users/Charles%20Bartlett</uri></pair>
+        <pair><name>Charles Carpenter</name><uri>http://papyri.info/editor/users/sosol.chuck</uri></pair>
+        <pair><name>Charles Crowther</name><uri>http://papyri.info/editor/users/cvc</uri></pair>
+        <pair><name>Charles Dalli</name><uri>http://papyri.info/editor/users/cdalli</uri></pair>
+        <pair><name>Charlie Balfour</name><uri>http://papyri.info/editor/users/csbalfour</uri></pair>
+        <pair><name>Charlotte Roueche</name><uri>http://papyri.info/editor/users/cmroueche</uri></pair>
+        <pair><name>Charlotte Tupman</name><uri>http://papyri.info/editor/users/ctupman</uri></pair>
+        <pair><name>chris martin</name><uri>http://papyri.info/editor/users/hendecasyllabic</uri></pair>
+        <pair><name>Christelle Fischer-Bovet</name><uri>http://papyri.info/editor/users/Fischer-Bovet</uri></pair>
+        <pair><name>Christian-Jürgen Gruber</name><uri>http://papyri.info/editor/users/morunculus</uri></pair>
+        <pair><name>Christina M. Kreinecker</name><uri>http://papyri.info/editor/users/cmk</uri></pair>
+        <pair><name>Christopher Blackwell</name><uri>http://papyri.info/editor/users/cwblackwell</uri></pair>
+        <pair><name>Christopher Lillington-Martin</name><uri>http://papyri.info/editor/users/chris.i.l.martin</uri></pair>
+        <pair><name>Christopher Warner</name><uri>http://papyri.info/editor/users/christopher.warner</uri></pair>
+        <pair><name>Cisca Hoogendijk</name><uri>http://papyri.info/editor/users/cisca.hoogendijk</uri></pair>
+        <pair><name>Claudia Kreuzsaler</name><uri>http://papyri.info/editor/users/claudia.kreuzsaler</uri></pair>
+        <pair><name>Claudius Teodorescu</name><uri>http://papyri.info/editor/users/claudius.teodorescu</uri></pair>
+        <pair><name>Clement Kuehn</name><uri>http://papyri.info/editor/users/Clement</uri></pair>
+        <pair><name>Colin McCaffrey</name><uri>http://papyri.info/editor/users/colinjm</uri></pair>
+        <pair><name>Colleen Donahoe</name><uri>http://papyri.info/editor/users/colleen_donahoe</uri></pair>
+        <pair><name>cre8tivegroup inc</name><uri>http://papyri.info/editor/users/cre8tivegroup</uri></pair>
+        <pair><name>Daria Spampinato</name><uri>http://papyri.info/editor/users/daria.spampinato</uri></pair>
+        <pair><name>David Danbeck</name><uri>http://papyri.info/editor/users/David%20Danbeck</uri></pair>
+        <pair><name>David Instone-Brewer</name><uri>http://papyri.info/editor/users/DavidIB</uri></pair>
+        <pair><name>David Michelson</name><uri>http://papyri.info/editor/users/david.a.michelson</uri></pair>
+        <pair><name>David Ratzan</name><uri>http://papyri.info/editor/users/dratzan</uri></pair>
+        <pair><name>David Wheeler-Reed</name><uri>http://papyri.info/editor/users/dwheelerreed</uri></pair>
+        <pair><name>Demokritos Kaltsas</name><uri>http://papyri.info/editor/users/dkaltsas</uri></pair>
+        <pair><name>Dieter Hagedorn</name><uri>http://papyri.info/editor/users/dieter.hagedorn</uri></pair>
+        <pair><name>dimitar petrovski</name><uri>http://papyri.info/editor/users/taratur</uri></pair>
+        <pair><name>don kretz</name><uri>http://papyri.info/editor/users/dakretz</uri></pair>
+        <pair><name>Dot Porter</name><uri>http://papyri.info/editor/users/dot.porter</uri></pair>
+        <pair><name>Dylan Bragg</name><uri>http://papyri.info/editor/users/dylbudbragg</uri></pair>
+        <pair><name>Edouard Chiricat</name><uri>http://papyri.info/editor/users/edouard</uri></pair>
+        <pair><name>Eduard Iricinschi</name><uri>http://papyri.info/editor/users/eduard.iri</uri></pair>
+        <pair><name>elena esposito</name><uri>http://papyri.info/editor/users/elenaepi</uri></pair>
+        <pair><name>Elena Martin Gonzalez</name><uri>http://papyri.info/editor/users/elenamartin.gonzalez</uri></pair>
+        <pair><name>eleonora angela conti</name><uri>http://papyri.info/editor/users/eleonorangela</uri></pair>
+        <pair><name>Eleonora Santin</name><uri>http://papyri.info/editor/users/ele.santin</uri></pair>
+        <pair><name>Elizabeth Buchanan</name><uri>http://papyri.info/editor/users/Elizabeth%20Buchanan</uri></pair>
+        <pair><name>Eman Ahmed</name><uri>http://papyri.info/editor/users/Eman</uri></pair>
+        <pair><name>Emilio Rosamilia</name><uri>http://papyri.info/editor/users/Emilio%20Rosamilia</uri></pair>
+        <pair><name>Emily Cole</name><uri>http://papyri.info/editor/users/ECole</uri></pair>
+        <pair><name>epidoc bologna</name><uri>http://papyri.info/editor/users/epidoc.033%20PROVA</uri></pair>
+        <pair><name>Erja Salmenkivi</name><uri>http://papyri.info/editor/users/ESalmenkivi</uri></pair>
+        <pair><name>ester di santis</name><uri>http://papyri.info/editor/users/esterdisa</uri></pair>
+        <pair><name>Fabian Reiter</name><uri>http://papyri.info/editor/users/fabian-reiter</uri></pair>
+        <pair><name>Fabienne Burkhalter</name><uri>http://papyri.info/editor/users/f.burkhalter</uri></pair>
+        <pair><name>fatma hamouda</name><uri>http://papyri.info/editor/users/fatmahamouda88</uri></pair>
+        <pair><name>Federico Morelli</name><uri>http://papyri.info/editor/users/federico.morelli</uri></pair>
+        <pair><name>FL AG</name><uri>http://papyri.info/editor/users/fernandorum</uri></pair>
+        <pair><name>Fournet</name><uri>http://papyri.info/editor/users/jlfournet</uri></pair>
+        <pair><name>francesca labonia</name><uri>http://papyri.info/editor/users/arrafra84</uri></pair>
+        <pair><name>Francesca Lai</name><uri>http://papyri.info/editor/users/francesca.lai</uri></pair>
+        <pair><name>Francesca Maltomini</name><uri>http://papyri.info/editor/users/f.maltomini</uri></pair>
+        <pair><name>Francisca Feraudi-Gruenais</name><uri>http://papyri.info/editor/users/francisca.feraudi-gruenais</uri></pair>
+        <pair><name>Frank Grieshaber</name><uri>http://papyri.info/editor/users/frank.grieshaber</uri></pair>
+        <pair><name>Fred Baggins</name><uri>http://papyri.info/editor/users/Fred</uri></pair>
+        <pair><name>Gabriel Bodard</name><uri>http://papyri.info/editor/users/gabrielbodard</uri></pair>
+        <pair><name>Gabriel Nocchi</name><uri>http://papyri.info/editor/users/gabrielnocchi@hotmail.com</uri></pair>
+        <pair><name>Gaelle Tallet</name><uri>http://papyri.info/editor/users/Gaelle</uri></pair>
+        <pair><name>GB</name><uri>http://papyri.info/editor/users/gabrielbodard</uri></pair>
+        <pair><name>Georg Schmelz</name><uri>http://papyri.info/editor/users/Georg</uri></pair>
+        <pair><name>George Bevan</name><uri>http://papyri.info/editor/users/george.bevan</uri></pair>
+        <pair><name>georgios deligiannakis</name><uri>http://papyri.info/editor/users/georgios.deligiannakis</uri></pair>
+        <pair><name>Gerhard Brey</name><uri>http://papyri.info/editor/users/gb</uri></pair>
+        <pair><name>Gianluca Casa</name><uri>http://papyri.info/editor/users/gianlucasa</uri></pair>
+        <pair><name>Gilles van Heems</name><uri>http://papyri.info/editor/users/gvheems</uri></pair>
+        <pair><name>Gillian Bentley</name><uri>http://papyri.info/editor/users/gilliangranville</uri></pair>
+        <pair><name>Giovanni Ruffini</name><uri>http://papyri.info/editor/users/grr</uri></pair>
+        <pair><name>Giulia Ghiretti</name><uri>http://papyri.info/editor/users/Giulia%20Ghiretti</uri></pair>
+        <pair><name>Giulia Tozzi</name><uri>http://papyri.info/editor/users/Giulia%20Tozzi</uri></pair>
+        <pair><name>Giuseppina Azzarello</name><uri>http://papyri.info/editor/users/giuseppina-azzarello</uri></pair>
+        <pair><name>Graecus Graecus</name><uri>http://papyri.info/editor/users/Graecus</uri></pair>
+        <pair><name>Graham Claytor</name><uri>http://papyri.info/editor/users/gclaytor</uri></pair>
+        <pair><name>Grant Adamson</name><uri>http://papyri.info/editor/users/grantadamson1</uri></pair>
+        <pair><name>Guillaume Rouvière</name><uri>http://papyri.info/editor/users/g.rouviere.lelitterarium</uri></pair>
+        <pair><name>GW Schwendner</name><uri>http://papyri.info/editor/users/gwschwendner</uri></pair>
+        <pair><name>heejin Jang</name><uri>http://papyri.info/editor/users/heejinj</uri></pair>
+        <pair><name>Hélène Cuvigny</name><uri>http://papyri.info/editor/users/Zoom</uri></pair>
+        <pair><name>Hellmut Vogeler</name><uri>http://papyri.info/editor/users/Hellmut</uri></pair>
+        <pair><name>Herbert Verreth</name><uri>http://papyri.info/editor/users/Herbert</uri></pair>
+        <pair><name>Hilary Howe</name><uri>http://papyri.info/editor/users/hgh856</uri></pair>
+        <pair><name>Holger Essler</name><uri>http://papyri.info/editor/users/holger-essler</uri></pair>
+        <pair><name>Horia Clejan</name><uri>http://papyri.info/editor/users/horia007</uri></pair>
+        <pair><name>Hugh Cayless</name><uri>http://papyri.info/editor/users/hcayless</uri></pair>
+        <pair><name>hussein rizk</name><uri>http://papyri.info/editor/users/hussein_saad@arts.helwan.edu.eg</uri></pair>
+        <pair><name>Ibrahim Saweros</name><uri>http://papyri.info/editor/users/IbrahimLeiden</uri></pair>
+        <pair><name>IDP</name><uri>http://papyri.info/about</uri></pair>
+        <pair><name>Ilaria Bultrighini</name><uri>http://papyri.info/editor/users/ilariab</uri></pair>
+        <pair><name>isabella andorlini’</name><uri>http://papyri.info/editor/users/iandorlini</uri></pair>
+        <pair><name>Isabella Bonati</name><uri>http://papyri.info/editor/users/isa.bonati</uri></pair>
+        <pair><name>Isabelle Pernin</name><uri>http://papyri.info/editor/users/isabelle.pernin</uri></pair>
+        <pair><name>Jaimie Murdock</name><uri>http://papyri.info/editor/users/jaimie.murdock</uri></pair>
+        <pair><name>Jakub Urbanik</name><uri>http://papyri.info/editor/users/jakub.urbanik</uri></pair>
+        <pair><name>james  Keenan</name><uri>http://papyri.info/editor/users/jgkeenan2</uri></pair>
+        <pair><name>James Corke-Webster</name><uri>http://papyri.info/editor/users/James%20C-W</uri></pair>
+        <pair><name>James Cowey</name><uri>http://papyri.info/editor/users/james.cowey</uri></pair>
+        <pair><name>Janneke de Jong</name><uri>http://papyri.info/editor/users/Janneke%20de%20Jong</uri></pair>
+        <pair><name>Jasmin Maria Widauer</name><uri>http://papyri.info/editor/users/j.m</uri></pair>
+        <pair><name>Jason Aftosmis</name><uri>http://papyri.info/editor/users/jkaftosmis</uri></pair>
+        <pair><name>Jean-Baptiste YON</name><uri>http://papyri.info/editor/users/JBYON</uri></pair>
+        <pair><name>Jean-Louis Prache</name><uri>http://papyri.info/editor/users/prachejle</uri></pair>
+        <pair><name>Jeffrey Parent</name><uri>http://papyri.info/editor/users/basileasou</uri></pair>
+        <pair><name>Jennifer Sheridan Moss</name><uri>http://papyri.info/editor/users/Jennifer%20Sheridan%20Moss</uri></pair>
+        <pair><name>Jennifer Wilkinson</name><uri>http://papyri.info/editor/users/jennifer.wilkinson</uri></pair>
+        <pair><name>Jenny Cromwell</name><uri>http://papyri.info/editor/users/jenniferacromwell</uri></pair>
+        <pair><name>jérôme bonnin</name><uri>http://papyri.info/editor/users/horologius</uri></pair>
+        <pair><name>Jesse Hoffman</name><uri>http://papyri.info/editor/users/Jesse Hoffman</uri></pair>
+        <pair><name>Joanne Stolk</name><uri>http://papyri.info/editor/users/joanne.stolk</uri></pair>
+        <pair><name>Joe Manning</name><uri>http://papyri.info/editor/users/joseph.manning</uri></pair>
+        <pair><name>joe schultz</name><uri>http://papyri.info/editor/users/mgs1meryl</uri></pair>
+        <pair><name>Joel Kalvesmaki</name><uri>http://papyri.info/editor/users/Kalvesmaki</uri></pair>
+        <pair><name>Johannes Thomann</name><uri>http://papyri.info/editor/users/johannes.thomann</uri></pair>
+        <pair><name>John Kennedy</name><uri>http://papyri.info/editor/users/jbkennedyjr</uri></pair>
+        <pair><name>Jon Fox support</name><uri>http://papyri.info/editor/users/jdfox777</uri></pair>
+        <pair><name>Jonas Beckman</name><uri>http://papyri.info/editor/users/jonas.beckman</uri></pair>
+        <pair><name>Jonathan McLaughlin</name><uri>http://papyri.info/editor/users/mclaughlin.jj</uri></pair>
+        <pair><name>Jonathan Prag</name><uri>http://papyri.info/editor/users/jonathan.prag</uri></pair>
+        <pair><name>Joseph Pawletko</name><uri>http://papyri.info/editor/users/jgpawletko.nyu</uri></pair>
+        <pair><name>Joshua D. Sosin</name><uri>http://papyri.info/editor/users/joshuad.sosin</uri></pair>
+        <pair><name>joyfulpuck</name><uri>http://papyri.info/editor/users/joyfulpuck</uri></pair>
+        <pair><name>Juan Garcés</name><uri>http://papyri.info/editor/users/Juan</uri></pair>
+        <pair><name>Julia Lougovaya</name><uri>http://papyri.info/editor/users/j.lougovaya.ast</uri></pair>
+        <pair><name>Julien Aliquot</name><uri>http://papyri.info/editor/users/Julien%20Aliquot</uri></pair>
+        <pair><name>Kai Thorsten Walzer</name><uri>http://papyri.info/editor/users/wzk</uri></pair>
+        <pair><name>Karin Wiedergut</name><uri>http://papyri.info/editor/users/karin.wiedergut</uri></pair>
+        <pair><name>Kate Agnew</name><uri>http://papyri.info/editor/users/katealaurel</uri></pair>
+        <pair><name>Kertesz Nikolett</name><uri>http://papyri.info/editor/users/niki2102</uri></pair>
+        <pair><name>KFL</name><uri>http://papyri.info/editor/users/Faith</uri></pair>
+        <pair><name>Konstantin Petkow</name><uri>http://papyri.info/editor/users/konstpet</uri></pair>
+        <pair><name>Kristine McLain</name><uri>http://papyri.info/editor/users/kemclain</uri></pair>
+        <pair><name>Lajos Berkes</name><uri>http://papyri.info/editor/users/berkes.lajos</uri></pair>
+        <pair><name>Laura Giunchedi</name><uri>http://papyri.info/editor/users/giunchetta</uri></pair>
+        <pair><name>Laura Willer</name><uri>http://papyri.info/editor/users/lavavilla</uri></pair>
+        <pair><name>Lauren Knifton</name><uri>http://papyri.info/editor/users/laurenknifton</uri></pair>
+        <pair><name>Laurence Darmezin</name><uri>http://papyri.info/editor/users/laurencedarmezin</uri></pair>
+        <pair><name>laurence foschia</name><uri>http://papyri.info/editor/users/laura</uri></pair>
+        <pair><name>Laurence Mellerin</name><uri>http://papyri.info/editor/users/lme789</uri></pair>
+        <pair><name>Lee Collins</name><uri>http://papyri.info/editor/users/lcollins</uri></pair>
+        <pair><name>Lincoln Blumell</name><uri>http://papyri.info/editor/users/Lincoln%20Blumell</uri></pair>
+        <pair><name>Ljuba Merlina Bortolani</name><uri>http://papyri.info/editor/users/LMB</uri></pair>
+        <pair><name>Louis King</name><uri>http://papyri.info/editor/users/leking</uri></pair>
+        <pair><name>Luca Bortolussi</name><uri>http://papyri.info/editor/users/lucabortolussi1</uri></pair>
+        <pair><name>Luca Iori</name><uri>http://papyri.info/editor/users/l.iori</uri></pair>
+        <pair><name>Lucia Criscuolo</name><uri>http://papyri.info/editor/users/lucia.criscuolo8</uri></pair>
+        <pair><name>Luke Devos</name><uri>http://papyri.info/editor/users/ldevos236</uri></pair>
+        <pair><name>M L</name><uri>http://papyri.info/editor/users/marionlame</uri></pair>
+        <pair><name>Magdy Aly</name><uri>http://papyri.info/editor/users/Magdy%20Aly</uri></pair>
+        <pair><name>Mahmoud Samori</name><uri>http://papyri.info/editor/users/mas2339</uri></pair>
+        <pair><name>Malcolm Choat</name><uri>http://papyri.info/editor/users/MalcolmC</uri></pair>
+        <pair><name>Måns Bylund</name><uri>http://papyri.info/editor/users/mans.bylund</uri></pair>
+        <pair><name>Marc Kaufmann</name><uri>http://papyri.info/editor/users/Marc</uri></pair>
+        <pair><name>Marcello Nobili</name><uri>http://papyri.info/editor/users/marcello.nobili</uri></pair>
+        <pair><name>Marcin Kotyl</name><uri>http://papyri.info/editor/users/mkotyl</uri></pair>
+        <pair><name>Marco Perale</name><uri>http://papyri.info/editor/users/hammamet80</uri></pair>
+        <pair><name>Marco Petris</name><uri>http://papyri.info/editor/users/mpetris</uri></pair>
+        <pair><name>Marek Dospěl</name><uri>http://papyri.info/editor/users/marek.dospel</uri></pair>
+        <pair><name>Margherita Centenari</name><uri>http://papyri.info/editor/users/m.%20centenari</uri></pair>
+        <pair><name>maria micha</name><uri>http://papyri.info/editor/users/mariamicha3</uri></pair>
+        <pair><name>Maria Rosaria Falivene</name><uri>http://papyri.info/editor/users/mr.falivene</uri></pair>
+        <pair><name>Marie Widmer</name><uri>http://papyri.info/editor/users/mwidmer.durham</uri></pair>
+        <pair><name>Mario C.D. Paganini</name><uri>http://papyri.info/editor/users/mcd-paganini</uri></pair>
+        <pair><name>Marius Gerhardt</name><uri>http://papyri.info/editor/users/mgerhardt</uri></pair>
+        <pair><name>Marja Vierros</name><uri>http://papyri.info/editor/users/Marja</uri></pair>
+        <pair><name>Mark Depauw</name><uri>http://papyri.info/editor/users/MD</uri></pair>
+        <pair><name>Markus Resel</name><uri>http://papyri.info/editor/users/Markus%20Resel</uri></pair>
+        <pair><name>Martin Mueller</name><uri>http://papyri.info/editor/users/martinmueller</uri></pair>
+        <pair><name>Maryline Parca</name><uri>http://papyri.info/editor/users/maryline.parca</uri></pair>
+        <pair><name>Maryse SCHILLING</name><uri>http://papyri.info/editor/users/maryse.schilling</uri></pair>
+        <pair><name>Massimiliano Nuti</name><uri>http://papyri.info/editor/users/Massimiliano</uri></pair>
+        <pair><name>Matias Buchholz</name><uri>http://papyri.info/editor/users/Buchholz</uri></pair>
+        <pair><name>Matthias Röder</name><uri>http://papyri.info/editor/users/Matthias</uri></pair>
+        <pair><name>Matthias Schulz</name><uri>http://papyri.info/editor/users/mschulzbbaw</uri></pair>
+        <pair><name>Matthias Stern</name><uri>http://papyri.info/editor/users/matthias-stern</uri></pair>
+        <pair><name>Micaela Langellotti</name><uri>http://papyri.info/editor/users/miky.baggins12</uri></pair>
+        <pair><name>Michael Arnush</name><uri>http://papyri.info/editor/users/MFA</uri></pair>
+        <pair><name>Michael Emadi</name><uri>http://papyri.info/editor/users/michael.emadi</uri></pair>
+        <pair><name>Michael Hunter</name><uri>http://papyri.info/editor/users/mth002</uri></pair>
+        <pair><name>michael speidel</name><uri>http://papyri.info/editor/users/mspeidel</uri></pair>
+        <pair><name>Michaël van der Meer</name><uri>http://papyri.info/editor/users/mee</uri></pair>
+        <pair><name>Michele Brunet</name><uri>http://papyri.info/editor/users/michele-brunet</uri></pair>
+        <pair><name>Michele Rossi</name><uri>http://papyri.info/editor/users/micheleapostata</uri></pair>
+        <pair><name>michele solitario</name><uri>http://papyri.info/editor/users/michelesolitario</uri></pair>
+        <pair><name>Mike LoSapio</name><uri>http://papyri.info/editor/users/mike.losapio</uri></pair>
+        <pair><name>mohamed el-ashiry</name><uri>http://papyri.info/editor/users/mashiry</uri></pair>
+        <pair><name>Mohamed Gaber Elmaghrabi</name><uri>http://papyri.info/editor/users/mgelmaghrabi</uri></pair>
+        <pair><name>Monica Berti</name><uri>http://papyri.info/editor/users/monberti</uri></pair>
+        <pair><name>Myriam Tettamanti</name><uri>http://papyri.info/editor/users/myriamttt</uri></pair>
+        <pair><name>Myrto Malouta</name><uri>http://papyri.info/editor/users/Myrto%20Malouta</uri></pair>
+        <pair><name>Nadine Quenouille</name><uri>http://papyri.info/editor/users/quenouille.ubl</uri></pair>
+        <pair><name>Natalia Vega</name><uri>http://papyri.info/editor/users/nvegan</uri></pair>
+        <pair><name>Nathan Gilbert</name><uri>http://papyri.info/editor/users/Nathan%20Gilbert</uri></pair>
+        <pair><name>nella sudano</name><uri>http://papyri.info/editor/users/nellasudano</uri></pair>
+        <pair><name>Nick Nicholas</name><uri>http://papyri.info/editor/users/hellenisteukontos</uri></pair>
+        <pair><name>Nico Louter</name><uri>http://papyri.info/editor/users/herensingel</uri></pair>
+        <pair><name>Nicola Reggiani</name><uri>http://papyri.info/editor/users/nicola.reggiani</uri></pair>
+        <pair><name>Nikolaos Gonis</name><uri>http://papyri.info/editor/users/ngonis</uri></pair>
+        <pair><name>nikos litinas</name><uri>http://papyri.info/editor/users/nikos</uri></pair>
+        <pair><name>Ning Xue</name><uri>http://papyri.info/editor/users/ning.xuelvin</uri></pair>
+        <pair><name>noha salem</name><uri>http://papyri.info/editor/users/noha</uri></pair>
+        <pair><name>Norman Cooke</name><uri>http://papyri.info/editor/users/Apophis</uri></pair>
+        <pair><name>Notis Toufexis</name><uri>http://papyri.info/editor/users/notis.toufexis</uri></pair>
+        <pair><name>olaf berg</name><uri>http://papyri.info/editor/users/olaf</uri></pair>
+        <pair><name>Olivier Gengler</name><uri>http://papyri.info/editor/users/Olivier</uri></pair>
+        <pair><name>Oncu Guney</name><uri>http://papyri.info/editor/users/nicole3six</uri></pair>
+        <pair><name>Orazio Licandro</name><uri>http://papyri.info/editor/users/oralicandro</uri></pair>
+        <pair><name>P Ceccarelli</name><uri>http://papyri.info/editor/users/paola.ceccarelli</uri></pair>
+        <pair><name>Paola Ceccarelli</name><uri>http://papyri.info/editor/users/Paola</uri></pair>
+        <pair><name>PaolaTomasi</name><uri>http://papyri.info/editor/users/paolatomasi</uri></pair>
+        <pair><name>Papyrologie Leipzig</name><uri>http://papyri.info/editor/users/papyrologie</uri></pair>
+        <pair><name>Parma Digital Papyrology Project</name><uri>http://papyri.info/editor/users/Parma%20Digital%20Papyrology%20Project</uri></pair>
+        <pair><name>Pascal Lemaire</name><uri>http://papyri.info/editor/users/Pascal%20Lemaire</uri></pair>
+        <pair><name>Paul Heilporn</name><uri>http://papyri.info/editor/users/pheilpor</uri></pair>
+        <pair><name>Paul van der Laan</name><uri>http://papyri.info/editor/users/PaulvdLaan</uri></pair>
+        <pair><name>paulipeter</name><uri>http://papyri.info/editor/users/paulipeter</uri></pair>
+        <pair><name>Peter Gurry</name><uri>http://papyri.info/editor/users/uspatriot</uri></pair>
+        <pair><name>Pichonnaz</name><uri>http://papyri.info/editor/users/ppichonnaz</uri></pair>
+        <pair><name>Pietro Liuzzo</name><uri>http://papyri.info/editor/users/Pietro%20Liuzzo</uri></pair>
+        <pair><name>Przemek Lucas Siekierka</name><uri>http://papyri.info/editor/users/Przemek </uri></pair>
+        <pair><name>Rachel Stroumsa</name><uri>http://papyri.info/editor/users/rstroumsa</uri></pair>
+        <pair><name>Rachel Yuen-Collingridge</name><uri>http://papyri.info/editor/users/yuencolling</uri></pair>
+        <pair><name>Raffaella Cribiore</name><uri>http://papyri.info/editor/users/rc119</uri></pair>
+        <pair><name>rasha el mofatch</name><uri>http://papyri.info/editor/users/rasha</uri></pair>
+        <pair><name>Rebekka Müller</name><uri>http://papyri.info/editor/users/r-m-mueller</uri></pair>
+        <pair><name>richard bouchon</name><uri>http://papyri.info/editor/users/richardbouchon</uri></pair>
+        <pair><name>Richard Burchfield</name><uri>http://papyri.info/editor/users/Richard</uri></pair>
+        <pair><name>Robert Camille</name><uri>http://papyri.info/editor/users/Bobby</uri></pair>
+        <pair><name>Roberta Mazza</name><uri>http://papyri.info/editor/users/rmazza67</uri></pair>
+        <pair><name>Roberto Mascellari</name><uri>http://papyri.info/editor/users/roberto.mascellari</uri></pair>
+        <pair><name>Rodney Ast</name><uri>http://papyri.info/editor/users/simoeis</uri></pair>
+        <pair><name>Rodolfo Pedro Buzón</name><uri>http://papyri.info/editor/users/rpbuzon</uri></pair>
+        <pair><name>Roger Bagnall</name><uri>http://papyri.info/editor/users/roger.bagnall</uri></pair>
+        <pair><name>Roger Macfarlane</name><uri>http://papyri.info/editor/users/Roger Macfarlane</uri></pair>
+        <pair><name>Roger S Bagnall</name><uri>http://papyri.info/editor/users/rsb331</uri></pair>
+        <pair><name>ruan r</name><uri>http://papyri.info/editor/users/iamrcr</uri></pair>
+        <pair><name>Ruth Patterson</name><uri>http://papyri.info/editor/users/Lubin</uri></pair>
+        <pair><name>Ryan Baumann</name><uri>http://papyri.info/editor/users/rfbaumann</uri></pair>
+        <pair><name>Ryan McConnell</name><uri>http://papyri.info/editor/users/ryemcc</uri></pair>
+        <pair><name>Ryan Schellenberg</name><uri>http://papyri.info/editor/users/rschellenberg</uri></pair>
+        <pair><name>S. Hodecek</name><uri>http://papyri.info/editor/users/SHodecek</uri></pair>
+        <pair><name>Sabine Huebner</name><uri>http://papyri.info/editor/users/sabine.r.huebner</uri></pair>
+        <pair><name>sachot</name><uri>http://papyri.info/editor/users/pierre-louis</uri></pair>
+        <pair><name>Sanne Van Looy</name><uri>http://papyri.info/editor/users/Sanne_Van_Looy</uri></pair>
+        <pair><name>Sarah E. Bond</name><uri>http://papyri.info/editor/users/Sarah </uri></pair>
+        <pair><name>Sarah Lippincott</name><uri>http://papyri.info/editor/users/sarah.k.lippincott</uri></pair>
+        <pair><name>Sarah Rollens</name><uri>http://papyri.info/editor/users/sarahrollens</uri></pair>
+        <pair><name>Scott Vanderbilt</name><uri>http://papyri.info/editor/users/datagenic</uri></pair>
+        <pair><name>Sebastian Heath</name><uri>http://papyri.info/editor/users/sebastianheath</uri></pair>
+        <pair><name>Serena Andrea Brioschi</name><uri>http://papyri.info/editor/users/epidoc.035</uri></pair>
+        <pair><name>Shawn Graham</name><uri>http://papyri.info/editor/users/Shawn Graham</uri></pair>
+        <pair><name>Simeon Tzonev</name><uri>http://papyri.info/editor/users/simeon-tzonev</uri></pair>
+        <pair><name>Simona Stoyanova</name><uri>http://papyri.info/editor/users/Simona</uri></pair>
+        <pair><name>SoSOL</name><uri>http://papyri.info/editor</uri></pair>
+        <pair><name>Sofia Torallas</name><uri>http://papyri.info/editor/users/sofiatorallas</uri></pair>
+        <pair><name>Sophie Kovarik</name><uri>http://papyri.info/editor/users/sophie.kovarik</uri></pair>
+        <pair><name>Stefano Costa</name><uri>http://papyri.info/editor/users/steko</uri></pair>
+        <pair><name>Stephan Riethmüller</name><uri>http://papyri.info/editor/users/sriethmueller</uri></pair>
+        <pair><name>Stephen Bay</name><uri>http://papyri.info/editor/users/stephen.bay</uri></pair>
+        <pair><name>Steve T Reece</name><uri>http://papyri.info/editor/users/Steve Reece</uri></pair>
+        <pair><name>Steven Kennedy</name><uri>http://papyri.info/editor/users/Dr.%20Steven%20Kennedy</uri></pair>
+        <pair><name>Suzanne Soliman</name><uri>http://papyri.info/editor/users/Suzanne Soliman</uri></pair>
+        <pair><name>Sven Tost</name><uri>http://papyri.info/editor/users/sventost76</uri></pair>
+        <pair><name>Takashi FUJII</name><uri>http://papyri.info/editor/users/takashi.fujii.jp</uri></pair>
+        <pair><name>Taylor Coughlan</name><uri>http://papyri.info/editor/users/tscoughlan</uri></pair>
+        <pair><name>Test User (Ryan Baumann)</name><uri>http://papyri.info/editor/users/testrfbaumann</uri></pair>
+        <pair><name>Theresia Pantzer</name><uri>http://papyri.info/editor/users/the_pantzer</uri></pair>
+        <pair><name>Thomas Kruse</name><uri>http://papyri.info/editor/users/thokru</uri></pair>
+        <pair><name>Thomas Wayment</name><uri>http://papyri.info/editor/users/Thom%20Wayment</uri></pair>
+        <pair><name>tiina purola</name><uri>http://papyri.info/editor/users/tpurola</uri></pair>
+        <pair><name>Timothy David Hill</name><uri>http://papyri.info/editor/users/th63</uri></pair>
+        <pair><name>Timothy Hill</name><uri>http://papyri.info/editor/users/thill</uri></pair>
+        <pair><name>Timothy J. Finney</name><uri>http://papyri.info/editor/users/tfinney</uri></pair>
+        <pair><name>Tito MARQUES PALMEIRO</name><uri>http://papyri.info/editor/users/tito22mp</uri></pair>
+        <pair><name>Todd Hickey</name><uri>http://papyri.info/editor/users/tmh</uri></pair>
+        <pair><name>Tom Elliott</name><uri>http://papyri.info/editor/users/paregorios</uri></pair>
+        <pair><name>Tom Toews</name><uri>http://papyri.info/editor/users/thomastoews</uri></pair>
+        <pair><name>Tonia Sarri</name><uri>http://papyri.info/editor/users/toniasarri</uri></pair>
+        <pair><name>Trevor Evans</name><uri>http://papyri.info/editor/users/trevor42evans</uri></pair>
+        <pair><name>Ulpius Mariscianus</name><uri>http://papyri.info/editor/users/mariscianus</uri></pair>
+        <pair><name>Ulrike Hoier</name><uri>http://papyri.info/editor/users/uhoier</uri></pair>
+        <pair><name>ulrike swoboda</name><uri>http://papyri.info/editor/users/swoboda</uri></pair>
+        <pair><name>Uri Yiftach-Firanko</name><uri>http://papyri.info/editor/users/uiftach</uri></pair>
+        <pair><name>Ursula Bsees</name><uri>http://papyri.info/editor/users/ursula.bsees</uri></pair>
+        <pair><name>Usama Ali Gad</name><uri>http://papyri.info/editor/users/Gad</uri></pair>
+        <pair><name>Valentina Asciutti</name><uri>http://papyri.info/editor/users/valeasc</uri></pair>
+        <pair><name>Valentina E. Pistarino</name><uri>http://papyri.info/editor/users/valentina.pistarino</uri></pair>
+        <pair><name>Valentina Garulli</name><uri>http://papyri.info/editor/users/vgarulli</uri></pair>
+        <pair><name>Valeria Valchera</name><uri>http://papyri.info/editor/users/valeria.valchera</uri></pair>
+        <pair><name>Vera Hofmann</name><uri>http://papyri.info/editor/users/vera</uri></pair>
+        <pair><name>Veronica Bucciantini</name><uri>http://papyri.info/editor/users/Veronica</uri></pair>
+        <pair><name>Vincent Razanajao</name><uri>http://papyri.info/editor/users/Raza</uri></pair>
+        <pair><name>William Johnson</name><uri>http://papyri.info/editor/users/w.a.j.</uri></pair>
+        <pair><name>Xavier Goás Aguililla</name><uri>http://papyri.info/editor/users/xavier.goas</uri></pair>
+        <pair><name>Yannis Kalliontzis</name><uri>http://papyri.info/editor/users/Yannis</uri></pair>
+        <pair><name>yasmine ech chael</name><uri>http://papyri.info/editor/users/yasmine</uri></pair>
+        <pair><name>yekaterina kosova</name><uri>http://papyri.info/editor/users/yekaterinakosova</uri></pair>
+        <pair><name>Yoann Goudin</name><uri>http://papyri.info/editor/users/yoanngoudin</uri></pair>
+        <pair><name>Yomna Hassan</name><uri>http://papyri.info/editor/users/Yomna%20Hassan</uri></pair>
+        <pair><name>yosra ahmed</name><uri>http://papyri.info/editor/users/saso1978</uri></pair>
+        <pair><name>Yumi Suzuki</name><uri>http://papyri.info/editor/users/yumi.suzuki.j</uri></pair>
+        <pair><name>Zdiarsky</name><uri>http://papyri.info/editor/users/angelika.zdiarsky</uri></pair>
+        <pair><name>Zoe Misiewicz</name><uri>http://papyri.info/editor/users/zoe.misiewicz</uri></pair>
+        <pair><name>Δάφνη Τσιμπούκα</name><uri>http://papyri.info/editor/users/Δάφνη</uri></pair>
+        <pair><name>Марина В</name><uri>http://papyri.info/editor/users/aquaalta2010</uri></pair>
+        <pair><name>Сергей Мубаракшин</name><uri>http://papyri.info/editor/users/tezzz17</uri></pair>
+        <pair><name>기철 주</name><uri>http://papyri.info/editor/users/bearjoo</uri></pair>
+</users>
