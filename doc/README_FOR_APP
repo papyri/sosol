@@ -1,3 +1,65 @@
+= App Structure
+
+== File Structure
+
+ app/                  application code
+   controllers/        controller code
+   helpers/            shared helper code
+   models/             model code
+   views/              view code/templates
+ config/               application configuration
+   boot.rb             Rails boot script
+   database.yml        Rails database configuration
+   deploy.rb           Capistrano deployment file
+   environment.rb      Rails environment script (defines gem deps, etc.)
+   environments/       environment-specific override scripts (i.e. for production, development, testing)
+   externals.yml       Capistrano external definitions, used for freezing external dependencies
+   hgv.yml
+   initializers/       Rails initializer scripts
+   locales/            Rails i18n locales
+   routes.rb           Rails route configuration
+   warble.rb           Warbler configuration, for packing app into .war file
+ data/                 application data
+   lookup/             XML lookup files for HGV
+   templates/          data templates, e.g. for new documents
+   xslt/               XSLT data
+     biblio/           XSLT for BiblioIdentifier
+     common/           Shared XSLT files
+     ddb/              XSLT for DDBIdentifier
+     epidoc/           Capistrano-defined external XSLT from EpiDoc example-p5-xslt
+     metadata/         XSLT for HGVMetaIdentifier
+     pn/               PN XSLT
+       navigator/      Capistrano-defined external XSLT from Navigator
+     translation/      XSLT for HGVTransIdentifier
+ db/                   database data (SQLite for development/testing, Git repositories)
+   git/                development/production Git repositories
+   migrate/            Rails database migration scripts
+   test/               test environment git repositories
+ doc/                  generated documentation
+ lib/                  shared application libraries
+   git_conf.rb         allows setting per-branch Git repositories for development
+   java/               Java JAR files, usable by JRuby
+   jruby_xml.rb        JRubyXML class for abstracting Java XML libraries
+   linking_info.rb     LinkingInfo class
+   maintenance_mode.rb MaintenanceMode module, enables cap deploy:web:enable/disable
+   numbers_rdf.rb      NumbersRDF module, for interaction with Numbers Server
+   rpx.rb              Rpx module, for RPX authentication
+   tasks/              Additional rake task definitions
+ log/                  running application log directory
+ public/               static web application data (error pages, JS, CSS, images)
+   flash/              Flash files
+   images/             image files
+   javascripts/        JS files
+   stylesheets/        CSS files
+     sass/             SASS source files for generated CSS
+ test/                 test code
+   fixtures/           test fixtures
+   functional/         functional tests
+   integration/        integration tests
+   unit/               unit tests
+ tmp/                  temporary data
+ vendor/               3rd-party code (i.e. frozen gems)
+
 = JRuby Deployment
 
 == Requirements
