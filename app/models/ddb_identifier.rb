@@ -370,7 +370,7 @@ class DDBIdentifier < Identifier
   end
 
   # - Retrieves the current version of XML for this DDBIdentifier
-  # - Processes XML with start-div-portlet.xsl XSLT
+  # - Processes XML with preview.xsl XSLT
   # 
   # - *Returns* :
   #   -  Preview HTML
