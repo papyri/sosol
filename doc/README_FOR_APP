@@ -3,12 +3,12 @@
 == Requirements
 
 * Java SE 6 (1.6+)
-* JRuby (1.3.1+) ''tested on 1.3.1 and 1.4.0''
+* JRuby (1.3.1+) - tested through JRuby 1.6.4. JRuby 1.6.5 seems to break things due to rubygems incompatibility.
 * Git (1.6.1.3+)
 
 == Initial setup steps for development
 
-* get source from [http://sourceforge.net/projects/sosol/develop SourceForge] or [https://github.com/papyri/sosol GitHub]
+* get source from [https://github.com/papyri/sosol GitHub]
 * copy in/create config/environments/*_secret.rb (where * is development, test, production - sets RPX_API_KEY and RPX_REALM, can get these by creating an [http://www.rpxnow.com/ RPX] account)
  RPX_API_KEY = '0b13c31190219061...'
  RPX_REALM = 'SoSOL...'
