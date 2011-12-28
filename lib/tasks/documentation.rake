@@ -19,3 +19,6 @@ namespace :doc do
     rdoc.main = 'doc/README_FOR_APP'
   }
 end
+
+desc "Generate Rails API, Guides, and application documentation"
+task :doc => ['doc:app','doc:rails','doc:guides']
