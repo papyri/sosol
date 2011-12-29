@@ -5,7 +5,6 @@ class BiblioIdentifier < HGVIdentifier
   # Repository file path prefix
   PATH_PREFIX = 'Biblio'
  
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   FRIENDLY_NAME = "Biblio"
 
@@ -161,7 +160,8 @@ class BiblioIdentifier < HGVIdentifier
     true
   end
 
-  # Validation of identifier XML file against tei-epidoc.rng file
+  # Validation of identifier XML file against tei-epidoc.rng file.
+  # Overridden from Identifier#is_valid_xml? to wrap bibliography stub XML in EpiDoc wrapper before validation.
   # - *Args*  :
   #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
   # - *Returns* :
