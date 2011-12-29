@@ -46,7 +46,7 @@ class Identifier < ActiveRecord::Base
   end
   
   # - *Returns* :
-  #   - this idenfiers origin publication and the origin children, but not self
+  #   - this idenfier's origin publication and the origin children, but not self
   def relatives
     if self.origin.nil?
       return []
