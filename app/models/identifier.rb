@@ -20,9 +20,6 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
 
-  #added i.type == self.type' to origin, parent, and children methods because name for meta and trans are
-  #the same and was returning the meta instead of trans when processing translations
-  
   # - *Returns* :
   #   - the originally created publication of this identifier (publciation that does not have a parent id)
   def origin
@@ -89,6 +86,7 @@ class Identifier < ActiveRecord::Base
   
   # Put stuff in here you want to do do all identifiers before a commit is done 
   # - currently no logic is in here - just returns whatever was passed in
+  # - intended to be overridden by Identifier subclasses, if necessary
   def before_commit(content)
     return content
   end
@@ -217,9 +215,10 @@ class Identifier < ActiveRecord::Base
     return new_identifier
   end
   
-  # Creates ERB file from retrieved default XML file template for the associated identifier class
+  # Processes ERB file from retrieved default XML file template for the associated identifier class
+  # in data/templates/
   # - *Returns* :
-  #   - template
+  #   - evaluated file template as string
   def file_template
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
