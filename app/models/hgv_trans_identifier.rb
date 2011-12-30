@@ -4,8 +4,6 @@ class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
   IDENTIFIER_NAMESPACE = 'hgvtrans'
   
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-  
   FRIENDLY_NAME = "Translation"
   
   BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
