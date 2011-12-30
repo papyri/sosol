@@ -861,30 +861,33 @@ class Publication < ActiveRecord::Base
       Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
       return false
     end
-   
-    # clone publication database record to owner
-    new_finalizing_publication = old_finalizing_publication.clone
-    new_finalizing_publication.owner = new_finalizer
-    new_finalizing_publication.creator = old_finalizing_publication.creator
-    new_finalizing_publication.title = old_finalizing_publication.title
-    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
-    new_finalizing_publication.parent = old_finalizing_publication.parent
-    
-    new_finalizing_publication.save!
-    
-    # copy identifiers over to new publication
-    old_finalizing_publication.identifiers.each do |identifier|
-      duplicate_identifier = identifier.clone
-      new_finalizing_publication.identifiers << duplicate_identifier
+  
+    self.transaction do
+      # clone publication database record to owner
+      new_finalizing_publication = old_finalizing_publication.clone
+      new_finalizing_publication.owner = new_finalizer
+      new_finalizing_publication.creator = old_finalizing_publication.creator
+      new_finalizing_publication.title = old_finalizing_publication.title
+      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.parent = old_finalizing_publication.parent
+      
+      new_finalizing_publication.save!
+
+      # copy identifiers over to new publication
+      old_finalizing_publication.identifiers.each do |identifier|
+        duplicate_identifier = identifier.clone
+        new_finalizing_publication.identifiers << duplicate_identifier
+      end
+      
+      # copy branch to new owner
+      new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+      new_finalizing_publication.save!
+
     end
     
-    # copy branch to new owner 
-    new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
-    new_finalizing_publication.save!
-   
     # destroy old publication (including branch)
     old_finalizing_publication.destroy
-   
+    
     return true
   end
   
