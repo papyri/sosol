@@ -1255,7 +1255,7 @@ module HgvMetaIdentifierHelper
 
                   t[:y] = t[:y2] = nil # kill years                  
                 end
-                
+
                 # year
                 if isVague && t[:y] && t[:m] && !t[:d]
                   if isVague2 &&  t[:y2] && t[:m2] && !t[:d2]
@@ -1522,7 +1522,7 @@ module HgvMetaIdentifierHelper
       
       # certainty
       if date_item[:certainty] # global uncertainty
-        if date_item[:certainty] == :low
+        if [:low, 'low'].include? date_item[:certainty] 
           t[:attributes][:certainty] = 'low'
         else # uncertainty for day, month or year
           date_item[:certainty].to_s.split('_').each{|dayMonthYear|
