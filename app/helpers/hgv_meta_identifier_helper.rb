@@ -1234,11 +1234,11 @@ module HgvMetaIdentifierHelper
               if isVague || isVague2
                 
                 # century
-                if isVague && t[:y] && !t[:m] && !t[:t]
+                if isVague && t[:y] && !t[:m] && !t[:d]
                  
                   t[:c] = HgvDate.getCentury t[:y] # century no. 1
 
-                  if isVague2 && t[:y2] && !t[:m2] && !t[:t2]
+                  if isVague2 && t[:y2] && !t[:m2] && !t[:d2]
                     t[:c2] = HgvDate.getCentury t[:y2] # century no. 2
                   end
 
@@ -1257,8 +1257,8 @@ module HgvMetaIdentifierHelper
                 end
                 
                 # year
-                if isVague && t[:y] && t[:m] && !t[:t]
-                  if isVague2 &&  t[:y2] && t[:m2] && !t[:t2]
+                if isVague && t[:y] && t[:m] && !t[:d]
+                  if isVague2 &&  t[:y2] && t[:m2] && !t[:d2]
                     if t[:y] == t[:y2]
                       t[:yx] = HgvDate.getYearQualifier t[:m], t[:m2] # combine date no. 1 and date no. 2
                       t[:y2] = t[:m] = t[:m2] = nil
@@ -1277,11 +1277,11 @@ module HgvMetaIdentifierHelper
                 end
                 
                 #month
-                if isVague && t[:y] && t[:m] && t[:t]
-                  if isVague2 &&  t[:y2] && t[:m2] && t[:t2]
+                if isVague && t[:y] && t[:m] && t[:d]
+                  if isVague2 &&  t[:y2] && t[:m2] && t[:d2]
                     if t[:y] == t[:y2] && t[:m] == t[:m2]
                       t[:mx] = HgvDate.getMonthQualifier t[:d], t[:d2] # combine date no. 1 and date no. 2
-                      t[:y2] = t[:m2] = t[:t] = t[:t2] = nil
+                      t[:y2] = t[:m2] = t[:d] = t[:d2] = nil
                     else
                       t[:mx] = HgvDate.getMonthQualifier t[:d]
                       t[:mx2] = HgvDate.getMonthQualifier nil, t[:d2]
