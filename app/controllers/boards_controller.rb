@@ -254,14 +254,14 @@ def send_board_reminder_emails
     body_text += community.name + " "
   end
   time_str = Time.now.strftime("%Y-%m-%d")
-  body_text += 'Board Members. As of ' + time_str  + ', '
+  body_text += "Board Members, as of " + time_str  + ", "
   boards.each do |board|
     #grab addresses for this board 
     board.users.each do |board_user|          
       addresses << board_user.email        
     end
   
-    body_text += board.name + " has " 
+    body_text += "\n" + board.name + " has " 
       
     #find all pubs that are still in voting phase         
     voting_publications = board.publications.collect{|p| p.status == 'voting' ? p : nil}.compact
