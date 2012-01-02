@@ -1474,7 +1474,7 @@ module HgvMetaIdentifierHelper
           t[:attributes][:notBefore] = date
           
           y2 = date_item[:y2] ? {nil => '', 0 => '-'}[date_item[:y2] =~ /-/] + date_item[:y2].sub('-', '').rjust(4, '0') : y
-          m2 = HgvDate.getMonthIso((date_item[:m2] ? date_item[:m2] : (date_item[:d2] ? date_item[:m] : nil)), (date_item[:yx2] ? date_item[:yx2] : date_item[:yx]), :chronMax)
+          m2 = HgvDate.getMonthIso((date_item[:m2] ? date_item[:m2] : (date_item[:d2] ? date_item[:m] : nil)), (date_item[:yx2] ? date_item[:yx2] : (y2 == y ? date_item[:yx] : nil)), :chronMax)
           d2 = HgvDate.getDayIso date_item[:d2], (date_item[:m] ? date_item[:m] : nil), (date_item[:mx] ? date_item[:mx] : date_item[:mx2]), :chronMax
           
           date2 = y2 + (m2 ? '-' + m2 + (d2 ? '-' + d2 : '') : '')
