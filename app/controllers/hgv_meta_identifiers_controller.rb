@@ -110,6 +110,13 @@ class HgvMetaIdentifiersController < IdentifiersController
 
       if params[:hgv_meta_identifier]
 
+        # get rid of empty digital images
+        if params[:hgv_meta_identifier][:figures]
+          params[:hgv_meta_identifier][:figures].delete_if{|index, figure|
+            !figure[:children] || !figure[:children][:graphic] || !figure[:children][:graphic][:attributes] || !figure[:children][:graphic][:attributes][:url] || figure[:children][:graphic][:attributes][:url].strip.empty?
+          }
+        end
+
         # get rid of empty publication parts
         if params[:hgv_meta_identifier][:publicationExtra]
           params[:hgv_meta_identifier][:publicationExtra].delete_if{|index, extra|
