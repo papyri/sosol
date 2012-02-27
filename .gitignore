@@ -4,5 +4,7 @@ tmp/**/*
 public/cache/**/*
 doc/api
 doc/app
+doc/guides
+doc/plugins
 db/*.sqlite3
 protosite.war

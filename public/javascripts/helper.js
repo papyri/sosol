@@ -842,37 +842,52 @@ function insertNum()
         }
       else //value empty but content has data
         {
-          if (document.number.rend_tick_check_n.checked == true)
+          if (document.uncertain.value_uncert_check_n.checked == true)
             {
-              opt_rend_tick = " rend=\"tick\"";
+              alert("Numerical value is required when Value uncertain? is checked");
+              editpass = "no";
             }
           else
             {
-              opt_rend_tick = "";
-            }
-          if (document.number.type_frac_check_n.checked == true)
-            {
-              number_type = "type_rend_content";
-            }
-          else
-            {
-              number_type = "content";
+              if (document.number.rend_tick_check_n.checked == true)
+                {
+                  opt_rend_tick = " rend=\"tick\"";
+                }
+              else
+                {
+                  opt_rend_tick = "";
+                }
+              if (document.number.type_frac_check_n.checked == true)
+                {
+                  number_type = "type_rend_content";
+                }
+              else
+                {
+                  number_type = "content";
+                }
             }
         }
     }
-  else
+  else //value has data
     {
-      if (numcontent.toString().match(/\s/) || numcontent.length < 1) //value has data but content is empty
+      if (numcontent.toString().match(/\s/) || numcontent.length < 1) //if content is empty
         {  
-          if (isNumericSpecial(numval) == true) //validates numeric value in fraction or digits
+          if (document.uncertain.value_uncert_check_n.checked == true)
             {
-              opt_rend_tick = "";
-              number_type = "value";
+              alert("Greek/Latin content is required when Value uncertain? is checked");
+              editpass = "no";
             }
           else
             {
-              alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
-              editpass = "no";
+              if (isNumericSpecial(numval) == true) //validates numeric value in fraction or digits
+                {
+                  number_type = "value";
+                }
+              else
+                {
+                  alert("At least 1 numeric digit or valid fraction (ex. 1/8) needed for number value");
+                  editpass = "no";
+                }
             }
         }
       else //value and content both have data
@@ -894,12 +909,11 @@ function insertNum()
   
 function finishNum()
 {
-    
   switch (number_type)
   {
   case "value":
     {
-      startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + "/>";
+      startxml = "<num value=\"" + numval + "\"/>";
       break;
     }
   case "content":
@@ -909,7 +923,15 @@ function finishNum()
     }
   case "value_rend_content":
     {
-      startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + ">" + numcontent + "</num>";
+      if (document.uncertain.value_uncert_check_n.checked == true)
+        {
+          startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + ">" + numcontent + "<certainty match=\"../@value\" locus=\"value\"/></num>";
+        }
+      else
+        {
+          startxml = "<num value=\"" + numval + "\"" + opt_rend_tick + ">" + numcontent + "</num>";
+        }
+
       break;
     }
   case "type_rend_content": //ignores a value if it was input
@@ -934,7 +956,8 @@ function finishNum()
   
 function moreNumEdit(newType)
 {
-  if (document.number.type_frac_check_n.checked) //ignores a value if it was input
+  if (document.number.type_frac_check_n.checked) 
+    //ignores a value if it was input and certainty if checked because certainty requires value
     {
       if (document.number.rend_tick_check_n.checked == true)
         {

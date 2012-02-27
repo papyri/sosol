@@ -32,7 +32,7 @@ function insertLinkExt(){
   //get values from page
   linkExtURL = document.getElementById("insertlink_external").value;
   if(!(linkExtURL.match(/\S/))){ //check for any non-whitespace character
-    alert("You must provide and external link");
+    alert("You must provide an external link");
     return;
   }
 
@@ -43,11 +43,12 @@ function insertLinkExt(){
   }
 
   //lowercase URL for consistency and so pass grammar which expects http in lowercase
-  if (linkExtURL.match(/^([HhTtPp\:\/]{7})/)){ //check if value is empty or contains space
-    convertXML = '<ref target="' + linkExtURL.toLowerCase() + '">' + linkFreeText + '<\/ref>';
+  if (linkExtURL.match(/^([HhTtPp\:\/]{7})/)){ //check if link starts with http://
+    //ensure the http:// is in lowercase to match grammar - if use .toLowerCase() it messes up URL's that use capital letters
+    convertXML = '<ref target="' + linkExtURL.replace(/^([HhTtPp\:\/\/]{7})/,'http://') + '">' + linkFreeText + '<\/ref>';
   }
   else{
-    convertXML = '<ref target="http:\/\/' + linkExtURL.toLowerCase() + '">' + linkFreeText + '<\/ref>';
+    convertXML = '<ref target="http:\/\/' + linkExtURL + '">' + linkFreeText + '<\/ref>';
   }
 
   window.opener.getMarkUp(convertXML);

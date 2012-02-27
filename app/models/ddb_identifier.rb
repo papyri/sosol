@@ -370,7 +370,7 @@ class DDBIdentifier < Identifier
   end
 
   # - Retrieves the current version of XML for this DDBIdentifier
-  # - Processes XML with start-div-portlet.xsl XSLT
+  # - Processes XML with preview.xsl XSLT
   # 
   # - *Returns* :
   #   -  Preview HTML
@@ -434,6 +434,13 @@ class DDBIdentifier < Identifier
     # between 2 numbers 
     # \u2010 \u2011 \u2012 \u2013 \u2212 \u10191 to \u002d')
     preprocessed_leiden.gsub!(/(\d+)([‐‑‒–−𐆑]{1})(\d+)/,'\1-\3')
+
+    # convert greek perispomeni \u1fc0 into combining greek perispomeni \u0342
+    combining_perispomeni = [0x342].pack('U')
+    preprocessed_leiden.gsub!(/#{[0x1fc0].pack('U')}/,combining_perispomeni)
+
+    # normalize to normalized form C
+    preprocessed_leiden = ActiveSupport::Multibyte::Chars.new(preprocessed_leiden).normalize(:c).to_s
     
     return preprocessed_leiden
   end
