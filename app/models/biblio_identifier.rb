@@ -2,9 +2,9 @@
 class BiblioIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
+  # Repository file path prefix
   PATH_PREFIX = 'Biblio'
-  
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
+ 
   
   FRIENDLY_NAME = "Biblio"
 
@@ -56,17 +56,23 @@ class BiblioIdentifier < HGVIdentifier
     :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
   }
 
-  # ?
+  # Used for template creation. See Identifier#file_template
+  # - *Returns*
+  #   - last identifier URI path component prefixed by 'b', for xml:id conformity
   def id_attribute
     return "b#{name.split('/').last}"
   end
 
-  # ?
+  # Used for template creation. See Identifier#file_template
+  # - *Returns*
+  #   - empty string, unused in bibliography template
   def n_attribute
     return ''
   end
 
-  # ?
+  # Used for template creation. See Identifier#file_template
+  # - *Returns*
+  #   - empty string, unused in bibliography template
   def xml_title_text
     return ''
   end
@@ -94,7 +100,12 @@ class BiblioIdentifier < HGVIdentifier
                    year, document_number)
   end
 
-  # ?
+  # Turns identifier into repository file path.
+  # e.g.:
+  # - papyri.info/biblio/18003:: Biblio/19/18003.xml
+  # - papyri.info/biblio/SoSOL/2011-0001:: Biblio/SoSOL/2011/0001.xml
+  # - *Returns*:
+  #   - file path as string
   def to_path
     path_components = [ PATH_PREFIX ]
     if name.split('-').length > 1
@@ -149,7 +160,8 @@ class BiblioIdentifier < HGVIdentifier
     true
   end
 
-  # Validation of identifier XML file against tei-epidoc.rng file
+  # Validation of identifier XML file against tei-epidoc.rng file.
+  # Overridden from Identifier#is_valid_xml? to wrap bibliography stub XML in EpiDoc wrapper before validation.
   # - *Args*  :
   #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
   # - *Returns* :

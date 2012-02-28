@@ -3,8 +3,6 @@ class HGVMetaIdentifier < HGVIdentifier
 
   PATH_PREFIX = 'HGV_meta_EpiDoc'
 
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-
   FRIENDLY_NAME = "HGV"
 
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*

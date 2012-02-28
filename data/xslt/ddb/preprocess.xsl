@@ -19,6 +19,11 @@
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- ||||||||||||||    EXCEPTIONS     |||||||||||||| -->
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+  <!-- normalize unicode in text nodes -->
+  <xsl:template match="text()">
+    <xsl:value-of select="normalize-unicode(.)"/>
+  </xsl:template>
   
   <!-- strip comments -->
   <xsl:template match="comment()"/>
