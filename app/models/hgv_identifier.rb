@@ -7,6 +7,7 @@ class HGVIdentifier < Identifier
   
   IDENTIFIER_NAMESPACE = 'hgv'
   TEMPORARY_COLLECTION = 'SoSOL'
+  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
   
   FRIENDLY_NAME = "HGV Identifier"
   

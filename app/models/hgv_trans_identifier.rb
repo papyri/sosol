@@ -4,8 +4,6 @@ class HGVTransIdentifier < HGVIdentifier
   PATH_PREFIX = 'HGV_trans_EpiDoc'
   IDENTIFIER_NAMESPACE = 'hgvtrans'
   
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-  
   FRIENDLY_NAME = "Translation"
   
   BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
@@ -146,15 +144,18 @@ class HGVTransIdentifier < HGVIdentifier
   end
   
   # - Retrieves the current version of XML for this Translation identifier
-  # - Processes XML with start-divtrans-portlet.xsl XSLT
+  # - Processes XML with preview.xsl XSLT
   # 
   # - *Returns* :
   #   -  Preview HTML
   def preview
+      parameters = {"edn-structure" => "ddbdp",
+        "css-loc" => ""}
       JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt pn start-divtrans-portlet.xsl})))
+        JRubyXML.stream_from_string(self.xml_content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt translation preview.xsl})),
+          parameters)
   end
   
   # Extracts 'Leiden+ that will not parse' from Translation XML file if it was saved by the user

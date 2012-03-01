@@ -847,10 +847,13 @@ class Publication < ActiveRecord::Base
       current_finalizer_publication.destroy
     end
   end
-  
+ 
+  # Moves finalizing publication from one finalizer to another.
+  #
+  # *Args*
+  # - +new_finalizer+ user who will become the finalizer
   def change_finalizer(new_finalizer)
     #need to copy finalizer's copy if they have changed anything
-    #copy board pub to new finalizer
     old_finalizing_publication = self.find_finalizer_publication
 
     if old_finalizing_publication.nil?
@@ -858,50 +861,34 @@ class Publication < ActiveRecord::Base
       Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
       return false
     end
-#    if old_finalizing_publication
-#      new_finalizing_publication = old_finalizing_publication.copy_to_owner(new_finalizer) #clone_to_owner(new_finalizer)
-#      new_finalizing_publication.parent = old_finalizing_publication.parent
-#      new_finalizing_publication.save!
-#    end
-    
-    #remove former finalizer
-#    old_finalizing_publication.destroy
-   
-   
-   #########
-    #---clone to owner
-    new_finalizing_publication = old_finalizing_publication.clone
-    new_finalizing_publication.owner = new_finalizer
-    new_finalizing_publication.creator = old_finalizing_publication.creator
-    new_finalizing_publication.title = old_finalizing_publication.title
-    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
-    new_finalizing_publication.parent = old_finalizing_publication.parent
-    
-    new_finalizing_publication.save!
-    
-    # copy identifiers over to new pub
-    old_finalizing_publication.identifiers.each do |identifier|
-      duplicate_identifier = identifier.clone
-      new_finalizing_publication.identifiers << duplicate_identifier
+  
+    self.transaction do
+      # clone publication database record to owner
+      new_finalizing_publication = old_finalizing_publication.clone
+      new_finalizing_publication.owner = new_finalizer
+      new_finalizing_publication.creator = old_finalizing_publication.creator
+      new_finalizing_publication.title = old_finalizing_publication.title
+      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.parent = old_finalizing_publication.parent
+      
+      new_finalizing_publication.save!
+
+      # copy identifiers over to new publication
+      old_finalizing_publication.identifiers.each do |identifier|
+        duplicate_identifier = identifier.clone
+        new_finalizing_publication.identifiers << duplicate_identifier
+      end
+      
+      # copy branch to new owner
+      new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+      new_finalizing_publication.save!
+
     end
-   #===clone to owner
-   
-   new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
-   new_finalizing_publication.save!
-   
-   old_finalizing_publication.destroy
-   #######
-   
-   return true
-   
-   
-    #now there are 2 finalizers, any danger in this?
-    #now copy any old changes to new
     
+    # destroy old publication (including branch)
+    old_finalizing_publication.destroy
     
-    #copy old finalizer's changes to new finalizer
-    #maybe just change owner? creator? but then need to copy over
-    
+    return true
   end
   
   #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
