@@ -179,7 +179,7 @@ class DdbIdentifiersController < IdentifiersController
 
     rescue JRubyXML::ParseError => parse_error
       flash[:error] = parse_error.to_str + 
-          ".  This message is because the XML created from Front Matter Leiden below did not pass Relax NG validation.  This file was NOT SAVED. "
+          ".  This message is because the XML created from Line By Line Leiden below did not pass Relax NG validation.  This file was NOT SAVED. "
      
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    :action => :commentary)
