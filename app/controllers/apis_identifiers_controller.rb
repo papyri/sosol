@@ -1,10 +1,11 @@
 class ApisIdentifiersController < IdentifiersController
-  layout 'site'
   before_filter :authorize
+  require 'pp'
 
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
 
   def update
@@ -35,20 +36,20 @@ class ApisIdentifiersController < IdentifiersController
   end
 
   def generate_flash_message
-      flash[:notice] = "File updated."
-      if %w{new editing}.include? @identifier.publication.status
-        flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
-      end      
-    end
+    flash[:notice] = "File updated."
+    if %w{new editing}.include? @identifier.publication.status
+      flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+    end      
+  end
 
-    def save_comment (comment, commit_sha)
-      if comment != nil && comment.strip != ""
-        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
-        @comment.save
-      end
+  def save_comment (comment, commit_sha)
+    if comment != nil && comment.strip != ""
+      @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.id, :publication_id => @identifier.publication_id, :comment => comment, :reason => "commit" } )
+      @comment.save
     end
+  end
 
-    def find_identifier
-      @identifier = ApisIdentifier.find(params[:id])
-    end
+  def find_identifier
+    @identifier = APISIdentifier.find(params[:id])
+  end
 end

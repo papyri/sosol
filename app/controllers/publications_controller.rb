@@ -10,6 +10,7 @@ class PublicationsController < ApplicationController
   
     require 'zip/zip'
     require 'zip/zipfilesystem'
+    require 'pp'
       
     @publication = Publication.find(params[:id])
     
@@ -461,6 +462,12 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
+  def edit_apis
+    @publication = Publication.find(params[:id])
+    @identifier = APISIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
+  
   def edit_trans  
     @publication = Publication.find(params[:id])    
     @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
@@ -549,6 +556,8 @@ class PublicationsController < ApplicationController
       else
         document_path = [collection, volume, document].join('_')
       end
+    elsif identifier_class == 'APISIdentifier'
+      document_path = [collection, 'apis', document].join('.')
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
@@ -868,7 +877,6 @@ class PublicationsController < ApplicationController
         @publication.creator = @current_user
         @publication.populate_identifiers_from_identifiers(
           related_identifiers, optional_title)
-
         if @publication.save!
           @publication.branch_from_master
 

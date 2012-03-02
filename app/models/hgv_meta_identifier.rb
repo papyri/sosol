@@ -332,7 +332,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # Takes all HGV values stored within current object instance and writes them to EpiDoc
   # - *Returns* :
-  #   - +String+ pretty EpiDco xml format of current HGV meta data file
+  #   - +String+ pretty EpiDoc xml format of current HGV meta data file
   # Assumes +@configuration+ member is loaded with configuration settings from +hgv.yml+
   # e.g. complext tree structure: {"children"=>{"pointer"=>{"attributes"=>{"target"=>"http://papyri.info/biblio/12345"}}, "pagination"=>{"value"=>"pp. 12-14"}}}
   # e.g. simple list: ["Brief (amtlich)", "Iesus an Vernas", "Mitteilung", "daß eine Säule im Steinbruch vollendet und zu Verladung bereit ist", "neu"]

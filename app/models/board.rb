@@ -95,7 +95,13 @@ class Board < ActiveRecord::Base
   #- +true+ if this board is responsible for the given identifier
   #- +false+ otherwise 
   def controls_identifier?(identifier)
-   self.identifier_classes.include?(identifier.class.to_s)  
+    # For APIS boards there is only a single identifier class (APISIdentifier) across
+    # all boards.
+   if "APISIdentifier" == identifier.class.to_s
+     identifier.title.include?(self.title.downcase)
+   else 
+     self.identifier_classes.include?(identifier.class.to_s)  
+   end
   end
   
   #Tallies the votes and returns the resulting decree action or returns an empty string if no decree has been triggered.

@@ -60,10 +60,11 @@ ActionController::Routing::Routes.draw do |map|
     :conditions => { :method => :post }
 
   map.resources :publications, :collection => { :advanced_create => :get }
-  map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_biblio_template => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
+  map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_apis => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_biblio_template => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
   map.resources :publications do |publication|
     publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
+    publication.resources :apis_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :preview => :get }
     # publication.resources :identifiers

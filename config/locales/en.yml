@@ -253,6 +253,36 @@ en:
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
       mentionedDateAnnotation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
+  
+  apis:
+    legend:
+      images: Images
+      object: Object
+      context: Context
+    label:
+      title: Title
+      author: Author
+      inventoryNo: Inventory No.
+      tmNo: TM No.
+      apisId: APIS ID
+      controlNo: Control No.
+      summary: Summary
+      generalNote: General Notes
+      textLang: Text Languages (free text)
+      mainLang: Main Language (ISO 639)
+      otherLangs: Additional Languages (ISO 639)
+      orgiDate: Date of Origin
+      when: ISO Date of Origin
+      notBefore: ISO Beginnning of Date Range
+      notAfter: ISO End of Date Range
+      origPlace: Place of Origin
+      provenance: Provenance
+      object: Object
+      context: Context
+      figures: Images
+      translation: Translation
+      
+      
 
   date:
     beginning: beginning

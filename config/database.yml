@@ -1,14 +1,11 @@
 # conditionally use JDBC depending on if we're in JRuby
 <% jdbc = 'jdbc' if RUBY_PLATFORM =~ /java/ %>
 
-# SQLite version 3.x
-#   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
-  adapter: <%= jdbc %>sqlite3
-  encoding: utf8
-  database: db/development.sqlite3
-  pool: 5
-  timeout: 5000
+  adapter: <%= jdbc %>mysql
+  database: idp
+  username: sosol
+  password: p4pyr!
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

@@ -1,6 +1,6 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier }
+  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier APISIdentifier }
   
   FRIENDLY_NAME = "Base Identifier"
   

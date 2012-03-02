@@ -11,7 +11,7 @@
 %div{:class => "publication_list_holder", :id => list_id }
   %table{:class=>"results", :width=>"95%"}
     %tr
-      %td
+      %td{:width=>"40%"}
       %td{:width=>"15%"}
       %td{:width=>"15%"}
       %td{:width=>"15%"}
@@ -24,9 +24,9 @@
       %td
         Text
       %td
-        Translation
+        APIS
       %td
-        Catalog
+        Translation
     - publications.each do |publication|
       
       %tr
@@ -76,6 +76,22 @@
           - if text_ids.length > 1
             = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
 
+        -# -------------APIS--------------------- 
+        %td{:class=>"identifier_td"}
+          - apis_ids = publication.identifiers.collect do |ids|
+            - if ids.type == "APISIdentifier"
+              - ids
+          - apis_ids = apis_ids.compact
+          - if (apis_ids.length == 0) && creatable_identifiers.include?("APISIdentifier")
+            - class_type = "APISIdentifier"
+            - link_id = "APISIdentifier" + publication.id.to_s
+            - create_type = 'Create new'
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclink => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>')"})
+          - elsif apis_ids.length > 0
+            = link_to apis_ids.first.title, edit_polymorphic_path([publication, apis_ids.first])
+            
+          - if apis_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => apis_ids }
   
         -# -------------TRANSLATIONS---------------------
         %td{:class=>"identifier_td"}
