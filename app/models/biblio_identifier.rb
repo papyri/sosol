@@ -12,48 +12,70 @@ class BiblioIdentifier < HGVIdentifier
 
   # A map (key → xpath) of all relevant xpaths for data lookup and storage
   XPATH = {
-    :articleTitle => "/bibl/title[@level='a'][@type='main']",
-    :journalTitle => "/bibl/title[@level='j'][@type='main']",
-    :bookTitle => "/bibl/title[@level='m'][@type='main']",
     :supertype => "/bibl/@type",
     :subtype => "/bibl/@subtype",
-    :language => "/bibl/@xml:lang",    
-      
-    :bp => "/bibl/idno[@type='bp']",
-    :bpOld => "/bibl/idno[@type='bp_old']",
+    :language => "/bibl/@xml:lang",
     :idp => "/bibl/@xml:id",
-    :isbn => "/bibl/idno[@type='isbn']",
-    :sd => "/bibl/idno[@type='sonderdruck']",
-    :checklist => "/bibl/idno[@type='checklist']",
-
-    :date => "/bibl/date",
-    :edition => "/bibl/edition",
-    :issue => "/bibl/biblScope[@type='issue']",
-    :distributor => "/bibl/distributor",
-    :paginationFrom => "/bibl/biblScope[@type='pp']/@from",
-    :paginationTo => "/bibl/biblScope[@type='pp']/@to",
-    :paginationTotal => "/bibl/note[@type='pageCount']",
-    :paginationPreface => "/bibl/note[@type='prefacePageCount']",
-    :illustration => "/bibl/note[@type='illustration']",
-    :no => "/bibl/biblScope[@type='no']",
-    :col => "/bibl/biblScope[@type='col']",
-    :tome => "/bibl/biblScope[@type='tome']",
-    :link => "/bibl/ptr/@target",
-    :fasc => "/bibl/biblScope[@type='fasc']",
-    :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
+    
+    :articleTitle => "/bibl/title[@level='a'][@type='main']",
+    :journalTitle => "/bibl/title[@level='j'][@type='main']",
+    :journalTitleShort => "/bibl/title[@level='j'][starts-with(@type, 'short')]",
+    :bookTitle => "/bibl/title[@level='m'][@type='main']",
+    :bookTitleShort => "/bibl/title[@level='m'][starts-with(@type, 'short')]",
+    
+    :seriesTitle => "/bibl/series/title[@level='s'][@type='main']", #new !!!
+    :seriesVolume => "/bibl/series/biblScope[@type='volume']", #new !!!
+    :papyrologicalSeries => "/bibl/note[@type='papyrological-series']/bibl", #new!!!
+    :category => "/bibl/note[@type='subject']", #new
 
     :authorList => "/bibl/author",
     :editorList => "/bibl/editor",
-
-    :journalTitleShort => "/bibl/title[@level='j'][starts-with(@type, 'short')]",
-    :bookTitleShort => "/bibl/title[@level='m'][starts-with(@type, 'short')]",
     
+    :date => "/bibl/date",
     :publisherList => "/bibl/node()[name() = 'publisher' or name() = 'pubPlace']",
-    :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl",
+
+    :edition => "/bibl/edition",
+    :distributor => "/bibl/distributor",
+    
+    :paginationFrom => "/bibl/biblScope[@type='pp']/@from", # !!!
+    :paginationTo => "/bibl/biblScope[@type='pp']/@to", # !!!
+    :paginationTotal => "/bibl/note[@type='pageCount']",
+    :paginationPreface => "/bibl/note[@type='prefacePageCount']",
+    :illustration => "/bibl/note[@type='illustration']",
+    
+    :no => "/bibl/biblScope[@type='no']",
+    :col => "/bibl/biblScope[@type='col']",
+    :tome => "/bibl/biblScope[@type='tome']",
+    :link => "/bibl/ptr/@target", # !!!
+    :fasc => "/bibl/biblScope[@type='fasc']",
+    :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']", # !!!
+    
     :note => "/bibl/note[@resp]",
     
-    :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl",
-    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl"
+    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl", # !!!
+    :issue => "/bibl/biblScope[@type='issue']",
+    :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl", # !!!
+    :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl", # !!!
+    
+    # :pi => "/bibl/idno[@type='pi']",
+    :bp => "/bibl/idno[@type='bp']",
+    :bpOld => "/bibl/idno[@type='bp_old']",
+    :isbn => "/bibl/idno[@type='isbn']",
+    :sd => "/bibl/idno[@type='sonderdruck']",
+    :checklist => "/bibl/idno[@type='checklist']"
+    
+    # seg
+  }
+  
+  XPATH_ORIGINAL = {
+    'Index'         => "/bibl/seg[@type='original'][@subtype='index']",
+    'Index bis'     => "/bibl/seg[@type='original'][@subtype='indexBis']",
+    'Titre'         => "/bibl/seg[@type='original'][@subtype='titre']",
+    'Publication'   => "/bibl/seg[@type='original'][@subtype='publication']",
+    'Resumé'        => "/bibl/seg[@type='original'][@subtype='resume']",
+    'S.B. & S.E.G.' => "/bibl/seg[@type='original'][@subtype='sbSeg']",
+    'C.R.'          => "/bibl/seg[@type='original'][@subtype='cr']",
+    'Nom'           => "/bibl/seg[@type='original'][@subtype='nom']"
   }
 
   # Used for template creation. See Identifier#file_template
@@ -356,7 +378,7 @@ class BiblioIdentifier < HGVIdentifier
   # Assumes that @epiDoc variable contains REXML::Document of current biblio record
   # Side effect on +@epiDoc+ (changes order of elements)
   def sortEpiDoc
-    ['/bibl/seg', '/bibl/idno'].each{|xpath|
+    finalOrder.each{|xpath|
       @epiDoc.each_element(xpath){|element|
         @epiDoc.root.delete element
         @epiDoc.root.add element
@@ -936,15 +958,7 @@ class BiblioIdentifier < HGVIdentifier
     # Gets original BP data from EpiDoc TEI:seg[@type='original'] tags (Index, Index bis, Titre, Publication, Resumé, S.B. & S.E.G., C.R.) as well as from old or new bp id
     # Side effect on +self[:originalBp]+
     def populateFromEpiDocOriginalBp
-      {
-        'Index'         => "/bibl/seg[@type='original'][@subtype='index']",
-        'Index bis'     => "/bibl/seg[@type='original'][@subtype='indexBis']",
-        'Titre'         => "/bibl/seg[@type='original'][@subtype='titre']",
-        'Publication'   => "/bibl/seg[@type='original'][@subtype='publication']",
-        'Resumé'        => "/bibl/seg[@type='original'][@subtype='resume']",
-        'S.B. & S.E.G.' => "/bibl/seg[@type='original'][@subtype='sbSeg']",
-        'C.R.'          => "/bibl/seg[@type='original'][@subtype='cr']"
-      }.each_pair{|title, xpath|
+      XPATH_ORIGINAL.each_pair{|title, xpath|
         element = epiDoc.elements[xpath]
         if element && element.text && !element.text.strip.empty?
           self[:originalBp][title] = element.text.strip
@@ -957,6 +971,31 @@ class BiblioIdentifier < HGVIdentifier
         self[:originalBp]['Ancien No'] = self[:bpOld]
       end
 
+    end
+    
+    # Build array for final sorting order of EpiDoc elements on the basis of XPATH array
+    # i.e. title stuff first, legacy stuff last
+    def finalOrder
+      order = []
+
+      XPATH.each_pair{|key, xpath|
+        xpath = xpath.sub(/^(\/bibl\/[^\/]+)(\/.+)?$/, '\1')
+        if !(xpath =~ /^\/bibl\/@[\w:]+$/)
+          if xpath == "/bibl/idno[@type='bp']"
+            order[order.length] = "/bibl/idno[@type='pi']"
+          end
+          
+          if !order.include?(xpath)
+            order[order.length] = xpath
+          end
+        end
+      }
+      
+      XPATH_ORIGINAL.each_pair{|key, xpath|
+        order[order.length] = xpath
+      }
+
+      order
     end
   
   # Data structure for personal information first name, last name, name, swap
