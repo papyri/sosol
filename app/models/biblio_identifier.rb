@@ -23,10 +23,13 @@ class BiblioIdentifier < HGVIdentifier
     :bookTitle => "/bibl/title[@level='m'][@type='main']",
     :bookTitleShort => "/bibl/title[@level='m'][starts-with(@type, 'short')]",
     
-    :seriesTitle => "/bibl/series/title[@level='s'][@type='main']", #new !!!
-    :seriesVolume => "/bibl/series/biblScope[@type='volume']", #new !!!
-    :papyrologicalSeries => "/bibl/note[@type='papyrological-series']/bibl", #new!!!
-    :category => "/bibl/note[@type='subject']", #new
+    :seriesTitle => "/bibl/series/title[@level='s'][@type='main']",
+    :seriesVolume => "/bibl/series/biblScope[@type='volume']",
+    :papyrologicalSeriesTitle => "/bibl/note[@type='papyrological-series']/bibl/title[@level='s'][@type='main']",
+    :papyrologicalSeriesVolume => "/bibl/note[@type='papyrological-series']/bibl/biblScope[@type='volume']",
+    :papyrologicalSeriesTitleShort => "/bibl/note[@type='papyrological-series']/bibl/title[@level='s'][starts-with(@type, 'short')]",
+    
+    :category => "/bibl/note[@type='subject']",
 
     :authorList => "/bibl/author",
     :editorList => "/bibl/editor",
@@ -37,8 +40,8 @@ class BiblioIdentifier < HGVIdentifier
     :edition => "/bibl/edition",
     :distributor => "/bibl/distributor",
     
-    :paginationFrom => "/bibl/biblScope[@type='pp']/@from", # !!!
-    :paginationTo => "/bibl/biblScope[@type='pp']/@to", # !!!
+    :paginationFrom => "/bibl/biblScope[@type='pp']/@from",
+    :paginationTo => "/bibl/biblScope[@type='pp']/@to",
     :paginationTotal => "/bibl/note[@type='pageCount']",
     :paginationPreface => "/bibl/note[@type='prefacePageCount']",
     :illustration => "/bibl/note[@type='illustration']",
@@ -48,14 +51,14 @@ class BiblioIdentifier < HGVIdentifier
     :tome => "/bibl/biblScope[@type='tome']",
     :link => "/bibl/ptr/@target", # !!!
     :fasc => "/bibl/biblScope[@type='fasc']",
-    :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']", # !!!
+    :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
     
     :note => "/bibl/note[@resp]",
     
-    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl", # !!!
+    :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl",
     :issue => "/bibl/biblScope[@type='issue']",
-    :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl", # !!!
-    :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl", # !!!
+    :relatedArticleList => "/bibl/relatedItem[@type='mentions']/bibl",
+    :revieweeList => "/bibl/relatedItem[@type='reviews']/bibl",
     
     # :pi => "/bibl/idno[@type='pi']",
     :bp => "/bibl/idno[@type='bp']",
@@ -228,6 +231,12 @@ class BiblioIdentifier < HGVIdentifier
     self[:articleTitle] = ''
     self[:journalTitle] = ''
     self[:journalTitleShort] = Array.new
+    self[:seriesTitle] = ''
+    self[:seriesVolume] = ''
+    self[:papyrologicalSeriesTitle] = ''
+    self[:papyrologicalSeriesVolume] = ''
+    self[:papyrologicalSeriesTitleShort] = Array.new
+    self[:category] = ''
     self[:bookTitle] = ''
     self[:bookTitleShort] = Array.new
     self[:supertype] = ''
@@ -334,14 +343,20 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostSimple :fasc
     updateFromPostSimple :reedition
     
+    updateFromPostSimple :seriesTitle
+    updateFromPostSimple :seriesVolume
+    updateFromPostSimple :papyrologicalSeriesTitle
+    updateFromPostSimple :papyrologicalSeriesVolume
+    
     updateFromPostPerson :authorList
     updateFromPostPerson :editorList
     
     updateFromPostShortTitle :journalTitleShort
     updateFromPostShortTitle :bookTitleShort
-    
+    updateFromPostShortTitle :papyrologicalSeriesTitleShort
+
     updateFromPostNote
-   
+
     updateFromPostPublisher
 
     updateFromPostReviewee
@@ -522,7 +537,7 @@ class BiblioIdentifier < HGVIdentifier
   # Side effect on +@epiDoc+
   def updateEpiDoc
 
-    [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition].each{|key|
+    [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition, :seriesTitle, :seriesVolume, :papyrologicalSeriesTitle, :papyrologicalSeriesVolume].each{|key|
       attribute = nil
       path = XPATH[key]
       if path =~ /(.+)\/@([^\[\]\/]+)\Z/
@@ -588,7 +603,7 @@ class BiblioIdentifier < HGVIdentifier
     end
 
 
-   [:journalTitleShort, :bookTitleShort].each{|key|
+   [:journalTitleShort, :bookTitleShort, :papyrologicalSeriesTitleShort].each{|key|
      @epiDoc.elements.delete_all XPATH[key]
      index = 1
      self[key].each{|shorty|
@@ -765,7 +780,7 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :supertype
       populateFromEpiDocSimple :subtype
       populateFromEpiDocSimple :language
-      
+
       populateFromEpiDocSimple :bp
       populateFromEpiDocSimple :bpOld
       populateFromEpiDocSimple :idp
@@ -789,22 +804,28 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :fasc
       populateFromEpiDocSimple :reedition
 
+      populateFromEpiDocSimple :seriesTitle
+      populateFromEpiDocSimple :seriesVolume
+      populateFromEpiDocSimple :papyrologicalSeriesTitle
+      populateFromEpiDocSimple :papyrologicalSeriesVolume
+
       populateFromEpiDocPerson :authorList
       populateFromEpiDocPerson :editorList
-      
+
       populateFromEpiDocShortTitle :journalTitleShort
       populateFromEpiDocShortTitle :bookTitleShort
-      
+      populateFromEpiDocShortTitle :papyrologicalSeriesTitleShort
+
       populateFromEpiDocNote
-     
+
       populateFromEpiDocPublisher
-     
+
       populateFromEpiDocReviewee
-      
+
       populateFromEpiDocContainer
-     
+
       populateFromEpiDocRelatedArticle
-     
+
       populateFromEpiDocOriginalBp
 
     end

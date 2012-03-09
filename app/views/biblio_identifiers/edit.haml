@@ -61,6 +61,22 @@
         .clear
         .swifty.quickSave=I18n.t('label.quickSave')
 
+      %h4.category.series
+        %a{:name => 'Series'}=I18n.t('biblio.legend.series')
+      .editbox.series{:style => 'display: none;'}
+        = f.text_field :seriesTitle
+        = f.text_field :seriesVolume
+        .clear
+        %label.papyrologicalSeries=I18n.t('biblio.label.papyrologicalSeries') + ':'
+        .clear
+        = f.text_field :papyrologicalSeriesTitle
+        = f.text_field :papyrologicalSeriesVolume
+        .clear
+        = f.label :papyrologicalSeriesTitleShort
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :papyrologicalSeriesTitleShort, :f => f}
+        .clear
+        .swifty.quickSave=I18n.t('label.quickSave')
+
       %h4.category.extra
         %a{:name => 'Extra'}=I18n.t('biblio.legend.extra')
       .editbox.extra{:style => 'display: none;'}
