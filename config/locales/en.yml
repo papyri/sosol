@@ -96,6 +96,7 @@ en:
       papyrologicalSeriesTitle: Title
       papyrologicalSeriesVolume: Volume
       papyrologicalSeriesTitleShort: Series Short
+      category: Category
 
     type:
       book: Book
@@ -115,6 +116,9 @@ en:
     shortTitleResponsibility:
       bp: Bibliographie Papyrologique
       cl: Checklist
+    category:
+      papyrus: Papyri
+      ostracon: Ostraca
 
   meta:
     legend:

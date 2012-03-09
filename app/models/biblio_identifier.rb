@@ -347,6 +347,7 @@ class BiblioIdentifier < HGVIdentifier
     updateFromPostSimple :seriesVolume
     updateFromPostSimple :papyrologicalSeriesTitle
     updateFromPostSimple :papyrologicalSeriesVolume
+    updateFromPostSimple :category
     
     updateFromPostPerson :authorList
     updateFromPostPerson :editorList
@@ -537,7 +538,7 @@ class BiblioIdentifier < HGVIdentifier
   # Side effect on +@epiDoc+
   def updateEpiDoc
 
-    [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition, :seriesTitle, :seriesVolume, :papyrologicalSeriesTitle, :papyrologicalSeriesVolume].each{|key|
+    [:articleTitle, :journalTitle, :bookTitle, :supertype, :subtype, :language, :bp, :bpOld, :isbn, :sd, :checklist, :date, :edition, :issue, :distributor, :paginationFrom, :paginationTo, :paginationTotal, :paginationPreface, :illustration, :no, :col, :tome, :link, :fasc, :reedition, :seriesTitle, :seriesVolume, :papyrologicalSeriesTitle, :papyrologicalSeriesVolume, :category].each{|key|
       attribute = nil
       path = XPATH[key]
       if path =~ /(.+)\/@([^\[\]\/]+)\Z/
@@ -808,6 +809,7 @@ class BiblioIdentifier < HGVIdentifier
       populateFromEpiDocSimple :seriesVolume
       populateFromEpiDocSimple :papyrologicalSeriesTitle
       populateFromEpiDocSimple :papyrologicalSeriesVolume
+      populateFromEpiDocSimple :category
 
       populateFromEpiDocPerson :authorList
       populateFromEpiDocPerson :editorList

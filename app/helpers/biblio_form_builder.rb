@@ -77,6 +77,10 @@ class BiblioFormBuilder < ActionView::Helpers::FormBuilder
       :shortTitleResponsibility => [
         [I18n.t('biblio.shortTitleResponsibility.bp'), 'BP'],
         [I18n.t('biblio.shortTitleResponsibility.cl'), 'Checklist']
+      ],
+      :category => [
+        [I18n.t('biblio.category.papyrus'), 'Papyri'],
+        [I18n.t('biblio.category.ostracon'), 'Ostraca']
       ]
     }[label]
   end
