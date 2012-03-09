@@ -19,7 +19,7 @@ class HGVMetaIdentifier < HGVIdentifier
         parameters)
   end
 
-  # Loads +HgvMetaConfiguration+ object (HGV xpaath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
+  # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def after_initialize
     @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
@@ -273,7 +273,6 @@ class HGVMetaIdentifier < HGVIdentifier
   def set_epidoc_attributes_tree parent, xpath, data, config
     child_name = xpath[/\A([\w]+)[\w\/\[\]@:=']*\Z/, 1]
     child_attributes = xpath.scan /@([\w:]+)='([\w]+)'/
-
     index = 1
     data.each { |item|
 
@@ -334,7 +333,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # - *Returns* :
   #   - +String+ pretty EpiDoc xml format of current HGV meta data file
   # Assumes +@configuration+ member is loaded with configuration settings from +hgv.yml+
-  # e.g. complext tree structure: {"children"=>{"pointer"=>{"attributes"=>{"target"=>"http://papyri.info/biblio/12345"}}, "pagination"=>{"value"=>"pp. 12-14"}}}
+  # e.g. complex tree structure: {"children"=>{"pointer"=>{"attributes"=>{"target"=>"http://papyri.info/biblio/12345"}}, "pagination"=>{"value"=>"pp. 12-14"}}}
   # e.g. simple list: ["Brief (amtlich)", "Iesus an Vernas", "Mitteilung", "daß eine Säule im Steinbruch vollendet und zu Verladung bereit ist", "neu"]
   # e.g. simple string value: "Letter from Iesous to Vernas"
   def set_epidoc_attributes
@@ -342,8 +341,10 @@ class HGVMetaIdentifier < HGVIdentifier
     doc = REXML::Document.new self.content
 
     @configuration.scheme.each_pair do |key, config|
-      xpath_parent = config[:xpath][/\A([\w\/\[\]@:=']+)\/([\w\/\[\]@:=']+)\Z/, 1]
+      xpath_parent = config[:xpath][/\A([\w\/\[\]\#_@:=']+)\/([\w\/\[\]\#_@:=']+)\Z/, 1]
       xpath_child = $2 
+      next if xpath_parent.nil?
+
       if config[:multiple]
 
         if self[key].empty?
@@ -490,42 +491,43 @@ class HGVMetaIdentifier < HGVIdentifier
     }
     
     # date
+    if @configuration.scheme[:textDate]
+      doc.elements.each(@configuration.scheme[:textDate][:xpath]){|date|
+        if date.elements['offset']
 
-    doc.elements.each(@configuration.scheme[:textDate][:xpath]){|date|
-      if date.elements['offset']
-
-        hgvFormat = ''
-        date.texts.each{|text|
-          hgvFormat += text.value
-          date.delete text  
-        }
-        hgvFormat = hgvFormat.gsub(/(vor|nach)( \(\?\))?/, '').strip
+          hgvFormat = ''
+          date.texts.each{|text|
+            hgvFormat += text.value
+            date.delete text  
+          }
+          hgvFormat = hgvFormat.gsub(/(vor|nach)( \(\?\))?/, '').strip
         
-        offset = date.elements['offset[position()=1]']
-        offset2 = date.elements['offset[position()=2]']
+          offset = date.elements['offset[position()=1]']
+          offset2 = date.elements['offset[position()=2]']
         
-        date.delete offset
-        date.delete offset2        
+          date.delete offset
+          date.delete offset2        
         
-        if offset
-          date.add_element offset
-          date.add_text REXML::Text.new(' ')
-        end
-        
-        if hgvFormat.include? ' - '
-          hgvFormat = hgvFormat.split ' - '
-          date.add_text REXML::Text.new(hgvFormat[0] + ' - ')
-          if offset2
-            date.add_element offset2
+          if offset
+            date.add_element offset
             date.add_text REXML::Text.new(' ')
           end
-          date.add_text REXML::Text.new(hgvFormat[1])
-        else
-          date.add_text REXML::Text.new(hgvFormat)
-        end
+        
+          if hgvFormat.include? ' - '
+            hgvFormat = hgvFormat.split ' - '
+            date.add_text REXML::Text.new(hgvFormat[0] + ' - ')
+            if offset2
+              date.add_element offset2
+              date.add_text REXML::Text.new(' ')
+            end
+            date.add_text REXML::Text.new(hgvFormat[1])
+          else
+            date.add_text REXML::Text.new(hgvFormat)
+          end
 
-      end
-    }
+        end
+      }
+    end
 
    return doc 
   end

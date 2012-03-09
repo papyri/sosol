@@ -144,6 +144,8 @@ class Identifier < ActiveRecord::Base
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(
         self.name.sub(/trans/,''))
+    elsif self.class == APISIdentifier
+      title = self.name.split('/').last
     end
     
     if title.nil?

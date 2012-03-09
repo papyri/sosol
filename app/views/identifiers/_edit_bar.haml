@@ -33,7 +33,7 @@
             %ul
               - for apis in apisrecs
                 %li
-                  link_to apis.titleize, edit_polymorphic_path([@identifier.publication, apis])
+                  = link_to apis.titleize, edit_polymorphic_path([@identifier.publication, apis])
       - if @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
           = link_to 'Translation', edit_trans_publication_path(@identifier.publication)

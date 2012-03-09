@@ -239,30 +239,29 @@ class Publication < ActiveRecord::Base
     #check each board in order by priority rank
     boards.each do |board|
 
-      #if board.community == publication.community
-        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-        if boards_identifiers.length > 0
-          #submit to that board
+    #if board.community == publication.community
+    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+    if boards_identifiers.length > 0
+      #submit to that board
+      Rails.logger.info "---Submittable Board identifiers are: " 
+      boards_identifiers.each do |log_sbi|
+        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
+      end
 
-    Rails.logger.info "---Submittable Board identifiers are: " 
-    boards_identifiers.each do |log_sbi|
-      Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-    end
+      #find the comment text made on submission
+      comment_text = '' #if no comment found, default to nothing. This should never happen.
+      begin
+        submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
+        if submit_comment && submit_comment.comment
+          comment_text = submit_comment.comment
+        end
+      rescue ActiveRecord::RecordNotFound
+        #comment_text already = ''
+        #TODO raise warning? add error logging
+      end
 
-          #find the comment text made on submission
-          comment_text = '' #if no comment found, default to nothing. This should never happen.
-          begin
-            submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
-            if submit_comment && submit_comment.comment
-              comment_text = submit_comment.comment
-            end
-          rescue ActiveRecord::RecordNotFound
-            #comment_text already = ''
-            #TODO raise warning? add error logging
-          end
-
-          #update the change_desc of each submitted identifier
-          boards_identifiers.each do |submitting_identifier|
+      #update the change_desc of each submitted identifier
+      boards_identifiers.each do |submitting_identifier|
             submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(comment_text), :comment => comment_text)
             submitting_identifier.status = "submitted"
             submitting_identifier.save!

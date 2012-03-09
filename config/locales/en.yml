@@ -271,15 +271,23 @@ en:
       textLang: Text Languages (free text)
       mainLang: Main Language (ISO 639)
       otherLangs: Additional Languages (ISO 639)
-      orgiDate: Date of Origin
+      support: Support
+      condition: Condition
+      lines: Lines
+      recto_verso: Recto/Verso
+      handDesc: Hands
+      origDate: Date of Origin
       when: ISO Date of Origin
       notBefore: ISO Beginnning of Date Range
       notAfter: ISO End of Date Range
       origPlace: Place of Origin
       provenance: Provenance
+      associatedName: Associated Names
+      keyword: Keywords
+      genre: Genre/Form
       object: Object
       context: Context
-      figures: Images
+      figures: Image URL
       translation: Translation
       
       

@@ -33,7 +33,7 @@
           = render :partial => 'apis_identifiers/label', :locals => { :key => :summary }
           = text_area_tag 'apis_identifier[' + :summary.to_s + ']', @identifier[:summary], :disabled => !@identifier.mutable?, :class => 'observechange'
           = render :partial => 'apis_identifiers/label', :locals => { :key => :generalNote }
-          = text_area_tag 'apis_identifier[' + :generalNote.to_s + ']', @identifier[:generalNote], :disabled => !@identifier.mutable?, :class => 'observechange'
+          = render :partial => 'apis_identifiers/multi_textarea', :locals => { :key => :generalNote }
 
           = render :partial => 'apis_identifiers/label', :locals => { :key => :textLang }
           = render :partial => 'apis_identifiers/text_field', :locals => { :key => :textLang }
@@ -45,7 +45,7 @@
           = text_field_tag 'apis_identifier[' + :textLang.to_s + '][otherLangs]', @identifier[:textLang][:attributes][:otherLangs], :disabled => !@identifier.mutable?, :class => 'observechange'
 
           %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('label.quickSave')
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.object
           %a{:name => 'Object<'}=I18n.t('apis.legend.object')
@@ -67,7 +67,7 @@
           = text_area_tag 'apis_identifier[' + :handDesc.to_s + ']', @identifier[:handDesc], :disabled => !@identifier.mutable?, :class => 'observechange'
 
           %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('label.quickSave')
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.context
           %a{:name => 'Context<'}=I18n.t('apis.legend.context')
@@ -96,9 +96,12 @@
 
           = render :partial => 'apis_identifiers/label', :locals => { :key => :keyword }
           = render :partial => 'apis_identifiers/multi', :locals => { :key => :keyword }
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :genre }
+          = render :partial => 'apis_identifiers/multi_genre', :locals => { :key => :genre }
 
           %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('label.quickSave')
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.images
           %a{:name => 'Reference'}=I18n.t('apis.legend.images')
@@ -106,7 +109,7 @@
           = render :partial => 'apis_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'apis_identifiers/figures'
           %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('label.quickSave')
+          .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.translation
           %a{:name => 'Translation'}=I18n.t('meta.legend.translation')
@@ -115,11 +118,11 @@
           = text_area_tag 'apis_identifier[' + :translation.to_s + ']', @identifier[:translation], :disabled => !@identifier.mutable?, :class => 'observechange'
 
           %div{:style => 'float: none; clear: both; display: block;'}      
-          .quickSave=I18n.t('label.quickSave')    
+          .swifty.quickSave=I18n.t('label.quickSave')    
 
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
         = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
 = javascript_include_tag 'edit_mask'
-= javascript_include_tag 'meta'
+= javascript_include_tag 'apis'
 = javascript_include_tag 'confirm'

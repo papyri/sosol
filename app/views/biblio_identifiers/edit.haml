@@ -3,7 +3,7 @@
   %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
   %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
-  #edit
+  %div{:id => 'edit', :class => 'biblioedit'}
     - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
       = f.error_messages
 

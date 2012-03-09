@@ -65,7 +65,6 @@ class APISIdentifier < HGVMetaIdentifier
       @scheme.each_value {|item|
         @keys += retrieve_all_keys item
       }
-  
     end
 
     # recursively retrieves all valid keys (element key, attribute keys, child keys)

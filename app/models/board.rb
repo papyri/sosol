@@ -98,7 +98,7 @@ class Board < ActiveRecord::Base
     # For APIS boards there is only a single identifier class (APISIdentifier) across
     # all boards.
    if "APISIdentifier" == identifier.class.to_s
-     identifier.title.include?(self.title.downcase)
+     self.identifier_classes.include?(identifier.class.to_s) && identifier.name.include?(self.title.downcase)
    else 
      self.identifier_classes.include?(identifier.class.to_s)  
    end
