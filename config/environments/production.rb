@@ -27,16 +27,18 @@ config.log_level = :debug
 # config.action_mailer.raise_delivery_errors = false
 
 config.action_mailer.raise_delivery_errors = true
-config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = 
-{	
-	:enable_starttls_auto 		=> 	true,
-	:address			=>	'smtp.gmail.com',
-	:port				=>	587,
-	:domain				=>	'dlib.nyu.edu',
-	:user_name			=>	'papyri.info',
-	:password			=>	'p4pyr0logi5t'
-}
+config.action_mailer.delivery_method = :sendmail
+config.action_mailer.perform_deliveries = true
+#config.action_mailer.smtp_settings = 
+#{	
+#	:enable_starttls_auto 		=> 	true,
+#	:address			=>	'smtp.gmail.com',
+#	:port				=>	587,
+#	:domain				=>	'gmail.com',
+#	:user_name			=>	'papyri.info@gmail.com',
+#	:password			=>	'p4pyr0logi5t',
+#	:authentication			=>	:plain	
+#}
 
 
 # config/environments/production_secret.rb should set
