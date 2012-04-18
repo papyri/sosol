@@ -13,6 +13,7 @@
         = f.select :supertype, options_for_select([])
         = f.select :subtype, options_for_select([])
         = f.select :language
+        = f.select :category
         .clear
         = f.text_field :bp
         = f.text_field :bpOld
@@ -58,6 +59,22 @@
         .clear
         = f.label :publisherList
         = render :partial => 'biblio_identifiers/publisherList', :locals => {:publisherTypeOptions => f.make_options(:publisherType)}
+        .clear
+        .swifty.quickSave=I18n.t('label.quickSave')
+
+      %h4.category.series
+        %a{:name => 'Series'}=I18n.t('biblio.legend.series')
+      .editbox.series{:style => 'display: none;'}
+        = f.text_field :seriesTitle
+        = f.text_field :seriesVolume
+        .clear
+        %label.papyrologicalSeries=I18n.t('biblio.label.papyrologicalSeries') + ':'
+        .clear
+        = f.text_field :papyrologicalSeriesTitle
+        = f.text_field :papyrologicalSeriesVolume
+        .clear
+        = f.label :papyrologicalSeriesTitleShort
+        = render :partial => 'biblio_identifiers/shortTitleList', :locals => {:type => :papyrologicalSeriesTitleShort, :f => f}
         .clear
         .swifty.quickSave=I18n.t('label.quickSave')
 

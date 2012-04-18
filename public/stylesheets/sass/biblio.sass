@@ -90,20 +90,23 @@ div#edit div#multi_editorList input,
 div#edit div#multi_authorList input,
 div#edit div#multi_publisherList input,
 div#edit div#multi_bookTitleShort input,
-div#edit div#multi_journalTitleShort input
+div#edit div#multi_journalTitleShort input,
+div#edit div#multi_papyrologicalSeriesTitleShort input
   width: 28%
 
 div#edit div#multi_editorList h6 label,
 div#edit div#multi_authorList h6 label,
 div#edit div#multi_publisherList h6 label,
 div#edit div#multi_journalTitleShort h6 label,
-div#edit div#multi_bookTitleShort h6 label
+div#edit div#multi_bookTitleShort h6 label,
+div#edit div#multi_papyrologicalSeriesTitleShort h6 label
   width: 28%
   text-align: center
   border: solid 1px transparent
 
 div#edit div#multi_journalTitleShort h6 label.responsibility,
-div#edit div#multi_bookTitleShort h6 label.responsibility
+div#edit div#multi_bookTitleShort h6 label.responsibility,
+div#edit div#multi_papyrologicalSeriesTitleShort h6 label.responsibility
   width: 16em
 
 div#edit div#multi_publisherList h6 label.publisherType
@@ -137,6 +140,14 @@ div#edit div.controlPanel label
 
 /**** General ****/
 
+div#edit label.papyrologicalSeries
+  width: auto
+  font-weight: bold
+  margin: 1em 0 0 0
+
+div#edit label#label_biblio_identifier_seriesTitle,
+div#edit label#label_biblio_identifier_papyrologicalSeriesTitle,
+div#edit label#label_biblio_identifier_papyrologicalSeriesTitleShort,
 div#edit label#label_biblio_identifier_articleTitle,
 div#edit label#label_biblio_identifier_journalTitle,
 div#edit label#label_biblio_identifier_bookTitle,
@@ -155,7 +166,15 @@ div#edit input#biblio_identifier_reedition,
 div#edit input#biblio_identifier_containerList,
 div#edit input#biblio_identifier_revieweeList
   width: 82%
-  
+
+div#edit input#biblio_identifier_seriesTitle,
+div#edit input#biblio_identifier_papyrologicalSeriesTitle
+  width: 64%
+
+div#edit input#biblio_identifier_seriesVolume,
+div#edit input#biblio_identifier_papyrologicalSeriesVolume
+  width: 6%
+
 div#edit div.multi
   float: left
   width: 82%
