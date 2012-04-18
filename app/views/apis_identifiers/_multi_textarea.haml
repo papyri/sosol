@@ -1,12 +1,11 @@
 .multi{:id => 'multi_' + key.to_s}
   %ul.items{:id => 'multiItems_' + key.to_s}
-    - @identifier[key].each_index do |index|
-      %li
-        = text_area_tag 'apis_identifier[' + key.to_s + '][' + index.to_s + ']', @identifier[key][index], :disabled => !@identifier.mutable?, :class => 'observechange'
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+    %li{:class => key.to_s}
+      = text_area_tag 'apis_identifier_' + key.to_s, '', :class => 'observechange'
+      %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+      %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + key.to_s}
     %textarea.observechange
-    %span{:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('tooltip.multiAdd')
+    %span{:onclick => "multiAddTextarea('" + key.to_s + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('tooltip.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

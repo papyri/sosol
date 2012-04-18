@@ -1,4 +1,1 @@
-- name = 'apis_identifier[' + key.to_s + ']' + (@identifier.configuration.scheme[key][:children] || @identifier.configuration.scheme[key][:attributes] ? '[value]' : '')
-- value = @identifier[key].kind_of?(Hash) && @identifier[key][:value] ? @identifier[key][:value] : @identifier[key]
-
-= text_field_tag name, value, :disabled => !@identifier.mutable?, :class => 'observechange'
+= text_field_tag 'apis_identifier_' + key.to_s, "", :class => 'observechange'

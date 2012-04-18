@@ -117,6 +117,7 @@ en:
       provenance: Provenance
       reference: Bibliography
       translation: Translations
+      images: Images
       date: Date
       mentionedDate: Mentioned Dates
 
@@ -256,9 +257,12 @@ en:
   
   apis:
     legend:
+      general: General
       images: Images
       object: Object
       context: Context
+      biblio: Bibliography
+      translation: Translation
     label:
       title: Title
       author: Author
@@ -274,8 +278,8 @@ en:
       support: Support
       condition: Condition
       lines: Lines
-      recto_verso: Recto/Verso
-      handDesc: Hands
+      rectoVerso: Recto/Verso
+      hands: Hands
       origDate: Date of Origin
       when: ISO Date of Origin
       notBefore: ISO Beginnning of Date Range
@@ -285,9 +289,21 @@ en:
       associatedName: Associated Names
       keyword: Keywords
       genre: Genre/Form
-      object: Object
-      context: Context
-      figures: Image URL
+      year: Year
+      month: Month
+      day: Day
+      year1: Year
+      month1: Month
+      day1: Day
+      year2: Year
+      month2: Month
+      day2: Day
+      figHead: Image Label
+      figDesc: Description
+      figUrl: Image URL
+      citation: Citation
+      citeNote: Note
+      citeType: DDbDP?
       translation: Translation
       
       
