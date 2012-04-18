@@ -5,8 +5,8 @@ vendor/plugins/rxsugar:
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/tags/IDP-Dec-release-2/example-p5-xslt
-  :revision: HEAD
+  :repository: https://epidoc.svn.sourceforge.net/svnroot/epidoc/trunk/example-p5-xslt
+  :revision: 1755 
 
 data/xslt/pn/navigator:
   :type: git
