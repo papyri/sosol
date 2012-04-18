@@ -41,6 +41,9 @@ span.quickHelp span.message
   right: 2em
   top: 2em
 
+div#edit label.apis 
+  width:8em;
+
 /**** special ****/
 
 div#edit div.editbox li.label
@@ -82,6 +85,9 @@ div#edit div.editbox label.provenance
 div#edit div.editbox label.tmNo
   margin: 0 0 0 22em
 
+div#edit form.edit_apis_identifier div.editbox label.tmNo {
+  margin: 0 0 0 0; 
+
 div#edit div.editbox label.provenanceType,
 div#edit div.editbox label.provenanceSubtype,
 div#edit div.editbox label.provenanceDate
@@ -103,6 +109,57 @@ div#edit input#hgv_meta_identifier_material
 
 div#edit div.editbox label#publicationExtraFullTitle
   width: auto
+
+div#edit input#apis_identifier_title,
+div#edit input#apis_identifier_support,
+div#edit input#apis_identifier_figHead,
+div#edit input#apis_identifier_figUrl,
+div#edit input#apis_identifier_citation
+  width: 35em;
+
+div#edit input#apis_identifier_apisId 
+  width:10em;
+
+div#edit textarea#apis_identifier_translation 
+  width:45em;
+  height:20em;
+
+div#edit div.editbox label#apis_identifier_author_label,
+div#edit div.editbox label#apis_identifier_inventoryNo_label,
+div#edit div.editbox label#apis_identifier_apisId_label,
+div#edit div.editbox label#apis_identifier_tmNo_label,
+div#edit div.editbox label#apis_identifier_controlNo_label,
+div#edit div.editbox label#apis_identifier_summary_label,
+div#edit div.editbox label#apis_identifier_generalNote_label,
+div#edit div.editbox label#apis_identifier_textLang_label,
+div#edit div.editbox label#apis_identifier_mainLang_label,
+div#edit div.editbox label#apis_identifier_condition_label,
+div#edit div.editbox label#apis_identifier_lines_label,
+div#edit div.editbox label#apis_identifier_rectoVerso_label,
+div#edit div.editbox label#apis_identifier_hands_label,
+div#edit div.editbox div#dateWhen h5,
+div#edit div.editbox div#dateRange h5,
+div#edit div.editbox label#apis_identifier_origPlace_label,
+div#edit div.editbox label#apis_identifier_provenance_label,
+div#edit div.editbox label#apis_identifier_associatedName_label,
+div#edit div.editbox label#apis_identifier_keyword_label,
+div#edit div.editbox label#apis_identifier_genre_label,
+div#edit div.editbox label#apis_identifier_figHead_label,
+div#edit div.editbox label#apis_identifier_figDesc_label,
+div#edit div.editbox label#apis_identifier_figUrl_label,
+div#edit div.editbox label#apis_identifier_citeNote_label,
+div#edit div.editbox label#apis_identifier_citeType_label
+  clear:left;
+
+div#edit div.editbox label.textLang,
+div#edit div.editbox label.mainLang 
+  width:13em;
+
+div#edit div.editbox label.otherLangs 
+  width:15em;
+
+div#edit input#apis_identifier_citeType 
+  margin-top: .4em;
 
 span.quickHelp_meta_help_tmNo span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
