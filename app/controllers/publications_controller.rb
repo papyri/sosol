@@ -281,7 +281,6 @@ class PublicationsController < ApplicationController
     end
     @publication.send_to_finalizer(@current_user)
       
-    end
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
   
