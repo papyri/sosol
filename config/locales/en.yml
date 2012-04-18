@@ -28,6 +28,7 @@ en:
       extra: Extra
       reference: Reference
       original: Original BP Record
+      series: Series
 
     label:
       articleTitle: Article
@@ -89,6 +90,13 @@ en:
       number: Number
       publisherType: Type
       value: Value
+      seriesTitle: Title
+      seriesVolume: Volume
+      papyrologicalSeries: Papyrological Series
+      papyrologicalSeriesTitle: Title
+      papyrologicalSeriesVolume: Volume
+      papyrologicalSeriesTitleShort: Series Short
+      category: Category
 
     type:
       book: Book
@@ -108,6 +116,9 @@ en:
     shortTitleResponsibility:
       bp: Bibliographie Papyrologique
       cl: Checklist
+    category:
+      papyrus: Papyri
+      ostracon: Ostraca
 
   meta:
     legend:

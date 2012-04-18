@@ -139,6 +139,10 @@ function checkNotAddedMultiples(){
     multiAddShortTitleList('bookTitleShort');
   }
 
+  if($('papyrologicalSeriesTitleShort_title').value.match(/.+/)){
+    multiAddShortTitleList('papyrologicalSeriesTitleShort');
+  }
+
   if($('note_responsibility').value.match(/.+/) && $('note_annotation').value.match(/.+/)){
     multiAddNote();
   }
