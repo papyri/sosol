@@ -293,8 +293,10 @@ var formX =  {
   scrubTemplate: function(template) {
     var names = formX.getNamesFromTemplate(template);
     for (var i=0; names && i < names.length; i++) {
-      template = template.replace(/\{[^{\[\]]*\}/g, '');
-      template = template.replace(/\[[^\]\[]*\]/g, '');
+      var brackets = new RegExp('\\{[^{\\[\\]]*\\$' + names[i] + '[^{\\[\\]]*\\}');
+      template = template.replace(brackets, '');
+      var squarebrackets = new RegExp('\\[[^\\]\\[]*\\$' + names[i] + '[^\\]\\[]*\\]')
+      template = template.replace(squarebrackets, '');
     }
     if (template.match(/\$\w+/)) {
       return null;
