@@ -18,11 +18,13 @@ var formX =  {
   serializeXML: function() {
      try {
         // Gecko- and Webkit-based browsers (Firefox, Chrome), Opera.
-        return (new XMLSerializer()).serializeToString(formX.xml);
+       // The xml namespace gets applied automatically whenever e.g. @xml:lang
+       // is used, so we strip it here
+        return (new XMLSerializer()).serializeToString(formX.xml).replace(" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"", '');
     } catch (e) {
        try {
           // Internet Explorer.
-          return formX.xml.xml;
+          return formX.xml.xml.replace(" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"", '');
        }
        catch (e) {  
           //Other browsers without XML Serializer
@@ -129,13 +131,13 @@ var formX =  {
   },
   getFormValue: function(elt) {
     if (elt.type == "checkbox" || elt.type == "radio") {
-      if (jQuery(elt).attr("checked") == "checked") {
-        return elt.value;
+      if (elt.checked || jQuery(elt).attr("checked") == "checked") {
+        return formX.escapeXML(elt.value);
       } else {
         return '';
       }
     } else {
-      return elt.value;  
+      return formX.escapeXML(elt.value);  
     }
   },
   // Pulls names in an XML fragment template (that must be in the form $word) out into
@@ -164,12 +166,16 @@ var formX =  {
             se.singleNodeValue.previousSibling.nodeValue = se.singleNodeValue.previousSibling.nodeValue.replace(/\r?\n\s*$/, '');
           }
         }
-        pe.removeChild(se.singleNodeValue);
-        if (se.singleNodeValue.nextSibling && se.singleNodeValue.nextSibling.nodeType == Node.TEXT_NODE) {
-          if (se.singleNodeValue.nextSibling.nodeValue.match(/^\r?\n\s*$/)) {
-            pe.removeChild(se.singleNodeValue.nextSibling);
-          } else {
-            se.singleNodeValue.nextSibling.nodeValue = se.singleNodeValue.nextSibling.nodeValue.replace(/^\s*\r?\n/, '');
+        if (se.singleNodeValue.nodeType == Node.ATTRIBUTE_NODE) {
+          se.singleNodeValue.ownerElement.removeAttribute(se.singleNodeValue);
+        } else {
+          pe.removeChild(se.singleNodeValue);
+          if (se.singleNodeValue.nextSibling && se.singleNodeValue.nextSibling.nodeType == Node.TEXT_NODE) {
+            if (se.singleNodeValue.nextSibling.nodeValue.match(/^\r?\n\s*$/)) {
+              pe.removeChild(se.singleNodeValue.nextSibling);
+            } else {
+              se.singleNodeValue.nextSibling.nodeValue = se.singleNodeValue.nextSibling.nodeValue.replace(/^\s*\r?\n/, '');
+            }
           }
         }
       }
@@ -205,7 +211,15 @@ var formX =  {
   },
   append: function(elt, pe, template) {
     if (elt.fsib) {
-      var fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib, formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+      var fs;
+      if (jQuery.isArray(elt.fsib)) {
+        fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib[0], formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        for (var i = 1; i < elt.fsib.length && !fs.singleNodeValue; i++) {
+          fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib[i], formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        }
+      } else {
+        fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib, formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+      }
       if (fs.singleNodeValue) {
         formX.appendFragment(pe, fs.singleNodeValue, template);
       } else {
@@ -304,6 +318,9 @@ var formX =  {
       return template.replace(/[\[\]\{\}]/g, '');
     }
   },
+  escapeXML: function(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+  },
   // Figures out if the node is indented and returns the indent whitespace
   getIndent: function(node) {
     var ie = formX.xml.evaluate("preceding-sibling::text()[1]", node, formX.nsr, XPathResult.STRING_TYPE, null);
@@ -317,15 +334,15 @@ var formX =  {
   // default namespace. Note that the fragment does not have to be well-formed, though it must
   // be complete (all open tags closed, etc.). Returns a nodelist containing the children of the wrapping element.
   parseFragment: function(xml) {
-    var x = "<x xmlns=\"" + formX.mapping.namespaces["#default"] + "\">" + xml + "</x>";
+    var x = "<x xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xmlns=\"" + formX.mapping.namespaces["#default"] + "\">" + xml + "</x>";
     var doc = formX.parser.parseFromString(x, "application/xml");
     // TODO: check for parse errors
     return doc.documentElement.childNodes;
   },
   formatFragment: function(elt, parent) {
     for (var i = 0; i < elt.childNodes.length; i ++) {
-      if (elt.childNodes[i].nodeType == Node.TEXT_NODE && elt.childNodes[i].nodeValue.match(/^\n\s*$/)) {
-        elt.childNodes[i].nodeValue += formX.getIndent(parent) + "  ";
+      if (elt.childNodes[i].nodeType == Node.TEXT_NODE && elt.childNodes[i].nodeValue.match(/\n\s*/)) {
+        elt.childNodes[i].nodeValue = elt.childNodes[i].nodeValue.replace(/\n(\s*)/g, "\n$1" + formX.getIndent(parent) + "  ");
       }
       if (elt.childNodes[i].nodeType == Node.ELEMENT_NODE) {
         formX.formatFragment(elt.childNodes[i], elt);
@@ -337,7 +354,7 @@ var formX =  {
     var newNodes = formX.parseFragment(xml);
     for (var i=0; i < newNodes.length; i++) {
       if (newNodes[i].nodeType == Node.ELEMENT_NODE) {
-        var elt = newNodes[i];
+        var elt = newNodes[i].cloneNode(true);  // Clone because the node is otherwise removed from newNodes[]
         formX.formatFragment(elt, node);
         node.ownerDocument.adoptNode(elt);
         if (sibling) {
@@ -353,6 +370,10 @@ var formX =  {
           node.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(node)+"  "));
           node.appendChild(elt);
         }
+      } else if (newNodes[i].nodeType == Node.TEXT_NODE) {
+        var text = newNodes[i];
+        node.ownerDocument.adoptNode(text);
+        node.appendChild(text);
       }
     }
     if (sibling) {

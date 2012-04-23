@@ -17,7 +17,8 @@ var apis_map = {
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']",
      "tpl": "<idno type=\"controlno\">$controlNo</idno>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary",
-     "tpl": "<summary>$summary</summary>"},
+     "tpl": "<summary>$summary</summary>",
+     "fsib": "t:msItem"},
     {"name": "generalNote",
      "xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note[@type='general']",
      "tpl": "<note type=\"general\">$generalNote</note>",
@@ -43,7 +44,7 @@ var apis_map = {
      "tpl": "<origDate[ when=\"{$year}{-$month}{-$day}\"][ notBefore=\"{$year1}{-$month1}{-$day1}\" notAfter=\"{$year2}{-$month2}{-$day2}\"]>$origDate</origDate>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace",
      "tpl": "<origPlace>$origPlace</origPlace>"},
-    {"name": "asn",
+    {"name": "associatedName",
      "xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:persName[@type='asn']",
      "multi": true,
      "tpl": "<persName type=\"asn\">$associatedName</persName>"},
@@ -55,15 +56,18 @@ var apis_map = {
      "multi": true},
     {"name": "genre",
      "xpath": "/t:TEI/t:teiHeader/t:profileDesc/t:textClass/t:keywords[@scheme='#apis']/t:term[t:rs]",
-     "tpl": "<term><rs type=\"genre_form\">$genre</rs></term>",
+     "children": ["t:rs"],
+     "tpl": "<term>\n  <rs type=\"genre_form\">$genre</rs>\n</term>",
      "multi": true},
     {"name": "citation",
      "xpath": "/t:TEI/t:text/t:body/t:div[@type='bibliography'][@subtype='citations']/t:listBibl/t:bibl",
      "children": ["@type", "text()", "t:note"],
      "tpl": "<bibl[ type=\"$citeType\"]>$citation[ <note>$citeNote</note>]</bibl>",
      "multi": true},
-    {"xpath": "/t:TEI/t:text/t:body/t:div/t:p/t:ref",
-     "tpl": "<ref target=\"$originalRecord\"/>"},
+    {"name": "originalRec",
+     "xpath": "/t:TEI/t:text/t:body/t:div[@type='bibliography'][@subtype='citations']/t:p",
+     "children": ["t:ref/@target"],
+     "tpl": "<p>\n  <ref target=\"$originalRecord\">Original Record</ref>.\n</p>"},
     {"name": "figure",
      "xpath": "/t:TEI/t:text/t:body/t:div[@type='figure']/t:p/t:figure",
      "children": ["t:head", "t:figDesc", "t:graphic/@url"],
@@ -72,6 +76,9 @@ var apis_map = {
     {"xpath":  "/t:TEI/t:text/t:body/t:div[@type='translation']/t:ab",
      "tpl": "<ab>$translation</ab>"}
   ],
+  "models": {
+    "t:physDesc": ["t:objectDesc", "t:handDesc"]
+  },
   "functions": {
     "getDate": function(date) {
       if (date) {

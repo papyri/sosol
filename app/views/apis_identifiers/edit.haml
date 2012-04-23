@@ -32,9 +32,9 @@
           = render :partial => 'apis_identifiers/label', :locals => {:key => :support}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :support}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :condition}
-          = text_area_tag 'apis_identifier_condition', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_condition', nil, :class => 'observeChange apis'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :summary}
-          = text_area_tag 'apis_identifier_summary', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_summary', nil, :class => 'observeChange apis'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :generalNote}
           = render :partial => 'apis_identifiers/multi_textarea', :locals => {:key => :generalNote}
           .language
@@ -45,11 +45,11 @@
             = render :partial => 'apis_identifiers/label', :locals => {:key => :otherLangs}
             = render :partial => 'apis_identifiers/text_field', :locals => {:key => :otherLangs}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :lines}
-          = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange apis'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :rectoVerso}
-          = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange'
-          = render :partial => 'apis_identifiers/label', :locals => {:key => :hands}
-          = text_area_tag 'apis_identifier_hands', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange apis'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :handDesc}
+          = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis'
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
         %h4.category.context
@@ -83,7 +83,7 @@
           = render :partial => 'apis_identifiers/label', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :provenance}
-          = text_area_tag 'apis_identifier_provenance', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_provenance', nil, :class => 'observeChange apis'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :associatedName}
           = render :partial => 'apis_identifiers/multi', :locals => {:key => :associatedName}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :keyword}
@@ -102,13 +102,16 @@
           %a{:name => 'Bibliography'}=I18n.t('apis.legend.biblio')
         .editbox{:style => 'display:none;'}
           = render :partial => 'apis_identifiers/citation'
+          %span.originalRec
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :originalRecord}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :originalRecord}
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
         %h4.category.translation
           %a{:name => 'Translation'}=I18n.t('apis.legend.translation')
         .editbox{:style => 'display: none;'}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :translation}
-          = text_area_tag 'apis_identifier_translation', nil, :class => 'observeChange'
+          = text_area_tag 'apis_identifier_translation', nil, :class => 'observeChange apis'
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
         .controlPanel

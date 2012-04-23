@@ -111,14 +111,30 @@ div#edit div.editbox label#publicationExtraFullTitle
   width: auto
 
 div#edit input#apis_identifier_title,
+div#edit input#apis_identifier_author,
 div#edit input#apis_identifier_support,
+div#edit input#apis_identifier_origDate,
+div#edit input#apis_identifier_origPlace,
 div#edit input#apis_identifier_figHead,
 div#edit input#apis_identifier_figUrl,
-div#edit input#apis_identifier_citation
-  width: 35em
+div#edit input#apis_identifier_citation,
+div#edit input#apis_identifier_originalRecord
+  width: 45.7em
 
-div#edit input#apis_identifier_apisId 
-  width: 10em
+div#edit input#apis_identifier_inventoryNo,
+div#edit input#apis_identifier_apisId,
+div#edit input#apis_identifier_tmNo,
+div#edit input#apis_identifier_controlNo
+  width: 15em
+
+div#edit textarea.apis
+  font-size: 11px
+  width: 45em
+
+div#edit div#multi_associatedName input,
+div#edit div#multi_keyword input,
+div#edit div#multi_genre input
+  width: 15em
 
 div#edit textarea#apis_identifier_translation 
   width: 45em
@@ -160,6 +176,29 @@ div#edit div.editbox label.otherLangs
 
 div#edit input#apis_identifier_citeType 
   margin-top: .4em
+
+div#edit div#dateWhen,
+div#edit div#dateRange
+  float: left
+  margin: .2em 0 .2em 1em
+  padding: 0.2em
+  border: thin solid silver
+
+
+div#edit div#multi_citation,
+div#edit ul#multiItems_citation,
+div#edit div#multi_figure,
+div#edit ul#multiItems_figure
+  float: left
+  width: 50em
+
+div#edit li.citation,
+div#edit li.figure
+  float: left
+  margin: 0 0 .2em 0
+  padding: .2em
+  width: 49em
+  border: thin solid silver
 
 span.quickHelp_meta_help_tmNo span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
