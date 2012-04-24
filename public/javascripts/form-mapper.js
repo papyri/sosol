@@ -337,6 +337,12 @@ var formX =  {
     var x = "<x xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xmlns=\"" + formX.mapping.namespaces["#default"] + "\">" + xml + "</x>";
     var doc = formX.parser.parseFromString(x, "application/xml");
     // TODO: check for parse errors
+    if (doc.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "parsererror").length > 0) {
+      throw "Error parsing the following XML: " + xml;
+    }
+    if (doc.documentElement.firstChild.nodeType == Node.TEXT_NODE && doc.documentElement.firstChild.nodeValue.match(/^XML Parsing Error/)) {
+      throw "Error parsing the following XML: " + xml;
+    }
     return doc.documentElement.childNodes;
   },
   formatFragment: function(elt, parent) {

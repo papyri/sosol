@@ -127,9 +127,14 @@
   formX.mapping = apis_map;
   formX.loadXML('xml');
   formX.populateForm();
-  jQuery("form.edit_apis_identifier").submit( function() {
+  jQuery("form.edit_apis_identifier").submit( function(e) {
   checkNotAddedMultiples();
+  try {
   formX.updateXML();
+  } catch (error) {
+  alert("Unable to submit.\n" + error);
+  e.preventDefault();
+  }
   var xml = formX.serializeXML();
   jQuery("input[name=\"apis_identifier[xml_content]\"]")[0].value = xml;
   });

@@ -48,6 +48,10 @@ class APISIdentifier < HGVMetaIdentifier
     return "apisTEMP"
   end
 
+  def n_attribute
+    return nil
+  end
+
   def xml_title_text
     return "Description of document"
   end

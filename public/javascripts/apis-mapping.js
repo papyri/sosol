@@ -69,7 +69,7 @@ var apis_map = {
      "children": ["t:ref/@target"],
      "tpl": "<p>\n  <ref target=\"$originalRecord\">Original Record</ref>.\n</p>"},
     {"name": "figure",
-     "xpath": "/t:TEI/t:text/t:body/t:div[@type='figure']/t:p/t:figure",
+     "xpath": "/t:TEI/t:text/t:body/t:div[@type='figure']/t:figure",
      "children": ["t:head", "t:figDesc", "t:graphic/@url"],
      "tpl": "<figure>\n  <head>$figHead</head>\n  <figDesc>$figDesc</figDesc>\n  <graphic url=\"$figUrl\"/>\n</figure>",
      "multi": true},
