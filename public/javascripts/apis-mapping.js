@@ -17,8 +17,7 @@ var apis_map = {
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']",
      "tpl": "<idno type=\"controlno\">$controlNo</idno>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:summary",
-     "tpl": "<summary>$summary</summary>",
-     "fsib": "t:msItem"},
+     "tpl": "<summary>$summary</summary>"},
     {"name": "generalNote",
      "xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItem/t:note[@type='general']",
      "tpl": "<note type=\"general\">$generalNote</note>",
@@ -28,8 +27,7 @@ var apis_map = {
      "children": ["@mainLang", "@otherLangs", "."],
      "tpl": "<textLang mainLang=\"$mainLang\"[ otherLangs=\"$otherLangs\"]>$textLang</textLang>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:support",
-     "tpl": "<support>$support</support>",
-     "fsib": "t:condition"},
+     "tpl": "<support>$support</support>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:supportDesc/t:condition/t:ab[@type='conservation']",
      "tpl": "<ab type=\"conservation\">$condition</ab>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab[@type='lines']",
@@ -41,7 +39,7 @@ var apis_map = {
     {"name": "origDate",
      "xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate",
      "children": [["@when","getYear"],["@when", "getMonth"], ["@when", "getDay"], ["@notBefore","getYear"],["@notBefore", "getMonth"], ["@notBefore", "getDay"], ["@notAfter","getYear"],["@notAfter", "getMonth"], ["@notAfter", "getDay"], "."],
-     "tpl": "<origDate[ when=\"{$year}{-$month}{-$day}\"][ notBefore=\"{$year1}{-$month1}{-$day1}\" notAfter=\"{$year2}{-$month2}{-$day2}\"]>$origDate</origDate>"},
+     "tpl": "<origDate[ when=\"$year{-$month}{-$day}\"][ notBefore=\"$year1{-$month1}{-$day1}\" notAfter=\"$year2{-$month2}{-$day2}\"]>$origDate</origDate>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace",
      "tpl": "<origPlace>$origPlace</origPlace>"},
     {"name": "associatedName",
@@ -77,7 +75,12 @@ var apis_map = {
      "tpl": "<ab>$translation</ab>"}
   ],
   "models": {
-    "t:physDesc": ["t:objectDesc", "t:handDesc"]
+    "http://www.tei-c.org/ns/1.0": {
+      "msContents": ["summary", "msItem"],
+      "physDesc": ["objectDesc", "handDesc"],
+      "origin": ["origDate", "origPlace", "persName"],
+      "supportDesc": ["support", "condition"]
+    }
   },
   "functions": {
     "getDate": function(date) {

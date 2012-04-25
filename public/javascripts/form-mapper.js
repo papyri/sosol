@@ -192,7 +192,7 @@ var formX =  {
           template = formX.scrubTemplate(template);
           if (template) {
             var pe = formX.addParents(elts[i].xpath);
-            formX.append(elts[i], pe, template);
+            formX.appendFragment(pe, template);
           }
         });
       } else {
@@ -204,30 +204,21 @@ var formX =  {
         template = formX.scrubTemplate(template);
         if (template) {
           var pe = formX.addParents(elts[i].xpath);
-          formX.append(elts[i], pe, template);
+          formX.appendFragment(pe, template);
         }
       }
     }
   },
-  append: function(elt, pe, template) {
-    if (elt.fsib) {
-      var fs;
-      if (jQuery.isArray(elt.fsib)) {
-        fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib[0], formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        for (var i = 1; i < elt.fsib.length && !fs.singleNodeValue; i++) {
-          fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib[i], formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        }
-      } else {
-        fs = formX.xml.evaluate(formX.getParentPath(elt.xpath) + '/' + elt.fsib, formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+  getSibling: function(parent, node) {
+    var model = formX.mapping.models[parent.namespaceURI][parent.localName];
+    var sib = null;
+    if (model) {
+      for (var i = model.indexOf(node.localName) + 1; i < model.length; i++) {
+        sib = formX.xml.evaluate("*[local-name() = '" + model[i] + "' and namespace-uri() = '" + parent.namespaceURI + "']", parent, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        if (sib.singleNodeValue) return sib.singleNodeValue;
       }
-      if (fs.singleNodeValue) {
-        formX.appendFragment(pe, fs.singleNodeValue, template);
-      } else {
-        formX.appendFragment(pe, null, template);
-      }
-    } else {
-      formX.appendFragment(pe, null, template);
     }
+    return null;
   },
   // Populates the DOM tree with elements matching all of the ancestors of the
   // element that would be matched by the provided XPath and so prepares for that
@@ -356,16 +347,18 @@ var formX =  {
     }
   },
   // Takes an element and an XML string and appends the parsed XML fragment to the supplied element node.
-  appendFragment: function(node, sibling, xml) {
+  appendFragment: function(node, xml) {
     var newNodes = formX.parseFragment(xml);
+    var sibling;
     for (var i=0; i < newNodes.length; i++) {
       if (newNodes[i].nodeType == Node.ELEMENT_NODE) {
         var elt = newNodes[i].cloneNode(true);  // Clone because the node is otherwise removed from newNodes[]
         formX.formatFragment(elt, node);
         node.ownerDocument.adoptNode(elt);
+        sibling = formX.getSibling(node, newNodes[i]);
         if (sibling) {
-          while (node.firstChild && node.firstChild.nodeType == Node.TEXT_NODE && node.firstChild.nodeValue.match(/^\n\s*$/)) {
-            node.removeChild(node.firstChild);
+          while (sibling.previousSibling && sibling.previousSibling.nodeType == Node.TEXT_NODE && sibling.previousSibling.nodeValue.match(/^\n\s*$/)) {
+            node.removeChild(sibling.previousSibling);
           }
           node.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(node)+"  "), sibling);
           node.insertBefore(elt, sibling);

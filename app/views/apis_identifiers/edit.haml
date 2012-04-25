@@ -55,31 +55,32 @@
         %h4.category.context
           %a{:name => 'Context'}=I18n.t('apis.legend.context')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/label', :locals => {:key => :origDate}
-          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origDate}
-          %div#dateWhen
-            %h5 Exact Date
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :year}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :month}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :day}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day}
-          %div#dateRange
-            %h5 From
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :year1}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year1}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :month1}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month1}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :day1}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day1}
-            %h5 To
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :year2}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year2}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :month2}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month2}
-            = render :partial => 'apis_identifiers/label', :locals => {:key => :day2}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day2}
+          %div.origDate
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :origDate}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origDate}
+            %div#dateWhen
+              %h5 Exact Date
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day}
+            %div#dateRange
+              %h5 From
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year1}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month1}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day1}
+              %h5 To
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year2}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month2}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day2}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :provenance}
