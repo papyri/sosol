@@ -8,8 +8,8 @@ var apis_map = {
      "tpl": "<title>$title</title>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:author",
      "tpl": "<author>$author</author>"},
-    {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invno']",
-     "tpl": "<idno type=\"invno\">$inventoryNo</idno>"},
+    {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invNo']",
+     "tpl": "<idno type=\"invNo\">$inventoryNo</idno>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
      "tpl": "<idno type=\"apisid\">$apisId</idno>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']",
@@ -39,7 +39,7 @@ var apis_map = {
     {"name": "origDate",
      "xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate",
      "children": [["@when","getYear"],["@when", "getMonth"], ["@when", "getDay"], ["@notBefore","getYear"],["@notBefore", "getMonth"], ["@notBefore", "getDay"], ["@notAfter","getYear"],["@notAfter", "getMonth"], ["@notAfter", "getDay"], "."],
-     "tpl": "<origDate[ when=\"$year{-$month}{-$day}\"][ notBefore=\"$year1{-$month1}{-$day1}\" notAfter=\"$year2{-$month2}{-$day2}\"]>$origDate</origDate>"},
+     "tpl": "<origDate[ when=\"~pad('$year', 4)~{-~pad('$month', 2)~}{-~pad('$day',2)~}\"][ notBefore=\"~pad('$year1',4)~{-~pad('$month1',2)~}{-~pad('$day1',2)~}\" notAfter=\"~pad('$year2',4)~{-~pad('$month2',2)~}{-~pad('$day2',2)~}\"]>$origDate</origDate>"},
     {"xpath": "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origPlace",
      "tpl": "<origPlace>$origPlace</origPlace>"},
     {"name": "associatedName",
@@ -114,6 +114,16 @@ var apis_map = {
       } else {
         return null;
       }
+    },
+    "pad": function(date, length) {
+      var str = date;
+      if (date.substr(0, 1) == '-') {
+        str = date.substr(1);
+      }
+      while (str.length < length) {
+        str = '0' + str;
+      }
+      return date.replace(/\d+/, str);
     }
   }
 }

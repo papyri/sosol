@@ -156,6 +156,7 @@ var formX =  {
     for (var i = 0; i < elts.length; i++) {
       var names = formX.getNamesFromTemplate(elts[i].tpl);
       var c = formX.xml.evaluate("count("+elts[i].xpath+")", formX.xml.documentElement, formX.nsr, XPathResult.NUMBER_TYPE, null);
+      // remove instances of the current mapped element
       for (var j=0; j < c.numberValue; j++) {
         var se = formX.xml.evaluate(elts[i].xpath, formX.xml.documentElement, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         var pe = se.singleNodeValue.parentNode;
@@ -179,6 +180,7 @@ var formX =  {
           }
         }
       }
+      // insert replacements, depending on the contents of the form
       if (elts[i].multi || elts[i].children) {
         var nc = jQuery("."+elts[i].name);
         nc.each(function(index, elt) {
@@ -189,7 +191,7 @@ var formX =  {
               template = template.replace("$"+names[j], formX.getFormValue(fe[0]));
             }
           }
-          template = formX.scrubTemplate(template);
+          template = formX.scrubTemplate(formX.execUpdates(template));
           if (template) {
             var pe = formX.addParents(elts[i].xpath);
             formX.appendFragment(pe, template);
@@ -199,7 +201,7 @@ var formX =  {
         var template = elts[i].tpl;
         var fe = jQuery("*[name=\""+formX.mapping.prefix+"_"+names[0]+"\"]"); 
         if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
-          template = template.replace("$"+names[0], formX.getFormValue(fe[0]));
+          template = formX.execUpdates(template.replace("$"+names[0], formX.getFormValue(fe[0])));
         }
         template = formX.scrubTemplate(template);
         if (template) {
@@ -300,6 +302,8 @@ var formX =  {
     for (var i=0; names && i < names.length; i++) {
       var brackets = new RegExp('\\{[^{\\[\\]]*\\$' + names[i] + '[^{\\[\\]]*\\}');
       template = template.replace(brackets, '');
+    }
+    for (var i=0; names && i < names.length; i++) {
       var squarebrackets = new RegExp('\\[[^\\]\\[]*\\$' + names[i] + '[^\\]\\[]*\\]')
       template = template.replace(squarebrackets, '');
     }
@@ -308,6 +312,25 @@ var formX =  {
     } else {
       return template.replace(/[\[\]\{\}]/g, '');
     }
+  },
+  execUpdates: function(template) {
+    var result = template;
+    var re = /~([^~]+)~/g; // match only function definitions where variables have been replaced.
+    var func;
+    try {
+      while ((func = re.exec(template)) != null) {
+        if (func[1].indexOf('$') < 0) {
+          var replace = eval("formX.mapping.functions." + func[1]);
+          result = result.replace(func[0], replace);
+        } else {
+          result = result.replace(func[0], '$temp');
+        }
+      }
+    } catch (e) {
+      console.log("Unable to execute function " + func[1] + " in the following template: " + result);
+      return null;
+    }
+    return result;
   },
   escapeXML: function(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
