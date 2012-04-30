@@ -1,6 +1,6 @@
 var formX =  {
-  mapping: null,
-  xml: null,
+  mapping: null, // The javascript object contianing the element mappings
+  xml: null, // The instance DOM
   parser: new DOMParser(),
   // Loads XML from the specified URL.
   loadXML: function(uri) {
@@ -129,6 +129,8 @@ var formX =  {
       elt.value = val;
     }
   },
+  // Return the appropriate value of the provided form element. If it is
+  // a checkbox or radio button, return its value only if it is checked.
   getFormValue: function(elt) {
     if (elt.type == "checkbox" || elt.type == "radio") {
       if (elt.checked || jQuery(elt).attr("checked") == "checked") {
@@ -211,11 +213,14 @@ var formX =  {
       }
     }
   },
-  getSibling: function(parent, node) {
+  // If a content model has been defined for the parent element, then locate the child's position
+  // in that model and determine whether an appropriate following sibling already exists. If it
+  // does, return the sibling.
+  getSibling: function(parent, child) {
     var model = formX.mapping.models[parent.namespaceURI][parent.localName];
     var sib = null;
     if (model) {
-      for (var i = model.indexOf(node.localName) + 1; i < model.length; i++) {
+      for (var i = model.indexOf(child.localName) + 1; i < model.length; i++) {
         sib = formX.xml.evaluate("*[local-name() = '" + model[i] + "' and namespace-uri() = '" + parent.namespaceURI + "']", parent, formX.nsr, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         if (sib.singleNodeValue) return sib.singleNodeValue;
       }
@@ -246,7 +251,7 @@ var formX =  {
       while (pe.lastChild && pe.lastChild.nodeType == Node.TEXT_NODE && pe.lastChild.nodeValue.match(/\n\s*$/)) {
         pe.removeChild(pe.lastChild);
       }
-      pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)+"  "));
+      pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)+formX.mapping.indent));
       pe.appendChild(ne);
       pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)));
       return ne;
@@ -307,15 +312,18 @@ var formX =  {
       var squarebrackets = new RegExp('\\[[^\\]\\[]*\\$' + names[i] + '[^\\]\\[]*\\]')
       template = template.replace(squarebrackets, '');
     }
-    if (template.match(/\$\w+/)) {
+    if (template.match(/\$[a-zA-Z]\w+/)) {
       return null;
     } else {
       return template.replace(/[\[\]\{\}]/g, '');
     }
   },
+  // Templates may contain function calls, bracketed with ~,~. This function executes those
+  // functions (when variables within them have been substituted) and replaces the function
+  // call with the returned value. 
   execUpdates: function(template) {
     var result = template;
-    var re = /~([^~]+)~/g; // match only function definitions where variables have been replaced.
+    var re = /~(\w+\([^~]+\))~/g; // match only function definitions where variables have been replaced.
     var func;
     try {
       while ((func = re.exec(template)) != null) {
@@ -332,6 +340,7 @@ var formX =  {
     }
     return result;
   },
+  // Replace <>&'" with their respective XML entities
   escapeXML: function(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
   },
@@ -359,10 +368,11 @@ var formX =  {
     }
     return doc.documentElement.childNodes;
   },
+  // Replaces newlines and indenting in templates with the appropriate indenting
   formatFragment: function(elt, parent) {
     for (var i = 0; i < elt.childNodes.length; i ++) {
       if (elt.childNodes[i].nodeType == Node.TEXT_NODE && elt.childNodes[i].nodeValue.match(/\n\s*/)) {
-        elt.childNodes[i].nodeValue = elt.childNodes[i].nodeValue.replace(/\n(\s*)/g, "\n$1" + formX.getIndent(parent) + "  ");
+        elt.childNodes[i].nodeValue = elt.childNodes[i].nodeValue.replace(/\n(\s*)/g, "\n$1" + formX.getIndent(parent) + formX.mapping.indent);
       }
       if (elt.childNodes[i].nodeType == Node.ELEMENT_NODE) {
         formX.formatFragment(elt.childNodes[i], elt);
@@ -383,13 +393,13 @@ var formX =  {
           while (sibling.previousSibling && sibling.previousSibling.nodeType == Node.TEXT_NODE && sibling.previousSibling.nodeValue.match(/^\n\s*$/)) {
             node.removeChild(sibling.previousSibling);
           }
-          node.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(node)+"  "), sibling);
+          node.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(node)+formX.mapping.indent), sibling);
           node.insertBefore(elt, sibling);
         } else {
           while (node.lastChild && node.lastChild.nodeType == Node.TEXT_NODE && node.lastChild.nodeValue.match(/^\n\s*$/)) {
             node.removeChild(node.lastChild);
           }
-          node.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(node)+"  "));
+          node.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(node)+formX.mapping.indent));
           node.appendChild(elt);
         }
       } else if (newNodes[i].nodeType == Node.TEXT_NODE) {
@@ -399,11 +409,10 @@ var formX =  {
       }
     }
     if (sibling) {
-      node.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(node)+"  "), sibling);
+      node.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(node)+formX.mapping.indent), sibling);
     } else {
       node.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(node)));
     }
   }
-  
 };
 
