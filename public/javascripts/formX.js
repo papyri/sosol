@@ -59,7 +59,7 @@ var formX =  {
       if ((elts[i].multi || elts[i].children)) {
         //unset all bound form values
         for (var j=0; j < names.length; j++) { 
-          var fe = jQuery(":input[name=\""+formX.mapping.prefix+"_"+names[j]+"\"]");
+          var fe = jQuery(":input[name=\""+names[j]+"\"]");
           fe.each(function(ind, elt) {
             formX.setFormValue(elt, "");
           });
@@ -72,7 +72,7 @@ var formX =  {
             nc.insertAfter(jQuery("."+elts[i].name).eq(index - 1));
           }
           for (var j=0; j < names.length; j++) { 
-            var fe = jQuery(":input[name=\""+formX.mapping.prefix+"_"+names[j]+"\"]");
+            var fe = jQuery(":input[name=\""+names[j]+"\"]");
             if (elts[i].children) { //set form element groups
               var children = elts[i].children; 
               if (jQuery.isArray(children[j])) { // we have to apply a function to the source value
@@ -97,7 +97,7 @@ var formX =  {
                 }
               }
             } else { //set simple form elements
-              var fe = jQuery("*[name=\""+formX.mapping.prefix+"_"+names[j]+"\"]");
+              var fe = jQuery("*[name=\""+names[j]+"\"]");
               if (fe[index]) {
                 formX.setFormValue(fe[index], node.textContent);
               } 
@@ -107,7 +107,7 @@ var formX =  {
           index++;
         }
       } else { // simple form elements
-        var fe = jQuery("*[name=\""+formX.mapping.prefix+"_"+names[0]+"\"]");
+        var fe = jQuery("*[name=\""+names[0]+"\"]");
         if (fe[0] && node) {
           formX.setFormValue(fe[0], node.textContent);
         } else if (fe[0]) {
@@ -188,7 +188,7 @@ var formX =  {
         nc.each(function(index, elt) {
           var template = elts[i].tpl;
           for (var j=0; j < names.length; j++) {
-            var fe = jQuery(elt).find("*[name=\""+formX.mapping.prefix+"_"+names[j]+"\"]");
+            var fe = jQuery(elt).find("*[name=\"+names[j]+"\"]");
             if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
               template = template.replace("$"+names[j], formX.getFormValue(fe[0]));
             }
@@ -201,7 +201,7 @@ var formX =  {
         });
       } else {
         var template = elts[i].tpl;
-        var fe = jQuery("*[name=\""+formX.mapping.prefix+"_"+names[0]+"\"]"); 
+        var fe = jQuery("*[name=\""+names[0]+"\"]"); 
         if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
           template = formX.execUpdates(template.replace("$"+names[0], formX.getFormValue(fe[0])));
         }
@@ -340,9 +340,19 @@ var formX =  {
     }
     return result;
   },
-  // Replace <>&'" with their respective XML entities
+  // Replace <>&'" with their respective XML entities and escape any characters that might
+  // interfere with formX, namely []{}~
   escapeXML: function(text) {
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+    return text.replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;")
+      .replace(/\[/g, "&#x005B;")
+      .replace(/\]/g, "&#x005D;")
+      .replace(/\{/g, "&#x007B;")
+      .replace(/\]/g, "&#x005D;")
+      .replace(/\}/g, "&#x007E;")
   },
   // Figures out if the node is indented and returns the indent whitespace
   getIndent: function(node) {
