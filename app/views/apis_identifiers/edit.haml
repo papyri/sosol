@@ -32,11 +32,13 @@
           = render :partial => 'apis_identifiers/label', :locals => {:key => :support}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :support}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :condition}
-          = text_area_tag 'apis_identifier_condition', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_condition', nil, :class => 'observeChange apis apis_identifier_condition'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :summary}
-          = text_area_tag 'apis_identifier_summary', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_summary', nil, :class => 'observeChange apis apis_identifier_summary'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :generalNote}
           = render :partial => 'apis_identifiers/multi_textarea', :locals => {:key => :generalNote}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :localNote}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :localNote}
           .language
             = render :partial => 'apis_identifiers/label', :locals => {:key => :textLang}
             = render :partial => 'apis_identifiers/text_field', :locals => {:key => :textLang}
@@ -45,11 +47,13 @@
             = render :partial => 'apis_identifiers/label', :locals => {:key => :otherLangs}
             = render :partial => 'apis_identifiers/text_field', :locals => {:key => :otherLangs}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :lines}
-          = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange apis apis_identifier_lines'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :rectoVerso}
-          = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange apis apis_identifier_rectoVerso'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :handDesc}
-          = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis apis_identifier_handDesc'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :relatedNote}
+          = text_area_tag 'apis_identifier_relatedNote', nil, :class => 'observeChange apis apis_identifier_relatedNote'
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
         %h4.category.context
@@ -84,7 +88,7 @@
           = render :partial => 'apis_identifiers/label', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origPlace}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :provenance}
-          = text_area_tag 'apis_identifier_provenance', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_provenance', nil, :class => 'observeChange apis apis_identifier_provenance'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :associatedName}
           = render :partial => 'apis_identifiers/multi', :locals => {:key => :associatedName}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :keyword}
@@ -112,7 +116,7 @@
           %a{:name => 'Translation'}=I18n.t('apis.legend.translation')
         .editbox{:style => 'display: none;'}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :translation}
-          = text_area_tag 'apis_identifier_translation', nil, :class => 'observeChange apis'
+          = text_area_tag 'apis_identifier_translation', nil, :class => 'observeChange apis apis_identifier_translation'
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
         .controlPanel
@@ -122,7 +126,7 @@
 = javascript_include_tag 'edit_mask'
 = javascript_include_tag 'apis'
 = javascript_include_tag 'apis-mapping'
-= javascript_include_tag 'form-mapper'
+= javascript_include_tag 'formX'
 = javascript_include_tag 'confirm'
 - javascript_tag do
   formX.mapping = apis_map;

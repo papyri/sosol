@@ -1,0 +1,18 @@
+= stylesheet_link_tag 'meta'
+#main
+  .site.metaSite
+    #preview
+- javascript_tag do
+  var xml;
+  jQuery.get('xml', function(data) {
+  jQuery.ajax({
+  type: 'POST',
+  url: 'http://dev.papyri.info/epidocinator?xsl=papyri.info-fragment&coll=apis', 
+  data: data, 
+  success: function(result) {
+  jQuery('#preview').html(result);
+  },
+  contentType: 'text/plain',
+  processData: false
+  })}, 'text');
+  

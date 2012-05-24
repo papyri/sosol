@@ -2,11 +2,11 @@
   %ul#multiItems_citation
     %li.citation
       = render :partial => 'apis_identifiers/label', :locals => {:key => :citation}
-      = text_field_tag 'apis_identifier_citation', '', :class => 'observechange apis'
+      = text_field_tag 'apis_identifier_citation', '', :class => 'observechange apis apis_identifier_citation'
       = render :partial => 'apis_identifiers/label', :locals => {:key => :citeNote}
-      = text_area_tag 'apis_identifier_citeNote', '', :class => 'observechange apis'
+      = text_area_tag 'apis_identifier_citeNote', '', :class => 'observechange apis apis_identifier_citation'
       = render :partial => 'apis_identifiers/label', :locals => {:key => :citeType}
-      = check_box_tag 'apis_identifier_citeType', 'ddbdp', :class => 'observechange'
+      = check_box_tag 'apis_identifier_citeType', 'ddbdp', false, :class => 'observechange apis_identifier_citeType'
       %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
       %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_citation

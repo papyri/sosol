@@ -1,7 +1,7 @@
 .multi{:id => 'multi_' + key.to_s}
   %ul.items{:id => 'multiItems_' + key.to_s}
     %li{:class => key.to_s}
-      = text_area_tag 'apis_identifier_' + key.to_s, '', :class => 'observechange apis'
+      = text_area_tag 'apis_identifier_' + key.to_s, '', :class => 'observechange apis apis_identifier_' + key.to_s
       %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
       %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + key.to_s}

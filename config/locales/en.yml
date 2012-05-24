@@ -286,17 +286,19 @@ en:
       textLang: Text Languages (free text)
       mainLang: Main Language (ISO 639)
       otherLangs: Additional Languages (ISO 639)
-      support: Support
+      support: Support/Dimensions
       condition: Condition
       lines: Lines
       rectoVerso: Recto/Verso
       handDesc: Hands
+      localNote: Local Note
+      relatedNote: Related Material
       origDate: Date of Origin
       when: ISO Date of Origin
       notBefore: ISO Beginnning of Date Range
       notAfter: ISO End of Date Range
       origPlace: Place of Origin
-      provenance: Provenance
+      provenance: Custodial Note
       associatedName: Associated Names
       keyword: Keywords
       genre: Genre/Form

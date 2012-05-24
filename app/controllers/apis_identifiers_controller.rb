@@ -48,7 +48,7 @@ class ApisIdentifiersController < IdentifiersController
 
   def preview
     find_identifier
-    @identifier.get_epidoc_attributes
+    @is_editor_view = true
   end
 
   def generate_flash_message
