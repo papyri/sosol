@@ -1,0 +1,106 @@
+# attributes for elements
+#
+# :xpath (mandatory)
+# :multiple -> true | false (optional, defaults to false)
+# :optional -> true | false (optional, defaults to true)
+# :default -> default value as string, multiple entries reasonable do not support default values (optional)
+# :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional)
+# :children -> recursive element structure
+#
+# attributes for attributes
+#
+# :name (mandatory) 
+# :optional (same as above)
+# :default (same as above)
+# :pattern (same as above)
+
+:apis:
+  :metadata:
+    :title:
+      :xpath: /TEI/teiHeader/fileDesc/titleStmt/title
+    :author:
+      :xpath: /TEI/teiHeader/fileDesc/titleStmt/author
+    :inventoryNo:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno[@type='invNo']
+    :apisId:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='apisid']
+    :controlNo:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='controlno']
+    :tmNo:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='TM']
+      :pattern: /\A\d+\Z/
+    :summary:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/summary
+    :generalNote:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note
+      :multiple: true
+    :textLang:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/textLang
+      :attributes:
+        :mainLang: 
+          :name: mainLang
+        :otherLangs:
+          :name: otherLangs
+    :support:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support
+    :condition:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/condition/ab[@type='conservation']
+    :lines:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/ab[@type='lines']
+    :recto_verso:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/ab[@type='recto-verso']
+    :handDesc:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p
+    :origDate:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origDate
+      :attributes:
+        :notBefore:
+          :name: notBefore
+          :optional: true
+        :notAfter:
+          :name: notAfter
+          :optional: true
+        :when:
+          :name: when
+          :optional: true
+    :origPlace:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/origPlace
+    :associatedName:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/origin/persName[@type='asn']
+      :multiple: true
+    :provenance:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/p
+    :keyword:
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='#apis']/term
+      :children:
+        :genre:
+          :xpath: rs[@type='genre_form']
+      :multiple: true
+    :citations:
+     :xpath: /TEI/text/body/div[@type='bibliography' and @subtype='citations']/listBibl/bibl
+     :multiple: true
+     :attributes:
+       :citeType:
+         :name: type
+         :optional:
+         :default: "ddbdp"
+    :originalRecord:
+     :xpath: /TEI/text/body/div/p/ref
+     :attributes:
+       :target:
+         :name: target
+    :figures:
+       :xpath: /TEI/text/body/div[@type='figure']/p/figure
+       :children:
+         :figHead:
+           :xpath: head
+         :figDesc:
+           :xpath: figDesc
+         :graphic:
+           :xpath: graphic
+           :attributes:
+             :figUrl:
+               :name: url
+       :multiple: true
+    :translation:
+       :xpath:  /TEI/text/body/div[@type='translation']/ab

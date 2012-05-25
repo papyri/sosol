@@ -1,0 +1,224 @@
+ #main
+  = render :partial => 'identifiers/edit_bar'
+  .site.metaSite
+    = render :partial => 'identifiers/header'
+    %span.expandAll#expandAll=I18n.t('meta.label.expandAll')
+    %span.collapseAll#collapseAll=I18n.t('meta.label.collapseAll')
+
+    #edit
+      - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
+        = f.error_messages
+
+        %h4.category.general
+          %a{:name => 'General<'}=I18n.t('meta.legend.general')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :title }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :title }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :author }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :author }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :inventoryNo }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :inventoryNo }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :apisid }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :apisid }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :controlNo }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :controlNo }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :tmNo }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :tmNo }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :summary }
+          = text_area_tag 'apis_identifier[' + :summary.to_s + ']', @identifier[:summary], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :generalNote }
+          = text_area_tag 'apis_identifier[' + :generalNote.to_s + ']', @identifier[:generalNote], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :textLang }
+	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :textLang }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :mainLang }
+	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :mainLang }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :otherLangs }
+	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :otherLangs }
+
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+	%h4.category.object
+          %a{:name => 'Object<'}=I18n.t('meta.legend.object')
+        .editbox{:style => 'display: none;'}
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :support }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :support }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :condition }
+          = text_area_tag 'apis_identifier[' + :condition.to_s + ']', @identifier[:condition], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :lines }
+          = text_area_tag 'apis_identifier[' + :lines.to_s + ']', @identifier[:lines], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :recto_verso }
+          = text_area_tag 'apis_identifier[' + :recto_verso.to_s + ']', @identifier[:recto_verso], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :handDesc }
+          = text_area_tag 'apis_identifier[' + :handDesc.to_s + ']', @identifier[:handDesc], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+	%h4.category.context
+          %a{:name => 'Context<'}=I18n.t('meta.legend.context')
+        .editbox{:style => 'display: none;'}	
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :origDate }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :origDate }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :when }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :when }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :notBefore }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :notBefore }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :notAfter }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :notAfter }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :origPlace }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :origPlace }
+
+	  = render :partial => 'apis_identifiers/label', :locals => { :key => :provenance }
+          = text_area_tag 'apis_identifier[' + :provenance.to_s + ']', @identifier[:provenance], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :associatedName }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :associatedName }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :keyword }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :keyword }
+
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+        %h4.category.citations
+          %a{:name => 'Citations'}=I18n.t('meta.legend.citations')
+        .editbox{:style => 'display: none;'}
+          =# debug @identifier[:publicationExtra]
+          %label#publicationExtraFullTitle &nbsp;
+
+          %hr
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationTitle }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :publicationTitle }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' }
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :tmNo }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :tmNo }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.tmNo' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationVolume }
+          = text_field_tag 'apis_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = hidden_field_tag 'apis_identifier[publicationExtra][0][attributes][type]', :volume
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' }
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationFascicle }
+          = text_field_tag 'apis_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = hidden_field_tag 'apis_identifier[publicationExtra][1][attributes][type]', :fascicle
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationNumbers }
+          = text_field_tag 'apis_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = hidden_field_tag 'apis_identifier[publicationExtra][2][attributes][type]', :numbers
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationSide }
+          = text_field_tag 'apis_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = hidden_field_tag 'apis_identifier[publicationExtra][3][attributes][type]', :side
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
+          
+          %div{:style => 'float: none; clear: both; display: block;'}
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationExtra }
+          = render :partial => 'apis_identifiers/publicationExtra'
+
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+        %h4.category.collection=I18n.t('meta.legend.collection')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionPlaceName }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionPlaceName }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :collection }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collection }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collection' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionInventoryNumber }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionInventoryNumber }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionInventoryNumber' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionTemporaryNotes }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionTemporaryNotes }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryNotes' }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
+          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
+          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' }
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+        %h4.category.provenance
+          %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'apis_identifiers/provenance'
+          %div{:style => 'float: none; clear: both; display: block;'}
+          %span.quickSave=I18n.t('meta.label.quickSave')
+          %span#addAlternativePlace.addAlternativePlace=I18n.t('meta.label.addAlternativePlace')
+
+        %h4.category.reference
+          %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :figures}
+          = render :partial => 'apis_identifiers/figures'
+          
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :illustrations }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :illustrations }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :otherPublications }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :otherPublications }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :bl }
+          = render :partial => 'apis_identifiers/bl'
+          %div{:style => 'float: none; clear: both; display: block;'}
+          .quickSave=I18n.t('meta.label.quickSave')
+
+        %h4.category.translation
+          %a{:name => 'Translation'}=I18n.t('meta.legend.translation')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsDe }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsDe }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsEn }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsEn }
+         
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsEs }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsEs }
+         
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsFr }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsFr }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsIt }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsIt }
+
+          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsLa }
+          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsLa }
+          %div{:style => 'float: none; clear: both; display: block;'}      
+          .quickSave=I18n.t('meta.label.quickSave')    
+
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+        = hidden_field_tag 'expansionSet', flash[:expansionSet]
+
+= javascript_include_tag 'meta'
+= javascript_include_tag 'confirm'
