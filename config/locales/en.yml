@@ -119,6 +119,8 @@ en:
     category:
       papyrus: Papyri
       ostracon: Ostraca
+      corpora: Corpora
+      series: Series
 
   meta:
     legend:
