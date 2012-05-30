@@ -1,0 +1,14 @@
+%div#multi_figure
+  %ul#multiItems_figure
+    %li.figure
+      = render :partial => 'apis_identifiers/label', :locals => {:key => :figHead}
+      = text_field_tag 'apis_identifier_figHead', '', :class => 'observechange apis apis_identifier_figHead'
+      = render :partial => 'apis_identifiers/label', :locals => {:key => :figDesc}
+      = text_area_tag 'apis_identifier_figDesc', '', :class => 'observechange apis apis_identifier_figDesc'
+      = render :partial => 'apis_identifiers/label', :locals => {:key => :figUrl}
+      = text_field_tag 'apis_identifier_figUrl', '', :class => 'observechange apis apis_identifier_figUrl'
+      %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+      %span.move{:title => I18n.t('tooltip.multiMove')} o
+  %p.add#multiPlus_figure
+    %span{:onclick => "multiAddFigures()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+  = javascript_tag "Sortable.create('multiItems_figure', {overlap: 'horizontal', constraint: false, handle: 'move'});"

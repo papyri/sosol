@@ -109,7 +109,7 @@ class REXML::XPath
   #   - false otherwise
   # e.g. REXML::XPath.fully_qualified_and_simple?("/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@xml:c2='c2']/@c3") => true
   def self.fully_qualified_and_simple? xpath
-    matchdata = /(\A((\/\w+)(\[@[\w:]+='[\w\.\- ]+'\])*)+(\/@[\w:]+)?\Z)/.match(xpath)
+    matchdata = /(\A((\/\w+)(\[@[\w:]+='[^\]]+'\])*)+(\/@[\w:]+)?\Z)/.match(xpath)
     matchdata && (matchdata.to_s == xpath)
   end
 
@@ -134,7 +134,7 @@ end
 class REXML::Element
 
   public
-
+  
   # Passthrough to class method +bulldoze_path+
   # - *Args*  :
   #   - +xpath+ → desired xpath +STRING+
@@ -153,7 +153,6 @@ class REXML::Element
   # - *Returns* :
   #   - +REXML::Element+ tip object of the xpath
   def self.bulldoze_path element, xpath, value = nil
-
     if !REXML::XPath::fully_qualified_and_simple? xpath
       raise Exception.new 'invalid xpath for bulldozing (' + xpath + ')'
     end
@@ -166,12 +165,18 @@ class REXML::Element
       element = self.bulldoze_path element, element_xpath
       element.attributes[attribute_name] = attribute_value
       
-      return element
+      if element
+        return element
+      else
+        raise Exception.new "Unable to get element for #{xpath}"
+      end
     end
     
     head = nil
 
     if element.elements[xpath].class != REXML::Element
+      puts "unable to find xpath #{xpath}"
+      element.write
       lumps = REXML::XPath::breakXpathIntoLumps xpath
       lumps.each do |lump|
         if element.elements[lump[:xpath]].class == REXML::Element
@@ -187,8 +192,12 @@ class REXML::Element
     if head && value
       head.text = value
     end
-
-    return head
+    
+    if head
+      return head
+    else
+      raise Exception.new "Unable to create element from #{xpath}"
+    end
   end
 
 end

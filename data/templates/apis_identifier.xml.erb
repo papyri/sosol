@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title><% title %></title>
+            <author>unknown</author>
+         </titleStmt>
+         <publicationStmt>
+            <authority>APIS</authority>
+            <idno type="apisid"><% id %></idno>
+            <idno type="controlno"></idno>
+            <idno type="TM"></idno>
+         </publicationStmt>
+         <sourceDesc>
+            <msDesc>
+               <msIdentifier>
+                  <idno type="invno">Inventory #</idno>
+               </msIdentifier>
+               <msContents>
+                  <summary>summary</summary>
+                  <msItemStruct>
+                     <note type="general">general note</note>
+                  </msItemStruct>
+               </msContents>
+               <physDesc>
+                  <objectDesc>
+                     <supportDesc>
+                        <support>measurements</support>
+                        <condition>
+                           <ab type="conservation"></ab>
+                        </condition>
+                     </supportDesc>
+                     <layoutDesc>
+                        <layout>
+                           <ab type="lines"></ab>
+                           <ab type="recto-verso"></ab>
+                        </layout>
+                     </layoutDesc>
+                  </objectDesc>
+                  <handDesc>
+                     <p></p>
+                  </handDesc>
+               </physDesc>
+               <history>
+                  <origin>
+                     <origDate>unknown</origDate>
+                     <origPlace>unknown</origPlace>
+                  </origin>
+                  <provenance>
+                     <p>unknown</p>
+                  </provenance>
+               </history>
+            </msDesc>
+         </sourceDesc>
+      </fileDesc>
+      <profileDesc>
+         <langUsage>
+            <language ident="en">English</language>
+            <language ident="la">Latin</language>
+            <language ident="el">Greek</language>
+         </langUsage>
+         <textClass>
+            <keywords scheme="#apis">
+               <term>
+                  <rs type="genre_form">Documentary</rs>
+               </term>
+               <term>
+                  <rs type="genre_form">Papyrus</rs>
+               </term>
+            </keywords>
+         </textClass>
+      </profileDesc>
+      <revisionDesc>
+        <change when="<%= Time.now.xmlschema %>" who="http://papyri.info/editor">Automated creation from template</change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <div type="bibliography" subtype="citations">
+            <listBibl>
+               <bibl>citation</bibl>
+            </listBibl>
+         </div>
+      </body>
+   </text>
+</TEI>

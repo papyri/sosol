@@ -27,7 +27,12 @@ module NumbersRDF
       
       # Splits identifier into component array by slashes 
       def identifier_to_components(identifier)
-        identifier.split('/')
+        if identifier.index(';')  # this is a DDbDP identifier
+          i = identifier.rindex('/', identifier.index(';'))
+          return identifier[0,i].split('/').push(identifier[i+1..-1])
+        else
+          return identifier.split('/')
+        end
       end
       
       # Converts e.g. 'papyri.info/hgv/1234' to 'hgv/1234/rdf', where 'rdf' is the decorator.
