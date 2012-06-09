@@ -27,7 +27,7 @@
                   = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
       - if @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}.length > 0
         %li{ :class => params[:controller] == 'apis_identifers' ? 'active' : ''}
-          = link_to 'APIS', edit_apis_publication_path(@identifier.publication)
+          = link_to 'APIS (beta)', edit_apis_publication_path(@identifier.publication)
           - apisrecs = @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}
           - if apisrecs.length > 1
             %ul
