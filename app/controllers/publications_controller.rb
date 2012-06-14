@@ -89,7 +89,7 @@ class PublicationsController < ApplicationController
   
   def create_from_identifier
     if params[:id].blank?
-      flash[:error] = 'You must specify an identifier.'
+    flash[:error] = 'You must specify an identifier.'
       redirect_to dashboard_url
       return
     end
