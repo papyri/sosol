@@ -2,7 +2,7 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
+ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
@@ -105,6 +105,12 @@ Rails::Initializer.run do |config|
   
   SITE_NAME = 'SoSOL'
   SITE_FULL_NAME = 'Son of Suda On Line'
+  SITE_TAG_LINE = ''
+  SITE_LAYOUT = 'pn'
+  SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier'
+  SITE_CTS_INVENTORIES = ''
+  SITE_CATALOG_SEARCH = ""
+  SITE_USER_NAMESPACE = "http://papyri.info"
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
