@@ -1,4 +1,6 @@
 require 'tempfile'
+## BALMAS 2012-06-14 Changes in this module from vendor-supplied version are to include the 
+## patch at https://github.com/mojombo/grit/pull/37 to improve performance of blob.data
 module Grit
 
   class Git
@@ -245,38 +247,33 @@ module Grit
 
     def sh(command)
       ret, err = '', ''
+      max = self.class.git_max_size
       Open3.popen3(command) do |_, stdout, stderr|
         Timeout.timeout(self.class.git_timeout) do
-          while tmp = stdout.read(1024)
-            ret += tmp
-            if (@bytes_read += tmp.size) > self.class.git_max_size
-              bytes = @bytes_read
-              @bytes_read = 0
-              raise GitTimeout.new(command, bytes)
-            end
+          while tmp = stdout.read(8192)
+             ret << tmp
+             raise GitTimeout.new(command, ret.size) if ret.size > max
           end
         end
 
-        while tmp = stderr.read(1024)
-          err += tmp
+        while tmp = stderr.read(8192)
+          err << tmp
         end
       end
       [ret, err]
     rescue Timeout::Error, Grit::Git::GitTimeout
-      bytes = @bytes_read
-      @bytes_read = 0
-      raise GitTimeout.new(command, bytes)
+      raise GitTimeout.new(command, ret.size)
     end
 
     def wild_sh(command)
       ret, err = '', ''
       Open3.popen3(command) do |_, stdout, stderr|
-        while tmp = stdout.read(1024)
-          ret += tmp
+        while tmp = stdout.read(8192)
+          ret << tmp
         end
 
-        while tmp = stderr.read(1024)
-          err += tmp
+        while tmp = stderr.read(8192)
+          err << tmp
         end
       end
       [ret, err]

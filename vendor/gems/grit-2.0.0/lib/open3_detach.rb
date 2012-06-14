@@ -1,3 +1,5 @@
+## BALMAS 2012-06-14 Changes in this module from vendor-supplied version are to include the 
+## patch at https://github.com/mojombo/grit/pull/37 to improve performance of blob.data
 module Open3
   extend self
 

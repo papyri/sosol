@@ -214,3 +214,15 @@ publications.
     * rm -rf REPOSITORY_ROOT/boards/*.git REPOSITORY_ROOT/users/*.git
   * can also delete every model instance from the console with e.g. User.find(:all).each{|u| u.destroy} but this can be tedious if there are loose instances of other models that aren't dependent-destroyed
 
+= XSugar Standalone
+* to start a local XSugar standalone server:
+  * in vendor/plugins/rxsugar/src/standalone run mvn:install and mvn:jetty run
+  
+= Tomcat setup
+* jruby -S rake RAILS_ENV=production db:migrate
+* jruby -S rake RAILS_ENV=production db:structure:dump
+* CREATE DATABASE sosol
+* GRANT all on database sosol to 'sosoladmin'@'localhost' identified by 's0s0ladm1n'
+* GRANT all on database sosol to 'sosoladmin'@'%' identified by 's0s0ladm1n'
+* cat production_structure.sql | mysql -u sosoladmin -p sosol
+

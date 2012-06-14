@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.integer  "finalizer_user_id"
     t.text     "identifier_classes"
-    t.decimal  "rank"
+    t.integer  "rank"
     t.string   "friendly_name"
     t.integer  "community_id"
   end
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
-    t.decimal  "trigger"
+    t.decimal  "trigger",      :precision => 5, :scale => 2
     t.string   "choices"
     t.integer  "board_id"
     t.datetime "created_at"
@@ -93,11 +93,11 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :default => "text"
+    t.string   "docotype",                                  :default => "text", :null => false
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
-  add_index "docos", ["id", "docotype"], :name => "index_docos_on_id_and_docotype"
+  add_index "docos", ["docotype"], :name => "index_docos_on_id_and_docotype"
 
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"

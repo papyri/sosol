@@ -1,0 +1,17 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+
+    #edit
+      - form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
+        = f.error_messages
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier,  :original_commit_comment => @original_commit_comment, :where_at => :top }
+        = f.label "Passage"
+        = clippy "tei_passage_cts_identifier"
+        %br
+        = text_area_tag 'tei_passage_cts_identifier', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
+
+= javascript_include_tag 'confirm'

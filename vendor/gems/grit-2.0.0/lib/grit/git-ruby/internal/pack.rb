@@ -8,6 +8,8 @@
 #
 # provides native ruby access to git objects and pack files
 #
+## BALMAS 2012-06-14 Changes in this module from vendor-supplied version are to include the 
+## patch at https://github.com/mojombo/grit/pull/37 to improve performance of blob.data
 
 require 'zlib'
 require 'grit/git-ruby/internal/raw_object'
@@ -315,7 +317,7 @@ module Grit
               if indata.size == 0
                 raise PackFormatError, 'error reading pack data'
               end
-              outdata += zstr.inflate(indata)
+              outdata << zstr.inflate(indata)
             end
             if outdata.size > destsize
               raise PackFormatError, 'error reading pack data'
@@ -349,9 +351,9 @@ module Grit
               cp_size |= delta.getord(pos += 1) << 16 if c & 0x40 != 0
               cp_size = 0x10000 if cp_size == 0
               pos += 1
-              dest += base[cp_off,cp_size]
+              dest << base[cp_off,cp_size]
             elsif c != 0
-              dest += delta[pos,c]
+              dest << delta[pos,c]
               pos += c
             else
               raise PackFormatError, 'invalid delta data'

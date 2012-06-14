@@ -66,6 +66,15 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :hgv_meta_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :preview => :get }
+
+    # FORK CHANGE START
+    publication.resources :epi_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get }
+    publication.resources :epi_trans_cts_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :post }
+    publication.resources :tei_passage_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :get}
+    publication.resources :tei_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
+    publication.resources :tei_trans_cts_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
+    # FORK CHANGE END
+
     # publication.resources :identifiers
   end
 
@@ -108,6 +117,17 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'ajax_proxy',
     :action => 'proxy',
     :id => /papyri\.info.*/
+   
+  map.connect 'cts/editions/:inventory',
+     :controller => 'cts_proxy',
+     :action => 'editions',
+     :inventory => /[^\/]*/
+    
+  map.connect 'cts/translations/:inventory/:urn',
+     :controller => 'cts_proxy',
+     :action => 'translations',
+     :inventory => /[^\/]*/,
+     :urn => /[^\/]*/
   
   # The priority is based upon order of creation: first created -> highest priority.
 

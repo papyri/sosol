@@ -103,7 +103,8 @@ class Repository
       #   slower than I would like but still an order of magnitude
       #   faster (for an example see e.g.
       #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
-      data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
+      # data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
+      data = blob.nil? ? nil : blob.data
       return data
     rescue Grit::Git::GitTimeout
       self.class.increase_timeout

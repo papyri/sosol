@@ -1,0 +1,51 @@
+!!!
+%html{html_attrs('en')}
+  %head
+    = csrf_meta_tag
+    %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
+    %meta{ 'name' => 'robots', 'content' => 'noindex, nofollow' }
+    %title
+      == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
+    = stylesheet_link_tag 'editor'
+    = stylesheet_link_tag SITE_LAYOUT
+    = stylesheet_link_tag 'master_additions'
+    - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
+      = stylesheet_link_tag 'meta'
+    - if controller.controller_name == 'biblio_identifiers' and controller.action_name == 'edit'
+      = stylesheet_link_tag 'edit_mask'
+      = stylesheet_link_tag 'biblio'
+      // FORK CHANGE START (stylesheet)
+    - if controller.controller_name == 'user' and controller.action_name == 'user_dashboard'
+      = stylesheet_link_tag 'publication_list'
+      = javascript_include_tag"dashboard"
+      // FORK CHANGE END
+
+    = javascript_include_tag :defaults
+    %style(type="text/css")
+      :sass
+        #header
+          background: #{defined?(ENVIRONMENT_BACKGROUND) ? ENVIRONMENT_BACKGROUND : '#EAEAEA'}
+  %body
+    #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
+      .site
+        #logo
+          %h1= link_to SITE_NAME, root_url
+          %p= 'Powered by Son of Suda Online'
+        -#= render(:partial => 'master_articles/master_article_box')
+        -#= render(:partial => 'user/admin_box')
+        = render(:partial => 'user/user_box')
+    -if (@current_user && controller.action_name == 'user_dashboard')
+      #cts_selector 
+        = render(:partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications' })
+    = render :partial => "common/flash_all"
+    
+     
+    .content_body
+      .nav
+        %ul{ :class => 'nav right'} 
+          = render "cross_site/board_tabs"
+          = render "cross_site/user_tabs"
+      = yield
+      
+

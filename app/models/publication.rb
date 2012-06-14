@@ -114,9 +114,12 @@ class Publication < ActiveRecord::Base
       identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
     end
 
-    #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
-    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
-    #identifiers is now a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+    if identifiers.class == Array
+      #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
+      identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    end
+    # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  
+    # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
 
 
     #title is first identifier in list
@@ -128,20 +131,27 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier, BiblioIdentifier].each do |identifier_class|
-      if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
-        identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
+    SITE_IDENTIFIERS.split(",").each do |identifier_name|
+ 
+      ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
+      if identifiers.has_key?(ns)
+        identifiers[ns].each do |identifier_string|
+          identifier_class = Object.const_get(identifier_name)
           temp_id = identifier_class.new(:name => identifier_string)
-          # make sure we have a path on master before forking it for this publication
-          unless self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+          # make sure we have a path on master before forking it for this publication 
+          if (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
+            raise temp_id.to_path + " not found on master"
+          else
+            Rails.logger.info("adding identifier to pub #{temp_id}")
+            temp_title = temp_id.titleize
             self.identifiers << temp_id
-            if self.title == original_title
-              self.title = temp_id.titleize
+            if ( self.title == original_title )
+              self.title = temp_title
             end
-          end
-        end
-      end
-    end
+          end # if master blank?
+        end # do
+      end # if
+    end # do
 
     #reset the title to what the caller wants
     if original_was_nil
@@ -416,7 +426,6 @@ class Publication < ActiveRecord::Base
     new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
     
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
-    
     new_publication.save!
     
     # branch from master so we aren't just creating an empty branch
@@ -648,8 +657,13 @@ class Publication < ActiveRecord::Base
       self.set_origin_and_local_identifier_status("approved")
       
       #send emails
-      self.owner.send_status_emails("approved", self)
-     
+       self.owner.send_status_emails("approved", self)
+      
+	  # do result_action_approve for each identifier in the publication
+      identifiers.each do |identifier| 
+        identifier.result_action_approve
+      end
+      
       #set up for finalizing
       self.send_to_finalizer
       
@@ -1371,9 +1385,15 @@ class Publication < ActiveRecord::Base
     all_built_comments = []
     xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
+    # BMA TODO switched to by id, figure out if there was a reason for limiting to the title??
+    #@arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
+    #                                     FROM comments a, publications b 
+    #                                    WHERE b.title = '#{title}'
+    #                                      AND a.publication_id = b.id
+    #                                 ORDER BY a.created_at DESC")
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
                                          FROM comments a, publications b 
-                                        WHERE b.title = '#{title}'
+                                        WHERE a.publication_id = #{self.id}
                                           AND a.publication_id = b.id
                                      ORDER BY a.created_at DESC")
     # add comments hash to array
@@ -1461,6 +1481,7 @@ class Publication < ActiveRecord::Base
     has_meta = false
     has_text = false
     has_biblio = false
+
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
         has_biblio = true

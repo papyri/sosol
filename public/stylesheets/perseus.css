@@ -1,0 +1,80 @@
+body {
+	background-color: #F8F6F4;
+}
+.publication_list_holder table.results td {
+	padding: 5px;
+	font-size: smaller;
+	background-color:
+}
+
+.publication_list_holder table.results tr:first-child{
+	display:none;
+}
+
+.publication_list_holder table.results tr {
+	line-height: 1em !important;
+}
+
+.publication_list_holder table.results a {
+	padding: 0 !important;
+}
+
+.dashboard_feed {
+	font-size: smaller;
+	clear: both;
+	margin-top: 5em;
+}
+
+.dashboard_feed ul li {
+	list-style: none;	
+}
+
+#board_list li, .batch_box li {
+	list-style: none;
+}
+
+.batch_box {
+	font-size: smaller;
+}
+
+#board_list li a, .archive_link a, .batch_box a {
+	color: #4183C4 !important;
+    text-decoration: none !important;
+}
+
+li.editor_menu {
+	color: #4183C4;
+}
+
+.create {
+	clear:both;
+	margin: 2em;
+}
+
+#notice_error, #notice_notice {
+	clear:both;
+	margin: 2em;
+}
+
+#cts_selector {
+	clear: both;
+	float: left;
+	padding: .5em;
+	margin: 1em;
+	border: 1px solid black;
+}
+
+.cts_selector_hint {
+	font-size: smaller;
+	font-style: italic;
+}
+
+#create_translation {
+	display:inline;
+}
+
+.content_body {
+	clear:both;
+}
+
+
