@@ -49,11 +49,11 @@ class BiblioIdentifier < HGVIdentifier
     :no => "/bibl/biblScope[@type='no']",
     :col => "/bibl/biblScope[@type='col']",
     :tome => "/bibl/biblScope[@type='tome']",
-    :link => "/bibl/ptr/@target", # !!!
     :fasc => "/bibl/biblScope[@type='fasc']",
     :reedition => "/bibl/relatedItem[@type='reedition'][@subtype='reference']/bibl[@type='publication'][@subtype='other']",
     
     :note => "/bibl/note[@resp]",
+    :link => "/bibl/ptr/@target",
     
     :containerList => "/bibl/relatedItem[@type='appearsIn']/bibl",
     :issue => "/bibl/biblScope[@type='issue']",
