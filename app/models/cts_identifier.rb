@@ -12,7 +12,6 @@ class CTSIdentifier < Identifier
   
   def titleize
     title = nil
-    Rails.logger.info("Looking for #{self.class::TEMPORARY_COLLECTION}")
     if (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
        title = self.class::TEMPORARY_TITLE
     else  
@@ -55,16 +54,18 @@ class CTSIdentifier < Identifier
     end
     Rails.logger.info("adding identifier to pub #{temp_id}")
     # make sure we're not already editing this
-    exists = self.find_by_name(document_path)
-    if (exists.nil?)
+    # TODO this is not correct - it needs to look only at those owned by the user
+    # this looks up the master publications
+    #exists = self.find_by_name(document_path)
+    #if (exists.nil?)
       temp_id.publication = publication 
       temp_id.save!
       return temp_id
-    else
-      raise "#{temp_id.name} is already in your edit list."
-    end
+    #else
+    #  raise "#{temp_id.name} is already in your edit list."
+    #end
   end
-
+  
   def self.inventories_hash
     return CTS::CTSLib.getInventoriesHash()
   end
@@ -143,7 +144,11 @@ class CTSIdentifier < Identifier
   def inventory
     return self.to_components[0]
   end
-    
+  
+  def related_inventory 
+    self.publication.identifiers.select{|i| (i.class == CTSInventoryIdentifier)}.last
+  end
+  
   def to_urn_components
     temp_components = self.to_components
     # should give us, e.g.

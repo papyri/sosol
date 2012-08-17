@@ -8,11 +8,10 @@ class CtsPublicationsController < PublicationsController
   ###
   def create_from_selector
     edition = params[:edition_urn]
-    # if no edition, just use a fake one for use in path processing
     if (edition.nil?)
+      # if no edition, just use a fake one for use in path processing
       edition = "urn:cts:" + params[:work_urn] + ".tempedition"
-    end
-    Rails.logger.info("Trying to create edition #{edition}")
+    end    
     collection = params[:CTSIdentifierCollectionSelect]
     identifier = collection + "/" + CTS::CTSLib.pathForUrn(edition,'edition')
     identifier_class = Object.const_get(CTS::CTSLib.getIdentifierClassName(identifier))
@@ -40,21 +39,21 @@ class CtsPublicationsController < PublicationsController
       expire_publication_cache
       redirect_to @publication
     
-    # proceed to create from existing identifier file -- only if we have an edition
+    # proceed to create from existing identifier file -- only if we have an identifier
     elsif (params[:edition_urn])
       related_identifiers = [identifier]
       conflicting_identifiers = []
   
       # loop through related identifiers looking for conflicts
       related_identifiers.each do |relid|
-        possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-        actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
-        conflicting_identifiers += actual_conflicts
-      end # end loop through related identifiers
+          possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+          actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+          conflicting_identifiers += actual_conflicts
+        end # end loop through related identifiers
   
-      if conflicting_identifiers.length > 0
-        Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
-        conflicting_publication = conflicting_identifiers.first.publication
+        if conflicting_identifiers.length > 0
+          Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
+          conflicting_publication = conflicting_identifiers.first.publication
         conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
   
         if conflicting_publications.length > 1
@@ -91,10 +90,30 @@ class CtsPublicationsController < PublicationsController
       @publication.creator = @current_user
       @publication.populate_identifiers_from_identifiers(
             identifiers_hash,nil)
-  
+                   
       if @publication.save!
         @publication.branch_from_master
-  
+        
+        # create the temporary CTS citation and inventory metadata records
+        # we can't do this until the publication has already been branched from the master 
+        # because they don't exist in the master git repo 
+        # and are only carried along with the publication until it is finalized
+        begin
+          # first the inventory record
+          CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,edition)
+          # now the citation identifier 
+          if params[:citation_urn]
+            # TODO this needs to support direction creation from a translation as well as an edition?
+            citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn],'edition')
+          end
+        rescue Exception => e
+          @publication.destroy
+          flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+          redirect_to dashboard_url
+          return
+        end
+
+
         # need to remove repeat against publication model
         e = Event.new
         e.category = "started editing"

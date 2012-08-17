@@ -47,22 +47,6 @@ class EpiTransCtsIdentifiersController < IdentifiersController
                                  :action => :edit) and return
   end
   
-  def add_new_lang_to_xml
-  # raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
-   
-  	find_identifier
-  	#must prevent existing lang from being wiped out
-    if @identifier.translation_already_in_language?(params[:lang])
-      flash[:warning] = "Language is already present in translation."
-      redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
-      return
-    end
-    @identifier.stub_text_structure(params[:lang])
-    @identifier.save
-    redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
-  end  
-
-
   
   def update
     find_identifier

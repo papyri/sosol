@@ -1,4 +1,5 @@
 class EpiCTSIdentifier < CTSIdentifier   
+  require 'json'
   
   PATH_PREFIX = 'CTS_XML_EpiDoc'
   
@@ -10,7 +11,6 @@ class EpiCTSIdentifier < CTSIdentifier
   
     
   def before_commit(content)
-    Rails.logger.info("Before commit content =" + content)
     EpiCTSIdentifier.preprocess(content)
   end
   
@@ -114,6 +114,15 @@ class EpiCTSIdentifier < CTSIdentifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt pn start-div-portlet_perseus.xsl})),
         parameters)
+  end
+  
+  def facs parameters = {}, xsl=nil
+    links = JSON.parse(
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.xml_content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          xsl ? xsl : %w{data xslt cts facs.xsl})),
+          parameters))
   end
 
 end

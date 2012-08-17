@@ -70,9 +70,11 @@ ActionController::Routing::Routes.draw do |map|
     # FORK CHANGE START
     publication.resources :epi_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get }
     publication.resources :epi_trans_cts_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :post }
-    publication.resources :tei_passage_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :get}
-    publication.resources :tei_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
+    publication.resources :citation_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :get}
+    publication.resources :tei_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get, :link_citation => :get }
     publication.resources :tei_trans_cts_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
+    publication.resources :cts_inventory_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
+
     # FORK CHANGE END
 
     # publication.resources :identifiers
@@ -126,6 +128,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'cts/translations/:inventory/:urn',
      :controller => 'cts_proxy',
      :action => 'translations',
+     :inventory => /[^\/]*/,
+     :urn => /[^\/]*/
+ 
+ map.connect 'cts/citations/:inventory/:urn',
+     :controller => 'cts_proxy',
+     :action => 'citations',
      :inventory => /[^\/]*/,
      :urn => /[^\/]*/
   

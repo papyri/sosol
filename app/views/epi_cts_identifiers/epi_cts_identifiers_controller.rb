@@ -12,7 +12,6 @@ class EpiCtsIdentifiersController < IdentifiersController
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
-    @identifier[:facs] = @identifier.facs
     render :template => 'epi_cts_identifiers/editxml'
   end
   

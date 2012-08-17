@@ -49,18 +49,19 @@ module CTS
         document_path_parts << a_pubtype
         # edition and exemplar
         document_path_parts << cite_parts[2..last_part].join(".")
-        unless passage.nil? 
+        # only include the passage if we have one 
+        unless passage.nil?
           document_path_parts << passage
         end
         return document_path_parts.join('/')        
       end
       
-      def workTitleForUrn(a_inventory,a_urn)
+      def workTitleForUrn(doc,a_urn)
         urn = urnObj(a_urn)
-        response = Net::HTTP.get_response(
-          URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
+        #response = Net::HTTP.get_response(
+        #  URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(doc),
           JRubyXML.stream_from_file(File.join(RAILS_ROOT,
               %w{data xslt cts work_title.xsl})), 
               :textgroup => urn.getTextGroup(true), :work => urn.getWork(true))
@@ -115,7 +116,7 @@ module CTS
           if (@inventories_hash.has_key?(components[0]))
             pub_type = ''
             if (components[5])
-              pub_type='Passage'
+              pub_type='Citation'
             elsif (components[3] == 'translation')
               pub_type='Trans'  
             end
@@ -128,7 +129,10 @@ module CTS
       def getIdentifierKey(a_identifier)
           getInventoriesHash()
           components = a_identifier.split('/')
-          if (@inventories_hash.has_key?(components[0]))
+          id_type = nil
+          if (components[3] == 'textinventory')
+            id_type = 'CTSInventoryIdentifier'
+          elsif (@inventories_hash.has_key?(components[0]))
             pub_type = ''
             if (components[5])
               pub_type='Passage'
@@ -136,8 +140,10 @@ module CTS
               pub_type='Trans'  
             end
             id_type = @inventories_hash.fetch(components[0]) + pub_type + "CTSIdentifier"
-            return id_type.constantize::IDENTIFIER_NAMESPACE
           end  
+          unless id_type.nil?
+            return id_type.constantize::IDENTIFIER_NAMESPACE
+          end
           return nil
       end
        
@@ -163,10 +169,13 @@ module CTS
         return results
       end
       
-      def proxyGetValidReff(a_inventory,a_urn,a_level)
-        if (a_inventory.nil? || a_inventory == '') 
-          a_inventory = 'perseussosol'
-        end    
+      def proxyGetCapabilities(a_inventory)
+         response = Net::HTTP.get_response(
+          URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
+        return response.body
+      end
+      
+      def proxyGetValidReff(a_inventory,a_urn,a_level)  
         uri = URI.parse("#{EXIST_HELPER_REPO}request=GetValidReff&inv=#{a_inventory}&urn=#{a_urn}&level=#{a_level}")
         Rails.logger.info(uri.request_uri)
         response = Net::HTTP.start(uri.host, uri.port) do |http|
@@ -182,15 +191,19 @@ module CTS
            nil
         end
       end
-      
+            
       def proxyGetPassage(a_inventory,a_document,a_urn,a_uuid)
           passage = ''
-         
+          inventory = getInventory(a_inventory)
+          Rails.logger.info("Putting inventory for #{a_urn} at #{a_uuid}")
           # post inventory and get path for file put 
+          # TODO CTS request should be PutInventory
+          # TODO CTS extensions should be at different base URI (e.g. CTS-X)
            uri = URI.parse("#{EXIST_HELPER_REPO}request=PutCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+           Rails.logger.info("Request=#{uri}")
            response = Net::HTTP.start(uri.host, uri.port) do |http|
                 headers = {'Content-Type' => 'text/xml; charset=utf-8'}
-                http.send_request('POST',uri.request_uri,a_inventory,headers)
+                http.send_request('POST',uri.request_uri,inventory,headers)
            end
            if (response.code == '200')
             Rails.logger.info("Response=#{response.body}")
@@ -199,6 +212,7 @@ module CTS
                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
                    %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
+              # inventory put succeeded, now put the document itself  
               pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
               Rails.logger.info("Put Request #{pathUri}") 
               put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|

@@ -1481,6 +1481,9 @@ class Publication < ActiveRecord::Base
     has_meta = false
     has_text = false
     has_biblio = false
+    has_cts = false
+    has_tei_cts = false
+    has_epi_cts = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1491,6 +1494,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s == "DDBIdentifier"
        has_text = true
+      end
+      if i.class.to_s =~ /CTSIdentifier/
+        has_cts = true
       end
     end
     if !has_text
@@ -1506,6 +1512,10 @@ class Publication < ActiveRecord::Base
     creatable_identifiers.delete("BiblioIdentifier")
     # Not allowed to create any other record in association with a BiblioIdentifier publication
     if has_biblio
+      creatable_identifiers = []
+    end
+    # Not allowed (yet) to create any other record in association with a CTSIdentifier publication
+    if has_cts
       creatable_identifiers = []
     end
     

@@ -1,39 +1,35 @@
-class TeiTeiPassageCTSIdentifiersController < IdentifiersController
-  layout 'site'
+class CitationCtsIdentifiersController < IdentifiersController
+  layout SITE_LAYOUT
   before_filter :authorize
   
-  # GET /publications/1/tei_passage_cts_identifiers/1/edit
   def edit
     redirect_to :action =>"editxml",:id=>params[:id]
   end
   
-  # present valid passage refs
   def create
-    if (! params[:start_passage_select_1] || params[:start_passage_select_1].strip == "")
+    startP = params[:start_passage].strip
+    endP =  params[:end_passage].strip
+    if (startP == '')
       flash[:notice] = "Supply a valid passage or passage range"
-      render :template => 'tei_passage_cts_identifiers/create'
+      render(:template => 'citation_cts_identifiers/create',
+             :locals => {:edition => params[:edition],
+                        :collection => params[:collection],
+                        :citeinfo => params[:citeinfo],
+                        :controller => params[:controller],
+                        :publication_id => params[:publication_id], 
+                        :pubtype => params[:pubtype]})
       return
     else
-      Rails.logger.info(params.inspect)
-      start_level = params[:start_passage_level]
-      end_level = params[:end_passage_level]
-      if (! params["start_passage_select_#{start_level}"] || params["start_passage_select_#{start_level}"].strip == "")
-        flash[:notice] = "Select a value for all available passage parts."
-        render :template => 'tei_passage_cts_identifiers/create'
-        return
+      if (endP != '') 
+          endP =  '-' + endP
       end
-      start_passage_urn = params["start_passage_select_#{start_level}"].split('|')[1]
-      end_passage_urn = ''
-      if (params["end_passage_select_#{end_level}"] && params[:end_passage_select_1].strip != "")
-        end_passage_urn = '-' + (params["end_passage_select_#{start_level}"].split('|')[1]).split(':').last
-      end
-      passage_urn = start_passage_urn + end_passage_urn
+      passage_urn = params[:publication_urn] + ':' + startP + endP
       publication_identifier = params[:publication_id]
       @publication = Publication.find(params[:publication_id])  
       conflicts = []  
       for pubid in @publication.identifiers do 
         
-        if pubid.urn_attribute == passage_urn
+        if (pubid.kind_of?(CitationCTSIdentifier) && pubid.urn_attribute == passage_urn)
           conflicts << pubid
         end
       end 
@@ -45,7 +41,7 @@ class TeiTeiPassageCTSIdentifiersController < IdentifiersController
         return
       end
       
-      @identifier = TeiPassageCTSIdentifier.new_from_template(@publication,passage_urn)
+      @identifier = CitationCTSIdentifier.new_from_template(@publication,params[:collection],passage_urn, params[:pubtype])
       flash[:notice] = "File created."
       expire_publication_cache
       redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -53,7 +49,6 @@ class TeiTeiPassageCTSIdentifiersController < IdentifiersController
     end                      
   end
   
-  # PUT /publications/1/tei_passage_cts_identifiers/1/update
   def update
     find_identifier
     @original_commit_comment = ''
@@ -62,7 +57,7 @@ class TeiTeiPassageCTSIdentifiersController < IdentifiersController
       params[:comment] = params[:commenttop]
     end
     begin
-      commit_sha = @identifier.set_xml_content(params[:tei_passage_cts_identifier],
+      commit_sha = @identifier.set_xml_content(params[:citation_cts_identifier],
                                     params[:comment])
       if params[:comment] != nil && params[:comment].strip != ""
           @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
@@ -79,12 +74,11 @@ class TeiTeiPassageCTSIdentifiersController < IdentifiersController
       rescue JRubyXML::ParseError => parse_error
         flash.now[:error] = parse_error.to_str + 
           ".  This message is because the XML did not pass Relax NG validation.  This file was NOT SAVED. "
-        render :template => 'tei_passage_cts_identifiers/edit'
+        render :template => 'citation_cts_identifiers/edit'
       end #begin
   end
    
     
-  # GET /publications/1/tei_passage_cts_identifiers/1/preview
   def preview
     find_identifier
     
@@ -99,7 +93,7 @@ class TeiTeiPassageCTSIdentifiersController < IdentifiersController
   
   protected
     def find_identifier
-      @identifier = TeiPassageCTSIdentifier.find(params[:id])
+      @identifier = CitationCTSIdentifier.find(params[:id])
     end
   
     def find_publication_and_identifier

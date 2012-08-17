@@ -1,8 +1,8 @@
-class TeiPassageCTSIdentifier < CTSIdentifier   
+class CitationCTSIdentifier < CTSIdentifier   
   
-  PATH_PREFIX = 'CTS_XML_PASSAGES'
-  IDENTIFIER_NAMESPACE = 'passage'
-  FRIENDLY_NAME = "Passage Text"
+  PATH_PREFIX = 'CTS_XML_CITATIONS'
+  IDENTIFIER_NAMESPACE = 'citation'
+  FRIENDLY_NAME = "Citation Text"
   EDIT_ARTIFACT = true
   
   XML_VALIDATOR = JRubyXML::TEIAPSGValidator
@@ -12,27 +12,29 @@ class TeiPassageCTSIdentifier < CTSIdentifier
   end
   
   
-  def self.new_from_template(publication,passage_urn)    
-    # TODO we need to pull the pubtype from the parent publication
-    new_identifier = self.new(:name => CTS::CTSLib.pathForUrn(passage_urn,'edition'))
+  def self.new_from_template(publication,a_inventory,passage_urn,pubtype)    
+    document_path = a_inventory + "/" + CTS::CTSLib.pathForUrn(passage_urn,pubtype)
+    new_identifier = self.new(:name => document_path)
     new_identifier.publication = publication
+    # TODO look at reason for int param to getPassage --- seems wrong
+    new_identifier.title = CTS::CTSLib.urnObj("urn:cts:#{passage_urn}").getPassage(100)
     new_identifier.save!
-    initial_content = new_identifier.file_template
-    new_identifier.set_xml_content(initial_content, :comment => "dummy passage")
-    commit_sha = new_identifier.get_recent_commit_sha()
-    Rails.logger.info("UUID for passage #{commit_sha}")
-    # TODO inventory should be carried along in identifier from creation as part of the path
-    inventory = new_identifier.related_text.inventory
-    document = new_identifier.related_text.content
-    passage_xml = CTS::CTSLib.proxyGetPassage(inventory,document,new_identifier.urn_attribute,commit_sha) 
-    Rails.logger.info("Passage XML:#{passage_xml}")
-    new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")    
-    return new_identifier
+    begin
+      uuid = publication.id.to_s + passage_urn.gsub(':','_')
+      inventory = new_identifier.related_text.inventory
+      document = new_identifier.related_text.content
+      passage_xml = CTS::CTSLib.proxyGetPassage(inventory,document,new_identifier.urn_attribute,uuid) 
+      new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
+      return new_identifier
+    rescue Exception => e
+      new_identifier.destroy
+      raise e
+    end
   end
     
   def before_commit(content)
     #begin
-    #  TeiPassageCTSIdentifier.preprocess(content)
+    #  TeiCitationCTSIdentifier.preprocess(content)
     #rescue
     #  raise "Invalid Passage XML"
     #else

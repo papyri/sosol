@@ -12,9 +12,9 @@
     </xsl:template>
     
     <xsl:template match="cts:urn">
-        <!-- TODO we need to do pipe separated because epi urns have commas -->
         <xsl:if test=". != $requestUrn">
-            <xsl:value-of select="concat(translate(.,',','__'),',')"/>
+        	<xsl:if test="preceding-sibling::cts:urn">|</xsl:if>
+            <xsl:value-of select="."/>
         </xsl:if>  
     </xsl:template>
     

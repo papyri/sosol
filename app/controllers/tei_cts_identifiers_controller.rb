@@ -1,10 +1,10 @@
 class TeiCtsIdentifiersController < IdentifiersController
-  layout 'site'
+  layout SITE_LAYOUT
   before_filter :authorize
   
   ## TODO 
   # we to offer the following options:
-  # 1. select a passage or passage-range to edit -> results in creation of one or more TeiPassageCTSIdentifier obj
+  # 1. select a citation or citations to edit -> results in creation of one or more TeiCitationCTSIdentifier obj
   # 2. download/export full XML of outermost tei:text element [ maybe limited to a specific role? ]
   # 3. upload/import full XML of outermost tei:text element [ maybe limited to a specific role? ]
   # 3. edit/update commentary (teiHeader) 
@@ -12,31 +12,59 @@ class TeiCtsIdentifiersController < IdentifiersController
   # 5. add a CITE index 
   # 6. update a CITE index 
   
-  # Ideally TeiPassageCTSIdentifier Interface would offer options to create stand-off markup in the form of
+  # Ideally TeiCitationCTSIdentifier Interface would offer options to create stand-off markup in the form of
   # CITE index entries, for example:
   #    from within a select a range of XML to create an index entry from
   #    e.g. this range is a quotation, this range is a named entity, this range maps to image coordinates X 
   
   # so related identifier types would be:
-  ## TeiPassageCTSIdentifier
+  ## TeiCitationCTSIdentifier
   ## TeiTransCTSIdentifier
   ## CITEIndexIdentifier
   
   def edit
     find_identifier
     # Redirecting to Publication because don't want to immediately show them
-    # the full XML - instead from Publication they can select a passage, etc.
+    # the full XML - instead from Publication they can select a citation, etc.
     publication = @identifier.publication.id
      redirect_to polymorphic_path([@identifier.publication],
                                      :action => :show)
   end
   
-  # GET /publications/1/tei_passage_cts_identifiers/1/edit
   def exportxml
     find_identifier
   end
   
-  # PUT /publications/1/tei_passage_cts_identifiers/1/update
+  def create_from_selector
+    publication = Publication.find(params[:publication_id])
+    edition = params[:edition_urn]
+    collection = params[:CTSIdentifierCollectionSelect]
+    
+    @identifier = TeiCTSIdentifier.new_from_template(publication,collection,edition,'edition',nil)
+    
+    flash[:notice] = "File created."
+    expire_publication_cache
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit) and return
+  end
+  
+   def link_translation
+    find_identifier
+    render(:template => 'tei_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'tei_trans_cts_identifiers',:publication_id => @identifier.publication.id, :emend => :showemend})
+   end
+   
+   def link_citation
+     find_identifier
+     render(:template => 'citation_cts_identifiers/create',
+            :locals => {:edition => @identifier.urn_attribute,
+                        :collection => @identifier.inventory,
+                        :citeinfo => @identifier.related_inventory.parse_inventory(),
+                        :controller => 'citation_cts_identifiers',
+                        :publication_id => @identifier.publication.id, 
+                        :pubtype => 'edition'})
+
+   end
+  
   def update
     find_identifier
     @original_commit_comment = ''
@@ -67,7 +95,6 @@ class TeiCtsIdentifiersController < IdentifiersController
   end
    
     
-  # GET /publications/1/tei_passage_cts_identifiers/1/preview
   def preview
     find_identifier
     

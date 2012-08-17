@@ -1,51 +1,23 @@
 class TeiTransCTSIdentifier < TeiCTSIdentifier   
   
   PATH_PREFIX = 'CTS_XML_TEI'
- 
   FRIENDLY_NAME = "Translation"
-  
-  IDENTIFIER_NAMESPACE = 'texts_translation'
-  
-  TEMPORARY_COLLECTION = 'philo'
-  
+  TEMPORARY_COLLECTION = 'TempTrans'
+  TEMPORARY_TITLE = 'New Translation'
+  FRIENDLY_NAME = "Inscription Translation"
+  IDENTIFIER_NAMESPACE = 'teia_translation'
   XML_VALIDATOR = JRubyXML::TEIAValidator
    
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_translation
   
-  def self.next_temporary_identifier(publication,lang)
-    tempid = publication.identifiers.select{|i| i.class == TeiCTSIdentifier}.last.clone
-    oldcomponents = tempid.to_components
-    # TODO fix this to deal properly with editions and exemplars
-    # i.e. differentiate between translation of edition, translation of exemplar, translation of work
-    newcomponents = [oldcomponents.slice(0..1),'translation']
-    edition = self::TEMPORARY_COLLECTION + "-" + lang
-    latest = self.find(:all,
-                       :conditions => ["name like ?", [newcomponents,edition].join("/") + "%"],
-                       :order => "name DESC",
-                       :limit => 1).first
-    if latest.nil?
-      # no constructed id's for this year/class
-      document_number = 1
-    else
-      Rails.logger.info("------Last component" + latest.to_components.last.split(/-/).last )
-      document_number = latest.to_components.last.split(/-/).last.to_i + 1
-    end
-    newcomponents << "#{edition}-#{document_number}"
-    Rails.logger.info("Next identifier " + newcomponents.join("/"))
-    return newcomponents.join("/")
-  end
-  
-  def self.new_from_template(publication)
-    # TODO get language from input
-    lang = 'en'
-    new_identifier = self.new(:name => self.next_temporary_identifier(publication,lang))
+  def self.new_from_template(publication,inventory,urn,pubtype,lang)
+    new_identifier = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
     new_identifier.publication = publication
     new_identifier.save!    
-    new_identifier.stub_text_structure(lang,new_identifier.id_attribute)
+    new_identifier.stub_text_structure(lang,new_identifier.id_attribute)     
     return new_identifier
   end
-    
   
   def translation_already_in_language?(lang)
     lang_path = '/TEI/text/body/div[@type = "translation" and @xml:lang = "' + lang + '"]'

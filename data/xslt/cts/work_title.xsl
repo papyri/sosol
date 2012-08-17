@@ -19,7 +19,7 @@
     </xsl:template>
    
     <xsl:template match="cts:textgroup">
-       <xsl:if test="@projid=$textgroup">
+       <xsl:if test="normalize-space(@projid)=normalize-space($textgroup)">
           <xsl:value-of select="translate(cts:groupname,':',',')"/>, <xsl:apply-templates select="cts:work"/>
        </xsl:if>
     </xsl:template>

@@ -1,6 +1,9 @@
 
-= link_to 'XML', exportxml_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
+= link_to 'XML', editxml_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
 = link_to 'Preview', preview_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
-= link_to 'Select Passage', create_publication_tei_passage_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
+- if @identifier.mutable?
+  = link_to 'Select Citation', link_citation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
+  = link_to 'Add Translation', link_translation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
+%br
 
 %br

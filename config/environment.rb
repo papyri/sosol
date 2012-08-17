@@ -103,14 +103,14 @@ Rails::Initializer.run do |config|
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
   
-  SITE_NAME = 'SoSOL'
-  SITE_FULL_NAME = 'Son of Suda On Line'
-  SITE_TAG_LINE = ''
-  SITE_LAYOUT = 'pn'
-  SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier'
-  SITE_CTS_INVENTORIES = ''
-  SITE_CATALOG_SEARCH = ""
-  SITE_USER_NAMESPACE = "http://papyri.info"
+SITE_NAME = 'Philologist'
+SITE_FULL_NAME = 'Philologist'
+SITE_TAG_LINE = 'powered by Son of Suda Online'
+SITE_LAYOUT = 'perseus'
+SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
+SITE_CATALOG_SEARCH = "View In Catalog|http://catalog.perseus.tufts.edu/perseus.org/xc/search/"
+SITE_USER_NAMESPACE = "http://data.perseus.org"
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')

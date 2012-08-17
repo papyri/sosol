@@ -1,0 +1,4 @@
+.create
+  %h3 Edit Citation:
+  %p
+    = render(:partial => "citation_cts_identifiers/create_from_cts_urn_form", :locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:citeinfo => citeinfo, :controller => 'citation_cts_identifiers',:publication_id => @identifier.publication.id, :pubtype => 'edition'})

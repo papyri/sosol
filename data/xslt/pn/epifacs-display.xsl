@@ -79,15 +79,6 @@
         <!-- Found in htm-tpl-nav.xsl -->
         <!-- xsl:call-template name="topNavigation"/-->
 
-        
-        <!-- Heading for a ddb style file -->
-        <xsl:if test="$leiden-style = 'ddbdp'">
-          <h2 class="apis-portal-title">Full Text: 
-            <xsl:value-of select="TEI/@id"/>
-          </h2>
-        </xsl:if>
-
-
         <!-- Found in htm-tpl-metadata.xsl -->
         <!-- Would need to change once combined -->
         <xsl:if test="starts-with(//TEI/@id, 'hgv')">
@@ -103,5 +94,10 @@
   </xsl:template>
   <xsl:template name="metadata"></xsl:template>
 
+  <xsl:template match="*:request"/>
+    
+  <xsl:template match="*:w[@rend]">
+      <span class="{@rend}" urn="urn:cts:epigraphy.perseus.org:igvii.2543-2545.perseus-grc1:2543.1:Σκῆνος[1]"><xsl:value-of select="."/></span>
+  </xsl:template>
 
 </xsl:stylesheet>

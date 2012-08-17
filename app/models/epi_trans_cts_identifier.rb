@@ -12,12 +12,6 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
    
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_translation
-
-  
-  def is_valid?(content = nil)
-    #FIXME added here since trans is not P5 validable yet
-    return true
-  end
   
   def self.new_from_template(publication,inventory,urn,pubtype,lang)
     new_identifier = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))

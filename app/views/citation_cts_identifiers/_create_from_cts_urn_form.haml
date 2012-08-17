@@ -1,0 +1,35 @@
+:javascript
+  
+  function merge_cites() {
+    var start =  $$('input[class="cite_from"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
+    if (start.length == 0 ) {
+      alert("Specify at least a starting citation");
+      return false;
+    }
+    var end = $$('input[class="cite_to"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
+    $('start_passage').value=start.join(".");
+    $('end_passage').value=end.join(".");
+    return true;
+  }
+  
+
+- form_for :citation_cts_identifer, Identifier.new, :url => { :controller => "citation_cts_identifiers", :action => "create"}, :html => {:onsubmit => 'return merge_cites();'} do |form|
+  = hidden_field_tag 'start_passage'
+  = hidden_field_tag 'end_passage'
+  = hidden_field_tag 'publication_id',publication_id.to_s
+  = hidden_field_tag 'publication_urn',edition.to_s
+  = hidden_field_tag 'collection', collection.to_s
+  = hidden_field_tag 'pubtype', pubtype.to_s
+  = label_tag 'From:'
+  - citeinfo['citations'].each_index do |index|
+    = label_tag citeinfo['citations'][index]
+    %input{:type => 'text', :name => 'cite_from_' + index.to_s, :class =>'cite_from'}     
+  %br
+  = label_tag 'To:'
+  - citeinfo['citations'].each_index do |index|
+    = label_tag citeinfo['citations'][index]
+    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to'}     
+  %br
+  
+  %br
+  = form.submit "Retrieve", :class => ''

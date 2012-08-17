@@ -2,9 +2,9 @@ class TeiCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_TEI'
   
-  FRIENDLY_NAME = "Full Text"
+  FRIENDLY_NAME = "Transcription Text"
   
-  IDENTIFIER_NAMESPACE = 'texts_edition'
+  IDENTIFIER_NAMESPACE = 'teia_edition'
   
   XML_VALIDATOR = JRubyXML::TEIAValidator
   

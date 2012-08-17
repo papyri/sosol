@@ -1,5 +1,5 @@
 class TeiTransCtsIdentifiersController < IdentifiersController
-  layout 'site'
+  layout SITE_LAYOUT
   before_filter :authorize
   # require 'xml'
   # require 'xml/xslt'
@@ -7,27 +7,48 @@ class TeiTransCtsIdentifiersController < IdentifiersController
   
   def edit
     find_identifier
-    redirect_to :action =>"editxml",:publication=>params[:publication],:id=>params[:id]
+    #find text for preview
+    @identifier[:text_html_preview] = @identifier.related_text.preview
   end
-    
-
-  def add_new_lang_to_xml
-  # raise "Function needs protection to prevent wipe out of existing data. Nothing happened."
-   
-  	find_identifier
-  	#must prevent existing lang from being wiped out
-    if @identifier.translation_already_in_language?(params[:lang])
-      flash[:warning] = "Language is already present in translation."
-      redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
-      return
-    end
-    @identifier.stub_text_structure(params[:lang])
-    @identifier.save
-    redirect_to polymorphic_path([@identifier.publication, @identifier], :action => :edit)
-  end  
-
-
   
+  def editxml
+    find_identifier
+    @identifier[:xml_content] = @identifier.xml_content
+    @is_editor_view = true
+    render :template => 'tei_trans_cts_identifiers/editxml'
+  end
+  
+    
+  def create_from_selector
+    publication = Publication.find(params[:publication_id])
+    edition = params[:edition_urn]
+    # if no edition, just use a fake one for use in path processing
+    
+    collection = params[:CTSIdentifierCollectionSelect]
+    
+    if (params[:commit] == "Create Translation")
+      lang = params[:create_lang]
+      # if the inventory doesn't have any edition for the translation then it's a new edition
+      # whose urn will be in the CTSIdentifierEditionSelect param
+      if (edition.nil?)
+        edition = params[:CTSIdentifierEditionSelect]
+      end
+      @identifier =  TeiTransCTSIdentifier.new_from_template(publication,collection,edition,'translation',lang)
+    else
+      begin
+        @identifier = TeiTransCTSIdentifier.new_from_inventory(publication,collection,edition,'translation')
+      rescue Exception => e
+        flash[:notice] = e.to_s
+        redirect_to dashboard_url
+        return
+      end
+    end
+    flash[:notice] = "File created."
+    expire_publication_cache
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit) and return
+  end
+
   def update
     find_identifier
     @original_commit_comment = ''

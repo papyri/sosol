@@ -20,19 +20,19 @@
     </xsl:template>
    
     <xsl:template match="cts:textgroup">
-       <xsl:if test="@projid=$textgroup">
-          <xsl:apply-templates select="cts:work"/>
+       <xsl:if test="normalize-space(@projid)=normalize-space($textgroup)">
+          <xsl:apply-templates select="cts:work[normalize-space(@projid)=normalize-space($work)]"/>
        </xsl:if>
     </xsl:template>
    
    <xsl:template match="cts:work">
-       <xsl:if test="@projid=$work">
-             <xsl:apply-templates select="cts:edition|cts:translation"/>
+       <xsl:if test="normalize-space(@projid)=normalize-space($work)">
+             <xsl:apply-templates select="*[normalize-space(@projid)=normalize-space($version)]"/>
        </xsl:if>
    </xsl:template>
    
    <xsl:template match="cts:edition|cts:translation">
-      <xsl:if test="@projid=$version">
+      <xsl:if test="normalize-space(@projid)=normalize-space($version)">
          <xsl:choose>
             <xsl:when test="$lang and cts:label[@xml:lang=$lang]">
                <xsl:value-of select="translate(normalize-space(cts:label[@xml:lang=$lang]),':',',')"/>
