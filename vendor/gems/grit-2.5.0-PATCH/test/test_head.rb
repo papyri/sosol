@@ -8,12 +8,12 @@ class TestHead < Test::Unit::TestCase
   # inspect
 
   def test_inspect
-    head = @r.heads[1]
+    head = @r.heads[2]
     assert_equal %Q{#<Grit::Head "test/master">}, head.inspect
   end
 
   def test_master
-    head = @r.commit('master')
+    head = @r.commit('heads/master')
     assert_equal 'ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a', head.id
   end
 

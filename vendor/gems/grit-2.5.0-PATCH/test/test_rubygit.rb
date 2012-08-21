@@ -134,12 +134,12 @@ class TestRubyGit < Test::Unit::TestCase
   end
 
   def test_rev_list_pretty
-    out = @git.rev_list({:pretty => 'raw'}, 'master')
+    out = @git.rev_list({:pretty => 'raw'}, 'heads/master')
     assert_equal out, fixture('rev_list_all')
   end
 
   def test_rev_list_raw_since
-    out = @git.rev_list({:since => Time.at(1204644738)}, 'master')
+    out = @git.rev_list({:since => Time.at(1204644738)}, 'heads/master')
     assert_match fixture('rev_list_since'), out  # I return slightly more for now
   end
 
