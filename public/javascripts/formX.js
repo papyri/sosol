@@ -1,5 +1,5 @@
 var formX =  {
-  mapping: null, // The javascript object contianing the element mappings
+  mapping: null, // The javascript object containing the element mappings
   xml: null, // The instance DOM
   parser: new DOMParser(),
   // Loads XML from the specified URL.
