@@ -455,7 +455,7 @@ class Identifier < ActiveRecord::Base
   def result_action_approve
    
     self.status = "approved"
-    #self.publication.send_to_finalizer
+    self.publication.send_to_finalizer
   end
   
   # See documentation of result_actions method of board model
@@ -495,13 +495,22 @@ class Identifier < ActiveRecord::Base
     return false
   end
   
+  ## identifier classes which need further automatic processing after approval but before
+  ## finalization should override this method -- the default does nothing
   def preprocess_for_finalization
     # default does nothing
     return false
   end
   
+  ## identifier classes which should not be visible to the end user (i.e. which are automatically managed) 
+  ## should override this to return false
   def self.is_visible 
     return true
+  end
+
+  ## get a link to the catalog for this identifier  
+  def get_catalog_link
+    NumbersRDF::NumbersHelper.identifier_to_url(self.name)
   end
 
 end

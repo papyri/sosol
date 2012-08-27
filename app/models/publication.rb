@@ -142,11 +142,9 @@ class Publication < ActiveRecord::Base
           if (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
             raise temp_id.to_path + " not found on master"
           else
-            Rails.logger.info("adding identifier to pub #{temp_id}")
-            temp_title = temp_id.titleize
             self.identifiers << temp_id
             if ( self.title == original_title )
-              self.title = temp_title
+              self.title = temp_id.titleize
             end
           end # if master blank?
         end # do
@@ -532,7 +530,6 @@ class Publication < ActiveRecord::Base
 
   #Sets the board's publication identifier status. This is used when the finalizer's copy needs to change the board's copy.
   def set_board_identifier_status(status_in)
-    Rails.logger.info("Setting board identifier status to #{status_in}")
       pub = self.find_first_board_parent
       if pub            
         pub.identifiers.each do |i|
@@ -572,7 +569,6 @@ class Publication < ActiveRecord::Base
         # set to new branch
         self.branch = new_branch_name
         # set status to new status
-        Rails.logger.info("Updating status for #{self.id} #{self.title} to new_status")
         self.status = new_status
         self.save!
         # save succeeded, so perform actual git change
@@ -1383,15 +1379,10 @@ class Publication < ActiveRecord::Base
     all_built_comments = []
     xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
-    # BMA TODO switched to by id, figure out if there was a reason for limiting to the title??
-    #@arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
-    #                                     FROM comments a, publications b 
-    #                                    WHERE b.title = '#{title}'
-    #                                      AND a.publication_id = b.id
-    #                                 ORDER BY a.created_at DESC")
+    # BMA What is the purpose of limiting comments to the title rather than the id? 
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
-                                         FROM comments a, publications b 
-                                        WHERE a.publication_id = #{self.id}
+                                        FROM comments a, publications b 
+                                        WHERE b.title = '#{title}'
                                           AND a.publication_id = b.id
                                      ORDER BY a.created_at DESC")
     # add comments hash to array
@@ -1480,9 +1471,7 @@ class Publication < ActiveRecord::Base
     has_text = false
     has_biblio = false
     has_cts = false
-    has_tei_cts = false
-    has_epi_cts = false
-
+    
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
         has_biblio = true
@@ -1512,7 +1501,7 @@ class Publication < ActiveRecord::Base
     if has_biblio
       creatable_identifiers = []
     end
-    # Not allowed (yet) to create any other record in association with a CTSIdentifier publication
+    #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
     if has_cts
       creatable_identifiers = []
     end

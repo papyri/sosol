@@ -220,4 +220,9 @@ class CTSIdentifier < Identifier
     return File.join(path_components)
   end
   
+   ## get a link to the catalog for this identifier  
+  def get_catalog_link
+    return "http://catalog.perseus.tufts.edu/perseus.org/xc/search/" + self.urn_attribute
+  end
+  
 end

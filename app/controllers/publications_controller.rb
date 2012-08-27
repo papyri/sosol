@@ -318,8 +318,6 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id])
     
-    # TODO double check the way the titles are assigned to board publications -- seems to be the same
-    # publication in the same day can't be finalized twice ---???
     # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
     # if something goes wrong
     max_loops = @publication.identifiers.size

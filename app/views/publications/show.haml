@@ -4,14 +4,12 @@
 
     function checkForComment() { 
       comment_text = $('submit_comment').value; 
-      // FORK CHANGE START interface
       if ($('reason_dataentry').checked) {
-        comment_text = comment_text + "Data Entry Error\n";
+        comment_text = comment_text + "\nData Entry Error\n";
       }
       if ($('reason_xmladded').checked) {
-        comment_text = comment_text + "XML Markup Change\n";
+        comment_text = comment_text + "\nXML Markup Change\n";
       }
-      // FORK CHANGE END interface
       if ($('community_id') != null)
       {
         var selected_submit = $('community_id').value;
@@ -65,7 +63,6 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            // FORK CHANGE START interface
             - form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'fixupComment(event);'})  do
               -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
@@ -189,7 +186,7 @@
     - if %w{editing new}.include?(@publication.status)
       - for class_type in @creatable_identifiers
         - link_type = class_type.constantize::FRIENDLY_NAME
-        - create_type = 'Link new ' + link_type
+        - create_type = 'Create new ' + link_type
         - newstyle = 'style="color:white; background-color:#005DAA"'
         = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');"})
      
