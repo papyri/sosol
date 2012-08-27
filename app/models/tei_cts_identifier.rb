@@ -2,11 +2,13 @@ class TeiCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_TEI'
   
-  FRIENDLY_NAME = "Transcription Text"
+  FRIENDLY_NAME = "Manuscript Transcription"
   
   IDENTIFIER_NAMESPACE = 'teia_edition'
   
   XML_VALIDATOR = JRubyXML::TEIAValidator
+    
+  XML_CITATION_PREPROCESSOR = 'preprocess_teia_passage.xsl'
   
       
   def before_commit(content)

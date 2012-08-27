@@ -145,6 +145,11 @@ class CTSIdentifier < Identifier
     return self.to_components[0]
   end
   
+  def has_related_citations
+      cites = self.publication.identifiers.select{|i| (i.class == CitationCTSIdentifier)}
+      return cites.size() > 0
+  end
+  
   def related_inventory 
     self.publication.identifiers.select{|i| (i.class == CTSInventoryIdentifier)}.last
   end
@@ -214,4 +219,5 @@ class CTSIdentifier < Identifier
     # e.g. CTS_XML_PASSAGES/perseus/greekLang/tlg0012/tlg001/tlg0012.tlg001.perseus-grc1.1.1.xml
     return File.join(path_components)
   end
+  
 end

@@ -14,13 +14,15 @@
     %tr
       %td
       - Identifier.site_identifier_classes.each do |i|
-        %td{:width=>"#{colwidth}%"}
+        - if i.constantize::is_visible   
+          %td{:width=>"#{colwidth}%"}
     %tr{:class=>"head"}
       %td
         = Publication
       - Identifier.site_identifier_classes.each do |i|
-        %td
-          = i.constantize::FRIENDLY_NAME
+        - if i.constantize::is_visible   
+          %td
+            = i.constantize::FRIENDLY_NAME
     - publications.each do |publication|
       
       %tr
@@ -34,25 +36,23 @@
         
         - creatable_identifiers = publication.creatable_identifiers
         - Identifier.site_identifier_classes.each do |i|
-          %td{:class=>"identifier_td"}
-            - meta_ids = publication.identifiers.collect do |ids|
-              - if ids.type == i
-                - ids
-              
-            - meta_ids = meta_ids.compact
-          
-            - if (meta_ids.length == 0) 
-              -  if (creatable_identifiers.include?(i))
-                - class_type = i
-                - link_id = i + publication.id.to_s
-                - create_type = 'Create New'           
-                = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-              - else 
-                = "-"
-            - elsif meta_ids.length > 0
-              = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
-            
-            - if meta_ids.length > 1
-              = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
+          - if i.constantize::is_visible   
+            %td{:class=>"identifier_td"}
+              - meta_ids = publication.identifiers.collect do |ids|
+                - if ids.type == i
+                  - ids
+              - meta_ids = meta_ids.compact
+              - if (meta_ids.length == 0) 
+                -  if (creatable_identifiers.include?(i))
+                  - class_type = i
+                  - link_id = i + publication.id.to_s
+                  - create_type = 'Create New'           
+                  = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+                - else 
+                  = "-"
+              - elsif meta_ids.length > 0
+                = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
+              - if meta_ids.length > 1
+                = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
           
        

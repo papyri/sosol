@@ -1,9 +1,12 @@
 :javascript
   
-  function merge_cites() {
+  // Merges the individual components of the citation into the passage component of a CTS URN
+  // and validates that at least one component of the starting citation was supplied before
+  // submitting the form.
+  function merge_cite_components() {
     var start =  $$('input[class="cite_from"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
     if (start.length == 0 ) {
-      alert("Specify at least a starting citation");
+      alert("Please specify at least one level of the citation.");
       return false;
     }
     var end = $$('input[class="cite_to"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
@@ -13,7 +16,7 @@
   }
   
 
-- form_for :citation_cts_identifer, Identifier.new, :url => { :controller => "citation_cts_identifiers", :action => "create"}, :html => {:onsubmit => 'return merge_cites();'} do |form|
+- form_for :citation_cts_identifer, Identifier.new, :url => { :controller => "citation_cts_identifiers", :action => "create"}, :html => {:onsubmit => 'return merge_cite_components();'} do |form|
   = hidden_field_tag 'start_passage'
   = hidden_field_tag 'end_passage'
   = hidden_field_tag 'publication_id',publication_id.to_s
@@ -28,7 +31,7 @@
   = label_tag 'To:'
   - citeinfo['citations'].each_index do |index|
     = label_tag citeinfo['citations'][index]
-    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to'}     
+    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to', :disabled => 'true'}     
   %br
   
   %br

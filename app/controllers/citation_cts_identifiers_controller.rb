@@ -7,9 +7,9 @@ class CitationCtsIdentifiersController < IdentifiersController
   end
   
   def create
-    startP = params[:start_passage].strip
-    endP =  params[:end_passage].strip
-    if (startP == '')
+    startCite = params[:start_passage].strip
+    endCite =  params[:end_passage].strip
+    if (startCite == '')
       flash[:notice] = "Supply a valid passage or passage range"
       render(:template => 'citation_cts_identifiers/create',
              :locals => {:edition => params[:edition],
@@ -20,23 +20,32 @@ class CitationCtsIdentifiersController < IdentifiersController
                         :pubtype => params[:pubtype]})
       return
     else
-      if (endP != '') 
-          endP =  '-' + endP
-      end
-      passage_urn = params[:publication_urn] + ':' + startP + endP
+      # TODO Ranges aren't implemented yet. To support citation ranges we 
+      # should treat each citation in the range as a separate identifier, by 
+      # first calling GetValidReff to get the list of valid citations in the
+      # range, and then creating a citation identifier for each one.   
+      passage_urn = params[:publication_urn] + ':' + startCite
       publication_identifier = params[:publication_id]
       @publication = Publication.find(params[:publication_id])  
       conflicts = []  
       for pubid in @publication.identifiers do 
         
-        if (pubid.kind_of?(CitationCTSIdentifier) && pubid.urn_attribute == passage_urn)
+        if (pubid.kind_of?(CitationCTSIdentifier) && 
+            # A conflicting citation is one which 
+            # a - has the exact same urn (i.e. the same citation), or 
+            # b - is a parent of the required citation, or 
+            # c - is a child of the required citation
+            (pubid.urn_attribute == passage_urn || 
+             pubid.urn_attribute =~ /^#{Regexp.quote(passage_urn)}\./ ||
+             passage_urn =~ /^#{Regexp.quote(pubid.urn_attribute)}\./)
+           )
           conflicts << pubid
         end
       end 
       
       if conflicts.length >0        
-        conflicting_passage = Publication.find(conflicts.first)
-        flash[:error] = "Error creating passage: passage already exists. Please delete the <a href='#{url_for(conflicting_passage)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
+        conflicting_passage = Publication.find(conflicts.first.publication)
+        flash[:error] = "You are already editing this citation. Please delete the <a href='#{url_for(conflicting_passage)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
         redirect_to dashboard_url
         return
       end

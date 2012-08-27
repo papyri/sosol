@@ -4,7 +4,7 @@ class TeiCtsIdentifiersController < IdentifiersController
   
   ## TODO 
   # we to offer the following options:
-  # 1. select a citation or citations to edit -> results in creation of one or more TeiCitationCTSIdentifier obj
+  # 1. select a citation or citations to edit -> results in creation of one or more CitationCTSIdentifier obj
   # 2. download/export full XML of outermost tei:text element [ maybe limited to a specific role? ]
   # 3. upload/import full XML of outermost tei:text element [ maybe limited to a specific role? ]
   # 3. edit/update commentary (teiHeader) 
@@ -12,7 +12,7 @@ class TeiCtsIdentifiersController < IdentifiersController
   # 5. add a CITE index 
   # 6. update a CITE index 
   
-  # Ideally TeiCitationCTSIdentifier Interface would offer options to create stand-off markup in the form of
+  # Ideally CitationCTSIdentifier Interface would offer options to create stand-off markup in the form of
   # CITE index entries, for example:
   #    from within a select a range of XML to create an index entry from
   #    e.g. this range is a quotation, this range is a named entity, this range maps to image coordinates X 

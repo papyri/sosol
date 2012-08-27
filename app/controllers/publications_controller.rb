@@ -317,7 +317,45 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id])
-
+    
+    # TODO double check the way the titles are assigned to board publications -- seems to be the same
+    # publication in the same day can't be finalized twice ---???
+    # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+    # if something goes wrong
+    max_loops = @publication.identifiers.size
+    loop_count = 0
+    done_preprocessing = false
+    @publication.transaction do
+      while (! done_preprocessing) do
+        loop_count = loop_count + 1
+        any_preprocessed = false
+        begin
+          #find all modified identiers in the publication and run any necessary preprocessing
+          @publication.identifiers.each do |id|
+            #board controls this id and it has been modified
+            if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+              modified = id.preprocess_for_finalization
+              if (modified)
+                id.save
+                any_preprocessed = true
+              end
+            end
+          end
+        rescue Exception => e
+          flash[:error] = "Error preprocessing finalization copy. #{e.to_s}"
+          redirect_to @publication
+          return
+        end # end iteration through identifiers
+        # we need to rerun preprocessing until no more changes are made because a preprocessing step
+        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = ! any_preprocessed
+        if (!done_preprocessing && loop_count == max_loops)
+          flash[:error] = "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
+          redirect_to @publication
+          break
+        end
+      end # done preprocessing 
+    end # end transaction
     #to prevent a community publication from being finalized if there is no end_user to get the final version
     if @publication.is_community_publication? && @publication.community.end_user.nil? 
       flash[:error] = "Error finalizing. No End User for the community."
@@ -401,7 +439,14 @@ class PublicationsController < ApplicationController
       flash[:error] = error_text
     end
     @publication.change_status('finalized')
-    
+    # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+    # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+    # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+    # you get an error because the title is already taken. I'm going to add the date time to the title
+    # of the finalized publication as a workaround
+    @publication.title = @publication.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+    @publication.save!
+
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
   end

@@ -494,5 +494,14 @@ class Identifier < ActiveRecord::Base
     #no vote found
     return false
   end
+  
+  def preprocess_for_finalization
+    # default does nothing
+    return false
+  end
+  
+  def self.is_visible 
+    return true
+  end
 
 end

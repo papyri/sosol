@@ -18,7 +18,7 @@
 class Publication < ActiveRecord::Base  
     
   
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed d }
   
   validates_presence_of :title, :branch
   
@@ -532,6 +532,7 @@ class Publication < ActiveRecord::Base
 
   #Sets the board's publication identifier status. This is used when the finalizer's copy needs to change the board's copy.
   def set_board_identifier_status(status_in)
+    Rails.logger.info("Setting board identifier status to #{status_in}")
       pub = self.find_first_board_parent
       if pub            
         pub.identifiers.each do |i|
@@ -571,6 +572,7 @@ class Publication < ActiveRecord::Base
         # set to new branch
         self.branch = new_branch_name
         # set status to new status
+        Rails.logger.info("Updating status for #{self.id} #{self.title} to new_status")
         self.status = new_status
         self.save!
         # save succeeded, so perform actual git change
@@ -657,15 +659,11 @@ class Publication < ActiveRecord::Base
       self.set_origin_and_local_identifier_status("approved")
       
       #send emails
-       self.owner.send_status_emails("approved", self)
-      
-	  # do result_action_approve for each identifier in the publication
-      identifiers.each do |identifier| 
-        identifier.result_action_approve
-      end
-      
+      self.owner.send_status_emails("approved", self)
+     
       #set up for finalizing
       self.send_to_finalizer
+      
       
   #----reject-----    
     elsif decree_action == "reject"   

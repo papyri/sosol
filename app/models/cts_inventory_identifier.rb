@@ -21,7 +21,6 @@ class CTSInventoryIdentifier < Identifier
     temp_id.title = "TextInventory for #{urn}"
     initial_content = CTS::CTSLib.proxyGetCapabilities(inventory) 
     temp_id.set_xml_content(initial_content,:comment => 'Inventory from CTS Repository')
-    CTS::CTSLib.initCTS(publication,inventory)
     temp_id.save!
     return temp_id
   end
@@ -76,5 +75,9 @@ class CTSInventoryIdentifier < Identifier
   
   def to_path
     return self.class::PATH_PREFIX + "/" + self.name + "/ti.xml"
+  end
+  
+  def self.is_visible 
+    return false
   end
 end

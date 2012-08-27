@@ -4,7 +4,7 @@ class TeiTransCTSIdentifier < TeiCTSIdentifier
   FRIENDLY_NAME = "Translation"
   TEMPORARY_COLLECTION = 'TempTrans'
   TEMPORARY_TITLE = 'New Translation'
-  FRIENDLY_NAME = "Inscription Translation"
+  FRIENDLY_NAME = "Manuscript Translation"
   IDENTIFIER_NAMESPACE = 'teia_translation'
   XML_VALIDATOR = JRubyXML::TEIAValidator
    
