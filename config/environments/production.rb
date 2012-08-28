@@ -5,7 +5,7 @@
 config.cache_classes = true
 
 # Use a different logger for distributed setups
-config.logger = Logger.new(STDOUT)
+# config.logger = SysLogger.new
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
@@ -32,16 +32,11 @@ config.action_mailer.smtp_settings =
 {	
 	:address			=>	'localhost',
 	:port					=>	25,
-	:domain				=>	'tufts.edu',
+	:domain				=>	'halsted.vis.uky.edu',
 }
 
 
 # config/environments/production_secret.rb should set
 # RPX_API_KEY and RPX_REALM (site name) for RPX,
 # and possibly other unversioned secrets for production
-REPOSITORY_ROOT = '/usr/local/gitrepos'
-CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
-XSUGAR_STANDALONE_URL="http://localhost:9999/"
-XSUGAR_STANDALONE_USE_PROXY="true"
-EXIST_STANDALONE_URL="http://localhost:8800"
 require File.join(File.dirname(__FILE__), 'production_secret')

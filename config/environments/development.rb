@@ -38,7 +38,10 @@ config.action_mailer.smtp_settings =
 # and possibly other unversioned secrets for development
 require File.join(File.dirname(__FILE__), 'development_secret')
 
-XSUGAR_STANDALONE_URL="http://localhost:9999/"
-XSUGAR_STANDALONE_USE_PROXY="true"
-EXIST_STANDALONE_URL="http://localhost:8080"
-DEV_INIT_FILES = []
+DEV_INIT_FILES = ['papyri.info/ddbdp/p.genova;2;67',
+         'papyri.info/ddbdp/sb;24;16003',
+         'papyri.info/ddbdp/p.lond;7;2067',
+         'papyri.info/ddbdp/p.harr;1;109',
+         'papyri.info/ddbdp/p.yale;1;44',
+         'papyri.info/ddbdp/p.tebt;2;414'
+        ]
