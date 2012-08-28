@@ -93,7 +93,7 @@ class CitationCTSIdentifier < CTSIdentifier
         Rails.logger.error(e)
         raise e
       else
-        self.related_text.set_xml_content(updated,:comment =>'merged updated passage #{self.urn_attribute}') 
+        self.related_text.set_xml_content(updated,:comment => "merged updated passage #{self.urn_attribute}") 
         self.status = "finalizing-preprocessed" # TODO check this 
       end
       return true
