@@ -2,7 +2,7 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-ENV['RAILS_ENV'] ||= 'production'
+#ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
@@ -103,14 +103,13 @@ Rails::Initializer.run do |config|
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
   
-SITE_NAME = 'Philologist'
-SITE_FULL_NAME = 'Philologist'
-SITE_TAG_LINE = 'powered by Son of Suda Online'
-SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
-SITE_CATALOG_SEARCH = "View In Catalog"
-SITE_USER_NAMESPACE = "http://data.perseus.org"
+SITE_NAME = 'SoSOL'
+SITE_FULL_NAME = 'Son of Suda On Line'
+SITE_TAG_LINE = ''
+SITE_LAYOUT = 'pn'
+SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier'
+SITE_CATALOG_SEARCH = "View in PN"
+SITE_USER_NAMESPACE = "papyri.info"
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')

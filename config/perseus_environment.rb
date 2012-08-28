@@ -109,7 +109,7 @@ SITE_TAG_LINE = 'powered by Son of Suda Online'
 SITE_LAYOUT = 'perseus'
 SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
 SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
-SITE_CATALOG_SEARCH = "View In Catalog|http://catalog.perseus.tufts.edu/perseus.org/xc/search/"
+SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "http://data.perseus.org"
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')

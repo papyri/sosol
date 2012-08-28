@@ -21,6 +21,5 @@ test:
 
 production:
   adapter: <%= jdbc %>mysql
-  database: sosol
-  username: sosoladmin
-  password: s0s0ladm1n
+  database: idp2
+  username: idp2
