@@ -743,7 +743,12 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
-      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+      begin
+        controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+      rescue Grit::Git::GitTimeout
+        Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
+        controlled_commit_diffs = ['timeout']
+      end 
       controlled_commit_diffs.length > 0
     end
     
@@ -1165,7 +1170,7 @@ class Publication < ActiveRecord::Base
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
     diff = self.owner.repository.repo.git.diff(
-      {:unified => 5000}, canonical_sha, self.head,
+      {:unified => 5000, :timeout => false}, canonical_sha, self.head,
       '--', *(self.controlled_paths))
     return diff || ""
   end
