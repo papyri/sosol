@@ -33,6 +33,25 @@ module CTS
         return urn
       end
       
+      # get a pub type for a urn from the parent inventory
+      def versionTypeForUrn(a_inventory,a_urn)
+        urn = urnObj(a_urn)
+        response = Net::HTTP.get_response(
+          URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
+        results = JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              %w{data xslt cts extract_reply.xsl})))
+        xml = REXML::Document.new(results)
+        xpath = "//ti:textgroup[@projid='#{urn.getTextGroup(true)}']/ti:work[@projid='#{urn.getWork(true)}']/*[@projid='#{urn.getVersion(true)}']"
+        node = REXML::XPath.first(xml, xpath,{ "ti"=> CTS_NAMESPACE })
+        nodeName = nil
+        unless (node.nil?)
+          nodeName = node.local_name()
+        end
+        return nodeName
+      end
+      
       # method which inserts the publication type (i.e. edition or translation) into the path of a CTS urn
       def pathForUrn(a_urn,a_pubtype) 
         path_parts = a_urn.sub!(/urn:cts:/,'').split(':')

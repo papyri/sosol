@@ -91,6 +91,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
+ 
+  map.connect 'cts_publications/create_from_linked_urn/:urn',
+    :controller => 'cts_publications',
+    :action => 'create_from_linked_urn',
+    :urn => /[^\/]*/
   
   map.connect 'mulgara/sparql/:query',
     :controller => 'ajax_proxy',

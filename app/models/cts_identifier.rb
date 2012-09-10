@@ -1,12 +1,11 @@
 class CTSIdentifier < Identifier  
-  # This is a superclass for objects using CITE Identifiers, including
-  # shared constants and methods. No instances of CITEIdentifier should be
+  # This is a superclass for objects using CTS Identifiers, including
+  # shared constants and methods. No instances of CTSIdentifier should be
   # created. 
   FRIENDLY_NAME = "Text"
   
   IDENTIFIER_PREFIX = 'urn:cts:' 
   IDENTIFIER_NAMESPACE = ''
-  NAMESPACE_DOMAIN = '.perseus.org'
   TEMPORARY_COLLECTION = 'TempTexts'
   TEMPORARY_TITLE = 'New Transcription'
   
