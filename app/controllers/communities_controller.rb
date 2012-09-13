@@ -1,4 +1,7 @@
 class CommunitiesController < ApplicationController
+
+  before_filter :authorize
+  
   # GET /communities
   # GET /communities.xml
   def index
