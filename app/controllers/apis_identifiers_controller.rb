@@ -35,15 +35,10 @@ class ApisIdentifiersController < IdentifiersController
       if %w{new editing}.include?@identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
       end
-      
-      redirect_to :action => :edit, :id => @identifier.id
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
-      new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
-      @identifier[:xml_content] = new_content
-      @is_editor_view = true
-      render :template => 'apis_identifiers/edit'
-    end
+      flash[:error] = parse_error.to_str + ". This file was NOT SAVED."
+    end      
+    redirect_to :action => :edit, :id => @identifier.id
   end
 
   def preview
