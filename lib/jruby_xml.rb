@@ -67,7 +67,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "data/templates/tei-xl.rng")
+        "../data/templates/tei-xl.rng")
     end
   end
   
@@ -77,7 +77,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "data/templates/tei-xl-psg.rng")
+        "../data/templates/tei-xl-psg.rng")
     end
   end
 

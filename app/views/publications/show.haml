@@ -121,7 +121,7 @@
           //= render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
 
         %p
-          = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : identifier.class == HGVIdentifier ? 'hgv.gif' : 'CTS.gif')  
+          = image_tag(identifier.class == DDBIdentifier ? 'ddb.gif' : identifier.class == HGVIdentifier ? 'hgv.gif' : identifier.class == OACIdentifier ? 'oac-logo-ds.png' : 'CTS.gif')  
           - if identifier.needs_reviewing?(@current_user.id)
             -#%b !
             = image_tag('review_flag.png')

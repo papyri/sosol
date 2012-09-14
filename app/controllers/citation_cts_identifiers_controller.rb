@@ -6,6 +6,63 @@ class CitationCtsIdentifiersController < IdentifiersController
     redirect_to :action =>"editxml",:id=>params[:id]
   end
   
+  ## provide user with choice of editing or annotating a citation 
+  def confirm_edit_or_annotate
+    find_publication    
+  end
+  
+  def edit_or_create
+    find_publication
+    
+    if (params[:urn].blank? || params[:collection].blank?)
+      flash[:error] = 'You must specify a URN and a Collection.'
+      redirect_to dashboard_url
+      return
+    end
+    
+    versionIdentifier = params[:version_id]
+    citationUrn = params[:urn]
+    sourceCollection = params[:collection]
+    sourceRepo = params[:src]
+    
+    @identifier = nil
+    conflicts = []
+    matches = []
+    for pubid in @publication.identifiers do 
+      if (pubid.kind_of?(CitationCTSIdentifier))
+        if (pubid.urn_attribute == citationUrn)
+          matches << pubid
+        elsif ( pubid.urn_attribute =~ /^#{Regexp.quote(citationUrn)}\./ ||
+                citationUrn =~ /^#{Regexp.quote(pubid.urn_attribute)}\./)
+          # A conflicting citation is one which 
+          # a - is a parent of the required citation, or 
+          # b - is a child of the required citation
+          conflicts << pubid
+        end # end test for conflicting citation
+      end # end test on citation
+    end # end loop through publications 
+    if conflicts.length >0        
+      conflicting_passage = Publication.find(conflicts.first.publication)
+      flash[:error] = "You are already editing a parent or child of this citation. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
+      redirect_to dashboard_url
+      return
+    elsif matches.length == 1        
+      @identifier = matches[0]
+    elsif matches.length == 0
+      #  we don't already have the identifier for this citation so create it
+      @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
+    else
+      flash[:error] = "One or more conflicting matches for this citation exist. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
+      redirect_to dashboard_url
+      return
+    end
+    flash[:notice] = "File retrieved."
+    expire_publication_cache
+    redirect_to polymorphic_path([@publication, @identifier],
+      :action => :editxml) and return  
+  end
+  
+  
   def create
     startCite = params[:start_passage].strip
     endCite =  params[:end_passage].strip
@@ -108,5 +165,9 @@ class CitationCtsIdentifiersController < IdentifiersController
     def find_publication_and_identifier
       @publication = Publication.find(params[:publication_id])
       find_identifier
+    end
+    
+     def find_publication
+      @publication = Publication.find(params[:publication_id])
     end
 end

@@ -83,4 +83,51 @@ li.editor_menu {
 	float: left;
 }
 
+.edit_oac_identifier {
+	margin-left: .5em;
+}
+.edit_oac_identifier #target_content  {
+	width: 80%;
+	height: 200px;
+	overflow: scroll;
+	border: 1px solid black;
 
+}
+.edit_oac_identifier #target_content .token {
+
+}
+
+.edit_oac_identifier .target_uri, .edit_oac_identifier .body_uri  {
+	width: 90%;
+}
+
+
+.edit_oac_identifier #target_content .token.highlighted {
+	background-color: #FFFF99;
+}
+
+.edit_oac_identifier #target_content .token.highlighted.selected {
+	font-weight: bold;
+}
+
+.edit_oac_identifier #annotation_fields {
+	width: 80%;
+}
+.edit_oac_identifier .add_target {
+	text-align: right;
+	margin-right: 10%;
+	
+}
+
+.hints {
+	background: #ffff99;
+  	border-color: yellow;
+  	font-style: italic;
+  	margin-bottom: .5em;
+}
+
+
+.oac_annotation .label {
+	font-weight: bold;
+	font-style:italic;
+}

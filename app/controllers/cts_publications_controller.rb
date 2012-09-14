@@ -2,7 +2,8 @@ class CtsPublicationsController < PublicationsController
   layout SITE_LAYOUT
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
-    
+  
+  
   ## Create/Update a CTS Publication from a linked URN
   def create_from_linked_urn
     if (params[:urn].blank? || params[:collection].blank?)
@@ -23,7 +24,7 @@ class CtsPublicationsController < PublicationsController
     
     pubtype = CTS::CTSLib.versionTypeForUrn(sourceCollection,versionUrn)
     if pubtype.nil?
-      flash[:error] = "No publication found for #{params[:urn]} in inventory for #{sourceCollection}"
+      flash[:error] = "No publication found for #{params[:urn]} in #{sourceCollection} inventory."
       redirect_to dashboard_url
       return
     end
@@ -96,49 +97,15 @@ class CtsPublicationsController < PublicationsController
           e.owner = @current_user
           e.save!
         end # end saving new publication
-     end # now we have a publication
-
-    # Now if we have a citation, check to see if we already are working on it
-    # and if not, create it
-    @identifier = nil
-    if (citationUrn.nil?)
-      @identifier = versionIdentifier
-    else
-      conflicts = []
-      matches = []
-      for pubid in @publication.identifiers do 
-        if (pubid.kind_of?(CitationCTSIdentifier))
-          if (pubid.urn_attribute == citationUrn)
-            matches << pubid
-          elsif ( pubid.urn_attribute =~ /^#{Regexp.quote(citationUrn)}\./ ||
-                  citationUrn =~ /^#{Regexp.quote(pubid.urn_attribute)}\./)
-            # A conflicting citation is one which 
-            # a - is a parent of the required citation, or 
-            # b - is a child of the required citation
-            conflicts << pubid
-          end # end test for conflicting citation
-        end # end test on citation
-      end # end loop through publications 
-      if conflicts.length >0        
-        conflicting_passage = Publication.find(conflicts.first.publication)
-        flash[:error] = "You are already editing a parent or child of this citation. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
-        redirect_to dashboard_url
-        return
-      elsif matches.length == 1        
-        @identifier = matches[0]
-      elsif matches.length == 0
-        #  we don't already have the identifier for this citation so create it
-        @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
-      else
-        flash[:error] = "One or more conflicting matches for this citation exist. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
-        redirect_to dashboard_url
-        return
-      end
-    end # end creation of identifier
-    flash[:notice] = "File retrieved."
-    expire_publication_cache
-      redirect_to polymorphic_path([@publication, @identifier],
-                                 :action => :editxml) and return          
+    end # now we have a publication
+    
+    redirect_to(:controller => 'citation_cts_identifiers', 
+                :action => 'confirm_edit_or_annotate', 
+                :publication_id => @publication.id,
+                :version_id => versionIdentifier,
+                :collection => sourceCollection,
+                :urn => citationUrn,
+                :src => sourceRepo)   
   end
   
   ###

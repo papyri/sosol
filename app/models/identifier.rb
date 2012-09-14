@@ -123,7 +123,7 @@ class Identifier < ActiveRecord::Base
     self.save! unless self.id.nil?
     
     self.publication.update_attribute(:updated_at, Time.now) unless self.publication.nil?
-    
+
     return commit_sha
   end
   
@@ -330,7 +330,6 @@ class Identifier < ActiveRecord::Base
       :actor    => default_actor)
       
     content = before_commit(content)
-
     commit_sha = ""
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
