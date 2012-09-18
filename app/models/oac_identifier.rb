@@ -13,16 +13,23 @@ class OACIdentifier < Identifier
   NS_FOAF = "http://xmlns.com/foaf/0.1/"  
   NS_OAC = "http://www.openannotation.org/ns/"  
   
+  def titleize
+    "Annotations"
+  end
+  
   # find this identifier from its parent identifier
   def self.find_from_parent(publication,parent)
-    temp_name = parent.name.clone + "/annotations"
+    temp_name = make_name(parent.name)
     publication.identifiers.select{|item|(item.name == temp_name) && item.kind_of?(OACIdentifier)}.last
+  end
+  
+  def self.make_name(parentName)
+    parentName.clone + "/annotations"
   end
   
   # create a new file to hold the annotations for the supplied publication and parent text
   def self.new_from_template(publication,parent)
-    temp_name = parent.name.clone 
-    temp_name = "#{temp_name}/annotations"
+    temp_name = make_name(parent.name) 
     temp_id = self.new(:name => temp_name)
     temp_id.publication = publication
     temp_id.title = "Annotations for #{parent.title}"
@@ -76,6 +83,62 @@ class OACIdentifier < Identifier
       Rails.logger.error("Error checking for annotation #{e.to_s}")
     end      
     return hasany
+  end
+  
+  # get the requested annotation by uri from the oac.xml 
+  def get_annotation(a_uri)
+    xpath = "/rdf:RDF/oac:Annotation[@rdf:about='#{a_uri}']"
+    REXML::XPath.first(self.rdf, xpath)          
+  end
+  
+  # get the target uris from the supplied annotation
+  def get_targets(a_annotation)
+    xpath = "oac:hasTarget/@rdf:resource"
+    uris = []
+    REXML::XPath.each(a_annotation, xpath) { |tgt|
+      uris << tgt.value
+    }          
+    return uris
+  end
+  
+  # get the body uri from the supplied annotation
+  def get_body(a_annotation)
+    xpath = "oac:hasBody/@rdf:resource"
+    uri = nil
+    REXML::XPath.each(a_annotation, xpath) { |body|
+      uri = body.value
+    }          
+    return uri
+  end
+  
+  # get the creator uri from the supplied annotation
+  def get_creator(a_annotation)
+    xpath = "dcterms:creator/foaf:Agent/@rdf:about"
+    creator = ""
+    REXML::XPath.each(a_annotation, xpath) { |uri|
+      creator = uri.value
+    }          
+    return creator
+  end
+  
+  # get the created date from the supplied annotation
+  def get_created(a_annotation)
+    xpath = "dcterms:created"
+    created = ""
+    REXML::XPath.each(a_annotation, xpath) { |date|
+      created = date.text
+    }          
+    return created
+  end
+  
+  # get the title from the supplied annotation
+  def get_title(a_annotation)
+    xpath = "dcterms:title"
+    title = ""
+    REXML::XPath.each(a_annotation, xpath) { |el|
+      title = el.text
+    }          
+    return title
   end
   
   # look for Annotations whose target resource matches the targetUriMatch string
@@ -192,6 +255,11 @@ class OACIdentifier < Identifier
     body.add_namespace(self::class::NS_OAC)
     body.add_attribute('rdf:resource',body_uri)
     return body
+  end
+  
+  # make a creator uri from the owner of the publication 
+  def make_creator_uri()
+    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
   end
   
   # create a dcterms:creator element

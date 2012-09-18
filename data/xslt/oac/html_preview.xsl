@@ -11,6 +11,7 @@
     <xsl:output method="xhtml"/>
     
     <xsl:param name="annotation_uri"/>
+    <xsl:param name="creator_uri"/>
     
     <xsl:template match="/rdf:RDF">
         <xsl:choose>
@@ -18,7 +19,7 @@
                 <xsl:apply-templates select="oac:Annotation[@rdf:about=$annotation_uri]"/>        
             </xsl:when>
             <xsl:otherwise>
-                <xsl:apply-templates select="oac:Annotation"/>
+                <xsl:apply-templates select="oac:Annotation[dcterms:creator[foaf:Agent[@rdf:about=$creator_uri]]]"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -27,7 +28,7 @@
         <xsl:choose>
             <xsl:when test="$annotation_uri">
                 <div class="oac_annotation">
-                    <span class="label">Annotation URI:</span><a href="{@rdf:about}"><xsl:value-of select="@rdf:about"/></a>
+                    <span class="label">Annotation URI:</span><a href="preview?annotation_uri={@rdf:about}"><xsl:value-of select="@rdf:about"/></a>
                     <xsl:apply-templates select="dcterms:creator"/>
                     <xsl:apply-templates select="dcterms:created"/>
                     <xsl:apply-templates select="oac:hasTarget"/>

@@ -49,6 +49,7 @@ class CitationCtsIdentifiersController < IdentifiersController
     elsif matches.length == 1        
       @identifier = matches[0]
     elsif matches.length == 0
+      pubtype = CTS::CTSLib.versionTypeForUrn(sourceCollection,citationUrn)
       #  we don't already have the identifier for this citation so create it
       @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
     else

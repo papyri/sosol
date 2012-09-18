@@ -139,9 +139,9 @@ class Publication < ActiveRecord::Base
           identifier_class = Object.const_get(identifier_name)
           temp_id = identifier_class.new(:name => identifier_string)
           # make sure we have a path on master before forking it for this publication 
-          if (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
-            raise temp_id.to_path + " not found on master"
-          else
+          unless (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
+            # 2012-09-17 BALMAS it might be good to have an option to raise an error if we couldn't
+            # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)? 
             self.identifiers << temp_id
             if ( self.title == original_title )
               self.title = temp_id.titleize

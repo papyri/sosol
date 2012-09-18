@@ -72,6 +72,17 @@ class OACIdentifierTest < ActiveSupport::TestCase
       should "have the new annotation" do
         assert @oac_identifier.has_target?(@test_tb2,@creator_uri)
       end   
+      
+      should "retrieve the annotation" do
+        annotation =  @oac_identifier.get_annotation(@test_uri2)
+        assert ! annotation.nil?
+        assert @oac_identifier.get_targets(annotation).size == 1
+        assert @oac_identifier.get_targets(annotation)[0] == @test_tb2
+        assert @oac_identifier.get_body(annotation) == @test_tb1
+        assert @oac_identifier.get_title(annotation) == @test_title
+        assert @oac_identifier.get_creator(annotation) == @creator_uri
+        assert @oac_identifier.get_created(annotation) != ""
+      end
     end
     
     context "with an updated annotation " do

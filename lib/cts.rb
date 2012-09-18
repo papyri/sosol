@@ -149,7 +149,9 @@ module CTS
           getInventoriesHash()
           components = a_identifier.split('/')
           id_type = nil
-          if (components[3] == 'textinventory')
+          if (components.last == 'annotations')
+            id_type = 'OACIdentifier'
+          elsif (components[3] == 'textinventory')
             id_type = 'CTSInventoryIdentifier'
           elsif (@inventories_hash.has_key?(components[0]))
             pub_type = ''

@@ -4,10 +4,10 @@
   var subref_end;
   var target_num = 1;
   var current_target;
-  var all_targets = $H()
+  var all_targets = $H();
   
   function get_target_passage() {
-    var request_url = "/cts/getpassage/" +
+    var request_url = "#{root_url}cts/getpassage/" +
       "#{@identifier.parentIdentifier.id}/" + $F('target_urn')
     new Ajax.Request(request_url, {
       method: 'get',
@@ -49,30 +49,34 @@
   }
   
   function start_target(a_e) {
-    if (!a_e) {
-      a_e = window.event;
-    }
-    var rp = a_e.rangeParent;
-    if ($(rp.parentElement).hasClassName('punc')) {
-      subref_start = $(rp.parentElement).next();
+    var rp = a_e.element();
+    if ($(rp).hasClassName('punc')) {
+      $(rp).next();
     } else {
-      subref_start = rp.parentElement
+      subref_start = rp;
     }
     
     toggle_highlight(false,['highlighted','selected']);
   }
   
   function end_target(a_e) {
-    if (!a_e) {
-      a_e = window.event;
-    }
-    var rp = a_e.rangeParent;
-    if ($(rp.parentElement).hasClassName('punc')) {
-      subref_end = $(rp.parentElement).previous();
+    var rp = a_e.element();
+    if ($(rp).hasClassName('punc')) {
+      subref_end = $(rp).previous();
     } else {
-      subref_end = rp.parentElement
+      subref_end = rp;
     }
-    var uri = $('src').value + "/" + $('target_urn').value + "#" + subref_start.readAttribute('data-ref') + '-' + subref_end.readAttribute('data-ref');
+    if (subref_start == null || subref_end == null) {
+      alert("Unable to identify the selected range. Please try your selection again.");
+      return;
+    }
+    var start_ref = subref_start.readAttribute('data-ref');
+    var end_ref = subref_end.readAttribute('data-ref')
+    if (start_ref == null || end_ref == null) {
+      alert("Unable to read the selected range. Please try your selection again.");
+      return;
+    }
+    var uri = $('src').value + "/" + $('target_urn').value + "#" + start_ref + '-' + end_ref;
     current_target.value = uri;
     all_targets.set(current_target.name,[subref_start,subref_end]);
     toggle_highlight(true,['highlighted']);
@@ -129,13 +133,58 @@
   function set_target_content(a_html) {
     var target = $('target_content');
     $('target_content').innerHTML = a_html;
+    $$('.target_uri').each(
+      function(elem) {
+        var uri = $(elem).getValue();
+        var u_match = uri.match(/^.*?urn:cts:(.*)$/)
+        if (u_match != null) {
+          var parts = u_match[1].split(/:/);
+          if (parts.length == 3) {
+            var r_match = parts[2].match(/^.*?#(.*)$/);
+            var r_start;
+            var r_end;
+            if (r_match != null) {
+              var r_parts = r_match[1].split(/-/);
+              if (r_parts.length > 0) {
+                r_start = r_parts[0];
+                r_end = r_parts[1];
+              } else {
+                r_start = r_parts;
+                r_end = r_parts;
+              }
+              var start_token = $$(".token.text[data-ref=" + r_start + "]")
+              var end_token = $$(".token.text[data-ref=" + r_start + "]")
+              // highlight the tokens if able to find them
+              if (start_token != null && end_token != null && start_token.length == 1 && end_token.length == 1) {
+                all_targets.set(elem.name,[start_token[0],end_token[0]]);
+              }
+            }
+          }
+        }
+      }
+    );
+    toggle_highlight(true,['highlighted','selected']);
   }
   
   function check_input() {
     var all_targets = $$('.target_uri');
-    var valid_targets = $$('.target_uri').detect(function(elem) { return elem.value.match(/^https?:/) != null});
-    var invalid_targets = $$('.target_uri').detect(function(elem) { return elem.value.match(/^https?:/) == null});
-    var valid_body = ( $('body_uri').value.match(/^https?:/) != null);
+    var valid_targets = [];
+    var invalid_targets = [];
+    all_targets.each(
+      function(elem) { 
+        if( $(elem).getValue().match(/^https?:/) != null ) {
+          valid_targets.push(elem);
+        }
+      }
+    );
+    all_targets.each(
+      function(elem) { 
+        if($(elem).getValue().match(/^https?:/) == null) {
+          invalid_targets.push(elem);
+        }
+      }
+    );
+    var valid_body = ( $('body_uri').getValue().match(/^https?:/) != null);
     var messages = [];
     if (! valid_targets || valid_targets.length == 0) {
       messages.push("You need to specify at least one valid uri as an annotation target.");
@@ -146,6 +195,7 @@
     if (! valid_body) {
       messages.push("You need to specify a valid uri as the annotation body.");
     }
+    // TODO we need also to check that the target rnages don't overlap
     if (messages.length > 0) {
       alert(messages.join("\n"));
       return false;
@@ -165,21 +215,28 @@
     get_target_passage();
     $('target_uri1').observe('click', select_target_input);
     $('remove_target_uri1').observe('click', remove_target_input);
+    $('target_content').observe('mousedown',start_target);
+    $('target_content').observe('mouseup',end_target);
     current_target = $('target_uri1');
   });
 
 .append
-  %h3 Add Annotation
+  %h3 
+  - if @identifier[:action] == 'append' 
+    Add Annotation
+  - else
+    Update Annotation
   %p
-  - form_for @identifier, :url => { :action => "append", :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
+  - form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
     = hidden_field_tag 'publication_id',@publication.id
     = hidden_field_tag 'id',@identifier.id
     = hidden_field_tag 'collection',params[:collection]
     = hidden_field_tag 'src',params[:src]
     = hidden_field_tag 'target_urn', params[:target_urn]
     = hidden_field_tag 'valid_targets',nil
+    = hidden_field_tag 'annotation_uri',params[:annotation_uri]
     = label_tag 'Citation Text:'
-    .target{:id => 'target_content',:onmousedown => 'start_target(event);', :onmouseup => 'end_target(event)' }
+    .target{:id => 'target_content' }
       .loading Loading...
     %fieldset{:id => 'annotation_fields'}
       .hints 
@@ -188,7 +245,11 @@
       .targets{:id => 'targets'}
         = label_tag 'Annotation Target URIs:'
         %br
-        = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+        -if params[:valid_targets].nil?
+          = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+        -else
+          -params[:valid_targets].split(',').each do |t|
+            = text_field_tag t, params[t], { :class => 'target_uri'}
         %button{:id => 'remove_target_uri1'}Remove
       .add_target
         = label_tag '(to select another target from this citation)'
@@ -196,6 +257,6 @@
       = select_tag("annotation_title", options_for_select(['isCitationOf','isInstanceOfPlace','isInstanceOfPerson']))
       %br
       = label_tag 'URI:'
-      = text_field_tag 'body_uri', nil, { :class => 'body_uri'}
+      = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
     = button_to "Submit"
   

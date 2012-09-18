@@ -2,9 +2,8 @@
 - if !(@identifier.has_related_citations)
   = link_to 'XML', editxml_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
 = link_to 'Preview', preview_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
-- if @identifier.mutable?
+- if @identifier.mutable? && @identifier.publication.status != 'finalizing'
   = link_to 'Select Citation', link_citation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
-  = link_to 'Add Translation', link_translation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier)
-%br
+  %br
 
 %br

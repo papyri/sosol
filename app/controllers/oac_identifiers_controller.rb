@@ -3,12 +3,29 @@ class OacIdentifiersController < IdentifiersController
   before_filter :authorize
   
   def edit
-    redirect_to :action =>"editxml",:id=>params[:id]
+    find_publication_and_identifier
+    if (params[:annotation_uri])
+      annotation = @identifier.get_annotation(params[:annotation_uri])
+      unless (annotation.nil?)
+        target_uris = @identifier.get_targets(annotation)
+        Rails.logger.info("Found #{target_uris.inspect}")
+        if (target_uris.grep(/^.*?\/urn:cts/).size == target_uris.size)
+          redirect_to :controller => "cts_oac_identifiers", :action=> "edit", :annotation_uri => params[:annotation_uri] and return
+        end
+      end
+    else
+       # we can't allow editing of the file as a whole because we
+      # need to keep people from editing others annotations
+      flash[:error] = "You must select an annotation to edit."
+      redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
+    end
   end
   
   def preview
     find_identifier
+    params[:creator_uri] = @identifier.make_creator_uri()
     @identifier[:html_preview] = @identifier.preview(params)
+    @identifier[:annotation_uri] = params[:annotation_uri]
   end
   
   protected

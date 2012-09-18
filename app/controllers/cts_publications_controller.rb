@@ -64,14 +64,16 @@ class CtsPublicationsController < PublicationsController
     if @publication.nil?
        # User doesn't have the parent publication yet so create it
        identifiers_hash = Hash.new
-       key = CTS::CTSLib.getIdentifierKey(versionIdentifier)
-       identifiers_hash[key] = Array.new()
-       identifiers_hash[key] << versionIdentifier
+       [versionIdentifier,OACIdentifier.make_name(versionIdentifier)].each do |id|
+        key = CTS::CTSLib.getIdentifierKey(id)
+        identifiers_hash[key] = Array.new()
+        identifiers_hash[key] << id
+       end
        @publication = Publication.new()
        @publication.owner = @current_user
        @publication.creator = @current_user
        @publication.populate_identifiers_from_identifiers(
-            identifiers_hash,nil)
+            identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
                    
         if @publication.save!
           @publication.branch_from_master
@@ -194,7 +196,7 @@ class CtsPublicationsController < PublicationsController
       @publication.owner = @current_user
       @publication.creator = @current_user
       @publication.populate_identifiers_from_identifiers(
-            identifiers_hash,nil)
+            identifiers_hash,CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn]))
                    
       if @publication.save!
         @publication.branch_from_master
