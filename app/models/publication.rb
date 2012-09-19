@@ -18,7 +18,7 @@
 class Publication < ActiveRecord::Base  
     
   
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed d }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
   
   validates_presence_of :title, :branch
   
