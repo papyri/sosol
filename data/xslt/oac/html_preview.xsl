@@ -18,8 +18,11 @@
             <xsl:when test="$annotation_uri">
                 <xsl:apply-templates select="oac:Annotation[@rdf:about=$annotation_uri]"/>        
             </xsl:when>
-            <xsl:otherwise>
+            <xsl:when test="$creator_uri">
                 <xsl:apply-templates select="oac:Annotation[dcterms:creator[foaf:Agent[@rdf:about=$creator_uri]]]"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="oac:Annotation"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

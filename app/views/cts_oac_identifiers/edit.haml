@@ -210,6 +210,10 @@
       return true;
     }
   }
+  
+  function confirm_delete() {
+    return confirm("Are you sure you want to delete this annotation?");
+  }
     
   document.observe("dom:loaded", function() {    
     get_target_passage();
@@ -258,5 +262,12 @@
       %br
       = label_tag 'URI:'
       = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
-    = button_to "Submit"
+    = button_to "Edit"
+    -if @identifier[:action] == 'update'
+      - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
+        = hidden_field_tag 'annotation_uri',params[:annotation_uri]
+        = hidden_field_tag 'publication_id',@publication.id
+        = hidden_field_tag 'id',@identifier.id
+        = button_to "Delete"       
+  
   

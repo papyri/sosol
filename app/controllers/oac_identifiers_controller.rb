@@ -14,16 +14,20 @@ class OacIdentifiersController < IdentifiersController
         end
       end
     else
-       # we can't allow editing of the file as a whole because we
+      # we can't allow editing of the file as a whole because we
       # need to keep people from editing others annotations
-      flash[:error] = "You must select an annotation to edit."
+      if (@publication.status == 'editing' || @publication.status == 'finalizing')
+        flash[:notice] = "Select an annotation to edit."
+      end
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
     end
   end
   
   def preview
     find_identifier
-    params[:creator_uri] = @identifier.make_creator_uri()
+    if (@identifier.publication.status != 'finalizing')
+      params[:creator_uri] = @identifier.make_creator_uri()
+    end
     @identifier[:html_preview] = @identifier.preview(params)
     @identifier[:annotation_uri] = params[:annotation_uri]
   end

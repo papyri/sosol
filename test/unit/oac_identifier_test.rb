@@ -83,6 +83,12 @@ class OACIdentifierTest < ActiveSupport::TestCase
         assert @oac_identifier.get_creator(annotation) == @creator_uri
         assert @oac_identifier.get_created(annotation) != ""
       end
+      
+      should "delete the annotation" do
+        @oac_identifier.delete_annotation(@test_uri2,"test delete")
+        assert @oac_identifier.get_annotation(@test_uri2).nil?
+        assert ! @oac_identifier.get_annotation(@test_uri1).nil?
+      end
     end
     
     context "with an updated annotation " do
@@ -98,5 +104,6 @@ class OACIdentifierTest < ActiveSupport::TestCase
         assert !@oac_identifier.has_target?(@test_tb2,@creator_uri)
       end   
     end
+    
   end
 end

@@ -17,6 +17,12 @@ class OACIdentifier < Identifier
     "Annotations"
   end
   
+  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
+    # this is a no-op because change desc is not added to this file
+    # need to override to ensure consistent formatting of XML for all commits
+    toXmlString self.rdf
+  end
+  
   # find this identifier from its parent identifier
   def self.find_from_parent(publication,parent)
     temp_name = make_name(parent.name)
@@ -214,6 +220,7 @@ class OACIdentifier < Identifier
     annot.add_element(self.make_title(title))
     annot.add_element(self.make_creator(creator_uri))
     annot.add_element(self.make_created)
+    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
   end
@@ -226,17 +233,19 @@ class OACIdentifier < Identifier
     end
     self.rdf.elements.delete_all xpath
     self.rdf.root.add_element(self.make_annotation(annot_uri,target_uris,body_uri,title,creator_uri))
+    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
   # delete an existing annotation from the oac.xml file
-  def delete_annotation(annot_uri)
+  def delete_annotation(annot_uri,comment)
     xpath = "/rdf:RDF/oac:Annotation[@rdf:about = '#{annot_uri}']"
     self.rdf.elements.delete_all xpath
     unless (REXML::XPath.first(self.rdf, xpath).nil?)
       raise "Unable to delete #{annot_uri}."
     end
+    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
   end

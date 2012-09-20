@@ -74,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :tei_trans_cts_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :cts_inventory_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :rename_review => :get, :rename => :put}
-    publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post}
+    publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :put}
 
 
     # publication.resources :identifiers

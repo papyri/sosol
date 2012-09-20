@@ -51,7 +51,7 @@ li.editor_menu {
 	margin: 2em;
 }
 
-#notice_error, #notice_notice {
+#notice_error, #notice_notice, #notice_warning {
 	clear:both;
 	margin: 2em;
 }

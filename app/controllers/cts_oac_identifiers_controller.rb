@@ -51,11 +51,11 @@ class CtsOacIdentifiersController < IdentifiersController
     
     if @identifier.nil?
       @identifier = OACIdentifier.new_from_template(@publication,@parent)
-      @creator = @identifier.make_creator_uri()
+      @creator_uri = @identifier.make_creator_uri()
       @identifier[:action] = 'append'
       render(:template => 'cts_oac_identifiers/edit') and return
     else
-      @creator = @identifier.make_creator_uri()
+      @creator_uri = @identifier.make_creator_uri()
       @identifier[:action] = 'append'
       if params[:commit] == 'Append'
         # if the confirmed that they want to add a new annotation for this target, bring them to the 
@@ -122,9 +122,29 @@ class CtsOacIdentifiersController < IdentifiersController
        :annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
   end
   
+  def delete_annotation 
+    find_publication_and_identifier
+    annotation_uri = params[:annotation_uri]
+    @creator_uri = @identifier.make_creator_uri()
+    annotation = @identifier.get_annotation(annotation_uri)
+    if (annotation.nil?)
+      Rails.logger.error("Deleting invalid annotation uri #{annotation_uri}")
+      flash[:error] = "Annotation #{annotation_uri} not found"
+      redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
+    elsif (@identifier.get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
+      Rails.logger.error("Deleting unauthorized annotation uri #{annotation_uri}")
+      flash[:error] = "You can only delete annotations you created"
+      redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
+    end
+    @identifier.delete_annotation(annotation_uri,"Deleted Annotation #{annotation_uri}")
+    redirect_to(:action => :preview, :publication_id => @publication.id, :id => @identifier.id) and return
+  end
+  
   def preview
     find_identifier
-    params[:creator_uri] = @identifier.make_creator_uri()
+    if (@identifier.publication.status != 'finalizing')
+      params[:creator_uri] = @identifier.make_creator_uri()
+    end
     @identifier[:html_preview] = @identifier.preview(params)
     @identifier[:annotation_uri] = params[:annotation_uri]
   end
