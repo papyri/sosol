@@ -47,7 +47,7 @@ class CitationCTSIdentifier < CTSIdentifier
       uuid = publication.id.to_s + passage_urn.gsub(':','_')
       inventory = new_identifier.related_text.related_inventory.xml_content
       document = new_identifier.related_text.content
-      passage_xml = CTS::CTSLib.proxyGetPassage(inventory,document,new_identifier.urn_attribute,uuid)
+      passage_xml = CTS::CTSLib.getPassageFromRepo(inventory,document,new_identifier.urn_attribute,uuid)
       new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
       return new_identifier
     rescue Exception => e

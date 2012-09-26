@@ -49,7 +49,8 @@ Rails::Initializer.run do |config|
   end
   
   config.gem "shoulda", :version => ">= 2.11.3"
-  
+  EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+
   config.gem "factory_girl", :version => "~> 1.2.2"
   
   config.gem 'airbrake', :version => ">= 3.0.5"
@@ -110,7 +111,9 @@ SITE_LAYOUT = 'perseus'
 SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
 SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
 SITE_CATALOG_SEARCH = "View In Catalog"
-SITE_USER_NAMESPACE = "http://data.perseus.org"
+SITE_USER_NAMESPACE = "data.perseus.org"
+EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')

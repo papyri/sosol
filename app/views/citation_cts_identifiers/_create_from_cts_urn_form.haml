@@ -16,13 +16,15 @@
   }
   
 
-- form_for :citation_cts_identifer, Identifier.new, :url => { :controller => "citation_cts_identifiers", :action => "create"}, :html => {:onsubmit => 'return merge_cite_components();'} do |form|
+- form_for :citation_cts_identifer, Identifier.new, :url => { :controller => "citation_cts_identifiers", :action => "select"}, :html => {:onsubmit => 'return merge_cite_components();'} do |form|
   = hidden_field_tag 'start_passage'
   = hidden_field_tag 'end_passage'
   = hidden_field_tag 'publication_id',publication_id.to_s
-  = hidden_field_tag 'publication_urn',edition.to_s
+  = hidden_field_tag 'urn',edition.to_s
+  = hidden_field_tag 'version_id',version_id.to_s
   = hidden_field_tag 'collection', collection.to_s
   = hidden_field_tag 'pubtype', pubtype.to_s
+  = hidden_field_tag 'src', 'SoSOL'
   = label_tag 'From:'
   - citeinfo['citations'].each_index do |index|
     = label_tag citeinfo['citations'][index]

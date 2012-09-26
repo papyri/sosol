@@ -82,7 +82,10 @@
     var textgroup = $F('group_urn');
     var works = inventories[inventory][textgroup].works;
     populate_selector($('work_urn'),works);
-    $('create_button').disabled = false;
+    // hack to disable Create for perseus editions for now
+    if (inventory != 'perseus') {
+      $('create_button').disabled = false;
+    }
     update_edition_urns();
   }
   
@@ -122,8 +125,9 @@
       = select_tag("#{identifier_class}CollectionSelect", options_for_select(identifier_class.inventories_hash.keys), :onchange => "get_inventory();$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
     = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_work_urns();"
     = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_edition_urns();"
-    = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
     = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
     //= text_field_tag('passage')
     = submit_tag "Emend", :disabled => true, :id => 'emend_button'
+    = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
+
     

@@ -17,7 +17,7 @@
     
     <xsl:template match="/">
         <xsl:variable name="text">
-            <xsl:apply-templates select="//text()"/>
+            <xsl:apply-templates select="//tei:text//text()[not(ancestor::tei:note) and not(ancestor::tei:bibl)]"/>
         </xsl:variable>
         <xsl:variable name="lang" select="//tei:text/@xml:lang"/>
         <xsl:variable name="match-nontext">

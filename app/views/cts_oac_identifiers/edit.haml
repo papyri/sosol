@@ -14,6 +14,9 @@
       dataType: 'text/html',
       onSuccess: function(response) {
         set_target_content(response.responseText);
+      },
+      onFailure: function() {
+        $('target_content').innerHTML = '<div class="error">Unable to load the requested citation.</div>';
       }
     }); 
   }
@@ -153,7 +156,7 @@
                 r_end = r_parts;
               }
               var start_token = $$(".token.text[data-ref=" + r_start + "]")
-              var end_token = $$(".token.text[data-ref=" + r_start + "]")
+              var end_token = $$(".token.text[data-ref=" + r_end + "]")
               // highlight the tokens if able to find them
               if (start_token != null && end_token != null && start_token.length == 1 && end_token.length == 1) {
                 all_targets.set(elem.name,[start_token[0],end_token[0]]);
@@ -239,35 +242,47 @@
     = hidden_field_tag 'target_urn', params[:target_urn]
     = hidden_field_tag 'valid_targets',nil
     = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-    = label_tag 'Citation Text:'
-    .target{:id => 'target_content' }
-      .loading Loading...
-    %fieldset{:id => 'annotation_fields'}
-      .hints 
-        Select from the text with your mouse to identifier a subreference within the citation as the Annotation Target. This will automatically update the Target URI with the selected subreference. 
+    %ul.hints
+      %li
+        Enter the Annotation Body URI identifying a resource which annotates your selected citation.   
+      %li 
+        Or choose an Annotation Body resource from a registered CTS repository and then click 
+        'Request Citation' to load the corresponding text 
+      %li 
+        Select subreferences ranges from within citation body or target text with your mouse. 
+        This will automatically update the corresponding URI with the selected subreference.
+      %li
         Press the 'Add' button to add more Target subreferences to this annotation. 
-      .targets{:id => 'targets'}
-        = label_tag 'Annotation Target URIs:'
-        %br
-        -if params[:valid_targets].nil?
-          = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
-        -else
-          -params[:valid_targets].split(',').each do |t|
-            = text_field_tag t, params[t], { :class => 'target_uri'}
-        %button{:id => 'remove_target_uri1'}Remove
-      .add_target
-        = label_tag '(to select another target from this citation)'
-        %button{:onclick => 'return add_target();'}Add
-      = select_tag("annotation_title", options_for_select(['isCitationOf','isInstanceOfPlace','isInstanceOfPerson']))
-      %br
-      = label_tag 'URI:'
+    #annotation_body_input
+      = label_tag 'URI for Annotation Body'
       = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
-    = button_to "Edit"
-    -if @identifier[:action] == 'update'
-      - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
-        = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-        = hidden_field_tag 'publication_id',@publication.id
-        = hidden_field_tag 'id',@identifier.id
-        = button_to "Delete"       
-  
-  
+      = render(:partial => 'cts_annotation_selector')
+    #annotation_target_input
+      #annotation_title_input
+        = select_tag("annotation_title", options_for_select(['isQuotedBy','isDirectSpeakerOf']))
+      %fieldset{:id => 'annotation_target_fields'}
+        .targets{:id => 'targets'}
+          = label_tag 'URI for Annotation Target(s)'
+          %br
+          -if params[:valid_targets].nil?
+            = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+          -else
+            -params[:valid_targets].split(',').each do |t|
+              = text_field_tag t, params[t], { :class => 'target_uri'}
+          %button{:id => 'remove_target_uri1'}Remove
+        .add_target
+          = label_tag '(to select another target from this citation)'
+          %button{:onclick => 'return add_target();'}Add   
+      = label_tag 'Citation Text:'
+      .target{:id => 'target_content' }
+        .loading Loading...
+    #annotation_form_submit
+      -if @identifier[:action] == 'update'
+        = button_to "Edit"
+        - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
+          = hidden_field_tag 'annotation_uri',params[:annotation_uri]
+          = hidden_field_tag 'publication_id',@publication.id
+          = hidden_field_tag 'id',@identifier.id
+          = button_to "Delete"  
+      -else
+        = button_to "Add"

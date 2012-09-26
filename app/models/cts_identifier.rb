@@ -221,7 +221,8 @@ class CTSIdentifier < Identifier
   
    ## get a link to the catalog for this identifier  
   def get_catalog_link
-    return "http://catalog.perseus.tufts.edu/perseus.org/xc/search/" + self.urn_attribute
+    #return "http://catalog.perseus.tufts.edu/perseus.org/xc/search/" + self.urn_attribute
+    return ''
   end
   
 end

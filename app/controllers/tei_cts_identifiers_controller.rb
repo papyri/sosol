@@ -55,8 +55,9 @@ class TeiCtsIdentifiersController < IdentifiersController
    
    def link_citation
      find_identifier
-     render(:template => 'citation_cts_identifiers/create',
+     render(:template => 'citation_cts_identifiers/select',
             :locals => {:edition => @identifier.urn_attribute,
+                        :version_id => @identifier.name,
                         :collection => @identifier.inventory,
                         :citeinfo => @identifier.related_inventory.parse_inventory(),
                         :controller => 'citation_cts_identifiers',

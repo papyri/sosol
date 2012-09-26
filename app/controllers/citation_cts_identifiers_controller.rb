@@ -8,7 +8,7 @@ class CitationCtsIdentifiersController < IdentifiersController
   
   ## provide user with choice of editing or annotating a citation 
   def confirm_edit_or_annotate
-    find_publication    
+    find_publication
   end
   
   def edit_or_create
@@ -20,10 +20,12 @@ class CitationCtsIdentifiersController < IdentifiersController
       return
     end
     
+   
+    
     versionIdentifier = params[:version_id]
-    citationUrn = params[:urn]
     sourceCollection = params[:collection]
     sourceRepo = params[:src]
+    citationUrn = params[:urn]
     
     @identifier = nil
     conflicts = []
@@ -49,7 +51,7 @@ class CitationCtsIdentifiersController < IdentifiersController
     elsif matches.length == 1        
       @identifier = matches[0]
     elsif matches.length == 0
-      pubtype = CTS::CTSLib.versionTypeForUrn(sourceCollection,citationUrn)
+      pubtype ||= CTS::CTSLib.versionTypeForUrn(sourceCollection,citationUrn)
       #  we don't already have the identifier for this citation so create it
       @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
     else
@@ -63,6 +65,30 @@ class CitationCtsIdentifiersController < IdentifiersController
       :action => :editxml) and return  
   end
   
+  def select
+    find_publication
+    startCite = params[:start_passage].strip
+    endCite =  params[:end_passage].strip
+    if (startCite == '')
+      flash[:notice] = "Supply a valid passage or passage range"
+      render(:template => 'citation_cts_identifiers/select',
+             :locals => {:edition => params[:edition],
+                        :version_id => params[:version_id],
+                        :collection => params[:collection],
+                        :citeinfo => params[:citeinfo],
+                        :controller => params[:controller],
+                        :publication_id => params[:publication_id], 
+                        :pubtype => params[:pubtype]})
+      return
+    else
+      redirect_to(:controller => 'cts_publications', 
+                :action => 'create_from_linked_urn',
+                :collection => params[:collection],
+                :urn => params[:urn] + ":" + params[:start_passage].strip,
+                :src => 'SoSOL')   
+   
+    end
+  end
   
   def create
     startCite = params[:start_passage].strip

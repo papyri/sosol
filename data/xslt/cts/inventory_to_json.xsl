@@ -154,17 +154,36 @@
             </xsl:choose>
         </xsl:variable>
         
+        <xsl:variable name="cites">
+            <xsl:call-template name="citation">
+                <xsl:with-param name="a_node" 
+                    select="(cts:online/cts:citationMapping/cts:citation)[1]"/>
+            </xsl:call-template>
+        </xsl:variable>
+        
         <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>':</xsl:text>
         
         <!-- edition obj -->
         <xsl:text>{</xsl:text>
         <xsl:text>label: '</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
-        <xsl:text>urn:'</xsl:text><xsl:value-of select="$urn"/><xsl:text>'</xsl:text>
+        <xsl:text>urn:'</xsl:text><xsl:value-of select="$urn"/><xsl:text>',</xsl:text>
+        <xsl:text>cites:[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
         <xsl:text>}</xsl:text>
         
         <xsl:if test="following-sibling::*[name(.) = name(current())]">
             <xsl:text>,</xsl:text>
         </xsl:if>
+    </xsl:template>
+    
+    <xsl:template name="citation">
+    <xsl:param name="a_node"/>
+    <xsl:text>"</xsl:text><xsl:value-of select="$a_node/@label"/><xsl:text>"</xsl:text>
+    <xsl:if test="$a_node/cts:citation">
+        <xsl:text>,</xsl:text>
+        <xsl:call-template name="citation">
+            <xsl:with-param name="a_node" select="$a_node/cts:citation"/>
+        </xsl:call-template>
+    </xsl:if>
     </xsl:template>
     
     <xsl:template match="*"/>

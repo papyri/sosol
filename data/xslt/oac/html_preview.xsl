@@ -32,11 +32,11 @@
             <xsl:when test="$annotation_uri">
                 <div class="oac_annotation">
                     <span class="label">Annotation URI:</span><a href="preview?annotation_uri={@rdf:about}"><xsl:value-of select="@rdf:about"/></a>
-                    <xsl:apply-templates select="dcterms:creator"/>
                     <xsl:apply-templates select="dcterms:created"/>
-                    <xsl:apply-templates select="oac:hasTarget"/>
-                    <xsl:apply-templates select="dcterms:title"/>
+                    <xsl:apply-templates select="dcterms:creator"/>
                     <xsl:apply-templates select="oac:hasBody"/>
+                    <xsl:apply-templates select="dcterms:title"/>
+                    <xsl:apply-templates select="oac:hasTarget"/>
                 </div>
             </xsl:when>
             <xsl:otherwise>
