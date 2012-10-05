@@ -201,7 +201,7 @@
   function merge_cite_info() {
     var start =  $$('input[class="cite_from"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
     if (start.length == 0 ) {
-      alert("Please specify at least one level of the citation.");
+      alert("Please specify at least one level of the passage citation scheme.");
       return false;
     }
     var end = $$('input[class="cite_to"]').map(function(e) { return e.value; }).grep(/[\w\d]+/);
@@ -237,7 +237,7 @@
         set_body_content(response.responseText);
       },
       onFailure: function(response) {
-        $('body_content').innerHTML = '<div class="error">Unable to load the requested citation.</div>';
+        $('body_content').innerHTML = '<div class="error">Unable to load the requested text.</div>';
       }
     }); 
   }
@@ -271,7 +271,11 @@
       return;
     }
     body_span = [body_subref_start,body_subref_end];
-    $('body_uri').value = $('body_uri').value.split('#')[0] + "#" + start_ref + '-' + end_ref;
+    var new_uri = $('body_uri').value.split('#')[0] + "#" + start_ref;
+    if (end_ref != start_ref) {
+        new_uri = new_uri + '-' + end_ref;
+     }
+    $('body_uri').value = new_uri;
     toggle_body_highlight(true,['highlighted']);
   }
   
@@ -358,6 +362,7 @@
 = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
 = select_tag 'version_urn', nil, :disabled => true, :style => 'min-width: 5em;'
 #citeinfo
-%button{:disabled => true, :id => 'request_button', :onclick => "return merge_cite_info();"}Request Citation
+%button{:disabled => true, :id => 'request_button', :onclick => "return merge_cite_info();"}Request Resource
+%p Resource passage:
 #body_content 
     

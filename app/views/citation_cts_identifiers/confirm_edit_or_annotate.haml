@@ -1,5 +1,5 @@
 .create
-  %h3 Edit or Annotate Citation?
+  %h3 Edit or Annotate?
   %p
   - form_for :citation_cts_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
     = hidden_field_tag 'publication_id',params[:publication_id]

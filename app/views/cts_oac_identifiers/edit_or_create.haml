@@ -1,5 +1,4 @@
 .create
-  %h3 Annotate Citation
   %p
   - form_for :oac_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "cts_oac_identifiers"} do |form|
     = hidden_field_tag 'publication_id',params[:publication_id]
@@ -8,9 +7,9 @@
     = hidden_field_tag 'collection',params[:collection]
     = hidden_field_tag 'src',params[:src]
     .hints 
-      You already have one one or more annotations on this citation. Click 'Preview' to preview these annotations and select one to 
+      You already have one one or more annotations on this passage. Click 'Review' to review these annotations and select one to 
       edit or click 'Append' to add a new annotation for this target.
-    = link_to 'Preview', preview_publication_oac_identifier_path( @identifier.publication, @identifier) 
+    = link_to 'Review', preview_publication_oac_identifier_path( @identifier.publication, @identifier) 
     = submit_tag "Append"
   
   

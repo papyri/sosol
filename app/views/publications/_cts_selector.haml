@@ -80,13 +80,16 @@
     // get the works for the selected textgroup and populate the work selector
     var inventory = $F('CTSIdentifierCollectionSelect');
     var textgroup = $F('group_urn');
-    var works = inventories[inventory][textgroup].works;
-    populate_selector($('work_urn'),works);
+    if (textgroup) {
+      var works = inventories[inventory][textgroup].works;
+      populate_selector($('work_urn'),works);
+      update_edition_urns();
+    }
     // hack to disable Create for perseus editions for now
+    
     if (inventory != 'perseus') {
       $('create_button').disabled = false;
     }
-    update_edition_urns();
   }
   
   function update_edition_urns()

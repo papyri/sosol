@@ -2,7 +2,7 @@ class CitationCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_CITATIONS'
   IDENTIFIER_NAMESPACE = 'citation'
-  FRIENDLY_NAME = "Citation Text"
+  FRIENDLY_NAME = "Passage Text"
     
   def related_text
     parent_urn = CTS::CTSLib.urnObj(self.urn_attribute).getUrnWithoutPassage();
