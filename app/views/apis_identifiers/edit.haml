@@ -18,8 +18,10 @@
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :author}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :inventoryNo}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :inventoryNo}
-          = render :partial => 'apis_identifiers/label', :locals => {:key => :apisId}
-          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :apisId}
+          .apisId
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :apisId}
+            = select_tag "apis_identifiers_apisCollection", options_for_select(APISIdentifier.collection_names_hash.sort), {:class => 'observeChange apis apis_identifier_apisCollection'}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :apisId}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :tmNo}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :tmNo}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :controlNo}
@@ -134,10 +136,14 @@
   formX.populateForm();
   jQuery("form.edit_apis_identifier").submit( function(e) {
   checkNotAddedMultiples();
+  var result;
   try {
-  formX.updateXML();
+  result = formX.updateXML();
   } catch (error) {
   alert("Unable to submit.\n" + error);
+  e.preventDefault();
+  }
+  if (!result) {
   e.preventDefault();
   }
   var xml = formX.serializeXML();

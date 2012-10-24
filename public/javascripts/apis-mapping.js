@@ -11,8 +11,11 @@ var apis_map = {
      tpl: "<author>$apis_identifier_author</author>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invNo' or @type='invno']",
      tpl: "<idno type=\"invNo\">$apis_identifier_inventoryNo</idno>"},
-    {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
-     tpl: "<idno type=\"apisid\">$apis_identifier_apisId</idno>"},
+    {name: "apisId",
+     xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
+     children: [["text()","getApisCollection"],["text()","getApisId"]],
+     tpl: "<idno type=\"apisid\">$apis_identifier_apisCollection.apis.$apis_identifier_apisId</idno>",
+     required: true},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']",
      tpl: "<idno type=\"TM\">$apis_identifier_tmNo</idno>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']",
@@ -88,6 +91,12 @@ var apis_map = {
     }
   },
   functions: {
+    getApisCollection: function(apisId) {
+      return apisId.substring(0,apisId.indexOf("."));
+    },
+    getApisId: function(apisId) {
+      return apisId.substring(apisId.lastIndexOf(".") + 1);
+    },
     getDate: function(date) {
       if (date) {
         var re = /(-?\d{4})-?(\d{2})?-?(\d{2})?/;

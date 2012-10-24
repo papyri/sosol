@@ -101,7 +101,7 @@ function multiAdd(id)
   var index = multiGetNextIndex(id);
 
   var item = '<li class="' + id + '">' +
-             '  <input type="text" value="' + value + '" name="apis_identifier_' + '" id="apis_identifier_' + id + '_' + index + '" class="observechange">' +
+             '  <input type="text" value="' + value + '" name="apis_identifier_' + id + '" id="apis_identifier_' + id + '_' + index + '" class="observechange">' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';

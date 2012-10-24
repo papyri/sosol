@@ -119,15 +119,7 @@ var formX =  {
   // Set the form control to the value, or check/uncheck if
   // it is a checkbox or radio button.
   setFormValue: function(elt, val) {
-    if (elt.type == "checkbox" || elt.type == "radio") {
-      if (elt.value == val) {
-        jQuery(elt).attr("checked", "checked");
-      } else {
-        jQuery(elt).removeAttr("checked");
-      }
-    } else {
-      elt.value = val;
-    }
+    jQuery(elt).val(val);
   },
   // Return the appropriate value of the provided form element. If it is
   // a checkbox or radio button, return its value only if it is checked.
@@ -154,6 +146,7 @@ var formX =  {
   },
   // Populates the formX.xml DOM with values taken from the HTML form
   updateXML: function() {
+    var result = true;
     var elts = formX.mapping.elements
     for (var i = 0; i < elts.length; i++) {
       var names = formX.getNamesFromTemplate(elts[i].tpl);
@@ -191,6 +184,10 @@ var formX =  {
             var fe = jQuery(elt).find("."+names[j]);
             if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
               template = template.replace("$"+names[j], formX.getFormValue(fe[0]));
+            } else if (fe[0] && elts[i].required) {
+              alert(elts[i].name + " must have a value.");
+              nc.css("color","red");
+              result = false;
             }
           }
           template = formX.scrubTemplate(formX.execUpdates(template));
@@ -212,6 +209,7 @@ var formX =  {
         }
       }
     }
+    return result;
   },
   // If a content model has been defined for the parent element, then locate the child's position
   // in that model and determine whether an appropriate following sibling already exists. If it

@@ -281,6 +281,7 @@ en:
       author: Author
       inventoryNo: Inventory No.
       tmNo: TM No.
+      apisCollection: Collection
       apisId: APIS ID
       controlNo: Control No.
       summary: Summary
