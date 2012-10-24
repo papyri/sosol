@@ -325,7 +325,7 @@
       .target{:id => 'target_content' }
         .loading Loading...
       #annotation_title_input
-        = select_tag("annotation_title", options_for_select({'isQuotationOf' => 'isQuotedBy','isSpokenBy' => 'isDirectSpeakerOf'}))
+        = select_tag("annotation_title", options_for_select({'isQuotationOf' => 'isQuotedBy','isSpokenBy' => 'isDirectSpeakerOf', 'isReferenceToPerson' => 'isPersonReferredToBy','isReferenceToPlace'=>'isPlaceReferredToBy'}))
     #annotation_body_input
       .annotation_header Annotation Resource      
       = label_tag 'URI for Resource:'
@@ -334,14 +334,14 @@
 
     #annotation_form_submit
       -if @identifier[:action] == 'update'
-        = button_to "Edit"
+        = button_to "Save"
         - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
           = hidden_field_tag 'annotation_uri',params[:annotation_uri]
           = hidden_field_tag 'publication_id',@publication.id
           = hidden_field_tag 'id',@identifier.id
           = button_to "Delete"  
       -else
-        = button_to "Add"
+        = button_to "Save"
   %form{:id=>'to_alpheios_align', :method => 'GET', :action => ALPHEIOS_URL, :onsubmit => 'return post_to_alpheios();', :target =>'alpheios'}
     = hidden_field_tag 'l1text',nil
     = hidden_field_tag 'l1',nil
