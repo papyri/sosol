@@ -286,10 +286,10 @@ en:
       controlNo: Control No.
       summary: Summary
       generalNote: General Notes
-      textLang: Text Languages (free text)
-      mainLang: Main Language (ISO 639)
-      otherLangs: Additional Languages (ISO 639)
-      support: Support/Dimensions
+      textLang: Text Languages
+      mainLang: Main Language
+      otherLangs: Additional Languages
+      support: Support / Dimensions
       condition: Condition
       lines: Lines
       rectoVerso: Recto/Verso
