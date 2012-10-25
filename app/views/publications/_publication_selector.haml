@@ -36,7 +36,7 @@
      });
   }
   function construct_hgv_sparql_query(volume_reference) {
-    return get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '/mulgara/sparql/?query=' : '/sparql/'}" +  "prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%20%7B%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fb%7D%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fa%20.%0A%20%20%3Fa%20dc%3Aidentifier%20%3Fb%0A%20%20filter%20regex%28str%28%3Fb%29%2C%20%22%5Ehttp%3A%2F%2Fpapyri.info%22%29%7D" + "#{request.domain == 'papyri.info' ? '&format=json' : ''}";
+    return get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '/sparql/?query=' : '/sparql/'}" +  "prefix%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%20%0Aconstruct%20%7B%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fb%7D%0Afrom%20%3Crmi%3A%2F%2Flocalhost%2Fpapyri.info%23pi%3E%0Awhere%20%7B%20%3Chttp%3A%2F%2Fpapyri.info%2Fhgv%2F" + volume_reference + "%3E%20dc%3AhasPart%20%3Fa%20.%0A%20%20%3Fa%20dc%3Aidentifier%20%3Fb%0A%20%20filter%20regex%28str%28%3Fb%29%2C%20%22%5Ehttp%3A%2F%2Fpapyri.info%22%29%7D" + "#{request.domain == 'papyri.info' ? '&output=json' : ''}";
   }
   function get_allowed_values(select_element, volume_number, request_url, disable_volume) {
     reset_selector(select_element);
@@ -68,13 +68,13 @@
         is_hgv_identifier = false;
         
         parts = json.results.bindings.findAll(function(b) {
-          return b.predicate.value == 'http://purl.org/dc/terms/hasPart';
+          return b['http://purl.org/dc/terms/hasPart'] != null;
         });
         values = parts.collect(function(p) {
           if($F('IdentifierClass') == 'HGVIdentifier') {
             // for HGV if we get HGV id's back immediately (i.e. no vols)
             // we want to re-run the query with SPARQL
-            if((!disable_volume) && p['object']['value'].match(/hgv\/\d+\D*\/source$/)) {
+            if((!disable_volume) && p['value'].match(/hgv\/\d+\D*\/source$/)) {
               disable_volume = true;
               reset_selector(select_element);
               is_hgv_identifier = true;
@@ -85,7 +85,7 @@
               toggle_availability();
             }
           }
-          else if(!disable_volume && p['object']['value'].match(/;;/)) {
+          else if(!disable_volume && p['value'].match(/;;/)) {
             select_element = $('document_number');
             reset_selector(select_element);
             disable_volume = true;
@@ -93,7 +93,7 @@
           
           if(!is_hgv_identifier) {
             // ; for DDB and _ for HGV
-            elements = p['object']['value'].split(/[;_]/);
+            elements = p['value'].split(/[;_]/);
             if($F('IdentifierClass') == 'HGVIdentifier') {
               lastpart = p['object']['value'].sub(new RegExp('^.*\\/' + $F('HGVIdentifierCollectionSelect') + '_'),'');
               if(select_element == $('document_number') && !disable_volume) {
@@ -151,12 +151,12 @@
         is_hgv_identifier = false;
         
         parts = json.results.bindings.findAll(function(b) {
-          return b.predicate.value == 'http://purl.org/dc/terms/hasPart';
+          return b['http://purl.org/dc/terms/hasPart'] != null;
         });
 
         values = parts.collect(function(p) {
 
-          elements = p['object']['value'].split(/[\.]/);
+          elements = p['value'].split(/[\.]/);
 
           lastpart = elements[elements.length-1];
 

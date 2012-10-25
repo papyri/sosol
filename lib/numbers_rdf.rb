@@ -46,9 +46,9 @@ module NumbersRDF
       
       # Converts a pure SPARQL query string into the appropriate URL path for our use. 
       def sparql_query_to_path(sparql_query, format = '')
-        path = "/mulgara/sparql/?query=" + URI.escape(sparql_query)
+        path = "/sparql/?query=" + URI.escape(sparql_query)
         if format != ''
-          path += "&format=#{format}"
+          path += "&output=#{format}"
         end
         return path
       end
@@ -110,7 +110,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dcterms:relation/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dc:relation/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
@@ -122,7 +122,7 @@ module NumbersRDF
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...] 
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dcterms:hasPart/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dc:hasPart/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
@@ -147,7 +147,7 @@ module NumbersRDF
       # Currently only works for HGV identifiers, e.g. 'papyri.info/hgv/25883' => 'P.Köln 3, 160 Einleitung'.
       def identifier_to_title(identifier)
         result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dcterms:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
+          "/rdf:RDF/rdf:Description/dc:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
         )
         return result.nil? ? nil : result.first
       end

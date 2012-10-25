@@ -1,6 +1,9 @@
 var formX =  {
-  mapping: null, // The javascript object contianing the element mappings
+  mapping: null, // The javascript object containing the element mappings
   xml: null, // The instance DOM
+  error: false,
+  errorMessages: [],
+  errorIds: [],
   parser: new DOMParser(),
   // Loads XML from the specified URL.
   loadXML: function(uri) {
@@ -119,15 +122,7 @@ var formX =  {
   // Set the form control to the value, or check/uncheck if
   // it is a checkbox or radio button.
   setFormValue: function(elt, val) {
-    if (elt.type == "checkbox" || elt.type == "radio") {
-      if (elt.value == val) {
-        jQuery(elt).attr("checked", "checked");
-      } else {
-        jQuery(elt).removeAttr("checked");
-      }
-    } else {
-      elt.value = val;
-    }
+    jQuery(elt).val(val);
   },
   // Return the appropriate value of the provided form element. If it is
   // a checkbox or radio button, return its value only if it is checked.
@@ -152,11 +147,20 @@ var formX =  {
     }
     return names;
   },
+  // Resets the error state so that the form can be resubmitted after
+  // errors have been fixed.
+  resetErrors: function() {
+    formX.error = false;
+    formX.errorMessages = [];
+    formX.errorIds = [];
+  },
   // Populates the formX.xml DOM with values taken from the HTML form
   updateXML: function() {
+    formX.resetErrors();
     var elts = formX.mapping.elements
     for (var i = 0; i < elts.length; i++) {
       var names = formX.getNamesFromTemplate(elts[i].tpl);
+      var count = names.length;
       var c = formX.xml.evaluate("count("+elts[i].xpath+")", formX.xml.documentElement, formX.nsr, XPathResult.NUMBER_TYPE, null);
       // remove instances of the current mapped element
       for (var j=0; j < c.numberValue; j++) {
@@ -191,9 +195,14 @@ var formX =  {
             var fe = jQuery(elt).find("."+names[j]);
             if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
               template = template.replace("$"+names[j], formX.getFormValue(fe[0]));
+            } else if (elts[i].required) {
+              formX.errorMessages.push(names[j] + " must have a value.");
+              formX.errorIds.push(names[j]);
+              formX.error = true;
+              break;
             }
           }
-          template = formX.scrubTemplate(formX.execUpdates(template));
+          template = formX.scrubTemplate(formX.execUpdates(template), count);
           if (template) {
             var pe = formX.addParents(elts[i].xpath);
             formX.appendFragment(pe, template);
@@ -204,8 +213,12 @@ var formX =  {
         var fe = jQuery("."+names[0]); 
         if (fe[0] && formX.getFormValue(fe[0]).length > 0) {
           template = formX.execUpdates(template.replace("$"+names[0], formX.getFormValue(fe[0])));
+        } else if (elts[i].required){
+          formX.errorMessages.push(names[0].substring("apis_identifer_".length + 1) + " must have a value.");
+          formX.errorIds.push(names[0]);
+          formX.error = true;
         }
-        template = formX.scrubTemplate(template);
+        template = formX.scrubTemplate(template, count);
         if (template) {
           var pe = formX.addParents(elts[i].xpath);
           formX.appendFragment(pe, template);
@@ -290,7 +303,7 @@ var formX =  {
     if (elt.indexOf('[') > 0) {
       var preds = elt.replace(']', '', 'g').split('[');
       for (var i=1; i < preds.length; i++) {
-        var attr = preds[i].match(/([^=]+)='([^']+)'/);
+        var attr = preds[i].search(/([^=]+)='([^']+)'/);
         if (attr) {
           result.push(attr.splice(1,2));
         }
@@ -302,8 +315,13 @@ var formX =  {
   // removes the markers for optional sections.
   // If the template still contains un-replaced variables, then return null,
   // otherwise, return the template
-  scrubTemplate: function(template) {
+  scrubTemplate: function(template, origCount) {
     var names = formX.getNamesFromTemplate(template);
+    var optional = template.match(/[\[\{]/g);
+    var optionalCount = 0;
+    if (optional) {
+      optionalCount = optional.length;
+    } 
     for (var i=0; names && i < names.length; i++) {
       var brackets = new RegExp('\\{[^{\\[\\]]*\\$' + names[i] + '[^{\\[\\]]*\\}');
       template = template.replace(brackets, '');
@@ -312,11 +330,23 @@ var formX =  {
       var squarebrackets = new RegExp('\\[[^\\]\\[]*\\$' + names[i] + '[^\\]\\[]*\\]')
       template = template.replace(squarebrackets, '');
     }
-    if (template.match(/\$[a-zA-Z]\w+/)) {
+    var re = /\$([a-zA-Z](\w|_)+)/g;
+    // if some non-optional variables were replaced and others not, we have an error
+    var remains = template.match(re);
+    if (remains && remains.length == origCount - optionalCount) {
       return null;
     } else {
-      return template.replace(/[\[\]\{\}]/g, '');
+      var result;
+      while ((result = re.exec(template)) !== null) {
+        formX.error = true;
+        formX.errorMessages.push(result[1].substring(result[1].lastIndexOf("_") + 1) + " should not be empty");
+        formX.errorIds.push(result[1]);
+      }
+      if (formX.error) {
+        return null;
+      }
     }
+    return template.replace(/[\[\]\{\}]/g, '');
   },
   // Templates may contain function calls, bracketed with ~,~. This function executes those
   // functions (when variables within them have been substituted) and replaces the function

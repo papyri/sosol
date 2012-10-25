@@ -18,8 +18,10 @@
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :author}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :inventoryNo}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :inventoryNo}
-          = render :partial => 'apis_identifiers/label', :locals => {:key => :apisId}
-          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :apisId}
+          .apisId
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :apisId}
+            = select_tag "apis_identifier_apisCollection", options_for_select(APISIdentifier.collection_names_hash.sort), {:class => 'observeChange apis apis_identifier_apisCollection'}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :apisId}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :tmNo}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :tmNo}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :controlNo}
@@ -39,19 +41,20 @@
           = render :partial => 'apis_identifiers/multi_textarea', :locals => {:key => :generalNote}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :localNote}
           = render :partial => 'apis_identifiers/text_field', :locals => {:key => :localNote}
-          .language
+          .lang
             = render :partial => 'apis_identifiers/label', :locals => {:key => :textLang}
             = render :partial => 'apis_identifiers/text_field', :locals => {:key => :textLang}
             = render :partial => 'apis_identifiers/label', :locals => {:key => :mainLang}
-            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :mainLang}
+            = select_tag "apis_identifier_mainLang", options_for_select({"---" => "", "Ancient Greek" => "grc", "Latin" => "la", "Coptic" => "cop", "Egyptian - Hieroglyphic script" => "egy-Egyp", "Egyptian - Hieratic script" => "egy-Egyh", "Egyptian - Demotic script" => "egy-Egyd", "Arabic" => "ar", "Ancient Greek in Latin script" => "grc-Latn", "Latin in Greek script" => "la-Grek", "Hebrew" => "he", "Semitic language" => "sem", "Persian" => "fas", "Aramaic" => "arc", "Undetermined" => "und"}), {:class => "observeChange apis apis_identifier_mainLang"}
             = render :partial => 'apis_identifiers/label', :locals => {:key => :otherLangs}
             = render :partial => 'apis_identifiers/text_field', :locals => {:key => :otherLangs}
           = render :partial => 'apis_identifiers/label', :locals => {:key => :lines}
           = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange apis apis_identifier_lines'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :rectoVerso}
           = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange apis apis_identifier_rectoVerso'
-          = render :partial => 'apis_identifiers/label', :locals => {:key => :handDesc}
-          = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis apis_identifier_handDesc'
+          .handDesc
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :handDesc}
+            = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis apis_identifier_handDesc'
           = render :partial => 'apis_identifiers/label', :locals => {:key => :relatedNote}
           = text_area_tag 'apis_identifier_relatedNote', nil, :class => 'observeChange apis apis_identifier_relatedNote'
           .clear
@@ -128,20 +131,76 @@
 = javascript_include_tag 'apis-mapping'
 = javascript_include_tag 'formX'
 = javascript_include_tag 'confirm'
-- javascript_tag do
+:javascript
   formX.mapping = apis_map;
   formX.loadXML('xml');
   formX.populateForm();
   jQuery("form.edit_apis_identifier").submit( function(e) {
-  checkNotAddedMultiples();
-  try {
-  formX.updateXML();
-  } catch (error) {
-  alert("Unable to submit.\n" + error);
-  e.preventDefault();
-  }
-  var xml = formX.serializeXML();
-  jQuery("input[name=\"apis_identifier[xml_content]\"]")[0].value = xml;
+    checkNotAddedMultiples();
+    try {
+      formX.updateXML();
+    } catch (error) {
+      alert("Unable to submit.\n" + error);
+      e.preventDefault();
+    }
+    if (formX.error) {
+      for (var i=0; i < formX.errorMessages.length; i++) {
+        alert(formX.errorMessages[i]);
+        jQuery("#" + formX.errorIds[i] + "_label").css({"font-weight": "bold", "color": "red"});
+      }
+      e.preventDefault();
+    }
+    var xml = formX.serializeXML();
+    jQuery("input[name=\"apis_identifier[xml_content]\"]")[0].value = xml;
   });
   jQuery('.quickSave').click(function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); jQuery('form.edit_apis_identifier').submit();});
+  jQuery(function() {
+      var availableLangs = ["Ancient Greek", "Latin", "Coptic", "Egyptian - Hieroglyphic script", "Egyptian - Hieratic script", "Egyptian - Demotic script", "Arabic", "Ancient Greek in Latin script", "Latin in Greek script", "Hebrew", "Semitic language", "Persian", "Aramaic", "Undetermined"];
+  		var langs = {"Ancient Greek": "grc", "Latin": "la", "Coptic": "cop", "Egyptian - Hieroglyphic script": "egy-Egyp", "Egyptian - Hieratic script": "egy-Egyh", "Egyptian - Demotic script": "egy-Egyd", "Arabic": "ar", "Ancient Greek in Latin script": "grc-Latn", "Latin in Greek script": "la-Grek", "Hebrew": "he", "Semitic language": "sem", "Persian": "fas", "Aramaic": "arc", "Undetermined": "und"};
+  		function split( val ) {
+  			return val.split( /,\s*/ );
+  		}
+  		function extractLast( term ) {
+  			return split( term ).pop();
+  		}
+
+  		jQuery( "#apis_identifier_otherLangs" )
+  			// don't navigate away from the field on tab when selecting an item
+  			.bind( "keydown", function( event ) {
+  				if ( event.keyCode === jQuery.ui.keyCode.TAB &&
+  						jQuery( this ).data( "autocomplete" ).menu.active ) {
+  					event.preventDefault();
+  				}
+  			})
+  			.autocomplete({
+  				minLength: 0,
+  				source: function( request, response ) {
+  					// delegate back to autocomplete, but extract the last term
+  					response( jQuery.ui.autocomplete.filter(
+  						availableLangs, extractLast( request.term ) ) );
+  				},
+  				focus: function() {
+  					// prevent value inserted on focus
+  					return false;
+  				},
+  				select: function( event, ui ) {
+  					var terms = split( this.value );
+  					// remove the current input
+  					terms.pop();
+  					// add the selected item
+  					terms.push( langs[ui.item.value] );
+  					// add placeholder to get the comma-and-space at the end
+  					terms.push( "" );
+  					this.value = terms.join( ", " );
+  					return false;
+  				}
+  			})
+        .blur(function() {
+          var value = jQuery(this).val();
+          if (value.substr(-2) == ", ") {
+            jQuery(this).val(value.substring(0, value.lastIndexOf(",")));
+          }
+        });
+  	});
+  
   

@@ -29,6 +29,22 @@ class APISIdentifier < HGVMetaIdentifier
     @configuration = ApisConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config apis.yml}))[:apis][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
+  
+  # Creates a hash of the names of all the APIS Collections available in SoSOL
+  # Overrides method in Identifier
+  # - used in selector
+  def self.collection_names_hash
+    self.collection_names
+    
+    unless defined? @collection_names_hash
+      @collection_names_hash = {}
+      @collection_names.each do |collection_name|
+        @collection_names_hash[collection_name] = collection_name
+      end
+    end
+    
+    return @collection_names_hash
+  end
 
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/

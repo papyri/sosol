@@ -6,13 +6,17 @@ var apis_map = {
   elements: [
     {name: "title",
      xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:title",
-     tpl: "<title>$apis_identifier_title</title>"},
+     tpl: "<title>$apis_identifier_title</title>",
+     required: true},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:titleStmt/t:author",
      tpl: "<author>$apis_identifier_author</author>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msIdentifier/t:idno[@type='invNo' or @type='invno']",
      tpl: "<idno type=\"invNo\">$apis_identifier_inventoryNo</idno>"},
-    {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
-     tpl: "<idno type=\"apisid\">$apis_identifier_apisId</idno>"},
+    {name: "apisId",
+     xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
+     children: [["text()","getApisCollection"],["text()","getApisId"]],
+     tpl: "<idno type=\"apisid\">$apis_identifier_apisCollection.apis.$apis_identifier_apisId</idno>",
+     required: true},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']",
      tpl: "<idno type=\"TM\">$apis_identifier_tmNo</idno>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='controlno']",
@@ -27,7 +31,7 @@ var apis_map = {
      tpl: "<note type=\"local_note\">$apis_identifier_localNote</note>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:note[@type='related']",
      tpl: "<note type=\"related\">$apis_identifier_relatedNote</note>"},
-    {name: "language",
+    {name: "lang",
      xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:msContents/t:msItemStruct/t:textLang",
      children: ["@mainLang", "@otherLangs", "."],
      tpl: "<textLang mainLang=\"$apis_identifier_mainLang\"[ otherLangs=\"$apis_identifier_otherLangs\"]>$apis_identifier_textLang</textLang>"},
@@ -39,8 +43,10 @@ var apis_map = {
      tpl: "<ab type=\"lines\">$apis_identifier_lines</ab>"},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:objectDesc/t:layoutDesc/t:layout/t:ab[@type='recto-verso']",
      tpl: "<ab type=\"recto-verso\">$apis_identifier_rectoVerso</ab>"},
-    {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc/t:p",
-     tpl: "<p>$apis_identifier_handDesc</p>"},
+    {name: "handDesc",
+     xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:physDesc/t:handDesc",
+     children: ["t:p"],
+     tpl: "<handDesc>\n  <p>$apis_identifier_handDesc</p>\n</handDesc>"},
     {name: "origDate",
      xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:msDesc/t:history/t:origin/t:origDate",
      children: [["@when","getYear"],["@when", "getMonth"], ["@when", "getDay"], ["@notBefore","getYear"],["@notBefore", "getMonth"], ["@notBefore", "getDay"], ["@notAfter","getYear"],["@notAfter", "getMonth"], ["@notAfter", "getDay"], "."],
@@ -88,6 +94,12 @@ var apis_map = {
     }
   },
   functions: {
+    getApisCollection: function(apisId) {
+      return apisId.substring(0,apisId.indexOf("."));
+    },
+    getApisId: function(apisId) {
+      return apisId.substring(apisId.lastIndexOf(".") + 1);
+    },
     getDate: function(date) {
       if (date) {
         var re = /(-?\d{4})-?(\d{2})?-?(\d{2})?/;

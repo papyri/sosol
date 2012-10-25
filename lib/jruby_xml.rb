@@ -101,7 +101,9 @@ module JRubyXML
         javax.xml.XMLConstants.const_get('XML_NS_PREFIX') => 
           javax.xml.XMLConstants.const_get('XML_NS_URI'),
         javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE') =>
-          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI')
+          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI'),
+        "http://purl.org/dc/terms/" =>
+          "dcterms"
       }
       root_node_attribute_hash.each_pair do |attribute_name, uri|
         if attribute_name =~ /^xmlns:/
