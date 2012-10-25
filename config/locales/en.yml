@@ -283,6 +283,8 @@ en:
       tmNo: TM No.
       apisCollection: Collection
       apisId: APIS ID
+      HGV: HGV ID
+      ddbdp: DDbDP ID
       controlNo: Control No.
       summary: Summary
       generalNote: General Notes
