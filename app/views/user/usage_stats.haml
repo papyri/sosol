@@ -21,10 +21,10 @@
         = hidden_field_tag 'save_user_id', user.id
       
       %br
-       - votes = Comment.vote.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
-       %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
-       - if votes.length > 0  
-         = render :partial => "usage_detail", :locals => { :user => user, :comments => votes, :type => 'vote'}
+      - votes = Comment.vote.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
+      %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
+      - if votes.length > 0  
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => votes, :type => 'vote'}
         
       %br
       - submits = Comment.submit.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
@@ -41,3 +41,4 @@
      
       %br
       %br
+
