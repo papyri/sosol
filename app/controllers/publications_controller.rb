@@ -121,6 +121,23 @@ class PublicationsController < ApplicationController
     expire_publication_cache
     redirect_to @publication
   end
+  
+  def create_from_apis_template
+    new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+    new_publication.title = APISIdentifier.new(:name => APISIdentifier.next_temporary_identifier(params[:apis_collection])).titleize
+    new_publication.status = "new"
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection])
+    @publication = new_publication
+    
+    flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
 
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)

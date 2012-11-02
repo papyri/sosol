@@ -45,6 +45,46 @@ class APISIdentifier < HGVMetaIdentifier
     
     return @collection_names_hash
   end
+  
+  # Determines the next 'SoSOL' temporary name for the associated identifier
+  # This overrides the identifier superclass definition so that SoSOL-side APIS
+  # id's will be e.g. papyri.info/apis/yale.apis.2011-0001 instead of papyri.info/apis/SoSOL;2011;0001
+  # - starts at '1' each year
+  # - *Returns* :
+  #   - temporary identifier name
+  def self.next_temporary_identifier(apis_collection)
+    year = Time.now.year
+    latest = self.find(:all,
+                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.#{year}-%"],
+                       :order => "name DESC",
+                       :limit => 1).first
+    if latest.nil?
+      # no constructed id's for this year/class
+      document_number = 1
+    else
+      document_number = latest.to_components.last.split(';').last.to_i + 1
+    end
+    
+    return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.%04d-%04d",
+                   year, document_number)
+  end
+  
+  # Create default XML file and identifier model entry for associated identifier class
+  # - *Args*  :
+  #   - +publication+ -> the publication the new translation is a part of
+  # - *Returns* :
+  #   - new identifier
+  def self.new_from_template(publication, collection = "unknown")
+    new_identifier = self.new(:name => self.next_temporary_identifier(collection))
+    new_identifier.publication = publication
+    
+    new_identifier.save!
+    
+    initial_content = new_identifier.file_template
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
+    
+    return new_identifier
+  end
 
   def to_path
     if name =~ /#{self.class::TEMPORARY_COLLECTION}/
