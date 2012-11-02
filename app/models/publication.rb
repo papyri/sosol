@@ -1458,7 +1458,7 @@ class Publication < ActiveRecord::Base
   def creatable_identifiers
     creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     
-    #WARNING hardcoded identifier depenency hack  
+    #WARNING hardcoded identifier dependency hack  
     #enforce creation order
     has_meta = false
     has_text = false
