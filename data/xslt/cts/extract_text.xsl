@@ -53,7 +53,7 @@
         <xsl:param name="match-nontext"/>
        <xsl:choose>
            <xsl:when test="$remainder">
-               <xsl:variable name="match_string" select="concat('^([^', $match-nontext, ']+)([', $match-nontext, ']+)(.*)$')"/>
+               <xsl:variable name="match_string" select="concat('^([^', $match-nontext, ']+)?([', $match-nontext, ']+)(.*)$')"/>
                <xsl:variable name="tokens">
                    <xsl:analyze-string select="$remainder" regex="{$match_string}">
                        <xsl:matching-substring>

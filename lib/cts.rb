@@ -118,10 +118,10 @@ module CTS
       
       def getInventoryUrl(a_inventory)
         # first check the internal repos
-        if (getInventoriesHash().has_key?(a_inventory))
-          EXIST_HELPER_REPO + 'CTS.xq?inv=' + a_inventory   
-        elsif (getExternalCTSHash().has_key?(a_inventory))
+        if (getExternalCTSHash().has_key?(a_inventory))
           @external_cts.fetch(a_inventory).fetch('api')
+        elsif (getInventoriesHash().has_key?(a_inventory))
+          EXIST_HELPER_REPO + 'CTS.xq?inv=' + a_inventory   
         else
           Rails.logger.info(@external_cts.inspect)
           raise "#{a_inventory} CTS Repository is not registered."
@@ -305,7 +305,7 @@ module CTS
       
       def proxyGetPassage(a_inventory,a_urn)
         response = Net::HTTP.get_response(URI.parse(self.getInventoryUrl(a_inventory) + 
-          "&request=GetPassagePlus&urn=#{a_urn}"))
+          "&request=GetPassage&urn=#{a_urn}"))
         return response.body
       end
       

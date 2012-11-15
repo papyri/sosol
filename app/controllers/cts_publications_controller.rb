@@ -72,7 +72,47 @@ class CtsPublicationsController < PublicationsController
        @publication = Publication.new()
        @publication.owner = @current_user
        @publication.creator = @current_user
-       @publication.populate_identifiers_from_identifiers(
+       
+      # HACK for IDigGreek to enable link in to create annotations on an edition that doesn't
+      # exist in the master repo
+      temp_id = nil
+      identifier_class = nil
+      SITE_IDENTIFIERS.split(",").each do |identifier_name|
+        ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
+        if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
+        
+          identifier_class = Object.const_get(identifier_name)
+          temp_id = identifier_class.new(:name => versionIdentifier)
+        end
+      end
+      
+      if (@publication.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
+        fullurn = "urn:cts:#{versionUrn}"
+        # fetch a title without creating from template
+        @publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(sourceCollection,fullurn,'edition','ed')).name
+        @publication.status = "new"
+        @publication.save!
+    
+        # branch from master so we aren't just creating an empty branch
+        @publication.branch_from_master
+        new_cts = identifier_class.new_from_template(@publication,sourceCollection,fullurn,'edition','ed')
+          
+        # create the inventory metadata records
+        # we can't do this until the publication has already been branched from the master 
+        # because it doesn't exist in the master git repo 
+        # and is only carried along with the publication until it is finalized
+        begin
+          # first the inventory record
+          CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
+        rescue Exception => e
+          @publication.destroy
+          flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+          redirect_to dashboard_url
+          return
+        end
+  
+      else
+        @publication.populate_identifiers_from_identifiers(
             identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
                    
         if @publication.save!
@@ -99,8 +139,8 @@ class CtsPublicationsController < PublicationsController
           e.owner = @current_user
           e.save!
         end # end saving new publication
-    end # now we have a publication
-    
+      end # now we have a publication
+    end    
     redirect_to(:controller => 'citation_cts_identifiers', 
                 :action => 'confirm_edit_or_annotate', 
                 :publication_id => @publication.id,
@@ -141,6 +181,26 @@ class CtsPublicationsController < PublicationsController
       # create the new template
       new_cts = identifier_class.new_from_template(new_publication,collection,urn,'edition',lang)
       @publication = new_publication
+      
+      # create the temporary CTS citation and inventory metadata records
+      # we can't do this until the publication has already been branched from the master 
+      # because they don't exist in the master git repo 
+      # and are only carried along with the publication until it is finalized
+      begin
+        # first the inventory record
+        CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,edition)
+        # now the citation identifier 
+        if params[:citation_urn]
+          # TODO this needs to support direction creation from a translation as well as an edition?
+          citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn],'edition')
+        end
+      rescue Exception => e
+        @publication.destroy
+        flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+        redirect_to dashboard_url
+        return
+      end
+
 
       flash[:notice] = 'Publication was successfully created.'
       expire_publication_cache

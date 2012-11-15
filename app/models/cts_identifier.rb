@@ -74,9 +74,11 @@ class CTSIdentifier < Identifier
     year = Time.now.year
     # we want to take the text group and work from the template urn and create our own edition urn
     # TODO - need to handle differing namespaces on tg and work
-    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) + ".#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    # TODO - use exemplar for version
+    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
     Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
+    editionPart = ".#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
@@ -88,8 +90,10 @@ class CTSIdentifier < Identifier
       Rails.logger.info("------Last component" + latest.to_components.last.split(/[\.;]/).last )
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
-    
-    return "#{document_path}#{document_number}"
+    editionPart = editionPart + document_number.to_s
+    # HACK for IDigGreek - just keep the original edition info
+    editionPart = urnObj.getVersion(false)
+    return "#{document_path}#{editionPart}"
   end
   
   def self.collection_names
