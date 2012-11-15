@@ -70,7 +70,7 @@ function helpDialogOpen(view)
     
   case "number":
     {
-      openconfig = config='height=350, width=625, left=150, top=50' + stdOptions;
+      openconfig = config='height=375, width=625, left=150, top=50' + stdOptions;
       break;
     }
   default: // nopts is default and need to clear optional xml values and leave diachar filled in 

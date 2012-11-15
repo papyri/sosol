@@ -10,7 +10,7 @@
 - colwidth = 60/Identifier.site_identifier_classes.size
 
 %div{:class => "publication_list_holder", :id => list_id }
-  %table{:class=>"results", :width=>"95%"}
+  %table{:class=>"results", :width=>"100%"}
     %tr
       %td
       - Identifier.site_identifier_classes.each do |i|
@@ -55,4 +55,63 @@
               - if meta_ids.length > 1
                 = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
           
+<<<<<<< HEAD
        
+=======
+        -# -------------TEXT---------------------    
+        %td{:class=>"identifier_td"}
+          - text_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "DDBIdentifier"
+              - ids
+          - text_ids = text_ids.compact
+          - if (text_ids.length == 0) && creatable_identifiers.include?("DDBIdentifier")
+            - class_type = "DDBIdentifier"
+            - link_id = "DDBIdentifier" + publication.id.to_s
+            - create_type = 'Create new'            
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - elsif text_ids.length > 0
+            = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
+
+          - if text_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
+
+        -# -------------APIS--------------------- 
+        %td{:class=>"identifier_td"}
+          - apis_ids = publication.identifiers.collect do |ids|
+            - if ids.type == "APISIdentifier"
+              - ids
+          - apis_ids = apis_ids.compact
+          - if (apis_ids.length == 0) && creatable_identifiers.include?("APISIdentifier")
+            - class_type = "APISIdentifier"
+            - link_id = "APISIdentifier" + publication.id.to_s
+            - create_type = 'Create new'
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclink => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>')"})
+          - elsif apis_ids.length > 0
+            = link_to apis_ids.first.title, edit_polymorphic_path([publication, apis_ids.first])
+            
+          - if apis_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => apis_ids }
+  
+        -# -------------TRANSLATIONS---------------------
+        %td{:class=>"identifier_td"}
+          - trans_ids = publication.identifiers.collect do |ids|
+  
+            - if ids.type == "HGVTransIdentifier"
+              - ids
+          - trans_ids = trans_ids.compact
+          - if (trans_ids.length == 0) && creatable_identifiers.include?("HGVTransIdentifier")
+            - class_type = "HGVTransIdentifier"
+            - link_id = "HGVTransIdentifier_" + publication.id.to_s
+            - create_type = 'Create new'            
+            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+          - elsif trans_ids.length > 0
+            = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
+
+          - if trans_ids.length > 1
+            = render :partial => "publications/batch_box", :locals => {:ids => trans_ids }
+            
+        -# -------------APIS---------------------
+        %td{:class=>"identifier_td"}
+          = " "              
+>>>>>>> master

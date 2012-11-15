@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.integer  "finalizer_user_id"
     t.text     "identifier_classes"
-    t.integer  "rank"
+    t.integer  "rank",               :precision => 10, :scale => 0
     t.string   "friendly_name"
     t.integer  "community_id"
   end

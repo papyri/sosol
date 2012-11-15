@@ -247,30 +247,29 @@ class Publication < ActiveRecord::Base
     #check each board in order by priority rank
     boards.each do |board|
 
-      #if board.community == publication.community
-        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-        if boards_identifiers.length > 0
-          #submit to that board
+    #if board.community == publication.community
+    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+    if boards_identifiers.length > 0
+      #submit to that board
+      Rails.logger.info "---Submittable Board identifiers are: " 
+      boards_identifiers.each do |log_sbi|
+        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
+      end
 
-    Rails.logger.info "---Submittable Board identifiers are: " 
-    boards_identifiers.each do |log_sbi|
-      Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-    end
+      #find the comment text made on submission
+      comment_text = '' #if no comment found, default to nothing. This should never happen.
+      begin
+        submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
+        if submit_comment && submit_comment.comment
+          comment_text = submit_comment.comment
+        end
+      rescue ActiveRecord::RecordNotFound
+        #comment_text already = ''
+        #TODO raise warning? add error logging
+      end
 
-          #find the comment text made on submission
-          comment_text = '' #if no comment found, default to nothing. This should never happen.
-          begin
-            submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
-            if submit_comment && submit_comment.comment
-              comment_text = submit_comment.comment
-            end
-          rescue ActiveRecord::RecordNotFound
-            #comment_text already = ''
-            #TODO raise warning? add error logging
-          end
-
-          #update the change_desc of each submitted identifier
-          boards_identifiers.each do |submitting_identifier|
+      #update the change_desc of each submitted identifier
+      boards_identifiers.each do |submitting_identifier|
             submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(comment_text), :comment => comment_text)
             submitting_identifier.status = "submitted"
             submitting_identifier.save!
@@ -874,30 +873,33 @@ class Publication < ActiveRecord::Base
       Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
       return false
     end
-   
-    # clone publication database record to owner
-    new_finalizing_publication = old_finalizing_publication.clone
-    new_finalizing_publication.owner = new_finalizer
-    new_finalizing_publication.creator = old_finalizing_publication.creator
-    new_finalizing_publication.title = old_finalizing_publication.title
-    new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
-    new_finalizing_publication.parent = old_finalizing_publication.parent
-    
-    new_finalizing_publication.save!
-    
-    # copy identifiers over to new publication
-    old_finalizing_publication.identifiers.each do |identifier|
-      duplicate_identifier = identifier.clone
-      new_finalizing_publication.identifiers << duplicate_identifier
+  
+    self.transaction do
+      # clone publication database record to owner
+      new_finalizing_publication = old_finalizing_publication.clone
+      new_finalizing_publication.owner = new_finalizer
+      new_finalizing_publication.creator = old_finalizing_publication.creator
+      new_finalizing_publication.title = old_finalizing_publication.title
+      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.parent = old_finalizing_publication.parent
+      
+      new_finalizing_publication.save!
+
+      # copy identifiers over to new publication
+      old_finalizing_publication.identifiers.each do |identifier|
+        duplicate_identifier = identifier.clone
+        new_finalizing_publication.identifiers << duplicate_identifier
+      end
+      
+      # copy branch to new owner
+      new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
+      new_finalizing_publication.save!
+
     end
     
-    # copy branch to new owner 
-    new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
-    new_finalizing_publication.save!
-   
     # destroy old publication (including branch)
     old_finalizing_publication.destroy
-   
+    
     return true
   end
   
@@ -1470,7 +1472,7 @@ class Publication < ActiveRecord::Base
   def creatable_identifiers
     creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
     
-    #WARNING hardcoded identifier depenency hack  
+    #WARNING hardcoded identifier dependency hack  
     #enforce creation order
     has_meta = false
     has_text = false

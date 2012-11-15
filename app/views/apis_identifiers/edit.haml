@@ -1,224 +1,210 @@
- #main
-  = render :partial => 'identifiers/edit_bar'
+= stylesheet_link_tag 'meta'
+#main
   .site.metaSite
     = render :partial => 'identifiers/header'
-    %span.expandAll#expandAll=I18n.t('meta.label.expandAll')
-    %span.collapseAll#collapseAll=I18n.t('meta.label.collapseAll')
+    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
     #edit
       - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
         = f.error_messages
-
+        = hidden_field_tag "apis_identifier[xml_content]"
         %h4.category.general
-          %a{:name => 'General<'}=I18n.t('meta.legend.general')
+          %a{:name => 'General'}=I18n.t('apis.legend.general')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :title }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :title }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :author }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :author }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :inventoryNo }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :inventoryNo }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :apisid }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :apisid }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :controlNo }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :controlNo }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :tmNo }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :tmNo }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :summary }
-          = text_area_tag 'apis_identifier[' + :summary.to_s + ']', @identifier[:summary], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :generalNote }
-          = text_area_tag 'apis_identifier[' + :generalNote.to_s + ']', @identifier[:generalNote], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :textLang }
-	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :textLang }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :mainLang }
-	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :mainLang }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :otherLangs }
-	  = render :partial => 'apis_identifiers/text_field', :locals => { :key => :otherLangs }
-
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
-	%h4.category.object
-          %a{:name => 'Object<'}=I18n.t('meta.legend.object')
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :title}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :title}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :author}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :author}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :inventoryNo}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :inventoryNo}
+          .apisId
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :apisId}
+            = select_tag "apis_identifier_apisCollection", options_for_select(APISIdentifier.collection_names_hash.sort), {:class => 'observeChange apis apis_identifier_apisCollection'}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :apisId}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :tmNo}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :tmNo}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :HGV}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :HGV}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :ddbdp}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :ddbdp}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :controlNo}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :controlNo}
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+        %h4.category.object
+          %a{:name => 'Object'}=I18n.t('apis.legend.object')
         .editbox{:style => 'display: none;'}
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :support }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :support }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :condition }
-          = text_area_tag 'apis_identifier[' + :condition.to_s + ']', @identifier[:condition], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :lines }
-          = text_area_tag 'apis_identifier[' + :lines.to_s + ']', @identifier[:lines], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :recto_verso }
-          = text_area_tag 'apis_identifier[' + :recto_verso.to_s + ']', @identifier[:recto_verso], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :handDesc }
-          = text_area_tag 'apis_identifier[' + :handDesc.to_s + ']', @identifier[:handDesc], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
-	%h4.category.context
-          %a{:name => 'Context<'}=I18n.t('meta.legend.context')
-        .editbox{:style => 'display: none;'}	
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :origDate }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :origDate }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :when }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :when }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :notBefore }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :notBefore }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :notAfter }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :notAfter }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :origPlace }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :origPlace }
-
-	  = render :partial => 'apis_identifiers/label', :locals => { :key => :provenance }
-          = text_area_tag 'apis_identifier[' + :provenance.to_s + ']', @identifier[:provenance], :disabled => !@identifier.mutable?, :class => 'observechange'
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :associatedName }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :associatedName }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :keyword }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :keyword }
-
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
-        %h4.category.citations
-          %a{:name => 'Citations'}=I18n.t('meta.legend.citations')
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :support}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :support}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :condition}
+          = text_area_tag 'apis_identifier_condition', nil, :class => 'observeChange apis apis_identifier_condition'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :summary}
+          = text_area_tag 'apis_identifier_summary', nil, :class => 'observeChange apis apis_identifier_summary'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :generalNote}
+          = render :partial => 'apis_identifiers/multi_textarea', :locals => {:key => :generalNote}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :localNote}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :localNote}
+          .lang
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :textLang}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :textLang}
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :mainLang}
+            = select_tag "apis_identifier_mainLang", options_for_select({"---" => "", "Ancient Greek" => "grc", "Latin" => "la", "Coptic" => "cop", "Egyptian - Hieroglyphic script" => "egy-Egyp", "Egyptian - Hieratic script" => "egy-Egyh", "Egyptian - Demotic script" => "egy-Egyd", "Arabic" => "ar", "Ancient Greek in Latin script" => "grc-Latn", "Latin in Greek script" => "la-Grek", "Hebrew" => "he", "Semitic language" => "sem", "Persian" => "fas", "Aramaic" => "arc", "Undetermined" => "und"}), {:class => "observeChange apis apis_identifier_mainLang"}
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :otherLangs}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :otherLangs}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :lines}
+          = text_area_tag 'apis_identifier_lines', nil, :class => 'observeChange apis apis_identifier_lines'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :rectoVerso}
+          = text_area_tag 'apis_identifier_rectoVerso', nil, :class => 'observeChange apis apis_identifier_rectoVerso'
+          .handDesc
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :handDesc}
+            = text_area_tag 'apis_identifier_handDesc', nil, :class => 'observeChange apis apis_identifier_handDesc'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :relatedNote}
+          = text_area_tag 'apis_identifier_relatedNote', nil, :class => 'observeChange apis apis_identifier_relatedNote'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+        %h4.category.context
+          %a{:name => 'Context'}=I18n.t('apis.legend.context')
         .editbox{:style => 'display: none;'}
-          =# debug @identifier[:publicationExtra]
-          %label#publicationExtraFullTitle &nbsp;
-
-          %hr
-          
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationTitle }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :publicationTitle }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' }
-          
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :tmNo }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :tmNo }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.tmNo' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationVolume }
-          = text_field_tag 'apis_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'apis_identifier[publicationExtra][0][attributes][type]', :volume
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' }
-          
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationFascicle }
-          = text_field_tag 'apis_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'apis_identifier[publicationExtra][1][attributes][type]', :fascicle
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationNumbers }
-          = text_field_tag 'apis_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'apis_identifier[publicationExtra][2][attributes][type]', :numbers
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationSide }
-          = text_field_tag 'apis_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'apis_identifier[publicationExtra][3][attributes][type]', :side
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
-          
-          %div{:style => 'float: none; clear: both; display: block;'}
-          
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :publicationExtra }
-          = render :partial => 'apis_identifiers/publicationExtra'
-
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
-        %h4.category.collection=I18n.t('meta.legend.collection')
+          %div.origDate
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :origDate}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origDate}
+            %div#dateWhen
+              %h5 Exact Date
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day}
+            %div#dateRange
+              %h5 From
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year1}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month1}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day1}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day1}
+              %h5 To
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :year2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :year2}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :month2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :month2}
+              = render :partial => 'apis_identifiers/label', :locals => {:key => :day2}
+              = render :partial => 'apis_identifiers/text_field', :locals => {:key => :day2}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :origPlace}
+          = render :partial => 'apis_identifiers/text_field', :locals => {:key => :origPlace}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :provenance}
+          = text_area_tag 'apis_identifier_provenance', nil, :class => 'observeChange apis apis_identifier_provenance'
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :associatedName}
+          = render :partial => 'apis_identifiers/multi', :locals => {:key => :associatedName}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :keyword}
+          = render :partial => 'apis_identifiers/multi', :locals => {:key => :keyword}
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :genre}
+          = render :partial => 'apis_identifiers/multi', :locals => {:key => :genre}
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+        %h4.category.images
+          %a{:name => 'Images'}=I18n.t('apis.legend.images')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionPlaceName }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionPlaceName }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :collection }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collection }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collection' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionInventoryNumber }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionInventoryNumber }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionInventoryNumber' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionTemporaryNotes }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionTemporaryNotes }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryNotes' }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
-          = render :partial => 'apis_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
-          = render :partial => 'apis_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' }
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
-        %h4.category.provenance
-          %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/provenance'
-          %div{:style => 'float: none; clear: both; display: block;'}
-          %span.quickSave=I18n.t('meta.label.quickSave')
-          %span#addAlternativePlace.addAlternativePlace=I18n.t('meta.label.addAlternativePlace')
-
-        %h4.category.reference
-          %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :figures}
           = render :partial => 'apis_identifiers/figures'
-          
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :illustrations }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :illustrations }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :otherPublications }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :otherPublications }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :bl }
-          = render :partial => 'apis_identifiers/bl'
-          %div{:style => 'float: none; clear: both; display: block;'}
-          .quickSave=I18n.t('meta.label.quickSave')
-
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+        %h4.category.biblio
+          %a{:name => 'Bibliography'}=I18n.t('apis.legend.biblio')
+        .editbox{:style => 'display:none;'}
+          = render :partial => 'apis_identifiers/citation'
+          %span.originalRec
+            = render :partial => 'apis_identifiers/label', :locals => {:key => :originalRecord}
+            = render :partial => 'apis_identifiers/text_field', :locals => {:key => :originalRecord}
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
         %h4.category.translation
-          %a{:name => 'Translation'}=I18n.t('meta.legend.translation')
+          %a{:name => 'Translation'}=I18n.t('apis.legend.translation')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsDe }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsDe }
+          = render :partial => 'apis_identifiers/label', :locals => {:key => :translation}
+          = text_area_tag 'apis_identifier_translation', nil, :class => 'observeChange apis apis_identifier_translation'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+        .controlPanel
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = hidden_field_tag 'expansionSet', flash[:expansionSet]
 
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsEn }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsEn }
-         
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsEs }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsEs }
-         
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsFr }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsFr }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsIt }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsIt }
-
-          = render :partial => 'apis_identifiers/label', :locals => { :key => :translationsLa }
-          = render :partial => 'apis_identifiers/multi', :locals => { :key => :translationsLa }
-          %div{:style => 'float: none; clear: both; display: block;'}      
-          .quickSave=I18n.t('meta.label.quickSave')    
-
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-        = hidden_field_tag 'expansionSet', flash[:expansionSet]
-
-= javascript_include_tag 'meta'
+= javascript_include_tag 'edit_mask'
+= javascript_include_tag 'apis'
+= javascript_include_tag 'apis-mapping'
+= javascript_include_tag 'formX'
 = javascript_include_tag 'confirm'
+:javascript
+  formX.mapping = apis_map;
+  formX.loadXML('xml');
+  formX.populateForm();
+  jQuery("form.edit_apis_identifier").submit( function(e) {
+    checkNotAddedMultiples();
+    try {
+      formX.updateXML();
+    } catch (error) {
+      alert("Unable to submit.\n" + error);
+      e.preventDefault();
+    }
+    if (formX.error) {
+      for (var i=0; i < formX.errorMessages.length; i++) {
+        alert(formX.errorMessages[i]);
+        jQuery("#" + formX.errorIds[i] + "_label").css({"font-weight": "bold", "color": "red"});
+      }
+      e.preventDefault();
+    }
+    var xml = formX.serializeXML();
+    jQuery("input[name=\"apis_identifier[xml_content]\"]")[0].value = xml;
+  });
+  jQuery('.quickSave').click(function(e){checkNotAddedMultiples(); rememberToggledView(); set_conf_false(); jQuery('form.edit_apis_identifier').submit();});
+  jQuery(function() {
+      var availableLangs = ["Ancient Greek", "Latin", "Coptic", "Egyptian - Hieroglyphic script", "Egyptian - Hieratic script", "Egyptian - Demotic script", "Arabic", "Ancient Greek in Latin script", "Latin in Greek script", "Hebrew", "Semitic language", "Persian", "Aramaic", "Undetermined"];
+  		var langs = {"Ancient Greek": "grc", "Latin": "la", "Coptic": "cop", "Egyptian - Hieroglyphic script": "egy-Egyp", "Egyptian - Hieratic script": "egy-Egyh", "Egyptian - Demotic script": "egy-Egyd", "Arabic": "ar", "Ancient Greek in Latin script": "grc-Latn", "Latin in Greek script": "la-Grek", "Hebrew": "he", "Semitic language": "sem", "Persian": "fas", "Aramaic": "arc", "Undetermined": "und"};
+  		function split( val ) {
+  			return val.split( /,\s*/ );
+  		}
+  		function extractLast( term ) {
+  			return split( term ).pop();
+  		}
+
+  		jQuery( "#apis_identifier_otherLangs" )
+  			// don't navigate away from the field on tab when selecting an item
+  			.bind( "keydown", function( event ) {
+  				if ( event.keyCode === jQuery.ui.keyCode.TAB &&
+  						jQuery( this ).data( "autocomplete" ).menu.active ) {
+  					event.preventDefault();
+  				}
+  			})
+  			.autocomplete({
+  				minLength: 0,
+  				source: function( request, response ) {
+  					// delegate back to autocomplete, but extract the last term
+  					response( jQuery.ui.autocomplete.filter(
+  						availableLangs, extractLast( request.term ) ) );
+  				},
+  				focus: function() {
+  					// prevent value inserted on focus
+  					return false;
+  				},
+  				select: function( event, ui ) {
+  					var terms = split( this.value );
+  					// remove the current input
+  					terms.pop();
+  					// add the selected item
+  					terms.push( langs[ui.item.value] );
+  					// add placeholder to get the comma-and-space at the end
+  					terms.push( "" );
+  					this.value = terms.join( ", " );
+  					return false;
+  				}
+  			})
+        .blur(function() {
+          var value = jQuery(this).val();
+          if (value.substr(-2) == ", ") {
+            jQuery(this).val(value.substring(0, value.lastIndexOf(",")));
+          }
+        });
+  	});
+  
+  

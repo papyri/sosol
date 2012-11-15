@@ -25,6 +25,15 @@
               - for meta in metas
                 %li
                   = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
+      - if @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}.length > 0
+        %li{ :class => params[:controller] == 'apis_identifers' ? 'active' : ''}
+          = link_to 'APIS (beta)', edit_apis_publication_path(@identifier.publication)
+          - apisrecs = @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}
+          - if apisrecs.length > 1
+            %ul
+              - for apis in apisrecs
+                %li
+                  = link_to apis.titleize, edit_polymorphic_path([@identifier.publication, apis])
       - if @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}.length > 0
         %li{ :class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}
           = link_to 'Translation', edit_trans_publication_path(@identifier.publication)
@@ -89,6 +98,13 @@
               %li{ :class => %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'commentary' ? 'active' : ''}= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+        - when APISIdentifier
+          .identifier_sub_menu#sub_menu_2
+          
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'APIS', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
         - when HGVMetaIdentifier
           .identifier_sub_menu#sub_menu_2

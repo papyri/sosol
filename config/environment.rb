@@ -71,7 +71,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Make Time.zone default to the specified zone, and make Active Record store time values
   # in the database in UTC, and return them converted to the specified local zone.
@@ -103,16 +103,15 @@ Rails::Initializer.run do |config|
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
   
-SITE_NAME = 'SoSOL'
-SITE_FULL_NAME = 'Son of Suda On Line'
-SITE_TAG_LINE = ''
-SITE_LAYOUT = 'pn'
-SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">'
-SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier'
-SITE_CATALOG_SEARCH = "View in PN"
-SITE_USER_NAMESPACE = "papyri.info"
-  
-  REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
+  SITE_NAME = 'Papyrological Editor'
+  SITE_FULL_NAME = 'Papyri.info' 
+  SITE_LAYOUT = 'pn'
+  SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">'
+  SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
+  SITE_CATALOG_SEARCH = "View in PN"
+  SITE_USER_NAMESPACE = "papyri.info"
+ 
+  REPOSITORY_ROOT = File.join('/data/papyri.info/sosol/repo')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
   GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="

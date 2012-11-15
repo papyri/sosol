@@ -159,13 +159,15 @@ class Identifier < ActiveRecord::Base
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(
         self.name.sub(/trans/,''))
+    elsif self.class == APISIdentifier
+      title = self.name.split('/').last
     end
     
     if title.nil?
       if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
-
+        puts "#{collection_name}, #{volume_number}, #{document_number}"
         collection_name = 
           self.class.collection_names_hash[collection_name]
         

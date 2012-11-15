@@ -57,7 +57,7 @@ module Grit
     end
 
     def shell_escape(str)
-      str.to_s.gsub("'", "\\\\'").gsub(";", '\\;')
+      str.to_s.gsub("'", "\\\\'").gsub(";", '\;')
     end
     alias_method :e, :shell_escape
 

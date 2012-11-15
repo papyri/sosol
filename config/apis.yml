@@ -71,9 +71,12 @@
     :provenance:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/history/provenance/p
     :keyword:
-      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='#apis']/term
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='#apis']/term[text()]
+      :multiple: true
+    :genre:
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords[@scheme='#apis']/term[rs]
       :children:
-        :genre:
+        :rs:
           :xpath: rs[@type='genre_form']
       :multiple: true
     :citations:

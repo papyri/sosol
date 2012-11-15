@@ -41,6 +41,9 @@ span.quickHelp span.message
   right: 2em
   top: 2em
 
+div#edit label.apis 
+  width: 8em
+
 /**** special ****/
 
 div#edit div.editbox li.label
@@ -82,6 +85,9 @@ div#edit div.editbox label.provenance
 div#edit div.editbox label.tmNo
   margin: 0 0 0 22em
 
+div#edit form.edit_apis_identifier div.editbox label.tmNo
+  margin: 0 0 0 0
+
 div#edit div.editbox label.provenanceType,
 div#edit div.editbox label.provenanceSubtype,
 div#edit div.editbox label.provenanceDate
@@ -103,6 +109,105 @@ div#edit input#hgv_meta_identifier_material
 
 div#edit div.editbox label#publicationExtraFullTitle
   width: auto
+
+div#edit input#apis_identifier_title,
+div#edit input#apis_identifier_author,
+div#edit input#apis_identifier_support,
+div#edit input#apis_identifier_localNote,
+div#edit input#apis_identifier_textLang,
+div#edit input#apis_identifier_origDate,
+div#edit input#apis_identifier_origPlace,
+div#edit input#apis_identifier_figHead,
+div#edit input#apis_identifier_figUrl,
+div#edit input#apis_identifier_citation,
+div#edit input#apis_identifier_originalRecord
+  width: 45.7em
+
+div#edit input#apis_identifier_inventoryNo,
+div#edit input#apis_identifier_apisId,
+div#edit input#apis_identifier_tmNo,
+div#edit input#apis_identifier_HGV,
+div#edit input#apis_identifier_ddbdp,
+div#edit input#apis_identifier_controlNo,
+div#edit select#apis_identifier_mainLang,
+div#edit input#apis_identifier_otherLangs
+  width: 15em
+
+div#edit textarea.apis
+  font-size: 11px
+  width: 45em
+
+div#edit div#multi_associatedName input,
+div#edit div#multi_keyword input,
+div#edit div#multi_genre input
+  width: 15em
+
+div#edit textarea#apis_identifier_translation 
+  width: 45em
+  height: 20em
+
+div#edit div.editbox label#apis_identifier_author_label,
+div#edit div.editbox label#apis_identifier_inventoryNo_label,
+div#edit div.editbox label#apis_identifier_apisId_label,
+div#edit div.editbox label#apis_identifier_tmNo_label,
+div#edit div.editbox label#apis_identifier_HGV_label,
+div#edit div.editbox label#apis_identifier_ddbdp_label,
+div#edit div.editbox label#apis_identifier_controlNo_label,
+div#edit div.editbox label#apis_identifier_summary_label,
+div#edit div.editbox label#apis_identifier_generalNote_label,
+div#edit div.editbox label#apis_identifier_textLang_label,
+div#edit div.editbox label#apis_identifier_mainLang_label,
+div#edit div.editbox label#apis_identifier_otherLangs_label,
+div#edit div.editbox label#apis_identifier_condition_label,
+div#edit div.editbox label#apis_identifier_lines_label,
+div#edit div.editbox label#apis_identifier_rectoVerso_label,
+div#edit div.editbox label#apis_identifier_hands_label,
+div#edit div.editbox div#dateWhen h5,
+div#edit div.editbox div#dateRange h5,
+div#edit div.editbox label#apis_identifier_origPlace_label,
+div#edit div.editbox label#apis_identifier_provenance_label,
+div#edit div.editbox label#apis_identifier_associatedName_label,
+div#edit div.editbox label#apis_identifier_keyword_label,
+div#edit div.editbox label#apis_identifier_genre_label,
+div#edit div.editbox label#apis_identifier_figHead_label,
+div#edit div.editbox label#apis_identifier_figDesc_label,
+div#edit div.editbox label#apis_identifier_figUrl_label,
+div#edit div.editbox label#apis_identifier_citeNote_label,
+div#edit div.editbox label#apis_identifier_citeType_label
+  clear: left
+
+div#edit div.editbox label.textLang,
+div#edit div.editbox label.mainLang 
+  width: 13em
+
+div#edit div.editbox label.otherLangs 
+  width: 15em
+
+div#edit input#apis_identifier_citeType 
+  margin-top: .4em
+
+div#edit div#dateWhen,
+div#edit div#dateRange
+  float: left
+  margin: .2em 0 .2em 1em
+  padding: 0.2em
+  border: thin solid silver
+
+
+div#edit div#multi_citation,
+div#edit ul#multiItems_citation,
+div#edit div#multi_figure,
+div#edit ul#multiItems_figure
+  float: left
+  width: 50em
+
+div#edit li.citation,
+div#edit li.figure
+  float: left
+  margin: 0 0 .2em 0
+  padding: .2em
+  width: 49em
+  border: thin solid silver
 
 span.quickHelp_meta_help_tmNo span.message,
 span.quickHelp_meta_help_collectionInventoryNumber span.message,
@@ -236,8 +341,6 @@ div#edit p#multiPlus_translationsLa input,
 div#edit p#multiPlus_translationsEs input,
 div#edit p#multiPlus_translationsEn input,
 div#edit p#multiPlus_translationsIt input
-
-
   width: 44em
 
 /**** provenance ****/

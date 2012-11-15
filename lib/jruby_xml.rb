@@ -97,7 +97,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "http://www.stoa.org/epidoc/schema/8.9/tei-epidoc.rng")
+        "http://www.stoa.org/epidoc/schema/8.10/tei-epidoc.rng")
     end
   end
   
@@ -121,7 +121,9 @@ module JRubyXML
         javax.xml.XMLConstants.const_get('XML_NS_PREFIX') => 
           javax.xml.XMLConstants.const_get('XML_NS_URI'),
         javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE') =>
-          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI')
+          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI'),
+        "http://purl.org/dc/terms/" =>
+          "dcterms"
       }
       root_node_attribute_hash.each_pair do |attribute_name, uri|
         if attribute_name =~ /^xmlns:/

@@ -17,6 +17,8 @@
                 = image_tag('hgv.gif')
               - when HGVTransIdentifier
                 = image_tag('hgv.gif')            
+              - when APISIdentifier
+                = image_tag('apis.png')
             - if identifier.needs_reviewing?(@current_user.id)
               -#%b !
               = image_tag('review_flag.png')

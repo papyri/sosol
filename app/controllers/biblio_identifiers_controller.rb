@@ -6,7 +6,7 @@ class BiblioIdentifiersController < IdentifiersController
   # Side effect on +@identifier+ and +@is_editor_view+
   def edit
     @is_editor_view = true
-    find_identifier    
+    find_identifier
   end
   
   # Retrieves bibliography object from database and updates its values from incoming post data, saves comment

@@ -28,6 +28,7 @@ en:
       extra: Extra
       reference: Reference
       original: Original BP Record
+      series: Series
 
     label:
       articleTitle: Article
@@ -89,6 +90,13 @@ en:
       number: Number
       publisherType: Type
       value: Value
+      seriesTitle: Title
+      seriesVolume: Volume
+      papyrologicalSeries: Papyrological Series
+      papyrologicalSeriesTitle: Title
+      papyrologicalSeriesVolume: Volume
+      papyrologicalSeriesTitleShort: Series Short
+      category: Category
 
     type:
       book: Book
@@ -108,6 +116,11 @@ en:
     shortTitleResponsibility:
       bp: Bibliographie Papyrologique
       cl: Checklist
+    category:
+      papyrus: Papyri
+      ostracon: Ostraca
+      corpora: Corpora
+      series: Series
 
   meta:
     legend:
@@ -117,6 +130,7 @@ en:
       provenance: Provenance
       reference: Bibliography
       translation: Translations
+      images: Images
       date: Date
       mentionedDate: Mentioned Dates
 
@@ -253,6 +267,65 @@ en:
       mentionedDateNotAfter: 'If applicable enter the second part of a span date. E.g. 0079, i.e. in yyyy-mm-dd format.'
       mentionedDateComment: 'Enter description of date, if applicable. E.g. Abschrift eines Dokuments vom:.'
       mentionedDateAnnotation: 'Enter further description of date, if applicable. E.g. vgl. BL IV, S. 44'
+  
+  apis:
+    legend:
+      general: General
+      images: Images
+      object: Object
+      context: Context
+      biblio: Bibliography
+      translation: Translation
+    label:
+      title: Title
+      author: Author
+      inventoryNo: Inventory No.
+      tmNo: TM No.
+      apisCollection: Collection
+      apisId: APIS ID
+      HGV: HGV ID
+      ddbdp: DDbDP ID
+      controlNo: Control No.
+      summary: Summary
+      generalNote: General Notes
+      textLang: Text Languages
+      mainLang: Main Language
+      otherLangs: Additional Languages
+      support: Support / Dimensions
+      condition: Condition
+      lines: Lines
+      rectoVerso: Recto/Verso
+      handDesc: Hands
+      localNote: Local Note
+      relatedNote: Related Material
+      origDate: Date of Origin
+      when: ISO Date of Origin
+      notBefore: ISO Beginnning of Date Range
+      notAfter: ISO End of Date Range
+      origPlace: Place of Origin
+      provenance: Custodial Note
+      associatedName: Associated Names
+      keyword: Keywords
+      genre: Genre/Form
+      year: Year
+      month: Month
+      day: Day
+      year1: Year
+      month1: Month
+      day1: Day
+      year2: Year
+      month2: Month
+      day2: Day
+      figHead: Image Label
+      figDesc: Description
+      figUrl: Image URL
+      citation: Citation
+      citeNote: Note
+      citeType: DDbDP?
+      originalRecord: Source
+      translation: Translation
+      
+      
 
   date:
     beginning: beginning

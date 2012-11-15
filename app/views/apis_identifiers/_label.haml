@@ -1,1 +1,1 @@
-= label_tag 'apis_identifier[' + key.to_s + ']', I18n.t('meta.label.' + key.to_s), :class => 'meta ' + key.to_s, :title => @identifier.configuration.xpath(key)
+= label_tag 'apis_identifier_' + key.to_s, I18n.t('apis.label.' + key.to_s), :class => 'apis', :id => 'apis_identifier_' + key.to_s + '_label'

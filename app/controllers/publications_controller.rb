@@ -10,6 +10,7 @@ class PublicationsController < ApplicationController
   
     require 'zip/zip'
     require 'zip/zipfilesystem'
+    require 'pp'
       
     @publication = Publication.find(params[:id])
     
@@ -88,7 +89,7 @@ class PublicationsController < ApplicationController
   
   def create_from_identifier
     if params[:id].blank?
-      flash[:error] = 'You must specify an identifier.'
+    flash[:error] = 'You must specify an identifier.'
       redirect_to dashboard_url
       return
     end
@@ -116,6 +117,23 @@ class PublicationsController < ApplicationController
     new_biblio = BiblioIdentifier.new_from_template(new_publication)
     @publication = new_publication
 
+    flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+  
+  def create_from_apis_template
+    new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+    new_publication.title = APISIdentifier.new(:name => APISIdentifier.next_temporary_identifier(params[:apis_collection])).titleize
+    new_publication.status = "new"
+    new_publication.save!
+    
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+    
+    new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection])
+    @publication = new_publication
+    
     flash[:notice] = 'Publication was successfully created.'
     expire_publication_cache
     redirect_to @publication
@@ -269,24 +287,17 @@ class PublicationsController < ApplicationController
   end
   
   def become_finalizer
-    
+    # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id])
-    
-    if @publication.change_finalizer(@current_user)
-      # TODO make sure we don't steal it from someone who is working on it
-    else
-      #no finalizer exists so pick one
-      #@publication = Publication.find(params[:id])
-      #@publication.remove_finalizer
-      
-      #note this can only be called on a board owned publication
-      if @publication.owner_type != "Board"
-        flash[:error] = "Can't change finalizer on non-board copy of publication."
-        redirect_to show
-      end
-      @publication.send_to_finalizer(@current_user)
-      
+    @publication.remove_finalizer
+
+    #note this can only be called on a board owned publication
+    if @publication.owner_type != "Board"
+      flash[:error] = "Can't change finalizer on non-board copy of publication."
+      redirect_to show
     end
+    @publication.send_to_finalizer(@current_user)
+      
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
   
@@ -504,6 +515,12 @@ class PublicationsController < ApplicationController
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
+  def edit_apis
+    @publication = Publication.find(params[:id])
+    @identifier = APISIdentifier.find_by_publication_id(@publication.id)
+    redirect_to edit_polymorphic_path([@publication, @identifier])
+  end
+  
   def edit_trans  
     @publication = Publication.find(params[:id])    
     @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
@@ -592,6 +609,8 @@ class PublicationsController < ApplicationController
       else
         document_path = [collection, volume, document].join('_')
       end
+    elsif identifier_class == 'APISIdentifier'
+      document_path = [collection, 'apis', document].join('.')
     end
     
     namespace = identifier_class.constantize::IDENTIFIER_NAMESPACE
@@ -911,7 +930,6 @@ class PublicationsController < ApplicationController
         @publication.creator = @current_user
         @publication.populate_identifiers_from_identifiers(
           related_identifiers, optional_title)
-
         if @publication.save!
           @publication.branch_from_master
 

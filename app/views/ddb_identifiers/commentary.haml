@@ -330,10 +330,12 @@
     
     //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
     if (originalleiden.indexOf("\n\n") == 0){
-      wrapped_content = "<W:" + originalleiden + ":W>";
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:" + originalleiden.replace(/&/g,'%26') + ":W>";
     }
     else{
-      wrapped_content = "<W:\n\n" + originalleiden + ":W>";
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:\n\n" + originalleiden.replace(/&/g,'%26') + ":W>";
     }
     
     new Ajax.Request(request_url, {
@@ -377,7 +379,8 @@
           Form.Element.enable('com_sugar_content');
 
           //remove wrap tags and namespace before call action to save to XML
-          $('com_sugar_content').value = json.content.replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+          // hack for ampersand in URL's - change from encoding to XML encoding to save in XML
+          $('com_sugar_content').value = json.content.replace(/%26/g,'&amp;').replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
 
           $('update_commentary_form').submit();
           
@@ -417,10 +420,12 @@
 
     //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
     if (originalleiden.indexOf("\n\n") == 0){
-      wrapped_content = "<W:" + originalleiden + ":W>";
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:" + originalleiden.replace(/&/g,'%26') + ":W>";
     }
     else{
-      wrapped_content = "<W:\n\n" + originalleiden + ":W>";
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:\n\n" + originalleiden.replace(/&/g,'%26') + ":W>";
     }
     
     new Ajax.Request(request_url, {
@@ -464,7 +469,8 @@
           Form.Element.enable('fm_sugar_content');
 
           //remove wrap tags and namespace before call action to save to XML
-          $('fm_sugar_content').value = json.content.replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+          // hack for ampersand in URL's - change from encoding to XML encoding to save in XML
+          $('fm_sugar_content').value = json.content.replace(/%26/g,'&amp;').replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
 
           $('update_frontmatter_form').submit();
           
@@ -500,7 +506,9 @@
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
-    wrapped_content = "<wrap>" + originalxml.strip() + "</wrap>";
+    // even though saved as &amp; in XML, comes here as & only
+    // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+    wrapped_content = "<wrap>" + originalxml.replace(/&/g,'%26').strip() + "</wrap>";
 
     new Ajax.Request(request_url, {
       method: 'post',
@@ -560,14 +568,16 @@
           // will automatically put back in on a save if a user does not
           if (wherefrom == "FM")
             {
-              $('fm_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              // hack for ampersand in URL's - change from encoding to & for display
+              $('fm_sugar_content').value = json.content.replace(/%26/g,'&').replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
               $('fm_sugar_content').toggleClassName('loading');
               Form.Element.enable('fm_sugar_content');
               Form.Element.enable('save_fm');
             }
           else
             {
-              $('com_sugar_content').value = json.content.replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              // hack for ampersand in URL's - change from encoding to & for display
+              $('com_sugar_content').value = json.content.replace(/%26/g,'&').replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
               $('com_sugar_content').toggleClassName('loading');
               Form.Element.enable('com_sugar_content');
               Form.Element.enable('save_com');
@@ -883,8 +893,10 @@
       request_url = "#{defined?(XSUGAR_STANDALONE_URL) ? XSUGAR_STANDALONE_URL : ''}";
       request_url = "/" + request_url.split("/").slice(3).join("/");
     }
-
-    wrapped_content = "<wrap>" + originalxml + "</wrap>";
+    
+    // this is called from helper pop up page
+    // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+    wrapped_content = "<wrap>" + originalxml.replace(/&/g,'%26') + "</wrap>";
     
     new Ajax.Request(request_url, {
       method: 'post',
@@ -897,7 +909,8 @@
           alert("Grammar conversion error line " + json.exception.line + " column " + json.exception.column + " of this XML \n" + json.content);
         }
         else {
-          leidenh = json.content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          // hack for ampersand in URL's - change from encoding to & for display
+          leidenh = json.content.replace(/%26/g,'&').replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
           
           insertMarkUp(leidenh);
         }
