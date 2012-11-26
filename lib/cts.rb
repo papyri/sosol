@@ -274,7 +274,7 @@ module CTS
                 end # end Net::HTTP.start
                 if (put_response.code == '201')
                 # request passage
-                  rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetPassagePlus&inv=#{a_uuid}&urn=#{a_urn}")
+                  rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{a_uuid}&urn=#{a_urn}")
                   psg_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
                     http.send_request('GET', rurl.request_uri)
                   end # end Net::HTTP.start

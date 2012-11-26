@@ -12,9 +12,9 @@
         <xsl:text>{</xsl:text>
         
         <xsl:for-each select="//cts:textgroup">
-            <xsl:variable name="group" select="@projid"/>
-            <xsl:variable name="groupname" select="cts:groupname[1]"/>
-            <xsl:variable name="group_prefix" select="substring-before($group,':')"/>
+            <xsl:variable name="group" select="normalize-space(@projid)"/>
+            <xsl:variable name="groupname" select="normalize-space(cts:groupname[1])"/>
+            <xsl:variable name="group_prefix" select="normalize-space(substring-before($group,':'))"/>
             <xsl:variable name="key" select="$group"/>
             
             <!-- start textgroup obj -->
@@ -47,16 +47,16 @@
     </xsl:template>
     
     <xsl:template match="cts:work">
-        <xsl:variable name="group" select="parent::cts:textgroup/@projid"/>
-        <xsl:variable name="group_prefix" select="substring-before($group,':')"/>
-        <xsl:variable name="work_prefix" select="substring-before(@projid,':')"/>
+        <xsl:variable name="group" select="normalize-space(parent::cts:textgroup/@projid)"/>
+        <xsl:variable name="group_prefix" select="normalize-space(substring-before($group,':'))"/>
+        <xsl:variable name="work_prefix" select="normalize-space(substring-before(@projid,':'))"/>
         <xsl:variable name="work">
             <xsl:choose>
                 <xsl:when test="$work_prefix = $group_prefix">
-                    <xsl:value-of select="substring-after(@projid,':')"/>
+                    <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="@projid"/>
+                    <xsl:value-of select="normalize-space(@projid)"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -71,7 +71,7 @@
                     <xsl:value-of select="translate(normalize-space(cts:title[1]),':',',')"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="substring-after(@projid,':')"/>
+                    <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -113,17 +113,17 @@
     </xsl:template>
     
     <xsl:template match="cts:edition|cts:translation">
-        <xsl:variable name="edition_prefix" select="substring-before(@projid,':')"/>
-        <xsl:variable name="group" select="parent::cts:work/parent::cts:textgroup/@projid"/>
-        <xsl:variable name="group_prefix" select="substring-before($group,':')"/>
-        <xsl:variable name="work_prefix" select="substring-before(parent::cts:work/@projid,':')"/>
+        <xsl:variable name="edition_prefix" select="normalize-space(substring-before(@projid,':'))"/>
+        <xsl:variable name="group" select="normalize-space(parent::cts:work/parent::cts:textgroup/@projid)"/>
+        <xsl:variable name="group_prefix" select="normalize-space(substring-before($group,':'))"/>
+        <xsl:variable name="work_prefix" select="normalize-space(substring-before(parent::cts:work/@projid,':'))"/>
         <xsl:variable name="work">
             <xsl:choose>
                 <xsl:when test="$work_prefix = $group_prefix">
-                    <xsl:value-of select="substring-after(parent::cts:work/@projid,':')"/>
+                    <xsl:value-of select="normalize-space(substring-after(parent::cts:work/@projid,':'))"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="parent::cts:work/@projid"/>
+                    <xsl:value-of select="normalize-space(parent::cts:work/@projid)"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -131,10 +131,10 @@
         <xsl:variable name="edition">
             <xsl:choose>
                 <xsl:when test="$edition_prefix = $work_prefix">
-                    <xsl:value-of select="substring-after(@projid,':')"/>
+                    <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="@projid"/>
+                    <xsl:value-of select="normalize-space(@projid)"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -149,7 +149,7 @@
                     <xsl:value-of select="translate(normalize-space(cts:label[1]),':',',')"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="substring-after(@projid,':')"/>
+                    <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -177,7 +177,7 @@
     
     <xsl:template name="citation">
     <xsl:param name="a_node"/>
-    <xsl:text>"</xsl:text><xsl:value-of select="$a_node/@label"/><xsl:text>"</xsl:text>
+    <xsl:text>"</xsl:text><xsl:value-of select="normalize-space($a_node/@label)"/><xsl:text>"</xsl:text>
     <xsl:if test="$a_node/cts:citation">
         <xsl:text>,</xsl:text>
         <xsl:call-template name="citation">
