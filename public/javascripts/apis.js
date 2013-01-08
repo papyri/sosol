@@ -158,12 +158,29 @@ function multiAddFigures()
 {
   var index = multiGetNextIndex('figure');
   var item = '<li>' +
-             '  <label class="apis" for="apis_identifier_figHead" id="apis_identifier_figHead_label">Image Label</label>' +
+             '  <label class="apis" for="apis_identifier_figHead_' + index + '" id="apis_identifier_figHead_' + index + '_label_">Image Label</label>' +
              '  <input class="observechange" id="apis_identifier_figHead_' + index + '" name="apis_identifier_figHead" type="text" value="" />' +
              '  <label class="apis" for="apis_identifier_figDesc" id="apis_identifier_figDesc_label">Description</label>' +
              '  <textarea class="observechange" id="apis_identifier_figDesc_' + index + '" name="apis_identifier_figDesc" value="" />' +
              '  <label class="apis" for="apis_identifier_figUrl" id="apis_identifier_figUrl_label">Image URL</label>' +
              '  <input class="observechange" id="apis_identifier_figUrl_' + index + '" name="apis_identifier_figUrl" type="text" value="" />' +
+             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+             '  <span class="move">o</span>' +
+             '</li>';
+
+  multiUpdate('figure', item);
+}
+
+function multiAddFacsimiles()
+{
+  var index = multiGetNextIndex('facsimile');
+  var item = '<li>' +
+             '  <label class="apis" for="apis_identifier_surfaceGrpId_' + index + '" id="apis_identifier_surfaceGrpId_' + index + '_label">Image Label</label>' +
+             '  <input class="observechange" id="apis_identifier_surfaceGrpId_' + index + '" name="apis_identifier_surfaceGrpId" type="text" value="" />' +
+             '  <label class="apis" for="apis_identifier_figDesc" id="apis_identifier_figDesc_label">Description</label>' +
+             '  <input class="observechange" id="apis_identifier_surfaceType_' + index + '" name="apis_identifier_surfaceType" type="text" value="" />' +
+             '  <label class="apis" for="apis_identifier_facsUrl_' + index + '" id="apis_identifier_facsUrl_' + index + '_label">Image URL</label>' +
+             '  <input class="observechange" id="apis_identifier_facsUrl_' + index + '" name="apis_identifier_facsUrl" type="text" value="" />' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';

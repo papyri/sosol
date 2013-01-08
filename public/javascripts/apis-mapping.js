@@ -86,11 +86,17 @@ var apis_map = {
      children: ["t:head", "t:figDesc", "t:graphic/@url"],
      tpl: "<figure>\n  <head>$apis_identifier_figHead</head>\n  <figDesc>$apis_identifier_figDesc</figDesc>\n  <graphic url=\"$apis_identifier_figUrl\"/>\n</figure>",
      multi: true},
+    {name: "facsimile",
+     xpath: "/t:TEI/t:facsimile/t:surfaceGrp",
+     children: ["@n", "t:surface[1]/@type", "t:surface[1]/t:graphic/@url", "t:surface[2]/@type", "t:surface[2]/t:graphic/@url"]
+     tpl: "<surfaceGrp n=\"$apis_identifier_surfaceGrpId\">\n  <surface[ type=\"$apis_identifier_surfaceType\"]>\n    <graphic url=\"$apis_identifier_facsUrl\"/>\n  </surface>[\n  <surface[ type=\"$apis_identifier_surfaceType2\"]>\n    <graphic url=\"$apis_identifier_facsUrl2\"/>\n  </surface>]\n</surfaceGrp>",
+     multi: true},
     {xpath:  "/t:TEI/t:text/t:body/t:div[@type='translation']/t:ab",
      tpl: "<ab>$apis_identifier_translation</ab>"}
   ],
   models: {
     "http://www.tei-c.org/ns/1.0": {
+      TEI: ["teiHeader", "facsimile", "text"],
       msContents: ["summary", "msItemStruct"],
       physDesc: ["objectDesc", "handDesc"],
       origin: ["origDate", "origPlace", "persName"],

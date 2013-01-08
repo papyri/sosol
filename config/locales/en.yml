@@ -319,6 +319,9 @@ en:
       figHead: Image Label
       figDesc: Description
       figUrl: Image URL
+      surfaceGrpId: Object ID
+      surfaceType: Side
+      facsUrl: Image URL
       citation: Citation
       citeNote: Note
       citeType: DDbDP?
