@@ -325,7 +325,7 @@
       .target{:id => 'target_content' }
         .loading Loading...
       #annotation_title_input
-        = select_tag("annotation_title", options_for_select({'isQuotationOf' => 'isQuotedBy','isSpokenBy' => 'isDirectSpeakerOf', 'isReferenceToPerson' => 'isPersonReferredToBy','isReferenceToPlace'=>'isPlaceReferredToBy'}))
+        = select_tag("annotation_title", options_for_select({'isQuotationOf' => 'isQuotedBy','isSpokenBy' => 'isDirectSpeakerOf', 'isReferenceTo' => 'hasReference','isEquivalentTo'=>'hasEquivalent'}))
     #annotation_body_input
       .annotation_header Annotation Resource      
       = label_tag 'URI for Resource:'
