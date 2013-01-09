@@ -150,9 +150,7 @@
 
         is_hgv_identifier = false;
         
-        parts = json.results.bindings.findAll(function(b) {
-          return b['http://purl.org/dc/terms/hasPart'] != null;
-        });
+        parts = json["http://papyri.info/apis/" + $F('APISIdentifierCollectionSelect')]['http://purl.org/dc/terms/hasPart'];
 
         values = parts.collect(function(p) {
 

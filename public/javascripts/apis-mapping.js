@@ -88,7 +88,7 @@ var apis_map = {
      multi: true},
     {name: "facsimile",
      xpath: "/t:TEI/t:facsimile/t:surfaceGrp",
-     children: ["@n", "t:surface[1]/@type", "t:surface[1]/t:graphic/@url", "t:surface[2]/@type", "t:surface[2]/t:graphic/@url"]
+     children: ["@n", "t:surface[1]/@type", "t:surface[1]/t:graphic/@url", "t:surface[2]/@type", "t:surface[2]/t:graphic/@url"],
      tpl: "<surfaceGrp n=\"$apis_identifier_surfaceGrpId\">\n  <surface[ type=\"$apis_identifier_surfaceType\"]>\n    <graphic url=\"$apis_identifier_facsUrl\"/>\n  </surface>[\n  <surface[ type=\"$apis_identifier_surfaceType2\"]>\n    <graphic url=\"$apis_identifier_facsUrl2\"/>\n  </surface>]\n</surfaceGrp>",
      multi: true},
     {xpath:  "/t:TEI/t:text/t:body/t:div[@type='translation']/t:ab",

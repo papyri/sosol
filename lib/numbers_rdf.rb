@@ -6,7 +6,7 @@ module NumbersRDF
   NAMESPACE_IDENTIFIER = 'papyri.info'
   
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = 'papyri.info'
+  NUMBERS_SERVER_DOMAIN = 'dev.papyri.info'
   NUMBERS_SERVER_PORT = 80
 
   class Timeout < ::Timeout::Error; end
@@ -75,6 +75,7 @@ module NumbersRDF
       # Gets the HTTP response for a given identifier. 
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
         path = identifier_to_path(identifier, decorator)
+        puts "Path: #{path}"
         response = path_to_numbers_server_response(path)
       end
      

@@ -104,6 +104,12 @@
           = render :partial => 'apis_identifiers/multi', :locals => {:key => :genre}
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
+        %h4.category.facsimiles
+          %a{:name => 'Facsimile Images'}=I18n.t('apis.legend.facsimiles')
+        .editbox{:style => 'display:none;'}
+          = render :partial => 'apis_identifiers/facsimiles'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
         %h4.category.images
           %a{:name => 'Images'}=I18n.t('apis.legend.images')
         .editbox{:style => 'display: none;'}
