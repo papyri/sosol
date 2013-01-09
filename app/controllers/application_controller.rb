@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
     rescue_from NumbersRDF::Timeout, :with => :render_numbers_error
   end
 
-  layout "pn"
+  layout SITE_LAYOUT
   
   protected
 

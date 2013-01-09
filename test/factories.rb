@@ -129,3 +129,12 @@ Factory.define :comment do |f|
   f.publication_id :publicaiton_id
   
 end
+
+Factory.sequence :tei_cts_identifier_string do |n|
+  "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
+end
+
+Factory.define :TeiCTSIdentifier do |f|
+  f.name { Factory.next(:tei_cts_identifier_string) }
+  f.title :title
+end

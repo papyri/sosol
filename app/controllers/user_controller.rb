@@ -231,7 +231,7 @@ class UserController < ApplicationController
 
       #get publications for the member to finalize
       @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-      @finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == @board)) ? p : nil}.compact
+      @finalizing_publications =  @board_final_pubs.collect{|p| ((! p.parent.nil? && p.parent.owner == @board)) ? p : nil}.compact
       
       #get publications that have been approved
       #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact

@@ -7,26 +7,22 @@
   - list_id = "publication_list_holder"
   
 - newstyle = 'style="color:blue; background-color:red"'
+- colwidth = 60/Identifier.site_identifier_classes.size
 
 %div{:class => "publication_list_holder", :id => list_id }
   %table{:class=>"results", :width=>"100%"}
     %tr
-      %td{:width=>"40%"}
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
+      %td
+      - Identifier.site_identifier_classes.each do |i|
+        - if i.constantize::is_visible   
+          %td{:width=>"#{colwidth}%"}
     %tr{:class=>"head"}
       %td
         = Publication
-      %td
-        HGV
-      %td
-        Text
-      %td
-        APIS
-      %td
-        Translation
+      - Identifier.site_identifier_classes.each do |i|
+        - if i.constantize::is_visible   
+          %td
+            = i.constantize::FRIENDLY_NAME
     - publications.each do |publication|
       
       %tr
@@ -39,25 +35,29 @@
             = publication.owner.name
         
         - creatable_identifiers = publication.creatable_identifiers
-        -# -------------META---------------------
-        %td{:class=>"identifier_td"}
-          - meta_ids = publication.identifiers.collect do |ids|
-            - if ids.type == "HGVMetaIdentifier"
-              - ids
-              
-          - meta_ids = meta_ids.compact
+        - Identifier.site_identifier_classes.each do |i|
+          - if i.constantize::is_visible   
+            %td{:class=>"identifier_td"}
+              - meta_ids = publication.identifiers.collect do |ids|
+                - if ids.type == i
+                  - ids
+              - meta_ids = meta_ids.compact
+              - if (meta_ids.length == 0) 
+                -  if (creatable_identifiers.include?(i))
+                  - class_type = i
+                  - link_id = i + publication.id.to_s
+                  - create_type = 'Create New'           
+                  = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
+                - else 
+                  = "-"
+              - elsif meta_ids.length > 0
+                = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
+              - if meta_ids.length > 1
+                = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
           
-          - if (meta_ids.length == 0) && creatable_identifiers.include?("HGVMetaIdentifier")
-            - class_type = "HGVMetaIdentifier"
-            - link_id = "HGVMetaIdentifier" + publication.id.to_s
-            - create_type = 'Create new'            
-            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
-          - elsif meta_ids.length > 0
-            = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
-          
-          - if meta_ids.length > 1
-            = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
-          
+<<<<<<< HEAD
+       
+=======
         -# -------------TEXT---------------------    
         %td{:class=>"identifier_td"}
           - text_ids = publication.identifiers.collect do |ids|
@@ -114,3 +114,4 @@
         -# -------------APIS---------------------
         %td{:class=>"identifier_td"}
           = " "              
+>>>>>>> master

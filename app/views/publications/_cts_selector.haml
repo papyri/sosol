@@ -1,0 +1,136 @@
+:javascript
+  
+  var inventories = {};
+
+  function get_collection_prefix() {
+
+    prefix =  "#{url_for(:controller => 'cts_proxy', :only_path => true)}";
+    return prefix;
+    
+  }
+  
+  function get_inventory()
+  {
+      var inventory = $F('CTSIdentifierCollectionSelect');
+      
+      // if we don't already have this inventory's data, retrieve it and ppopulate the selector
+      
+      if (inventories[inventory] == null) {
+        var request_url = get_collection_prefix() + "/editions?inventory=" + inventory;
+        new Ajax.Request(request_url, {
+          method: 'get',
+          dataType: 'application/json',
+          onSuccess: function(response) {
+            inventories[inventory] = eval ('('+response.responseText +')');
+            update_group_urns();
+          }
+       });
+
+      }
+      else {
+          update_group_urns();
+      }
+  }
+  
+  
+  function clear_selector(select_element) {
+    select_element.childElements().each(Element.remove);
+  }
+  
+  function populate_selector(select_element,options) {
+    select_element.childElements().each(Element.remove);
+    
+    var count = 0;
+    for (var i in options)
+    {
+      if (options[i].urn != null) {
+        select_element.insert("<option value='" + options[i].urn + "'>" + options[i].label + "</option>");
+        count++;
+      }
+    }
+    
+    if (count == 0) {
+      select_element.disabled = true;
+      select_element.hide();
+    } else {
+      if (count > 1) {
+        select_element.insert("<option value=''>click to select...</option>");
+      } 
+      select_element.disabled = false;
+      select_element.show();
+    }
+  }
+  
+  function update_group_urns() {
+    $('emend_button').disabled = true;
+    $('create_button').disabled = true;
+    clear_selector($('edition_urn'));
+    clear_selector($('work_urn'));
+    var inventory = $F('CTSIdentifierCollectionSelect');
+    //  populate the textgroup selector
+    var groups = inventories[inventory];
+    populate_selector($('group_urn'),groups);
+    update_work_urns();
+  }
+  
+  function update_work_urns() {
+    $('emend_button').disabled = true;
+    $('create_button').disabled = true;
+    clear_selector($('edition_urn'));
+    // get the works for the selected textgroup and populate the work selector
+    var inventory = $F('CTSIdentifierCollectionSelect');
+    var textgroup = $F('group_urn');
+    if (textgroup) {
+      var works = inventories[inventory][textgroup].works;
+      populate_selector($('work_urn'),works);
+      update_edition_urns();
+    }
+    // hack to disable Create for perseus editions for now
+    
+    if (inventory != 'perseus') {
+      $('create_button').disabled = false;
+    }
+  }
+  
+  function update_edition_urns()
+  {
+    $('emend_button').disabled = true;
+    // get the editions for the selected textgroup and work and populate the edition selector
+    var inventory = $F('CTSIdentifierCollectionSelect');
+    var textgroup = $F('group_urn');
+    var work = $F('work_urn').replace(textgroup+".",'');
+    if (work) {
+      var editions = inventories[inventory][textgroup].works[work].editions
+      
+      if (editions) {
+        populate_selector($('edition_urn'),editions)
+        $('emend_button').disabled = false;
+      } else {
+        // still need to empty it out
+        populate_selector($('edition_urn'),{})
+        $('emend_button').disabled = true;
+      }
+    }
+
+  }
+  
+  document.observe("dom:loaded", function() {    
+    get_inventory();
+  });
+  
+- cache(:action => 'dashboard', :part => 'publication_selector') do
+  - unless defined? hide_text
+    %p== Existing publication:
+  - form_tag :controller => controller, :action => "create_from_selector" do
+    %p{:class => ['cts_selector_hint']}== Select a publication to work with:
+    = hidden_field_tag 'IdentifierClass','CTSIdentifier'
+    - [CTSIdentifier].each do |identifier_class|
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select(identifier_class.inventories_hash.keys), :onchange => "get_inventory();$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
+    = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_work_urns();"
+    = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_edition_urns();"
+    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
+    //= text_field_tag('passage')
+    = submit_tag "Emend", :disabled => true, :id => 'emend_button'
+    = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
+
+    

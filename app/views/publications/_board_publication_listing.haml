@@ -5,24 +5,23 @@
 - else
   - list_id = "publication_list_holder"
   
+- colwidth = 60/Identifier.site_identifier_classes.size  
 
 %div{:class => "publication_list_holder", :id => list_id }
   %table{:class=>"results", :width=>"95%"}
     %tr
       %td
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
-      %td{:width=>"15%"}
+      - Identifier.site_identifier_classes.each do |i|
+        - if i.constantize::is_visible   
+          %td{:width=>"#{colwidth}%"}
+      %td
     %tr{:class=>"head"}
       %td
         = Publication
-      %td
-        HGV
-      %td
-        Text
-      %td
-        Translation
+      - Identifier.site_identifier_classes.each do |i|
+        - if i.constantize::is_visible   
+          %td
+            = i.constantize::FRIENDLY_NAME
       %td
         Info
     - publications.each do |publication|
@@ -34,72 +33,28 @@
     
           -#= link_to publication.title, publication
           
-        -# -------------META---------------------
-        %td{:class=>"identifier_td"}
-          - meta_ids = publication.identifiers.collect do |ids|
-  
-            - if ids.type == "HGVMetaIdentifier"
-              - ids
-          - meta_ids = meta_ids.compact
+        - Identifier.site_identifier_classes.each do |i|
+          - if i.constantize::is_visible   
+            %td{:class=>"identifier_td"}
+              - meta_ids = publication.identifiers.collect do |ids|
+                - if ids.type == i
+                  - ids
+              - meta_ids = meta_ids.compact
           
-          - if meta_ids.length == 0
-            -# no option to create here
-          - else
-            = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
-            
-          - if meta_ids.length > 1
-            = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
-             
-            -#
-              - if mid.needs_reviewing?(@current_user)
-                = image_tag('review_flag.png')
-                = link_to mid.title, edit_polymorphic_path([publication,mid]), html_options = {:style=>"display:inline;"}
+              - if meta_ids.length == 0
+                -# no option to create here
               - else
-                = link_to mid.title, edit_polymorphic_path([publication,mid])
-                
+                = link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first])
             
-            
-        -# -------------TEXT---------------------
-        %td{:class=>"identifier_td"}
-          - text_ids = publication.identifiers.collect do |ids|
-  
-            - if ids.type == "DDBIdentifier"
-              - ids
-          - text_ids = text_ids.compact
-          
-          - if text_ids.length == 0
-            -# no option to create here
-          - else
-            = link_to text_ids.first.title, edit_polymorphic_path([publication,text_ids.first])
-            
-          - if text_ids.length > 1
-            = render :partial => "publications/batch_box", :locals => {:ids => text_ids }
-            
-         
-  
-        -# -------------TRANSLATION---------------------
-        %td{:class=>"identifier_td"}
-          - trans_ids = publication.identifiers.collect do |ids|
-  
-            - if ids.type == "HGVTransIdentifier"
-              - ids
-          - trans_ids = trans_ids.compact
-         
-         
-          - if trans_ids.length == 0
-            -# no option to create here
-          - else
-            = link_to trans_ids.first.title, edit_polymorphic_path([publication,trans_ids.first])
-            
-          - if trans_ids.length > 1
-            = render :partial => "publications/batch_box", :locals => {:ids => trans_ids }
-          
-         
-            
-        -# -------------APIS---------------------    
-        %td{:class=>"identifier_td"}
-          = " "    
-          
+              - if meta_ids.length > 1
+                = render :partial => "publications/batch_box", :locals => {:ids => meta_ids }
+             
+                -#
+                  - if mid.needs_reviewing?(@current_user)
+                    = image_tag('review_flag.png')
+                    = link_to mid.title, edit_polymorphic_path([publication,mid]), html_options = {:style=>"display:inline;"}
+                  - else
+                    = link_to mid.title, edit_polymorphic_path([publication,mid])
         -# -------------INFO---------------------  
         %td
           -# for efficiency only get extra info for the needed categories

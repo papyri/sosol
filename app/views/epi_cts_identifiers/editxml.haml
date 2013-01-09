@@ -1,0 +1,31 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :updatexml } do |f|
+        = f.error_messages
+
+        %br
+        - if @identifier[:facs].length > 1
+          - @identifier[:facs].each do |i|
+            %a{:href => i, :target => 'cts-image-frame'} i
+        
+        %iframe{:id=> 'cts-image-frame', :src => @identifier[:facs][0]}
+        
+
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
+                
+        %label XML
+        = clippy "#{@identifier.class.to_s.underscore}_xml_content"
+        
+        = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+        // FORK CHANGE END
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+
+= javascript_include_tag 'confirm'
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller

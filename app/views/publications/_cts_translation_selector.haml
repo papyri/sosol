@@ -1,0 +1,90 @@
+:javascript
+  
+  var editions = { };
+
+  function get_collection_prefix() {
+
+    prefix =  "#{url_for(:controller => 'cts_proxy', :only_path => true)}";
+    return prefix;
+ 
+  }
+  
+  function get_inventory()
+  {
+      var inventory = $F('CTSIdentifierCollectionSelect');
+      
+        var request_url = get_collection_prefix() + "/translations?inventory=" + inventory + "&urn=" + $F('CTSIdentifierEditionSelect');
+        new Ajax.Request(request_url, {
+          method: 'get',
+          dataType: 'application/json',
+          onSuccess: function(response) {
+            editions = eval ('('+ response.responseText +')');
+            update_translation_urns();
+          }
+       });
+
+  }
+  
+  function clear_selector(select_element) {
+    select_element.childElements().each(Element.remove);
+  }
+  
+  function populate_selector(select_element,options) {
+    select_element.childElements().each(Element.remove);
+    
+    var count = 0;
+    for (var i in options)
+    {
+      if (options[i].urn != null) {
+        select_element.insert("<option value='" + options[i].urn + "'>" + options[i].label + "</option>");
+        count++;
+      }
+    }
+    
+    if (count == 0) {
+      $$('p.cts_selector_hint')[0].innerHTML = 'No existing translations';
+      select_element.disabled = true;
+      select_element.hide();
+      $('emend_button').disabled = true;
+      $('emend_button').hide();
+      $('emend_or_create').hide();
+    } else {
+      if (count > 1) {
+        select_element.insert("<option value=''>click to select...</option>");
+      } 
+      $('emend_button').disabled = false;
+      select_element.disabled = false;
+    }
+    $('create_button').disabled = false;
+  }
+  
+    
+   function update_translation_urns()
+  {
+    populate_selector($('edition_urn'),editions.editions)
+  }
+  
+  document.observe("dom:loaded", function() {    
+    get_inventory();
+  });
+  
+- cache(:action => 'dashboard', :part => 'publication_selector') do
+  - unless defined? hide_text
+    %p== Existing publication:
+  - form_tag :controller => controller, :action => "create_from_selector" do
+    %p{:class => ['cts_selector_hint']}== Select a publication to work with:
+    = hidden_field_tag 'IdentifierClass','CTSIdentifier'
+    = hidden_field_tag 'publication_id',publication_id
+    = hidden_field_tag 'CTSIdentifierCollectionSelect',collection.to_s
+    = hidden_field_tag 'CTSIdentifierEditionSelect',edition.to_s
+    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
+    //= text_field_tag('passage')
+    -if emend == :showemend
+      = submit_tag "Emend", :disabled => true, :id => 'emend_button'
+      %div{:id => 'create_translation'}
+        %span{:id => 'emend_or_create'}==Or
+        = submit_tag "Create Translation", :disabled => true, :id => 'create_button'
+        = select_tag 'create_lang', options_for_select([%w{English eng},%w{French fr},%w{Latin lat}])
+    -else
+      = submit_tag "Emend", :disabled => true, :id => 'emend_button', :style => 'display:none'
+      = submit_tag "Create Translation", :disabled => true, :id => 'create_button', :style => 'display:none'
