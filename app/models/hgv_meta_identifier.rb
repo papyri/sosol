@@ -55,7 +55,11 @@ class HGVMetaIdentifier < HGVIdentifier
   # ?
   def n_attribute
     ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
-    return ddb.n_attribute
+    if ddb
+      return ddb.n_attribute
+    else
+      return nil
+    end
   end
   
   # ?

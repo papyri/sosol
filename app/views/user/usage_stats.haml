@@ -32,12 +32,11 @@
       - if submits.length > 0
         = render :partial => "usage_detail", :locals => { :user => user, :comments => submits, :type => 'submission'}       
       
-      - if user.admin
-        %br
-        - finalizings = Comment.finalizing.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
-        %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
-        - if finalizings.length > 0 
-          = render :partial => "usage_detail", :locals => { :user => user, :comments => finalizings, :type => 'final'}
+      %br
+      - finalizings = Comment.finalizing.find_all_by_user_id(user.id, :conditions => "created_at >= '#{@calc_date}'", :order => "created_at DESC")
+      %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
+      - if finalizings.length > 0 
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => finalizings, :type => 'final'}
      
       %br
       %br
