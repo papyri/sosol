@@ -4,7 +4,7 @@ class CtsOacIdentifiersController < IdentifiersController
   
   def edit
     find_publication_and_identifier
-    annotation_uri = params[:annotation_uri] || @identifier[:annotation_uri]
+    annotation_uri = params[:annotation_uri].to_s || @identifier[:annotation_uri]
     if (annotation_uri)
       @creator_uri = @identifier.make_creator_uri()
       annotation = @identifier.get_annotation(annotation_uri)
@@ -151,15 +151,15 @@ class CtsOacIdentifiersController < IdentifiersController
     
   protected
     def find_identifier
-      @identifier = OACIdentifier.find(params[:id])
+      @identifier = OACIdentifier.find(params[:id].to_s)
     end
   
     def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
     end
     
      def find_publication
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
     end
 end

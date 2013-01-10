@@ -34,15 +34,15 @@ class OacIdentifiersController < IdentifiersController
   
   protected
     def find_identifier
-      @identifier = OACIdentifier.find(params[:id])
+      @identifier = OACIdentifier.find(params[:id].to_s)
     end
   
     def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
     end
     
      def find_publication
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
     end
 end

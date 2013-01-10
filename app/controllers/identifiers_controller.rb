@@ -2,7 +2,7 @@
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   # def method_missing(method_name, *args)
-  #   identifier = Identifier.find(params[:id])
+  #   identifier = Identifier.find(params[:id].to_s)
   #   redirect_to :controller => identifier.class.to_s.pluralize.underscore, :action => method_name
   # end
   
@@ -36,7 +36,7 @@ class IdentifiersController < ApplicationController
   
   # POST /identifiers
   def create
-    @publication = Publication.find(params[:publication_id])
+    @publication = Publication.find(params[:publication_id].to_s)
     identifier_type = params[:identifier_type].constantize
     
     @identifier = identifier_type.new_from_template(@publication)
@@ -83,7 +83,7 @@ class IdentifiersController < ApplicationController
       commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
       if params[:comment] != nil && params[:comment].strip != ""
-        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
         @comment.save
       end
       
@@ -110,7 +110,7 @@ class IdentifiersController < ApplicationController
   def show_commit
     find_identifier
     @identifier.get_commits
-    commit_index = @identifier[:commits].find_index {|c| c[:id] == params[:commit_id]}
+    commit_index = @identifier[:commits].find_index {|c| c[:id] == params[:commit_id].to_s}
     @commit = @identifier[:commits][commit_index]
     @prev_commit = commit_index > 0 ? @identifier[:commits][commit_index-1] : nil
     @next_commit = commit_index < (@identifier[:commits].length - 1) ? @identifier[:commits][commit_index+1] : nil

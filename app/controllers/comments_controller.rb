@@ -16,10 +16,10 @@ class CommentsController < ApplicationController
   # GET
   # - shows current comments and gives form for new comment
   def ask_for
-    @publication = Publication.find(params[:publication_id])
+    @publication = Publication.find(params[:publication_id].to_s)
     @publication_id = @publication.origin.id
     
-    @identifier = Identifier.find(params[:identifier_id])
+    @identifier = Identifier.find(params[:identifier_id].to_s)
     @identifier_id  = @identifier.origin.id
    
     @comments = Comment.find_all_by_publication_id(@publication_id, :order => 'created_at').reverse
@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
   # GET /comments/1
   # GET /comments/1.xml
   def show
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -50,14 +50,14 @@ class CommentsController < ApplicationController
 
   # GET /comments/1/edit
   def edit
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id].to_s)
   end
 
   # POST /comments
   # POST /comments.xml
   def create
   
-    @comment = Comment.new(params[:comment])
+    @comment = Comment.new(params[:comment].to_s)
 
     @comment.user_id = @current_user.id
  #   if params[:reason] != nil
@@ -83,10 +83,10 @@ class CommentsController < ApplicationController
   # PUT /comments/1
   # PUT /comments/1.xml
   def update
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id].to_s)
 
     respond_to do |format|
-      if @comment.update_attributes(params[:comment])
+      if @comment.update_attributes(params[:comment].to_s)
         flash[:notice] = 'Comment was successfully updated.'
         format.html { redirect_to(@comment) }
         format.xml  { head :ok }
@@ -100,7 +100,7 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.xml
   def destroy
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id].to_s)
     @comment.destroy
 
     respond_to do |format|

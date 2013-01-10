@@ -12,7 +12,7 @@ class CtsPublicationsController < PublicationsController
       return
     end
     
-    urnObj = CTS::CTSLib.urnObj(params[:urn])
+    urnObj = CTS::CTSLib.urnObj(params[:urn].to_s)
     sourceRepo = params[:src]
     sourceCollection = params[:collection]
    
@@ -192,7 +192,7 @@ class CtsPublicationsController < PublicationsController
         # now the citation identifier 
         if params[:citation_urn]
           # TODO this needs to support direction creation from a translation as well as an edition?
-          citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn],'edition')
+          citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
         end
       rescue Exception => e
         @publication.destroy
@@ -256,7 +256,7 @@ class CtsPublicationsController < PublicationsController
       @publication.owner = @current_user
       @publication.creator = @current_user
       @publication.populate_identifiers_from_identifiers(
-            identifiers_hash,CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn]))
+            identifiers_hash,CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn].to_s))
                    
       if @publication.save!
         @publication.branch_from_master
@@ -271,7 +271,7 @@ class CtsPublicationsController < PublicationsController
           # now the citation identifier 
           if params[:citation_urn]
             # TODO this needs to support direction creation from a translation as well as an edition?
-            citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn],'edition')
+            citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
           end
         rescue Exception => e
           @publication.destroy

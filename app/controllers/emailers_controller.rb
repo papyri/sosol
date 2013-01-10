@@ -2,7 +2,7 @@ class EmailersController < ApplicationController
   before_filter :authorize
   
   def find_board_member
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
   end
   
   def whens_hash
@@ -10,13 +10,13 @@ class EmailersController < ApplicationController
   end
   
   def find_sosol_users
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
     @sosol_users = User.find(:all)
   end
   
   def add_member
-   @emailer = Emailer.find(params[:id])
-   user = User.find_by_name(params[:user_name])
+   @emailer = Emailer.find(params[:id].to_s)
+   user = User.find_by_name(params[:user_name].to_s)
    
     if nil == @emailer.users.find_by_id(user.id) 
       @emailer.users << user
@@ -31,9 +31,9 @@ class EmailersController < ApplicationController
   
   def remove_member
   
-    user = User.find(params[:user_id])
+    user = User.find(params[:user_id].to_s)
     
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
     @emailer.users.delete(user)
     @emailer.save            
 
@@ -57,7 +57,7 @@ class EmailersController < ApplicationController
   # GET /emailers/1
   # GET /emailers/1.xml
   def show
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -70,7 +70,7 @@ class EmailersController < ApplicationController
   def new
     @emailer = Emailer.new
     @emailer.board_id = params[:board_id]
-    @board = Board.find(params[:board_id])
+    @board = Board.find(params[:board_id].to_s)
     @whens = whens_hash
 
     respond_to do |format|
@@ -81,7 +81,7 @@ class EmailersController < ApplicationController
 
   # GET /emailers/1/edit
   def edit
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
     @whens = whens_hash()
     #@whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
   end
@@ -89,7 +89,7 @@ class EmailersController < ApplicationController
   # POST /emailers
   # POST /emailers.xml
   def create
-    @emailer = Emailer.new(params[:emailer])
+    @emailer = Emailer.new(params[:emailer].to_s)
     
     if @emailer.save
       board = Board.find(@emailer.board_id)
@@ -106,10 +106,10 @@ class EmailersController < ApplicationController
   # PUT /emailers/1
   # PUT /emailers/1.xml
   def update
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
 
     respond_to do |format|
-      if @emailer.update_attributes(params[:emailer])
+      if @emailer.update_attributes(params[:emailer].to_s)
         flash[:notice] = 'Emailer was successfully updated.'
         format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
         #format.html { redirect_to(@emailer) }
@@ -124,7 +124,7 @@ class EmailersController < ApplicationController
   # DELETE /emailers/1
   # DELETE /emailers/1.xml
   def destroy
-    @emailer = Emailer.find(params[:id])
+    @emailer = Emailer.find(params[:id].to_s)
     @emailer.destroy
 
     respond_to do |format|

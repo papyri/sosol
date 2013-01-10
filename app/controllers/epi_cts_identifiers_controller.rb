@@ -17,7 +17,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   end
   
   def create_from_selector
-    publication = Publication.find(params[:publication_id])
+    publication = Publication.find(params[:publication_id].to_s)
     edition = params[:edition_urn]
     collection = params[:CTSIdentifierCollectionSelect]
     
@@ -44,10 +44,10 @@ class EpiCtsIdentifiersController < IdentifiersController
       params[:comment] = params[:commenttop]
     end
     begin
-      commit_sha = @identifier.set_xml_content(params[:tei_cts_identifier],
-                                    params[:comment])
+      commit_sha = @identifier.set_xml_content(params[:tei_cts_identifier].to_s,
+                                    params[:comment].to_s)
       if params[:comment] != nil && params[:comment].strip != ""
-          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
           @comment.save
       end
       flash[:notice] = "File updated."
@@ -83,7 +83,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     
     begin
 
-      @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id])
+      @identifier.update_commentary(params[:line_id].to_s, params[:reference].to_s, params[:content].to_s, params[:original_item_id].to_s)
       flash[:notice] = "File updated with new commentary."
 
       redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -103,7 +103,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     
     begin
 
-      @identifier.update_frontmatter_commentary(params[:content])
+      @identifier.update_frontmatter_commentary(params[:content].to_s)
 
       flash[:notice] = "File updated with new commentary."
 
@@ -132,7 +132,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   def delete_commentary
     find_identifier
     
-    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], true)
+    @identifier.update_commentary(params[:line_id].to_s, params[:reference].to_s, params[:content].to_s, params[:original_item_id].to_s, true)
     
     flash[:notice] = "Commentary entry removed."
     
@@ -155,11 +155,11 @@ class EpiCtsIdentifiersController < IdentifiersController
   
   protected
     def find_identifier
-      @identifier = EpiCTSIdentifier.find(params[:id])
+      @identifier = EpiCTSIdentifier.find(params[:id].to_s)
     end
   
     def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
     end
 end

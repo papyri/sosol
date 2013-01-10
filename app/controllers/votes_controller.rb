@@ -17,7 +17,7 @@ class VotesController < ApplicationController
   # GET /votes/1
   # GET /votes/1.xml
   def show
-    @vote = Vote.find(params[:id])
+    @vote = Vote.find(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -38,13 +38,13 @@ class VotesController < ApplicationController
 
   # GET /votes/1/edit
   def edit
-    @vote = Vote.find(params[:id])
+    @vote = Vote.find(params[:id].to_s)
   end
 
   # POST /votes
   # POST /votes.xml
   def create
-    @vote = Vote.new(params[:vote])
+    @vote = Vote.new(params[:vote].to_s)
 
     respond_to do |format|
       if @vote.save
@@ -61,10 +61,10 @@ class VotesController < ApplicationController
   # PUT /votes/1
   # PUT /votes/1.xml
   def update
-    @vote = Vote.find(params[:id])
+    @vote = Vote.find(params[:id].to_s)
 
     respond_to do |format|
-      if @vote.update_attributes(params[:vote])
+      if @vote.update_attributes(params[:vote].to_s)
         flash[:notice] = 'Vote was successfully updated.'
         format.html { redirect_to(@vote) }
         format.xml  { head :ok }
@@ -78,7 +78,7 @@ class VotesController < ApplicationController
   # DELETE /votes/1
   # DELETE /votes/1.xml
   def destroy
-    @vote = Vote.find(params[:id])
+    @vote = Vote.find(params[:id].to_s)
     @vote.destroy
 
     respond_to do |format|

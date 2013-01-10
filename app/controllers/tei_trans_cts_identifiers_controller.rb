@@ -20,7 +20,7 @@ class TeiTransCtsIdentifiersController < IdentifiersController
   
     
   def create_from_selector
-    publication = Publication.find(params[:publication_id])
+    publication = Publication.find(params[:publication_id].to_s)
     edition = params[:edition_urn]
     # if no edition, just use a fake one for use in path processing
     
@@ -57,10 +57,10 @@ class TeiTransCtsIdentifiersController < IdentifiersController
       params[:comment] = params[:commenttop]
     end
     begin
-      commit_sha = @identifier.set_xml_content(params[:tei_cts_identifier],
-                                    params[:comment])
+      commit_sha = @identifier.set_xml_content(params[:tei_cts_identifier].to_s,
+                                    params[:comment].to_s)
       if params[:comment] != nil && params[:comment].strip != ""
-          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
           @comment.save
       end
       flash[:notice] = "File updated."
@@ -94,6 +94,6 @@ class TeiTransCtsIdentifiersController < IdentifiersController
   
   protected
     def find_identifier
-      @identifier = TeiTransCTSIdentifier.find(params[:id])
+      @identifier = TeiTransCTSIdentifier.find(params[:id].to_s)
     end
 end

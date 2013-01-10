@@ -22,10 +22,10 @@ class CitationCtsIdentifiersController < IdentifiersController
     
    
     
-    versionIdentifier = params[:version_id]
-    sourceCollection = params[:collection]
-    sourceRepo = params[:src]
-    citationUrn = params[:urn]
+    versionIdentifier = params[:version_id].to_s
+    sourceCollection = params[:collection].to_s
+    sourceRepo = params[:src].to_s
+    citationUrn = params[:urn].to_s
     
     @identifier = nil
     conflicts = []
@@ -72,18 +72,18 @@ class CitationCtsIdentifiersController < IdentifiersController
     if (startCite == '')
       flash[:notice] = "Supply a valid passage or passage range"
       render(:template => 'citation_cts_identifiers/select',
-             :locals => {:edition => params[:edition],
-                        :version_id => params[:version_id],
-                        :collection => params[:collection],
-                        :citeinfo => params[:citeinfo],
-                        :controller => params[:controller],
-                        :publication_id => params[:publication_id], 
-                        :pubtype => params[:pubtype]})
+             :locals => {:edition => params[:edition].to_s,
+                        :version_id => params[:version_id].to_s,
+                        :collection => params[:collection].to_s,
+                        :citeinfo => params[:citeinfo].to_s,
+                        :controller => params[:controller].to_s,
+                        :publication_id => params[:publication_id].to_s, 
+                        :pubtype => params[:pubtype].to_s})
       return
     else
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
-                :collection => params[:collection],
+                :collection => params[:collection].to_s,
                 :urn => params[:urn] + ":" + params[:start_passage].strip,
                 :src => 'SoSOL')   
    
@@ -96,12 +96,12 @@ class CitationCtsIdentifiersController < IdentifiersController
     if (startCite == '')
       flash[:notice] = "Supply a valid passage or passage range"
       render(:template => 'citation_cts_identifiers/create',
-             :locals => {:edition => params[:edition],
-                        :collection => params[:collection],
-                        :citeinfo => params[:citeinfo],
-                        :controller => params[:controller],
-                        :publication_id => params[:publication_id], 
-                        :pubtype => params[:pubtype]})
+             :locals => {:edition => params[:edition].to_s,
+                        :collection => params[:collection].to_s,
+                        :citeinfo => params[:citeinfo].to_s,
+                        :controller => params[:controller].to_s,
+                        :publication_id => params[:publication_id].to_s, 
+                        :pubtype => params[:pubtype].to_s})
       return
     else
       # TODO Ranges aren't implemented yet. To support citation ranges we 
@@ -109,8 +109,8 @@ class CitationCtsIdentifiersController < IdentifiersController
       # first calling GetValidReff to get the list of valid citations in the
       # range, and then creating a citation identifier for each one.   
       passage_urn = params[:publication_urn] + ':' + startCite
-      publication_identifier = params[:publication_id]
-      @publication = Publication.find(params[:publication_id])  
+      publication_identifier = params[:publication_id].to_s
+      @publication = Publication.find(params[:publication_id].to_s)  
       conflicts = []  
       for pubid in @publication.identifiers do 
         
@@ -134,7 +134,7 @@ class CitationCtsIdentifiersController < IdentifiersController
         return
       end
       
-      @identifier = CitationCTSIdentifier.new_from_template(@publication,params[:collection],passage_urn, params[:pubtype])
+      @identifier = CitationCTSIdentifier.new_from_template(@publication,params[:collection].to_s,passage_urn, params[:pubtype].to_s)
       flash[:notice] = "File created."
       expire_publication_cache
       redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -147,13 +147,13 @@ class CitationCtsIdentifiersController < IdentifiersController
     @original_commit_comment = ''
     #if user fills in comment box at top, it overrides the bottom
     if params[:commenttop] != nil && params[:commenttop].strip != ""
-      params[:comment] = params[:commenttop]
+      params[:comment].to_s = params[:commenttop].to_s
     end
     begin
-      commit_sha = @identifier.set_xml_content(params[:citation_cts_identifier],
-                                    params[:comment])
+      commit_sha = @identifier.set_xml_content(params[:citation_cts_identifier].to_s,
+                                    params[:comment].to_s)
       if params[:comment] != nil && params[:comment].strip != ""
-          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
           @comment.save
       end
       flash[:notice] = "File updated."
@@ -186,15 +186,15 @@ class CitationCtsIdentifiersController < IdentifiersController
   
   protected
     def find_identifier
-      @identifier = CitationCTSIdentifier.find(params[:id])
+      @identifier = CitationCTSIdentifier.find(params[:id].to_s)
     end
   
     def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
     end
     
      def find_publication
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
     end
 end
