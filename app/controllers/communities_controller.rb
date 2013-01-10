@@ -43,7 +43,7 @@ class CommunitiesController < ApplicationController
   # POST /communities
   # POST /communities.xml
   def create
-    @community = Community.new(params[:community].to_s)
+    @community = Community.new(params[:community])
     @community.admins << @current_user
 
     respond_to do |format|

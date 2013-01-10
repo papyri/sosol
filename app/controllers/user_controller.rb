@@ -164,7 +164,7 @@ class UserController < ApplicationController
     
     dashboard_type = params[:dashboard_type]
     if (dashboard_type)
-      puts dashboard_type
+      #puts dashboard_type
       if dashboard_type == "user"
         render "dashboard_user" 
         return

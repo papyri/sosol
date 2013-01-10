@@ -40,7 +40,7 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.xml
   def create
-    @event = Event.new(params[:event].to_s)
+    @event = Event.new(params[:event])
 
     respond_to do |format|
       if @event.save

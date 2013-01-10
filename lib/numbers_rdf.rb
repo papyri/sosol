@@ -75,7 +75,7 @@ module NumbersRDF
       # Gets the HTTP response for a given identifier. 
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
         path = identifier_to_path(identifier, decorator)
-        puts "Path: #{path}"
+        #puts "Path: #{path}"
         response = path_to_numbers_server_response(path)
       end
      

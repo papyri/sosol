@@ -846,7 +846,7 @@ class PublicationsController < ApplicationController
       #might be able to modify publication_from_identifier
       #where to get title? make them up based on time for now
       new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M") #12Jan2011_2359
-      puts new_title
+      #puts new_title
         @publication = Publication.new()
         @publication.owner = @current_user
         @publication.creator = @current_user

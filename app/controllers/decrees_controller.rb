@@ -47,7 +47,7 @@ class DecreesController < ApplicationController
   # POST /decrees
   # POST /decrees.xml
   def create
-    @decree = Decree.new(params[:decree].to_s)
+    @decree = Decree.new(params[:decree])
 
     if @decree.save
       board = Board.find(@decree.board_id)

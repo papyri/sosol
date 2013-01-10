@@ -44,7 +44,7 @@ class VotesController < ApplicationController
   # POST /votes
   # POST /votes.xml
   def create
-    @vote = Vote.new(params[:vote].to_s)
+    @vote = Vote.new(params[:vote])
 
     respond_to do |format|
       if @vote.save
