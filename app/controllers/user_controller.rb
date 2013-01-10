@@ -247,13 +247,18 @@ class UserController < ApplicationController
       
         end
      end
-
-
-
-
+     
+     # biblio voting stacked up and created huge problems (e.g. running out of heap), so
+     # we now paginate voting items 50 at a time.
+     if params[:offset]
+       @offset = Integer(params[:offset])
+     else
+       @offset = 0
+     end
+     @count = Publication.count(:conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"})
 
      #find all pubs that are still in voting phase 
-     board_voting_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
+     board_voting_publications = Publication.find(:all, :conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC", :offset => @offset, :limit => 50  )
      #find all pubs that the user needs to review
      @needs_reviewing_publications = board_voting_publications.collect{ |p|
         needs_review = false
@@ -266,10 +271,10 @@ class UserController < ApplicationController
      }.compact
      
      if @needs_reviewing_publications.nil?
-      @member_already_voted_on = board_voting_publications
-    else
-      @member_already_voted_on = board_voting_publications - @needs_reviewing_publications
-      end
+       @member_already_voted_on = board_voting_publications
+     else
+       @member_already_voted_on = board_voting_publications - @needs_reviewing_publications
+     end
      
      #set so the correct tab will be active
      @current_board = @board
