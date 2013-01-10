@@ -57,7 +57,7 @@ class CommentsController < ApplicationController
   # POST /comments.xml
   def create
   
-    @comment = Comment.new(params[:comment].to_s)
+    @comment = Comment.new(params[:comment])
 
     @comment.user_id = @current_user.id
  #   if params[:reason] != nil

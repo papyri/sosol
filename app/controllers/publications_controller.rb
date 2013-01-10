@@ -643,7 +643,7 @@ class PublicationsController < ApplicationController
     if params[:vote].blank? || params[:vote][:choice].blank?
       flash[:error] = "You must select a vote choice."
       
-      redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote].to_s[:identifier_id])])
+      redirect_to edit_polymorphic_path([@publication, params[:vote].blank? ? @publication.entry_identifier : Identifier.find(params[:vote][:identifier_id])])
       return
     end
 
@@ -656,7 +656,7 @@ class PublicationsController < ApplicationController
     
     Vote.transaction do
       #note that votes go to the publication's identifier
-      @vote = Vote.new(params[:vote].to_s)
+      @vote = Vote.new(params[:vote])
       @vote.user_id = @current_user.id
       
       vote_identifier = @vote.identifier.lock!

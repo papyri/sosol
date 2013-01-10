@@ -56,11 +56,11 @@ class DocosController < ApplicationController
   # POST /docos
   # POST /docos.xml
   def create
-    @doco = Doco.new(params[:doco].to_s) #to have something to send to template if an error in edit_input
+    @doco = Doco.new(params[:doco]) #to have something to send to template if an error in edit_input
     edit_check = edit_input('new')
     
     if edit_check == 'passed edits'
-      @doco = Doco.new(params[:doco].to_s) #create for save with param values after edit_input has filled in/tweaked
+      @doco = Doco.new(params[:doco]) #create for save with param values after edit_input has filled in/tweaked
       respond_to do |format|
         if @doco.save
           flash[:notice] = 'Doco was successfully created.'
