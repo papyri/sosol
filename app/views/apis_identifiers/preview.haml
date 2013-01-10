@@ -7,7 +7,7 @@
   jQuery.get('xml', function(data) {
     jQuery.ajax({
       type: 'POST',
-      url: 'http://dev.papyri.info/epidocinator?xsl=papyri.info-fragment&coll=apis', 
+      url: 'http://papyri.info/epidocinator?xsl=papyri.info-fragment&coll=apis', 
       data: data, 
       success: function(result) {
         jQuery('#preview').html(result);
