@@ -89,7 +89,7 @@ class EmailersController < ApplicationController
   # POST /emailers
   # POST /emailers.xml
   def create
-    @emailer = Emailer.new(params[:emailer].to_s)
+    @emailer = Emailer.new(params[:emailer])
     
     if @emailer.save
       board = Board.find(@emailer.board_id)
@@ -109,7 +109,7 @@ class EmailersController < ApplicationController
     @emailer = Emailer.find(params[:id].to_s)
 
     respond_to do |format|
-      if @emailer.update_attributes(params[:emailer].to_s)
+      if @emailer.update_attributes(params[:emailer])
         flash[:notice] = 'Emailer was successfully updated.'
         format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
         #format.html { redirect_to(@emailer) }

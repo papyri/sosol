@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
-    t.decimal  "trigger",      :precision => 5, :scale => 2
+    t.integer  "trigger",      :precision => 10, :scale => 0
     t.string   "choices"
     t.integer  "board_id"
     t.datetime "created_at"

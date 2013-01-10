@@ -83,7 +83,7 @@ class DocosController < ApplicationController
     if edit_check == 'passed edits'
     
       respond_to do |format|
-        if @doco.update_attributes(params[:doco].to_s)
+        if @doco.update_attributes(params[:doco])
           flash[:notice] = 'Doco was successfully updated.'
           #format.html { redirect_to(@doco) }
           format.html { redirect_to(docos_url(:docotype => @doco.docotype)) }

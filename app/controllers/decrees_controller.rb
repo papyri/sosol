@@ -77,7 +77,7 @@ class DecreesController < ApplicationController
     @decree = Decree.find(params[:id].to_s)
 
     respond_to do |format|
-      if @decree.update_attributes(params[:decree].to_s)
+      if @decree.update_attributes(params[:decree])
         flash[:notice] = 'Decree was successfully updated.'
         
         format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }

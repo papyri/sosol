@@ -60,7 +60,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id].to_s)
 
     respond_to do |format|
-      if @event.update_attributes(params[:event].to_s)
+      if @event.update_attributes(params[:event])
         flash[:notice] = 'Event was successfully updated.'
         format.html { redirect_to(@event) }
         format.xml  { head :ok }

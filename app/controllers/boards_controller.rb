@@ -121,7 +121,7 @@ class BoardsController < ApplicationController
   def create
 
 
-    @board = Board.new(params[:board].to_s)
+    @board = Board.new(params[:board])
     
     @board.identifier_classes = []
 
@@ -161,7 +161,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      if @board.update_attributes(params[:board].to_s)
+      if @board.update_attributes(params[:board])
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }

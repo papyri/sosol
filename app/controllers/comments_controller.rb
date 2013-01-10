@@ -86,7 +86,7 @@ class CommentsController < ApplicationController
     @comment = Comment.find(params[:id].to_s)
 
     respond_to do |format|
-      if @comment.update_attributes(params[:comment].to_s)
+      if @comment.update_attributes(params[:comment])
         flash[:notice] = 'Comment was successfully updated.'
         format.html { redirect_to(@comment) }
         format.xml  { head :ok }
