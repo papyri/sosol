@@ -28,7 +28,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     #exit
     begin
-      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment])
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier].to_s, params[:comment].to_s)
       expire_publication_cache
       generate_flash_message
     rescue JRubyXML::ParseError => e
@@ -38,7 +38,7 @@ class HgvMetaIdentifiersController < IdentifiersController
       return
     end
     
-    save_comment(params[:comment], commit_sha)
+    save_comment(params[:comment].to_s, commit_sha)
     
     flash[:expansionSet] = params[:expansionSet]
 
@@ -217,7 +217,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Assumes that post data contains hgv identifier id
     # Side effect on +@identifier+
     def find_identifier
-      @identifier = HGVMetaIdentifier.find(params[:id])
+      @identifier = HGVMetaIdentifier.find(params[:id].to_s)
     end
 
 end

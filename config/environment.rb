@@ -2,7 +2,7 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
+#ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
@@ -105,6 +105,11 @@ Rails::Initializer.run do |config|
   
   SITE_NAME = 'Papyrological Editor'
   SITE_FULL_NAME = 'Papyri.info' 
+  SITE_LAYOUT = 'pn'
+  SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">'
+  SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
+  SITE_CATALOG_SEARCH = "View in PN"
+  SITE_USER_NAMESPACE = "papyri.info"
  
   REPOSITORY_ROOT = File.join('/data/papyri.info/sosol/repo')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')

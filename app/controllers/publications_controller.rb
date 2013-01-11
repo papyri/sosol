@@ -12,7 +12,7 @@ class PublicationsController < ApplicationController
     require 'zip/zipfilesystem'
     require 'pp'
       
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     
     
     file_friendly_name = @publication.title.gsub(/[\\\/:."*?<>|\s]+/, "-")
@@ -62,7 +62,7 @@ class PublicationsController < ApplicationController
     @publication = Publication.new()
     @publication.owner = @current_user
     @publication.populate_identifiers_from_identifiers(
-      params[:pn_id])
+      params[:pn_id].to_s)
     
     @publication.creator = @current_user
     #@publication.creator_type = "User"
@@ -124,14 +124,14 @@ class PublicationsController < ApplicationController
   
   def create_from_apis_template
     new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
-    new_publication.title = APISIdentifier.new(:name => APISIdentifier.next_temporary_identifier(params[:apis_collection])).titleize
+    new_publication.title = APISIdentifier.new(:name => APISIdentifier.next_temporary_identifier(params[:apis_collection].to_s)).titleize
     new_publication.status = "new"
     new_publication.save!
     
     # branch from master so we aren't just creating an empty branch
     new_publication.branch_from_master
     
-    new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection])
+    new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection].to_s)
     @publication = new_publication
     
     flash[:notice] = 'Publication was successfully created.'
@@ -246,9 +246,9 @@ class PublicationsController < ApplicationController
     #need to set id to 0
     #raise community_id
     
-    #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
     #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
-    @comment = Comment.new( {:publication_id => params[:id], :comment => params[:submit_comment], :reason => "submit", :user_id => @current_user.id } )
+    @comment = Comment.new( {:publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
     @comment.save
     
     error_text, identifier_for_comment = @publication.submit
@@ -262,7 +262,7 @@ class PublicationsController < ApplicationController
       flash[:notice] = 'Publication submitted.'
     else
       #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
-      cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id], :reason => "submit", :user_id => @current_user.id } )
+      cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
       Comment.destroy(cleanup_id)
       flash[:error] = error_text
     end
@@ -288,7 +288,7 @@ class PublicationsController < ApplicationController
   
   def become_finalizer
     # TODO make sure we don't steal it from someone who is working on it
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @publication.remove_finalizer
 
     #note this can only be called on a board owned publication
@@ -305,7 +305,7 @@ class PublicationsController < ApplicationController
   
   def finalize_review
     
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @identifier = nil#@publication.entry_identifier
     #if we are finalizing then find the board that this pub came from 
     # and find the identifers that the board controls
@@ -327,8 +327,44 @@ class PublicationsController < ApplicationController
  
   
   def finalize
-    @publication = Publication.find(params[:id])
-
+    @publication = Publication.find(params[:id].to_s)
+    
+    # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+    # if something goes wrong
+    max_loops = @publication.identifiers.size
+    loop_count = 0
+    done_preprocessing = false
+    @publication.transaction do
+      while (! done_preprocessing) do
+        loop_count = loop_count + 1
+        any_preprocessed = false
+        begin
+          #find all modified identiers in the publication and run any necessary preprocessing
+          @publication.identifiers.each do |id|
+            #board controls this id and it has been modified
+            if id.modified? && @publication.find_first_board.controls_identifier?(id) 
+              modified = id.preprocess_for_finalization
+              if (modified)
+                id.save
+                any_preprocessed = true
+              end
+            end
+          end
+        rescue Exception => e
+          flash[:error] = "Error preprocessing finalization copy. #{e.to_s}"
+          redirect_to @publication
+          return
+        end # end iteration through identifiers
+        # we need to rerun preprocessing until no more changes are made because a preprocessing step
+        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = ! any_preprocessed
+        if (!done_preprocessing && loop_count == max_loops)
+          flash[:error] = "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
+          redirect_to @publication
+          break
+        end
+      end # done preprocessing 
+    end # end transaction
     #to prevent a community publication from being finalized if there is no end_user to get the final version
     if @publication.is_community_publication? && @publication.community.end_user.nil? 
       flash[:error] = "Error finalizing. No End User for the community."
@@ -340,20 +376,20 @@ class PublicationsController < ApplicationController
     @publication.identifiers.each do |id|
       #board controls this id and it has been modified
       if id.modified? && @publication.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
-        id.update_revision_desc(params[:comment], @current_user);
+        id.update_revision_desc(params[:comment].to_s, @current_user);
         id.save
       end
     end
     
     
     #copy back in any case
-    @publication.copy_back_to_user(params[:comment], @current_user)
+    @publication.copy_back_to_user(params[:comment].to_s, @current_user)
   
     #if it is a community pub, we don't commit to canon
     #instead we copy changes back to origin
     if @publication.is_community_publication?
       
-      #@publication.copy_back_to_user(params[:comment], @current_user)
+      #@publication.copy_back_to_user(params[:comment].to_s, @current_user)
   
       
     else #commit to canon
@@ -412,7 +448,14 @@ class PublicationsController < ApplicationController
       flash[:error] = error_text
     end
     @publication.change_status('finalized')
-    
+    # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+    # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+    # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+    # you get an error because the title is already taken. I'm going to add the date time to the title
+    # of the finalized publication as a workaround
+    @publication.title = @publication.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+    @publication.save!
+
     flash[:notice] = 'Publication finalized.'
     redirect_to @publication
   end
@@ -422,7 +465,7 @@ class PublicationsController < ApplicationController
   def show
     
     begin
-      @publication = Publication.find(params[:id])
+      @publication = Publication.find(params[:id].to_s)
     rescue    
       flash[:error] = "Publication not found"
       redirect_to (dashboard_url)
@@ -455,37 +498,37 @@ class PublicationsController < ApplicationController
   
   # GET /publications/1/edit
   def edit
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     
     redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
   end
   
   def edit_text
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @identifier = DDBIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_meta
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @identifier = HGVMetaIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_apis
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @identifier = APISIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
   
   def edit_trans  
-    @publication = Publication.find(params[:id])    
+    @publication = Publication.find(params[:id].to_s)    
     @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])    
   end
 
   def edit_biblio
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     @identifier = BiblioIdentifier.find_by_publication_id(@publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
@@ -494,7 +537,7 @@ class PublicationsController < ApplicationController
   
     #if they are on show, then need to goto first or last identifers
     if params[:current_action_name] == "show"
-      @publication = Publication.find(params[:id])
+      @publication = Publication.find(params[:id].to_s)
       if params[:direction] == 'prev'
         @identifier = @publication.identifiers.last
       else
@@ -504,7 +547,7 @@ class PublicationsController < ApplicationController
       return
     end
     
-    @publication = Publication.find(params[:pub_id])
+    @publication = Publication.find(params[:pub_id].to_s)
 
     if params[:direction] == 'prev'
       direction = -1
@@ -512,7 +555,7 @@ class PublicationsController < ApplicationController
       direction = 1
     end
 
-    @identifier = Identifier.find(params[:id_id])
+    @identifier = Identifier.find(params[:id_id].to_s)
     current_identifier_class = @identifier.class
     current_index = @publication.identifiers.index(@identifier)
 
@@ -589,7 +632,7 @@ class PublicationsController < ApplicationController
     
     #fails - if not pub found ie race condition of voting on reject or graffiti
     begin
-      @publication = Publication.find(params[:id])  
+      @publication = Publication.find(params[:id].to_s)  
     rescue    
       flash[:warning] = "Publication not found - voting is over for this publications."
       redirect_to (dashboard_url)
@@ -654,7 +697,7 @@ class PublicationsController < ApplicationController
 
     begin
       #see if publication still exists
-      Publication.find(params[:id])
+      Publication.find(params[:id].to_s)
       redirect_to @publication
       return
     rescue
@@ -665,7 +708,7 @@ class PublicationsController < ApplicationController
   end
   
   def confirm_archive
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
   end
   
   def confirm_archive_all
@@ -677,12 +720,12 @@ class PublicationsController < ApplicationController
         redirect_to dashboard_url
       end
     end
-    @publications = Publication.find_all_by_owner_id(params[:id], :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id], :parent_id => nil }, :order => "updated_at DESC")
+    @publications = Publication.find_all_by_owner_id(params[:id].to_s, :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id].to_s, :parent_id => nil }, :order => "updated_at DESC")
     
   end
   
   def archive
-    archive_pub(params[:id])
+    archive_pub(params[:id].to_s)
     expire_publication_cache
     redirect_to @publication    
   end
@@ -699,11 +742,11 @@ class PublicationsController < ApplicationController
   end
   
   def confirm_withdraw
-   @publication = Publication.find(params[:id])
+   @publication = Publication.find(params[:id].to_s)
   end
 
   def withdraw
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     pub_name = @publication.title
     @publication.withdraw
     
@@ -724,12 +767,12 @@ class PublicationsController < ApplicationController
   end 
   
   def confirm_delete
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
   end
   
   # DELETE 
   def destroy
-    @publication = Publication.find(params[:id])
+    @publication = Publication.find(params[:id].to_s)
     pub_name = @publication.title
     @publication.destroy
     
@@ -752,7 +795,7 @@ class PublicationsController < ApplicationController
   
   protected
     def find_publication
-      @publication ||= Publication.find(params[:id])
+      @publication ||= Publication.find(params[:id].to_s)
     end
 
     def ownership_guard
@@ -803,7 +846,7 @@ class PublicationsController < ApplicationController
       #might be able to modify publication_from_identifier
       #where to get title? make them up based on time for now
       new_title = 'Batch_' + Time.now.strftime("%d%b%Y_%H%M") #12Jan2011_2359
-      puts new_title
+      #puts new_title
         @publication = Publication.new()
         @publication.owner = @current_user
         @publication.creator = @current_user

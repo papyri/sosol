@@ -1,3 +1,4 @@
 Identifier
 = identifier.name
-== (#{link_to "View in PN", NumbersRDF::NumbersHelper.identifier_to_url(identifier.name)})
+-if identifier.get_catalog_link != ''
+  == (#{link_to SITE_CATALOG_SEARCH, identifier.get_catalog_link})

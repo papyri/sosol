@@ -28,9 +28,9 @@ class BiblioIdentifiersController < IdentifiersController
       return
     end
 
-    save_comment(params[:comment], commit_sha)
+    save_comment(params[:comment].to_s, commit_sha)
 
-    flash[:expansionSet] = params[:expansionSet]
+    flash[:expansionSet] = params[:expansionSet].to_s
 
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit)
@@ -65,7 +65,7 @@ class BiblioIdentifiersController < IdentifiersController
     # Assumes that post data contains biblio identifier id
     # Side effect on +@identifier+
     def find_identifier
-      @identifier = BiblioIdentifier.find(params[:id])
+      @identifier = BiblioIdentifier.find(params[:id].to_s)
     end
 
 end

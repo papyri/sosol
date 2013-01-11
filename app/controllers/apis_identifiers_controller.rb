@@ -25,7 +25,7 @@ class ApisIdentifiersController < IdentifiersController
       commit_sha = @identifier.set_xml_content(xml_content,
                                   :comment => params[:comment])
       if params[:comment] != nil && params[:comment].strip != ""
-        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
         @comment.save
       end
       
@@ -61,7 +61,7 @@ class ApisIdentifiersController < IdentifiersController
   end
 
   def find_identifier
-    @identifier = APISIdentifier.find(params[:id])
+    @identifier = APISIdentifier.find(params[:id].to_s)
   end
 
   def xml

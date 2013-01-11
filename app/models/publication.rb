@@ -114,9 +114,12 @@ class Publication < ActiveRecord::Base
       identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifiers)
     end
 
-    #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
-    identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
-    #identifiers is now a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+    if identifiers.class == Array
+      #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
+      identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
+    end
+    # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  
+    # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
 
 
     #title is first identifier in list
@@ -128,20 +131,25 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    [DDBIdentifier, HGVMetaIdentifier, HGVTransIdentifier, BiblioIdentifier, APISIdentifier].each do |identifier_class|
-      if identifiers.has_key?(identifier_class::IDENTIFIER_NAMESPACE)
-        identifiers[identifier_class::IDENTIFIER_NAMESPACE].each do |identifier_string|
+    SITE_IDENTIFIERS.split(",").each do |identifier_name|
+ 
+      ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
+      if identifiers.has_key?(ns)
+        identifiers[ns].each do |identifier_string|
+          identifier_class = Object.const_get(identifier_name)
           temp_id = identifier_class.new(:name => identifier_string)
-          # make sure we have a path on master before forking it for this publication
-          unless self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+          # make sure we have a path on master before forking it for this publication 
+          unless (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
+            # 2012-09-17 BALMAS it might be good to have an option to raise an error if we couldn't
+            # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)? 
             self.identifiers << temp_id
-            if self.title == original_title
+            if ( self.title == original_title )
               self.title = temp_id.titleize
             end
-          end
-        end
-      end
-    end
+          end # if master blank?
+        end # do
+      end # if
+    end # do
 
     #reset the title to what the caller wants
     if original_was_nil
@@ -415,7 +423,6 @@ class Publication < ActiveRecord::Base
     new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
     
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
-    
     new_publication.save!
     
     # branch from master so we aren't just creating an empty branch
@@ -652,6 +659,7 @@ class Publication < ActiveRecord::Base
       #set up for finalizing
       self.send_to_finalizer
       
+      
   #----reject-----    
     elsif decree_action == "reject"   
      
@@ -734,7 +742,12 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
-      controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+      begin
+        controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+      rescue Grit::Git::GitTimeout
+        Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
+        controlled_commit_diffs = ['timeout']
+      end 
       controlled_commit_diffs.length > 0
     end
     
@@ -1159,7 +1172,7 @@ class Publication < ActiveRecord::Base
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
     diff = self.owner.repository.repo.git.diff(
-      {:unified => 5000}, canonical_sha, self.head,
+      {:unified => 5000, :timeout => false}, canonical_sha, self.head,
       '--', *(self.controlled_paths))
     return diff || ""
   end
@@ -1373,8 +1386,9 @@ class Publication < ActiveRecord::Base
     all_built_comments = []
     xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
+    # BMA What is the purpose of limiting comments to the title rather than the id? 
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
-                                         FROM comments a, publications b 
+                                        FROM comments a, publications b 
                                         WHERE b.title = '#{title}'
                                           AND a.publication_id = b.id
                                      ORDER BY a.created_at DESC")
@@ -1463,6 +1477,8 @@ class Publication < ActiveRecord::Base
     has_meta = false
     has_text = false
     has_biblio = false
+    has_cts = false
+    
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
         has_biblio = true
@@ -1472,6 +1488,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s == "DDBIdentifier"
        has_text = true
+      end
+      if i.class.to_s =~ /CTSIdentifier/
+        has_cts = true
       end
     end
     if !has_text
@@ -1487,6 +1506,10 @@ class Publication < ActiveRecord::Base
     creatable_identifiers.delete("BiblioIdentifier")
     # Not allowed to create any other record in association with a BiblioIdentifier publication
     if has_biblio
+      creatable_identifiers = []
+    end
+    #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
+    if has_cts
       creatable_identifiers = []
     end
     

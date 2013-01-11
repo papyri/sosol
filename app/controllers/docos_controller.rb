@@ -6,7 +6,7 @@ class DocosController < ApplicationController
   # GET /docos.xml
   def index
     @docotype = params[:docotype]
-    @docos = Doco.find(:all, :conditions => {:docotype => params[:docotype]}, :order => "category, line")
+    @docos = Doco.find(:all, :conditions => {:docotype => params[:docotype].to_s}, :order => "category, line")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,7 +17,7 @@ class DocosController < ApplicationController
   # GET /docos/1
   # GET /docos/1.xml
   def show
-    @doco = Doco.find(params[:id])
+    @doco = Doco.find(params[:id].to_s)
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @doco }
@@ -31,7 +31,7 @@ class DocosController < ApplicationController
     if params[:id] == "blank"
       @doco = Doco.new
     else
-      @fillin = Doco.find(params[:id])
+      @fillin = Doco.find(params[:id].to_s)
       @doco = Doco.new
       @doco.category = @fillin.category
       @doco.line = @fillin.line
@@ -50,7 +50,7 @@ class DocosController < ApplicationController
 
   # GET /docos/1/edit
   def edit
-    @doco = Doco.find(params[:id])
+    @doco = Doco.find(params[:id].to_s)
   end
 
   # POST /docos
@@ -77,7 +77,7 @@ class DocosController < ApplicationController
   # PUT /docos/1
   # PUT /docos/1.xml
   def update
-    @doco = Doco.find(params[:id])
+    @doco = Doco.find(params[:id].to_s)
     edit_check = edit_input('edit')
     
     if edit_check == 'passed edits'
@@ -99,7 +99,7 @@ class DocosController < ApplicationController
   # DELETE /docos/1
   # DELETE /docos/1.xml
   def destroy
-    @doco = Doco.find(params[:id])
+    @doco = Doco.find(params[:id].to_s)
     @doco.destroy
 
     respond_to do |format|

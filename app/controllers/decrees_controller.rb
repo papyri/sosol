@@ -17,7 +17,7 @@ class DecreesController < ApplicationController
   # GET /decrees/1
   # GET /decrees/1.xml
   def show
-    @decree = Decree.find(params[:id])
+    @decree = Decree.find(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -29,8 +29,8 @@ class DecreesController < ApplicationController
   # GET /decrees/new.xml
   def new
     @decree = Decree.new
-    @decree.board_id = params[:board_id]
-    @board = Board.find(params[:board_id])
+    @decree.board_id = params[:board_id].to_s
+    @board = Board.find(params[:board_id].to_s)
    
 
     respond_to do |format|
@@ -41,7 +41,7 @@ class DecreesController < ApplicationController
 
   # GET /decrees/1/edit
   def edit
-    @decree = Decree.find(params[:id])
+    @decree = Decree.find(params[:id].to_s)
   end
 
   # POST /decrees
@@ -74,7 +74,7 @@ class DecreesController < ApplicationController
   # PUT /decrees/1
   # PUT /decrees/1.xml
   def update
-    @decree = Decree.find(params[:id])
+    @decree = Decree.find(params[:id].to_s)
 
     respond_to do |format|
       if @decree.update_attributes(params[:decree])
@@ -92,7 +92,7 @@ class DecreesController < ApplicationController
   # DELETE /decrees/1
   # DELETE /decrees/1.xml
   def destroy
-    @decree = Decree.find(params[:id])
+    @decree = Decree.find(params[:id].to_s)
     @decree.destroy
 
     respond_to do |format|

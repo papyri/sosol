@@ -14,7 +14,7 @@ class BoardsController < ApplicationController
   
   #Presents overview for publication.
   def overview
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
 
     if @board.users.find_by_id(@current_user.id) || @current_user.developer
       # below is dangerous since it will expose publications to non owners
@@ -37,13 +37,13 @@ class BoardsController < ApplicationController
   end
   
   def find_member
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
   end
 
   #Adds the user to the board member list.
   def add_member
-    @board = Board.find(params[:id])
-    user = User.find_by_name(params[:user_name])
+    @board = Board.find(params[:id].to_s)
+    user = User.find_by_name(params[:user_name].to_s)
 
     if nil == @board.users.find_by_id(user.id) 
       @board.users << user
@@ -55,9 +55,9 @@ class BoardsController < ApplicationController
 
   #Removes a member from the board member list.
   def remove_member
-    user = User.find(params[:user_id])
+    user = User.find(params[:user_id].to_s)
 
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
     @board.users.delete(user)
     @board.save
 
@@ -79,7 +79,7 @@ class BoardsController < ApplicationController
   # GET /boards/1
   # GET /boards/1.xml
   def show
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -101,8 +101,8 @@ class BoardsController < ApplicationController
     #  @available_identifier_classes -= b.identifier_classes
     #end
     
-    if params[:community_id]
-      @board.community_id =  params[:community_id]
+    if params[:community_id].to_s
+      @board.community_id =  params[:community_id].to_s
     end
      
     respond_to do |format|
@@ -113,7 +113,7 @@ class BoardsController < ApplicationController
 
   # GET /boards/1/edit
   def edit
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
   end
 
   # POST /boards
@@ -127,7 +127,7 @@ class BoardsController < ApplicationController
 
     #let them choose as many ids as they want
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
-      if params.has_key?(identifier_class) && params[identifier_class] == "1"
+      if params.has_key?(identifier_class) && params[:identifier_class].to_s == "1"
         @board.identifier_classes << identifier_class
       end
     end
@@ -158,7 +158,7 @@ class BoardsController < ApplicationController
   # PUT /boards/1
   # PUT /boards/1.xml
   def update
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
       if @board.update_attributes(params[:board])
@@ -175,7 +175,7 @@ class BoardsController < ApplicationController
   # DELETE /boards/1
   # DELETE /boards/1.xml
   def destroy
-    @board = Board.find(params[:id])
+    @board = Board.find(params[:id].to_s)
     @board.destroy
 
     respond_to do |format|
@@ -188,9 +188,9 @@ class BoardsController < ApplicationController
   #If community_id is given then the returned boards are only for that community.
   #If no community_id is given then the "sosol" boards are returned. 
   def rank
-    if params[:community_id]
-      @boards = Board.ranked_by_community_id( params[:community_id] )
-      @community_id = params[:community_id] 
+    if params[:community_id].to_s
+      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
+      @community_id = params[:community_id].to_s 
     else
       #default to sosol boards
       @boards = Board.ranked;  
@@ -201,8 +201,8 @@ class BoardsController < ApplicationController
   #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
-    if params[:community_id]
-      @boards = Board.ranked_by_community_id( params[:community_id] )
+    if params[:community_id].to_s
+      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
     else
       #default to sosol boards
       @boards = Board.ranked;  
@@ -210,7 +210,7 @@ class BoardsController < ApplicationController
     
     #@boards = Board.find(:all)
 
-    rankings = params[:ranking].split(',');
+    rankings = params[:ranking].to_s.split(',');
     
     rank_count = 1
     rankings.each do |rank_id|
@@ -225,8 +225,8 @@ class BoardsController < ApplicationController
     end
     
     
-    if params[:community_id]
-      redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id]
+    if params[:community_id].to_s
+      redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id].to_s
       return
     else
       #default to sosol boards
@@ -241,9 +241,9 @@ def send_board_reminder_emails
     
   addresses = Array.new 
   
-  if (params[:community_id])
-    boards = Board.ranked_by_community_id(params[:community_id]) 
-    community = Community.find_by_id(params[:community_id]) 
+  if (params[:community_id].to_s)
+    boards = Board.ranked_by_community_id(params[:community_id].to_s) 
+    community = Community.find_by_id(params[:community_id].to_s) 
   else
     boards = Board.ranked
   end
@@ -322,7 +322,7 @@ def send_board_reminder_emails
 end
 
 def confirm_destroy
-  @board = Board.find(params[:id])
+  @board = Board.find(params[:id].to_s)
 end
 
 end

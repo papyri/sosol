@@ -1,18 +1,15 @@
 #main
   - max_visible_comments = 10
   :javascript 
-    function checkForComment() 
-    { 
-      //comment_text = $('submit_comment').value; 
-      //var submits = $$('input.submit')
-      //for (var i=0;i<submits.length;i++)
-      //{
-      //  $(submits[i]).disabled = comment_text.replace(/^\s+|\s+$/g, '') == ""; 
-      //}
-      
-  
-      var comment_text = $('submit_comment').value;
-      
+
+    function checkForComment() { 
+      comment_text = $('submit_comment').value; 
+      if ($('reason_dataentry').checked) {
+        comment_text = comment_text + "\nData Entry Error\n";
+      }
+      if ($('reason_xmladded').checked) {
+        comment_text = comment_text + "\nXML Markup Change\n";
+      }
       if ($('community_id') != null)
       {
         var selected_submit = $('community_id').value;
@@ -21,13 +18,20 @@
       else
       {
         $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
-      }
+      } 
     }
     
-    // function setCommunityId(id)
-    // {
-    //   $('community_id').value = id;
-    // }  
+    function fixupComment() {
+        comment_text = $('submit_comment').value; 
+        if ($('reason_dataentry').checked) {
+          comment_text = comment_text + "Data Entry Error\n";
+        }
+        if ($('reason_xmladded').checked) {
+          comment_text = comment_text + "XML Markup Change\n";
+        }
+        $('submit_comment').value = comment_text;
+        return true;
+    }
     
     function toggle_div(obj) {
       var el = document.getElementById(obj);
@@ -59,12 +63,18 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            - form_tag :controller => 'publications', :action => "submit"  do
+            - form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'fixupComment(event);'})  do
               -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br
               %br
-              = label_tag "Briefly describe the reason for your submission:"
+              = label_tag "Select a reason for your submission:"
+              %br
+              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_dataentry", :id => "reason_dataentry", :value => "render", :enabled => "true" }Data Entry Error
+              %br
+              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_xmladded", :id => "reason_xmladded", :value => "render", :enabled => "true" }XML Markup
+              %br
+              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_other", :id => "reason_other", :value => "render", :enabled => "true" }Other:
               %br
               = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
@@ -80,8 +90,6 @@
                     - community_hash[community.format_name] = community.id
                   -#= submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
                 = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => 'checkForComment()' }
-                
-                        
                 
         - else
           %b
@@ -104,10 +112,11 @@
         %h1 MODIFIED PUBLICATION
       
       
-    - for identifier in @publication.identifiers 
-      %h3
-        == #{identifier.class::FRIENDLY_NAME} - 
-        = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
+    - for identifier in @publication.identifiers
+      - if identifier.class::is_visible   
+        %h3
+          == #{identifier.class::FRIENDLY_NAME} - 
+          = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
 
       %p
         - if identifier.class == DDBIdentifier
@@ -116,6 +125,8 @@
           = image_tag('hgv.gif')
         - if identifier.class == APISIdentifier
           = image_tag('apis.png')
+        - if identifier.class == OACIdentifier
+          = image_tag('oac-logo-ds.png')
         - if identifier.needs_reviewing?(@current_user.id)
           -#%b !
           = image_tag('review_flag.png')

@@ -1,0 +1,13 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages
+        = hidden_field_tag 'annotation_uri',params[:annotation_uri]
+
+        .PContent
+          = @identifier[:html_preview]
+    

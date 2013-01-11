@@ -1,11 +1,12 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
-  IDENTIFIER_SUBCLASSES = %w{ DDBIdentifier HGVMetaIdentifier HGVTransIdentifier BiblioIdentifier APISIdentifier }
+
+  IDENTIFIER_SUBCLASSES = SITE_IDENTIFIERS.split(",")
   
   FRIENDLY_NAME = "Base Identifier"
   
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
-  
+   
   validates_presence_of :name, :type
   
   belongs_to :publication
@@ -20,6 +21,20 @@ class Identifier < ActiveRecord::Base
   
   require 'jruby_xml'
 
+
+  # - *Returns* :
+  #   - all identifier classes enabled for the site
+  def self.site_identifier_classes
+    site_classes = []
+    site_identifiers = SITE_IDENTIFIERS.split(",")
+    Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
+        if site_identifiers.include?(identifier_class.to_s)
+            site_classes << identifier_class
+        end    
+    end
+    return site_classes
+  end
+  
   # - *Returns* :
   #   - the originally created publication of this identifier (publciation that does not have a parent id)
   def origin
@@ -108,7 +123,7 @@ class Identifier < ActiveRecord::Base
     self.save! unless self.id.nil?
     
     self.publication.update_attribute(:updated_at, Time.now) unless self.publication.nil?
-    
+
     return commit_sha
   end
   
@@ -152,7 +167,7 @@ class Identifier < ActiveRecord::Base
       if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
-        puts "#{collection_name}, #{volume_number}, #{document_number}"
+        #puts "#{collection_name}, #{volume_number}, #{document_number}"
         collection_name = 
           self.class.collection_names_hash[collection_name]
         
@@ -224,7 +239,7 @@ class Identifier < ActiveRecord::Base
   def file_template
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
-    
+                              
     template = ERB.new(File.new(template_path).read, nil, '-')
     
     id = self.id_attribute
@@ -317,7 +332,6 @@ class Identifier < ActiveRecord::Base
       :actor    => default_actor)
       
     content = before_commit(content)
-
     commit_sha = ""
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
@@ -403,7 +417,7 @@ class Identifier < ActiveRecord::Base
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         %w{data xslt common add_change.xsl})),
-      :who => ActionController::Integration::Session.new.url_for(:host => NumbersRDF::NAMESPACE_IDENTIFIER, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
+      :who => ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
       :comment => text
     )
     
@@ -480,6 +494,24 @@ class Identifier < ActiveRecord::Base
     end
     #no vote found
     return false
+  end
+  
+  ## identifier classes which need further automatic processing after approval but before
+  ## finalization should override this method -- the default does nothing
+  def preprocess_for_finalization
+    # default does nothing
+    return false
+  end
+  
+  ## identifier classes which should not be visible to the end user (i.e. which are automatically managed) 
+  ## should override this to return false
+  def self.is_visible 
+    return true
+  end
+
+  ## get a link to the catalog for this identifier  
+  def get_catalog_link
+    NumbersRDF::NumbersHelper.identifier_to_url(self.name)
   end
 
 end

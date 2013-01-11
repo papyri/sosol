@@ -6,7 +6,7 @@ class RpxController < ApplicationController
   protect_from_forgery :except => [:login_return, :associate_return]
   
   def remove_openid
-    user_identifier = UserIdentifier.find_by_id(params[:openid])
+    user_identifier = UserIdentifier.find_by_id(params[:openid].to_s)
     if user_identifier.nil?
       flash[:error] = "OpenID Disassociation Failed: No such OpenID"
       redirect_to :controller => "user", :action => "account"
@@ -45,8 +45,8 @@ class RpxController < ApplicationController
     end
 
     # FIXME: Glassfish reqeust object seems to ignore context root?
-    # data = @rpx.auth_info(params[:token], request.url)
-    data = @rpx.auth_info(params[:token], url_for(:controller => :rpx, :action => :associate_return, :only_path => false))
+    # data = @rpx.auth_info(params[:token].to_s, request.url)
+    data = @rpx.auth_info(params[:token].to_s, url_for(:controller => :rpx, :action => :associate_return, :only_path => false))
 
     identifier = data["identifier"]
     user_identifier = UserIdentifier.find_by_identifier(identifier)
@@ -97,8 +97,8 @@ class RpxController < ApplicationController
     end
 
     # FIXME: Glassfish reqeust object seems to ignore context root?
-    # data = @rpx.auth_info(params[:token], request.url)
-    data = @rpx.auth_info(params[:token], url_for(:controller => :rpx, :action => :login_return, :only_path => false))
+    # data = @rpx.auth_info(params[:token].to_s, request.url)
+    data = @rpx.auth_info(params[:token].to_s, url_for(:controller => :rpx, :action => :login_return, :only_path => false))
 
     identifier = data["identifier"]
     

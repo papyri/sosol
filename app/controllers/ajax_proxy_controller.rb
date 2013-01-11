@@ -1,6 +1,6 @@
 class AjaxProxyController < ApplicationController
   def proxy
-    response = NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(params[:id], 'json')
+    response = NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(params[:id].to_s, 'json')
     if response.code != '200'
       @response = nil
     else
@@ -9,7 +9,7 @@ class AjaxProxyController < ApplicationController
   end
   
   def sparql
-    response = NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(params[:query], 'json')
+    response = NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(params[:query].to_s, 'json')
     if response.code != '200'
       @response = nil
     else
@@ -21,7 +21,7 @@ class AjaxProxyController < ApplicationController
   
   def hgvnum
 
-    related_identifiers = NumbersRDF::NumbersHelper.collection_identifier_to_identifiers(params[:identifier])
+    related_identifiers = NumbersRDF::NumbersHelper.collection_identifier_to_identifiers(params[:identifier].to_s)
 
     if related_identifiers.nil?
       render :text => "no related identifiers" 
@@ -33,7 +33,7 @@ class AjaxProxyController < ApplicationController
   
   # Gets the HTTP response from PN solr query
   def get_bibliography
-    searchText = (params[:searchText])
+    searchText = (params[:searchText].to_s)
     #replace space with + to match PN search
     searchText = searchText.split(" ").join("+")
 
@@ -61,9 +61,9 @@ class AjaxProxyController < ApplicationController
       begin
         return Net::HTTP.post_form(URI.parse(XSUGAR_STANDALONE_URL),
           {
-            :content => params[:content],
-            :type => params[:type],
-            :direction => params[:direction]
+            :content => params[:content].to_s,
+            :type => params[:type].to_s,
+            :direction => params[:direction].to_s
           }
         )
       rescue EOFError

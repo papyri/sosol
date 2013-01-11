@@ -20,7 +20,7 @@ class HgvTransGlossariesController < ApplicationController
   # GET /hgv_trans_glossaries/1.xml
   def show
  
-    @glossary = HGVTransGlossary.new.find_item(params[:id])
+    @glossary = HGVTransGlossary.new.find_item(params[:id].to_s)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -30,7 +30,7 @@ class HgvTransGlossariesController < ApplicationController
 
   # GET /hgv_trans_glossaries/1/edit
   def edit
-    @entry = HGVTransGlossary.new.find_item(params[:id])
+    @entry = HGVTransGlossary.new.find_item(params[:id].to_s)
     @possible_langs = HGVTransGlossary.lang_codes
     @is_editor_view = true
   end
@@ -42,7 +42,7 @@ class HgvTransGlossariesController < ApplicationController
     #hgv_trans_glossaries must exist...
     #add new entry 
     raise "HGVTransGlossary needs parent publication"
-    HGVTransGlossary.new.add_entry_to_file(params[:hgv_trans_glossary])
+    HGVTransGlossary.new.add_entry_to_file(params[:hgv_trans_glossary].to_s)
     redirect_to :action => 'index'
   end
 
@@ -50,14 +50,14 @@ class HgvTransGlossariesController < ApplicationController
   # PUT /hgv_trans_glossaries/1.xml
   def update  
     raise "HGVTransGlossary needs parent publication"
-    HGVTransGlossary.addEntry(params[:hgv_trans_glossary])
+    HGVTransGlossary.addEntry(params[:hgv_trans_glossary].to_s)
   end
 
   # DELETE /hgv_trans_glossaries/1
   # DELETE /hgv_trans_glossaries/1.xml
   def destroy
     raise "HGVTransGlossary needs parent publication"
-    HGVTransGlossary.new.delete_entry_in_file(params[:id])
+    HGVTransGlossary.new.delete_entry_in_file(params[:id].to_s)
     redirect_to :action => 'index'
   end
 end

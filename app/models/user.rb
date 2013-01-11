@@ -1,5 +1,6 @@
 #Represents a system user.
 class User < ActiveRecord::Base
+  
   validates_uniqueness_of :name, :case_sensitive => false
   
   has_many :user_identifiers, :dependent => :destroy
@@ -48,13 +49,7 @@ class User < ActiveRecord::Base
         self.admin = true
         self.save!
       
-        ['papyri.info/ddbdp/p.genova;2;67',
-         'papyri.info/ddbdp/sb;24;16003',
-         'papyri.info/ddbdp/p.lond;7;2067',
-         'papyri.info/ddbdp/p.harr;1;109',
-         'papyri.info/ddbdp/p.yale;1;44',
-         'papyri.info/ddbdp/p.tebt;2;414'
-        ].each do |pn_id|
+        DEV_INIT_FILES.each do |pn_id|
           p = Publication.new
           p.owner = self
           p.creator = self

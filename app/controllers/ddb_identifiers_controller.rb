@@ -67,7 +67,7 @@ class DdbIdentifiersController < IdentifiersController
     collection_name = params[:new_name].split('/').last.split(';').first
     if CollectionIdentifier.new.has_collection?(collection_name)
       begin
-        @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header])
+        @identifier.rename(params[:new_name].to_s, :update_header => true, :set_dummy_header => params[:set_dummy_header].to_s)
         flash[:notice] = "Identifier renamed."
       rescue RuntimeError => e
         flash[:error] = e.to_s
@@ -91,20 +91,20 @@ class DdbIdentifiersController < IdentifiersController
       params[:comment] = params[:commenttop]
     end
     if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
-      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier_leiden_plus], params[:comment])
+      @identifier.save_broken_leiden_plus_to_xml(params[:ddb_identifier_leiden_plus].to_s, params[:comment].to_s)
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_leiden_cache
       expire_publication_cache
-        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
+        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus].to_s
         @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
       begin
-        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier_leiden_plus],
-                                    params[:comment])
+        commit_sha = @identifier.set_leiden_plus(params[:ddb_identifier_leiden_plus].to_s,
+                                    params[:comment].to_s)
         if params[:comment] != nil && params[:comment].strip != ""
-          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment], :reason => "commit" } )
+          @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
           @comment.save
         end
         flash[:notice] = "File updated."
@@ -171,7 +171,7 @@ class DdbIdentifiersController < IdentifiersController
     
     begin
 
-      @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id])
+      @identifier.update_commentary(params[:line_id].to_s, params[:reference].to_s, params[:content].to_s, params[:original_item_id].to_s)
       flash[:notice] = "File updated with new commentary."
 
       redirect_to polymorphic_path([@identifier.publication, @identifier],
@@ -198,7 +198,7 @@ class DdbIdentifiersController < IdentifiersController
     
     begin
 
-      @identifier.update_frontmatter_commentary(params[:content])
+      @identifier.update_frontmatter_commentary(params[:content].to_s)
 
       flash[:notice] = "File updated with new commentary."
 
@@ -240,7 +240,7 @@ class DdbIdentifiersController < IdentifiersController
   def delete_commentary
     find_identifier
     
-    @identifier.update_commentary(params[:line_id], params[:reference], params[:content], params[:original_item_id], true)
+    @identifier.update_commentary(params[:line_id].to_s, params[:reference].to_s, params[:content].to_s, params[:original_item_id].to_s, true)
     
     flash[:notice] = "Commentary entry removed."
     
@@ -264,14 +264,14 @@ class DdbIdentifiersController < IdentifiersController
     # - *Params*  :
     #   - +id+ -> id from identifier table of the DDB Text
     def find_identifier
-      @identifier = DDBIdentifier.find(params[:id])
+      @identifier = DDBIdentifier.find(params[:id].to_s)
     end
   
     # Sets the publication instance variable values and then calls find_identifier
     # - *Params*  :
     #   - +publication_id+ -> id from publication table of the publication containing this DDB Text
     def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id])
+      @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
     end
 end

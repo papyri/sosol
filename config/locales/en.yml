@@ -271,6 +271,7 @@ en:
   apis:
     legend:
       general: General
+      facsimiles: Facsimile Images
       images: Images
       object: Object
       context: Context
@@ -319,6 +320,10 @@ en:
       figHead: Image Label
       figDesc: Description
       figUrl: Image URL
+      surfaceGrpId: Object ID
+      surfaceType1: Side 1
+      surfaceType2: Side 2
+      facsUrl: Image URL
       citation: Citation
       citeNote: Note
       citeType: DDbDP?

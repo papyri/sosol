@@ -3,7 +3,7 @@
     return "#{request.domain == 'papyri.info' ? '' : url_for(:controller => 'ajax_proxy', :only_path => true)}";
   }
   function get_collection_prefix() {
-    prefix = get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '' : '/papyri.info'}";
+    var prefix = get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '' : '/papyri.info'}";
     if($F('IdentifierClass') == 'DDBIdentifier') {
       return prefix + '/ddbdp/' + $F('DDBIdentifierCollectionSelect');
     }
@@ -16,6 +16,22 @@
       }
     }
   }
+  
+  function get_collection_uri() {
+    var prefix = "http://papyri.info";
+    if($F('IdentifierClass') == 'DDBIdentifier') {
+      return prefix + '/ddbdp/' + $F('DDBIdentifierCollectionSelect');
+    }
+    else {
+      if($F('IdentifierClass') == 'HGVIdentifier') {
+        return prefix + '/hgv/' + $F('HGVIdentifierCollectionSelect');
+      }
+      else {
+        return prefix + '/apis/' + $F('APISIdentifierCollectionSelect');
+      }
+    }
+  }
+  
   function reset_selector(select_element) {
     select_element.childElements().each(Element.remove);
     
@@ -60,17 +76,20 @@
     new Ajax.Request(request_url, {
       method: 'get',
       onSuccess: function(response) {
-        json = response.responseText.evalJSON();
+        var json = response.responseText.evalJSON();
         
         if(disable_volume === undefined) {
           disable_volume = false;
         }
-        is_hgv_identifier = false;
-        
-        parts = json.results.bindings.findAll(function(b) {
-          return b['http://purl.org/dc/terms/hasPart'] != null;
-        });
-        values = parts.collect(function(p) {
+        var is_hgv_identifier = false;
+        var subject;
+        if (volume_number) {
+          subject = get_collection_uri() + ";" + volume_number;
+        } else {
+          subject = get_collection_uri();
+        }
+        var parts = json[subject]['http://purl.org/dc/terms/hasPart'];
+        var values = parts.collect(function(p) {
           if($F('IdentifierClass') == 'HGVIdentifier') {
             // for HGV if we get HGV id's back immediately (i.e. no vols)
             // we want to re-run the query with SPARQL
@@ -93,7 +112,8 @@
           
           if(!is_hgv_identifier) {
             // ; for DDB and _ for HGV
-            elements = p['value'].split(/[;_]/);
+            var elements = p['value'].split(/[;_]/);
+            var lastpart;
             if($F('IdentifierClass') == 'HGVIdentifier') {
               lastpart = p['object']['value'].sub(new RegExp('^.*\\/' + $F('HGVIdentifierCollectionSelect') + '_'),'');
               if(select_element == $('document_number') && !disable_volume) {
@@ -150,9 +170,7 @@
 
         is_hgv_identifier = false;
         
-        parts = json.results.bindings.findAll(function(b) {
-          return b['http://purl.org/dc/terms/hasPart'] != null;
-        });
+        parts = json["http://papyri.info/apis/" + $F('APISIdentifierCollectionSelect')]['http://purl.org/dc/terms/hasPart'];
 
         values = parts.collect(function(p) {
 
