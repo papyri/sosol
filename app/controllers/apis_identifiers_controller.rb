@@ -1,5 +1,6 @@
 class ApisIdentifiersController < IdentifiersController
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
   require 'pp'
 
   def editold

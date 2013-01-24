@@ -5,6 +5,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   # uses standard layout
   # user must be logged in to access these actions
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
   # before post data is used for further processing unwanted entries are discarded
   before_filter :prune_params, :only => [:update, :get_date_preview]
   #  before post data is further processed some user entries are decorated with additional information, such as human readable format strings
