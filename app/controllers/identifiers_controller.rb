@@ -140,6 +140,7 @@ class IdentifiersController < ApplicationController
     end
     
     def ownership_guard
+      find_identifier
       if !@identifier.publication.mutable_by?(@current_user)
         flash[:error] = 'Operation not permitted.'
         redirect_to dashboard_url
