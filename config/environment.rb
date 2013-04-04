@@ -106,7 +106,7 @@ Rails::Initializer.run do |config|
   SITE_NAME = 'Papyrological Editor'
   SITE_FULL_NAME = 'Papyri.info' 
   SITE_LAYOUT = 'pn'
-  SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">'
+  SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
   SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
   SITE_CATALOG_SEARCH = "View in PN"
   SITE_USER_NAMESPACE = "papyri.info"

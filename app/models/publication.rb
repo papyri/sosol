@@ -1528,11 +1528,11 @@ class Publication < ActiveRecord::Base
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
-      str.tr(' ','_')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
     end
 
     #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
-      str.tr(':;','_')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
     end
 end
