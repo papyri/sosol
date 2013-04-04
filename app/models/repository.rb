@@ -36,7 +36,7 @@ class Repository
       FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
       
       @path = File.join(REPOSITORY_ROOT,
-                        @master_class_path, "#{safe_repo_name(master.name)}.git")
+                        @master_class_path, "#{master.name}.git")
     end
     
     @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
