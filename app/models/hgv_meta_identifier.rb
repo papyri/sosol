@@ -193,6 +193,7 @@ class HGVMetaIdentifier < HGVIdentifier
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
 
     epidoc = set_epidoc_attributes
+    puts epidoc
 
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)
@@ -227,21 +228,21 @@ class HGVMetaIdentifier < HGVIdentifier
       if config[:children] || config[:attributes]
         result = if config[:multiple]
           tmp = []
-          if attributes_hash[key.to_s]
-            attributes_hash[key.to_s].each_pair {|index, item|
+          unless attributes_hash[key].nil?
+            attributes_hash[key].each_pair {|index, item|
               tmp[tmp.length] = populate_tree_from_attributes_hash item, config
             }
           end
           tmp
         else
-          populate_tree_from_attributes_hash attributes_hash[key.to_s], config      
+          populate_tree_from_attributes_hash attributes_hash[key], config      
         end
 
         self[key] = result  
       elsif config[:multiple]
-        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
+        self[key] = attributes_hash[key] ? attributes_hash[key].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
       else 
-        self[key] = attributes_hash[key.to_s] ? attributes_hash[key.to_s].strip : nil
+        self[key] = attributes_hash[key] ? attributes_hash[key].strip : nil
       end
     end
   end
@@ -581,8 +582,8 @@ class HGVMetaIdentifier < HGVIdentifier
 
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
-          if data['attributes'] && data['attributes'][attribute_key.to_s] && !data['attributes'][attribute_key.to_s].to_s.strip.empty?
-            result_item[:attributes][attribute_key] = data['attributes'][attribute_key.to_s].to_s.strip
+          if data['attributes'] && data['attributes'][attribute_key] && !data['attributes'][attribute_key].to_s.strip.empty?
+            result_item[:attributes][attribute_key] = data['attributes'][attribute_key].to_s.strip
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
@@ -596,7 +597,7 @@ class HGVMetaIdentifier < HGVIdentifier
             children = []
             
             if data[:children]
-              x = data[:children][child_key.to_s].kind_of?(Hash) ? data[:children][child_key.to_s].values : data[:children][child_key.to_s]
+              x = data[:children][child_key].kind_of?(Hash) ? data[:children][child_key].values : data[:children][child_key]
               
               x.each{|child|
                 children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
@@ -604,7 +605,7 @@ class HGVMetaIdentifier < HGVIdentifier
             end
             result_item[:children][child_key] = children
           else
-            result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key.to_s], child_config # recursion óla
+            result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key], child_config # recursion óla
           end
         }
       end
