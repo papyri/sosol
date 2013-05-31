@@ -111,7 +111,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dces:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
+          "/rdf:RDF/rdf:Description/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
         if results.nil?
           return nil
         else
@@ -135,7 +135,7 @@ module NumbersRDF
       def collection_identifier_to_identifiers(identifier)
         results = apply_xpath_to_sparql_query(
           "//*:uri/text()",
-          'prefix dc: <http://purl.org/dc/elements/1.1/> select ?hgvid from <rmi://localhost/papyri.info#pi> where { ?hgvid dc:identifier <http://' + URI.escape(identifier) + '> . filter regex(str(?hgvid), "^http://papyri.info/hgv/")}'
+          'prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <rmi://localhost/papyri.info#pi> where { ?hgvid dc:identifier <http://' + URI.escape(identifier) + '> . filter regex(str(?hgvid), "^http://papyri.info/hgv/")}'
         )
         if results.nil?
           return nil
