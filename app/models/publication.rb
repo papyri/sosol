@@ -115,7 +115,7 @@ class Publication < ActiveRecord::Base
     end
 
     if identifiers.class == Array
-      #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
+      #identifiers is now an array of strings like:  papyri.info/ddbdp/bgu;7;1504
       identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
     end
     # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  
