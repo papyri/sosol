@@ -1897,7 +1897,11 @@ module ActiveRecord #:nodoc:
               # end
               self.class_eval <<-EOS, __FILE__, __LINE__ + 1
                 def self.#{method_id}(*args)
-                  options = args.extract_options!
+                  options = if args.length > #{attribute_names.size}
+                              args.extract_options!
+                            else
+                              {}
+                            end
                   attributes = construct_attributes_from_arguments(
                     [:#{attribute_names.join(',:')}],
                     args
@@ -2303,7 +2307,7 @@ module ActiveRecord #:nodoc:
         def expand_hash_conditions_for_aggregates(attrs)
           expanded_attrs = {}
           attrs.each do |attr, value|
-            unless (aggregation = reflect_on_aggregation(attr.to_sym)).nil?
+            unless (aggregation = reflect_on_aggregation(attr)).nil?
               mapping = aggregate_mapping(aggregation)
               mapping.each do |field_attr, aggregate_attr|
                 if mapping.size == 1 && !value.respond_to?(aggregate_attr)
@@ -2333,17 +2337,19 @@ module ActiveRecord #:nodoc:
         # And for value objects on a composed_of relationship:
         #   { :address => Address.new("123 abc st.", "chicago") }
         #     # => "address_street='123 abc st.' and address_city='chicago'"
-        def sanitize_sql_hash_for_conditions(attrs, default_table_name = quoted_table_name)
+        def sanitize_sql_hash_for_conditions(attrs, default_table_name = quoted_table_name, top_level = true)
           attrs = expand_hash_conditions_for_aggregates(attrs)
+
+          return '1 = 2' if !top_level && attrs.is_a?(Hash) && attrs.empty?
 
           conditions = attrs.map do |attr, value|
             table_name = default_table_name
 
-            unless value.is_a?(Hash)
+            if not value.is_a?(Hash)
               attr = attr.to_s
 
               # Extract table name from qualified attribute names.
-              if attr.include?('.')
+              if attr.include?('.') and top_level
                 attr_table_name, attr = attr.split('.', 2)
                 attr_table_name = connection.quote_table_name(attr_table_name)
               else
@@ -2351,8 +2357,10 @@ module ActiveRecord #:nodoc:
               end
 
               attribute_condition("#{attr_table_name}.#{connection.quote_column_name(attr)}", value)
+            elsif top_level
+              sanitize_sql_hash_for_conditions(value, connection.quote_table_name(attr.to_s), false)
             else
-              sanitize_sql_hash_for_conditions(value, connection.quote_table_name(attr.to_s))
+              raise ActiveRecord::StatementInvalid
             end
           end.join(' AND ')
 
@@ -2990,11 +2998,11 @@ module ActiveRecord #:nodoc:
       def remove_attributes_protected_from_mass_assignment(attributes)
         safe_attributes =
           if self.class.accessible_attributes.nil? && self.class.protected_attributes.nil?
-            attributes.reject { |key, value| attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
+            attributes.reject { |key, value| attributes_protected_by_default.include?(key.gsub(/\(.+/m, "")) }
           elsif self.class.protected_attributes.nil?
-            attributes.reject { |key, value| !self.class.accessible_attributes.include?(key.gsub(/\(.+/, "")) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
+            attributes.reject { |key, value| !self.class.accessible_attributes.include?(key.gsub(/\(.+/m, "")) || attributes_protected_by_default.include?(key.gsub(/\(.+/m, "")) }
           elsif self.class.accessible_attributes.nil?
-            attributes.reject { |key, value| self.class.protected_attributes.include?(key.gsub(/\(.+/,"")) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
+            attributes.reject { |key, value| self.class.protected_attributes.include?(key.gsub(/\(.+/m,"")) || attributes_protected_by_default.include?(key.gsub(/\(.+/m, "")) }
           else
             raise "Declare either attr_protected or attr_accessible for #{self.class}, but not both."
           end

@@ -724,9 +724,6 @@ module ActionMailer #:nodoc:
         IO.popen("#{sendmail_settings[:location]} #{sendmail_args}","w+") do |sm|
           sm.print(mail.encoded.gsub(/\r/, ''))
           sm.flush
-          # hack to prevent stepping on the sendmail process
-          sm.close_write
-          sleep 3
         end
       end
 
