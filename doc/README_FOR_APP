@@ -166,8 +166,11 @@ publications.
 * copy in/create config/environments/*_secret.rb (where * is development, test, production - sets RPX_API_KEY and RPX_REALM, can get these by creating an [http://www.rpxnow.com/ RPX] account)
  RPX_API_KEY = '0b13c31190219061...'
  RPX_REALM = 'SoSOL...'
-* jruby -S gem install capistrano (may not work in JRuby)
+* jruby -S gem install capistrano jruby-openssl
 * cap local externals:setup (pulls in xsugar, EpiDoc XSLT)
+* jruby -S gem install jdbc-sqlite3 --version "=3.6.3.054"
+* jruby -S gem install activerecord-jdbcsqlite3-adapter --version "=0.9.2"
+* jruby -S rake gems:install
 * jruby -S rake db:migrate
 * clone canonical.git (jruby -S rake git:db:canonical:clone)
 * jruby -S rake (run tests, sanity check)

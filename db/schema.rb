@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110630150541) do
+ActiveRecord::Schema.define(:version => 20110811204557) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20110630150541) do
     t.datetime "updated_at"
     t.integer  "finalizer_user_id"
     t.text     "identifier_classes"
-    t.integer  "rank",               :precision => 10, :scale => 0
+    t.decimal  "rank"
     t.string   "friendly_name"
     t.integer  "community_id"
   end
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(:version => 20110630150541) do
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
-    t.integer  "trigger",      :precision => 10, :scale => 0
+    t.decimal  "trigger"
     t.string   "choices"
     t.integer  "board_id"
     t.datetime "created_at"
@@ -93,11 +93,11 @@ ActiveRecord::Schema.define(:version => 20110630150541) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :default => "text", :null => false
+    t.string   "docotype",                                  :default => "text"
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
-  add_index "docos", ["docotype"], :name => "index_docos_on_id_and_docotype"
+  add_index "docos", ["id", "docotype"], :name => "index_docos_on_id_and_docotype"
 
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"

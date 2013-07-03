@@ -41,7 +41,7 @@ Rails::Initializer.run do |config|
   end
   
   if(RUBY_PLATFORM == 'java')
-    config.gem "jruby-openssl", :lib => false
+    config.gem "jruby-openssl", :version => ">= 0.8.8", :lib => false
     config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
     config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
@@ -52,12 +52,9 @@ Rails::Initializer.run do |config|
   
   config.gem "factory_girl", :version => "~> 1.2.2"
   
-  config.gem 'airbrake', :version => ">= 3.0.5"
+  config.gem 'airbrake', :version => "~> 3.0.5"
   
-  config.gem 'grit',
-    :lib     => 'grit',
-    :source  => 'http://gemcutter.org',
-    :version => '>= 2.0'
+  config.gem 'grit', :version => '~> 2.0.0'
 
   config.gem 'rubyzip', :lib => 'zip/zip', :version => ">= 0.9.5"
 
@@ -111,7 +108,7 @@ Rails::Initializer.run do |config|
   SITE_CATALOG_SEARCH = "View in PN"
   SITE_USER_NAMESPACE = "papyri.info"
  
-  REPOSITORY_ROOT = File.join('/data/papyri.info/sosol/repo')
+  REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
   GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
