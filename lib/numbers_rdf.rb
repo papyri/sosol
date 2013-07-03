@@ -111,7 +111,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dc:relation/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
         if results.nil?
           return nil
         else
@@ -123,7 +123,7 @@ module NumbersRDF
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...] 
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dc:hasPart/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description/dcterms:hasPart/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
@@ -135,7 +135,7 @@ module NumbersRDF
       def collection_identifier_to_identifiers(identifier)
         results = apply_xpath_to_sparql_query(
           "//*:uri/text()",
-          'prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <rmi://localhost/papyri.info#pi> where { ?hgvid dc:identifier <http://' + URI.escape(identifier) + '> . filter regex(str(?hgvid), "^http://papyri.info/hgv/")}'
+          'prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <http://papyri.info/graph> where { ?hgvid dc:identifier <http://' + URI.escape(identifier) + '> . filter regex(str(?hgvid), "^http://papyri.info/hgv/")}'
         )
         if results.nil?
           return nil
@@ -148,7 +148,7 @@ module NumbersRDF
       # Currently only works for HGV identifiers, e.g. 'papyri.info/hgv/25883' => 'P.Köln 3, 160 Einleitung'.
       def identifier_to_title(identifier)
         result = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dc:bibliographicCitation/text()", identifier, 'frbr:Work/rdf'
+          "/rdf:RDF/rdf:Description/dcterms:bibliographicCitation/text()", identifier, 'work/rdf'
         )
         return result.nil? ? nil : result.first
       end

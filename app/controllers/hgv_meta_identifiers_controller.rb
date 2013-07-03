@@ -5,6 +5,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   # uses standard layout
   # user must be logged in to access these actions
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
   # before post data is used for further processing unwanted entries are discarded
   before_filter :prune_params, :only => [:update, :get_date_preview]
   #  before post data is further processed some user entries are decorated with additional information, such as human readable format strings
@@ -28,7 +29,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     #exit
     begin
-      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier].to_s, params[:comment].to_s)
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment].to_s)
       expire_publication_cache
       generate_flash_message
     rescue JRubyXML::ParseError => e

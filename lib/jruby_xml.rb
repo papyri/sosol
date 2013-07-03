@@ -122,13 +122,17 @@ module JRubyXML
           javax.xml.XMLConstants.const_get('XML_NS_URI'),
         javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE') =>
           javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI'),
-        "http://purl.org/dc/terms/" =>
-          "dcterms"
+        "dcterms" =>
+          "http://purl.org/dc/terms/",
+        "dces" => 
+          "http://purl.org/dc/elements/1.1/"
       }
       root_node_attribute_hash.each_pair do |attribute_name, uri|
         if attribute_name =~ /^xmlns:/
           namespace = attribute_name.split(':').last
-          @prefixes[namespace] = uri
+          if (!@prefixes[namespace])
+            @prefixes[namespace] = uri
+          end
         elsif attribute_name == 'xmlns'
           @prefixes[javax.xml.XMLConstants.const_get('DEFAULT_NS_PREFIX')] = uri
         end

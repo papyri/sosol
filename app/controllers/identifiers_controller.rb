@@ -138,6 +138,14 @@ class IdentifiersController < ApplicationController
     def expire_leiden_cache
       expire_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
     end
+    
+    def ownership_guard
+      find_identifier
+      if !@identifier.publication.mutable_by?(@current_user)
+        flash[:error] = 'Operation not permitted.'
+        redirect_to dashboard_url
+      end
+    end
   
     # Used to insert '**POSSIBLE ERROR**' in Leiden+ and XML edit page when there is a parse or validation error
     # - this same logic found in DDBIdentifiers view's commentary.haml and edit.haml - javascript section

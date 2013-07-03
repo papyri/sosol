@@ -12,7 +12,7 @@ config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = false
 config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
 config.cache_store = :file_store, "/tmp/sosol/"
-config.log_level = :debug
+#config.log_level = :warn
 #config.action_controller.page_cache_directory        = "public/cache"
 #config.action_controller.page_cache_extension        = ".html.erb"
 # config.action_view.cache_template_loading            = true
@@ -28,6 +28,9 @@ config.log_level = :debug
 
 config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :sendmail
+#config.action_mailer.sendmail_settings = {
+#	:arguments			=>	'-i -t -f noreply@papyri.info'
+#}
 config.action_mailer.perform_deliveries = true
 #config.action_mailer.smtp_settings = 
 #{	

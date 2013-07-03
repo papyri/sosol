@@ -1,6 +1,7 @@
 class DdbIdentifiersController < IdentifiersController
   #layout 'site'
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
   
   # - GET /publications/1/ddb_identifiers/1/edit
   # - Edit DDB Text via Leiden+
@@ -67,7 +68,7 @@ class DdbIdentifiersController < IdentifiersController
     collection_name = params[:new_name].split('/').last.split(';').first
     if CollectionIdentifier.new.has_collection?(collection_name)
       begin
-        @identifier.rename(params[:new_name].to_s, :update_header => true, :set_dummy_header => params[:set_dummy_header].to_s)
+        @identifier.rename(params[:new_name].to_s, :update_header => true, :set_dummy_header => params[:set_dummy_header])
         flash[:notice] = "Identifier renamed."
       rescue RuntimeError => e
         flash[:error] = e.to_s

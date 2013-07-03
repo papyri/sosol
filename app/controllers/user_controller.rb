@@ -66,7 +66,6 @@ class UserController < ApplicationController
     @users = [User.find_by_name(params[:user_name])]
     if !@users.compact.empty?
       @calc_date = ''
-      
       respond_to do |format|
         format.html { render "usage_stats"; return }
         format.json { render :json => @users.first }

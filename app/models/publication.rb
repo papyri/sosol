@@ -115,7 +115,7 @@ class Publication < ActiveRecord::Base
     end
 
     if identifiers.class == Array
-      #identifiers is now an array ofstrings like:  papyri.info/ddbdp/bgu;7;1504
+      #identifiers is now an array of strings like:  papyri.info/ddbdp/bgu;7;1504
       identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
     end
     # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  
@@ -1528,11 +1528,11 @@ class Publication < ActiveRecord::Base
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
-      str.tr(' ','_')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
     end
 
     #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
-      str.tr(':;','_')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
     end
 end

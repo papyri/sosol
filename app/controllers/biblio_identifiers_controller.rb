@@ -1,5 +1,7 @@
 # Controller for all actions concerning the handling of bibliographical data, such as edit and update
 class BiblioIdentifiersController < IdentifiersController
+  before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
 
   # Retrieves bibliography object from database and displays all values in a entry mask
   # Assumes that incoming post respectively get parameters contain a valid biblio identifier id

@@ -34,6 +34,7 @@ class Repository
         end
       end
       FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
+      
       @path = File.join(REPOSITORY_ROOT,
                         @master_class_path, "#{master.name}.git")
     end
@@ -240,5 +241,9 @@ class Repository
   def self.increase_timeout
     Grit::Git.git_timeout *= 2
     RAILS_DEFAULT_LOGGER.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
+  end
+  
+  def safe_repo_name(name)
+    java.text.Normalizer.normalize(name.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
   end
 end
