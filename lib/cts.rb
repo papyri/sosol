@@ -7,8 +7,10 @@ module CTS
   CTS_JAR_PATH = File.join(File.dirname(__FILE__), *%w"java cts3.jar")  
   GROOVY_JAR_PATH = File.join(File.dirname(__FILE__), *%w"java groovy-all-1.6.2.jar")  
   CTS_NAMESPACE = "http://chs.harvard.edu/xmlns/cts3/ti"
-  EXIST_HELPER_REPO = "#{EXIST_STANDALONE_URL}/exist/rest/db/xq/"
-  EXIST_HELPER_REPO_PUT = "#{EXIST_STANDALONE_URL}/exist/rest"
+  if defined?(EXIST_STANDALONE_URL)
+    EXIST_HELPER_REPO = "#{EXIST_STANDALONE_URL}/exist/rest/db/xq/"
+    EXIST_HELPER_REPO_PUT = "#{EXIST_STANDALONE_URL}/exist/rest"
+  end
   
   module CTSLib
     class << self
@@ -145,12 +147,14 @@ module CTS
       def getExternalCTSHash()
         unless defined? @external_cts
           @external_cts = Hash.new
-          EXTERNAL_CTS_REPOS.split(',').each do |entry|
-            info = entry.split('|')
-            repo_info = Hash.new
-            repo_info['api'] = info[1]
-            repo_info['urispace'] = info[2]
-            @external_cts[info[0]] = repo_info
+          if defined?(EXTERNAL_CTS_REPOS)
+            EXTERNAL_CTS_REPOS.split(',').each do |entry|
+              info = entry.split('|')
+              repo_info = Hash.new
+              repo_info['api'] = info[1]
+              repo_info['urispace'] = info[2]
+              @external_cts[info[0]] = repo_info
+            end
           end
         end
         return @external_cts
@@ -159,9 +163,11 @@ module CTS
       def getInventoriesHash()
         unless defined? @inventories_hash
           @inventories_hash = Hash.new
-          SITE_CTS_INVENTORIES.split(',').each do |entry|
-            info = entry.split('|')
-            @inventories_hash[info[0]] = info[1]
+          if defined?(SITE_CTS_INVENTORIES)
+            SITE_CTS_INVENTORIES.split(',').each do |entry|
+              info = entry.split('|')
+              @inventories_hash[info[0]] = info[1]
+            end
           end
         end
         return @inventories_hash

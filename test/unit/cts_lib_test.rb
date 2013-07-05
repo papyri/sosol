@@ -11,9 +11,11 @@ class CTSLibTest < ActiveSupport::TestCase
     end
     
     should "be edition" do
+      if defined?(EXIST_HELPER_REPO)
        type = CTS::CTSLib.versionTypeForUrn('perseus','urn:cts:greekLang:tlg0012.tlg001.perseus-grc1').to_s
        Rails.logger.info("Type = #{type}")
        assert type == 'edition'
+      end
     end
     
   end
