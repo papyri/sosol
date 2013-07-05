@@ -86,6 +86,10 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'show',
     :user_name => /[^\/]*/
   
+  map.connect 'editor/user/info',
+    :controller => 'user',
+    :action => 'info'
+  
   map.connect 'publications/:publication_id/:controller/:id/show_commit/:commit_id',
     :controller => /.*_?identifiers/,
     :action => 'show_commit',
@@ -111,6 +115,10 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'sparql',
     :query => /.*/
   
+  map.connect 'sparql',
+    :controller => 'ajax_proxy',
+    :action => 'sparql'
+
   map.connect 'ajax_proxy/xsugar/',
     :controller => 'ajax_proxy',
     :action => 'xsugar',
