@@ -4,6 +4,9 @@ class OACIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
+      @original_site_identifiers = Sosol::Application.config.site_identifiers
+      Sosol::Application.config.site_identifiers = (@original_site_identifiers.split(',') | %w{OACIdentifier TeiCTSIdentifier}).join(',')
+
       @creator = Factory(:user, :name => "Creator")
       @creator2 = Factory(:user, :name => "Creator2")
       @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
@@ -16,14 +19,15 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @test_tb1 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg001.perseus-grc1:1.1'
       @test_tb2 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg002.perseus-grc1:1.1'
       @test_title = 'Test Annotation'
-      @creator_uri = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
-      @creator2_uri = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
+      @creator_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
+      @creator2_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
       @oac_identifier.add_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator_uri,'test add annotation')
     end
     
     teardown do
       @publication.destroy
       @creator.destroy
+      Sosol::Application.config.site_identifiers = @original_site_identifiers
     end
     
     should "retrieve the target by urn" do
