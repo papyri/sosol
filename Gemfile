@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.20'
+gem 'rails', '3.1.12'
 
 gem 'haml', '~> 3.0.25'
 gem 'json-jruby', '>= 1.4.3.1', :require => 'json'
@@ -20,3 +20,4 @@ gem 'factory_girl', '~> 2.6.4'
 gem 'airbrake', '~> 3.0.5'
 gem 'grit', '~> 2.0.0'
 gem 'rubyzip', '>= 0.9.5', :require => 'zip/zip'
+gem 'prototype-rails'
