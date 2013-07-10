@@ -5,9 +5,9 @@
     %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
     %meta{ 'name' => 'robots', 'content' => 'noindex, nofollow' }
     %title
-      == #{SITE_NAME} Prototype: #{controller.controller_name} - #{controller.action_name}
+      == #{Sosol::Application.config.site_name} Prototype: #{controller.controller_name} - #{controller.action_name}
     = stylesheet_link_tag 'editor'
-    = stylesheet_link_tag SITE_LAYOUT
+    = stylesheet_link_tag Sosol::Application.config.site_layout
     = stylesheet_link_tag 'master_additions'
     - if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit'
       = stylesheet_link_tag 'edit_mask'
@@ -29,7 +29,7 @@
     #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
-          %h1= link_to SITE_NAME, root_url
+          %h1= link_to Sosol::Application.config.site_name, root_url
           %p= 'Powered by Son of Suda Online'
         -#= render(:partial => 'master_articles/master_article_box')
         -#= render(:partial => 'user/admin_box')

@@ -18,15 +18,15 @@ class ApplicationController < ActionController::Base
   # session :session_key => '_sosol_session_id'
   # layout 'default'
 
-  include MaintenanceMode
-  before_filter :disabled?
+  # include ::MaintenanceMode
+  # before_filter :disabled?
 
   before_filter :get_user_id
   before_filter :rpx_setup
 
   before_filter :tab_setup
 
-  unless ActionController::Base.consider_all_requests_local
+  unless Rails.application.config.consider_all_requests_local
     rescue_from Exception, :with => :render_500
     rescue_from ActionController::RoutingError, :with => :render_404
     rescue_from ActionController::UnknownAction, :with => :render_404
@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
     rescue_from NumbersRDF::Timeout, :with => :render_numbers_error
   end
 
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   
   protected
 
@@ -86,11 +86,11 @@ class ApplicationController < ActionController::Base
   end
   
   def rpx_setup
-    unless Object.const_defined?(:RPX_API_KEY) && Object.const_defined?(:RPX_BASE_URL) && Object.const_defined?(:RPX_REALM)
+    if Sosol::Application.config.rpx_api_key.nil? || Sosol::Application.config.rpx_base_url.nil? || Sosol::Application.config.rpx_realm.nil?
       render :template => 'const_message'
       return false
     end
-    @rpx = Rpx::RpxHelper.new(RPX_API_KEY, RPX_BASE_URL, RPX_REALM)
+    @rpx = Rpx::RpxHelper.new(Sosol::Application.config.rpx_api_key, Sosol::Application.config.rpx_base_url, Sosol::Application.config.rpx_realm)
     return true
   end
   

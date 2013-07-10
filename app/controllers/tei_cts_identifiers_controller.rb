@@ -1,5 +1,5 @@
 class TeiCtsIdentifiersController < IdentifiersController
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   before_filter :authorize
   
   ## TODO 

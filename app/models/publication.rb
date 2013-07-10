@@ -52,7 +52,7 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
   
-  named_scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
+  scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
   
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
@@ -131,7 +131,7 @@ class Publication < ActiveRecord::Base
     end
     self.title = original_title
 
-    SITE_IDENTIFIERS.split(",").each do |identifier_name|
+    Sosol::Application.config.site_identifiers.split(",").each do |identifier_name|
  
       ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
       if identifiers.has_key?(ns)
@@ -178,19 +178,19 @@ class Publication < ActiveRecord::Base
   # If branch hasn't been specified, create it from the title before
   # validation, replacing spaces with underscore.
   # TODO: do a branch rename inside before_validation_on_update?
-  def before_validation
-    self.branch ||= title_to_ref(self.title)
+  before_validation do |publication|
+    publication.branch ||= title_to_ref(publication.title)
   end
   
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
-  def before_create
-    if self.owner.repository.branches.include?(self.branch)
+  before_create do |publication|
+    if publication.owner.repository.branches.include?(publication.branch)
       return false
     end
   end
 
-  def after_destroy
-    self.owner.repository.delete_branch(self.branch)
+  after_destroy do |publication|
+    publication.owner.repository.delete_branch(publication.branch)
   end
   
   #Outputs publication information and content to the Rails logger.
@@ -479,7 +479,7 @@ class Publication < ActiveRecord::Base
   end 
 
   # TODO: rename actual branch after branch attribute rename
-  def after_create
+  after_create do |publication|
   end
   
   #Sets the origin status for publication identifiers that this publication's board controls. Sets are made on the origin copy.

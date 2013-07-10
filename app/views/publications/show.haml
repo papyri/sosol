@@ -183,7 +183,7 @@
         - for other_pub in @other_user_publications
           %li
             = other_pub.creator.human_name
-            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{SITE_NAME} - Publication #{other_pub.title}")}>
+            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{Sosol::Application.config.site_name} - Publication #{other_pub.title}")}>
             == (last edited #{time_ago_in_words(other_pub.updated_at)} ago)
       %br
 

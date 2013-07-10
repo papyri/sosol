@@ -24,8 +24,8 @@ class User < ActiveRecord::Base
   
   has_repository
   
-  def after_create
-    repository.create
+  after_create do |user|
+    user.repository.create
     
     # create some fixture publications/identifiers
     # ["p.genova/p.genova.2/p.genova.2.67.xml",
@@ -46,13 +46,13 @@ class User < ActiveRecord::Base
 
     if ENV['RAILS_ENV'] != 'test'
       if ENV['RAILS_ENV'] == 'development'
-        self.admin = true
-        self.save!
+        user.admin = true
+        user.save!
       
-        DEV_INIT_FILES.each do |pn_id|
+        Sosol::Application.config.dev_init_files.each do |pn_id|
           p = Publication.new
-          p.owner = self
-          p.creator = self
+          p.owner = user
+          p.creator = user
           p.populate_identifiers_from_identifiers(pn_id)
           p.save!
           p.branch_from_master
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
           e = Event.new
           e.category = "started editing"
           e.target = p
-          e.owner = self
+          e.owner = user
           e.save!
         end # each
       end # == development
@@ -89,8 +89,8 @@ class User < ActiveRecord::Base
     "#{self.author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
   
-  def before_destroy
-    repository.destroy
+  before_destroy do |user|
+    user.repository.destroy
   end
   
   #Sends an email to all users on the system that have an email address.

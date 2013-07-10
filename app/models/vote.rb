@@ -7,9 +7,7 @@ class Vote < ActiveRecord::Base
   
 
   #Ensures vote is tallied after it is saved.
-  def after_save
-    self.tally
-  end
+  after_save :tally
   
   #Ensures vote is tallied for publication.
   def tally

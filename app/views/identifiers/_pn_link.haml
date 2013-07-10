@@ -1,4 +1,4 @@
 Identifier
 = identifier.name
 -if identifier.get_catalog_link != ''
-  == (#{link_to SITE_CATALOG_SEARCH, identifier.get_catalog_link})
+  == (#{link_to Sosol::Application.config.site_catalog_search, identifier.get_catalog_link})

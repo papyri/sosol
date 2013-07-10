@@ -1,5 +1,5 @@
 class CtsPublicationsController < PublicationsController
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
@@ -77,7 +77,7 @@ class CtsPublicationsController < PublicationsController
       # exist in the master repo
       temp_id = nil
       identifier_class = nil
-      SITE_IDENTIFIERS.split(",").each do |identifier_name|
+      Sosol::Application.config.site_identifiers.split(",").each do |identifier_name|
         ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
         if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
         

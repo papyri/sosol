@@ -23,12 +23,14 @@ class APISIdentifier < HGVMetaIdentifier
         parameters)
   end
   
+  after_initialize :post_initialization_configuration
   # Loads +ApisConfiguration+ object (APIS xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
-  def after_initialize
+  def post_initialization_configuration
     @configuration = ApisConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config apis.yml}))[:apis][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
+
   
   # Creates a hash of the names of all the APIS Collections available in SoSOL
   # Overrides method in Identifier

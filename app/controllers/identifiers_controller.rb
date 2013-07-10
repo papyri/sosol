@@ -25,8 +25,8 @@ class IdentifiersController < ApplicationController
       if commit[:message].empty?
         commit[:message] = '(no commit message)'
       end
-      commit[:url] = GITWEB_BASE_URL +
-                     ["#{@identifier.publication.owner.repository.path.sub(/^#{REPOSITORY_ROOT}/,'db/git')}",
+      commit[:url] = Sosol::Application.config.gitweb_base_url +
+                     ["#{@identifier.publication.owner.repository.path.sub(/^#{Sosol::Application.config.repository_root}/,'db/git')}",
                       "a=commitdiff",
                       "h=#{commit[:id]}"].join(';')
     end

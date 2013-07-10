@@ -1,10 +1,11 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of Active Record to incrementally modify your database, and
-# then regenerate this schema definition.
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your database schema. If you need
-# to create the application database on another system, you should be using db:schema:load, not running
-# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended to check this file into your version control system.
@@ -73,7 +74,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
 
   create_table "decrees", :force => true do |t|
     t.string   "action"
-    t.decimal  "trigger"
+    t.decimal  "trigger",      :precision => 5, :scale => 2
     t.string   "choices"
     t.integer  "board_id"
     t.datetime "created_at"
@@ -93,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at"
     t.string   "urldisplay"
     t.text     "note"
-    t.string   "docotype",                                  :default => "text"
+    t.string   "docotype",                                  :default => "text", :null => false
   end
 
   add_index "docos", ["docotype"], :name => "index_docos_on_docotype"

@@ -19,9 +19,10 @@ class HGVMetaIdentifier < HGVIdentifier
         parameters)
   end
 
+  after_initialize :post_initialization_configuration
   # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
-  def after_initialize
+  def post_initialization_configuration
     @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end

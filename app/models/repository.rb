@@ -25,7 +25,7 @@ class Repository
   def initialize(master = nil)
     @master = master
     if master.nil?
-      @path = CANONICAL_REPOSITORY
+      @path = Sosol::Application.config.canonical_repository
     else
       @master_class_path = @master.class.to_s.underscore.pluralize
       if @master.class == Board
@@ -33,13 +33,13 @@ class Repository
           @master_class_path = File.join('communities', @master.community.name)
         end
       end
-      FileUtils.mkdir_p(File.join(REPOSITORY_ROOT, @master_class_path))
+      FileUtils.mkdir_p(File.join(Sosol::Application.config.repository_root, @master_class_path))
       
-      @path = File.join(REPOSITORY_ROOT,
+      @path = File.join(Sosol::Application.config.repository_root,
                         @master_class_path, "#{master.name}.git")
     end
     
-    @canonical = Grit::Repo.new(CANONICAL_REPOSITORY)
+    @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
     if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
     else
@@ -224,7 +224,7 @@ class Repository
   
   # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor = nil)
-    if @path == CANONICAL_REPOSITORY
+    if @path == Sosol::Application.config.canonical_repository
       raise "Cannot commit directly to canonical repository" unless (file == CollectionIdentifier.new.to_path)
     end
     

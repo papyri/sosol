@@ -1,220 +1,351 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :communities, :member => { :find_member => :get, :add_member => :get, :add_member_page => :get, :remove_member => :get, :add_admin => :get, :add_admin_page => :get, :remove_admin => :get, :remove_current_user_membership => :post, :remove_current_user => :post } 
-
-  #map.resources :glossaries
-  map.resources :hgv_trans_glossaries, :member => { :update => :put }
-
-  map.resources :emailers, :member => { :add_member => :get, :remove_member => :get} 
-
-  map.resources :votes
-
-  map.resources :decrees
-
-  map.resources :docos
-
-  map.resources :boards, :collection => { :rank => :get, :update_rankings => :post, :send_board_reminder_emails => :get } 
-  map.resources :boards, :member => { :edit_members => :get, :add_member => :get, :remove_member => :get, :update_rankings => :post } 
- 	
-  map.resources :comments, :member => { :ask_for => :get }
-
-  map.resources :events
+Sosol::Application.routes.draw do
+  resources :communities do
   
-  # map.logout '/logout', :controller => 'sessions', :action => 'destroy'
-  # map.login '/login', :controller => 'sessions', :action => 'new'
-  # map.register '/register', :controller => 'users', :action => 'create'
-  # map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resource :session
+    member do
+  get :find_member
+  get :add_member
+  get :add_member_page
+  get :remove_member
+  get :add_admin
+  get :add_admin_page
+  get :remove_admin
+  post :remove_current_user_membership
+  post :remove_current_user
+  end
   
-  map.help 'help', 
-    :controller => 'user', 
-    :action => 'help'
-  
-  map.build 'build', 
-    :controller => 'docos', 
-    :action => 'build'
-  
-  map.documentation 'documentation',
-    :controller => "docos",
-    :action => "documentation"
-
-  #deletable map.connect 'articles/list_all', :controller => 'articles', :action => 'list_all'
-  map.usage 'usage', :controller => 'user', :action => 'usage_stats'
-  map.all_users_links 'all_users_links', :controller => 'user', :action => 'all_users_links'
-  map.index_user_admins 'index_user_admins', :controller => 'user', :action => 'index_user_admins'
-  map.dashboard 'dashboard', :controller => 'user', :action => 'dashboard'
-  map.developer 'developer', :controller => 'user', :action => 'developer'
-  map.sendmsg 'sendmsg', :controller => 'user', :action => 'create_email_everybody'
-
-  #deleteable map.resources :articles, :member => { :review_for_finalize => :get, :comment_on => :get }
-
-  map.master_list 'master_list', :controller => "publications", :action => "master_list"
-  
-  #deletable map.new_from_pn 'articles/new_from_pn', :controller => 'articles', :action => 'new_from_pn'
-  #deletable map.begin_article  'articles/begin', :controller => 'articles', :action => 'begin'
-  #map.connect 'articles/begin', :controller => 'articles', :action => 'begin'
-  #deleteable map.resources :articles, :member => { :editxml => :get, :preview => :get, :comment_on => :get }
-	
-  map.connect 'publications/archive_all',
-    :controller => 'publications',
-    :action => 'archive_all',
-    :conditions => { :method => :post }
-
-  map.resources :publications, :collection => { :advanced_create => :get }
-  map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_apis => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_biblio_template => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
-  map.resources :publications do |publication|
-    publication.resources :ddb_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
-    publication.resources :hgv_meta_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
-    publication.resources :apis_identifiers, :member => { :history => :get, :preview => :get, :xml => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
-    publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
-    publication.resources :biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :preview => :get }
-
-    publication.resources :epi_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get }
-    publication.resources :epi_trans_cts_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :post }
-    publication.resources :citation_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :get, :edit_or_create => :post, :select => :post}
-    publication.resources :tei_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get, :link_citation => :get }
-    publication.resources :tei_trans_cts_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
-    publication.resources :cts_inventory_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
-    publication.resources :oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :rename_review => :get, :rename => :put}
-    publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :put}
-
-
-    # publication.resources :identifiers
   end
 
-  map.connect 'users/:user_name',
-    :controller => 'user',
-    :action => 'show',
-    :user_name => /[^\/]*/
+  resources :hgv_trans_glossaries do
   
-  map.connect 'editor/user/info',
-    :controller => 'user',
-    :action => 'info'
+    member do
+  put :update
+  end
   
-  map.connect 'publications/:publication_id/:controller/:id/show_commit/:commit_id',
-    :controller => /.*_?identifiers/,
-    :action => 'show_commit',
-    :commit_id => /[0-9a-fA-F]{40}/
-  
-  map.connect 'publications/create_from_identifier/:id',
-    :controller => 'publications',
-    :action => 'create_from_identifier',
-    :id => /papyri\.info.*/
- 
-  map.connect 'cts_publications/create_from_linked_urn/:urn',
-    :controller => 'cts_publications',
-    :action => 'create_from_linked_urn',
-    :urn => /[^\/]*/
-  
-  map.connect 'mulgara/sparql/:query',
-    :controller => 'ajax_proxy',
-    :action => 'sparql',
-    :query => /.*/
-   
-  map.connect 'ajax_proxy/sparql/:query',
-    :controller => 'ajax_proxy',
-    :action => 'sparql',
-    :query => /.*/
-  
-  map.connect 'sparql',
-    :controller => 'ajax_proxy',
-    :action => 'sparql'
+  end
 
-  map.connect 'ajax_proxy/xsugar/',
-    :controller => 'ajax_proxy',
-    :action => 'xsugar',
-    :conditions => { :method => :post }
+  resources :emailers do
+  
+    member do
+  get :add_member
+  get :remove_member
+  end
+  
+  end
+
+  resources :votes
+  resources :decrees
+  resources :docos
+  resources :boards do
+    collection do
+  get :rank
+  post :update_rankings
+  get :send_board_reminder_emails
+  end
+  
+  
+  end
+
+  resources :boards do
+  
+    member do
+  get :edit_members
+  get :add_member
+  get :remove_member
+  post :update_rankings
+  end
+  
+  end
+
+  resources :comments do
+  
+    member do
+  get :ask_for
+  end
+  
+  end
+
+  resources :events
+  resource :session
+  match 'help' => 'user#help', :as => :help
+  match 'build' => 'docos#build', :as => :build
+  match 'documentation' => 'docos#documentation', :as => :documentation
+  match 'usage' => 'user#usage_stats', :as => :usage
+  match 'all_users_links' => 'user#all_users_links', :as => :all_users_links
+  match 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins
+  match 'dashboard' => 'user#dashboard', :as => :dashboard
+  match 'developer' => 'user#developer', :as => :developer
+  match 'sendmsg' => 'user#create_email_everybody', :as => :sendmsg
+  match 'master_list' => 'publications#master_list', :as => :master_list
+  match 'publications/archive_all' => 'publications#archive_all', :via => :post
+  resources :publications do
+    collection do
+  get :advanced_create
+  end
+  
+  
+  end
+
+  resources :publications do
+  
+    member do
+  get :edit_adjacent
+  get :edit_text
+  get :edit_meta
+  get :edit_apis
+  get :edit_biblio
+  get :edit_trans
+  get :show
+  post :create
+  post :create_from_templates
+  post :create_from_biblio_template
+  post :create_from_selector
+  post :submit
+  get :finalize_review
+  post :finalize
+  post :become_finalizer
+  end
+  
+  end
+
+  resources :publications do
+  
+  
+      resources :ddb_identifiers do
     
-  map.connect 'ajax_proxy/hgvnum/',
-    :controller => 'ajax_proxy',
-    :action => 'hgvnum',
-    :conditions => { :method => :post }
-  
-  map.connect 'ajax_proxy/:id',
-    :controller => 'ajax_proxy',
-    :action => 'proxy',
-    :id => /papyri\.info.*/
-   
-  map.connect 'cts/editions/:inventory',
-     :controller => 'cts_proxy',
-     :action => 'editions',
-     :inventory => /[^\/]*/
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    end
     
-  map.connect 'cts/translations/:inventory/:urn',
-     :controller => 'cts_proxy',
-     :action => 'translations',
-     :inventory => /[^\/]*/,
-     :urn => /[^\/]*/
- 
- map.connect 'cts/citations/:inventory/:urn',
-     :controller => 'cts_proxy',
-     :action => 'citations',
-     :inventory => /[^\/]*/,
-     :urn => /[^\/]*/
+    end
+
+    resources :hgv_meta_identifiers do
     
- map.connect 'cts/getpassage/:id/:urn',
-     :controller => 'cts_proxy',
-     :action => 'getpassage',
-     :urn => /[^\/]*/
- 
-  map.connect 'cts/getcapabilities/:collection',
-     :controller => 'cts_proxy',
-     :action => 'getcapabilities'
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
     
-  map.connect 'cts/getrepos',
-    :controller => 'cts_proxy',
-    :action => 'getrepos'
-  
-  # The priority is based upon order of creation: first created -> highest priority.
+    end
 
-  # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
-
-  # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
-
-  # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
-  # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
-  #   end
-
-  # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
-  #   end
-
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  map.root :controller => "welcome"
-
-  # See how all your routes lay out with "rake routes"
-
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
-  
-  map.signout 'signout',
-    :controller => "user",
-    :action => "signout"
+    resources :apis_identifiers do
     
-  map.signin 'signin',
-    :controller => "user",
-    :action => "signin"
+        member do
+    get :history
+    get :preview
+    get :xml
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
     
-  map.account 'account',
-    :controller => "user",
-    :action => "account"
+    end
+
+    resources :hgv_trans_identifiers do
+    
+        member do
+    post :add_new_lang_to_xml
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
+    
+    end
+
+    resources :biblio_identifiers do
+    
+        member do
+    get :history
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    get :preview
+    end
+    
+    end
+
+    resources :epi_cts_identifiers do
+    
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    get :link_translation
+    end
+    
+    end
+
+    resources :epi_trans_cts_identifiers do
+    
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    post :create
+    end
+    
+    end
+
+    resources :citation_cts_identifiers do
+    
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    get :create
+    post :edit_or_create
+    post :select
+    end
+    
+    end
+
+    resources :tei_cts_identifiers do
+    
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :exportxml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    get :link_translation
+    get :link_citation
+    end
+    
+    end
+
+    resources :tei_trans_cts_identifiers do
+    
+        member do
+    post :create
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :exportxml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    end
+    
+    end
+
+    resources :cts_inventory_identifiers do
+    
+        member do
+    post :create
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :exportxml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    end
+    
+    end
+
+    resources :oac_identifiers do
+    
+        member do
+    post :create
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :exportxml
+    post :edit_or_create
+    post :append
+    get :rename_review
+    put :rename
+    end
+    
+    end
+
+    resources :cts_oac_identifiers do
+    
+        member do
+    post :create
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :exportxml
+    post :edit_or_create
+    post :append
+    put :delete_annotation
+    end
+    
+    end
+  end
+
+  match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
+  match 'editor/user/info' => 'user#info'
+  match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
+  match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
+  match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/
+  match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
+  match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
+  match 'sparql' => 'ajax_proxy#sparql'
+  match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
+  match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
+  match 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/
+  match 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => /[^\/]*/
+  match 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => /[^\/]*/, :urn => /[^\/]*/
+  match 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => /[^\/]*/, :urn => /[^\/]*/
+  match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/
+  match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities'
+  match 'cts/getrepos' => 'cts_proxy#getrepos'
+  match '/' => 'welcome#index'
+  match '/:controller(/:action(/:id))'
+  match 'signout' => 'user#signout', :as => :signout
+  match 'signin' => 'user#signin', :as => :signin
+  match 'account' => 'user#account', :as => :account
 end

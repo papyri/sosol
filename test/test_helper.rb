@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
+require 'rails/test_help'
+require 'factory_girl_rails'
 require 'factory_girl'
 require 'shoulda'
 require 'active_support'
@@ -47,10 +48,10 @@ end
 
 class ActiveSupport::TestCase
   def setup_test_repository
-    if (!File.directory?(CANONICAL_REPOSITORY)) && File.directory?(CANONICAL_CANONICAL_REPOSITORY)
+    if (!File.directory?(Sosol::Application.config.canonical_repository)) && File.directory?(Sosol::Application.config.canonical_canonical_repository)
       clone_command = ["git clone --bare",
-                    CANONICAL_CANONICAL_REPOSITORY,
-                    CANONICAL_REPOSITORY].join(' ')
+                    Sosol::Application.config.canonical_canonical_repository,
+                    Sosol::Application.config.canonical_repository].join(' ')
 
       puts `#{clone_command}`
       return $?.success?

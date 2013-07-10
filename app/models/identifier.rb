@@ -1,7 +1,7 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
 
-  IDENTIFIER_SUBCLASSES = SITE_IDENTIFIERS.split(",")
+  IDENTIFIER_SUBCLASSES = Sosol::Application.config.site_identifiers.split(",")
   
   FRIENDLY_NAME = "Base Identifier"
   
@@ -26,7 +26,7 @@ class Identifier < ActiveRecord::Base
   #   - all identifier classes enabled for the site
   def self.site_identifier_classes
     site_classes = []
-    site_identifiers = SITE_IDENTIFIERS.split(",")
+    site_identifiers = Sosol::Application.config.site_identifiers.split(",")
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
         if site_identifiers.include?(identifier_class.to_s)
             site_classes << identifier_class

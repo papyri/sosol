@@ -224,9 +224,10 @@ class BiblioIdentifier < HGVIdentifier
     @epiDocX ||= REXML::Document.new(self.xml_content)
   end
   
+  after_find :after_find_retrieve
   # Retrieves data from xml or sets empty defaults
   # Side effect on +self+ attributes
-  def after_find
+  def after_find_retrieve
 
     self[:articleTitle] = ''
     self[:journalTitle] = ''
@@ -721,7 +722,7 @@ class BiblioIdentifier < HGVIdentifier
     end
   end
   
-  # Grabs another biblio file from +CANONICAL_REPOSITORY+'s master branch and extracts its title, author, date, etc. information
+  # Grabs another biblio file from +Sosol::Application.config.canonical_repository+'s master branch and extracts its title, author, date, etc. information
   # - *Args*  :
   #   - +biblioId+ → id of biblio record of interest
   # - *Returns* :
@@ -732,7 +733,7 @@ class BiblioIdentifier < HGVIdentifier
     begin
       biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
   
-      git = Grit::Repo.new(CANONICAL_REPOSITORY).commits.first.tree
+      git = Grit::Repo.new(Sosol::Application.config.canonical_repository).commits.first.tree
       biblio = git / getBiblioPath(biblioId)
       relatedItem = REXML::Document.new(biblio.data)
 

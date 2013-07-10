@@ -1,7 +1,7 @@
 if(RUBY_PLATFORM == 'java')
   require 'java'
   
-  JAR_PATH = File.join(RAILS_ROOT, 'lib', 'java')
+  JAR_PATH = File.join(::Rails.root.to_s, 'lib', 'java')
   
   Dir.entries(JAR_PATH).sort.each do |entry|
     if entry =~ /.jar$/

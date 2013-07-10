@@ -1,47 +1,31 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Sosol::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# In the development environment your application's code is reloaded on
-# every request.  This slows down response time but is perfect for development
-# since you don't have to restart the webserver when you make code changes.
-config.cache_classes = false
+  # In the development environment your application's code is reloaded on
+  # every request.  This slows down response time but is perfect for development
+  # since you don't have to restart the webserver when you make code changes.
+  config.cache_classes = false
 
-# Log error messages when you accidentally call methods on nil.
-config.whiny_nils = true
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Show full error reports and disable caching
-config.action_controller.consider_all_requests_local = true
-config.action_view.debug_rjs                         = true
-config.action_controller.perform_caching             = false
-#below lines for testing page caching for documentation
-#config.action_controller.perform_caching             = true
-#config.action_controller.page_cache_directory        = "public/cache"
-#config.action_controller.page_cache_extension        = ".html.erb"
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = true
+  config.action_view.debug_rjs             = true
+  config.action_controller.perform_caching = false
 
-# Don't care if the mailer can't send
-#config.action_mailer.raise_delivery_errors = false
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = false
 
+  # Print deprecation notices to the Rails logger
+  config.active_support.deprecation = :log
 
-#for mail testing
-#require 'smtp_tls'
-config.action_mailer.raise_delivery_errors = true
-config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = 
-{	
-	:address			=>	'localhost',
-	:port					=>	25,
-	:domain				=>	'jfox-laptop',
-}
+  # Only use best-standards-support built into browsers
+  config.action_dispatch.best_standards_support = :builtin
 
+  # config/environments/development_secret.rb should set
+  # RPX_API_KEY and RPX_REALM (site name) for RPX,
+  # and possibly other unversioned secrets for development
+  require File.join(File.dirname(__FILE__), 'development_secret')
+end
 
-# config/environments/development_secret.rb should set
-# RPX_API_KEY and RPX_REALM (site name) for RPX,
-# and possibly other unversioned secrets for development
-require File.join(File.dirname(__FILE__), 'development_secret')
-
-DEV_INIT_FILES = ['papyri.info/ddbdp/p.genova;2;67',
-         'papyri.info/ddbdp/sb;24;16003',
-         'papyri.info/ddbdp/p.lond;7;2067',
-         'papyri.info/ddbdp/p.harr;1;109',
-         'papyri.info/ddbdp/p.yale;1;44',
-         'papyri.info/ddbdp/p.tebt;2;414'
-        ]

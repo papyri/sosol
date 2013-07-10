@@ -1,5 +1,5 @@
 class OacIdentifiersController < IdentifiersController
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   before_filter :authorize
   
   def edit

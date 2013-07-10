@@ -12,7 +12,7 @@ class EmailerMailer < ActionMailer::Base
     #TODO check that email is creatible, ie has valid addresses
     
     #from "SoSOL"
-    from SITE_NAME
+    from Sosol::Application.config.site_name
     sent_on Time.now
   
     subject subject_line
@@ -37,7 +37,7 @@ class EmailerMailer < ActionMailer::Base
     #they can checkout the comments to see if there is more info about the withdraw
     
     #from "SoSOL"
-    from SITE_NAME
+    from Sosol::Application.config.site_name
     sent_on Time.now
     
     subject publication_title + " has been withdrawn."

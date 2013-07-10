@@ -18,9 +18,9 @@ class Board < ActiveRecord::Base
   #board rank determines workflow order for publication
   #ranked scopes returns the boards for a given community in order of their rank
   #ranked left as default for sosol ranks
-  named_scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
+  scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
   
-  named_scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
+  scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
 
 
 
@@ -44,11 +44,11 @@ class Board < ActiveRecord::Base
     return title
   end
   
-  def after_create
-    repository.create
+  after_create do |board|
+    board.repository.create
   end
   
-  def before_destroy
+  before_destroy do |board|
     repository.destroy
   end
   

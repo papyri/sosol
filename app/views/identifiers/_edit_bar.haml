@@ -6,7 +6,7 @@
         %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'finalize_review')) ? 'active' : ''}
           = link_to 'Finalize', finalize_review_publication_path(@identifier.publication)
       %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}
-        = link_to 'Overview', show_publication_path(@identifier.publication)
+        = link_to 'Overview', publication_path(@identifier.publication)
       - if @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}.length > 0
         %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
           = link_to 'Text', edit_text_publication_path(@identifier.publication)

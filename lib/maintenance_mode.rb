@@ -4,7 +4,7 @@
 module MaintenanceMode
 protected
   def disabled?
-    maintfile = RAILS_ROOT + "/public/system/maintenance.html"
+    maintfile = ::Rails.root.to_s + "/public/system/maintenance.html"
     if FileTest::exist?(maintfile)
       send_file maintfile, :type => 'text/html; charset=utf-8', :disposition => 'inline'
     end

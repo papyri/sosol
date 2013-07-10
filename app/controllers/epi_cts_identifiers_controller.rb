@@ -1,5 +1,5 @@
 class EpiCtsIdentifiersController < IdentifiersController
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   before_filter :authorize
   
   # GET /publications/1/epi_cts_identifiers/1/edit
