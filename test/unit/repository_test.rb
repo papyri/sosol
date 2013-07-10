@@ -17,7 +17,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
     
     should "have the canonical path" do
-      assert_equal Sosol::CANONICAL_REPOSITORY, @repo.path
+      assert_equal Sosol::Application.config.canonical_repository, @repo.path
     end
   
     should "preserve objects after alternates repository deletion" do

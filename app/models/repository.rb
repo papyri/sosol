@@ -213,7 +213,7 @@ class Repository
     # add the new data
     index.add(new_path, content)
     # remove the old path from the tree
-    index.rm(original_path)
+    index.delete(original_path)
 
     index.commit(comment,
                  @repo.commits(branch,1).first.to_s, # commit parent,
