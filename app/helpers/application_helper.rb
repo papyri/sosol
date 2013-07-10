@@ -176,7 +176,7 @@ class REXML::Element
 
     if element.elements[xpath].class != REXML::Element
       puts "unable to find xpath #{xpath}"
-      element.write
+      element.to_s
       lumps = REXML::XPath::breakXpathIntoLumps xpath
       lumps.each do |lump|
         if element.elements[lump[:xpath]].class == REXML::Element
