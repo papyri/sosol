@@ -46,4 +46,9 @@ Sosol::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  # config/environments/production_secret.rb should set
+  # RPX_API_KEY and RPX_REALM (site name) for RPX,
+  # and possibly other unversioned secrets for development
+  require File.join(File.dirname(__FILE__), 'production_secret')
 end
