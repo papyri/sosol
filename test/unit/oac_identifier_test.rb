@@ -27,6 +27,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
     teardown do
       @publication.destroy
       @creator.destroy
+      @creator2.destroy
       Sosol::Application.config.site_identifiers = @original_site_identifiers
     end
     
