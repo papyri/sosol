@@ -80,6 +80,25 @@ class User < ActiveRecord::Base
     Grit::Actor.new(self.full_name, self.email)
   end
   
+  # Copied from: https://raw.github.com/mojombo/grit/v2.4.1/lib/grit/actor.rb
+  # Outputs an actor string for Git commits.
+  #
+  #   actor = Actor.new('bob', 'bob@email.com')
+  #   actor.output(time) # => "bob <bob@email.com> UNIX_TIME +0700"
+  #
+  # time - The Time the commit was authored or committed.
+  #
+  # Returns a String.
+  def output(time)
+    out = @name.to_s.dup
+    if @email
+      out << " <#{@email}>"
+    end
+    hours = (time.utc_offset.to_f / 3600).to_i # 60 * 60, seconds to hours
+    rem   = time.utc_offset.abs % 3600
+    out << " #{time.to_i} #{hours >= 0 ? :+ : :-}#{hours.abs.to_s.rjust(2, '0')}#{rem.to_s.rjust(2, '0')}"
+  end
+
   def author_string
     "#{self.full_name} <#{self.email}>"
   end

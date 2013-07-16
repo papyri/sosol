@@ -95,17 +95,17 @@ Sosol::Application.routes.draw do
   get :edit_biblio
   get :edit_trans
   get :show
-  post :create
-  post :create_from_templates
-  post :create_from_biblio_template
-  post :create_from_selector
   post :submit
   get :finalize_review
   post :finalize
   post :become_finalizer
   end
-  
   end
+  post 'publications/create' => 'publications#create'
+  post 'publications/create_from_templates' => 'publications#create_from_templates'
+  post 'publications/create_from_biblio_template' => 'publications#create_from_biblio_template'
+  post 'publications/create_from_selector' => 'publications#create_from_selector'
+  
 
   resources :publications do
   

@@ -743,7 +743,7 @@ class Publication < ActiveRecord::Base
     controlled_commits = creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
       begin
-        controlled_commit_diffs = Grit::Commit.diff(self.repository.repo, creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+        controlled_commit_diffs = self.repository.repo.diff(creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
       rescue Grit::Git::GitTimeout
         Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
         controlled_commit_diffs = ['timeout']

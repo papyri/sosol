@@ -1,7 +1,6 @@
 class TeiTransCTSIdentifier < TeiCTSIdentifier   
   
   PATH_PREFIX = 'CTS_XML_TEI'
-  FRIENDLY_NAME = "Translation"
   TEMPORARY_COLLECTION = 'TempTrans'
   TEMPORARY_TITLE = 'New Translation'
   FRIENDLY_NAME = "Manuscript Translation"
