@@ -876,7 +876,7 @@ class Publication < ActiveRecord::Base
   
     self.transaction do
       # clone publication database record to owner
-      new_finalizing_publication = old_finalizing_publication.clone
+      new_finalizing_publication = old_finalizing_publication.dup
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
       new_finalizing_publication.title = old_finalizing_publication.title
@@ -887,7 +887,7 @@ class Publication < ActiveRecord::Base
 
       # copy identifiers over to new publication
       old_finalizing_publication.identifiers.each do |identifier|
-        duplicate_identifier = identifier.clone
+        duplicate_identifier = identifier.dup
         new_finalizing_publication.identifiers << duplicate_identifier
       end
       
@@ -1302,7 +1302,7 @@ class Publication < ActiveRecord::Base
   #
   #*Returns* +publication+ that is the new copy.
   def clone_to_owner(new_owner)
-    duplicate = self.clone
+    duplicate = self.dup
     duplicate.owner = new_owner
     duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
@@ -1312,7 +1312,7 @@ class Publication < ActiveRecord::Base
     
     # copy identifiers over to new pub
     identifiers.each do |identifier|
-      duplicate_identifier = identifier.clone
+      duplicate_identifier = identifier.dup
       duplicate.identifiers << duplicate_identifier
     end
     
@@ -1326,7 +1326,7 @@ class Publication < ActiveRecord::Base
   #
   #*Returns* +publication+ that is the new copy.
    def clone_to_end_user()
-    duplicate = self.clone
+    duplicate = self.dup
     duplicate.owner = self.community.end_user
     duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
     duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
@@ -1336,7 +1336,7 @@ class Publication < ActiveRecord::Base
     
     # copy identifiers over to new pub
     identifiers.each do |identifier|
-      duplicate_identifier = identifier.clone
+      duplicate_identifier = identifier.dup
       duplicate.identifiers << duplicate_identifier
     end
     
