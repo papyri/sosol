@@ -4,8 +4,8 @@
   %h1
     - if @identifier.publication.owner_type == "Board"
       = "Review " + @identifier.publication.owner.friendly_name + " - "
-      - else
-        = "Editing "
+    - else
+      = "Editing "
     = @identifier.title
     = " from publication "
     = link_to @identifier.publication.title, @identifier.publication
