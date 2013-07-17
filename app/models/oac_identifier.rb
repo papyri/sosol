@@ -1,5 +1,6 @@
 class OACIdentifier < Identifier  
   # This is a base class for OAC Annotations.
+  include OacHelper
   
   PATH_PREFIX = 'XML_OAC'
   IDENTIFIER_NAMESPACE = 'oac'
@@ -97,56 +98,6 @@ class OACIdentifier < Identifier
     REXML::XPath.first(self.rdf, xpath)          
   end
   
-  # get the target uris from the supplied annotation
-  def get_targets(a_annotation)
-    xpath = "oac:hasTarget/@rdf:resource"
-    uris = []
-    REXML::XPath.each(a_annotation, xpath) { |tgt|
-      uris << tgt.value
-    }          
-    return uris
-  end
-  
-  # get the body uri from the supplied annotation
-  def get_body(a_annotation)
-    xpath = "oac:hasBody/@rdf:resource"
-    uri = nil
-    REXML::XPath.each(a_annotation, xpath) { |body|
-      uri = body.value
-    }          
-    return uri
-  end
-  
-  # get the creator uri from the supplied annotation
-  def get_creator(a_annotation)
-    xpath = "dcterms:creator/foaf:Agent/@rdf:about"
-    creator = ""
-    REXML::XPath.each(a_annotation, xpath) { |uri|
-      creator = uri.value
-    }          
-    return creator
-  end
-  
-  # get the created date from the supplied annotation
-  def get_created(a_annotation)
-    xpath = "dcterms:created"
-    created = ""
-    REXML::XPath.each(a_annotation, xpath) { |date|
-      created = date.text
-    }          
-    return created
-  end
-  
-  # get the title from the supplied annotation
-  def get_title(a_annotation)
-    xpath = "dcterms:title"
-    title = ""
-    REXML::XPath.each(a_annotation, xpath) { |el|
-      title = el.text
-    }          
-    return title
-  end
-  
   # look for Annotations whose target resource matches the targetUriMatch string
   # targeUriMatch is expected to be a properly quoted regex string
   def matching_targets(targetUriMatch,creatorUri)
@@ -214,12 +165,12 @@ class OACIdentifier < Identifier
     end
     annot.elements.delete_all '*'
     target_uris.each do |uri|
-      annot.add_element(self.make_target(uri))
+      annot.add_element(OacHelper::make_target(uri))
     end
-    annot.add_element(self.make_body(body_uri))
-    annot.add_element(self.make_title(title))
-    annot.add_element(self.make_creator(creator_uri))
-    annot.add_element(self.make_created)
+    annot.add_element(OacHelper::make_body(body_uri))
+    annot.add_element(OacHelper::make_title(title))
+    annot.add_element(OacHelper::make_creator(creator_uri))
+    annot.add_element(OacHelper::make_created)
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
@@ -232,7 +183,7 @@ class OACIdentifier < Identifier
       raise "An annotation identified by #{annot_uri} already exists."
     end
     self.rdf.elements.delete_all xpath
-    self.rdf.root.add_element(self.make_annotation(annot_uri,target_uris,body_uri,title,creator_uri))
+    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,title,creator_uri))
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
@@ -250,53 +201,10 @@ class OACIdentifier < Identifier
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
-  # create an oac:hasTarget element
-  def make_target(target_uri)
-    target = REXML::Element.new("hasTarget")
-    target.add_namespace(self::class::NS_OAC)
-    target.add_attribute('rdf:resource',target_uri)
-    return target
-  end
-  
-  # create an oac:hasBody element
-  def make_body(body_uri)
-    body = REXML::Element.new("hasBody")
-    body.add_namespace(self::class::NS_OAC)
-    body.add_attribute('rdf:resource',body_uri)
-    return body
-  end
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
     ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
-  end
-  
-  # create a dcterms:creator element
-  def make_creator(creator_uri)
-    creator = REXML::Element.new("creator")
-    creator.add_namespace(self::class::NS_DCTERMS)
-    agent = REXML::Element.new("Agent")
-    agent.add_namespace(self::class::NS_FOAF)
-    agent.add_attribute('rdf:about',creator_uri)
-    creator.add_element(agent)
-    return creator  
-  end
-  
-  # create a dcterms:created element
-  def make_created()
-    now = Time.new
-    created = REXML::Element.new("created")
-    created.add_namespace(self::class::NS_DCTERMS)
-    created.add_text(now.inspect)
-    return created
-  end
-  
-  # create a dcterms:title element
-  def make_title(title_text)
-    title = REXML::Element.new("title")
-    title.add_namespace(self::class::NS_DCTERMS)
-    title.add_text(title_text)
-    return title
   end
   
   # find the next annotation uri for appending to the oac.xml
@@ -325,21 +233,7 @@ class OACIdentifier < Identifier
     next_num = max+1
     return "#{SITE_OAC_NAMESPACE}/#{self.publication.id}/#{self.parentIdentifier.id}/#{self.id}/#{self.publication.owner.id}/#{next_num}" 
   end
-
-  # make an oac:Annotation element
-  def make_annotation(annot_uri,target_uris,body_uri,title_text,creator_uri)
-    annot = REXML::Element.new("Annotation")
-    annot.add_namespace(self::class::NS_OAC)
-    annot.add_attribute('rdf:about',annot_uri)
-    target_uris.each do |uri|
-      annot.add_element(self.make_target(uri))
-    end
-    annot.add_element(self.make_body(body_uri))
-    annot.add_element(self.make_title(title_text))
-    annot.add_element(self.make_creator(creator_uri))
-    annot.add_element(self.make_created)
-    return annot
-  end    
+  
   
   # Converts REXML::Document / ::Element into xml string
   # - *Args*  :

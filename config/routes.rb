@@ -100,6 +100,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'cts_publications',
     :action => 'create_from_linked_urn',
     :urn => /[^\/]*/
+ 
+  map.connect 'cite_publications/create_from_linked_urn/:urn',
+    :controller => 'cite_publications',
+    :action => 'create_from_linked_urn',
+    :urn => /[^\/]*/
   
   map.connect 'mulgara/sparql/:query',
     :controller => 'ajax_proxy',

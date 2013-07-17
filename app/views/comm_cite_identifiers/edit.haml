@@ -1,0 +1,24 @@
+= stylesheet_link_tag 'pagedown'
+= javascript_include_tag 'pagedown/Markdown.Converter'
+= javascript_include_tag 'pagedown/Markdown.Sanitizer'
+= javascript_include_tag 'pagedown/Markdown.Editor'
+= javascript_include_tag 'comm-cite'
+
+:javascript 
+  document.observe("dom:loaded", function() {    
+    PerseidsCiteComm.setup_editor();
+  });
+
+.edit
+  %h3 
+    Edit Commentary
+  %p
+  - form_for @identifier, :url => { :action => @identifier[:action], :controller => "comm_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
+    = hidden_field_tag 'publication_id',@publication.id
+    = hidden_field_tag 'id',@identifier.id
+    .wmd-panel{:id=>'wmd-panel'}
+      .wmd-button-bar{:id => 'wmd-button-bar'}
+      %textarea{:id => 'wmd-input', :class=>'wmd-input'}
+      .wmd-preview{:id => 'wmd-preview'}  
+    = button_to "Save"
+

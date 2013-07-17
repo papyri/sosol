@@ -1,0 +1,18 @@
+= stylesheet_link_tag 'pagedown'
+= javascript_include_tag 'pagedown/Markdown.Converter'
+= javascript_include_tag 'comm-cite'
+
+:javascript 
+  document.observe("dom:loaded", function() {    
+    PerseidsCiteComm.preview("#{@identifier.get_commentary_text}",'PContent');
+  });
+#main
+  = render :partial => 'identifiers/edit_bar'
+
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages        
+        %label Preview
+        .PContent

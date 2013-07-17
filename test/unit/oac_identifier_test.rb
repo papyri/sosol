@@ -4,8 +4,8 @@ class OACIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = Factory(:user, :name => "Creator")
-      @creator2 = Factory(:user, :name => "Creator2")
+      @creator = Factory(:user, :name => "CreatorA")
+      @creator2 = Factory(:user, :name => "CreatorB")
       @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
@@ -22,8 +22,12 @@ class OACIdentifierTest < ActiveSupport::TestCase
     end
     
     teardown do
-      @publication.destroy
-      @creator.destroy
+      unless (@publication.nil?)
+        @publication.destroy
+      end
+      unless (@creator.nil?)
+        @creator.destroy
+      end
     end
     
     should "retrieve the target by urn" do
@@ -76,12 +80,12 @@ class OACIdentifierTest < ActiveSupport::TestCase
       should "retrieve the annotation" do
         annotation =  @oac_identifier.get_annotation(@test_uri2)
         assert ! annotation.nil?
-        assert @oac_identifier.get_targets(annotation).size == 1
-        assert @oac_identifier.get_targets(annotation)[0] == @test_tb2
-        assert @oac_identifier.get_body(annotation) == @test_tb1
-        assert @oac_identifier.get_title(annotation) == @test_title
-        assert @oac_identifier.get_creator(annotation) == @creator_uri
-        assert @oac_identifier.get_created(annotation) != ""
+        assert OacHelper::get_targets(annotation).size == 1
+        assert OacHelper::get_targets(annotation)[0] == @test_tb2
+        assert OacHelper::get_body(annotation) == @test_tb1
+        assert OacHelper::get_title(annotation) == @test_title
+        assert OacHelper::get_creator(annotation) == @creator_uri
+        assert OacHelper::get_created(annotation) != ""
       end
       
       should "delete the annotation" do
