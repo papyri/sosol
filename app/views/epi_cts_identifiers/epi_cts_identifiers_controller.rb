@@ -71,7 +71,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(
         EpiCTSIdentifier.preprocess(@identifier.xml_content)),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt perseus commentary.xsl})),
         {})
       
@@ -143,7 +143,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   def preview
     find_identifier
     
-    # Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
+    # Dir.chdir(File.join(Rails.root, 'data/xslt/'))
     # xslt = XML::XSLT.new()
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')

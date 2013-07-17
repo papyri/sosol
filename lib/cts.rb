@@ -40,7 +40,7 @@ module CTS
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(response.body),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply.xsl})))
         xml = REXML::Document.new(results)
         xpath = "//ti:textgroup[@projid='#{urn.getTextGroup(true)}']/ti:work[@projid='#{urn.getWork(true)}']/*[@projid='#{urn.getVersion(true)}']"
@@ -81,7 +81,7 @@ module CTS
         #  URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(doc),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts work_title.xsl})), 
               :textgroup => urn.getTextGroup(true), :work => urn.getWork(true))
         return results
@@ -97,7 +97,7 @@ module CTS
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(response.body),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts version_title.xsl})), 
               :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true) )
         return results
@@ -108,7 +108,7 @@ module CTS
             URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
          results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(response.body),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply.xsl})))
          return results
       end
@@ -217,7 +217,7 @@ module CTS
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(response.body),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts inventory_to_json.xsl})))
         return results
       end
@@ -228,7 +228,7 @@ module CTS
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(response.body),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts inventory_trans_to_json.xsl})), 
               :e_textgroup => urn.getTextGroup(true), :e_work => urn.getWork(true), :e_expression => 'translation')
         return results
@@ -248,7 +248,7 @@ module CTS
         if (response.code == '200')
            results = JRubyXML.apply_xsl_transform(
                    JRubyXML.stream_from_string(response.body),
-                   JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                   JRubyXML.stream_from_file(File.join(Rails.root,
                    %w{data xslt cts validreff_urns.xsl})))  
         else
            nil
@@ -268,7 +268,7 @@ module CTS
              if (response.code == '200')
               path = JRubyXML.apply_xsl_transform(
                      JRubyXML.stream_from_string(response.body),
-                     JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                     JRubyXML.stream_from_file(File.join(Rails.root,
                      %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
                 # inventory put succeeded, now put the document itself  
@@ -287,7 +287,7 @@ module CTS
                   if (psg_response.code == '200')
                     passage = JRubyXML.apply_xsl_transform(
                        JRubyXML.stream_from_string(psg_response.body),
-                       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                       JRubyXML.stream_from_file(File.join(Rails.root,
                        %w{data xslt cts extract_getpassage_reply.xsl})))  
                     return passage
                   else 
@@ -327,7 +327,7 @@ module CTS
           if (response.code == '200')
             path = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(response.body),
-              JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
               pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
@@ -346,7 +346,7 @@ module CTS
                   # now we return the updated document
                   updated_text = JRubyXML.apply_xsl_transform(
                     JRubyXML.stream_from_string(psg_response.body),
-                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                    JRubyXML.stream_from_file(File.join(Rails.root,
                     %w{data xslt cts extract_updatepassage_reply.xsl})))
                     # if the parsed response doesn't include the updated text 
                     # then raise an error so that we don't overwrite the file with blank data

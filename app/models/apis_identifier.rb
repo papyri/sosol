@@ -18,7 +18,7 @@ class APISIdentifier < HGVMetaIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
         parameters)
   end
@@ -27,7 +27,7 @@ class APISIdentifier < HGVMetaIdentifier
   # Loads +ApisConfiguration+ object (APIS xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = ApisConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config apis.yml}))[:apis][:metadata]
+    @configuration = ApisConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config apis.yml}))[:apis][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
 
@@ -119,7 +119,7 @@ class APISIdentifier < HGVMetaIdentifier
     attr_reader :scheme, :keys;
 
     def initialize
-      @scheme = YAML::load_file(File.join(RAILS_ROOT, %w{config apis.yml}))[:apis][:metadata]
+      @scheme = YAML::load_file(File.join(Rails.root, %w{config apis.yml}))[:apis][:metadata]
 
       add_meta_information! @scheme
 

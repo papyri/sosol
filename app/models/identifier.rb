@@ -238,7 +238,7 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - evaluated file template as string
   def file_template
-    template_path = File.join(RAILS_ROOT, ['data','templates'],
+    template_path = File.join(Rails.root, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
                               
     template = ERB.new(File.new(template_path).read, nil, '-')
@@ -416,7 +416,7 @@ class Identifier < ActiveRecord::Base
   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
     doc = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt common add_change.xsl})),
       :who => ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
       :comment => text

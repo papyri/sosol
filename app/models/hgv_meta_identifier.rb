@@ -8,13 +8,13 @@ class HGVMetaIdentifier < HGVIdentifier
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :
   #   - +parameters+ → xsl parameter hash, e.g. +{:leiden-style => 'ddb'}+, defaults to empty hash
-  #   - +xsl+ → path to xsl file, relative to +RAILS_ROOT+, e.g. +%w{data xslt epidoc my.xsl})+, defaults to +data/xslt/epidoc/start-edition.xsl+
+  #   - +xsl+ → path to xsl file, relative to +Rails.root+, e.g. +%w{data xslt epidoc my.xsl})+, defaults to +data/xslt/epidoc/start-edition.xsl+
   # - *Returns* :
   #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
         parameters)
   end
@@ -23,7 +23,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
+    @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
 
@@ -208,7 +208,7 @@ class HGVMetaIdentifier < HGVIdentifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt metadata update_header.xsl})),
           :filename_text => self.to_components.last,
           :reprint_from_text => options[:set_dummy_header] ? options[:original].title : '',
@@ -629,7 +629,7 @@ class HGVMetaIdentifier < HGVIdentifier
     # Assumes the existenz of configuration file +config/hgv.yml+, for further information about expected values and format see there
     # Side effect on +@scheme+ and +@keys+
     def initialize
-      @scheme = YAML::load_file(File.join(RAILS_ROOT, %w{config hgv.yml}))[:hgv][:metadata]
+      @scheme = YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
 
       add_meta_information! @scheme
 

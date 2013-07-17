@@ -49,21 +49,21 @@ class CTSInventoryIdentifier < Identifier
     atts['worktitle'] = { 'eng' =>
           JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(self.xml_content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts work_title.xsl})), 
               :textgroup => urn.getTextGroup(true), :work => urn.getWork(true))
     }
     atts['versiontitle'] = { 'eng' =>
        JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(self.xml_content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt cts version_title.xsl})), 
             :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true) )
     }
     atts['citations'] = JSON.parse(
           JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(self.xml_content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts inventory_citation_to_json.xsl})), 
               :e_textgroup => urn.getTextGroup(true), :e_work => urn.getWork(true), :e_edition => urn.getVersion(true)
     ))

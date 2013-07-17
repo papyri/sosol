@@ -94,7 +94,7 @@ class DDBIdentifier < Identifier
   def self.preprocess(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt ddb preprocess.xsl})))
   end
   
@@ -106,7 +106,7 @@ class DDBIdentifier < Identifier
       dummy_header =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt ddb dummyize.xsl})),
           :reprint_in_text => self.title,
           :ddb_hybrid_ref_attribute => self.n_attribute
@@ -136,7 +136,7 @@ class DDBIdentifier < Identifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt ddb update_header.xsl})),
           :title_text => self.xml_title_text,
           :human_title_text => self.titleize,
@@ -168,7 +168,7 @@ class DDBIdentifier < Identifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           DDBIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_commentary.xsl})),
         :line_id => line_id,
         :reference => reference,
@@ -193,7 +193,7 @@ class DDBIdentifier < Identifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           DDBIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_frontmatter_commentary.xsl})),
         :content => commentary_content,
         :delete_commentary => (delete_commentary ? 'true' : '')
@@ -236,7 +236,7 @@ class DDBIdentifier < Identifier
     # strip xml:id from lb's
     original_xml = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(original_xml),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt ddb strip_lb_ids.xsl})))
     
     original_xml_content = REXML::Document.new(original_xml)
@@ -383,7 +383,7 @@ class DDBIdentifier < Identifier
     )
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt ddb preview.xsl})),
         parameters)
   end

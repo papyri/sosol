@@ -17,7 +17,7 @@ class EpiCTSIdentifier < CTSIdentifier
   def self.preprocess(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt ddb preprocess.xsl})))
   end
   
@@ -29,7 +29,7 @@ class EpiCTSIdentifier < CTSIdentifier
       dummy_header =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt ddb dummyize.xsl}))
         )
       
@@ -57,7 +57,7 @@ class EpiCTSIdentifier < CTSIdentifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt ddb update_header.xsl})),
           :title_text => self.xml_title_text,
           :human_title_text => self.titleize,
@@ -73,7 +73,7 @@ class EpiCTSIdentifier < CTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           EpiCTSIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_commentary.xsl})),
         :line_id => line_id,
         :reference => reference,
@@ -90,7 +90,7 @@ class EpiCTSIdentifier < CTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           EpiCTSIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_frontmatter_commentary.xsl})),
         :content => commentary_content,
         :delete_commentary => (delete_commentary ? 'true' : '')
@@ -111,7 +111,7 @@ class EpiCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt pn start-div-portlet_perseus.xsl})),
         parameters)
   end
@@ -120,7 +120,7 @@ class EpiCTSIdentifier < CTSIdentifier
     links = JSON.parse(
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.xml_content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           xsl ? xsl : %w{data xslt cts facs.xsl})),
           parameters))
   end

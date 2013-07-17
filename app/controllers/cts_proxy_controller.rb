@@ -38,7 +38,7 @@ class CtsProxyController < ApplicationController
     end
     render :text => JRubyXML.apply_xsl_transform(
                       JRubyXML.stream_from_string(response),
-                      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                      JRubyXML.stream_from_file(File.join(Rails.root,
                       %w{data xslt cts extract_text.xsl})))  
   end
   
@@ -46,7 +46,7 @@ class CtsProxyController < ApplicationController
     response = CTS::CTSLib.proxyGetCapabilities(params[:collection].to_s)
     render :text => JRubyXML.apply_xsl_transform(
                       JRubyXML.stream_from_string(response),
-                      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                      JRubyXML.stream_from_file(File.join(Rails.root,
                       %w{data xslt cts inventory_to_json.xsl})))
   end
   

@@ -24,7 +24,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def before_commit(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt translation preprocess.xsl}))
     )
   end
@@ -52,7 +52,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     translation_stub_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.related_text.xml_content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt translation epi_to_translation_xsl.xsl})),
         :lang => lang,
         :urn => urn  
@@ -66,7 +66,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt translation update_header.xsl})),
           :filename_text => self.to_components.last,
           :title_text => NumbersRDF::NumbersHelper::identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,CTSIdentifier::IDENTIFIER_NAMESPACE,self.to_components.last].join('/'))
@@ -79,7 +79,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def preview
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt pn start-divtrans-portlet.xsl})))
   end
   

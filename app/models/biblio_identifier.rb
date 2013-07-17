@@ -165,13 +165,13 @@ class BiblioIdentifier < HGVIdentifier
   # Generates a preview document by running an xsl transformation on the biblio xml document
   # - *Args*  :
   #   - +parameters+ → additional parameters to controll the transformation process (optional), should be given as a +Hash+, e.g. {'citationStyle' => 'Sammelbuch'}
-  #   - +xsl+ → +String+ or +Array+, path to xsl document for the transformation, starting from +RAILS_ROOT+
+  #   - +xsl+ → +String+ or +Array+, path to xsl document for the transformation, starting from +Rails.root+
   # - *Returns* :
   #   - +String+, result of xsl transformation
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt biblio pn-preview.xsl})),
         parameters)
   end
@@ -206,7 +206,7 @@ class BiblioIdentifier < HGVIdentifier
   #   - wrapped XML content as String
   def wrap_xml(content)
     xml_stub = REXML::Document.new(content)
-    xml_wrapper = REXML::Document.new(File.new(File.join(RAILS_ROOT, ['data','templates'], 'biblio_dummy_wrapper.xml')))
+    xml_wrapper = REXML::Document.new(File.new(File.join(Rails.root, ['data','templates'], 'biblio_dummy_wrapper.xml')))
     basepath = '/TEI/text/body/div[@type = "bibliography"]'
     add_node_here = REXML::XPath.first(xml_wrapper, basepath)
     add_node_here.add_element xml_stub.root

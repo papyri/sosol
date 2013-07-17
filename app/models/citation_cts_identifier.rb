@@ -18,7 +18,7 @@ class CitationCTSIdentifier < CTSIdentifier
     Rails.logger.info("Preprocessing citation xml with #{xslt}")
     fixed = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cts}, xslt)))
     # Validate Citation XML with a validator specific to the parent class
     self.related_text.class::XML_VALIDATOR.instance.validate(
@@ -68,7 +68,7 @@ class CitationCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cts alpheios-tei.xsl})),
         parameters)
   end

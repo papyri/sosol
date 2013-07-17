@@ -7,7 +7,7 @@ class CtsInventoryIdentifiersController < IdentifiersController
   def preview
     find_identifier
     
-    # Dir.chdir(File.join(RAILS_ROOT, 'data/xslt/'))
+    # Dir.chdir(File.join(Rails.root, 'data/xslt/'))
     # xslt = XML::XSLT.new()
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')

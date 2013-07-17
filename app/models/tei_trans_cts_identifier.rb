@@ -41,7 +41,7 @@ class TeiTransCTSIdentifier < TeiCTSIdentifier
     translation_stub_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.related_text.xml_content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt translation tei_to_translation_xsl.xsl})),
         :lang => lang,
         :urn => urn  
@@ -55,7 +55,7 @@ class TeiTransCTSIdentifier < TeiCTSIdentifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt translation update_header.xsl})),
           :filename_text => self.to_components.last,
           :title_text => NumbersRDF::NumbersHelper::identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,CTSIdentifier::IDENTIFIER_NAMESPACE,self.to_components.last].join('/')),

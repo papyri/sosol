@@ -18,7 +18,7 @@ class TeiCTSIdentifier < CTSIdentifier
   def self.preprocess(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cts validate_teia.xsl})))
   end  
   
@@ -27,7 +27,7 @@ class TeiCTSIdentifier < CTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           TeiCTSIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_commentary.xsl})),
         :line_id => line_id,
         :reference => reference,
@@ -44,7 +44,7 @@ class TeiCTSIdentifier < CTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           TeiCTSIdentifier.preprocess(self.xml_content)),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt ddb update_frontmatter_commentary.xsl})),
         :content => commentary_content,
         :delete_commentary => (delete_commentary ? 'true' : '')
@@ -66,7 +66,7 @@ class TeiCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cts alpheios-tei.xsl})),
         parameters)
   end

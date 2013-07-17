@@ -70,7 +70,7 @@ class HGVTransIdentifier < HGVIdentifier
   def before_commit(content)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt translation preprocess.xsl}))
     )
   end
@@ -102,7 +102,7 @@ class HGVTransIdentifier < HGVIdentifier
     translation_stub_xsl =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.related_text.content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt translation ddb_to_translation_xsl.xsl}))
       )
     
@@ -128,7 +128,7 @@ class HGVTransIdentifier < HGVIdentifier
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
             %w{data xslt translation update_header.xsl})),
           :filename_text => self.to_components.last,
           :HGV_text => related_hgv.join(' '),
@@ -153,7 +153,7 @@ class HGVTransIdentifier < HGVIdentifier
         "css-loc" => ""}
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.xml_content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt translation preview.xsl})),
           parameters)
   end

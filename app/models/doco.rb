@@ -32,14 +32,14 @@ class Doco < ActiveRecord::Base
     @all_docos = self.find(:all, :conditions => {:docotype => docotype}, :order => "category ASC, line ASC")
     doco_elements = doc_tree
     
-    #doco_template = IO.read(File.join(RAILS_ROOT, ['data','templates'],"docotemplate.haml"))
+    #doco_template = IO.read(File.join(Rails.root, ['data','templates'],"docotemplate.haml"))
     
     #haml_engine = Haml::Engine.new(doco_template)
     
-    #open(File.join(RAILS_ROOT, ['app','views', 'docos'],"documentation.html.erb"),'w') {|file|
-    #open(File.join(RAILS_ROOT, ['public','cache'],"documentation.html.erb"),'w') {|file|
+    #open(File.join(Rails.root, ['app','views', 'docos'],"documentation.html.erb"),'w') {|file|
+    #open(File.join(Rails.root, ['public','cache'],"documentation.html.erb"),'w') {|file|
     #         file.write(haml_engine.render(Object.new, :doco_elements => doco_elements)) }
-    #FileUtils.copy("#{RAILS_ROOT}/public/cache/documentation.html.erb", "#{RAILS_ROOT}/app/views/docos/documentation.html.erb")
+    #FileUtils.copy("#{Rails.root}/public/cache/documentation.html.erb", "#{Rails.root}/app/views/docos/documentation.html.erb")
     return doco_elements
   end
   
