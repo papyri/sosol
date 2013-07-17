@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.12'
+gem 'rails', '3.2.13'
 
 gem 'haml', '~> 3.0.25'
 gem 'json-jruby', '>= 1.4.3.1', :require => 'json'
