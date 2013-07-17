@@ -14,7 +14,7 @@ class CTSInventoryIdentifier < Identifier
   end
   
   def self.new_from_template(publication,inventory,parent,urn)
-    temp_name = parent.clone
+    temp_name = parent.dup
     temp_name.sub!(/edition/,'textinventory')
     temp_id = self.new(:name => temp_name)
     temp_id.publication = publication

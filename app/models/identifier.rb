@@ -349,7 +349,7 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - a String of the SHA1 of the commit
   def rename(new_name, options = {})
-    original = self.clone
+    original = self.dup
     options[:original] = original
     
     original_name = self.name

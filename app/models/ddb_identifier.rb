@@ -120,7 +120,7 @@ class DDBIdentifier < Identifier
             
       # need to do on originals too
       self.relatives.each do |relative|
-        original_relative = relative.clone
+        original_relative = relative.dup
         original_relative.name = original.name
         original_relative.title = original.title
         relative.save!
