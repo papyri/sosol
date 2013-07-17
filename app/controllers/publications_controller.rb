@@ -53,7 +53,7 @@ class PublicationsController < ApplicationController
   end
 
   def advanced_create()
-    
+    @publication = Publication.new
   end
 
   # POST /publications

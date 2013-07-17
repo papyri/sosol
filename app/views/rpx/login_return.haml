@@ -6,7 +6,7 @@
       = h session[:identifier]
     ,
     but you need to enter a nickname to sign up.
-  - form_for :new_user, :url => { :action => "create_submit" } do |f|
+  = form_for :new_user, :url => { :action => "create_submit" } do |f|
     %table
       %tr
         %th

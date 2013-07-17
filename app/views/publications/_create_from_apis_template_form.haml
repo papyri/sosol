@@ -1,3 +1,3 @@
-- form_for :publication, Publication.new, :url => { :controller => "publications", :action => "create_from_apis_template" } do |form|
+= form_for @publication, :url => { :controller => "publications", :action => "create_from_apis_template" } do |form|
   = select_tag "apis_collection", options_for_select(APISIdentifier.collection_names_hash.sort)
   = form.submit "Create New APIS Publication", :class => 'save'

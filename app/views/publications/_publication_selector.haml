@@ -253,7 +253,7 @@
 - cache(:action => 'dashboard', :part => 'publication_selector') do
   - unless defined? hide_text
     %p== Existing publication:
-  - form_tag :controller => 'publications', :action => "create_from_selector" do
+  = form_tag :controller => 'publications', :action => "create_from_selector" do
     -if emend == :helper
       = select_tag('IdentifierClass', options_for_select([%w{DDB DDBIdentifier},%w{HGV HGVIdentifier},%w{APIS APISIdentifier}]), :onchange => "IDClassChange(this.options[this.selectedIndex].value);")
       = select_tag("APISIdentifierCollectionSelect", options_for_select([['','']] + APISIdentifier.collection_names_hash.sort), :class => 'invisible', :onchange => "reset_selector($('document_number'));$('volume_number').disabled=true;$('document_number').disabled='';$('emend_button').disabled='';get_apis_documents();if(this.options[0].value==''){this.remove(0)}")
