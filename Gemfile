@@ -4,7 +4,16 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.12'
 
-gem 'haml', '~> 3.0.25'
+# Needed for the new asset pipeline
+group :assets do
+  gem 'sass-rails',   "~> 3.1.5"
+  gem 'coffee-rails', "~> 3.1.1"
+  gem 'uglifier',     ">= 1.0.3"
+end
+
+gem 'jquery-rails'
+
+gem 'haml', '>= 3.0.25'
 gem 'json-jruby', '>= 1.4.3.1', :require => 'json'
 gem 'json'
 gem 'jruby-openssl', '>= 0.8.8'
