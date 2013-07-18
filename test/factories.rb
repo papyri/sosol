@@ -24,7 +24,7 @@ FactoryGirl.define do
   end
 
   factory :board do |f|
-    f.title { FactoryGirl.next(:name) }
+    f.title { FactoryGirl.generate(:name) }
     f.category 'category'
     f.identifier_classes ['DDBIdentifier']
   end
@@ -53,7 +53,7 @@ FactoryGirl.define do
       ]
     }
   end
-  
+
   factory :hgv_meta_board, :parent => :hgv_board do |f|
     f.identifier_classes ['HGVMetaIdentifier']
   end
@@ -64,8 +64,8 @@ FactoryGirl.define do
 
 
   factory :user do |f|
-    f.name { FactoryGirl.next(:name) }
-    f.email { FactoryGirl.next(:email) }
+    f.name { FactoryGirl.generate(:name) }
+    f.email { FactoryGirl.generate(:email) }
   end
 
   factory :admin, :parent => :user do |f|
@@ -110,17 +110,17 @@ FactoryGirl.define do
   end
 
   factory :HGVMetaIdentifier do |f|
-    f.name { FactoryGirl.next(:hgv_identifier_string) }
-    f.alternate_name { FactoryGirl.next(:hgv_number) }
+    f.name { FactoryGirl.generate(:hgv_identifier_string) }
+    f.alternate_name { FactoryGirl.generate(:hgv_number) }
   end
 
   factory :DDBIdentifier do |f|
-    f.name { FactoryGirl.next(:ddb_identifier_string) }
+    f.name { FactoryGirl.generate(:ddb_identifier_string) }
   end
 
   factory :community do |f|
-    f.name { FactoryGirl.next(:name) }
-    f.friendly_name { FactoryGirl.next(:name) } 
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
     f.description 'description'
     f.admins Array.new
   end
@@ -136,7 +136,7 @@ FactoryGirl.define do
   end
 
   factory :TeiCTSIdentifier do |f|
-    f.name { FactoryGirl.next(:tei_cts_identifier_string) }
+    f.name { FactoryGirl.generate(:tei_cts_identifier_string) }
     f.title :title
   end
 
