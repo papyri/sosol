@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # Helper functions for complex EpiDoc transformations, date operations and form data for select boxes
 module HgvMetaIdentifierHelper
 
