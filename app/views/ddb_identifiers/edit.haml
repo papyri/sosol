@@ -150,7 +150,7 @@
     = render :partial => 'leiden_helpers', :locals => { :identifier => @identifier}
 
     #edit
-      - form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
+      = form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
         = f.error_messages
         %br
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :top }

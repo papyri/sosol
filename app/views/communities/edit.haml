@@ -4,7 +4,7 @@
   %h1
     = "Editing " + @community.format_name + " community"
   
-  - form_for(@community) do |f|
+  = form_for(@community) do |f|
     = f.error_messages
   
   

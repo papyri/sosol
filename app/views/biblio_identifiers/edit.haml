@@ -4,7 +4,7 @@
   %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
   %div{:id => 'edit', :class => 'biblioedit'}
-    - form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
+    = form_for @identifier, :url => { :action => :update }, :builder => BiblioFormBuilder, :html => { :autocomplete => :off } do |f| 
       = f.error_messages
 
       %h4.category.meta

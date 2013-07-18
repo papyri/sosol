@@ -12,7 +12,7 @@
     
   %h3
     Personal
-  - form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
+  = form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
     = f.error_messages
     %p
       = f.label :full_name
