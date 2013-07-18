@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # Model class for bibliography records as they reside in the Biblio folder of idp.data's git repository
 class BiblioIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes

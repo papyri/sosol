@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # - Sub-class of Identifier
 # - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier  
