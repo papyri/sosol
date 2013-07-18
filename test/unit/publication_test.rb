@@ -5,7 +5,7 @@ require 'test_helper'
 class PublicationTest < ActiveSupport::TestCase
   context "a publication conflicting with an existing branch" do
     setup do
-      @user = FactoryGirl(:user)
+      @user = FactoryGirl.create(:user)
       
       @branchname = "testpublication"
       @user.repository.create_branch(@branchname)
@@ -23,7 +23,7 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a new publication from templates" do
     setup do
-      @user = FactoryGirl(:user)
+      @user = FactoryGirl.create(:user)
       @publication = Publication.new_from_templates(@user)
     end
 
@@ -67,8 +67,8 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication copied to another owner" do
     setup do
-      @original_owner = FactoryGirl(:user)
-      @new_owner = FactoryGirl(:user)
+      @original_owner = FactoryGirl.create(:user)
+      @new_owner = FactoryGirl.create(:user)
       @publication = Publication.new_from_templates(@original_owner)
       @publication_copy = @publication.copy_to_owner(@new_owner)
     end
@@ -100,11 +100,11 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication with unicode in its title/branch" do
     setup do
-      @user = FactoryGirl(:user)
+      @user = FactoryGirl.create(:user)
       @original_branches = @user.repository.branches
       
       @unicode_title = "P.Über βρεκεκεκέξ"
-      @publication = FactoryGirl(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
+      @publication = FactoryGirl.create(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
       @publication.branch_from_master
       
       @new_ddb = DDBIdentifier.new_from_template(@publication)

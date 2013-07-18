@@ -2,11 +2,11 @@ require 'test_helper'
 
 class VotesControllerTest < ActionController::TestCase
   def setup
-    @user = FactoryGirl(:user)
+    @user = FactoryGirl.create(:user)
     @request.session[:user_id] = @user.id
-    @publication = FactoryGirl(:publication, :owner => @user)
-    @vote = FactoryGirl(:vote, :user => @user, :publication => @publication)
-    @vote_two = FactoryGirl(:vote, :user => @user, :publication => @publication)
+    @publication = FactoryGirl.create(:publication, :owner => @user)
+    @vote = FactoryGirl.create(:vote, :user => @user, :publication => @publication)
+    @vote_two = FactoryGirl.create(:vote, :user => @user, :publication => @publication)
   end
   
   def teardown

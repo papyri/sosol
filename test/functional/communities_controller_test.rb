@@ -2,10 +2,10 @@ require 'test_helper'
 
 class CommunitiesControllerTest < ActionController::TestCase
   def setup
-    @admin = FactoryGirl(:admin)
+    @admin = FactoryGirl.create(:admin)
     @request.session[:user_id] = @admin.id
-    @community = FactoryGirl(:community)
-    @community_two = FactoryGirl(:community)
+    @community = FactoryGirl.create(:community)
+    @community_two = FactoryGirl.create(:community)
   end
   
   def teardown

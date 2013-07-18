@@ -13,8 +13,8 @@ class DDBIdentifierTest < ActiveSupport::TestCase
   
   context "identifier renaming" do
     setup do
-      @creator = FactoryGirl(:user, :name => "Creator")
-      @publication = FactoryGirl(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      @creator = FactoryGirl.create(:user, :name => "Creator")
+      @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
       

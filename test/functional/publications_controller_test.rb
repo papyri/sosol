@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PublicationsControllerTest < ActionController::TestCase
   def setup
-    @user = FactoryGirl(:user)
+    @user = FactoryGirl.create(:user)
     @request.session[:user_id] = @user.id
   end
   

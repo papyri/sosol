@@ -2,10 +2,10 @@ require 'test_helper'
 
 class BoardsControllerTest < ActionController::TestCase
   def setup
-    @admin = FactoryGirl(:admin)
+    @admin = FactoryGirl.create(:admin)
     @request.session[:user_id] = @admin.id
-    @board = FactoryGirl(:board)
-    @board_two = FactoryGirl(:board)
+    @board = FactoryGirl.create(:board)
+    @board_two = FactoryGirl.create(:board)
   end
   
   def teardown

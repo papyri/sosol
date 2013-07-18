@@ -3,7 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   context "an existing user" do
     setup do
-      @user = FactoryGirl(:user)
+      @user = FactoryGirl.create(:user)
       @path = @user.repository.path
     end
     
