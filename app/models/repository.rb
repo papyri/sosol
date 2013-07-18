@@ -234,7 +234,7 @@ class Repository
     index.read_tree(branch)
     index.add(file, data)
     index.commit(comment,
-                 @repo.commits(branch,1).first.to_s, # commit parent
+                 [@repo.commits(branch,1).first], # commit parent
                  actor,
                  nil,
                  branch)
