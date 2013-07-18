@@ -20,13 +20,13 @@ module ApplicationHelper
               width="110"
               height="14"
               id="clippy" >
-      <param name="movie" value="#{asset_path('clippy.swf','flash')}"/>
+      <param name="movie" value="/flash/clippy.swf"/>
       <param name="allowScriptAccess" value="always" />
       <param name="quality" value="high" />
       <param name="scale" value="noscale" />
       <param name="FlashVars" value="id=#{textarea_id}" />
       <param name="bgcolor" value="#{bgcolor}">
-      <embed src="#{asset_path('clippy.swf','flash')}"
+      <embed src="/flash/clippy.swf"
              width="110"
              height="14"
              name="clippy"
