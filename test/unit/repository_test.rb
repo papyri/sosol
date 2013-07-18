@@ -29,7 +29,7 @@ class RepositoryTest < ActiveSupport::TestCase
   
   context "a User Repository" do
     setup do
-      @user = Factory(:user)
+      @user = FactoryGirl(:user)
     end
     
     teardown do

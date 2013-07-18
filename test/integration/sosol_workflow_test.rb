@@ -18,23 +18,23 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         #a user to put on the boards
-        @board_user = Factory(:user, :name => "board_man_bob")
-        @board_user_2 = Factory(:user, :name => "board_man_alice")   
+        @board_user = FactoryGirl(:user, :name => "board_man_bob")
+        @board_user_2 = FactoryGirl(:user, :name => "board_man_alice")   
         #a user to submit publications
-        @creator_user = Factory(:user, :name => "creator_bob") 
+        @creator_user = FactoryGirl(:user, :name => "creator_bob") 
         #an end user to recieve the "finalized" publication
-        @end_user = Factory(:user, :name => "end_bob")
+        @end_user = FactoryGirl(:user, :name => "end_bob")
         
        
         #set up the boards, and vote
-        @meta_board = Factory(:hgv_meta_board, :title => "meta")
+        @meta_board = FactoryGirl(:hgv_meta_board, :title => "meta")
 
         #the board memeber
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
 
         #the vote
-        @meta_decree = Factory(:count_decree,
+        @meta_decree = FactoryGirl(:count_decree,
                 :board => @meta_board,
                 :trigger => 1.0,
                 :action => "approve",
@@ -43,11 +43,11 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @meta_board.decrees << @meta_decree
         
 
-        @text_board = Factory(:board, :title => "text")
+        @text_board = FactoryGirl(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
         #the vote
-        @text_decree = Factory(:count_decree,
+        @text_decree = FactoryGirl(:count_decree,
                 :board => @text_board,
                 :trigger => 1.0,
                 :action => "approve",
@@ -56,12 +56,12 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @text_board.decrees << @text_decree
         
 
-        @translation_board = Factory(:hgv_trans_board, :title => "translation")
+        @translation_board = FactoryGirl(:hgv_trans_board, :title => "translation")
         
         #the board memeber
         @translation_board.users << @board_user
         #the vote
-        @translation_decree = Factory(:count_decree,
+        @translation_decree = FactoryGirl(:count_decree,
                 :board => @translation_board,
                 :trigger => 1.0,
                 :action => "approve",
@@ -340,7 +340,7 @@ end
        Rails.logger.debug "Found text identifier, will vote on it"
 
 =begin
-       @text_vote = Factory(:vote,
+       @text_vote = FactoryGirl(:vote,
               :publication_id => text_identifier.publication.id,
               :identifier_id => text_identifier.id,
               :user => @board_user,
@@ -485,37 +485,37 @@ end
   end
   context "for IDP2" do
     setup do
-      @ddb_board = Factory(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryGirl(:board, :title => 'DDbDP Editorial Board')
     
       3.times do |i|
-        @ddb_board.users << Factory(:user)
+        @ddb_board.users << FactoryGirl(:user)
       end
       
-      Factory(:percent_decree,
+      FactoryGirl(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "approve",
               :choices => "yes no defer")
-      Factory(:percent_decree,
+      FactoryGirl(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "reject",
               :choices => "reject")
-      Factory(:count_decree,
+      FactoryGirl(:count_decree,
               :board => @ddb_board,
               :trigger => 1.0,
               :action => "graffiti",
               :choices => "graffiti")
       
-      @james = Factory(:user, :name => "James")
+      @james = FactoryGirl(:user, :name => "James")
       
-      @hgv_meta_board = Factory(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = Factory(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryGirl(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryGirl(:hgv_trans_board, :title => 'Translations')
       
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
       
-      @submitter = Factory(:user, :name => "Submitter")
+      @submitter = FactoryGirl(:user, :name => "Submitter")
     end
     
     teardown do
@@ -524,7 +524,7 @@ end
     end
     
     def generate_board_vote_for_decree(board, decree, identifier, user)
-      Factory(:vote,
+      FactoryGirl(:vote,
               :publication_id => identifier.publication.id,
               :identifier_id => identifier.id,
               :user => user,
@@ -551,7 +551,7 @@ end
 
     context "a publication" do
       setup do
-        @publication = Factory(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryGirl(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
         
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master

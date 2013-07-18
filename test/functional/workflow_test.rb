@@ -3,37 +3,37 @@ require 'test_helper'
 class WorkflowTest < ActiveSupport::TestCase
   context "for IDP2" do
     setup do
-      @ddb_board = Factory(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryGirl(:board, :title => 'DDbDP Editorial Board')
     
       3.times do |i|
-        @ddb_board.users << Factory(:user)
+        @ddb_board.users << FactoryGirl(:user)
       end
       
-      Factory(:percent_decree,
+      FactoryGirl(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "approve",
               :choices => "yes no defer")
-      Factory(:percent_decree,
+      FactoryGirl(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "reject",
               :choices => "reject")
-      Factory(:count_decree,
+      FactoryGirl(:count_decree,
               :board => @ddb_board,
               :trigger => 1.0,
               :action => "graffiti",
               :choices => "graffiti")
       
-      @james = Factory(:user, :name => "James")
+      @james = FactoryGirl(:user, :name => "James")
       
-      @hgv_meta_board = Factory(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = Factory(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryGirl(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryGirl(:hgv_trans_board, :title => 'Translations')
       
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
       
-      @submitter = Factory(:user, :name => "Submitter")
+      @submitter = FactoryGirl(:user, :name => "Submitter")
     end
     
     teardown do
@@ -42,7 +42,7 @@ class WorkflowTest < ActiveSupport::TestCase
     end
     
     def generate_board_vote_for_decree(board, decree, identifier, user)
-      Factory(:vote,
+      FactoryGirl(:vote,
               :publication_id => identifier.publication.id,
               :identifier_id => identifier.id,
               :user => user,
@@ -68,7 +68,7 @@ class WorkflowTest < ActiveSupport::TestCase
 
     context "a publication" do
       setup do
-        @publication = Factory(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryGirl(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
         
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master

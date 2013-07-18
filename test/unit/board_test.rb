@@ -3,8 +3,8 @@ require 'test_helper'
 class BoardTest < ActiveSupport::TestCase
   context "a created board" do
     setup do
-      @board = Factory(:board)
-      @decree = Factory(:decree, :board => @board)
+      @board = FactoryGirl(:board)
+      @decree = FactoryGirl(:decree, :board => @board)
       @path = @board.repository.path
     end
     

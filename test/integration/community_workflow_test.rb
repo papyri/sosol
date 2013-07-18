@@ -40,21 +40,21 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         
         
         #a user to put on the boards
-        @board_user = Factory(:user, :name => "board_man_freaky_bob")
-        @board_user_2 = Factory(:user, :name => "board_man_freaky_alice")   
+        @board_user = FactoryGirl(:user, :name => "board_man_freaky_bob")
+        @board_user_2 = FactoryGirl(:user, :name => "board_man_freaky_alice")   
         #a user to submit publications
-        @creator_user = Factory(:user, :name => "creator_freaky_bob") 
+        @creator_user = FactoryGirl(:user, :name => "creator_freaky_bob") 
         #an end user to recieve the "finalized" publication
-        @end_user = Factory(:user, :name => "end_freaky_bob")
+        @end_user = FactoryGirl(:user, :name => "end_freaky_bob")
         
         #a general member in the community
-        @community_user = Factory(:user, :name => "community_freaky_bob")
+        @community_user = FactoryGirl(:user, :name => "community_freaky_bob")
         
         #a user to make a publication so we are not testing SOSOL 2011 1 (local bug-this one somehow got added to canonical)
-        @trash_user = Factory(:user, :name => "just_to_make_another_publication")
+        @trash_user = FactoryGirl(:user, :name => "just_to_make_another_publication")
         
         #set up the community
-        @test_community = Factory(:community, 
+        @test_community = FactoryGirl(:community, 
                                   :name => "test_freaky_community", 
                                   :friendly_name => "testy", 
                                   #:abbreviation => "tc", 
@@ -66,15 +66,15 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         
         
         #set up the boards, and vote
-        #@meta_board = Factory(:community_meta_board, :title => "meta", :community_id => @test_community.id)
-        @meta_board = Factory(:hgv_meta_board, :title => "meta", :community_id => @test_community.id)
+        #@meta_board = FactoryGirl(:community_meta_board, :title => "meta", :community_id => @test_community.id)
+        @meta_board = FactoryGirl(:hgv_meta_board, :title => "meta", :community_id => @test_community.id)
 
         #the board member
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
 
         #the vote
-        @meta_decree = Factory(:count_decree,
+        @meta_decree = FactoryGirl(:count_decree,
                 :board => @meta_board,
                 :trigger => 1.0,
                 :action => "approve",
@@ -87,12 +87,12 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         
 
         
-        #@text_board = Factory(:community_text_board, :title => "text", :community_id => @test_community.id)
-        @text_board = Factory(:board, :title => "text", :community_id => @test_community.id)
+        #@text_board = FactoryGirl(:community_text_board, :title => "text", :community_id => @test_community.id)
+        @text_board = FactoryGirl(:board, :title => "text", :community_id => @test_community.id)
         #the board memeber
         @text_board.users << @board_user
         #the vote
-        @text_decree = Factory(:count_decree,
+        @text_decree = FactoryGirl(:count_decree,
                 :board => @text_board,
                 :trigger => 1.0,
                 :action => "approve",
@@ -103,13 +103,13 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @test_community.boards << @text_board
 
         
-        #@translation_board = Factory(:community_translation_board, :title => "translation", :community_id => @test_community.id)
-        @translation_board = Factory(:hgv_trans_board, :title => "translation", :community_id => @test_community.id)
+        #@translation_board = FactoryGirl(:community_translation_board, :title => "translation", :community_id => @test_community.id)
+        @translation_board = FactoryGirl(:hgv_trans_board, :title => "translation", :community_id => @test_community.id)
         
         #the board memeber
         @translation_board.users << @board_user
         #the vote
-        @translation_decree = Factory(:count_decree,
+        @translation_decree = FactoryGirl(:count_decree,
                 :board => @translation_board,
                 :trigger => 1.0,
                 :action => "approve",

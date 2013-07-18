@@ -3,11 +3,11 @@ require 'test_helper'
 class PublicationTest < ActiveSupport::TestCase
   context "a publication conflicting with an existing branch" do
     setup do
-      @user = Factory(:user)
+      @user = FactoryGirl(:user)
       
       @branchname = "testpublication"
       @user.repository.create_branch(@branchname)
-      @publication = Factory.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
+      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
     end
     
     teardown do
@@ -21,7 +21,7 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a new publication from templates" do
     setup do
-      @user = Factory(:user)
+      @user = FactoryGirl(:user)
       @publication = Publication.new_from_templates(@user)
     end
 
@@ -65,8 +65,8 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication copied to another owner" do
     setup do
-      @original_owner = Factory(:user)
-      @new_owner = Factory(:user)
+      @original_owner = FactoryGirl(:user)
+      @new_owner = FactoryGirl(:user)
       @publication = Publication.new_from_templates(@original_owner)
       @publication_copy = @publication.copy_to_owner(@new_owner)
     end
@@ -98,11 +98,11 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication with unicode in its title/branch" do
     setup do
-      @user = Factory(:user)
+      @user = FactoryGirl(:user)
       @original_branches = @user.repository.branches
       
       @unicode_title = "P.Über βρεκεκεκέξ"
-      @publication = Factory(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
+      @publication = FactoryGirl(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
       @publication.branch_from_master
       
       @new_ddb = DDBIdentifier.new_from_template(@publication)

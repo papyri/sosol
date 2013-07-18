@@ -2,10 +2,10 @@ require 'test_helper'
 
 class BoardsControllerTest < ActionController::TestCase
   def setup
-    @admin = Factory(:admin)
+    @admin = FactoryGirl(:admin)
     @request.session[:user_id] = @admin.id
-    @board = Factory(:board)
-    @board_two = Factory(:board)
+    @board = FactoryGirl(:board)
+    @board_two = FactoryGirl(:board)
   end
   
   def teardown
@@ -28,7 +28,7 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should create board" do
     assert_difference('Board.count') do
-      post :create, :board => Factory.build(:board).attributes
+      post :create, :board => FactoryGirl.build(:board).attributes
     end
 
     assert_redirected_to edit_board_path(assigns(:board))
@@ -36,13 +36,13 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should have max rank default" do
-    post :create, :board => Factory.build(:board).attributes
+    post :create, :board => FactoryGirl.build(:board).attributes
     assert assigns(:board).rank == Board.count
     assigns(:board).destroy
   end
     
   test "should have valid rank" do
-    post :create, :board => Factory.build(:board).attributes
+    post :create, :board => FactoryGirl.build(:board).attributes
     assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
     assigns(:board).destroy
   end

@@ -2,11 +2,11 @@ require 'test_helper'
 
 class DecreesControllerTest < ActionController::TestCase
   def setup
-    @admin = Factory(:admin)
+    @admin = FactoryGirl(:admin)
     @request.session[:user_id] = @admin.id
-    @board = Factory(:board)
-    @decree = Factory(:decree, :board => @board)
-    @decree_two = Factory(:decree, :board => @board)
+    @board = FactoryGirl(:board)
+    @decree = FactoryGirl(:decree, :board => @board)
+    @decree_two = FactoryGirl(:decree, :board => @board)
   end
   
   def teardown
