@@ -19,7 +19,7 @@
           %li= i.name
       %h3
         %br
-      - form_for @identifier, :url => { :action => "rename" } do |f|
+      = form_for @identifier, :url => { :action => "rename" } do |f|
         = f.error_messages
         %label New name:
         = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?

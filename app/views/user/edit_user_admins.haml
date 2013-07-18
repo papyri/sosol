@@ -3,7 +3,7 @@
 
   
   %p
-    - form_for(@user, :url => { :action => "update_admins", :id => @user.id }) do |f|
+    = form_for(@user, :url => { :action => "update_admins", :id => @user.id }) do |f|
       = f.error_messages
       .user_admins
         .user_name

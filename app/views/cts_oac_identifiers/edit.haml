@@ -288,7 +288,7 @@
   - else
     Update Annotation
   %p
-  - form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
+  = form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
     = hidden_field_tag 'publication_id',@publication.id
     = hidden_field_tag 'id',@identifier.id
     = hidden_field_tag 'collection',params[:collection]
@@ -335,7 +335,7 @@
     #annotation_form_submit
       -if @identifier[:action] == 'update'
         = button_to "Save"
-        - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
+        = form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
           = hidden_field_tag 'annotation_uri',params[:annotation_uri]
           = hidden_field_tag 'publication_id',@publication.id
           = hidden_field_tag 'id',@identifier.id

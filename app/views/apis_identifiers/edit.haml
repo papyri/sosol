@@ -6,7 +6,7 @@
     %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
     #edit
-      - form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
+      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
         = f.error_messages
         = hidden_field_tag "apis_identifier[xml_content]"
         %h4.category.general

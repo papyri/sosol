@@ -1,6 +1,6 @@
 .create
   %p
-  - form_for :oac_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "cts_oac_identifiers"} do |form|
+  = form_for :oac_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "cts_oac_identifiers"} do |form|
     = hidden_field_tag 'publication_id',params[:publication_id]
     = hidden_field_tag 'version_id',params[:version_id]
     = hidden_field_tag 'target_urn',params[:target_urn]

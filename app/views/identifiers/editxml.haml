@@ -3,7 +3,7 @@
   .site
     = render :partial => 'identifiers/header'
     #edit
-      - form_for @identifier, :url => { :action => :updatexml } do |f|
+      = form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
 
       
