@@ -20,7 +20,7 @@ class Grit::Commit
 end
 
 class Repository
-  attr_reader :master, :path, :repo
+  attr_reader :master, :path, :repo, :jgit_repo
   
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
@@ -44,8 +44,15 @@ class Repository
     @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
     if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
+
+      begin
+        @jgit_repo = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
+      rescue Exception => e
+        Rails.logger.info("JGIT CorruptObjectException: #{e.inspect}")
+      end
     else
       @repo = nil
+      @jgit_repo = nil
     end
   end
   
@@ -62,6 +69,11 @@ class Repository
     # master.update_attribute :has_repository, true
     # create a git repository
     @repo ||= @canonical.fork_bare(path)
+    begin
+      @jgit_repo ||= org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
+    rescue Exception => e
+      Rails.logger.info("JGIT CorruptObjectException: #{e.inspect}")
+    end
   end
   
   def destroy
@@ -83,13 +95,36 @@ class Repository
   #the given file is the filename + path to the file
   def get_blob_from_branch(file, branch = 'master')
     begin
-      #get the tree for the file's directory
-      tree = @repo.tree(branch, [File.dirname(file)])
-      subtree = tree.contents.first
-      return nil if subtree.nil?
-      #get the named object (file's base name) from tree
-      blob = subtree / File.basename(file)
-    rescue Grit::GitRuby::Repository::NoSuchPath
+      if @jgit_repo.nil?
+        # Rails.logger.info("JGIT NIL")
+        return nil
+      end
+      last_commit_id = @jgit_repo.resolve(branch)
+      jgit_tree = org.eclipse.jgit.revwalk.RevWalk.new(@jgit_repo).parseCommit(last_commit_id).getTree()
+      path_filter = org.eclipse.jgit.treewalk.filter.PathFilter.create(file)
+      tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(@jgit_repo)
+      tree_walk.addTree(jgit_tree)
+      tree_walk.setRecursive(true)
+      tree_walk.setFilter(path_filter)
+      if !tree_walk.next()
+        Rails.logger.info("JGIT TREEWALK for #{file} on #{branch}: #{tree_walk}")
+        return nil
+      end
+      # jgit_blob = ""
+      # @jgit_repo.open(tree_walk.getObjectId(0)).copyTo(jgit_blob)
+      # Rails.logger.info("JGIT BLOB: #{jgit_blob}")
+      jgit_blob = ""
+      begin
+        Rails.logger.info("JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name()}")
+        jgit_blob = org.apache.commons.io.IOUtils.toString(@jgit_repo.open(tree_walk.getObjectId(0)).openStream(), "UTF-8")
+      rescue Exception => e
+        Rails.logger.info("JGIT Blob Exception for #{file} on #{branch} in #{path}: #{e.inspect}")
+        return nil
+      end
+      Rails.logger.info("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding("UTF-8").length}")
+      return jgit_blob
+    rescue Exception => e
+      Rails.logger.info("JGIT Exception: #{e.inspect}\n#{caller.join("\n")}")
       return nil
     end
   end
@@ -109,7 +144,7 @@ class Repository
       # data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
       # BALMAS -> above problem was addressed via a patch to the GRIT modules
       # should should be okay now to cal blob.data
-      data = blob.nil? ? nil : blob.data
+      data = blob.nil? ? nil : blob # .data
       return data
     rescue Grit::Git::GitTimeout
       self.class.increase_timeout
@@ -202,9 +237,12 @@ class Repository
   
   def rename_file(original_path, new_path, branch, comment, actor)
     content = get_file_from_branch(original_path, branch)
+    new_blob = get_blob_from_branch(new_path, branch)
+    Rails.logger.info("JGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect}")
+
     if !content
       raise "Rename error: Original file '#{original_path}' does not exist on branch '#{branch}'"
-    elsif get_blob_from_branch(new_path, branch)
+    elsif !new_blob.nil?
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
     
@@ -218,7 +256,7 @@ class Repository
     index.delete(original_path)
 
     index.commit(comment,
-                 @repo.commits(branch,1).first.to_s, # commit parent,
+                 @repo.commits(branch,1), # commit parent,
                  actor,
                  nil,
                  branch)
@@ -229,15 +267,127 @@ class Repository
     if @path == Sosol::Application.config.canonical_repository
       raise "Cannot commit directly to canonical repository" unless (file == CollectionIdentifier.new.to_path)
     end
-    
-    index = @repo.index
-    index.read_tree(branch)
-    index.add(file, data)
-    index.commit(comment,
-                 [@repo.commits(branch,1).first], # commit parent
-                 actor,
-                 nil,
-                 branch)
+
+    begin
+      inserter = @jgit_repo.newObjectInserter()
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, data.to_java_bytes)
+
+      last_commit_id = @jgit_repo.resolve(branch)
+      
+      jgit_tree = org.eclipse.jgit.revwalk.RevWalk.new(@jgit_repo).parseCommit(last_commit_id).getTree()
+      path_filter = org.eclipse.jgit.treewalk.filter.PathFilter.create(File.dirname(file))
+      tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(@jgit_repo)
+      tree_walk.addTree(jgit_tree)
+      tree_walk.setRecursive(true)
+      tree_walk.setFilter(path_filter)
+
+      # insert the leaf tree object with the new blob in it
+      formatter = org.eclipse.jgit.lib.TreeFormatter.new()
+      blob_inserted = false
+      while tree_walk.next()
+        current_file = File.basename(tree_walk.getPathString())
+        Rails.logger.info("JGIT Commit walked: #{current_file}")
+        if (!blob_inserted) && (current_file > File.basename(file))
+          Rails.logger.info("JGIT Commit inserted: #{File.basename(file)}")
+          formatter.append(File.basename(file), org.eclipse.jgit.lib.FileMode::REGULAR_FILE, file_id)
+          blob_inserted = true
+        end
+        formatter.append(current_file, tree_walk.getFileMode(0), tree_walk.getObjectId(0))
+      end
+      if !blob_inserted
+        Rails.logger.info("JGIT Commit inserted: #{File.basename(file)}")
+        formatter.append(File.basename(file), org.eclipse.jgit.lib.FileMode::REGULAR_FILE, file_id)
+      end
+
+      tree_id = inserter.insert(formatter)
+
+      components = File.dirname(file).split("/")
+      # components.pop
+      components.each_index do |i|
+        # for each dir, we need to write a new tree which points to
+        # - all trees
+        # - all blobs
+        current_full_dir = components[0..-(i+1)].join("/")
+        current_parent_dir = components[0..-(i+2)].join("/")
+        current_dir = components[-(i+1)]
+        
+        tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(@jgit_repo)
+        tree_walk.addTree(jgit_tree)
+        tree_walk.setRecursive(true)
+        tree_walk.setPostOrderTraversal(true)
+        if current_parent_dir != ""
+          path_filter = org.eclipse.jgit.treewalk.filter.PathFilter.create(current_parent_dir)
+          tree_walk.setFilter(path_filter)
+        end
+
+        Rails.logger.info("JGIT Commit walking: #{current_full_dir} = #{tree_walk.getTreeCount()}")
+
+        formatter = org.eclipse.jgit.lib.TreeFormatter.new()
+        tree_inserted = false
+        while tree_walk.next()
+          current_file = tree_walk.getPathString()
+          # if tree_walk.isSubtree()
+            # Rails.logger.info("JGIT Subtree: #{current_file}")
+          # end
+          if (current_file.split("/").length == current_full_dir.split("/").length)
+            Rails.logger.info("JGIT Commit walked @ depth #{tree_walk.getDepth()}: #{current_file}")
+            current_file = current_file.split("/")[-1]
+            if (!tree_inserted) && (current_file > current_dir)
+              Rails.logger.info("JGIT Commit inserted: #{current_dir}")
+              formatter.append(current_dir, org.eclipse.jgit.lib.FileMode::TREE, tree_id)
+              tree_inserted = true
+            end
+
+            if (!tree_inserted) && (current_file == current_dir)
+              Rails.logger.info("JGIT Commit inserted: #{current_dir}")
+              formatter.append(current_dir, org.eclipse.jgit.lib.FileMode::TREE, tree_id)
+              tree_inserted = true
+            else
+              formatter.append(current_file, tree_walk.getFileMode(0), tree_walk.getObjectId(0))
+            end
+          else
+            # Rails.logger.info("JGIT Commit skipped: #{current_file} for #{current_full_dir}")
+          end
+        end
+        if !tree_inserted
+          Rails.logger.info("JGIT Commit inserted: #{current_dir}")
+          formatter.append(current_dir, org.eclipse.jgit.lib.FileMode::TREE, tree_id)
+        end
+
+        tree_id = inserter.insert(formatter)
+      end
+
+      person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
+
+      commit = org.eclipse.jgit.lib.CommitBuilder.new()
+      commit.setTreeId(tree_id)
+      commit.setParentId(@jgit_repo.resolve(branch))
+      commit.setAuthor(person_ident)
+      commit.setCommitter(person_ident)
+      commit.setMessage(comment)
+
+      commit_id = inserter.insert(commit)
+      inserter.flush()
+
+      Rails.logger.info("JGIT COMMIT before: #{@jgit_repo.resolve(branch).name()}")
+      ref_update = @jgit_repo.updateRef(branch)
+      # ref_update.setForceUpdate(true)
+      ref_update.setRefLogIdent(person_ident)
+      ref_update.setNewObjectId(commit_id)
+      ref_update.setExpectedOldObjectId(@jgit_repo.resolve(branch))
+      # ref_update.setExpectedOldObjectId(org.eclipse.jgit.lib.ObjectId.zeroId())
+      ref_update.setRefLogMessage("commit: #{comment}", false)
+
+      result = ref_update.update()
+      Rails.logger.info("JGIT COMMIT #{file} = #{file_id.name()} on #{branch} = #{tree_id.name()} comment '#{comment}' = #{commit_id.name()}: #{result.toString()}")
+
+      Rails.logger.info("JGIT COMMIT after: #{@jgit_repo.resolve(branch).name()}")
+      self.get_blob_from_branch(file, branch)
+      return commit_id.name()
+    rescue Exception => e
+      Rails.logger.info("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
+      return nil
+    end
   end
   
   def self.increase_timeout
