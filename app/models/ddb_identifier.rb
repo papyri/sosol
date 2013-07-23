@@ -247,7 +247,7 @@ class DDBIdentifier < Identifier
     # otherwise, return nil (client can then get_broken_leiden)
     if get_broken_leiden(original_xml_content).nil?
       # get div type=edition from XML in string format for conversion
-      abs = DDBIdentifier.get_div_edition(original_xml).to_s
+      abs = DDBIdentifier.get_div_edition(original_xml).join('')
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       

@@ -8,3 +8,4 @@ doc/guides
 doc/plugins
 db/*.sqlite3
 protosite.war
+lib/rxsugar
