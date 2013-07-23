@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :community_admins,  :class_name => "Community", :association_foreign_key => "community_id", :foreign_key => "user_id", :join_table => "communities_admins"
 
   
-  has_and_belongs_to_many :boards
+  has_many :boards, :through => :boards_users
   has_many :finalizing_boards, :class_name => 'Board', :foreign_key => 'finalizer_user_id'
   
   has_and_belongs_to_many :emailers

@@ -6,7 +6,8 @@ class Board < ActiveRecord::Base
   
   has_many :votes
   
-  has_and_belongs_to_many :users
+  has_many :boards_users
+  has_many :users, :through => :boards_users
   belongs_to :finalizer_user, :class_name => 'User'
   
   has_many :publications, :as => :owner, :dependent => :destroy
