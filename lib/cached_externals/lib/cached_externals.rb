@@ -103,7 +103,7 @@ Capistrano::Configuration.instance.load do
         scm.query_revision(options[:revision]) { |cmd| `#{cmd}` }
       rescue => scm_error
         $stderr.puts scm_error
-        next
+        return
       end
 
     destination = File.join(shared_dir, revision.to_s)
