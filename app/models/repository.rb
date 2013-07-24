@@ -330,7 +330,7 @@ class Repository
             # Rails.logger.info("JGIT Subtree: #{current_file}")
           # end
           if (current_file.split("/").length == current_full_dir.split("/").length)
-            Rails.logger.info("JGIT Commit walked @ depth #{tree_walk.getDepth()}: #{current_file}")
+            # Rails.logger.info("JGIT Commit walked @ depth #{tree_walk.getDepth()}: #{current_file}")
             current_file = current_file.split("/")[-1]
             if (!tree_inserted) && (current_file > current_dir)
               Rails.logger.info("JGIT Commit inserted: #{current_dir}")
