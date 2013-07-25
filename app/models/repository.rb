@@ -88,7 +88,7 @@ class Repository
     
     canon = Repository.new
     canon.del_alternates(self)
-    FileUtils::rm_r path, :verbose => false
+    `rm -r #{path}`
   end
   
   #returns the blob that represents the given file
