@@ -41,7 +41,7 @@ class PublicationTest < ActiveSupport::TestCase
     end
     
     should "have a branch with its branch attribute" do
-      assert @user.repository.branches.include?(@publication.branch)
+      assert @user.repository.branches.include?(@publication.branch), "#{@user.repository.branches.inspect} does not include #{@publication.branch}"
     end
     
     should "delete its branch upon destruction" do

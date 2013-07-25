@@ -232,7 +232,7 @@ class Repository
   end
   
   def branches
-    @repo.branches.map{|b| b.name}
+    org.eclipse.jgit.api.Git.new(@jgit_repo).branchList().call().map{|e| e.getName().sub(/^refs\/heads\//,'')}
   end
   
   def rename_file(original_path, new_path, branch, comment, actor)
