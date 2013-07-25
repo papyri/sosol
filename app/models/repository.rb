@@ -185,7 +185,7 @@ class Repository
       source_name = @repo.get_head(source_name).commit.id
     end
     
-    @repo.update_ref(name, source_name)
+    org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).call()
   end
   
   def delete_branch(name)
