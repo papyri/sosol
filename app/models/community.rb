@@ -4,7 +4,8 @@
 class Community < ActiveRecord::Base
   
   has_and_belongs_to_many :members, :class_name => "User", :association_foreign_key => "user_id", :foreign_key => "community_id", :join_table => "communities_members"
-  has_and_belongs_to_many :admins, :class_name => "User",  :association_foreign_key => "user_id", :foreign_key => "community_id", :join_table => "communities_admins"
+  has_many :communities_admins
+  has_many :admins, :class_name => "User", :source => :user, :foreign_key => "community_id", :through => :communities_admins
   
   
   has_many :boards , :dependent => :destroy 
