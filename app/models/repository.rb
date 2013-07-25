@@ -292,7 +292,9 @@ class Repository
           formatter.append(File.basename(file), org.eclipse.jgit.lib.FileMode::REGULAR_FILE, file_id)
           blob_inserted = true
         end
-        formatter.append(current_file, tree_walk.getFileMode(0), tree_walk.getObjectId(0))
+        if current_file != File.basename(file)
+          formatter.append(current_file, tree_walk.getFileMode(0), tree_walk.getObjectId(0))
+        end
       end
       if !blob_inserted
         Rails.logger.info("JGIT Commit inserted: #{File.basename(file)}")
