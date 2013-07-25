@@ -189,7 +189,7 @@ class Repository
   end
   
   def delete_branch(name)
-    @repo.git.fs_delete("refs/heads/#{name}")
+    org.eclipse.jgit.api.Git.new(@jgit_repo).branchDelete().setBranchNames("refs/heads/#{name}").setForce(true).call()
   end
   
   #(from_branch, to_branch, from_repo)
