@@ -126,6 +126,7 @@ class JGitTree
   end
 
   def del(path)
+    Rails.logger.info("JGIT del for #{path}")
     # takes a path relative to this tree and removes it
     components = path.split('/')
     if components.length > 1 # need to recurse
@@ -427,20 +428,32 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
     
-    index = @repo.index
-    index.read_tree(branch)
+    person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
+    # TODO: just get the object id instead of reinserting
+    inserter = @jgit_repo.newObjectInserter()
+    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_bytes)
+    inserter.flush()
+
+    jgit_tree = JGitTree.new()
+    jgit_tree.load_from_repo(@jgit_repo, branch)
+    jgit_tree.add_blob(new_path, file_id.name())
+    jgit_tree.del(original_path)
+    jgit_tree.commit(comment, person_ident)
+
+    # index = @repo.index
+    # index.read_tree(branch)
     # do the rename here, against index.tree
     # rename is just a simultaneous add/delete
     # add the new data
-    index.add(new_path, content)
+    # index.add(new_path, content)
     # remove the old path from the tree
-    index.delete(original_path)
+    # index.delete(original_path)
 
-    index.commit(comment,
-                 @repo.commits(branch,1), # commit parent,
-                 actor,
-                 nil,
-                 branch)
+    # index.commit(comment,
+                 # @repo.commits(branch,1), # commit parent,
+                 # actor,
+                 # nil,
+                 # branch)
   end
   
   # Returns a String of the SHA1 of the commit
