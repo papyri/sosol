@@ -74,6 +74,37 @@ class JGitTree
     # if we're a tree, read the current tree
   end
 
+  def commit(comment, person_ident)
+    if parent.nil?
+      inserter = repo.newObjectInserter()
+
+      commit = org.eclipse.jgit.lib.CommitBuilder.new()
+      commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(self.update_sha))
+      commit.setParentId(repo.resolve(branch))
+      commit.setAuthor(person_ident)
+      commit.setCommitter(person_ident)
+      commit.setMessage(comment)
+
+      commit_id = inserter.insert(commit)
+      inserter.flush()
+
+      Rails.logger.info("JGIT COMMIT before: #{repo.resolve(branch).name()}")
+      ref_update = repo.updateRef(branch)
+      ref_update.setRefLogIdent(person_ident)
+      ref_update.setNewObjectId(commit_id)
+      ref_update.setExpectedOldObjectId(repo.resolve(branch))
+      ref_update.setRefLogMessage("commit: #{comment}", false)
+
+      result = ref_update.update()
+      Rails.logger.info("JGIT COMMIT on #{branch} = #{self.sha} comment '#{comment}' = #{commit_id.name()}: #{result.toString()}")
+
+      Rails.logger.info("JGIT COMMIT after: #{repo.resolve(branch).name()}")
+      return commit_id.name()
+    else
+      return root.commit(comment, person_ident)
+    end
+  end
+
   def add(path, sha, mode)
     # Rails.logger.info("JGITTREE: Add for #{path}")
     # takes a path relative to this tree and adds it
@@ -430,31 +461,7 @@ class Repository
 
       person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
 
-      commit = org.eclipse.jgit.lib.CommitBuilder.new()
-      commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(jgit_tree.update_sha))
-      commit.setParentId(@jgit_repo.resolve(branch))
-      commit.setAuthor(person_ident)
-      commit.setCommitter(person_ident)
-      commit.setMessage(comment)
-
-      commit_id = inserter.insert(commit)
-      inserter.flush()
-
-      Rails.logger.info("JGIT COMMIT before: #{@jgit_repo.resolve(branch).name()}")
-      ref_update = @jgit_repo.updateRef(branch)
-      # ref_update.setForceUpdate(true)
-      ref_update.setRefLogIdent(person_ident)
-      ref_update.setNewObjectId(commit_id)
-      ref_update.setExpectedOldObjectId(@jgit_repo.resolve(branch))
-      # ref_update.setExpectedOldObjectId(org.eclipse.jgit.lib.ObjectId.zeroId())
-      ref_update.setRefLogMessage("commit: #{comment}", false)
-
-      result = ref_update.update()
-      Rails.logger.info("JGIT COMMIT #{file} = #{file_id.name()} on #{branch} = #{jgit_tree.sha} comment '#{comment}' = #{commit_id.name()}: #{result.toString()}")
-
-      Rails.logger.info("JGIT COMMIT after: #{@jgit_repo.resolve(branch).name()}")
-      self.get_blob_from_branch(file, branch)
-      return commit_id.name()
+      jgit_tree.commit(comment, person_ident)
     rescue Exception => e
       Rails.logger.info("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
       return nil
