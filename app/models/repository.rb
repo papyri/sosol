@@ -75,11 +75,14 @@ class JGitTree
   end
 
   def add(path, sha, mode)
-    # puts "Add for #{path}"
+    # Rails.logger.info("JGITTREE: Add for #{path}")
     # takes a path relative to this tree and adds it
     components = path.split('/')
     if components.length > 1 # need to recurse
-      if nodes[components.first].nodes.length == 0 # need to load this subtree first
+      if !nodes.has_key?(components.first) # creating a new tree
+        nodes[components.first] = JGitTree.new()
+        nodes[components.first].parent = self
+      elsif nodes[components.first].nodes.length == 0 # need to load this subtree first
         nodes[components.first].load_from_repo(self.root.repo, self.root.branch, nodes[components.first].path)
       end
       nodes[components.first].add(components[1..-1].join('/'), sha, mode)
