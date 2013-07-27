@@ -790,13 +790,28 @@ class Publication < ActiveRecord::Base
     # adding controlled path blobs, then writing the modified tree
     # (happens on the finalizer's repo)
     finalizer.repository.update_master_from_canonical
-    index = finalizer.repository.repo.index
-    index.read_tree('master')
-    controlled_paths_blobs.each_pair do |path, blob|
-      index.add(path, blob)
-    end
     
-    tree_sha1 = index.write_tree(index.tree, index.current_tree)
+
+    jgit_tree = JGitTree.new()
+    jgit_tree.load_from_repo(finalizer.repository.jgit_repo, 'master')
+    inserter = finalizer.repository.jgit_repo.newObjectInserter()
+    controlled_paths_blobs.each_pair do |path, blob|
+      unless blob.nil?
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_bytes)
+        jgit_tree.add_blob(path, file_id.name())
+      end
+    end
+    inserter.flush()
+
+    tree_sha1 = jgit_tree.update_sha
+    
+    # index = finalizer.repository.repo.index
+    # index.read_tree('master')
+    # controlled_paths_blobs.each_pair do |path, blob|
+      # index.add(path, blob)
+    # end
+    
+    # tree_sha1 = index.write_tree(index.tree, index.current_tree)
     Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
     # tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
     
