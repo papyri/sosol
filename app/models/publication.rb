@@ -574,8 +574,7 @@ class Publication < ActiveRecord::Base
         self.save!
         # save succeeded, so perform actual git change
         # branch from the original branch
-        self.owner.repository.create_branch(new_branch_name,
-          self.owner.repository.repo.get_head(old_branch_name).commit.sha)
+        self.owner.repository.create_branch(new_branch_name, old_branch_name)
         # delete the original branch
         self.owner.repository.delete_branch(old_branch_name)
       end
@@ -935,7 +934,15 @@ class Publication < ActiveRecord::Base
   end
   
   def head
-    self.owner.repository.repo.get_head(self.branch).commit.sha
+    full_branch = ""
+    unless self.parent.nil?
+      full_branch += "refs/remotes/" + self.parent.owner.class.to_s.underscore.pluralize + "/"
+    end
+    full_branch +=  self.branch
+    Rails.logger.debug("head called for #{full_branch} with branches #{self.repository.branches.join(' ')} in #{self.repository.path}")
+    resolve = self.owner.repository.jgit_repo.resolve(full_branch)
+    Rails.logger.debug("head called got: #{resolve.inspect}")
+    resolve.name()
   end
   
   def merge_base(branch = 'master')
@@ -959,7 +966,6 @@ class Publication < ActiveRecord::Base
       Rails.logger.info "====creators publication begining finalize=="
       @publication.origin.log_info
 =end            
-        
       #determine where to get data to build the index, 
       # controlled paths are from the finalizer (this) publication
       # uncontrolled paths are from the origin publication
@@ -999,32 +1005,45 @@ class Publication < ActiveRecord::Base
       end
 =end
 
+    jgit_tree = JGitTree.new()
+    jgit_tree.load_from_repo(self.origin.owner.repository.jgit_repo, self.origin.branch)
+    inserter = self.origin.owner.repository.jgit_repo.newObjectInserter()
+    controlled_paths_blobs.merge(uncontrolled_paths_blobs).each_pair do |path, blob|
+      unless blob.nil?
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_bytes)
+        jgit_tree.add_blob(path, file_id.name())
+      end
+    end
+    inserter.flush()
+
+    jgit_tree.commit(commit_comment, committer_user)
+
       #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-      origin_index = self.origin.owner.repository.repo.index
-      origin_index.read_tree('master')
+     #  origin_index = self.origin.owner.repository.repo.index
+     #  origin_index.read_tree('master')
       
-      Rails.logger.debug "=======orign INDEX before add========"
-      Rails.logger.debug origin_index.inspect
+     #  Rails.logger.debug "=======orign INDEX before add========"
+     #  Rails.logger.debug origin_index.inspect
       
       
-      #add the controlled paths to the index
-      controlled_paths_blobs.each_pair do |path, blob|
-         origin_index.add(path, blob.data)
-         Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-      end
+     #  #add the controlled paths to the index
+     #  controlled_paths_blobs.each_pair do |path, blob|
+     #     origin_index.add(path, blob.data)
+     #     Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
+     #  end
       
-      #need to add exiting tree to index, except for controlled blobs
-      uncontrolled_paths_blobs.each_pair do |path, blob|
-          origin_index.add(path, blob.data)
-          Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-      end
+     #  #need to add exiting tree to index, except for controlled blobs
+     #  uncontrolled_paths_blobs.each_pair do |path, blob|
+     #      origin_index.add(path, blob.data)
+     #      Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
+     #  end
       
 
-      Rails.logger.debug "=======orign INDEX after add========"
-      Rails.logger.debug origin_index.inspect
+     #  Rails.logger.debug "=======orign INDEX after add========"
+     #  Rails.logger.debug origin_index.inspect
  
-     #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-      origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
+     # #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
+     #  origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
      
      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
 
