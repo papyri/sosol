@@ -194,7 +194,7 @@ class HGVMetaIdentifier < HGVIdentifier
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
 
     epidoc = set_epidoc_attributes
-    puts epidoc
+    Rails.logger.debug epidoc
 
     #set_content does not validate xml (which is what epidoc is)
     #self.set_content(epidoc, :comment => comment)

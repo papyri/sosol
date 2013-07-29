@@ -175,7 +175,7 @@ class REXML::Element
     head = nil
 
     if element.elements[xpath].class != REXML::Element
-      puts "unable to find xpath #{xpath}"
+      Rails.logger.debug("unable to find xpath #{xpath}")
       element.to_s
       lumps = REXML::XPath::breakXpathIntoLumps xpath
       lumps.each do |lump|
