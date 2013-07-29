@@ -11,16 +11,17 @@ class CtsOacIdentifiersController < IdentifiersController
       if (annotation.nil?)
         flash[:error] = "Annotation #{annotation_uri} not found"
         redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-      elsif (@identifier.get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
+      elsif (OacHelper::get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
         flash[:error] = "You can only edit annotations you created"
         redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
       else
         @identifier[:action] = 'update'
         params[:annotation_uri] = annotation_uri
-        params[:annotation_title] = @identifier.get_title(annotation)
-        params[:body_uri] = @identifier.get_body(annotation)
+        params[:annotation_title] = OacHelper::get_title(annotation)
+        params[:body_uri] = OacHelper::get_body(annotation)
         index = 1
-        targets = @identifier.get_targets(annotation)
+        targets = OacHelper::get_targets(annotation)
+        Rails.logger.info("TAGG #{targets.inspect}")
         targets.each do |tgt|
           params["target_uri#{index}"] = tgt
           index = index+1
@@ -106,7 +107,7 @@ class CtsOacIdentifiersController < IdentifiersController
       Rails.logger.error("Updating invalid annotation uri #{annotation_uri}")
       flash[:error] = "Annotation #{annotation_uri} not found"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-    elsif (@identifier.get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
+    elsif (OacHelper::get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
       Rails.logger.error("Updating unauthorized annotation uri #{annotation_uri}")
       flash[:error] = "You can only edit annotations you created"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
@@ -131,7 +132,7 @@ class CtsOacIdentifiersController < IdentifiersController
       Rails.logger.error("Deleting invalid annotation uri #{annotation_uri}")
       flash[:error] = "Annotation #{annotation_uri} not found"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-    elsif (@identifier.get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
+    elsif (OacHelper::get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
       Rails.logger.error("Deleting unauthorized annotation uri #{annotation_uri}")
       flash[:error] = "You can only delete annotations you created"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return

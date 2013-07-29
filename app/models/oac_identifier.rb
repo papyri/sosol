@@ -4,7 +4,7 @@ class OACIdentifier < Identifier
   
   PATH_PREFIX = 'XML_OAC'
   IDENTIFIER_NAMESPACE = 'oac'
-  FRIENDLY_NAME = 'Annotations'
+  FRIENDLY_NAME = 'Text Annotations'
   TEMPORARY_COLLECTION = 'TempAnnotations'
   TEMPORARY_TITLE = 'Annotations'
   XML_VALIDATOR = JRubyXML::RDFValidator
@@ -79,10 +79,10 @@ class OACIdentifier < Identifier
   
   # test to see if any annotations have been added to the oac.xml file yet
   def has_anyannotation?()
-    xpath = "/rdf:RDF/oac:Annotation"
+    all = get_all_annotations(self.rdf)
     hasany = false
     begin
-      if ! REXML::XPath.first(self.rdf, xpath).nil?
+      if ! all.first.nil?
         hasany = true
       end
     rescue Exception => e
@@ -94,32 +94,35 @@ class OACIdentifier < Identifier
   
   # get the requested annotation by uri from the oac.xml 
   def get_annotation(a_uri)
-    xpath = "/rdf:RDF/oac:Annotation[@rdf:about='#{a_uri}']"
-    REXML::XPath.first(self.rdf, xpath)          
+   OacHelper::get_annotation(self.rdf,a_uri)          
   end
   
   # look for Annotations whose target resource matches the targetUriMatch string
   # targeUriMatch is expected to be a properly quoted regex string
   def matching_targets(targetUriMatch,creatorUri)
     matches = []
-    xpath = "/rdf:RDF/oac:Annotation[dcterms:creator/foaf:Agent[@rdf:about =  '#{creatorUri}']]"
-    REXML::XPath.each(self.rdf, xpath) { |el| 
-      annot_id = el.attributes['rdf:about']
-      REXML::XPath.each(el, "oac:hasTarget/@rdf:resource" ) { |tgt|  
-        Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
-        if tgt.value =~ /#{targetUriMatch}/ 
-          Rails.logger.info("Matched")
-          match = Hash.new
-          match['id'] = annot_id
-          match['target'] = tgt.value
-          matches << match   
-        end
-      }
+    Rails.logger.info("ALL #{OacHelper::get_all_annotations(self.rdf).inspect}")
+    OacHelper::get_all_annotations(self.rdf).each() { |el|
+      Rails.logger.info("checking #{OacHelper::get_creator(el)}")
+      if (OacHelper::get_creator(el) == creatorUri) 
+        annot_id = el.attributes['rdf:about']
+        OacHelper::get_targets(el).each() { |tgt|
+          Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
+          if tgt =~ /#{targetUriMatch}/ 
+            Rails.logger.info("Matched")
+            match = Hash.new
+            match['id'] = annot_id
+            match['target'] = tgt
+            matches << match   
+          end
+        }
+      end
     }
     return matches
   end
   
   # check to see if the supplied target is already used for any of the annotations owned by the requesting user
+  ## USED ONLY IN TESTS NEEDS TO BE REDONE FOR NAMESPACE
   def has_target?(targetUri,creatorUri)
     has_target = false
     if (self.has_anyannotation?)
@@ -127,8 +130,8 @@ class OACIdentifier < Identifier
       # /rdf:RDF/oac:Annotation[oac:Target] succeeds
       # /rdf:RDF/oac:Annotation[dcterms:creator] succeeds
       # but /rdf:RDF/oac:Annotation[oac:Target and dcterms:creator] fails
-      xpath = "/rdf:RDF/oac:Annotation[oac:hasTarget[@rdf:resource = '#{targetUri}']]"
-      REXML::XPath.each(self.rdf, xpath) { |el|
+      xpath = "//oa:Annotation[oa:hasTarget[@rdf:resource = '#{targetUri}']]"
+      REXML::XPath.each(self.rdf, xpath, {"oac"=> NS_OACOLD,"oa" => NS_OAC}) { |el|
         if el.get_elements("dcterms:creator/foaf:Agent[@rdf:about =  '#{creatorUri}']").length == 1
            has_target = true
         end
@@ -156,8 +159,7 @@ class OACIdentifier < Identifier
   
   # update a pre-existing annotation in the oac.xml file
   def update_annotation(annot_uri,target_uris,body_uri,title,creator_uri,comment)
-    xpath = "/rdf:RDF/oac:Annotation[@rdf:about = '#{annot_uri}']"
-    annot = REXML::XPath.first(self.rdf, xpath) 
+    annot = OacHelper::get_annotation(self.rdf,annot_uri) 
     if (annot.nil?)
       Rails.logger.info("Not found #{annot_uri}")
       Rails.logger.info(toXmlString self.rdf)
@@ -178,11 +180,10 @@ class OACIdentifier < Identifier
   
   # add a new annotation to the oac.xml file
   def add_annotation(annot_uri,target_uris,body_uri,title,creator_uri,comment)
-    xpath = "/rdf:RDF/oac:Annotation[@rdf:about = '#{annot_uri}']"
-    unless (REXML::XPath.first(self.rdf, xpath).nil?)
+    exists = OacHelper::get_annotation(self.rdf,annot_uri)
+    unless (exists.nil?)
       raise "An annotation identified by #{annot_uri} already exists."
     end
-    self.rdf.elements.delete_all xpath
     self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,title,creator_uri))
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
@@ -191,9 +192,8 @@ class OACIdentifier < Identifier
   
   # delete an existing annotation from the oac.xml file
   def delete_annotation(annot_uri,comment)
-    xpath = "/rdf:RDF/oac:Annotation[@rdf:about = '#{annot_uri}']"
-    self.rdf.elements.delete_all xpath
-    unless (REXML::XPath.first(self.rdf, xpath).nil?)
+    OacHelper::remove_annotation(self.rdf,annot_uri)
+    unless (OacHelper::get_annotation(self.rdf,annot_uri).nil?)
       raise "Unable to delete #{annot_uri}."
     end
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
@@ -223,7 +223,8 @@ class OACIdentifier < Identifier
     # specific string (e.g. http://data.perseus.org/annotations/sosol1/) but this may not be a good
     # approach for a distributed environment. 
     max = 1
-    REXML::XPath.each(self.rdf, "//oac:Annotation") { |el|
+    all = OacHelper::get_all_annotations(self.rdf)
+    all.each { |el|
       annot_id = el.attributes['rdf:about']
       num_this_creator = annot_id.split(/\//).last.to_i
       if (num_this_creator > max)

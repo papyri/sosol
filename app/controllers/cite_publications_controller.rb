@@ -20,11 +20,14 @@ class CitePublicationsController < PublicationsController
       redirect_to dashboard_url
       return
     end
+    
     identifier_name = "#{params[:type]}CiteIdentifier"
+    identifier_name.constantize::IDENTIFIER_NAMESPACE
     identifier_class = Object.const_get(identifier_name)
     
     # other optional inputs
     ## params[:init_value]  - some string value to use to initialize the object
+    ## params[:pub] - publication title
     
     @publication = nil
     ## if urn and key value are supplied we need to check to see if the requested object exists before
@@ -38,14 +41,19 @@ class CitePublicationsController < PublicationsController
                        :conditions => ["name like ?", "#{lookup_id}%"],
                        :order => "name DESC")
         Rails.logger.info("found possible conflicts #{possible_conflicts.inspect}")
-        actual_conflicts = possible_conflicts.select {|pc| 
-          ((pc.publication) && 
-           (pc.publication.owner == @current_user) && 
-           !(%w{archived finalized}.include?(pc.publication.status)) &&
-           pc.is_match?(params[:init_value])
-          )
-        }
-        existing_identifiers += actual_conflicts
+        
+          actual_conflicts = possible_conflicts.select {|pc| 
+            begin
+              ((pc.publication) && 
+               (pc.publication.owner == @current_user) && 
+               !(%w{archived finalized}.include?(pc.publication.status)) &&
+               pc.is_match?(params[:init_value])
+              )
+            rescue Exception => e
+              Rails.logger.error("Error checking for conflicts #{pc.inspect} : #{e}")
+            end
+          }
+          existing_identifiers += actual_conflicts
       end
       # all we have is a collection urn so we must want to create a new object
     elsif (is_object_urn?(params[:urn]))
@@ -58,7 +66,11 @@ class CitePublicationsController < PublicationsController
         flash[:error] = 'Error creating publication: multiple conflicting identifiers'
         flash[:error] += '<ul>'
         existing_identifiers.each do |conf_id|
-          flash[:error] += "<li><a href='#{url_for(conf_id)}'>#{conf_pub.name}</a></li>"
+          begin
+            flash[:error] += "<li><a href='#{url_for(conf_id)}'>#{conf_id}</a></li>"
+          rescue
+            flash[:error] += "<li>#{conf_id}</li>"
+          end
         end
         flash[:error] += '</ul>'
         redirect_to dashboard_url
@@ -83,22 +95,46 @@ class CitePublicationsController < PublicationsController
       ## we will always create a new version in the master repo, just a question of 
       ## whether we start fresh or from an existing object
       # fetch a title without creating from template
-      @publication.title = identifier_class.new(:name => identifier_class.next_object_identifier(params[:urn])).name
+      
+      if (params[:pub])
+        @publication.title = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + params[:pub].gsub!(/[^\w\.]/,'_')
+      else
+        now = Time.now
+        lookup_path = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + now.year.to_s + now.mon.to_s + now.day.to_s
+        latest = Publication.find(:all,
+                       :conditions => ["title like ?", "#{lookup_path}%"],
+                       :order => "title DESC",
+                       :limit => 1).first
+        if latest.nil?
+          incr = 1
+        else  
+          incr = latest.title.split('/').last.to_i + 1
+        end
+        @publication.title = lookup_path + "/" + incr.to_s  
+      end
+      
+      Rails.logger.info("Saving new Publication #{@publication.title}")
       @publication.status = "new"
       @publication.save!
     
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
       
-      
-      if is_collection_urn
-        # we are creating a new object
-        new_cite = identifier_class.new_from_template(@publication,params[:urn],params[:init_value])
-      else
-        # we are creating a new version of an existing object
-        new_cite = identifier_class.new_from_inventory(@publication,params[:urn])
+      begin
+        if is_collection_urn
+          # we are creating a new object
+          new_cite = identifier_class.new_from_template(@publication,params[:urn],params[:init_value])
+        else
+          # we are creating a new version of an existing object
+          new_cite = identifier_class.new_from_inventory(@publication,params[:urn])
+        end
+        flash[:notice] = 'Publication was successfully created.'      
+      rescue Exception => e
+        @publication.destroy
+        flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s
+        redirect_to dashboard_url
+        return
       end
-      flash[:notice] = 'Publication was successfully created.'      
     else
       new_cite = existing_identifiers.first
       flash[:notice] = 'Edit existing publication.'   

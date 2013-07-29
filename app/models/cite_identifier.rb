@@ -75,6 +75,11 @@ class CiteIdentifier < Identifier
     return temp_id
   end
   
+  # get a temporary identifier - use for parent publication only
+  def self.next_temporary_identifier(a_collection_urn)
+   
+  end
+  
   # returns the next identifier for a new object in a collection
   def self.next_object_identifier(a_collection_urn)
     lookup_path = self.path_for_collection(a_collection_urn)
@@ -173,7 +178,7 @@ class CiteIdentifier < Identifier
     # e.g. CITE_OAC_XML/perseus/mycoll
     collection_path = File.join(path_components)
     tree = self.publication.repository.repo.tree('master', [collection_path])
-    return ! tree.contents.first.nil?
+    exists = ! tree.contents.first.nil?
   end
   
   def to_path

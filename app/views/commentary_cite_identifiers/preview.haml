@@ -1,0 +1,26 @@
+= stylesheet_link_tag 'pagedown'
+= javascript_include_tag 'pagedown/Markdown.Converter'
+= javascript_include_tag 'pagedown/Markdown.Sanitizer'
+= javascript_include_tag 'pagedown/Markdown.Editor'
+= javascript_include_tag 'comm-cite'
+= javascript_include_tag 'confirm'
+
+:javascript 
+  document.observe("dom:loaded", function() {    
+    var converter = new Markdown.getSanitizingConverter();
+    var textElem = $("oac_cnt_chars")
+    var ptext = converter.makeHtml(textElem.innerHTML);
+    textElem.innerHTML=ptext
+  });
+  
+#main
+  = render :partial => 'identifiers/edit_bar'
+
+  .site
+    #edit
+      - form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages
+        %h2 Preview
+        .PContent
+          = @identifier[:html_preview]
+       

@@ -7,10 +7,6 @@ body {
 	background-color:
 }
 
-.publication_list_holder table.results tr:first-child{
-	display:none;
-}
-
 .publication_list_holder table.results tr {
 	line-height: 1em !important;
 }
@@ -145,6 +141,7 @@ li.editor_menu {
 .oac_annotation .label {
 	font-weight: bold;
 	font-style:italic;
+	padding-right: .5em;
 }
 
 
@@ -179,4 +176,35 @@ li.editor_menu {
 .annotation_header {
 	font-weight: bold;
 	margin-bottom: .5em;
+}
+
+.edit_commentary_cite_identifier .targets {
+	padding: 0 3em;
+}
+
+.edit_commentary_cite_identifier .targets .oac_label {
+	font-style: italic;
+}
+
+.edit_commentary_cite_identifier .targets .oac_target {
+	margin-left: .5em;
+}
+
+.edit_commentary_cite_identifier #edit-panel {
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	border: 1px solid black;
+	padding: 1em;
+	background-color: white;
+}
+
+.PContent .oac_target {
+	margin-left: 1em;
+}
+
+.PContent #oac_cnt_chars {
+	padding: 1em 2em 2em 1em;
+	border: 1px dashed black;
 }

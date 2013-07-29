@@ -24,12 +24,14 @@ class CommentaryCiteIdentifierTest < ActiveSupport::TestCase
       test1 = CommentaryCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll","urn:cts:test")
       assert test1.urn_attribute == "urn:cite:perseus:testcoll.1.1"
       test2 = CommentaryCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll","urn:cts:test")
+      test3 = CommentaryCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll","urn:cts:test:1.1-1.2")
       assert test2.urn_attribute == "urn:cite:perseus:testcoll.2.1"
       next_version = CommentaryCiteIdentifier.next_version_identifier(test2.urn_attribute)
       Rails.logger.info("Next Version = #{next_version}")
       assert next_version == "cite/perseus/testcoll.2.2"
       assert !test1.is_match?('perseus:citations/urn:cts:latinLit:phi0959.phi006:1.253-1.415')
       assert test1.is_match?('urn:cts:test')
+      assert ! test3.is_match?('urn:cts:test:1.1-1.3')
    end  
    
    should "create object 1.1" do 

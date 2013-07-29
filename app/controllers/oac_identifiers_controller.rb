@@ -7,7 +7,7 @@ class OacIdentifiersController < IdentifiersController
     if (params[:annotation_uri])
       annotation = @identifier.get_annotation(params[:annotation_uri])
       unless (annotation.nil?)
-        target_uris = @identifier.get_targets(annotation)
+        target_uris = OacHelper::get_targets(annotation)
         Rails.logger.info("Found #{target_uris.inspect}")
         if (target_uris.grep(/^.*?\/urn:cts/).size == target_uris.size)
           redirect_to :controller => "cts_oac_identifiers", :action=> "edit", :annotation_uri => params[:annotation_uri] and return

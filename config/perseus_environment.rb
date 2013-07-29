@@ -49,7 +49,6 @@ Rails::Initializer.run do |config|
   end
   
   config.gem "shoulda", :version => ">= 2.11.3"
-  EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 
   config.gem "factory_girl", :version => "~> 1.2.2"
   
@@ -104,14 +103,16 @@ Rails::Initializer.run do |config|
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
   
-SITE_NAME = 'Philologist'
-SITE_FULL_NAME = 'Philologist'
+SITE_NAME = 'Perseids'
+SITE_FULL_NAME = 'Perseids'
 SITE_TAG_LINE = 'powered by Son of Suda Online'
+SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
 SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'
 SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
 SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "data.perseus.org"
+SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosol1"
 EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 
   

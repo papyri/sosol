@@ -5,16 +5,65 @@ module OacHelper
   NS_DCTERMS = "http://purl.org/dc/terms/"  
   NS_DC = "http://purl.org/dc/elements/1.1/"
   NS_FOAF = "http://xmlns.com/foaf/0.1/"  
-  NS_OAC = "http://www.w3.org/ns/oa#"  
+  NS_OAC = "http://www.w3.org/ns/oa#" 
+  NS_OACOLD = "http://www.openannotation.org/ns/" 
   NS_CONTENT = "http://www.w3.org/2008/content#"
+ 
+  
+  # get the annotation identified by requested uri from the supplied document
+  def self.get_annotation(a_doc,a_uri)
+    xpath = "//oa:Annotation[@rdf:about='#{a_uri}']"
+    annot = REXML::XPath.first(a_doc, xpath,{"oa"=>NS_OAC})
+    if (annot.nil?)
+      xpath = "//oac:Annotation[@rdf:about='#{a_uri}']"
+      annot = REXML::XPath.first(a_doc, xpath,{"oac"=>NS_OACOLD}) 
+    end     
+    return annot     
+  end
+  
+    # get the first annotation from the supplied document
+  def self.get_first_annotation(a_doc)
+    xpath = "//oa:Annotation"
+    annot = REXML::XPath.first(a_doc, xpath,{"oa"=>NS_OAC})
+    if (annot.nil?)
+      xpath = "//oac:Annotation"
+      annot = REXML::XPath.first(a_doc, xpath,{"oac"=>NS_OACOLD}) 
+    end     
+    return annot     
+  end
+  
+  # get all the annotations from the supplied document
+  def self.get_all_annotations(a_doc)
+    xpath = "//oa:Annotation"
+    all = REXML::XPath.match(a_doc,xpath,{"oa"=>NS_OAC} )
+    if (all.size == 0)
+      xpath = "//oac:Annotation"
+      all = REXML::XPath.match(a_doc,xpath,{"oac"=>NS_OACOLD})
+    end       
+    return all
+  end
+  
+  # delete the annotiation identified by the uri from the supplied document
+  def self.remove_annotation(a_doc,a_uri)
+    xpath = "//oa:Annotation[@rdf:about = '#{annot_uri}']"
+    doc.elements.delete_all xpath, {"oa" => NS_OAC}
+    xpath = "//oac:Annotation[@rdf:about = '#{annot_uri}']"
+    doc.elements.delete_all xpath, {"oac" => NS_OACOLD}
+  end
   
   # get the target uris from the supplied annotation
   def self.get_targets(a_annotation)
-    xpath = "oac:hasTarget/@rdf:resource"
     uris = []
-    REXML::XPath.each(a_annotation, xpath, {"oac" => NS_OAC, "rdf" => NS_RDF}) { |tgt|
+    xpath = "oa:hasTarget/@rdf:resource"
+    REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF}) { |tgt|
       uris << tgt.value
-    }          
+    }
+    if (uris.size == 0)
+      xpath = "oac:hasTarget/@rdf:resource"
+      REXML::XPath.each(a_annotation, xpath, { "oac" => NS_OACOLD, "rdf" => NS_RDF}) { |tgt|
+      uris << tgt.value
+    } 
+    end          
     return uris
   end
   
@@ -22,8 +71,8 @@ module OacHelper
   def self.has_target?(a_annotation,a_uri)
     has_target = false;
     Rails.logger.info("looking for #{a_uri} in #{a_annotation}")
-    xpath = "//oac:hasTarget[@rdf:resource = '#{a_uri}']]"
-    if ! REXML::XPath.first(a_annotation, xpath, {'oac' => NS_OAC}).nil?
+    xpath = "oa:hasTarget[@rdf:resource = '#{a_uri}']]"
+    if ! REXML::XPath.first(a_annotation, xpath, {'oa'=>NS_OAC,'oac' => NS_OACOLD}).nil?
         has_target = true
     end
     return has_target
@@ -31,17 +80,46 @@ module OacHelper
   
   # get the body uri from the supplied annotation
   def self.get_body(a_annotation)
-    xpath = "oac:hasBody/@rdf:resource"
+    xpath = "oa:hasBody/@rdf:resource"
     uri = nil
-    REXML::XPath.each(a_annotation, xpath, {"oac" => NS_OAC, "rdf" => NS_RDF}) { |body|
+    REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF}) { |body|
       uri = body.value
-    }          
+    }     
+    if (uri.nil?)     
+      xpath = "oac:hasBody/@rdf:resource"
+      REXML::XPath.each(a_annotation, xpath, {"oac"=>NS_OACOLD, "rdf" => NS_RDF}) { |body|
+        uri = body.value
+      }     
+    end
     return uri
   end
   
   def self.get_body_text(a_annotation)
-    xpath = "oac:hasBody[cnt:ContentAsText]"
-    REXML::XPath.first(xpath, {"oac" => NS_OAC, "cnt" => NS_CNT})
+    xpath = "oa:hasBody/cnt:ContentAsText/cnt:chars"
+    chars = REXML::XPath.first(a_annotation,xpath, {"oa" => NS_OAC, "cnt" => NS_CONTENT})
+    if chars.nil?
+      return ""
+    else 
+      Rails.logger.info("Found #{chars.text}")
+      chars.text
+    end
+  end
+  
+  def self.get_body_content(a_annotation)
+    xpath = "oa:hasBody/cnt:ContentAsText"
+    REXML::XPath.first(a_annotation,xpath, {"oa" => NS_OAC, "cnt" => NS_CONTENT})
+  end
+  
+  
+  def self.get_body_language(a_annotation)
+    xpath = "oa:hasBody/cnt:ContentAsText/dc:language"
+    language = REXML::XPath.first(a_annotation,xpath, {"oa" => NS_OAC, "cnt" => NS_CONTENT})
+    unless language.nil?
+      return language.text
+    else
+      # TODO should we throw an error instead?
+      return "eng"
+    end
   end
   
   # get the creator uri from the supplied annotation
@@ -76,9 +154,9 @@ module OacHelper
   
   # get the list of annotators in the supplied annotation
   def self.get_annotators(a_annotation)
-    xpath = "//oac:annotatedBy/foaf:Person/@rdf:about"
+    xpath = "oa:annotatedBy/foaf:Person/@rdf:about"
     uris = []
-    REXML::XPath.each(a_annotation, xpath, {"oac"=> NS_OAC, "foaf" => NS_FOAF, "rdf" => NS_RDF}) { |uri|
+    REXML::XPath.each(a_annotation, xpath, {"oa"=> NS_OAC, "foaf" => NS_FOAF, "rdf" => NS_RDF}) { |uri|
       uris << uri.value
     }          
     return uris
@@ -170,7 +248,7 @@ module OacHelper
     elem = REXML::Element.new("motivatedBy")
     elem.add_namespace(NS_OAC)
     elem.add_namespace("rdf",NS_RDF)
-    elem.attribute('rdf:resource',motivation_uri)
+    elem.add_attribute('rdf:resource',motivation_uri)
     return elem
   end
   
@@ -214,7 +292,7 @@ module OacHelper
   end
   
   def self.update_body_text(a_annotation,a_language,a_text)
-    cnt = get_body_text(a_annotation)
+    cnt = get_body_content(a_annotation)
     language_xpath = "dc:language"
     lang = REXML::XPath.first(cnt, language_xpath,{"dc" => NS_DC}) 
     if (lang.nil?)
@@ -223,10 +301,10 @@ module OacHelper
       language.add_text(a_language)
       cnt.add_element(language)
     else
-      language.text = a_language
+      lang.text = a_language
     end
     chars_xpath = "cnt:chars"
-    chars = REXML::XPath.first(cnt,chars_xpath,{"cnt" => NS_CNT})
+    chars = REXML::XPath.first(cnt,chars_xpath,{"cnt" => NS_CONTENT})
     if (chars.nil?)
       chars = REXML::Element.new("chars")
       chars.add_namespace(NS_CONTENT)
@@ -278,10 +356,10 @@ module OacHelper
 
   
   def self.add_annotator(a_annotation,a_uri)
-     xpath = "/rdf:RDF/oac:Annotation"
-      REXML::XPath.each(a_annotation, xpath,{"rdf" => NS_RDF, "oac" => NS_OAC}) { |el|
+     xpath = "oa:Annotation"
+      REXML::XPath.each(a_annotation, xpath,{"rdf" => NS_RDF, "oa" => NS_OAC}) { |el|
         # only add the annotator if not already there
-        if REXML::XPath.match(el,"oac:annotatedBy/foaf:Person[@rdf:about =  '#{a_uri}']").length == 0
+        if REXML::XPath.match(el,"oa:annotatedBy/foaf:Person[@rdf:about =  '#{a_uri}']").length == 0
            el.add_element(make_annotator(a_uri))
         end
       }

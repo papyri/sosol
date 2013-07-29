@@ -25,4 +25,8 @@ class CitePublicationsControllerTest < ActionController::TestCase
     assert_equal 1, assigns(:publication).identifiers.size 
   end
   
+  #TODO 
+  # test_should_use_supplied_title
+  # test_should_use_temporary_title
+  
 end

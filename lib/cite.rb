@@ -1,9 +1,16 @@
 module Cite
   require 'jruby_xml'
   
+  class CiteError < ::StandardError
+  end
+  
   CITE_JAR_PATH = File.join("#{RAILS_ROOT}", 'lib', *%w"java cite-0.12.22.jar")  
   GROOVY_JAR_PATH = File.join("#{RAILS_ROOT}", 'lib', *%w"java groovy-all-2.0.0-rc-3.jar")  
+  NS_CITE = "http://chs.harvard.edu/xmlns/cite"
   module CiteLib 
+    
+
+    
     class << self
       # method which returns a CITE Urn object from the java chs cite library
       def urn_obj(a_urn)
@@ -34,8 +41,49 @@ module Cite
         end
         return valid_collection_urn
       end
-    end
-    
-    
-  end
-end
+      
+      # lookup the max size of a field (perseids extension of standard cite functionality)
+      # only one restricted field allowed per collection
+      def get_collection_field_max(a_urn)
+        coll = get_collection(a_urn)
+        field = coll.elements["*[@x-perseidsmax]"]
+        if field.nil?
+          # not defined - unlimited
+          return -1
+        else
+          return field.attributes['x-perseidsmax'].to_i
+        end
+      end
+      
+      # lookup the collection in the Inventory and return the descriptive title
+      def get_collection_title(a_urn)
+        coll = get_collection(a_urn)
+        if coll.nil?
+          raise "Invalid Collection"
+        else
+           coll.attributes['description']
+        end
+      end
+      
+      # lookup the collection in the Inventor
+      def get_collection(a_urn)
+        if (is_collection_urn?(a_urn))
+          a_urn + a_urn + ".0.0"
+        end
+        urnObj = urn_obj(a_urn)
+        name = urnObj.getCollection()
+        ns = urnObj.getNs()
+        xpath = "//cite:citeCollection[@name='#{name}' and cite:namespaceMapping[@abbr='#{ns}']]"
+        Rails.logger.info("Lookup collection #{xpath}")
+        return REXML::XPath.first(inventory(),xpath,{'cite' => NS_CITE})
+      end
+      
+      def inventory
+        unless defined? @inventory
+          @inventory = REXML::Document.new File.new(File.join("#{RAILS_ROOT}",'config','citecapabilities.xml'))
+        end
+        return @inventory
+      end
+    end # end class
+  end # end module CiteLib
+end # end Cite

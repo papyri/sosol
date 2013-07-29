@@ -7,7 +7,6 @@ class CommentaryCiteIdentifier < CiteIdentifier
   FILE_TYPE="oac.xml"
   ANNOTATION_TITLE = "Commentary Annotation"
   
-  MAX_WORDS = -1
   #XML_VALIDATOR = JRubyXML::OacMarkdownValidator
   
   def titleize
@@ -67,8 +66,11 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
   # get the requested annotation by uri from the oac.xml 
   def get_annotation()
-    xpath = "/rdf:RDF/oac:Annotation"
-    REXML::XPath.first(self.rdf, xpath)          
+   OacHelper::get_first_annotation(self.rdf)         
+  end
+  
+  def language()
+    OacHelper::get_body_language(get_annotation)
   end
 
   def init_content(a_value)
@@ -79,8 +81,10 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
     atts = {}
     atts['uri'] = annot_uri
-    atts['target_uris'] = a_value.split(/,/)
+    atts['target_uris'] = a_value
     atts['body_uri'] = body_uri
+    # TODO support user default for commentary language
+    atts['body_language'] = 'eng'
     atts['annotator_uri'] = make_annotator_uri()
 
     # defaults
@@ -92,15 +96,22 @@ class CommentaryCiteIdentifier < CiteIdentifier
     self.set_xml_content(oacRdf, :comment => 'Initializing Content')
   end
   
-  def update_commentary(a_lang,a_text)
-    OacHelper::update_body_text(self.rdf,a_lang,a_text)
+  def get_commentary_text()
+    OacHelper::get_body_text(get_annotation)
+  end
+  
+  def update_commentary(a_lang,a_text,a_comment)
+    OacHelper::update_body_text(get_annotation,a_lang,a_text)
+    oacRdf = toXmlString self.rdf
+    # TODO should either update annotatedAt or set updatedAt (does that exist??)
+    self.set_xml_content(oacRdf, :comment => a_comment)
   end
   
   # Place any actions you always want to perform on  identifier content prior to it being committed in this method
   # - *Args*  :
   #   - +content+ -> CommentaryCiteIdentifier XML as string
   def before_commit(content)
-    CommentaryCiteIdentifier.preprocess(content)
+    CommentaryCiteIdentifier.preprocess(self.urn_attribute,content)
   end
   
   # Applies the preprocess XSLT to 'content'
@@ -108,13 +119,25 @@ class CommentaryCiteIdentifier < CiteIdentifier
   #   - +content+ -> XML as string
   # - *Returns* :
   #   - modified 'content'
-  def self.preprocess(content)
+  def self.preprocess(urn,content)
     #  this is where we can apply a word count limit
     #  transform can check language and apply tokenization 
     #  rules per language
     #  default for base class is to allow any word length so 
-    #  will just return the original content 
-    return content
+    #  will just return the original content
+    max = Cite::CiteLib.get_collection_field_max(urn) 
+    passed = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt cite markdown_field_verify.xsl})),
+        :e_max => max)
+    if (passed == 'true')
+      return content  
+    elsif (passed == 'error')
+      raise Cite::CiteError.new("Unable to process commentary text.")
+    else 
+      raise Cite::CiteError.new("Commentary text has #{passed} words, which exceeds the maximum of #{max}.")
+   end
   end
   
 
@@ -122,13 +145,30 @@ class CommentaryCiteIdentifier < CiteIdentifier
   def is_match?(a_value) 
     # for a commentary annotation, the match will be on the target uri
     has_all_targets = true
-    a_value.split(/,/).each do |uri|
-      has_target = OacHelper::has_target?(self.rdf,uri)
+    a_value.each do |uri|
+      has_target = OacHelper::has_target?(get_annotation,uri)
       if (! has_target) 
         has_all_targets = false
       end 
     end
     return has_all_targets
+  end
+  
+  def preview_targets parameters = {}, xsl = nil
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : %w{data xslt cite commentary_cite_targets.xsl})),
+        parameters)
+  end
+  
+  def preview parameters = {}, xsl = nil
+    # TODO 
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : %w{data xslt cite commentary_cite_html_preview.xsl})),
+        parameters)
   end
   
   ## TODO
