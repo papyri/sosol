@@ -21,7 +21,7 @@ class IdentifiersController < ApplicationController
   def history
     find_identifier
     @identifier.get_commits
-    @identifier[:commits].each do |commit|
+    @identifier.get_commits.each do |commit|
       if commit[:message].empty?
         commit[:message] = '(no commit message)'
       end
@@ -110,10 +110,10 @@ class IdentifiersController < ApplicationController
   def show_commit
     find_identifier
     @identifier.get_commits
-    commit_index = @identifier[:commits].find_index {|c| c[:id] == params[:commit_id].to_s}
-    @commit = @identifier[:commits][commit_index]
-    @prev_commit = commit_index > 0 ? @identifier[:commits][commit_index-1] : nil
-    @next_commit = commit_index < (@identifier[:commits].length - 1) ? @identifier[:commits][commit_index+1] : nil
+    commit_index = @identifier.get_commits.find_index {|c| c[:id] == params[:commit_id].to_s}
+    @commit = @identifier.get_commits()[commit_index]
+    @prev_commit = commit_index > 0 ? @identifier.get_commits()[commit_index-1] : nil
+    @next_commit = commit_index < (@identifier.get_commits.length - 1) ? @identifier.get_commits()[commit_index+1] : nil
     
     @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id],"--",@identifier.to_path)
     if @diff.blank?

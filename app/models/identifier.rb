@@ -132,8 +132,7 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - array of commits
   def get_commits
-    self[:commits] = 
-      self.repository.get_log_for_file_from_branch(
+    self.repository.get_log_for_file_from_branch(
         self.to_path, self.branch
     )
   end
