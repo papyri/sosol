@@ -364,10 +364,14 @@ class Repository
     # We always assume we want to branch from master by default
     if source_name == 'master'
       self.update_master_from_canonical
-      source_name = @repo.get_head(source_name).commit.id
     end
-    
-    org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).call()
+
+    begin
+      ref = org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).call()
+      Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
+    rescue Exception => e
+      Rails.logger.debug("create_branch exception: #{e.inspect}")
+    end
   end
   
   def delete_branch(name)
@@ -381,7 +385,7 @@ class Repository
     # Heavyweight (missing objects are actually copied):
     self.fetch_objects(other_repo)
     
-    head_ref = other_repo.repo.get_head(branch).commit.sha
+    head_ref = other_repo.jgit_repo.resolve(branch).name()
     self.create_branch(new_branch, head_ref)
   end
   
