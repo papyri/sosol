@@ -87,6 +87,7 @@ class JGitTree
 
       commit_id = inserter.insert(commit)
       inserter.flush()
+      inserter.release()
 
       Rails.logger.info("JGIT COMMIT before: #{repo.resolve(branch).name()}")
       ref_update = repo.updateRef(branch)
@@ -159,6 +160,7 @@ class JGitTree
 
     tree_id = inserter.insert(formatter)
     inserter.flush()
+    inserter.release()
     @sha = tree_id.name()
   end
 
@@ -436,6 +438,7 @@ class Repository
     inserter = @jgit_repo.newObjectInserter()
     file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_bytes)
     inserter.flush()
+    inserter.release()
 
     jgit_tree = JGitTree.new()
     jgit_tree.load_from_repo(@jgit_repo, branch)
@@ -478,6 +481,8 @@ class Repository
       person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
 
       jgit_tree.commit(comment, person_ident)
+      inserter.flush()
+      inserter.release()
     rescue Exception => e
       Rails.logger.info("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
       return nil
