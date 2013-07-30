@@ -385,8 +385,7 @@ class Repository
     # Heavyweight (missing objects are actually copied):
     self.fetch_objects(other_repo)
     
-    head_ref = other_repo.jgit_repo.resolve(branch).name()
-    self.create_branch(new_branch, head_ref)
+    self.create_branch(new_branch, other_repo.name + "/" + branch)
   end
   
   def add_remote(other_repo)
