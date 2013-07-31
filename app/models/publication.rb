@@ -544,7 +544,8 @@ class Publication < ActiveRecord::Base
   
   
   def change_status(new_status)
-    if (self.status != new_status) && !(self.owner.repository.repo.get_head(self.branch).nil?)
+    Rails.logger.info("change_status to #{new_status} for #{self.inspect}")
+    if (self.status != new_status) && !(self.head.nil?)
       old_branch_name = self.branch
       old_branch_leaf = old_branch_name.split('/').last
       new_branch_components = [old_branch_leaf]
@@ -935,14 +936,14 @@ class Publication < ActiveRecord::Base
   
   def head
     full_branch = ""
-    unless self.parent.nil?
+    if !self.parent.nil? && self.status == 'voting'
       full_branch += "refs/remotes/" + self.parent.owner.class.to_s.underscore.pluralize + "/"
     end
     full_branch +=  self.branch
-    Rails.logger.debug("head called for #{full_branch} with branches #{self.repository.branches.join(' ')} in #{self.repository.path}")
+    Rails.logger.debug("head called for #{full_branch} in status #{self.status} with branches #{self.repository.branches.join(' ')} in #{self.repository.path}")
     resolve = self.owner.repository.jgit_repo.resolve(full_branch)
     Rails.logger.debug("head called got: #{resolve.inspect}")
-    resolve.name()
+    resolve.nil? ? nil : resolve.name()
   end
   
   def merge_base(branch = 'master')
