@@ -935,15 +935,7 @@ class Publication < ActiveRecord::Base
   end
   
   def head
-    full_branch = ""
-    if !self.parent.nil? && self.status == 'voting'
-      full_branch += "refs/remotes/" + self.parent.owner.class.to_s.underscore.pluralize + "/"
-    end
-    full_branch +=  self.branch
-    Rails.logger.debug("head called for #{full_branch} in status #{self.status} with branches #{self.repository.branches.join(' ')} in #{self.repository.path}")
-    resolve = self.owner.repository.jgit_repo.resolve(full_branch)
-    Rails.logger.debug("head called got: #{resolve.inspect}")
-    resolve.nil? ? nil : resolve.name()
+    self.owner.repository.jgit_repo.resolve(self.branch).name()
   end
   
   def merge_base(branch = 'master')
