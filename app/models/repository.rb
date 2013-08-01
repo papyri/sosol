@@ -90,7 +90,7 @@ class JGitTree
       inserter.release()
 
       Rails.logger.info("JGIT COMMIT before: #{repo.resolve(branch).name()}")
-      ref_update = repo.updateRef(branch)
+      ref_update = repo.updateRef("refs/heads/" + branch)
       ref_update.setRefLogIdent(person_ident)
       ref_update.setNewObjectId(commit_id)
       ref_update.setExpectedOldObjectId(repo.resolve(branch))
@@ -385,8 +385,9 @@ class Repository
     # Lightweight (but have to watch out for side-effects of repo deletion):
     # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
+    head_ref = other_repo.jgit_repo.resolve(branch).name()
     self.fetch_objects(other_repo)
-    
+    Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     self.create_branch(new_branch, other_repo.name + "/" + branch)
   end
   
