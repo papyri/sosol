@@ -17,6 +17,8 @@
 #- commiting to canon
 
 
+require 'jgit_tree'
+
 class Publication < ActiveRecord::Base  
     
   
@@ -792,7 +794,7 @@ class Publication < ActiveRecord::Base
     finalizer.repository.update_master_from_canonical
     
 
-    jgit_tree = JGitTree.new()
+    jgit_tree = JGit::JGitTree.new()
     jgit_tree.load_from_repo(finalizer.repository.jgit_repo, 'master')
     inserter = finalizer.repository.jgit_repo.newObjectInserter()
     controlled_paths_blobs.each_pair do |path, blob|
@@ -998,7 +1000,7 @@ class Publication < ActiveRecord::Base
       end
 =end
 
-    jgit_tree = JGitTree.new()
+    jgit_tree = JGit::JGitTree.new()
     jgit_tree.load_from_repo(self.origin.owner.repository.jgit_repo, self.origin.branch)
     inserter = self.origin.owner.repository.jgit_repo.newObjectInserter()
     controlled_paths_blobs.merge(uncontrolled_paths_blobs).each_pair do |path, blob|
