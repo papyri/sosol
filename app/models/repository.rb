@@ -198,9 +198,6 @@ class JGitTree
   def add_tree(path, sha)
     add(path, sha, org.eclipse.jgit.lib.FileMode::TREE)
   end
-
-  def write!
-  end
 end
 
 class Repository
