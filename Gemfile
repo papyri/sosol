@@ -22,7 +22,7 @@ gem 'activerecord-jdbc-adapter', '>= 0.9.2'
 gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2'
 gem 'activerecord-jdbcmysql-adapter', '>= 0.9.2'
 gem 'rack', '>= 1.1.0'
-gem 'shoulda-matchers', '~> 2.0.0'
+gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
