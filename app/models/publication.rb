@@ -1017,7 +1017,7 @@ class Publication < ActiveRecord::Base
     end
     inserter.flush()
 
-    jgit_tree.commit(commit_comment, committer_user)
+    jgit_tree.commit(commit_comment, org.eclipse.jgit.lib.PersonIdent.new(committer_user.name, committer_user.email))
 
       #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
      #  origin_index = self.origin.owner.repository.repo.index
