@@ -13,10 +13,10 @@ namespace :doc do
     rdoc.title    = ENV['title'] || "Rails Application Documentation"
     rdoc.options << '--line-numbers' << '--inline-source'
     rdoc.options << '--charset' << 'utf-8'
-    rdoc.rdoc_files.include('doc/README_FOR_APP')
+    rdoc.rdoc_files.include('README.rdoc')
     rdoc.rdoc_files.include('app/**/*.rb')
     rdoc.rdoc_files.include('lib/**/*.rb')
-    rdoc.main = 'doc/README_FOR_APP'
+    rdoc.main = 'README.rdoc'
   }
 end
 
