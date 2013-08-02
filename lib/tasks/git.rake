@@ -41,7 +41,7 @@ namespace :git do
         
         clone_command = ["git clone --bare",
                         CANONICAL_CLONE_URL,
-                        CANONICAL_REPOSITORY].join(' ')
+                        Sosol::Application.config.canonical_repository].join(' ')
         
         system(clone_command)
       end
