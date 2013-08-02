@@ -1,3 +1,27 @@
+= Quick Start
+
+== Requirements
+
+* Java SE 6 (1.6+)
+* JRuby (1.7.4+) - tested through JRuby 1.7.4. Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
+* Bundler (1.3.5+) (gem install bundler)
+* Git (1.6.1.3+)
+
+== Initial setup steps for development
+
+* get source from {GitHub}[https://github.com/sosol/sosol]: git clone https://github.com/sosol/sosol.git
+* copy in/create config/environments/*_secret.rb (where * is development, test, production - sets config.rpx_api_key and config.rpx_realm, can get these by creating an {RPX}[http://www.rpxnow.com/] account), e.g.:
+    Sosol::Application.configure do
+      config.rpx_api_key = '0cdf56769f20a2b73a929ac3ba633152'
+      config.rpx_realm = 'sosol-development'
+    end
+* bundle install
+* bundle exec cap local externals:setup
+* rake db:migrate
+* rake git:db:canonical:clone
+* rake test
+* bundle exec rails server
+
 = App Structure
 
 == File Structure
@@ -153,28 +177,6 @@ dataset as well as coherent means for aggregating these components into
 publications.
 
 = JRuby Deployment
-
-== Requirements
-
-* Java SE 6 (1.6+)
-* JRuby (1.7.4+) - tested through JRuby 1.7.4. Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
-* Bundler (1.3.5+) (gem install bundler)
-* Git (1.6.1.3+)
-
-== Initial setup steps for development
-
-* get source from {GitHub}[https://github.com/sosol/sosol]: git clone https://github.com/sosol/sosol.git
-* copy in/create config/environments/*_secret.rb (where * is development, test, production - sets config.rpx_api_key and config.rpx_realm, can get these by creating an {RPX}[http://www.rpxnow.com/] account), e.g.:
-    Sosol::Application.configure do
-      config.rpx_api_key = '0cdf56769f20a2b73a929ac3ba633152'
-      config.rpx_realm = 'sosol-development'
-    end
-* bundle install
-* bundle exec cap local externals:setup
-* rake db:migrate
-* rake git:db:canonical:clone
-* rake test
-* bundle exec rails server
 
 == WAR-based deployment
 
