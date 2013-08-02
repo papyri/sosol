@@ -174,7 +174,7 @@ publications.
 * rake db:migrate
 * rake git:db:canonical:clone
 * rake test
-* rails server
+* bundle exec rails server
 
 == WAR-based deployment
 
