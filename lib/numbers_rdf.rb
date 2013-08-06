@@ -111,7 +111,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
+          "/rdf:RDF/rdf:Description[rdf:about='#{identifier}']/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
         if results.nil?
           return nil
         else
@@ -123,7 +123,7 @@ module NumbersRDF
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...] 
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description/dcterms:hasPart/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description[rdf:about='#{identifier}']/dcterms:hasPart/@rdf:resource", identifier)
         if results.nil?
           return nil
         else
