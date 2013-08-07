@@ -100,7 +100,7 @@ class DDBIdentifier < Identifier
   
   def after_rename(options = {})
     # copy back the content to the original name before we update the header
-    if options[:set_dummy_header]
+    if options[:set_dummy_header] && (options[:set_dummy_header] != "false")
       original = options[:original]
       dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'"
       dummy_header =

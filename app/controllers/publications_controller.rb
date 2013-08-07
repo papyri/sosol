@@ -328,6 +328,15 @@ class PublicationsController < ApplicationController
   
   def finalize
     @publication = Publication.find(params[:id].to_s)
+
+    if @publication.needs_rename?
+      identifiers_needing_rename = @publication.identifiers.select do |i|
+        i.needs_rename?
+      end
+      flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+      redirect_to @publication
+      return
+    end
     
     # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
     # if something goes wrong
