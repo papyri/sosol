@@ -14,13 +14,13 @@ end
 gem 'jquery-rails'
 
 gem 'haml', '>= 3.0.25'
-gem 'json-jruby', '>= 1.4.3.1', :require => 'json'
+gem 'json-jruby', '>= 1.4.3.1', :require => 'json', :platform => :jruby
 gem 'json'
-gem 'jruby-openssl', '>= 0.8.8'
-gem 'jdbc-sqlite3', '>= 3.6.3.054'
-gem 'activerecord-jdbc-adapter', '>= 0.9.2'
-gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2'
-gem 'activerecord-jdbcmysql-adapter', '>= 0.9.2'
+gem 'jruby-openssl', '>= 0.8.8', :platform => :jruby
+gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 0.9.2', :platform => :jruby
 gem 'rack', '>= 1.1.0'
 gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
