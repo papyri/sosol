@@ -1,0 +1,7 @@
+language: ruby
+rvm:
+  - jruby-19mode
+before_script:
+  - bundle exec cap local externals:setup
+  - rake git:db:canonical:clone
+after_script: ./script/clean
