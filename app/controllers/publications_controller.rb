@@ -330,7 +330,7 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id].to_s)
 
     if @publication.needs_rename?
-      identifiers_needing_rename = @publication.identifiers.select do |i|
+      identifiers_needing_rename = @publication.controlled_identifiers.select do |i|
         i.needs_rename?
       end
       flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
