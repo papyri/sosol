@@ -61,6 +61,16 @@ class PublicationTest < ActiveSupport::TestCase
     should "have a head" do
       assert @publication.head
     end
+
+    should "not be able to create multiple new identifiers of the same class from templates" do
+      @publication.reload
+      original_identifiers_length = @publication.identifiers.length
+      @publication.identifiers.each do |i|
+        assert_nil i.class.new_from_template(@publication)
+      end
+      @publication.reload
+      assert_equal original_identifiers_length, @publication.identifiers.length
+    end
   end
   
   context "a publication copied to another owner" do
