@@ -1,0 +1,8 @@
+language: ruby
+rvm:
+  - jruby-19mode
+before_script:
+  - bundle exec cap local externals:setup
+  - touch config/environments/test_secret.rb
+  - rake git:db:canonical:clone
+  - rake db:migrate
