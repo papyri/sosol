@@ -275,6 +275,10 @@ class UserController < ApplicationController
        @member_already_voted_on = board_voting_publications - @needs_reviewing_publications
      end
      
+     # move publications with votes to the front of the array
+     voted_indices = @needs_reviewing_publications.to_enum(:each_index).select {|i| @needs_reviewing_publications[i].votes.length > 0}
+     voted_indices.each {|index| @needs_reviewing_publications.unshift(@needs_reviewing_publications.delete_at(index))}
+
      #set so the correct tab will be active
      @current_board = @board
      #render :layout => 'header_footer'

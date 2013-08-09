@@ -257,6 +257,16 @@ end
          end
        end
        
+
+       # do rename
+       open_session do |meta_rename_session|
+        meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          :new_name => 'papyri.info/hgv/9999999999'
+       end
+
+       meta_final_publication.reload
+       assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
+
        open_session do |meta_finalize_session|
 
         meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
@@ -373,11 +383,45 @@ end
        assert_equal 2, finalizer_publications.length, "Finalizer does not have a new (text) publication to finalize"
 
        text_final_publication = text_publication.find_finalizer_publication
+
        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
        Rails.logger.debug "---Finalizer has text publication"
 
+       text_final_identifier = nil
+       text_final_publication.identifiers.each do |id|
+         if @text_board.controls_identifier?(id)
+            text_final_identifier = id    
+         end
+       end
+       assert_not_nil text_final_identifier, "Finalizer does not have controlled identifier"
 
+       assert text_final_publication.needs_rename?, "finalizing publication should need rename before being renamed"
 
+       # try to finalize without rename
+       open_session do |text_finalize_session|
+        text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          :comment => 'I agree text is great and now it is final'
+     
+         Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
+         Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect       
+         Rails.logger.debug text_finalize_session.body
+
+         Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect      
+       end
+
+       text_final_publication.reload
+       assert_not_equal "finalized", text_final_publication.status, "Text final publication finalized when it should be blocked by rename guard"
+
+       # do rename
+       open_session do |text_rename_session|
+        text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+       end
+
+       text_final_publication.reload
+       assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
+
+       # actually finalize now that we've renamed
        open_session do |text_finalize_session|
 
         text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
