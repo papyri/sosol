@@ -268,6 +268,22 @@ end
        assert_equal meta_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
        Rails.logger.debug "---Meta Finalizer has publication"
        
+       meta_final_identifier = nil
+       meta_final_publication.identifiers.each do |id|
+         if @meta_board.controls_identifier?(id)
+            meta_final_identifier = id    
+         end
+       end
+       
+       # do rename
+       open_session do |meta_rename_session|
+        meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          :new_name => 'papyri.info/hgv/9999999999'
+       end
+
+       meta_final_publication.reload
+       assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
+       
        #finalize the meta
        open_session do |meta_finalize_session|
 
@@ -368,6 +384,22 @@ end
        text_final_publication = text_publication.find_finalizer_publication
        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
        Rails.logger.debug "---Finalizer has text publication"
+
+       text_final_identifier = nil
+       text_final_publication.identifiers.each do |id|
+         if @text_board.controls_identifier?(id)
+            text_final_identifier = id    
+         end
+       end
+
+       # do rename
+       open_session do |text_rename_session|
+        text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+       end
+
+       text_final_publication.reload
+       assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
        #finalize text
        open_session do |text_finalize_session|
