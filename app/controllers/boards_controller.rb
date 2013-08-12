@@ -127,7 +127,7 @@ class BoardsController < ApplicationController
 
     #let them choose as many ids as they want
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
-      if params.has_key?(identifier_class) && params[:identifier_class].to_s == "1"
+      if params.has_key?(identifier_class) && params[identifier_class].to_s == "1"
         @board.identifier_classes << identifier_class
       end
     end
