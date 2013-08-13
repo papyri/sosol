@@ -72,7 +72,7 @@ GEM
       tilt
     highline (1.6.19)
     hike (1.2.3)
-    i18n (0.6.4)
+    i18n (0.6.5)
     jdbc-mysql (5.1.25)
     jdbc-sqlite3 (3.7.2.1)
     journey (1.0.4)
@@ -88,7 +88,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.23)
-    multi_json (1.7.8)
+    multi_json (1.7.9)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
