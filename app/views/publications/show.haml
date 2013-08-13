@@ -63,7 +63,7 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            - form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'fixupComment(event);'})  do
+            = form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'fixupComment(event);'})  do
               -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br

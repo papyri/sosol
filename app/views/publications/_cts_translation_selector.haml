@@ -71,7 +71,7 @@
 - cache(:action => 'dashboard', :part => 'publication_selector') do
   - unless defined? hide_text
     %p== Existing publication:
-  - form_tag :controller => controller, :action => "create_from_selector" do
+  = form_tag :controller => controller, :action => "create_from_selector" do
     %p{:class => ['cts_selector_hint']}== Select a publication to work with:
     = hidden_field_tag 'IdentifierClass','CTSIdentifier'
     = hidden_field_tag 'publication_id',publication_id
