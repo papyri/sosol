@@ -99,6 +99,8 @@ GEM
     polyglot (0.3.3)
     prototype-rails (3.2.1)
       rails (~> 3.2)
+    puma (2.5.0-java)
+      rack (>= 1.1, < 2.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -172,6 +174,7 @@ DEPENDENCIES
   json
   json-jruby (>= 1.4.3.1)
   prototype-rails
+  puma
   rack (>= 1.1.0)
   rails (= 3.2.14)
   rake
