@@ -203,24 +203,42 @@ class Repository
     # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
     head_ref = other_repo.jgit_repo.resolve(branch).name()
-    self.fetch_objects(other_repo)
+    self.fetch_objects(other_repo, branch)
     Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     self.create_branch(new_branch, other_repo.name + "/" + branch)
   end
   
   def add_remote(other_repo)
-    unless @repo.remote_list.include?(other_repo.name)
-      @repo.remote_add(other_repo.name, other_repo.path)
+    remote_configs = org.eclipse.jgit.transport.RemoteConfig.getAllRemoteConfigs(@jgit_repo.getConfig()).to_a
+    unless remote_configs.map{|c| c.getName()}.include?(other_repo.name)
+      remote_config = org.eclipse.jgit.transport.RemoteConfig.new(@jgit_repo.getConfig(), other_repo.name)
+      remote_config.addURI(org.eclipse.jgit.transport.URIish.new("file://" + other_repo.path))
+      remote_config.update(@jgit_repo.getConfig())
     end
   end
   
-  def fetch_objects(other_repo)
+  def fetch_objects(other_repo, branch = nil)
     self.add_remote(other_repo)
     begin
-      @repo.remote_fetch(other_repo.name)
+      fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
+      fetch_command.setRemote(other_repo.name)
+      unless branch.nil?
+        fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
+      end
+      result = fetch_command.call()
+      unless branch.nil?
+        update = result.getTrackingRefUpdate("refs/remotes/" + other_repo.name + "/" + branch)
+        if update.nil?
+          Rails.logger.debug("fetch: ref not updated")
+        else
+          Rails.logger.debug("fetch: updated #{update.getRemoteName()} #{update.getOldObjectId()} -> #{update.getNewObjectId()} with result #{update.getResult().toString()}")
+        end
+      end
     rescue Grit::Git::GitTimeout
       self.class.increase_timeout
       fetch_objects(other_repo)
+    rescue Java::OrgEclipseJgitApiErrors::TransportException => e
+      Rails.logger.debug("fetch transport exception: #{e.inspect}")
     end
   end
   
