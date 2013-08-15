@@ -59,13 +59,17 @@ class AjaxProxyController < ApplicationController
   protected
     def get_xsugar_response(params)
       begin
-        return Net::HTTP.post_form(URI.parse(XSUGAR_STANDALONE_URL),
-          {
-            :content => params[:content].to_s,
-            :type => params[:type].to_s,
-            :direction => params[:direction].to_s
-          }
-        )
+        if !defined?(Sosol::Application.config.xsugar_standalone_url)
+          return nil
+        else
+          return Net::HTTP.post_form(URI.parse(Sosol::Application.config.xsugar_standalone_url),
+            {
+              :content => params[:content].to_s,
+              :type => params[:type].to_s,
+              :direction => params[:direction].to_s
+            }
+          )
+        end
       rescue EOFError
         get_xsugar_response(params)
       end
