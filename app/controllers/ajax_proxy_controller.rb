@@ -4,7 +4,7 @@ class AjaxProxyController < ApplicationController
     if response.code != '200'
       @response = nil
     else
-      @response = response.body
+      @response = response.body.html_safe
     end
   end
   
@@ -13,7 +13,7 @@ class AjaxProxyController < ApplicationController
     if response.code != '200'
       @response = nil
     else
-      @response = response.body
+      @response = response.body.html_safe
     end
     
     render :template => 'ajax_proxy/proxy'
@@ -42,7 +42,7 @@ class AjaxProxyController < ApplicationController
 
       response = Net::HTTP.get_response(URI("#{built_uri}"))
 
-      render :text => response.body
+      render :text => response.body.html_safe
     rescue ::Timeout::Error => e
       render :text =>  "rescue timeout bibliography call" 
     rescue
@@ -53,7 +53,7 @@ class AjaxProxyController < ApplicationController
   def xsugar
     response = get_xsugar_response(params)
     
-    render :text => response.body, :status => response.code
+    render :text => response.body.html_safe, :status => response.code
   end
   
   protected
