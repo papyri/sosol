@@ -9,3 +9,4 @@ doc/plugins
 db/*.sqlite3
 protosite.war
 lib/rxsugar
+.sass-cache
