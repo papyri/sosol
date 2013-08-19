@@ -13,7 +13,7 @@
       = link_to "Usage Stats By User", all_users_links_url
       %br
       %br
-      - form_tag :controller => 'user', :action => "refresh_usage" do
+      = form_tag :controller => 'user', :action => "refresh_usage" do
         = label_tag 'date_value', 'Usage for Last', :style => "font-size: medium;"
         = text_field_tag 'date_value', nil, :maxlength => 3, :size => 2, :style => "font-size: medium;"
         = select_tag 'date_range', options_for_select({ "Day(s)" => "day", "Month(s)" => "month", "Year(s)" => "year" }), :style => 'min-width: 5em;font-size: medium;'

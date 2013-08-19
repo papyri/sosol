@@ -7,11 +7,11 @@
           - when "+"
             %ins
               %pre
-                %code= diff_line_text
+                %code= diff_line_text.html_safe
           - when "-"
             %del
               %pre
-                %code= diff_line_text
+                %code= diff_line_text.html_safe
           - else
             %pre
-              %code= diff_line_text
+              %code= diff_line_text.html_safe
