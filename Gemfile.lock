@@ -35,8 +35,7 @@ GEM
     activesupport (3.2.14)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    airbrake (3.1.12)
-      activesupport
+    airbrake (3.1.13)
       builder
       json
     arel (3.0.2)
@@ -58,8 +57,7 @@ GEM
     diff-lcs (1.2.4)
     dynamic_form (1.1.4)
     erubis (2.7.0)
-    execjs (1.4.0)
-      multi_json (~> 1.0)
+    execjs (2.0.0)
     factory_girl (4.2.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.2.1)
