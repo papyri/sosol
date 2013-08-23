@@ -10,6 +10,7 @@ module Onelogin
       ASSERTION = "urn:oasis:names:tc:SAML:2.0:assertion"
       PROTOCOL  = "urn:oasis:names:tc:SAML:2.0:protocol"
       DSIG      = "http://www.w3.org/2000/09/xmldsig#"
+      SOAP      = "http://schemas.xmlsoap.org/soap/envelope/"
 
       attr_accessor :options, :response, :document, :settings
 
@@ -17,14 +18,27 @@ module Onelogin
         raise ArgumentError.new("Response cannot be nil") if response.nil?
         self.options  = options
         self.response = response
+        
 
-        begin
-          self.document = XMLSecurity::SignedDocument.new(Base64.decode64(response))
-        rescue REXML::ParseException => e
-          if response =~ /</
-            self.document = XMLSecurity::SignedDocument.new(response)
-          else
-            raise e
+        # TODO AttributeQuery Response handling should probably go into a subclass of response
+        if (options[:is_aq_response])
+          begin
+           envelope = REXML::Document.new(response)
+           wrapped = REXML::XPath.first(envelope,'o:Envelope/o:Body/p:Response', {'p' => PROTOCOL, 'o' => SOAP})
+           self.document = XMLSecurity::SignedDocument.new(wrapped.to_s)
+          rescue REXML::ParseException => e
+            Rails.logger.debug("Failed to parse AQ response ",e)
+            self.document = XMLSecurity::SignedDocument.new(Base64.decode64(response))
+          end
+        else
+          begin
+            self.document = XMLSecurity::SignedDocument.new(Base64.decode64(response))
+          rescue REXML::ParseException => e
+            if response =~ /</
+              self.document = XMLSecurity::SignedDocument.new(response)
+            else
+              raise e
+            end
           end
         end
       end
@@ -45,7 +59,17 @@ module Onelogin
           node.nil? ? nil : node.text
         end
       end
-
+      
+      # returns the scoped value of the eduPersonTargetedId attribute 
+      # TODO this should go into an AttributeQuery response subclass
+      # and be generalized to support any scoped attribute
+      def scoped_targeted_id 
+        @name_id ||= begin
+          node = REXML::XPath.first(document,"/p:Response/a:Assertion/a:AttributeStatement/a:Attribute[@Name='urn:oid:1.3.6.1.4.1.5923.1.1.1.10']/a:AttributeValue/a:NameID", { "p" => PROTOCOL, "a" => ASSERTION })
+          node.nil? ? nil : node.attributes["NameQualifier"]+"/" + node.text
+        end
+      end 
+      
       # A hash of alle the attributes with the response. Assuming there is only one value for each key
       def attributes
         @attr_statements ||= begin

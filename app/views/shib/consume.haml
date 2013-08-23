@@ -1,4 +1,26 @@
-%h1 SAMLResponse
-%pre
-  = @samlResponse
-  
+#main.site
+  -# render :partial => "common/flash_all"
+  %p
+    You've authenticated as
+    %strong
+      = h session[:identifier]
+    ,
+    but you need to enter a nickname to sign up.
+  - form_for :new_user, :url => ("https://sosol.perseids.org/sosol/shib/create_submit") do |f|
+    %table
+      %tr
+        %th
+          Nickname
+        %td
+          = f.text_field :name, :value => @name
+      %tr
+        %th
+          Full Name
+        %td
+          = f.text_field :full_name, :value => @full_name
+      %tr
+        %th
+          E-Mail
+        %td
+          = f.text_field :email, :value => @email
+    = submit_tag "Create"
