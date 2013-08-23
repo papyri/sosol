@@ -87,8 +87,8 @@ class ShibController < ApplicationController
               else 
                 # first login with this identifier let the user supply their details
                 session[:identifier] = att_response.scoped_targeted_id
-                @email = guess_email att_response.attributes
-                @name = ''
+                @email = ''
+                @name = guess_nickname att_response.attributes
                 @full_name = ''
               end
             else # Invalid AQ Response or no scoped targed id
@@ -199,12 +199,12 @@ class ShibController < ApplicationController
       settings
     end
       
-    def guess_email(data)
+    def guess_nickname(data)
       # eduPersonPrincipalName is urn:oid:1.3.6.1.4.1.5923.1.1.1.6
       if data['urn:oid:1.3.6.1.4.1.5923.1.1.1.6']
         return data['urn:oid:1.3.6.1.4.1.5923.1.1.1.6']
       end
-      # There wasn't anything, so let the user enter an email address
+      # There wasn't anything, so let the user enter a nickname
       return ''
     end
 end
