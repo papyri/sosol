@@ -4,7 +4,7 @@ class AjaxProxyController < ApplicationController
     if response.code != '200'
       @response = nil
     else
-      @response = response.body
+      @response = response.body.html_safe
     end
   end
   
@@ -13,7 +13,7 @@ class AjaxProxyController < ApplicationController
     if response.code != '200'
       @response = nil
     else
-      @response = response.body
+      @response = response.body.html_safe
     end
     
     render :template => 'ajax_proxy/proxy'
@@ -42,7 +42,7 @@ class AjaxProxyController < ApplicationController
 
       response = Net::HTTP.get_response(URI("#{built_uri}"))
 
-      render :text => response.body
+      render :text => response.body.html_safe
     rescue ::Timeout::Error => e
       render :text =>  "rescue timeout bibliography call" 
     rescue
@@ -53,19 +53,23 @@ class AjaxProxyController < ApplicationController
   def xsugar
     response = get_xsugar_response(params)
     
-    render :text => response.body, :status => response.code
+    render :text => response.body.html_safe, :status => response.code
   end
   
   protected
     def get_xsugar_response(params)
       begin
-        return Net::HTTP.post_form(URI.parse(XSUGAR_STANDALONE_URL),
-          {
-            :content => params[:content].to_s,
-            :type => params[:type].to_s,
-            :direction => params[:direction].to_s
-          }
-        )
+        if !defined?(Sosol::Application.config.xsugar_standalone_url)
+          return nil
+        else
+          return Net::HTTP.post_form(URI.parse(Sosol::Application.config.xsugar_standalone_url),
+            {
+              :content => params[:content].to_s,
+              :type => params[:type].to_s,
+              :direction => params[:direction].to_s
+            }
+          )
+        end
       rescue EOFError
         get_xsugar_response(params)
       end

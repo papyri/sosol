@@ -101,9 +101,10 @@ class DDBIdentifier < Identifier
   end
   
   def after_rename(options = {})
+    original = options[:original]
+
     # copy back the content to the original name before we update the header
-    if options[:set_dummy_header]
-      original = options[:original]
+    if options[:set_dummy_header] && (options[:set_dummy_header] != "false")
       dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{self.name}'"
       dummy_header =
         JRubyXML.apply_xsl_transform(

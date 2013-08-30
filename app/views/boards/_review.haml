@@ -17,7 +17,7 @@
             - user_has_voted = true
   %br
   - if !user_has_voted && identifier.publication.status == "voting"
-    = form_for :vote, Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
+    = form_for Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :as => :vote, :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
       #submit
         = f.hidden_field :publication_id
         = f.hidden_field :identifier_id
@@ -33,4 +33,4 @@
         %br
         = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
         -#= f.submit "Vote", :disabled => !publication.mutable?
-        = f.submit "Vote", :disabled => true, :onclick => 'preventDoubleVote()'
+        = f.submit "Vote", :id => 'vote_submit', :disabled => true, :onclick => 'preventDoubleVote()'

@@ -1,6 +1,8 @@
 # Disable automatic framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
 
+require 'sass/plugin'
+
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|
   # Update stylesheets before doing anything
@@ -14,9 +16,9 @@ Warbler::Config.new do |config|
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
-  config.includes = FileList[
+  # config.includes = FileList[
     # "db/production.sqlite3",
-    "vendor/gems/*/.specification"]
+    # "vendor/gems/*/.specification"]
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
@@ -54,10 +56,10 @@ Warbler::Config.new do |config|
   # config.gems << /^merb-/
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
   
-  config.gems << "jruby-openssl"
+  # config.gems << "jruby-openssl"
 
   # Include gem dependencies not mentioned specifically
-  config.gem_dependencies = true
+  # config.gem_dependencies = true
 
   # Files to be included in the root of the webapp.  Note that files in public
   # will have the leading 'public/' part of the path stripped during staging.

@@ -4,7 +4,7 @@
 
     = render :partial => 'identifiers/header'
     %br
-    - form_tag  finalize_publication_path(@publication), :method => :post do
+    = form_tag  finalize_publication_path(@publication), :method => :post do
       = label_tag "Finalization comment:"
       = text_area_tag :comment, '', :class => :comment, :cols => '80', :rows => '5'
       = hidden_field_tag 'identifier_id', @identifier.id
