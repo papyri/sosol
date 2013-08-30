@@ -222,9 +222,16 @@ class Identifier < ActiveRecord::Base
   #   - new identifier
   def self.new_from_template(publication)
     new_identifier = self.new(:name => self.next_temporary_identifier)
-    new_identifier.publication = publication
     
-    new_identifier.save!
+    Identifier.transaction do
+      publication.lock!
+      if publication.identifiers.select{|i| i.class == self}.length > 0
+        return nil
+      else
+        new_identifier.publication = publication
+        new_identifier.save!
+      end
+    end
     
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
@@ -391,6 +398,18 @@ class Identifier < ActiveRecord::Base
   def after_rename(options = {})
   end
   
+  # Determines if identifier is in a temporary collection and so needs renaming before finalization.
+  # - *Returns* :
+  #   - true/false
+  def needs_rename?
+    if defined?(self.class::TEMPORARY_COLLECTION)
+      if self.to_components[2] =~ /^#{self.class::TEMPORARY_COLLECTION}[.;\/]/
+        return true
+      end
+    end
+    return false
+  end
+
   # Added to speed up dashboard since titleize can be slow
   # - gets the title from the identifier model if it exists, otherwise creates it using titleize and saves
   #   it in the model

@@ -40,10 +40,16 @@ class IdentifiersController < ApplicationController
     identifier_type = params[:identifier_type].constantize
     
     @identifier = identifier_type.new_from_template(@publication)
-    flash[:notice] = "File created."
-    expire_publication_cache
-    redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                 :action => :edit) and return
+    if @identifier.nil?
+      flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
+      redirect_to polymorphic_path([@publication],
+                                   :action => :show) and return
+    else
+      flash[:notice] = "File created."
+      expire_publication_cache
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   :action => :edit) and return
+    end
   end
   
   # GET /publications/1/xxx_identifiers/1/rename_review
