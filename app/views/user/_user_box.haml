@@ -28,6 +28,6 @@
       - if @current_user.is_community_master_admin
         = link_to "Community", :controller => "communities"
         
-- else
+- elsif (controller.action_name != 'consume' && controller.action_name != 'signin')
   #signin
     = link_to 'Sign In', signin_url

@@ -2,6 +2,8 @@ require 'ruby-saml'
 
 class ShibController < ApplicationController
    
+    protect_from_forgery :except => [:consume, :signin]
+    
     def get_config
       unless defined? @shib_config
         @shib_config = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth]
@@ -9,21 +11,30 @@ class ShibController < ApplicationController
       return @shib_config
     end
     
-    def init
+    def signin
       idp = params[:idp]
       unless (idp)
-        raise "No IdP Specified"
+        flash[:error] = "No IdP Specified"
+        redirect_to :controller => "signin", :action => "index"
+        return 
       end
       request = Onelogin::Saml::Authrequest.new
       redirect_to(request.create(saml_settings(idp)))
     end
 
     def consume
-      # TODO We should not skip conditions: this was to deal with time discrepancies -- in live environment
-      # need to make sure time issues are resolved via appropriate means
-      # upgrade ruby-saml to get :clock_drift option code 
+      
+      if params[:SAMLResponse].nil?
+        flash[:error] = "SAMLResponse is missing."
+        redirect_to :controller => "signin", :action => "index"
+        return 
+      end 
+      
       get_config
-      response          = Onelogin::Saml::Response.new(params[:SAMLResponse],{:skip_conditions => true})
+      # allowed_clock_drift is configured in seconds - allows for slight mismatch on time
+      # between sp and idp servers
+      allowed_clock_drift = @shib_config[:allowed_clock_drift] || 0
+      response          = Onelogin::Saml::Response.new(params[:SAMLResponse],{:allowed_clock_drift => allowed_clock_drift})
       issuer = response.issuer
       
       # lookup the code for the idp using the entity_id for the issuer of the AuthResponse
@@ -64,46 +75,53 @@ class ShibController < ApplicationController
           # separate class in the one login lib and allow for more general retrieval of
           # scoped attribute values
           if (http_response.code == '200')
-            att_response = Onelogin::Saml::Response.new(http_response.body,{:skip_conditions => true, :is_aq_response => true})
+            att_response = Onelogin::Saml::Response.new(http_response.body,{:allowed_clock_drift => allowed_clock_drift, :is_aq_response => true})
             att_response.settings = saml_settings(idp)
-            if att_response.is_valid? && att_response.scoped_targeted_id
-              user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
-  
-              if user_identifier
-                # User Identifier exists, login and redirect to index
-                user = user_identifier.user
-                session[:user_id] = user.id
-                if !session[:entry_url].blank?
-                  redirect_to session[:entry_url]
-                  session[:entry_url] = nil
-                  return
-                else
-                  # TODO figure out proxyurl stuff ? this doesn't work in the dev environment
-                  # because it redirects to the apache url without sosol path
-                  # also need to verify session is maintained
-                  redirect_to dashboard_url
-                  return
+            begin 
+              if att_response.is_valid? && att_response.scoped_targeted_id
+                user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
+    
+                if user_identifier
+                  # User Identifier exists, login and redirect to index
+                  user = user_identifier.user
+                  session[:user_id] = user.id
+                  if !session[:entry_url].blank?
+                    redirect_to session[:entry_url]
+                    session[:entry_url] = nil
+                    return
+                  else
+                    redirect_to :controller => "user", :action => "dashboard"
+                    return
+                  end
+                else 
+                  # first login with this identifier let the user supply their details
+                  session[:identifier] = att_response.scoped_targeted_id
+                  @display_id = get_displayid(att_response.attributes,idp) || session[:identifier]
+                  @email = guess_email(att_response.attributes, idp)
+                  @name = guess_nickname(att_response.attributes, idp)
+                  @full_name = guess_fullname(att_response.attributes, idp)
                 end
-              else 
-                # first login with this identifier let the user supply their details
-                session[:identifier] = att_response.scoped_targeted_id
-                @email = ''
-                @name = guess_nickname att_response.attributes
-                @full_name = ''
+              else # Invalid AQ Response or no scoped targed id
+                Rails.logger.debug("AQ Response invalid: #{att_response}")
+                flash[:error] = "SAML AttributeQuery returned an invalid response."
+                redirect_to :controller => "signin", :action => "index"
               end
-            else # Invalid AQ Response or no scoped targed id
-              Rails.logger.debug("AQ Response invalid: #{att_response}")
-              flash[:error] = "SAML AttributeQuery returned an invalid response."
-              redirect_to :controller => "signin", :action => "index"
+            rescue Exception => e # error caught checking validity of AQ Response
+                Rails.logger.debug("AQ Response invalid", e)
+                flash[:error] = "SAML AttributeQuery returned an invalid response."
+                redirect_to :controller => "signin", :action => "index"
             end
           else # end test on http_response code of attribute query request
             Rails.logger.debug("AQ Request failed: #{http_response.code}")
             flash[:error] = "SAML AttributeQuery Failed."
             redirect_to :controller => "signin", :action => "index"
           end
-        else # end lookup test on idp issuer entity id
+        else # invalid AuthResponse 
+          Rails.logger.debug("Invalid Shib Response #{response}")
+          flash[:error] = "SAML Authentication Failed."
+          redirect_to :controller => "signin", :action => "index"
         end        
-      else # invalid AuthResponse
+      else # end lookup test on idp issuer entity id
         Rails.logger.debug("Invalid Shib Response #{response}")
         flash[:error] = "SAML Authentication Failed."
         redirect_to :controller => "signin", :action => "index"
@@ -133,7 +151,7 @@ class ShibController < ApplicationController
   
       if @name.empty?
         flash.now[:error] = "Nickname must not be empty"
-        render :action => "login_return"
+        render :action => "shib_consume"
         return
       end
   
@@ -143,7 +161,7 @@ class ShibController < ApplicationController
         user.save!
       rescue ActiveRecord::RecordInvalid => e
         flash.now[:error] = "Nickname not available"
-        render :action => "login_return"
+        render :action => "shib_consume"
         return
       end
   
@@ -157,7 +175,7 @@ class ShibController < ApplicationController
         rescue Exception => e
           user.destroy
           flash.now[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
-          render :action => "login_return"
+          render :action => "shib_consume"
           return
       end
   
@@ -198,13 +216,37 @@ class ShibController < ApplicationController
       
       settings
     end
-      
-    def guess_nickname(data)
-      # eduPersonPrincipalName is urn:oid:1.3.6.1.4.1.5923.1.1.1.6
-      if data['urn:oid:1.3.6.1.4.1.5923.1.1.1.6']
-        return data['urn:oid:1.3.6.1.4.1.5923.1.1.1.6']
+
+    def get_displayid(data,idp)
+      if data[@shib_config[:idps][idp][:attributes][:display_id]]
+        return data[@shib_config[:idps][idp][:attributes][:display_id]]
       end
       # There wasn't anything, so let the user enter a nickname
       return ''
     end
+          
+    def guess_nickname(data,idp)
+      if data[@shib_config[:idps][idp][:attributes][:nickname]]
+        return data[@shib_config[:idps][idp][:attributes][:nickname]]
+      end
+      # There wasn't anything, so let the user enter a nickname
+      return ''
+    end
+    
+    def guess_fullname(data,idp)
+      if data[@shib_config[:idps][idp][:attributes][:fullname]]
+        return data[@shib_config[:idps][idp][:attributes][:fullname]]
+      end
+      # There wasn't anything, so let the user enter a nickname
+      return ''
+    end
+    
+    def guess_email(data,idp)
+      if data[@shib_config[:idps][idp][:attributes][:email]]
+        return data[@shib_config[:idps][idp][:attributes][:email]]
+      end
+      # There wasn't anything, so let the user enter a nickname
+      return ''
+    end
+
 end

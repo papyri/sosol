@@ -3,10 +3,14 @@
   %p
     You've authenticated as
     %strong
-      = h session[:identifier]
-    ,
-    but you need to enter a nickname to sign up.
-  - form_for :new_user, :url => ("https://sosol.perseids.org/sosol/shib/create_submit") do |f|
+      = h @display_id
+    %p
+      You must to choose a nickname to complete the sign-up process.  
+    %p
+      %strong
+        Note:
+      this nickname will be visible to all users of the platform.  
+  - form_for :new_user, :url => { :action => "create_submit" } do |f|
     %table
       %tr
         %th

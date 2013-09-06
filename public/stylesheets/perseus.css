@@ -1,5 +1,29 @@
 body {
-	background-color: #F8F6F4;
+	background-color: white;
+}
+
+#shib_login {
+	margin: 10px 5px 5px 10px;
+}
+
+#wayf_select_form {
+	background-color: #F4F4F4;
+	border: 1px solid #DADADA;
+	width: 50%;
+	padding: 10px;
+	margin: 0 0 10px;
+}
+
+#wayf_select_form input[type=submit] {
+	font-size: larger;
+}
+
+#shib_login #shib_or_idp {
+	font-style: italic;
+}
+
+#edit_bar {
+	background-color: #F4F4F4;
 }
 .publication_list_holder table.results td {
 	padding: 5px;
@@ -9,6 +33,10 @@ body {
 
 .publication_list_holder table.results tr {
 	line-height: 1em !important;
+}
+
+.publication_list_holder table.results tr.head {
+	font-style: italic;
 }
 
 .publication_list_holder table.results a {

@@ -1,5 +1,24 @@
 development:
   :shibboleth:
+    :allowed_clock_drift: 5
+    :issuer: sosol.perseids.org
+    :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
+    :sp_private_key: <%= RAILS_ROOT %>/data/certificates/private.key
+    :assertion_consumer_service_url: "https://dev.alpheios.net/shib/consume"
+    :idps:
+      tufts:
+        :entity_id: "https://shib-idp.tufts.edu/idp/shibboleth"
+        :display_name: "Tufts University"
+        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftsprod.crt
+        :idp_sso_target_url: "https://shib-idp.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
+        :idp_aqr_target_url: "https://shib-idp.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
+        :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+        :attributes:
+          :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
+test:
+  :shibboleth:
+    :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
     :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
     :sp_private_key: <%= RAILS_ROOT %>/data/certificates/private.key
@@ -7,34 +26,29 @@ development:
     :idps:
       tufts:
         :entity_id: "https://shibidp-test.uit.tufts.edu/idp/shibboleth"
+        :display_name: "Tufts University"
         :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
         :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
         :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
         :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
-test:
-  :shibboleth:
-    :issuer: sosol.perseids.org
-    :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
-    :sp_private_key: /etc/ssh/private/private.key
-    :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
-    :idps:
-      tufts:
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
-        :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
-        :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
-        :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
-        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+        :attributes:
+          :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"      
 production:
   :shibboleth:
+    :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
-    :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
-    :sp_private_key: /etc/ssh/private/private.key
+    :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
+    :sp_private_key: /etc/ssl/private/private.key
     :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
     :idps:
       tufts:
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftsprod.crt
-        :idp_sso_target_url: "https://shibidp.uit.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
-        :idp_aqr_target_url: "https://shibidp.uit.tufts.edu/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
+        :entity_id: "https://shib-idp.tufts.edu/idp/shibboleth"
+        :display_name: "Tufts University"
+        :idp_cert: /etc/ssl/certs/tuftsprod.crt
+        :idp_sso_target_url: "https://shib-idp.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
+        :idp_aqr_target_url: "https://shib-idp.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
         :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+        :attributes:
+          :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        

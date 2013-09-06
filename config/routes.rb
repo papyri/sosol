@@ -164,9 +164,9 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'cts_proxy',
     :action => 'getrepos'
     
-  map.connect 'shib/init/:idp',
+  map.connect 'shib/signin/:idp',
     :controller => 'shib',
-    :action => 'init'
+    :action => 'signin'
   
   # The priority is based upon order of creation: first created -> highest priority.
 

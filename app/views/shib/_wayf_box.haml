@@ -1,0 +1,9 @@
+-if ShibHelper::shib_enabled?
+  #shib_login
+    #wayf_select_form
+      - form_for :new_user, :url => { :action => "signin", :controller=> "shib", :protocol => 'https' } do |f|
+        =label_tag 'Login with your Insitutional Credentials from:'
+        =select_tag "idp", options_for_select(ShibHelper::get_idp_list)
+        =submit_tag "Sign In"
+    #shib_or_idp Or login with a Social Identity or OpenID Provider:
+      
