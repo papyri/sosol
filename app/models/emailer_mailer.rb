@@ -12,7 +12,7 @@ class EmailerMailer < ActionMailer::Base
     #TODO check that email is creatible, ie has valid addresses
     
     #from "SoSOL"
-    from SITE_NAME
+    from SITE_EMAIL_FROM || SITE_NAME 
     sent_on Time.now
   
     subject subject_line
