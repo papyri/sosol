@@ -6,20 +6,31 @@ body {
 	margin: 10px 5px 5px 10px;
 }
 
+#shib_login label {
+	font-style: italic;
+}
+
 #wayf_select_form {
-	background-color: #F4F4F4;
-	border: 1px solid #DADADA;
+	background-color: white;
 	width: 50%;
 	padding: 10px;
 	margin: 0 0 10px;
 }
 
-#wayf_select_form input[type=submit] {
-	font-size: larger;
-}
+#wayf_select_form button {
+	cursor: pointer;
+	background-color: white;
+	border: none;
 
+}
+#wayf_select_form img {
+	border: 3px outset #300F00;
+	cursor: pointer;
+	padding: 2px;
+}
 #shib_login #shib_or_idp {
 	font-style: italic;
+	clear: both;
 }
 
 #edit_bar {
