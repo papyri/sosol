@@ -85,11 +85,16 @@ class Repository
     # This will pull in all objects regardless of alternates/shared status.
     # If you delete an alternates-referenced repository without repacking,
     # referenced objects will disappear, possibly making the repo unusable.
-    @canonical.git.repack({})
+    begin
+      @canonical.git.repack({})
     
-    canon = Repository.new
-    canon.del_alternates(self)
-    `rm -r "#{path}"`
+      canon = Repository.new
+      canon.del_alternates(self)
+      `rm -r "#{path}"`
+    rescue Grit::Git::GitTimeout
+      self.class.increase_timeout
+      self.destroy
+    end
   end
   
   #returns the blob that represents the given file
@@ -327,7 +332,7 @@ class Repository
   
   def self.increase_timeout
     Grit::Git.git_timeout *= 2
-    RAILS_DEFAULT_LOGGER.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
+    Rails.logger.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
   
   def safe_repo_name(name)
