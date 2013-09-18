@@ -133,7 +133,11 @@ module JGit
       inserter = root.repo.newObjectInserter()
       formatter = org.eclipse.jgit.lib.TreeFormatter.new()
 
-      nodes.keys.sort.each do |node|
+      # Git expects Tree entries sorted as if they have a trailing slash
+      # TODO: could still potentially have tree/file collision here, e.g. file 'test' and directory 'test' will still collide in the hash
+      # But I don't think this occurs in idp.data
+      sorted_nodes = nodes.keys.map{|n| (nodes[n].mode == org.eclipse.jgit.lib.FileMode::TREE) ? "#{n}/" : n}.sort.map{|n| n.chomp('/')}
+      sorted_nodes.each do |node|
         # puts "About to append #{node} #{nodes[node].mode} #{nodes[node].sha} in #{self.path}"
         formatter.append(node, nodes[node].mode, org.eclipse.jgit.lib.ObjectId.fromString(nodes[node].sha))
       end
