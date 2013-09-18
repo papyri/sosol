@@ -63,6 +63,8 @@ module JGit
         commit.setParentId(repo.resolve(branch))
         commit.setAuthor(person_ident)
         commit.setCommitter(person_ident)
+        # TODO: Check if this solves character encoding problem
+        commit.setEncoding("UTF-8")
         commit.setMessage(comment)
 
         commit_id = inserter.insert(commit)
@@ -87,7 +89,7 @@ module JGit
     end
 
     def add(path, sha, mode)
-      # Rails.logger.info("JGITTREE: Add for #{path}")
+      Rails.logger.debug("JGITTREE: Add for #{path}")
       # takes a path relative to this tree and adds it
       components = path.split('/')
       if components.length > 1 # need to recurse
@@ -133,7 +135,11 @@ module JGit
       inserter = root.repo.newObjectInserter()
       formatter = org.eclipse.jgit.lib.TreeFormatter.new()
 
-      nodes.keys.sort.each do |node|
+      # Git expects Tree entries sorted as if they have a trailing slash
+      # TODO: could still potentially have tree/file collision here, e.g. file 'test' and directory 'test' will still collide in the hash
+      # But I don't think this occurs in idp.data
+      sorted_nodes = nodes.keys.map{|n| (nodes[n].mode == org.eclipse.jgit.lib.FileMode::TREE) ? "#{n}/" : n}.sort.map{|n| n.chomp('/')}
+      sorted_nodes.each do |node|
         # puts "About to append #{node} #{nodes[node].mode} #{nodes[node].sha} in #{self.path}"
         formatter.append(node, nodes[node].mode, org.eclipse.jgit.lib.ObjectId.fromString(nodes[node].sha))
       end
