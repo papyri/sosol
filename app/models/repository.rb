@@ -49,7 +49,7 @@ class Repository
       begin
         @jgit_repo = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
       rescue Exception => e
-        Rails.logger.info("JGIT CorruptObjectException: #{e.inspect}")
+        Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace}")
       end
     else
       @repo = nil
@@ -73,7 +73,7 @@ class Repository
     begin
       @jgit_repo ||= org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
     rescue Exception => e
-      Rails.logger.info("JGIT CorruptObjectException: #{e.inspect}")
+      Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace}")
     end
   end
   
@@ -116,16 +116,16 @@ class Repository
       # Rails.logger.info("JGIT BLOB: #{jgit_blob}")
       jgit_blob = ""
       begin
-        Rails.logger.info("JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name()}")
+        Rails.logger.debug("JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name()}")
         jgit_blob = org.apache.commons.io.IOUtils.toString(@jgit_repo.open(tree_walk.getObjectId(0)).openStream(), "UTF-8")
       rescue Exception => e
-        Rails.logger.info("JGIT Blob Exception for #{file} on #{branch} in #{path}: #{e.inspect}")
+        Rails.logger.error("JGIT Blob Exception for #{file} on #{branch} in #{path}: #{e.inspect}\n#{e.backtrace}")
         return nil
       end
-      Rails.logger.info("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding("UTF-8").length}")
+      Rails.logger.error("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding("UTF-8").length}")
       return jgit_blob
     rescue Exception => e
-      Rails.logger.info("JGIT Exception: #{e.inspect}\n#{caller.join("\n")}")
+      Rails.logger.error("JGIT Exception: #{e.inspect}\n#{caller.join("\n")}\n#{e.backtrace}")
       return nil
     end
   end
@@ -187,9 +187,9 @@ class Repository
 
     begin
       ref = org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).call()
-      Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
+      # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
     rescue Exception => e
-      Rails.logger.debug("create_branch exception: #{e.inspect}")
+      Rails.logger.error("create_branch exception: #{e.inspect}\n#{e.backtrace}")
     end
   end
   
@@ -238,7 +238,7 @@ class Repository
       self.class.increase_timeout
       fetch_objects(other_repo)
     rescue Java::OrgEclipseJgitApiErrors::TransportException => e
-      Rails.logger.debug("fetch transport exception: #{e.inspect}")
+      Rails.logger.error("fetch transport exception: #{e.inspect}\n#{e.backtrace}")
     end
   end
   
@@ -320,7 +320,7 @@ class Repository
       inserter.flush()
       inserter.release()
     rescue Exception => e
-      Rails.logger.info("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
+      Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace}")
       return nil
     end
   end

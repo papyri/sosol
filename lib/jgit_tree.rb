@@ -63,6 +63,8 @@ module JGit
         commit.setParentId(repo.resolve(branch))
         commit.setAuthor(person_ident)
         commit.setCommitter(person_ident)
+        # TODO: Check if this solves character encoding problem
+        commit.setEncoding("UTF-8")
         commit.setMessage(comment)
 
         commit_id = inserter.insert(commit)
@@ -87,7 +89,7 @@ module JGit
     end
 
     def add(path, sha, mode)
-      # Rails.logger.info("JGITTREE: Add for #{path}")
+      Rails.logger.debug("JGITTREE: Add for #{path}")
       # takes a path relative to this tree and adds it
       components = path.split('/')
       if components.length > 1 # need to recurse
@@ -132,9 +134,10 @@ module JGit
     def update_sha
       inserter = root.repo.newObjectInserter()
       formatter = org.eclipse.jgit.lib.TreeFormatter.new()
-
+      
+      # TODO: figure out if this is where tree breakage occurs
       nodes.keys.sort.each do |node|
-        # puts "About to append #{node} #{nodes[node].mode} #{nodes[node].sha} in #{self.path}"
+        # Rails.logger.debug("About to append #{node} #{nodes[node].mode} #{nodes[node].sha} in #{self.path}")
         formatter.append(node, nodes[node].mode, org.eclipse.jgit.lib.ObjectId.fromString(nodes[node].sha))
       end
 
