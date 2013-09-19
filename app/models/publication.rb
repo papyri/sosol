@@ -817,18 +817,6 @@ class Publication < ActiveRecord::Base
     Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
     # tree_sha1 = self.repository.repo.commit(board_branch_point).tree.id
     
-    # most of this is dup'd from Grit::Index#commit
-    # with modifications to allow for correct timestamping
-    # and author/committer split
-    contents = []
-    contents << ['tree', tree_sha1].join(' ')
-    contents << ['parent', parent_commit].join(' ')
-    
-    contents << ['author', self.creator.git_author_string].join(' ')
-    contents << ['committer', finalizer.git_author_string].join(' ')
-    contents << ''
-    contents << commit_message
-    
     inserter = finalizing_publication.repository.jgit_repo.newObjectInserter()
 
     commit = org.eclipse.jgit.lib.CommitBuilder.new()
@@ -837,7 +825,7 @@ class Publication < ActiveRecord::Base
     commit.setAuthor(org.eclipse.jgit.lib.PersonIdent.new(self.creator.name,self.creator.email))
     commit.setCommitter(org.eclipse.jgit.lib.PersonIdent.new(finalizer.name,finalizer.email))
     commit.setEncoding("UTF-8")
-    commit.setMessage(contents.join("\n"))
+    commit.setMessage(commit_message)
 
     flattened_commit_sha1 = inserter.insert(commit).name()
     inserter.flush()
@@ -1121,22 +1109,21 @@ class Publication < ActiveRecord::Base
 
         commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
       
-        contents = []
-        contents << ['tree', tree_sha1].join(' ')
-        contents << ['parent', canonical_sha].join(' ')
-        contents << ['parent', publication_sha].join(' ')
+        inserter = self.owner.repository.jgit_repo.newObjectInserter()
 
-        contents << ['author', self.owner.git_author_string].join(' ')
-        contents << ['committer', self.owner.git_author_string].join(' ')
-        contents << ''
-        contents << commit_message
+        commit = org.eclipse.jgit.lib.CommitBuilder.new()
+        commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+        commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
+        commit.setAuthor(org.eclipse.jgit.lib.PersonIdent.new(self.owner.name,self.owner.email))
+        commit.setCommitter(org.eclipse.jgit.lib.PersonIdent.new(self.owner.name,self.owner.email))
+        commit.setEncoding("UTF-8")
+        commit.setMessage(commit_message)
+
+        finalized_commit_sha1 = inserter.insert(commit).name()
+        inserter.flush()
+        inserter.release()
       
-        finalized_commit_sha1 = 
-          self.owner.repository.repo.git.put_raw_object(
-            contents.join("\n"), 'commit')
-      
-        Rails.logger.info("Finalized commit contents:\n#{contents.join("\n")}")
-        Rails.logger.info("Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+        Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
       
         # Update our own head first
         self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
