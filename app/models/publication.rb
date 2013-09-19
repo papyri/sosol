@@ -829,10 +829,20 @@ class Publication < ActiveRecord::Base
     contents << ''
     contents << commit_message
     
-    flattened_commit_sha1 = 
-      finalizing_publication.repository.repo.git.put_raw_object(
-        contents.join("\n"), 'commit')
-    
+    inserter = finalizing_publication.repository.jgit_repo.newObjectInserter()
+
+    commit = org.eclipse.jgit.lib.CommitBuilder.new()
+    commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+    commit.setParentId(org.eclipse.jgit.lib.ObjectId.fromString(parent_commit))
+    commit.setAuthor(org.eclipse.jgit.lib.PersonIdent.new(self.creator.name,self.creator.email))
+    commit.setCommitter(org.eclipse.jgit.lib.PersonIdent.new(finalizer.name,finalizer.email))
+    commit.setEncoding("UTF-8")
+    commit.setMessage(contents.join("\n"))
+
+    flattened_commit_sha1 = inserter.insert(commit).name()
+    inserter.flush()
+    inserter.release()
+
     finalizing_publication.repository.create_branch(
       finalizing_publication.branch, flattened_commit_sha1)
     
