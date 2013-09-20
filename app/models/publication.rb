@@ -1101,7 +1101,7 @@ class Publication < ActiveRecord::Base
         index = self.owner.repository.repo.index
         index.read_tree('master')
         controlled_paths_blobs.each_pair do |path, blob|
-          index.add(path, blob.data)
+          index.add(path, blob)
         end
 
         tree_sha1 = index.write_tree(index.tree, index.current_tree)
