@@ -40,7 +40,6 @@ class CitePublicationsController < PublicationsController
         possible_conflicts = identifier_class.find(:all,
                        :conditions => ["name like ?", "#{lookup_id}%"],
                        :order => "name DESC")
-        Rails.logger.info("found possible conflicts #{possible_conflicts.inspect}")
         
           actual_conflicts = possible_conflicts.select {|pc| 
             begin
@@ -50,7 +49,7 @@ class CitePublicationsController < PublicationsController
                pc.is_match?(params[:init_value])
               )
             rescue Exception => e
-              Rails.logger.error("Error checking for conflicts #{pc.inspect} : #{e}")
+              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
             end
           }
           existing_identifiers += actual_conflicts
@@ -67,9 +66,9 @@ class CitePublicationsController < PublicationsController
         flash[:error] += '<ul>'
         existing_identifiers.each do |conf_id|
           begin
-            flash[:error] += "<li><a href='#{url_for(conf_id)}'>#{conf_id}</a></li>"
+            flash[:error] += "<li><a href='" + url_for(conf_id) + "'>" + conf_id.name.to_s + "</a></li>"
           rescue
-            flash[:error] += "<li>#{conf_id}</li>"
+            flash[:error] += "<li>" + conf_id.name.to_s + ":" + conf_id.publication.status + "</li>"
           end
         end
         flash[:error] += '</ul>'
@@ -103,7 +102,7 @@ class CitePublicationsController < PublicationsController
         lookup_path = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + now.year.to_s + now.mon.to_s + now.day.to_s
         latest = Publication.find(:all,
                        :conditions => ["title like ?", "#{lookup_path}%"],
-                       :order => "title DESC",
+                       :order => "created_at DESC",
                        :limit => 1).first
         if latest.nil?
           incr = 1
@@ -130,6 +129,7 @@ class CitePublicationsController < PublicationsController
         end
         flash[:notice] = 'Publication was successfully created.'      
       rescue Exception => e
+        Rails.logger.info(e.backtrace)
         @publication.destroy
         flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s
         redirect_to dashboard_url

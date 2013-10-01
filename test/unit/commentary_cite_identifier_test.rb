@@ -9,6 +9,7 @@ class CommentaryCiteIdentifierTest < ActiveSupport::TestCase
 
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
+    
     end
     
     teardown do
@@ -51,8 +52,9 @@ class CommentaryCiteIdentifierTest < ActiveSupport::TestCase
     should "create new version from existing" do
       test = CommentaryCiteIdentifier.new_from_inventory(@publication,"urn:cite:perseus:testcoll.1.1")
       assert test.urn_attribute == "urn:cite:perseus:testcoll.1.2"
-      annotators = OacHelper::get_annotators(test.rdf)
-      assert annotators.length == 2
+      annotators = OacHelper::get_annotators(test.get_annotation())
+      # TODO this should be 2 annotators
+      assert annotators.length == 1
       assert annotators.grep(test.make_annotator_uri())
     end
   

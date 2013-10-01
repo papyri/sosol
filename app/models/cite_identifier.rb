@@ -85,7 +85,7 @@ class CiteIdentifier < Identifier
     lookup_path = self.path_for_collection(a_collection_urn)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{lookup_path}%"],
-                       :order => "name DESC",
+                       :order => "publication_id DESC",
                        :limit => 1).first
     next_version_id = 1
     if latest.nil?
@@ -104,7 +104,7 @@ class CiteIdentifier < Identifier
     lookup_path = self.path_for_object_urn(a_urn)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{lookup_path}%"],
-                       :order => "name DESC",
+                       :order => "id DESC",
                        :limit => 1).first
     if latest.nil?
       # if we don't have any identifiers in the db for this object yet, just increment the
