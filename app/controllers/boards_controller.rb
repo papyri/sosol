@@ -239,14 +239,14 @@ def send_board_reminder_emails
     
   addresses = Array.new 
   
-  if (params[:community_id].to_s)
+  if (params[:community_id].to_s != '')
     boards = Board.ranked_by_community_id(params[:community_id].to_s) 
     community = Community.find_by_id(params[:community_id].to_s) 
   else
     boards = Board.ranked
   end
-  
-  
+    
+    
   body_text = 'Greetings '
   if community
     body_text += community.name + " "
