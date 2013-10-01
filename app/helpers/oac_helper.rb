@@ -365,5 +365,17 @@ module OacHelper
       }
       return a_annotation   
   end
+  
+  # Updates the annotation uri and body uri for inline content
+  def self.update_annotation_uris(a_annotation,a_annot_uri,a_body_uri)
+    a_annotation.delete_attribute('rdf:about')
+    a_annotation.add_attribute('rdf:about',a_annot_uri)    
+    xpath = "oa:hasBody/cnt:ContentAsText"
+    REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF, "cnt" => NS_CONTENT}) { |body|
+      body.delete_attribute('rdf:about')
+      body.add_attribute('rdf:about',a_body_uri)
+    }    
+
+  end
 
 end

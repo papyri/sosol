@@ -175,4 +175,14 @@ class CommentaryCiteIdentifier < CiteIdentifier
   def is_valid_xml?(content)
     return true
   end
+  
+  # need to update the uris to reflect the new name
+  def after_rename(options = {})
+    annot_uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute
+    body_uri = annot_uri + "/commentary"
+    OacHelper::update_annotation_uris(get_annotation,annot_uri,body_uri)
+    oacRdf = toXmlString self.rdf
+    # TODO should either update annotatedAt or set updatedAt (does that exist??)
+    self.set_xml_content(oacRdf, :comment => 'Update uris to reflect new identifier')
+  end
 end
