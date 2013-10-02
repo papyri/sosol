@@ -2,9 +2,10 @@
 <!-- this stylesheet is used to produce HTML for the lbl commentary view -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
   
-  <xsl:import href="../pn/start-div-portlet.xsl"/>
+  <xsl:import href="../perseus/epidoc_preview.xsl"/>
   <xsl:import href="../ddb/lb_id.xsl"/>
   <xsl:import href="../ddb/commentary_preview.xsl"/>
+  <xsl:import href="../perseus/epidoc/htm-tpl-apparatus.xsl"/>
   
   <!-- Text edition div -->
   <xsl:template match="tei:body" priority="1">

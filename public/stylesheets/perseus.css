@@ -247,3 +247,34 @@ li.editor_menu {
 	padding: 1em 2em 2em 1em;
 	border: 1px dashed black;
 }
+
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+.clear { clear:both; }
+
+.edit_epi_cts_identifier #epi_cts_identifier_xml_content {
+	width:45%;
+	float: left;
+}
+
+.edit_epi_cts_identifier #ict_tool_wrapper {
+	width:50%;
+	float:left;
+	height: 40em;
+	padding-left: 1%;
+
+}
+
+.edit_epi_cts_identifier #ict_frame {
+	width: 100%;
+	height: 95%;
+}
+

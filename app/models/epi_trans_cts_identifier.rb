@@ -80,7 +80,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt pn start-divtrans-portlet.xsl})))
+        %w{data xslt perseus epidoc_preview.xsl})))
   end
   
 end

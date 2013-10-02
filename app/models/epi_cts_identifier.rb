@@ -112,17 +112,8 @@ class EpiCTSIdentifier < CTSIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        xsl ? xsl : %w{data xslt pn start-div-portlet_perseus.xsl})),
+        xsl ? xsl : %w{data xslt perseus epidoc_preview.xsl})),
         parameters)
   end
   
-  def facs parameters = {}, xsl=nil
-    links = JSON.parse(
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(self.xml_content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-          xsl ? xsl : %w{data xslt cts facs.xsl})),
-          parameters))
-  end
-
 end

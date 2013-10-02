@@ -5,23 +5,17 @@
     #edit
       - form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
-
-        %br
-        - if @identifier[:facs].length > 1
-          - @identifier[:facs].each do |i|
-            %a{:href => i, :target => 'cts-image-frame'} i
-        
-        %iframe{:id=> 'cts-image-frame', :src => @identifier[:facs][0]}
-        
-
+                  
         %br
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
                 
         %label XML
         = clippy "#{@identifier.class.to_s.underscore}_xml_content"
-        
-        = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
-        // FORK CHANGE END
+        .clearfix
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+          #ict_tool_wrapper 
+            #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'make_ICT_link'}
+            %iframe{:id => 'ict_frame'}        
         %br
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
@@ -29,3 +23,4 @@
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  PerseidsLD.do_simple_query();

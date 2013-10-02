@@ -78,7 +78,7 @@ class CTSIdentifier < Identifier
     newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
     Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
-    editionPart = ".#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
@@ -91,8 +91,7 @@ class CTSIdentifier < Identifier
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
     editionPart = editionPart + document_number.to_s
-    # HACK for IDigGreek - just keep the original edition info
-    editionPart = urnObj.getVersion(false)
+    # TODO add exemplar (version) component
     return "#{document_path}#{editionPart}"
   end
   
@@ -128,6 +127,12 @@ class CTSIdentifier < Identifier
   
   def urn_attribute
      return IDENTIFIER_PREFIX + self.to_urn_components.join(":")
+  end
+  
+  def work_urn
+    urn_obj = CTS::CTSLib.urnObj(self.urn_attribute)
+    work_urn = IDENTIFIER_PREFIX + urn_obj.getTextGroup() + '.' + urn_obj.getWork(false)
+    return work_urn
   end
   
   def id_attribute

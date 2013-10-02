@@ -2,20 +2,23 @@
 <!-- $Id: start-edition.xsl 1510 2008-08-14 15:27:51Z zau $ -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <xsl:include href="global-varsandparams.xsl"/>
+  <xsl:variable name="line-inc">5</xsl:variable>
+  <xsl:include href="../perseus/epidoc/global-varsandparams.xsl"/>
+  
+  <xsl:include href="../perseus/epidoc/txt-tpl-apparatus.xsl"/>
 
   <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
   <xsl:include href="../epidoc/htm-teiab.xsl"/>
-  <xsl:include href="../epidoc/htm-teiapp.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teiapp.xsl"/>
   <xsl:include href="../epidoc/htm-teidiv.xsl"/>
   <xsl:include href="../epidoc/htm-teidivedition.xsl"/>
   <xsl:include href="../epidoc/htm-teiforeign.xsl"/>
   <xsl:include href="../epidoc/htm-teifigure.xsl"/>
   <xsl:include href="../epidoc/htm-teig.xsl"/>
-  <xsl:include href="../epidoc/htm-teigap.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teigap.xsl"/>
   <xsl:include href="../epidoc/htm-teihead.xsl"/>
-  <xsl:include href="../epidoc/htm-teihi.xsl"/>
-  <xsl:include href="../epidoc/htm-teilb.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teihi.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teilb.xsl"/>
   <xsl:include href="../epidoc/htm-teilgandl.xsl"/>
   <xsl:include href="../epidoc/htm-teilistanditem.xsl"/>
   <xsl:include href="../epidoc/htm-teilistbiblandbibl.xsl"/>
@@ -25,11 +28,11 @@
   <xsl:include href="../epidoc/htm-teip.xsl"/>
   <xsl:include href="../epidoc/htm-teiseg.xsl"/>
   <xsl:include href="../epidoc/htm-teispace.xsl"/>
-  <xsl:include href="../epidoc/htm-teisupplied.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teisupplied.xsl"/>
   <xsl:include href="../epidoc/htm-teiterm.xsl"/>
-  <xsl:include href="../epidoc/htm-teiaddanddel.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-teiaddanddel.xsl"/>
   
-  <xsl:include href="htm-teixref.xsl"/>
+  <xsl:include href="../epidoc/htm-teiref.xsl"/>
 
   <!-- tei stylesheets that are also used by start-txt -->
   <xsl:include href="../epidoc/teiabbrandexpan.xsl"/>
@@ -43,23 +46,19 @@
   <xsl:include href="../epidoc/teiq.xsl"/>
   <xsl:include href="../epidoc/teisicandcorr.xsl"/>
   <xsl:include href="../epidoc/teispace.xsl"/>
-  <xsl:include href="../epidoc/teisupplied.xsl"/>
+  <xsl:include href="../perseus/epidoc/teisupplied.xsl"/>
   <xsl:include href="../epidoc/teisurplus.xsl"/>
   <xsl:include href="../epidoc/teiunclear.xsl"/>
 
   <!-- html related stylesheets for named templates -->
   <xsl:include href="../epidoc/htm-tpl-lang.xsl"/>
   <xsl:include href="../epidoc/htm-tpl-license.xsl"/>
-  
-  <xsl:include href="htm-tpl-scripts.xsl"/>
-  <xsl:include href="htm-tpl-apparatus-portlet.xsl"/>
-  <!-- xsl:include href="htm-tpl-metadata.xsl"/ -->
-  <xsl:include href="htm-tpl-nav-pn.xsl"/>
+  <xsl:include href="../perseus/epidoc/htm-tpl-cssandscripts.xsl"/>
 
   <!-- global named templates with no html, also used by start-txt -->
-  <xsl:include href="../epidoc/tpl-reasonlost.xsl"/>
-  <xsl:include href="../epidoc/tpl-certlow.xsl"/>
-  <xsl:include href="../epidoc/tpl-text.xsl"/>
+  <xsl:include href="../perseus/epidoc/tpl-reasonlost.xsl"/>
+  <xsl:include href="../perseus/epidoc/tpl-certlow.xsl"/>
+  <xsl:include href="../perseus/epidoc/tpl-text.xsl"/>
 
 
 
