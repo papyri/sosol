@@ -110,6 +110,7 @@ module NumbersRDF
 
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
+        puts identifier
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}/source']/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
         if results.nil?

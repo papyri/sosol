@@ -1176,6 +1176,13 @@ class Publication < ActiveRecord::Base
       '--', *(self.controlled_paths))
     return diff || ""
   end
+
+  def needs_rename?
+    self.controlled_identifiers.each do |i|
+      return true if i.needs_rename?
+    end
+    return false
+  end
   
   #*Returns* comment object with the publication's submit comment.
   def submission_reason
