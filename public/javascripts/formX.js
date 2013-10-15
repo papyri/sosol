@@ -303,7 +303,7 @@ var formX =  {
     if (elt.indexOf('[') > 0) {
       var preds = elt.replace(']', '', 'g').split('[');
       for (var i=1; i < preds.length; i++) {
-        var attr = preds[i].search(/([^=]+)='([^']+)'/);
+        var attr = preds[i].match(/([^=]+)='([^']+)'/);
         if (attr) {
           result.push(attr.splice(1,2));
         }
