@@ -435,8 +435,8 @@ var formX =  {
     for (var i=0; i < newNodes.length; i++) {
       if (newNodes[i].nodeType == Node.ELEMENT_NODE) {
         var elt = newNodes[i].cloneNode(true);  // Clone because the node is otherwise removed from newNodes[]
-        formX.formatFragment(elt, node);
         node.ownerDocument.adoptNode(elt);
+        formX.formatFragment(elt, node);
         sibling = formX.getSibling(node, newNodes[i]);
         if (sibling) {
           while (sibling.previousSibling && sibling.previousSibling.nodeType == Node.TEXT_NODE && sibling.previousSibling.nodeValue.match(/^\n\s*$/)) {
