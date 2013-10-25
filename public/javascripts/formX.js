@@ -261,12 +261,21 @@ var formX =  {
       for (var i=0; attrs && i < attrs.length; i++) {
         ne.setAttribute(attrs[i][0].replace(/@/, ''), attrs[i][1]);
       }
-      while (pe.lastChild && pe.lastChild.nodeType == Node.TEXT_NODE && pe.lastChild.nodeValue.match(/\n\s*$/)) {
-        pe.removeChild(pe.lastChild);
+      var sibling = formX.getSibling(pe, ne);
+      if (sibling) {
+        while (sibling.previousSibling && sibling.previousSibling.nodeType == Node.TEXT_NODE && sibling.previousSibling.nodeValue.match(/^\n\s*$/)) {
+          pe.removeChild(sibling.previousSibling);
+        }
+        pe.insertBefore(formX.xml.createTextNode("\n"+formX.getIndent(ne)+formX.mapping.indent), sibling);
+        pe.insertBefore(ne, sibling);
+      } else {
+        while (pe.lastChild && pe.lastChild.nodeType == Node.TEXT_NODE && pe.lastChild.nodeValue.match(/\n\s*$/)) {
+          pe.removeChild(pe.lastChild);
+        }
+        pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)+formX.mapping.indent));
+        pe.appendChild(ne);
+        pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)));
       }
-      pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)+formX.mapping.indent));
-      pe.appendChild(ne);
-      pe.appendChild(formX.xml.createTextNode("\n"+formX.getIndent(pe)));
       return ne;
     } else {
       return pe;
@@ -303,7 +312,7 @@ var formX =  {
     if (elt.indexOf('[') > 0) {
       var preds = elt.replace(']', '', 'g').split('[');
       for (var i=1; i < preds.length; i++) {
-        var attr = preds[i].search(/([^=]+)='([^']+)'/);
+        var attr = preds[i].match(/([^=]+)='([^']+)'/);
         if (attr) {
           result.push(attr.splice(1,2));
         }
@@ -426,8 +435,8 @@ var formX =  {
     for (var i=0; i < newNodes.length; i++) {
       if (newNodes[i].nodeType == Node.ELEMENT_NODE) {
         var elt = newNodes[i].cloneNode(true);  // Clone because the node is otherwise removed from newNodes[]
-        formX.formatFragment(elt, node);
         node.ownerDocument.adoptNode(elt);
+        formX.formatFragment(elt, node);
         sibling = formX.getSibling(node, newNodes[i]);
         if (sibling) {
           while (sibling.previousSibling && sibling.previousSibling.nodeType == Node.TEXT_NODE && sibling.previousSibling.nodeValue.match(/^\n\s*$/)) {
