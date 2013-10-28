@@ -1,6 +1,8 @@
 class CitationCtsIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update ]
+
   
   def edit
     redirect_to :action =>"editxml",:id=>params[:id]

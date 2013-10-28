@@ -1,6 +1,8 @@
 class CtsOacIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :append, :delete_annotation]
+
   
   def edit
     find_publication_and_identifier
@@ -11,13 +13,13 @@ class CtsOacIdentifiersController < IdentifiersController
       if (annotation.nil?)
         flash[:error] = "Annotation #{annotation_uri} not found"
         redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-      elsif (OacHelper::get_creator(annotation) != @creator_uri && @publication.status != 'finalizing')
+      elsif ((OacHelper::get_creator(annotation) != @creator_uri && ! (OacHelper::get_annotators(annotation).include? @creator_uri)) && @publication.status != 'finalizing')
         flash[:error] = "You can only edit annotations you created"
         redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
       else
         @identifier[:action] = 'update'
         params[:annotation_uri] = annotation_uri
-        params[:annotation_title] = OacHelper::get_title(annotation)
+        params[:annotation_motivation] = OacHelper::get_title(annotation)
         params[:body_uri] = OacHelper::get_body(annotation)
         index = 1
         targets = OacHelper::get_targets(annotation)
@@ -90,7 +92,7 @@ class CtsOacIdentifiersController < IdentifiersController
     end
     
     body_uri = params[:body_uri]
-    title = params[:annotation_title]
+    title = params[:annotation_motivation]
     @creator_uri = @identifier.make_creator_uri()
     annotation_uri = @identifier.next_annotation_uri()
     @identifier.add_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,'Added Annotation')
@@ -117,7 +119,7 @@ class CtsOacIdentifiersController < IdentifiersController
       target_uris << params[uri] 
     end
     body_uri = params[:body_uri]
-    title = params[:annotation_title]
+    title = params[:annotation_motivation]
     @identifier.update_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,"Updated Annotation #{annotation_uri}")
     redirect_to(:action => :preview,
        :annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return

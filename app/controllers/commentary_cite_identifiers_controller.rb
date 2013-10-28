@@ -1,7 +1,8 @@
 class CommentaryCiteIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
-  
+  before_filter :ownership_guard, :only => [:update]
+
   def edit
     find_publication_and_identifier
     @identifier[:action] = 'update'  

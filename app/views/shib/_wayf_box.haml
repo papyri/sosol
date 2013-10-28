@@ -1,7 +1,7 @@
 -if ShibHelper::shib_enabled?
   #shib_login
     =label_tag 'Login with your Insitutional Credentials from:'
-    #wayf_select_form
+    #wayf_select_form{:class=>'clearfix'}
       -if ShibHelper::num_idps < 3
         - @idps = ShibHelper::get_idp_list
         - @idps.each do |idp|

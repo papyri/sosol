@@ -77,7 +77,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :rename_review => :get, :rename => :put}
     publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :put}
     publication.resources :commentary_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put}
-
+    publication.resources :treebank_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
 
 
     # publication.resources :identifiers
@@ -167,6 +167,29 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'shib/signin/:idp',
     :controller => 'shib',
     :action => 'signin'
+    
+  map.connect 'shib/metadata/:idp',
+    :controller => 'shib',
+    :action => 'metadata'
+  
+  map.connect 'dmm_api/item/:identifier_type/:id/partial',
+    :controller => 'dmm_api',
+    :action => 'api_item_patch',
+    :conditions => { :method => :post }
+    
+  map.connect 'dmm_api/item/:identifier_type/:id/partial',
+    :controller => 'dmm_api',
+    :action => 'api_item_get',
+    :conditions => { :method => :get }
+ 
+ map.connect 'dmm_api/item/:identifier_type/:id/info',
+    :controller => 'dmm_api',
+    :action => 'api_item_info',
+    :conditions => { :method => :get }
+ 
+  map.connect 'dmm_api/item/:identifier_type/:id/return/:item_action',
+    :controller => 'dmm_api',
+    :action => 'api_item_return'
   
   # The priority is based upon order of creation: first created -> highest priority.
 

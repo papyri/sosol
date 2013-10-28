@@ -104,7 +104,7 @@ class OACIdentifier < Identifier
     Rails.logger.info("ALL #{OacHelper::get_all_annotations(self.rdf).inspect}")
     OacHelper::get_all_annotations(self.rdf).each() { |el|
       Rails.logger.info("checking #{OacHelper::get_creator(el)}")
-      if (OacHelper::get_creator(el) == creatorUri) 
+      if (OacHelper::get_creator(el) == creatorUri || OacHelper::get_annotators(el).include?(creatorUri)) 
         annot_id = el.attributes['rdf:about']
         OacHelper::get_targets(el).each() { |tgt|
           Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
@@ -134,6 +134,8 @@ class OACIdentifier < Identifier
       REXML::XPath.each(self.rdf, xpath, {"oac"=> NS_OACOLD,"oa" => NS_OAC}) { |el|
         if el.get_elements("dcterms:creator/foaf:Agent[@rdf:about =  '#{creatorUri}']").length == 1
            has_target = true
+        elsif el.get_elements("oa:annotatedBy/foaf:Person[@rdf:about =  '#{creatorUri}']").length == 1
+           has_target = true
         end
       }   
     end
@@ -158,7 +160,7 @@ class OACIdentifier < Identifier
   end
   
   # update a pre-existing annotation in the oac.xml file
-  def update_annotation(annot_uri,target_uris,body_uri,title,creator_uri,comment)
+  def update_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,comment)
     annot = OacHelper::get_annotation(self.rdf,annot_uri) 
     if (annot.nil?)
       Rails.logger.info("Not found #{annot_uri}")
@@ -170,21 +172,21 @@ class OACIdentifier < Identifier
       annot.add_element(OacHelper::make_target(uri))
     end
     annot.add_element(OacHelper::make_body(body_uri))
-    annot.add_element(OacHelper::make_title(title))
-    annot.add_element(OacHelper::make_creator(creator_uri))
-    annot.add_element(OacHelper::make_created)
+    annot.add_element(OacHelper::make_motivation(motivation))
+    annot.add_element(OacHelper::make_annotator(creator_uri))
+    annot.add_element(OacHelper::make_annotated_at)
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
   # add a new annotation to the oac.xml file
-  def add_annotation(annot_uri,target_uris,body_uri,title,creator_uri,comment)
+  def add_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,comment)
     exists = OacHelper::get_annotation(self.rdf,annot_uri)
     unless (exists.nil?)
       raise "An annotation identified by #{annot_uri} already exists."
     end
-    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,title,creator_uri))
+    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri))
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
@@ -204,7 +206,7 @@ class OACIdentifier < Identifier
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
+    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
   end
   
   # find the next annotation uri for appending to the oac.xml

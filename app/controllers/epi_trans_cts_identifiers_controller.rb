@@ -1,6 +1,8 @@
 class EpiTransCtsIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   # require 'xml'
   # require 'xml/xslt'
   

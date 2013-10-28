@@ -1,7 +1,8 @@
 class EpiCtsIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
-  
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   # GET /publications/1/epi_cts_identifiers/1/edit
   def edit
     find_identifier

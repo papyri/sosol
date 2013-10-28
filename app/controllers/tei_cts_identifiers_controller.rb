@@ -1,6 +1,8 @@
 class TeiCtsIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   
   ## TODO 
   # we to offer the following options:

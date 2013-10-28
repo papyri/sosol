@@ -316,7 +316,7 @@ module OacHelper
   end
   
   # make an oac:Annotation element
-  def self.make_annotation(annot_uri,target_uris,body_uri,title_text,creator_uri)
+  def self.make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri)
     annot = REXML::Element.new("Annotation")
     annot.add_namespace(NS_OAC)
     annot.add_namespace("rdf",NS_RDF)
@@ -325,9 +325,9 @@ module OacHelper
       annot.add_element(make_target(uri))
     end
     annot.add_element(make_body(body_uri))
-    annot.add_element(make_title(title_text))
-    annot.add_element(make_creator(creator_uri))
-    annot.add_element(make_created)
+    annot.add_element(make_motivation(motivation))
+    annot.add_element(make_annotator(creator_uri))
+    annot.add_element(make_annotated_at())
     return annot
   end    
   

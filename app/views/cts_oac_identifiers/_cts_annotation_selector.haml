@@ -353,16 +353,18 @@
     $('version_urn').observe('select',update_cite_info);
     $('body_content').observe('mousedown',start_body);
     $('body_content').observe('mouseup',end_body);
+    jQuery(".cts_selector_hint").click( function() { jQuery("#cts_select_container").toggle(); });
 
   });
-    
-%p{:class => ['cts_selector_hint']}== Or select from a CTS Repository:
-= select_tag 'body_repo', nil, :onchange => "get_inventory();"
-= select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-= select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-= select_tag 'version_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-#citeinfo
-%button{:disabled => true, :id => 'request_button', :onclick => "return merge_cite_info();"}Request Resource
-%p Resource passage:
-#body_content 
+
+%p{:class => ['cts_selector_hint']}== Click  to show/hide available textual sources
+#cts_select_container{:style => "display:none;"}    
+  = select_tag 'body_repo', nil, :onchange => "get_inventory();"
+  = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  = select_tag 'version_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  #citeinfo
+  %button{:disabled => true, :id => 'request_button', :onclick => "return merge_cite_info();"}Request Resource
+  %p Resource passage:
+  #body_content 
     

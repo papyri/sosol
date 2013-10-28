@@ -111,6 +111,26 @@ module JRubyXML
     end
   end
   
+  class PerseusTreebankValidator < JARVValidator
+    def initialize
+    @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://www.w3.org/2001/XMLSchema")
+      @schema = verifier_factory.compileSchema(
+        "http://nlp.perseus.tufts.edu/syntax/treebank/treebank-1.6.xsd")
+    end
+  end
+  
+   class SimpleMarkdownCiteValidator < JARVValidator
+    def initialize
+    @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://relaxng.org/ns/structure/1.0")
+      @schema = verifier_factory.compileSchema(
+        "#{RAILS_ROOT}/data/templates/smdcite.rng")
+    end
+  end
+  
   class NamespaceContext
     include javax.xml.namespace.NamespaceContext
     

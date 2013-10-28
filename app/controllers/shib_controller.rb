@@ -61,7 +61,7 @@ class ShibController < ApplicationController
           att_request = att_request.create(response.name_id,response.settings,{})
           uri = URI.parse(response.settings.idp_aqr_target_url)
           
-          cert = File.read(@shib_config[:sp_cert])
+          cert = File.read(@shib_config[:idps][idp][:sp_cert])
           key = File.read(@shib_config[:sp_private_key])
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
@@ -102,12 +102,13 @@ class ShibController < ApplicationController
                   @full_name = guess_fullname(att_response.attributes, idp)
                 end
               else # Invalid AQ Response or no scoped targed id
-                Rails.logger.debug("AQ Response invalid: #{att_response}")
+                Rails.logger.debug("AQ Response invalid: #{att_response.attributes.inspect}")
                 flash[:error] = "SAML AttributeQuery returned an invalid response."
                 redirect_to :controller => "signin", :action => "index"
               end
             rescue Exception => e # error caught checking validity of AQ Response
-                Rails.logger.debug("AQ Response invalid", e)
+                Rails.logger.error("AQ Response invalid - caught exception", e)
+                raise e
                 flash[:error] = "SAML AttributeQuery returned an invalid response."
                 redirect_to :controller => "signin", :action => "index"
             end
@@ -130,14 +131,22 @@ class ShibController < ApplicationController
     end
     
     def metadata
+      idp = params[:idp]
+      unless (idp)
+        flash[:error] = "No IdP Specified"
+        redirect_to :controller => "signin", :action => "index"
+        return 
+      end
       get_config
+  
       settings = Onelogin::Saml::Settings.new
-
-      # TODO get all metadata from config
-      # acs url should be the Apache https proxy for the environment 
       settings.assertion_consumer_service_url = @shib_config[:assertion_consumer_service_url]
       settings.issuer                         = @shib_config[:issuer]
-      settings.sp_cert                       = File.read(@shib_config[:sp_cert])
+      # check to be sure the issuer isn't different for this IdP
+      if (@shib_config[:idps][idp][:issuer])
+        settings.issuer = @shib_config[:idps][idp][:issuer]
+      end
+      settings.sp_cert                       = File.read(@shib_config[:idps][idp][:sp_cert])
       meta = Onelogin::Saml::Metadata.new
       render :xml => meta.generate(settings)
     end

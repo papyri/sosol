@@ -85,7 +85,7 @@ class CiteIdentifier < Identifier
     lookup_path = self.path_for_collection(a_collection_urn)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{lookup_path}%"],
-                       :order => "publication_id DESC",
+                       :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
                        :limit => 1).first
     next_version_id = 1
     if latest.nil?
@@ -104,7 +104,7 @@ class CiteIdentifier < Identifier
     lookup_path = self.path_for_object_urn(a_urn)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{lookup_path}%"],
-                       :order => "id DESC",
+                       :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
                        :limit => 1).first
     if latest.nil?
       # if we don't have any identifiers in the db for this object yet, just increment the
@@ -249,7 +249,16 @@ class CiteIdentifier < Identifier
     citeurn = Cite::CiteLib.urn_obj(a_urn)
     return  object_path + citeurn.getVersion() 
   end
+  
+   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
+    # default for CITE identifiers a no-op
+    self.content
+   end
    
+    # make a annotator uri from the owner of the publication 
+    def make_annotator_uri()
+      ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
+    end
 
 end
 

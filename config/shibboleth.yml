@@ -2,16 +2,31 @@ development:
   :shibboleth:
     :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
-    :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
-    :sp_private_key: <%= RAILS_ROOT %>/data/certificates/private.key
-    :assertion_consumer_service_url: "https://dev.alpheios.net/shib/consume"
+    :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
+    :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
-        :entity_id: "https://shib-idp.tufts.edu/idp/shibboleth"
+        :issuer: sosol-test.perseids.org
+        :entity_id: "https://shibidp-test.uit.tufts.edu/idp/shibboleth"
         :display_name: "Tufts University"
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftsprod.crt
-        :idp_sso_target_url: "https://shib-idp.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
-        :idp_aqr_target_url: "https://shib-idp.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
+        :logo: "tuftsidplogo.jpg"
+        :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
+        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
+        :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol-test.perseids.org"
+        :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol-test.perseids.org"
+        :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+        :attributes:
+          :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
+      ulei:
+        :issuer: "http://sosol.perseids.org/"
+        :entity_id: "https://aai.rz.uni-leipzig.de/idp/shibboleth"
+        :display_name: "University of Leipzig"
+        :logo: "uleipzig_small.gif"
+        :sp_cert: /etc/ssl/certs/sosol_perseids_org_cert.cer
+        :idp_cert: <%= RAILS_ROOT %>/data/certificates/ulei.d.crt
+        :idp_sso_target_url: "https://aai.rz.uni-leipzig.de/idp/profile/SAML2/Unsolicited/SSO?providerId=http://sosol.perseids.org/"
+        :idp_aqr_target_url: "https://aai.rz.uni-leipzig.de:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=http://sosol.perseids.org/"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
         :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
         :attributes:
@@ -20,13 +35,14 @@ test:
   :shibboleth:
     :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
-    :sp_cert: <%= RAILS_ROOT %>/data/certificates/perseidsshibcert.pem
-    :sp_private_key: <%= RAILS_ROOT %>/data/certificates/private.key
-    :assertion_consumer_service_url: "https://dev.alpheios.net/shib/consume"
+    :assertion_consumer_service_url: "https://sosol-test.perseids.org/sosol/shib/consume"
+    :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
         :entity_id: "https://shibidp-test.uit.tufts.edu/idp/shibboleth"
         :display_name: "Tufts University"
+        :logo: "tuftsidplogo.jpg"
+        :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
         :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
         :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
         :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
@@ -38,13 +54,14 @@ production:
   :shibboleth:
     :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
-    :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
-    :sp_private_key: /etc/ssl/private/private.key
     :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
+    :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
         :entity_id: "https://shib-idp.tufts.edu/idp/shibboleth"
         :display_name: "Tufts University"
+        :logo: "tuftsidplogo.jpg"
+        :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
         :idp_cert: /etc/ssl/certs/tuftsprod.crt
         :idp_sso_target_url: "https://shib-idp.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
         :idp_aqr_target_url: "https://shib-idp.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"

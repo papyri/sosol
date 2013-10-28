@@ -1,0 +1,15 @@
+development:
+  treebank_editor:
+    :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+    :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    
+test:
+  treebank_editor:
+    :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+    :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    
+production:
+  treebank_editor:
+    :edit_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+    :view_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    

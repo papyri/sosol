@@ -72,10 +72,11 @@ are described below (text in <> should be replaced as appropriate for the deploy
     shibboleth:
         :allowed_clock_drift: <allowed time difference between IdP and SP in seconds>
         :issuer: <sosol deployment entity id> 
-        :sp_cert: <file system path to SP public X509 certificate>
         :sp_private_key: <file system path to SP private X509 signing key>
         :assertion_consumer_service_url: "https://<base url for SosOl deployment>/shib/consume"
 
+
+Of these, the issuer setting can also be overridden at the idp level.
 
 # IdP Configuration
 
@@ -86,10 +87,12 @@ are described below (text in <> should be replaced as appropriate for the deploy
     shibboleth:    
         :idps:
           <idplookupkey>:
+            :issuer: <sp entity id>
             :entity_id: <idp entity id>
             :display_name: <display name for IdP>
             :logo: <logo file for IdP>
             :idp_cert: <path to IdP public X509 certificate>
+            :sp_cert: <file system path to SP public X509 certificate>
             :idp_sso_target_url: "https://<idp sso base url>/idp/profile/SAML2/Unsolicited/SSO?providerId=<sosol entity id>"
             :idp_aqr_target_url: "https://<idp aq base url>/idp/profile/SAML2/SOAP/AttributeQuery?providerId=<sosol entity id>"
             :name_identifier_format: <Name Identifier Format in AuthNResponse>

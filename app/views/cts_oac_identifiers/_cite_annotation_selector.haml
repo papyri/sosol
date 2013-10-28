@@ -1,0 +1,11 @@
+:javascript  
+  document.observe("dom:loaded", function() {
+    jQuery(".cite_selector_hint").click( function() { jQuery("#cite_select_container").toggle();});
+  });
+    
+%p{:class => ['cite_selector_hint']}== Click  to show/hide available CITE collections
+#cite_select_container{:style => "display:none;"}
+  %p
+    = select_tag 'cite_selector', options_for_select({"Choose a collection..." => "", "Perseus Lost Content Items" => "http://perseids.org/collections/urn:cite:perseus:lci"}), :onchange => "PerseidsCite.get_collection();"
+  %iframe{:id => 'cite_frame'}   
+    

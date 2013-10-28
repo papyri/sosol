@@ -14,13 +14,15 @@ body {
 	background-color: white;
 	width: 50%;
 	padding: 10px;
-	margin: 0 0 10px;
+	margin-left: 10px;
+	margin-bottom: 10px;
 }
 
 #wayf_select_form button {
 	cursor: pointer;
 	background-color: white;
 	border: none;
+	float: left;
 
 }
 #wayf_select_form img {
@@ -99,11 +101,16 @@ li.editor_menu {
 	border: 1px solid black;
 }
 
-.cts_selector_hint {
+.cts_selector_hint, .cite_selector_hint {
 	font-size: smaller;
 	font-style: italic;
+	color: blue;
 }
 
+#cite_frame {
+	width: 100%;
+	min-height: 400px;
+}
 #create_translation {
 	display:inline;
 }
@@ -152,7 +159,7 @@ li.editor_menu {
 	border: 1.5px solid black;
 }
 
-.edit_oac_identifier #annotation_title_input {
+.edit_oac_identifier #annotation_motivation_input {
 	margin: .25em;
 	float: right;
 }
@@ -239,7 +246,7 @@ li.editor_menu {
 	background-color: white;
 }
 
-.PContent .oac_target {
+.PContent .oac_target, .PContent .oac_body {
 	margin-left: 1em;
 }
 
@@ -278,3 +285,34 @@ li.editor_menu {
 	height: 95%;
 }
 
+li.sentence {
+	list-style-type: none;
+}
+
+.sentence .sentence_num {
+	font-weight: bold;
+	font-size: smaller;
+	margin-left: -1em;
+}
+
+.sentence a {
+	padding-left: -2em;
+	font-size: smaller;
+}
+
+.sentence_nav {
+	font-size: smaller;
+	text-align: right;
+}
+
+.sentence_nav .sentence_prev:before {
+	content: "<<";
+}
+
+.sentence_nav .sentence_next:after {
+	content: ">>";
+}
+
+.sentence_nav .sentence_prev, .sentence_nav .sentence_next {
+	font-style: italic;
+}
