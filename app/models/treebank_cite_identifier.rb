@@ -61,7 +61,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       treebank.insert_before("sentence[1]",annotator)
     end
     
-    Rails.logger.info("Initialized with #{toXmlString treebank}") 
     toXmlString treebank
   end
   
@@ -226,11 +225,9 @@ class TreebankCiteIdentifier < CiteIdentifier
         raise "Invalid Sentence Identifier"
       end
       REXML::XPath.each(old,"word") { |w|
-        Rails.logger.info("Deleting " + w.attributes['id'])
          old.delete_element(w) 
       }
       REXML::XPath.each(s,"word") { |w|
-        Rails.logger.info("Replacing " + w.attributes['id'])
          old.add_element(w.clone) 
       }
     rescue Exception => e
@@ -283,9 +280,11 @@ class TreebankCiteIdentifier < CiteIdentifier
         passage = urn_obj.getPassage(100)
         work = urn_obj.getUrnWithoutPassage()
         passage.split(/-/).each do | p |
-          found = REXML::XPath.first(t,"sentence[@document_id='#{work}' and @subdoc='#{p}']")
-          unless (found.nil?)
-            has_any_targets = true
+          REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
+            unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
+              has_any_targets = true
+              break
+            end
           end
         end  
       end
