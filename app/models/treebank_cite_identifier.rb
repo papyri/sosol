@@ -260,8 +260,36 @@ class TreebankCiteIdentifier < CiteIdentifier
 
   ## method which checks the cite object for an initialization  value
   def is_match?(a_value) 
-    # for a treebank annotation, the match will be on the target urns
-    has_any_targets = true
+    has_any_targets = false
+   # for a treebank annotation, the match will be on the target urns
+    a_value.each do | uri |
+      begin
+        urn_value = uri.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
+        urn_obj = CTS::CTSLib.urnObj(urn_value)
+      rescue Exception => e
+        # if we get an exception it might be an invalid urn or it might be something that
+        # isn't a urn
+        if (! uri =~ /urn:cts:/)
+          # not a cts urn, just assume we have to create a new template
+          raise "Not a URN"
+        else 
+          # otherwise raise an error
+          raise e
+        end
+      end
+      # TODO need a way to test target uris which aren't CTS urns
+      unless (urn_obj.nil?)
+        t = REXML::Document.new(self.xml_content).root
+        passage = urn_obj.getPassage(100)
+        work = urn_obj.getUrnWithoutPassage()
+        passage.split(/-/).each do | p |
+          found = REXML::XPath.first(t,"sentence[@document_id='#{work}' and @subdoc='#{p}']")
+          unless (found.nil?)
+            has_any_targets = true
+          end
+        end  
+      end
+    end
     # TODO compare the requested text urn against the text urns in this treebank document
     return has_any_targets
   end
