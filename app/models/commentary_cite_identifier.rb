@@ -47,7 +47,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
   # make a annotator uri from the owner of the publication 
   def make_annotator_uri()
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
+    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
   end
   
   # Converts REXML::Document / ::Element into xml string
