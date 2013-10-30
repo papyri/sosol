@@ -1,9 +1,8 @@
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
   
-  protect_from_forgery :except => [:api_item_get, :api_item_info]
-  #before_filter :authorize
-  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_get]
+  before_filter :authorize
+  before_filter :ownership_guard, :only => [:api_item_patch]
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
