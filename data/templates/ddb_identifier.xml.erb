@@ -7,7 +7,7 @@
         <title><%= title %></title>
       </titleStmt>
       <publicationStmt>
-        <authority>NYU Digital Library Technology Services</authority>
+        <authority>Duke Collaboratory for Classics Computing (DC3)</authority>
         <idno type="filename"><%= id %></idno>
         <idno type="ddb-hybrid"><%= n %></idno>
         <%- related_metas = self.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.collect{|j| j.to_components.last} -%>

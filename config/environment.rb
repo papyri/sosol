@@ -111,7 +111,7 @@ Rails::Initializer.run do |config|
   SITE_CATALOG_SEARCH = "View in PN"
   SITE_USER_NAMESPACE = "papyri.info"
  
-  REPOSITORY_ROOT = File.join('/data/papyri.info/sosol/repo')
+  REPOSITORY_ROOT = File.join('/srv/data/papyri.info/sosol/repo')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
   GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
