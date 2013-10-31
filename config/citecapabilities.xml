@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collectionService xmlns="http://chs.harvard.edu/xmlns/cite">
+        <citeCollection
+            canonicalId="urn"
+            class=""
+            name="mythcomm"
+            description="Myth Commentaries">
+            <namespaceMapping
+                abbr="perseus"
+                fullValue="http://data.perseus.org/ns/collections"/>
+            <citeProperty
+                label="Annotation URN"
+                name="urn"
+                type="citeurn"/>
+            <citeProperty
+                label="Annotation"
+                name="oac"
+                type="string"
+                x-perseidsmax="500"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="urn"
+            class=""
+            name="lcicomm"
+            description="Lost Content Item Commentaries">
+            <namespaceMapping
+                abbr="perseus"
+                fullValue="http://data.perseus.org/ns/collections"/>
+            <citeProperty
+                label="Annotation URN"
+                name="urn"
+                type="citeurn"/>
+            <citeProperty
+                label="Annotation"
+                name="oac"
+                type="string"
+                x-perseidsmax="500"/>
+    </citeCollection>
+	    <citeCollection
+	        canonicalId="urn"
+	        class=""
+	        name="grctb"
+	        description="Greek Treebank Collection">
+	        <namespaceMapping
+	            abbr="perseus"
+	            fullValue="http://data.perseus.org/ns/collections"/>
+	        <citeProperty
+	            label="Treebank URN"
+	            name="urn"
+	            type="citeurn"/>
+	        <citeProperty
+	            label="Treebank Data"
+	            name="xml"
+	            type="string"/>
+	    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="lattb"
+        description="Latin Treebank Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Treebank URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Treebank Data"
+            name="xml"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="testcoll"
+        description="Test Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Annotation"
+            name="oac"
+            type="string"
+            x-perseidsmax="500"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="testcollun"
+        description="Test Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Annotation"
+            name="oac"
+            type="string"/>
+    </citeCollection>
+</collectionService>
