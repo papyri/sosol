@@ -272,7 +272,7 @@ class Identifier < ActiveRecord::Base
   #   - temporary identifier name
   def self.next_temporary_identifier
     year = Time.now.year
-    latest = self.where("name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%").order("name DESC").limit(1)
+    latest = self.where("name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%").order("name DESC").limit(1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1
