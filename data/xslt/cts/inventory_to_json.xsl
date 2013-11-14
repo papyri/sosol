@@ -6,6 +6,9 @@
     <xsl:output method="text"/>
     
     <xsl:param name="e_lang" select="'eng'"/>
+    <xsl:variable name="apos">'</xsl:variable>
+    <xsl:variable name="apos_replace" select="concat('\',$apos)"/>
+    
     
     <xsl:template match="/">
         <!--start inventory obj -->
@@ -21,13 +24,13 @@
             <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>': {</xsl:text>
             
             <!-- add urn -->
-            <xsl:text>urn:'</xsl:text><xsl:value-of select="$group"/><xsl:text>',</xsl:text>
+            <xsl:text>'urn':'</xsl:text><xsl:value-of select="$group"/><xsl:text>',</xsl:text>
             
             <!-- add groupname field -->
-            <xsl:text>label:'</xsl:text><xsl:value-of select="$groupname"/><xsl:text>',</xsl:text>
+            <xsl:text>'label':'</xsl:text><xsl:value-of select="$groupname"/><xsl:text>',</xsl:text>
             
             <!-- add works field -->
-            <xsl:text>works: {</xsl:text>
+            <xsl:text>'works': {</xsl:text>
             
             <!-- iterate through works -->
             <xsl:apply-templates select="cts:work"/>
@@ -65,10 +68,18 @@
         <xsl:variable name="label">
             <xsl:choose>
                 <xsl:when test="$e_lang and cts:title[@xml:lang=$e_lang]">
-                    <xsl:value-of select="normalize-space(cts:title[@xml:lang=$e_lang])"/>
+                    <xsl:call-template name="replace-string">
+                        <xsl:with-param name="text" select="normalize-space(cts:title[@xml:lang=$e_lang])"/>
+                        <xsl:with-param name="replace" select="$apos"/>
+                        <xsl:with-param name="with" select="$apos_replace"/>
+                    </xsl:call-template>
                 </xsl:when>
                 <xsl:when test="cts:title">
-                    <xsl:value-of select="translate(normalize-space(cts:title[1]),':',',')"/>
+                    <xsl:call-template name="replace-string">
+                        <xsl:with-param name="text" select="translate(normalize-space(cts:title[1]),':',',')"/>
+                        <xsl:with-param name="replace" select="$apos"/>
+                        <xsl:with-param name="with" select="$apos_replace"/>
+                    </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
@@ -80,8 +91,8 @@
         <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>': {</xsl:text>
       
         <!-- add label field -->
-        <xsl:text>label:'</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
-        <xsl:text>urn:'</xsl:text><xsl:value-of select="$urn"/><xsl:text>'</xsl:text>
+        <xsl:text>'label':'</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
+        <xsl:text>'urn':'</xsl:text><xsl:value-of select="$urn"/><xsl:text>'</xsl:text>
         
         <xsl:if test="cts:edition">
         <!-- add editions field -->
@@ -143,10 +154,18 @@
         <xsl:variable name="label">
             <xsl:choose>
                 <xsl:when test="$e_lang and cts:label[@xml:lang=$e_lang]">
-                    <xsl:value-of select="normalize-space(cts:label[@xml:lang=$e_lang])"/>
+                    <xsl:call-template name="replace-string">
+                        <xsl:with-param name="text" select="normalize-space(cts:label[@xml:lang=$e_lang])"/>
+                        <xsl:with-param name="replace" select="$apos"/>
+                        <xsl:with-param name="with" select="$apos_replace"/>
+                    </xsl:call-template>
                 </xsl:when>
                 <xsl:when test="cts:title">
-                    <xsl:value-of select="translate(normalize-space(cts:label[1]),':',',')"/>
+                    <xsl:call-template name="replace-string">
+                        <xsl:with-param name="text" select="translate(normalize-space(cts:label[1]),':',',')"/>
+                        <xsl:with-param name="replace" select="$apos"/>
+                        <xsl:with-param name="with" select="$apos_replace"/>
+                    </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
@@ -165,9 +184,9 @@
         
         <!-- edition obj -->
         <xsl:text>{</xsl:text>
-        <xsl:text>label: '</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
-        <xsl:text>urn:'</xsl:text><xsl:value-of select="$urn"/><xsl:text>',</xsl:text>
-        <xsl:text>cites:[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
+        <xsl:text>'label': '</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
+        <xsl:text>'urn':'</xsl:text><xsl:value-of select="$urn"/><xsl:text>',</xsl:text>
+        <xsl:text>'cites':[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
         <xsl:text>}</xsl:text>
         
         <xsl:if test="following-sibling::*[name(.) = name(current())]">
@@ -187,4 +206,25 @@
     </xsl:template>
     
     <xsl:template match="*"/>
+    
+    <xsl:template name="replace-string">
+        <xsl:param name="text"/>
+        <xsl:param name="replace"/>
+        <xsl:param name="with"/>
+        <xsl:choose>
+            <xsl:when test="contains($text,$replace)">
+                <xsl:value-of select="substring-before($text,$replace)"/>
+                <xsl:value-of select="$with"/>
+                <xsl:call-template name="replace-string">
+                    <xsl:with-param name="text"
+                        select="substring-after($text,$replace)"/>
+                    <xsl:with-param name="replace" select="$replace"/>
+                    <xsl:with-param name="with" select="$with"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 </xsl:stylesheet>
