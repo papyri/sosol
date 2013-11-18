@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: start-edition.xsl 1510 2008-08-14 15:27:51Z zau $ -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0">
 
+  <xsl:output method="html"/>
+  
   <xsl:variable name="line-inc">5</xsl:variable>
   <xsl:include href="../perseus/epidoc/global-varsandparams.xsl"/>
   
@@ -60,17 +62,11 @@
   <xsl:include href="../perseus/epidoc/tpl-certlow.xsl"/>
   <xsl:include href="../perseus/epidoc/tpl-text.xsl"/>
 
-
-
+  
   <!-- HTML FILE -->
   <xsl:template match="/">
     <!-- <xsl:param name='leiden-style'>ddbdp</xsl:param> -->
-<div class="pn-ddbdp-data">
-    <xsl:if test="//*[@facs]">
-        <xsl:for-each select="//*/@facs">
-            <iframe class="pn-image-link" src="{.}" width="90%" height="30%"/>
-        </xsl:for-each> 
-    </xsl:if>
+    <div class="perseids-epi-data" id="epi_cts_identifier_xml_content">
     <div class="greek">
         <!-- Found in htm-tpl-cssandscripts.xsl -->
         <xsl:call-template name="css-script"/>
@@ -99,7 +95,21 @@
 
     </div>
 </div>
+    <xsl:if test="//*[@facs]">
+      <div id="ict_tool_wrapper">
+        <iframe id="ict_frame" src="/templates/image_frame_empty.html" width="90%" height="30%">
+          <html><head><title>Linked Image Viewer</title></head>
+          <body><div class="hint">Click on linked text to view image.</div></body></html>
+        </iframe>
+      </div>
+    </xsl:if>
+    
   </xsl:template>
+  
+  <xsl:template match="*[@facs]">
+    <span onclick="PerseidsTools.do_facs_link(this);" class="linked_facs" data-facs="{@facs}"><xsl:apply-templates/></span>
+  </xsl:template>
+  
   <xsl:template name="metadata"></xsl:template>
 
 

@@ -45,4 +45,23 @@ PerseidsTools.LDResults.make_ICT_link  = function(a_parentElem,a_results) {
 	
 }
 
-
+// click handler for a span which has a data-facs attribute 
+PerseidsTools.do_facs_link = function(a_elem) {
+	var citeUrl = jQuery("#Cite_Image_Service").attr("data-content");
+	var uri = jQuery(a_elem).attr("data-facs");
+	var url = null;
+	// if the facs value is a full URL, just use it
+	if (uri.match(/^http/)) {
+		url = uri;
+	// if the facs value references a CITE urn, try to bring it up in the Image Viewer
+	} else if (uri.match(/^urn:cite:/)) {
+		url = citeUrl + uri;
+	} else {
+		// otherwise do nothing
+	}
+	if (url != null) {
+		jQuery('#ict_frame').attr("src",url);
+	}
+	return false;
+}
+	

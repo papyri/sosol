@@ -149,7 +149,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
-
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:html_preview] = @identifier.preview
   end
   

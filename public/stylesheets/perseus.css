@@ -316,3 +316,9 @@ li.sentence {
 .sentence_nav .sentence_prev, .sentence_nav .sentence_next {
 	font-style: italic;
 }
+
+.linked_facs {
+	color: blue;
+	text-decoration: underline;
+	
+}
