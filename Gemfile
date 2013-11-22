@@ -20,7 +20,7 @@ gem 'jquery-rails'
 gem 'haml', '>= 3.0.25'
 gem 'json-jruby', '>= 1.5.0', :require => 'json', :platform => :jruby
 gem 'json'
-gem 'jruby-openssl', '>= 0.8.8', :platform => :jruby
+gem 'jruby-openssl', '>= 0.8.8', :platform => :jruby, :require => false
 gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
 gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
 gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby
@@ -32,9 +32,9 @@ gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '>= 3.0.5'
 gem 'grit', '~> 2.4.0'
-gem 'rubyzip', '>= 0.9.5', :require => 'zip/zip'
+gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
 gem 'prototype-rails'
 gem 'dynamic_form'
-gem 'capistrano'
+gem 'capistrano', '~> 2.15.0'
 gem 'warbler'
 gem 'puma'

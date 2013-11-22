@@ -566,7 +566,7 @@ class Publication < ActiveRecord::Base
       if self.owner.repository.branches.include?(new_branch_name)
         new_branch_name += Time.now.strftime("-%H.%M.%S")
       end
-    
+
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
       self.transaction do
@@ -574,7 +574,12 @@ class Publication < ActiveRecord::Base
         self.branch = new_branch_name
         # set status to new status
         self.status = new_status
-        self.save!
+        begin
+          self.save!
+        rescue ActiveRecord::RecordInvalid
+          self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
+          self.save!
+        end
         # save succeeded, so perform actual git change
         # branch from the original branch
         self.owner.repository.create_branch(new_branch_name, old_branch_name)
