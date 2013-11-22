@@ -40,7 +40,9 @@ module NumbersRDF
       def identifier_to_path(identifier, decorator)
         local_identifier = identifier_to_local_identifier(identifier)
         url_paths = identifier_to_components(local_identifier)
-        url_paths << "source"
+	if ( identifier !~ /^papyri.info\/\w+$/ )
+          url_paths << "source"
+	end
         url_paths << decorator
         return url_paths.join('/')
       end
@@ -123,7 +125,6 @@ module NumbersRDF
       # Gets the 'parts' for an identifier, useful for figuring out hierarchy coming in from an identifier class.
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...] 
       def identifier_to_parts(identifier)
-        puts identifier
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}']/dcterms:hasPart/@rdf:resource", identifier)
         if results.nil?
