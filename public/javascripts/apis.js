@@ -101,12 +101,14 @@ function multiAdd(id)
   var index = multiGetNextIndex(id);
 
   var item = '<li class="' + id + '">' +
-             '  <input type="text" value="' + value + '" name="apis_identifier_' + id + '" id="apis_identifier_' + id + '_' + index + '" class="observechange">' +
+             '  <input type="text" value="' + value + '" name="apis_identifier_' + id + '" id="apis_identifier_' + id + '_' + index + '"' +
+             ' class="observechange apis_identifier_' + id + '">' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
 
   multiUpdate(id, item);
+  $$('#multiPlus_' + id + ' > input')[0].value = "";
 }
 
 function multiAddTextarea(id)
@@ -116,12 +118,14 @@ function multiAddTextarea(id)
   var index = multiGetNextIndex(id);
 
   var item = '<li class="' + id + '">' +
-             '  <textarea name="apis_identifier_' + id + '" id="apis_identifier_' + id + '_' + index + '" class="observechange">' + value +'</textarea>' +
+             '  <textarea name="apis_identifier_' + id + '" id="apis_identifier_' + id + '_' + index + '"' +
+             ' class="observechange apis_identifier_' + id + '">' + value +'</textarea>' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
 
   multiUpdate(id, item);
+  $$('#multiPlus_' + id + ' > textarea')[0].value = "";
 }
 
 function multiAddGenre()
@@ -131,23 +135,25 @@ function multiAddGenre()
   var index = multiGetNextIndex('genre');
 
   var item = '<li class="genre">' +
-             '  <input type="text" value="' + value + '" name="apis_identifier_genre" id="apis_identifier_genre_' + index + '" class="observechange">' +
+             '  <input type="text" value="' + value + '" name="apis_identifier_genre" id="apis_identifier_genre_' + index + '"' +
+             ' class="observechange apis_identifier_genre">' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
 
   multiUpdate('genre', item);
+  $$('#multiPlus_genre > input')[0].value = "";
 }
 
 function multiAddCitation() {
   var index = multiGetNextIndex('citation');
   var item = '<li class="citation">' +
              '  <label class="apis" for="apis_identifier_citation" id="apis_identifier_citation_label">Citation</label>' +
-             '  <input class="observechange" id="apis_identifier_citation" name="apis_identifier_citation" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_citation" id="apis_identifier_citation" name="apis_identifier_citation" type="text" value="" />' +
              '  <label class="apis" for="apis_identifier_citeNote" id="apis_identifier_citeNote_label">Note</label>' +
-             '  <textarea class="observechange" id="apis_identifier_citeNote" name="apis_identifier_citeNote" value="" />' +
+             '  <textarea class="observechange apis_identifier_citeNote" id="apis_identifier_citeNote" name="apis_identifier_citeNote" value="" />' +
              '  <label class="apis" for="apis_identifier_citeType" id="apis_identifier_citeType_label">DDbDP?</label>' +
-             '  <input id="apis_identifier_citeType" name="apis_identifier_citeType" type="checkbox" value="ddbdp" />' +
+             '  <input id="apis_identifier_citeType" name="apis_identifier_citeType" type="checkbox" value="ddbdp" class="apis_identifier_citeType/>' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
@@ -159,11 +165,11 @@ function multiAddFigures()
   var index = multiGetNextIndex('figure');
   var item = '<li>' +
              '  <label class="apis" for="apis_identifier_figHead_' + index + '" id="apis_identifier_figHead_' + index + '_label_">Image Label</label>' +
-             '  <input class="observechange" id="apis_identifier_figHead_' + index + '" name="apis_identifier_figHead" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_figHead" id="apis_identifier_figHead_' + index + '" name="apis_identifier_figHead" type="text" value="" />' +
              '  <label class="apis" for="apis_identifier_figDesc" id="apis_identifier_figDesc_label">Description</label>' +
              '  <textarea class="observechange" id="apis_identifier_figDesc_' + index + '" name="apis_identifier_figDesc" value="" />' +
              '  <label class="apis" for="apis_identifier_figUrl" id="apis_identifier_figUrl_label">Image URL</label>' +
-             '  <input class="observechange" id="apis_identifier_figUrl_' + index + '" name="apis_identifier_figUrl" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_figUrl" id="apis_identifier_figUrl_' + index + '" name="apis_identifier_figUrl" type="text" value="" />' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
@@ -176,11 +182,11 @@ function multiAddFacsimiles()
   var index = multiGetNextIndex('facsimile');
   var item = '<li>' +
              '  <label class="apis" for="apis_identifier_surfaceGrpId_' + index + '" id="apis_identifier_surfaceGrpId_' + index + '_label">Image Label</label>' +
-             '  <input class="observechange" id="apis_identifier_surfaceGrpId_' + index + '" name="apis_identifier_surfaceGrpId" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_surfaceGrpId" id="apis_identifier_surfaceGrpId_' + index + '" name="apis_identifier_surfaceGrpId" type="text" value="" />' +
              '  <label class="apis" for="apis_identifier_figDesc" id="apis_identifier_figDesc_label">Description</label>' +
-             '  <input class="observechange" id="apis_identifier_surfaceType_' + index + '" name="apis_identifier_surfaceType" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_surfaceType" id="apis_identifier_surfaceType_' + index + '" name="apis_identifier_surfaceType" type="text" value="" />' +
              '  <label class="apis" for="apis_identifier_facsUrl_' + index + '" id="apis_identifier_facsUrl_' + index + '_label">Image URL</label>' +
-             '  <input class="observechange" id="apis_identifier_facsUrl_' + index + '" name="apis_identifier_facsUrl" type="text" value="" />' +
+             '  <input class="observechange apis_identifier_facsUrl" id="apis_identifier_facsUrl_' + index + '" name="apis_identifier_facsUrl" type="text" value="" />' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';

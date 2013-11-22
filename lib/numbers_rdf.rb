@@ -35,11 +35,14 @@ module NumbersRDF
         end
       end
       
-      # Converts e.g. 'papyri.info/hgv/1234' to 'hgv/1234/rdf', where 'rdf' is the decorator.
+      # Converts e.g. 'papyri.info/hgv/1234' to 'hgv/1234/source/rdf', where 'rdf' is the decorator.
       # Used by numbers_server_response methods to construct an appropriate HTTP request.
       def identifier_to_path(identifier, decorator)
         local_identifier = identifier_to_local_identifier(identifier)
         url_paths = identifier_to_components(local_identifier)
+	if ( identifier !~ /^papyri.info\/\w+$/ )
+          url_paths << "source"
+	end
         url_paths << decorator
         return url_paths.join('/')
       end
@@ -110,7 +113,6 @@ module NumbersRDF
 
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
-        puts identifier
         results = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}/source']/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
         if results.nil?
