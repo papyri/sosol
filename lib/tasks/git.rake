@@ -43,11 +43,13 @@ namespace :git do
           CANONICAL_CLONE_URL = "git://github.com/papyri/idp.data.git"
         end
         
-        clone_command = ["git clone --bare",
-                        CANONICAL_CLONE_URL,
-                        Sosol::Application.config.canonical_repository].join(' ')
-        
-        system(clone_command)
+        if !File.exist?(Sosol::Application.config.canonical_repository)
+          clone_command = ["git clone --bare",
+                          CANONICAL_CLONE_URL,
+                          Sosol::Application.config.canonical_repository].join(' ')
+          
+          system(clone_command)
+        end
       end
     end
   end
