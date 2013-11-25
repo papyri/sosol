@@ -1,0 +1,23 @@
+#!/bin/bash
+
+command -v rbenv >/dev/null 2>&1 || { echo "This script requires rbenv but it's not installed. Aborting." >&2; exit 1; }
+
+for i in development test production; do
+if [ ! -e "config/environments/${i}_secret.rb" ]; then
+	echo "config/environments/${i}_secret.rb not found."
+	echo "Please see README.rdoc to set up config/environments/*_secret.rb"
+	exit 1
+fi
+done
+
+rbenv install
+rbenv rehash
+
+command -v bundler >/dev/null 2>&1 || { gem install bundler; rbenv rehash; }
+
+bundle install
+bundle exec cap local externals:setup
+bundle exec rake db:migrate
+bundle exec rake git:db:canonical:clone
+bundle exec rake test
+bundle exec rails server
