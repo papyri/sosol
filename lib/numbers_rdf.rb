@@ -148,7 +148,7 @@ module NumbersRDF
       end
       
       # Gets the title for an identifier using its frbr:Work/rdf representation.
-      # Currently only works for HGV identifiers, e.g. 'papyri.info/hgv/25883' => 'P.Köln 3, 160 Einleitung'.
+      # Currently only works for HGV identifiers, e.g. 'papyri.info/hgv/25883/source' => 'P.Köln 3, 160 Einleitung'.
       def identifier_to_title(identifier)
         result = apply_xpath_to_identifier(
           "/rdf:RDF/rdf:Description/dcterms:bibliographicCitation/text()", identifier, 'work/rdf'
