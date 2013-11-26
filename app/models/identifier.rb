@@ -155,10 +155,10 @@ class Identifier < ActiveRecord::Base
   def titleize
     title = nil
     if self.class == HGVMetaIdentifier
-      title = NumbersRDF::NumbersHelper::identifier_to_title(self.name)
+      title = NumbersRDF::NumbersHelper::identifier_to_title("#{self.name}/source")
     elsif self.class == HGVTransIdentifier
       title = NumbersRDF::NumbersHelper::identifier_to_title(
-        self.name.sub(/trans/,''))
+        "#{self.name.sub(/trans/,'')}/source")
     elsif self.class == APISIdentifier
       title = self.name.split('/').last
     end
