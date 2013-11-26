@@ -223,6 +223,7 @@ class Repository
   end
   
   def fetch_objects(other_repo, branch = nil)
+    Rails.logger.debug("fetch_objects: #{other_repo.name}, #{branch}")
     self.add_remote(other_repo)
     begin
       fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
@@ -277,7 +278,7 @@ class Repository
     person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
     # TODO: just get the object id instead of reinserting
     inserter = @jgit_repo.newObjectInserter()
-    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_bytes)
+    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
     inserter.flush()
     inserter.release()
 
