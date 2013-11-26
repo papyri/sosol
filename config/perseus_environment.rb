@@ -84,7 +84,8 @@ Rails::Initializer.run do |config|
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
     :key => '_protosite_session',
-    :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6'
+    :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6',
+    :httponly => false
   }
 
   # Use the database for sessions instead of the cookie-based default,
@@ -108,12 +109,15 @@ SITE_FULL_NAME = 'Perseids'
 SITE_TAG_LINE = 'powered by Son of Suda Online'
 SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
 SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
 SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "data.perseus.org"
-SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosol1"
-EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
+SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
+EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+ENVIRONMENT_BACKGROUPD = 'white'
+SITE_EMAIL_FROM = 'admin@perseids.org'
 
   
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
