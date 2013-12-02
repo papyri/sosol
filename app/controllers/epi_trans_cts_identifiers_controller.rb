@@ -8,12 +8,15 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   
   def edit
     find_identifier
+    # Add URL to image service for display of related images
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     #find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
   end
   
   def editxml
     find_identifier
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'epi_trans_cts_identifiers/editxml'
@@ -92,9 +95,20 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview
   end
   
+  def destroy
+    find_identifier 
+    name = @identifier.title
+    pub = @identifier.publication
+    @identifier.destroy
+    
+    flash[:notice] = name + ' was successfully removed from your publication.'
+    redirect_to pub
+    return
+  end
   
   protected
     def find_identifier
       @identifier = EpiTransCTSIdentifier.find(params[:id].to_s)
     end
+    
 end
