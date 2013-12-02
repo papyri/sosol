@@ -40,7 +40,7 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.xml
   def create
-    @event = Event.new(params[:event])
+    @event = Event.new(event_params)
 
     respond_to do |format|
       if @event.save
@@ -82,4 +82,10 @@ class EventsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+    def event_params
+      params.require(:event).permit(:category,:owner,:target)
+    end
 end

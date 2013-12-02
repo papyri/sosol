@@ -89,7 +89,7 @@ class EmailersController < ApplicationController
   # POST /emailers
   # POST /emailers.xml
   def create
-    @emailer = Emailer.new(params[:emailer])
+    @emailer = Emailer.new(emailer_params)
     
     if @emailer.save
       board = Board.find(@emailer.board_id)
@@ -133,4 +133,10 @@ class EmailersController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+    def emailer_params
+      params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message)
+    end
 end

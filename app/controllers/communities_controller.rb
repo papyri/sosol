@@ -43,17 +43,20 @@ class CommunitiesController < ApplicationController
   # POST /communities
   # POST /communities.xml
   def create
-    @community = Community.new(params[:community])
-    @community.admins << @current_user
+    @community = Community.new(community_params)
+    @community.transaction do
+      @community.save!
+      @community.admins << @current_user
 
-    respond_to do |format|
-      if @community.save!
-        flash[:notice] = 'Community was successfully created.'
-        format.html { redirect_to(:action => 'edit', :id => @community.id) }
-        format.xml  { render :xml => @community, :status => :created, :location => @community }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @community.errors, :status => :unprocessable_entity }
+      respond_to do |format|
+        if @community.save!
+          flash[:notice] = 'Community was successfully created.'
+          format.html { redirect_to(:action => 'edit', :id => @community.id) }
+          format.xml  { render :xml => @community, :status => :created, :location => @community }
+        else
+          format.html { render :action => "new" }
+          format.xml  { render :xml => @community.errors, :status => :unprocessable_entity }
+        end
       end
     end
   end
@@ -222,5 +225,11 @@ class CommunitiesController < ApplicationController
   def confirm_destroy
       @community = Community.find(params[:id].to_s)
   end
+
+  private
+
+    def community_params
+      params.require(:community).permit(:name,:friendly_name,:description,:admins)
+    end
   
 end

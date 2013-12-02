@@ -101,4 +101,10 @@ class DecreesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+    def decree_params
+      params.require(:decree).permit(:association,:tally_method,:action,:trigger,:choices)
+    end
 end

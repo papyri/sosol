@@ -119,9 +119,7 @@ class BoardsController < ApplicationController
   # POST /boards
   # POST /boards.xml
   def create
-
-
-    @board = Board.new(params[:board])
+    @board = Board.new(board_params)
     
     @board.identifier_classes = []
 
@@ -343,6 +341,12 @@ end
 
 def confirm_destroy
   @board = Board.find(params[:id].to_s)
+end
+
+private
+
+def board_params
+  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees)
 end
 
 end
