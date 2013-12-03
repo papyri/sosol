@@ -59,11 +59,11 @@ class HgvTransIdentifiersController < IdentifiersController
     end
     if params[:commit]== "Save With Broken Leiden+"
      #broken leiden
-      @identifier.save_broken_leiden_trans_to_xml(params[:hgv_trans_identifier].to_s[:leiden_trans], params[:comment].to_s)
+      @identifier.save_broken_leiden_trans_to_xml(params[:hgv_trans_identifier][:leiden_trans].to_s, params[:comment].to_s)
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_publication_cache
-        @identifier[:leiden_trans] = params[:hgv_trans_identifier].to_s[:leiden_trans]
+        @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans].to_s
         
         @is_editor_view = true
         
@@ -76,7 +76,7 @@ class HgvTransIdentifiersController < IdentifiersController
       begin#checking for parse error
         
         
-        commit_sha = @identifier.set_leiden_translation_content(params[:hgv_trans_identifier].to_s[:leiden_trans], params[:comment].to_s)
+        commit_sha = @identifier.set_leiden_translation_content(params[:hgv_trans_identifier][:leiden_trans].to_s, params[:comment].to_s)
         
         if params[:comment] != nil && params[:comment].strip != ""
           @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
