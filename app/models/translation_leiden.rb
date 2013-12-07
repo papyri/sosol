@@ -13,7 +13,7 @@ class TranslationLeiden < HGVTransIdentifier
   #   - Leiden+
   def self.xml_to_translation_leiden(content)
     if content.include?("<div")
-      #wrap in <body> tag only so that the sugar grammer can transform 
+      #wrap in <body> tag only so that the sugar grammar can transform 
       #assume <div> and <p> both provided
       wrapped_content = "<body xmlns:xml=\"http://www.w3.org/XML/1998/namespace\">" + content + "</body>"
       #call to convert xml to leiden

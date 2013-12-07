@@ -127,7 +127,7 @@ class Repository
         Rails.logger.error("JGIT Blob Exception for #{file} on #{branch} in #{path}: #{e.inspect}\n#{e.backtrace}")
         return nil
       end
-      Rails.logger.error("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding("UTF-8").length}")
+      Rails.logger.debug("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding("UTF-8").length}")
       return jgit_blob
     rescue Exception => e
       Rails.logger.error("JGIT Exception: #{e.inspect}\n#{caller.join("\n")}\n#{e.backtrace}")
@@ -277,7 +277,7 @@ class Repository
     person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
     # TODO: just get the object id instead of reinserting
     inserter = @jgit_repo.newObjectInserter()
-    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_bytes)
+    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
     inserter.flush()
     inserter.release()
 
