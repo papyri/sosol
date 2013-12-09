@@ -223,6 +223,7 @@ class Repository
   end
   
   def fetch_objects(other_repo, branch = nil)
+    Rails.logger.debug("fetch_objects: #{other_repo.name}, #{branch}")
     self.add_remote(other_repo)
     begin
       fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
