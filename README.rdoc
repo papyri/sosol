@@ -15,12 +15,15 @@
       config.rpx_api_key = '0cdf56769f20a2b73a929ac3ba633152'
       config.rpx_realm = 'sosol-development'
     end
-* bundle install
-* bundle exec cap local externals:setup
-* rake db:migrate
-* rake git:db:canonical:clone
-* rake test
-* bundle exec rails server
+* If you have {rbenv}[https://github.com/sstephenson/rbenv] installed with the {ruby-build plugin}[https://github.com/sstephenson/ruby-build#installing-as-an-rbenv-plugin-recommended], running ./script/setup will run the following setup commands for you (though you can run them one-by-one manually instead if you want to have a chance to intervene if things go wrong):
+  * rbenv install
+  * gem install bundler
+  * bundle install
+  * bundle exec cap local externals:setup
+  * bundle exec rake db:migrate
+  * bundle exec rake git:db:canonical:clone
+  * bundle exec rake test
+  * bundle exec rails server
 
 = App Structure
 
