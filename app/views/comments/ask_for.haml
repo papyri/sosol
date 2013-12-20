@@ -3,7 +3,7 @@
 %h3
   = @publication.title
 
-= form_for :comment, Comment.new(:publication_id => @publication_id, :identifier_id => @identifier_id, :reason => "general"), :url => { :controller => "comments", :action => "create" } do |form|
+= form_for Comment.new(:publication_id => @publication_id, :identifier_id => @identifier_id, :reason => "general"), :url => { :controller => "comments", :action => "create" } do |form|
   = form.hidden_field :publication_id
   = form.hidden_field :identifier_id 
   = form.hidden_field :reason
