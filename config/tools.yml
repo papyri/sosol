@@ -1,7 +1,7 @@
 development:
   treebank_editor:
-    :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
-    :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :edit_url: "http://sosol-test.perseids.org/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+    :view_url: "http://sosol-test.perseids.org/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     

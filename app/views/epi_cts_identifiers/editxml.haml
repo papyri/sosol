@@ -1,3 +1,23 @@
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/third_party/menumucil/css/menumucil.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/css/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/css/imgbit.css"}
+:css
+  .edit_epi_cts_identifier #ict_tool_wrapper {
+    height: auto;
+  }
+  .site {
+    padding: 0;
+  }
+  .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
+    width: 100%; 
+  }
+	
+//------------------------------------------------------------
+//  Content
+//------------------------------------------------------------
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
@@ -5,22 +25,33 @@
     #edit
       - form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
-                  
-        %br
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
-                
+        #ict_tool_wrapper
+          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'make_ICT_link'}
+		
+        %img{:src => "/javascripts/imgspect/examples/img/the-garden-of-earthly-delights.jpg", :id => "bosch"}
         %label XML
         = clippy "#{@identifier.class.to_s.underscore}_xml_content"
+		
         .clearfix
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
-          #ict_tool_wrapper 
-            #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'make_ICT_link'}
-            %iframe{:id => 'ict_frame'}        
-        %br
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-
 = javascript_include_tag 'confirm'
+
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/StringExt.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/Culuh.js"}
+%script{:src => "/javascripts/imgspect/third_party/menumucil/menumucil.js"}
+%script{:src => "/javascripts/imgspect/imgspect.js"}
+%script{:src => "/javascripts/imgspect/imgbit.js"}
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
   PerseidsLD.do_simple_query();
+
+  // start imgspect and grab a handler
+  var spect = null;
+  $(window).load( function(){
+    spect = $( '#bosch' ).imgspect().data( '#bosch' );
+  });
+

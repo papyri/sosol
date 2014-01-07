@@ -2,7 +2,7 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-#ENV['RAILS_ENV'] ||= 'production'
+ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
@@ -49,7 +49,7 @@ Rails::Initializer.run do |config|
   end
   
   config.gem "shoulda", :version => ">= 2.11.3"
-  
+
   config.gem "factory_girl", :version => "~> 1.2.2"
   
   config.gem 'airbrake', :version => ">= 3.0.5"
@@ -71,7 +71,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
-  config.log_level = :info
+  # config.log_level = :debug
 
   # Make Time.zone default to the specified zone, and make Active Record store time values
   # in the database in UTC, and return them converted to the specified local zone.
@@ -84,7 +84,8 @@ Rails::Initializer.run do |config|
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
     :key => '_protosite_session',
-    :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6'
+    :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6',
+    :httponly => false
   }
 
   # Use the database for sessions instead of the cookie-based default,
@@ -103,15 +104,23 @@ Rails::Initializer.run do |config|
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
   
-  SITE_NAME = 'Papyrological Editor'
-  SITE_FULL_NAME = 'Papyri.info' 
-  SITE_LAYOUT = 'pn'
-  SITE_WIKI_LINK = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
-  SITE_IDENTIFIERS = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
-  SITE_CATALOG_SEARCH = "View in PN"
-  SITE_USER_NAMESPACE = "papyri.info"
- 
-  REPOSITORY_ROOT = File.join('/data/papyri.info/sosol/repo')
+SITE_NAME = 'Perseids'
+SITE_FULL_NAME = 'Perseids'
+SITE_TAG_LINE = 'powered by Son of Suda Online'
+SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
+SITE_LAYOUT = 'perseus'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
+SITE_CATALOG_SEARCH = "View In Catalog"
+SITE_USER_NAMESPACE = "data.perseus.org"
+SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
+SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
+EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+ENVIRONMENT_BACKGROUPD = 'white'
+SITE_EMAIL_FROM = 'admin@perseids.org'
+
+  
+REPOSITORY_ROOT = "/usr/local/gitrepos"
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
   
   GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="

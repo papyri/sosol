@@ -1,0 +1,3 @@
+[submodule "public/javascripts/imgspect"]
+	path = public/javascripts/imgspect
+	url = https://github.com/PerseusDL/imgspect
