@@ -39,7 +39,36 @@ module Cite
              valid_collection_urn = true
          end 
         end
+        # TODO - validate against inventory?
         return valid_collection_urn
+      end
+      
+      # method to see if what we have is an object identifier
+      def is_object_urn?(a_urn)
+        valid_object_urn = false;
+        parts = a_urn.split(/:/)
+        if (parts.length == 4)
+          obj_parts = parts[3].split(/\./)
+          if parts[0] == 'urn' && parts[1] == 'cite' && obj_parts.length == 2 && obj_parts[1] !~ /\./
+            valid_object_urn = true
+          end 
+        end
+        # TODO - validate against inventory?
+        return valid_object_urn
+      end
+      
+      # method to see if what we have is a version identifier
+      def is_version_urn?(a_urn)
+        valid_version_urn = false;
+        parts = a_urn.split(/:/)
+        if (parts.length == 4)
+          obj_parts = parts[3].split(/\./)
+          if parts[0] == 'urn' && parts[1] == 'cite' && obj_parts.length == 3 
+            valid_version_urn = true
+          end 
+        end
+        # TODO - validate against inventory?
+        return valid_version_urn
       end
       
       # lookup the max size of a field (perseids extension of standard cite functionality)
@@ -83,6 +112,12 @@ module Cite
           @inventory = REXML::Document.new File.new(File.join("#{RAILS_ROOT}",'config','citecapabilities.xml'))
         end
         return @inventory
+      end
+      
+      # Get the list of creatable identifiers for the supplied urn
+      # @param {String} a_urn
+      def get_creatable_identifiers(a_urn)
+        
       end
     end # end class
   end # end module CiteLib

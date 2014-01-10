@@ -10,6 +10,17 @@ class TreebankCiteIdentifier < CiteIdentifier
   # TODO Validator depends upon treebank format
   XML_VALIDATOR = JRubyXML::PerseusTreebankValidator
   
+  # Overrides Identifier#set_content to make sure content is preprocessed first
+  # - *Args*  :
+  #   - +content+ -> the XML you want committed to the repository
+  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
+  # - *Returns* :
+  #   - a String of the SHA1 of the commit
+  def set_content(content, options = {})
+    content = TreebankCiteIdentifier.preprocess(content)
+    super
+  end
+  
   def titleize
     # TODO should say Treebank on Target URI
     title = self.name
@@ -60,7 +71,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       annotator.add_element(uri)
       treebank.insert_before("sentence[1]",annotator)
     end
-    
     toXmlString treebank
   end
   
@@ -77,13 +87,33 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @param [String] a_value is the initialization value - in this case the target urn 
   def init_content(a_value)
     init_value = a_value.to_s
+    template = nil
     begin
       urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
       urn_obj = CTS::CTSLib.urnObj(urn_value)
+      unless (urn_obj.nil?)
+        base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
+        template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
+        template = self.publication.repository.get_file_from_branch(template_path, 'master') 
+      end
     rescue Exception => e
       # if we get an exception it might be an invalid urn or it might be something that
-      # isn't a urn
-      if (! a_value =~ /urn:cts:/)
+      # isn't a urn - if it's a uri we try to retrieve the content 
+      if (a_value =~ /^https?:/)
+        begin
+            svc_params =
+              { :text_uri => a_value, 
+                :template_format => 'Perseus',
+                :mime_type => 'text/xml', # TODO - mime_type and lang should be auto-detected by svc
+                :lang => 'grc', 
+                :wait => 'true' # TODO we need to support async
+              }
+            response = Services::Manager.send_request(self.publication,'annotation/template', svc_params)
+            template = OacHelper.get_body_xml(response)
+            # TODO support call to Morphology Service ?
+        rescue
+          raise "Invalid treebank content at #{a_value}"
+        end
         # not a cts urn, just assume we have to create a new template
         raise "Not a URN"
       else 
@@ -91,21 +121,12 @@ class TreebankCiteIdentifier < CiteIdentifier
         raise e
       end
     end
-    template = nil
-    unless (urn_obj.nil?)
-      base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
-      template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
-      template = self.publication.repository.get_file_from_branch(template_path, 'master') 
-    end
     if (template.nil?)
-      raise "Service call not yet implemented"    
+      raise "Unable to create template for #{a_value}"    
     end
+
     template_init = init_version_content(template)
-    # TODO here we need to call the Annotation Service, passing in
-    ## the urn of the target passage OR the text to be annotated
-    ## call should be asynchronous and supply user email address for notification
-    ## for now we will require the user to complete the step to populate the 
-    ## template from the service results, but eventually that should be automatic
+ 
     self.set_xml_content(template_init, :comment => 'Initializing Content')
   end
   
@@ -251,8 +272,11 @@ class TreebankCiteIdentifier < CiteIdentifier
   # - *Returns* :
   #   - modified 'content'
   def self.preprocess(content)
-    # TODO verify against correct schema for format
-      return content  
+    # autoadjust sentence numbering
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite treebankrenumber.xsl})))  
+    # TODO verify against correct schema for format  
   end  
 
   ## method which checks the cite object for an initialization  value
@@ -298,7 +322,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def preview parameters = {}, xsl = nil
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
@@ -312,7 +336,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def edit parameters = {}, xsl = nil
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
@@ -328,4 +352,5 @@ class TreebankCiteIdentifier < CiteIdentifier
     # TODO update uri 
     self.set_xml_content(updated, :comment => 'Update uris to reflect new identifier')
   end
+  
 end

@@ -55,10 +55,46 @@ class CitePublicationsController < PublicationsController
           existing_identifiers += actual_conflicts
       end
       # all we have is a collection urn so we must want to create a new object
-    elsif (is_object_urn?(params[:urn]))
+    elsif (Cite::CiteLib.is_object_urn?(params[:urn]))
       ### if publication exists for a version of this object, bring them to it, otherwise create a new version
-    elsif (is_version_urn?(params[:urn]))
+      lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
+        existing_identifiers = []
+        possible_conflicts = identifier_class.find(:all,
+                       :conditions => ["name like ?", "#{lookup_id}%"],
+                       :order => "name DESC")
+        
+          actual_conflicts = possible_conflicts.select {|pc| 
+            begin
+              ((pc.publication) && 
+               (pc.publication.owner == @current_user) && 
+               !(%w{archived finalized}.include?(pc.publication.status))
+              )
+            rescue Exception => e
+              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+            end
+          }
+          existing_identifiers += actual_conflicts
+    elsif (Cite::CiteLib.is_version_urn?(params[:urn]))
       ### if publication exists for this version of this object, bring them to it, otherwise raise ERROR
+      lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
+        existing_identifiers = []
+        possible_conflicts = identifier_class.find(:all,
+                       :conditions => ["name like ?", "#{lookup_id}%"],
+                       :order => "name DESC")
+        
+          actual_conflicts = possible_conflicts.select {|pc| 
+            begin
+              ((pc.publication) && 
+               (pc.publication.owner == @current_user) && 
+               !(%w{archived finalized}.include?(pc.publication.status))
+               # TODO we should double check that the one they are editing is based on the same version
+               # and raise an error otherwise
+              )
+            rescue Exception => e
+              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+            end
+          }
+          existing_identifiers += actual_conflicts
     end # end test on urn type
     
     if existing_identifiers.length > 1
@@ -124,6 +160,7 @@ class CitePublicationsController < PublicationsController
           # we are creating a new object
           new_cite = identifier_class.new_from_template(@publication,params[:urn],params[:init_value])
         else
+          Rails.logger.info("New Object from inventory #{params[:urn]}")
           # we are creating a new version of an existing object
           new_cite = identifier_class.new_from_inventory(@publication,params[:urn])
         end

@@ -16,6 +16,13 @@ class TreebankCiteIdentifiersController < IdentifiersController
     @identifier[:list] = @identifier.edit(parameters = params)
   end
   
+   def editxml
+    find_identifier
+    @identifier[:xml_content] = @identifier.xml_content
+    @is_editor_view = true
+    render :template => 'treebank_cite_identifiers/editxml'
+  end
+  
   def preview
     find_identifier
     @identifier[:html_preview] = @identifier.preview(parameters = params)

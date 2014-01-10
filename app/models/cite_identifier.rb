@@ -57,6 +57,7 @@ class CiteIdentifier < Identifier
   # and upping it by one.
   ##
   def self.new_from_inventory(a_publication,a_urn)
+    # TODO if we just have an object urn we need to first find the latest version in the repo
     parent_document_path = self.path_for_version_urn(a_urn) 
     parent_id = self.new(:name => parent_document_path)
     # make sure we have a path on master before forking it for this publication 
@@ -72,6 +73,7 @@ class CiteIdentifier < Identifier
     temp_id.save!
      # initialize a new version of the content from the parent content
     initial_content = temp_id.init_version_content(parent_id.content)
+    temp_id.set_content(initial_content, :comment => 'Created from Inventory')
     return temp_id
   end
   
