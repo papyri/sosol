@@ -4,6 +4,15 @@ PerseidsTools = PerseidsTools || {};
 
 PerseidsTools.LDResults = {};
 
+PerseidsTools.LDResults.imgspect_link = function( _elem, _results ) {
+	var url = "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn=";
+	for ( var i=0, ii=_results.length; i<ii; i++ ) {
+		var imgUrn = '<a class="imgUrn" rel="' + url + _results[i] + '&w=3000"><img src="'+ url + _results[i] + '&w=100"/></a>';
+		jQuery( _elem ).append( imgUrn );
+	}
+	jQuery( document ).trigger( 'IMGSPECT-LINKS_LOADED' );
+}
+
 PerseidsTools.LDResults.make_ICT_link  = function(a_parentElem,a_results) {
 
 	//  - if there is just one image, it should automatically populate the frame
