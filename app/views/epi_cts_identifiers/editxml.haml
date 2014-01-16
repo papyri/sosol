@@ -1,18 +1,31 @@
 //------------------------------------------------------------
 //  CSS
 //------------------------------------------------------------
-%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/third_party/menumucil/css/menumucil.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/src/css/imgbit.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/src/css/imgspect.css"}
 :css
   .edit_epi_cts_identifier #ict_tool_wrapper {
     width: 100%;
     margin: 40px 0;
     height: auto;
   }
+    width: 50%;
+  }
   .site {
     padding: 0;
   }
+  #edit textarea#output,
   .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
-    width: 100%; 
+    box-sizing: border-box;
+    width: 60%;
+    float: left;
+  }
+  #edit textarea#output {
+    width: 40%;
+  }
+  .imgUrn img {
+  	margin: 0 5px 20px 0;
   }
     
 //------------------------------------------------------------
@@ -27,38 +40,36 @@
         = f.error_messages
         #ict_tool_wrapper
           #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
+          %div{:id => "imgspect"}        
         
-        %div{:id => "imgspect"}
-        %label XML
+        %label XML        
         = clippy "#{@identifier.class.to_s.underscore}_xml_content"
         
         .clearfix
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+          %textarea{:id => "output"}
+          
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
-
+    
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"}
-%script{:src => "/javascripts/imgspect/imgspect.js"}
+%script{:src => "/javascripts/imgspect/src/js/imgspect.js"}
+%script{:src => "/javascripts/imgspect/src/js/imgbit.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/jQueryPlus.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/StringExt.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/TimeStamp.js"}
+%script{:src => "/javascripts/imgspect/third_party/jslib/src/js/Culuh.js"}
+%script{:src => "/javascripts/imgspect/third_party/menumucil/menumucil.js"}
+%script{:src => "/javascripts/imgspect/src/js/PerseidsBridge.js"}
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
   PerseidsLD.do_simple_query();
 
-  // start imgspect and grab a handler
-  var spect = null;
-  jQuery(document).on( 'IMGSPECT-LINKS_LOADED', function(){
-    jQuery('.imgUrn').click( function(_e) {
-        jQuery('#imgspect').empty();
-        var img = new Image();
-        img.onload = function() {
-            jQuery('#imgspect').append( this );
-            spect = $('#imgspect img').imgspect().data('#imgspect');
-        }
-        var src = jQuery(this).attr('rel');
-        img.src = src;
-        _e.preventDefault();
-        return false;
-    });
-  });
+  //------------------------------------------------------------
+  // Start imgspect bridge and grab a handler
+  //------------------------------------------------------------
+  var bridge = PerseidsBridge.imgspect.init();
+  bridge.start( 'output' );
 
