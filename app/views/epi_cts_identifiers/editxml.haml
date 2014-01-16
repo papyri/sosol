@@ -5,24 +5,72 @@
 %link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/src/css/imgbit.css"}
 %link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/imgspect/src/css/imgspect.css"}
 :css
-  .edit_epi_cts_identifier #ict_tool_wrapper {
-    width: 100%;
-    margin: 40px 0;
-    height: auto;
+  body {
+    background-color: #f9f9f9;
   }
-    width: 50%;
+  .edit_epi_cts_identifier #ict_tool_wrapper {
+    padding: 0;
+    margin: 10px 0 40px 0;
+    width: 100%;
+    height: auto
   }
   .site {
+    width: 100%;
+    margin: 0;
     padding: 0;
+  }
+  div.nav {
+    min-height: 0;
+  }
+  #logo {
+    padding: 0;
+    margin: 10px 0 0 10px;
+  }
+  #logo p {
+    font-size: 10px;
+    color: #AAA;
+  }
+  #logo img {
+    width: 100px;
+  }
+  #user_box {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  #user_box .name {
+    color: #999;
+  }
+  #user_box .links {
+    color: #CCC;
   }
   #edit textarea#output,
   .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
     box-sizing: border-box;
-    width: 60%;
-    float: left;
+    width: 100%;
+    margin: 0 20px;
   }
-  #edit textarea#output {
-    width: 40%;
+  #edit_header {
+    margin-top: 25px;
+    padding: 10px;
+  }
+  #edit_header h1,
+  #edit_header h3 {
+    width: 100%;
+    text-align: center;
+    font-weight: normal;
+    font-size: 16px;
+    color: #AAA;
+  }
+  #edit_header h3 {
+    display: none;
+  }
+  #edit_header h1 a {
+    display: inline-block;
+    font-size: 18px;
+    text-decoration: none;
+  }
+  #edit_header h1 a:hover {
+    text-decoration: underline;
   }
   #imgspectWarning {
     background-color: rgba(255,255,255,0.95);
@@ -30,7 +78,6 @@
     padding: 5px;
     padding-bottom: 20px;
   }
-  
   #imgspectWarning p {
     padding: 20px;
   }
@@ -38,15 +85,20 @@
     text-align: center;
   }
   #imgspectWarning a {
+    text-decoration: none;
     margin: 10px;
   }
   #ict_tool {
-    background-color: #333;
-    padding: 10px;
+    margin: 0;
+    background-color: #444;
+    padding: 5px;
   }
   #ict_tool .imgUrn img {
-  	margin: 5px;
+    margin: 5px;
     border: solid 1px #666;
+  }
+  #edit form input.save {
+    margin-bottom: 40px;
   }
     
 //------------------------------------------------------------
@@ -62,10 +114,10 @@
         #ict_tool_wrapper
           #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
             
-          %div{:id => "imgspect"}        
+          %div{:id => "imgspect"}    
         
-        %label XML        
-        = clippy "#{@identifier.class.to_s.underscore}_xml_content"
+        .clearfix
+        %label XML
         
         .clearfix
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
