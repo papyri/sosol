@@ -47,7 +47,9 @@
   .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
     box-sizing: border-box;
     width: 100%;
-    margin: 0 20px;
+  }
+  #editors {
+    padding: 0 20px;
   }
   #edit_header {
     margin-top: 25px;
@@ -79,7 +81,11 @@
     padding-bottom: 20px;
   }
   #imgspectWarning p {
-    padding: 20px;
+    text-align:center;
+    padding: 5px 20px;
+  }
+  #imgspectWarning p:last-of-type {
+    margin-bottom: 40px;
   }
   #imgspectWarning #imgspectButtons {
     text-align: center;
@@ -88,14 +94,30 @@
     text-decoration: none;
     margin: 10px;
   }
+  #imgspectWarning a:hover {
+    text-decoration: underline;
+  }
   #ict_tool {
+    -webkit-transition: background-color 250ms linear;
+    -moz-transition: background-color 250ms linear;
+    -o-transition: background-color 250ms linear;
+    -ms-transition: background-color 250ms linear;
+    transition: background-color 250ms linear;
     margin: 0;
-    background-color: #444;
+    background-color: #DDD;
     padding: 5px;
+  }
+  #ict_tool.imgspectLoaded {
+    background-color: #333;
   }
   #ict_tool .imgUrn img {
     margin: 5px;
     border: solid 1px #666;
+  }
+  #ict_tool #imgspectHint {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #666;
   }
   #edit form input.save {
     margin-bottom: 40px;
@@ -117,13 +139,11 @@
           %div{:id => "imgspect"}    
         
         .clearfix
-        %label XML
-        
-        .clearfix
+        %div{:id => "editors"}
+          %label XML
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
-          %textarea{:id => "output"}
           
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
     
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}

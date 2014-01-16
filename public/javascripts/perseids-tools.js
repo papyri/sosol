@@ -6,6 +6,7 @@ PerseidsTools.LDResults = {};
 
 PerseidsTools.LDResults.imgspect_link = function( _elem, _results ) {
 	var url = "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn=";
+	jQuery( _elem ).append( '<div id="imgspectHint">Click an image to inspect.</div>' );
 	for ( var i=0, ii=_results.length; i<ii; i++ ) {
 		var imgUrn = '<a class="imgUrn" rel="' + url + _results[i] + '&w=3000"><img src="'+ url + _results[i] + '&w=100"/></a>';
 		jQuery( _elem ).append( imgUrn );

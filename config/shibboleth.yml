@@ -2,7 +2,7 @@ development:
   :shibboleth:
     :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
-    :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
+    :assertion_consumer_service_url: "https://sosol-test.perseids.org/sosol/shib/consume"
     :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
