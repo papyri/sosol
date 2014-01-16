@@ -24,8 +24,29 @@
   #edit textarea#output {
     width: 40%;
   }
-  .imgUrn img {
-  	margin: 0 5px 20px 0;
+  #imgspectWarning {
+    background-color: rgba(255,255,255,0.95);
+    border: solid 2px #AAA;
+    padding: 5px;
+    padding-bottom: 20px;
+  }
+  
+  #imgspectWarning p {
+    padding: 20px;
+  }
+  #imgspectWarning #imgspectButtons {
+    text-align: center;
+  }
+  #imgspectWarning a {
+    margin: 10px;
+  }
+  #ict_tool {
+    background-color: #333;
+    padding: 10px;
+  }
+  #ict_tool .imgUrn img {
+  	margin: 5px;
+    border: solid 1px #666;
   }
     
 //------------------------------------------------------------
@@ -40,6 +61,7 @@
         = f.error_messages
         #ict_tool_wrapper
           #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
+            
           %div{:id => "imgspect"}        
         
         %label XML        
@@ -53,7 +75,7 @@
 = javascript_include_tag 'confirm'
     
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
-%script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"}
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
 %script{:src => "/javascripts/imgspect/src/js/imgspect.js"}
 %script{:src => "/javascripts/imgspect/src/js/imgbit.js"}
 %script{:src => "/javascripts/imgspect/third_party/jslib/src/js/jQueryPlus.js"}
@@ -61,6 +83,7 @@
 %script{:src => "/javascripts/imgspect/third_party/jslib/src/js/TimeStamp.js"}
 %script{:src => "/javascripts/imgspect/third_party/jslib/src/js/Culuh.js"}
 %script{:src => "/javascripts/imgspect/third_party/menumucil/menumucil.js"}
+%script{:src => "/javascripts/imgspect/third_party/plopup/src/js/plopup.js"}
 %script{:src => "/javascripts/imgspect/src/js/PerseidsBridge.js"}
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
