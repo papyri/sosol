@@ -115,5 +115,5 @@ environment.rb to allow the session cookie to apply under ssl:
 * requres canonix 0.1.7 instead of xmlcanonicalizer (required for canonicalization with namespace instance prefixes)
 * for some reason 0.1.7 breaks warble so must be manually included in war or deployment environment 
 * openssl 0.7.7 (instead of 0.5.2)
-
+    * but note test server required openssl 0.8.8 otherwise it couldn't read bouncy castle - difference in jruby version?
 
