@@ -47,6 +47,7 @@
   .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
     box-sizing: border-box;
     width: 100%;
+    margin-bottom: 50px;
   }
   #editors {
     padding: 0 20px;
@@ -122,6 +123,9 @@
   #edit form input.save {
     margin-bottom: 40px;
   }
+  #edit form textarea.caption {
+    margin-bottom: 0;
+  }
     
 //------------------------------------------------------------
 //  Content
@@ -166,5 +170,5 @@
   // Start imgspect bridge and grab a handler
   //------------------------------------------------------------
   var bridge = PerseidsBridge.imgspect.init();
-  bridge.start( 'output' );
+  bridge.start();
 

@@ -59,6 +59,7 @@ class ShibController < ApplicationController
           # this could all move to its own method too
           att_request = Onelogin::Saml::AttributeQuery.new
           att_request = att_request.create(response.name_id,response.settings,{})
+          Rails.logger.info("AQ=#{att_request}")
           uri = URI.parse(response.settings.idp_aqr_target_url)
           
           cert = File.read(@shib_config[:idps][idp][:sp_cert])
