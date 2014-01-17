@@ -126,6 +126,22 @@
   #edit form textarea.caption {
     margin-bottom: 0;
   }
+  #aceMask {
+    height: 800px;
+    overflow-y: hidden;
+    margin-bottom: 50px;
+  }
+  #aceWrapper {
+    position: relative;
+    height: 10000px;
+  }
+  #aceEditor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
     
 //------------------------------------------------------------
 //  Content
@@ -144,7 +160,6 @@
         
         .clearfix
         %div{:id => "editors"}
-          %label XML
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
           
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
@@ -161,6 +176,7 @@
 %script{:src => "/javascripts/imgspect/third_party/menumucil/menumucil.js"}
 %script{:src => "/javascripts/imgspect/third_party/plopup/src/js/plopup.js"}
 %script{:src => "/javascripts/imgspect/src/js/PerseidsBridge.js"}
+%script{:src => "/javascripts/ace-builds/src-noconflict/ace.js"}
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
@@ -171,4 +187,39 @@
   //------------------------------------------------------------
   var bridge = PerseidsBridge.imgspect.init();
   bridge.start();
+  
+  //------------------------------------------------------------
+  //  Experiments with ACE editor
+  //------------------------------------------------------------
+  jQuery( document ).ready( function() {
+    
+    //------------------------------------------------------------
+    //  Resize the editor
+    //------------------------------------------------------------
+    function setEditorHeight(){
+      var lastLine = jQuery("#aceEditor .ace_gutter-cell:last");
+      var neededHeight = lastLine.position().top + lastLine.outerHeight();
+      jQuery("#aceMask").height(neededHeight);
+    }
+    
+    //------------------------------------------------------------
+    //  Copy content into a div
+    //------------------------------------------------------------
+    var editor = jQuery("#epi_cts_identifier_xml_content");
+    var xml = editor.val();
+    editor.hide();
+    editor.after( '<div id="aceMask"><div id="aceWrapper"><div id="aceEditor"></div></div></div>' );
+    var aceDiv = jQuery('#aceEditor');
+    aceDiv.text( xml );
+    
+    //------------------------------------------------------------
+    //  Startup and configure ace editor
+    //------------------------------------------------------------
+    var aceEditor = ace.edit("aceEditor");
+    aceEditor.setTheme("ace/theme/tomorrow");
+    aceEditor.getSession().setMode("ace/mode/xml");
+    aceEditor.getSession().setUseWrapMode(true);
+    setEditorHeight();
+    $(window).on('resize', setEditorHeight );
+  });
 
