@@ -59,7 +59,6 @@ class ShibController < ApplicationController
           # this could all move to its own method too
           att_request = Onelogin::Saml::AttributeQuery.new
           att_request = att_request.create(response.name_id,response.settings,{})
-          Rails.logger.info("AQ=#{att_request}")
           uri = URI.parse(response.settings.idp_aqr_target_url)
           
           cert = File.read(@shib_config[:idps][idp][:sp_cert])
@@ -81,8 +80,8 @@ class ShibController < ApplicationController
             begin 
               if att_response.is_valid? && att_response.scoped_targeted_id
                 user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
-    
-                if user_identifier
+                
+                if !@current_user && user_identifier
                   # User Identifier exists, login and redirect to index
                   user = user_identifier.user
                   session[:user_id] = user.id
@@ -94,7 +93,21 @@ class ShibController < ApplicationController
                     redirect_to :controller => "user", :action => "dashboard"
                     return
                   end
+                elsif @current_user && user_identifier.nil?
+                  # only can add a shibboleth identity to an account if there isn't already one for it 
+                  @current_user.user_identifiers << UserIdentifier.create(:identifier => att_response.scoped_targeted_id)
+                  flash[:notice] = "#{att_response.scoped_targeted_id} added to your account"
+                  return
+                elsif @current_user && user_identifier && @current_user.id == user_identifier.user.id
+                  flash[:notice] = "That identity was already associated with this account"
+                  redirect_to :controller => "user", :action => "account"
+                  return
+                elsif user_identifier
+                  flash[:error] = "That identity is already associated with a different user account."
+                  redirect_to :controller => "user", :action => "account"
+                  return
                 else 
+                  # no current session and the identifier wasn't found so 
                   # first login with this identifier let the user supply their details
                   session[:identifier] = att_response.scoped_targeted_id
                   @display_id = get_displayid(att_response.attributes,idp) || session[:identifier]
@@ -217,7 +230,11 @@ class ShibController < ApplicationController
       settings.idp_sso_target_url = idp_settings[:idp_sso_target_url] 
       settings.idp_aqr_target_url = idp_settings[:idp_aqr_target_url]
 
-      settings.issuer                         = @shib_config[:issuer]
+      settings.issuer             = @shib_config[:issuer]
+      # check to be sure the issuer isn't different for this IdP
+      if (idp_settings[:issuer])
+        settings.issuer = idp_settings[:issuer]
+      end
       settings.idp_cert                       = File.read(idp_settings[:idp_cert]) 
       # TODO this is depends upon the IdP
       settings.name_identifier_format         = idp_settings[:name_identifier_format]

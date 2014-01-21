@@ -8,7 +8,7 @@ class RpxController < ApplicationController
   def remove_openid
     user_identifier = UserIdentifier.find_by_id(params[:openid].to_s)
     if user_identifier.nil?
-      flash[:error] = "OpenID Disassociation Failed: No such OpenID"
+      flash[:error] = "Identity Disassociation Failed: No such Identity for this account"
       redirect_to :controller => "user", :action => "account"
       return
     end
@@ -17,15 +17,15 @@ class RpxController < ApplicationController
     
     if user.id == @current_user.id
       if user.user_identifiers.length > 1
-        flash[:notice] = "OpenID #{user_identifier.identifier} removed"
+        flash[:notice] = "Identity #{user_identifier.identifier} removed"
         user_identifier.destroy
         redirect_to :controller => "user", :action => "account"
       else
-        flash[:error] = "OpenID Disassociation Failed: Your account must have at least one OpenID"
+        flash[:error] = "Identity Disassociation Failed: Your account must have at least one Identity"
         redirect_to :controller => "user", :action => "account"
       end
     else
-      flash[:error] = "OpenID Disassociation Failed: ID not owned by user"
+      flash[:error] = "Identity Disassociation Failed: ID not owned by user"
       redirect_to :controller => "user", :action => "account"
       return
     end

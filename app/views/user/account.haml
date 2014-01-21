@@ -45,13 +45,13 @@
   %br
   %br
   %h3
-    Your OpenIDs
+    Your Identities
   - if @identifiers.length == 0
     %p
-      No OpenIDs are associated with this account.
+      No Identities are associated with this account.
   - else
     %p
-      OpenIDs associated with this account:
+      Identities associated with this account:
     %ul
       - @identifiers.each do |identifier|
         %li
@@ -59,6 +59,7 @@
           \-
           = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
   = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
+  = render :partial => "shib/wayf_box_link"
 
 
 %script{:src => rpx_widget_url, :type => "text/javascript"}
