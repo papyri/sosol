@@ -2,7 +2,7 @@ class TeiCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_TEI'
   
-  FRIENDLY_NAME = "Manuscript Transcription"
+  FRIENDLY_NAME = "Transcription Text (TEI-A)"
   
   IDENTIFIER_NAMESPACE = 'teia_edition'
   

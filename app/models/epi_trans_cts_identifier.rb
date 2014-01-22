@@ -4,7 +4,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   TEMPORARY_COLLECTION = 'TempTrans'
   TEMPORARY_TITLE = 'New Translation'
   
-  FRIENDLY_NAME = "Inscription Translation"
+  FRIENDLY_NAME = "Translation Text (EpiDoc)"
   
   IDENTIFIER_NAMESPACE = 'epigraphy_translation'
   

@@ -10,7 +10,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     find_identifier
     # Add URL to image service for display of related images
     @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
-    #find text for preview
+    # find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
   end
   
@@ -52,6 +52,17 @@ class EpiTransCtsIdentifiersController < IdentifiersController
                                  :action => :edit) and return
   end
   
+  def link_citation
+    find_identifier
+    render(:template => 'citation_cts_identifiers/select',
+           :locals => {:edition => @identifier.urn_attribute,
+                       :version_id => @identifier.name,
+                       :collection => @identifier.inventory,
+                       :citeinfo => @identifier.related_inventory.parse_inventory(),
+                       :controller => 'citation_cts_identifiers',
+                       :publication_id => @identifier.publication.id, 
+                       :pubtype => 'translation'})
+  end
   
   def update
     find_identifier

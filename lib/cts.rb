@@ -245,7 +245,59 @@ module CTS
                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
                    %w{data xslt cts validreff_urns.xsl})))  
         else
+           Rails.logger.error("Error response from #{uri}")
            nil
+        end
+      end
+      
+      def getValidReffFromRepo(a_uuid,a_inventory,a_document,a_urn,a_level)
+        begin
+          # post inventory and get path for file put 
+          uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+          response = Net::HTTP.start(uri.host, uri.port) do |http|
+            headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+            http.send_request('POST',uri.request_uri,a_inventory,headers)
+          end # end http put of inventory
+          if (response.code == '200')
+            path = JRubyXML.apply_xsl_transform(
+              JRubyXML.stream_from_string(response.body),
+              JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              %w{data xslt cts extract_reply_text.xsl})))  
+            if (path != '')
+              # inventory put succeeded, now put the document itself  
+              pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+              put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
+                headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+                http.send_request('PUT', pathUri.request_uri, a_document,headers)      
+              end # end put of document
+              if (put_response.code == '201')
+                # request valid reffs
+                rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetValidReff&inv=#{a_uuid}&urn=#{a_urn}&level=#{a_level}")
+                refs_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
+                  http.send_request('GET', rurl.request_uri)
+                end # end valid reffs request
+                if (refs_response.code == '200')
+                  JRubyXML.apply_xsl_transform(
+                    JRubyXML.stream_from_string(refs_response.body),
+                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                    %w{data xslt cts validreff_urns.xsl})))  
+                else
+                  Rails.logger.error("Error response from #{uri}")
+                  nil
+                end # end  valid reffs
+              else 
+                Rails.logger.error("Error response from #{pathUri}")
+              end # end  put of text
+            else
+              Rails.logger.error("No path to inventory")
+            end # end test on path to inventory
+          else 
+            Rails.logger.error("Error response from #{uri}")  
+          end # end put of inventory
+        ensure
+          # cleanup
+          rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
+          Net::HTTP.get_response(rurl)
         end
       end
             
@@ -372,6 +424,12 @@ module CTS
         # for POC just use the work and edition
         searchid = a_identifier.to_urn_components[0] + "." + a_identifier.to_urn_components[1]
         return SITE_CATALOG_SEARCH + searchid
+      end
+      
+       # Get the list of creatable identifiers for the supplied urn
+      # @param {String} a_urn
+      def get_creatable_identifiers(a_urn)
+        
       end
       
     end #class

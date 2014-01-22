@@ -97,7 +97,7 @@
 </div>
     <xsl:if test="//*[@facs]">
       <div id="ict_tool_wrapper">
-        <iframe id="ict_frame" src="/templates/image_frame_empty.html" width="90%" height="30%">
+        <iframe id="ict_frame" src="/sosol/templates/image_frame_empty.html" width="90%" height="30%">
           <html><head><title>Linked Image Viewer</title></head>
           <body><div class="hint">Click on linked text to view image.</div></body></html>
         </iframe>
@@ -107,7 +107,8 @@
   </xsl:template>
   
   <xsl:template match="*[@facs]">
-    <span onclick="PerseidsTools.do_facs_link(this);" class="linked_facs" data-facs="{@facs}"><xsl:apply-templates/></span>
+    <xsl:variable name="elem_class" select="concat('tei-',local-name(.))"/>
+    <span onclick="PerseidsTools.do_facs_link(this);" class="linked_facs {$elem_class}" data-facs="{@facs}"><xsl:apply-templates/></span>
   </xsl:template>
   
   <xsl:template name="metadata"></xsl:template>

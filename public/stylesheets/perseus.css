@@ -322,3 +322,9 @@ li.sentence {
 	text-decoration: underline;
 	
 }
+
+.todo {
+  color: green;
+  background: #99ff99;
+  border-color: green;
+}

@@ -74,12 +74,6 @@ class TreebankCiteIdentifier < CiteIdentifier
     toXmlString treebank
   end
   
-  # templates for treebank files come from repo or service
-  # @see init_content
-  def file_template
-    return ""
-  end
-  
   # Initializes a treebank template
   # First looks in the repository to see if we already have a template
   # for the requested URN target. If so, we just use that. Otherwise
@@ -198,7 +192,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # get the number of sentences in the treebank file
   def size
     # TODO - pull from file
-    return 100.to_s
+    return 5000.to_s
   end
   
   
@@ -327,7 +321,7 @@ class TreebankCiteIdentifier < CiteIdentifier
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
         :s => parameters[:s],
-        :max => 20, # TODO - make max sentences configurable
+        :max => 50, # TODO - make max sentences configurable
         :tool_url => Tools::Manager.tool_config('treebank_editor')[:view_url])  
  end
   
@@ -340,7 +334,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
-        :max => 20, # TODO - make max sentences configurable
+        :max => 50, # TODO - make max sentences configurable
         :s => parameters[:s],
         :tool_url => Tools::Manager.tool_config('treebank_editor')[:edit_url])  
   end
