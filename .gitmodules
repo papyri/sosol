@@ -1,9 +1,6 @@
 [submodule "public/javascripts/imgspect"]
 	path = public/javascripts/imgspect
 	url = https://github.com/PerseusDL/imgspect
-[submodule "public/javascripts/ace"]
-	path = public/javascripts/ace
-	url = http://github.com/ajaxorg/ace-builds
-[submodule "public/javascripts/ace-builds"]
-	path = public/javascripts/ace-builds
-	url = http://github.com/ajaxorg/ace-builds
+[submodule "public/javascripts/texAce"]
+	path = public/javascripts/texAce
+	url = http://github.com/caesarfeta/texAce

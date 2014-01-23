@@ -10,7 +10,7 @@
   body {
     background-color: #f9f9f9;
   }
-  .edit_epi_cts_identifier #ict_tool_wrapper {
+  .edit_citation_cts_identifier #ict_tool_wrapper {
     padding: 0;
     margin: 10px 0 40px 0;
     width: 100%;
@@ -46,7 +46,7 @@
     color: #CCC;
   }
   #edit textarea#output,
-  .edit_epi_cts_identifier #epi_cts_identifier_xml_content {
+  .edit_citation_cts_identifier #citation_cts_identifier_xml_content {
     box-sizing: border-box;
     width: 100%;
     margin-bottom: 50px;
@@ -146,7 +146,7 @@
       - form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
         #ict_tool_wrapper
-          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
+          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.urn_attribute, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
             
           %div{:id => "imgspect"}    
         
@@ -190,6 +190,6 @@
     //------------------------------------------------------------
     //  Copy content into a div
     //------------------------------------------------------------
-    $("#epi_cts_identifier_xml_content").texAce({lang:'xml',theme_selector:true});
+    $("#citation_cts_identifier_xml_content").texAce({lang:'xml',theme_selector:true});
   });
 

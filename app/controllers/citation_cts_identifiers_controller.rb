@@ -7,6 +7,13 @@ class CitationCtsIdentifiersController < IdentifiersController
   def edit
     redirect_to :action =>"editxml",:id=>params[:id]
   end
+
+  def editxml
+    find_identifier
+    @identifier[:xml_content] = @identifier.xml_content
+    @is_editor_view = true
+    render :template => 'citation_cts_identifiers/editxml'
+  end
   
   ## provide user with choice of editing or annotating a citation 
   def confirm_edit_or_annotate
