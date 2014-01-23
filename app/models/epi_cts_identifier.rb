@@ -3,12 +3,17 @@ class EpiCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_EpiDoc'
   
-  FRIENDLY_NAME = "Inscription Text"
+  FRIENDLY_NAME = "Transcription Text (EpiDoc)"
   
   IDENTIFIER_NAMESPACE = 'epigraphy_edition'
   
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-  
+  XML_CITATION_PREPROCESSOR = 'preprocess_epi_passage.xsl'
+
+  # This is a somewhat arbitrary size restriction 
+  # at some point would be nice to do something more intelligent  
+  MAX_PREVIEW_SIZE = 50000
+
     
   def before_commit(content)
     EpiCTSIdentifier.preprocess(content)
@@ -109,11 +114,18 @@ class EpiCTSIdentifier < CTSIdentifier
   ^ )
     
   def preview parameters = {}, xsl = nil
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        xsl ? xsl : %w{data xslt perseus epidoc_preview.xsl})),
-        parameters)
+    ## Manuscripts can be quite big - for these we 
+    ## should ask the user to specify which passage they want to preview
+    if (self.xml_content.size < MAX_PREVIEW_SIZE)
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.xml_content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          xsl ? xsl : %w{data xslt perseus epidoc_preview.xsl})),
+          parameters)
+    else
+      # TODO interface for selecting and previewing passages
+      '<div class="todo">Text should be previewed here but it is too large. An upcoming release will offer the ability to preview selected passages.</div>' 
+    end  
   end
   
 end

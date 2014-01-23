@@ -116,6 +116,11 @@ class CTSIdentifier < Identifier
     return @collection_names_hash
   end
   
+  def lang
+    return REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/@xml:lang").to_s
+  end
+  
   def reprinted_in
     return REXML::XPath.first(REXML::Document.new(self.xml_content),
       "/TEI/text/body/head/ref[@type='reprint-in']/@n")
@@ -156,6 +161,13 @@ class CTSIdentifier < Identifier
   def has_related_citations
       cites = self.publication.identifiers.select{|i| (i.class == CitationCTSIdentifier)}
       return cites.size() > 0
+  end
+  
+  # Checks to see if we can retrieve any valid citations from this text
+  def has_valid_reffs?
+    uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
+    refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
+    return ! refs.nil? && refs != ''
   end
   
   def related_inventory 
@@ -232,6 +244,11 @@ class CTSIdentifier < Identifier
   def get_catalog_link
     #return "http://catalog.perseus.tufts.edu/perseus.org/xc/search/" + self.urn_attribute
     return ''
+  end
+  
+  # default xslt for previewing a CTS passage
+  def passage_preview_xslt
+    File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_passage_preview.xsl}))
   end
   
 end

@@ -29,10 +29,22 @@ class EpiCtsIdentifiersController < IdentifiersController
                                  :action => :edit) and return
   end
   
-   def link_translation
+  def link_translation
     find_identifier
     render(:template => 'epi_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'epi_trans_cts_identifiers',:publication_id => @identifier.publication.id, :emend => :showemend})
-   end
+  end
+   
+  def link_citation
+    find_identifier
+    render(:template => 'citation_cts_identifiers/select',
+           :locals => {:edition => @identifier.urn_attribute,
+                       :version_id => @identifier.name,
+                       :collection => @identifier.inventory,
+                       :citeinfo => @identifier.related_inventory.parse_inventory(),
+                       :controller => 'citation_cts_identifiers',
+                       :publication_id => @identifier.publication.id, 
+                       :pubtype => 'edition'})
+  end
 
   
   # PUT /publications/1/epi_cts_identifiers/1/update
@@ -152,6 +164,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:html_preview] = @identifier.preview
   end
+  
   
   protected
     def find_identifier

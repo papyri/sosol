@@ -107,7 +107,8 @@
   </xsl:template>
   
   <xsl:template match="*[@facs]">
-    <span onclick="PerseidsTools.do_facs_link(this);" class="linked_facs" data-facs="{@facs}"><xsl:apply-templates/></span>
+    <xsl:variable name="elem_class" select="concat('tei-',local-name(.))"/>
+    <span onclick="PerseidsTools.do_facs_link(this);" class="linked_facs {$elem_class}" data-facs="{@facs}"><xsl:apply-templates/></span>
   </xsl:template>
   
   <xsl:template name="metadata"></xsl:template>

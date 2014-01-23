@@ -97,7 +97,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "http://www.stoa.org/epidoc/schema/8.10/tei-epidoc.rng")
+        "http://www.stoa.org/epidoc/schema/8.16/tei-epidoc.rng")
     end
   end
   
@@ -268,7 +268,7 @@ module JRubyXML
             raise "Unknown XPath error during SAXON transform"
           end
         else
-          raise "Unknown error during SAXON transform"
+          raise "Unknown error during SAXON transform #{xpath_exception} (#{xpath_exception.class})"
         end
       end
       

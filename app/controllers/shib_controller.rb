@@ -22,6 +22,19 @@ class ShibController < ApplicationController
       redirect_to(request.create(saml_settings(idp)))
     end
 
+    def associate_submit
+      if (params[:commit] == 'Cancel')
+        flash[:notice] = "Associate cancelled. No change made to your account"        
+      elsif (session[:pending_id]) 
+        @current_user.user_identifiers << UserIdentifier.create(:identifier => session[:pending_id])
+        flash[:notice] = "#{session[:pending_id]} added to your account"
+      else
+        flash[:error] = "No pending association for this session"
+      end
+      session.delete(:pending_id)
+      redirect_to :controller => "user", :action => "account"
+    end
+    
     def consume
       
       if params[:SAMLResponse].nil?
@@ -81,8 +94,9 @@ class ShibController < ApplicationController
               if att_response.is_valid? && att_response.scoped_targeted_id
                 user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
                 
+                # User Identifier already exists for this identity and no current user session so 
+                # login and redirect to index or pending entry url
                 if !@current_user && user_identifier
-                  # User Identifier exists, login and redirect to index
                   user = user_identifier.user
                   session[:user_id] = user.id
                   if !session[:entry_url].blank?
@@ -93,28 +107,43 @@ class ShibController < ApplicationController
                     redirect_to :controller => "user", :action => "dashboard"
                     return
                   end
-                elsif @current_user && user_identifier.nil?
+                end
+
+                # Have current user session and we don't already have a sosol user associated 
+                # with the shibboleth identity so this is an associate action - confirm before proceeding                
+                if @current_user && user_identifier.nil?
                   # only can add a shibboleth identity to an account if there isn't already one for it 
-                  @current_user.user_identifiers << UserIdentifier.create(:identifier => att_response.scoped_targeted_id)
-                  flash[:notice] = "#{att_response.scoped_targeted_id} added to your account"
+                  session[:pending_id] = att_response.scoped_targeted_id
+                  @display_id = get_displayid(att_response.attributes,idp) || session[:pending_id] 
+                  @identifiers = @current_user.user_identifiers
+                  render :action => "associate"
                   return
-                elsif @current_user && user_identifier && @current_user.id == user_identifier.user.id
+                end
+                
+                # Have current user session and the shibboleth identity is already associated with this user
+                # display message and return to user account page
+                if @current_user && user_identifier && @current_user.id == user_identifier.user.id
                   flash[:notice] = "That identity was already associated with this account"
                   redirect_to :controller => "user", :action => "account"
                   return
-                elsif user_identifier
+                end
+                
+                # Have current user session and the shibboleth identity is already associated with a different
+                # user account - display message and return to user account page
+                if @current_user && user_identifier
                   flash[:error] = "That identity is already associated with a different user account."
                   redirect_to :controller => "user", :action => "account"
                   return
-                else 
-                  # no current session and the identifier wasn't found so 
-                  # first login with this identifier let the user supply their details
-                  session[:identifier] = att_response.scoped_targeted_id
-                  @display_id = get_displayid(att_response.attributes,idp) || session[:identifier]
-                  @email = guess_email(att_response.attributes, idp)
-                  @name = guess_nickname(att_response.attributes, idp)
-                  @full_name = guess_fullname(att_response.attributes, idp)
                 end
+                
+                # fall through behavior: no current session and a sosol id for this identity wasn't found so 
+                # this is the first login with this identifier - let the user supply their details and consume
+                session[:identifier] = att_response.scoped_targeted_id
+                @display_id = get_displayid(att_response.attributes,idp) || session[:identifier]
+                @email = guess_email(att_response.attributes, idp)
+                @name = guess_nickname(att_response.attributes, idp)
+                @full_name = guess_fullname(att_response.attributes, idp)
+                
               else # Invalid AQ Response or no scoped targed id
                 Rails.logger.debug("AQ Response invalid: #{att_response.attributes.inspect}")
                 flash[:error] = "SAML AttributeQuery returned an invalid response."
@@ -174,7 +203,7 @@ class ShibController < ApplicationController
   
       if @name.empty?
         flash.now[:error] = "Nickname must not be empty"
-        render :action => "shib_consume"
+        render :action => "consume"
         return
       end
   
@@ -184,7 +213,7 @@ class ShibController < ApplicationController
         user.save!
       rescue ActiveRecord::RecordInvalid => e
         flash.now[:error] = "Nickname not available"
-        render :action => "shib_consume"
+        render :action => "consume"
         return
       end
   
@@ -198,7 +227,7 @@ class ShibController < ApplicationController
         rescue Exception => e
           user.destroy
           flash.now[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
-          render :action => "shib_consume"
+          render :action => "consume"
           return
       end
   
