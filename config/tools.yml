@@ -4,6 +4,7 @@ development:
     :view_url: "http://sosol-test.perseids.org/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
+    :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
     
 test:
   treebank_editor:
@@ -11,6 +12,7 @@ test:
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
+    :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
    
     
 production:
@@ -19,4 +21,5 @@ production:
     :view_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
+    :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
     

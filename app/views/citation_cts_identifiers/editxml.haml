@@ -142,6 +142,7 @@
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
+    #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
     #edit
       - form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages

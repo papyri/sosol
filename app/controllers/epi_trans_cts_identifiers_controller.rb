@@ -16,7 +16,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   
   def editxml
     find_identifier
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'epi_trans_cts_identifiers/editxml'
