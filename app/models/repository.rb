@@ -312,7 +312,7 @@ class Repository
 
     begin
       inserter = @jgit_repo.newObjectInserter()
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, data.to_java_bytes)
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, data.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
 
       last_commit_id = @jgit_repo.resolve(branch)
       

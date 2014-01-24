@@ -804,7 +804,7 @@ class Publication < ActiveRecord::Base
     inserter = finalizer.repository.jgit_repo.newObjectInserter()
     controlled_paths_blobs.each_pair do |path, blob|
       unless blob.nil?
-        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_bytes)
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
         jgit_tree.add_blob(path, file_id.name())
       end
     end
@@ -1008,7 +1008,7 @@ class Publication < ActiveRecord::Base
     inserter = self.origin.owner.repository.jgit_repo.newObjectInserter()
     controlled_paths_blobs.merge(uncontrolled_paths_blobs).each_pair do |path, blob|
       unless blob.nil?
-        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_bytes)
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
         jgit_tree.add_blob(path, file_id.name())
       end
     end
