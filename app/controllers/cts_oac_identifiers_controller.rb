@@ -1,12 +1,14 @@
 class CtsOacIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
-  before_filter :authorize
+  before_filter :authorize, :set_headers
   before_filter :ownership_guard, :only => [:update, :append, :delete_annotation]
 
   
   def edit
     find_publication_and_identifier
     annotation_uri = params[:annotation_uri].to_s || @identifier[:annotation_uri]
+    @identifier[:token_service_config] = Tools::Manager.tool_config('cts_tokenizer',true)
+    @identifier[:xslt_path] = url_for(:action => 'annotate_xslt', :id => @identifier.id,:publication_id => @publication.id)
     if (annotation_uri)
       @creator_uri = @identifier.make_creator_uri()
       annotation = @identifier.get_annotation(annotation_uri)
@@ -33,10 +35,11 @@ class CtsOacIdentifiersController < IdentifiersController
         src = uri_parts[0]
         urn.sub!(/^.*?urn:cts/,'urn:cts')
         urnObj = CTS::CTSLib.urnObj(urn)
-        params[:target_urn] = "#{urnObj.getUrnWithoutPassage()}:#{urnObj.getPassage(1000)}"
+        params[:target_urn] = "#{urnObj.getUrnWithoutPassage()}:#{urnObj.getPassage(1000).sub(/[@#][^@#]+$/,'')}"
         params[:collection] = @identifier.parentIdentifier.inventory
         params[:src] = src
-        params[:valid_targets] = (1..targets.size).map { |i| "target_uri#{i}"}.join(",") 
+        params[:valid_targets] = (1..targets.size).map { |i| "target_uri#{i}"}.join(",")
+ 
       end
     else
       # we can't allow editing of the file as a whole because we
@@ -51,15 +54,19 @@ class CtsOacIdentifiersController < IdentifiersController
     find_publication
     @parent = @publication.identifiers.select{ | pubid | pubid.name == params[:version_id] }.first
     @identifier = OACIdentifier.find_from_parent(@publication,@parent)
-    
     if @identifier.nil?
       @identifier = OACIdentifier.new_from_template(@publication,@parent)
       @creator_uri = @identifier.make_creator_uri()
       @identifier[:action] = 'append'
+      @identifier[:token_service_config] = Tools::Manager.tool_config('cts_tokenizer',true)
+      @identifier[:xslt_path] = url_for(:action => 'annotate_xslt', :id => @identifier.id,:publication_id => @publication.id)
+   
       render(:template => 'cts_oac_identifiers/edit') and return
     else
       @creator_uri = @identifier.make_creator_uri()
       @identifier[:action] = 'append'
+      @identifier[:token_service_config] = Tools::Manager.tool_config('cts_tokenizer',true)
+      @identifier[:xslt_path] = url_for(:action => 'annotate_xslt', :id => @identifier.id,:publication_id => @publication.id)
       if params[:commit] == 'Append'
         # if the confirmed that they want to add a new annotation for this target, bring them to the 
         # apppend form
@@ -151,6 +158,12 @@ class CtsOacIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview(params)
     @identifier[:annotation_uri] = params[:annotation_uri]
   end
+  
+  def annotate_xslt
+    find_identifier
+    render :xml => @identifier.parentIdentifier.passage_annotate_xslt
+  end
+  
     
   protected
     def find_identifier
@@ -165,4 +178,13 @@ class CtsOacIdentifiersController < IdentifiersController
      def find_publication
       @publication = Publication.find(params[:publication_id].to_s)
     end
+    
+  private
+    def set_headers
+      headers['Access-Control-Allow-Origin'] = '*'
+      headers['Access-Control-Expose-Headers'] = 'ETag,x-json'
+      headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD'
+      headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+      headers['Access-Control-Max-Age'] = '86400'
+  end
 end

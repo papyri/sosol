@@ -155,17 +155,12 @@ ActionController::Routing::Routes.draw do |map|
      :controller => 'cts_proxy',
      :action => 'getpassage',
      :urn => /[^\/]*/
- 
-  map.connect 'cts/getpassagexml/:id/:urn',
-     :controller => 'cts_proxy',
-     :action => 'getpassagexml',
-     :urn => /[^\/]*/
- 
-  map.connect 'cts/getcapabilities/:collection',
+    
+  map.connect 'cts/getcapabilities/:id',
      :controller => 'cts_proxy',
      :action => 'getcapabilities'
-    
-  map.connect 'cts/getrepos',
+  
+  map.connect 'cts/getrepos/:id',
     :controller => 'cts_proxy',
     :action => 'getrepos'
     

@@ -16,12 +16,18 @@
     <xsl:template match="tei:w">
         <xsl:variable name="thistext" select="text()"/>
         <xsl:element name="span">
-            <xsl:variable name="subref" select="count(preceding::tei:w[text() = $thistext])+1"></xsl:variable>
-            <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
-            <xsl:attribute name="class">text</xsl:attribute>
+            <xsl:if test="not(ancestor::tei:note) and not(ancestor::tei:head) and not(ancestor::tei:speaker)">
+                <xsl:variable name="subref" select="count(preceding::tei:w[text() = $thistext])+1"></xsl:variable>
+                <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
+                <xsl:attribute name="class">token text</xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="node()"/>
         </xsl:element>
+        <!-- add spaces back -->
+        <xsl:if test="local-name(following-sibling::*[1]) = 'w'">
+            <xsl:text> </xsl:text>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="w">
@@ -33,11 +39,15 @@
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="node()"/>
         </xsl:element>
+        <!-- add spaces back -->
+        <xsl:if test="following-sibling::w">
+            <xsl:text> </xsl:text>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="tei:pc|pc">
         <xsl:element name="span">
-            <xsl:attribute name="class">punc</xsl:attribute>
+            <xsl:attribute name="class">token punc</xsl:attribute>
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="node()"/>
         </xsl:element>
@@ -68,7 +78,7 @@
         <xsl:choose>
             <xsl:when test="@n">
                 <div class="tei_section">
-                    <span class="tei_sectionNum"><xsl:value-of select="@n"/></span><xsl:apply-templates/>
+                    <span class="tei_sectionNum"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@subtype"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></span><xsl:apply-templates/>
                 </div>
             </xsl:when>
             <xsl:otherwise>
@@ -307,8 +317,10 @@
         <div class="gap">. . .</div>
     </xsl:template>
     
-    <xsl:template match="milestone[@unit='chapter']">
-        <div class="tei_milestone"><xsl:value-of select="@unit"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></div>
+    <xsl:template match="tei:milestone|milestone">
+        <div class="tei_milestone">
+            <xsl:attribute name="class">tei_milestone <xsl:value-of select="@unit"/></xsl:attribute><xsl:value-of select="@n"/>
+        </div>
     </xsl:template>
     
     <!-- Default: replicate unrecognized markup -->

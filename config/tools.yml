@@ -5,6 +5,12 @@ development:
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
+  cts_tokenizer:
+    :default:
+      :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
+    :lat:
+      :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+    
     
 test:
   treebank_editor:
@@ -13,6 +19,11 @@ test:
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
+  cts_tokenizer:
+    :default:
+      :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
+    :lat:
+      :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
    
     
 production:
@@ -22,4 +33,9 @@ production:
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
+  cts_tokenizer:
+    :default:
+      :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
+    :lat:
+      :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
     

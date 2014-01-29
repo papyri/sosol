@@ -139,6 +139,14 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="edition_type" select="local-name(.)"/>
+        <xsl:variable name="lang">
+            <xsl:choose>
+                <xsl:when test="$edition_type='edition'">
+                    <xsl:value-of select="parent::cts:work/@xml:lang"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:value-of select="@xml:lang"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="edition">
             <xsl:choose>
                 <xsl:when test="$edition_prefix = $work_prefix">
@@ -185,6 +193,7 @@
         <!-- edition obj -->
         <xsl:text>{</xsl:text>
         <xsl:text>'label': '</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
+        <xsl:text>'lang': '</xsl:text><xsl:value-of select="$lang"/><xsl:text>',</xsl:text>
         <xsl:text>'urn':'</xsl:text><xsl:value-of select="$urn"/><xsl:text>',</xsl:text>
         <xsl:text>'cites':[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
         <xsl:text>}</xsl:text>

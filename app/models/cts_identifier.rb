@@ -158,6 +158,45 @@ class CTSIdentifier < Identifier
     return self.to_components[0]
   end
   
+  # return an inventory object for related text items
+  def related_text_inventory
+    # this is a somewhat ridiculous structure
+    # for backwards-compability with cts_proxy_controller.getcapabilities
+    # it mimics the one created by calling inventory_to_json.xsl
+    # on a TextInventory
+    inv = Hash.new
+    self_urn = CTS::CTSLib.urnObj(self.urn_attribute)
+    self_tg = self_urn.getTextGroup(true)
+    self_work = self_urn.getWork(false) 
+    inv[self.id.to_s] = 
+      { 'label' => self_tg, 
+        'urn' => self.id.to_s,
+        'works' => {
+          self_work =>
+          {  'label' => self_work,
+             'urn' => self_work,
+             'editions' => {},
+             'translations' => {}
+          }
+        }
+      }
+    related = self.publication.identifiers.select{|i| 
+      ( (i.id != self.id) && (i.class != CitationCTSIdentifier) && i.respond_to?('related_text'))}
+    related.each do |r|
+      r_urn = CTS::CTSLib.urnObj(r.urn_attribute)
+      r_ver = r_urn.getVersion(false)
+      inv[self.id.to_s]['works'][self_work]['editions'][r_ver] = 
+        { 'label' => r.title, 
+           'urn' => r.urn_attribute, 
+           'lang' => r.lang,
+           'item_type' => r.class.to_s,
+           'item_id' => r.id.to_s,
+           'cites' => r.related_inventory.parse_inventory['citations']
+        }  
+    end
+    return inv    
+  end
+  
   def has_related_citations
       cites = self.publication.identifiers.select{|i| (i.class == CitationCTSIdentifier)}
       return cites.size() > 0
@@ -246,9 +285,9 @@ class CTSIdentifier < Identifier
     return ''
   end
   
-  # default xslt for previewing a CTS passage
-  def passage_preview_xslt
-    File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_passage_preview.xsl}))
+  # default xslt for displaying an annotation view of a CTS passage
+  def passage_annotate_xslt
+    File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_annotate.xsl}))
   end
   
 end

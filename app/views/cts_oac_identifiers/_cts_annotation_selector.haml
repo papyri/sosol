@@ -8,7 +8,7 @@
   var body_subref_end;
   
   function get_repos() {
-    var request_url = "#{root_url}cts/getrepos"
+    var request_url = "#{root_url}cts/getrepos/#{@identifier.parentIdentifier.id}"
     new Ajax.Request(request_url, {
       method: 'get',
       dataType: 'application/json',
@@ -37,8 +37,9 @@
         update_group_urns();
       // if we don't already have this inventory's data, retrieve it and populate the selector
       } else if (inventories[inventory] == null) {
-          var request_url = "#{root_url}cts/getcapabilities/" + inventory;
-          new Ajax.Request(request_url, {
+        var request_url = "#{root_url}cts/getcapabilities/" + inventory;
+
+        new Ajax.Request(request_url, {
             method: 'get',
             dataType: 'application/json',
             onSuccess: function(response) {
@@ -51,8 +52,7 @@
         update_group_urns();
       }
   }
-  
-  
+   
   function clear_selector(select_element) {
     select_element.childElements().each(Element.remove);
   }
@@ -61,11 +61,14 @@
     select_element.childElements().each(Element.remove);
     
     var count = 0
-    for (var i in options)
-    {
-      if (options[i].urn != null) {
-        select_element.insert("<option value='" + options[i].urn + "'>" + options[i].label + "</option>");
-        count++;
+    for (var k=0; k<options.length; k++) {
+      var obj = options[k]
+      for (var i in obj)
+      {
+        if (obj[i].urn != null) {
+          select_element.insert("<option value='" + obj[i].urn + "'>" + obj[i].label + "</option>");
+          count++;
+        }
       }
     }
     if (count == 0) {
@@ -96,7 +99,7 @@
     } else {
       //  populate the textgroup selector
       var groups = inventories[inventory];
-      populate_selector($('group_urn'),groups,body_urn_parts.textgroup);
+      populate_selector($('group_urn'),[groups],body_urn_parts.textgroup);
       update_work_urns();
     }
   }
@@ -109,7 +112,7 @@
     var textgroup = $F('group_urn');
     if (textgroup) { 
       var works = inventories[inventory][textgroup].works;
-      populate_selector($('work_urn'),works,body_urn_parts.work);
+      populate_selector($('work_urn'),[works],body_urn_parts.work);
       update_version_urns();
     }
   }
@@ -122,15 +125,18 @@
     var textgroup = $F('group_urn');
     var work = $F('work_urn');
     var editions = null;
+    var translations = null;
     if (inventory && textgroup && work) {
       work = work.replace(textgroup+".",''); 
       editions = inventories[inventory][textgroup].works[work].editions
+      translations = inventories[inventory][textgroup].works[work].translations
+      
     }
     if (editions != null ) {
-      populate_selector($('version_urn'),editions,body_urn_parts.version)
+      populate_selector($('version_urn'),[editions,translations],body_urn_parts.version)
     } else {
       // still need to empty it out
-      populate_selector($('version_urn'),{})
+      populate_selector($('version_urn'),[{}])
       $('request_button').disabled = true;
     }
     update_cite_info();
@@ -138,7 +144,7 @@
   
   function update_body_urn_parts() {
     // check to see if the pre-populated URI is from one of the registered repositories
-    urn_match = $(body_uri).getValue().match(/^(.*?)\/(urn:cts:.*)$/)    
+    urn_match = $('body_uri').getValue().match(/^(.*?)\/(urn:cts:.*)$/)    
     if (urn_match != null) {
       urispace = urn_match[1];
       urn = urn_match[2];
@@ -167,10 +173,15 @@
     var work = $F('work_urn');
     if (inventory && textgroup && work) { 
       work = work.replace(textgroup+".",'');
-      var version = $F('version_urn').replace('urn:cts:'+ textgroup + "." + work + ".",'')
+      var version = $F('version_urn').match(/^.*?([^\.]+)$/)[1];
       // lookup citation labels from stored inventory data
       // for each citation level, add label and input to the #citeinfo div in the form
-      citeinfo = inventories[inventory][textgroup].works[work].editions[version].cites
+      var citeinfo = 
+        inventories[inventory][textgroup].works[work].editions[version] != null ? 
+        inventories[inventory][textgroup].works[work].editions[version].cites :
+        inventories[inventory][textgroup].works[work].translations[version] != null ? 
+        inventories[inventory][textgroup].works[work].translations[version].cites : [];
+          
       var range = body_urn_parts.passage ? body_urn_parts.passage.split('-') : [];
       var values = [];
       for (var i=0; i<range.length;i++) {
@@ -229,18 +240,57 @@
     if (end_range.length > 0) {
       passage = passage + '-' + end_range;
     }
-    var request_url = "#{root_url}cts/getpassage/" + $F('body_repo') + "/" + $F('version_urn') + ":" + passage;
-    new Ajax.Request(request_url, {
-      method: 'get',
-      dataType: 'text/html',
-      onSuccess: function(response) {
-        set_body_content(response.responseText);
-      },
-      onFailure: function(response) {
-        $('body_content').innerHTML = '<div class="error">Unable to load the requested text.</div>';
-      }
-    }); 
+    var inventory = $F('body_repo');
+    var textgroup = $F('group_urn');
+    var work = $F('work_urn').replace(textgroup+".",''); 
+    var version = $F('version_urn');
+    var lookup_ver = version.match(/^.*?([^\.]+)$/)[1];
+    var props = 
+      inventories[inventory][textgroup].works[work].editions[lookup_ver] != null ? 
+      inventories[inventory][textgroup].works[work].editions[lookup_ver] : 
+      inventories[inventory][textgroup].works[work].translations[lookup_ver] != null ? 
+      inventories[inventory][textgroup].works[work].translations[lookup_ver] : {};
+    var lang = props.lang || 'default';
+    var request_inventory = props.item_id || inventory; 
+
+    var passage_url = "#{root_url}cts/getpassage/" + request_inventory  + "/" + version + ":" + passage;
+    
+    var tokenizer_cfg = JSON.parse('#{@identifier[:token_service_config]}');
+  
+    var tokenizer_url;
+    if (tokenizer_cfg[lang]) {
+      tokenizer_url = tokenizer_cfg[lang].request_url;
+    } else {
+      tokenizer_url = tokenizer_cfg['default'].request_url;
+    }
+     
+    var data_xslt = '#{@identifier[:xslt_path]}';
+    var request_url = tokenizer_url + encodeURIComponent(passage_url);
+    jQuery.ajax({
+      type: "GET",
+      url: request_url,
+      timeout: 20000}).done(
+      function(a_data) {
+        if (data_xslt != null) {
+          jQuery.get(data_xslt).done(
+            function(a_xsl) {
+              var xsltProcessor = new XSLTProcessor();
+              xsltProcessor.importStylesheet(a_xsl);
+              var content = xsltProcessor.transformToDocument(a_data);
+              set_body_content(jQuery("div",content).get(0).innerHTML);
+            }
+          ).fail(function(req,status,err){alert("can't load xslt from " + data_xslt + ":" + err)});          
+        } else {
+          content = a_data;
+          set_target_content(content);
+        }
+      }).fail(
+        function(req,status,err) {
+          $('body_content').innerHTML = '<div class="error">Unable to load the requested text.(' + status + ':' + err + ')</div>';
+        }
+      ); 
   }
+  
   
   function start_body(a_e) {
     var rp = a_e.element();
@@ -261,13 +311,13 @@
       body_subref_end = rp;
     }
     if (body_subref_start == null || body_subref_end == null) {
-      alert("Unable to identify the selected range. Please try your selection again.");
+      //alert("Unable to identify the selected range. Please try your selection again.");
       return;
     }
     var start_ref = body_subref_start.readAttribute('data-ref');
     var end_ref = body_subref_end.readAttribute('data-ref')
     if (start_ref == null || end_ref == null) {
-      alert("Unable to read the selected range. Please try your selection again.");
+      //alert("Unable to read the selected range. Please try your selection again.");
       return;
     }
     body_span = [body_subref_start,body_subref_end];
@@ -350,7 +400,7 @@
     get_repos();
     $('group_urn').observe('change',update_work_urns);
     $('work_urn').observe('change',update_version_urns);
-    $('version_urn').observe('select',update_cite_info);
+    $('version_urn').observe('change',update_cite_info);
     $('body_content').observe('mousedown',start_body);
     $('body_content').observe('mouseup',end_body);
     jQuery(".cts_selector_hint").click( function() { jQuery("#cts_select_container").toggle(); });
