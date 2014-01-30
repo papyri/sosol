@@ -180,18 +180,27 @@ function multiAddFigures()
 function multiAddFacsimiles()
 {
   var index = multiGetNextIndex('facsimile');
-  var item = '<li>' +
-             '  <label class="apis" for="apis_identifier_surfaceGrpId_' + index + '" id="apis_identifier_surfaceGrpId_' + index + '_label">Image Label</label>' +
-             '  <input class="observechange apis_identifier_surfaceGrpId" id="apis_identifier_surfaceGrpId_' + index + '" name="apis_identifier_surfaceGrpId" type="text" value="" />' +
-             '  <label class="apis" for="apis_identifier_figDesc" id="apis_identifier_figDesc_label">Description</label>' +
-             '  <input class="observechange apis_identifier_surfaceType" id="apis_identifier_surfaceType_' + index + '" name="apis_identifier_surfaceType" type="text" value="" />' +
-             '  <label class="apis" for="apis_identifier_facsUrl_' + index + '" id="apis_identifier_facsUrl_' + index + '_label">Image URL</label>' +
-             '  <input class="observechange apis_identifier_facsUrl" id="apis_identifier_facsUrl_' + index + '" name="apis_identifier_facsUrl" type="text" value="" />' +
-             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-             '  <span class="move">o</span>' +
-             '</li>';
+  var item = '<li class="facsimile" id="" style="position: relative;">' +
+             '   <label class="apis" for="apis_identifier_surfaceGrpId_' + index + '" id="apis_identifier_surfaceGrpId_label_' + index + '">Object ID</label>' +
+             '  <input class="observechange apis apis_identifier_surfaceGrpId" id="apis_identifier_surfaceGrpId_' + index + 
+                  '" name="apis_identifier_surfaceGrpId_' + index + '" type="text" value="">' +
+             '  <label class="apis" for="apis_identifier_surfaceType1_' + index + '" id="apis_identifier_surfaceType1_label_' + index + '">Side 1</label>' +
+             '  <input class="observechange apis apis_identifier_surfaceType" id="apis_identifier_surfaceType_' + index + 
+                  '" name="apis_identifier_surfaceType_' + index + '" type="text" value="">' +
+             '  <label class="apis" for="apis_identifier_facsUrl_' + index + '" id="apis_identifier_facsUrl_label_' + index + '">Image URL</label>' +
+             '  <input class="observechange apis apis_identifier_facsUrl" id="apis_identifier_facsUrl_' + index + 
+                  '" name="apis_identifier_facsUrl_' + index + '" type="text" value="">' +
+             '  <label class="apis" for="apis_identifier_surfaceType2_' + index + '" id="apis_identifier_surfaceType2_label_' + index + '">Side 2</label>' +
+             '  <input class="observechange apis apis_identifier_surfaceType2" id="apis_identifier_surfaceType2_' + index + 
+                  '" name="apis_identifier_surfaceType2" type="text" value="">' +
+             '  <label class="apis" for="apis_identifier_facsUrl_' + index + '" id="apis_identifier_facsUrl_label_' + index + '">Image URL</label>' +
+             '  <input class="observechange apis apis_identifier_facsUrl2" id="apis_identifier_facsUrl2_' + index + 
+                  '" name="apis_identifier_facsUrl2_' + index + '" type="text" value="">' +
+             '  <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
+             '  <span class="move" title="move">o</span>' +
+            '</li>';
 
-  multiUpdate('figure', item);
+  multiUpdate('facsimile', item);
 }
 
 

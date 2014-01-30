@@ -40,9 +40,9 @@ module NumbersRDF
       def identifier_to_path(identifier, decorator)
         local_identifier = identifier_to_local_identifier(identifier)
         url_paths = identifier_to_components(local_identifier)
-	if ( identifier !~ /^papyri.info\/\w+$/ && decorator == "rdf" )
+      	if ( identifier !~ /^papyri.info\/\w+$/ && decorator == "rdf")
           url_paths << "source"
-	end
+      	end
         url_paths << decorator
         return url_paths.join('/')
       end

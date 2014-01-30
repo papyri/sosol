@@ -234,8 +234,8 @@ class HGVTransIdentifier < HGVIdentifier
         
     nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
     transformed_xml_content = REXML::Document.new(nonx2x)
-    
-    #puts nonx2x
+ 
+    #puts "Leiden+ transform result: #{nonx2x}"
     #puts transformed_xml_content.to_s
     # fetch the original content
     original_xml_content = REXML::Document.new(self.xml_content)
@@ -250,6 +250,7 @@ class HGVTransIdentifier < HGVIdentifier
     # write back to a string
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
+    puts modified_xml_content
     return modified_xml_content
   end
   
