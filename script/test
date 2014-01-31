@@ -1,4 +1,4 @@
 #!/bin/sh
 
-jruby -S rake
+bundle exec rake
 

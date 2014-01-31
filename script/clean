@@ -10,5 +10,5 @@ rm -rf db/git/boards/*
 rm -rf db/git/users/*
 rm -rf db/git/communities/*
 echo "" > db/git/canonical.git/objects/info/alternates
-jruby -S rake db:migrate:reset
+bundle exec rake db:migrate:reset
 
