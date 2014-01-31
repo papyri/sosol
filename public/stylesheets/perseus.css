@@ -1,7 +1,10 @@
 body {
 	background-color: white;
 }
-
+.required {
+	font-size: small;
+	color: #FF3333;
+}
 #shib_login {
 	margin: 10px 5px 5px 10px;
 }
