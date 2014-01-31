@@ -36,22 +36,39 @@ class CtsProxyController < ApplicationController
     else
       response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,params[:urn].to_s)
     end
-    render :text => JRubyXML.apply_xsl_transform(
-                      JRubyXML.stream_from_string(response),
-                      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-                      %w{data xslt cts extract_text.xsl})))  
+    render :xml => response
   end
-  
+    
   def getcapabilities
-    response = CTS::CTSLib.proxyGetCapabilities(params[:collection].to_s)
-    render :text => JRubyXML.apply_xsl_transform(
-                      JRubyXML.stream_from_string(response),
-                      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-                      %w{data xslt cts inventory_to_json.xsl})))
+    if (params[:id] =~ /^\d+$/)  
+      # get a json inventory object for the cts-enabled texts in the current publication                       
+      identifier = Identifier.find(params[:id].to_s)
+      render :text => JSON.generate(identifier.related_text_inventory)
+   else
+      response = CTS::CTSLib.proxyGetCapabilities(params[:id].to_s)
+      render :text => JRubyXML.apply_xsl_transform(
+                        JRubyXML.stream_from_string(response),
+                        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                        %w{data xslt cts inventory_to_json.xsl})))    
+    end
   end
   
+ 
+ 
+  # get available repositories to search for annotation bodies 
   def getrepos
-    render :text => CTS::CTSLib.getExternalCTSReposAsJson()
-  end
+    repos = CTS::CTSLib.getExternalCTSRepos()
 
+    if (params[:id])
+       identifier = Identifier.find(params[:id].to_s)
+       related = identifier.related_text_inventory
+       related.keys.each do |key|
+         urispace = root_url + "/dmm_api/" + identifier.class.to_s + "/" + params[:id]
+         repos['keys'][key.to_s] = urispace
+         repos['urispaces'][urispace] = key.to_s
+       end
+    end
+    render :text => JSON.generate(repos) 
+  end
+  
 end

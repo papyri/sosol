@@ -131,12 +131,14 @@ li.editor_menu {
 .edit_oac_identifier {
 	margin-left: .5em;
 }
+
 .edit_oac_identifier #target_content, .edit_oac_identifier #body_content  {
-	height: 200px;
+	height: 400px;
 	overflow: scroll;
 	border: 1px solid black;
-
+	padding-left: 1em;
 }
+
 .edit_oac_identifier #target_content .token {
 
 }
@@ -160,6 +162,20 @@ li.editor_menu {
 	width: 48%;
 	padding: .25em;
 	border: 1.5px solid black;
+	resize:both;
+	overflow:auto;
+}
+
+.edit_oac_identifier #target_content .tei_milestone, .edit_oac_identifier #body_content .tei_milestone {
+	float:left;
+	font-weight: bold;
+	margin-left: -1em;
+}
+
+.edit_oac_identifier #target_content .tei_sectionNum, .edit_oac_identifier #body_content .tei_sectionNum {
+    font-style: italic;
+    font-weight: lighter;	
+    font-size: smaller;
 }
 
 .edit_oac_identifier #annotation_motivation_input {
@@ -331,3 +347,5 @@ li.sentence {
   background: #99ff99;
   border-color: green;
 }
+
+

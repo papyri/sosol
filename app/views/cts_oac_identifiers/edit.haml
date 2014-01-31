@@ -7,20 +7,42 @@
   var all_targets = $H();
   
   function get_target_passage() {
-    var request_url = "#{root_url}cts/getpassage/" +
-      "#{@identifier.parentIdentifier.id}/" + $F('target_urn')
-    new Ajax.Request(request_url, {
-      method: 'get',
-      dataType: 'text/html',
-      onSuccess: function(response) {
-        set_target_content(response.responseText);
-      },
-      onFailure: function() {
-        $('target_content').innerHTML = '<div class="error">Unable to load the requested text.</div>';
-      }
-    }); 
+    var passage_url = "#{root_url}cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
+    
+    var tokenizer_cfg = JSON.parse('#{@identifier[:token_service_config]}');
+    var lang = "#{@identifier.parentIdentifier.lang}";
+    var tokenizer_url;
+    if (tokenizer_cfg[lang]) {
+      tokenizer_url = tokenizer_cfg[lang].request_url;
+    } else {
+      tokenizer_url = tokenizer_cfg['default'].request_url;
+    }
+     
+    var data_xslt = '#{@identifier[:xslt_path]}';
+    var request_url = tokenizer_url + encodeURIComponent(passage_url);
+    
+    jQuery.get(request_url).done(
+      function(a_data) {
+        if (data_xslt != null) {
+          jQuery.get(data_xslt).done(
+            function(a_xsl) {
+              var xsltProcessor = new XSLTProcessor();
+              xsltProcessor.importStylesheet(a_xsl);
+              var content = xsltProcessor.transformToDocument(a_data);
+              set_target_content(jQuery("div",content).get(0).innerHTML);
+            }
+          ).fail(function(req,status,err){alert("can't load xslt from " + data_xslt + ":" + err)});          
+        } else {
+          content = a_data;
+          set_target_content(content);
+        }
+      }).fail(
+        function() {
+          $('target_content').innerHTML = '<div class="error">Unable to load the requested text.</div>';
+        }
+      ); 
   }
-  
+    
   function add_target() {
     next_target = ++target_num;
     input_name = 'target_uri' + next_target;
@@ -70,13 +92,13 @@
       subref_end = rp;
     }
     if (subref_start == null || subref_end == null) {
-      alert("Unable to identify the selected range. Please try your selection again.");
+      //alert("Unable to identify the selected range. Please try your selection again.");
       return;
     }
     var start_ref = subref_start.readAttribute('data-ref');
     var end_ref = subref_end.readAttribute('data-ref')
     if (start_ref == null || end_ref == null) {
-      alert("Unable to read the selected range. Please try your selection again.");
+      //alert("Unable to read the selected range. Please try your selection again.");
       return;
     }
     var uri = $('src').value + "/" + $('target_urn').value + "#" + start_ref;
@@ -279,7 +301,7 @@
       .target{:id => 'target_content' }
         .loading Loading...
       #annotation_motivation_input
-        = select_tag("annotation_motivation", options_for_select({'Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
+        = select_tag("annotation_motivation", options_for_select({'Has Translation' => 'oa:linking_translation','Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
     #annotation_body_input
       .annotation_header Annotation Resource      
       = label_tag 'URI for Resource:'
@@ -297,3 +319,4 @@
           = button_to "Delete"  
       -else
         = button_to "Save"
+      = button_to "Create New"

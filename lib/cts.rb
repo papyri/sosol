@@ -127,8 +127,8 @@ module CTS
           raise "#{a_inventory} CTS Repository is not registered."
         end
       end
-      
-      def getExternalCTSReposAsJson()
+            
+      def getExternalCTSRepos()
         getExternalCTSHash()
         repos = Hash.new
         keys = Hash.new
@@ -139,7 +139,7 @@ module CTS
         end
         repos['keys'] = keys
         repos['urispaces'] = urispaces
-        JSON.generate(repos)
+        return repos
       end
       
       def getExternalCTSHash()

@@ -4,14 +4,17 @@ PerseidsTools = PerseidsTools || {};
 
 PerseidsTools.LDResults = {};
 
+// adds thumbnails for each returned image urn, and triggers the IMGSPECT-LINKS_LOADED event
 PerseidsTools.LDResults.imgspect_link = function( _elem, _results ) {
-	var url = "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn=";
-	jQuery( _elem ).append( '<div id="imgspectHint">Click an image to inspect.</div>' );
-	for ( var i=0, ii=_results.length; i<ii; i++ ) {
-		var imgUrn = '<a class="imgUrn" rel="' + url + _results[i] + '&w=3000"><img src="'+ url + _results[i] + '&w=100"/></a>';
-		jQuery( _elem ).append( imgUrn );
+	var url = jQuery("#Cite_Image_Service").attr("data-content");
+	if (url) {
+		jQuery( _elem ).append( '<div id="imgspectHint">Click an image to inspect.</div>' );
+		for ( var i=0, ii=_results.length; i<ii; i++ ) {
+			var imgUrn = '<a class="imgUrn" rel="' + url + _results[i] + '&w=3000"><img src="'+ url + _results[i] + '&w=100"/></a>';
+			jQuery( _elem ).append( imgUrn );
+		}
+		jQuery( document ).trigger( 'IMGSPECT-LINKS_LOADED' );
 	}
-	jQuery( document ).trigger( 'IMGSPECT-LINKS_LOADED' );
 }
 
 PerseidsTools.LDResults.make_ICT_link  = function(a_parentElem,a_results) {
@@ -53,7 +56,7 @@ PerseidsTools.LDResults.make_ICT_link  = function(a_parentElem,a_results) {
 		jQuery("#ict_frame").attr("src",val); 
 	}
 	
-}
+};
 
 // click handler for a span which has a data-facs attribute 
 PerseidsTools.do_facs_link = function(a_elem) {
@@ -73,5 +76,4 @@ PerseidsTools.do_facs_link = function(a_elem) {
 		jQuery('#ict_frame').attr("src",url);
 	}
 	return false;
-}
-	
+};
