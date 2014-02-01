@@ -71,7 +71,9 @@
         %ul
           - if params[:controller] != 'publications'
             -if @identifier.class == OACIdentifier
-              %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri])
+              -if %w{preview}.include?(params[:action])
+                %li{ :class => ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri])
+              %li{ :class => ''}= link_to 'New Target', polymorphic_path([:link_citation,@identifier.parentIdentifier.publication,@identifier.parentIdentifier])  
               %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
             -elsif @identifier.class.to_s =~ /CTSIdentifier/
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
@@ -82,7 +84,8 @@
             - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
               %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
             -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
-            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=600, height=200']
+            -if @identifier.class != OACIdentifier
+              %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :popup => ['new win', 'width=600, height=200']
           - elsif params[:action] == 'finalize_review'
             %li{ :class => !%w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)

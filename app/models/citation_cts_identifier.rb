@@ -15,7 +15,6 @@ class CitationCTSIdentifier < CTSIdentifier
     end
     # Before checking for validity, preprocess according to requirements of the parent text
     xslt = self.related_text.class::XML_CITATION_PREPROCESSOR
-    Rails.logger.info("Preprocessing citation xml with #{xslt}")
     fixed = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -79,7 +78,6 @@ class CitationCTSIdentifier < CTSIdentifier
     # send the parent text for review
     # passage itself doesn't get finalized
     # archive? the passage
-
     # only do this once
     if self.status == 'finalizing-preprocessed'
       return false
@@ -90,7 +88,7 @@ class CitationCTSIdentifier < CTSIdentifier
       rescue Exception => e
         # TODO if we are unable to merge the citation back into the source document, 
         # we should support submitting it on its own? 
-        Rails.logger.error(e)
+        Rails.logger.error("Error updating passage: ",e)
         raise e
       else
         self.related_text.set_xml_content(updated,:comment => "merged updated passage #{self.urn_attribute}") 

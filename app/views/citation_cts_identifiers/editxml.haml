@@ -1,10 +1,10 @@
 //------------------------------------------------------------
 //  CSS
 //------------------------------------------------------------
-%link{:rel => "stylesheet", :type => "text/css", :href => "/sosol/javascripts/imgspect/third_party/menumucil/css/menumucil.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "/sosol/javascripts/imgspect/src/css/imgbit.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "/sosol/javascripts/imgspect/src/css/imgspect.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "/sosol/javascripts/texAce/src/css/texAce.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/third_party/menumucil/css/menumucil.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/src/css/imgbit.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/src/css/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/src/css/texAce.css"}
 
 
 :css
@@ -159,7 +159,6 @@
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
     
-%script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
 = javascript_include_tag "imgspect/src/js/imgspect"
 = javascript_include_tag "imgspect/src/js/imgbit"

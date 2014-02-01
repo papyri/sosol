@@ -94,8 +94,7 @@ class CitationCtsIdentifiersController < IdentifiersController
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
                 :collection => params[:collection].to_s,
-                :urn => params[:urn] + ":" + params[:start_passage].strip,
-                :src => 'SoSOL')   
+                :urn => params[:urn] + ":" + params[:start_passage].strip)   
    
     end
   end

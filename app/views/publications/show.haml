@@ -3,13 +3,7 @@
   :javascript 
 
     function checkForComment() { 
-      comment_text = $('submit_comment').value; 
-      if ($('reason_dataentry').checked) {
-        comment_text = comment_text + "\nData Entry Error\n";
-      }
-      if ($('reason_xmladded').checked) {
-        comment_text = comment_text + "\nXML Markup Change\n";
-      }
+      var comment_text = $('submit_comment').value;
       if ($('community_id') != null)
       {
         var selected_submit = $('community_id').value;
@@ -20,19 +14,7 @@
         $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
       } 
     }
-    
-    function fixupComment() {
-        comment_text = $('submit_comment').value; 
-        if ($('reason_dataentry').checked) {
-          comment_text = comment_text + "Data Entry Error\n";
-        }
-        if ($('reason_xmladded').checked) {
-          comment_text = comment_text + "XML Markup Change\n";
-        }
-        $('submit_comment').value = comment_text;
-        return true;
-    }
-    
+      
     function toggle_div(obj) {
       var el = document.getElementById(obj);
       if ( el.style.display != "none" ) {
@@ -63,18 +45,12 @@
                   %li
                     = "#{identifier.title} (#{identifier.class::FRIENDLY_NAME  })"
             They will be submitted to the proper boards for review.
-            - form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'fixupComment(event);'})  do
+            - form_tag(  {:controller => 'publications',:action => "submit"}, {:onsubmit => 'checkForComment();'})  do
               -#= hidden_field_tag 'community_id'
               You will no longer be able to edit any of the items in this the publication once it is submitted. 
               %br
               %br
-              = label_tag "Select a reason for your submission:"
-              %br
-              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_dataentry", :id => "reason_dataentry", :value => "render", :enabled => "true" }Data Entry Error
-              %br
-              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_xmladded", :id => "reason_xmladded", :value => "render", :enabled => "true" }XML Markup
-              %br
-              %input{ :type => "checkbox", :onclick => "checkForComment(event)", :class => "rend_frac_check_c", :name => "reason_other", :id => "reason_other", :value => "render", :enabled => "true" }Other:
+              = label_tag "Supply a reason for your submission:"
               %br
               = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
@@ -83,7 +59,7 @@
               
               - if @current_user.community_memberships.count > 0
                 - community_hash = Hash.new
-                - community_hash["SOSOL"] = 0
+                - community_hash[SITE_NAME] = 0
                 - @current_user.community_memberships.each do |community|
                 
                   - if community.is_submittable? #check to see that we can submit to community

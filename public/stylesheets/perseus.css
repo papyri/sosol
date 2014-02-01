@@ -139,8 +139,14 @@ li.editor_menu {
 	padding-left: 1em;
 }
 
-.edit_oac_identifier #target_content .token {
+.edit_oac_identifier #target_content .token.text, .edit_oac_identifier #body_content .token.text {
+    cursor: pointer;
+    background-color: #eee;
+}
 
+.edit_oac_identifier #target_content, .edit_oac_identifier #body_content {
+    background-color: #f9f9f9;
+    color: #111;
 }
 
 .edit_oac_identifier .target_uri, .edit_oac_identifier .body_uri  {
@@ -150,7 +156,7 @@ li.editor_menu {
 
 
 .edit_oac_identifier #target_content .token.highlighted, .edit_oac_identifier #body_content .token.highlighted {
-	background-color: #FFFF99;
+	background-color: #888;
 }
 
 .edit_oac_identifier #target_content .token.highlighted.selected, .edit_oac_identifier #body_content .token.highlighted.selected {

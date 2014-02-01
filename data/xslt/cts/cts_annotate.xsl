@@ -323,6 +323,14 @@
         </div>
     </xsl:template>
     
+    <xsl:template match="tei:pb|pb">
+        <div class="tei_pagebreak"><xsl:text>[pp. </xsl:text><xsl:value-of select="@n"/><xsl:text>]</xsl:text></div><br/>
+    </xsl:template>
+    
+    <xsl:template match="tei:seg|seg">
+        <xsl:apply-templates/>
+    </xsl:template>
+    
     <!-- Default: replicate unrecognized markup -->
     <xsl:template match="@*|node()" priority="-1">
         <xsl:copy>

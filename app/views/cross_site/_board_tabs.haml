@@ -46,7 +46,6 @@
               = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
 
 :javascript
-  $j = jQuery.noConflict();
   
   //------------------------------------------------------------
   //  Drop down menu when board list is clicked
@@ -56,9 +55,9 @@
     //------------------------------------------------------------
     //  Add to the dom
     //------------------------------------------------------------
-    var board_list = $j('#board_list');
-    var board_menu = $j('#board_menu');
-    $j('body').append( board_list );
+    var board_list = jQuery('#board_list');
+    var board_menu = jQuery('#board_menu');
+    jQuery('body').append( board_list );
     
     //------------------------------------------------------------
     //  Display switch
@@ -74,7 +73,7 @@
     //  Position the board list
     //------------------------------------------------------------
     positionBoardList();
-    $j( window ).resize( function() {
+    jQuery( window ).resize( function() {
         positionBoardList();
     });
   }
@@ -83,8 +82,8 @@
   //  Position the board list
   //------------------------------------------------------------
   function positionBoardList() {
-    var board_list = $j('#board_list');
-    var board_menu = $j('#board_menu');
+    var board_list = jQuery('#board_list');
+    var board_menu = jQuery('#board_menu');
     board_list.css({ 
       position: 'absolute', 
       zIndex: '9999'}
@@ -98,11 +97,11 @@
   //------------------------------------------------------------
   //  Hide the board list if outside board list is clicked
   //------------------------------------------------------------
-  $j( document ).click( function( _e ) {
+  jQuery( document ).click( function( _e ) {
     var clicked = _e.target;
     if ( clicked.id != 'board_menu' ) { 
-      if ( $j('#board_list') )  {
-        $j('#board_list').css( 'display', 'none' );
+      if ( jQuery('#board_list') )  {
+        jQuery('#board_list').css( 'display', 'none' );
       }
     }
   });

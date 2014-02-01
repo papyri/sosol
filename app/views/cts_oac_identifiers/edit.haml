@@ -7,7 +7,8 @@
   var all_targets = $H();
   
   function get_target_passage() {
-    var passage_url = "#{root_url}cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
+    //var passage_url = "#{root_url}cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
+    var passage_url = "http://dev.alpheios.net:3000/cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
     
     var tokenizer_cfg = JSON.parse('#{@identifier[:token_service_config]}');
     var lang = "#{@identifier.parentIdentifier.lang}";
@@ -29,7 +30,12 @@
               var xsltProcessor = new XSLTProcessor();
               xsltProcessor.importStylesheet(a_xsl);
               var content = xsltProcessor.transformToDocument(a_data);
-              set_target_content(jQuery("div",content).get(0).innerHTML);
+              var div = jQuery("div",content);
+              if (div.length > 0) {
+                set_target_content(div.get(0).innerHTML);
+              } else {
+                set_target_content('<div class="error">Unable to load the requested text.</div>')
+              }
             }
           ).fail(function(req,status,err){alert("can't load xslt from " + data_xslt + ":" + err)});          
         } else {
@@ -101,7 +107,7 @@
       //alert("Unable to read the selected range. Please try your selection again.");
       return;
     }
-    var uri = $('src').value + "/" + $('target_urn').value + "#" + start_ref;
+    var uri = $('src').value + "/" + $('target_urn').value + "@" + start_ref;
     // no span needed if the start and end are the same
     if (end_ref != start_ref) {
       uri = uri + '-' + end_ref;
@@ -169,7 +175,7 @@
         if (u_match != null) {
           var parts = u_match[1].split(/:/);
           if (parts.length == 3) {
-            var r_match = parts[2].match(/^.*?#(.*)$/);
+            var r_match = parts[2].match(/^.*?@(.*)$/);
             var r_start;
             var r_end;
             if (r_match != null) {
@@ -181,11 +187,13 @@
                 r_start = r_parts;
                 r_end = r_parts;
               }
-              var start_token = $$(".token.text[data-ref=" + r_start + "]")
-              var end_token = $$(".token.text[data-ref=" + r_end + "]")
+              
+              //prototype is unreliable here - switch to jQuery
+              var span_start = jQuery("#target_content .token.text[data-ref='" + r_start + "']");
+              var span_end = jQuery("#target_content .token.text[data-ref='" + r_end + "']");
               // highlight the tokens if able to find them
-              if (start_token != null && end_token != null && start_token.length == 1 && end_token.length == 1) {
-                all_targets.set(elem.name,[start_token[0],end_token[0]]);
+              if (span_start.length > 0 && span_end.length > 0) {
+                all_targets.set(elem.name,[span_start.get(0),span_end.get(0)]);
               }
             }
           }
@@ -257,66 +265,72 @@
     current_target = $('target_uri1');
   });
 
-.append
-  %h3 
-  - if @identifier[:action] == 'append' 
-    Add Annotation
-  - else
-    Update Annotation
-  %p
-  - form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
-    = hidden_field_tag 'publication_id',@publication.id
-    = hidden_field_tag 'id',@identifier.id
-    = hidden_field_tag 'collection',params[:collection]
-    = hidden_field_tag 'src',params[:src]
-    = hidden_field_tag 'target_urn', params[:target_urn]
-    = hidden_field_tag 'valid_targets',nil
-    = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-    %ul.hints
-      %li
-        Enter a URI identifying a resource that annotates your selected passage.   
-      %li 
-        Or choose an annotation resource from the drop-downs and click 
-        'Request Resource' to load the corresponding text. 
-      %li 
-        You can also select more specific passages within either text with your mouse. This will automatically
-        generate a more specific URI for your annotation. 
-    #annotation_target_input
-      .annotation_header Annotation Target
-      #fieldset{:id => 'annotation_target_fields'}
-        .targets{:id => 'targets'}
-          = label_tag 'URI for Target:'
-          %br
-          -if params[:valid_targets].nil?
-            = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+    .append
+      %h3 
+      - if @identifier[:action] == 'append' 
+        Add Annotation
+      - else
+        Update Annotation
+      %p
+      - form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
+        = hidden_field_tag 'publication_id',@publication.id
+        = hidden_field_tag 'id',@identifier.id
+        = hidden_field_tag 'collection',params[:collection]
+        = hidden_field_tag 'src',params[:src] != '' ? params[:src] : @identifier[:src]
+        = hidden_field_tag 'target_urn', params[:target_urn]
+        = hidden_field_tag 'valid_targets',nil
+        = hidden_field_tag 'annotation_uri',params[:annotation_uri]
+        %ul.hints
+          %li
+            Enter a URI identifying a resource that annotates your selected passage.   
+          %li 
+            Or choose an annotation resource from the drop-downs and click 
+            'Request Resource' to load the corresponding text. 
+          %li 
+            You can also select more specific passages within either text with your mouse. This will automatically
+            generate a more specific URI for your annotation. 
+        #annotation_target_input
+          .annotation_header Annotation Target
+          #fieldset{:id => 'annotation_target_fields'}
+            .targets{:id => 'targets'}
+              = label_tag 'URI for Target:'
+              %br
+              -if params[:valid_targets].nil?
+                -if params[:src] != ''
+                  = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+                -else
+                  = text_field_tag 'target_uri1', "#{@identifier[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
+              -else
+                -params[:valid_targets].split(',').each_with_index do |t,i|
+                  = text_field_tag t, params[t], { :class => 'target_uri'}
+                  -if i > 0
+                    %button{:class=> '.remove_target_uri', :id => 'remove_target_uri'+(i+1).to_s}Remove
+            .add_target
+              = label_tag '(to select another range from within this passage)'
+              %button{:onclick => 'return add_target();'}Add   
+          = label_tag 'Target Passage:'
+          .target{:id => 'target_content' }
+            .loading Loading...
+          #annotation_motivation_input
+            = select_tag("annotation_motivation", options_for_select({'Has Translation' => 'oa:linking_translation','Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
+        #annotation_body_input
+          .annotation_header Annotation Resource      
+          = label_tag 'URI for Resource:'
+          = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
+          = render(:partial => 'cite_annotation_selector')
+          = render(:partial => 'cts_annotation_selector')
+    
+        #annotation_form_submit
+          -if @identifier[:action] == 'update'
+            = button_to "Save"
+            - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
+              = hidden_field_tag 'annotation_uri',params[:annotation_uri]
+              = hidden_field_tag 'publication_id',@publication.id
+              = hidden_field_tag 'id',@identifier.id
+              = button_to "Delete"  
           -else
-            -params[:valid_targets].split(',').each_with_index do |t,i|
-              = text_field_tag t, params[t], { :class => 'target_uri'}
-              -if i > 0
-                %button{:class=> '.remove_target_uri', :id => 'remove_target_uri'+(i+1).to_s}Remove
-        .add_target
-          = label_tag '(to select another range from within this passage)'
-          %button{:onclick => 'return add_target();'}Add   
-      = label_tag 'Target Passage:'
-      .target{:id => 'target_content' }
-        .loading Loading...
-      #annotation_motivation_input
-        = select_tag("annotation_motivation", options_for_select({'Has Translation' => 'oa:linking_translation','Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
-    #annotation_body_input
-      .annotation_header Annotation Resource      
-      = label_tag 'URI for Resource:'
-      = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
-      = render(:partial => 'cite_annotation_selector')
-      = render(:partial => 'cts_annotation_selector')
-
-    #annotation_form_submit
-      -if @identifier[:action] == 'update'
-        = button_to "Save"
-        - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
-          = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-          = hidden_field_tag 'publication_id',@publication.id
-          = hidden_field_tag 'id',@identifier.id
-          = button_to "Delete"  
-      -else
-        = button_to "Save"
-      = button_to "Create New"
+            = button_to "Save"

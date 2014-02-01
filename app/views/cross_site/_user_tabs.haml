@@ -31,7 +31,6 @@
         - #should be finding all user pubs, then showing the ones with community ids?
 
 :javascript
-  $j = jQuery.noConflict();
   
   //------------------------------------------------------------
   //  Drop down menu when board list is clicked
@@ -41,9 +40,9 @@
     //------------------------------------------------------------
     //  Add to the dom
     //------------------------------------------------------------
-    var community_list = $j('#community_list');
-    var community_menu = $j('#community_menu');
-    $j('body').append( community_list );
+    var community_list = jQuery('#community_list');
+    var community_menu = jQuery('#community_menu');
+    jQuery('body').append( community_list );
     
     //------------------------------------------------------------
     //  Display switch
@@ -59,7 +58,7 @@
     //  Position the community list
     //------------------------------------------------------------
     positionCommunityList();
-    $j( window ).resize( function() {
+    jQuery( window ).resize( function() {
         positionCommunityList();
     });
   }
@@ -68,8 +67,8 @@
   //  Position the community list
   //------------------------------------------------------------
   function positionCommunityList() {
-    var community_list = $j('#community_list');
-    var community_menu = $j('#community_menu');
+    var community_list = jQuery('#community_list');
+    var community_menu = jQuery('#community_menu');
     community_list.css({ 
       position: 'absolute', 
       zIndex: '9999'}
@@ -83,11 +82,11 @@
   //------------------------------------------------------------
   //  Hide the community list if outside community list is clicked
   //------------------------------------------------------------
-  $j( document ).click( function( _e ) {
+  jQuery( document ).click( function( _e ) {
     var clicked = _e.target;
     if ( clicked.id != 'community_menu' ) { 
-      if ( $j('#community_list') )  {
-        $j('#community_list').css( 'display', 'none' );
+      if ( jQuery('#community_list') )  {
+        jQuery('#community_list').css( 'display', 'none' );
       }
     }
   });

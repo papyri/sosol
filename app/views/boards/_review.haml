@@ -36,26 +36,25 @@
           = f.submit "Vote", :disabled => true, :onclick => 'preventDoubleVote()'
         
 :javascript
-  $j = jQuery.noConflict();
   
   //------------------------------------------------------------
   //  Runs whenever vote text area or drop-down is changed
   //------------------------------------------------------------
   function checkForComment() { 
-    comment_text = $j('#comment_comment').val();
-    if ( comment_text.replace(/^\s+|\s+$/g, '') != "" && $j('#vote_choice').val() != "" ) {
-      $j('#vote_submit').attr('disabled', false );       
+    comment_text = jQuery('#comment_comment').val();
+    if ( comment_text.replace(/^\s+|\s+$/g, '') != "" && jQuery('#vote_choice').val() != "" ) {
+      jQuery('#vote_submit').attr('disabled', false );       
     }
     else {
-      $j('#vote_submit').attr('disabled', true );
+      jQuery('#vote_submit').attr('disabled', true );
     }
   }
   
   function preventDoubleVote() { 
     set_conf_false_vote();
-    $j('#vote_submit').hide();
+    jQuery('#vote_submit').hide();
   }
   
-  $j('#vote_choice').change( function(){
+  jQuery('#vote_choice').change( function(){
     checkForComment();
   });

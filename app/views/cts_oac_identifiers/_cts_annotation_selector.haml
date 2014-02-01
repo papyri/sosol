@@ -22,7 +22,12 @@
   function populate_body_repo() {
     update_body_urn_parts();
     for (key in repos.keys) {
-      $('body_repo').insert("<option value='" + key + "'>" + key + "</option>");
+      var label = key;
+      // if the repo is for the publication it will be all digits override the label
+      if (label.match(/^\d+$/) ){
+        label = "This Publication"
+      }
+      $('body_repo').insert("<option value='" + key + "'>" + label + "</option>");
     }
     $('body_repo').insert("<option value='-'>click to select...</option>");
     $(body_repo).childElements().each(function(o){
@@ -149,13 +154,20 @@
       urispace = urn_match[1];
       urn = urn_match[2];
       body_urn_parts.repos = repos.urispaces[urispace];
+      // try again with the identifier if the end of the uri is digits because it might be from the pub
+      if (! body_urn_parts.repos) {
+        var match_pub = urispace.match(/^(.*?)\/\d+$/);
+        if (match_pub) {
+          body_urn_parts.repos = repos.urispaces[match_pub[1]];
+        }
+      }
       urn_parts = urn.split(':');
       version_parts = urn_parts[3].split('.');
       body_urn_parts.textgroup = urn_parts[2] + ':' + version_parts[0];
       body_urn_parts.work = urn_parts[2] + ':' + version_parts[0] + "." + version_parts[1];
       body_urn_parts.version = [urn_parts[0],urn_parts[1],urn_parts[2],urn_parts[3]].join(':');
       if (urn_parts.length == 5) {
-        body_urn_parts.passage = urn_parts[4].split('#')[0];
+        body_urn_parts.passage = urn_parts[4].split('@')[0];
       }
     } 
     else {
@@ -220,17 +232,37 @@
       alert("Citation start and end must be at the same citation level.");
       return false;
     }
-    var uri = repos.keys[$F('body_repo')] + "/" + $('version_urn').value + ':' + start.join('.');
+    var urispace = repos.keys[$F('body_repo')]
+    // if the body resource is from the identifier repo, then append the right id
+    var props = body_props_from_form();
+    if (props.item_id) {
+      urispace = urispace + '/' + props.item_id
+    }
+    var uri =  urispace + "/" + $('version_urn').value + ':' + start.join('.');
     if (end.length > 0) {
       uri = uri + '-' + end.join('.');
     }
-    var uri_match = new RegExp("^" + uri + '#');
+    var uri_match = new RegExp("^" + uri + '@');
     var old_uri_value = $('body_uri').value;
     if (old_uri_value.match(uri_match) == null) {
       $('body_uri').value = uri;
     }
     get_body_passage();
     return false;
+  }
+  
+  function body_props_from_form() {
+    var inventory = $F('body_repo');
+    var textgroup = $F('group_urn');
+    var work = $F('work_urn').replace(textgroup+".",''); 
+    var version = $F('version_urn');
+    var lookup_ver = version.match(/^.*?([^\.]+)$/)[1];
+    var props = 
+      inventories[inventory][textgroup].works[work].editions[lookup_ver] != null ? 
+      inventories[inventory][textgroup].works[work].editions[lookup_ver] : 
+      inventories[inventory][textgroup].works[work].translations[lookup_ver] != null ? 
+      inventories[inventory][textgroup].works[work].translations[lookup_ver] : {};
+    return props; 
   }
   
   function get_body_passage() {
@@ -321,7 +353,7 @@
       return;
     }
     body_span = [body_subref_start,body_subref_end];
-    var new_uri = $('body_uri').value.split('#')[0] + "#" + start_ref;
+    var new_uri = $('body_uri').value.split('@')[0] + "@" + start_ref;
     if (end_ref != start_ref) {
         new_uri = new_uri + '-' + end_ref;
      }
@@ -374,7 +406,7 @@
     if (u_match != null) {
       var parts = u_match[1].split(/:/);
       if (parts.length == 3) {
-        var r_match = parts[2].match(/^.*?#(.*)$/);
+        var r_match = parts[2].match(/^.*?@(.*)$/);
         var r_start;
         var r_end;
         if (r_match != null) {
@@ -386,10 +418,12 @@
             r_start = r_parts;
             r_end = r_parts;
           }
-          body_span = [
-            $$("#body_content .token.text[data-ref=" + r_start + "]")[0],
-            $$("#body_content .token.text[data-ref=" + r_end + "]")[0]
-            ]
+          var span_start = jQuery("#body_content .token.text[data-ref='" + r_start + "']");
+          var span_end = jQuery("#body_content .token.text[data-ref='" + r_end + "']");
+          // highlight the tokens if able to find them
+          if (span_start.length > 0 && span_end.length > 0) {
+            body_span = [span_start.get(0),span_end.get(0)];
+          }
         }
       }
     }

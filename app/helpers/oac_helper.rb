@@ -105,6 +105,16 @@ module OacHelper
     end
   end
   
+  def self.get_body_xml(a_annotation)
+    xpath = "oac:hasBody[rdf:type[@rdf:resource='cnt:ContentAsXML']]/cnt:rest"
+    cnt = REXML::XPath.first(a_annotation,xpath, {"oac" => NS_OACOLD, "cnt" => NS_CONTENT})
+    if cnt.nil?
+      return ""
+    else 
+      REXML::XPath.first(cnt)
+    end
+  end
+  
   def self.get_body_content(a_annotation)
     xpath = "oa:hasBody/cnt:ContentAsText"
     REXML::XPath.first(a_annotation,xpath, {"oa" => NS_OAC, "cnt" => NS_CONTENT})

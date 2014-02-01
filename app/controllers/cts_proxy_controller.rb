@@ -23,18 +23,20 @@ class CtsProxyController < ApplicationController
   end
   
   def getpassage
+    # subrefs not supported for getpassage for now
+    urn_no_subref = params[:urn].sub(/[\#@][^\#@]+$/,'')
     if (params[:id] =~ /^\d+$/)
       documentIdentifier = Identifier.find(params[:id].to_s)
       inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
       if (CTS::CTSLib.getExternalCTSHash().has_key?(inventory_code))
-        response = CTS::CTSLib.proxyGetPassage(inventory_code,params[:urn].to_s)
+        response = CTS::CTSLib.proxyGetPassage(inventory_code,urn_no_subref)
       else
         inventory = documentIdentifier.related_inventory.xml_content
-        uuid = documentIdentifier.publication.id.to_s + params[:urn].gsub(':','_') + '_proxyreq'
-        response = CTS::CTSLib.getPassageFromRepo(inventory,documentIdentifier.content,params[:urn].to_s,uuid)
+        uuid = documentIdentifier.publication.id.to_s + urn_no_subref.gsub(':','_') + '_proxyreq'
+        response = CTS::CTSLib.getPassageFromRepo(inventory,documentIdentifier.content,urn_no_subref,uuid)
      end
     else
-      response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,params[:urn].to_s)
+      response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,urn_no_subref)
     end
     render :xml => response
   end
@@ -63,7 +65,7 @@ class CtsProxyController < ApplicationController
        identifier = Identifier.find(params[:id].to_s)
        related = identifier.related_text_inventory
        related.keys.each do |key|
-         urispace = root_url + "/dmm_api/" + identifier.class.to_s + "/" + params[:id]
+         urispace = root_url + "cts/getpassage"
          repos['keys'][key.to_s] = urispace
          repos['urispaces'][urispace] = key.to_s
        end

@@ -15,6 +15,9 @@ module CTS
       
       # method which returns a CtsUrn object from the java chs cts3 library
       def urnObj(a_urn)
+        # HACK to make new style subrefs work with old library
+        # TODO remove when cts.jar is upgraded to 4.0
+        a_urn = a_urn.sub('@','#')
         if(RUBY_PLATFORM == 'java')
           require 'java'
           require CTS_JAR_PATH
@@ -362,6 +365,8 @@ module CTS
       end
       
       def proxyUpdatePassage(a_psg,a_inventory,a_document,a_urn,a_uuid)
+        Rails.logger.info("In proxyUpdatePassage with #{a_psg}, #{a_inventory}")
+
         begin
           # load inventory  -> POST inventory -> returns unique identifier for inventory
           uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
@@ -371,6 +376,7 @@ module CTS
           end
           # load document -> POST document
           if (response.code == '200')
+            Rails.logger.info("Inventory put ok")
             path = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(response.body),
               JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -382,6 +388,7 @@ module CTS
                 http.send_request('PUT', pathUri.request_uri, a_document,headers)      
               end
               if (put_response.code == '201')
+                Rails.logger.info("Document put ok")
                 # put passage
                 rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=UpdatePassage&inv=#{a_uuid}&urn=#{a_urn}") 
                 psg_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
@@ -390,6 +397,7 @@ module CTS
                 end
                 if (psg_response.code == '200')
                   # now we return the updated document
+                  Rails.logger.info("Passage put ok #{psg_response.body}")
                   updated_text = JRubyXML.apply_xsl_transform(
                     JRubyXML.stream_from_string(psg_response.body),
                     JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -399,6 +407,7 @@ module CTS
                     if (updated_text == '' )
                       raise "Update failed: #{psg_response.body}"
                     end 
+                    Rails.logger.info("Returning #{updated_text}")
                     return updated_text
                 else
                   raise "Passage request failed #{psg_response.code} #{psg_response.msg}>"
@@ -410,8 +419,10 @@ module CTS
               raise "No path for put"
             end # put_path          
          else # end post inventory
-          raise "Inventory post failed #{response.code} #{response.msg}"
+          raise "Inventory post to #{uri} failed #{response.code} #{response.msg} #{response.body}" 
          end
+       rescue Exception => a_e
+         raise "Exception in proxyUpdatePassage with #{a_psg}, #{a_inventory}"
        ensure
         # cleanup
         rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 

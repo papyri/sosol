@@ -142,7 +142,13 @@
         <xsl:variable name="lang">
             <xsl:choose>
                 <xsl:when test="$edition_type='edition'">
-                    <xsl:value-of select="parent::cts:work/@xml:lang"/>
+                    <!-- this is an unsupported extension of CTS - we need multiple versions with different languages for Bodin --> 
+                    <xsl:choose>
+                        <xsl:when test="@xml:lang">
+                            <xsl:value-of select="@xml:lang"/>
+                        </xsl:when>
+                        <xsl:otherwise><xsl:value-of select="parent::cts:work/@xml:lang"/></xsl:otherwise>
+                    </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise><xsl:value-of select="@xml:lang"/></xsl:otherwise>
             </xsl:choose>

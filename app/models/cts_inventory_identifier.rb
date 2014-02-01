@@ -8,14 +8,6 @@ class CTSInventoryIdentifier < Identifier
   FRIENDLY_NAME = "TextInventory"
   IDENTIFIER_NAMESPACE = 'textinventory'
 
-  # override modified because for now we don't want to commit these documents
-  # as they are temporary artifiacts of the editing environment
-  # NOTE - if and when we enable modification of the master CTS Text Inventory
-  # from SoSOL we may have to change this
-  def modified?
-    false
-  end
-
   def is_valid_xml?(content = nil)
     return true
   end
@@ -50,7 +42,7 @@ class CTSInventoryIdentifier < Identifier
   def parse_inventory()
     atts = {}
     urnStr = self.title
-    urnStr.sub!(/TextInventory for/,'urn:cts:')
+    urnStr.sub!(/TextInventory for /,'urn:cts:')
     urn = CTS::CTSLib.urnObj(urnStr)
     
     atts['worktitle'] = { 'eng' =>

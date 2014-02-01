@@ -14,6 +14,11 @@ class OACIdentifier < Identifier
   NS_FOAF = "http://xmlns.com/foaf/0.1/"  
   NS_OAC = "http://www.openannotation.org/ns/"  
   
+  def get_catalog_link
+   # no catalog for annotations right now
+   return ''
+  end
+  
   def titleize
     "Annotations"
   end
@@ -264,4 +269,5 @@ class OACIdentifier < Identifier
         xsl ? xsl : %w{data xslt oac html_preview.xsl})),
         parameters)
   end
+  
 end
