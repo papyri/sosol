@@ -159,6 +159,7 @@
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
     
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
 = javascript_include_tag "imgspect/src/js/imgspect"
 = javascript_include_tag "imgspect/src/js/imgbit"

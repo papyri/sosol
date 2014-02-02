@@ -7,8 +7,7 @@
   var all_targets = $H();
   
   function get_target_passage() {
-    //var passage_url = "#{root_url}cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
-    var passage_url = "http://dev.alpheios.net:3000/cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
+    var passage_url = "#{root_url}cts/getpassage/" + "#{@identifier.parentIdentifier.id}/" + $F('target_urn');
     
     var tokenizer_cfg = JSON.parse('#{@identifier[:token_service_config]}');
     var lang = "#{@identifier.parentIdentifier.lang}";

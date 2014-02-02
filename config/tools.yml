@@ -21,7 +21,7 @@ test:
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
   cts_tokenizer:
     :default:
-      :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
+      :request_url: "http://sosol.perseids.org/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
     :lat:
       :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
    
