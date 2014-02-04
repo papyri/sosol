@@ -81,7 +81,7 @@ module Rpx
           raise RpxException.new(resp), 'Unable to parse JSON response'
         end
       else
-        raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}"
+        raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
       end
 
       if data['stat'] != 'ok'
