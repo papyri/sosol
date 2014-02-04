@@ -67,8 +67,11 @@ class TeiCTSIdentifier < CTSIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        xsl ? xsl : %w{data xslt cts alpheios-tei.xsl})),
+        xsl ? xsl : self.preview_xslt)),
         parameters)
   end
   
+  def preview_xslt
+    %w{data xslt perseus alpheios-tei.xsl}
+  end
 end

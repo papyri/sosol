@@ -120,12 +120,16 @@ class EpiCTSIdentifier < CTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(self.xml_content),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-          xsl ? xsl : %w{data xslt perseus epidoc_preview.xsl})),
+          xsl ? xsl : self.preview_xslt)),
           parameters)
     else
       # TODO interface for selecting and previewing passages
       '<div class="todo">Text should be previewed here but it is too large. An upcoming release will offer the ability to preview selected passages.</div>' 
     end  
+  end
+  
+  def preview_xslt
+    %w{data xslt perseus epidoc_preview.xsl}
   end
   
 end
