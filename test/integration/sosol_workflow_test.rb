@@ -1,6 +1,96 @@
 require 'test_helper'
 require 'ddiff'
 
+class CommunityWorkflowTest < ActionController::IntegrationTest
+  def generate_board_vote_for_decree(board, decree, identifier, user)
+    FactoryGirl.create(:vote,
+            :publication_id => identifier.publication.id,
+            :identifier_id => identifier.id,
+            :user => user,
+            :choice => (decree.get_choice_array)[rand(
+              decree.get_choice_array.size)])
+  end
+  
+  
+  def generate_board_votes_for_action(board, action, identifier)
+    decree = board.decrees.detect {|d| d.action == action}
+    vote_count = 0
+    if decree.tally_method == Decree::TALLY_METHODS[:percent]
+      while (((vote_count.to_f / decree.board.users.length)*100) < decree.trigger) do
+        generate_board_vote_for_decree(board, decree, identifier, board.users[vote_count])
+        vote_count += 1
+      end
+    elsif decree.tally_method == Decree::TALLY_METHODS[:count]
+      while (vote_count.to_f < decree.trigger) do
+        generate_board_vote_for_decree(board, decree, identifier, board.users[vote_count])
+        vote_count += 1
+      end
+    end
+  end
+
+  def compare_publications(a,b)
+    
+    pubs_are_matched = true
+    a.identifiers.each do |aid|
+      id_has_match = false
+      b.identifiers.each do |bid|
+        if (aid.class.to_s == bid.class.to_s && aid.title == bid.title)
+          if (aid.xml_content == bid.xml_content)
+            id_has_match = true
+            Rails.logger.debug "Identifier match found"
+          else
+            if aid.xml_content == nil
+              Rails.logger.debug a.title + " has nill " + aid.class.to_s + " identifier"
+            end
+            if bid.xml_content == nil
+              Rails.logger.debug b.title + " has nill " + bid.class.to_s + " identifier"
+            end
+            Rails.logger.debug "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
+            log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
+            #Rails.logger.debug "full xml a " + aid.xml_content
+            #Rails.logger.debug "full xml b " + bid.xml_content
+          
+          end
+        end
+      
+      end
+      
+      if !id_has_match
+        pubs_are_matched = false
+        Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " is different"
+        
+      end
+    
+    end
+    
+    
+    if pubs_are_matched
+      Rails.logger.debug "Publications are matched"  
+    end
+    
+  end
+
+  def log_diffs(a, b)
+    a_to_b_diff = a.diff(b)
+    
+    plus_str = ""
+    minus_str = ""
+    a_to_b_diff.diffs.each do |d|
+      d.each do |mod|
+        if mod[0] == "+"
+          plus_str = plus_str + mod[2].chr
+        else
+          minus_str = minus_str + mod[2].chr
+        end
+      end
+    end
+    
+    Rails.logger.debug "added " + plus_str
+    Rails.logger.debug "removed " + minus_str
+    
+  end
+end
+
 
 class CommunityWorkflowTest < ActionController::IntegrationTest
   context "for idp3" do
@@ -456,73 +546,7 @@ end
        @publication.destroy
        
        Rails.logger.debug "ENDED TEST: user creates and submits publication to community"
-     end
-      
-      def compare_publications(a,b)
-        
-        pubs_are_matched = true
-        a.identifiers.each do |aid|
-          id_has_match = false
-          b.identifiers.each do |bid|
-            if (aid.class.to_s == bid.class.to_s && aid.title == bid.title)
-              if (aid.xml_content == bid.xml_content)
-                id_has_match = true
-                Rails.logger.debug "Identifier match found"
-              else
-                if aid.xml_content == nil
-                  Rails.logger.debug a.title + " has nill " + aid.class.to_s + " identifier"
-                end
-                if bid.xml_content == nil
-                  Rails.logger.debug b.title + " has nill " + bid.class.to_s + " identifier"
-                end
-                Rails.logger.debug "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
-                log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
-                #Rails.logger.debug "full xml a " + aid.xml_content
-                #Rails.logger.debug "full xml b " + bid.xml_content
-              
-              end
-            end
-          
-          end
-          
-          if !id_has_match
-            pubs_are_matched = false
-            Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " is different"
-            
-          end
-        
-        end
-        
-        
-        if pubs_are_matched
-          Rails.logger.debug "Publications are matched"  
-        end
-        
-      end
-      
-      def log_diffs(a, b)
-        a_to_b_diff = a.diff(b)
-        
-        plus_str = ""
-        minus_str = ""
-        a_to_b_diff.diffs.each do |d|
-          d.each do |mod|
-            if mod[0] == "+"
-              plus_str = plus_str + mod[2].chr
-            else
-              minus_str = minus_str + mod[2].chr
-            end
-          end
-        end
-        
-        Rails.logger.debug "added " + plus_str
-        Rails.logger.debug "removed " + minus_str
-        
-      end
-      
-
-      
-      
+     end      
     end
     
     
@@ -565,32 +589,6 @@ end
     teardown do
       ( @ddb_board.users + [ @james, @submitter,
         @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
-    end
-    
-    def generate_board_vote_for_decree(board, decree, identifier, user)
-      FactoryGirl.create(:vote,
-              :publication_id => identifier.publication.id,
-              :identifier_id => identifier.id,
-              :user => user,
-              :choice => (decree.get_choice_array)[rand(
-                decree.get_choice_array.size)])
-    end
-    
-    
-    def generate_board_votes_for_action(board, action, identifier)
-      decree = board.decrees.detect {|d| d.action == action}
-      vote_count = 0
-      if decree.tally_method == Decree::TALLY_METHODS[:percent]
-        while (((vote_count.to_f / decree.board.users.length)*100) < decree.trigger) do
-          generate_board_vote_for_decree(board, decree, identifier, board.users[vote_count])
-          vote_count += 1
-        end
-      elsif decree.tally_method == Decree::TALLY_METHODS[:count]
-        while (vote_count.to_f < decree.trigger) do
-          generate_board_vote_for_decree(board, decree, identifier, board.users[vote_count])
-          vote_count += 1
-        end
-      end
     end
 
     context "a publication" do

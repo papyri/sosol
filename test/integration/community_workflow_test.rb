@@ -22,6 +22,92 @@ The finalizer finalizes it, which copies the changes back to the original submit
 =end
 
 class CommunityWorkflowTest < ActionController::IntegrationTest
+  def compare_publications(a,b)
+    
+    pubs_are_matched = true
+    a.identifiers.each do |aid|
+      id_has_match = false
+      b.identifiers.each do |bid|
+        if (aid.class.to_s == bid.class.to_s && aid.title == bid.title)
+          if (aid.xml_content == bid.xml_content)
+            id_has_match = true
+            Rails.logger.debug "Identifier match found"
+          else
+            if aid.xml_content == nil
+              Rails.logger.debug a.title + " has nill " + aid.class.to_s + " identifier"
+            end
+            if bid.xml_content == nil
+              Rails.logger.debug b.title + " has nill " + bid.class.to_s + " identifier"
+            end
+            Rails.logger.debug "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
+            log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
+            #Rails.logger.debug "full xml a " + aid.xml_content
+            #Rails.logger.debug "full xml b " + bid.xml_content
+          
+          end
+        end
+      
+      end
+      
+      if !id_has_match
+        pubs_are_matched = false
+        Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " are different"
+        
+      end
+    
+    end
+    
+    
+    if pubs_are_matched
+      Rails.logger.debug "Publications are matched"  
+    end
+    
+  end
+
+  def log_diffs(a, b)
+    a_to_b_diff = a.diff(b)
+    
+    plus_str = ""
+    minus_str = ""
+    a_to_b_diff.diffs.each do |d|
+      d.each do |mod|
+        if mod[0] == "+"
+          plus_str = plus_str + mod[2].chr
+        else
+          minus_str = minus_str + mod[2].chr
+        end
+      end
+    end
+    
+    Rails.logger.debug "added " + plus_str
+    Rails.logger.debug "removed " + minus_str
+    
+  end
+
+  def output_publication_info(publication)
+    Rails.logger.info "-----Publication Info-----"
+    Rails.logger.info "--Owner: " + publication.owner.name
+    Rails.logger.info "--Title: " + publication.title
+    Rails.logger.info "--Status: " + publication.status
+    Rails.logger.info "--content"
+    
+    publication.identifiers.each do |id|
+      Rails.logger.info "---ID title: " + id.title
+      Rails.logger.info "---ID class:" + id.class.to_s
+      Rails.logger.info "---ID content:"
+      if id.xml_content
+        Rails.logger.info id.xml_content
+      else
+        Rails.logger.info "NO CONTENT!"
+      end
+      #Rails.logger.info "== end Owner: " + publication.owner.name
+    end
+    Rails.logger.info "==end Owner: " + publication.owner.name
+    Rails.logger.info "=====End Publication Info====="
+  end
+end
+
+class CommunityWorkflowTest < ActionController::IntegrationTest
   context "for community" do
 
 =begin
@@ -464,92 +550,6 @@ end
        
        
      end
-      
-      def compare_publications(a,b)
-        
-        pubs_are_matched = true
-        a.identifiers.each do |aid|
-          id_has_match = false
-          b.identifiers.each do |bid|
-            if (aid.class.to_s == bid.class.to_s && aid.title == bid.title)
-              if (aid.xml_content == bid.xml_content)
-                id_has_match = true
-                Rails.logger.debug "Identifier match found"
-              else
-                if aid.xml_content == nil
-                  Rails.logger.debug a.title + " has nill " + aid.class.to_s + " identifier"
-                end
-                if bid.xml_content == nil
-                  Rails.logger.debug b.title + " has nill " + bid.class.to_s + " identifier"
-                end
-                Rails.logger.debug "Identifier diffs for " + a.title + " " + b.title + " " + aid.class.to_s + " " +  aid.title
-                log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
-                #Rails.logger.debug "full xml a " + aid.xml_content
-                #Rails.logger.debug "full xml b " + bid.xml_content
-              
-              end
-            end
-          
-          end
-          
-          if !id_has_match
-            pubs_are_matched = false
-            Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " are different"
-            
-          end
-        
-        end
-        
-        
-        if pubs_are_matched
-          Rails.logger.debug "Publications are matched"  
-        end
-        
-      end
-      
-      def log_diffs(a, b)
-        a_to_b_diff = a.diff(b)
-        
-        plus_str = ""
-        minus_str = ""
-        a_to_b_diff.diffs.each do |d|
-          d.each do |mod|
-            if mod[0] == "+"
-              plus_str = plus_str + mod[2].chr
-            else
-              minus_str = minus_str + mod[2].chr
-            end
-          end
-        end
-        
-        Rails.logger.debug "added " + plus_str
-        Rails.logger.debug "removed " + minus_str
-        
-      end
-      
-      def output_publication_info(publication)
-        Rails.logger.info "-----Publication Info-----"
-        Rails.logger.info "--Owner: " + publication.owner.name
-        Rails.logger.info "--Title: " + publication.title
-        Rails.logger.info "--Status: " + publication.status
-        Rails.logger.info "--content"
-        
-        publication.identifiers.each do |id|
-          Rails.logger.info "---ID title: " + id.title
-          Rails.logger.info "---ID class:" + id.class.to_s
-          Rails.logger.info "---ID content:"
-          if id.xml_content
-            Rails.logger.info id.xml_content
-          else
-            Rails.logger.info "NO CONTENT!"
-          end
-          #Rails.logger.info "== end Owner: " + publication.owner.name
-        end
-        Rails.logger.info "==end Owner: " + publication.owner.name
-        Rails.logger.info "=====End Publication Info====="
-      end
-      
-      
     end
     
     
