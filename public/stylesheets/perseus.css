@@ -152,6 +152,8 @@ li.editor_menu {
 .edit_oac_identifier .target_uri, .edit_oac_identifier .body_uri  {
 	width: 98%;
 	font-size: small;
+	/* using direction rtl to show the end of the url for long ones */
+	direction:rtl;
 }
 
 
