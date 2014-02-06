@@ -9,6 +9,6 @@
   %h2
     Are You Sure You Want to Delete this publication? This action will only delete your copy of this publication, but cannot be undone.
   %h1
-    = link_to "Delete", @publication, :method => :delete 
+    = button_to "Delete", @publication, :method => :delete 
     = "or"
     = link_to "Cancel", @publication
