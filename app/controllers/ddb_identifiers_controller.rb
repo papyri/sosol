@@ -24,7 +24,7 @@ class DdbIdentifiersController < IdentifiersController
       if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
         @identifier[:leiden_plus] = read_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
       else
-        if(defined?(Sosol::Application.config.xsugar_standalone_enabled) && Sosol::Application.config.xsugar_standalone_enabled)
+        if((!Sosol::Application.config.xsugar_standalone_enabled.nil?) && Sosol::Application.config.xsugar_standalone_enabled)
           original_xml = DDBIdentifier.preprocess(@identifier.xml_content)
 
           # strip xml:id from lb's
@@ -34,7 +34,7 @@ class DdbIdentifiersController < IdentifiersController
               %w{data xslt ddb strip_lb_ids.xsl})))
 
           # get div type=edition from XML in string format for conversion
-          abs = DDBIdentifier.get_div_edition(original_xml).to_s
+          abs = DDBIdentifier.get_div_edition(original_xml).join('')
           
           if @identifier.get_broken_leiden.nil?  
             @identifier[:leiden_plus] = abs
