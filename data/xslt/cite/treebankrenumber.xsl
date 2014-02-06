@@ -13,10 +13,28 @@
         <treebank>
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="*[not(local-name(.) = 'sentence')]"/>
-            <xsl:for-each select="sentence">     
-                <sentence id="{position()}">
+            <xsl:for-each select="sentence">   
+                <xsl:variable name="s_num" select="position()"/>
+                <sentence id="{$s_num}">
                     <xsl:apply-templates select="@*[not(name(.) = 'id')]"/>
-                    <xsl:apply-templates select="*"/>
+                    <xsl:variable name="renum_words" select="word[@id != position()]"/>
+                    <xsl:if test="count($renum_words) > 0">
+                        <xsl:message>The word count for sentence <xsl:value-of select="$s_num"/> has changed.  Dependencies have been reset.</xsl:message>
+                    </xsl:if>
+                    <xsl:for-each select="word">
+                        <word id="{position()}">
+                            <xsl:variable name="old_head" select="@head"/>
+                            <xsl:choose>
+                                <xsl:when test="count($renum_words)>0">
+                                    <xsl:attribute name="head">0</xsl:attribute>
+                                    <xsl:apply-templates select="@*[not(name(.) = 'head') and not(name(.) = 'id')]"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:apply-templates select="@*[not(name(.) = 'id')]"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </word>
+                    </xsl:for-each>
                 </sentence>
             </xsl:for-each>
         </treebank>

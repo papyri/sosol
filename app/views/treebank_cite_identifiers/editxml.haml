@@ -5,7 +5,7 @@
     #edit
       - form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
-                  
+        
         %br
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
                 

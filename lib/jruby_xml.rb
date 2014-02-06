@@ -48,6 +48,20 @@ module JRubyXML
     end
   end
   
+  class TransformMessageListener < Java::net.sf.saxon.event.SequenceWriter
+    
+    def write(node)
+      unless defined? @messages
+        @messages = []
+      end
+      @messages <<  node.getStringValue()
+    end
+    
+    def get_messages()
+      return @messages
+    end
+  end
+    
   # http://iso-relax.sourceforge.net/JARV/JARV.html
   class JARVValidator
     include Singleton
@@ -239,9 +253,10 @@ module JRubyXML
     end
 
     def apply_xsl_transform(xml_stream, xsl_stream, parameters = {})
+      message_writer = java.io.StringWriter.new()
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
-      
+      transformer.setMessageEmitter(TransformMessageListener.new())
       parameters.each do |parameter, value|
         transformer.setParameter(parameter.to_s, value)
       end
@@ -252,6 +267,48 @@ module JRubyXML
       begin
         transformer.transform(xml_stream, result)
         return string_writer.toString()
+      rescue NativeException => java_exception
+        # For some reason Saxon doesn't seem to use the set ErrorListener
+        # so we have to do all this
+        xpath_exception = java_exception.cause()
+        if xpath_exception.class == Java::NetSfSaxonTrans::XPathException
+          sax_parse_exception = xpath_exception.getCause()
+          Rails.logger.info sax_parse_exception.class
+          if sax_parse_exception.class == Java::OrgXmlSax::SAXParseException
+            raise ParseError.new(
+                sax_parse_exception.getLineNumber,
+                sax_parse_exception.getColumnNumber),
+              sax_parse_exception.getMessage
+          else
+            raise "Unknown XPath error during SAXON transform"
+          end
+        else
+          raise "Unknown error during SAXON transform #{xpath_exception} (#{xpath_exception.class})"
+        end
+      end
+      
+      return nil
+    end
+    
+    # a transformation which catches xslt transform messages
+    # and returns them with the transformed content
+    def apply_xsl_transform_catch_messages(xml_stream, xsl_stream, parameters = {})
+      message_listener = TransformMessageListener.new()
+      transformer = get_transformer(xsl_stream)
+      transformer.setErrorListener(TransformErrorListener.new())
+      transformer.setMessageEmitter(message_listener)
+      parameters.each do |parameter, value|
+        transformer.setParameter(parameter.to_s, value)
+      end
+      
+      string_writer = java.io.StringWriter.new()
+      result = javax.xml.transform.stream.StreamResult.new(string_writer)
+      
+      begin
+        transformer.transform(xml_stream, result)
+        return {
+          :content => string_writer.toString(),
+          :messages => message_listener.get_messages() }
       rescue NativeException => java_exception
         # For some reason Saxon doesn't seem to use the set ErrorListener
         # so we have to do all this
@@ -301,6 +358,7 @@ module JRubyXML
 
         transformer_factory = javax.xml.transform.TransformerFactory.newInstance()
         transformer_factory.setErrorListener(TransformErrorListener.new())
+        
         
         if xsl_stream.nil?
           return transformer_factory.newTransformer()

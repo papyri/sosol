@@ -23,7 +23,7 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-      render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
+      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
       
@@ -36,7 +36,13 @@ class DmmApiController < ApplicationController
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
       
-      render :xml => @identifier.api_update(params[:q],params[:raw_post],params[:comment])
+      begin
+        response = @identifier.api_update(params[:q],params[:raw_post],params[:comment]) 
+      rescue Exception => e
+        render :xml => "<error>#{e}</error>", :status => 500
+        return
+      end
+      render :xml => response
     end
   end
   

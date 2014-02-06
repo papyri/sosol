@@ -17,13 +17,23 @@ class TreebankCiteIdentifier < CiteIdentifier
   # - *Returns* :
   #   - a String of the SHA1 of the commit
   def set_content(content, options = {})
-    content = TreebankCiteIdentifier.preprocess(content)
+    content = preprocess(content)
     super
   end
   
   def titleize
     # TODO should say Treebank on Target URI
-    title = self.name
+    t = REXML::Document.new(self.xml_content).root
+    f = REXML::XPath.first(t,"sentence")
+    l = REXML::XPath.first(t,"sentence[last()]")
+    urn = f.attributes['document_id']
+    title = "Treebank of #{urn}"
+    from = f.attributes['subdoc']
+    to = l.attributes['subdoc']
+    title = title + ":#{from}"
+    if (from != to)
+      title = title + "-#{to}"
+    end
     return title
   end
   
@@ -45,7 +55,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     treebank.delete_element("date")
     date = REXML::Element.new("date")
     date.add_text(Time.new.inspect)
-    treebank.insert_before("sentence[1]",date)
+    treebank.insert_before("*[1]",date)
     creator_uri = make_annotator_uri
     xpath = "annotator/uri"
     all_annotators = REXML::XPath.match(treebank, xpath)
@@ -120,7 +130,6 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
 
     template_init = init_version_content(template)
- 
     self.set_xml_content(template_init, :comment => 'Initializing Content')
   end
   
@@ -178,28 +187,28 @@ class TreebankCiteIdentifier < CiteIdentifier
   
   # get the format for the treebank file
   def format
-    #TODO - pull from file
-    return 'aldt'
+    t = REXML::Document.new(self.xml_content)
+    REXML::XPath.first(t,"/treebank/@format").to_s
   end
   
   
   # get the language for the treebank file
   def language
-    #TODO - pull from file
-    return 'lat'
+    t = REXML::Document.new(self.xml_content)
+    REXML::XPath.first(t,"/treebank/@xml:lang").to_s
   end
   
   # get the number of sentences in the treebank file
   def size
-    # TODO - pull from file
-    return 5000.to_s
+    t = REXML::Document.new(self.xml_content)
+    REXML::XPath.match(t,"/treebank/sentence").size.to_s
   end
-  
   
    # get the direction of text in the treebank file
   def direction
-    # TODO - pull from file
-    return 'ltr'
+    t = REXML::Document.new(self.xml_content)
+    d = REXML::XPath.first(t,"/treebank/@direction").to_s
+    return d == '' ? 'ltr' : d
   end
   
   # api_get responds to a call from the data management api controller
@@ -257,7 +266,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # - *Args*  :
   #   - +content+ -> TreebankCiteIdentifier XML as string
   def before_commit(content)
-    TreebankCiteIdentifier.preprocess(content)
+    self.preprocess(content)
   end
   
   # Applies the preprocess XSLT to 'content'
@@ -265,13 +274,18 @@ class TreebankCiteIdentifier < CiteIdentifier
   #   - +content+ -> XML as string
   # - *Returns* :
   #   - modified 'content'
-  def self.preprocess(content)
+  def preprocess(content)
     # autoadjust sentence numbering
-    JRubyXML.apply_xsl_transform(
+    result = JRubyXML.apply_xsl_transform_catch_messages(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite treebankrenumber.xsl})))  
-    # TODO verify against correct schema for format  
+    # TODO verify against correct schema for format
+    if (! result[:messages].nil? && result[:messages].length > 0)
+      self[:transform_messages] = result[:messages]
+    end
+    return result[:content]
   end  
+  
 
   ## method which checks the cite object for an initialization  value
   def is_match?(a_value) 
