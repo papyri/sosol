@@ -326,13 +326,16 @@
   
   function start_body(a_e) {
     var rp = a_e.element();
-    if ($(rp).hasClassName('punc')) {
-      $(rp).next();
-    } else {
-      body_subref_start = rp;
+    // ignore anything except tokens
+    if ($(rp).hasClassName('token')) {
+      if ($(rp).hasClassName('punc')) {
+        $(rp).next();
+      } else {
+        body_subref_start = rp;
+      }
+      
+      toggle_body_highlight(false,['highlighted','selected']);
     }
-    
-    toggle_body_highlight(false,['highlighted','selected']);
   }
   
   function end_body(a_e) {

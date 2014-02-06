@@ -74,19 +74,24 @@
   function select_target_input(a_e) {
     last_target = current_target;
     current_target = a_e.element();
-    toggle_highlight(false,['selected'],[last_target.name]);
+    if (last_target) {
+      toggle_highlight(false,['selected'],[last_target.name]);
+    }
     toggle_highlight(true,['selected'],[current_target.name])
   }
   
   function start_target(a_e) {
     var rp = a_e.element();
-    if ($(rp).hasClassName('punc')) {
-      $(rp).next();
-    } else {
-      subref_start = rp;
+    // ignore anything except tokens
+    if ($(rp).hasClassName('token')) {
+      if ($(rp).hasClassName('punc')) {
+        $(rp).next();
+      } else {
+        subref_start = rp;
+      }
+      
+      toggle_highlight(false,['highlighted','selected']);
     }
-    
-    toggle_highlight(false,['highlighted','selected']);
   }
   
   function end_target(a_e) {
