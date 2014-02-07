@@ -310,32 +310,16 @@ class DDBIdentifier < Identifier
     
     #remove namespace from XML returned from XSugar
     nonx2x.sub!(/ xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/,'')
-      
-    transformed_xml_content = REXML::Document.new(
-      nonx2x)
-      
-    # fetch the original content
-    original_xml_content = REXML::Document.new(self.xml_content)
     
-    #deletes div type=edition in current XML which includes <div> with subtype=brokeLeiden if it exists, 
-    #all <div> type=textpart and/or <ab> tags
-    #the complete <div> type=edition will be replaced with new transformed_xml_content
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]')
-    
-    #delete \n left after delete div edition so not keep adding newlines to XML content
-    original_xml_content.delete_element('/TEI/text/body/node()[last()]')
-    
-    modified_abs = transformed_xml_content.elements['/']
-    
-    original_edition =  original_xml_content.elements['/TEI/text/body']
-    
-    # put new div type=edition content in
-    original_edition.add_text modified_abs[0]
-    
-    # write back to a string and return it to calling 
-    modified_xml_content = ''
-    original_xml_content.write(modified_xml_content)
-    return modified_xml_content
+    rewritten_xml =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.xml_content),
+        JRubyXML.stream_from_file(File.join(Rails.root,
+          %w{data xslt ddb update_edition.xsl})),
+        :new_edition => nonx2x.force_encoding("UTF-8")
+      )
+
+    return rewritten_xml
   end
   
   # - Retrieves the current version of XML for this DDBIdentifier
