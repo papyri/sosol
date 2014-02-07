@@ -5,6 +5,8 @@
     exclude-result-prefixes="xs"
     version="1.0">
     
+    <xsl:output method="xml" xml:space="default"/>
+    
     <xsl:template match="/">
         <xsl:apply-templates select="//tei|//TEI|//tei:tei|//tei:TEI"/>
     </xsl:template>
@@ -318,9 +320,7 @@
     </xsl:template>
     
     <xsl:template match="tei:milestone|milestone">
-        <div class="tei_milestone">
-            <xsl:attribute name="class">tei_milestone <xsl:value-of select="@unit"/></xsl:attribute><xsl:value-of select="@n"/>
-        </div>
+        <span class="tei_milestone"><xsl:attribute name="class">tei_milestone <xsl:value-of select="@unit"/></xsl:attribute><xsl:value-of select="@n"/></span>
     </xsl:template>
     
     <xsl:template match="tei:pb|pb">
