@@ -330,27 +330,16 @@ class DDBIdentifier < Identifier
   #   - +brokeleiden+ -> the Leiden+ that will not transform to save in the XML
   #   - +commit_comment+ -> the comment from the user to attach to this repository commit and put 
   def save_broken_leiden_plus_to_xml(brokeleiden, commit_comment = '')
-    # fetch the original content
-    original_xml_content = REXML::Document.new(self.xml_content)
-    #deletes XML with broke Leiden+ if it exists already so can add with updated data
-    original_xml_content.delete_element('/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]')
-    #set in XML where to add new div tag to contain broken Leiden+ and add it
-    basepath = '/TEI/text/body/div[@type = "edition"]'
-    add_node_here = REXML::XPath.first(original_xml_content, basepath)
-    add_node_here.add_element 'div', {'type'=>'edition', 'subtype'=>'brokeleiden'}
-    #set in XML where to add new note tag to contain broken Leiden+ and add it
-    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]'
-    add_node_here = REXML::XPath.first(original_xml_content, basepath)
-    add_node_here.add_element "note"
-    #set in XML where to add broken Leiden+ and add it
-    basepath = '/TEI/text/body/div[@type = "edition"]/div[@subtype = "brokeleiden"]/note'
-    add_node_here = REXML::XPath.first(original_xml_content, basepath)
-    brokeleiden = BROKE_LEIDEN_MESSAGE + brokeleiden
-    add_node_here.add_text brokeleiden
-    
-    # write back to a string
-    modified_xml_content = ''
-    original_xml_content.write(modified_xml_content)
+    modified_xml_content =
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(self.xml_content),
+        JRubyXML.stream_from_file(File.join(Rails.root,
+          %w{data xslt ddb update_brokeleiden.xsl})),
+        :new_brokeleiden => brokeleiden.force_encoding("UTF-8"),
+        :brokeleiden_message => BROKE_LEIDEN_MESSAGE
+      )
+
+    Rails.logger.info(modified_xml_content)
     
     # commit xml to repo
     self.set_xml_content(modified_xml_content, :comment => commit_comment)
