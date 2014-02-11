@@ -5,9 +5,6 @@ class User < ActiveRecord::Base
   
   has_many :user_identifiers, :dependent => :destroy
 
-  #worksA has_and_belongs_to_many :community_memberships, :class_name => "Community", :foreign_key => "user_id",    :join_table => "communities_members"
-  #worksA has_and_belongs_to_many :community_admins,  :class_name => "Community", :foreign_key => "user_id", :join_table => "communities_admins"
- 
   has_many :communities_members
   has_many :community_memberships, :class_name => "Community", :foreign_key => "user_id", :through => :communities_members, :source => :user
   has_many :communities_admins
