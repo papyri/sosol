@@ -358,56 +358,6 @@ class Publication < ActiveRecord::Base
   def  is_community_publication?
     return (self.community_id != nil)  &&  (self.community_id != 0)      
   end
-   
-  #nolonger in use 2-22-2010
-=begin
-  def submit_identifier(identifier)
-    
-    @recent_submit_sha = "";
-    
-    #find correct board    
-    
-    boards = Board.find(:all)
-    boards.each do |board|
-      if board.identifier_classes && board.identifier_classes.include?(identifier.class.to_s)
-        begin
-          submit_comment = Comment.find(:last, :conditions => { :publication_id => identifier.publication.id, :reason => "submit" } )
-          if submit_comment && submit_comment.comment
-            identifier.set_xml_content(
-              identifier.add_change_desc(submit_comment.comment),
-              :comment => '')
-          else
-            identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
-          end
-        rescue ActiveRecord::RecordNotFound
-          identifier.set_xml_content(identifier.add_change_desc(), :comment => '')
-        end
-        
-        boards_copy = copy_to_owner(board)
-        boards_copy.status = "voting"
-        boards_copy.save!
-        
-        identifier.status = "submitted"
-        self.change_status("submitted")
-        
-        board.send_status_emails("submitted", self)
-       
-        # self.title = self.creator.name + "/" + self.title
-        # self.branch = title_to_ref(self.title)
-        # 
-        # self.owner.repository.copy_branch_from_repo( duplicate.branch, self.branch, duplicate.owner.repository )
-        #(from_branch, to_branch, from_repo)
-        self.save!
-        identifier.save!
-        
-        #make the most recent sha for the identifier available...is this the one we want?
-        @recent_submit_sha = identifier.get_recent_commit_sha
-        return true
-      end
-    end
-    return false #no board exists for this identifier class
-  end
-=end
  
   #Simply pointer to submit_to_next_board method.
   def submit
