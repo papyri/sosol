@@ -248,7 +248,7 @@ class DocosController < ApplicationController
             xml2conv = params[:doco][:xml]
             leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
           end
-          params[:doco][:leiden] = leidenback
+          params[:doco][:leiden] = leidenback.force_encoding('UTF-8')
         rescue RXSugar::XMLParseError => parse_error
           @doco.leiden = params[:doco][:leiden]
           @doco.xml = params[:doco][:xml]
@@ -276,7 +276,7 @@ class DocosController < ApplicationController
           else #translation
             xmlback = TranslationLeiden.translation_leiden_to_xml(leiden2conv)
           end
-          params[:doco][:xml] = "#{xmlback}"
+          params[:doco][:xml] = xmlback.join('').force_encoding('UTF-8')
         rescue RXSugar::NonXMLParseError => parse_error
           @doco.xml = params[:doco][:xml]
           @doco.leiden = params[:doco][:leiden]
