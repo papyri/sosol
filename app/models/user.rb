@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   has_many :communities_members
   has_many :community_memberships, :class_name => "Community", :foreign_key => "user_id", :through => :communities_members, :source => :user
   has_many :communities_admins
-  has_many :community_admins,  :class_name => "Community", :foreign_key => "user_id", :through => :communities_admins
+  has_many :community_admins,  :class_name => "Community", :foreign_key => "user_id", :through => :communities_admins, :source => :user
 
   has_many :boards_users
   has_many :boards, :through => :boards_users
