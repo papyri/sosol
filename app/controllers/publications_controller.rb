@@ -481,7 +481,7 @@ class PublicationsController < ApplicationController
       return
     end
     @is_editor_view = true 
-    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.title.split("/").last)
+    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.origin.title)
 
     @show_submit = allow_submit?
     
