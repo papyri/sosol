@@ -4,9 +4,9 @@
   %head
     %style{ :type => "text/css" }
       :sass
-        !intro_color = #8EDEFA
-        !sosol_color = #EAEAEA
-        !parse_color = #66FF66
+        $intro_color: #8EDEFA
+        $sosol_color: #EAEAEA
+        $parse_color: #66FF66
         =element
           margin: .25em
           padding: .5em
@@ -15,14 +15,14 @@
         .intro
           +element
           font-size: large
-          background-color = !intro_color
+          background-color: $intro_color
         .category
           +element
           text-align: left
-          background-color = !sosol_color
+          background-color: $sosol_color
         .category_display
           font-size: large
-          background-color = !sosol_color
+          background-color: $sosol_color
         .toggle_button
           a
             text-decoration: underline
