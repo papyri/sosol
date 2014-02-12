@@ -51,16 +51,18 @@
       }
      });
   }
+  
   function construct_hgv_sparql_query(volume_reference) {
     var query = "prefix dcterms: <http://purl.org/dc/terms/> "
       + "construct {<http://papyri.info/hgv/" + volume_reference + "> dcterms:hasPart ?b} "
       + "from <http://papyri.info/graph> "
       + "where { <http://papyri.info/hgv/" + volume_reference + "> dcterms:hasPart ?a . "
       + "        ?a dcterms:identifier ?b "
-      + "        filter regex(str(?b), "^http://papyri.info")}";
+      + "        filter regex(str(?b), \"^http://papyri.info\")}";
     return get_proxy_prefix() + "#{request.domain == 'papyri.info' ? '/sparql?query=' : '/sparql/'}" +  
        + encodeURIComponent(query) + "#{request.domain == 'papyri.info' ? '&output=json' : ''}";
   }
+
   function get_allowed_values(select_element, volume_number, request_url, disable_volume) {
     reset_selector(select_element);
     toggle_availability();
