@@ -22,3 +22,13 @@
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  
+  //------------------------------------------------------------
+  //  Experiments with ACE editor
+  //------------------------------------------------------------
+  jQuery( document ).ready( function() {
+    //------------------------------------------------------------
+    //  Copy content into a div
+    //------------------------------------------------------------
+    jQuery(".alpheios-enabled-text").texAce({lang:'xml',theme_selector:true});
+  });

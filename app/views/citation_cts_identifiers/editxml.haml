@@ -1,145 +1,13 @@
 //------------------------------------------------------------
 //  CSS
 //------------------------------------------------------------
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/third_party/menumucil/css/menumucil.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/src/css/imgbit.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/src/css/imgspect.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/src/css/texAce.css"}
-
-
-:css
-  body {
-    background-color: #f9f9f9;
-  }
-  .edit_citation_cts_identifier #ict_tool_wrapper {
-    padding: 0;
-    margin: 10px 0 40px 0;
-    width: 100%;
-    height: auto
-  }
-  .site {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  div.nav {
-    min-height: 0;
-  }
-  #logo {
-    padding: 0;
-    margin: 10px 0 0 10px;
-  }
-  #logo p {
-    font-size: 10px;
-    color: #AAA;
-  }
-  #logo img {
-    width: 100px;
-  }
-  #user_box {
-    margin-top: 10px;
-    margin-right: 10px;
-  }
-  #user_box .name {
-    color: #999;
-  }
-  #user_box .links {
-    color: #CCC;
-  }
-  #edit textarea#output,
-  .edit_citation_cts_identifier #citation_cts_identifier_xml_content {
-    box-sizing: border-box;
-    width: 100%;
-    margin-bottom: 50px;
-  }
-  #editors {
-    padding: 0 20px;
-  }
-  #edit_header {
-    margin-top: 25px;
-    padding: 10px;
-  }
-  #edit_header h1,
-  #edit_header h3 {
-    width: 100%;
-    text-align: center;
-    font-weight: normal;
-    font-size: 16px;
-    color: #AAA;
-  }
-  #edit_header h3 {
-    display: none;
-  }
-  #edit_header h1 a {
-    display: inline-block;
-    font-size: 18px;
-    text-decoration: none;
-  }
-  #edit_header h1 a:hover {
-    text-decoration: underline;
-  }
-  #imgspectWarning {
-    background-color: rgba(255,255,255,0.95);
-    border: solid 2px #AAA;
-    padding: 5px;
-    padding-bottom: 20px;
-  }
-  #imgspectWarning p {
-    text-align:center;
-    padding: 5px 20px;
-  }
-  #imgspectWarning p:last-of-type {
-    margin-bottom: 40px;
-  }
-  #imgspectWarning #imgspectButtons {
-    text-align: center;
-  }
-  #imgspectWarning a {
-    text-decoration: none;
-    margin: 10px;
-  }
-  #imgspectWarning a:hover {
-    text-decoration: underline;
-  }
-  #ict_tool {
-    -webkit-transition: background-color 250ms linear;
-    -moz-transition: background-color 250ms linear;
-    -o-transition: background-color 250ms linear;
-    -ms-transition: background-color 250ms linear;
-    transition: background-color 250ms linear;
-    margin: 0;
-    background-color: #DDD;
-    padding: 5px;
-  }
-  #ict_tool.imgspectLoaded {
-    background-color: #333;
-  }
-  #ict_tool .imgUrn img {
-    margin: 5px;
-    border: solid 1px #666;
-  }
-  #ict_tool .imgUrn.selected img {
-    outline: 1px solid #FFF
-  }
-  #ict_tool #imgspectHint {
-    margin-left: 5px;
-    font-size: 12px;
-    color: #666;
-  }
-  #edit form input.save {
-    margin-bottom: 40px;
-  }
-  #edit form textarea.caption {
-    margin-bottom: 0;
-  }
-  #aceMask {
-    margin-bottom: 50px
-  }
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
     
 //------------------------------------------------------------
 //  Content
 //------------------------------------------------------------
-#main
+#main.full
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
@@ -161,18 +29,11 @@
     
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
 %script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
-= javascript_include_tag "imgspect/src/js/imgspect"
-= javascript_include_tag "imgspect/src/js/imgbit"
-= javascript_include_tag "imgspect/third_party/jslib/src/js/jQueryPlus"
-= javascript_include_tag "imgspect/third_party/jslib/src/js/StringExt"
-= javascript_include_tag "imgspect/third_party/jslib/src/js/TimeStamp"
-= javascript_include_tag "imgspect/third_party/jslib/src/js/Culuh"
-= javascript_include_tag "imgspect/third_party/menumucil/menumucil"
-= javascript_include_tag "imgspect/third_party/plopup/src/js/plopup"
-= javascript_include_tag "imgspect/src/js/PerseidsBridge"
+= javascript_include_tag "imgspect/imgspect.min"
 = javascript_include_tag "texAce/src/js/texAce"
 = javascript_include_tag "texAce/third_party/ace-builds/src-noconflict/ace"
 = javascript_include_tag "texAce/third_party/jquery-cookie/jquery.cookie"
+
 
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");

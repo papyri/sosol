@@ -89,8 +89,8 @@
       position: 'absolute', 
       zIndex: '9999'}
     );
-    var left_pos = board_menu.offset().left + board_menu.width() - board_list.width() ;
-    var top_pos = board_menu.offset().top + board_menu.width() ;
+    var left_pos = board_menu.offset().left + board_menu.outerWidth() - board_list.outerWidth();
+    var top_pos = board_menu.offset().top + board_menu.outerHeight();
     board_list.css('top', top_pos + 'px' );
     board_list.css('left', left_pos + 'px' );
   }
