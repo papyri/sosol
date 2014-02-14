@@ -9,6 +9,9 @@ PerseidsTools.LDResults.imgspect_link = function( _elem, _results ) {
 	var url = jQuery("#Cite_Image_Service").attr("data-content");
 	if (url) {
 		jQuery( _elem ).append( '<div id="imgspectHint">Click an image to inspect.</div>' );
+		if ( _results.length == 0 ) {
+			jQuery( '.perseidsld_query_obj_simple' ).remove();
+		}
 		for ( var i=0, ii=_results.length; i<ii; i++ ) {
 			var imgUrn = '<a id="imgUrn_'+i+'" class="imgUrn" href="' + url + _results[i] + '&w=3000"><img src="'+ url + _results[i] + '&w=100"/></a>';
 			jQuery( _elem ).append( imgUrn );
