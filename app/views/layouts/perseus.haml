@@ -42,7 +42,7 @@
           %p= 'Powered by Son of Suda Online'
         -#= render(:partial => 'master_articles/master_article_box')
         -#= render(:partial => 'user/admin_box')
-        = render(:partial => 'user/user_box')
+        = render(:partial => 'user/perseids_user_box')
     -if (@current_user && controller.action_name == 'user_dashboard')
       #cts_selector 
         = render(:partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications' })

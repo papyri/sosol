@@ -187,8 +187,10 @@ class UserController < ApplicationController
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     # TODO enable more fine grained control of events that are shown
-    # THIS shouldn't be merged back into master as is    
-    #@show_events = true
+    # THIS shouldn't be merged back into master as is
+    if (@current_user.admin || @current_user.developer)    
+      @show_events = true
+    end
   end
   
   #Finds publications created by the current user and are part of the specified community.

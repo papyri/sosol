@@ -125,18 +125,23 @@ class CommentaryCiteIdentifier < CiteIdentifier
     #  rules per language
     #  default for base class is to allow any word length so 
     #  will just return the original content
-    max = Cite::CiteLib.get_collection_field_max(urn) 
-    passed = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-        %w{data xslt cite markdown_field_verify.xsl})),
-        :e_max => max)
-    if (passed == 'true')
-      return content  
-    elsif (passed == 'error')
-      raise Cite::CiteError.new("Unable to process commentary text.")
-    else 
-      raise Cite::CiteError.new("Commentary text has #{passed} words, which exceeds the maximum of #{max}.")
+    max = Cite::CiteLib.get_collection_field_max(urn)
+    # -1 or undefined means no limit
+    if (max.nil? || max < 0) 
+      return content
+    else
+      passed = JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt cite markdown_field_verify.xsl})),
+          :e_max => max)
+      if (passed == 'true')
+        return content  
+      elsif (passed == 'error')
+        raise Cite::CiteError.new("Unable to process commentary text.")
+      else 
+        raise Cite::CiteError.new("Commentary text has #{passed} words, which exceeds the maximum of #{max}.")
+     end
    end
   end
   

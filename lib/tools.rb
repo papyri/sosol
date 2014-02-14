@@ -17,7 +17,7 @@ module Tools
           @config = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config tools.yml})).read).result)[Rails.env]
         end
         if (as_json)
-         return @config[a_tool].to_json
+          return @config[a_tool].to_json
         else
           return @config[a_tool]  
         end

@@ -294,4 +294,8 @@ class CTSIdentifier < Identifier
     File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_annotate.xsl}))
   end
   
+  # default xslt for retrieving the subref of a CTS passage
+  def passage_subref_xslt_file
+    File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+  end
 end

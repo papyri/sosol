@@ -24,9 +24,7 @@ class CiteIdentifier < Identifier
   # and upping it by one.
   ##
   def self.new_from_template(a_publication,a_urn,a_init_value)
-    Rails.logger.info("new from template for #{a_urn}")
     temp_id = self.new(:name => self.next_object_identifier(a_urn))
-    Rails.logger.info("adding identifier to pub #{temp_id}")
     temp_id.publication = a_publication 
     if (! temp_id.collection_exists?)
       raise "Unregistered CITE Collection for #{a_urn}"
@@ -140,7 +138,7 @@ class CiteIdentifier < Identifier
   end
   
   def collection
-    return self.to_components[0]
+    Cite::CiteLib.get_collection_urn(self.urn_attribute)
   end
    
   def related_inventory 
@@ -153,7 +151,6 @@ class CiteIdentifier < Identifier
     # [0] id namespace  - e.g. cite
     # [1] collection namespace = e.g. perseus
     # [2] collection.object.version - e.g. testColl.1.1 
-    Rails.logger.info("In to_urn_components: " + temp_components.inspect)
     urn_components = []
     urn_components << temp_components[1]
     urn_components << temp_components[2]
@@ -186,7 +183,6 @@ class CiteIdentifier < Identifier
   def to_path
     path_components = [ self.class::PATH_PREFIX ]
     temp_components = self.to_components
-    Rails.logger.info("PATH:" + temp_components.inspect)
      # should give us, e.g.
     # [0] id namespace - e.g. cite
     # [1] collection namespace = e.g. perseus
@@ -241,7 +237,6 @@ class CiteIdentifier < Identifier
   
   def self.path_for_object_urn(a_urn)
     collection_path = path_for_collection(a_urn)
-    Rails.logger.info("Path for collection of #{a_urn} = #{collection_path}")
     citeurn = Cite::CiteLib.urn_obj(a_urn)
     path = collection_path + citeurn.getObjectId() + "."
   end

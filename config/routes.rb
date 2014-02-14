@@ -58,6 +58,7 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'archive_all',
     :conditions => { :method => :post }
+    
 
   map.resources :publications, :collection => { :advanced_create => :get }
   map.resources :publications, :member => {  :edit_adjacent => :get, :edit_text => :get, :edit_meta => :get, :edit_apis => :get, :edit_biblio => :get, :edit_trans => :get, :show => :get, :create => :post, :create_from_templates => :post, :create_from_biblio_template => :post, :create_from_selector => :post, :submit => :post, :finalize_review => :get, :finalize => :post, :become_finalizer => :post }
@@ -76,7 +77,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :cts_inventory_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get,:rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete }
     publication.resources :oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :rename_review => :get, :rename => :put}
     publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :annotate_xslt => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :put}
-    publication.resources :commentary_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put}
+    publication.resources :commentary_cite_identifiers, :member => { :create => :get, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put}
     publication.resources :treebank_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
 
 

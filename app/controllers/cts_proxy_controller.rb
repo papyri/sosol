@@ -22,23 +22,35 @@ class CtsProxyController < ApplicationController
     render :text => response
   end
   
-  def getpassage
-    # subrefs not supported for getpassage for now
-    urn_no_subref = params[:urn].sub(/[\#@][^\#@]+$/,'')
+  def getpassage 
+    if (CTS::CTSLib.get_subref(params[:urn]))
+      redirect_to :action => :getsubref, :id => params[:id], :urn => params[:urn]
+      return
+    end
+    
     if (params[:id] =~ /^\d+$/)
       documentIdentifier = Identifier.find(params[:id].to_s)
       inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
       if (CTS::CTSLib.getExternalCTSHash().has_key?(inventory_code))
-        response = CTS::CTSLib.proxyGetPassage(inventory_code,urn_no_subref)
+        response = CTS::CTSLib.proxyGetPassage(inventory_code,params[:urn])
       else
         inventory = documentIdentifier.related_inventory.xml_content
-        uuid = documentIdentifier.publication.id.to_s + urn_no_subref.gsub(':','_') + '_proxyreq'
-        response = CTS::CTSLib.getPassageFromRepo(inventory,documentIdentifier.content,urn_no_subref,uuid)
+        uuid = documentIdentifier.publication.id.to_s + params[:urn].gsub(':','_') + '_proxyreq'
+        response = CTS::CTSLib.getPassageFromRepo(inventory,documentIdentifier.content,params[:urn],uuid)
      end
     else
-      response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,urn_no_subref)
+      response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,params[:urn])
     end
-    render :xml => response
+     render :xml => response
+  end
+  
+  def getsubref
+    begin
+      render :text =>CTS::CTSLib.get_passage_subref(params[:id],params[:urn])
+    rescue Exception => e
+        Rails.logger.error(e)
+       render :text => e.to_s, :status => 500
+    end
   end
     
   def getcapabilities
