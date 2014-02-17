@@ -49,7 +49,7 @@ module NumbersRDF
       
       # Converts a pure SPARQL query string into the appropriate URL path for our use. 
       def sparql_query_to_path(sparql_query, format = '')
-        path = "/sparql/?query=" + URI.escape(sparql_query)
+        path = "/sparql?query=" + URI.escape(sparql_query)
         if format != ''
           path += "&output=#{format}"
         end
