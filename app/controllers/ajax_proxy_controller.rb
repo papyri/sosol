@@ -1,22 +1,12 @@
 class AjaxProxyController < ApplicationController
   def proxy
     response = NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(params[:id].to_s, 'json')
-    if response.code != '200'
-      @response = nil
-    else
-      @response = response.body.html_safe
-    end
+    render :text => response.body, :status => response.code
   end
   
   def sparql
     response = NumbersRDF::NumbersHelper.sparql_query_to_numbers_server_response(params[:query].to_s, 'json')
-    if response.code != '200'
-      @response = nil
-    else
-      @response = response.body.html_safe
-    end
-    
-    render :template => 'ajax_proxy/proxy'
+    render :text => response.body, :status => response.code
   end
   
   def hgvnum
