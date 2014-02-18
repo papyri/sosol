@@ -84,12 +84,10 @@
     else if(!(($F('IdentifierClass') == 'HGVIdentifier') && (disable_volume == true))) {
       request_url = request_url + "#{request.domain == 'papyri.info' ? '/json' : ''}";
     }
-    console.log(request_url);
     new Ajax.Request(request_url, {
       method: 'get',
       onSuccess: function(response) {
         var json = response.responseText.evalJSON();
-        console.log(json);
         
         if(disable_volume === undefined) {
           disable_volume = false;
@@ -97,7 +95,12 @@
         var is_hgv_identifier = false;
         var subject;
         if (volume_number) {
-          subject = get_collection_uri() + ";" + volume_number;
+          if($F('IdentifierClass') == 'HGVIdentifier') {
+            subject = get_collection_uri() + "_" + volume_number;
+          }
+          else {
+            subject = get_collection_uri() + ";" + volume_number;
+          }
         } else {
           subject = get_collection_uri();
         }
