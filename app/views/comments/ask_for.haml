@@ -7,8 +7,9 @@
   = form.hidden_field :publication_id
   = form.hidden_field :identifier_id 
   = form.hidden_field :reason
-  = form.text_field :comment
+  = form.text_area :comment
   = form.hidden_field :reason
+  %br
   = form.submit "Add Comment", :id => "submit_button"
 
 - if @comments.length < 1
