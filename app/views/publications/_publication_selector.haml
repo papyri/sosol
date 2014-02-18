@@ -61,8 +61,7 @@
       + "        filter regex(str(?b), \"^http://papyri.info\")}";
     query = encodeURIComponent(query);
     var full_query = get_proxy_prefix() + 
-      String("#{request.domain == 'papyri.info' ? '/sparql?query=' : '/sparql/'}").concat(query) + 
-      String("#{request.domain == 'papyri.info' ? '&output=json' : ''}");
+      String("#{request.domain == 'papyri.info' ? '/sparql?query=' : '/sparql/'}").concat(query);
     return full_query;
   }
 
@@ -85,10 +84,12 @@
     else if(!(($F('IdentifierClass') == 'HGVIdentifier') && (disable_volume == true))) {
       request_url = request_url + "#{request.domain == 'papyri.info' ? '/json' : ''}";
     }
+    console.log(request_url);
     new Ajax.Request(request_url, {
       method: 'get',
       onSuccess: function(response) {
         var json = response.responseText.evalJSON();
+        console.log(json);
         
         if(disable_volume === undefined) {
           disable_volume = false;

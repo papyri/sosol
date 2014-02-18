@@ -48,11 +48,8 @@ module NumbersRDF
       end
       
       # Converts a pure SPARQL query string into the appropriate URL path for our use. 
-      def sparql_query_to_path(sparql_query, format = '')
+      def sparql_query_to_path(sparql_query)
         path = "/sparql?query=" + URI.escape(sparql_query)
-        if format != ''
-          path += "&output=#{format}"
-        end
         return path
       end
       
@@ -66,10 +63,11 @@ module NumbersRDF
       end
 
       # Gets the HTTP response for a given URL path.
-      def path_to_numbers_server_response(path)
+      def path_to_numbers_server_response(path, format = 'rdf')
         begin
-          return Net::HTTP.get_response(NUMBERS_SERVER_DOMAIN, path,
-                               NUMBERS_SERVER_PORT)
+          http = Net::HTTP.new(NUMBERS_SERVER_DOMAIN, NUMBERS_SERVER_PORT)
+          headers = (format == 'json') ? {'Accept' => 'application/rdf+json'} : {}
+          return http.get(path, headers)
         rescue ::Timeout::Error => e
           raise NumbersRDF::Timeout, e.message, caller
         end
@@ -79,13 +77,13 @@ module NumbersRDF
       def identifier_to_numbers_server_response(identifier, decorator = 'rdf')
         path = identifier_to_path(identifier, decorator)
         #puts "Path: #{path}"
-        response = path_to_numbers_server_response(path)
+        response = path_to_numbers_server_response(path, decorator)
       end
      
       # Gets the HTTP response for a given SPARQL query. 
       def sparql_query_to_numbers_server_response(sparql_query, format = '')
-        path = sparql_query_to_path(sparql_query, format)
-        response = path_to_numbers_server_response(path)
+        path = sparql_query_to_path(sparql_query)
+        response = path_to_numbers_server_response(path, format)
       end
      
       # Applies XPath to an HTTP response (assumed to be XML). 
