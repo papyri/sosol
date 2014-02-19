@@ -207,7 +207,7 @@
     toggle_highlight(true,['highlighted','selected']);
   }
   
-  function check_input() {
+  function merge_targets() {
     var all_targets = $$('.target_uri');
     var valid_targets = [];
     var invalid_targets = [];
@@ -225,14 +225,48 @@
         }
       }
     );
-    var valid_body = ( $('body_uri').getValue().match(/^https?:/) != null);
+    if (invalid_targets.length == 0) {
+      return valid_targets;
+    } else {
+      // returning null indicates there were invalid targets
+      return null;
+    }
+   
+  }
+  
+  function submit_commentary_create() {
+    var valid_targets = merge_targets();
     var messages = [];
-    if (! valid_targets || valid_targets.length == 0) {
+    if (null == valid_targets) {
+       messages.push("You have one more more invalid annotation target uris specified.");
+    } else if ( valid_targets.length == 0) {
       messages.push("You need to specify at least one valid uri as an annotation target.");
     }
-    if (invalid_targets && invalid_targets.length > 0) {
-      messages.push("You have one more more invalid annotation target uris specified.");
+    // TODO we need also to check that the target ranges don't overlap
+    if (messages.length > 0) {
+      alert(messages.join("\n"));
+      return false;
+    } else {
+      jQuery("#init_value").remove();
+      valid_targets.each(
+        function(a_elem) {
+          jQuery('#commentary_form').append('<input name="init_value[]" type="hidden" value="' + $(a_elem).getValue() + '""/>');
+        });
+      $('commentary_form').submit();
+      return false;
     }
+  }
+  
+  function check_input() {
+    var messages = [];
+    var valid_targets = merge_targets();
+    if (null == valid_targets) {
+       messages.push("You have one more more invalid annotation target uris specified.");
+    } else if ( valid_targets.length == 0) {
+      messages.push("You need to specify at least one valid uri as an annotation target.");
+    }
+    var valid_body = ( $('body_uri').getValue().match(/^https?:/) != null);
+    
     if (! valid_body) {
       messages.push("You need to specify a valid uri as the annotation body.");
     }
@@ -318,16 +352,17 @@
               %button{:onclick => 'return add_target();'}Add   
           = label_tag 'Target Passage:'
           .target{:id => 'target_content' }
-            .loading Loading...
+            .loading Loading...                     
           #annotation_motivation_input
             = select_tag("annotation_motivation", options_for_select({'Has Translation' => 'oa:linking_translation','Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
         #annotation_body_input
           .annotation_header Annotation Resource      
           = label_tag 'URI for Resource:'
           = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
+          #annotation_commentary_link
+            = link_to('Click to create Commentary on annotation target(s)', '', html_options = {:id=> 'create_commentary_link', :onclick => 'return submit_commentary_create();'})
           = render(:partial => 'cite_annotation_selector')
           = render(:partial => 'cts_annotation_selector')
-    
         #annotation_form_submit
           -if @identifier[:action] == 'update'
             = button_to "Save"
@@ -338,3 +373,6 @@
               = button_to "Delete"  
           -else
             = button_to "Save"
+      - form_tag url_for(options={:action => 'create',:controller => 'commentary_cite_identifiers'}), {:id => 'commentary_form'} do
+        = hidden_field_tag 'publication_id',@publication.id
+        = hidden_field_tag 'init_value[]',nil

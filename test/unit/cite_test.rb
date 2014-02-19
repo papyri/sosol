@@ -29,6 +29,11 @@ class CiteTest < ActiveSupport::TestCase
     max2 = Cite::CiteLib.get_collection_field_max('urn:cite:perseus:testcollun.1.1')
     assert max2 == -1
   end
+  
+  should "test default collection" do
+    coll = Cite::CiteLib.get_default_collection_urn()
+    assert coll == 'urn:cite:perseus:comm'
+  end
 
  end
    

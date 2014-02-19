@@ -1,0 +1,33 @@
+- if @current_user
+  #user_box
+    .name= h @current_user.name
+    .links
+      = link_to 'home', dashboard_url
+      \|
+      = link_to 'account', account_url
+      \|
+      = link_to 'about', 'http://sites.tufts.edu/perseids', :onclick => "window.open(this.href);return false;"
+      -# can uncomment lines below to put links directly to text and translation help pages
+      -#= link_to 'Text Leiden+ Help', documentation_url(:docotype => "text"), :onclick => "window.open(this.href);return false;"
+      -#\|
+      -#= link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation"), :onclick => "window.open(this.href);return false;"
+      \|
+      = link_to 'sign out', signout_url
+      %p
+      - if @current_user.admin 
+        = link_to 'Boards', boards_url
+        \|
+        = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
+        \|
+        = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+        \|
+        = link_to 'Email Users', sendmsg_url
+        \|
+      - if @current_user.developer
+        = link_to 'developer', developer_url
+      - if @current_user.is_community_master_admin
+        = link_to "Community", :controller => "communities"
+        
+- elsif (controller.action_name != 'consume' && controller.action_name != 'signin')
+  #signin
+    = link_to 'Sign In', signin_url

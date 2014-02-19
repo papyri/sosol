@@ -244,7 +244,8 @@
     }
     var uri_match = new RegExp("^" + uri + '@');
     var old_uri_value = $('body_uri').value;
-    if (old_uri_value.match(uri_match) == null) {
+    // hack to prevent replacement of uri during board review
+    if (old_uri_value.match(uri_match) == null && "#{(@identifier.mutable?).to_s}" == 'true') {
       $('body_uri').value = uri;
     }
     get_body_passage();
@@ -309,12 +310,19 @@
               var xsltProcessor = new XSLTProcessor();
               xsltProcessor.importStylesheet(a_xsl);
               var content = xsltProcessor.transformToDocument(a_data);
-              set_body_content(jQuery("div",content).get(0).innerHTML);
+              if (jQuery("div",content).length > 0) {
+                set_body_content(jQuery("div",content).get(0).innerHTML);
+              } else {
+                set_body_content('<div class="error">Requested citation not found.</div>');
+              }
             }
-          ).fail(function(req,status,err){alert("can't load xslt from " + data_xslt + ":" + err)});          
+          ).fail(
+            function(req,status,err){
+               set_body_content('<div class="error">Error transforming requested citation.</div>');
+            }
+          );          
         } else {
-          content = a_data;
-          set_target_content(content);
+          set_body_content(a_data);
         }
       }).fail(
         function(req,status,err) {

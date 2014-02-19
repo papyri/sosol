@@ -94,7 +94,12 @@ module Cite
         end
       end
       
-      # lookup the collection in the Inventor
+      def get_collection_urn(a_urn)
+        urnObj = urn_obj(a_urn)
+        urnObj.getNs() + ":" + urnObj.getCollection()
+      end
+      
+      # lookup the collection in the Inventory
       def get_collection(a_urn)
         if (is_collection_urn?(a_urn))
           a_urn + a_urn + ".0.0"
@@ -103,8 +108,21 @@ module Cite
         name = urnObj.getCollection()
         ns = urnObj.getNs()
         xpath = "//cite:citeCollection[@name='#{name}' and cite:namespaceMapping[@abbr='#{ns}']]"
-        Rails.logger.info("Lookup collection #{xpath}")
         return REXML::XPath.first(inventory(),xpath,{'cite' => NS_CITE})
+      end
+      
+      # lookup the default collection in the Inventory
+      def get_default_collection_urn()
+        xpath = "//cite:citeCollection[@x-perseidsdefault='true']"
+        coll = REXML::XPath.first(inventory(),xpath,{'cite' => NS_CITE})
+        if (coll.nil?)
+          return nil
+        else
+          ns = REXML::XPath.first(coll,"cite:namespaceMapping",{'cite' => NS_CITE})
+          ns.attributes['abbr']
+          "urn:cite:#{ns.attributes['abbr']}:#{coll.attributes['name']}"
+        end
+        
       end
       
       def inventory

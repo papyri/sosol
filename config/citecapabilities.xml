@@ -35,6 +35,24 @@
                 name="oac"
                 type="string"
                 x-perseidsmax="500"/>
+        </citeCollection>
+         <citeCollection
+            canonicalId="urn"
+            class=""
+            name="pdlcomm"
+            description="Perseus General Commentary Collection"
+            x-perseidsdefault="true">
+            <namespaceMapping
+                abbr="perseus"
+                fullValue="http://data.perseus.org/ns/collections"/>
+            <citeProperty
+                label="Annotation URN"
+                name="urn"
+                type="citeurn"/>
+            <citeProperty
+                label="Annotation"
+                name="oac"
+                type="string"/>
     </citeCollection>
 	    <citeCollection
 	        canonicalId="urn"

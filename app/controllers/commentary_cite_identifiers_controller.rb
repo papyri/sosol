@@ -3,6 +3,51 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update]
 
+  def create
+    @publication = Publication.find(params[:publication_id].to_s)
+    
+    # use the default collection if one wasn't specified
+    collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
+        
+    # support either :init_value or :valid_targets to specify initial targets
+    # latter is for compatibility with prototype cts oac annotation ui
+    valid_targets = params[:valid_targets] || params[:init_value]
+
+    # required params: publication_id, urn, init_value
+    unless (@publication && collection_urn && valid_targets)
+      flash[:error] = "Unable to create commentary item. Missing urn and initial value."
+      redirect_to dashboard_url
+      return
+    end
+    
+    # make sure we have a valid collection 
+    if Cite::CiteLib::get_collection(collection_urn).nil?
+      flash[:error] = "Unable to create commentary item. Unknown collection."
+      redirect_to dashboard_url
+      return
+    end
+
+    conflicts = []
+    for pubid in @publication.identifiers do 
+      ## only allow one commentary item per target and collection
+      if (pubid.kind_of?(CommentaryCiteIdentifier) && 
+          pubid.collection == Cite::CiteLib.get_collection_urn(collection_urn) &&
+          pubid.is_match?(valid_targets))
+        conflicts << pubid
+      end
+    end 
+    
+    if (conflicts.length > 0) 
+      flash[:notice] = "You already are editing a commentary for this target."
+      redirect_to polymorphic_path([@publication, conflicts[0]],:action => :edit)
+      return
+    end
+    
+    @identifier = CommentaryCiteIdentifier.new_from_template(@publication,collection_urn,valid_targets)
+    redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
+
+  end
+
   def edit
     find_publication_and_identifier
     @identifier[:action] = 'update'  
