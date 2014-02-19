@@ -7,6 +7,9 @@ h1,h2,h3,h4 {
 ul {
   list-style-position: inside;
 }
+li {
+  padding: 5px 0;
+}
 a,
 a:visited {
   color: #4183C4;
