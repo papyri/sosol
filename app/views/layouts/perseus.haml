@@ -51,22 +51,22 @@
   -#  body content
   -#-------------------------------------------------------------
   %body
+
+    -#-------------------------------------------------------------
+    -#  header
+    -#-------------------------------------------------------------
     #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
-          %h1= link_to( image_tag('perseids_notag_150.png'), '/user/user_dashboard' )
+          %h1= link_to( image_tag('perseids_notag_150.png'), root_url )
           %p= 'Powered by Son of Suda Online'
         -#= render(:partial => 'master_articles/master_article_box')
         -#= render(:partial => 'user/admin_box')
-        = render(:partial => 'user/perseids_user_box')
-    -if (@current_user && controller.action_name == 'user_dashboard')
-      #cts_selector 
-        = render(:partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications' })
-    = render :partial => "common/flash_all"
-    
+        
         -#-------------------------------------------------------------
         -#  user dashboard
         -#-------------------------------------------------------------
+        = render(:partial => 'user/perseids_user_box')
         = render :partial => 'common/flash_all'
         %div{ :style => 'clear:both' }
         
@@ -92,5 +92,3 @@
     -#-------------------------------------------------------------
     .content_body
       = yield
-      
-
