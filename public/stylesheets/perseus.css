@@ -589,6 +589,29 @@ li.sentence {
   background: none;
   float: right;
 }
+.comment_partial {
+  background-color: rgba(0,0,0,0);
+}
+.comment_partial .name {
+  color: #999;
+}
+.comment_partial .transcription {
+  width: 98%;
+}
+.comment_partial .transcription.text {
+  float: none;
+  background-color: #EAEAEA;
+  padding: 20px;
+}
+.comment_partial .time {
+  color: #999;
+}
+.comment_partial .reason {
+  font-style: italic;
+}
+.site h3, .site h2 {
+  padding-top: 30px;
+}
 
 /* Page Specific */
 
