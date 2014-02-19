@@ -431,13 +431,14 @@ class Identifier < ActiveRecord::Base
   #   - +input_content+ -> the XML you want this added to, otherwise pulls it from the repository for this identifier
   # - *Returns* :
   #   - string of the XML containing the added 'change' tag
-  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
+  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
     doc = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt common add_change.xsl})),
       :who => ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
-      :comment => text
+      :comment => text,
+      :when => timestamp
     )
     
     return doc.to_s
@@ -460,7 +461,7 @@ class Identifier < ActiveRecord::Base
     
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
       if(parent_classes.include?(c.identifier.class.to_s))
-        change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content )
+        change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content, c.created_at.localtime.xmlschema )
         commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
       end
     end

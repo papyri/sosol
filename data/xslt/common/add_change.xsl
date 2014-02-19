@@ -6,6 +6,7 @@
   
   <xsl:param name="who"/>
   <xsl:param name="comment"/>
+  <xsl:param name="when" select="current-dateTime()"/>
 
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
@@ -26,7 +27,7 @@
       <xsl:copy-of select="@*"/>
       <xsl:element name="change">
         <xsl:attribute name="when">
-          <xsl:value-of select="current-dateTime()"/>
+          <xsl:value-of select="$when"/>
         </xsl:attribute>
         <xsl:attribute name="who">
           <xsl:value-of select="$who"/>
