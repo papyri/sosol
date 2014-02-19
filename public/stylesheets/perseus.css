@@ -345,10 +345,11 @@ div.nav {
 .archive_link a,
 .batch_box a {
   color: #4183C4;
-    text-decoration: none;
+  text-decoration: none;
 }
 .archive_link {
-  margin-bottom: 100px;
+  margin-bottom: 25px;
+  float: none;
 }
 .archive_link a:hover {
   text-decoration: underline;
@@ -378,6 +379,15 @@ li.editor_menu {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 10px;
+}
+.perseids_pilots_link {
+	margin-top: 1em;
+	float: right;
+	margin-right: 50px;
+}
+.cts_selector_hint, .cite_selector_hint, .perseids_pilots_link a {
+	font-size: smaller;
+	font-style: italic;
 }
 #cite_frame {
   width: 100%;
@@ -435,6 +445,17 @@ li.editor_menu {
 .edit_oac_identifier .add_target {
   text-align: right;
 }
+<<<<<<< HEAD
+=======
+
+.edit_oac_identifier #create_commentary_link {
+	color: blue;
+	font-style: italic;
+	font-size: smaller;
+	text-decoration: none;
+}
+
+>>>>>>> perseus_shibboleth
 .hints {
     margin-bottom: .5em;
     margin-left: 1em;
@@ -463,6 +484,7 @@ li.editor_menu {
   font-style: italic;
   font-size: smaller;
 }
+<<<<<<< HEAD
 #to_alpheios_align {
   margin-left:.5em;
 }
@@ -472,6 +494,9 @@ li.editor_menu {
   margin-right: 2em;
   margin-top: -1.5em;
 }
+=======
+
+>>>>>>> perseus_shibboleth
 .edit_oac_identifier #annotation_target_input #title_placeholder {
   min-height: 2em;
 }

@@ -320,7 +320,12 @@
     </xsl:template>
     
     <xsl:template match="tei:milestone|milestone">
-        <span class="tei_milestone"><xsl:attribute name="class">tei_milestone <xsl:value-of select="@unit"/></xsl:attribute><xsl:value-of select="@n"/></span>
+        <xsl:choose>
+            <xsl:when test="@unit='para'"/>
+            <xsl:otherwise>
+                <span class="tei_milestone"><xsl:attribute name="class">tei_milestone <xsl:value-of select="@unit"/></xsl:attribute><xsl:value-of select="@n"/></span>                
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="tei:pb|pb">

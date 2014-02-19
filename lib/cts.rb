@@ -34,6 +34,16 @@ module CTS
         return urn
       end
       
+      # TODO - use CTS Library for this once we are using the right version
+      
+      def get_subref(a_urn)
+        if a_urn =~ /^.*[\#@]([^\#@]+)$/
+          "#{$1}"
+        else 
+          nil 
+        end
+      end
+      
       # get a pub type for a urn from the parent inventory
       def versionTypeForUrn(a_inventory,a_urn)
         urn = urnObj(a_urn)
@@ -443,6 +453,94 @@ module CTS
         
       end
       
+      # a_inv will either be a SoSOL document identifier or the name of the inventory
+      def get_passage_subref(a_inv, a_urn)
+        lang = nil
+        documentIdentifier = nil
+        tokenizer_url = nil   
+        passage_url = nil
+        temp_uuid = nil
+        
+        tokenizer_cfg = Tools::Manager.tool_config('cts_tokenizer',false)
+        
+        if (a_inv =~ /^\d+$/)
+          documentIdentifier = Identifier.find(a_inv)
+          lang = documentIdentifier.lang
+          inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
+        else
+          inventory_code = a_inv
+        end
+        
+        if (lang && tokenizer_cfg[lang]) 
+          tokenizer_url = tokenizer_cfg[lang][:request_url];
+        else
+          tokenizer_url = tokenizer_cfg[:default][:request_url];
+        end
+        
+        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
+        begin
+          if (getExternalCTSHash().has_key?(inventory_code))
+            passage_url = getInventoryUrl(inventory_code) + "&request=GetPassage&urn=#{urn_no_subref}"
+          else
+            proxy_urn = urn_no_subref.gsub(':','_')
+            inventory = documentIdentifier.related_inventory.xml_content
+            temp_uuid = documentIdentifier.publication.id.to_s + proxy_urn + '_proxyreq'
+            # post inventory and get path for file put 
+            uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{temp_uuid}&urn=#{urn_no_subref}")
+            response = Net::HTTP.start(uri.host, uri.port) do |http|
+              headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+              http.send_request('POST',uri.request_uri,inventory,headers)
+            end
+            if (response.code == '200')
+              path = JRubyXML.apply_xsl_transform(
+                JRubyXML.stream_from_string(response.body),
+                JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                %w{data xslt cts extract_reply_text.xsl})))  
+              if (path != '')
+                # inventory put succeeded, now put the document itself  
+                pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+                put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
+                  headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+                  http.send_request('PUT', pathUri.request_uri, documentIdentifier.content,headers)      
+                end # end Net::HTTP.start
+                if (put_response.code == '201')
+                  passage_url = "#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{temp_uuid}&urn=#{urn_no_subref}"
+                else 
+                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
+                end # end test on text Put request
+              else
+                raise "no path for put"
+              end  # end test on path retrieved from CreateCitableText response          
+            else 
+                raise "Inventory post failed #{response.code} #{response.msg} #{response.body}"
+            end # end test on GetCitationText response code
+          end
+          # we should have a passage url to send to the tokenizer now
+          tok_url = URI(tokenizer_url + CGI.escape(passage_url))
+          
+          Rails.logger.info("Request URL #{tok_url.request_uri}")
+          tok_response = Net::HTTP.start(tok_url.host, tok_url.port) do |http|
+            http.send_request('GET',tok_url.request_uri)
+          end
+          if (tok_response.code == '200')
+            xslt_path = documentIdentifier ? 
+              documentIdentifier.passage_subref_xslt_file : 
+              File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+            JRubyXML.apply_xsl_transform(
+              JRubyXML.stream_from_string(tok_response.body),
+              JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})),
+              :e_subref => get_subref(a_urn).to_s)
+          else 
+            raise "Failed request to #{tok_url} : #{tok_response.code} #{tok_response.msg} #{tok_response.body}" 
+          end
+        ensure
+          # cleanup
+          if (temp_uuid)
+            rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{urn_no_subref}&xuuid=#{temp_uuid}") 
+            Net::HTTP.get_response(rurl)
+          end
+        end  
+      end
     end #class
   end #module CTSLib
 end #module CTS
