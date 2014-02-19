@@ -260,21 +260,8 @@ class Publication < ActiveRecord::Base
         Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
       end
 
-      #find the comment text made on submission
-      comment_text = '' #if no comment found, default to nothing. This should never happen.
-      begin
-        submit_comment = Comment.find(:last, :conditions => { :publication_id => self.id, :reason => "submit" } )
-        if submit_comment && submit_comment.comment
-          comment_text = submit_comment.comment
-        end
-      rescue ActiveRecord::RecordNotFound
-        #comment_text already = ''
-        #TODO raise warning? add error logging
-      end
-
-      #update the change_desc of each submitted identifier
+      # submit each submitting_identifier
       boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.set_xml_content(submitting_identifier.add_change_desc(comment_text), :comment => comment_text)
             submitting_identifier.status = "submitted"
             submitting_identifier.save!
 
