@@ -459,9 +459,9 @@ class Identifier < ActiveRecord::Base
     parent_classes = self.parent.owner.identifier_classes
     
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
-      if((c.reason == "vote") && (parent_classes.include?(c.identifier.class.to_s)))
-        change_desc_content = add_change_desc( "Vote - " + c.comment, c.user, change_desc_content )
-        commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
+      if(parent_classes.include?(c.identifier.class.to_s))
+        change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content )
+        commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
       end
     end
     
