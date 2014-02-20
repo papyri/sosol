@@ -234,7 +234,7 @@ class Identifier < ActiveRecord::Base
     end
     
     initial_content = new_identifier.file_template
-    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template')
+    new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     
     return new_identifier
   end
