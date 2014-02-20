@@ -275,7 +275,6 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
     
-    person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
     # TODO: just get the object id instead of reinserting
     inserter = @jgit_repo.newObjectInserter()
     file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
@@ -286,7 +285,7 @@ class Repository
     jgit_tree.load_from_repo(@jgit_repo, branch)
     jgit_tree.add_blob(new_path, file_id.name())
     jgit_tree.del(original_path)
-    jgit_tree.commit(comment, person_ident)
+    jgit_tree.commit(comment, actor)
 
     # index = @repo.index
     # index.read_tree(branch)
@@ -305,7 +304,7 @@ class Repository
   end
   
   # Returns a String of the SHA1 of the commit
-  def commit_content(file, branch, data, comment, actor = nil)
+  def commit_content(file, branch, data, comment, actor)
     if @path == Sosol::Application.config.canonical_repository
       raise "Cannot commit directly to canonical repository" unless (file == CollectionIdentifier.new.to_path)
     end
@@ -320,9 +319,7 @@ class Repository
       jgit_tree.load_from_repo(@jgit_repo, branch)
       jgit_tree.add_blob(file, file_id.name())
 
-      person_ident = org.eclipse.jgit.lib.PersonIdent.new("name", "email")
-
-      jgit_tree.commit(comment, person_ident)
+      jgit_tree.commit(comment, actor)
       inserter.flush()
       inserter.release()
     rescue Exception => e

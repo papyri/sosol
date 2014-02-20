@@ -75,8 +75,8 @@ class User < ActiveRecord::Base
     end
   end
   
-  def grit_actor
-    Grit::Actor.new(self.full_name, self.email)
+  def jgit_actor
+    org.eclipse.jgit.lib.PersonIdent.new(self.full_name, self.email)
   end
   
   # Copied from: https://raw.github.com/mojombo/grit/v2.4.1/lib/grit/actor.rb

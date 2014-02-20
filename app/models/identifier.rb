@@ -331,7 +331,7 @@ class Identifier < ActiveRecord::Base
   def set_xml_content(content, options)
     default_actor = nil
     if((!self.owner.nil?) && (self.owner.class == User))
-      default_actor = self.owner.grit_actor
+      default_actor = self.owner.jgit_actor
     end
 
     options.reverse_merge!(
@@ -374,7 +374,7 @@ class Identifier < ActiveRecord::Base
                                   new_path,
                                   self.branch,
                                   commit_message,
-                                  self.owner.grit_actor)
+                                  self.owner.jgit_actor)
       
       # rename origin and children
       original_relatives.each do |relative|
@@ -387,7 +387,7 @@ class Identifier < ActiveRecord::Base
                                         new_path,
                                         relative.branch,
                                         commit_message,
-                                        self.owner.grit_actor)
+                                        self.owner.jgit_actor)
       end
       self.after_rename(options)
     end

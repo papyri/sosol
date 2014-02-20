@@ -766,8 +766,8 @@ class Publication < ActiveRecord::Base
     commit = org.eclipse.jgit.lib.CommitBuilder.new()
     commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
     commit.setParentId(org.eclipse.jgit.lib.ObjectId.fromString(parent_commit))
-    commit.setAuthor(org.eclipse.jgit.lib.PersonIdent.new(self.creator.name,self.creator.email))
-    commit.setCommitter(org.eclipse.jgit.lib.PersonIdent.new(finalizer.name,finalizer.email))
+    commit.setAuthor(self.creator.jgit_actor)
+    commit.setCommitter(finalizer.jgit_actor)
     commit.setEncoding("UTF-8")
     commit.setMessage(commit_message)
 
@@ -953,7 +953,7 @@ class Publication < ActiveRecord::Base
     end
     inserter.flush()
 
-    jgit_tree.commit(commit_comment, org.eclipse.jgit.lib.PersonIdent.new(committer_user.name, committer_user.email))
+    jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
       #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
      #  origin_index = self.origin.owner.repository.repo.index
@@ -1072,8 +1072,8 @@ class Publication < ActiveRecord::Base
         commit = org.eclipse.jgit.lib.CommitBuilder.new()
         commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
         commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
-        commit.setAuthor(org.eclipse.jgit.lib.PersonIdent.new(self.owner.name,self.owner.email))
-        commit.setCommitter(org.eclipse.jgit.lib.PersonIdent.new(self.owner.name,self.owner.email))
+        commit.setAuthor(self.owner.jgit_actor)
+        commit.setCommitter(self.owner.jgit_actor)
         commit.setEncoding("UTF-8")
         commit.setMessage(commit_message)
 
