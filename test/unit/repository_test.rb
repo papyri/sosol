@@ -8,7 +8,7 @@ class RepositoryTest < ActiveSupport::TestCase
     
     should "not be able to have direct commits" do
       assert_raise RuntimeError do
-        @repo.commit_content('README.TXT','master','TEST','TEST')
+        @repo.commit_content('README.TXT','master','TEST','TEST',org.eclipse.jgit.lib.PersonIdent.new("TEST", "TEST"))
       end
     end
     

@@ -36,7 +36,7 @@ class CollectionIdentifier < Identifier
     unless self.has_collection?(short_name)
       self.set_xml_content(collection_xml_with_new_collection(short_name, long_name),
                            :comment => "Add collection #{short_name} = #{long_name}",
-                           :actor => actor.grit_actor)
+                           :actor => actor.jgit_actor)
       self.class.add_collection_to_collection_names_hash(short_name, long_name)
     end
   end

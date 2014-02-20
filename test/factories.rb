@@ -3,6 +3,10 @@ FactoryGirl.define do
     "name_#{n}"
   end
 
+  sequence :full_name do |n|
+    "Full Name #{n}"
+  end
+
   sequence :email do |n|
       "person#{n}@example.com"
   end
@@ -65,6 +69,7 @@ FactoryGirl.define do
 
   factory :user do |f|
     f.name { FactoryGirl.generate(:name) }
+    f.full_name { FactoryGirl.generate(:full_name) }
     f.email { FactoryGirl.generate(:email) }
   end
 
