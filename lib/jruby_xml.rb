@@ -101,7 +101,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-    "http://www.w3.org/TR/rdf-syntax-grammar/rdfxml.rng")
+    "http://www.w3.org/TR/REC-rdf-syntax/rdfxml.rng")
     end
   end 
   
@@ -134,6 +134,17 @@ module JRubyXML
         "http://nlp.perseus.tufts.edu/syntax/treebank/treebank-1.6.xsd")
     end
   end
+  
+  class AlpheiosAlignmentValidator < JARVValidator
+    def initialize
+    @verifier_factory = 
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://www.w3.org/2001/XMLSchema")
+      @schema = verifier_factory.compileSchema(
+        "https://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd")
+    end
+  end
+  
   
    class SimpleMarkdownCiteValidator < JARVValidator
     def initialize
