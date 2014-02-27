@@ -21,7 +21,7 @@ class CtsOacIdentifiersController < IdentifiersController
       else
         @identifier[:action] = 'update'
         params[:annotation_uri] = annotation_uri
-        params[:annotation_motivation] = OacHelper::get_title(annotation)
+        params[:annotation_motivation] = OacHelper::get_motivation(annotation)
         params[:body_uri] = OacHelper::get_body(annotation)
         index = 1
         targets = OacHelper::get_targets(annotation)

@@ -7,7 +7,8 @@
     
     <xsl:output method="text"/>
     <xsl:param name="e_subref"/>
-        
+    <xsl:include href="extract_subref.xsl"/>
+    
     <xsl:template match="/">
         <xsl:variable name="tokens">
             <xsl:apply-templates select="//tei:w|//tei:pc"/>
@@ -37,48 +38,6 @@
             </xsl:if>
             <xsl:apply-templates select="node()"/>
         </xsl:element>
-    </xsl:template>
-    
-    <xsl:template name="get-words">
-        <xsl:param name="words"/>
-        <xsl:param name="start"/>
-        <xsl:param name="end"/>
-        <xsl:param name="started" select="false()"/>
-        <xsl:param name="index" select="xs:integer(1)"/>
-        <xsl:message>Testing <xsl:copy-of select="$words/*[$index]"/></xsl:message>
-        <xsl:choose>
-            <!-- no more words -->
-            <xsl:when test="count($words) = 0">
-                <!-- done -->
-            </xsl:when>
-            <!-- haven't found the start token yet -->
-            <xsl:when test="not($started)">
-                <xsl:if test="$words/*[$index]/@data-ref=$start">
-                    <xsl:value-of select="$words/*[$index]"/>
-                    <xsl:value-of select="$words/*[$index]/@space"/>
-                </xsl:if>
-                <xsl:call-template name="get-words">
-                    <xsl:with-param name="words" select="$words"/>
-                    <xsl:with-param name="start" select="$start"/>
-                    <xsl:with-param name="end" select="$end"/>
-                    <xsl:with-param name="started" select="$words/*[$index]/@data-ref=$start"/>
-                    <xsl:with-param name="index" select="$index+1"/>
-                </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$words/*[$index]"/>
-                <xsl:value-of select="$words/*[$index]/@space"/>
-                <xsl:if test="not($words/*[$index]/@data-ref=$end)">
-                    <xsl:call-template name="get-words">
-                        <xsl:with-param name="words" select="$words"/>
-                        <xsl:with-param name="start" select="$start"/>
-                        <xsl:with-param name="end" select="$end"/>
-                        <xsl:with-param name="started" select="true()"/>
-                        <xsl:with-param name="index" select="$index+1"/>
-                    </xsl:call-template>    
-                </xsl:if>
-            </xsl:otherwise>
-        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="@*"/>

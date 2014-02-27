@@ -314,12 +314,16 @@ li.editor_menu {
 
 li.sentence {
 	list-style-type: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 95%;
+	white-space: nowrap;
 }
 
 .sentence .sentence_num {
 	font-weight: bold;
 	font-size: smaller;
-	margin-left: -1em;
+	float: left;
 }
 
 .sentence a {
