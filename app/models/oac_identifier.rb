@@ -97,6 +97,15 @@ class OACIdentifier < Identifier
     return hasany
   end
   
+  def can_align?(a_uri)
+    if (a_uri.nil?)
+      return false
+    end
+    annotation = self.get_annotation(a_uri)
+    Rails.logger.info("Motivation=#{OacHelper::get_motivation(annotation)}")
+    return OacHelper::get_motivation(annotation) == 'oa:linking_translation'
+  end
+  
   # get the requested annotation by uri from the oac.xml 
   def get_annotation(a_uri)
    OacHelper::get_annotation(self.rdf,a_uri)          

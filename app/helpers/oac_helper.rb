@@ -152,6 +152,11 @@ module OacHelper
     return created
   end
   
+  # get the motivation from the supplied annotation
+  def self.get_motivation(a_annotation)    
+    REXML::XPath.first(a_annotation, "oa:motivatedBy", {"oa"=> NS_OAC, "rdf" => NS_RDF}).attributes['rdf:resource']
+  end
+  
   # get the title from the supplied annotation
   def self.get_title(a_annotation)
     xpath = "dcterms:title"

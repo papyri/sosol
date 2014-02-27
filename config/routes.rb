@@ -69,7 +69,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :hgv_trans_identifiers, :member => { :add_new_lang_to_xml => :post , :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put }
     publication.resources :biblio_identifiers, :member => { :history => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :preview => :get }
 
-    publication.resources :epi_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get, :link_citation => :get }
+    publication.resources :epi_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get, :link_citation => :get, :link_alignment => :get }
     publication.resources :epi_trans_cts_identifiers, :member => { :history => :get,  :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :post, :link_citation => :get }
     publication.resources :citation_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :rename_review => :get, :rename => :put, :create => :get, :edit_or_create => :post, :select => :post}
     publication.resources :tei_cts_identifiers, :member => { :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :rename_review => :get, :rename => :put, :commentary => :get, :update_commentary => :put, :update_frontmatter_commentary => :put, :delete_commentary => :delete, :delete_frontmatter_commentary => :delete, :link_translation => :get, :link_citation => :get }
@@ -79,6 +79,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :cts_oac_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :annotate_xslt => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :put}
     publication.resources :commentary_cite_identifiers, :member => { :create => :get, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put}
     publication.resources :treebank_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
+    publication.resources :alignment_cite_identifiers, :member => { :create => :post, :create_from_annotation => :get, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
 
 
     # publication.resources :identifiers

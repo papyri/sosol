@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aligned-text xmlns="http://alpheios.net/namespaces/aligned-text">
+    <language lnum="L1" xml:lang="lat"/>
+    <language lnum="L2" xml:lang="lat"/>
+    <sentence id="1" document_id="cite/perseus/testcoll.1.1">
+        <wds lnum="L1">
+            <comment class="uri">http://test1.org</comment>
+            <w n="1-1">
+                <text>Troiae</text>
+            </w>
+            <w n="1-2">
+                <text>qui</text>
+            </w>
+            <w n="1-3">
+                <text>primus</text>
+            </w>
+            <w n="1-4">
+                <text>ab</text>
+            </w>
+            <w n="1-5">
+                <text>oris</text>
+            </w>
+            <w n="1-6">
+                <text>Italiam</text>
+            </w>
+            <w n="1-7">
+                <text>,</text>
+            </w>
+            <w n="1-8">
+                <text>fato</text>
+            </w>
+            <w n="1-9">
+                <text>profugus</text>
+            </w>
+            <w n="1-10">
+                <text>,</text>
+            </w>
+            <w n="1-11">
+                <text>Laviniaque</text>
+            </w>
+            <w n="1-12">
+                <text>venit</text>
+            </w>
+        </wds>
+        <wds lnum="L2">
+            <comment class="uri">http://test2.org</comment>
+            <w n="1-1">
+                <text>Troiae</text>
+            </w>
+            <w n="1-2">
+                <text>qui</text>
+            </w>
+            <w n="1-3">
+                <text>primus</text>
+            </w>
+            <w n="1-4">
+                <text>ab</text>
+            </w>
+            <w n="1-5">
+                <text>oris</text>
+            </w>
+            <w n="1-6">
+                <text>Italiam</text>
+            </w>
+            <w n="1-7">
+                <text>,</text>
+            </w>
+            <w n="1-8">
+                <text>fato</text>
+            </w>
+            <w n="1-9">
+                <text>profugus</text>
+            </w>
+            <w n="1-10">
+                <text>,</text>
+            </w>
+            <w n="1-11">
+                <text>Laviniaque</text>
+            </w>
+            <w n="1-12">
+                <text>venit</text>
+            </w>
+        </wds>
+    </sentence>
+</aligned-text>

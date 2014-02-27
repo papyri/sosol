@@ -27,29 +27,25 @@ class CtsProxyController < ApplicationController
       redirect_to :action => :getsubref, :id => params[:id], :urn => params[:urn]
       return
     end
-    
-    if (params[:id] =~ /^\d+$/)
-      documentIdentifier = Identifier.find(params[:id].to_s)
-      inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
-      if (CTS::CTSLib.getExternalCTSHash().has_key?(inventory_code))
-        response = CTS::CTSLib.proxyGetPassage(inventory_code,params[:urn])
-      else
-        inventory = documentIdentifier.related_inventory.xml_content
-        uuid = documentIdentifier.publication.id.to_s + params[:urn].gsub(':','_') + '_proxyreq'
-        response = CTS::CTSLib.getPassageFromRepo(inventory,documentIdentifier.content,params[:urn],uuid)
-     end
-    else
-      response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,params[:urn])
-    end
-     render :xml => response
+     render :xml => CTS::CTSLib.getPassage(params[:id],params[:urn])
   end
   
   def getsubref
     begin
-      render :text =>CTS::CTSLib.get_passage_subref(params[:id],params[:urn])
+      passage_text = CTS::CTSLib.get_tokenized_passage(params[:id],params[:urn])
+      xslt_path = File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+      if(params[:id] =~/^\d+$/)
+        documentIdentifier = Identifier.find(params[:id])
+        xslt_path = documentIdentifier.passage_subref_xslt_file
+      end 
+              
+      render :text => JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(passage_text),
+        JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})),
+          :e_subref => CTS::CTSLib.get_subref(params[:urn]).to_s)
     rescue Exception => e
-        Rails.logger.error(e)
-       render :text => e.to_s, :status => 500
+      Rails.logger.error(e)
+      render :text => e.to_s, :status => 500
     end
   end
     
