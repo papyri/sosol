@@ -1,3 +1,2 @@
 - if @identifier.mutable? && @identifier.publication.status != 'finalizing' && @identifier.can_align?(@identifier[:annotation_uri])
   %li{ :class => ''}= link_to 'Create Alignment Annotation', polymorphic_path([:link_alignment,@identifier.parentIdentifier.publication,@identifier.parentIdentifier],:a_id => @identifier.id.to_s, :annotation_uri => @identifier[:annotation_uri])  
-%br
