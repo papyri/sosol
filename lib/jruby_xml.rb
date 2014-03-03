@@ -87,7 +87,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-    "http://www.w3.org/TR/rdf-syntax-grammar/rdfxml.rng")
+    "http://www.w3.org/TR/REC-rdf-syntax/rdfxml.rng")
     end
   end 
   
