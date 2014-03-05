@@ -84,7 +84,7 @@ class OACIdentifier < Identifier
   
   # test to see if any annotations have been added to the oac.xml file yet
   def has_anyannotation?()
-    all = get_all_annotations(self.rdf)
+    all = OacHelper::get_all_annotations(self.rdf)
     hasany = false
     begin
       if ! all.first.nil?
