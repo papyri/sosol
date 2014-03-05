@@ -91,8 +91,11 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metaclass (0.0.4)
     mime-types (1.25.1)
     mini_portile (0.5.2)
+    mocha (1.0.0)
+      metaclass (~> 0.0.1)
     multi_json (1.8.4)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
@@ -101,6 +104,8 @@ GEM
     net-ssh (2.8.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    nokogiri (1.6.1)
+      mini_portile (~> 0.5.0)
     nokogiri (1.6.1-java)
       mini_portile (~> 0.5.0)
     polyglot (0.3.4)
@@ -191,6 +196,7 @@ DEPENDENCIES
   jruby-openssl (>= 0.8.8)
   json
   json-jruby (>= 1.5.0)
+  mocha
   nokogiri
   prototype-rails
   puma
