@@ -24,7 +24,7 @@ module CTS
           require 'java'
           require CTS_JAR_PATH
           require GROOVY_JAR_PATH
-          include_class("edu.harvard.chs.cts3.CtsUrn") { |pkg, name| "J" + name }
+          java_import("edu.harvard.chs.cts3.CtsUrn") { |pkg, name| "J" + name }
           urn = JCtsUrn.new(a_urn)
         else
           require 'rubygems'

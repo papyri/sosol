@@ -18,7 +18,7 @@ module Cite
           require 'java'
           require CITE_JAR_PATH
           require GROOVY_JAR_PATH
-          include_class("edu.harvard.chs.cite.CiteUrn") { |pkg, name| "J" + name }
+          java_import("edu.harvard.chs.cite.CiteUrn") { |pkg, name| "J" + name }
           urn = JCiteUrn.new(a_urn)
         else
           require 'rubygems'
