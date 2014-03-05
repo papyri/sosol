@@ -291,11 +291,11 @@ class CTSIdentifier < Identifier
   
   # default xslt for displaying an annotation view of a CTS passage
   def passage_annotate_xslt
-    File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_annotate.xsl}))
+    File.read(File.join(Rails.root,%w{data xslt cts cts_annotate.xsl}))
   end
   
   # default xslt for retrieving the subref of a CTS passage
   def passage_subref_xslt_file
-    File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+    File.join(Rails.root,%w{data xslt cts passage_to_subref.xsl})
   end
 end

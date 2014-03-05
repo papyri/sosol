@@ -132,7 +132,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
     else
       passed = JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(content),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt cite markdown_field_verify.xsl})),
           :e_max => max)
       if (passed == 'true')
@@ -162,7 +162,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   def preview_targets parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite commentary_cite_targets.xsl})),
         parameters)
   end
@@ -171,7 +171,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
     # TODO 
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite commentary_cite_html_preview.xsl})),
         parameters)
   end

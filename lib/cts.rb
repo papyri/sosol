@@ -280,7 +280,7 @@ module CTS
           if (response.code == '200')
             path = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(response.body),
-              JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
               # inventory put succeeded, now put the document itself  
@@ -298,7 +298,7 @@ module CTS
                 if (refs_response.code == '200')
                   JRubyXML.apply_xsl_transform(
                     JRubyXML.stream_from_string(refs_response.body),
-                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                    JRubyXML.stream_from_file(File.join(Rails.root,
                     %w{data xslt cts validreff_urns.xsl})))  
                 else
                   Rails.logger.error("Error response from #{uri}")
@@ -338,7 +338,7 @@ module CTS
         end      
         JRubyXML.apply_xsl_transform(
           JRubyXML.stream_from_string(passage),
-          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          JRubyXML.stream_from_file(File.join(Rails.root,
           %w{data xslt cts extract_getpassage_reply.xsl})))  
       end
             
@@ -526,7 +526,7 @@ module CTS
             if (response.code == '200')
               path = JRubyXML.apply_xsl_transform(
                 JRubyXML.stream_from_string(response.body),
-                JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                JRubyXML.stream_from_file(File.join(Rails.root,
                 %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
                 # inventory put succeeded, now put the document itself  

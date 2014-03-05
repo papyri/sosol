@@ -34,7 +34,7 @@ class CtsProxyController < ApplicationController
   def getsubref
     begin
       passage_text = CTS::CTSLib.get_tokenized_passage(params[:id],params[:urn])
-      xslt_path = File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+      xslt_path = File.join(Rails.root,%w{data xslt cts passage_to_subref.xsl})
       if(params[:id] =~/^\d+$/)
         documentIdentifier = Identifier.find(params[:id])
         xslt_path = documentIdentifier.passage_subref_xslt_file
@@ -42,7 +42,7 @@ class CtsProxyController < ApplicationController
               
       render :text => JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(passage_text),
-        JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})),
+        JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cts passage_to_subref.xsl})),
           :e_subref => CTS::CTSLib.get_subref(params[:urn]).to_s)
     rescue Exception => e
       Rails.logger.error(e)
@@ -59,7 +59,7 @@ class CtsProxyController < ApplicationController
       response = CTS::CTSLib.proxyGetCapabilities(params[:id].to_s)
       render :text => JRubyXML.apply_xsl_transform(
                         JRubyXML.stream_from_string(response),
-                        JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                        JRubyXML.stream_from_file(File.join(Rails.root,
                         %w{data xslt cts inventory_to_json.xsl})))    
     end
   end

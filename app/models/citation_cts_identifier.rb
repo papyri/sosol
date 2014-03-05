@@ -64,7 +64,7 @@ class CitationCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : self.related_text.preview_xslt)),
         parameters)
   end

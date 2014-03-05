@@ -14,7 +14,7 @@ module Tools
       # @param [String] a_svc the service name
       def tool_config(a_tool,as_json = false)
         unless defined? @config
-          @config = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config tools.yml})).read).result)[Rails.env]
+          @config = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config tools.yml})).read).result)[Rails.env]
         end
         if (as_json)
           return @config[a_tool].to_json

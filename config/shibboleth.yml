@@ -11,7 +11,7 @@ development:
         :display_name: "Tufts University"
         :logo: "tuftsidplogo.jpg"
         :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
+        :idp_cert: <%= Rails.root %>/data/certificates/tuftstest.crt
         :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol-test.perseids.org"
         :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol-test.perseids.org"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
@@ -24,7 +24,7 @@ development:
         :display_name: "University of Leipzig"
         :logo: "uleipzig_small.gif"
         :sp_cert: /etc/ssl/certs/sosol_perseids_org_cert.cer
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/ulei.d.crt
+        :idp_cert: <%= Rails.root %>/data/certificates/ulei.d.crt
         :idp_sso_target_url: "https://aai.rz.uni-leipzig.de/idp/profile/SAML2/Unsolicited/SSO?providerId=http://sosol.perseids.org/"
         :idp_aqr_target_url: "https://aai.rz.uni-leipzig.de:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=http://sosol.perseids.org/"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
@@ -43,7 +43,7 @@ test:
         :display_name: "Tufts University"
         :logo: "tuftsidplogo.jpg"
         :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
-        :idp_cert: <%= RAILS_ROOT %>/data/certificates/tuftstest.crt
+        :idp_cert: <%= Rails.root %>/data/certificates/tuftstest.crt
         :idp_sso_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
         :idp_aqr_target_url: "https://shibidp-test.uit.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"

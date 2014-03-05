@@ -29,7 +29,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   def titleize
     title = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, %w{data xslt cite alignment_title.xsl})))
+      JRubyXML.stream_from_file(File.join(Rails.root, %w{data xslt cite alignment_title.xsl})))
     if (title != '')
       title
     else
@@ -94,7 +94,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
               sentence_xml =
                 JRubyXML.apply_xsl_transform(
                   JRubyXML.stream_from_string(passage_xml),
-                  JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite tokens_to_align.xsl })),
+                  JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite tokens_to_align.xsl })),
                   :e_uri => a_uri, 
                   :e_subref => XML_TOKENIZER.get_subref(urn),
                   :e_tag => token_elem)
@@ -191,7 +191,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   def sentence(a_id)
      JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, %w{data xslt cite alignment_sentence.xsl})),
+      JRubyXML.stream_from_file(File.join(Rails.root, %w{data xslt cite alignment_sentence.xsl})),
       :s => a_id)  
   end
   
@@ -273,7 +273,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
     # autoadjust sentence numbering
     #result = JRubyXML.apply_xsl_transform_catch_messages(
     #  JRubyXML.stream_from_string(content),
-    #  JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite alignrenumber.xsl})))  
+    #  JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite alignrenumber.xsl})))  
     ## TODO verify against correct schema for format
     #if (! result[:messages].nil? && result[:messages].length > 0)
     #  self[:transform_messages] = result[:messages]
@@ -305,7 +305,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite alignment_list.xsl})),
         :doc_id => self.id,
         :s => parameters[:s],
@@ -319,7 +319,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite alignment_list.xsl})),
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable

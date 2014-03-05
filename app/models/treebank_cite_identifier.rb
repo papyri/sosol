@@ -174,7 +174,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # get descriptive info for a treebank file
   def api_info
     # TODO eventually this will be customized per user/file - for now return the default
-    template_path = File.join(RAILS_ROOT, ['data','templates'],
+    template_path = File.join(Rails.root, ['data','templates'],
                               "treebank-desc-#{self.format}.xml.erb")
     template = ERB.new(File.new(template_path).read, nil, '-')
     
@@ -278,7 +278,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     # autoadjust sentence numbering
     result = JRubyXML.apply_xsl_transform_catch_messages(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite treebankrenumber.xsl})))  
+      JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite treebankrenumber.xsl})))  
     # TODO verify against correct schema for format
     if (! result[:messages].nil? && result[:messages].length > 0)
       self[:transform_messages] = result[:messages]
@@ -331,7 +331,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
         :s => parameters[:s],
@@ -345,7 +345,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable

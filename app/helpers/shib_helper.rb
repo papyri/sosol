@@ -16,7 +16,7 @@ module ShibHelper
   def self.get_idp_hash
     unless defined? @idps
       @idps = Hash.new
-      idpconfig = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth][:idps]
+      idpconfig = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth][:idps]
       idpconfig.keys.each do |k|
         @idps[idpconfig[k][:display_name]] = k,idpconfig[k]
       end
@@ -28,7 +28,7 @@ module ShibHelper
   def self.get_idp_list
     unless defined? @idps
       @idps = []
-      idpconfig = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth][:idps]
+      idpconfig = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth][:idps]
       idpconfig.keys.each do |k|
         @idps << { :key => k, :display_name => idpconfig[k][:display_name], :logo => idpconfig[k][:logo]}
       end

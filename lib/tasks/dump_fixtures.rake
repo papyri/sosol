@@ -1,9 +1,9 @@
 desc 'Dump a database to yaml fixtures.  Set environment variables DB
 and DEST to specify the target database and destination path for the
-fixtures.  DB defaults to development and DEST defaults to RAILS_ROOT/
+fixtures.  DB defaults to development and DEST defaults to Rails.root/
 test/fixtures.'
 task :dump_fixtures => :environment do
-	 path = ENV['DEST'] || "#{RAILS_ROOT}/test/fixtures"
+	 path = ENV['DEST'] || "#{Rails.root}/test/fixtures"
 	 db   = ENV['DB']   || 'development'
 	 sql  = 'SELECT * FROM %s'
 

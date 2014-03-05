@@ -4,8 +4,8 @@ module Cite
   class CiteError < ::StandardError
   end
   
-  CITE_JAR_PATH = File.join("#{RAILS_ROOT}", 'lib', *%w"java cite-0.12.22.jar")  
-  GROOVY_JAR_PATH = File.join("#{RAILS_ROOT}", 'lib', *%w"java groovy-all-2.0.0-rc-3.jar")  
+  CITE_JAR_PATH = File.join("#{Rails.root}", 'lib', *%w"java cite-0.12.22.jar")  
+  GROOVY_JAR_PATH = File.join("#{Rails.root}", 'lib', *%w"java groovy-all-2.0.0-rc-3.jar")  
   NS_CITE = "http://chs.harvard.edu/xmlns/cite"
   module CiteLib 
     
@@ -127,7 +127,7 @@ module Cite
       
       def inventory
         unless defined? @inventory
-          @inventory = REXML::Document.new File.new(File.join("#{RAILS_ROOT}",'config','citecapabilities.xml'))
+          @inventory = REXML::Document.new File.new(File.join("#{Rails.root}",'config','citecapabilities.xml'))
         end
         return @inventory
       end

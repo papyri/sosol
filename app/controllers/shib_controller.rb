@@ -6,7 +6,7 @@ class ShibController < ApplicationController
     
     def get_config
       unless defined? @shib_config
-        @shib_config = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth]
+        @shib_config = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config shibboleth.yml})).read).result)[Rails.env][:shibboleth]
       end
       return @shib_config
     end

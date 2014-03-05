@@ -79,7 +79,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def preview
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt perseus epidoc_preview.xsl})))
   end
   

@@ -152,7 +152,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "#{RAILS_ROOT}/data/templates/smdcite.rng")
+        "#{Rails.root}/data/templates/smdcite.rng")
     end
   end
   
