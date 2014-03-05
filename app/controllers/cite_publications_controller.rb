@@ -1,5 +1,5 @@
 class CitePublicationsController < PublicationsController
-  layout SITE_LAYOUT
+  layout Sosol::Application.config.site_layout
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
