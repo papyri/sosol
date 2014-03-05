@@ -17,6 +17,9 @@ module CTS
       
       # method which returns a CtsUrn object from the java chs cts3 library
       def urnObj(a_urn)
+        # HACK to make new style subrefs work with old library
+        # TODO remove when cts.jar is upgraded to 4.0
+        a_urn = a_urn.sub('@','#')
         if(RUBY_PLATFORM == 'java')
           require 'java'
           require CTS_JAR_PATH
@@ -31,6 +34,16 @@ module CTS
           urn = cts_urn_class.new(a_urn)
         end
         return urn
+      end
+      
+      # TODO - use CTS Library for this once we are using the right version
+      
+      def get_subref(a_urn)
+        if a_urn =~ /^.*[\#@]([^\#@]+)$/
+          "#{$1}"
+        else 
+          nil 
+        end
       end
       
       # get a pub type for a urn from the parent inventory
@@ -129,8 +142,8 @@ module CTS
           raise "#{a_inventory} CTS Repository is not registered."
         end
       end
-      
-      def getExternalCTSReposAsJson()
+            
+      def getExternalCTSRepos()
         getExternalCTSHash()
         repos = Hash.new
         keys = Hash.new
@@ -141,7 +154,7 @@ module CTS
         end
         repos['keys'] = keys
         repos['urispaces'] = urispaces
-        JSON.generate(repos)
+        return repos
       end
       
       def getExternalCTSHash()
@@ -251,11 +264,85 @@ module CTS
                    JRubyXML.stream_from_file(File.join(Rails.root,
                    %w{data xslt cts validreff_urns.xsl})))  
         else
+           Rails.logger.error("Error response from #{uri}")
            nil
         end
       end
+      
+      def getValidReffFromRepo(a_uuid,a_inventory,a_document,a_urn,a_level)
+        begin
+          # post inventory and get path for file put 
+          uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+          response = Net::HTTP.start(uri.host, uri.port) do |http|
+            headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+            http.send_request('POST',uri.request_uri,a_inventory,headers)
+          end # end http put of inventory
+          if (response.code == '200')
+            path = JRubyXML.apply_xsl_transform(
+              JRubyXML.stream_from_string(response.body),
+              JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              %w{data xslt cts extract_reply_text.xsl})))  
+            if (path != '')
+              # inventory put succeeded, now put the document itself  
+              pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+              put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
+                headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+                http.send_request('PUT', pathUri.request_uri, a_document,headers)      
+              end # end put of document
+              if (put_response.code == '201')
+                # request valid reffs
+                rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetValidReff&inv=#{a_uuid}&urn=#{a_urn}&level=#{a_level}")
+                refs_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
+                  http.send_request('GET', rurl.request_uri)
+                end # end valid reffs request
+                if (refs_response.code == '200')
+                  JRubyXML.apply_xsl_transform(
+                    JRubyXML.stream_from_string(refs_response.body),
+                    JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                    %w{data xslt cts validreff_urns.xsl})))  
+                else
+                  Rails.logger.error("Error response from #{uri}")
+                  nil
+                end # end  valid reffs
+              else 
+                Rails.logger.error("Error response from #{pathUri}")
+              end # end  put of text
+            else
+              Rails.logger.error("No path to inventory")
+            end # end test on path to inventory
+          else 
+            Rails.logger.error("Error response from #{uri}")  
+          end # end put of inventory
+        ensure
+          # cleanup
+          rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
+          Net::HTTP.get_response(rurl)
+        end
+      end
+      
+      def getPassage(a_id,a_urn)
+        passage = nil
+        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
+        if (a_id =~ /^\d+$/)
+          documentIdentifier = Identifier.find(a_id)
+          inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
+          if (getExternalCTSHash().has_key?(inventory_code))
+            passage = _proxyGetPassage(inventory_code,urn_no_subref)
+          else
+            inventory = documentIdentifier.related_inventory.xml_content
+            uuid = documentIdentifier.publication.id.to_s + a_urn.gsub(':','_') + '_proxyreq'
+            passage = _getPassageFromRepo(inventory,documentIdentifier.content,urn_no_subref,uuid)
+          end
+        else
+          passage = _proxyGetPassage(a_id,urn_no_subref)
+        end      
+        JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(passage),
+          JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+          %w{data xslt cts extract_getpassage_reply.xsl})))  
+      end
             
-      def getPassageFromRepo(inventory,a_document,a_urn,a_uuid)
+      def _getPassageFromRepo(inventory,a_document,a_urn,a_uuid)
           passage = ''
           begin
             # post inventory and get path for file put 
@@ -285,11 +372,7 @@ module CTS
                     http.send_request('GET', rurl.request_uri)
                   end # end Net::HTTP.start
                   if (psg_response.code == '200')
-                    passage = JRubyXML.apply_xsl_transform(
-                       JRubyXML.stream_from_string(psg_response.body),
-                       JRubyXML.stream_from_file(File.join(Rails.root,
-                       %w{data xslt cts extract_getpassage_reply.xsl})))  
-                    return passage
+                    return psg_response.body
                   else 
                    raise "Passage request failed #{psg_response.code} #{psg_response.msg} #{psg_response.body}"
                   end # end test on GetPassagePlus response code
@@ -309,13 +392,16 @@ module CTS
         end
       end
       
-      def proxyGetPassage(a_inventory,a_urn)
+      def _proxyGetPassage(a_inventory,a_urn)
+        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         response = Net::HTTP.get_response(URI.parse(self.getInventoryUrl(a_inventory) + 
-          "&request=GetPassage&urn=#{a_urn}"))
+          "&request=GetPassage&urn=#{urn_no_subref}"))
         return response.body
       end
       
       def proxyUpdatePassage(a_psg,a_inventory,a_document,a_urn,a_uuid)
+        Rails.logger.info("In proxyUpdatePassage with #{a_psg}, #{a_inventory}")
+
         begin
           # load inventory  -> POST inventory -> returns unique identifier for inventory
           uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
@@ -325,6 +411,7 @@ module CTS
           end
           # load document -> POST document
           if (response.code == '200')
+            Rails.logger.info("Inventory put ok")
             path = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(response.body),
               JRubyXML.stream_from_file(File.join(Rails.root,
@@ -336,6 +423,7 @@ module CTS
                 http.send_request('PUT', pathUri.request_uri, a_document,headers)      
               end
               if (put_response.code == '201')
+                Rails.logger.info("Document put ok")
                 # put passage
                 rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=UpdatePassage&inv=#{a_uuid}&urn=#{a_urn}") 
                 psg_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
@@ -344,6 +432,7 @@ module CTS
                 end
                 if (psg_response.code == '200')
                   # now we return the updated document
+                  Rails.logger.info("Passage put ok #{psg_response.body}")
                   updated_text = JRubyXML.apply_xsl_transform(
                     JRubyXML.stream_from_string(psg_response.body),
                     JRubyXML.stream_from_file(File.join(Rails.root,
@@ -353,6 +442,7 @@ module CTS
                     if (updated_text == '' )
                       raise "Update failed: #{psg_response.body}"
                     end 
+                    Rails.logger.info("Returning #{updated_text}")
                     return updated_text
                 else
                   raise "Passage request failed #{psg_response.code} #{psg_response.msg}>"
@@ -364,8 +454,10 @@ module CTS
               raise "No path for put"
             end # put_path          
          else # end post inventory
-          raise "Inventory post failed #{response.code} #{response.msg}"
+          raise "Inventory post to #{uri} failed #{response.code} #{response.msg} #{response.body}" 
          end
+       rescue Exception => a_e
+         raise "Exception in proxyUpdatePassage with #{a_psg}, #{a_inventory}"
        ensure
         # cleanup
         rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
@@ -380,6 +472,112 @@ module CTS
         return SITE_CATALOG_SEARCH + searchid
       end
       
+       # Get the list of creatable identifiers for the supplied urn
+      # @param {String} a_urn
+      def get_creatable_identifiers(a_urn)
+        
+      end
+      
+      # a_inv will either be a SoSOL document identifier or the name of the inventory
+      def get_tokenized_passage(a_inv, a_urn,a_tags=[])
+		    lang = nil
+        documentIdentifier = nil
+        tokenizer_url = nil   
+        passage_url = nil
+        temp_uuid = nil
+        
+        tokenizer_cfg = Tools::Manager.tool_config('cts_tokenizer',false)
+        
+        if (!a_inv.nil? && a_inv =~ /^\d+$/)
+          documentIdentifier = Identifier.find(a_inv)
+          lang = documentIdentifier.lang
+          inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
+        else
+          inventory_code = a_inv
+        end
+        Rails.logger.info("get_tokenized_passage for #{a_inv} = #{inventory_code}")
+        
+        if (lang && tokenizer_cfg[lang]) 
+          tokenizer_url = tokenizer_cfg[lang][:request_url];
+        else
+          tokenizer_url = tokenizer_cfg[:default][:request_url];
+        end
+        
+        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
+        begin
+        
+          # if we don't have an inventory identifier, and the urn is a url
+          # just pass it as-is to the tokenizer
+          if (a_inv.nil? && a_urn =~ /^http/)
+            Rails.logger.debug("Setting passage url to #{a_urn}")
+            passage_url = a_urn
+          elsif (getExternalCTSHash().has_key?(inventory_code))
+            passage_url = getInventoryUrl(inventory_code) + "&request=GetPassage&urn=#{urn_no_subref}"
+          else
+             proxy_urn = urn_no_subref.gsub(':','_')
+            inventory = documentIdentifier.related_inventory.xml_content
+            temp_uuid = documentIdentifier.publication.id.to_s + proxy_urn + '_proxyreq'
+            # post inventory and get path for file put 
+            uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{temp_uuid}&urn=#{urn_no_subref}")
+            response = Net::HTTP.start(uri.host, uri.port) do |http|
+              headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+              http.send_request('POST',uri.request_uri,inventory,headers)
+            end
+            if (response.code == '200')
+              path = JRubyXML.apply_xsl_transform(
+                JRubyXML.stream_from_string(response.body),
+                JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+                %w{data xslt cts extract_reply_text.xsl})))  
+              if (path != '')
+                # inventory put succeeded, now put the document itself  
+                pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+                put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
+                  headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+                  http.send_request('PUT', pathUri.request_uri, documentIdentifier.content,headers)      
+                end # end Net::HTTP.start
+                if (put_response.code == '201')
+                  passage_url = "#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{temp_uuid}&urn=#{urn_no_subref}"
+                else 
+                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
+                end # end test on text Put request
+              else
+                raise "no path for put"
+              end  # end test on path retrieved from CreateCitableText response          
+            else 
+                raise "Inventory post failed #{response.code} #{response.msg} #{response.body}"
+            end # end test on GetCitationText response code        
+          end
+        
+
+          # we should have a passage url to send to the tokenizer now        
+          # TODO should use placeholders to replace values in the tokenizer_url
+          # note also variances in support for [] after parameter name
+          tokenizer_url = tokenizer_url + CGI.escape(passage_url)
+          a_tags.each do |a_tag| 
+            tokenizer_url = tokenizer_url + "&tags=#{a_tag}"
+          end
+          
+          Rails.logger.info("Calling tokenizer at #{tokenizer_url}")
+          tok_uri = URI(tokenizer_url)
+        
+          
+          tok_response = Net::HTTP.start(tok_uri.host, tok_uri.port) do |http|
+            http.send_request('GET',tok_uri.request_uri)
+          end
+          if (tok_response.code == '200')
+            tok_response.response.body
+          else 
+            raise "Failed request to #{tok_uri} : #{tok_response.code} #{tok_response.msg} #{tok_response.body}" 
+          end
+        
+        ensure
+          # cleanup
+          if (temp_uuid)
+            rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{urn_no_subref}&xuuid=#{temp_uuid}") 
+            Net::HTTP.get_response(rurl)
+          end
+        end
+     end
     end #class
   end #module CTSLib
 end #module CTS

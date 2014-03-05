@@ -1,9 +1,19 @@
 class CitationCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update ]
+
   
   def edit
     redirect_to :action =>"editxml",:id=>params[:id]
+  end
+
+  def editxml
+    find_identifier
+    @identifier[:xml_content] = @identifier.xml_content
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
+    @is_editor_view = true
+    render :template => 'citation_cts_identifiers/editxml'
   end
   
   ## provide user with choice of editing or annotating a citation 
@@ -84,8 +94,7 @@ class CitationCtsIdentifiersController < IdentifiersController
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
                 :collection => params[:collection].to_s,
-                :urn => params[:urn] + ":" + params[:start_passage].strip,
-                :src => 'SoSOL')   
+                :urn => params[:urn] + ":" + params[:start_passage].strip)   
    
     end
   end
@@ -180,7 +189,7 @@ class CitationCtsIdentifiersController < IdentifiersController
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
-
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:html_preview] = @identifier.preview
   end
   

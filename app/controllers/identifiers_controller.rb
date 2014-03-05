@@ -99,7 +99,9 @@ class IdentifiersController < ApplicationController
       if %w{new editing}.include?@identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
       end
-      
+      unless (@identifier[:transform_messages].nil? )
+        flash[:notice] = @identifier[:transform_messages].join('<br/>')
+      end
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error

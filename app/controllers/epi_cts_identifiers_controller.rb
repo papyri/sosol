@@ -1,7 +1,8 @@
 class EpiCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
-  
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   # GET /publications/1/epi_cts_identifiers/1/edit
   def edit
     find_identifier
@@ -11,8 +12,8 @@ class EpiCtsIdentifiersController < IdentifiersController
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
     @is_editor_view = true
-    @identifier[:facs] = @identifier.facs
     render :template => 'epi_cts_identifiers/editxml'
   end
   
@@ -29,10 +30,33 @@ class EpiCtsIdentifiersController < IdentifiersController
                                  :action => :edit) and return
   end
   
-   def link_translation
+  def link_translation
     find_identifier
     render(:template => 'epi_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'epi_trans_cts_identifiers',:publication_id => @identifier.publication.id, :emend => :showemend})
-   end
+  end
+   
+  def link_citation
+    find_identifier
+    render(:template => 'citation_cts_identifiers/select',
+           :locals => {:edition => @identifier.urn_attribute,
+                       :version_id => @identifier.name,
+                       :collection => @identifier.inventory,
+                       :citeinfo => @identifier.related_inventory.parse_inventory(),
+                       :controller => 'citation_cts_identifiers',
+                       :publication_id => @identifier.publication.id, 
+                       :pubtype => 'edition'})
+  end
+  
+  def link_alignment
+    find_publication_and_identifier
+    # TODO eventually should be able to link from places other than an annotation?
+    redirect_to(:controller => 'alignment_cite_identifiers', 
+      :publication_id => @publication.id,
+      :a_id => params[:a_id],
+      :annotation_uri => params[:annotation_uri],
+      :action => :create_from_annotation) and return
+
+  end
 
   
   # PUT /publications/1/epi_cts_identifiers/1/update
@@ -149,9 +173,10 @@ class EpiCtsIdentifiersController < IdentifiersController
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
-
+    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:html_preview] = @identifier.preview
   end
+  
   
   protected
     def find_identifier

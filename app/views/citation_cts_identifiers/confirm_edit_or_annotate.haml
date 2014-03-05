@@ -14,11 +14,7 @@
     = hidden_field_tag 'target_urn',params[:urn]
     = hidden_field_tag 'collection',params[:collection]
     = submit_tag "Annotate", :method => 'post'
-    -if params[:src] == 'SoSOL'
-      =label_tag 'Base Uri for Citations:'
-      %input{:type => 'text', :name => 'src', :value => 'http://data.perseus.org/citations'}     
-    -else 
-      = hidden_field_tag 'src',params[:src]
+    = hidden_field_tag 'src',params[:src]
     
   
   

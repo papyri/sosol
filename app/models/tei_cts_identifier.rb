@@ -2,7 +2,7 @@ class TeiCTSIdentifier < CTSIdentifier
   
   PATH_PREFIX = 'CTS_XML_TEI'
   
-  FRIENDLY_NAME = "Manuscript Transcription"
+  FRIENDLY_NAME = "Transcription Text (TEI-A)"
   
   IDENTIFIER_NAMESPACE = 'teia_edition'
   
@@ -66,9 +66,12 @@ class TeiCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cts alpheios-tei.xsl})),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : self.preview_xslt)),
         parameters)
   end
   
+  def preview_xslt
+    %w{data xslt perseus alpheios-tei.xsl}
+  end
 end

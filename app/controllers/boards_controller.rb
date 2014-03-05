@@ -132,8 +132,6 @@ class BoardsController < ApplicationController
       end
     end
 
-
-
     #put the new board in last rank
     if @board.community_id
       @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
@@ -241,14 +239,14 @@ def send_board_reminder_emails
     
   addresses = Array.new 
   
-  if (params[:community_id].to_s)
+  if (params[:community_id].to_s != '')
     boards = Board.ranked_by_community_id(params[:community_id].to_s) 
     community = Community.find_by_id(params[:community_id].to_s) 
   else
     boards = Board.ranked
   end
-  
-  
+    
+    
   body_text = 'Greetings '
   if community
     body_text += community.name + " "

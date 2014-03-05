@@ -28,4 +28,3 @@ Sosol::Application.configure do
   # and possibly other unversioned secrets for development
   require File.join(File.dirname(__FILE__), 'development_secret')
 end
-

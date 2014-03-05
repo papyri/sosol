@@ -1459,6 +1459,7 @@ class Publication < ActiveRecord::Base
     has_text = false
     has_biblio = false
     has_cts = false
+    has_cite = false
     
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1472,6 +1473,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CTSIdentifier/
         has_cts = true
+      end
+      if i.class.to_s =~ /CiteIdentifier/
+        has_cite = true
       end
     end
     if !has_text
@@ -1489,8 +1493,8 @@ class Publication < ActiveRecord::Base
     if has_biblio
       creatable_identifiers = []
     end
-    #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
-    if has_cts
+    #  BALMAS Creating other records in association with  CTSIdentifier or CiteIdentifier publication will be enabled elsewhere
+    if has_cts || has_cite
       creatable_identifiers = []
     end
     

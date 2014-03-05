@@ -4,7 +4,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   TEMPORARY_COLLECTION = 'TempTrans'
   TEMPORARY_TITLE = 'New Translation'
   
-  FRIENDLY_NAME = "Inscription Translation"
+  FRIENDLY_NAME = "Translation Text (EpiDoc)"
   
   IDENTIFIER_NAMESPACE = 'epigraphy_translation'
   
@@ -79,8 +79,8 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def preview
       JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt pn start-divtrans-portlet.xsl})))
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        %w{data xslt perseus epidoc_preview.xsl})))
   end
   
 end

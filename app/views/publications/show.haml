@@ -4,7 +4,6 @@
 
     function checkForComment() { 
       comment_text = $('submit_comment').value; 
-
       if ($('community_id') != null)
       {
         var selected_submit = $('community_id').value;
@@ -15,7 +14,7 @@
         $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
       } 
     }
-    
+
     function toggle_div(obj) {
       var el = document.getElementById(obj);
       if ( el.style.display != "none" ) {

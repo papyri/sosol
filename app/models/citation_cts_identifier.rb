@@ -15,7 +15,6 @@ class CitationCTSIdentifier < CTSIdentifier
     end
     # Before checking for validity, preprocess according to requirements of the parent text
     xslt = self.related_text.class::XML_CITATION_PREPROCESSOR
-    Rails.logger.info("Preprocessing citation xml with #{xslt}")
     fixed = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,
@@ -44,10 +43,7 @@ class CitationCTSIdentifier < CTSIdentifier
     new_identifier.title = titleParts.join(' ') 
     new_identifier.save!
     begin
-      uuid = publication.id.to_s + passage_urn.gsub(':','_')
-      inventory = new_identifier.related_text.related_inventory.xml_content
-      document = new_identifier.related_text.content
-      passage_xml = CTS::CTSLib.getPassageFromRepo(inventory,document,new_identifier.urn_attribute,uuid)
+      passage_xml = CTS::CTSLib.getPassage(new_identifier.related_text.id.to_s,new_identifier.urn_attribute)
       new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
       return new_identifier
     rescue Exception => e
@@ -68,8 +64,8 @@ class CitationCTSIdentifier < CTSIdentifier
   def preview parameters = {}, xsl = nil
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cts alpheios-tei.xsl})),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : self.related_text.preview_xslt)),
         parameters)
   end
   
@@ -79,7 +75,6 @@ class CitationCTSIdentifier < CTSIdentifier
     # send the parent text for review
     # passage itself doesn't get finalized
     # archive? the passage
-
     # only do this once
     if self.status == 'finalizing-preprocessed'
       return false
@@ -90,7 +85,7 @@ class CitationCTSIdentifier < CTSIdentifier
       rescue Exception => e
         # TODO if we are unable to merge the citation back into the source document, 
         # we should support submitting it on its own? 
-        Rails.logger.error(e)
+        Rails.logger.error("Error updating passage: ",e)
         raise e
       else
         self.related_text.set_xml_content(updated,:comment => "merged updated passage #{self.urn_attribute}") 

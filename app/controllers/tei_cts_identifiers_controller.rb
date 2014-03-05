@@ -1,6 +1,8 @@
 class TeiCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   
   ## TODO 
   # we to offer the following options:

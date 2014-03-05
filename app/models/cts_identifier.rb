@@ -78,7 +78,7 @@ class CTSIdentifier < Identifier
     newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
     Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
-    editionPart = ".#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
@@ -91,8 +91,7 @@ class CTSIdentifier < Identifier
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
     editionPart = editionPart + document_number.to_s
-    # HACK for IDigGreek - just keep the original edition info
-    editionPart = urnObj.getVersion(false)
+    # TODO add exemplar (version) component
     return "#{document_path}#{editionPart}"
   end
   
@@ -117,6 +116,11 @@ class CTSIdentifier < Identifier
     return @collection_names_hash
   end
   
+  def lang
+    return REXML::XPath.first(REXML::Document.new(self.xml_content),
+      "/TEI/text/@xml:lang").to_s
+  end
+  
   def reprinted_in
     return REXML::XPath.first(REXML::Document.new(self.xml_content),
       "/TEI/text/body/head/ref[@type='reprint-in']/@n")
@@ -128,6 +132,12 @@ class CTSIdentifier < Identifier
   
   def urn_attribute
      return IDENTIFIER_PREFIX + self.to_urn_components.join(":")
+  end
+  
+  def work_urn
+    urn_obj = CTS::CTSLib.urnObj(self.urn_attribute)
+    work_urn = IDENTIFIER_PREFIX + urn_obj.getTextGroup() + '.' + urn_obj.getWork(false)
+    return work_urn
   end
   
   def id_attribute
@@ -148,9 +158,59 @@ class CTSIdentifier < Identifier
     return self.to_components[0]
   end
   
+  # return an inventory object for related text items
+  def related_text_inventory
+    
+    # this is a somewhat ridiculous structure
+    # for backwards-compability with cts_proxy_controller.getcapabilities
+    # it mimics the one created by calling inventory_to_json.xsl
+    # on a TextInventory
+    inv = Hash.new
+
+    related = self.publication.identifiers.select{|i| 
+      ( (i.id != self.id) && (i.class != CitationCTSIdentifier) && i.respond_to?('related_text'))}
+    if (related.size > 0)
+      self_urn = CTS::CTSLib.urnObj(self.urn_attribute)
+      self_tg = self_urn.getTextGroup(true)
+      self_work = self_urn.getWork(false) 
+      inv[self.id.to_s] = 
+        { 'label' => self_tg, 
+          'urn' => self.id.to_s,
+          'works' => {
+            self_work =>
+            {  'label' => self_work,
+               'urn' => self_work,
+               'editions' => {},
+               'translations' => {}
+            }
+          }
+        }
+      related.each do |r|
+        r_urn = CTS::CTSLib.urnObj(r.urn_attribute)
+        r_ver = r_urn.getVersion(false)
+        inv[self.id.to_s]['works'][self_work]['editions'][r_ver] = 
+          { 'label' => r.title, 
+             'urn' => r.urn_attribute, 
+             'lang' => r.lang,
+             'item_type' => r.class.to_s,
+             'item_id' => r.id.to_s,
+             'cites' => r.related_inventory.parse_inventory['citations']
+          }  
+      end
+    end
+    return inv    
+  end
+  
   def has_related_citations
       cites = self.publication.identifiers.select{|i| (i.class == CitationCTSIdentifier)}
       return cites.size() > 0
+  end
+  
+  # Checks to see if we can retrieve any valid citations from this text
+  def has_valid_reffs?
+    uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
+    refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
+    return ! refs.nil? && refs != ''
   end
   
   def related_inventory 
@@ -229,4 +289,13 @@ class CTSIdentifier < Identifier
     return ''
   end
   
+  # default xslt for displaying an annotation view of a CTS passage
+  def passage_annotate_xslt
+    File.read(File.join(RAILS_ROOT,%w{data xslt cts cts_annotate.xsl}))
+  end
+  
+  # default xslt for retrieving the subref of a CTS passage
+  def passage_subref_xslt_file
+    File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
+  end
 end

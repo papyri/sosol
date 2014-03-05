@@ -8,7 +8,6 @@ class CTSInventoryIdentifier < Identifier
   FRIENDLY_NAME = "TextInventory"
   IDENTIFIER_NAMESPACE = 'textinventory'
 
-
   def is_valid_xml?(content = nil)
     return true
   end
@@ -43,7 +42,7 @@ class CTSInventoryIdentifier < Identifier
   def parse_inventory()
     atts = {}
     urnStr = self.title
-    urnStr.sub!(/TextInventory for/,'urn:cts:')
+    urnStr.sub!(/TextInventory for /,'urn:cts:')
     urn = CTS::CTSLib.urnObj(urnStr)
     
     atts['worktitle'] = { 'eng' =>

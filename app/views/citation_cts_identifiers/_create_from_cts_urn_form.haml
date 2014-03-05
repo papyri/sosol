@@ -24,7 +24,6 @@
   = hidden_field_tag 'version_id',version_id.to_s
   = hidden_field_tag 'collection', collection.to_s
   = hidden_field_tag 'pubtype', pubtype.to_s
-  = hidden_field_tag 'src', 'SoSOL'
   = label_tag 'From:'
   - citeinfo['citations'].each_index do |index|
     = label_tag citeinfo['citations'][index]

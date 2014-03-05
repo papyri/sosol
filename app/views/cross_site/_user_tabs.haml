@@ -1,49 +1,3 @@
-:javascript
-  function showCommunityDialog(e)
-  {
-    
-    var community_list = $('community_list');
-    var body = document.body;
-    var community_menu = $('community_menu');
-    
-    body.appendChild(community_list);
-    
-    if (community_list.style.display == "block")
-    {
-      community_list.style.display = "none";
-    }
-    else
-    {
-      community_list.style.display = "block";
-    }
-    
-    community_list.setStyle({ position: 'absolute', zIndex: '9999'});
-    
-    
-    var left_pos = community_menu.cumulativeOffset().left + community_menu.getWidth() - community_list.getWidth() ;
-    var top_pos = community_menu.cumulativeOffset().top + community_menu.getHeight() ;
-    
-    community_list.style.top = top_pos + "px";
-    community_list.style.left = left_pos + "px";
-
-    
-  }
-
-  Event.observe(document.body, 'click',
-    function windowClick(e)
-    {
-      var clicked = $(Event.element(e));
-      if (clicked.id != 'community_menu')
-      { 
-        if ($('community_list')) 
-          {
-            $('community_list').style.display = "none";
-          }
-      }
-    }
-   );
-
-
 - if @current_user
 
   - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
@@ -75,3 +29,65 @@
                 = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
                 
         - #should be finding all user pubs, then showing the ones with community ids?
+
+:javascript
+  $j = jQuery.noConflict();
+  
+  //------------------------------------------------------------
+  //  Drop down menu when board list is clicked
+  //------------------------------------------------------------
+  function showCommunityDialog( _e ) {
+  
+    //------------------------------------------------------------
+    //  Add to the dom
+    //------------------------------------------------------------
+    var community_list = $j('#community_list');
+    var community_menu = $j('#community_menu');
+    $j('body').append( community_list );
+    
+    //------------------------------------------------------------
+    //  Display switch
+    //------------------------------------------------------------
+    if ( community_list.css('display') == 'block' ) {
+      community_list.css('display', 'none');
+    }
+    else {
+      community_list.css('display', 'block');
+    }
+    
+    //------------------------------------------------------------
+    //  Position the community list
+    //------------------------------------------------------------
+    positionCommunityList();
+    $j( window ).resize( function() {
+        positionCommunityList();
+    });
+  }
+  
+  //------------------------------------------------------------
+  //  Position the community list
+  //------------------------------------------------------------
+  function positionCommunityList() {
+    var community_list = $j('#community_list');
+    var community_menu = $j('#community_menu');
+    community_list.css({ 
+      position: 'absolute', 
+      zIndex: '9999'}
+    );
+    var left_pos = community_menu.offset().left + community_menu.width() - community_list.width() ;
+    var top_pos = community_menu.offset().top + community_menu.width() ;
+    community_list.css('top', top_pos + 'px' );
+    community_list.css('left', left_pos + 'px' );
+  }
+  
+  //------------------------------------------------------------
+  //  Hide the community list if outside community list is clicked
+  //------------------------------------------------------------
+  $j( document ).click( function( _e ) {
+    var clicked = _e.target;
+    if ( clicked.id != 'community_menu' ) { 
+      if ( $j('#community_list') )  {
+        $j('#community_list').css( 'display', 'none' );
+      }
+    }
+  });

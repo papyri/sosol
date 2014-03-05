@@ -1,6 +1,8 @@
 class TeiTransCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
+  before_filter :ownership_guard, :only => [:update, :updatexml]
+
   # require 'xml'
   # require 'xml/xslt'
   

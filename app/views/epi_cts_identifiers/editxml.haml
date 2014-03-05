@@ -1,31 +1,61 @@
-#main
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
+:css
+  body {
+    background-color: #f9f9f9;
+  }
+    
+//------------------------------------------------------------
+//  Content
+//------------------------------------------------------------
+#main.full.editxml
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
+    #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
     #edit
       = form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
-
-        %br
-        - if @identifier[:facs].length > 1
-          - @identifier[:facs].each do |i|
-            %a{:href => i, :target => 'cts-image-frame'} i
+        #ict_tool_wrapper
+          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
+            
+          %div{:id => "imgspect"}    
         
-        %iframe{:id=> 'cts-image-frame', :src => @identifier[:facs][0]}
-        
-
-        %br
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
-                
-        %label XML
-        = clippy "#{@identifier.class.to_s.underscore}_xml_content"
-        
-        = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
-        // FORK CHANGE END
-        %br
-        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-
+        .clearfix
+        %div{:id => "editors"}
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+          
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
+    
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
+= javascript_include_tag "imgspect/imgspect.min"
+= javascript_include_tag "texAce/src/js/texAce"
+= javascript_include_tag "texAce/third_party/ace-builds/src-noconflict/ace"
+= javascript_include_tag "texAce/third_party/jquery-cookie/jquery.cookie"
 :javascript
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  PerseidsLD.do_simple_query();
+
+  //------------------------------------------------------------
+  // Start imgspect bridge and grab a handler
+  //------------------------------------------------------------
+  var bridge = PerseidsBridge.imgspect.init();
+  bridge.start();
+  
+  //------------------------------------------------------------
+  //  Experiments with ACE editor
+  //------------------------------------------------------------
+  jQuery( document ).ready( function() {
+    
+    //------------------------------------------------------------
+    //  Copy content into a div
+    //------------------------------------------------------------
+    jQuery("#epi_cts_identifier_xml_content").texAce({lang:'xml',theme_selector:true});
+  });
+

@@ -1,6 +1,8 @@
+= javascript_include_tag 'perseids-tools'
+
 #main
   = render :partial => 'identifiers/edit_bar'
-
+  #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
   .site
     = render :partial => 'identifiers/header'
     #edit
@@ -10,3 +12,4 @@
         %label Preview
         .PContent
           = @identifier[:html_preview]
+          

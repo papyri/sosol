@@ -13,6 +13,7 @@ class EmailerMailer < ActionMailer::Base
     
     #from "SoSOL"
     from Sosol::Application.config.site_name
+    # from SITE_EMAIL_FROM || SITE_NAME 
     sent_on Time.now
   
     subject subject_line

@@ -1,49 +1,3 @@
-:javascript
-  function showBoardDialog(e)
-  {
-    
-    var board_list = $('board_list');
-    var body = document.body;
-    var board_menu = $('board_menu');
-    
-    body.appendChild(board_list);
-    
-    if (board_list.style.display == "block")
-    {
-      board_list.style.display = "none";
-    }
-    else
-    {
-      board_list.style.display = "block";
-    }
-    
-    board_list.setStyle({ position: 'absolute', zIndex: '9999'});
-    
-    var left_pos = board_menu.cumulativeOffset().left + board_menu.getWidth() - board_list.getWidth() ;
-    var top_pos = board_menu.cumulativeOffset().top + board_menu.getHeight() ;
-    
-    board_list.style.top = top_pos + "px";
-    board_list.style.left = left_pos + "px";
-   
-  }
-  
-  
-  Event.observe(document.body, 'click',
-    function windowClick(e)
-    {
-      var clicked = $(Event.element(e));
-      if (clicked.id != 'board_menu')
-      { 
-        if ($('board_list')) 
-          {
-            $('board_list').style.display = "none";
-          }
-      }
-    }
-   );
-  
-
-
 - if @current_user
   
   
@@ -90,5 +44,65 @@
           - community_boards.each do |cb|
             %li
               = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
-              
-          
+
+:javascript
+  $j = jQuery.noConflict();
+  
+  //------------------------------------------------------------
+  //  Drop down menu when board list is clicked
+  //------------------------------------------------------------
+  function showBoardDialog( _e ) {
+  
+    //------------------------------------------------------------
+    //  Add to the dom
+    //------------------------------------------------------------
+    var board_list = $j('#board_list');
+    var board_menu = $j('#board_menu');
+    $j('body').append( board_list );
+    
+    //------------------------------------------------------------
+    //  Display switch
+    //------------------------------------------------------------
+    if ( board_list.css('display') == 'block' ) {
+      board_list.css('display', 'none');
+    }
+    else {
+      board_list.css('display', 'block');
+    }
+    
+    //------------------------------------------------------------
+    //  Position the board list
+    //------------------------------------------------------------
+    positionBoardList();
+    $j( window ).resize( function() {
+        positionBoardList();
+    });
+  }
+  
+  //------------------------------------------------------------
+  //  Position the board list
+  //------------------------------------------------------------
+  function positionBoardList() {
+    var board_list = $j('#board_list');
+    var board_menu = $j('#board_menu');
+    board_list.css({ 
+      position: 'absolute', 
+      zIndex: '9999'}
+    );
+    var left_pos = board_menu.offset().left + board_menu.outerWidth() - board_list.outerWidth();
+    var top_pos = board_menu.offset().top + board_menu.outerHeight();
+    board_list.css('top', top_pos + 'px' );
+    board_list.css('left', left_pos + 'px' );
+  }
+  
+  //------------------------------------------------------------
+  //  Hide the board list if outside board list is clicked
+  //------------------------------------------------------------
+  $j( document ).click( function( _e ) {
+    var clicked = _e.target;
+    if ( clicked.id != 'board_menu' ) { 
+      if ( $j('#board_list') )  {
+        $j('#board_list').css( 'display', 'none' );
+      }
+    }
+  });

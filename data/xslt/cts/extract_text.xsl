@@ -65,7 +65,7 @@
                    </xsl:analyze-string>
                </xsl:variable>
                <xsl:choose>
-                   <xsl:when test="$tokens">
+                   <xsl:when test="$tokens/*">
                        <xsl:call-template name="tokenize-text">
                            <xsl:with-param name="match-nontext" select="$match-nontext"/>
                            <xsl:with-param name="tokenized" select="($tokenized,$tokens/token)"/>
