@@ -82,6 +82,7 @@ GEM
     jruby-openssl (0.9.4)
       bouncy-castle-java (>= 1.5.0147)
     jruby-rack (1.1.14)
+    json (1.5.0)
     json (1.5.0-java)
     json-jruby (1.5.0-java)
       json (= 1.5.0)
@@ -102,6 +103,8 @@ GEM
     polyglot (0.3.4)
     prototype-rails (3.2.1)
       rails (~> 3.2)
+    puma (2.8.0)
+      rack (>= 1.1, < 2.0)
     puma (2.8.0-java)
       rack (>= 1.1, < 2.0)
     rack (1.4.5)
@@ -163,6 +166,7 @@ GEM
       jruby-rack (>= 1.0.0)
       rake (>= 0.9.6)
       rubyzip (>= 0.9, < 1.1)
+    xmlcanonicalizer (0.1.2)
 
 PLATFORMS
   java
@@ -196,3 +200,4 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   uuid
   warbler
+  xmlcanonicalizer
