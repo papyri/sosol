@@ -4,9 +4,9 @@ class OACIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = Factory(:user, :name => "CreatorA")
-      @creator2 = Factory(:user, :name => "CreatorB")
-      @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      @creator = FactoryGirl.create(:user, :name => "CreatorA")
+      @creator2 = FactoryGirl.create(:user, :name => "CreatorB")
+      @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
       @parent = FactoryGirl.create(:TeiCTSIdentifier, :title => 'Test Text')

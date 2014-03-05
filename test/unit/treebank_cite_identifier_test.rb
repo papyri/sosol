@@ -4,8 +4,8 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = Factory(:user, :name => "Creator2")
-      @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      @creator = FactoryGirl.create(:user, :name => "Creator2")
+      @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
 
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
