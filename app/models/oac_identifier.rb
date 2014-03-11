@@ -12,7 +12,8 @@ class OACIdentifier < Identifier
   NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   NS_DCTERMS = "http://purl.org/dc/terms/"  
   NS_FOAF = "http://xmlns.com/foaf/0.1/"  
-  NS_OAC = "http://www.openannotation.org/ns/"  
+  NS_OAC = "http://www.w3.org/ns/oa#" 
+  
   
   def get_catalog_link
    # no catalog for annotations right now
@@ -84,7 +85,7 @@ class OACIdentifier < Identifier
   
   # test to see if any annotations have been added to the oac.xml file yet
   def has_anyannotation?()
-    all = get_all_annotations(self.rdf)
+    all = get_annotations
     hasany = false
     begin
       if ! all.first.nil?
@@ -109,6 +110,10 @@ class OACIdentifier < Identifier
   # get the requested annotation by uri from the oac.xml 
   def get_annotation(a_uri)
    OacHelper::get_annotation(self.rdf,a_uri)          
+  end
+  
+  def get_annotations()
+    OacHelper::get_annotations_by_annotator(self.rdf,make_creator_uri())
   end
   
   # look for Annotations whose target resource matches the targetUriMatch string
@@ -139,19 +144,12 @@ class OACIdentifier < Identifier
   ## USED ONLY IN TESTS NEEDS TO BE REDONE FOR NAMESPACE
   def has_target?(targetUri,creatorUri)
     has_target = false
-    if (self.has_anyannotation?)
-      # this is annoying .. REXML doesn't seem to support multiple predicates combined with and?
-      # /rdf:RDF/oac:Annotation[oac:Target] succeeds
-      # /rdf:RDF/oac:Annotation[dcterms:creator] succeeds
-      # but /rdf:RDF/oac:Annotation[oac:Target and dcterms:creator] fails
-      xpath = "//oa:Annotation[oa:hasTarget[@rdf:resource = '#{targetUri}']]"
-      REXML::XPath.each(self.rdf, xpath, {"oac"=> NS_OACOLD,"oa" => NS_OAC}) { |el|
-        if el.get_elements("dcterms:creator/foaf:Agent[@rdf:about =  '#{creatorUri}']").length == 1
+    self.get_annotations().each do |a_annot|
+      Rails.logger.info("Checking #{toXmlString a_annot} for #{targetUri}")
+      xpath = "//oa:hasTarget[@rdf:resource = '#{targetUri}']]"
+      if (REXML::XPath.match(a_annot, xpath, {"oa" => NS_OAC}).size > 0) 
            has_target = true
-        elsif el.get_elements("oa:annotatedBy/foaf:Person[@rdf:about =  '#{creatorUri}']").length == 1
-           has_target = true
-        end
-      }   
+      end
     end
     return has_target
   end
@@ -174,8 +172,9 @@ class OACIdentifier < Identifier
   end
   
   # update a pre-existing annotation in the oac.xml file
-  def update_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,comment)
+  def update_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,agents,comment)
     annot = OacHelper::get_annotation(self.rdf,annot_uri) 
+    Rails.logger.info("Before update #{toXmlString annot}")
     if (annot.nil?)
       Rails.logger.info("Not found #{annot_uri}")
       Rails.logger.info(toXmlString self.rdf)
@@ -188,21 +187,28 @@ class OACIdentifier < Identifier
     annot.add_element(OacHelper::make_body(body_uri))
     annot.add_element(OacHelper::make_motivation(motivation))
     annot.add_element(OacHelper::make_annotator(creator_uri))
+    unless (agents.nil?)
+      agents.each do | a_agent | 
+        annot.add_element(OacHelper::make_software_agent(a_agent))
+      end
+    end
     annot.add_element(OacHelper::make_annotated_at)
+    Rails.logger.info("After update #{toXmlString annot}")
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
   # add a new annotation to the oac.xml file
-  def add_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,comment)
+  def add_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,agent,comment)
     exists = OacHelper::get_annotation(self.rdf,annot_uri)
     unless (exists.nil?)
       raise "An annotation identified by #{annot_uri} already exists."
     end
-    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri))
+    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,agent))
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
+    Rails.logger.info("Adding #{oacRdf}")
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
@@ -210,7 +216,7 @@ class OACIdentifier < Identifier
   def delete_annotation(annot_uri,comment)
     OacHelper::remove_annotation(self.rdf,annot_uri)
     unless (OacHelper::get_annotation(self.rdf,annot_uri).nil?)
-      raise "Unable to delete #{annot_uri}."
+      raise "Unable to delete #{annot_uri} still have #{OacHelper::get_annotation(self.rdf,annot_uri)}."
     end
     # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
     oacRdf = toXmlString self.rdf
@@ -277,6 +283,125 @@ class OACIdentifier < Identifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt oac html_preview.xsl})),
         parameters)
+  end
+  
+  # api_get responds to a call from the data management api controller
+  # @param [String] a_query if not nil, means use the query to 
+  #                         return part of the item
+  def api_get(a_query)
+
+  end
+  
+  # api_update responds to a call from the data management api controller
+  # @param [String] a_query  parameter containing a querystring
+  #                 specific to the identifier type. We use it for TreebankIdentifiers
+  #                 to identify the sentence
+  # @param [String] a_body the raw body of the post data
+  # @param [String] a_comment an update comment
+  #
+  def api_update(a_query,a_body,a_comment)
+    
+    if (a_query)
+      # if we have a query, then update just a single annotation
+      # TODO 
+    else
+      # otherwise, we loop through updating the annotations that already exist, appending any that don't
+      # and remove any for the agent(s) which aren't there any more
+      REXML::Document.new(a_body)
+      agents []
+      to_update = []
+      to_insert = []
+      uris = []
+      REXML::XPath.each(a_body,'//*[oa:hasTarget]',{"oa" => NS_OA}) { | a_annot |
+        annotation = get_annotation(a_annot.attributes['rdf:about'])
+        agents.concat(OacHelper::get_software_agents(a_annot))
+        if (annotation)
+          if (can_update?(annotation,a_annot))
+            to_update << a_annot
+          else
+            Raise "Invalid agent for annotation" 
+          end
+        else 
+          to_insert << a_annot
+        end
+      }
+      errors = []
+      to_update.each do |a_annot|
+        begin
+          uri = a_annot.attributes['rdf:about']
+          targets = OacHelper::get_targets(a_annot)
+          body = OacHelper::get_body(a_annot)
+          motivation = OacHelper::get_motivation()
+          agents = OacHelper::get_software_agents()
+          update_annotation(annot_uri,target_uris,body_uri,motivation,make_creator_uri(),agents,a_comment)
+          uris << a_annot.attributes['rdf:about']
+        rescue Exception => a_e
+          Rails.logger.error("Unable to update annotation",a_e)
+          errors << a_annot
+        end 
+      end
+      to_insert.each do | a_annot|
+        begin
+          uri = a_annot.attributes['rdf:about']
+          targets = OacHelper::get_targets(a_annot)
+          body = OacHelper::get_body(a_annot)
+          motivation = OacHelper::get_motivation()
+          agents = OacHelper::get_software_agents()
+          add_annotation(annot_uri,target_uris,body_uri,motivation,make_creator_uri(),agents,a_comment)
+          uris << a_annot.attributes['rdf:about']
+        rescue Exception => a_e
+          Rails.logger.error("Unable to insert annotation",a_e)
+          errors << a_annot
+        end
+      end
+      agents = agents.uniq
+      # now loop through the agents and get any previously saved annotations for that
+      # agent which aren't there anymore -- HACK until we support api delete
+      get_annotations().each do | a_annot |
+        annot_agents = OacHelper::get_software_agents(a_annot)
+        annot_uri = a_annot.attributes['@rdf:about']
+        # if all agents metch and the annotation doesn't exist in the update set, delete it
+        if ( (agents & annot_agents).size == agents.size && ! uris.include?(annot_uri))
+          begin 
+            delete_annotation(annot_uri,a_comment)
+          rescue
+            errors << "Unable to delete #{annot_uri}"
+          end
+        end
+      end      
+    end
+    if(errors.size > 0)
+      raise "Errors during update: #{errors.join(",")}"
+    end
+  end
+  
+  # get descriptive info 
+  def api_info
+
+  end
+  
+  def can_update?(a_orig,a_new)
+    session_owner = make_creator_uri()
+    
+    authorized_owner =
+      # either the original creator is the session owner 
+      OacHelper::get_creator(a_orig) == session_owner ||
+      # or own of the annotators is the session owner 
+      (OacHelper::get_annotators(a_orig).include?(session_owner)) ||
+      # or the publication is being finalized, in which case the session owner is not necessarily an annotator
+      # TODO in case of changes during finalization, the finalizer should be added as an annotator 
+      @publication.status == 'finalizing'
+    orig_agents = OacHelper::get_software_agents(a_orig)
+    new_agents = OacHelper::get_software_agents(a_new)
+    
+    authorized_agent =
+      # if no previous agent, then anyone is authorized to update 
+      orig_agents.size == 0 ||
+      # otherwise there must be at least one common agent between the original and the updated 
+      (orig_agents & new_agents).size > 0
+    Rails.logger.info("orig_agents = #{orig_agents.inspect} new = #{new_agents.inspect} auth=#{authorized_agent.inspect}")
+    return authorized_agent && authorized_owner
+      
   end
   
 end

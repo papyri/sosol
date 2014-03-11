@@ -39,7 +39,10 @@ class CtsOacIdentifiersController < IdentifiersController
         params[:collection] = @identifier.parentIdentifier.inventory
         params[:src] = src
         params[:valid_targets] = (1..targets.size).map { |i| "target_uri#{i}"}.join(",")
- 
+        @identifier[:toponym_export_url] = 
+          Tools::Manager.tool_config('recogito')[:export_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}"
+        @identifier[:toponym_import_url] = 
+          Tools::Manager.tool_config('recogito')[:import_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}" 
       end
     else
       # we can't allow editing of the file as a whole because we
@@ -61,7 +64,11 @@ class CtsOacIdentifiersController < IdentifiersController
       @identifier[:token_service_config] = Tools::Manager.tool_config('cts_tokenizer',true)
       @identifier[:xslt_path] = url_for(:action => 'annotate_xslt', :id => @identifier.id,:publication_id => @publication.id)
       @identifier[:src] = "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}"
-   
+      @identifier[:toponym_export_url] = 
+          Tools::Manager.tool_config('recogito')[:export_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}" 
+      @identifier[:toponym_import_url] = 
+          Tools::Manager.tool_config('recogito')[:import_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}" 
+
       render(:template => 'cts_oac_identifiers/edit') and return
     else
       @creator_uri = @identifier.make_creator_uri()
@@ -69,6 +76,11 @@ class CtsOacIdentifiersController < IdentifiersController
       @identifier[:token_service_config] = Tools::Manager.tool_config('cts_tokenizer',true)
       @identifier[:xslt_path] = url_for(:action => 'annotate_xslt', :id => @identifier.id,:publication_id => @publication.id)
       @identifier[:src] = "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}"
+      @identifier[:toponym_export_url] = 
+          Tools::Manager.tool_config('recogito')[:export_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}"
+      @identifier[:toponym_import_url] = 
+          Tools::Manager.tool_config('recogito')[:import_url] + "#{root_url}cts/getpassage/#{@identifier.parentIdentifier.id}/#{params[:target_urn]}" 
+     
       if params[:commit] == 'Append'
         # if the confirmed that they want to add a new annotation for this target, bring them to the 
         # apppend form
@@ -104,7 +116,7 @@ class CtsOacIdentifiersController < IdentifiersController
     title = params[:annotation_motivation]
     @creator_uri = @identifier.make_creator_uri()
     annotation_uri = @identifier.next_annotation_uri()
-    @identifier.add_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,'Added Annotation')
+    @identifier.add_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,nil,'Added Annotation')
     redirect_to(:action => :preview,
        :annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
   end
@@ -118,7 +130,7 @@ class CtsOacIdentifiersController < IdentifiersController
       Rails.logger.error("Updating invalid annotation uri #{annotation_uri}")
       flash[:error] = "Annotation #{annotation_uri} not found"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-    elsif (OacHelper::get_creator(annotation) != @creator_uri && ! (OacHelper::get_annotators(annotation).include?(@creator_uri)) && @publication.status != 'finalizing')
+    elsif (! @identifier.can_update?(annotation))
       Rails.logger.error("Updating unauthorized annotation uri #{annotation_uri}")
       flash[:error] = "You can only edit annotations you created"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
@@ -129,7 +141,7 @@ class CtsOacIdentifiersController < IdentifiersController
     end
     body_uri = params[:body_uri]
     title = params[:annotation_motivation]
-    @identifier.update_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,"Updated Annotation #{annotation_uri}")
+    @identifier.update_annotation(annotation_uri,target_uris,body_uri,title,@creator_uri,nil,"Updated Annotation #{annotation_uri}")
     redirect_to(:action => :preview,
        :annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
   end
@@ -143,7 +155,7 @@ class CtsOacIdentifiersController < IdentifiersController
       Rails.logger.error("Deleting invalid annotation uri #{annotation_uri}")
       flash[:error] = "Annotation #{annotation_uri} not found"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
-    elsif (OacHelper::get_creator(annotation) != @creator_uri && ! (OacHelper::get_annotators(annotation).include?(@creator_uri)) && @publication.status != 'finalizing')
+    elsif (! @identifier.can_update?(annotation))
       Rails.logger.error("Deleting unauthorized annotation uri #{annotation_uri}")
       flash[:error] = "You can only delete annotations you created"
       redirect_to(:action => :preview,:publication_id => @publication.id, :id => @identifier.id) and return
@@ -154,8 +166,9 @@ class CtsOacIdentifiersController < IdentifiersController
   
   def preview
     find_identifier
+    target_urn = "#{urnObj.getUrnWithoutPassage()}:#{urnObj.getPassage(1000).sub(/[@#][^@#]+$/,'')}"
     if (@identifier.publication.status != 'finalizing')
-      params[:creator_uri] = @identifier.make_creator_uri()
+      params[:creator_uri] = @identifier.make_creator_uri()       
     end
     @identifier[:html_preview] = @identifier.preview(params)
     @identifier[:annotation_uri] = params[:annotation_uri]

@@ -8,6 +8,7 @@ module OacHelper
   NS_OAC = "http://www.w3.org/ns/oa#" 
   NS_OACOLD = "http://www.openannotation.org/ns/" 
   NS_CONTENT = "http://www.w3.org/2008/content#"
+  NS_PROV = "http://www.w3.org/ns/prov#"
  
   
   # get the annotation identified by requested uri from the supplied document
@@ -43,12 +44,17 @@ module OacHelper
     return all
   end
   
+  def self.get_annotations_by_annotator(a_doc,a_annotator)
+    xpath = "//oa:Annotation[oa:annotatedBy/foaf:Person[@rdf:about = '#{a_annotator}']]"
+    return REXML::XPath.match(a_doc,xpath,{"oa"=>NS_OAC, "rdf" => NS_RDF, "foaf" => NS_FOAF} )
+  end
+  
   # delete the annotiation identified by the uri from the supplied document
   def self.remove_annotation(a_doc,a_uri)
-    xpath = "//oa:Annotation[@rdf:about = '#{annot_uri}']"
-    doc.elements.delete_all xpath, {"oa" => NS_OAC}
-    xpath = "//oac:Annotation[@rdf:about = '#{annot_uri}']"
-    doc.elements.delete_all xpath, {"oac" => NS_OACOLD}
+    xpath = "//oa:Annotation[@rdf:about = '#{a_uri}']"
+    REXML::XPath.each(a_doc,xpath,{"oa" => NS_OAC, "rdf" => NS_RDF}) { | a_el |
+      a_doc.root.elements.delete a_el
+    }
   end
   
   # get the target uris from the supplied annotation
@@ -142,6 +148,21 @@ module OacHelper
     return creator
   end
   
+  # get the agent(s) from the supplied annotation
+  def self.get_software_agents(a_annotation)
+    xpath = "oa:serializedBy/prov:SoftwareAgent"
+    agents = []
+    REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "prov" => NS_PROV, "rdf" => NS_RDF, "rdfs" => NS_RDFS}) { |agent|
+      if agent.attributes['rdf:about']
+        agents << agent.attributes['rdf:about']
+      else
+        agents << REXML::XPath.first(agent,'rdfs:label',{"rdfs" => NS_RDFS}).text
+      end
+    }          
+    return agents
+  end
+    
+  
   # get the created date from the supplied annotation
   def self.get_created(a_annotation)
     xpath = "dcterms:created"
@@ -150,6 +171,13 @@ module OacHelper
       created = date.text
     }          
     return created
+  end
+  
+  # get the oac:annotatedAt element
+  def self.get_annotated_at(a_annotation)
+    xpath = "oa:annotatedAt"
+    at = REXML::XPath.first(a_annotation, xpath, {"oa"=> NS_OAC}).text 
+    return at || ""
   end
   
   # get the motivation from the supplied annotation
@@ -210,6 +238,24 @@ module OacHelper
     agent.add_attribute('rdf:about',creator_uri)
     creator.add_element(agent)
     return creator  
+  end
+  
+  # create a prov:SoftwareAgent element
+  def self.make_software_agent(a_agent)
+    serialized = REXML::Element.new("serializedBy")
+    serialized.add_namespace(NS_OAC)
+    agent = REXML::Element.new("SoftwareAgent")
+    agent.add_namespace(NS_PROV)
+    # test if the agent is a uri
+    begin
+      URI.parse(a_agent)
+      agent.add_attribute('rdf:about',a_agent)
+    rescue
+      # if not a uri, then just add it as a label
+      agent.add_element(make_label('eng',a_agent))
+    end
+    serialized.add_element agent
+    return serialized
   end
   
   def self.make_annotator(a_uri)
@@ -331,7 +377,7 @@ module OacHelper
   end
   
   # make an oac:Annotation element
-  def self.make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri)
+  def self.make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,agent)
     annot = REXML::Element.new("Annotation")
     annot.add_namespace(NS_OAC)
     annot.add_namespace("rdf",NS_RDF)
@@ -343,6 +389,9 @@ module OacHelper
     annot.add_element(make_motivation(motivation))
     annot.add_element(make_annotator(creator_uri))
     annot.add_element(make_annotated_at())
+    unless (agent.nil?)
+      annot.add_element(make_software_agent(agent))
+    end
     return annot
   end    
   

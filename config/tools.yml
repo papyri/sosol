@@ -13,6 +13,9 @@ development:
       :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?splitting=false&uri="
     :lat:
       :request_url: "http://localhost/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+  recogito:
+    :export_url: "http://pelagios.org/recogito/edit/annotation?ctsURI="
+    :import_url: "http://pelagios.org/recogito/api/annotations?ctsURI="
     
     
 test:
