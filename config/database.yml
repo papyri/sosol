@@ -21,5 +21,8 @@ test:
 
 production:
   adapter: <%= jdbc %>mysql
-  database: idp2
-  username: idp2
+  hostname: localhost
+  database: sosol
+  username: ****
+  password: ****
+  socket: /var/mysql/mysql.sock
