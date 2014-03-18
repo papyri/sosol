@@ -1,0 +1,4 @@
+- if @identifier.mutable? && @identifier.publication.status != 'finalizing'
+  %li{ :class => ''}= link_to 'Recogito Export', @identifier[:toponym_export_url]
+  %li{ :class => ''}= link_to 'Recogito Import', @identifier[:toponym_import_url]
+

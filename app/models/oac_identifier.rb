@@ -414,13 +414,13 @@ class OACIdentifier < Identifier
     # any previously saved annotations for that agent which aren't there anymore
     # HACK until we support api delete
     unless (a_query)
-      get_annotations().each do | a_annot |
+     get_annotations().each do | a_annot |
         annot_agents = OacHelper::get_software_agents(a_annot)
         annot_uri = a_annot.attributes['@rdf:about']
         # if all agents metch and the annotation doesn't exist in the update set, delete it
         if ( (agents & annot_agents).size == agents.size && ! uris.include?(annot_uri))
           begin 
-            #delete_annotation(annot_uri,a_comment)
+            delete_annotation(annot_uri,a_comment)
           rescue
             errors << "Unable to delete #{annot_uri}"
           end
@@ -461,7 +461,7 @@ class OACIdentifier < Identifier
     end
     return config.to_json                  
   end
-  
+    
   def can_update?(a_orig,a_new)
     session_owner = make_creator_uri()
     
