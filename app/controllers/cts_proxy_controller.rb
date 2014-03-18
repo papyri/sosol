@@ -53,10 +53,10 @@ class CtsProxyController < ApplicationController
     if (params[:id] =~ /^\d+$/)  
       # get a json inventory object for the cts-enabled texts in the current publication                       
       identifier = Identifier.find(params[:id].to_s)
-      render :text => JSON.generate(identifier.related_text_inventory)
+      render :json => JSON.generate(identifier.related_text_inventory)
    else
       response = CTS::CTSLib.proxyGetCapabilities(params[:id].to_s)
-      render :text => JRubyXML.apply_xsl_transform(
+      render :json => JRubyXML.apply_xsl_transform(
                         JRubyXML.stream_from_string(response),
                         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
                         %w{data xslt cts inventory_to_json.xsl})))    

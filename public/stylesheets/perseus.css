@@ -533,6 +533,22 @@ li.editor_menu {
   padding: 1em 2em 2em 1em;
   border: 1px dashed black;
 }
+
+.PContent .oac_annotation {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px dashed black;
+}
+
+.PContent .oac_annotation .edit_links {
+	padding-top: .5em;
+}
+
+.PContent .oac_annotation .edit_links button {
+	float: left;
+	margin-right: .5em;
+}
+
 .clearfix:after {
     content: "."; 
     display: block; 

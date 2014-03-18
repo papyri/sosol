@@ -1,5 +1,6 @@
-= link_to 'Edit in Alpheios', edit_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
-= link_to 'Edit Alignment XML', editxml_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
+- if @identifier.mutable? 
+  = link_to 'Edit in Alpheios', edit_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
+  = link_to 'Edit Alignment XML', editxml_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
 = link_to 'Preview', preview_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
 - if alignment_cite_identifier.publication.identifiers.size > 1
 = link_to 'Delete', polymorphic_path([alignment_cite_identifier.publication, alignment_cite_identifier]), :confirm => 'Are you sure?', :method => :delete

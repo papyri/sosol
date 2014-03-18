@@ -189,7 +189,7 @@ class CTSIdentifier < Identifier
         r_urn = CTS::CTSLib.urnObj(r.urn_attribute)
         r_ver = r_urn.getVersion(false)
         inv[self.id.to_s]['works'][self_work]['editions'][r_ver] = 
-          { 'label' => r.title, 
+          { 'label' => r.title.gsub(/'/, "&apos;"), 
              'urn' => r.urn_attribute, 
              'lang' => r.lang,
              'item_type' => r.class.to_s,

@@ -72,9 +72,8 @@
           - if params[:controller] != 'publications'
             -if @identifier.class == OACIdentifier
               -if %w{preview}.include?(params[:action])
-                %li{ :class => ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri])
+                %li{ :class => ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri])  
               %li{ :class => ''}= link_to 'New Target', polymorphic_path([:link_citation,@identifier.parentIdentifier.publication,@identifier.parentIdentifier])
-              = render :partial => 'oac_identifiers/link_alignment'  
               %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
             -elsif @identifier.class.to_s =~ /CTSIdentifier/
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])

@@ -196,7 +196,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   end
   
   # get descriptive info for an alignment file
-  def api_info
+  def api_info(base_url)
     # TODO
   end
     
@@ -226,7 +226,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   # @param [String] a_body the raw body of the post data
   # @param [String] a_comment an update comment
   #
-  def api_update(a_query,a_body,a_comment)
+  def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_body,a_comment)

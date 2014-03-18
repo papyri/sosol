@@ -12,6 +12,11 @@
     
     <xsl:param name="annotation_uri"/>
     <xsl:param name="creator_uri"/>
+    <xsl:param name="tool_url"/>
+    <xsl:param name="delete_link"/>
+    <xsl:param name="align_link"/>
+    <xsl:param name="form_token"/>
+    <xsl:param name="mode" select="'preview'"/>
     
     <xsl:template match="/rdf:RDF">
         <xsl:choose>
@@ -29,24 +34,40 @@
     </xsl:template>
     
     <xsl:template match="oa:Annotation">
-		<xsl:choose>
-          <xsl:when test="$annotation_uri">
-			<div class="oac_annotation" about="{@rdf:about}" typeof="oac:Annotation">
-		    	<span class="label">Annotation:</span><xsl:value-of select="@rdf:about"/>
-        		<xsl:apply-templates select="oa:annotatedAt"/>
-            	<xsl:apply-templates select="oa:annotatedBy"/>
-		    	<xsl:apply-templates select="rdfs:label"/>
-		    	<xsl:apply-templates select="oa:motivatedBy"/>
-		    	<xsl:apply-templates select="oa:hasTarget"/>
-            	<xsl:apply-templates select="oa:hasBody"/>
-			</div>
-		  </xsl:when>
-		  <xsl:otherwise>
-        	<div class="oac_annotation">
-            	<a href="preview?annotation_uri={@rdf:about}"><xsl:value-of select="@rdf:about"/></a>
-            </div>
-          </xsl:otherwise>
-        </xsl:choose>
+	   <div class="oac_annotation clearfix" about="{@rdf:about}" typeof="oac:Annotation">
+		  <span class="label">Annotation:</span><xsl:value-of select="@rdf:about"/>
+          <xsl:apply-templates select="oa:annotatedAt"/>
+          <xsl:apply-templates select="oa:annotatedBy"/>
+		  <xsl:apply-templates select="rdfs:label"/>
+		  <xsl:apply-templates select="oa:motivatedBy"/>
+		  <xsl:apply-templates select="oa:hasTarget"/>
+          <xsl:apply-templates select="oa:hasBody"/>
+	      <xsl:choose>
+	          <xsl:when test="$mode = 'edit'">
+	              <div class="edit_links">
+	                  <a href="{replace($tool_url,'URI',@rdf:about)}"><button>Edit</button></a>
+	                  <form method="post" action="{$delete_link}" onsubmit="return confirm('Are you sure you want to delete this annotation?');">
+	                      <input type="hidden" name="authenticity_token" value="{$form_token}"/>
+	                      <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>
+	                      <button type="submit">Delete</button>
+	                  </form>
+	                  <xsl:if test="count(oa:hasTarget) = 1 and contains(oa:hasTarget/@rdf:resource,'urn:cts')
+	                      and count(oa:hasBody)  = 1 and contains(oa:hasBody/@rdf:resource,'urn:cts')">
+	                      <form method="post" action="{$align_link}">
+	                          <input type="hidden" name="authenticity_token" value="{$form_token}"/>
+	                          <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>         	              
+	                          <button type="submit">Align Text</button>
+	                      </form>
+	                  </xsl:if>
+	              </div>
+	          </xsl:when>
+	          <xsl:otherwise>
+	              <div class="edit_links">
+	                  <a href="{replace($tool_url,'URI',@rdf:about)}"><button>Preview</button></a>
+	              </div>
+	          </xsl:otherwise>
+	      </xsl:choose>
+	   </div>
     </xsl:template>
     
     <xsl:template match="oa:hasTarget">
