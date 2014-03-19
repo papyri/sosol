@@ -18,16 +18,16 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     annotation = annotation_doc.get_annotation(params[:annotation_uri])     
     # for now only support a single annotation target
     targets = OacHelper::get_targets(annotation)
-    body = OacHelper::get_body(annotation)
-    if (targets.size != 1 || body.nil?)
-      flash[:error] = "Unable to create alignment item. Need a single uri for each sentence but got #{targets.inspect} and #{body}"
+    bodies = OacHelper::get_bodies(annotation)
+    if (targets.size != 1 || bodies.size != 1)
+      flash[:error] = "Unable to create alignment item. Need a single uri for each sentence but got #{targets.inspect} and #{bodies.inspect}"
       redirect_to dashboard_url
       return
     end 
 
     init_value = []
     init_value << CGI::unescape(targets[0])
-    init_value << CGI::unescape(body)
+    init_value << CGI::unescape(bodies[0])
     @identifier = AlignmentCiteIdentifier.new_from_template(@publication,AlignmentCiteIdentifier::COLLECTION,init_value)
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
   end

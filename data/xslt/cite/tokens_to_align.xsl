@@ -54,12 +54,19 @@
         <xsl:variable name="start" select="substring-before($e_subref,'-')"/>
         <xsl:variable name="end" select="substring-after($e_subref,'-')"/>
         <xsl:variable name="words">
-            <xsl:call-template name="get-words">
-                <xsl:with-param name="words" select="$tokens"/>
-                <xsl:with-param name="start" select="$start"/>
-                <xsl:with-param name="end" select="$end"/>
-                <xsl:with-param name="wrap" select="$e_tag"/>
-            </xsl:call-template>
+            <xsl:choose>
+                <xsl:when test="$start and $end">
+                    <xsl:call-template name="get-words">
+                        <xsl:with-param name="words" select="$tokens"/>
+                        <xsl:with-param name="start" select="$start"/>
+                        <xsl:with-param name="end" select="$end"/>
+                        <xsl:with-param name="wrap" select="$e_tag"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:copy-of select="$tokens"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
         <xsl:element name="bead">
             <xsl:attribute name="xml:lang"><xsl:value-of select="$lang"/></xsl:attribute>

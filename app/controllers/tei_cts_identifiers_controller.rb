@@ -110,6 +110,11 @@ class TeiCtsIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview
   end
   
+  def annotate_xslt
+    find_identifier
+    render :xml => @identifier.passage_annotate_xslt
+  end
+  
   protected
     def find_identifier
       @identifier = TeiCTSIdentifier.find(params[:id].to_s)

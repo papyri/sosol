@@ -1,4 +1,5 @@
 - if @identifier.mutable? && @identifier.publication.status != 'finalizing' && @identifier.class::IDENTIFIER_PREFIX == 'urn:cts:'
-  = link_to 'Select Target', polymorphic_path([:link_citation,oac_identifier.publication,oac_identifier.parentIdentifier])  
+  = link_to 'Select Target', polymorphic_path([:link_citation,oac_identifier.publication,oac_identifier.parentIdentifier])
+  = link_to 'Edit', edit_publication_oac_identifier_path( oac_identifier.publication, oac_identifier)
 = link_to 'Preview', preview_publication_oac_identifier_path( oac_identifier.publication, oac_identifier)
 %br

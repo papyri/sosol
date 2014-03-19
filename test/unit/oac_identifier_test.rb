@@ -18,7 +18,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @test_title = 'Test Annotation'
       @creator_uri = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
       @creator2_uri = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
-      @oac_identifier.add_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator_uri,'test add annotation')
+      @oac_identifier.add_annotation(@test_uri1,[@test_tb1],[@test_tb2],@test_title,@creator_uri,nil,'test add annotation')
     end
     
     teardown do
@@ -42,7 +42,23 @@ class OACIdentifierTest < ActiveSupport::TestCase
         assert @oac_identifier.matching_targets('urn:cts:greekLang:tlg0012.tlg001.perseus-grc1',@creator_uri).size == 1
     end
     
+    should "have annotations" do 
+      assert OacHelper::get_all_annotations(@oac_identifier.rdf).size > 0
+      assert @oac_identifier.has_anyannotation?
+
+    end
+
+    should "have an annotation by creator" do 
+      assert OacHelper::get_annotators(@oac_identifier.get_annotation(@test_uri1))[0] == @creator_uri
+    end
+
+    should "have one annotation by the creator" do 
+      assert OacHelper::get_annotations_by_annotator(@oac_identifier.rdf,@creator_uri).size == 1
+      assert @oac_identifier.get_annotations().size == 1
+    end
+
     should "have the target" do
+        Rails.logger.info("In should have")
         assert @oac_identifier.has_target?(@test_tb1,@creator_uri)
     end
     
@@ -53,13 +69,13 @@ class OACIdentifierTest < ActiveSupport::TestCase
       
     should "raise an error when the annotation exists" do
       assert_raise RuntimeError do
-      @oac_identifier.add_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator_uri,'test add annotation')
+      @oac_identifier.add_annotation(@test_uri1,[@test_tb1],[@test_tb2],@test_title,@creator_uri,nil,'test add annotation')
       end
     end
     
     should "raise an error when the annotation does not exist" do
       assert_raise RuntimeError do
-      @oac_identifier.add_annotation(@test_uri1,[@test_tb2],@test_tb2,@test_title,@creator_uri,'test add annotation')
+      @oac_identifier.add_annotation(@test_uri1,[@test_tb2],[@test_tb2],@test_title,@creator_uri,nil,'test add annotation')
       end
     end
     
@@ -70,7 +86,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
     
     context "with a new annotation " do
       setup do
-        @oac_identifier.add_annotation(@test_uri2,[@test_tb2],@test_tb1,@test_title,@creator_uri,'test add annotation')
+        @oac_identifier.add_annotation(@test_uri2,[@test_tb2],[@test_tb1],@test_title,@creator_uri,nil,'test add annotation')
       end
       
       should "have the new annotation" do
@@ -82,10 +98,10 @@ class OACIdentifierTest < ActiveSupport::TestCase
         assert ! annotation.nil?
         assert OacHelper::get_targets(annotation).size == 1
         assert OacHelper::get_targets(annotation)[0] == @test_tb2
-        assert OacHelper::get_body(annotation) == @test_tb1
-        assert OacHelper::get_title(annotation) == @test_title
-        assert OacHelper::get_creator(annotation) == @creator_uri
-        assert OacHelper::get_created(annotation) != ""
+        assert OacHelper::get_bodies(annotation)[0] == @test_tb1
+        assert OacHelper::get_motivation(annotation) == @test_title
+        assert OacHelper::get_annotators(annotation)[0] == @creator_uri
+        assert OacHelper::get_annotated_at(annotation) != ""
       end
       
       should "delete the annotation" do
@@ -97,17 +113,28 @@ class OACIdentifierTest < ActiveSupport::TestCase
     
     context "with an updated annotation " do
       setup do
-        @oac_identifier.update_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator2_uri,'test update annotation')
+        @oac_identifier.update_annotation(@test_uri1,[@test_tb2],[@test_tb2],@test_title,@creator_uri,nil,'test update annotation')
       end
       
       should "have the updated annotation" do
-        assert @oac_identifier.has_target?(@test_tb1,@creator2_uri)
+        assert @oac_identifier.has_target?(@test_tb2,@creator_uri)
       end
       
       should "not have the old annotation" do
-        assert !@oac_identifier.has_target?(@test_tb2,@creator_uri)
+        assert !@oac_identifier.has_target?(@test_tb1,@creator_uri)
       end   
     end
     
+    context "with an external agent " do
+      setup do 
+        @oac_identifier.add_annotation(@test_uri2,[@test_tb2],[@test_tb1],@test_title,@creator_uri,'http://myannottool.org','test add annotation')
+      end
+      
+      should "not allow update from nil agent" do
+        orig =  @oac_identifier.get_annotation(@test_uri2)
+        update = @oac_identifier.get_annotation(@test_uri1)
+        assert ! @oac_identifier.can_update?(orig,update)
+      end
+    end
   end
 end

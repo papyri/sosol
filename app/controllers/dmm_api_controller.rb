@@ -2,11 +2,40 @@
 class DmmApiController < ApplicationController
   
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:api_item_patch]
+  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
 
+  def api_item_append
+     # add the raw post to the session
+    params[:raw_post] = request.raw_post
+    unless (params[:comment]) 
+      params[:comment] = "append_from_api"
+    end
+    find_identifier
+    if (@identifier.nil?)
+      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
+    else
+      # TODO we need to look at the etags to make sure we're editing the correct version
+            
+      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
+      cookies[:csrftoken] = {
+        :value => form_authenticity_token,
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+      }
+      agent = agent_of(params[:raw_post])
+
+      begin
+        response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
+      rescue Exception => e
+        Rails.logger.error(e.backtrace)
+        render :xml => "<error>#{e}</error>", :status => 500
+        return
+      end
+      render :xml => "<item>#{response}</item>"
+    end
+  end
   
   # responds to a POST (s/b PATCH) request to update a file (TODO - need to update rails to get PATCH support)
   # @param [String] identifier_type
@@ -35,10 +64,11 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      
+      agent = agent_of(params[:raw_post])
       begin
-        response = @identifier.api_update(params[:q],params[:raw_post],params[:comment]) 
+        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment]) 
       rescue Exception => e
+        Rails.logger.error(e.backtrace)
         render :xml => "<error>#{e}</error>", :status => 500
         return
       end
@@ -72,15 +102,34 @@ class DmmApiController < ApplicationController
   # responds to a GET request to retrieve information about a file
   # @param [String] identifier_type
   # @param [String] id - the unique id of the identifier
+  # @param [String] format - the requested format (optional - if not specified default is xml)
   # @response atompub? HAL?  
   #           Authentication should be via oauth2 - for now assume session is shared and 
   #           use X-CSRF-Token
   def api_item_info
     find_identifier
+    
     if (@identifier.nil?)
-      render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
+      if (params[:format] == 'json')
+        render :json => {:error => "Unrecognized Identifier Type"}, :status => 500
+      else
+        render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
+      end
     else
-      render :xml => @identifier.api_info 
+      # build up some urls to send to the model
+      urls = {}
+      urls['self'] = polymorphic_url([@identifier.publication,@identifier])
+      if (@identifier.respond_to? :parentIdentifier)
+        urls['parent']  = polymorphic_url([@identifier.publication,@identifier.parentIdentifier]) 
+      else
+        urls['parent'] = nil
+      end
+      urls['root'] = "#{root_url}"
+      if (params[:format] == 'json')
+        render :json => @identifier.api_info(urls)
+      else
+        render :xml => @identifier.api_info(urls)
+      end
     end
   end
   
@@ -140,6 +189,23 @@ class DmmApiController < ApplicationController
                       :action => 'api_item_get', 
                       :id => a_id,
                       :identifier_type => a_identifier_type)
+    end
+    
+    # looks for the software agent in the data
+    # TODO we need to decide upon a standardized approach to this
+    def agent_of(a_data)
+      unless defined? @agents
+        @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
+      end
+      agent = nil
+      Rails.logger.info("Agents = #{@agents.inspect}")
+      @agents.keys.each do | a_agent |
+        if (a_data =~ /#{@agents[a_agent][:uri_match]}/sm)
+          agent = @agents[a_agent]
+          break
+        end
+      end
+      return agent
     end
 
 end

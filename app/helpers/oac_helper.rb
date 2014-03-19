@@ -85,19 +85,13 @@ module OacHelper
   end 
   
   # get the body uri from the supplied annotation
-  def self.get_body(a_annotation)
+  def self.get_bodies(a_annotation)
     xpath = "oa:hasBody/@rdf:resource"
-    uri = nil
+    uris = []
     REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF}) { |body|
-      uri = body.value
+      uris << body.value
     }     
-    if (uri.nil?)     
-      xpath = "oac:hasBody/@rdf:resource"
-      REXML::XPath.each(a_annotation, xpath, {"oac"=>NS_OACOLD, "rdf" => NS_RDF}) { |body|
-        uri = body.value
-      }     
-    end
-    return uri
+    return uris
   end
   
   def self.get_body_text(a_annotation)
@@ -377,7 +371,7 @@ module OacHelper
   end
   
   # make an oac:Annotation element
-  def self.make_annotation(annot_uri,target_uris,body_uri,motivation,creator_uri,agent)
+  def self.make_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agent)
     annot = REXML::Element.new("Annotation")
     annot.add_namespace(NS_OAC)
     annot.add_namespace("rdf",NS_RDF)
@@ -385,7 +379,9 @@ module OacHelper
     target_uris.each do |uri|
       annot.add_element(make_target(uri))
     end
-    annot.add_element(make_body(body_uri))
+    body_uris.each do |uri|
+      annot.add_element(make_body(uri))
+    end
     annot.add_element(make_motivation(motivation))
     annot.add_element(make_annotator(creator_uri))
     annot.add_element(make_annotated_at())

@@ -351,6 +351,12 @@ div.nav {
 }
 .batch_box {
   font-size: smaller;
+  max-width: 60%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+
 }
 .archive_link a,
 .batch_box a {
@@ -393,8 +399,8 @@ li.editor_menu {
 }
 .perseids_pilots_link {
 	margin-top: 1em;
-	float: right;
-	margin-right: 50px;
+	float:right;
+	margin-right: 10px;
 }
 .cts_selector_hint, .cite_selector_hint, .perseids_pilots_link a, #annotation_commentary_link a {
 	font-size: smaller;
@@ -533,6 +539,22 @@ li.editor_menu {
   padding: 1em 2em 2em 1em;
   border: 1px dashed black;
 }
+
+.PContent .oac_annotation {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px dashed black;
+}
+
+.PContent .oac_annotation .edit_links {
+	padding-top: .5em;
+}
+
+.PContent .oac_annotation .edit_links button {
+	float: left;
+	margin-right: .5em;
+}
+
 .clearfix:after {
     content: "."; 
     display: block; 
