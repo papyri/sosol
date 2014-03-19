@@ -351,6 +351,12 @@ div.nav {
 }
 .batch_box {
   font-size: smaller;
+  max-width: 60%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+
 }
 .archive_link a,
 .batch_box a {
