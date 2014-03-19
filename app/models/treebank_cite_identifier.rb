@@ -172,7 +172,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   # get descriptive info for a treebank file
-  def api_info(base_url)
+  def api_info(urls)
     # TODO eventually this will be customized per user/file - for now return the default
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "treebank-desc-#{self.format}.xml.erb")
@@ -231,7 +231,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @param [String] a_body the raw body of the post data
   # @param [String] a_comment an update comment
   #
-  def api_update(a_agent,_query,a_body,a_comment)
+  def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_body,a_comment)

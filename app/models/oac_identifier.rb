@@ -434,30 +434,29 @@ class OACIdentifier < Identifier
   end
   
   # get descriptive info 
-  def api_info(base_url)
+  def api_info(urls)
     motivations = [];
     motivations << { :label => 'Has Translation', :value => 'oa:linking_translation'}
     motivations << { :label => 'Has Link', :value => 'oa:linking'}
     motivations << { :label => 'Has Identity', :value => 'oa:identifying'}
     motivations << { :label => 'Has Classification', :value => 'oa:classifying'}
     motivations << { :label => 'Has Comment', :value => 'oa:commenting'}
-    # TODO clean this up - url parsing doesn't belong here
-    root_url = base_url.sub(/(https?:\/\/.*?\/).*$/,'\1')
+    
     config = 
       { :tokenizer => Tools::Manager.tool_config('cts_tokenizer',false),
         :motivations => motivations,
-        :passage_xslt => "#{base_url}/annotate_xslt",
-        :cts_services => { 'repos' => "#{root_url}cts/getrepos/#{self.parentIdentifier.id}",
-                           'capabilities' => "#{root_url}cts/getcapabilities/",
-                           'passage' => "#{root_url}cts/getpassage/"
+        :passage_xslt => "#{urls['parent']}/annotate_xslt",
+        :cts_services => { 'repos' => "#{urls['root']}cts/getrepos/#{self.parentIdentifier.id}",
+                           'capabilities' => "#{urls['root']}cts/getcapabilities/",
+                           'passage' => "#{urls['root']}cts/getpassage/"
                          },
         :target_links => [
-          {:label => 'Create Commentary', :url => "#{root_url}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'},
+          {:label => 'Create Commentary', :url => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'},
         ]
        }
     if (Tools::Manager.tool_config('toponym_editor'))
       config[:target_links] << {:label => 'Annotate Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:export_url]}
-      config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{root_url}/dmm_api/item/OAC/#{self.id}/partial"}  
+      config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
     return config.to_json                  
   end

@@ -196,7 +196,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   end
   
   # get descriptive info for an alignment file
-  def api_info(base_url)
+  def api_info(urls)
     # TODO
   end
     

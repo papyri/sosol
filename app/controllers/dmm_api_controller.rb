@@ -116,10 +116,19 @@ class DmmApiController < ApplicationController
         render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
       end
     else
-      if (params[:format] == 'json')
-        render :json => @identifier.api_info(polymorphic_url([@identifier.publication,@identifier.parentIdentifier]))
+      # build up some urls to send to the model
+      urls = {}
+      urls['self'] = polymorphic_url([@identifier.publication,@identifier])
+      if (@identifier.respond_to? :parentIdentifier)
+        urls['parent']  = polymorphic_url([@identifier.publication,@identifier.parentIdentifier]) 
       else
-        render :xml => @identifier.api_info(polymorphic_url([@identifier.publication,@identifier.parentIdentifier]))
+        urls['parent'] = nil
+      end
+      urls['root'] = "#{root_url}"
+      if (params[:format] == 'json')
+        render :json => @identifier.api_info(urls)
+      else
+        render :xml => @identifier.api_info(urls)
       end
     end
   end
