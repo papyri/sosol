@@ -399,8 +399,8 @@ li.editor_menu {
 }
 .perseids_pilots_link {
 	margin-top: 1em;
-	float: right;
-	margin-right: 50px;
+	float:right;
+	margin-right: 10px;
 }
 .cts_selector_hint, .cite_selector_hint, .perseids_pilots_link a, #annotation_commentary_link a {
 	font-size: smaller;

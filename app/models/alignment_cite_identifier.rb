@@ -48,7 +48,10 @@ class AlignmentCiteIdentifier < CiteIdentifier
   
   def init_content(a_value)
     template = nil
-    if (a_value.length == 1 && a_value.match(/^http/))
+    if (a_value.nil? || a_value.length == 0)
+      # no-op creates an empty alignment file
+      return
+    elsif (a_value.length == 1 && a_value.match(/^http/))
       # TODO assume that the init value is the uri to a valid annotation template
       raise "Initialization from annotation template URI Not yet supported"
     elsif (a_value.length == 2)
