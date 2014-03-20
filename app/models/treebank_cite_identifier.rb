@@ -312,25 +312,49 @@ class TreebankCiteIdentifier < CiteIdentifier
         # isn't a urn
         if (! uri =~ /urn:cts:/)
           # not a cts urn, just assume we have to create a new template
-          raise "Not a URN"
+          Rails.logger.info("Creating treebank file without a URN for #{uri}")
+          return false
         else 
           # otherwise raise an error
           raise e
         end
       end
+
       # TODO need a way to test target uris which aren't CTS urns
-      unless (urn_obj.nil?)
-        t = REXML::Document.new(self.xml_content).root
-        passage = urn_obj.getPassage(100)
-        work = urn_obj.getUrnWithoutPassage()
-        passage.split(/-/).each do | p |
-          REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
-            unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
-              has_any_targets = true
+      begin
+        unless (urn_obj.nil?)
+          t = REXML::Document.new(self.xml_content).root
+          passage = nil
+          begin
+            passage = urn_obj.getPassage(100)
+          rescue
+          end
+          if (passage.nil?)
+            # if we don't have a passage the match should be on the work only
+            work = urn_value;
+            match = REXML::XPath.first(t,"sentence[@document_id='#{work}']")
+            if (match)
+              has_any_targets=true
               break
             end
-          end
-        end  
+          elsif (passage)
+            work = urn_obj.getUrnWithoutPassage()
+            passage.split(/-/).each do | p |
+              REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
+                unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
+                  Rails.logger.info("match on #{work} and #{p} in #{self.id}")
+                  has_any_targets = true
+                  break
+                end
+              end
+            end 
+          else
+            # give up for now if we can't parse the cts urn of either the document or subdoc
+          end 
+        end
+      rescue Exception => e
+        # if we can't parse the urn we can't test it so just assume it's not a match
+        Rails.logger.error(e)
       end
     end
     # TODO compare the requested text urn against the text urns in this treebank document
