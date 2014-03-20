@@ -79,8 +79,15 @@
     <xsl:template match="tei:div|div">
         <xsl:choose>
             <xsl:when test="@n">
+                <xsl:variable name="n" select="@n"/>
                 <div class="tei_section">
-                    <span class="tei_sectionNum"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@subtype"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></span><xsl:apply-templates/>
+                    <!-- hack to avoid repeating divs for ranges -->
+                    <xsl:if test="not(preceding-sibling::tei:div[@n=$n]) and
+                        not(preceding-sibling::div[@n=$n])">
+                        <span class="tei_sectionNum"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@subtype"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></span>
+                    </xsl:if>
+                    <xsl:apply-templates/>
+                        
                 </div>
             </xsl:when>
             <xsl:otherwise>
