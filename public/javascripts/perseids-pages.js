@@ -65,12 +65,12 @@ CtsSelector = function() {
 	this.inventories = {};
 }
 CtsSelector.prototype.get_collection_prefix = function() {
-	var prefix =  "#{url_for(:controller => 'cts_proxy', :only_path => true)}";
+	var prefix =  jQuery('#cts_proxy').val();
 	return prefix;
 }
 
 CtsSelector.prototype.get_inventory = function() {
-	var inventory = jQuery('CTSIdentifierCollectionSelect');
+	var inventory = $F('CTSIdentifierCollectionSelect');
 	//------------------------------------------------------------
 	//  if we don't already have this inventory's data, 
 	//  retrieve it and ppopulate the selector
@@ -85,8 +85,6 @@ CtsSelector.prototype.get_inventory = function() {
 				this.update_group_urns();
 			},
 			onError: function( _error ) {
-				console.log( 'error encountered' );
-				console.log( _error );
 			}
 		});
 	}

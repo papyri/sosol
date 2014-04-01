@@ -1,4 +1,5 @@
 %div{:id => 'publications-_cts_selector'}
+%input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
 - cache(:action => 'dashboard', :part => 'publication_selector') do
   - unless defined? hide_text
     %p== Existing publication:
