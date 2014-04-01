@@ -79,8 +79,15 @@
     <xsl:template match="tei:div|div">
         <xsl:choose>
             <xsl:when test="@n">
+                <xsl:variable name="n" select="@n"/>
                 <div class="tei_section">
-                    <span class="tei_sectionNum"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@subtype"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></span><xsl:apply-templates/>
+                    <!-- hack to avoid repeating divs for ranges -->
+                    <xsl:if test="not(preceding-sibling::tei:div[@n=$n]) and
+                        not(preceding-sibling::div[@n=$n])">
+                        <span class="tei_sectionNum"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@subtype"/><xsl:text> </xsl:text><xsl:value-of select="@n"/></span>
+                    </xsl:if>
+                    <xsl:apply-templates/>
+                        
                 </div>
             </xsl:when>
             <xsl:otherwise>
@@ -336,10 +343,31 @@
         <xsl:apply-templates/>
     </xsl:template>
     
-    <!-- Default: replicate unrecognized markup -->
-    <xsl:template match="@*|node()" priority="-1">
-        <xsl:copy>
+    <xsl:template match="tei:body|body">
+        <xsl:element name="div">
+            <xsl:attribute name="id">tei_body</xsl:attribute>
             <xsl:apply-templates select="@*|node()"/>
-        </xsl:copy>
+        </xsl:element>
     </xsl:template>
+    <!-- Default: replicate unrecognized markup -->
+    <xsl:template match="@*" priority="-1">
+        <xsl:copy/>
+    </xsl:template>
+    
+    <!-- Default: replicate unrecognized markup -->
+    <xsl:template match="node()" priority="-1">
+        <xsl:choose>
+            <xsl:when test="self::text()">
+                <xsl:copy/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:element name="{local-name(.)}">
+                    <xsl:apply-templates select="@*|node()"/>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
+        
+    </xsl:template>
+    
+   
 </xsl:stylesheet>

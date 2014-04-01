@@ -33,10 +33,11 @@ class CitePublicationsController < PublicationsController
     ## if urn and key value are supplied we need to check to see if the requested object exists before
     ## creating it
     is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
+    existing_identifiers = []
+
     if ( is_collection_urn )
       if (params[:init_value])
         lookup_id = CiteIdentifier::path_for_collection(params[:urn])
-        existing_identifiers = []
         possible_conflicts = identifier_class.find(:all,
                        :conditions => ["name like ?", "#{lookup_id}%"],
                        :order => "name DESC")
@@ -58,7 +59,6 @@ class CitePublicationsController < PublicationsController
     elsif (Cite::CiteLib.is_object_urn?(params[:urn]))
       ### if publication exists for a version of this object, bring them to it, otherwise create a new version
       lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
-        existing_identifiers = []
         possible_conflicts = identifier_class.find(:all,
                        :conditions => ["name like ?", "#{lookup_id}%"],
                        :order => "name DESC")
@@ -77,7 +77,6 @@ class CitePublicationsController < PublicationsController
     elsif (Cite::CiteLib.is_version_urn?(params[:urn]))
       ### if publication exists for this version of this object, bring them to it, otherwise raise ERROR
       lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
-        existing_identifiers = []
         possible_conflicts = identifier_class.find(:all,
                        :conditions => ["name like ?", "#{lookup_id}%"],
                        :order => "name DESC")
@@ -148,7 +147,6 @@ class CitePublicationsController < PublicationsController
         @publication.title = lookup_path + "/" + incr.to_s  
       end
       
-      Rails.logger.info("Saving new Publication #{@publication.title}")
       @publication.status = "new"
       @publication.save!
     
@@ -160,7 +158,6 @@ class CitePublicationsController < PublicationsController
           # we are creating a new object
           new_cite = identifier_class.new_from_template(@publication,params[:urn],params[:init_value])
         else
-          Rails.logger.info("New Object from inventory #{params[:urn]}")
           # we are creating a new version of an existing object
           new_cite = identifier_class.new_from_inventory(@publication,params[:urn])
         end

@@ -22,17 +22,26 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   def titleize
+    title = self.name
     # TODO should say Treebank on Target URI
     t = REXML::Document.new(self.xml_content).root
     f = REXML::XPath.first(t,"sentence")
     l = REXML::XPath.first(t,"sentence[last()]")
-    urn = f.attributes['document_id']
-    title = "Treebank of #{urn}"
-    from = f.attributes['subdoc']
-    to = l.attributes['subdoc']
-    title = title + ":#{from}"
-    if (from != to)
-      title = title + "-#{to}"
+    if (f)
+      urn = f.attributes['document_id']
+      if (urn != '')
+        title = "Treebank of #{urn}"
+      end
+      from = f.attributes['subdoc']
+      if (from != '')
+        title = title + ":#{from}"  
+      end
+      if (l)
+        to = l.attributes['subdoc']
+        if (to != '' && from != to)
+          title = title + "-#{to}"
+        end
+      end
     end
     return title
   end
@@ -69,14 +78,14 @@ class TreebankCiteIdentifier < CiteIdentifier
       annotator = REXML::Element.new("annotator")
       short = REXML::Element.new("short")
       short.add_text(self.publication.creator.name)
-      name = REXML::Element.new("name")
-      name.add_text(self.publication.creator.human_name)
+      persname = REXML::Element.new("name")
+      persname.add_text(self.publication.creator.human_name)
       address = REXML::Element.new("address")
       address.add_text(self.publication.creator.email)
       uri = REXML::Element.new("uri")
       uri.add_text(creator_uri)
       annotator.add_element(short)
-      annotator.add_element(name)
+      annotator.add_element(persname)
       annotator.add_element(address)
       annotator.add_element(uri)
       treebank.insert_before("sentence[1]",annotator)
@@ -90,43 +99,46 @@ class TreebankCiteIdentifier < CiteIdentifier
   # we send a job to the annotation service to create one
   # @param [String] a_value is the initialization value - in this case the target urn 
   def init_content(a_value)
-    init_value = a_value.to_s
-    template = nil
-    begin
-      urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
-      urn_obj = CTS::CTSLib.urnObj(urn_value)
-      unless (urn_obj.nil?)
-        base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
-        template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
-        template = self.publication.repository.get_file_from_branch(template_path, 'master') 
-      end
-    rescue Exception => e
-      # if we get an exception it might be an invalid urn or it might be something that
-      # isn't a urn - if it's a uri we try to retrieve the content 
-      if (a_value =~ /^https?:/)
-        begin
-            svc_params =
-              { :text_uri => a_value, 
-                :template_format => 'Perseus',
-                :mime_type => 'text/xml', # TODO - mime_type and lang should be auto-detected by svc
-                :lang => 'grc', 
-                :wait => 'true' # TODO we need to support async
-              }
-            response = Services::Manager.send_request(self.publication,'annotation/template', svc_params)
-            template = OacHelper.get_body_xml(response)
-            # TODO support call to Morphology Service ?
-        rescue
-          raise "Invalid treebank content at #{a_value}"
+    template = self.content
+
+    if (! a_value.nil? && a_value.length == 1) 
+      init_value = a_value[0].to_s
+      begin
+        urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
+        urn_obj = CTS::CTSLib.urnObj(urn_value)
+        unless (urn_obj.nil?)
+          base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
+          template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
+          template = self.publication.repository.get_file_from_branch(template_path, 'master') 
         end
-        # not a cts urn, just assume we have to create a new template
-        raise "Not a URN"
-      else 
-        # otherwise raise an error
-        raise e
+      rescue Exception => e
+        # if we get an exception it might be an invalid urn or it might be something that
+        # isn't a urn - if it's a uri we try to retrieve the content 
+        if (a_value =~ /^https?:/)
+          begin
+              svc_params =
+                { :text_uri => a_value, 
+                  :template_format => 'Perseus',
+                  :mime_type => 'text/xml', # TODO - mime_type and lang should be auto-detected by svc
+                  :lang => 'grc', 
+                  :wait => 'true' # TODO we need to support async
+                }
+              response = Services::Manager.send_request(self.publication,'annotation/template', svc_params)
+              template = OacHelper.get_body_xml(response)
+              # TODO support call to Morphology Service ?
+          rescue
+            raise "Invalid treebank content at #{a_value}"
+          end
+          # not a cts urn, just assume we have to create a new template
+          raise "Not a URN"
+        else 
+          # otherwise raise an error
+          raise e
+        end
       end
     end
     if (template.nil?)
-      raise "Unable to create template for #{a_value}"    
+      raise "Unable to create template for #{a_value.inspect}"    
     end
 
     template_init = init_version_content(template)
@@ -172,7 +184,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   # get descriptive info for a treebank file
-  def api_info
+  def api_info(urls)
     # TODO eventually this will be customized per user/file - for now return the default
     template_path = File.join(Rails.root, ['data','templates'],
                               "treebank-desc-#{self.format}.xml.erb")
@@ -231,7 +243,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @param [String] a_body the raw body of the post data
   # @param [String] a_comment an update comment
   #
-  def api_update(a_query,a_body,a_comment)
+  def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_body,a_comment)
@@ -300,25 +312,49 @@ class TreebankCiteIdentifier < CiteIdentifier
         # isn't a urn
         if (! uri =~ /urn:cts:/)
           # not a cts urn, just assume we have to create a new template
-          raise "Not a URN"
+          Rails.logger.info("Creating treebank file without a URN for #{uri}")
+          return false
         else 
           # otherwise raise an error
           raise e
         end
       end
+
       # TODO need a way to test target uris which aren't CTS urns
-      unless (urn_obj.nil?)
-        t = REXML::Document.new(self.xml_content).root
-        passage = urn_obj.getPassage(100)
-        work = urn_obj.getUrnWithoutPassage()
-        passage.split(/-/).each do | p |
-          REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
-            unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
-              has_any_targets = true
+      begin
+        unless (urn_obj.nil?)
+          t = REXML::Document.new(self.xml_content).root
+          passage = nil
+          begin
+            passage = urn_obj.getPassage(100)
+          rescue
+          end
+          if (passage.nil?)
+            # if we don't have a passage the match should be on the work only
+            work = urn_value;
+            match = REXML::XPath.first(t,"sentence[@document_id='#{work}']")
+            if (match)
+              has_any_targets=true
               break
             end
-          end
-        end  
+          elsif (passage)
+            work = urn_obj.getUrnWithoutPassage()
+            passage.split(/-/).each do | p |
+              REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
+                unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
+                  Rails.logger.info("match on #{work} and #{p} in #{self.id}")
+                  has_any_targets = true
+                  break
+                end
+              end
+            end 
+          else
+            # give up for now if we can't parse the cts urn of either the document or subdoc
+          end 
+        end
+      rescue Exception => e
+        # if we can't parse the urn we can't test it so just assume it's not a match
+        Rails.logger.error(e)
       end
     end
     # TODO compare the requested text urn against the text urns in this treebank document

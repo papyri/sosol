@@ -1,0 +1,6 @@
+:agents:
+  :recogito:
+    :uri_match: "http://pelagios.org/recogito#version1.0"
+    :transformations:
+      :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
+      

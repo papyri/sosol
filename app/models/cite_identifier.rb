@@ -134,7 +134,7 @@ class CiteIdentifier < Identifier
   
   def xml_title_text
     # TODO lookup title
-    self.urn_attribute
+    self.urn_attribute || self.name
   end
   
   def collection

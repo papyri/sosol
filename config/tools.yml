@@ -5,6 +5,9 @@ development:
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+  oa_editor:
+    :edit_url: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI"
+    :view_url: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
@@ -13,6 +16,9 @@ development:
       :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?splitting=false&uri="
     :lat:
       :request_url: "http://localhost/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+  toponym_editor:
+    :export_url: "http://pelagios.org/recogito/edit/annotation?ctsURI="
+    :import_url: "http://pelagios.org/recogito/api/annotations?ctsURI="
     
     
 test:
@@ -22,6 +28,9 @@ test:
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+  oa_editor:
+    :edit_url: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI"
+    :view_url: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
@@ -39,12 +48,15 @@ production:
   alignment_editor:
     :edit_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+  oa_editor:
+    :edit_url: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI"
+    :view_url: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI&app=viewer"
   cite_image_service:
     :context_url: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
     :binary_url:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
   cts_tokenizer:
     :default:
-      :request_url: "http://localhost/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
+      :request_url: "http://sosol.perseids.org/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
     :lat:
       :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
     

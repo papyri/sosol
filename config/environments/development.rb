@@ -27,4 +27,13 @@ Sosol::Application.configure do
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
   require File.join(File.dirname(__FILE__), 'development_secret')
+  
+  XSUGAR_STANDALONE_URL="http://localhost:9999/"
+  config.xsugar_standalone_url="http://localhost:9999/"
+  XSUGAR_STANDALONE_USE_PROXY="true"
+  config.xsugar_standalone_use_proxy="true"
+  EXIST_STANDALONE_URL="http://localhost:8080"
+  config.exist_standalone_url="http://localhost:8080"
+  DEV_INIT_FILES = []
+  config.dev_init_files = []
 end

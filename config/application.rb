@@ -131,8 +131,6 @@ module Sosol
     config.site_layout = 'perseus'
     SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
     config.site_identifiers = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
-    RPX_BASE_URL = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
-    config.rpx_base_url = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
     SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
     config.site_cts_inventories = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
     SITE_CATALOG_SEARCH = "View In Catalog"

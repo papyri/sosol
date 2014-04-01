@@ -21,16 +21,16 @@
             <xsl:variable name="key" select="$group"/>
             
             <!-- start textgroup obj -->
-            <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>': {</xsl:text>
+            <xsl:text>"</xsl:text><xsl:value-of select="$key"/><xsl:text>": {</xsl:text>
             
             <!-- add urn -->
-            <xsl:text>'urn':'</xsl:text><xsl:value-of select="$group"/><xsl:text>',</xsl:text>
+            <xsl:text>"urn":"</xsl:text><xsl:value-of select="$group"/><xsl:text>",</xsl:text>
             
             <!-- add groupname field -->
-            <xsl:text>'label':'</xsl:text><xsl:value-of select="$groupname"/><xsl:text>',</xsl:text>
+            <xsl:text>"label":"</xsl:text><xsl:value-of select="$groupname"/><xsl:text>",</xsl:text>
             
             <!-- add works field -->
-            <xsl:text>'works': {</xsl:text>
+            <xsl:text>"works": {</xsl:text>
             
             <!-- iterate through works -->
             <xsl:apply-templates select="cts:work"/>
@@ -88,15 +88,15 @@
         </xsl:variable>
         
         <!-- start work obj -->
-        <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>': {</xsl:text>
+        <xsl:text>"</xsl:text><xsl:value-of select="$key"/><xsl:text>": {</xsl:text>
       
         <!-- add label field -->
-        <xsl:text>'label':'</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
-        <xsl:text>'urn':'</xsl:text><xsl:value-of select="$urn"/><xsl:text>'</xsl:text>
+        <xsl:text>"label":"</xsl:text><xsl:value-of select="$label"/><xsl:text>",</xsl:text>
+        <xsl:text>"urn":"</xsl:text><xsl:value-of select="$urn"/><xsl:text>"</xsl:text>
         
         <xsl:if test="cts:edition">
         <!-- add editions field -->
-	        <xsl:text>,'editions': {</xsl:text>
+	        <xsl:text>,"editions": {</xsl:text>
 	        
 	        <!-- iterate through editions -->
 	        <xsl:apply-templates select="cts:edition"/>
@@ -106,7 +106,7 @@
         </xsl:if>
         <!-- add translations field -->
         <xsl:if test="cts:translation">
-	        <xsl:text>,'translations': {</xsl:text>
+	        <xsl:text>,"translations": {</xsl:text>
 	        
 	        <!-- iterate through translations -->
 	        <xsl:apply-templates select="cts:translation"/>
@@ -194,14 +194,14 @@
             </xsl:call-template>
         </xsl:variable>
         
-        <xsl:text>'</xsl:text><xsl:value-of select="$key"/><xsl:text>':</xsl:text>
+        <xsl:text>"</xsl:text><xsl:value-of select="$key"/><xsl:text>":</xsl:text>
         
         <!-- edition obj -->
         <xsl:text>{</xsl:text>
-        <xsl:text>'label': '</xsl:text><xsl:value-of select="$label"/><xsl:text>',</xsl:text>
-        <xsl:text>'lang': '</xsl:text><xsl:value-of select="$lang"/><xsl:text>',</xsl:text>
-        <xsl:text>'urn':'</xsl:text><xsl:value-of select="$urn"/><xsl:text>',</xsl:text>
-        <xsl:text>'cites':[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
+        <xsl:text>"label": "</xsl:text><xsl:value-of select="$label"/><xsl:text>",</xsl:text>
+        <xsl:text>"lang": "</xsl:text><xsl:value-of select="$lang"/><xsl:text>",</xsl:text>
+        <xsl:text>"urn":"</xsl:text><xsl:value-of select="$urn"/><xsl:text>",</xsl:text>
+        <xsl:text>"cites":[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
         <xsl:text>}</xsl:text>
         
         <xsl:if test="following-sibling::*[name(.) = name(current())]">

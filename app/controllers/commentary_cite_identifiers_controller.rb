@@ -3,15 +3,20 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update]
 
+  
+  def create_from_annotation
+    # there is no difference between create_from_annotation and create other than
+    # create_from_annotation supports GET 
+    create()
+  end
+  
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
     # use the default collection if one wasn't specified
     collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
         
-    # support either :init_value or :valid_targets to specify initial targets
-    # latter is for compatibility with prototype cts oac annotation ui
-    valid_targets = params[:valid_targets] || params[:init_value]
+    valid_targets = params[:init_value]
 
     # required params: publication_id, urn, init_value
     unless (@publication && collection_urn && valid_targets)

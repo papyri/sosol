@@ -22,7 +22,7 @@
       = stylesheet_link_tag 'biblio'
       
       // FORK CHANGE START (stylesheet)
-    - if controller.controller_name == 'user' and controller.action_name == 'user_dashboard'
+    - if controller.controller_name == 'user' and (controller.action_name == 'user_dashboard' or controller.action_name == 'user_community_dashboard')
       = stylesheet_link_tag 'publication_list'
       = javascript_include_tag"dashboard"
       // FORK CHANGE END
@@ -36,6 +36,7 @@
     = javascript_include_tag 'perseids-ld'
     = javascript_include_tag 'perseids-tools'
     = javascript_include_tag 'perseids-cite'
+    = javascript_include_tag 'perseids-pages'
     
     -#-------------------------------------------------------------
     -#  javascript and styles

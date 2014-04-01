@@ -30,7 +30,10 @@ class CitationCtsIdentifiersController < IdentifiersController
       return
     end
     
-   
+  def annotate_xslt
+    find_identifier
+    render :xml => @identifier.parentIdentifier.passage_annotate_xslt
+  end
     
     versionIdentifier = params[:version_id].to_s
     sourceCollection = params[:collection].to_s
