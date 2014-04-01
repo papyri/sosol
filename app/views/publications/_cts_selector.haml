@@ -7,20 +7,17 @@
     %p{:class => ['cts_selector_hint']}== Select a publication to work with:
     = hidden_field_tag 'IdentifierClass','CTSIdentifier'
     - [CTSIdentifier].each do |identifier_class|
-      = select_tag("#{identifier_class}CollectionSelect", options_for_select(identifier_class.inventories_hash.keys), :onchange => "get_inventory();$('emend_button').disabled='';if(this.options[0].value==''){this.remove(0)}")
-    = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_work_urns();"
-    = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "update_edition_urns();"
-    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select(identifier_class.inventories_hash.keys))
+    = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+    = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
     //= text_field_tag('passage')
     = submit_tag "Emend", :disabled => true, :id => 'emend_button'
     = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
     %p{:class => ['perseids_pilots_link']}
       = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
-      |
       = link_to 'New Latin Treebank Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Treebank', :urn => 'urn:cite:perseus:lattb')
-      |
       = link_to 'New Greek Treebank Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Treebank', :urn => 'urn:cite:perseus:grctb')
-      |
       = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
       
 

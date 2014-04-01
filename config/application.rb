@@ -11,6 +11,26 @@ require 'rails/all'
 require 'rexml/document'
 Bundler.require( :default, Rails.env ) if defined?( Bundler )
 
+RPX_BASE_URL = 'https://rpxnow.com'
+SITE_NAME = 'Perseids'
+SITE_FULL_NAME = 'Perseids'
+SITE_TAG_LINE = 'powered by Son of Suda Online'
+SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
+SITE_LAYOUT = 'perseus'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
+SITE_CATALOG_SEARCH = "View In Catalog"
+SITE_USER_NAMESPACE = "data.perseus.org"
+SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
+SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
+EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+ENVIRONMENT_BACKGROUPD = 'white'
+SITE_EMAIL_FROM = 'admin@perseids.org'
+REPOSITORY_ROOT = "/usr/local/gitrepos"
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
+CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
+GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
+
 module Sosol
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
@@ -117,41 +137,23 @@ module Sosol
     # config.active_record.observers = :cacher, :garbage_collector
     
     # RPX application configuration
-    RPX_BASE_URL = 'https://rpxnow.com'
-    config.rpx_base_url = 'https://rpxnow.com'
-    SITE_NAME = 'Perseids'
-    config.site_name = 'Perseids'
-    SITE_FULL_NAME = 'Perseids'
-    config.site_full_name = 'Perseids'
-    SITE_TAG_LINE = 'powered by Son of Suda Online'
-    config.site_tag_line = 'powered by Son of Suda Online'
-    SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
-    config.site_wiki_link = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
-    SITE_LAYOUT = 'perseus'
-    config.site_layout = 'perseus'
-    SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
-    config.site_identifiers = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
-    SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
-    config.site_cts_inventories = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
-    SITE_CATALOG_SEARCH = "View In Catalog"
-    config.site_catalog_search = "View In Catalog"
-    SITE_USER_NAMESPACE = "data.perseus.org"
-    config.site_user_namespace = "data.perseus.org"
-    SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
-    config.site_oac_namespace = "http://data.perseus.org/annotations/sosoloacprototype"
-    SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
-    config.site_cite_collection_namespace = "http://data.perseus.org/collections"
-    EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
-    config.external_cts_repos = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
-    ENVIRONMENT_BACKGROUPD = 'white'
-    config.environment_backgroupd = 'white'
-    SITE_EMAIL_FROM = 'admin@perseids.org'
-    config.site_email_from = 'admin@perseids.org'
-    REPOSITORY_ROOT = "/usr/local/gitrepos"
-    config.repository_root = "/usr/local/gitrepos"
-    CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
-    config.canonical_repository = File.join( config.repository_root, 'canonical.git' )
-    GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
-    config.gitweb_base_url = "http://127.0.0.1:1234/?p="
+    config.rpx_base_url = RPX_BASE_URL
+    config.site_name = SITE_NAME
+    config.site_full_name = SITE_FULL_NAME
+    config.site_tag_line = SITE_TAG_LINE
+    config.site_wiki_link = SITE_WIKI_LINK
+    config.site_layout = SITE_LAYOUT
+    config.site_identifiers = SITE_IDENTIFIERS
+    config.site_cts_inventories = SITE_CTS_INVENTORIES
+    config.site_catalog_search = SITE_CATALOG_SEARCH
+    config.site_user_namespace = SITE_USER_NAMESPACE
+    config.site_oac_namespace = SITE_OAC_NAMESPACE
+    config.site_cite_collection_namespace = SITE_CITE_COLLECTION_NAMESPACE
+    config.external_cts_repos = EXTERNAL_CTS_REPOS
+    config.environment_backgroupd = ENVIRONMENT_BACKGROUPD
+    config.site_email_from = SITE_EMAIL_FROM
+    config.repository_root = REPOSITORY_ROOT
+    config.canonical_repository = CANONICAL_REPOSITORY
+    config.gitweb_base_url = GITWEB_BASE_URL
   end
 end

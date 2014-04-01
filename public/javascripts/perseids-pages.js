@@ -60,10 +60,35 @@ jQuery( document ).ready( function() {
 
 /**
 * The CTS Publications Selector
+* This is the Javascript for the publications/_cts_selector view.
 */
 CtsSelector = function() {
 	this.inventories = {};
+	this.eventListeners();
 }
+
+CtsSelector.prototype.eventListeners = function() {
+	var self = this;
+	jQuery( '#CTSIdentifierCollectionSelect' ).on( 'change', function( _e ) {
+		self.get_inventory();
+		jQuery('emend_button').disabled='';
+		if ( this.options[0].value=='' ) { 
+			this.remove(0)
+		}
+	});
+	jQuery( '#group_urn' ).on( 'change', function( _e ){
+		self.update_work_urns();
+	});
+	jQuery( '#work_urn' ).on( 'change', function( _e ){
+		self.update_edition_urns();
+	});
+	jQuery( '#edition_urn' ).on( 'change', function( _e ){
+		if ( this.options[0].value=='') { 
+			this.remove(0)
+		}
+	});
+}
+
 CtsSelector.prototype.get_collection_prefix = function() {
 	var prefix =  jQuery('#cts_proxy').val();
 	return prefix;
