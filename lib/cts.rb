@@ -226,6 +226,7 @@ module CTS
       end
        
       def getEditionUrns(a_inventory)
+        Rails.logger.info self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"
         response = Net::HTTP.get_response(
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(

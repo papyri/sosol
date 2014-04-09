@@ -95,26 +95,27 @@ CtsSelector.prototype.get_collection_prefix = function() {
 }
 
 CtsSelector.prototype.get_inventory = function() {
+	var self = this;
 	var inventory = $F('CTSIdentifierCollectionSelect');
 	//------------------------------------------------------------
 	//  if we don't already have this inventory's data, 
 	//  retrieve it and ppopulate the selector
 	//------------------------------------------------------------
-	if ( this.inventories[inventory] == null ) {
+	if ( self.inventories[inventory] == null ) {
 		var request_url = this.get_collection_prefix() + "/editions?inventory=" + inventory;
 		new Ajax.Request( request_url, {
 			method: 'get',
 			dataType: 'application/json',
 			onSuccess: function( response ) {
-				this.inventories[inventory] = eval ('('+response.responseText +')');
-				this.update_group_urns();
+				self.inventories[inventory] = eval ('('+response.responseText +')');
+				self.update_group_urns();
 			},
 			onError: function( _error ) {
 			}
 		});
 	}
 	else {
-		this.update_group_urns();
+		self.update_group_urns();
 	}
 }
 
@@ -147,14 +148,14 @@ CtsSelector.prototype.populate_selector = function( select_element, options ) {
 CtsSelector.prototype.update_group_urns = function() {
 	$('emend_button').disabled = true;
 	$('create_button').disabled = true;
-	clear_selector($('edition_urn'));
-	clear_selector($('work_urn'));
+	this.clear_selector($('edition_urn'));
+	this.clear_selector($('work_urn'));
 	var inventory = $F('CTSIdentifierCollectionSelect');
 	//------------------------------------------------------------
 	//   populate the textgroup selector
 	//------------------------------------------------------------
 	var groups = this.inventories[inventory];
-	populate_selector($('group_urn'),groups);
+	this.populate_selector($('group_urn'),groups);
 	this.update_work_urns();
 }
 
