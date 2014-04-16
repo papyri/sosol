@@ -97,7 +97,8 @@ class CitationCtsIdentifiersController < IdentifiersController
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
                 :collection => params[:collection].to_s,
-                :urn => params[:urn] + ":" + params[:start_passage].strip)   
+                :urn => params[:urn] + ":" + params[:start_passage].strip,
+                :pubtype => params[:pubtype])   
    
     end
   end
