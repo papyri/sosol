@@ -74,7 +74,9 @@ module Grit
     #
     # Returns the String contents of the file
     def fs_read(file)
-      File.open(File.join(self.git_dir, file)).read
+      # 2014-04-16 BALMAS APPLIED patch from
+      # https://github.com/mojombo/grit/blob/b49a6ff4ccd169eef6671263ccb29d3ead957697/lib/grit/git.rb#L119
+      File.read(File.join(self.git_dir, file))
     end
 
     # Write a normal file to the filesystem.

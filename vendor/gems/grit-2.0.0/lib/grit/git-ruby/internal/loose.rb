@@ -29,7 +29,8 @@ module Grit
           begin
             return nil unless sha1[0...2] && sha1[2..39]
             path = @directory + '/' + sha1[0...2] + '/' + sha1[2..39]
-            get_raw_object(File.open(path, 'rb').read)
+            # 2014-04-16 Applied patch from https://github.com/mojombo/grit/commit/d7d2eb5e6c753077045832f7c319d413fbd6346c
+            get_raw_object(File.read(path))            
           rescue Errno::ENOENT
             nil
           end
