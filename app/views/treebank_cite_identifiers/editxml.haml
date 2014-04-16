@@ -31,8 +31,10 @@
   showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
   // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
   //------------------------------------------------------------
-  //  Start Ace Editor
+  //  Start Ace Editor 
+  //  2014-04-16 BALMAS DISABLED FOR NOW - NEED TO FIX TO WORK BETTER WITH TREEBANK FILES
+  //  see https://github.com/PerseusDL/perseids_docs/issues/102
   //------------------------------------------------------------
-  jQuery( document ).ready( function() {
-    jQuery(".alpheios-enabled-text").texAce({lang:'xml',theme_selector:true});
-  });
+  //jQuery( document ).ready( function() {
+  //  jQuery(".alpheios-enabled-text").texAce({lang:'xml',theme_selector:true});
+  //});
