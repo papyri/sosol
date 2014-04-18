@@ -18,7 +18,6 @@ SITE_TAG_LINE = 'powered by Son of Suda Online'
 SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
 SITE_LAYOUT = 'perseus'
 SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
 SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "data.perseus.org"
 SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
@@ -27,7 +26,7 @@ EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv
 ENVIRONMENT_BACKGROUPD = 'white'
 SITE_EMAIL_FROM = 'admin@perseids.org'
 REPOSITORY_ROOT = "/usr/local/gitrepos"
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei|'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei,annotsrc|Tei,pilots|'
 CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
 GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 

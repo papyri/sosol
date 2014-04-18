@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require 'nokogiri'
+require 'open-uri'
+
+eXist = '/usr/local/exist'
+canonical = '/tmp/canonical/CTS_XML_TEI/perseus'
+inventory = [
+  '/home/ubuntu/db/repository/inventory/epifacs.xml',
+  '/home/ubuntu/db/repository/inventory/annotsrc.xml',
+  '/home/ubuntu/db/repository/inventory/pilots.xml' ]
+
+#-------------------------------------------------------------
+# Loop through the inventory files
+#-------------------------------------------------------------
+for file in inventory
+  doc = Nokogiri::HTML(open(file))
+  doc.search('online').each do |tag|
+    xml = tag.attr('docname')
+    path = xml.gsub( '/db/repository', '' ) # Little to specific
+    local = canonical + path
+    #-------------------------------------------------------------
+    # Add the file to the eXistDB collection
+    #-------------------------------------------------------------
+    if File.exist?( local )
+      system eXist + '/bin/client.sh -m ' + xml + ' -p ' + local
+    else
+      puts 'Not Found:' + xml
+    end
+  end
+end
