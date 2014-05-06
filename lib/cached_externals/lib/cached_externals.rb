@@ -106,7 +106,7 @@ Capistrano::Configuration.instance.load do
         return
       end
 
-    destination = File.join(shared_dir, revision.to_s)
+    destination = "\"#{File.join(shared_dir, revision.to_s)}\""
 
     if in_local_stage?
       FileUtils.rm_rf(path)
