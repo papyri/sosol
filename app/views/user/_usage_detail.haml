@@ -6,12 +6,12 @@
           = link_to comment.publication.title, comment.publication
           - case comment.reason
             - when 'vote'
-              = "(" + comment.identifier.title + ") &nbsp" + "Vote "
+              = "(" + comment.identifier.title + ") &nbsp;".html_safe + "Vote "
             - when 'submit'
-              = " (" + comment.publication.status + ") &nbsp"  
+              = " (" + comment.publication.status + ") &nbsp;".html_safe
             - when 'finalizing'
               - if comment.identifier && comment.identifier.title
-                = "(" + comment.identifier.title + ") &nbsp"      
+                = "(" + comment.identifier.title + ") &nbsp;".html_safe
           = h comment.comment 
           = comment.created_at.to_formatted_s(:long)
 
