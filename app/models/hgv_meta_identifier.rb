@@ -323,7 +323,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
         end
 
-        if item[:preFlag] # CL: CROMULENT GEO HACK
+        if (item.is_a? Hash) && item[:preFlag] # CL: CROMULENT GEO HACK
           offset = REXML::Element.new 'offset'
           offset.add_text 'bei'
           parent.add offset
