@@ -20,7 +20,6 @@ gem 'jquery-rails'
 gem 'haml', '>= 3.0.25'
 gem 'json-jruby', '>= 1.5.0', :require => 'json', :platform => :jruby
 gem 'json'
-gem 'jruby-openssl', '>= 0.8.8', :platform => :jruby, :require => false
 gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
 gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
 gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby
