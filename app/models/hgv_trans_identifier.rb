@@ -195,7 +195,7 @@ class HGVTransIdentifier < HGVIdentifier
       body = HGVTransIdentifier.get_body(original_xml)
       
       # transform XML to Leiden+ 
-      transformed = HGVTransIdentifier.xml2nonxml(body.to_s) #via jrubyHelper
+      transformed = HGVTransIdentifier.xml2nonxml(body.join('')) #via jrubyHelper
       
       return transformed
     else
