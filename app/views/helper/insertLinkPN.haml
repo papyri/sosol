@@ -1,11 +1,10 @@
 :javascript
-  
   //these funcions have to be in the haml file because of the ruby stuff in them needs to be handled on view load
   
   var sendBack = "";
   
   function getHGVNumber(identifierIn){
- 
+  
     request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/hgvnum/';
     
     //made asynchronous false because next call to xsugar was firing before response got back
@@ -30,7 +29,7 @@
     });
     return sendBack;
   }
-  
+
 #main
   = csrf_meta_tag
   = javascript_include_tag :defaults
