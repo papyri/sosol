@@ -255,6 +255,13 @@ class CtsPublicationsController < PublicationsController
       @publication = Publication.new()
       @publication.owner = @current_user
       @publication.creator = @current_user
+      
+      # Debugging
+      # Rails.logger.info ':start:'
+      # Rails.logger.info identifiers_hash
+      # Rails.logger.info CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn].to_s)
+      # Rails.logger.info ':end:'
+      
       @publication.populate_identifiers_from_identifiers(
             identifiers_hash,CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn].to_s))
                    

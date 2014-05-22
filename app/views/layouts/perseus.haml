@@ -60,7 +60,7 @@
     #header{ :class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic' }
       .site
         #logo
-          %h1= link_to( image_tag('perseids_notag_150.png'), Sosol::Application.config.action_controller.relative_url_root )
+          %h1= link_to( image_tag('perseids_notag_150.png'), '/' )
           %p= 'Powered by Son of Suda Online'
         -#= render(:partial => 'master_articles/master_article_box')
         -#= render(:partial => 'user/admin_box')

@@ -43,6 +43,7 @@ class Repository
     end
     
     @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
+    
     if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
 
@@ -181,6 +182,12 @@ class Repository
   end
   
   def update_master_from_canonical
+    
+    # Rails.logger.info ':start:'
+    # Rails.logger.info @repo
+    # Rails.logger.info @canonical.get_head('master')
+    # Rails.logger.info ':end:'
+    
     @repo.update_ref('master',@canonical.get_head('master').commit.id)
   end
   

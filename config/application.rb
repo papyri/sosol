@@ -26,7 +26,7 @@ EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv
 ENVIRONMENT_BACKGROUPD = 'white'
 SITE_EMAIL_FROM = 'admin@perseids.org'
 REPOSITORY_ROOT = "/usr/local/gitrepos"
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei,annotsrc|Tei,pilots|'
+SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi,perseids|Tei,annotsrc|Tei,pilots|Tei'
 CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
 GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 

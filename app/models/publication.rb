@@ -18,6 +18,7 @@
 
 
 require 'jgit_tree'
+require 'pp'
 
 class Publication < ActiveRecord::Base  
     
@@ -110,7 +111,6 @@ class Publication < ActiveRecord::Base
   # * a single string such as: papyri.info/ddbdp/bgu;7;1504
   #publication title is named using first identifier
   def populate_identifiers_from_identifiers(identifiers, original_title = nil)
-
     self.repository.update_master_from_canonical
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
@@ -188,6 +188,11 @@ class Publication < ActiveRecord::Base
   
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
+    
+    Rails.logger.info ':start:'
+    Rails.logger.info pp publication
+    Rails.logger.info ':end:'
+    
     if publication.owner.repository.branches.include?(publication.branch)
       return false
     end
