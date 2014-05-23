@@ -513,5 +513,10 @@ class Identifier < ActiveRecord::Base
   def get_catalog_link
     NumbersRDF::NumbersHelper.identifier_to_url(self.name)
   end
+  
+  ## create a default title for an identifier
+  def self.create_title(params)
+    ## default is a noop
+  end
 
 end

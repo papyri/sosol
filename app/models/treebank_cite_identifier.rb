@@ -236,13 +236,20 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
   end
   
-  # api_get responds to a call from the data management api controller
-  # @param [String] a_query  parameter containing a querystring
-  #                 specific to the identifier type. We use it for TreebankIdentifiers
-  #                 to identify the sentence
-  # @param [String] a_body the raw body of the post data
-  # @param [String] a_comment an update comment
-  #
+  def self.api_create(a_publication,a_agent,a_params,a_body,a_comment)
+    temp_id = self.new(:name => self.next_object_identifier(a_params[:urn]))
+    temp_id.publication = a_publication 
+    if (! temp_id.collection_exists?)
+      raise "Unregistered CITE Collection for #{a_params[:urn]}"
+    end
+    temp_id.save!
+    temp_id.set_content(a_body, :comment => a_comment)
+    template_init = temp_id.init_version_content(a_body)
+    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
+    return temp_id
+  end
+  
+  # api_update responds to a call from the data management api controller
   def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.size == 2)

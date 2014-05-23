@@ -7,6 +7,63 @@ class DmmApiController < ApplicationController
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
 
+  def api_item_create
+    begin
+      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
+      cookies[:csrftoken] = {
+        :value => form_authenticity_token,
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+      }
+      params[:raw_post] = request.raw_post
+      unless (params[:comment]) 
+        params[:comment] = "create_from_api"
+      end
+      identifier_class = identifier_type
+      existing_identifiers = identifier_class.find_matching_identifiers(params,@current_user)
+      # TODO errors should include links to existing publications
+      if existing_identifiers.length > 1
+        list = existing_identifiers.collect{ |p|p.name}.join(',')
+        render :xml => "<error>Multiple conflicting identifiers( #{list})</error>", :status => 500
+        return
+      elsif existing_identifiers.length == 1
+        conflicting_publication = existing_identifiers.first.publication
+        if (conflicting_publication.status == "committed")
+          expire_publication_cache
+          conflicting_publication.archive
+        else
+           render :xml => "<error>Conflicting identifier.( #{existing_identifiers.first.name})</error>", :status => 500
+           return
+        end
+      end # end test of possible conflicts
+        
+      # User doesn't have conflicts so create the publication yet so create if we weren't given one
+      if (params[:publication_id])
+        find_publication
+      else
+        @publication = Publication.new()
+        @publication.owner = @current_user
+        @publication.creator = @current_user
+        @publication.title = identifier_class::create_title(params)   
+        @publication.status = "new"
+        @publication.save!
+        
+        # branch from master so we aren't just creating an empty branch
+        @publication.branch_from_master
+      end    
+      
+      agent = agent_of(params[:raw_post])
+      # TODO we need a better way of isolating create params per type so that we don't have to pass
+      # the entire params object to the model
+      new_identifier_uri = identifier_class.api_create(@publication,agent,params,params[:raw_post],params[:comment])
+    rescue Exception => e
+      Rails.logger.error(e.backtrace)
+      render :xml => "<error>#{e}</error>", :status => 500
+      return   
+    end
+    render :xml => "<item>#{new_identifier_uri.id}</item>"
+    return 
+  end
+
   def api_item_append
      # add the raw post to the session
     params[:raw_post] = request.raw_post
@@ -160,22 +217,38 @@ class DmmApiController < ApplicationController
     end
   end
   
+  def ping
+      cookies[:csrftoken] = {
+        :value => form_authenticity_token,
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+      }
+      render :xml => 'OK' 
+  end
 
   protected
     
-    def find_identifier
-      identifier_class_name = "#{params[:identifier_type]}Identifier"
-     begin
-      identifier_class_name.constantize::IDENTIFIER_NAMESPACE
-      identifier_class = Object.const_get(identifier_class_name)
-    rescue Exception => e
-      Rails.logger.error(e)
+    def identifier_type 
+      identifier_class_name = "#{params[:identifier_type]}Identifier"        
+      begin
+        identifier_class_name.constantize::IDENTIFIER_NAMESPACE
+        identifier_class = Object.const_get(identifier_class_name)
+      rescue Exception => e
+        Rails.logger.error(e)
+      end
+      return identifier_class
     end
+    
+    def find_identifier
+      identifier_class = identifier_type  
       unless (identifier_class.nil?)
         @identifier = identifier_class.find(params[:id])   
       end
     end
     
+    def find_publication
+      @publication ||= Publication.find(params[:publication_id].to_s)
+    end
+
     def ownership_guard
       find_identifier
       if !@identifier.publication.mutable_by?(@current_user)

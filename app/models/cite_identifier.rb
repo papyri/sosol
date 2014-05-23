@@ -16,6 +16,31 @@ class CiteIdentifier < Identifier
     return title
   end
 
+  ## create a default title for a cite identifier
+  def self.create_title(params)
+    ## 2014-05-20 BMA: not sure if this use pf params[:pub] was something I intended to do but
+    ## forgot to implement or if it's just an idea that doesn't make sense now. I don't think 
+    ## it's being used.
+    if (params[:pub])
+        temp_title = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + params[:pub].gsub!(/[^\w\.]/,'_')
+    else
+      now = Time.now
+      lookup_path = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + now.year.to_s + now.mon.to_s + now.day.to_s
+      latest = Publication.find(:all,
+        :conditions => ["title like ?", "#{lookup_path}%"],
+        :order => "created_at DESC",
+        :limit => 1).first
+      if latest.nil?
+        incr = 1
+      else  
+        incr = latest.title.split('/').last.to_i + 1
+      end
+      temp_title = lookup_path + "/" + incr.to_s
+    end
+    return temp_title    
+  end
+
+
   ##
   # New from Template creates a new CITE object in an existing CITE Collection.
   # It should check for the existence of the existing CITE Collection on the master, 
@@ -255,6 +280,82 @@ class CiteIdentifier < Identifier
     # make a annotator uri from the owner of the publication 
     def make_annotator_uri()
       ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    end
+    
+    def self.find_matching_identifiers(params,user)
+      publication = nil
+      ## if urn and key value are supplied we need to check to see if the requested object exists before
+      ## creating it
+      is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
+      existing_identifiers = []
+
+      Rails.logger.info("Self.class #{self}")
+      if ( is_collection_urn )
+        if (params[:init_value])
+          lookup_id = path_for_collection(params[:urn])
+          Rails.logger.info("Checking #{self} collection for identifiers #{lookup_id} for #{user}")
+          possible_conflicts = self.find(:all,
+                         :conditions => ["name like ?", "#{lookup_id}%"],
+                         :order => "name DESC")
+          
+          actual_conflicts = possible_conflicts.select {|pc| 
+            begin
+              ((pc.publication) && 
+                (pc.publication.owner == user) && 
+                !(%w{archived finalized}.include?(pc.publication.status)) &&
+                 pc.is_match?(params[:init_value])
+              )
+            rescue Exception => e
+              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+            end
+          }
+          existing_identifiers += actual_conflicts
+        end
+      # all we have is a collection urn so we must want to create a new object
+      elsif (Cite::CiteLib.is_object_urn?(params[:urn]))
+        ### if publication exists for a version of this object, bring them to it, otherwise create a new version
+        lookup_id = path_for_object_urn(params[:urn])
+        Rails.logger.info("Checking #{self} object for identifiers #{lookup_id} #{user}")
+        possible_conflicts = self.find(:all,
+                       :conditions => ["name like ?", "#{lookup_id}%"],
+                       :order => "name DESC")
+        
+        actual_conflicts = possible_conflicts.select {|pc| 
+            begin
+              ((pc.publication) && 
+               (pc.publication.owner == user) && 
+               !(%w{archived finalized}.include?(pc.publication.status))
+              )
+            rescue Exception => e
+              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+            end
+        }
+        existing_identifiers += actual_conflicts
+      elsif (Cite::CiteLib.is_version_urn?(params[:urn]))
+        ### if publication exists for this version of this object, bring them to it, otherwise raise ERROR
+        lookup_id = path_for_object_urn(params[:urn])
+        Rails.logger.info("Checking #{self} version for identifiers #{lookup_id} #{user}")
+        possible_conflicts = self.find(:all,
+                       :conditions => ["name like ?", "#{lookup_id}%"],
+                       :order => "name DESC")
+        
+        actual_conflicts = possible_conflicts.select {|pc| 
+          begin
+            ((pc.publication) && 
+               (pc.publication.owner == user) && 
+               !(%w{archived finalized}.include?(pc.publication.status))
+               # TODO we should double check that the one they are editing is based on the same version
+               # and raise an error otherwise
+            )
+          rescue Exception => e
+            Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+          end
+        }
+        existing_identifiers += actual_conflicts
+      else 
+        raise "Unable to check for conflicts - unknown urn type"
+      end # end test on urn type
+      return existing_identifiers
     end
 
 end
