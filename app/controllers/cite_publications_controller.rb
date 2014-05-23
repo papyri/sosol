@@ -33,7 +33,7 @@ class CitePublicationsController < PublicationsController
     ## if urn and key value are supplied we need to check to see if the requested object exists before
     ## creating it
     is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
-    existing_identifiers = identifier_class.find_matching_identifiers(params,@current_user)
+    existing_identifiers = identifier_class.find_matching_identifiers(params[:urn],@current_user,params[:init_value])
     Rails.logger.info("Existing #{existing_identifiers.inspect}")
 
     if existing_identifiers.length > 1
@@ -71,7 +71,7 @@ class CitePublicationsController < PublicationsController
       # fetch a title without creating from template
       
      
-      @publication.title = identifier_class::create_title(params)   
+      @publication.title = identifier_class::create_title(params[:urn])   
       @publication.status = "new"
       @publication.save!
     

@@ -19,7 +19,9 @@ class DmmApiController < ApplicationController
         params[:comment] = "create_from_api"
       end
       identifier_class = identifier_type
-      existing_identifiers = identifier_class.find_matching_identifiers(params,@current_user)
+      tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
+      Rails.logger.info("Collection = #{tempid}")
+      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,params[:init_value])
       # TODO errors should include links to existing publications
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')
@@ -43,7 +45,7 @@ class DmmApiController < ApplicationController
         @publication = Publication.new()
         @publication.owner = @current_user
         @publication.creator = @current_user
-        @publication.title = identifier_class::create_title(params)   
+        @publication.title = identifier_class::create_title(tempid)   
         @publication.status = "new"
         @publication.save!
         
@@ -52,9 +54,7 @@ class DmmApiController < ApplicationController
       end    
       
       agent = agent_of(params[:raw_post])
-      # TODO we need a better way of isolating create params per type so that we don't have to pass
-      # the entire params object to the model
-      new_identifier_uri = identifier_class.api_create(@publication,agent,params,params[:raw_post],params[:comment])
+      new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
     rescue Exception => e
       Rails.logger.error(e.backtrace)
       render :xml => "<error>#{e}</error>", :status => 500
