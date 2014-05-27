@@ -15,17 +15,17 @@ class DmmApiControllerTest < ActionController::TestCase
    
   def test_should_create_publication_and_treebank_identifier
     @request.env['RAW_POST_DATA'] = @valid_tb
-    post :api_item_create, :identifier_type => 'TreebankCite', :urn => 'urn:cite:perseus:testcoll'
+    post :api_item_create, :identifier_type => 'TreebankCite'
     assert_match(/<item>..*?<\/item>/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size 
   end
   
    def test_should_fail_create_duplicate_identifier
     @request.env['RAW_POST_DATA'] = @valid_tb
-    post :api_item_create, :identifier_type => 'TreebankCite', :urn => 'urn:cite:perseus:testcoll'
+    post :api_item_create, :identifier_type => 'TreebankCite'
     assert_match(/<item>..*?<\/item>/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size 
-    post :api_item_create, :identifier_type => 'TreebankCite', :urn => assigns(:publication).identifiers[0].urn_attribute
+    post :api_item_create, :identifier_type => 'TreebankCite', :init_value => "urn:cts:latinLit:tg.work.edition:1.1"
     assert_match(/<error>Conflicting identifier/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size
   end
