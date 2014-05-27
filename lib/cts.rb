@@ -319,13 +319,27 @@ module CTS
         urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         if (a_id =~ /^\d+$/)
           documentIdentifier = Identifier.find(a_id)
+          # look to see if we have extracted this citation already and are editing it
+          matches = []
+          for psgid in documentIdentifier.publication.identifiers do 
+            if (psgid.kind_of?(CitationCTSIdentifier))
+              if (psgid.urn_attribute == urn_no_subref || 
+                  urn_no_subref =~ /^#{Regexp.quote(psgid.urn_attribute)}\./)
+
+                # we want the citation cts identifier if its urn is an exact
+                # match OR if its urn is the parent of the requested citation
+                matches << psgid 
+              end # end test on urn
+            end # end test on citation
+          end # end loop through identifiers in this documents publication 
           inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
           if (getExternalCTSHash().has_key?(inventory_code))
             passage = _proxyGetPassage(inventory_code,urn_no_subref)
           else
             inventory = documentIdentifier.related_inventory.xml_content
             uuid = documentIdentifier.publication.id.to_s + a_urn.gsub(':','_') + '_proxyreq'
-            passage = _getPassageFromRepo(inventory,documentIdentifier.content,urn_no_subref,uuid)
+            content = matches.length > 0 ? matches[0].content : documentIdentifier.content
+            passage = _getPassageFromRepo(inventory,content,urn_no_subref,uuid)
           end
         else
           passage = _proxyGetPassage(a_id,urn_no_subref)
