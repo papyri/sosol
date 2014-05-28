@@ -515,8 +515,9 @@ class Identifier < ActiveRecord::Base
   end
   
   ## create a default title for an identifier
-  def self.create_title(params)
-    ## default is a noop
+  ## @param a_from is up to the controller
+  def self.create_title(a_from)
+    ## default is a no-op
   end
 
 end

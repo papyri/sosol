@@ -20,7 +20,6 @@ class DmmApiController < ApplicationController
       end
       identifier_class = identifier_type
       tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-      Rails.logger.info("Collection = #{tempid}")
       existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,params[:init_value])
       # TODO errors should include links to existing publications
       if existing_identifiers.length > 1

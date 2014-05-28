@@ -34,7 +34,6 @@ class CitePublicationsController < PublicationsController
     ## creating it
     is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
     existing_identifiers = identifier_class.find_matching_identifiers(params[:urn],@current_user,params[:init_value])
-    Rails.logger.info("Existing #{existing_identifiers.inspect}")
 
     if existing_identifiers.length > 1
         flash[:error] = 'Error creating publication: multiple conflicting identifiers'
