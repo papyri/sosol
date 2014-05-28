@@ -33,69 +33,8 @@ class CitePublicationsController < PublicationsController
     ## if urn and key value are supplied we need to check to see if the requested object exists before
     ## creating it
     is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
-    existing_identifiers = []
+    existing_identifiers = identifier_class.find_matching_identifiers(params[:urn],@current_user,params[:init_value])
 
-    if ( is_collection_urn )
-      if (params[:init_value])
-        lookup_id = CiteIdentifier::path_for_collection(params[:urn])
-        possible_conflicts = identifier_class.find(:all,
-                       :conditions => ["name like ?", "#{lookup_id}%"],
-                       :order => "name DESC")
-        
-          actual_conflicts = possible_conflicts.select {|pc| 
-            begin
-              ((pc.publication) && 
-               (pc.publication.owner == @current_user) && 
-               !(%w{archived finalized}.include?(pc.publication.status)) &&
-               pc.is_match?(params[:init_value])
-              )
-            rescue Exception => e
-              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
-            end
-          }
-          existing_identifiers += actual_conflicts
-      end
-      # all we have is a collection urn so we must want to create a new object
-    elsif (Cite::CiteLib.is_object_urn?(params[:urn]))
-      ### if publication exists for a version of this object, bring them to it, otherwise create a new version
-      lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
-        possible_conflicts = identifier_class.find(:all,
-                       :conditions => ["name like ?", "#{lookup_id}%"],
-                       :order => "name DESC")
-        
-          actual_conflicts = possible_conflicts.select {|pc| 
-            begin
-              ((pc.publication) && 
-               (pc.publication.owner == @current_user) && 
-               !(%w{archived finalized}.include?(pc.publication.status))
-              )
-            rescue Exception => e
-              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
-            end
-          }
-          existing_identifiers += actual_conflicts
-    elsif (Cite::CiteLib.is_version_urn?(params[:urn]))
-      ### if publication exists for this version of this object, bring them to it, otherwise raise ERROR
-      lookup_id = CiteIdentifier::path_for_object_urn(params[:urn])
-        possible_conflicts = identifier_class.find(:all,
-                       :conditions => ["name like ?", "#{lookup_id}%"],
-                       :order => "name DESC")
-        
-          actual_conflicts = possible_conflicts.select {|pc| 
-            begin
-              ((pc.publication) && 
-               (pc.publication.owner == @current_user) && 
-               !(%w{archived finalized}.include?(pc.publication.status))
-               # TODO we should double check that the one they are editing is based on the same version
-               # and raise an error otherwise
-              )
-            rescue Exception => e
-              Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
-            end
-          }
-          existing_identifiers += actual_conflicts
-    end # end test on urn type
-    
     if existing_identifiers.length > 1
         flash[:error] = 'Error creating publication: multiple conflicting identifiers'
         flash[:error] += '<ul>'
@@ -130,23 +69,8 @@ class CitePublicationsController < PublicationsController
       ## whether we start fresh or from an existing object
       # fetch a title without creating from template
       
-      if (params[:pub])
-        @publication.title = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + params[:pub].gsub!(/[^\w\.]/,'_')
-      else
-        now = Time.now
-        lookup_path = Cite::CiteLib.get_collection_title(params[:urn]) + "/" + now.year.to_s + now.mon.to_s + now.day.to_s
-        latest = Publication.find(:all,
-                       :conditions => ["title like ?", "#{lookup_path}%"],
-                       :order => "created_at DESC",
-                       :limit => 1).first
-        if latest.nil?
-          incr = 1
-        else  
-          incr = latest.title.split('/').last.to_i + 1
-        end
-        @publication.title = lookup_path + "/" + incr.to_s  
-      end
-      
+     
+      @publication.title = identifier_class::create_title(params[:urn])   
       @publication.status = "new"
       @publication.save!
     

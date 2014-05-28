@@ -33,13 +33,17 @@ module Cite
       # method to see if all we have is a collection identifier
       def is_collection_urn?(a_urn)
         valid_collection_urn = false;
-        parts = a_urn.split(/:/)
-        if (parts.length == 4)
-         if parts[0] == 'urn' && parts[1] == 'cite' && parts[3] !~ /\./
-             valid_collection_urn = true
-         end 
+        begin 
+          parts = a_urn.split(/:/)
+          if (parts.length == 4)
+           if parts[0] == 'urn' && parts[1] == 'cite' && parts[3] !~ /\./
+               valid_collection_urn = true
+           end 
+          end
+          # TODO - validate against inventory?
+        rescue
+          # if it's invalid, the answer is obviously false
         end
-        # TODO - validate against inventory?
         return valid_collection_urn
       end
       

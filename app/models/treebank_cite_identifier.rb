@@ -6,6 +6,11 @@ class TreebankCiteIdentifier < CiteIdentifier
   FILE_TYPE="tb.xml"
   ANNOTATION_TITLE = "Treebank Annotation"
   TEMPLATE = "template"
+  NS_DCAM = "http://purl.org/dc/dcam/"
+  NS_TREEBANK = "http://nlp.perseus.tufts.edu/syntax/treebank/1.5"
+  NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+
   
   # TODO Validator depends upon treebank format
   XML_VALIDATOR = JRubyXML::PerseusTreebankValidator
@@ -236,13 +241,44 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
   end
   
-  # api_get responds to a call from the data management api controller
-  # @param [String] a_query  parameter containing a querystring
-  #                 specific to the identifier type. We use it for TreebankIdentifiers
-  #                 to identify the sentence
-  # @param [String] a_body the raw body of the post data
-  # @param [String] a_comment an update comment
-  #
+  def self.api_parse_post_for_identifier(a_post)
+    oacxml = REXML::Document.new(a_post).root
+    urn = REXML::XPath.first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
+    if (urn)
+      return urn.attributes['rdf:resource']
+    else
+      raise "Unspecified Collection"
+    end
+  end
+  
+  def self.api_create(a_publication,a_agent,a_body,a_comment)
+    urn = self.api_parse_post_for_identifier(a_body)
+    temp_id = self.new(:name => self.next_object_identifier(urn))
+    temp_id.publication = a_publication 
+    if (! temp_id.collection_exists?)
+      raise "Unregistered CITE Collection for #{urn}"
+    end
+    temp_id.save!
+    oacxml = REXML::Document.new(a_body).root
+    treebank = REXML::XPath.first(oacxml,'//tb:treebank',{"tb" => NS_TREEBANK})
+    if (!treebank)
+      # try without the namespace
+      # this is actually all that's currently supported - eventually we want to 
+      # require a namespace but that requires a new version of the schema
+      treebank = REXML::XPath.first(oacxml,'//treebank')
+    end 
+    formatter = PrettySsime.new
+    formatter.compact = true
+    formatter.width = 2**32
+    content = ''
+    formatter.write treebank, content
+    temp_id.set_content(content, :comment => a_comment)
+    template_init = temp_id.init_version_content(content)
+    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
+    return temp_id
+  end
+  
+  # api_update responds to a call from the data management api controller
   def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.size == 2)

@@ -13,8 +13,22 @@
         <xsl:variable name="tokens">
             <xsl:apply-templates select="//tei:w|//tei:pc"/>
         </xsl:variable>
-        <xsl:variable name="start" select="substring-before($e_subref,'-')"/>
-        <xsl:variable name="end" select="substring-after($e_subref,'-')"/>
+        <xsl:variable name="start">
+            <xsl:choose>
+                <xsl:when test="contains($e_subref,'-')">
+                    <xsl:value-of select="substring-before($e_subref,'-')"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:value-of select="$e_subref"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="end">
+            <xsl:choose>
+                <xsl:when test="contains($e_subref,'-')">
+                    <xsl:value-of select="substring-after($e_subref,'-')"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:value-of select="$e_subref"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:call-template name="get-words">
             <xsl:with-param name="words" select="$tokens"/>
             <xsl:with-param name="start" select="$start"/>

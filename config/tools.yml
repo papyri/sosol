@@ -2,6 +2,7 @@ development:
   treebank_editor:
     :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
@@ -25,6 +26,7 @@ test:
   treebank_editor:
     :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
@@ -45,6 +47,7 @@ production:
   treebank_editor:
     :edit_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"

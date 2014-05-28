@@ -49,15 +49,21 @@ class EpiCtsIdentifiersController < IdentifiersController
   
   def link_alignment
     find_publication_and_identifier
-    # TODO eventually should be able to link from places other than an annotation?
-    redirect_to(:controller => 'alignment_cite_identifiers', 
-      :publication_id => @publication.id,
-      :a_id => params[:a_id],
-      :annotation_uri => params[:annotation_uri],
-      :action => :create_from_annotation) and return
 
+    # TODO eventually should be able to link from places other 
+    # than an annotation?
+    if (params[:annotation_uri])
+      redirect_to(:controller => 'alignment_cite_identifiers', 
+        :publication_id => @publication.id,
+        :a_id => params[:a_id],
+        :annotation_uri => params[:annotation_uri],
+        :action => :create_from_annotation) and return
+    else 
+      flash.now[:error] = "Missing input details for annotation."
+      redirect_to dashboard_url
+    end
+    
   end
-
   
   # PUT /publications/1/epi_cts_identifiers/1/update
   def update

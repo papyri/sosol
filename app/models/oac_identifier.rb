@@ -466,6 +466,9 @@ class OACIdentifier < Identifier
       config[:target_links] << {:label => 'Annotate Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:export_url]}
       config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
+    if (Tools::Manager.tool_config('treebank_editor'))
+      config[:target_links] << {:label => 'New Treebank Annotation', :url => (Tools::Manager.tool_config('treebank_editor')[:create_url]).sub(/DOC/,self.parentIdentifier.publication.id.to_s), :target_param => 'text_uri'}
+    end
     return config.to_json                  
   end
     

@@ -189,6 +189,12 @@ ActionController::Routing::Routes.draw do |map|
     :action => 'api_item_append',
     :conditions => { :method => :post }
  
+ map.connect 'dmm_api/item/:identifier_type/create/:publication_id',
+    :controller => 'dmm_api',
+    :action => 'api_item_create',
+    :conditions => { :method => :post },
+    :publication_id => nil
+ 
  map.connect 'dmm_api/item/:identifier_type/:id/info/:format',
     :controller => 'dmm_api',
     :action => 'api_item_info',

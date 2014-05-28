@@ -14,7 +14,7 @@
         <xsl:param name="wrap"/>
         <xsl:choose>
             <!-- no more words -->
-            <xsl:when test="count($words/*) = 0 or $index = count($words/*)">
+            <xsl:when test="count($words/*) = 0 or $index = count($words/*) or ($started and $start = $end)">
                 <!-- done -->
             </xsl:when>
             <!-- haven't found the start token yet -->
