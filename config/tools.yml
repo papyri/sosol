@@ -2,6 +2,7 @@ development:
   treebank_editor:
     :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
