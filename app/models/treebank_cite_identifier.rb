@@ -235,7 +235,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def api_get(a_query)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.nil?)
-      raise "Invalid request - no sentence specified in #{a_query}"
+      return self.xml_content
     else
       return sentence(qmatch[1])
     end
@@ -433,4 +433,8 @@ class TreebankCiteIdentifier < CiteIdentifier
     self.set_xml_content(updated, :comment => 'Update uris to reflect new identifier')
   end
   
+  # temporary hack to enable link to Arethusa as an alternate viewer
+  def file_preview()
+    Tools::Manager.tool_config('treebank_editor')[:file_url].sub('DOC',self.id.to_s)  
+  end
 end

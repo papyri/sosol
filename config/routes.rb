@@ -174,6 +174,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'shib',
     :action => 'metadata'
   
+  map.connect 'dmm_api/item/:identifier_type/:id',
+    :controller => 'dmm_api',
+    :action => 'api_item_get',
+    :conditions => { :method => :get }
+    
   map.connect 'dmm_api/item/:identifier_type/:id/partial',
     :controller => 'dmm_api',
     :action => 'api_item_patch',
