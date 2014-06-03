@@ -314,7 +314,7 @@ module CTS
         end
       end
       
-      def getPassage(a_id,a_urn)
+      def getPassage(a_id,a_urn,a_checkExists)
         passage = nil
         urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         if (a_id =~ /^\d+$/)
@@ -323,8 +323,9 @@ module CTS
           matches = []
           for psgid in documentIdentifier.publication.identifiers do 
             if (psgid.kind_of?(CitationCTSIdentifier))
-              if (psgid.urn_attribute == urn_no_subref || 
-                  urn_no_subref =~ /^#{Regexp.quote(psgid.urn_attribute)}\./)
+              if (a_checkExists &&
+                  (psgid.urn_attribute == urn_no_subref || 
+                  urn_no_subref =~ /^#{Regexp.quote(psgid.urn_attribute)}\./))
 
                 # we want the citation cts identifier if its urn is an exact
                 # match OR if its urn is the parent of the requested citation
@@ -385,7 +386,7 @@ module CTS
                    raise "Passage request failed #{psg_response.code} #{psg_response.msg} #{psg_response.body}"
                   end # end test on GetPassagePlus response code
                 else 
-                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
+                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body} document #{a_document}"
                 end # end test on text Put request
               else
                   raise "no path for put"

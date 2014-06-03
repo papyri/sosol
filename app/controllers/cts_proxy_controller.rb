@@ -27,7 +27,7 @@ class CtsProxyController < ApplicationController
       redirect_to :action => :getsubref, :id => params[:id], :urn => params[:urn]
       return
     end
-     render :xml => CTS::CTSLib.getPassage(params[:id],params[:urn])
+     render :xml => CTS::CTSLib.getPassage(params[:id],params[:urn],true)
   end
   
   def getsubref

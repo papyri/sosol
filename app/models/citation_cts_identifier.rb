@@ -43,7 +43,7 @@ class CitationCTSIdentifier < CTSIdentifier
     new_identifier.title = titleParts.join(' ') 
     new_identifier.save!
     begin
-      passage_xml = CTS::CTSLib.getPassage(new_identifier.related_text.id.to_s,new_identifier.urn_attribute)
+      passage_xml = CTS::CTSLib.getPassage(new_identifier.related_text.id.to_s,new_identifier.urn_attribute,false)
       new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
       return new_identifier
     rescue Exception => e
