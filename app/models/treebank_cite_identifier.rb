@@ -281,13 +281,21 @@ class TreebankCiteIdentifier < CiteIdentifier
   # api_update responds to a call from the data management api controller
   def api_update(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
-    if (qmatch.size == 2)
+    if (qmatch && qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_body,a_comment)
     else
-      raise "Sentence Identifier Missing"
+      # if no query, assume it's an entire document
+      return self.update_document(a_body,a_comment)
     end
   end
-  
+ 
+  def update_document(a_body,a_comment) 
+    xml = REXML::Document.new(a_body).root
+    updated = toXmlString xml
+    self.set_xml_content(updated, :comment => a_comment)
+    return updated
+  end
+
   def update_sentence(a_id,a_body,a_comment)
     begin
       s = REXML::Document.new(a_body).root
