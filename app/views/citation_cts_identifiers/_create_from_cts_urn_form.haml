@@ -32,7 +32,7 @@
   = label_tag 'To:'
   - citeinfo['citations'].each_index do |index|
     = label_tag citeinfo['citations'][index]
-    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to', :disabled => 'true'}     
+    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to'}     
   %br
   
   %br

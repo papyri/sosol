@@ -1,6 +1,6 @@
 = link_to 'Edit in Alpheios', edit_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier)
 = link_to 'Edit Treebank XML', editxml_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier)
 = link_to 'Preview', preview_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier)
--if @identifier.file_preview && params[:arethusa]
+-if @identifier.respond_to?(:file_preview) && params[:arethusa]
   = link_to 'Preview in Arethusa', @identifier.file_preview
 %br

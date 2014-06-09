@@ -94,10 +94,14 @@ class CitationCtsIdentifiersController < IdentifiersController
                         :pubtype => params[:pubtype].to_s})
       return
     else
+      urn = params[:urn] + ":" + params[:start_passage].strip
+      if (params[:end_passage])
+        urn = urn + "-" + params[:end_passage].strip
+      end
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
                 :collection => params[:collection].to_s,
-                :urn => params[:urn] + ":" + params[:start_passage].strip,
+                :urn => urn,
                 :pubtype => params[:pubtype])   
    
     end
