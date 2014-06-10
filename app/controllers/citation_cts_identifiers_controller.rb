@@ -201,6 +201,17 @@ class CitationCtsIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview
   end
   
+  def destroy
+    find_identifier 
+    name = @identifier.title
+    pub = @identifier.publication
+    @identifier.destroy
+    
+    flash[:notice] = name + ' was successfully removed from your publication.'
+    redirect_to pub
+    return
+  end
+  
   protected
     def find_identifier
       @identifier = CitationCTSIdentifier.find(params[:id].to_s)
