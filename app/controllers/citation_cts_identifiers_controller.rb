@@ -95,7 +95,7 @@ class CitationCtsIdentifiersController < IdentifiersController
       return
     else
       urn = params[:urn] + ":" + params[:start_passage].strip
-      if (params[:end_passage])
+      if (params[:end_passage] != '')
         urn = urn + "-" + params[:end_passage].strip
       end
       redirect_to(:controller => 'cts_publications', 
