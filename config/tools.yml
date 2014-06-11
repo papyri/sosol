@@ -64,4 +64,6 @@ production:
       :request_url: "http://sosol.perseids.org/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
     :lat:
       :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
-    
+  toponym_editor:
+    :export_url: "http://pelagios.org/recogito/edit/annotation?ctsURI="
+    :import_url: "http://pelagios.org/recogito/api/annotations?ctsURI="

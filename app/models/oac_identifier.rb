@@ -462,7 +462,11 @@ class OACIdentifier < Identifier
           {:label => 'Create Commentary', :url => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'},
         ]
        }
-    if (Tools::Manager.tool_config('toponym_editor'))
+    # temporary solution to selectively enable the toponym editor for testing
+    # see https://github.com/PerseusDL/perseids_docs/issues/141
+    has_toponym_hook = REXML::XPath.match(self.rdf.root,"//perseids:PerseidsTool[@rdf:resource='toponym_editor']",{'perseids' => "http://data.perseus.org/ns/perseids"}).size > 0
+    
+    if (Tools::Manager.tool_config('toponym_editor') && has_toponym_hook)
       config[:target_links] << {:label => 'Annotate Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:export_url]}
       config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
