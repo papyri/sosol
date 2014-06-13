@@ -1,0 +1,791 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2008-2010 Cantus Foundation
+  http://alpheios.net
+  
+  This file is part of Alpheios.
+  
+  Alpheios is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  Alpheios is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!--
+  Description for Ancient Language Dependency Treebank (ALDT) format
+
+  Tables of morphology categories and values
+
+  <desc>
+    <meta>* = metadatum
+      @name = name of metadatum
+      @value = value of metadatum
+    <table> = table of morphology categories
+      @type = morphology
+      <category> = morphology category
+        @id = name of category (pos [part of speech], person, etc.)
+        @n = position of category in treebank postag attribute
+        <entry> = entry in category
+          @punct = 'y' if this is punctuation
+          <short> = single-letter value in postag
+          <long> = equivalent human-readable name
+          <lex> = equivalent name in lexicon schema, if different from <long>
+          <color> = color to associate with entry
+          <style> = style to associate with entry
+          <mask> = mask of allowable categories
+    <table> = table of dependency relations
+      @type = relation
+      <entry> = dependency relation
+        <tb> = treebank name
+        <disp> = displayable form, if different from treebank name
+        <menu> = menu item text, if different from treebank name
+        <help dir="up"> = help text for head direction
+        <help dir="dn"> = help text for dependent direction
+      Order of entries defines menu order
+    <table> = table of dependency suffixes
+      @type = subrelation
+      <entry> = suffix
+        <tb> = treebank name
+        <menu> = menu item text, if different from treebank name
+      Order of entries defines menu order
+
+    text color according to part of speech:
+    POS             color
+    a adjective     blue
+    d adverb        orange
+    l article       pale blue
+    c conjunction   pink
+    i interjection  yellow
+    n noun          black
+    r preposition   green
+    p pronoun       purple
+    v verb          red
+
+    e exclamation=interjection
+-->
+<info numSentences="<%= size%>" xml:lang="<%= lang%>" format="<%= format%>" direction="<%= direction%>">
+<desc xmlns="http://alpheios.net/namespaces/treebank-desc">
+	<meta name="format" value="aldt"/>
+	<meta name="ellipsis" value="yes"/>
+	<meta name="has-lemmas" value="yes"/>
+	<table type="morphology">
+		<!-- part of speech -->
+		<category id="pos" n="1" name="Part of Speech">
+			<entry>
+				<short>l</short>
+				<long>article</long>
+				<color>skyblue</color>
+				<mask>+-+---++</mask>
+			</entry>
+			<entry>
+				<short>n</short>
+				<long>noun</long>
+				<color>black</color>
+				<mask>+-+---+--+</mask>
+			</entry>
+			<entry>
+				<short>p</short>
+				<long>pronoun</long>
+				<color>purple</color>
+				<mask>+-+---+--+</mask>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>substantive adjective</long>
+				<color>black</color>
+				<mask>+-+---+--+</mask>
+			</entry>
+			<entry>
+				<short>b</short>
+				<long>substantive participle</long>
+				<color>black</color>
+				<mask>+-+---+--+</mask>
+			</entry>
+			<entry>
+				<short>f</short>
+				<long>infinitive</long>
+				<color>black</color>
+				<mask>+--+++------------------+</mask>
+			</entry>
+			<entry>
+				<short>v</short>
+				<long>verb</long>
+				<color>red</color>
+				<mask>++++++</mask>
+			</entry>
+			<entry>
+				<short>t</short>
+				<long>participle</long>
+				<lex>verb participle</lex>
+				<mask>+-+++++++</mask>
+			</entry>
+			<entry>
+				<short>j</short>
+				<long>verbal adjective tos/teos</long>
+				<mask>+-+---+++</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>adjective</long>
+				<color>blue</color>
+				<mask>+-+---+++</mask>
+			</entry>
+			<entry>
+				<short>o</short>
+				<long>pronominal adjective</long>
+				<color>blue</color>
+				<mask>+-+---++-</mask>
+			</entry>
+			<entry>
+				<short>d</short>
+				<long>adverb</long>
+				<color>darkorange</color>
+				<mask>+-------+</mask>
+			</entry>
+			<entry>
+				<short>c</short>
+				<long>conjunction</long>
+				<color>deeppink</color>
+				<mask>+</mask>
+			</entry>
+			<entry>
+				<short>r</short>
+				<long>preposition</long>
+				<color>green</color>
+				<mask>+</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>interjection (adverbial)</long>
+				<color>gold</color>
+				<mask>+</mask>
+			</entry>
+			<entry punct="y">
+				<short>u</short>
+				<long>punctuation</long>
+				<mask>+</mask>
+			</entry>
+			<entry>
+				<short>x</short>
+				<long>uncertain</long>
+				<mask>+</mask>
+			</entry>
+		</category>
+		<category id="person" n="2" name="Person">
+			<entry>
+				<short>1</short>
+				<long>first_person</long>
+				<lex>1st</lex>
+			</entry>
+			<entry>
+				<short>2</short>
+				<long>second_person</long>
+				<lex>2nd</lex>
+			</entry>
+			<entry>
+				<short>3</short>
+				<long>third_person</long>
+				<lex>3rd</lex>
+			</entry>
+		</category>
+		<category id="number" n="3" name="Number">
+			<entry>
+				<short>s</short>
+				<long>singular</long>
+			</entry>
+			<entry>
+				<short>p</short>
+				<long>plural</long>
+			</entry>
+			<entry>
+				<short>d</short>
+				<long>dual</long>
+			</entry>
+		</category>
+		<category id="tense" n="4" name="Tense">
+			<entry>
+				<short>p</short>
+				<long>present</long>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>imperfect</long>
+			</entry>
+			<entry>
+				<short>r</short>
+				<long>perfect</long>
+			</entry>
+			<entry>
+				<short>l</short>
+				<long>pluperfect</long>
+			</entry>
+			<entry>
+				<short>t</short>
+				<long>future_perfect</long>
+				<lex>future perfect</lex>
+			</entry>
+			<entry>
+				<short>f</short>
+				<long>future</long>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>aorist</long>
+			</entry>
+		</category>
+		<category id="mood" n="5" name="Mood">
+			<entry>
+				<short>i</short>
+				<long>indicative</long>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>subjunctive</long>
+			</entry>
+			<entry>
+				<short>o</short>
+				<long>optative</long>
+			</entry>
+			<entry>
+				<short>m</short>
+				<long>imperative</long>
+			</entry>
+		</category>
+		<category id="voice" n="6" name="Voice">
+			<entry>
+				<short>m</short>
+				<long>middle</long>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>active</long>
+			</entry>
+			<entry>
+				<short>p</short>
+				<long>passive</long>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>medio_passive</long>
+				<lex>mediopassive</lex>
+			</entry>
+		</category>
+		<category id="gender" n="7" name="Gender">
+			<entry>
+				<short>m</short>
+				<long>masculine</long>
+			</entry>
+			<entry>
+				<short>f</short>
+				<long>feminine</long>
+			</entry>
+			<entry>
+				<short>n</short>
+				<long>neuter</long>
+			</entry>
+		</category>
+		<category id="case" n="8" name="Case">
+			<entry>
+				<short>n</short>
+				<long>nominative</long>
+			</entry>
+			<entry>
+				<short>g</short>
+				<long>genitive</long>
+			</entry>
+			<entry>
+				<short>d</short>
+				<long>dative</long>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>accusative</long>
+			</entry>
+			<entry>
+				<short>v</short>
+				<long>vocative</long>
+			</entry>
+			<entry>
+				<short>l</short>
+				<long>locative</long>
+			</entry>
+		</category>
+		<category id="degree" n="9" name="Degree">
+			<entry>
+				<short>p</short>
+				<long>positive</long>
+			</entry>
+			<entry>
+				<short>c</short>
+				<long>comparative</long>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>superlative</long>
+			</entry>
+		</category>
+		<category id="case" n="10" name="Case">
+			<entry>
+				<short>n</short>
+				<long>nominative</long>
+				<mask>+-+---+--++</mask>
+			</entry>
+			<entry>
+				<short>g</short>
+				<long>genitive</long>
+				<mask>+-+---+--+--+</mask>
+			</entry>
+			<entry>
+				<short>d</short>
+				<long>dative</long>
+				<mask>+-+---+--+------+</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>accusative</long>
+				<mask>+-+---+--+---------+</mask>
+			</entry>
+			<entry>
+				<short>v</short>
+				<long>vocative</long>
+				<mask>+-+---+--+</mask>
+			</entry>
+		</category>
+		<category id="dependencyfornominative" n="11" name="Dependency">
+			<entry>
+				<short>d</short>
+				<long>dependent</long>
+				<mask>+-+---+--++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>independent</long>
+				<mask>+-+---+--+++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofnominative1" n="12" name="Syntax of the nominative">
+			<entry>
+				<short>c</short>
+				<long>citation</long>
+				<mask>+-+---+--+++</mask>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>exclamation</long>
+				<mask>+-+---+--+++</mask>
+			</entry>
+		</category>
+		<category id="dependencyforgenitive" n="13" name="Dependency">
+			<entry>
+				<short>d</short>
+				<long>dependent</long>
+				<mask>+-+---+--+--++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>independent</long>
+				<mask>+-+---+--+--+--+</mask>
+			</entry>
+		</category>
+		<category id="syntaxofgenitive1" n="14" name="Syntax of the genitive">
+			<entry>
+				<short>p</short>
+				<long>genitive proper</long>
+				<mask>+-+---+--+--++</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>ablatival genitive</long>
+				<mask>+-+---+--+--++</mask>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>genitive of time and space</long>
+				<mask>+-+---+--+--+++</mask>
+			</entry>
+			<entry>
+				<short>u</short>
+				<long>uncertain kind of genitive (only if depending on adj., adv., or prep.)</long>
+				<mask>+-+---+--+--++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofgenitive2" n="15" name="Genitive of time and space">
+			<entry>
+				<short>t</short>
+				<long>genitive of time</long>
+				<mask>+-+---+--+--+++</mask>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>genitive of space</long>
+				<mask>+-+---+--+--+++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofgenitive3" n="16" name="Syntax of genitive">
+			<entry>
+				<short>e</short>
+				<long>exclamation</long>
+				<mask>+-+---+--+--+--+</mask>
+			</entry>
+		</category>
+		<category id="dependencyfordative" n="17" name="Dependency">
+			<entry>
+				<short>d</short>
+				<long>dependent</long>
+				<mask>+-+---+--+------++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofdative1" n="18" name="Syntax of the dative">
+			<entry>
+				<short>p</short>
+				<long>dative proper</long>
+				<mask>+-+---+--+------++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>instrumental dative</long>
+				<mask>+-+---+--+------++</mask>
+			</entry>
+			<entry>
+				<short>l</short>
+				<long>locative dative</long>
+				<mask>+-+---+--+------+++</mask>
+			</entry>
+			<entry>
+				<short>u</short>
+				<long>uncertain kind of dative (only if depending on adj., adv., or prep.)</long>
+				<mask>+-+---+--+------++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofdative2" n="19" name="Locative dative">
+			<entry>
+				<short>t</short>
+				<long>dative of time</long>
+				<mask>+-+---+--+------+++</mask>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>dative of space</long>
+				<mask>+-+---+--+------+++</mask>
+			</entry>
+		</category>
+		<category id="dependencyforaccusative" n="20" name="Dependency">
+			<entry>
+				<short>d</short>
+				<long>dependent</long>
+				<mask>+-+---+--+---------++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>independent</long>
+				<mask>+-+---+--+---------+---+</mask>
+			</entry>
+		</category>
+		<category id="syntaxofaccusative1" n="21" name="Syntax of the accusative">
+			<entry>
+				<short>i</short>
+				<long>internal object (object effected)</long>
+				<mask>+-+---+--+---------+++</mask>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>external object (object affected)</long>
+				<mask>+-+---+--+---------++</mask>
+			</entry>
+			<entry>
+				<short>r</short>
+				<long>accusative of respect</long>
+				<mask>+-+---+--+---------++</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>adverbial accusative</long>
+				<mask>+-+---+--+---------++</mask>
+			</entry>
+			<entry>
+				<short>u</short>
+				<long>uncertain kind of accusative (only if depending on adj., adv., or prep.)</long>
+				<mask>+-+---+--+---------++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofaccusative2" n="22" name="Internal object (object effected)">
+			<entry>
+				<short>c</short>
+				<long>cognate accusative</long>
+				<mask>+-+---+--+---------+++</mask>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>accusative of extent</long>
+				<mask>+-+---+--+---------++++</mask>
+			</entry>
+			<entry>
+				<short>t</short>
+				<long>terminal accusative</long>
+				<mask>+-+---+--+---------+++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofaccusative3" n="23" name="Accusative of extent">
+			<entry>
+				<short>t</short>
+				<long>accusative of time</long>
+				<mask>+-+---+--+---------++++</mask>
+			</entry>
+			<entry>
+				<short>s</short>
+				<long>accusative of space</long>
+				<mask>+-+---+--+---------++++</mask>
+			</entry>
+		</category>
+		<category id="syntaxofaccusative4" n="24" name="Syntax of the accusative">
+			<entry>
+				<short>t</short>
+				<long>elliptical accusative</long>
+				<mask>+-+---+--+---------+---+</mask>
+			</entry>
+		</category>
+		<category id="dependencyforinfinitive" n="25" name="Dependency">
+			<entry>
+				<short>d</short>
+				<long>dependent</long>
+				<mask>+--+++------------------++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>independent</long>
+				<mask>+--+++------------------+-----+</mask>
+			</entry>
+		</category>
+		<category id="caseforinfinitive" n="26" name="Case">
+			<entry>
+				<short>n</short>
+				<long>nominative</long>
+				<mask>+--+++------------------++</mask>
+			</entry>
+			<entry>
+				<short>g</short>
+				<long>genitive</long>
+				<mask>+--+++------------------+++</mask>
+			</entry>
+			<entry>
+				<short>d</short>
+				<long>dative</long>
+				<mask>+--+++------------------++-+</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>accusative</long>
+				<mask>+--+++------------------++--+</mask>
+			</entry>
+		</category>
+		<category id="infinitivesyntaxofgenitive" n="27" name="Syntax of the genitive">
+			<entry>
+				<short>p</short>
+				<long>genitive proper</long>
+				<mask>+--+++------------------+++</mask>
+			</entry>
+			<entry>
+				<short>a</short>
+				<long>ablatival genitive</long>
+				<mask>+--+++------------------+++</mask>
+			</entry>
+		</category>
+		<category id="infinitivesyntaxofdative" n="28" name="Syntax of the dative">
+			<entry>
+				<short>d</short>
+				<long>dative proper</long>
+				<mask>+--+++------------------++-+</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>instrumental dative</long>
+				<mask>+--+++------------------++-+</mask>
+			</entry>
+		</category>
+		<category id="infinitivesyntaxofaccusative1" n="29" name="Syntax of the accusative">
+			<entry>
+				<short>o</short>
+				<long>object</long>
+				<mask>+--+++------------------++--++</mask>
+			</entry>
+		</category>
+		<category id="infinitivesyntaxofaccusative2" n="30" name="Object">
+			<entry>
+				<short>n</short>
+				<long>not in indirect discourse</long>
+				<mask>+--+++------------------++--++</mask>
+			</entry>
+			<entry>
+				<short>i</short>
+				<long>in indirect discourse (i.e. governed by verbs of saying and thinking)</long>
+				<mask>+--+++------------------++--++</mask>
+			</entry>
+		</category>
+		<category id="dependencyforinfinitive" n="31" name="Independent">
+			<entry>
+				<short>c</short>
+				<long>command</long>
+				<mask>+--+++------------------++</mask>
+			</entry>
+			<entry>
+				<short>w</short>
+				<long>wish</long>
+				<mask>+--+++------------------+</mask>
+			</entry>
+			<entry>
+				<short>e</short>
+				<long>exclamation</long>
+				<mask>+--+++------------------+</mask>
+			</entry>
+			<entry>
+				<short>p</short>
+				<long>parenthetical</long>
+				<mask>+--+++------------------+</mask>
+			</entry>
+		</category>
+	</table>
+	<table type="relation">
+		<entry>
+			<tb>PRED</tb>
+			<help dir="up">root</help>
+			<help dir="dn">predicate</help>
+		</entry>
+		<entry>
+			<tb>SBJ</tb>
+			<disp>SUBJ</disp>
+			<help dir="up">verb</help>
+			<help dir="dn">subject</help>
+		</entry>
+		<entry>
+			<tb>OBJ</tb>
+			<help dir="up">verb</help>
+			<help dir="dn">object</help>
+		</entry>
+		<entry>
+			<tb>ATR</tb>
+			<disp>ATTR</disp>
+			<help dir="up">modified word</help>
+			<help dir="dn">attribute</help>
+		</entry>
+		<entry>
+			<tb>ADV</tb>
+			<help dir="up">modified word</help>
+			<help dir="dn">adverbial</help>
+		</entry>
+		<entry>
+			<tb>ATV</tb>
+			<disp>COMP</disp>
+			<help dir="dn">complement</help>
+		</entry>
+		<entry>
+			<tb>AtvV</tb>
+			<disp>COMP</disp>
+			<help dir="dn">complement</help>
+		</entry>
+		<entry>
+			<tb>PNOM</tb>
+			<help dir="up">verb</help>
+			<help dir="dn">predicate nominal</help>
+		</entry>
+		<entry>
+			<tb>OCOMP</tb>
+			<help dir="up">verb</help>
+			<help dir="dn">object complement</help>
+		</entry>
+		<entry>
+			<tb>APOS</tb>
+			<disp>APPOS</disp>
+			<help dir="dn">apposing element</help>
+		</entry>
+		<entry>
+			<tb>COORD</tb>
+			<help dir="dn">coordinator</help>
+		</entry>
+		<entry>
+			<tb>AuxP</tb>
+			<disp>PREP</disp>
+			<menu>AuxP (prep)</menu>
+			<help dir="dn">preposition</help>
+		</entry>
+		<entry>
+			<tb>AuxC</tb>
+			<disp>CONJ</disp>
+			<menu>AuxC (conj)</menu>
+			<help dir="dn">conjunction</help>
+		</entry>
+		<entry>
+			<tb>AuxR</tb>
+			<disp>RFLX</disp>
+			<menu>AuxR (refl passive)</menu>
+			<help dir="dn">reflexive passive</help>
+		</entry>
+		<entry>
+			<tb>AuxY</tb>
+			<disp>SADV</disp>
+			<menu>AuxY (sent adv)</menu>
+			<help dir="dn">sentence adverbial</help>
+		</entry>
+		<entry>
+			<tb>AuxX</tb>
+			<disp>COMMA</disp>
+			<menu>AuxX (comma)</menu>
+			<help dir="up">head of clause</help>
+			<help dir="dn">comma</help>
+		</entry>
+		<entry>
+			<tb>AuxG</tb>
+			<disp>BRCKT</disp>
+			<menu>AuxG (bracketing)</menu>
+			<help dir="up">head of phrase</help>
+			<help dir="dn">bracketing punctuation</help>
+		</entry>
+		<entry>
+			<tb>AuxK</tb>
+			<disp>TERM</disp>
+			<menu>AuxK (terminal)</menu>
+			<help dir="up">root</help>
+			<help dir="dn">terminal punctuation</help>
+		</entry>
+		<entry>
+			<tb>AuxV</tb>
+			<disp>AUXV</disp>
+			<menu>AuxV (aux verb)</menu>
+			<help dir="up">tensed verb</help>
+			<help dir="dn">auxiliary verb</help>
+		</entry>
+		<entry>
+			<tb>AuxZ</tb>
+			<disp>EMPH</disp>
+			<menu>AuxZ (emph)</menu>
+			<help dir="dn">emphasizing particle</help>
+		</entry>
+		<entry>
+			<tb>ExD</tb>
+			<disp>ELLIP</disp>
+			<help dir="dn">ellipsis</help>
+		</entry>
+	</table>
+	<table type="subrelation">
+		<entry>
+			<tb/>
+			<menu>- -</menu>
+		</entry>
+		<entry>
+			<tb>_AP</tb>
+		</entry>
+		<entry>
+			<tb>_CO</tb>
+		</entry>
+		<entry>
+			<tb>_AP_CO</tb>
+		</entry>
+	</table>
+</desc>
+</info>
