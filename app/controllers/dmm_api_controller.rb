@@ -52,7 +52,7 @@ class DmmApiController < ApplicationController
         @publication.branch_from_master
       end    
       
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
       new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
     rescue Exception => e
       Rails.logger.error(e.backtrace)
@@ -80,7 +80,7 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
 
       begin
         response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
@@ -120,7 +120,7 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
       begin
         response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment]) 
       rescue Exception => e
@@ -261,23 +261,6 @@ class DmmApiController < ApplicationController
                       :action => 'api_item_get', 
                       :id => a_id,
                       :identifier_type => a_identifier_type)
-    end
-    
-    # looks for the software agent in the data
-    # TODO we need to decide upon a standardized approach to this
-    def agent_of(a_data)
-      unless defined? @agents
-        @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
-      end
-      agent = nil
-      Rails.logger.info("Agents = #{@agents.inspect}")
-      @agents.keys.each do | a_agent |
-        if (a_data =~ /#{@agents[a_agent][:uri_match]}/sm)
-          agent = @agents[a_agent]
-          break
-        end
-      end
-      return agent
     end
 
 end

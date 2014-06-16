@@ -33,10 +33,7 @@ class CtsPublicationsController < PublicationsController
     
     # check to see if the user is already working on the parent publication
     @publication = nil
-    existing_identifiers = []
-    possible_conflicts = Identifier.find_all_by_name(versionIdentifier, :include => :publication)
-    actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
-    existing_identifiers += actual_conflicts
+    existing_identifiers = CTSIdentifier::find_matching_identifiers(versionIdentifier,@current_user,nil)
         
     if existing_identifiers.length > 0
       conflicting_publication = existing_identifiers.first.publication
@@ -208,19 +205,11 @@ class CtsPublicationsController < PublicationsController
     
     # proceed to create from existing identifier file -- only if we have an identifier
     elsif (params[:edition_urn])
-      related_identifiers = [identifier]
-      conflicting_identifiers = []
-  
-      # loop through related identifiers looking for conflicts
-      related_identifiers.each do |relid|
-          possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
-          actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
-          conflicting_identifiers += actual_conflicts
-        end # end loop through related identifiers
-  
-        if conflicting_identifiers.length > 0
-          Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
-          conflicting_publication = conflicting_identifiers.first.publication
+      conflicting_identifiers = CTSIdentifier::find_matching_identifiers(identifier,@current_user,nil)
+      
+      if conflicting_identifiers.length > 0
+        Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
+        conflicting_publication = conflicting_identifiers.first.publication
         conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
   
         if conflicting_publications.length > 1
@@ -246,11 +235,9 @@ class CtsPublicationsController < PublicationsController
       # else
       identifiers_hash = Hash.new
       
-      related_identifiers.each do |relid|
-        key = CTS::CTSLib.getIdentifierKey(relid)
-        identifiers_hash[key] = Array.new() unless identifiers_hash.has_key?(key)
-        identifiers_hash[key] << relid
-      end
+      key = CTS::CTSLib.getIdentifierKey(identifier)
+      identifiers_hash[key] = Array.new()
+      identifiers_hash[key] << identifier
       
       @publication = Publication.new()
       @publication.owner = @current_user
@@ -302,5 +289,57 @@ class CtsPublicationsController < PublicationsController
     end # end if creating from inventory
     
   end # end create_from_selector
+  
+  def create_from_uri
+    # check agent
+    agent = AgentHelper::agent_of(params[:uri])
+    if (agent.nil?)
+      flash[:error] = "Unrecognized Link Agent #{params[:uri]}"
+      redirect_to_dashboard_url
+    end
+
+    collection = a_agent[:collections][:CTSIdentifier]
+
+    # retrieve URI
+    begin
+      linked_uri = URI.parse(params[:uri])
+      resp = Net::HTTP.start(linked_uri.host, linked_uri.port) do |http|
+        http.send_request('GET',linked_uri.request_uri)
+      end
+      if (resp.code == '200')
+        content = resp.body
+      else 
+        raise "Failed request to #{linked_uri} : #{resp.code} #{resp.msg} #{resp.body}" 
+      end
+    rescue Exception => e
+      flash[:error] = e.get_message
+      redirect_to_dashboard_url
+    end
+    
+    if (a_agent[:transformations][:CTSIdentifier])
+      transform = a_agent[:transformations][:CTSIdentifier]
+    end
+    unless (transform.nil?)
+      content = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)))  
+    end
+
+    xml = REXML::Document.new(content).root
+    # retrieve urn
+    urn = REXML::XPath.first(xml, "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='urn:cts']]", {'tei' => '"http://www.tei-c.org/ns/1.0") '})
+    if (urn.nil?)
+      flash[:error] = "Unable to parse CTS urn from retrieved content: #{content}"
+      redirect_to_dashboard_url
+    end 
+
+    redirect_to(
+      :action => :create_from_linked_urn,
+      :params[:urn] => urn, 
+      :params[:collection] => collection,
+      :params[:init_value] => content) and return
+
+         
+  end
   
 end
