@@ -1,7 +1,7 @@
 class EpiTransCTSIdentifier < EpiCTSIdentifier   
   
   PATH_PREFIX = 'CTS_XML_EpiDoc'
-  TEMPORARY_COLLECTION = 'TempTrans'
+  TEMPORARY_COLLECTION = 'pdltmp'
   TEMPORARY_TITLE = 'New Translation'
   
   FRIENDLY_NAME = "Translation Text (EpiDoc)"
@@ -47,11 +47,16 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     self.publication.identifiers.select{|i| (i.class == EpiCTSIdentifier) && !i.is_reprinted?}.last
   end
   
-    def stub_text_structure(lang,urn)
+  def stub_text_structure(lang,urn)
     Rails.logger.info("transforming template for #{urn}")
+    if (self.related_text.nil?)
+      template = self.file_template
+    else 
+      self.related_text.xml_content
+    end
     translation_stub_xml =
       JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(self.related_text.xml_content),
+        JRubyXML.stream_from_string(template),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
           %w{data xslt translation epi_to_translation_xsl.xsl})),
         :lang => lang,

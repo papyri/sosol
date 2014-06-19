@@ -132,4 +132,30 @@ class EpiCTSIdentifier < CTSIdentifier
     %w{data xslt perseus epidoc_preview.xsl}
   end
   
+  def self.parse_docs(content)
+    docs = []
+    xml = REXML::Document.new(content).root
+    formatter = PrettySsime.new
+    formatter.compact = true
+    formatter.width = 2**32
+  
+    # retrieve documents, pubtypes and languages
+    # TODO this really belongs on the epi_cts_identifier model
+    REXML::XPath.each(xml, "//tei:TEI", {'tei' => 'http://www.tei-c.org/ns/1.0'}) { |doc|
+      version = REXML::XPath.first(doc,"tei:text/tei:body/tei:div",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+      if (version.nil? || version.attributes['type'].nil? || version.attributes['xml:lang'].nil?)
+        raise "Unable to parse doc #{version}"
+      end
+      lang = version.attributes['xml:lang']    
+      modified_xml_content = ''
+      formatter.write doc, modified_xml_content
+      doc = Hash.new
+      doc[:lang] = lang
+      doc[:contents] = modified_xml_content
+      docs << doc
+               
+    }
+    Rails.logger.info("Docs = #{docs.inspect}")
+    return docs
+  end
 end

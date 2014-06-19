@@ -10,26 +10,22 @@ class CTSIdentifier < Identifier
   TEMPORARY_TITLE = 'New Transcription'
   
   def titleize
-    title = nil
-    if (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
-       title = self.class::TEMPORARY_TITLE
-    else  
-      begin
-        # if we don't have a publication associated with identifier yet, we're most likely
-        # looking for the title for the parent 'publication' which probably should be the work title
-        # and not the version-specific label
-        if nil == self.publication
-          title = CTS::CTSLib.workTitleForUrn(self.inventory,self.urn_attribute)
-        else
-          title = CTS::CTSLib.versionTitleForUrn(self.inventory,self.urn_attribute)
-        end
-      rescue Exception => e
-        Rails.logger.error("Error retrieving title: #{e.class.to_s}, #{e.to_s}")
+    begin
+      # if we don't have a publication associated with identifier yet, we're most likely
+      # looking for the title for the parent 'publication' which probably should be the work title
+      # and not the version-specific label
+      if nil == self.publication
+        title = CTS::CTSLib.workTitleForUrn(self.inventory,self.urn_attribute)
+      else
+        title = CTS::CTSLib.versionTitleForUrn(self.inventory,self.urn_attribute)
       end
+    rescue Exception => e
+      Rails.logger.error("Error retrieving title from #{self.inventory} at #{self.urn_attribute}: #{e.class.to_s}, #{e.to_s}")
     end
-    if (title.nil?)
-      title = self.name
+    if (title.nil? || title == '')
+      title = self.urn_attribute
     end
+  
     return title
   end
 
@@ -40,6 +36,17 @@ class CTSIdentifier < Identifier
     temp_id.save!
     initial_content = temp_id.file_template
     temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    return temp_id
+  end
+  
+  def self.new_from_supplied(publication,inventory,urn,pubtype,lang,initial_content)
+    # TODO - we shouldn't really supply pubtype and lang in param - instead parse it from the content
+    temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
+    temp_id.publication = publication 
+    temp_id.save!
+    ## replace work urn with version 
+    initial_content = initial_content.gsub!(/#{urn}/,temp_id.urn_attribute)
+    temp_id.set_content(initial_content, :comment => 'Created from Supplied content')
     return temp_id
   end
   
@@ -79,14 +86,19 @@ class CTSIdentifier < Identifier
     Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    Rails.logger.info("Edition part:#{editionPart}")
+    Rails.logger.info("DocumentPath:#{document_path}")
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
                        :limit => 1).first
     if latest.nil?
+      Rails.logger.info("NOT FOUND")
+
       # no constructed id's for this year/class
       document_number = 1
     else
+      Rails.logger.info("Found #{latest.inspect}")
       Rails.logger.info("------Last component" + latest.to_components.last.split(/[\.;]/).last )
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
@@ -306,5 +318,9 @@ class CTSIdentifier < Identifier
     identifiers += actual_conflicts
     return identifiers
   end
-    
+  
+  
+  # parse individual docs and metadata from a supplied TEI XML document
+  def self.parse_docs(content)
+  end  
 end

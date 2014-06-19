@@ -11,7 +11,9 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     # Add URL to image service for display of related images
     @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     # find text for preview
-    @identifier[:text_html_preview] = @identifier.related_text.preview
+    if (@identifier.related_text)
+      @identifier[:text_html_preview] = @identifier.related_text.preview
+    end
   end
   
   def editxml

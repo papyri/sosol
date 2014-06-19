@@ -3,9 +3,10 @@
     :uri_match: "http://pelagios.org/recogito#version1.0"
     :transformations:
       :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
+
   :eagle:
     :uri_match: "http://www.eagle-network.eu/wiki"
     :transformations:
-      :CTSIdentifier: "/data/xslt/eagle-xml-perseids.xsl"
+      :CTSIdentifier: "/data/xslt/cts/eagle-xml-perseids.xsl"
     :collections:
       :CTSIdentifier: "eagle"

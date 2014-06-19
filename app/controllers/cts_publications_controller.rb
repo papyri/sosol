@@ -2,7 +2,7 @@ class CtsPublicationsController < PublicationsController
   layout SITE_LAYOUT
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
-  
+  require 'jruby_xml'  
   
   ## Create/Update a CTS Publication from a linked URN
   def create_from_linked_urn
@@ -69,75 +69,81 @@ class CtsPublicationsController < PublicationsController
        @publication = Publication.new()
        @publication.owner = @current_user
        @publication.creator = @current_user
-       
-      # HACK for IDigGreek to enable link in to create annotations on an edition that doesn't
-      # exist in the master repo
-      temp_id = nil
-      identifier_class = nil
-      SITE_IDENTIFIERS.split(",").each do |identifier_name|
-        ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
-        if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
-        
-          identifier_class = Object.const_get(identifier_name)
-          temp_id = identifier_class.new(:name => versionIdentifier)
-        end
-      end
       
-      if (@publication.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
-        fullurn = "urn:cts:#{versionUrn}"
-        # fetch a title without creating from template
-        @publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(sourceCollection,fullurn,'edition','ed')).name
-        @publication.status = "new"
-        @publication.save!
-    
-        # branch from master so we aren't just creating an empty branch
-        @publication.branch_from_master
-        new_cts = identifier_class.new_from_template(@publication,sourceCollection,fullurn,'edition','ed')
+      if (existing_identifiers.length == 0) 
+        # HACK for IDigGreek to enable link in to create annotations on an edition that doesn't
+        # exist in the master repo
+        temp_id = nil
+        identifier_class = nil
+        SITE_IDENTIFIERS.split(",").each do |identifier_name|
+          ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
+          if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
           
-        # create the inventory metadata records
-        # we can't do this until the publication has already been branched from the master 
-        # because it doesn't exist in the master git repo 
-        # and is only carried along with the publication until it is finalized
-        begin
-          # first the inventory record
-          CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
-        rescue Exception => e
-          @publication.destroy
-          flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
-          redirect_to dashboard_url
-          return
+            identifier_class = Object.const_get(identifier_name)
+            temp_id = identifier_class.new(:name => versionIdentifier)
+          end
         end
-  
-      else
-        @publication.populate_identifiers_from_identifiers(
-            identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
-                   
-        if @publication.save!
-          @publication.branch_from_master
         
-          # create the temporary CTS citation and inventory metadata records
+        if (@publication.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
+          fullurn = "urn:cts:#{versionUrn}"
+          # fetch a title without creating from template
+          @publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(sourceCollection,fullurn,'edition','ed')).name
+          @publication.status = "new"
+          @publication.save!
+      
+          lang = params[:lang] || 'en'
+          # branch from master so we aren't just creating an empty branch
+          @publication.branch_from_master
+          new_cts = identifier_class.new_from_template(@publication,sourceCollection,fullurn, pubtype,lang)
+                     
+          # create the inventory metadata records
           # we can't do this until the publication has already been branched from the master 
-          # because they don't exist in the master git repo 
-          # and are only carried along with the publication until it is finalized
+          # because it doesn't exist in the master git repo 
+          # and is only carried along with the publication until it is finalized
           begin
             # first the inventory record
+            Rails.logger.info("Create inventory file from branch blank")
             CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
           rescue Exception => e
             @publication.destroy
             flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
             redirect_to dashboard_url
             return
-          end # end creating inventory record
-
-          # need to remove repeat against publication model
-          e = Event.new
-          e.category = "started editing"
-          e.target = @publication
-          e.owner = @current_user
-          e.save!
-        end # end saving new publication
-      end # now we have a publication
+          end
+    
+        else
+          @publication.populate_identifiers_from_identifiers(
+              identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
+                     
+          if @publication.save!
+            @publication.branch_from_master
+          
+            # create the temporary CTS citation and inventory metadata records
+            # we can't do this until the publication has already been branched from the master 
+            # because they don't exist in the master git repo 
+            # and are only carried along with the publication until it is finalized
+            begin
+              # first the inventory record
+              Rails.logger.info("Create inventory file from branch")
+              CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
+            rescue Exception => e
+              @publication.destroy
+              flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+              redirect_to dashboard_url
+              return
+            end # end creating inventory record
+  
+            # need to remove repeat against publication model
+            e = Event.new
+            e.category = "started editing"
+            e.target = @publication
+            e.owner = @current_user
+            e.save!
+          end # end saving new publication
+        end # now we have a publication
+      end
     end    
+    Rails.logger.info("Publication #{@publication.inspect} Identifiers #{@publication.identifiers.inspect}")
     redirect_to(:controller => 'citation_cts_identifiers', 
                 :action => 'confirm_edit_or_annotate', 
                 :publication_id => @publication.id,
@@ -163,7 +169,7 @@ class CtsPublicationsController < PublicationsController
     if (params[:commit] == "Create Edition")
       lang = params[:lang]
       # TODO figure out language for new editions from inventory
-      lang ||= 'ed'
+      lang ||= 'en'
       new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
       urn = "urn:cts:#{edition}"
       # fetch a title without creating from template
@@ -295,10 +301,10 @@ class CtsPublicationsController < PublicationsController
     agent = AgentHelper::agent_of(params[:uri])
     if (agent.nil?)
       flash[:error] = "Unrecognized Link Agent #{params[:uri]}"
-      redirect_to_dashboard_url
+      redirect_to dashboard_url
     end
 
-    collection = a_agent[:collections][:CTSIdentifier]
+    collection = agent[:collections][:CTSIdentifier]
 
     # retrieve URI
     begin
@@ -313,33 +319,100 @@ class CtsPublicationsController < PublicationsController
       end
     rescue Exception => e
       flash[:error] = e.get_message
-      redirect_to_dashboard_url
+      redirect_to dashboard_url and return
     end
     
-    if (a_agent[:transformations][:CTSIdentifier])
-      transform = a_agent[:transformations][:CTSIdentifier]
+    if (agent[:transformations][:CTSIdentifier])
+      transform = agent[:transformations][:CTSIdentifier]
     end
     unless (transform.nil?)
+      user = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
       content = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)))  
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)),
+      'uri' => params[:uri],
+      'current_user' => user,
+      'emend' => params[:emend],
+      'lang' => params[:lang]
+      )  
     end
 
     xml = REXML::Document.new(content).root
-    # retrieve urn
-    urn = REXML::XPath.first(xml, "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='urn:cts']]", {'tei' => '"http://www.tei-c.org/ns/1.0") '})
-    if (urn.nil?)
-      flash[:error] = "Unable to parse CTS urn from retrieved content: #{content}"
-      redirect_to_dashboard_url
+    # retrieve urn and pubtype from content 
+    create = REXML::XPath.first(xml, "/create[@urn]")
+    unless (create.nil?)
+      urn = create.attributes['urn']
+      pubtype = create.attributes['pubtype']
+      if (urn.nil? || pubtype.nil?)
+        flash[:error] = "Unable to parse CTS urn or pubtype from retrieved content: #{content}"
+        redirect_to dashboard_url and return
+      end
     end 
+    
+    begin
+      urnObj = CTS::CTSLib.urnObj(urn)
+    rescue
+      flash[:error] = "Invalid URN identifier for linked text #{urn}}"
+      redirect_to dashboard_url and return
+    end
+    
+    # we must have at least a work
+    work = urnObj.getWork(false)
+    if (work.nil? || work == '')
+      flash[:error] = "Missing work identifier for linked text #{urn}}"
+      redirect_to dashboard_url and return
+    end
+    
+    version = urnObj.getVersion(false)
+    Rails.logger.info("Checking for version #{version}")
+    if (version.nil? || version == '')
+      # if no edition, just use a fake one for use in path processing
+      version = urn + ".tempedition"    
+      identifier = collection + "/" + CTS::CTSLib.pathForUrn(version,pubtype)
+      identifier_class = Object.const_get(CTS::CTSLib.getIdentifierClassName(identifier))
+      new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
+      # fetch a title without creating from template
+      new_publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(collection,urn,pubtype,'pub')).name
+      new_publication.status = "new"
+      new_publication.save!
+      @publication = new_publication
+      # branch from master so we aren't just creating an empty branch
+      new_publication.branch_from_master
+    
+      # create the new templates
+      begin     
+        identifier_class.parse_docs(content).each{ |doc|
+          new_cts = identifier_class.new_from_supplied(new_publication,collection,urn,pubtype,doc[:lang],doc[:contents])
+        }
+      rescue Exception => e
+        @publication.destroy
+        flash[:notice] = 'Error initializing content:' + e.to_s
+        redirect_to dashboard_url
+        return
+      end
+      
+      # create the temporary CTS citation and inventory metadata records
+      # we can't do this until the publication has already been branched from the master 
+      # because they don't exist in the master git repo 
+      # and are only carried along with the publication until it is finalized
+      begin
+        # first the inventory record
+        CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,version)
+        # now the citation identifier 
+      rescue Exception => e
+        @publication.destroy
+        flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+        redirect_to dashboard_url
+        return
+      end
 
-    redirect_to(
-      :action => :create_from_linked_urn,
-      :params[:urn] => urn, 
-      :params[:collection] => collection,
-      :params[:init_value] => content) and return
-
-         
+      flash[:notice] = 'Publication was successfully created.'
+      expire_publication_cache
+      redirect_to @publication
+    # proceed to create from existing identifier file -- only if we have an identifier
+    else
+      raise "Editing an existing edition from URI is not yet supported"
+    end # end if editing existing edition       
   end
   
 end
