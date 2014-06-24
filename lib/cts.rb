@@ -321,18 +321,21 @@ module CTS
         end
       end
       
-      def getPassage(a_id,a_urn)
+      def getPassage(a_id,a_urn,a_checkExists)
         passage = nil
         urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         if (a_id =~ /^\d+$/)
           documentIdentifier = Identifier.find(a_id)
+          # look to see if we have extracted this citation already and are editing it
+          matches = a_checkExists ? check_for_citation(documentIdentifier,urn_no_subref) : []
           inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
           if (getExternalCTSHash().has_key?(inventory_code))
             passage = _proxyGetPassage(inventory_code,urn_no_subref)
           else
             inventory = documentIdentifier.related_inventory.xml_content
             uuid = documentIdentifier.publication.id.to_s + a_urn.gsub(':','_') + '_proxyreq'
-            passage = _getPassageFromRepo(inventory,documentIdentifier.content,urn_no_subref,uuid)
+            content = matches.length > 0 ? matches[0].content : documentIdentifier.content
+            passage = _getPassageFromRepo(inventory,content,urn_no_subref,uuid)
           end
         else
           passage = _proxyGetPassage(a_id,urn_no_subref)
@@ -378,7 +381,7 @@ module CTS
                    raise "Passage request failed #{psg_response.code} #{psg_response.msg} #{psg_response.body}"
                   end # end test on GetPassagePlus response code
                 else 
-                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
+                  raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body} document #{a_document}"
                 end # end test on text Put request
               else
                   raise "no path for put"
@@ -479,6 +482,23 @@ module CTS
         
       end
       
+      def check_for_citation(documentIdentifier,urn_no_subref)
+        # look to see if we have extracted this citation already and are editing it
+          matches = []
+          for psgid in documentIdentifier.publication.identifiers do 
+            if (psgid.kind_of?(CitationCTSIdentifier))
+              if (psgid.urn_attribute == urn_no_subref || 
+                  urn_no_subref =~ /^#{Regexp.quote(psgid.urn_attribute)}\./)
+
+                # we want the citation cts identifier if its urn is an exact
+                # match OR if its urn is the parent of the requested citation
+                matches << psgid 
+              end # end test on urn
+            end # end test on citation
+          end # end loop through identifiers in this documents publication
+          return matches 
+      end
+      
       # a_inv will either be a SoSOL document identifier or the name of the inventory
       def get_tokenized_passage(a_inv, a_urn,a_tags=[])
 		    lang = nil
@@ -486,11 +506,12 @@ module CTS
         tokenizer_url = nil   
         passage_url = nil
         temp_uuid = nil
-        
+        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         tokenizer_cfg = Tools::Manager.tool_config('cts_tokenizer',false)
         
         if (!a_inv.nil? && a_inv =~ /^\d+$/)
           documentIdentifier = Identifier.find(a_inv)
+          matches = check_for_citation(documentIdentifier,urn_no_subref)
           lang = documentIdentifier.lang
           inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
         else
@@ -504,7 +525,7 @@ module CTS
           tokenizer_url = tokenizer_cfg[:default][:request_url];
         end
         
-        urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
+      
         begin
         
           # if we don't have an inventory identifier, and the urn is a url
@@ -534,7 +555,8 @@ module CTS
                 pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
                 put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
                   headers = {'Content-Type' => 'text/xml; charset=utf-8'}
-                  http.send_request('PUT', pathUri.request_uri, documentIdentifier.content,headers)      
+                  content = matches.length > 0 ? matches[0].content : documentIdentifier.content
+                  http.send_request('PUT', pathUri.request_uri, content,headers)      
                 end # end Net::HTTP.start
                 if (put_response.code == '201')
                   passage_url = "#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{temp_uuid}&urn=#{urn_no_subref}"

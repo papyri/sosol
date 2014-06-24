@@ -84,7 +84,7 @@
       %div{:id => 'create_translation'}
         %span{:id => 'emend_or_create'}==Or
         = submit_tag "Create Translation", :disabled => true, :id => 'create_button'
-        = select_tag 'create_lang', options_for_select([%w{English eng},%w{French fr},%w{Latin lat}])
+        = select_tag 'create_lang', options_for_select([%w{English eng},%w{French fr},%w{Latin lat},%w{Croatian hrv},%w{German deu}, %w{Italian ita}, %w{Persian(Farsi) fas}, %w{Arabic ara}, %w{Georgian geo}])
     -else
       = submit_tag "Emend", :disabled => true, :id => 'emend_button', :style => 'display:none'
       = submit_tag "Create Translation", :disabled => true, :id => 'create_button', :style => 'display:none'

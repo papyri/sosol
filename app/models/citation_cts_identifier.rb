@@ -35,15 +35,20 @@ class CitationCTSIdentifier < CTSIdentifier
     urnObj = CTS::CTSLib.urnObj("urn:cts:#{passage_urn}")
     citeLevel = urnObj.getCitationDepth()
     citeinfo = new_identifier.related_text.related_inventory.parse_inventory()
-    passageParts = urnObj.getPassage(citeLevel).split(/\./)
-    titleParts = []
-    for i in 0..citeLevel-1
-      titleParts << citeinfo['citations'][i] + ' ' + passageParts[i]
-    end
-    new_identifier.title = titleParts.join(' ') 
+    passage = urnObj.getPassage(citeLevel);
+    if (passage =~ /-/)
+      new_identifier.title = passage
+    else
+      passageParts = passage.split(/\./)
+      titleParts = []
+      for i in 0..citeLevel-1
+        titleParts << citeinfo['citations'][i] + ' ' + passageParts[i]
+      end
+      new_identifier.title = titleParts.join(' ')
+    end      
     new_identifier.save!
     begin
-      passage_xml = CTS::CTSLib.getPassage(new_identifier.related_text.id.to_s,new_identifier.urn_attribute)
+      passage_xml = CTS::CTSLib.getPassage(new_identifier.related_text.id.to_s,new_identifier.urn_attribute,false)
       new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
       return new_identifier
     rescue Exception => e

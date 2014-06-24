@@ -16,8 +16,9 @@
     = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
     %p{:class => ['perseids_pilots_link']}
       = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
-      = link_to 'New Latin Treebank Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Treebank', :urn => 'urn:cite:perseus:lattb')
-      = link_to 'New Greek Treebank Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Treebank', :urn => 'urn:cite:perseus:grctb')
+      |
+      = link_to 'New Treebank Annotation', (Tools::Manager.tool_config('treebank_editor')[:create_url]).sub(/DOC/,'')
+      |
       = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
       
 

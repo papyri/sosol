@@ -2,6 +2,8 @@ development:
   treebank_editor:
     :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :file_url: "http://localhost/arethusa/app/#/perseids?doc=DOC"
+    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
@@ -25,6 +27,7 @@ test:
   treebank_editor:
     :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
@@ -45,9 +48,11 @@ production:
   treebank_editor:
     :edit_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :create_url: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=DOC"
+    :file_url: "http://sosol.perseids.org/tools/arethusa/app/#/perseids?doc=DOC"
   alignment_editor:
-    :edit_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
-    :view_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+    :edit_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+    :view_url: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
   oa_editor:
     :edit_url: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI"
     :view_url: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=DOC&uri=URI&app=viewer"
@@ -59,4 +64,6 @@ production:
       :request_url: "http://sosol.perseids.org/exist/rest/db/xq/tokenize.xquery?merging=false&splitting=false&uri="
     :lat:
       :request_url: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
-    
+  toponym_editor:
+    :export_url: "http://pelagios.org/recogito/edit/annotation?ctsURI="
+    :import_url: "http://pelagios.org/recogito/api/annotations?ctsURI="

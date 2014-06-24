@@ -94,10 +94,15 @@ class CitationCtsIdentifiersController < IdentifiersController
                         :pubtype => params[:pubtype].to_s})
       return
     else
+      urn = params[:urn] + ":" + params[:start_passage].strip
+      if (params[:end_passage] != '')
+        urn = urn + "-" + params[:end_passage].strip
+      end
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
                 :collection => params[:collection].to_s,
-                :urn => params[:urn] + ":" + params[:start_passage].strip)   
+                :urn => urn,
+                :pubtype => params[:pubtype])   
    
     end
   end
@@ -194,6 +199,17 @@ class CitationCtsIdentifiersController < IdentifiersController
     # xslt.serve()
     @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
     @identifier[:html_preview] = @identifier.preview
+  end
+  
+  def destroy
+    find_identifier 
+    name = @identifier.title
+    pub = @identifier.publication
+    @identifier.destroy
+    
+    flash[:notice] = name + ' was successfully removed from your publication.'
+    redirect_to pub
+    return
   end
   
   protected

@@ -22,7 +22,7 @@ class CtsPublicationsController < PublicationsController
     # if the version Urn is the same as the supplied urn then we don't have a citation specified
     citationUrn = (versionUrn == params[:urn]) ? nil :  params[:urn]
     
-    pubtype = CTS::CTSLib.versionTypeForUrn(sourceCollection,versionUrn)
+    pubtype = params[:pubtype] || CTS::CTSLib.versionTypeForUrn(sourceCollection,versionUrn)
     if pubtype.nil?
       flash[:error] = "No publication found for #{params[:urn]} in #{sourceCollection} inventory."
       redirect_to dashboard_url

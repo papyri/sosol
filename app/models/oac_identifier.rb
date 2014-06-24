@@ -435,12 +435,20 @@ class OACIdentifier < Identifier
   
   # get descriptive info 
   def api_info(urls)
+    # TODO these really should come from an external config file
     motivations = [];
     motivations << { :label => 'Has Translation', :value => 'oa:linking_translation'}
     motivations << { :label => 'Has Link', :value => 'oa:linking'}
     motivations << { :label => 'Has Identity', :value => 'oa:identifying'}
     motivations << { :label => 'Has Classification', :value => 'oa:classifying'}
     motivations << { :label => 'Has Comment', :value => 'oa:commenting'}
+    motivations << { :label => 'Has Fragment', :value => 'http://erlangen-crm.org/efrbroo/R15_has_fragment'}
+    motivations << { :label => 'Is Fragment Of', :value => 'http://erlangen-crm.org/efrbroo/R15i_is_fragment_of'}
+    motivations << { :label => 'Is Longer Version Of', :value => 'http://purl.org/saws/ontology#isLongerVersionOf'}
+    motivations << { :label => 'Is Shorter Version Of', :value => 'http://purl.org/saws/ontology#isShorterVersionOf'}
+    motivations << { :label => 'Is Variant Of', :value => 'http://purl.org/saws/ontology#isVariantOf'}
+    motivations << { :label => 'Is Verbatim Of', :value => 'http://purl.org/saws/ontology#isVerbatimOf'}
+    
     
     config = 
       { :tokenizer => Tools::Manager.tool_config('cts_tokenizer',false),
@@ -454,9 +462,16 @@ class OACIdentifier < Identifier
           {:label => 'Create Commentary', :url => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'},
         ]
        }
-    if (Tools::Manager.tool_config('toponym_editor'))
+    # temporary solution to selectively enable the toponym editor for testing
+    # see https://github.com/PerseusDL/perseids_docs/issues/141
+    has_toponym_hook = REXML::XPath.match(self.rdf.root,"//perseids:PerseidsTool[@rdf:resource='toponym_editor']",{'perseids' => "http://data.perseus.org/ns/perseids"}).size > 0
+    
+    if (Tools::Manager.tool_config('toponym_editor') && has_toponym_hook)
       config[:target_links] << {:label => 'Annotate Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:export_url]}
       config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
+    end
+    if (Tools::Manager.tool_config('treebank_editor'))
+      config[:target_links] << {:label => 'New Treebank Annotation', :url => (Tools::Manager.tool_config('treebank_editor')[:create_url]).sub(/DOC/,self.parentIdentifier.publication.id.to_s), :target_param => 'text_uri'}
     end
     return config.to_json                  
   end
