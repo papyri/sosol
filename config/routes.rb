@@ -1,4 +1,7 @@
 Sosol::Application.routes.draw do
+
+  root :to => 'welcome#index'
+
   resources :communities do
   
     member do
@@ -197,6 +200,7 @@ Sosol::Application.routes.draw do
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     get :link_translation
+    get :link_citation
     end
     
     end

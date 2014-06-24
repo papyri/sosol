@@ -19,7 +19,7 @@ class Identifier < ActiveRecord::Base
   validates_each :type do |record, attr, value|
     record.errors.add attr, "Identifier must be one of #{Sosol::Application.config.site_identifiers}" unless Sosol::Application.config.site_identifiers.split(',').include?(value)
   end
-  
+    
   require 'jruby_xml'
 
 
@@ -314,6 +314,10 @@ class Identifier < ActiveRecord::Base
     
     return false    
 
+  end
+  
+  def xml_content_attr( _xml )
+    self[:xml_content] = _xml
   end
   
   # - *Returns* :
