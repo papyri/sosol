@@ -267,7 +267,7 @@ class DmmApiController < ApplicationController
     # TODO we need to decide upon a standardized approach to this
     def agent_of(a_data)
       unless defined? @agents
-        @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
+        @agents = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config agents.yml})).read).result)[:agents]
       end
       agent = nil
       Rails.logger.info("Agents = #{@agents.inspect}")

@@ -225,7 +225,7 @@ class OACIdentifier < Identifier
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    ActionController::Integration::Session.new(Sosol::Application).url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
   end
   
   # find the next annotation uri for appending to the oac.xml
@@ -280,7 +280,7 @@ class OACIdentifier < Identifier
     parameters[:tool_url] = Tools::Manager.tool_config('oa_editor')[:view_url].sub(/DOC/,self.id.to_s)
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         xsl ? xsl : %w{data xslt oac html_preview.xsl})),
         parameters)
   end
@@ -328,7 +328,7 @@ class OACIdentifier < Identifier
     else
       oac = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(a_body),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)))  
+      JRubyXML.stream_from_file(File.join(Rails.root, transform)))  
     end
     annot_uri = next_annotation_uri()
     annot = REXML::Document.new(oac).root
@@ -356,7 +356,7 @@ class OACIdentifier < Identifier
     else
       oac = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(a_body),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)))  
+      JRubyXML.stream_from_file(File.join(Rails.root, transform)))  
     end
     oacxml = REXML::Document.new(oac).root
     
