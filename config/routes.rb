@@ -328,6 +328,42 @@ Sosol::Application.routes.draw do
     end
     
     end
+
+    resources :treebank_cite_identifiers do
+        member do
+    post :create
+    get :history 
+    get :preview 
+    get :editxml 
+    get :updatexml
+    get :exportxml 
+    post :edit 
+    get :rename_review
+    put :rename
+    get :api_get
+    post :api_update 
+    end
+    
+    end
+
+    resources :alignment_cite_identifiers do
+        member do
+    post :create
+    get :history 
+    get :preview 
+    get :editxml 
+    get :updatexml
+    get :exportxml 
+    post :edit
+    get :rename_review
+    put :rename
+    get :api_get
+    post :api_update 
+    end
+    
+    end
+    
+
   end
 
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
@@ -347,6 +383,17 @@ Sosol::Application.routes.draw do
   match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/
   match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities'
   match 'cts/getrepos' => 'cts_proxy#getrepos'
+  match 'shib/signin/:idp' => 'shib#signin'
+  match 'shib/metadata/:idp' => 'shib#metadata'
+  match 'dmm_api/item/:identifier_type/:id' =>'dmm_api#api_item_get', :via => :get
+  match 'dmm_api/item/:identifier_type/:id' => 'dmm_api#api_item_patch', :via => :post
+  match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_patch', :via => :post
+  match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_patch', :via => :get
+  match 'dmm_api/item/:identifier_type/:id/append' => 'dmm_api#api_item_append', :via => :post
+  match 'dmm_api/create/item/:identifier_type(/:publication_id)' => 'dmm_api#api_item_create', :via => :post
+  match 'dmm_api/item/:identifier_type/:id/info(/:format)' => 'dmm_api#api_item_info', :via => :get
+  match 'dmm_api/item/:identifier_type/:id/return/:item_action' => 'dmm_api#api_item_return'
+
   match '/' => 'welcome#index'
   match '/:controller(/:action(/:id))'
   match 'signout' => 'user#signout', :as => :signout
