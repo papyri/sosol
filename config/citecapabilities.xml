@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This Inventory Contains the Definition of Published Perseus CITE Collections 
+    whose data is maintained in a GIT Repository and managed via the 
+    Perseids SoSOL Platform.
+    
+    Tufts University holds the overall copyright to the Perseus Digital Library; 
+    the materials therein (including all texts, translations, images, descriptions, drawings, etc.) 
+    are provided for the personal use of students, scholars, and the public.
+    
+    Materials within the Perseus DL have varying copyright status: please contact the project 
+    for more information about a specific component or object. Copyright is protected by 
+    the copyright laws of the United States and the Universal Copyright Convention.
+    
+    Unless otherwise indicated, all collections identified here are licensed under a 
+    Creative Commons Attribution-ShareAlike 3.0 United States License. 
+    You must offer Perseus any modifications you make. Perseus provides credit for all accepted changes. 
+-->
 <collectionService xmlns="http://chs.harvard.edu/xmlns/cite">
         <citeCollection
             canonicalId="urn"
@@ -16,7 +33,7 @@
                 label="Annotation"
                 name="oac"
                 type="string"
-                x-perseidsmax="500"/>
+                x-perseidsmax="525"/>
         </citeCollection>
         <citeCollection
             canonicalId="urn"
@@ -35,30 +52,29 @@
                 name="oac"
                 type="string"
                 x-perseidsmax="500"/>
-        </citeCollection>
-         <citeCollection
-            canonicalId="urn"
-            class=""
-            name="pdlcomm"
-            description="Perseus General Commentary Collection"
-            x-perseidsdefault="true">
-            <namespaceMapping
-                abbr="perseus"
-                fullValue="http://data.perseus.org/ns/collections"/>
-            <citeProperty
-                label="Annotation URN"
-                name="urn"
-                type="citeurn"/>
-            <citeProperty
-                label="Annotation"
-                name="oac"
-                type="string"/>
     </citeCollection>
 	    <citeCollection
 	        canonicalId="urn"
 	        class=""
 	        name="grctb"
 	        description="Greek Treebank Collection">
+	        <namespaceMapping
+	            abbr="perseus"
+	            fullValue="http://data.perseus.org/ns/collections"/>
+	        <citeProperty
+	            label="Treebank URN"
+	            name="urn"
+	            type="citeurn"/>
+	        <citeProperty
+	            label="Treebank Data"
+	            name="xml"
+	            type="string"/>
+	    </citeCollection>
+	    <citeCollection
+	        canonicalId="urn"
+	        class=""
+	        name="aratb"
+	        description="Arabic Treebank Collection">
 	        <namespaceMapping
 	            abbr="perseus"
 	            fullValue="http://data.perseus.org/ns/collections"/>
@@ -86,6 +102,41 @@
         <citeProperty
             label="Treebank Data"
             name="xml"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="align"
+        description="Translation Alignment Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Alignment URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Alignment Data"
+            name="xml"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="pdlcomm"
+        description="Perseus General Commentary Collection"
+        x-perseidsdefault="true">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Annotation"
+            name="oac"
             type="string"/>
     </citeCollection>
     <citeCollection

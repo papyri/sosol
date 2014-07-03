@@ -114,7 +114,14 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - a String of the SHA1 of the commit
   def set_content(content, options = {})
-    options.reverse_merge! :comment => ''
+    default_actor = nil
+    if((!self.owner.nil?) && (self.owner.class == User))
+      default_actor = self.owner.jgit_actor
+    end
+      
+    options.reverse_merge!(
+      :comment => '',
+      :actor    => default_actor)
     commit_sha = self.repository.commit_content(self.to_path,
                                    self.branch,
                                    content,

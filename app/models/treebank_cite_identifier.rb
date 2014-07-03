@@ -30,21 +30,25 @@ class TreebankCiteIdentifier < CiteIdentifier
     title = self.name
     # TODO should say Treebank on Target URI
     t = REXML::Document.new(self.xml_content).root
-    f = REXML::XPath.first(t,"sentence")
-    l = REXML::XPath.first(t,"sentence[last()]")
-    if (f)
-      urn = f.attributes['document_id']
-      if (urn != '')
-        title = "Treebank of #{urn}"
-      end
-      from = f.attributes['subdoc']
-      if (from != '')
-        title = title + ":#{from}"  
-      end
-      if (l)
-        to = l.attributes['subdoc']
-        if (to != '' && from != to)
-          title = title + "-#{to}"
+    # we shouldn't really ever get here without content
+    # but if we do, it's better not to throw an error
+    if (t)
+      f = REXML::XPath.first(t,"sentence")
+      l = REXML::XPath.first(t,"sentence[last()]")
+      if (f)
+        urn = f.attributes['document_id']
+        if (urn != '')
+          title = "Treebank of #{urn}"
+        end
+        from = f.attributes['subdoc']
+        if (from != '')
+          title = title + ":#{from}"  
+        end
+        if (l)
+          to = l.attributes['subdoc']
+          if (to != '' && from != to)
+            title = title + "-#{to}"
+          end
         end
       end
     end

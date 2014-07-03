@@ -87,6 +87,7 @@ class CitePublicationsController < PublicationsController
         end
         flash[:notice] = 'Publication was successfully created.'      
       rescue Exception => e
+        Rails.logger.error(e)
         Rails.logger.info(e.backtrace)
         @publication.destroy
         flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s

@@ -335,7 +335,7 @@ Sosol::Application.routes.draw do
     get :history 
     get :preview 
     get :editxml 
-    get :updatexml
+    put :updatexml
     get :exportxml 
     post :edit 
     get :rename_review
@@ -352,7 +352,7 @@ Sosol::Application.routes.draw do
     get :history 
     get :preview 
     get :editxml 
-    get :updatexml
+    put :updatexml
     get :exportxml 
     post :edit
     get :rename_review
@@ -388,7 +388,7 @@ Sosol::Application.routes.draw do
   match 'dmm_api/item/:identifier_type/:id' =>'dmm_api#api_item_get', :via => :get
   match 'dmm_api/item/:identifier_type/:id' => 'dmm_api#api_item_patch', :via => :post
   match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_patch', :via => :post
-  match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_patch', :via => :get
+  match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_get', :via => :get
   match 'dmm_api/item/:identifier_type/:id/append' => 'dmm_api#api_item_append', :via => :post
   match 'dmm_api/create/item/:identifier_type(/:publication_id)' => 'dmm_api#api_item_create', :via => :post
   match 'dmm_api/item/:identifier_type/:id/info(/:format)' => 'dmm_api#api_item_info', :via => :get

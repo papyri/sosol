@@ -17,7 +17,7 @@ SITE_FULL_NAME = 'Perseids'
 SITE_TAG_LINE = 'powered by Son of Suda Online'
 SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
 SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier'
 SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "data.perseus.org"
 SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
   
@@ -270,9 +272,10 @@ class DmmApiController < ApplicationController
         @agents = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config agents.yml})).read).result)[:agents]
       end
       agent = nil
-      Rails.logger.info("Agents = #{@agents.inspect}")
+      a_data = a_data.force_encoding("UTF-8")
       @agents.keys.each do | a_agent |
-        if (a_data =~ /#{@agents[a_agent][:uri_match]}/sm)
+        uri_match = @agents[a_agent][:uri_match]
+        if (a_data =~ /#{uri_match}/mu)
           agent = @agents[a_agent]
           break
         end
