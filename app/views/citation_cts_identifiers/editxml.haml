@@ -12,7 +12,7 @@
     = render :partial => 'identifiers/header'
     #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
     #edit
-      - form_for @identifier, :url => { :action => :updatexml } do |f|
+      = form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
         #ict_tool_wrapper
           #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.urn_attribute, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}

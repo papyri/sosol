@@ -52,7 +52,7 @@ module CTS
         response = Net::HTTP.get_response(
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
           JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply.xsl})))
         xml = REXML::Document.new(results)
@@ -109,7 +109,7 @@ module CTS
         response = Net::HTTP.get_response(
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
           JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts version_title.xsl})), 
               :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true) )
@@ -120,7 +120,7 @@ module CTS
          response = Net::HTTP.get_response(
             URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
          results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
           JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply.xsl})))
          return results
@@ -170,6 +170,7 @@ module CTS
             end
           end
         end
+        Rails.logger.info("EX:#{@external_cts.inspect}")
         return @external_cts
       end
       
@@ -230,7 +231,7 @@ module CTS
         response = Net::HTTP.get_response(
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
           JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts inventory_to_json.xsl})))
         return results
@@ -241,7 +242,7 @@ module CTS
         response = Net::HTTP.get_response(
           URI.parse(self.getInventoryUrl(a_inventory) + "&request=GetCapabilities"))
         results = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(response.body),
+          JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
           JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts inventory_trans_to_json.xsl})), 
               :e_textgroup => urn.getTextGroup(true), :e_work => urn.getWork(true), :e_expression => 'translation')
@@ -261,7 +262,7 @@ module CTS
         end
         if (response.code == '200')
            results = JRubyXML.apply_xsl_transform(
-                   JRubyXML.stream_from_string(response.body),
+                   JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
                    JRubyXML.stream_from_file(File.join(Rails.root,
                    %w{data xslt cts validreff_urns.xsl})))  
         else
@@ -280,7 +281,7 @@ module CTS
           end # end http put of inventory
           if (response.code == '200')
             path = JRubyXML.apply_xsl_transform(
-              JRubyXML.stream_from_string(response.body),
+              JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
               JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
@@ -298,7 +299,7 @@ module CTS
                 end # end valid reffs request
                 if (refs_response.code == '200')
                   JRubyXML.apply_xsl_transform(
-                    JRubyXML.stream_from_string(refs_response.body),
+                    JRubyXML.stream_from_string(refs_response.body.force_encoding("UTF-8")),
                     JRubyXML.stream_from_file(File.join(Rails.root,
                     %w{data xslt cts validreff_urns.xsl})))  
                 else
@@ -358,7 +359,7 @@ module CTS
              end
              if (response.code == '200')
               path = JRubyXML.apply_xsl_transform(
-                     JRubyXML.stream_from_string(response.body),
+                     JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
                      JRubyXML.stream_from_file(File.join(Rails.root,
                      %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
@@ -376,7 +377,7 @@ module CTS
                     http.send_request('GET', rurl.request_uri)
                   end # end Net::HTTP.start
                   if (psg_response.code == '200')
-                    return psg_response.body
+                    return psg_response.body.force_encoding("UTF-8")
                   else 
                    raise "Passage request failed #{psg_response.code} #{psg_response.msg} #{psg_response.body}"
                   end # end test on GetPassagePlus response code
@@ -400,7 +401,7 @@ module CTS
         urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
         response = Net::HTTP.get_response(URI.parse(self.getInventoryUrl(a_inventory) + 
           "&request=GetPassage&urn=#{urn_no_subref}"))
-        return response.body
+        return response.body.force_encoding("UTF-8")
       end
       
       def proxyUpdatePassage(a_psg,a_inventory,a_document,a_urn,a_uuid)
@@ -417,7 +418,7 @@ module CTS
           if (response.code == '200')
             Rails.logger.info("Inventory put ok")
             path = JRubyXML.apply_xsl_transform(
-              JRubyXML.stream_from_string(response.body),
+              JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
               JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
@@ -438,7 +439,7 @@ module CTS
                   # now we return the updated document
                   Rails.logger.info("Passage put ok #{psg_response.body}")
                   updated_text = JRubyXML.apply_xsl_transform(
-                    JRubyXML.stream_from_string(psg_response.body),
+                    JRubyXML.stream_from_string(psg_response.body.force_encoding("UTF-8")),
                     JRubyXML.stream_from_file(File.join(Rails.root,
                     %w{data xslt cts extract_updatepassage_reply.xsl})))
                     # if the parsed response doesn't include the updated text 
@@ -547,7 +548,7 @@ module CTS
             end
             if (response.code == '200')
               path = JRubyXML.apply_xsl_transform(
-                JRubyXML.stream_from_string(response.body),
+                JRubyXML.stream_from_string(response.body.force_encoding("UTF-8")),
                 JRubyXML.stream_from_file(File.join(Rails.root,
                 %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
@@ -588,7 +589,7 @@ module CTS
             http.send_request('GET',tok_uri.request_uri)
           end
           if (tok_response.code == '200')
-            tok_response.response.body
+            tok_response.response.body.force_encoding("UTF-8")
           else 
             raise "Failed request to #{tok_uri} : #{tok_response.code} #{tok_response.msg} #{tok_response.body}" 
           end

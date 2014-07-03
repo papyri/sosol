@@ -42,7 +42,6 @@ class EpiCtsIdentifiersController < IdentifiersController
                        :version_id => @identifier.name,
                        :collection => @identifier.inventory,
                        :citeinfo => @identifier.related_inventory.parse_inventory(),
-                       :controller => 'citation_cts_identifiers',
                        :publication_id => @identifier.publication.id, 
                        :pubtype => 'edition'})
   end

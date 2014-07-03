@@ -153,7 +153,15 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      render :xml => @identifier.api_get(params[:q]) 
+      begin
+        resp = @identifier.api_get(params[:q]) 
+        render :xml => resp
+      rescue Exception => e
+        Rails.logger.error(e)
+        Rails.logger.error(e.backtrace)
+        render :xml => "<error>#{e}</error>", :status => 500
+      end
+      return
     end
   end
   

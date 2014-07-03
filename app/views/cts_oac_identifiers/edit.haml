@@ -1,76 +1,10 @@
 = javascript_include_tag 'confirm'
 = javascript_include_tag 'treebank-cite'
-  
+
 #main
   = render :partial => 'identifiers/edit_bar'
   .site
     = render :partial => 'identifiers/header'
-    .append
-      %h3 
-      - if @identifier[:action] == 'append' 
-        Add Annotation
-      - else
-        Update Annotation
-      %p
-      - form_for @identifier, :url => { :action => @identifier[:action], :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return check_input();'} do |form|
-        = hidden_field_tag 'publication_id',@publication.id
-        = hidden_field_tag 'id',@identifier.id
-        = hidden_field_tag 'collection',params[:collection]
-        = hidden_field_tag 'src',params[:src] != '' ? params[:src] : @identifier[:src]
-        = hidden_field_tag 'target_urn', params[:target_urn]
-        = hidden_field_tag 'valid_targets',nil
-        = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-        %ul.hints
-          %li
-            Enter a URI identifying a resource that annotates your selected passage.   
-          %li 
-            Or choose an annotation resource from the drop-downs and click 
-            'Request Resource' to load the corresponding text. 
-          %li 
-            You can also select more specific passages within either text with your mouse. This will automatically
-            generate a more specific URI for your annotation. 
-        #annotation_target_input
-          .annotation_header Annotation Target
-          #fieldset{:id => 'annotation_target_fields'}
-            .targets{:id => 'targets'}
-              = label_tag 'URI for Target:'
-              %br
-              -if params[:valid_targets].nil?
-                -if params[:src] != ''
-                  = text_field_tag 'target_uri1', "#{params[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
-                -else
-                  = text_field_tag 'target_uri1', "#{@identifier[:src]}/#{params[:target_urn]}", { :class => 'target_uri'}
-              -else
-                -params[:valid_targets].split(',').each_with_index do |t,i|
-                  = text_field_tag t, params[t], { :class => 'target_uri'}
-                  -if i > 0
-                    %button{:class=> '.remove_target_uri', :id => 'remove_target_uri'+(i+1).to_s}Remove
-            .add_target
-              = label_tag '(to select another range from within this passage)'
-              %button{:onclick => 'return add_target();'}Add   
-          = label_tag 'Target Passage:'
-          .target{:id => 'target_content' }
-            .loading Loading...                     
-          #annotation_motivation_input
-            = select_tag("annotation_motivation", options_for_select({'Has Translation' => 'oa:linking_translation','Has Link' => 'oa:linking','Has Identity' => 'oa:identifying', 'Has Classification' => 'oa:classifying', 'Has Comment'=>'oa:commenting'}))
-        #annotation_body_input
-          .annotation_header Annotation Resource      
-          = label_tag 'URI for Resource:'
-          = text_field_tag 'body_uri', params[:body_uri], { :class => 'body_uri'}
-          #annotation_commentary_link
-            = link_to('Click to create Commentary on annotation target(s)', '', html_options = {:id=> 'create_commentary_link', :onclick => 'return submit_commentary_create();'})
-          = render(:partial => 'cite_annotation_selector')
-          = render(:partial => 'cts_annotation_selector')
-        #annotation_form_submit
-          -if @identifier[:action] == 'update'
-            = button_to "Save"
-            - form_for @identifier, :url => { :action => 'delete_annotation', :controller => "cts_oac_identifiers"}, :html => {:onsubmit => 'return confirm_delete();'} do |form|
-              = hidden_field_tag 'annotation_uri',params[:annotation_uri]
-              = hidden_field_tag 'publication_id',@publication.id
-              = hidden_field_tag 'id',@identifier.id
-              = button_to "Delete"  
-          -else
-            = button_to "Save"
-      - form_tag url_for(options={:action => 'create',:controller => 'commentary_cite_identifiers'}), {:id => 'commentary_form'} do
-        = hidden_field_tag 'publication_id',@publication.id
-        = hidden_field_tag 'init_value[]',nil
+    #edit
+      .PContent
+        = @identifier[:list].html_safe

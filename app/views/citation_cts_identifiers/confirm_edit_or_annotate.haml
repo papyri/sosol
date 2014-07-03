@@ -1,14 +1,14 @@
 .create
   %h3 Edit or Annotate?
   %p
-  = form_for :citation_cts_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
+  = form_for CitationCTSIdentifier.new(), :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
     = hidden_field_tag 'publication_id',params[:publication_id]
     = hidden_field_tag 'version_id',params[:version_id]
     = hidden_field_tag 'collection',params[:collection]
     = hidden_field_tag 'urn',params[:urn]
     = hidden_field_tag 'src',params[:src]
     = button_to "Edit"
-  = form_for :cts_oac_identifer, Identifier.new, :url => { :action => "edit_or_create", :controller => "cts_oac_identifiers"} do |form|
+  = form_for CtsOACIdentifier.new(), :url => { :action => "edit_or_create", :controller => "cts_oac_identifiers"} do |form|
     = hidden_field_tag 'publication_id',params[:publication_id]
     = hidden_field_tag 'version_id',params[:version_id]
     = hidden_field_tag 'target_urn',params[:urn]

@@ -4,7 +4,7 @@ class CtsOacIdentifiersController < IdentifiersController
   before_filter :ownership_guard, :only => [:edit, :update, :append, :delete_annotation]
   
   def edit
-    find_identifier
+    find_publication
     annotation_uri = params[:annotation_uri]
     if (annotation_uri)
       @creator_uri = @identifier.make_creator_uri()

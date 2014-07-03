@@ -306,10 +306,10 @@ class OACIdentifier < Identifier
       if (qmatch.nil?)
         raise "Invalid request - no uri specified in #{a_query}"
       else
-        return get_annotation(qmatch[1])
+        return toXmlString get_annotation(qmatch[1])
       end
     else
-      return get_annotations()
+      return toXmlString get_annotations()
     end
       
   end
@@ -388,10 +388,11 @@ class OACIdentifier < Identifier
         bodies = OacHelper::get_bodies(a_annot)
         motivation = OacHelper::get_motivation(a_annot)
         swagents = OacHelper::get_software_agents(a_annot)
-        update_annotation(uri,targets,bodies,motivation,make_creator_uri(),swagents[0],a_comment)
+        update_annotation(uri,targets,bodies,motivation,make_creator_uri(),swagents,a_comment)
         uris << a_annot.attributes['rdf:about']
       rescue Exception => a_e
         Rails.logger.error(a_e)
+        Rails.logger.error(a_e.backtrace)
         errors << a_annot
       end 
     end

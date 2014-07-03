@@ -201,6 +201,8 @@ Sosol::Application.routes.draw do
     delete :delete_frontmatter_commentary
     get :link_translation
     get :link_citation
+    get :link_alignment
+    get :annotate_xslt
     end
     
     end
@@ -215,6 +217,8 @@ Sosol::Application.routes.draw do
     get :rename_review
     put :rename
     post :create
+    get :link_citation
+    get :annotate_xslt
     end
     
     end
@@ -231,6 +235,7 @@ Sosol::Application.routes.draw do
     get :create
     post :edit_or_create
     post :select
+    get :annotate_xslt
     end
     
     end
@@ -325,6 +330,7 @@ Sosol::Application.routes.draw do
     post :edit_or_create
     post :append
     put :delete_annotation
+    get :annotate_xslt
     end
     
     end
@@ -381,8 +387,8 @@ Sosol::Application.routes.draw do
   match 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => /[^\/]*/, :urn => /[^\/]*/
   match 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => /[^\/]*/, :urn => /[^\/]*/
   match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/
-  match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities'
-  match 'cts/getrepos' => 'cts_proxy#getrepos'
+  match 'cts/getcapabilities/:id' => 'cts_proxy#getcapabilities'
+  match 'cts/getrepos/:id' => 'cts_proxy#getrepos'
   match 'shib/signin/:idp' => 'shib#signin'
   match 'shib/metadata/:idp' => 'shib#metadata'
   match 'dmm_api/item/:identifier_type/:id' =>'dmm_api#api_item_get', :via => :get
