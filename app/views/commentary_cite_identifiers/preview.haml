@@ -18,7 +18,7 @@
 
   .site
     #edit
-      - form_for @identifier, :url => { :action => :update }  do |f|
+      = form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
         %h2 Preview
         .PContent

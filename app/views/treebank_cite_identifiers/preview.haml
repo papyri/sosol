@@ -6,10 +6,10 @@
 
   .site
     #edit
-      - form_for @identifier, :url => { :action => :update }  do |f|
+      = form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
         %h2 Preview
         .hints Click a sentence to view it in Alpheios
         .PContent
-          = @identifier[:html_preview]
+          = @identifier[:html_preview].html_safe
        
