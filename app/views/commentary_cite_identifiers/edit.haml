@@ -21,7 +21,7 @@
       = hidden_field_tag 'id',@identifier.id
       = hidden_field_tag 'commentary_language', @identifier.language
       .targets
-        = @identifier[:targets]
+        = @identifier[:targets].html_safe
       #edit-panel
         .wmd-panel{:id=>'wmd-panel'}
           .wmd-preview{:id => 'wmd-preview'} 
