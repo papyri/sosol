@@ -368,6 +368,20 @@ Sosol::Application.routes.draw do
     end
     
     end
+    resources :commentary_cite_identifiers do 
+        member do
+    post :create 
+    get :create_from_annotation
+    get :history 
+    get :preview 
+    get :editxml 
+    put :update 
+    get :exportxml
+    post :edit 
+    get :rename_review 
+    put :rename
+    end
+    end
     
 
   end
