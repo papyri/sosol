@@ -1,9 +1,15 @@
 development:
   treebank_editor:
-    :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
-    :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
-    :file_url: "http://localhost/arethusa/app/#/perseids?doc=DOC"
-    :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
+    alpheios:
+        :edit_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+        :view_url: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"
+        :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=DOC"
+        :create_label: 'via Alpheios'
+    arethusa:
+        :edit_url: "http://localhost/app/#/perseids?doc=DOC&s=SENT"
+        :view_url: "http://localhost/app/#/perseids?doc=DOC&mode=viewer"
+        :create_url: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?doc=DOC"
+        :create_label: 'via Arethusa'
   alignment_editor:
     :edit_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX"
     :view_url: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=DOC&s=SENT&numSentences=MAX&app=viewer"

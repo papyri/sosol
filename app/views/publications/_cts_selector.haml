@@ -132,12 +132,15 @@
     //= text_field_tag('passage')
     = submit_tag "Emend", :disabled => true, :id => 'emend_button'
     = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
-    %p{:class => ['perseids_pilots_link']}
-      = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
-      |
-      = link_to 'New Treebank Annotation', (Tools::Manager.tool_config('treebank_editor')[:create_url]).sub(/DOC/,'')
-      |
-      = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
-      
-
-    
+    %div{:class => ['nav_tools']}
+      %ul{:class => ['nav_right','perseids_menu']}
+        %li
+          = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
+        %li
+          New Treebank Annotation
+          %ul{:class => ['perseids_sub_menu']}
+            - ['alpheios','arethusa'].each do |tool|
+              %li
+                = link_to Tools::Manager.tool_config('treebank_editor')["#{tool}"][:create_label], (Tools::Manager.tool_config('treebank_editor')["#{tool}"][:create_url]).sub(/DOC/,'')
+        %li      
+          = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
