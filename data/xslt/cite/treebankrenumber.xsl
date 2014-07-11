@@ -6,7 +6,7 @@
     version="2.0">
     
     <xsl:output indent="yes"></xsl:output>
-    <xsl:param name="clear_relations" select="false()"/>
+    <xsl:param name="clear_relations" select="true()"/>
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
