@@ -474,8 +474,8 @@ class OACIdentifier < Identifier
     has_toponym_hook = REXML::XPath.match(self.rdf.root,"//perseids:PerseidsTool[@rdf:resource='toponym_editor']",{'perseids' => "http://data.perseus.org/ns/perseids"}).size > 0
     
     if (Tools::Manager.tool_config(:toponym_editor) && has_toponym_hook)
-      explink = Tools::Manager.link_to('toponym_editor','recogito',:export)
-      implink = Tools::Manager.link_to('toponym_editor','recogito',:import) 
+      explink = Tools::Manager.link_to('toponym_editor',:recogito,:export)
+      implink = Tools::Manager.link_to('toponym_editor',:recogito,:import) 
       config[:target_links]['Toponym Annotations'] << explink
       config[:target_links]['Toponym Annotations'] << {:text => implink[:text], :href => impliknk[:href], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
