@@ -405,9 +405,25 @@ class TreebankCiteIdentifier < CiteIdentifier
     return has_any_targets
   end
   
+  def get_editor_agent
+    t = REXML::Document.new(self.xml_content).root
+    tool = 'alpheios'
+    all_annotators = REXML::XPath.each(t, "annotator/uri") do |a_agent| 
+      tool_uri = a_agent.text
+      agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
+      unless (agent.nil?)
+        tool = agent
+        break;
+      end
+    end
+    return tool
+  end
+  
   # preview 
   # outputs the sentence list
   def preview parameters = {}, xsl = nil
+    tool = self.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,self)
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -416,12 +432,15 @@ class TreebankCiteIdentifier < CiteIdentifier
         :doc_id => self.id,
         :s => parameters[:s],
         :max => 50, # TODO - make max sentences configurable
-        :tool_url => Tools::Manager.tool_config('treebank_editor')[:view_url])  
+        :target => tool_link[:target],
+        :tool_url => tool_link[:href])
  end
   
   # edit 
   # outputs the sentence list with sentences linked to editor
   def edit parameters = {}, xsl = nil
+    tool = self.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,self)
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -430,7 +449,8 @@ class TreebankCiteIdentifier < CiteIdentifier
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable
         :s => parameters[:s],
-        :tool_url => Tools::Manager.tool_config('treebank_editor')[:edit_url])  
+        :target => tool_link[:target],
+        :tool_url => tool_link[:href])
   end
   
   
@@ -441,8 +461,4 @@ class TreebankCiteIdentifier < CiteIdentifier
     self.set_xml_content(updated, :comment => 'Update uris to reflect new identifier')
   end
   
-  # temporary hack to enable link to Arethusa as an alternate viewer
-  def file_preview()
-    Tools::Manager.tool_config('treebank_editor')[:file_url].sub('DOC',self.id.to_s)  
-  end
 end

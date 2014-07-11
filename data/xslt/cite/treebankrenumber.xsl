@@ -4,7 +4,9 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="xs"
     version="2.0">
+    
     <xsl:output indent="yes"></xsl:output>
+    <xsl:param name="clear_relations" select="false()"/>
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
@@ -18,14 +20,14 @@
                 <sentence id="{$s_num}">
                     <xsl:apply-templates select="@*[not(name(.) = 'id')]"/>
                     <xsl:variable name="renum_words" select="word[@id != position()]"/>
-                    <xsl:if test="count($renum_words) > 0">
+                    <xsl:if test="count($renum_words) > 0 and $clear_relations">
                         <xsl:message>The word count for sentence <xsl:value-of select="$s_num"/> has changed.  Dependencies have been reset.</xsl:message>
                     </xsl:if>
                     <xsl:for-each select="word">
                         <word id="{position()}">
                             <xsl:variable name="old_head" select="@head"/>
                             <xsl:choose>
-                                <xsl:when test="count($renum_words)>0">
+                                <xsl:when test="count($renum_words)>0 and $clear_relations">
                                     <xsl:attribute name="head">0</xsl:attribute>
                                     <xsl:apply-templates select="@*[not(name(.) = 'head') and not(name(.) = 'id')]"/>
                                 </xsl:when>

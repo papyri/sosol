@@ -139,8 +139,8 @@
         %li
           New Treebank Annotation
           %ul{:class => ['perseids_sub_menu']}
-            - ['alpheios','arethusa'].each do |tool|
+            - Tools::Manager.link_all('treebank_editor',:create,nil).each do |link|
               %li
-                = link_to Tools::Manager.tool_config('treebank_editor')["#{tool}"][:create_label], (Tools::Manager.tool_config('treebank_editor')["#{tool}"][:create_url]).sub(/DOC/,'')
+                = link_to link[:text], link[:href], html_options = {'target' => link[:target]} 
         %li      
           = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')

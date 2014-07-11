@@ -500,7 +500,6 @@ module CTS
         passage_url = nil
         temp_uuid = nil
         urn_no_subref = a_urn.sub(/[\#@][^\#@]+$/,'')
-        tokenizer_cfg = Tools::Manager.tool_config('cts_tokenizer',false)
         
         if (!a_inv.nil? && a_inv =~ /^\d+$/)
           documentIdentifier = Identifier.find(a_inv)
@@ -512,11 +511,11 @@ module CTS
         end
         Rails.logger.info("get_tokenized_passage for #{a_inv} = #{inventory_code}")
         
-        if (lang && tokenizer_cfg[lang]) 
-          tokenizer_url = tokenizer_cfg[lang][:request_url];
-        else
-          tokenizer_url = tokenizer_cfg[:default][:request_url];
+        tokenizer = Tools::Manager.link_to('cts_tokenizer',lang,:tokenize,nil)
+        if (tokenizer.nil?)
+          tokenizer = Tools::Manager.link_to('cts_tokenizer',:default,:tokenize,nil)
         end
+        tokenizer_url = tokenizer[:href] 
         
       
         begin
