@@ -172,13 +172,13 @@ production:
       :uri: 'http://github.com/alpheios-project/treebank-editor'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=DOC&s=SENT&numSentences=MAX"
+          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
           :text: 'Edit in Alpheios'
         :view:
           :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
           :text: 'Preview in Alpheios'
         :create:
-          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=DOC"
+          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=IDENTIFIER"
           :text: 'via Alpheios'
     arethusa:
         :target: 'perseids-arethusa'
