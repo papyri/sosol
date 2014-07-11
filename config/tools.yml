@@ -200,7 +200,7 @@ production:
       :method: 'get'
       :actions:
         :edit: 
-          :href: "http://sosol.perseids.org/alpheios/app/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
           :text: "Align in Alpheios"
         :view:
           :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
