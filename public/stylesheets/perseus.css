@@ -397,7 +397,7 @@ li.editor_menu {
   font-style: italic;
   margin-bottom: 10px;
 }
-.perseids_pilots_link {
+.nav_tools {
 	margin-top: 1em;
 	float:right;
 	margin-right: 10px;
@@ -840,3 +840,45 @@ li.sentence {
 .main.editxml #aceMask {
   margin-bottom: 50px
 }
+
+
+ul.perseids_menu, ul.perseids_menu ul.perseids_sub_menu {
+    padding:0;
+    margin: 0;
+}
+
+ul.perseids_menu li, ul.perseids_menu ul.perseids_sub_menu li {
+    list-style-type: none;
+    display: inline-block;
+    color: #4183c4;
+    cursor: pointer;
+    padding-left: 1em;
+    font-family: Helvetica,Arial,sans-serif;
+}
+
+/*Link Appearance*/
+ul.perseids_menu li a, ul.perseids_menu li ul.perseids_sub_menu li a {
+    display:inline-block;
+}
+ul.perseids_menu li a:hover, ul.perseids_menu li ul.perseids_sub_menu li a:hover {
+    text-decoration: underline;
+}
+/*Make the parent of sub-menu relative*/
+ul.perseids_menu li {
+    position: relative;
+    padding: 5px;
+    background: #eee;
+	z-index: 10;
+
+}
+/*sub menu*/
+ul.perseids_menu li ul.perseids_sub_menu {
+    display:none;
+    position: absolute;
+    top: 1.5em;
+    left: 0;
+}
+ul.perseids_menu li:hover ul.perseids_sub_menu {
+    display:block;
+}
+

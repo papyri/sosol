@@ -9,14 +9,14 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   def edit
     find_identifier
     # Add URL to image service for display of related images
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context,nil)[:href] 
     # find text for preview
     @identifier[:text_html_preview] = @identifier.related_text.preview
   end
   
   def editxml
     find_identifier
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary,nil)[:href] 
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'epi_trans_cts_identifiers/editxml'
