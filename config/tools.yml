@@ -15,7 +15,6 @@ development:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=IDENTIFIER"
           :text: 'via Alpheios'
     arethusa:
-        :target: 'perseids-arethusa'
         :text: 'Arethusa'
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
@@ -98,7 +97,6 @@ test:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=IDENTIFIER"
           :text: 'via Alpheios'
     arethusa:
-        :target: 'perseids-arethusa'
         :text: 'Arethusa'
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
@@ -181,7 +179,6 @@ production:
           :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=IDENTIFIER"
           :text: 'via Alpheios'
     arethusa:
-        :target: 'perseids-arethusa'
         :text: 'Arethusa'
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
