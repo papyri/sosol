@@ -41,4 +41,28 @@ class Community < ActiveRecord::Base
   def format_name
     return  self.name + " ( " + self.friendly_name + " )"
   end
+
+  #*Returns*
+  # - true if the community is setup to allow self signup
+  # - false if the communit is not setup to allow self signup
+  def allows_self_signup?
+    return self.allows_self_signup.nil? ? false : allows_self_signup
+  end
+
+  # Adds a user as a member of this community
+  # 
+  # *Returns*
+  #  - true if successful or user is alreadya a member
+  #  - false if unsuccessful
+  def add_member(user_id)
+    user = User.find_by_id(user_id.to_s)
+    if user.nil? 
+      return false
+    end
+    if nil == self.members.find_by_id(user.id) 
+      self.members << user
+      self.save
+    end
+    return true
+  end
 end
