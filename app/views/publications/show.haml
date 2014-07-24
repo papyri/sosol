@@ -57,16 +57,22 @@
               %br
               = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
               
+              - community_hash = Hash.new
               - if @current_user.community_memberships.count > 0
-                - community_hash = Hash.new
-                - community_hash[SITE_NAME] = 0
                 - @current_user.community_memberships.each do |community|
                 
                   - if community.is_submittable? #check to see that we can submit to community
                     - community_hash[community.format_name] = community.id
                   -#= submit_tag "Submit to " + community.friendly_name + " Boards", :disabled => true, :class => 'submit', :onclick => "setCommunityId(\'" + community.id.to_s + "\')"
+                - community_hash[Sosol::Application.config.site_name] = 0
                 = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => 'checkForComment()' }
-                
+              - else 
+                - Community.all.each do |community|
+                  - if community.allows_self_signup?
+                    - community_hash[community.format_name] = community.id
+                = hidden_field_tag 'do_community_signup', '1'
+                - community_hash[Sosol::Application.config.site_name] = 0
+                = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => "confirmSignup()" }
         - else
           %b
             Publication may not be submitted at this time.
@@ -197,3 +203,5 @@
     
     - if %w{new editing submitted approved voting committed}.include? @publication.status
       = link_to "Download Copy", :controller => 'publications', :id => @publication.id, :action => "download"
+=javascript_include_tag "communities"
+

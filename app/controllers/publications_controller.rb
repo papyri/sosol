@@ -223,6 +223,15 @@ class PublicationsController < ApplicationController
       return
     end
     
+    #check if we need to signup to a community 
+    if params[:do_community_signup] && params[:community][:id]
+      @community = Community.find(params[:community][:id].to_s)
+      unless (@community.add_member(@current_user.id))
+         flash[:error] = 'Unable to signup for selected community'
+         redirect_to @publication
+         return
+      end
+    end
     #check if we are submitting to a community
     #community_id = params[:community_id]
     if params[:community] && params[:community][:id]
