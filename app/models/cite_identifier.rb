@@ -6,6 +6,8 @@ class CiteIdentifier < Identifier
   
   IDENTIFIER_PREFIX = 'urn:cite:' 
   IDENTIFIER_NAMESPACE = 'cite'
+  NS_DCAM = "http://purl.org/dc/dcam/"
+
   
   # must be defined in subclass 
   #  PATH_PREFIX
@@ -354,6 +356,15 @@ class CiteIdentifier < Identifier
       return existing_identifiers
     end
 
+    def self.api_parse_post_for_identifier(a_post)
+      oacxml = REXML::Document.new(a_post).root
+      urn = REXML::XPath.first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
+      if (urn)
+        return urn.attributes['rdf:resource']
+      else
+        raise "Unspecified Collection"
+      end
+    end
 end
 
 

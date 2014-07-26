@@ -5,7 +5,7 @@ class DmmApiControllerTest < ActionController::TestCase
     @creator = Factory(:user, :name => "Creator")
     @request.session[:user_id] = @creator.id
     @valid_tb = File.read(File.join(File.dirname(__FILE__), 'data', 'validtb.xml'))
-
+    @valid_align = File.read(File.join(File.dirname(__FILE__), 'data', 'validalign.xml'))
   end
   
   def teardown
@@ -16,6 +16,13 @@ class DmmApiControllerTest < ActionController::TestCase
   def test_should_create_publication_and_treebank_identifier
     @request.env['RAW_POST_DATA'] = @valid_tb
     post :api_item_create, :identifier_type => 'TreebankCite'
+    assert_match(/<item>..*?<\/item>/,@response.body) 
+    assert_equal 1, assigns(:publication).identifiers.size 
+  end
+  
+  def test_should_create_publication_and_alignment_identifier
+    @request.env['RAW_POST_DATA'] = @valid_align
+    post :api_item_create, :identifier_type => 'AlignmentCite'
     assert_match(/<item>..*?<\/item>/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size 
   end
@@ -34,12 +41,10 @@ class DmmApiControllerTest < ActionController::TestCase
     @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
     @publication.branch_from_master
-    @cts_identifier = EpiCTSIdentifier.new_from_template(@publication,'epifacs','urn:cts:greekEpi:igvii.2543-2545.test','edition','grc')
-    assert_equal 1, @publication.identifiers.size
     @request.env['RAW_POST_DATA'] = @valid_tb
     post :api_item_create, :identifier_type => 'TreebankCite', :publication_id => @publication.id.to_s
     assert_match(/<item>..*?<\/item>/,@response.body)   
-    assert_equal 2, @publication.identifiers.size
+    assert_equal 1, @publication.identifiers.size
   end
     
 end

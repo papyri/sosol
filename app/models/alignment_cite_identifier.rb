@@ -10,9 +10,6 @@ class AlignmentCiteIdentifier < CiteIdentifier
   
   XML_VALIDATOR = JRubyXML::AlpheiosAlignmentValidator
   
-  # TODO move tokenizer functionality out to a separate class
-  XML_TOKENIZER = CTS::CTSLib
-  
   NS_ALIGN = "http://alpheios.net/namespaces/aligned-text"
   
   # Overrides Identifier#set_content to make sure content is preprocessed first
@@ -88,10 +85,10 @@ class AlignmentCiteIdentifier < CiteIdentifier
             token_elem = 'token'
             urn = ''
             if (local_match && local_match.captures.length == 2)
-              passage_xml = XML_TOKENIZER.get_tokenized_passage(local_match.captures[0],local_match.captures[1],[token_elem])
+              passage_xml = CTS::CTSLib.get_tokenized_passage(local_match.captures[0],local_match.captures[1],[token_elem])
               urn = local_match.captures[1]
             else
-              passage_xml = XML_TOKENIZER.get_tokenized_passage(nil,a_uri,[token_elem])
+              passage_xml = CTS::CTSLib.get_tokenized_passage(nil,a_uri,[token_elem])
             end            
             if (passage_xml)
               sentence_xml =
@@ -99,7 +96,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
                   JRubyXML.stream_from_string(passage_xml),
                   JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite tokens_to_align.xsl })),
                   :e_uri => a_uri, 
-                  :e_subref => XML_TOKENIZER.get_subref(urn),
+                  :e_subref => CTS::CTSLib.get_subref(urn),
                   :e_tag => token_elem)
                 xml_to_insert << sentence_xml
               end
@@ -222,6 +219,27 @@ class AlignmentCiteIdentifier < CiteIdentifier
     end
   end
   
+  def self.api_create(a_publication,a_agent,a_body,a_comment)
+    urn = self.api_parse_post_for_identifier(a_body)
+    temp_id = self.new(:name => self.next_object_identifier(urn))
+    temp_id.publication = a_publication 
+    if (! temp_id.collection_exists?)
+      raise "Unregistered CITE Collection for #{urn}"
+    end
+    temp_id.save!
+    oacxml = REXML::Document.new(a_body).root
+    alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
+    formatter = PrettySsime.new
+    formatter.compact = true
+    formatter.width = 2**32
+    content = ''
+    formatter.write alignment, content
+    temp_id.set_content(content, :comment => a_comment)
+    template_init = temp_id.init_version_content(content)
+    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
+    return temp_id
+  end
+
   # api_get responds to a call from the data management api controller
   # @param [String] a_query  parameter containing a querystring
   #                 specific to the identifier type. We use it for TreebankIdentifiers
