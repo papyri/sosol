@@ -29,7 +29,6 @@ module Tools
       end
       
       def link_to(a_type,a_tool,a_action,a_identifier=nil)
-        Rails.logger.info("Link to #{a_type},#{a_tool},#{a_action}")
         config = tool_config(a_type)[a_tool]
         link = nil
         if (config && config[:actions][a_action])

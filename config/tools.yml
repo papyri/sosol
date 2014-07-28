@@ -38,6 +38,9 @@ development:
         :view:
           :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
           :text: "View in Alpheios"
+        :create:
+          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?doc=IDENTIFIER"
+          :text: 'New Alignment'
   oa_editor:
     :perseids:
       :text: 'Annotation Editor'
@@ -120,6 +123,9 @@ test:
         :view:
           :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
           :text: "View in Alpheios"
+        :create:
+          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?doc=IDENTIFIER"
+          :text: 'New Alignment'
   oa_editor:
     :perseids:
       :text: 'Annotation Editor'
@@ -202,6 +208,9 @@ production:
         :view:
           :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
           :text: "View in Alpheios"
+        :create:
+          :href: "http://sosol.perseids.org/alpheios/app/align-entersentence-perseids.xhtml?doc=IDENTIFIER"
+          :text: 'New Alignment'
   oa_editor:
     :perseids:
       :text: 'Annotation Editor'

@@ -143,4 +143,5 @@
               %li
                 = link_to link[:text], link[:href], html_options = {'target' => link[:target]} 
         %li      
-          = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
+          - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,nil)
+          = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
