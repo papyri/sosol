@@ -81,6 +81,7 @@
             -elsif @identifier.class == TreebankCiteIdentifier || @identifier.class == AlignmentCiteIdentifier
               %li{ :class => %w{edit commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => %w{editxml}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit XML', polymorphic_path([:editxml,@identifier.publication, @identifier])
+              %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
