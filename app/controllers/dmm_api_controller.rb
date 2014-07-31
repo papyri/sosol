@@ -2,7 +2,7 @@
 class DmmApiController < ApplicationController
   
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
+  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append,:api_item_comments_post]
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
@@ -71,7 +71,7 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
+        return
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
             
@@ -108,7 +108,7 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
+        return
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
       
@@ -142,7 +142,7 @@ class DmmApiController < ApplicationController
   def api_item_get
     find_identifier
     if (@identifier.nil?)
-      render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
+       return
     else
       # Set a cookie so that the calling app can access the session
       # TODO this should be protected by OAuth
@@ -164,13 +164,8 @@ class DmmApiController < ApplicationController
   #           use X-CSRF-Token
   def api_item_info
     find_identifier
-    
     if (@identifier.nil?)
-      if (params[:format] == 'json')
-        render :json => {:error => "Unrecognized Identifier Type"}, :status => 500
-      else
-        render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
-      end
+      return
     else
       # build up some urls to send to the model
       urls = {}
@@ -203,8 +198,7 @@ class DmmApiController < ApplicationController
       Rails.logger.error(e)
     end   
     if (identifier_class.nil?)
-      flash[:error] = "Unrecognized Identifier Type"
-      redirect_to dashboard_url
+      return render_error("Unrecognized Identifier Type")
     else
       if (params[:id])
         redirect_to :controller => identifier_class_name.underscore.pluralize,
@@ -213,6 +207,72 @@ class DmmApiController < ApplicationController
       else  
         redirect_to dashboard_url
       end
+    end
+  end
+
+  # responds to a GET request for comments for an item
+  # @param [String] identifier_type
+  # @param [String] id - the unique id of the identifier
+  # @param [String] q - optional query filter for comment type (set to reason)
+  # @returns JSON object, array of comment objects
+  def api_item_comments_get
+    find_identifier
+    if (@identifier.nil?)
+      return
+    end
+    # we get comments on the origin only
+    comments = Comment.find_all_by_identifier_id(@identifier.origin.id, :order => 'created_at').reverse
+    comments = comments.collect{ | c | c.api_get }
+    if (params[:q])
+        comments = comments.select{ | c | c[:reason] == params[:q] }
+    end 
+    render :json => comments
+  end
+
+  # responds to a POST request to create/edit a comment
+  # @param [String] identifier_type
+  # @param [String] id - the unique id of the identifier
+  # Body of the post is expected to be a JSON object which mirrors the format
+  # of the api_item_comments_get response for an individual comment
+  # e.g. 
+  #   { 'reason':'review','comment':'comment text' }
+  #   { 'reason':'review','comment':'updated comment text', 'comment_id':'1' }
+  # for a new comment no comment_id is supplied
+  def api_item_comments_post
+    find_identifier
+    if (@identifier.nil?)
+      return
+    end
+    # hack - need better way to control allowed reasons for commit
+    if (params[:reason] !~ /^general|review$/)
+      return render_error("Invalid comment reason")
+    end 
+    rc = false
+    if (params[:comment_id]) 
+      comment = Comment.find(params[:comment_id].to_s)
+      # only update comments that belong to this identifier's origin
+      if (comment && comment.identifier_id == @identifier.origin.id)
+        comment.comment = params[:comment]
+      else 
+         return render_error("Invalid or Inaccessible Comment")
+      end
+    else 
+      # we set comments on the origin only
+      # but note that the ownership guard is applied before this, on the id
+      # of the publication being commented on, which in the case of review
+      # should be the board-owned copy
+      comment = Comment.new(
+        {  :identifier_id => @identifier.origin.id,
+           :publication_id => @identifier.publication.origin.id,
+           :user_id => @current_user.id,
+           :reason => params[:reason],
+           :comment => params[:comment],
+        })
+    end
+    if (comment.save)
+      render :json => comment.api_get()
+    else 
+      render_error('Unable to save comment')
     end
   end
   
@@ -239,8 +299,14 @@ class DmmApiController < ApplicationController
     
     def find_identifier
       identifier_class = identifier_type  
-      unless (identifier_class.nil?)
-        @identifier = identifier_class.find(params[:id])   
+      if (identifier_class.nil?)
+       return render_error("Invalid Identifier Type")
+      else
+        begin 
+          @identifier = identifier_class.find(params[:id])   
+        rescue 
+          render_error("Invalid Identifier")
+        end
       end
     end
     
@@ -250,12 +316,11 @@ class DmmApiController < ApplicationController
 
     def ownership_guard
       find_identifier
-      if !@identifier.publication.mutable_by?(@current_user)
-        flash[:error] = 'Operation not permitted.'
-        redirect_to dashboard_url
+      if @identifier && !@identifier.publication.mutable_by?(@current_user)
+        return render_forbidden('Operation not permitted.')
       end
     end
-    
+
     def expire_api_item_cache(a_identifier_type,a_id)
       expire_fragment(:controller => 'dmm_api',
                       :action => 'api_item_get', 
@@ -278,6 +343,24 @@ class DmmApiController < ApplicationController
         end
       end
       return agent
+    end
+
+    # renders an error response
+    def render_error(a_msg,a_format=:json)
+      if (a_format == 'json') 
+        render :json => {:error => a_msg}, :status => 500
+      else 
+        render :xml => "<error>#{a_msg}</error>", :status => 500
+      end
+    end
+
+    # renders a forbidden error response
+    def render_forbidden(a_msg,a_format=:json)
+      if (a_format == 'json') 
+        render :json => {:error => a_msg}, :status => 403
+      else 
+        render :xml => "<error>#{a_msg}</error>", :status => 403
+      end
     end
 
 end
