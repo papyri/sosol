@@ -214,6 +214,16 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'dmm_api/item/:identifier_type/:id/return/:item_action',
     :controller => 'dmm_api',
     :action => 'api_item_return'
+
+  map.connect 'dmm_api/item/:identifier_type/:id/comments',
+    :controller => 'dmm_api',
+    :action => 'api_item_comments_get',
+    :conditions => { :method => :get }
+
+  map.connect 'dmm_api/item/:identifier_type/:id/comments',
+    :controller => 'dmm_api',
+    :action => 'api_item_comments_post',
+    :conditions => { :method => :post }
   
   # The priority is based upon order of creation: first created -> highest priority.
 
