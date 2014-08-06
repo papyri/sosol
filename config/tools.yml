@@ -47,10 +47,10 @@ development:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
           :text: "Edit"
         :view:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
   image_service:
     :cite:
       :method: 'get'
@@ -132,10 +132,10 @@ test:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
           :text: "Edit"
         :view:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
   image_service:
     :cite:
       :method: 'get'
@@ -217,10 +217,10 @@ production:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI"
+          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
           :text: "Edit"
         :view:
-          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer"
+          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
   image_service:
     :cite:
       :method: 'get'
