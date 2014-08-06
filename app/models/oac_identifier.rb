@@ -278,6 +278,7 @@ class OACIdentifier < Identifier
   # each annotation in the oac.xml file 
   def preview parameters = {}, xsl = nil
     parameters[:tool_url] =Tools::Manager.link_to('oa_editor',:perseids,:view,self)[:href] 
+    parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -289,6 +290,7 @@ class OACIdentifier < Identifier
   # outputs the sentence list with sentences linked to editor
   def edit parameters = {}, xsl = nil
     parameters[:tool_url] = Tools::Manager.link_to('oa_editor',:perseids,:edit,self)[:href]
+    parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
