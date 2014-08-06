@@ -2,7 +2,7 @@
 <aligned-text xmlns="http://alpheios.net/namespaces/aligned-text">
     <language lnum="L1" xml:lang="lat"/>
     <language lnum="L2" xml:lang="lat"/>
-    <sentence id="1" document_id="cite/perseus/testcoll.1.1">
+    <sentence id="1" document_id="cite/perseus/align.1.1">
         <wds lnum="L1">
             <comment class="uri">http://test1.org</comment>
             <w n="1-1">

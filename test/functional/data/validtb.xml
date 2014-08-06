@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <Annotation xmlns="http://www.w3.org/ns/oa#">
-      <memberOf xmlns="http://purl.org/dc/dcam/" rdf:resource="urn:cite:perseus:testcoll"  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+      <memberOf xmlns="http://purl.org/dc/dcam/" rdf:resource="urn:cite:perseus:lattb"  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
       <hasTarget xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:cts:latinLit:tg.work.edition:1.1"/>
       <hasBody xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:uuidd0e1"/>
       <isMotivatedBy xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="oa:linking"/>

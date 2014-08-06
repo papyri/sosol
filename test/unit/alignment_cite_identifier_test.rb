@@ -25,7 +25,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
-      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://test1.org","http://test2.org"])
+      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert_not_nil test
       # ideally we should do an XML comparison
       template = REXML::Document.new(test.content).root
@@ -34,7 +34,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       assert_equal 'lat', REXML::XPath.first(template,"//align:language[@lnum='L2']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['xml:lang']
       assert_equal 'ltr', REXML::XPath.first(template,"//align:language[@lnum='L1']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['dir']
       assert_equal 'ltr', REXML::XPath.first(template,"//align:language[@lnum='L2']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['dir']
-      assert_equal 'cite/perseus/testcoll.1.1', REXML::XPath.first(template,"//align:sentence",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['document_id']
+      assert_equal 'cite/perseus/align.1.1', REXML::XPath.first(template,"//align:sentence",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['document_id']
       assert_equal 12, REXML::XPath.match(template,"//align:sentence/align:wds[@lnum='L1']/align:w",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).length
       assert_equal 12, REXML::XPath.match(template,"//align:sentence/align:wds[@lnum='L2']/align:w",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).length
       assert_equal 'http://test1.org', REXML::XPath.first(template,"//align:sentence/align:wds[@lnum='L1']/align:comment[@class='uri']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).text
@@ -46,7 +46,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
-      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://test1.org","http://test2.org"])
+      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert test.is_match?(["http://test1.org","http://test2.org"])
 
     end
@@ -55,7 +55,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
-      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://test1.org","http://test2.org"])
+      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert ! test.is_match?(["http://test1.org","http://test3.org"])
 
     end
@@ -64,7 +64,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
       AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
-      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://test1.org/urn:cts:xxx","http://test2.org/urn:cts:yyy"])
+      test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org/urn:cts:xxx","http://test2.org/urn:cts:yyy"])
       assert_equal "Alignment of urn:cts:xxx and urn:cts:yyy", test.title
 
     end

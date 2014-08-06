@@ -24,7 +24,7 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
     should "create from template in repo" do      
       target_cite_urn =  CTS::CTSLib.urnObj("urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4")
       test_path = "CITE_TREEBANK_XML/template/data.perseus.org/citations/latinLit/phi0631/phi002/phi0631.phi002.perseus-lat1.1-4.tb.xml"
-      test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll","http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4") 
+      test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:lattb","http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4") 
       template_path = test.path_for_target("template","http://data.perseus.org/citations/",target_cite_urn)
       assert_equal template_path, test_path
       assert_not_nil test.xml_content
@@ -32,7 +32,7 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
       template_xml = REXML::Document.new(test.xml_content)
       assert_not_nil REXML::XPath.first(template_xml,"/treebank")
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/annotator")
-      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text, "http://data.perseus.org/users/1"
+      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text, "http://data.perseus.org/users/Creator2"
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/date")
       
 
