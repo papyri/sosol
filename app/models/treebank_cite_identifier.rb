@@ -423,7 +423,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # outputs the sentence list
   def preview parameters = {}, xsl = nil
     tool = self.get_editor_agent()
-    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,self)
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,[self])
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
@@ -440,7 +440,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # outputs the sentence list with sentences linked to editor
   def edit parameters = {}, xsl = nil
     tool = self.get_editor_agent()
-    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,self)
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,[self])
     parameters[:s] ||= 1
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
