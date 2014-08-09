@@ -108,44 +108,41 @@ class TreebankCiteIdentifier < CiteIdentifier
 
     if (! a_value.nil? && a_value.length == 1) 
       init_value = a_value[0].to_s
-      begin
+      if (init_value =~ /urn:cts:/)
         urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
-        urn_obj = CTS::CTSLib.urnObj(urn_value)
-        unless (urn_obj.nil?)
-          base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
-          template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
-          template = self.publication.repository.get_file_from_branch(template_path, 'master') 
-        end
-      rescue Exception => e
-        # if we get an exception it might be an invalid urn or it might be something that
-        # isn't a urn - if it's a uri we try to retrieve the content 
-        if (a_value =~ /^https?:/)
-          begin
-              svc_params =
-                { :text_uri => a_value, 
-                  :template_format => 'Perseus',
-                  :mime_type => 'text/xml', # TODO - mime_type and lang should be auto-detected by svc
-                  :lang => 'grc', 
-                  :wait => 'true' # TODO we need to support async
-                }
-              response = Services::Manager.send_request(self.publication,'annotation/template', svc_params)
-              template = OacHelper.get_body_xml(response)
-              # TODO support call to Morphology Service ?
-          rescue
-            raise "Invalid treebank content at #{a_value}"
+        begin
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+          unless (urn_obj.nil?)
+            base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
+            template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
+            template = self.publication.repository.get_file_from_branch(template_path, 'master') 
           end
-          # not a cts urn, just assume we have to create a new template
-          raise "Not a URN"
-        else 
-          # otherwise raise an error
-          raise e
+        rescue Exception => e
+            raise "Invalid URN: #{e}" 
         end
+      elsif (init_value =~ /^https?:/)
+        begin
+          rurl = URI.parse(init_value)
+          response = Net::HTTP.start(rurl.host, rurl.port) do |http|
+            http.send_request('GET', rurl.request_uri)
+          end # end Net::HTTP.start
+          if (response.code == '200')
+            if (is_valid_xml?(response.body))
+                template = response.body
+            else 
+                raise "Supplied URI does not return a valid treebank file"
+            end
+          else
+            raise "Request for template failed #{response.code} #{response.msg} #{response.body}"
+          end # end test on response code
+        rescue
+          raise "Invalid treebank content at #{init_value}"
+        end
+      else 
+        # otherwise raise an error
+        raise e
       end
     end
-    if (template.nil?)
-      raise "Unable to create template for #{a_value.inspect}"    
-    end
-
     template_init = init_version_content(template)
     self.set_xml_content(template_init, :comment => 'Initializing Content')
   end
@@ -349,8 +346,11 @@ class TreebankCiteIdentifier < CiteIdentifier
    # for a treebank annotation, the match will be on the target urns
     a_value.each do | uri |
       begin
-        urn_value = uri.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
-        urn_obj = CTS::CTSLib.urnObj(urn_value)
+        urn_match = uri.match(/^(urn:cts:.*)$/)
+        if (urn_match) 
+          urn_value = urn_match.captures[0]
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+        end 
       rescue Exception => e
         # if we get an exception it might be an invalid urn or it might be something that
         # isn't a urn
@@ -460,5 +460,59 @@ class TreebankCiteIdentifier < CiteIdentifier
     # TODO update uri 
     self.set_xml_content(updated, :comment => 'Update uris to reflect new identifier')
   end
-  
+
+  # find files matching this one metting the supplied conditions
+  # @conditions matching params
+  def matching_files(a_conditions)
+     review_files = []
+     check_targets = self.targets
+     Rails.logger.info("checking targets #{check_targets.inspect}")
+     pub_files = Publication.find(
+       :all, 
+       :conditions => a_conditions).collect { |p| 
+         p.identifiers.select{|i| 
+             i.class == TreebankCiteIdentifier &&
+             i.is_match?(check_targets)
+         }
+     }
+     pub_files.each do |f|
+         review_files.concat(f)
+     end
+     review_files
+  end
+
+  def targets
+    targets = []
+    t = REXML::Document.new(self.xml_content).root
+    REXML::XPath.each(t,"//sentence") do | s |
+      document_id = s.attributes['document_id']
+      subdoc = s.attributes['subdoc'] 
+      if (! document_id.nil?)
+        full_uri = document_id
+        # we only know how to make subdocs part of the uri 
+        # if we are dealing with cts urns
+        if (document_id =~ /urn:cts:/ && ! subdoc.nil? && subdoc != '' )
+          urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+            passage = urn_obj.getPassage(100)
+          rescue
+          end
+          unless urn_obj.nil?
+            if (passage.nil?)
+              full_uri = "#{full_uri}:#{subdoc}"
+            else
+              # if we have a passage in the document_id then the subdoc
+              # is probably a lower level citation
+              # TODO probably also should check to be sure the subdoc isn't
+              # a subref only
+              full_uri = "#{full_uri}.#{subdoc}"
+            end
+          end
+        end # end test for cts and subdoc
+        targets << full_uri
+      end # end test for document_id
+    end
+    targets.uniq!
+  end
 end
