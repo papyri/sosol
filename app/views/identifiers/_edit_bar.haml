@@ -82,11 +82,9 @@
               %li{ :class => %w{edit commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => %w{editxml}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit XML', polymorphic_path([:editxml,@identifier.publication, @identifier])
               %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
-              - compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:export,[@identifier])
-              -if !compare.nil? && @identifier[:matching_files]
-                -@identifier[:matching_files].each do |f|
-                  %li{ :class => ''}
-                    =link_to compare[:text], compare[:href].sub!(/COMPARE_TO/,f.id.to_s), html_options = {'target' => compare[:target]} 
+              -if @identifier[:compare]
+                %li{ :class => ''}
+                  = link_to @identifier[:compare][:text], @identifier[:compare][:href], html_options = {'target' => @identifier[:compare][:target]} 
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)

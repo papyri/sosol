@@ -345,6 +345,10 @@ class TreebankCiteIdentifier < CiteIdentifier
     has_any_targets = false
    # for a treebank annotation, the match will be on the target urns
     a_value.each do | uri |
+      if has_any_targets
+         # one match is enough
+         break
+      end
       begin
         urn_match = uri.match(/^(urn:cts:.*)$/)
         if (urn_match) 
@@ -386,7 +390,6 @@ class TreebankCiteIdentifier < CiteIdentifier
             passage.split(/-/).each do | p |
               REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
                 unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
-                  Rails.logger.info("match on #{work} and #{p} in #{self.id}")
                   has_any_targets = true
                   break
                 end
@@ -464,21 +467,22 @@ class TreebankCiteIdentifier < CiteIdentifier
   # find files matching this one metting the supplied conditions
   # @conditions matching params
   def matching_files(a_conditions)
-     review_files = []
-     check_targets = self.targets
-     Rails.logger.info("checking targets #{check_targets.inspect}")
-     pub_files = Publication.find(
-       :all, 
-       :conditions => a_conditions).collect { |p| 
-         p.identifiers.select{|i| 
-             i.class == TreebankCiteIdentifier &&
-             i.is_match?(check_targets)
-         }
-     }
-     pub_files.each do |f|
-         review_files.concat(f)
-     end
-     review_files
+    review_files = []
+    check_targets = self.targets
+    if (check_targets) 
+      pub_files = Publication.find(
+        :all, 
+        :conditions => a_conditions).collect { |p| 
+          p.identifiers.select{|i| 
+              i.class == TreebankCiteIdentifier &&
+              i.is_match?(check_targets)
+          }
+      }
+      pub_files.each do |f|
+        review_files.concat(f)
+      end
+    end
+    review_files
   end
 
   def targets

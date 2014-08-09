@@ -42,6 +42,7 @@ module Tools
           end
           link[:target] = config[:actions][a_action][:target] || config[:target]
           link[:text] = config[:actions][a_action][:text] || config[:text]
+          link[:replace_param] = config[:actions][a_action][:replace_param]
         end 
         return link
       end

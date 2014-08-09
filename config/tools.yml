@@ -99,12 +99,16 @@ development:
       :text: 'Compare'
       :target: 'perseids-llt-review'
       :actions:
-        :export:
-          :href: 'http://74.70.97.104/treebank/diff/html?gold=COMPARE_TO'
+        :review:
+          :href: 'http://74.70.97.104/treebank/diff/html?'
           :id_param: 'reviewable'
+          :replace_param: 'gold'
           :text: 'Compare'
-      
-
+        :gold:
+          :href: 'http://74.70.97.104/treebank/diff/html?'
+          :id_param: 'gold'
+          :replace_param: 'reviewable'
+          :text: 'Compare'
     
 test:
   treebank_editor:

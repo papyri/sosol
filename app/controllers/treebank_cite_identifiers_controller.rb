@@ -14,11 +14,13 @@ class TreebankCiteIdentifiersController < IdentifiersController
   def edit
     find_identifier
     @identifier[:list] = @identifier.edit(parameters = params)
+    @identifier[:compare] = compare_link
   end
   
    def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
+    @identifier[:compare] = compare_link
     @is_editor_view = true
     render :template => 'treebank_cite_identifiers/editxml'
   end
@@ -26,6 +28,12 @@ class TreebankCiteIdentifiersController < IdentifiersController
   def preview
     find_identifier
     @identifier[:html_preview] = @identifier.preview(parameters = params)
+  end
+
+  def select_review_file
+     find_identifier
+     @identifier_type = 'TreebankCite'
+     @user_files = @identifier.matching_by_user(@current_user)
   end
     
   
@@ -42,4 +50,26 @@ class TreebankCiteIdentifiersController < IdentifiersController
      def find_publication
       @publication = Publication.find(params[:publication_id].to_s)
     end  
+
+  def compare_link
+    if @identifier.publication.origin.owner_id != @current_user.id
+      compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:review,[@identifier])
+      if (compare) 
+        matching_files =
+          @identifier.matching_files(["owner_id = #{@current_user.id}"])
+      end
+    elsif @current_user.boards 
+      compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:gold,[@identifier])
+      if (compare) 
+        matching_files = 
+          @identifier.matching_files({:owner_type => 'Board', :status => 'voting', :owner_id => @current_user.boards.collect { |b| b.id }})
+      end
+    end
+    if (compare && matching_files && matching_files.length > 0)
+      matching_files.each do |f|
+        compare[:href] += "&#{compare[:replace_param]}=#{f.id.to_s}"
+      end
+      compare
+    end
+  end
 end
