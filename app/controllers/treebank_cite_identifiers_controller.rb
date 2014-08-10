@@ -30,13 +30,6 @@ class TreebankCiteIdentifiersController < IdentifiersController
     @identifier[:html_preview] = @identifier.preview(parameters = params)
   end
 
-  def select_review_file
-     find_identifier
-     @identifier_type = 'TreebankCite'
-     @user_files = @identifier.matching_by_user(@current_user)
-  end
-    
-  
   protected
     def find_identifier
       @identifier = TreebankCiteIdentifier.find(params[:id].to_s)
