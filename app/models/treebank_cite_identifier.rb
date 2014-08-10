@@ -1,3 +1,4 @@
+require 'nokogiri'
 class TreebankCiteIdentifier < CiteIdentifier   
   include OacHelper
 
@@ -29,21 +30,21 @@ class TreebankCiteIdentifier < CiteIdentifier
   def titleize
     title = self.name
     # TODO should say Treebank on Target URI
-    t = REXML::Document.new(self.xml_content).root
-    f = REXML::XPath.first(t,"sentence")
-    l = REXML::XPath.first(t,"sentence[last()]")
+    s = _xpath("sentence")
+    f = s.first()
+    l = s.last()
     if (f)
       urn = f.attributes['document_id']
-      if (urn != '')
+      if (urn)
         title = "Treebank of #{urn}"
       end
       from = f.attributes['subdoc']
-      if (from != '')
+      if (from.text != '')
         title = title + ":#{from}"  
       end
       if (l)
         to = l.attributes['subdoc']
-        if (to != '' && from != to)
+        if (to.text != '' && from.text != to.text)
           title = title + "-#{to}"
         end
       end
@@ -191,38 +192,46 @@ class TreebankCiteIdentifier < CiteIdentifier
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "treebank-desc-#{self.format}.xml.erb")
     template = ERB.new(File.new(template_path).read, nil, '-')
-    
-    format = self.format
-    lang = self.language
-    size = self.size
-    direction = self.direction
+    root = _parseroot
+    format = self.format(root)
+    lang = self.language(root)
+    size = self.size(root)
+    direction = self.direction(root)
     return template.result(binding)
   end
   
   # get the format for the treebank file
-  def format
-    t = REXML::Document.new(self.xml_content)
-    REXML::XPath.first(t,"/treebank/@format").to_s
+  def format(t = nil)
+    if (t.nil?)
+      t = _parseroot
+    end
+    t.attributes['format'].text
   end
   
   
   # get the language for the treebank file
-  def language
-    t = REXML::Document.new(self.xml_content)
-    REXML::XPath.first(t,"/treebank/@xml:lang").to_s
+  def language(t = nil)
+    if (t.nil?)
+      t = _parseroot
+    end
+    t.attributes['lang'].text
   end
   
   # get the number of sentences in the treebank file
-  def size
-    t = REXML::Document.new(self.xml_content)
-    REXML::XPath.match(t,"/treebank/sentence").size.to_s
+  def size(t = nil)
+    if (t.nil?)
+      t = _parseroot
+    end
+    _xpath("sentence",{},t).length.to_s
   end
   
    # get the direction of text in the treebank file
-  def direction
-    t = REXML::Document.new(self.xml_content)
-    d = REXML::XPath.first(t,"/treebank/@direction").to_s
-    return d == '' ? 'ltr' : d
+  def direction(t = nil)
+    if (t.nil?)
+      t = _parseroot
+    end
+    d = t.attributes['direction']
+    return d == '' ? 'ltr' : d.text
   end
   
   # api_get responds to a call from the data management api controller
@@ -237,39 +246,42 @@ class TreebankCiteIdentifier < CiteIdentifier
       return sentence(qmatch[1])
     end
   end
-  
+
   def self.api_parse_post_for_identifier(a_post)
-    oacxml = REXML::Document.new(a_post).root
-    urn = REXML::XPath.first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
+    oacxml = _parsepost(a_post)
+    urn = oacxml.xpath('//dcam:memberOf',{"dcam" => NS_DCAM}).first()
     if (urn)
-      return urn.attributes['rdf:resource']
-    else
-      raise "Unspecified Collection"
+      urn = urn.attributes['resource'].text
     end
   end
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)
-    urn = self.api_parse_post_for_identifier(a_body)
+    oacxml = _parsepost(a_body)
+    urn = oacxml.xpath('//dcam:memberOf',{"dcam" => NS_DCAM}).first()
+    if (urn)
+      urn = urn.attributes['resource'].text
+    else
+      raise "Unspecified Collection"
+    end
     temp_id = self.new(:name => self.next_object_identifier(urn))
     temp_id.publication = a_publication 
     if (! temp_id.collection_exists?)
       raise "Unregistered CITE Collection for #{urn}"
     end
     temp_id.save!
-    oacxml = REXML::Document.new(a_body).root
-    treebank = REXML::XPath.first(oacxml,'//tb:treebank',{"tb" => NS_TREEBANK})
-    if (!treebank)
+    treebank = oacxml.xpath('//tb:treebank',{"tb" => NS_TREEBANK})
+    if (treebank.length != 1)
       # try without the namespace
       # this is actually all that's currently supported - eventually we want to 
       # require a namespace but that requires a new version of the schema
-      treebank = REXML::XPath.first(oacxml,'//treebank')
+      treebank = oacxml.xpath('//treebank')
     end 
-    formatter = PrettySsime.new
-    formatter.compact = true
-    formatter.width = 2**32
-    content = ''
-    formatter.write treebank, content
-    temp_id.set_content(content, :comment => a_comment)
+    if (treebank.length != 1)
+       raise "Invalid treebank file"
+    end
+    content = treebank[0].to_xml(:indent => 2)
+    # use set_xml_content to prevent an invalid file from being initialized
+    temp_id.set_xml_content(content, :comment => a_comment)
     template_init = temp_id.init_version_content(content)
     temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
     return temp_id
@@ -287,8 +299,8 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
  
   def update_document(a_body,a_comment) 
-    xml = REXML::Document.new(a_body).root
-    updated = toXmlString xml
+    xml = _parseroot(a_body)
+    updated = xml.to_xml(:indent => 2)
     self.set_xml_content(updated, :comment => a_comment)
     return updated
   end
@@ -487,10 +499,9 @@ class TreebankCiteIdentifier < CiteIdentifier
 
   def targets
     targets = []
-    t = REXML::Document.new(self.xml_content).root
-    REXML::XPath.each(t,"//sentence") do | s |
-      document_id = s.attributes['document_id']
-      subdoc = s.attributes['subdoc'] 
+    self._xpath("//sentence").each do |s|
+      document_id = s.attributes['document_id'].text
+      subdoc = s.attributes['subdoc'] .text
       if (! document_id.nil?)
         full_uri = document_id
         # we only know how to make subdocs part of the uri 
@@ -519,4 +530,28 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     targets.uniq!
   end
+
+  def self._parsepost(postdata)
+    Nokogiri::XML::Document.parse(postdata){ |config|
+      config.nonet.noblanks
+    }.root
+  end
+
+  def _parseroot(safe = true)
+    Nokogiri::XML::Document.parse(self.xml_content){ |config|
+        if (safe)
+          config.nonet.noblanks
+        else
+          config.noblanks
+        end
+    }.root
+  end
+
+  def _xpath(xpath="", ns={}, doc=nil)
+    if (doc.nil?)
+      doc = _parseroot
+    end
+    doc.xpath(xpath,ns)
+  end
+
 end

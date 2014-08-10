@@ -45,24 +45,36 @@ class TreebankCiteIdentifiersController < IdentifiersController
     end  
 
   def compare_link
+    matching_files = {}
     if @identifier.publication.origin.owner_id != @current_user.id
       compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:review,[@identifier])
       if (compare) 
-        matching_files =
+        matching_files['my'] =
           @identifier.matching_files(["owner_id = #{@current_user.id}"])
       end
     elsif @current_user.boards 
       compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:gold,[@identifier])
       if (compare) 
-        matching_files = 
-          @identifier.matching_files({:owner_type => 'Board', :status => 'voting', :owner_id => @current_user.boards.collect { |b| b.id }})
+        @current_user.boards.each do |b|
+          matching_files[b.friendly_name] = 
+            @identifier.matching_files(
+              {:owner_type => 'Board', :status => 'voting', :owner_id => b.id })
+        end
       end
     end
-    if (compare && matching_files && matching_files.length > 0)
-      matching_files.each do |f|
-        compare[:href] += "&#{compare[:replace_param]}=#{f.id.to_s}"
+    compare_sets = []
+    if (compare && matching_files.keys.length > 0)
+      matching_files.keys.each do |s|
+        if matching_files[s].length > 0
+          this_set = compare
+          this_set[:title] = "#{s} files"
+          matching_files[s].each do |f|
+            this_set[:href] += "&#{this_set[:replace_param]}=#{f.id.to_s}"
+          end
+          compare_sets << this_set
+        end
       end
-      compare
+      compare_sets
     end
   end
 end
