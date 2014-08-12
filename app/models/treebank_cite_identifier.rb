@@ -260,11 +260,11 @@ class TreebankCiteIdentifier < CiteIdentifier
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)
     oacxml = XmlHelper::parseroot(a_body)
-    urn = XmlHelper::first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
-    if (urn)
-      urn = XmlHelper::attribute_local_text(urn,'resource')
+    urnelem = XmlHelper::first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
+    if (urnelem)
+      urn = XmlHelper::attribute_local_text(urnelem,'resource')
     else
-      raise "Unspecified Collection"
+      raise "Unspecified Collection for #{urnelem}"
     end
     temp_id = self.new(:name => self.next_object_identifier(urn))
     temp_id.publication = a_publication 

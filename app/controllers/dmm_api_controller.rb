@@ -60,6 +60,10 @@ class DmmApiController < ApplicationController
       new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
     rescue Exception => e
       Rails.logger.error(e.backtrace)
+      unless(params[:publication_id])
+        #cleanup if we created a publication
+        @publication.destroy
+      end
       render :xml => "<error>#{e}</error>", :status => 500
       return   
     end
