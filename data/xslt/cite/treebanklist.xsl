@@ -14,13 +14,13 @@
     <xsl:param name="tool_url" select="'http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&amp;s=SENT&amp;numSentences=MAX'"/>
     <xsl:variable name="doclang">
       <xsl:choose>
-        <xsl:when test="//treebank[@xml:lang]"><xsl:value-of select="//treebank[@xml:lang]"/></xsl:when>
+        <xsl:when test="//treebank[@xml:lang]"><xsl:value-of select="//treebank/@xml:lang"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="$lang"/></xsl:otherwise>
       </xsl:choose> 
     </xsl:variable>
     <xsl:variable name="docfmt">
       <xsl:choose>
-        <xsl:when test="//treebank[@format]"><xsl:value-of select="//treebank[@format]"/></xsl:when>
+        <xsl:when test="//treebank[@format]"><xsl:value-of select="//treebank/@format"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="'aldt'"/></xsl:otherwise>
       </xsl:choose> 
     </xsl:variable>
