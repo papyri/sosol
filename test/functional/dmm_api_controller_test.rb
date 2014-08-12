@@ -50,7 +50,7 @@ class DmmApiControllerTest < ActionController::TestCase
   end
   
   
-   def test_should_fail_create_duplicate_identifier
+   def test_should_fail_create_duplicate_identifier_using_init
     @request.env['RAW_POST_DATA'] = @valid_tb
     post :api_item_create, :identifier_type => 'TreebankCite'
     assert_match(/<item>..*?<\/item>/,@response.body) 
@@ -59,6 +59,16 @@ class DmmApiControllerTest < ActionController::TestCase
     assert_match(/<error>Conflicting identifier/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size
   end
+
+   def test_should_fail_create_duplicate_identifier_using_post
+    @request.env['RAW_POST_DATA'] = @valid_tb
+    post :api_item_create, :identifier_type => 'TreebankCite'
+    assert_equal 1, assigns(:publication).identifiers.size 
+    post :api_item_create, :identifier_type => 'TreebankCite'
+    assert_match(/<error>Conflicting identifier/,@response.body) 
+    assert_equal 1, assigns(:publication).identifiers.size
+  end
+  
   
   def test_should_create_treebank_identifier_in_existing_publication
     @publication = Factory(:publication, :owner => @creator, :creator => @creator, :status => "new")

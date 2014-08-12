@@ -100,14 +100,14 @@ development:
       :target: 'perseids-llt-review'
       :actions:
         :review:
-          :href: 'http://74.70.97.104/treebank/diff/html?'
-          :id_param: 'reviewable'
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'reviewable[]'
           :replace_param: 'gold'
           :text: 'Compare'
         :gold:
-          :href: 'http://74.70.97.104/treebank/diff/html?'
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
-          :replace_param: 'reviewable'
+          :replace_param: 'reviewable[]'
           :text: 'Compare'
     
 test:
@@ -205,6 +205,23 @@ test:
         :import:
           :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
           :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
+    
     
 production:
   treebank_editor:
@@ -300,3 +317,20 @@ production:
         :import:
           :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
           :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
+    

@@ -42,6 +42,11 @@ module XmlHelper
     doc.xpath(xpath,nsmap).first()
   end
 
+  # @param [String] attribute local name
+  def self.attribute_local_text(elem,att)
+    elem.attributes[att].value()
+  end
+
   def self.delete_self(elem)
     elem.remove()
   end

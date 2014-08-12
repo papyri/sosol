@@ -20,8 +20,12 @@ class DmmApiController < ApplicationController
       end
       identifier_class = identifier_type
       tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,params[:init_value])
-      # TODO errors should include links to existing publications
+      if (params[:init_value] && params[:init_value].length > 0)
+         check_match = params[:init_value]
+      else
+         check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
+      end
+      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')
         render :xml => "<error>Multiple conflicting identifiers( #{list})</error>", :status => 500

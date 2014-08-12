@@ -31,23 +31,22 @@ class TreebankCiteIdentifier < CiteIdentifier
     title = self.name
     # TODO should say Treebank on Target URI
     begin
-      s = _xpath("sentence")
-      f = s.first()
-      l = s.last()
+      parsed = XmlHelper::parseattributes(self.xml_content,
+      {"sentence" => ['document_id','subdoc']})
+      f = parsed['sentence'].first()
+      l = parsed['sentence'].last()
       if (f)
-        urn = f.attributes['document_id']
-        if (urn)
+        urn = f['document_id']
+        unless (urn.nil?)
           title = "Treebank of #{urn}"
         end
-        from = f.attributes['subdoc']
-        if (from.text != '')
+        from = f['subdoc']
+        unless (from.nil?)
           title = title + ":#{from}"  
         end
-        if (l)
-          to = l.attributes['subdoc']
-          if (to.text != '' && from.text != to.text)
-            title = title + "-#{to}"
-          end
+        to = l['subdoc']
+        unless (to.nil? || from == to)
+          title = title + "-#{to}"
         end
       end
     rescue Exception => e
@@ -249,18 +248,21 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
 
   def self.api_parse_post_for_identifier(a_post)
-    oacxml = XmlHelper::parseroot(a_post)
-    urn = oacxml.first('//dcam:memberOf',{"dcam" => NS_DCAM})
-    if (urn)
-      urn = urn.attributes['resource'].text
-    end
+    dcam = XmlHelper::parseattributes(a_post, {
+      "#{NS_DCAM} memberOf" => ["#{NS_RDF} resource"]})
+    dcam["#{NS_DCAM} memberOf"][0]["#{NS_RDF} resource"] 
+  end
+  
+  # try to parse an initialization value from posted data
+  def self.api_parse_post_for_init(a_post)
+    targets(a_post)
   end
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)
     oacxml = XmlHelper::parseroot(a_body)
-    urn = oacxml.first('//dcam:memberOf',{"dcam" => NS_DCAM})
+    urn = XmlHelper::first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
     if (urn)
-      urn = urn.attributes['resource'].text
+      urn = XmlHelper::attribute_local_text(urn,'resource')
     else
       raise "Unspecified Collection"
     end
@@ -270,15 +272,9 @@ class TreebankCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{urn}"
     end
     temp_id.save!
-    treebank = oacxml.first('//tb:treebank',{"tb" => NS_TREEBANK})
+    treebank = XmlHelper::first(oacxml,'//treebank')
     if (treebank.nil?)
-      # try without the namespace
-      # this is actually all that's currently supported - eventually we want to 
-      # require a namespace but that requires a new version of the schema
-      treebank = oacxml.first('//treebank')
-    end 
-    if (treebank.nil?)
-       raise "Invalid treebank file"
+       raise "Invalid treebank file #{XmlHelper::to_s(oacxml)}"
     end
     content = XmlHelper::to_s(treebank)
     # use set_xml_content to prevent an invalid file from being initialized
@@ -321,14 +317,12 @@ class TreebankCiteIdentifier < CiteIdentifier
         new_words = XmlHelper::all(s,"tb:word",{'tb' => NS_TREEBANK})
       end
       new_words.each { |w|
-         Rails.logger.info("Adding #{w}")
          XmlHelper.add_child_strip_ns(old,w.clone) 
       }
     rescue Exception => e
       raise e
     end
     updated = XmlHelper::to_s(t)
-    Rails.logger.info("Updated to #{updated}")
     self.set_xml_content(updated, :comment => a_comment)
     return updated
   end
@@ -362,7 +356,8 @@ class TreebankCiteIdentifier < CiteIdentifier
   def is_match?(a_value) 
     has_any_targets = false
     unless (self.xml_content)
-       return has_any_targets
+      Rails.logger.info("No xml content found in #{self.name}")
+      return has_any_targets
     end
     my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
     # we have to just return false if we don't have any targets defined
@@ -376,71 +371,75 @@ class TreebankCiteIdentifier < CiteIdentifier
          # one match is enough
          break
       end
-      begin
-        urn_match = uri.match(/^(urn:cts:.*)$/)
-        if (urn_match) 
-          urn_value = urn_match.captures[0]
+      urn_match = uri.match(/^.*?(urn:cts:.*)$/)
+      if (urn_match.nil?) 
+        # not a cts urn, match will just require match on the document_id 
+        # only because we don't know how to parse the subdoc from the uri
+        match = my_targets['sentence'].select { |s| 
+          s['document_id']  == uri 
+        }
+        if (match.length > 0)
+          has_any_targets = true
+          break
+        end
+      else
+        urn_value = urn_match.captures[0]
+        begin
           urn_obj = CTS::CTSLib.urnObj(urn_value)
-        end 
-      rescue Exception => e
-        # if we get an exception it might be an invalid urn or it might be something that
-        # isn't a urn
-        if (! uri =~ /urn:cts:/)
-          # not a cts urn, just assume we have to create a new template
-          Rails.logger.warn("Creating treebank file without a URN for #{uri}")
-          return false
-        else 
-          # otherwise raise an error
+        rescue Exception => e
+          # if we get an exception it's invalid urn
+          # quietly log an error about the invalid urn
+          # and fall through to default for no matches
+          Rails.logger.error("Fail to parse urn from #{uri}")
           Rails.logger.error(e.backtrace)
-          raise e
         end
-      end
-
-      # TODO need a way to test target uris which aren't CTS urns
-      begin
         unless (urn_obj.nil?)
-          passage = nil
           begin
-            passage = urn_obj.getPassage(100)
-          rescue
-          end
-          # if we don't have a passage the match should be on the work only
-          if (passage.nil?)
-            matching_work = my_targets['sentence'].select { |s| 
-              s['document_id'] == urn_value
-            }
-            if (matching_work.lenth > 0) 
-              has_any_targets=true
-              break
+            passage = nil
+            begin
+              passage = urn_obj.getPassage(100)
+            rescue
+              Rails.logger.error("unable to parse passage from #{urn_value}")
             end
-          elsif (passage)
-            work = urn_obj.getUrnWithoutPassage()
-            passage.split(/-/).each do | p |
-              match = my_targets['sentence'].select { |s| 
-                s['document_id']  == work && s['subdoc'].match(/^#{p}(\.|$)/)
+            # if we don't have a passage the match should be on the work only
+            if (passage.nil?)
+              matching_work = my_targets['sentence'].select { |s| 
+                s['document_id'] == urn_value
               }
-              if (match.length > 0)
-                has_any_targets = true
-               break
+              if (matching_work.length > 0) 
+                has_any_targets=true
+                break
               end
+            elsif (passage)
+              work = urn_obj.getUrnWithoutPassage()
+              passage.split(/-/).each do | p |
+                match = my_targets['sentence'].select { |s| 
+                  s['document_id']  == work && s['subdoc'].match(/^#{p}(\.|$)/)
+               }
+               if (match.length > 0)
+                 has_any_targets = true
+                 break
+                end
+              end 
+            else
+              # give up for now if we can't parse the cts urn of 
+              # either the document or subdoc
             end 
-          else
-            # give up for now if we can't parse the cts urn of either the document or subdoc
-          end 
-        end
-      rescue Exception => e
-        # if we can't parse the urn we can't test it so just assume it's not a match
-        Rails.logger.error(e.backtrace)
-      end
+          rescue Exception => e
+            # if we can't parse the urn we can't test it 
+            # so just assume it's not a match
+            Rails.logger.error(e.backtrace)
+          end # end transation on passage calculations
+        end # end test on non-null urnObj
+      end # end test on urn string
     end
-    # TODO compare the requested text urn against the text urns in this treebank document
     return has_any_targets
   end
   
   def get_editor_agent
     t = XmlHelper::parseroot(self.xml_content)
     tool = 'alpheios'
-    all_annotators = XmlHelper::all(t, "annotator/uri") do |a_agent| 
+    XmlHelper::all(t, "/treebank/annotator/uri").each do |a_agent| 
       tool_uri = a_agent.text
       agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
       unless (agent.nil?)
@@ -497,7 +496,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @conditions matching params
   def matching_files(a_conditions)
     review_files = []
-    check_targets = self.targets
+    check_targets = self.class::targets(self.xml_content)
     if (check_targets) 
       pub_files = Publication.find(
         :all, 
@@ -514,9 +513,11 @@ class TreebankCiteIdentifier < CiteIdentifier
     review_files
   end
 
-  def targets
-    targets = []
-    parsed = XmlHelper::parseattributes(self.xml_content,
+  # parse the supplied content for annotation targets
+  # @param [String] content should be a valid treebank document
+  def self.targets(content)
+    parsed_targets = []
+    parsed = XmlHelper::parseattributes(content,
       {"sentence" => ['document_id','subdoc']})
     parsed['sentence'].each do |s|
       document_id = s['document_id']
@@ -544,10 +545,10 @@ class TreebankCiteIdentifier < CiteIdentifier
             end
           end
         end # end test for cts and subdoc
-        targets << full_uri
+        parsed_targets << full_uri
       end # end test for document_id
     end
-    targets.uniq!
+    return parsed_targets.uniq
   end
 
 end
