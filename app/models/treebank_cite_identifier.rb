@@ -259,11 +259,8 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)
-    oacxml = XmlHelper::parseroot(a_body)
-    urnelem = XmlHelper::first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
-    if (urnelem)
-      urn = XmlHelper::attribute_local_text(urnelem,'resource')
-    else
+    urn = api_parse_post_for_identifier(a_body) 
+    unless (urn)
       raise "Unspecified Collection for #{urnelem}"
     end
     temp_id = self.new(:name => self.next_object_identifier(urn))
@@ -272,12 +269,14 @@ class TreebankCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{urn}"
     end
     temp_id.save!
-    treebank = XmlHelper::first(oacxml,'//treebank')
-    if (treebank.nil?)
-       raise "Invalid treebank file #{XmlHelper::to_s(oacxml)}"
+    # use set_xml_content to prevent an invalid file from being initialized
+    oacxml = XmlHelper::parseroot(a_body)
+    treebank = XmlHelper::first(oacxml,"//treebank")
+    unless (treebank)
+        Rails.logger.error("unable to parse treebank from post")
+        raise "Unable to parse treebank for post"
     end
     content = XmlHelper::to_s(treebank)
-    # use set_xml_content to prevent an invalid file from being initialized
     temp_id.set_xml_content(content, :comment => a_comment)
     template_init = temp_id.init_version_content(content)
     temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
