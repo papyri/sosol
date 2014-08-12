@@ -30,24 +30,28 @@ class TreebankCiteIdentifier < CiteIdentifier
   def titleize
     title = self.name
     # TODO should say Treebank on Target URI
-    s = _xpath("sentence")
-    f = s.first()
-    l = s.last()
-    if (f)
-      urn = f.attributes['document_id']
-      if (urn)
-        title = "Treebank of #{urn}"
-      end
-      from = f.attributes['subdoc']
-      if (from.text != '')
-        title = title + ":#{from}"  
-      end
-      if (l)
-        to = l.attributes['subdoc']
-        if (to.text != '' && from.text != to.text)
-          title = title + "-#{to}"
+    begin
+      s = _xpath("sentence")
+      f = s.first()
+      l = s.last()
+      if (f)
+        urn = f.attributes['document_id']
+        if (urn)
+          title = "Treebank of #{urn}"
+        end
+        from = f.attributes['subdoc']
+        if (from.text != '')
+          title = title + ":#{from}"  
+        end
+        if (l)
+          to = l.attributes['subdoc']
+          if (to.text != '' && from.text != to.text)
+            title = title + "-#{to}"
+          end
         end
       end
+    rescue Exception => e
+        Rails.logger.error("Error parsing title", e.backtrace)
     end
     return title
   end
@@ -131,16 +135,19 @@ class TreebankCiteIdentifier < CiteIdentifier
             if (is_valid_xml?(response.body))
                 template = response.body
             else 
+                Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
                 raise "Supplied URI does not return a valid treebank file"
             end
           else
             raise "Request for template failed #{response.code} #{response.msg} #{response.body}"
           end # end test on response code
-        rescue
+        rescue Exception => e
+          Rails.logger.error(e.backtrace)
           raise "Invalid treebank content at #{init_value}"
         end
       else 
         # otherwise raise an error
+        Rails.logger.error(e.backtrace)
         raise e
       end
     end
@@ -181,9 +188,9 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @param [String] a_id the sentence id
   # @return [String] the sentence xml 
   def sentence(a_id)
-    t = REXML::Document.new(self.xml_content)
-    s = REXML::XPath.first(t,"/treebank/sentence[@id=#{a_id}]")
-    toXmlString s
+    t = XmlHelper::parseroot(self.xml_content)
+    s = XmlHelper::first(t,"/treebank/sentence[@id=#{a_id}]")
+    XmlHelper::to_s(s)
   end
   
   # get descriptive info for a treebank file
@@ -192,46 +199,40 @@ class TreebankCiteIdentifier < CiteIdentifier
     template_path = File.join(RAILS_ROOT, ['data','templates'],
                               "treebank-desc-#{self.format}.xml.erb")
     template = ERB.new(File.new(template_path).read, nil, '-')
-    root = _parseroot
-    format = self.format(root)
-    lang = self.language(root)
-    size = self.size(root)
-    direction = self.direction(root)
+
+    # we don't use the attribute lookup methods here because they would
+    # each parse the document again
+    root_atts = XmlHelper::parseattributes(self.xml_content, 
+      {'treebank' => ['format','http://www.w3.org/XML/1998/namespace lang','direction'],
+       'sentence' => ['document_id']
+      } );
+    format = root_atts['treebank'][0]['format']
+    lang = root_atts['treebank'][0]['http://www.w3.org/XML/1998/namespace lang']
+    direction = root_atts['treebank'][0]['direction'].nil? ? 'ltr' : root_atts['treebank'][0]['direction']
+    size = root_atts['sentence'].length
     return template.result(binding)
   end
   
   # get the format for the treebank file
-  def format(t = nil)
-    if (t.nil?)
-      t = _parseroot
-    end
-    t.attributes['format'].text
+  def format()
+    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['format']})["treebank"][0]['format']
   end
   
   
   # get the language for the treebank file
-  def language(t = nil)
-    if (t.nil?)
-      t = _parseroot
-    end
-    t.attributes['lang'].text
+  def language()
+    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
   end
   
   # get the number of sentences in the treebank file
-  def size(t = nil)
-    if (t.nil?)
-      t = _parseroot
-    end
-    _xpath("sentence",{},t).length.to_s
+  def size()
+    XmlHelper::parseattributes(self.xml_content,{"sentence"=>['document_id']})
   end
   
    # get the direction of text in the treebank file
   def direction(t = nil)
-    if (t.nil?)
-      t = _parseroot
-    end
-    d = t.attributes['direction']
-    return d == '' ? 'ltr' : d.text
+    d = XmlHelper::parseattributes(self.xml_content,{"treebank"=>['direction']})["treebank"][0]['direction']
+    return d.nil? ? 'ltr' : d
   end
   
   # api_get responds to a call from the data management api controller
@@ -248,16 +249,16 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
 
   def self.api_parse_post_for_identifier(a_post)
-    oacxml = _parsepost(a_post)
-    urn = oacxml.xpath('//dcam:memberOf',{"dcam" => NS_DCAM}).first()
+    oacxml = XmlHelper::parseroot(a_post)
+    urn = oacxml.first('//dcam:memberOf',{"dcam" => NS_DCAM})
     if (urn)
       urn = urn.attributes['resource'].text
     end
   end
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)
-    oacxml = _parsepost(a_body)
-    urn = oacxml.xpath('//dcam:memberOf',{"dcam" => NS_DCAM}).first()
+    oacxml = XmlHelper::parseroot(a_body)
+    urn = oacxml.first('//dcam:memberOf',{"dcam" => NS_DCAM})
     if (urn)
       urn = urn.attributes['resource'].text
     else
@@ -269,17 +270,17 @@ class TreebankCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{urn}"
     end
     temp_id.save!
-    treebank = oacxml.xpath('//tb:treebank',{"tb" => NS_TREEBANK})
-    if (treebank.length != 1)
+    treebank = oacxml.first('//tb:treebank',{"tb" => NS_TREEBANK})
+    if (treebank.nil?)
       # try without the namespace
       # this is actually all that's currently supported - eventually we want to 
       # require a namespace but that requires a new version of the schema
-      treebank = oacxml.xpath('//treebank')
+      treebank = oacxml.first('//treebank')
     end 
-    if (treebank.length != 1)
+    if (treebank.nil?)
        raise "Invalid treebank file"
     end
-    content = treebank[0].to_xml(:indent => 2)
+    content = XmlHelper::to_s(treebank)
     # use set_xml_content to prevent an invalid file from being initialized
     temp_id.set_xml_content(content, :comment => a_comment)
     template_init = temp_id.init_version_content(content)
@@ -299,30 +300,35 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
  
   def update_document(a_body,a_comment) 
-    xml = _parseroot(a_body)
-    updated = xml.to_xml(:indent => 2)
-    self.set_xml_content(updated, :comment => a_comment)
-    return updated
+    self.set_xml_content(a_body, :comment => a_comment)
+    return self.xml_content
   end
 
   def update_sentence(a_id,a_body,a_comment)
     begin
-      s = REXML::Document.new(a_body).root
-      t = REXML::Document.new(self.xml_content)
-      old = REXML::XPath.first(t,"/treebank/sentence[@id=#{a_id}]")
+      s = XmlHelper::parseroot(a_body)
+      t = XmlHelper::parseroot(self.xml_content)
+      old = XmlHelper::first(t,"/treebank/sentence[@id=#{a_id}]")
       if (old.nil?)
         raise "Invalid Sentence Identifier"
       end
-      REXML::XPath.each(old,"word") { |w|
-         old.delete_element(w) 
+      XmlHelper::all(old,"word").each { |w|
+         XmlHelper::delete_self(w)
       }
-      REXML::XPath.each(s,"word") { |w|
-         old.add_element(w.clone) 
+      new_words = XmlHelper::all(s,"word")
+      # try with namespace (Alpheios used it)
+      if (new_words.length == 0)
+        new_words = XmlHelper::all(s,"tb:word",{'tb' => NS_TREEBANK})
+      end
+      new_words.each { |w|
+         Rails.logger.info("Adding #{w}")
+         XmlHelper.add_child_strip_ns(old,w.clone) 
       }
     rescue Exception => e
       raise e
     end
-    updated = toXmlString t
+    updated = XmlHelper::to_s(t)
+    Rails.logger.info("Updated to #{updated}")
     self.set_xml_content(updated, :comment => a_comment)
     return updated
   end
@@ -355,7 +361,16 @@ class TreebankCiteIdentifier < CiteIdentifier
   ## method which checks the cite object for an initialization  value
   def is_match?(a_value) 
     has_any_targets = false
-   # for a treebank annotation, the match will be on the target urns
+    unless (self.xml_content)
+       return has_any_targets
+    end
+    my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
+    # we have to just return false if we don't have any targets defined
+    # in ourself
+    if (my_targets['sentence'].length == 0)
+      return has_any_targets
+    end
+    # for a treebank annotation, the match will be on the target urns
     a_value.each do | uri |
       if has_any_targets
          # one match is enough
@@ -372,10 +387,11 @@ class TreebankCiteIdentifier < CiteIdentifier
         # isn't a urn
         if (! uri =~ /urn:cts:/)
           # not a cts urn, just assume we have to create a new template
-          Rails.logger.info("Creating treebank file without a URN for #{uri}")
+          Rails.logger.warn("Creating treebank file without a URN for #{uri}")
           return false
         else 
           # otherwise raise an error
+          Rails.logger.error(e.backtrace)
           raise e
         end
       end
@@ -383,28 +399,29 @@ class TreebankCiteIdentifier < CiteIdentifier
       # TODO need a way to test target uris which aren't CTS urns
       begin
         unless (urn_obj.nil?)
-          t = REXML::Document.new(self.xml_content).root
           passage = nil
           begin
             passage = urn_obj.getPassage(100)
           rescue
           end
+          # if we don't have a passage the match should be on the work only
           if (passage.nil?)
-            # if we don't have a passage the match should be on the work only
-            work = urn_value;
-            match = REXML::XPath.first(t,"sentence[@document_id='#{work}']")
-            if (match)
+            matching_work = my_targets['sentence'].select { |s| 
+              s['document_id'] == urn_value
+            }
+            if (matching_work.lenth > 0) 
               has_any_targets=true
               break
             end
           elsif (passage)
             work = urn_obj.getUrnWithoutPassage()
             passage.split(/-/).each do | p |
-              REXML::XPath.each(t,"sentence[@document_id='#{work}']") do | s |
-                unless (s.attributes['subdoc'].match(/^#{p}(\.|$)/).nil?)
-                  has_any_targets = true
-                  break
-                end
+              match = my_targets['sentence'].select { |s| 
+                s['document_id']  == work && s['subdoc'].match(/^#{p}(\.|$)/)
+              }
+              if (match.length > 0)
+                has_any_targets = true
+               break
               end
             end 
           else
@@ -413,7 +430,7 @@ class TreebankCiteIdentifier < CiteIdentifier
         end
       rescue Exception => e
         # if we can't parse the urn we can't test it so just assume it's not a match
-        Rails.logger.error(e)
+        Rails.logger.error(e.backtrace)
       end
     end
     # TODO compare the requested text urn against the text urns in this treebank document
@@ -421,9 +438,9 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   def get_editor_agent
-    t = REXML::Document.new(self.xml_content).root
+    t = XmlHelper::parseroot(self.xml_content)
     tool = 'alpheios'
-    all_annotators = REXML::XPath.each(t, "annotator/uri") do |a_agent| 
+    all_annotators = XmlHelper::all(t, "annotator/uri") do |a_agent| 
       tool_uri = a_agent.text
       agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
       unless (agent.nil?)
@@ -499,14 +516,16 @@ class TreebankCiteIdentifier < CiteIdentifier
 
   def targets
     targets = []
-    self._xpath("//sentence").each do |s|
-      document_id = s.attributes['document_id'].text
-      subdoc = s.attributes['subdoc'] .text
+    parsed = XmlHelper::parseattributes(self.xml_content,
+      {"sentence" => ['document_id','subdoc']})
+    parsed['sentence'].each do |s|
+      document_id = s['document_id']
+      subdoc = s['subdoc']
       if (! document_id.nil?)
         full_uri = document_id
         # we only know how to make subdocs part of the uri 
         # if we are dealing with cts urns
-        if (document_id =~ /urn:cts:/ && ! subdoc.nil? && subdoc != '' )
+        if (document_id =~ /urn:cts:/ && ! subdoc.nil?)
           urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
           begin
             urn_obj = CTS::CTSLib.urnObj(urn_value)
@@ -529,29 +548,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       end # end test for document_id
     end
     targets.uniq!
-  end
-
-  def self._parsepost(postdata)
-    Nokogiri::XML::Document.parse(postdata){ |config|
-      config.nonet.noblanks
-    }.root
-  end
-
-  def _parseroot(safe = true)
-    Nokogiri::XML::Document.parse(self.xml_content){ |config|
-        if (safe)
-          config.nonet.noblanks
-        else
-          config.noblanks
-        end
-    }.root
-  end
-
-  def _xpath(xpath="", ns={}, doc=nil)
-    if (doc.nil?)
-      doc = _parseroot
-    end
-    doc.xpath(xpath,ns)
   end
 
 end
