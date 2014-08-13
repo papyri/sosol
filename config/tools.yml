@@ -1,4 +1,11 @@
 development:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search:
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'
@@ -111,6 +118,13 @@ development:
           :text: 'Compare'
     
 test:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search: 
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'
@@ -224,6 +238,13 @@ test:
     
     
 production:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search:
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'

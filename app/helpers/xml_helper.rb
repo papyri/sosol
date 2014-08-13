@@ -1,3 +1,4 @@
+require 'nokogiri'
 module XmlHelper
 
 

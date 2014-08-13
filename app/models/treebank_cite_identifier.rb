@@ -45,19 +45,27 @@ class TreebankCiteIdentifier < CiteIdentifier
       if (f)
         urn = f['document_id']
         unless (urn.nil?)
-          title = "Treebank of #{urn}"
-        end
-        from = f['subdoc']
-        unless (from.nil?)
-          title = title + ":#{from}"  
-        end
-        to = l['subdoc']
-        unless (to.nil? || from == to)
-          title = title + "-#{to}"
-        end
+          urnObj = CTS::CTSLib.urnObj(urn)
+          begin
+            passage = urnObj.getPassage(100)
+          rescue
+            # okay not to have a passage
+          end
+          separator = passage.nil? ? ':' : '.'
+          from = f['subdoc']
+          unless (from.nil?)
+            urn = urn + separator + from 
+            to = l['subdoc']
+            unless (to.nil? || from == to)
+              urn = urn + "-#{to}"
+            end
+          end
+          title = "Treebank of #{CTS::CTSLib.urn_abbr(urn)}"
+        end 
       end
     rescue Exception => e
-        Rails.logger.error("Error parsing title", e.backtrace)
+        Rails.logger.error("Error parsing title")
+        Rails.logger.error(e.backtrace)
     end
     return title
   end

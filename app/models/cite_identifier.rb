@@ -370,7 +370,7 @@ class CiteIdentifier < Identifier
     def self.api_parse_post_for_init(a_post)
       #default is no-op
     end
-    
+
 end
 
 
