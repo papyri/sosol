@@ -29,7 +29,7 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
       template_xml = REXML::Document.new(test.xml_content)
       assert_not_nil REXML::XPath.first(template_xml,"/treebank")
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/annotator")
-      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text, "http://data.perseus.org/users/Creator1"
+      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "http://data.perseus.org/users/Creator1"
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/date")
       
 

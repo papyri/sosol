@@ -10,11 +10,18 @@ class TreebankCiteIdentifier < CiteIdentifier
   NS_DCAM = "http://purl.org/dc/dcam/"
   NS_TREEBANK = "http://nlp.perseus.tufts.edu/syntax/treebank/1.5"
   NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  DOM_PARSER = 'REXML'
 
 
   
   # TODO Validator depends upon treebank format
   XML_VALIDATOR = JRubyXML::PerseusTreebankValidator
+
+  # Get a dom parser for my xml content
+  # @return dom parser
+  def xml_parser
+    XmlHelper::getDomParser(self.xml_content,DOM_PARSER)
+  end
   
   # Overrides Identifier#set_content to make sure content is preprocessed first
   # - *Args*  :
@@ -55,28 +62,21 @@ class TreebankCiteIdentifier < CiteIdentifier
     return title
   end
   
-  def toXmlString xmlObject
-    formatter = PrettySsime.new
-    formatter.compact = true
-    formatter.width = 2**32
-    modified_xml_content = ''
-    formatter.write xmlObject, modified_xml_content
-    modified_xml_content
-  end
-  
   # initialization method for a new version of an existing Annotation Object
   # adds the creator as a top-level annotator and creates/updates the date
   # @param a_content the original content
   # @return the updated content
   def init_version_content(a_content)
-    treebank = REXML::Document.new(a_content).root
-    treebank.delete_element("date")
-    date = REXML::Element.new("date")
-    date.add_text(Time.new.inspect)
-    treebank.insert_before("*[1]",date)
+    parser = XmlHelper::getDomParser(a_content,DOM_PARSER)
+    treebank = parser.parseroot
+    parser.all(treebank,"date").each do |d|
+      parser.delete_child(treebank,d)
+    end
+    date = parser.make_text_elem('date',nil,Time.new.inspect)
+    parser.insert_before(treebank,"*[1]",date)
     creator_uri = make_annotator_uri
     xpath = "annotator/uri"
-    all_annotators = REXML::XPath.match(treebank, xpath)
+    all_annotators = parser.all(treebank, xpath)
     add = true
     all_annotators.each do |ann|
       if  ann == creator_uri
@@ -84,22 +84,18 @@ class TreebankCiteIdentifier < CiteIdentifier
       end
     end
     if (add)
-      annotator = REXML::Element.new("annotator")
-      short = REXML::Element.new("short")
-      short.add_text(self.publication.creator.name)
-      persname = REXML::Element.new("name")
-      persname.add_text(self.publication.creator.human_name)
-      address = REXML::Element.new("address")
-      address.add_text(self.publication.creator.email)
-      uri = REXML::Element.new("uri")
-      uri.add_text(creator_uri)
-      annotator.add_element(short)
-      annotator.add_element(persname)
-      annotator.add_element(address)
-      annotator.add_element(uri)
-      treebank.insert_before("sentence[1]",annotator)
+      annotator = parser.make_elem("annotator")
+      short = parser.make_text_elem("short",nil,self.publication.creator.name)
+      persname = parser.make_text_elem("name",nil,self.publication.creator.human_name)
+      address = parser.make_text_elem("address",nil,self.publication.creator.email)
+      uri = parser.make_text_elem("uri",nil,creator_uri)
+      parser.add_child(annotator,short)
+      parser.add_child(annotator,persname)
+      parser.add_child(annotator,address)
+      parser.add_child(annotator,uri)
+      parser.insert_before(treebank,"sentence[1]",annotator)
     end
-    toXmlString treebank
+    parser.to_s
   end
   
   # Initializes a treebank template
@@ -187,9 +183,10 @@ class TreebankCiteIdentifier < CiteIdentifier
   # @param [String] a_id the sentence id
   # @return [String] the sentence xml 
   def sentence(a_id)
-    t = XmlHelper::parseroot(self.xml_content)
-    s = XmlHelper::first(t,"/treebank/sentence[@id=#{a_id}]")
-    XmlHelper::to_s(s)
+    parser = self.xml_parser
+    t = parser.parseroot
+    s = parser.first(t,"/treebank/sentence[@id=#{a_id}]")
+    parser.to_s(s)
   end
   
   # get descriptive info for a treebank file
@@ -261,7 +258,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def self.api_create(a_publication,a_agent,a_body,a_comment)
     urn = api_parse_post_for_identifier(a_body) 
     unless (urn)
-      raise "Unspecified Collection for #{urnelem}"
+      raise "Unspecified Collection for #{urn}"
     end
     temp_id = self.new(:name => self.next_object_identifier(urn))
     temp_id.publication = a_publication 
@@ -269,14 +266,15 @@ class TreebankCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{urn}"
     end
     temp_id.save!
-    # use set_xml_content to prevent an invalid file from being initialized
-    oacxml = XmlHelper::parseroot(a_body)
-    treebank = XmlHelper::first(oacxml,"//treebank")
+    parser = XmlHelper::getDomParser(a_body,DOM_PARSER)
+    oacxml = parser.parseroot 
+    treebank = parser.first(oacxml,"//treebank")
     unless (treebank)
         Rails.logger.error("unable to parse treebank from post")
         raise "Unable to parse treebank for post"
     end
-    content = XmlHelper::to_s(treebank)
+    content = parser.to_s(treebank)
+    # use set_xml_content to prevent an invalid file from being initialized
     temp_id.set_xml_content(content, :comment => a_comment)
     template_init = temp_id.init_version_content(content)
     temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
@@ -301,27 +299,29 @@ class TreebankCiteIdentifier < CiteIdentifier
 
   def update_sentence(a_id,a_body,a_comment)
     begin
-      s = XmlHelper::parseroot(a_body)
-      t = XmlHelper::parseroot(self.xml_content)
-      old = XmlHelper::first(t,"/treebank/sentence[@id=#{a_id}]")
-      if (old.nil?)
+      s_parser = XmlHelper::getDomParser(a_body,DOM_PARSER)
+      old_parser = self.xml_parser
+      new_sentence = s_parser.parseroot
+      t = old_parser.parseroot
+      old_sentence = old_parser.first(t,"/treebank/sentence[@id=#{a_id}]")
+      if (old_sentence.nil?)
         raise "Invalid Sentence Identifier"
       end
-      XmlHelper::all(old,"word").each { |w|
-         XmlHelper::delete_self(w)
+      old_parser.all(old_sentence,"word").each { |w|
+         s_parser.delete_child(old_sentence,w)
       }
-      new_words = XmlHelper::all(s,"word")
+      new_words = s_parser.all(new_sentence,"word")
       # try with namespace (Alpheios used it)
       if (new_words.length == 0)
-        new_words = XmlHelper::all(s,"tb:word",{'tb' => NS_TREEBANK})
+        new_words = s_parser.all(new_sentence,"tb:word",{'tb' => NS_TREEBANK})
       end
       new_words.each { |w|
-         XmlHelper.add_child_strip_ns(old,w.clone) 
+         old_parser.add_child_strip_ns(old_sentence,w.clone) 
       }
     rescue Exception => e
       raise e
     end
-    updated = XmlHelper::to_s(t)
+    updated = old_parser.to_s
     self.set_xml_content(updated, :comment => a_comment)
     return updated
   end
@@ -436,9 +436,10 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   def get_editor_agent
-    t = XmlHelper::parseroot(self.xml_content)
+    parser = self.xml_parser 
+    t = parser.parseroot
     tool = 'alpheios'
-    XmlHelper::all(t, "/treebank/annotator/uri").each do |a_agent| 
+    parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
       tool_uri = a_agent.text
       agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
       unless (agent.nil?)
