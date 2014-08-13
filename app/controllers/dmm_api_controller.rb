@@ -36,7 +36,8 @@ class DmmApiController < ApplicationController
           expire_publication_cache
           conflicting_publication.archive
         else
-           render :xml => "<error>Conflicting identifier.( #{existing_identifiers.first.name})</error>", :status => 500
+           links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
+           render :xml => "<error xmlns:xlink=\"http://www.w3.org/1999/xlink\">You have conflicting document(s) already being edited at #{links.join(" ")} .</error>", :status => 500
            return
         end
       end # end test of possible conflicts
