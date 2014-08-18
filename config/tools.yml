@@ -1,4 +1,11 @@
 development:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search:
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'
@@ -6,26 +13,32 @@ development:
       :uri: 'http://github.com/alpheios-project/treebank-editor'
       :actions:
         :edit:
-          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: 'Edit in Alpheios'
         :view:
-          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: 'Preview in Alpheios'
         :create:
-          :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=IDENTIFIER"
+          :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?"
           :text: 'via Alpheios'
+          :id_param: 'doc'
     arethusa:
         :text: 'Arethusa'
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
           :edit:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT"
+            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+            :id_param: 'doc'
             :text: "Edit in Arethusa"
           :view:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT&mode=viewer"
+            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+            :id_param: 'doc'
             :text: "Preview in Arethusa"
           :create:
-            :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?doc=IDENTIFIER"
+            :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
+            :id_param: 'doc'
             :text: 'via Arethusa'
   alignment_editor:
     :alpheios:
@@ -33,13 +46,16 @@ development:
       :method: 'get'
       :actions:
         :edit: 
-          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: "Align in Alpheios"
         :view:
-          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: "View in Alpheios"
         :create:
-          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?doc=IDENTIFIER"
+          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?"
+          :id_param: 'doc'
           :text: 'New Text Alignment'
   oa_editor:
     :perseids:
@@ -47,10 +63,12 @@ development:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?&uri=URI&lang=LANG"
+          :id_param: 'doc'
           :text: "Edit"
         :view:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?uri=URI&app=viewer&lang=LANG"
+          :id_param: 'doc'
   image_service:
     :cite:
       :method: 'get'
@@ -82,8 +100,31 @@ development:
         :import:
           :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
           :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
     
 test:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search: 
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'
@@ -91,40 +132,49 @@ test:
       :uri: 'http://github.com/alpheios-project/treebank-editor'
       :actions:
         :edit:
-          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: 'Edit in Alpheios'
         :view:
-          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://localhost/exist/rest/db/app/treebank-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: 'Preview in Alpheios'
         :create:
-          :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?doc=IDENTIFIER"
+          :href: "http://localhost/exist/rest/db/app/treebank-entertext-perseids-test.xhtml?"
+          :id_param: 'doc'
           :text: 'via Alpheios'
     arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT"
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT&mode=viewer"
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?doc=IDENTIFIER"
-            :text: 'via Arethusa'
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :edit:
+          :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+          :id_param: 'doc'
+          :text: "Edit in Arethusa"
+        :view:
+          :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+          :id_param: 'doc'
+          :text: "Preview in Arethusa"
+        :create:
+          :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
+          :id_param: 'doc'
+          :text: 'via Arethusa'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
       :method: 'get'
       :actions:
         :edit: 
-          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: "Align in Alpheios"
         :view:
-          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://localhost/exist/rest/db/app/align-editsentence-perseids-test.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: "View in Alpheios"
         :create:
-          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?doc=IDENTIFIER"
+          :href: "http://localhost/exist/rest/db/app/align-entersentence-ext.xhtml?"
+          :id_param: 'doc'
           :text: 'New Text Alignment'
   oa_editor:
     :perseids:
@@ -132,10 +182,12 @@ test:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?uri=URI&lang=LANG"
+          :id_param: 'doc'
           :text: "Edit"
         :view:
-          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
+          :href: "http://localhost/annotation-editor/perseids-annotate.xhtml?uri=URI&app=viewer&lang=LANG"
+          :id_param: 'doc'
   image_service:
     :cite:
       :method: 'get'
@@ -167,8 +219,32 @@ test:
         :import:
           :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
           :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
+    
     
 production:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search:
+          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
   treebank_editor:
     alpheios:
       :text: 'Alpheios'
@@ -176,40 +252,48 @@ production:
       :uri: 'http://github.com/alpheios-project/treebank-editor'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: 'Edit in Alpheios'
         :view:
-          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://sosol.perseids.org/alpheios/app/treebank-editsentence-perseids.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: 'Preview in Alpheios'
         :create:
-          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?doc=IDENTIFIER"
+          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-perseids.xhtml?"
           :text: 'via Alpheios'
     arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT"
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?doc=IDENTIFIER&chunk=SENT&mode=viewer"
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?doc=IDENTIFIER"
-            :text: 'via Arethusa'
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :edit:
+          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+          :id_param: 'doc'
+          :text: "Edit in Arethusa"
+        :view:
+          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+          :id_param: 'doc'
+          :text: "Preview in Arethusa"
+        :create:
+          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?"
+          :id_param: 'doc'
+          :text: 'via Arethusa'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
       :method: 'get'
       :actions:
         :edit: 
-          :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX"
+          :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
           :text: "Align in Alpheios"
         :view:
-          :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?doc=IDENTIFIER&s=SENT&numSentences=MAX&app=viewer"
+          :href: "http://sosol.perseids.org/alpheios/app/align-editsentence-perseids.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
           :text: "View in Alpheios"
         :create:
-          :href: "http://sosol.perseids.org/alpheios/app/align-entersentence-perseids.xhtml?doc=IDENTIFIER"
+          :href: "http://sosol.perseids.org/alpheios/app/align-entersentence-perseids.xhtml?"
+          :id_param: 'doc'
           :text: 'New Text Alignment'
   oa_editor:
     :perseids:
@@ -217,10 +301,12 @@ production:
       :method: 'get'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&lang=LANG"
+          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?uri=URI&lang=LANG"
+          :id_param: 'doc'
           :text: "Edit"
         :view:
-          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?doc=IDENTIFIER&uri=URI&app=viewer&lang=LANG"
+          :href: "http://sosol.perseids.org/tools/annotation-editor/perseids-annotate.xhtml?uri=URI&app=viewer&lang=LANG"
+          :id_param: 'doc'
   image_service:
     :cite:
       :method: 'get'
@@ -252,3 +338,20 @@ production:
         :import:
           :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
           :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
+    

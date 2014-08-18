@@ -1,7 +1,7 @@
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
   
-  before_filter :authorize
+  before_filter :authorize, :except => [:api_item_info, :api_item_get]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append,:api_item_comments_post]
   
   # minutes for csrf session cookie expiration
@@ -20,8 +20,12 @@ class DmmApiController < ApplicationController
       end
       identifier_class = identifier_type
       tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,params[:init_value])
-      # TODO errors should include links to existing publications
+      if (params[:init_value] && params[:init_value].length > 0)
+         check_match = params[:init_value]
+      else
+         check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
+      end
+      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')
         render :xml => "<error>Multiple conflicting identifiers( #{list})</error>", :status => 500
@@ -32,7 +36,8 @@ class DmmApiController < ApplicationController
           expire_publication_cache
           conflicting_publication.archive
         else
-           render :xml => "<error>Conflicting identifier.( #{existing_identifiers.first.name})</error>", :status => 500
+           links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
+           render :xml => "<error xmlns:xlink=\"http://www.w3.org/1999/xlink\">You have conflicting document(s) already being edited at #{links.join(" ")} .</error>", :status => 500
            return
         end
       end # end test of possible conflicts
@@ -56,6 +61,10 @@ class DmmApiController < ApplicationController
       new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
     rescue Exception => e
       Rails.logger.error(e.backtrace)
+      unless(params[:publication_id])
+        #cleanup if we created a publication
+        @publication.destroy
+      end
       render :xml => "<error>#{e}</error>", :status => 500
       return   
     end

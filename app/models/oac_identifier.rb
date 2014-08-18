@@ -277,7 +277,7 @@ class OACIdentifier < Identifier
   # if the annotation_uri parameter is not supplied, it will provide a list of links to preview
   # each annotation in the oac.xml file 
   def preview parameters = {}, xsl = nil
-    parameters[:tool_url] =Tools::Manager.link_to('oa_editor',:perseids,:view,self)[:href] 
+    parameters[:tool_url] =Tools::Manager.link_to('oa_editor',:perseids,:view,[self])[:href] 
     parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
@@ -289,7 +289,7 @@ class OACIdentifier < Identifier
    # edit 
   # outputs the sentence list with sentences linked to editor
   def edit parameters = {}, xsl = nil
-    parameters[:tool_url] = Tools::Manager.link_to('oa_editor',:perseids,:edit,self)[:href]
+    parameters[:tool_url] = Tools::Manager.link_to('oa_editor',:perseids,:edit,[self])[:href]
     parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
@@ -453,7 +453,7 @@ class OACIdentifier < Identifier
     
     tokenizer = {}
     Tools::Manager.tool_config('cts_tokenizer',false).keys.each do |name|
-      tokenizer[name] =  Tools::Manager.link_to('cts_tokenizer',name,:tokenize,nil)[:href]
+      tokenizer[name] =  Tools::Manager.link_to('cts_tokenizer',name,:tokenize)[:href]
     end
       
     config = 
@@ -481,8 +481,8 @@ class OACIdentifier < Identifier
       config[:target_links]['Toponym Annotations'] << explink
       config[:target_links]['Toponym Annotations'] << {:text => implink[:text], :href => impliknk[:href], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
-    Tools::Manager.link_all('treebank_editor',:create,self.parentIdentifier.publication).each do |link| 
-        config[:target_links]['Treebank Annotations'] << {:text => link[:text], :href => link[:href], :target_param => 'text_uri'}        
+    Tools::Manager.link_all('treebank_editor',:create,[self.parentIdentifier.publication]).each do |link| 
+        config[:target_links]['Treebank Annotations'] << {:text => link[:text], :href => CGI.escape(link[:href]), :target_param => 'text_uri'}        
     end
     return config.to_json                  
   end

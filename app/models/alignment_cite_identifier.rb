@@ -331,7 +331,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
         :doc_id => self.id,
         :s => parameters[:s],
         :max => 50, # TODO - make max sentences configurable
-        :tool_url => Tools::Manager.link_to('alignment_editor',:alpheios,:view,self)[:href])  
+        :tool_url => Tools::Manager.link_to('alignment_editor',:alpheios,:view,[self])[:href])  
  end
   
   # edit 
@@ -345,7 +345,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable
         :s => parameters[:s],
-        :tool_url => Tools::Manager.link_to('alignment_editor',:alpheios,:edit,self)[:href])  
+        :tool_url => Tools::Manager.link_to('alignment_editor',:alpheios,:edit,[self])[:href])  
   end
   
   

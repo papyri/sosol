@@ -520,4 +520,10 @@ class Identifier < ActiveRecord::Base
     ## default is a no-op
   end
 
+  # find files matching this one metting the supplied conditions
+  # @conditions matching params
+  def matching_files(a_conditions)
+    # default is a no-op
+  end
+
 end

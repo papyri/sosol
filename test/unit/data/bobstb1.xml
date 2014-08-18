@@ -13,7 +13,7 @@
    <ContentAsXML xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="urn:uuidd0e1">
       <cnt:rest xmlns:cnt="http://www.w3.org/2008/content#" rdf:parseType="Literal">
          <treebank xml:lang="lat" format="aldt" version="1.5" xmlns="">
-            <sentence id="1" document_id="urn:cts:latinLit:tg.work.edition" subdoc="1.1" span="" xmlns="">
+            <sentence id="1" document_id="http://bobsfiles.com/1.xml" subdoc="1.1" span="">
                <word id="1" form="tantum" lemma="" postag="" head="0" relation="nil"/>
                <word id="2" form="in" lemma="" postag="" head="0" relation="nil"/>
                <word id="3" form="amore" lemma="" postag="" head="0" relation="nil"/>
