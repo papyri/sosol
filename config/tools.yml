@@ -29,11 +29,11 @@ development:
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
           :edit:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
             :id_param: 'doc'
             :text: "Edit in Arethusa"
           :view:
-            :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
             :id_param: 'doc'
             :text: "Preview in Arethusa"
           :create:
@@ -148,11 +148,11 @@ test:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :edit:
-          :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+          :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
           :id_param: 'doc'
           :text: "Edit in Arethusa"
         :view:
-          :href: "http://localhost/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+          :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
           :id_param: 'doc'
           :text: "Preview in Arethusa"
         :create:
@@ -267,11 +267,11 @@ production:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT"
+          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
           :id_param: 'doc'
           :text: "Edit in Arethusa"
         :view:
-          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseidsLANGFORMAT?chunk=SENT&mode=viewer"
+          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
           :id_param: 'doc'
           :text: "Preview in Arethusa"
         :create:
