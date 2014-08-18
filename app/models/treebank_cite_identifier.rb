@@ -45,19 +45,23 @@ class TreebankCiteIdentifier < CiteIdentifier
       if (f)
         urn = f['document_id']
         unless (urn.nil?)
-          urnObj = CTS::CTSLib.urnObj(urn)
-          begin
-            passage = urnObj.getPassage(100)
-          rescue
-            # okay not to have a passage
-          end
-          separator = passage.nil? ? ':' : '.'
-          from = f['subdoc']
-          unless (from.nil?)
-            urn = urn + separator + from 
-            to = l['subdoc']
-            unless (to.nil? || from == to)
-              urn = urn + "-#{to}"
+          urn_match = urn.match(/(urn:cts:.*?)$/)
+          if (urn_match)
+            urn = urn_match.captures[0]
+            urnObj = CTS::CTSLib.urnObj(urn)
+            begin
+              passage = urnObj.getPassage(100)
+            rescue
+              # okay not to have a passage
+            end
+            separator = passage.nil? ? ':' : '.'
+            from = f['subdoc']
+            unless (from.nil?)
+              urn = urn + separator + from 
+              to = l['subdoc']
+              unless (to.nil? || from == to)
+                urn = urn + "-#{to}"
+              end
             end
           end
           title = "Treebank of #{CTS::CTSLib.urn_abbr(urn)}"
