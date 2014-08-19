@@ -1,0 +1,646 @@
+<!--
+  Copyright 2008-2010 Cantus Foundation
+  http://alpheios.net
+  
+  This file is part of Alpheios.
+  
+  Alpheios is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  Alpheios is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--><!--
+  Description for Ancient Language Dependency Treebank (ALDT) format
+
+  Tables of morphology categories and values
+
+  <desc>
+    <meta>* = metadatum
+      @name = name of metadatum
+      @value = value of metadatum
+    <table> = table of morphology categories
+      @type = morphology
+      <category> = morphology category
+        @id = name of category (pos [part of speech], person, etc.)
+        @n = position of category in treebank postag attribute
+        <entry> = entry in category
+          @punct = 'y' if this is punctuation
+          <short> = single-letter value in postag
+          <long> = equivalent human-readable name
+          <lex> = equivalent name in lexicon schema, if different from <long>
+          <color> = color to associate with entry
+          <style> = style to associate with entry
+          <mask> = mask of allowable categories
+    <table> = table of dependency relations
+      @type = relation
+      <entry> = dependency relation
+        <tb> = treebank name
+        <disp> = displayable form, if different from treebank name
+        <menu> = menu item text, if different from treebank name
+        <help dir="up"> = help text for head direction
+        <help dir="dn"> = help text for dependent direction
+      Order of entries defines menu order
+    <table> = table of dependency suffixes
+      @type = subrelation
+      <entry> = suffix
+        <tb> = treebank name
+        <menu> = menu item text, if different from treebank name
+      Order of entries defines menu order
+
+    text color according to part of speech:
+    POS             color
+    a adjective     blue
+    d adverb        orange
+    l article       pale blue
+    c conjunction   pink
+    i interjection  yellow
+    n noun          black
+    r preposition   green
+    p pronoun       purple
+    v verb          red
+
+    e exclamation=interjection
+-->
+<info numSentences="<%= size%>" xml:lang="<%= lang%>" format="<%= format%>" direction="<%= direction%>">
+<desc xmlns="http://alpheios.net/namespaces/treebank-desc">
+    <meta name="format" value="acclatch2"/>
+    <meta name="ellipsis" value="yes"/>
+    <meta name="has-lemmas" value="yes"/>
+    <table type="morphology">
+        <!-- part of speech -->
+        <category id="pos" n="1" name="Part of Speech">
+            <entry>
+                <short>n</short>
+                <long>noun</long>
+                <color>black</color>
+                <mask>+-+---++</mask>
+            </entry>
+            <entry>
+                <short>v</short>
+                <long>verb</long>
+                <color>red</color>
+                <mask>++++++</mask>
+            </entry>
+            <entry>
+                <short>t</short>
+                <long>participle</long>
+                <lex>verb participle</lex>
+                <mask>+-+++++++</mask>
+            </entry>
+            <entry>
+                <short>a</short>
+                <long>adjective</long>
+                <color>blue</color>
+                <mask>+-+---+++</mask>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>adverb</long>
+                <color>darkorange</color>
+                <mask>+-------+</mask>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>conjunction</long>
+                <color>deeppink</color>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>l</short>
+                <long>article</long>
+                <color>skyblue</color>
+                <mask>+-+---++</mask>
+            </entry>
+            <entry>
+                <short>g</short>
+                <long>particle</long>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>r</short>
+                <long>preposition</long>
+                <color>green</color>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>p</short>
+                <long>pronoun</long>
+                <color>purple</color>
+                <mask>+-+---++</mask>
+            </entry>
+            <entry>
+                <short>m</short>
+                <long>numeral</long>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>interjection</long>
+                <color>gold</color>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>exclamation</long>
+                <color>gold</color>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>x</short>
+                <long>irregular</long>
+                <mask>+</mask>
+            </entry>
+            <entry punct="y">
+                <short>u</short>
+                <long>punctuation</long>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>f</short>
+                <long>functional</long>
+                <mask>+</mask>
+            </entry>
+            <entry>
+                <short>z</short>
+                <long>determiner</long>
+                <mask>+</mask>
+            </entry>
+        </category>
+        <category id="person" n="2" name="Person">
+            <entry>
+                <short>1</short>
+                <long>first_person</long>
+                <lex>1st</lex>
+            </entry>
+            <entry>
+                <short>2</short>
+                <long>second_person</long>
+                <lex>2nd</lex>
+            </entry>
+            <entry>
+                <short>3</short>
+                <long>third_person</long>
+                <lex>3rd</lex>
+            </entry>
+        </category>
+        <category id="number" n="3" name="Number">
+            <entry>
+                <short>s</short>
+                <long>singular</long>
+            </entry>
+            <entry>
+                <short>p</short>
+                <long>plural</long>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>dual</long>
+            </entry>
+        </category>
+        <category id="tense" n="4" name="Tense">
+            <entry>
+                <short>p</short>
+                <long>present</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>imperfect</long>
+            </entry>
+            <entry>
+                <short>r</short>
+                <long>perfect</long>
+            </entry>
+            <entry>
+                <short>l</short>
+                <long>pluperfect</long>
+            </entry>
+            <entry>
+                <short>t</short>
+                <long>future_perfect</long>
+                <lex>future perfect</lex>
+            </entry>
+            <entry>
+                <short>f</short>
+                <long>future</long>
+            </entry>
+            <entry>
+                <short>a</short>
+                <long>aorist</long>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>preterite</long>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>conditional</long>
+            </entry>
+        </category>
+        <category id="mood" n="5" name="Mood">
+            <entry>
+                <short>i</short>
+                <long>indicative</long>
+            </entry>
+            <entry>
+                <short>s</short>
+                <long>subjunctive</long>
+            </entry>
+            <entry>
+                <short>o</short>
+                <long>optative</long>
+            </entry>
+            <entry>
+                <short>n</short>
+                <long>infinitive</long>
+            </entry>
+            <entry>
+                <short>m</short>
+                <long>imperative</long>
+            </entry>
+            <entry>
+                <short>g</short>
+                <long>gerundive</long>
+            </entry>
+            <entry>
+                <short>p</short>
+                <long>participial</long>
+                <lex>participle</lex>
+            </entry>
+        </category>
+        <category id="voice" n="6" name="Voice">
+            <entry>
+                <short>m</short>
+                <long>middle</long>
+            </entry>
+            <entry>
+                <short>a</short>
+                <long>active</long>
+            </entry>
+            <entry>
+                <short>p</short>
+                <long>passive</long>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>deponent</long>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>medio_passive</long>
+                <lex>mediopassive</lex>
+            </entry>
+        </category>
+        <category id="gender" n="7" name="Gender">
+            <entry>
+                <short>m</short>
+                <long>masculine</long>
+            </entry>
+            <entry>
+                <short>f</short>
+                <long>feminine</long>
+            </entry>
+            <entry>
+                <short>n</short>
+                <long>neuter</long>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>common</long>
+            </entry>
+        </category>
+        <category id="case" n="8" name="Case">
+            <entry>
+                <short>n</short>
+                <long>nominative</long>
+            </entry>
+            <entry>
+                <short>g</short>
+                <long>genitive</long>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>dative</long>
+            </entry>
+            <entry>
+                <short>a</short>
+                <long>accusative</long>
+            </entry>
+            <entry>
+                <short>b</short>
+                <long>ablative</long>
+            </entry>
+            <entry>
+                <short>v</short>
+                <long>vocative</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>instrumental</long>
+            </entry>
+            <entry>
+                <short>l</short>
+                <long>locative</long>
+            </entry>
+        </category>
+        <category id="degree" n="9" name="Degree">
+            <entry>
+                <short>p</short>
+                <long>positive</long>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>comparative</long>
+            </entry>
+            <entry>
+                <short>s</short>
+                <long>superlative</long>
+            </entry>
+        </category>
+        <category id="possessive" n="10" name="Possessive">
+            <entry>
+                <short>a</short>
+                <long>poss(1st/plur)</long>
+            </entry>
+            <entry>
+                <short>b</short>
+                <long>poss(1st/sing)</long>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>poss(2nd/dual)</long>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>poss(2nd/fem/plur)</long>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>poss(2nd/fem/sing)</long>
+            </entry>
+            <entry>
+                <short>f</short>
+                <long>poss(2nd/masc/plur)</long>
+            </entry>
+            <entry>
+                <short>g</short>
+                <long>poss(2nd/masc/sing)</long>
+            </entry>
+            <entry>
+                <short>h</short>
+                <long>poss(3rd/dual)</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>poss(3rd/fem/plur)</long>
+            </entry>
+            <entry>
+                <short>j</short>
+                <long>poss(3rd/fem/sing)</long>
+            </entry>
+            <entry>
+                <short>k</short>
+                <long>poss(3rd/masc/plur)</long>
+            </entry>
+            <entry>
+                <short>l</short>
+                <long>poss(3rd/masc/sing)</long>
+            </entry>
+        </category>
+        <category id="definite" n="11" name="Definite">
+            <entry>
+                <short>d</short>
+                <long>definite</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>indefinite</long>
+            </entry>
+        </category>
+        <category id="object" n="12" name="Object">
+            <entry>
+                <short>a</short>
+                <long>+obj(1st/plur)</long>
+            </entry>
+            <entry>
+                <short>b</short>
+                <long>+obj(1st/sing)</long>
+            </entry>
+            <entry>
+                <short>c</short>
+                <long>+obj(2nd/dual)</long>
+            </entry>
+            <entry>
+                <short>d</short>
+                <long>+obj(2nd/fem/plur)</long>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>+obj(2nd/fem/sing)</long>
+            </entry>
+            <entry>
+                <short>f</short>
+                <long>+obj(2nd/masc/plur)</long>
+            </entry>
+            <entry>
+                <short>g</short>
+                <long>+obj(2nd/masc/sing)</long>
+            </entry>
+            <entry>
+                <short>h</short>
+                <long>+obj(3rd/dual)</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>+obj(3rd/fem/plur)</long>
+            </entry>
+            <entry>
+                <short>j</short>
+                <long>+obj(3rd/fem/sing)</long>
+            </entry>
+            <entry>
+                <short>k</short>
+                <long>+obj(3rd/masc/plur)</long>
+            </entry>
+            <entry>
+                <short>l</short>
+                <long>+obj(3rd/masc/sing)</long>
+            </entry>
+        </category>
+        <category id="prefix" n="13" name="Prefix">
+            <entry>
+                <short>c</short>
+                <long>conj+</long>
+            </entry>
+            <entry>
+                <short>e</short>
+                <long>emphatic+</long>
+            </entry>
+            <entry>
+                <short>i</short>
+                <long>interrogative+</long>
+            </entry>
+            <entry>
+                <short>n</short>
+                <long>neg+</long>
+            </entry>
+            <entry>
+                <short>p</short>
+                <long>prep+</long>
+            </entry>
+            <entry>
+                <short>r</short>
+                <long>resultative+</long>
+            </entry>
+        </category>
+        <category id="sort" n="14" name="Sort">
+            <entry>
+                <short>c</short>
+                <long>cardinal</long>
+            </entry>
+            <entry>
+                <short>o</short>
+                <long>ordinal</long>
+            </entry>
+        </category>
+    </table>
+    <table type="relation">
+        
+        <entry>
+            <tb>-</tb>
+            <disp>nil</disp>
+            <menu>nil</menu>
+        </entry>
+        
+        <entry>
+            <tb>MnVb</tb>
+            <disp>MnVb</disp>
+            <menu>main verb</menu>
+        </entry>
+        <entry>
+            <tb>Sbj</tb>
+            <disp>Sbj</disp>
+            <menu>subject</menu>
+        </entry>
+        
+        <entry>
+            <tb>Pnom</tb>
+            <disp>Pnom</disp>
+            <menu>predicate nom</menu>
+           
+        </entry>
+        
+        
+        <entry>
+            <tb>Poss</tb>
+            <disp>Poss</disp>
+            <menu>possessive</menu>
+            <help dir="up">verb</help>
+            <help dir="dn">subject</help>
+        </entry>
+        <entry>
+            <tb>DirObj</tb>
+            <disp>DirObj</disp>
+            <menu>direct obj</menu>
+            <help dir="up">verb</help>
+            <help dir="dn">object</help>
+        </entry>
+        <entry>
+            <tb>IndObj</tb>
+            <disp>IndObj</disp>
+            <menu>Indirect obj</menu>
+            <help dir="up">verb</help>
+            <help dir="dn">object</help>
+        </entry>
+        <entry>
+            <tb>Ref</tb>
+            <disp>Ref</disp>
+            <menu>reference</menu>
+            <help dir="up">verb</help>
+            <help dir="dn">object</help>
+        </entry>
+        <entry>
+            <tb>Prep</tb>
+            <disp>PREP</disp>
+            <menu>preposition</menu>
+            <help dir="dn">preposition</help>
+        </entry>
+        <entry>
+            <tb>ObPrep</tb>
+            <menu>obj of prep</menu>
+        </entry>
+        <entry>
+            <tb>Mns</tb>
+            <disp>Mns</disp>
+            <menu>means</menu>
+        </entry>
+        
+        <entry>
+            <tb>Acmp</tb>
+            <disp>Accomp</disp>
+            <menu>accompaniment</menu>
+        </entry>
+        <entry>
+            <tb>Sepr</tb>
+            <disp>Separat</disp>
+            <menu>separation</menu>
+        </entry>
+        
+        <entry>
+            <tb>C_Cl</tb>
+            <disp>CompCl</disp>
+            <menu>complement cl</menu>
+        </entry>
+        <entry>
+            <tb>APOS</tb>
+            <disp>APPOS</disp>
+          <menu>apposing element</menu>
+        </entry>
+        <entry>
+            <tb>COORD</tb>
+           <menu>coordinator</menu>
+        </entry>
+        
+        <entry>
+            <tb>SntAdv</tb>
+            <disp>SntAdv</disp>
+            <menu>sentence adv</menu>
+        </entry>
+        
+        
+        <entry>
+            <tb>Adr</tb>
+            <disp>Adr</disp>
+            <menu>address</menu>
+        </entry>
+        
+        
+        <entry>
+            <tb>AuxZ</tb>
+            <disp>AuxZ</disp>
+            <menu>AuxZ (emph)</menu>
+        </entry>
+    </table>
+    <table type="subrelation">
+        <entry>
+            <tb/>
+            <menu>- -</menu>
+        </entry>
+        <entry>
+            <tb>_AP</tb>
+        </entry>
+        <entry>
+            <tb>_CO</tb>
+        </entry>
+        <entry>
+            <tb>_AP_CO</tb>
+        </entry>
+    </table>
+</desc>
+</info>
