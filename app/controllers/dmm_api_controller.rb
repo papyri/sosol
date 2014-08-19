@@ -117,7 +117,7 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-        return
+        return render_error("Unable to locate Document")
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
       
@@ -129,8 +129,8 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      agent = agent_of(params[:raw_post])
       begin
+        agent = agent_of(params[:raw_post])
         response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment]) 
       rescue Exception => e
         Rails.logger.error(e.backtrace)
@@ -323,6 +323,13 @@ class DmmApiController < ApplicationController
       @publication ||= Publication.find(params[:publication_id].to_s)
     end
 
+    def authorize
+      if @current_user.nil?
+        return render_forbidden('Unable to establish session')
+      end
+    end
+
+
     def ownership_guard
       find_identifier
       if @identifier && !@identifier.publication.mutable_by?(@current_user)
@@ -344,7 +351,6 @@ class DmmApiController < ApplicationController
         @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
       end
       agent = nil
-      Rails.logger.info("Agents = #{@agents.inspect}")
       @agents.keys.each do | a_agent |
         if (a_data =~ /#{@agents[a_agent][:uri_match]}/sm)
           agent = @agents[a_agent]
