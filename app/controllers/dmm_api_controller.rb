@@ -284,13 +284,18 @@ class DmmApiController < ApplicationController
       render_error('Unable to save comment')
     end
   end
-  
+ 
+  ##
+  # API request to verify a session exists and set the csrf cookie
+  # @returns {String} JSON representation of the user info
+  #                   or 403 FORBIDDEN if no session can be established
+  ##
   def ping
       cookies[:csrftoken] = {
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
-      render :xml => 'OK' 
+      render :json => @current_user
   end
 
   protected
