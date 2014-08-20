@@ -10,7 +10,20 @@
     <xsl:param name="max" select="xs:integer(100)"/>
     <xsl:param name="lang" select="'grc'"/>
     <xsl:param name="direction" select="'ltr'"/>
+    <xsl:param name="target" select="''"/>
     <xsl:param name="tool_url" select="'http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&amp;s=SENT&amp;numSentences=MAX'"/>
+    <xsl:variable name="doclang">
+      <xsl:choose>
+        <xsl:when test="//treebank[@xml:lang]"><xsl:value-of select="//treebank/@xml:lang"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$lang"/></xsl:otherwise>
+      </xsl:choose> 
+    </xsl:variable>
+    <xsl:variable name="docfmt">
+      <xsl:choose>
+        <xsl:when test="//treebank[@format]"><xsl:value-of select="//treebank/@format"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="'aldt'"/></xsl:otherwise>
+      </xsl:choose> 
+    </xsl:variable>
     
     <xsl:template match="/treebank">
         <xsl:variable name="count" select="count(sentence)"/>
@@ -84,12 +97,16 @@
                 <xsl:when test="$tool_url">
                     <xsl:element name="a">
                         <xsl:attribute name="href" select="
+                              replace(
+                                replace(
                                      replace(
                                         replace(
-                                            replace($tool_url,'DOC',xs:string($doc_id)),'SENT',@id),
-                                                'MAX',xs:string($max))
+                                            replace($tool_url,'DOC',xs:string($doc_id)),
+                                                'SENT',@id),
+                                                    'MAX',xs:string($max)),'LANG',$doclang),
+                                                        'FORMAT',$docfmt)
                                             "/>
-                        <!--xsl:attribute name="target">alpheios</xsl:attribute-->
+                        <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
                         <xsl:apply-templates select="word"></xsl:apply-templates>
                     </xsl:element>
                 </xsl:when>

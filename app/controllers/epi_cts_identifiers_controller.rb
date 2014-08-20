@@ -12,7 +12,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary)[:href] 
     @is_editor_view = true
     render :template => 'epi_cts_identifiers/editxml'
   end
@@ -179,7 +179,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     @identifier[:html_preview] = @identifier.preview
   end
   

@@ -277,7 +277,8 @@ class OACIdentifier < Identifier
   # if the annotation_uri parameter is not supplied, it will provide a list of links to preview
   # each annotation in the oac.xml file 
   def preview parameters = {}, xsl = nil
-    parameters[:tool_url] = Tools::Manager.tool_config('oa_editor')[:view_url].sub(/DOC/,self.id.to_s)
+    parameters[:tool_url] =Tools::Manager.link_to('oa_editor',:perseids,:view,[self])[:href] 
+    parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -288,7 +289,8 @@ class OACIdentifier < Identifier
    # edit 
   # outputs the sentence list with sentences linked to editor
   def edit parameters = {}, xsl = nil
-    parameters[:tool_url] = Tools::Manager.tool_config('oa_editor')[:edit_url].sub(/DOC/,self.id.to_s)
+    parameters[:tool_url] = Tools::Manager.link_to('oa_editor',:perseids,:edit,[self])[:href]
+    parameters[:lang] = self.parentIdentifier.lang
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
@@ -449,29 +451,38 @@ class OACIdentifier < Identifier
     motivations << { :label => 'Is Variant Of', :value => 'http://purl.org/saws/ontology#isVariantOf'}
     motivations << { :label => 'Is Verbatim Of', :value => 'http://purl.org/saws/ontology#isVerbatimOf'}
     
-    
+    tokenizer = {}
+    Tools::Manager.tool_config('cts_tokenizer',false).keys.each do |name|
+      tokenizer[name] =  Tools::Manager.link_to('cts_tokenizer',name,:tokenize)[:href]
+    end
+      
     config = 
-      { :tokenizer => Tools::Manager.tool_config('cts_tokenizer',false),
+      { :tokenizer => tokenizer,
         :motivations => motivations,
         :passage_xslt => "#{urls['parent']}/annotate_xslt",
         :cts_services => { 'repos' => "#{urls['root']}cts/getrepos/#{self.parentIdentifier.id}",
                            'capabilities' => "#{urls['root']}cts/getcapabilities/",
                            'passage' => "#{urls['root']}cts/getpassage/"
                          },
-        :target_links => [
-          {:label => 'Create Commentary', :url => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'},
-        ]
+        :target_links => {
+          :commentary => [],
+          'Toponym Annotations' => [],
+          'Treebank Annotations' => []
+        }
        }
+    config[:target_links][:commentary] << {:text => 'Create Commentary', :href => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'}
     # temporary solution to selectively enable the toponym editor for testing
     # see https://github.com/PerseusDL/perseids_docs/issues/141
     has_toponym_hook = REXML::XPath.match(self.rdf.root,"//perseids:PerseidsTool[@rdf:resource='toponym_editor']",{'perseids' => "http://data.perseus.org/ns/perseids"}).size > 0
     
-    if (Tools::Manager.tool_config('toponym_editor') && has_toponym_hook)
-      config[:target_links] << {:label => 'Annotate Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:export_url]}
-      config[:target_links] << {:label => 'Import Toponyms', :url => Tools::Manager.tool_config('toponym_editor')[:import_url], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
+    if (Tools::Manager.tool_config(:toponym_editor) && has_toponym_hook)
+      explink = Tools::Manager.link_to('toponym_editor',:recogito,:export)
+      implink = Tools::Manager.link_to('toponym_editor',:recogito,:import) 
+      config[:target_links]['Toponym Annotations'] << explink
+      config[:target_links]['Toponym Annotations'] << {:text => implink[:text], :href => impliknk[:href], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
-    if (Tools::Manager.tool_config('treebank_editor'))
-      config[:target_links] << {:label => 'New Treebank Annotation', :url => (Tools::Manager.tool_config('treebank_editor')[:create_url]).sub(/DOC/,self.parentIdentifier.publication.id.to_s), :target_param => 'text_uri'}
+    Tools::Manager.link_all('treebank_editor',:create,[self.parentIdentifier.publication]).each do |link| 
+        config[:target_links]['Treebank Annotations'] << {:text => link[:text], :href => CGI.escape(link[:href]), :target_param => 'text_uri'}        
     end
     return config.to_json                  
   end

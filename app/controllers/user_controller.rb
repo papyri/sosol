@@ -62,14 +62,19 @@ class UserController < ApplicationController
   end
   
   #default view of stats for the user name entered/linked to
+  # json and xml formats just return user human name and affiliation
   def show
     @users = [User.find_by_name(params[:user_name])]
     if !@users.compact.empty?
       @calc_date = ''
       respond_to do |format|
         format.html { render "usage_stats"; return }
-        format.json { render :json => @users.first }
-        format.xml  { render :xml => @users.first }
+        format.json { render :json => { 
+          :human_name => @users.first.human_name,
+          :affiliation => @users.first.affiliation }}
+        format.xml  { render :xml => {
+          :human_name => @users.first.human_name,
+          :affiliation => @users.first.affiliation }}
       end
     else
       flash[:error] = "User not found."

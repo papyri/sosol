@@ -1,791 +1,2865 @@
-<?xml version="1.0"?>
-<!--
-  Copyright 2008-2010 Cantus Foundation
-  http://alpheios.net
-  
-  This file is part of Alpheios.
-  
-  Alpheios is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  Alpheios is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<!--
-  Description for Ancient Language Dependency Treebank (ALDT) format
+<!-- This file has been written by Giuseppe G. A. Celano and released on April 5th, 2014 -->
 
-  Tables of morphology categories and values
+<!-- This is the new tagset allowing to annotate most of Smyth's Grammar-->
 
-  <desc>
-    <meta>* = metadatum
-      @name = name of metadatum
-      @value = value of metadatum
-    <table> = table of morphology categories
-      @type = morphology
-      <category> = morphology category
-        @id = name of category (pos [part of speech], person, etc.)
-        @n = position of category in treebank postag attribute
-        <entry> = entry in category
-          @punct = 'y' if this is punctuation
-          <short> = single-letter value in postag
-          <long> = equivalent human-readable name
-          <lex> = equivalent name in lexicon schema, if different from <long>
-          <color> = color to associate with entry
-          <style> = style to associate with entry
-          <mask> = mask of allowable categories
-    <table> = table of dependency relations
-      @type = relation
-      <entry> = dependency relation
-        <tb> = treebank name
-        <disp> = displayable form, if different from treebank name
-        <menu> = menu item text, if different from treebank name
-        <help dir="up"> = help text for head direction
-        <help dir="dn"> = help text for dependent direction
-      Order of entries defines menu order
-    <table> = table of dependency suffixes
-      @type = subrelation
-      <entry> = suffix
-        <tb> = treebank name
-        <menu> = menu item text, if different from treebank name
-      Order of entries defines menu order
 
-    text color according to part of speech:
-    POS             color
-    a adjective     blue
-    d adverb        orange
-    l article       pale blue
-    c conjunction   pink
-    i interjection  yellow
-    n noun          black
-    r preposition   green
-    p pronoun       purple
-    v verb          red
-
-    e exclamation=interjection
--->
 <info numSentences="<%= size%>" xml:lang="<%= lang%>" format="<%= format%>" direction="<%= direction%>">
 <desc xmlns="http://alpheios.net/namespaces/treebank-desc">
-	<meta name="format" value="aldt"/>
-	<meta name="ellipsis" value="yes"/>
-	<meta name="has-lemmas" value="yes"/>
-	<table type="morphology">
-		<!-- part of speech -->
-		<category id="pos" n="1" name="Part of Speech">
-			<entry>
-				<short>l</short>
-				<long>article</long>
-				<color>skyblue</color>
-				<mask>+-+---++</mask>
-			</entry>
-			<entry>
-				<short>n</short>
-				<long>noun</long>
-				<color>black</color>
-				<mask>+-+---+--+</mask>
-			</entry>
-			<entry>
-				<short>p</short>
-				<long>pronoun</long>
-				<color>purple</color>
-				<mask>+-+---+--+</mask>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>substantive adjective</long>
-				<color>black</color>
-				<mask>+-+---+--+</mask>
-			</entry>
-			<entry>
-				<short>b</short>
-				<long>substantive participle</long>
-				<color>black</color>
-				<mask>+-+---+--+</mask>
-			</entry>
-			<entry>
-				<short>f</short>
-				<long>infinitive</long>
-				<color>black</color>
-				<mask>+--+++------------------+</mask>
-			</entry>
-			<entry>
-				<short>v</short>
-				<long>verb</long>
-				<color>red</color>
-				<mask>++++++</mask>
-			</entry>
-			<entry>
-				<short>t</short>
-				<long>participle</long>
-				<lex>verb participle</lex>
-				<mask>+-+++++++</mask>
-			</entry>
-			<entry>
-				<short>j</short>
-				<long>verbal adjective tos/teos</long>
-				<mask>+-+---+++</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>adjective</long>
-				<color>blue</color>
-				<mask>+-+---+++</mask>
-			</entry>
-			<entry>
-				<short>o</short>
-				<long>pronominal adjective</long>
-				<color>blue</color>
-				<mask>+-+---++-</mask>
-			</entry>
-			<entry>
-				<short>d</short>
-				<long>adverb</long>
-				<color>darkorange</color>
-				<mask>+-------+</mask>
-			</entry>
-			<entry>
-				<short>c</short>
-				<long>conjunction</long>
-				<color>deeppink</color>
-				<mask>+</mask>
-			</entry>
-			<entry>
-				<short>r</short>
-				<long>preposition</long>
-				<color>green</color>
-				<mask>+</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>interjection (adverbial)</long>
-				<color>gold</color>
-				<mask>+</mask>
-			</entry>
-			<entry punct="y">
-				<short>u</short>
-				<long>punctuation</long>
-				<mask>+</mask>
-			</entry>
-			<entry>
-				<short>x</short>
-				<long>uncertain</long>
-				<mask>+</mask>
-			</entry>
-		</category>
-		<category id="person" n="2" name="Person">
-			<entry>
-				<short>1</short>
-				<long>first_person</long>
-				<lex>1st</lex>
-			</entry>
-			<entry>
-				<short>2</short>
-				<long>second_person</long>
-				<lex>2nd</lex>
-			</entry>
-			<entry>
-				<short>3</short>
-				<long>third_person</long>
-				<lex>3rd</lex>
-			</entry>
-		</category>
-		<category id="number" n="3" name="Number">
-			<entry>
-				<short>s</short>
-				<long>singular</long>
-			</entry>
-			<entry>
-				<short>p</short>
-				<long>plural</long>
-			</entry>
-			<entry>
-				<short>d</short>
-				<long>dual</long>
-			</entry>
-		</category>
-		<category id="tense" n="4" name="Tense">
-			<entry>
-				<short>p</short>
-				<long>present</long>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>imperfect</long>
-			</entry>
-			<entry>
-				<short>r</short>
-				<long>perfect</long>
-			</entry>
-			<entry>
-				<short>l</short>
-				<long>pluperfect</long>
-			</entry>
-			<entry>
-				<short>t</short>
-				<long>future_perfect</long>
-				<lex>future perfect</lex>
-			</entry>
-			<entry>
-				<short>f</short>
-				<long>future</long>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>aorist</long>
-			</entry>
-		</category>
-		<category id="mood" n="5" name="Mood">
-			<entry>
-				<short>i</short>
-				<long>indicative</long>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>subjunctive</long>
-			</entry>
-			<entry>
-				<short>o</short>
-				<long>optative</long>
-			</entry>
-			<entry>
-				<short>m</short>
-				<long>imperative</long>
-			</entry>
-		</category>
-		<category id="voice" n="6" name="Voice">
-			<entry>
-				<short>m</short>
-				<long>middle</long>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>active</long>
-			</entry>
-			<entry>
-				<short>p</short>
-				<long>passive</long>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>medio_passive</long>
-				<lex>mediopassive</lex>
-			</entry>
-		</category>
-		<category id="gender" n="7" name="Gender">
-			<entry>
-				<short>m</short>
-				<long>masculine</long>
-			</entry>
-			<entry>
-				<short>f</short>
-				<long>feminine</long>
-			</entry>
-			<entry>
-				<short>n</short>
-				<long>neuter</long>
-			</entry>
-		</category>
-		<category id="case" n="8" name="Case">
-			<entry>
-				<short>n</short>
-				<long>nominative</long>
-			</entry>
-			<entry>
-				<short>g</short>
-				<long>genitive</long>
-			</entry>
-			<entry>
-				<short>d</short>
-				<long>dative</long>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>accusative</long>
-			</entry>
-			<entry>
-				<short>v</short>
-				<long>vocative</long>
-			</entry>
-			<entry>
-				<short>l</short>
-				<long>locative</long>
-			</entry>
-		</category>
-		<category id="degree" n="9" name="Degree">
-			<entry>
-				<short>p</short>
-				<long>positive</long>
-			</entry>
-			<entry>
-				<short>c</short>
-				<long>comparative</long>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>superlative</long>
-			</entry>
-		</category>
-		<category id="case" n="10" name="Case">
-			<entry>
-				<short>n</short>
-				<long>nominative</long>
-				<mask>+-+---+--++</mask>
-			</entry>
-			<entry>
-				<short>g</short>
-				<long>genitive</long>
-				<mask>+-+---+--+--+</mask>
-			</entry>
-			<entry>
-				<short>d</short>
-				<long>dative</long>
-				<mask>+-+---+--+------+</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>accusative</long>
-				<mask>+-+---+--+---------+</mask>
-			</entry>
-			<entry>
-				<short>v</short>
-				<long>vocative</long>
-				<mask>+-+---+--+</mask>
-			</entry>
-		</category>
-		<category id="dependencyfornominative" n="11" name="Dependency">
-			<entry>
-				<short>d</short>
-				<long>dependent</long>
-				<mask>+-+---+--++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>independent</long>
-				<mask>+-+---+--+++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofnominative1" n="12" name="Syntax of the nominative">
-			<entry>
-				<short>c</short>
-				<long>citation</long>
-				<mask>+-+---+--+++</mask>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>exclamation</long>
-				<mask>+-+---+--+++</mask>
-			</entry>
-		</category>
-		<category id="dependencyforgenitive" n="13" name="Dependency">
-			<entry>
-				<short>d</short>
-				<long>dependent</long>
-				<mask>+-+---+--+--++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>independent</long>
-				<mask>+-+---+--+--+--+</mask>
-			</entry>
-		</category>
-		<category id="syntaxofgenitive1" n="14" name="Syntax of the genitive">
-			<entry>
-				<short>p</short>
-				<long>genitive proper</long>
-				<mask>+-+---+--+--++</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>ablatival genitive</long>
-				<mask>+-+---+--+--++</mask>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>genitive of time and space</long>
-				<mask>+-+---+--+--+++</mask>
-			</entry>
-			<entry>
-				<short>u</short>
-				<long>uncertain kind of genitive (only if depending on adj., adv., or prep.)</long>
-				<mask>+-+---+--+--++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofgenitive2" n="15" name="Genitive of time and space">
-			<entry>
-				<short>t</short>
-				<long>genitive of time</long>
-				<mask>+-+---+--+--+++</mask>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>genitive of space</long>
-				<mask>+-+---+--+--+++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofgenitive3" n="16" name="Syntax of genitive">
-			<entry>
-				<short>e</short>
-				<long>exclamation</long>
-				<mask>+-+---+--+--+--+</mask>
-			</entry>
-		</category>
-		<category id="dependencyfordative" n="17" name="Dependency">
-			<entry>
-				<short>d</short>
-				<long>dependent</long>
-				<mask>+-+---+--+------++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofdative1" n="18" name="Syntax of the dative">
-			<entry>
-				<short>p</short>
-				<long>dative proper</long>
-				<mask>+-+---+--+------++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>instrumental dative</long>
-				<mask>+-+---+--+------++</mask>
-			</entry>
-			<entry>
-				<short>l</short>
-				<long>locative dative</long>
-				<mask>+-+---+--+------+++</mask>
-			</entry>
-			<entry>
-				<short>u</short>
-				<long>uncertain kind of dative (only if depending on adj., adv., or prep.)</long>
-				<mask>+-+---+--+------++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofdative2" n="19" name="Locative dative">
-			<entry>
-				<short>t</short>
-				<long>dative of time</long>
-				<mask>+-+---+--+------+++</mask>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>dative of space</long>
-				<mask>+-+---+--+------+++</mask>
-			</entry>
-		</category>
-		<category id="dependencyforaccusative" n="20" name="Dependency">
-			<entry>
-				<short>d</short>
-				<long>dependent</long>
-				<mask>+-+---+--+---------++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>independent</long>
-				<mask>+-+---+--+---------+---+</mask>
-			</entry>
-		</category>
-		<category id="syntaxofaccusative1" n="21" name="Syntax of the accusative">
-			<entry>
-				<short>i</short>
-				<long>internal object (object effected)</long>
-				<mask>+-+---+--+---------+++</mask>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>external object (object affected)</long>
-				<mask>+-+---+--+---------++</mask>
-			</entry>
-			<entry>
-				<short>r</short>
-				<long>accusative of respect</long>
-				<mask>+-+---+--+---------++</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>adverbial accusative</long>
-				<mask>+-+---+--+---------++</mask>
-			</entry>
-			<entry>
-				<short>u</short>
-				<long>uncertain kind of accusative (only if depending on adj., adv., or prep.)</long>
-				<mask>+-+---+--+---------++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofaccusative2" n="22" name="Internal object (object effected)">
-			<entry>
-				<short>c</short>
-				<long>cognate accusative</long>
-				<mask>+-+---+--+---------+++</mask>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>accusative of extent</long>
-				<mask>+-+---+--+---------++++</mask>
-			</entry>
-			<entry>
-				<short>t</short>
-				<long>terminal accusative</long>
-				<mask>+-+---+--+---------+++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofaccusative3" n="23" name="Accusative of extent">
-			<entry>
-				<short>t</short>
-				<long>accusative of time</long>
-				<mask>+-+---+--+---------++++</mask>
-			</entry>
-			<entry>
-				<short>s</short>
-				<long>accusative of space</long>
-				<mask>+-+---+--+---------++++</mask>
-			</entry>
-		</category>
-		<category id="syntaxofaccusative4" n="24" name="Syntax of the accusative">
-			<entry>
-				<short>t</short>
-				<long>elliptical accusative</long>
-				<mask>+-+---+--+---------+---+</mask>
-			</entry>
-		</category>
-		<category id="dependencyforinfinitive" n="25" name="Dependency">
-			<entry>
-				<short>d</short>
-				<long>dependent</long>
-				<mask>+--+++------------------++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>independent</long>
-				<mask>+--+++------------------+-----+</mask>
-			</entry>
-		</category>
-		<category id="caseforinfinitive" n="26" name="Case">
-			<entry>
-				<short>n</short>
-				<long>nominative</long>
-				<mask>+--+++------------------++</mask>
-			</entry>
-			<entry>
-				<short>g</short>
-				<long>genitive</long>
-				<mask>+--+++------------------+++</mask>
-			</entry>
-			<entry>
-				<short>d</short>
-				<long>dative</long>
-				<mask>+--+++------------------++-+</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>accusative</long>
-				<mask>+--+++------------------++--+</mask>
-			</entry>
-		</category>
-		<category id="infinitivesyntaxofgenitive" n="27" name="Syntax of the genitive">
-			<entry>
-				<short>p</short>
-				<long>genitive proper</long>
-				<mask>+--+++------------------+++</mask>
-			</entry>
-			<entry>
-				<short>a</short>
-				<long>ablatival genitive</long>
-				<mask>+--+++------------------+++</mask>
-			</entry>
-		</category>
-		<category id="infinitivesyntaxofdative" n="28" name="Syntax of the dative">
-			<entry>
-				<short>d</short>
-				<long>dative proper</long>
-				<mask>+--+++------------------++-+</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>instrumental dative</long>
-				<mask>+--+++------------------++-+</mask>
-			</entry>
-		</category>
-		<category id="infinitivesyntaxofaccusative1" n="29" name="Syntax of the accusative">
-			<entry>
-				<short>o</short>
-				<long>object</long>
-				<mask>+--+++------------------++--++</mask>
-			</entry>
-		</category>
-		<category id="infinitivesyntaxofaccusative2" n="30" name="Object">
-			<entry>
-				<short>n</short>
-				<long>not in indirect discourse</long>
-				<mask>+--+++------------------++--++</mask>
-			</entry>
-			<entry>
-				<short>i</short>
-				<long>in indirect discourse (i.e. governed by verbs of saying and thinking)</long>
-				<mask>+--+++------------------++--++</mask>
-			</entry>
-		</category>
-		<category id="dependencyforinfinitive" n="31" name="Independent">
-			<entry>
-				<short>c</short>
-				<long>command</long>
-				<mask>+--+++------------------++</mask>
-			</entry>
-			<entry>
-				<short>w</short>
-				<long>wish</long>
-				<mask>+--+++------------------+</mask>
-			</entry>
-			<entry>
-				<short>e</short>
-				<long>exclamation</long>
-				<mask>+--+++------------------+</mask>
-			</entry>
-			<entry>
-				<short>p</short>
-				<long>parenthetical</long>
-				<mask>+--+++------------------+</mask>
-			</entry>
-		</category>
-	</table>
-	<table type="relation">
-		<entry>
-			<tb>PRED</tb>
-			<help dir="up">root</help>
-			<help dir="dn">predicate</help>
-		</entry>
-		<entry>
-			<tb>SBJ</tb>
-			<disp>SUBJ</disp>
-			<help dir="up">verb</help>
-			<help dir="dn">subject</help>
-		</entry>
-		<entry>
-			<tb>OBJ</tb>
-			<help dir="up">verb</help>
-			<help dir="dn">object</help>
-		</entry>
-		<entry>
-			<tb>ATR</tb>
-			<disp>ATTR</disp>
-			<help dir="up">modified word</help>
-			<help dir="dn">attribute</help>
-		</entry>
-		<entry>
-			<tb>ADV</tb>
-			<help dir="up">modified word</help>
-			<help dir="dn">adverbial</help>
-		</entry>
-		<entry>
-			<tb>ATV</tb>
-			<disp>COMP</disp>
-			<help dir="dn">complement</help>
-		</entry>
-		<entry>
-			<tb>AtvV</tb>
-			<disp>COMP</disp>
-			<help dir="dn">complement</help>
-		</entry>
-		<entry>
-			<tb>PNOM</tb>
-			<help dir="up">verb</help>
-			<help dir="dn">predicate nominal</help>
-		</entry>
-		<entry>
-			<tb>OCOMP</tb>
-			<help dir="up">verb</help>
-			<help dir="dn">object complement</help>
-		</entry>
-		<entry>
-			<tb>APOS</tb>
-			<disp>APPOS</disp>
-			<help dir="dn">apposing element</help>
-		</entry>
-		<entry>
-			<tb>COORD</tb>
-			<help dir="dn">coordinator</help>
-		</entry>
-		<entry>
-			<tb>AuxP</tb>
-			<disp>PREP</disp>
-			<menu>AuxP (prep)</menu>
-			<help dir="dn">preposition</help>
-		</entry>
-		<entry>
-			<tb>AuxC</tb>
-			<disp>CONJ</disp>
-			<menu>AuxC (conj)</menu>
-			<help dir="dn">conjunction</help>
-		</entry>
-		<entry>
-			<tb>AuxR</tb>
-			<disp>RFLX</disp>
-			<menu>AuxR (refl passive)</menu>
-			<help dir="dn">reflexive passive</help>
-		</entry>
-		<entry>
-			<tb>AuxY</tb>
-			<disp>SADV</disp>
-			<menu>AuxY (sent adv)</menu>
-			<help dir="dn">sentence adverbial</help>
-		</entry>
-		<entry>
-			<tb>AuxX</tb>
-			<disp>COMMA</disp>
-			<menu>AuxX (comma)</menu>
-			<help dir="up">head of clause</help>
-			<help dir="dn">comma</help>
-		</entry>
-		<entry>
-			<tb>AuxG</tb>
-			<disp>BRCKT</disp>
-			<menu>AuxG (bracketing)</menu>
-			<help dir="up">head of phrase</help>
-			<help dir="dn">bracketing punctuation</help>
-		</entry>
-		<entry>
-			<tb>AuxK</tb>
-			<disp>TERM</disp>
-			<menu>AuxK (terminal)</menu>
-			<help dir="up">root</help>
-			<help dir="dn">terminal punctuation</help>
-		</entry>
-		<entry>
-			<tb>AuxV</tb>
-			<disp>AUXV</disp>
-			<menu>AuxV (aux verb)</menu>
-			<help dir="up">tensed verb</help>
-			<help dir="dn">auxiliary verb</help>
-		</entry>
-		<entry>
-			<tb>AuxZ</tb>
-			<disp>EMPH</disp>
-			<menu>AuxZ (emph)</menu>
-			<help dir="dn">emphasizing particle</help>
-		</entry>
-		<entry>
-			<tb>ExD</tb>
-			<disp>ELLIP</disp>
-			<help dir="dn">ellipsis</help>
-		</entry>
-	</table>
-	<table type="subrelation">
-		<entry>
-			<tb/>
-			<menu>- -</menu>
-		</entry>
-		<entry>
-			<tb>_AP</tb>
-		</entry>
-		<entry>
-			<tb>_CO</tb>
-		</entry>
-		<entry>
-			<tb>_AP_CO</tb>
-		</entry>
-	</table>
+  <meta name="format" value="aldt"/>
+  <meta name="ellipsis" value="yes"/>
+  <meta name="has-lemmas" value="yes"/>
+  <table type="morphology">
+	  
+    <!-- the number of the parts of speech that is proposed for annotation contains more categories than the ones usually recognized. This is due 
+		to two reasons: one is practical and the other is theoretical/pedagogical. The practical one is that some of the categories 
+		we want to annotate are tied algorithmically. For example, we annotate the syntax of the case for the noun: however, since a substantive
+		adjective and participle can function as a noun, we need to distinguish these categories from those of adjective and participle 		respectively in order to
+		tie them to the the relevant <categories> elements below. for the theoretical/pedagogical reasons see the relevant documentation -->
+	
+    <category id="pos" n="1" name="Part of Speech">
+      <entry>
+        <short>l</short>
+        <long>article</long>
+        <color>skyblue</color>
+        <mask>+-+---++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>noun</long>
+        <color>black</color>
+        <mask>+-+---+------------------------------------+++++++++++++++++++++++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>pronoun</long>
+        <color>purple</color>
+        <mask>+-+---+------------------------------------+++++++++++++++++++++++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>substantive adjective</long>
+        <color>black</color>
+        <mask>+-+---+-+----------------------------------+++++++++++++++++++++++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>substantive participle</long>
+        <color>black</color>
+        <mask>+-++-++-----------------------------------------------------------++++++++++++++++++++++++</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>infinitive</long>
+        <color>black</color>
+        <mask>+--+-+-----------------++++++++++++++++++-+</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>finite form verb</long>
+        <color>red</color>
+        <mask>++++++---++++++++</mask>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>participle</long>
+        <color>red</color>
+        <lex>verb participle</lex>
+        <mask>+-++-+++---------+++++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>verbal adjective τος/τεος</long>
+        <color>blue</color>
+        <mask>+-+---+++</mask>
+      </entry>
+      <entry>
+        <short>z</short>
+        <long>substantivized verbal adjective in τος/τεος</long>
+        <color>blue</color>
+        <mask>+-+---+-+----------------------------------+++++++++++++++++++++++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>adjective</long>
+        <color>blue</color>
+        <mask>+-+---+++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>pronominal adjective</long>
+        <color>blue</color>
+        <mask>+-+---++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>adverb</long>
+        <color>darkorange</color>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>adposition</long>
+        <color>green</color>
+        <mask>+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>conjunction</long>
+        <color>deeppink</color>
+        <mask>+</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>interjection (adverbial)</long>
+        <color>gold</color>
+        <mask>+</mask>
+      </entry>
+      <entry punct="y">
+        <short>u</short>
+        <long>punctuation</long>
+        <mask>+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+</mask>
+      </entry>
+    </category>
+	
+    <category id="person" n="2" name="Person">
+      <entry>
+        <short>1</short>
+        <long>first person</long>
+        <lex>1st</lex>
+      </entry>
+      <entry>
+        <short>2</short>
+        <long>second person</long>
+        <lex>2nd</lex>
+      </entry>
+      <entry>
+        <short>3</short>
+        <long>third person</long>
+        <lex>3rd</lex>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="number" n="3" name="Number">
+      <entry>
+        <short>s</short>
+        <long>singular</long>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>plural</long>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dual</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="tense" n="4" name="Tense">
+      <entry>
+        <short>p</short>
+        <long>present</long>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>imperfect</long>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>perfect</long>
+      </entry>
+      <entry>
+        <short>l</short>
+        <long>pluperfect</long>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>future perfect</long>
+        <lex>future perfect</lex>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>future</long>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>aorist</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="mood" n="5" name="Mood">
+      <entry>
+        <short>i</short>
+        <long>indicative</long>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>subjunctive</long>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>optative</long>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>imperative</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="voice" n="6" name="Voice">
+      <entry>
+        <short>a</short>
+        <long>active form (active meaning)</long>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>active form (passive meaning)</long>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>middle form (middle/active meaning)</long>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>middle form (passive meaning)</long>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>medio-passive form (middle meaning)</long>
+        <lex>mediopassive</lex>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>medio-passive form (passive meaning)</long>
+        <lex>mediopassive</lex>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>passive form (passive meaning)</long>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>passive form (active/middle meaning)</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="gender" n="7" name="Gender">
+      <entry>
+        <short>m</short>
+        <long>masculine</long>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>feminine</long>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>neuter</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="case" n="8" name="Case">
+      <entry>
+        <short>n</short>
+        <long>nominative</long>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>genitive</long>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dative</long>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>accusative</long>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>vocative</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+    <category id="degree" n="9" name="Degree">
+      <entry>
+        <short>p</short>
+        <long>positive</long>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>comparative</long>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>superlative</long>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+      </entry>
+    </category>
+	
+    <category id="dependencyforfiniteformverbs" n="10" name="Dep. for finite form verbs">
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>++++++---+-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+</mask>
+      </entry>
+    </category>
+    <category id="kindofindependentfiniteformverbs" n="11" name="Kind of ind. finite form verbs">
+      <entry>
+        <short>s</short>
+        <long>statement</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>command</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>w</short>
+        <long>wish</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>q</short>
+        <long>question</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>++++++---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---++</mask>
+      </entry>
+    </category>
+    <category id="directindirectdiscourse" n="12" name="Dir./Ind. disc.">
+      <entry>
+        <short>i</short>
+        <long>indirect discourse</long>
+        <mask>++++++---+-++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>not indirect discourse</long>
+        <mask>++++++---+-++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-+</mask>
+      </entry>
+    </category>
+    <category id="kindofsubordinateclause" n="13" name="Kind of clause">
+      <entry>
+        <short>s</short>
+        <long>substantive clause</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>adjective clause</long>
+        <mask>++++++---+-++-+</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>adverb clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-++</mask>
+      </entry>
+    </category>
+    <category id="kindofsubstantiveclause" n="14" name="Kind of sub. clause">
+      <entry>
+        <short>s</short>
+        <long>statement</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+      <entry>
+        <short>w</short>
+        <long>will or desire</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+      <entry>
+        <short>q</short>
+        <long>question</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-+++</mask>
+      </entry>
+    </category>
+    <category id="adjectiveclause" n="15" name="Adj. clause">
+      <entry>
+        <short>p</short>
+        <long>proper</long>
+        <mask>++++++---+-++-+</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>improper</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofadjectiveclause" n="16" name="Kind of adj. clause">
+      <entry>
+        <short>p</short>
+        <long>relative clause of purpose</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>relative clause of cause</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>relative clause of result</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>conditional relative clause</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-++-++</mask>
+      </entry>
+    </category>
+    <category id="kindofadverbclause" n="17" name="Kind of adv. clause">
+      <entry>
+        <short>p</short>
+        <long>purpose clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>causal clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>result clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>conditional clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>concessive clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>temporal clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>comparison clause</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>++++++---+-++---+</mask>
+      </entry>
+    </category>
+	
+    <!-- The following category describes the verbal participle -->
+	
+    <category id="kindofparticiple" n="18" name="Kind of Part">
+      <entry>
+        <short>p</short>
+        <long>attributive participle</long>
+        <mask>+-++-+++---------++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>circumstantial participle</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>supplementary participle</long>
+        <mask>+-++-+++---------+---+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>in periphrastic constructions</long>
+        <mask>+-++-+++---------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+</mask>
+      </entry>
+    </category>
+    <category id="kindofattributiveparticiple" n="19" name="Kind of attr. Part.">
+      <entry>
+        <short>p</short>
+        <long>proper</long>
+        <mask>+-++-+++---------++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>improper</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+</mask>
+      </entry>
+    </category>
+    <category id="kindofimproperattributiveparticiple" n="20" name="Kind of improper attr. Part">
+      <entry>
+        <short>t</short>
+        <long>time</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>means</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>purpose</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>concession</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>condition</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>comparative</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>any attendant circumstance</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+++</mask>
+      </entry>
+    </category>
+    <category id="kindofcircumstantialparticiple" n="21" name="Kind of circum. Part">
+      <entry>
+        <short>t</short>
+        <long>time</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>means</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>purpose</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>concession</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>condition</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>comparative</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>any attendant circumstance</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+--+</mask>
+      </entry>
+    </category>
+    <category id="kindofsupplementaryparticiple" n="22" name="Kind of suppl. Part">
+      <entry>
+        <short>i</short>
+        <long>in indirect discourse</long>
+        <mask>+-++-+++---------+---+</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>not in indirect discourse</long>
+        <mask>+-++-+++---------+---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+---+</mask>
+      </entry>
+    </category>
+    <category id="CANCELLEDkindofnotinindirectdiscourseparticiple" n="23" name="Kind of Part not in ind. disc.">
+      <entry>
+        <short>w</short>
+        <long>after verbs(/adjectives/nouns) of emotion (2100), to do well (2101), endure (2098), and come and go (2099)</long>
+        <mask>+-++-+++---------+---++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>after verbs(/adjectives/adverbs/nouns) of any meaning except emotion, to do well, endure, and come and go</long>
+        <mask>+-++-+++---------+---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-+++---------+---++</mask>
+      </entry>
+    </category>
+	
+    <!-- the infinitive is here treated as a verbal NOUN, in accordance with the traditional grammar for Ancient Greek. It has 
+		some specific <categories> (from @n 25 to 32): Although many of them are also the same used for the noun, I had to write new <category> 
+		elements because of the (computational) syntax of this file (more precisely, the one contained in the <mask> elements): 
+		for example, the category number 27 coincides in content with the one number 14: however, since the superordinate category is different 
+		(number 26 and 10 respectively), they need to be kept separate. If I had used the category number 14 for the infinitive, 
+		I would have been required to tie it to category number 10, which is the wrong one for the infinitive. -->
+	
+    <category id="dependencyfortheinfinitive" n="24" name="Dep. for the inf">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+--+-+-----------------+-----------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+</mask>
+      </entry>
+    </category>
+    <category id="casefortheinfinitive" n="25" name="Case for the Inf">
+      <entry>
+        <short>n</short>
+        <long>nominative (articular)</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>nominative (verbal)</long>
+        <mask>+--+-+-----------------++---------------+</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>genitive (articular)</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dative (articular)</long>
+        <mask>+--+-+-----------------++-----+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>accusative (articular)</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>accusative (verbal)</long>
+        <mask>+--+-+-----------------++---------------+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>infinitive of purpose (uncertain case)</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>infinitive of result (uncertain case)</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>infinitive with πρίν (uncertain case)</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+    </category>
+    <category id="kindofinfinitivegenitive" n="26" name="Kind of Inf Gen">
+      <entry>
+        <short>p</short>
+        <long>genitive proper</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>ablatival genitive</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of time and place</long>
+        <mask>+--+-+-----------------+++---+</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>(with ἀμφί, περί) topic</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>z</short>
+        <long>(with διά, μέχρι) time extension (with force of acc.)</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>(with διά, μέχρι) space extension (with force of acc.)</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀπό, ἐξ) cause</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>(with ἀπό, διά, ἐξ) means or instrument</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>(with ἀπό, ἐξ, πρός, ὑπό) agent</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀπό, διά, ἐξ, μετά) manner</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with μετά, ἄνευ) accompaniment</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) advantage</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of genitive (only if depending on adj., adv., or adp.)</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+++</mask>
+      </entry>
+    </category>
+    <category id="kindofgenitiveproperfortheinfinite" n="27" name="Kind of Gen proper (Inf)">
+      <entry>
+        <short>p</short>
+        <long>genitive of possession or belonging</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of the divided whole</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>q</short>
+        <long>genitive of quality</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of explanation</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>genitive of material or contents</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of measure</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>subjective/objective genitive</long>
+        <mask>+--+-+-----------------+++++</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>genitive of price and value</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of crime and accountability</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of connection</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++++</mask>
+      </entry>
+    </category>
+    <category id="subjectiveobjectivegenitivefortheinfinite" n="28" name="Subj. or obj. Gen (Inf)">
+      <entry>
+        <short>s</short>
+        <long>subjective genitive</long>
+        <mask>+--+-+-----------------+++++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>objective genitive</long>
+        <mask>+--+-+-----------------+++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+++++</mask>
+      </entry>
+    </category>
+    <category id="kindofablativalgenitivefortheinfinite" n="29" name="Kind of abl. Gen">
+      <entry>
+        <short>w</short>
+        <long>genitive of temporal starting point (from)</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of separation</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of distinction and comparison</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of cause</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>genitive of purpose</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of source</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+++--+</mask>
+      </entry>
+    </category>
+    <category id="genitiveoftimeandplacefortheinfinitive" n="30" name="Gen of time and place (Inf)">
+      <entry>
+        <short>t</short>
+        <long>genitive of time</long>
+        <mask>+--+-+-----------------+++---+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of place</long>
+        <mask>+--+-+-----------------+++---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+++---+</mask>
+      </entry>
+    </category>
+    <category id="kindofinfinitivedative" n="31" name="Kind of Inf Dat">
+      <entry>
+        <short>d</short>
+        <long>dative proper</long>
+        <mask>+--+-+-----------------++-----++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>instrumental dative</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>l</short>
+        <long>locative dative</long>
+        <mask>+--+-+-----------------++-----+-----+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>(with ἐπί) purpose</long>
+        <mask>+--+-+-----------------++-----+</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of dative (only if depending on adj., adv., or adp.)</long>
+        <mask>+--+-+-----------------++-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----+</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeproperfortheinfinite" n="32" name="Kind of Dat proper (Inf.)">
+      <entry>
+        <short>d</short>
+        <long>dative as direct complement of verbs</long>
+        <mask>+--+-+-----------------++-----++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>dative as indirect complement of verbs (recipient)</long>
+        <mask>+--+-+-----------------++-----++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative of interest</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>dative of relation</long>
+        <mask>+--+-+-----------------++-----++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofinterestfortheinfinite" n="33" name="Kind of Dat of int. (Inf)">
+      <entry>
+        <short>p</short>
+        <long>dative of the possessor</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>dative of advantage and disadvantage</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>dative of feeling</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative with participle of inclination or aversion</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>dative of agent</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----+++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofrelationfortheinfinite" n="34" name="Kind of Dat of rel. (Inf.)">
+      <entry>
+        <short>p</short>
+        <long>dative of relation proper</long>
+        <mask>+--+-+-----------------++-----++-+</mask>
+      </entry>
+	  <entry>
+        <short>r</short>
+        <long>dative of reference</long>
+        <mask>+--+-+-----------------++-----++-+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>dative of the participle expressing time</long>
+        <mask>+--+-+-----------------++-----++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofinstrumentaldativefortheinfinite" n="35" name="Kind of instr Dat (Inf)">
+      <entry>
+        <short>i</short>
+        <long>instrument/means</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>dative of standard of judgement</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of measure of difference</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>respect</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>comitative</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----+---+</mask>
+      </entry>
+    </category>
+    <category id="kindofcomitativedativefortheinfinite" n="36" name="Kind of com. Dat (Inf)">
+      <entry>
+        <short>a</short>
+        <long>dative of association</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>dative of accompaniment</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>dative of military accompaniment</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of accompanying circumstance</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----+---++</mask>
+      </entry>
+    </category>
+    <category id="kindoflocaldativefortheinfinitive" n="37" name="Kind of Loc. Dat (Inf.)">
+      <entry>
+        <short>t</short>
+        <long>dative of time</long>
+        <mask>+--+-+-----------------++-----+-----+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>dative of place</long>
+        <mask>+--+-+-----------------++-----+-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++-----+-----+</mask>
+      </entry>
+    </category>
+    <category id="kindofinfinitiveaccusative" n="38" name="Kind of Inf Acc">
+      <entry>
+        <short>i</short>
+        <long>internal object (object effected)</long>
+        <mask>+--+-+-----------------++------------++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>external object (object affected)</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>accusative of extent</long>
+        <mask>+--+-+-----------------++------------+-+</mask>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>terminal accusative</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>accusative of respect</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀνά, εἰς, μετά, κατά, παρά, πρός, ὑπό, ὑπέρ) time terminal accusative</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀνά, εἰς, κατά) manner</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with διά, παρά) cause</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>(with διά, εἰς, ἐπί, κατά, πρός) purpose</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>k</short>
+        <long>(with εἰς, ἐπί, παρά, ὑπέρ) measure</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) standard of judgment</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of accusative (only if depending on adj., adv., or adp.)</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++------------+</mask>
+      </entry>
+    </category>
+    <category id="internalobject(object effected)" n="39" name="Internal object (Inf)">
+      <entry>
+        <short>c</short>
+        <long>cognate accusative/accusative of result</long>
+        <mask>+--+-+-----------------++------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++------------++</mask>
+      </entry>
+    </category>
+    <category id="accusativeofextent" n="40" name="Acc of extent (Inf)">
+      <entry>
+        <short>t</short>
+        <long>accusative of time</long>
+        <mask>+--+-+-----------------++------------+-+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>accusative of space</long>
+        <mask>+--+-+-----------------++------------+-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++------------+-+</mask>
+      </entry>
+    </category>
+    <category id="directindirectdiscoursefortheinfinite" n="41" name="Dir./Ind. disc. (Inf)">
+      <entry>
+        <short>n</short>
+        <long>not in indirect discourse</long>
+        <mask>+--+-+-----------------++---------------+</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>in indirect discourse</long>
+        <mask>+--+-+-----------------++---------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++---------------+</mask>
+      </entry>
+    </category>
+    <category id="CANCELLEDkindofnotinindirectdiscourseinfinitive" n="42" name="Kind of Inf not in ind. disc.">
+      <entry>
+        <short>w</short>
+        <long>with verbs(/adjectives/nouns) of will or desire</long>
+        <mask>+--+-+-----------------++---------------++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>not with verbs(/adjectives/adverbs/nouns) of will/desire</long>
+        <mask>+--+-+-----------------++---------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------++---------------++</mask>
+      </entry>
+    </category>
+    <category id="kindofindependentinfinitive" n="43" name="Kind of ind. Inf">
+      <entry>
+        <short>c</short>
+        <long>command</long>
+        <mask>+--+-+-----------------+------------------+</mask>
+      </entry>
+      <entry>
+        <short>w</short>
+        <long>wish</long>
+        <mask>+--+-+-----------------+------------------+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>+--+-+-----------------+------------------+</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>absolute infinitive</long>
+        <mask>+--+-+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+--+-+-----------------+------------------+</mask>
+      </entry>
+    </category>
+	
+    <!-- the noun, and its syntactic equivalents (i.e., the pronoun, the substantive adjective, and the substantive participle) 
+		has a dedicated <category> element for the case, because such an element ONLY is tied to the following ones 
+		(from @n 11 to @24). That is, on the basis of the case the noun and its equivalents have, the categories 
+		for the syntax of the relevant case are selected according to the following <category> elements (from @n 11 to 24). 
+		The noun and its equivalents are the ONLY parts of speech whose syntax can be described in such a way; the adjective, 
+		for example, has a case, but such a case cannot be described in the terms in which the case for the noun and its equivalents are -->
+	
+    <category id="casefornounandequivalentsexcludingsubstantiveparticiple" n="44" name="Case">
+      <entry>
+        <short>n</short>
+        <long>nominative</long>
+        <mask>+-+---+------------------------------------++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>genitive</long>
+        <mask>+-+---+------------------------------------+--+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dative</long>
+        <mask>+-+---+------------------------------------+---------+</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>accusative</long>
+        <mask>+-+---+------------------------------------+-----------------+</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>vocative</long>
+        <mask>+-+---+------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+</mask>
+      </entry>
+    </category>
+    <category id="dependencyforthenominative" n="45" name="Dep. for the Nom">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-+---+------------------------------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-+---+------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------++</mask>
+      </entry>
+    </category>
+    <category id="Kindofindependentnominative" n="46" name="Kind of ind. Nom">
+      <entry>
+        <short>c</short>
+        <long>citation</long>
+        <mask>+-+---+------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>nominativus pendens</long>
+        <mask>+-+---+------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>+-+---+------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+++</mask>
+      </entry>
+    </category>
+    <category id="Dependencyforthegenitive" n="47" name="Dep. for the Gen">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-+---+------------------------------------+--+-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--+</mask>
+      </entry>
+    </category>
+    <category id="Kindofdependentgenitive" n="48" name="Kind of dep. Gen">
+      <entry>
+        <short>p</short>
+        <long>genitive proper</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>ablatival genitive</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of time and place</long>
+        <mask>+-+---+------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>(with ἀμφί, περί) topic</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>z</short>
+        <long>(with διά, μέχρι) time extension (with force of acc.)</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>(with διά, μέχρι) space extension (with force of acc.)</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀπό, ἐξ) cause</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>(with ἀπό, διά, ἐξ) means or instrument</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>(with ἀπό, ἐξ, πρός, ὑπό) agent</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀπό, διά, ἐξ, μετά) manner</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with μετά, ἄνευ) accompaniment</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) advantage</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of genitive (only if depending on adj., adv., or adp.)</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--++</mask>
+      </entry>
+    </category>
+    <category id="kindofgenitiveproper" n="49" name="Kind of Gen proper">
+      <entry>
+        <short>p</short>
+        <long>genitive of possession or belonging</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of the divided whole</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>q</short>
+        <long>genitive of quality</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of explanation</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>genitive of material or contents</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of measure</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>subjective/objective genitive</long>
+        <mask>+-+---+------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>genitive of price and value</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of crime and accountability</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of connection</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--+++</mask>
+      </entry>
+    </category>
+    <category id="subjectiveobjectivegenitive" n="50" name="Subj. or obj. Gen">
+      <entry>
+        <short>s</short>
+        <long>subjective genitive</long>
+        <mask>+-+---+------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>objective genitive</long>
+        <mask>+-+---+------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--++++</mask>
+      </entry>
+    </category>
+    <category id="kindofablativalgenitive" n="51" name="Kind of abl. Gen">
+      <entry>
+        <short>w</short>
+        <long>genitive of temporal starting point (from)</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of separation</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of distinction and comparison</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of cause</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>genitive of purpose</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of source</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--++--+</mask>
+      </entry>
+    </category>
+    <category id="Genitiveoftimeandplace" n="52" name="Gen of time and place">
+      <entry>
+        <short>t</short>
+        <long>genitive of time</long>
+        <mask>+-+---+------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of place</long>
+        <mask>+-+---+------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--++---+</mask>
+      </entry>
+    </category>
+    <category id="Kindofindependentgenitive" n="53" name="Kind of ind. Gen">
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>+-+---+------------------------------------+--+-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+--+-----+</mask>
+      </entry>
+    </category>
+    <category id="dependencyforthedative" n="54" name="Dep. for the Dat">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-+---+------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------+</mask>
+      </entry>
+    </category>
+    <category id="Kindofdependentdative" n="55" name="Kind of dep. Dat">
+      <entry>
+        <short>p</short>
+        <long>dative proper</long>
+        <mask>+-+---+------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>instrumental dative</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>l</short>
+        <long>locative dative</long>
+        <mask>+-+---+------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>(with ἐπί) purpose</long>
+        <mask>+-+---+------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of dative (only if depending on adj., adv., or adp.)</long>
+        <mask>+-+---+------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeproper" n="56" name="Kind of Dat proper">
+      <entry>
+        <short>d</short>
+        <long>dative as direct complement of verbs</long>
+        <mask>+-+---+------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>dative as indirect complement of verbs (recipient)</long>
+        <mask>+-+---+------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative of interest</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>dative of relation</long>
+        <mask>+-+---+------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------+++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofinterest" n="57" name="Kind of Dat of int.">
+      <entry>
+        <short>p</short>
+        <long>dative of the possessor</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>dative of advantage and disadvantage</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>dative of feeling</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative with participle of inclination or aversion</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>dative of agent</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------++++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofrelation" n="58" name="Kind of Dat of rel.">
+      <entry>
+        <short>p</short>
+        <long>dative of relation proper</long>
+        <mask>+-+---+------------------------------------+---------+++-+</mask>
+      </entry>	
+      <entry>
+        <short>r</short>
+        <long>dative of reference</long>
+        <mask>+-+---+------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>dative of the participle expressing time</long>
+        <mask>+-+---+------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------+++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofinstrumentaldative" n="59" name="Kind of instr. Dat">
+      <entry>
+        <short>i</short>
+        <long>instrument/means</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>dative of standard of judgement</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of measure of difference</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>respect</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>comitative</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------++---+</mask>
+      </entry>
+    </category>
+    <category id="kindofcomitativedative" n="60" name="Kind of com. Dat">
+      <entry>
+        <short>a</short>
+        <long>dative of association</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>dative of accompaniment</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>dative of military accompaniment</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of accompanying circumstance</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------++---++</mask>
+      </entry>
+    </category>
+    <category id="localdative" n="61" name="Locative Dat">
+      <entry>
+        <short>t</short>
+        <long>dative of time</long>
+        <mask>+-+---+------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>dative of place</long>
+        <mask>+-+---+------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+---------++-----+</mask>
+      </entry>
+    </category>
+    <category id="dependencyfortheaccusative" n="62" name="Dep. for the Acc">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-+---+------------------------------------+-----------------+---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+-----------------+</mask>
+      </entry>
+    </category>
+    <category id="kindofdependentaccusative" n="63" name="Kind of dep. Acc">
+      <entry>
+        <short>i</short>
+        <long>internal object (object effected)</long>
+        <mask>+-+---+------------------------------------+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>external object (object affected)</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>accusative of extent</long>
+        <mask>+-+---+------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>terminal accusative</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>accusative of respect</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀνά, εἰς, μετά, κατά, παρά, πρός, ὑπό, ὑπέρ) time terminal accusative</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀνά, εἰς, κατά) manner</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with διά, παρά) cause</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>(with διά, εἰς, ἐπί, κατά, πρός) purpose</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>k</short>
+        <long>(with εἰς, ἐπί, παρά, ὑπέρ) measure</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) standard of judgment</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of accusative (only if depending on adj., adv., or adp.)</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+-----------------++</mask>
+      </entry>
+    </category>
+    <category id="internalobject(object effected)" n="64" name="Internal object">
+      <entry>
+        <short>c</short>
+        <long>cognate accusative/accusative of result</long>
+        <mask>+-+---+------------------------------------+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+-----------------+++</mask>
+      </entry>
+    </category>
+    <category id="accusativeofextent" n="65" name="Acc of extent">
+      <entry>
+        <short>t</short>
+        <long>accusative of time</long>
+        <mask>+-+---+------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>accusative of space</long>
+        <mask>+-+---+------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+-----------------++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofindependentaccusative" n="66" name="Kind of ind. Acc">
+      <entry>
+        <short>t</short>
+        <long>elliptical accusative</long>
+        <mask>+-+---+------------------------------------+-----------------+---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-+---+------------------------------------+-----------------+---+</mask>
+      </entry>
+    </category>
+	
+    <!-- The following category describes the nominal participle -->
+	
+    <category id="caseforsubstantiveparticiple" n="67" name="Case for the Part">
+      <entry>
+        <short>n</short>
+        <long>nominative</long>
+        <mask>+-++-++-----------------------------------------------------------++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>genitive</long>
+        <mask>+-++-++-----------------------------------------------------------+--+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>dative</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>accusative</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>vocative</long>
+        <mask>+-++-++-----------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+</mask>
+      </entry>
+    </category>
+    <category id="dependencyforthenominativeparticiple" n="68" name="Dep. for the Nom (Part)">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-++-++-----------------------------------------------------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-++-++-----------------------------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------++</mask>
+      </entry>
+    </category>
+    <category id="Kindofindependentnominativeparticiple" n="69" name="Kind of ind. Nom (Part)">
+      <entry>
+        <short>c</short>
+        <long>citation</long>
+        <mask>+-++-++-----------------------------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>nominativus pendens</long>
+        <mask>+-++-++-----------------------------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>+-++-++-----------------------------------------------------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+++</mask>
+      </entry>
+    </category>
+    <category id="Dependencyforthegenitiveparticiple" n="70" name="Dep. for the Gen (Part)">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-++-++-----------------------------------------------------------+--+-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--+</mask>
+      </entry>
+    </category>
+    <category id="Kindofdependentgenitiveparticiple" n="71" name="Kind of dep. Gen (Part)">
+      <entry>
+        <short>p</short>
+        <long>genitive proper</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>ablatival genitive</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of time and place</long>
+        <mask>+-++-++-----------------------------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>(with ἀμφί, περί) topic</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>z</short>
+        <long>(with διά, μέχρι) time extension (with force of acc.)</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>(with διά, μέχρι) space extension (with force of acc.)</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀπό, ἐξ) cause</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>(with ἀπό, διά, ἐξ) means or instrument</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>(with ἀπό, ἐξ, πρός, ὑπό) agent</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀπό, διά, ἐξ, μετά) manner</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with μετά, ἄνευ) accompaniment</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) advantage</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of genitive (only if depending on adj., adv., or adp.)</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--++</mask>
+      </entry>
+    </category>
+    <category id="kindofgenitiveproperforparticiple" n="72" name="Kind of Gen proper (Part)">
+      <entry>
+        <short>p</short>
+        <long>genitive of possession or belonging</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of the divided whole</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>q</short>
+        <long>genitive of quality</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>genitive of explanation</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>genitive of material or contents</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of measure</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>b</short>
+        <long>subjective/objective genitive</long>
+        <mask>+-++-++-----------------------------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>v</short>
+        <long>genitive of price and value</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of crime and accountability</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of connection</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--+++</mask>
+      </entry>
+    </category>
+    <category id="subjectiveobjectivegenitiveforparticiple" n="73" name="Subj. or obj. Gen (Part)">
+      <entry>
+        <short>s</short>
+        <long>subjective genitive</long>
+        <mask>+-++-++-----------------------------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>objective genitive</long>
+        <mask>+-++-++-----------------------------------------------------------+--++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--++++</mask>
+      </entry>
+    </category>
+    <category id="kindofablativalgenitiveforparticiple" n="74" name="Kind of abl. Gen (Part)">
+      <entry>
+        <short>w</short>
+        <long>genitive of temporal starting point (from)</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of separation</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>genitive of distinction and comparison</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>genitive of cause</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>genitive of purpose</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>genitive of source</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--++--+</mask>
+      </entry>
+    </category>
+    <category id="Genitiveoftimeandplaceforparticiple" n="75" name="Gen of time and place (Part)">
+      <entry>
+        <short>t</short>
+        <long>genitive of time</long>
+        <mask>+-++-++-----------------------------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>genitive of place</long>
+        <mask>+-++-++-----------------------------------------------------------+--++---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--++---+</mask>
+      </entry>
+    </category>
+    <category id="Kindofindependentgenitiveforparticiple" n="76" name="Kind of ind. Gen (Part)">
+      <entry>
+        <short>e</short>
+        <long>exclamation</long>
+        <mask>+-++-++-----------------------------------------------------------+--+-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+--+-----+</mask>
+      </entry>
+    </category>
+    <category id="dependencyforthedativeforparticiple" n="77" name="Dep. for the Dat (Part)">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+</mask>
+      </entry>
+    </category>
+    <category id="Kindofdependentdativeforparticiple" n="78" name="Kind of dep. Dat (Part)">
+      <entry>
+        <short>p</short>
+        <long>dative proper</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>instrumental dative</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>l</short>
+        <long>locative dative</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>(with ἐπί) purpose</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of dative (only if depending on adj., adv., or adp.)</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeproperforparticiple" n="79" name="Kind of Dat proper (Part)">	
+      <entry>
+        <short>d</short>
+        <long>dative as direct complement of verbs</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>dative as indirect complement of verbs (recipient)</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative of interest</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>dative of relation</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofinterestforparticiple" n="80" name="Kind of Dat of int. (Part)">
+      <entry>
+        <short>p</short>
+        <long>dative of the possessor</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>a</short>
+        <long>dative of advantage and disadvantage</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>dative of feeling</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>dative with participle of inclination or aversion</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>dative of agent</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++++</mask>
+      </entry>
+    </category>
+    <category id="kindofdativeofrelationforparticiple" n="81" name="Kind of Dat of rel. (Part)">
+      <entry>
+        <short>p</short>
+        <long>dative of relation proper</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++-+</mask>
+      </entry>
+	  <entry>
+        <short>r</short>
+        <long>dative of reference</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>dative of the participle expressing time</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------+++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofinstrumentaldativeforparticiple" n="82" name="Kind of instr. Dat (Part)">
+      <entry>
+        <short>i</short>
+        <long>instrument/means</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>dative of standard of judgement</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of measure of difference</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>respect</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>comitative</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---+</mask>
+      </entry>
+    </category>
+    <category id="kindofcomitativedativeforparticiple" n="83" name="Kind of com. Dat (Part)">
+      <entry>
+        <short>a</short>
+        <long>dative of association</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>dative of accompaniment</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>dative of military accompaniment</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>dative of accompanying circumstance</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++---++</mask>
+      </entry>
+    </category>
+    <category id="localdativeforparticiple" n="84" name="Locative Dat (Part)">
+      <entry>
+        <short>t</short>
+        <long>dative of time</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>dative of place</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++-----+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+---------++-----+</mask>
+      </entry>
+    </category>
+    <category id="dependencyfortheaccusativeforparticiple" n="85" name="Dep. for the Acc (Part)">
+      <entry>
+        <short>d</short>
+        <long>dependent</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>independent</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+</mask>
+      </entry>
+    </category>
+    <category id="kindofdependentaccusativeforparticiple" n="86" name="Kind of dep. Acc (Part)">
+      <entry>
+        <short>i</short>
+        <long>internal object (object effected)</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>external object (object affected)</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>accusative of extent</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>t</short>
+        <long>terminal accusative</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>accusative of respect</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>(with ἀνά, εἰς, μετά, κατά, παρά, πρός, ὑπό, ὑπέρ) time terminal accusative</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>(with ἀνά, εἰς, κατά) manner</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>(with διά, παρά) cause</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>(with διά, εἰς, ἐπί, κατά, πρός) purpose</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>k</short>
+        <long>(with εἰς, ἐπί, παρά, ὑπέρ) measure</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>j</short>
+        <long>(with πρός) standard of judgment</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>unspecified kind of accusative (only if depending on adj., adv., or adp.)</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++</mask>
+      </entry>
+    </category>
+    <category id="internalobjectforparticiple" n="87" name="Internal object (Part)">
+      <entry>
+        <short>c</short>
+        <long>cognate accusative/accusative of result</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+++</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+++</mask>
+      </entry>
+    </category>
+    <category id="accusativeofextentforparticiple" n="88" name="Acc of extent (Part)">
+      <entry>
+        <short>t</short>
+        <long>accusative of time</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>accusative of space</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++-+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------++-+</mask>
+      </entry>
+    </category>
+    <category id="kindofindependentaccusativeforparticiple" n="89" name="Kind of ind. Acc (Part)">
+      <entry>
+        <short>t</short>
+        <long>elliptical accusative</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+---+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-++-++-----------------------------------------------------------+-----------------+---+</mask>
+      </entry>
+    </category>
+	
+    <category id="kindofadverb" n="90" name="Kind of adverb">
+      <entry>
+        <short>t</short>
+        <long>time (with force of genitive/dative)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>p</short>
+        <long>place (with force of genitive/dative)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>d</short>
+        <long>time (with force of accusative of extent)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>e</short>
+        <long>time (with force of terminal accusative)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>z</short>
+        <long>space (with force of accusative of extent)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>h</short>
+        <long>space (with force of terminal accusative)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>w</short>
+        <long>temporal starting point (from)</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>s</short>
+        <long>separation</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>o</short>
+        <long>source</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>c</short>
+        <long>cause</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>r</short>
+        <long>result</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>m</short>
+        <long>manner</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>y</short>
+        <long>measure</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>i</short>
+        <long>instrument/means</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>u</short>
+        <long>purpose</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>n</short>
+        <long>concessive</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>g</short>
+        <long>negation</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>l</short>
+        <long>modal</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>f</short>
+        <long>unspecified</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+      <entry>
+        <short>x</short>
+        <long>I do not know</long>
+        <mask>+-------+--------------------------------------------------------------------------------+</mask>
+      </entry>
+    </category>
+	
+  </table>
+  
+  <table type="relation">
+    <entry>
+      <tb>PRED</tb>
+      <help dir="up">root</help>
+      <help dir="dn">predicate</help>
+    </entry>
+    <entry>
+      <tb>SBJ</tb>
+      <disp>SUBJ</disp>
+      <help dir="up">verb</help>
+      <help dir="dn">subject</help>
+    </entry>
+    <entry>
+      <tb>OBJ</tb>
+      <help dir="up">verb</help>
+      <help dir="dn">object</help>
+    </entry>
+    <entry>
+      <tb>ATR</tb>
+      <disp>ATTR</disp>
+      <help dir="up">modified word</help>
+      <help dir="dn">attribute</help>
+    </entry>
+    <entry>
+      <tb>ADV</tb>
+      <help dir="up">modified word</help>
+      <help dir="dn">adverbial</help>
+    </entry>
+    <entry>
+      <tb>PNOM</tb>
+      <help dir="up">verb</help>
+      <help dir="dn">predicate nominal</help>
+    </entry>
+    <entry>
+      <tb>OCOMP</tb>
+      <help dir="up">verb</help>
+      <help dir="dn">object complement</help>
+    </entry>
+    <entry>
+      <tb>APOS</tb>
+      <disp>APPOS</disp>
+      <help dir="dn">apposing element</help>
+    </entry>
+    <entry>
+      <tb>COORD</tb>
+      <help dir="dn">coordinator</help>
+    </entry>
+    <entry>
+      <tb>AtvV</tb>
+      <disp>COMP</disp>
+      <help dir="dn">complement</help>
+    </entry>
+    <entry>
+      <tb>AuxP</tb>
+      <disp>PREP</disp>
+      <menu>AuxP (prep)</menu>
+      <help dir="dn">preposition</help>
+    </entry>
+    <entry>
+      <tb>AuxC</tb>
+      <disp>CONJ</disp>
+      <menu>AuxC (conj)</menu>
+      <help dir="dn">conjunction</help>
+    </entry>
+    <entry>
+      <tb>AuxY</tb>
+      <disp>SADV</disp>
+      <menu>AuxY (sent adv)</menu>
+      <help dir="dn">sentence adverbial</help>
+    </entry>
+    <entry>
+      <tb>AuxX</tb>
+      <disp>COMMA</disp>
+      <menu>AuxX (comma)</menu>
+      <help dir="up">head of clause</help>
+      <help dir="dn">comma</help>
+    </entry>
+    <entry>
+      <tb>AuxG</tb>
+      <disp>BRCKT</disp>
+      <menu>AuxG (bracketing)</menu>
+      <help dir="up">head of phrase</help>
+      <help dir="dn">bracketing punctuation</help>
+    </entry>
+    <entry>
+      <tb>AuxK</tb>
+      <disp>TERM</disp>
+      <menu>AuxK (terminal)</menu>
+      <help dir="up">root</help>
+      <help dir="dn">terminal punctuation</help>
+    </entry>
+    <entry>
+      <tb>AuxV</tb>
+      <disp>AUXV</disp>
+      <menu>AuxV (aux verb)</menu>
+      <help dir="up">tensed verb</help>
+      <help dir="dn">auxiliary verb</help>
+    </entry>
+    <entry>
+      <tb>AuxZ</tb>
+      <disp>EMPH</disp>
+      <menu>AuxZ (emph)</menu>
+      <help dir="dn">emphasizing particle</help>
+    </entry>
+    <entry>
+      <tb>ExD</tb>
+      <disp>ELLIP</disp>
+      <help dir="dn">ellipsis</help>
+    </entry>
+  </table>
+  <table type="subrelation">
+    <entry>
+      <tb/>
+      <menu>- -</menu>
+    </entry>
+    <entry>
+      <tb>_AP</tb>
+    </entry>
+    <entry>
+      <tb>_CO</tb>
+    </entry>
+    <entry>
+      <tb>_AP_CO</tb>
+    </entry>
+    <entry>
+      <tb>_CNS</tb>
+    </entry>
+  </table>
 </desc>
 </info>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <Annotation xmlns="http://www.w3.org/ns/oa#">
+      <memberOf xmlns="http://purl.org/dc/dcam/" rdf:resource="urn:cite:perseus:testcoll"  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+      <hasTarget xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:cts:latinLit:tg.work.edition:1.1"/>
+      <hasBody xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:uuidd0e1"/>
+      <isMotivatedBy xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="oa:linking"/>
+      <serializedBy>
+         <SoftwareAgent xmlns="http://www.w3.org/ns/prov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://services.perseids.org/llt/segtok"/>
+      </serializedBy>
+      <serializedAt/>
+   </Annotation>
+   <ContentAsXML xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="urn:uuidd0e1">
+      <cnt:rest xmlns:cnt="http://www.w3.org/2008/content#" rdf:parseType="Literal">
+         <treebank xml:lang="lat" format="aldt" version="1.5" xmlns="">
+            <sentence id="1" document_id="http://bobsfiles.com/1.xml" subdoc="1.1" span="">
+               <word id="1" form="tantum" lemma="" postag="" head="0" relation="nil"/>
+               <word id="2" form="in" lemma="" postag="" head="0" relation="nil"/>
+               <word id="3" form="amore" lemma="" postag="" head="0" relation="nil"/>
+               <word id="4" form="preces" lemma="" postag="" head="0" relation="nil"/>
+               <word id="5" form="et" lemma="" postag="" head="0" relation="nil"/>
+               <word id="6" form="bene" lemma="" postag="" head="0" relation="nil"/>
+               <word id="7" form="facta" lemma="" postag="" head="0" relation="nil"/>
+               <word id="8" form="valent" lemma="" postag="" head="0" relation="nil"/>
+            </sentence>
+         </treebank>
+      </cnt:rest>
+   </ContentAsXML>
+</RDF>

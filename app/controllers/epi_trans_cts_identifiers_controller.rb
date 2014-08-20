@@ -9,7 +9,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   def edit
     find_identifier
     # Add URL to image service for display of related images
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:context_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     # find text for preview
     if (@identifier.related_text)
       @identifier[:text_html_preview] = @identifier.related_text.preview
@@ -18,7 +18,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   
   def editxml
     find_identifier
-    @identifier[:cite_image_service] = Tools::Manager.tool_config('cite_image_service')[:binary_url] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary)[:href] 
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'epi_trans_cts_identifiers/editxml'
@@ -117,6 +117,11 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     flash[:notice] = name + ' was successfully removed from your publication.'
     redirect_to pub
     return
+  end
+  
+  def annotate_xslt
+    find_identifier
+    render :xml => @identifier.passage_annotate_xslt
   end
   
   protected

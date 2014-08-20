@@ -44,7 +44,7 @@ class CtsProxyController < ApplicationController
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})),
           :e_subref => CTS::CTSLib.get_subref(params[:urn]).to_s)
     rescue Exception => e
-      Rails.logger.error(e)
+      Rails.logger.error(e.backtrace)
       render :text => e.to_s, :status => 500
     end
   end

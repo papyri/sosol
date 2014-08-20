@@ -6,6 +6,8 @@ class CiteIdentifier < Identifier
   
   IDENTIFIER_PREFIX = 'urn:cite:' 
   IDENTIFIER_NAMESPACE = 'cite'
+  NS_DCAM = "http://purl.org/dc/dcam/"
+
   
   # must be defined in subclass 
   #  PATH_PREFIX
@@ -352,6 +354,21 @@ class CiteIdentifier < Identifier
         raise "Unable to check for conflicts - unknown urn type"
       end # end test on urn type
       return existing_identifiers
+    end
+
+    def self.api_parse_post_for_identifier(a_post)
+      oacxml = REXML::Document.new(a_post).root
+      urn = REXML::XPath.first(oacxml,'//dcam:memberOf',{"dcam" => NS_DCAM})
+      if (urn)
+        return urn.attributes['rdf:resource']
+      else
+        raise "Unspecified Collection"
+      end
+    end
+
+    # try to parse an initialization value from posted data
+    def self.api_parse_post_for_init(a_post)
+      #default is no-op
     end
 
 end
