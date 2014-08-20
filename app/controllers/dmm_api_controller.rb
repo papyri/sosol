@@ -295,6 +295,7 @@ class DmmApiController < ApplicationController
         :value => form_authenticity_token,
         :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
+      @current_user[:uri] = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
       render :json => @current_user
   end
 
