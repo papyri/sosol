@@ -297,16 +297,27 @@ class CtsPublicationsController < PublicationsController
   end # end create_from_selector
   
   def create_from_uri
-    # check agent
+    if (_create_from_uri)
+      redirect_to @publication
+    else
+      redirect_to dashboard_url
+    end
+  end
+
+  protected
+
+  def _create_from_uri
+
+    # check agent - only registered uri agents allowed
     agent = AgentHelper::agent_of(params[:uri])
     if (agent.nil?)
-      flash[:error] = "Unrecognized Link Agent #{params[:uri]}"
-      redirect_to dashboard_url
+      flash[:error] = "Publication not created. Unrecognized Link Agent #{params[:uri]}"
+      return
     end
 
     collection = agent[:collections][:CTSIdentifier]
 
-    # retrieve URI
+    # retrieve content from URL
     begin
       linked_uri = URI.parse(params[:uri])
       resp = Net::HTTP.start(linked_uri.host, linked_uri.port) do |http|
@@ -315,16 +326,18 @@ class CtsPublicationsController < PublicationsController
       if (resp.code == '200')
         content = resp.body
       else 
-        raise "Failed request to #{linked_uri} : #{resp.code} #{resp.msg} #{resp.body}" 
+        raise "Publication not created. Unable to retrieve content from #{linked_uri} (Error returned: #{resp.code} #{resp.msg} #{resp.body})" 
       end
     rescue Exception => e
-      flash[:error] = e.get_message
-      redirect_to dashboard_url and return
+      flash[:error] = e.message
+      return
     end
-    
+
+    # check to see if we need to transform the retried content
     if (agent[:transformations][:CTSIdentifier])
       transform = agent[:transformations][:CTSIdentifier]
     end
+
     unless (transform.nil?)
       user = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
       content = JRubyXML.apply_xsl_transform(
@@ -337,43 +350,51 @@ class CtsPublicationsController < PublicationsController
       )  
     end
 
-    xml = REXML::Document.new(content).root
-    # retrieve urn and pubtype from content 
-    create = REXML::XPath.first(xml, "/create[@urn]")
-    unless (create.nil?)
-      urn = create.attributes['urn']
-      pubtype = create.attributes['pubtype']
-      if (urn.nil? || pubtype.nil?)
-        flash[:error] = "Unable to parse CTS urn or pubtype from retrieved content: #{content}"
-        redirect_to dashboard_url and return
-      end
-    end 
-    
+    # retrieve identifier type, urn and pubtype from content 
+    parsed = XmlHelper::parseattributes(content,{'create',['urn','pubtype','type']})
+    if (parsed['create'].length > 0)
+      urn = parsed['create'][0]['urn']
+      pubtype = parsed['create'][0]['pubtype']
+      identifier_type = parsed['create'][0]['type']
+    end
+
+    # at minimum we need identifier type, pubtype and urn or we can't proceed
+    if (identifier_type.nil? || urn.nil? || pubtype.nil?)
+      flash[:error] = "Publication not created. Unable to parse collection, CTS urn or pubtype from retrieved content: #{content}."
+      return
+    end
+
+    # for translations we also need to know what language
+    if (pubtype == 'translation' && ! params[:lang])
+        flash[:error] = "Publication not created. A language must be specified for translations."
+        return
+    end
+
     begin
       urnObj = CTS::CTSLib.urnObj(urn)
     rescue
-      flash[:error] = "Invalid URN identifier for linked text #{urn}}"
-      redirect_to dashboard_url and return
+      flash[:error] = "Publication not created. Invalid URN identifier for linked text #{urn}}"
+      return
     end
     
     # we must have at least a work
     work = urnObj.getWork(false)
     if (work.nil? || work == '')
-      flash[:error] = "Missing work identifier for linked text #{urn}}"
-      redirect_to dashboard_url and return
+      flash[:error] = "Publication not created. Missing work identifier for linked text #{urn}}"
+      return
     end
     
     version = urnObj.getVersion(false)
-    Rails.logger.info("Checking for version #{version}")
     if (version.nil? || version == '')
       # if no edition, just use a fake one for use in path processing
       version = urn + ".tempedition"    
       identifier = collection + "/" + CTS::CTSLib.pathForUrn(version,pubtype)
-      identifier_class = Object.const_get(CTS::CTSLib.getIdentifierClassName(identifier))
+      identifier_class = Object.const_get(identifier_type)
       new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
       # fetch a title without creating from template
       new_publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(collection,urn,pubtype,'pub')).name
       new_publication.status = "new"
+      Rails.logger.info("Saving #{new_publication.inspect}")
       new_publication.save!
       @publication = new_publication
       # branch from master so we aren't just creating an empty branch
@@ -386,8 +407,7 @@ class CtsPublicationsController < PublicationsController
         }
       rescue Exception => e
         @publication.destroy
-        flash[:notice] = 'Error initializing content:' + e.to_s
-        redirect_to dashboard_url
+        flash[:notice] = 'Publication not created. Error initializing content:' + e.to_s
         return
       end
       
@@ -401,14 +421,12 @@ class CtsPublicationsController < PublicationsController
         # now the citation identifier 
       rescue Exception => e
         @publication.destroy
-        flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
-        redirect_to dashboard_url
+        flash[:notice] = 'Publication not created. Error during creation of inventory excerpt:' + e.to_s
         return
       end
 
       flash[:notice] = 'Publication was successfully created.'
       expire_publication_cache
-      redirect_to @publication
     # proceed to create from existing identifier file -- only if we have an identifier
     else
       raise "Editing an existing edition from URI is not yet supported"

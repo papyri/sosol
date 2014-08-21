@@ -11,69 +11,12 @@
     <xsl:template match="/">
     <xsl:variable name="iteminwiki" select="entity"/>
     <xsl:variable name="ctsurn">
-        <xsl:variable name="ids">
-            <xsl:choose>
-                <xsl:when test="$iteminwiki//property[@id='p37']">
-                    <xsl:text>EDB</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p37']//datavalue/@value"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="$iteminwiki//property[@id='p24']">
-                            <!--EDH-->
-                            <xsl:value-of select="$iteminwiki//property[@id='p24']//datavalue/@value"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                        <xsl:choose>
-                             <xsl:when test="$iteminwiki//property[@id='p38']">
-                                 <xsl:text>EDR</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p38']//datavalue/@value"/>
-                             </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p22']">
-                                <xsl:text>HE</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p22']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p33']">
-                                <xsl:text>petrae</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p33']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p34']">
-                                <xsl:text>UEL</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p34']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p35']">
-                                <xsl:text>DAI</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p35']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p47']"> 
-                                <!--Last Statues of Antiquity-->
-                                <xsl:value-of select="$iteminwiki//property[@id='p47']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p40']"> 
-                                <!--BSR - IRT -->
-                                <xsl:value-of select="$iteminwiki//property[@id='p40']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p50']"> 
-                                <!--insAph -->
-                                <xsl:value-of select="$iteminwiki//property[@id='p50']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p48']"> 
-                                <!--ELTE-->
-                                <xsl:value-of select="$iteminwiki//property[@id='p48']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p51']"> 
-                                <xsl:text>AIO</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p51']//datavalue/@value"/>
-                            </xsl:when>
-                            <xsl:when test="$iteminwiki//property[@id='p56']"> 
-                                <!--PHI-->
-                                <xsl:value-of select="$iteminwiki//property[@id='p56']//datavalue/@value"/>
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
         <xsl:choose>
            <xsl:when test="$iteminwiki//property[@id='p3']">
-               <xsl:value-of select="concat('urn:cts:tm:', $iteminwiki//property[@id='p3']//datavalue/@value, '.', $ids)"/>
+               <xsl:value-of select="concat('urn:cts:pdlepi:eagle.tm', $iteminwiki//property[@id='p3']//datavalue/@value)"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="concat('urn:cts:eagle:', $ids)"/> <!--this is just to test, it should never actually happen but the problem remains for multiple tm..-->
+                <!--only items with TM ids are supported for Perseids-EAGLE integration -->
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
@@ -112,11 +55,12 @@
                 <xsl:sequence select="$iteminwiki//property[@id='p57']/claim"/>
             </xsl:if>
         </xsl:variable>
-    <create urn="{$ctsurn}" pubtype="translation">
+    <create urn="{$ctsurn}" pubtype="translation" type="EagleTransCTSIdentifier">
         <xsl:choose>
             <xsl:when test="not($emend)">
                 <TEI xmlns="http://www.tei-c.org/ns/1.0">
                     <xsl:call-template name="make_header">
+                        <xsl:with-param name="entity" select="$iteminwiki"/>
                         <xsl:with-param name="claim" select="()"/>
                         <xsl:with-param name="title" select="$iteminwiki//description[@language=$lang]/@value"/>
                         <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -136,6 +80,7 @@
                 <xsl:for-each select="$englishtranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='en']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -154,6 +99,7 @@
                 <xsl:for-each select="$germantranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='de']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -173,6 +119,7 @@
                 <xsl:for-each select="$italiantranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='it']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -192,6 +139,7 @@
                 <xsl:for-each select="$spanishtranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='es']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -211,6 +159,7 @@
                 <xsl:for-each select="$frenchtranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='fr']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -230,6 +179,7 @@
                 <xsl:for-each select="$hungariantranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='hu']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -248,6 +198,7 @@
                 <xsl:for-each select="$croatiantranslations/*">
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
+                            <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
                             <xsl:with-param name="title" select="$iteminwiki//description[@language='hr']/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
@@ -269,6 +220,7 @@
 </xsl:template>
     
     <xsl:template name="make_header">
+        <xsl:param name="entity"/>
         <xsl:param name="claim"/>
         <xsl:param name="title"/>
         <xsl:param name="lang"/>
@@ -300,6 +252,9 @@
                         <authority>Europeana Network of Ancient Greek and Latin Epigraphy</authority>
                         <idno type="urn:cts">
                             <xsl:value-of select="$ctsurn"/></idno>
+                        <xsl:call-template name="make_ids">
+                            <xsl:with-param name="iteminwiki" select="$entity"/>
+                        </xsl:call-template>
                         <availability>
                             <p>
                                 <ref type="license" target="{$license}"/>
@@ -335,5 +290,107 @@
                     </change>
                 </revisionDesc>
             </teiHeader>
+    </xsl:template>
+    
+    <xsl:template name="make_ids">
+        <xsl:param name="iteminwiki"/>
+        <xsl:choose>
+            <xsl:when test="$iteminwiki//property[@id='p37']">
+                <xsl:call-template name="make_idno">
+                    <xsl:with-param name="type">EDB</xsl:with-param>
+                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p37']//datavalue/@value"/></xsl:with-param>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="$iteminwiki//property[@id='p24']">
+                        <xsl:call-template name="make_idno">
+                            <xsl:with-param name="type">EDH</xsl:with-param>
+                            <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p24']//datavalue/@value"/></xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="$iteminwiki//property[@id='p38']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">EDR</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p38']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p22']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">HE</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p22']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p33']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">petrae</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p33']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p34']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">UEL</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p34']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p35']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">DAI</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p35']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p47']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">Last Statues of Antiquity</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p47']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p40']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">BSR - IRT</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p40']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p50']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">insAph</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p50']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>                            
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p48']"> 
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">ELTE</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p48']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>                     
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p51']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">AIO</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p51']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>         
+                                <xsl:text>AIO</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p51']//datavalue/@value"/>
+                            </xsl:when>
+                            <xsl:when test="$iteminwiki//property[@id='p56']">
+                                <xsl:call-template name="make_idno">
+                                    <xsl:with-param name="type">phi</xsl:with-param>
+                                    <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p56']//datavalue/@value"/></xsl:with-param>
+                                </xsl:call-template>         
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="make_idno">
+        <xsl:param name="type"/>
+        <xsl:param name="value"/>
+        <xsl:element name="idno" namespace="http://www.tei-c.org/ns/1.0">
+            <xsl:attribute name="type"><xsl:value-of select="$type"/></xsl:attribute>
+            <xsl:value-of select="$value"/>
+        </xsl:element>
     </xsl:template>
 </xsl:stylesheet>

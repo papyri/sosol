@@ -1,0 +1,41 @@
+= javascript_include_tag 'perseids-tools'
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
+.main.editxml
+  = render :partial => 'identifiers/edit_bar'
+  #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :updatexml } do |f|
+        = f.error_messages
+
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
+        
+        %label XML
+        = clippy "#{@identifier.class.to_s.underscore}_xml_content"
+        %br
+        // FORK CHANGE START (alpheios class)
+        = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+        // FORK CHANGE END
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+= javascript_include_tag 'confirm'
+-#-------------------------------------------------------------
+-#  texAce includes
+-#-------------------------------------------------------------
+= javascript_include_tag "texAce/src/js/texAce"
+= javascript_include_tag "texAce/third_party/ace-builds/src-noconflict/ace"
+= javascript_include_tag "texAce/third_party/jquery-cookie/jquery.cookie"
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  //------------------------------------------------------------
+  //  Start ACE editor
+  //------------------------------------------------------------
+  jQuery( document ).ready( function() {
+    $(".alpheios-enabled-text").texAce({lang:'xml',theme_selector:true});
+  });

@@ -1,0 +1,8 @@
+- if !(@identifier.has_related_citations)
+  = link_to 'XML', edit_polymorphic_path([eagle_trans_cts_identifier.publication, eagle_trans_cts_identifier])  
+= link_to 'Preview', preview_publication_eagle_trans_cts_identifier_path( eagle_trans_cts_identifier.publication, eagle_trans_cts_identifier)
+- if @identifier.has_valid_reffs? && @identifier.mutable? && @identifier.publication.status != 'finalizing' 
+  = link_to 'Select Passage', link_citation_publication_eagle_trans_cts_identifier_path( eagle_trans_cts_identifier.publication, eagle_trans_cts_identifier) 
+= link_to 'Delete', polymorphic_path([eagle_trans_cts_identifier.publication, eagle_trans_cts_identifier]), :confirm => 'Are you sure?', :method => :delete
+
+%br

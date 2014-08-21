@@ -9,4 +9,4 @@
     :transformations:
       :CTSIdentifier: "/data/xslt/cts/eagle-xml-perseids.xsl"
     :collections:
-      :CTSIdentifier: "eagle"
+      :CTSIdentifier: "pdlepi"
