@@ -28,6 +28,16 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
         %w{data xslt translation preprocess.xsl}))
     )
   end
+
+  def lang
+    parsed = XmlHelper::parseattributes(self.xml_content,
+      {"http://www.tei-c.org/ns/1.0 div" => 
+        ['type','http://www.w3.org/XML/1998/namespace lang'] })
+    langs = parsed['http://www.tei-c.org/ns/1.0 div'].select{ |e| 
+      e['type'] == 'translation'
+    }
+    langs.first['http://www.w3.org/XML/1998/namespace lang']
+  end
   
   def translation_already_in_language?(lang)
     lang_path = '/TEI/text/body/div[@type = "translation" and @xml:lang = "' + lang + '"]'

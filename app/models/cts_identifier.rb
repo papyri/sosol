@@ -41,6 +41,7 @@ class CTSIdentifier < Identifier
   
   def self.new_from_supplied(publication,inventory,urn,pubtype,lang,initial_content)
     # TODO - we shouldn't really supply pubtype and lang in param - instead parse it from the content
+    Rails.logger.info("New from supp = #{lang}")
     temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
     temp_id.publication = publication 
     temp_id.save!
