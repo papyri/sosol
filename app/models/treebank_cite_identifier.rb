@@ -472,6 +472,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
         :doc_id => self.id,
         :s => parameters[:s],
         :max => 50, # TODO - make max sentences configurable
@@ -489,6 +490,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable
         :s => parameters[:s],

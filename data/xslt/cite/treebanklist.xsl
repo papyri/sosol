@@ -6,6 +6,7 @@
     <xsl:output method="xhtml"/>
     
     <xsl:param name="doc_id"/>
+    <xsl:param name="title"/>
     <xsl:param name="s" select="xs:integer(1)"/>
     <xsl:param name="max" select="xs:integer(100)"/>
     <xsl:param name="lang" select="'grc'"/>
@@ -52,8 +53,14 @@
             </xsl:if>    
         </xsl:variable>
         <xsl:variable name="first" select="sentence[@id = $start]"/>
+        <xsl:variable name="navtitle">
+            <xsl:choose>
+                <xsl:when test="$title"><xsl:value-of select="$title"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="string-join(($first/@document_id, $first/@subdoc), ':')"></xsl:value-of></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="nav">
-        <xsl:if test="$next or $prev">
+        <xsl:if test="$next != '' or $prev !=''">
             <xsl:element name="div">
                 <xsl:attribute name="class">sentence_nav</xsl:attribute>
                 <xsl:if test="$prev != ''">
@@ -63,7 +70,7 @@
                         <xsl:text>Previous</xsl:text>
                     </xsl:element>
                 </xsl:if>
-                <xsl:element name="label"><xsl:value-of select="string-join(($first/@document_id, $first/@subdoc), ':')"></xsl:value-of></xsl:element>
+                <xsl:element name="label"><xsl:value-of select="$navtitle"/></xsl:element>
                 <xsl:if test="$next != ''">
                     <xsl:element name="span">
                         <xsl:attribute name="class">sentence_next</xsl:attribute>
