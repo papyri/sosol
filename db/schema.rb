@@ -50,12 +50,12 @@ ActiveRecord::Schema.define(:version => 20140724154655) do
     t.integer  "members"
     t.integer  "admins"
     t.string   "description"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "board_id"
     t.integer  "publication_id"
     t.integer  "end_user_id"
-    t.boolean  "allows_self_signup"
+    t.boolean  "allows_self_signup", :default => false
   end
 
   create_table "communities_admins", :id => false, :force => true do |t|
