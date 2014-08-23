@@ -81,6 +81,24 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
       assert test.is_match?(["http://bobsfiles.com/1.xml"])
     end
 
+    should "match_on_url_urn" do
+      file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
+      test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+      assert test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
+    end
+
+    should "match_on_url_urn_with_urn" do
+      file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
+      test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+      assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
+    end
+
+    should "not_match_on_url_urn_with_extension" do
+      file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
+      test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+      assert ! test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1.xml"])
+    end
+
    end  
    
 
