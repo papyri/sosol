@@ -72,7 +72,7 @@
                     - community_hash[community.format_name] = community.id
                 = hidden_field_tag 'do_community_signup', '1'
                 - community_hash[SITE_NAME] = 0
-                = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => "confirmSignup()" }
+                = select "community", "id", community_hash, {:include_blank => true } ,{ :onchange => "confirmSignup() && checkForComment();" }
         - else
           %b
             Publication may not be submitted at this time.
