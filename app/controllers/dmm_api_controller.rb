@@ -252,6 +252,11 @@ class DmmApiController < ApplicationController
     if (@identifier.nil?)
       return
     end
+
+    # set review as the the default reason for a comment if the 
+    # commenter is not the owne of the publication  - otherwise its general
+    default_reason = @identifier.origin.publication.owner_id != @current_user.id ? 'review' : 'general'
+    params[:reason] ||= default_reason
     # hack - need better way to control allowed reasons for commit
     if (params[:reason] !~ /^general|review$/)
       return render_error("Invalid comment reason")
