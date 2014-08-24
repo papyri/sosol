@@ -88,16 +88,6 @@ class DmmApiControllerTest < ActionController::TestCase
     
   end
 
-  def test_should_fail_comment_update_wrong_user
-    @request.env['RAW_POST_DATA'] = @valid_align
-    post :api_item_create, :identifier_type => 'AlignmentCite'
-    post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "review"
-    comment_id = @response.body.match(/"comment_id":(.*?),/).captures
-    @request.session[:user_id] = @creatorb.id
-    post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment_id => comment_id, :comment=>"test update", :reason => "review"
-    assert_response(403)
-  end
-  
   def test_should_succeed_comment_update_owner_user
     @request.env['RAW_POST_DATA'] = @valid_align
     post :api_item_create, :identifier_type => 'AlignmentCite'

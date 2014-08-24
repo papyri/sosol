@@ -2,7 +2,7 @@
 class DmmApiController < ApplicationController
   
   before_filter :authorize, :except => [:api_item_info, :api_item_get]
-  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append,:api_item_comments_post]
+  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
@@ -272,9 +272,6 @@ class DmmApiController < ApplicationController
       end
     else 
       # we set comments on the origin only
-      # but note that the ownership guard is applied before this, on the id
-      # of the publication being commented on, which in the case of review
-      # should be the board-owned copy
       comment = Comment.new(
         {  :identifier_id => @identifier.origin.id,
            :publication_id => @identifier.publication.origin.id,
