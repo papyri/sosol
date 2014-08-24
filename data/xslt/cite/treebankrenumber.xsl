@@ -7,10 +7,18 @@
     
     <xsl:output indent="yes"></xsl:output>
     <xsl:param name="clear_relations" select="true()"/>
+    
+    <!-- between alpheios and arethusa, only arethusa supports blank values for heads, alpheios requires them to be 0 (root) -->
+    <xsl:variable name="reset_head_val">
+        <xsl:choose>
+            <xsl:when test="//annotator[uri/text()='http://github.com/latin-language-toolkit/arethusa']"></xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
     <xsl:template match="/">
         <xsl:apply-templates/>
     </xsl:template>
-    
     <xsl:template match="treebank">
         <treebank>
             <xsl:apply-templates select="@*"/>
@@ -23,19 +31,33 @@
                     <xsl:if test="count($renum_words) > 0 and $clear_relations">
                         <xsl:message>The word count for sentence <xsl:value-of select="$s_num"/> has changed.  Dependencies have been reset.</xsl:message>
                     </xsl:if>
-                    <xsl:for-each select="word">
-                        <word id="{position()}">
-                            <xsl:variable name="old_head" select="@head"/>
-                            <xsl:choose>
-                                <xsl:when test="count($renum_words)>0 and $clear_relations">
-                                    <xsl:attribute name="head">0</xsl:attribute>
-                                    <xsl:apply-templates select="@*[not(name(.) = 'head') and not(name(.) = 'id')]"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:apply-templates select="@*[not(name(.) = 'id')]"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </word>
+                    <xsl:variable name="newwords">
+                         <xsl:for-each select="word">
+                             <xsl:variable name="old_id" select="@id"/>
+                             <word id="{position()}">
+                                 <xsl:apply-templates select="@*[not(name(.) = 'id')]"/>
+                                 <xsl:attribute name="old_id"><xsl:value-of select="$old_id"/></xsl:attribute>
+                             </word>
+                         </xsl:for-each>
+                    </xsl:variable>
+                    <xsl:for-each select="$newwords/*">
+                        <xsl:variable name="old_head" select="@head"/>
+                        <xsl:copy>
+                            <xsl:apply-templates select="@*[not(local-name(.) = 'head') and not(local-name(.) = 'old_id')]"/>
+                            <xsl:attribute name="head">
+                                <xsl:choose>
+                                    <!-- a word can't reference itself as head, set to root or undefined -->
+                                    <xsl:when test="$old_head = @id"><xsl:value-of select="$reset_head_val"/></xsl:when>
+                                    <!-- if a word references a head which has been renumbered, update the head value of this word -->
+                                    <xsl:when test="not($old_head = 0) and $newwords/*[@old_id=$old_head]"><xsl:value-of select="$newwords/*[@old_id=$old_head]/@id"/></xsl:when>
+                                    <!-- if a word references a head which has been removed, set to root or undefined -->
+                                    <xsl:when test="not(@head = 0) and not($newwords/*[@old_id=$old_head])"><xsl:value-of select="$reset_head_val"/></xsl:when>                                   
+                                    <!-- a word can't reference a non-existing word as head, set to root or undefined -->
+                                    <xsl:when test="not(@head = 0) and not($newwords/*[@id=$old_head])"><xsl:value-of select="$reset_head_val"/></xsl:when>                                   
+                                    <xsl:otherwise><xsl:value-of select="@head"/></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                        </xsl:copy>
                     </xsl:for-each>
                 </sentence>
             </xsl:for-each>
