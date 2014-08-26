@@ -114,6 +114,7 @@ class BoardsController < ApplicationController
   # GET /boards/1/edit
   def edit
     @board = Board.find(params[:id].to_s)
+    @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES) - @board.identifier_classes
   end
 
   # POST /boards
@@ -157,6 +158,12 @@ class BoardsController < ApplicationController
   # PUT /boards/1.xml
   def update
     @board = Board.find(params[:id].to_s)
+
+    Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
+      if params.has_key?(identifier_class) && params[:"#{identifier_class}"].to_s == "1"
+        @board.identifier_classes << identifier_class
+      end
+    end
 
     respond_to do |format|
       if @board.update_attributes(params[:board])
