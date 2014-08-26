@@ -430,7 +430,16 @@ class TreebankCiteIdentifier < CiteIdentifier
               passage.split(/-/).each do | p |
                 match = my_targets['sentence'].select { |s| 
                   doc_match = s['document_id'].match(/(urn:cts:.*?)$/)
-                  doc_match && doc_match.captures[0] == work && s['subdoc'].match(/^#{p}(\.|$)/)
+                  subdoc_match = false
+                  if (doc_match && doc_match.captures[0] == work)
+                    s['subdoc'].split(/-/).each do |s|
+                      if (s.match(/^#{p}(\.|$)/))
+                        subdoc_match = true;
+                        break;
+                     end
+                    end
+                  end 
+                  subdoc_match
                }
                if (match.length > 0)
                  has_any_targets = true

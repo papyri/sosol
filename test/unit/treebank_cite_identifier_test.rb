@@ -91,6 +91,18 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
       file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
       test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
       assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
+      assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"])
+      assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"])
+      assert test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"])
+      assert test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"])
+    end
+
+    should "match_on_url_urn_with_urn_no_range" do
+      file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurlnorange.xml'))
+      test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+      assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
+      assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"])
+      assert ! test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.2"])
     end
 
     should "not_match_on_url_urn_with_extension" do
