@@ -23,6 +23,10 @@ class DmmApiController < ApplicationController
       else
          check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
       end
+      # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
+      # now because the syntax for find_matching_identifier is slightly 
+      # different for cts_identifier classes (3rd param is a boolean 
+      # for fuzzy matching in that case)
       existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')

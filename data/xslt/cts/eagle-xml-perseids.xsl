@@ -4,12 +4,13 @@
     exclude-result-prefixes="xs"
     version="2.0">
     <xsl:output method="xml" indent="yes"></xsl:output>
-    <xsl:param name="uri"/>
+    <xsl:param name="agent" select="'http://www.eagle-network.eu'"/>
+    <xsl:param name="id"/>
     <xsl:param name="current_user"/>
-    <xsl:param name="emend"/>
+    <xsl:param name="filter"/>
     <xsl:param name="lang"/>
     <xsl:template match="/">
-    <xsl:variable name="iteminwiki" select="entity"/>
+    <xsl:variable name="iteminwiki" select="//entity[1]"/>
     <xsl:variable name="ctsurn">
         <xsl:choose>
            <xsl:when test="$iteminwiki//property[@id='p3']">
@@ -20,44 +21,18 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-        <xsl:variable name="englishtranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='en')">
-                <xsl:sequence select="$iteminwiki//property[@id='p11']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="germantranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='de')">
-                <xsl:sequence select="$iteminwiki//property[@id='p12']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="italiantranslations">
-            <xsl:if test="$emend and  (not($lang) or $lang='it')">
-                <xsl:sequence select="$iteminwiki//property[@id='p13']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="spanishtranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='es')">
-                <xsl:sequence select="$iteminwiki//property[@id='p14']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="frenchtranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='fr')">
-                <xsl:sequence select="$iteminwiki//property[@id='p15']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="hungariantranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='hu')">
-                <xsl:sequence select="$iteminwiki//property[@id='p19']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="croatiantranslations">
-            <xsl:if test="$emend and (not($lang) or $lang='hr')">
-                <xsl:sequence select="$iteminwiki//property[@id='p57']/claim"/>
-            </xsl:if>
-        </xsl:variable>
-    <create urn="{$ctsurn}" pubtype="translation" type="EagleTransCTSIdentifier">
+    <xsl:variable name="itemstoedit">
         <xsl:choose>
-            <xsl:when test="not($emend)">
+            <xsl:when test="$filter">
+                <xsl:sequence select="$iteminwiki//claim[@id=$filter]"/>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:variable>
+     
+    <create urn="{$ctsurn}" pubtype="translation" type="EpiTransCTSIdentifier">
+        <xsl:choose>
+            <!-- if we don't have any items selected, create a new one -->
+            <xsl:when test="not($itemstoedit)">
                 <TEI xmlns="http://www.tei-c.org/ns/1.0">
                     <xsl:call-template name="make_header">
                         <xsl:with-param name="entity" select="$iteminwiki"/>
@@ -77,142 +52,36 @@
                 </TEI>    
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$englishtranslations/*">
+                <xsl:for-each select="$itemstoedit/*">
+                    <xsl:variable name="property" select="parent::property/@id"/>
+                    <xsl:variable name="textlang">
+                        <xsl:choose>
+                            <xsl:when test="$property = 'p11'">en</xsl:when>
+                            <xsl:when test="$property = 'p12'">de</xsl:when>
+                            <xsl:when test="$property = 'p13'">it</xsl:when>
+                            <xsl:when test="$property = 'p14'">es</xsl:when>
+                            <xsl:when test="$property = 'p15'">fr</xsl:when>
+                            <xsl:when test="$property = 'p19'">hu</xsl:when>
+                            <xsl:when test="$property = 'p57'">hr</xsl:when>
+                        </xsl:choose>
+                    </xsl:variable>
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
                             <xsl:with-param name="entity" select="$iteminwiki"/>
                             <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='en']/@value"/>
+                            <xsl:with-param name="title" select="$iteminwiki//description[@language=$textlang]/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'en'"/>
+                            <xsl:with-param name="lang" select="$textlang"/>
                             <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
                         </xsl:call-template>
                         <text xml:lang="eng">
                             <body>
-                                <div xml:lang="eng" type="translation" xml:space="preserve" n="{$ctsurn}">
+                                <div xml:lang="{$textlang}" type="translation" xml:space="preserve" n="{$ctsurn}">
                                     <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
                                 </div>
                             </body>
                         </text>
                     </TEI>    
-                </xsl:for-each>
-                <xsl:for-each select="$germantranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='de']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'de'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="de" type="translation" xml:space="preserve" n="{$ctsurn}">
-                                    <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                                </div>
-                            </body>
-                        </text>
-                    </TEI>
-                    
-                </xsl:for-each>
-                <xsl:for-each select="$italiantranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='it']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'it'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="it" type="translation" xml:space="preserve" n="{$ctsurn}">
-                                    <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                                </div>
-                            </body>
-                        </text>
-                    </TEI>
-                    
-                </xsl:for-each>
-                <xsl:for-each select="$spanishtranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='es']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'es'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="es" type="translation" xml:space="preserve" n="{$ctsurn}">
-                                    <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                                </div>
-                            </body>
-                        </text>
-                    </TEI>
-                    
-                </xsl:for-each>
-                <xsl:for-each select="$frenchtranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='fr']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'fr'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="fr" type="translation" xml:space="preserve" n="{$ctsurn}">
-                            <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                        </div>
-                            </body>
-                        </text>
-                    </TEI>
-                    
-                </xsl:for-each>
-                <xsl:for-each select="$hungariantranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='hu']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'hu'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="hu" type="translation" xml:space="preserve" n="{$ctsurn}">
-                            <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                        </div>
-                            </body>
-                        </text>
-                    </TEI>
-                </xsl:for-each>
-                <xsl:for-each select="$croatiantranslations/*">
-                    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:call-template name="make_header">
-                            <xsl:with-param name="entity" select="$iteminwiki"/>
-                            <xsl:with-param name="claim" select="."/>
-                            <xsl:with-param name="title" select="$iteminwiki//description[@language='hr']/@value"/>
-                            <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                            <xsl:with-param name="lang" select="'hr'"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
-                        </xsl:call-template>
-                        <text>
-                            <body>
-                                <div xml:lang="hr" type="translation" xml:space="preserve" n="{$ctsurn}">
-                            <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
-                        </div>
-                            </body>
-                        </text>
-                    </TEI>
                 </xsl:for-each>
             </xsl:otherwise>
         </xsl:choose>
@@ -260,6 +129,7 @@
                                 <ref type="license" target="{$license}"/>
                             </p>
                         </availability>
+                        <distributor><xsl:value-of select="$agent"/></distributor>
                     </publicationStmt>
                     <sourceDesc>
                         <xsl:choose>
@@ -286,7 +156,7 @@
                 </profileDesc>
                 <revisionDesc>
                     <change who="{$current_user}">
-                        Imported from <xsl:value-of select="$uri"/>
+                        Imported from <xsl:value-of select="concat($agent,'/wiki/index.php/Item:',$id)"/>
                     </change>
                 </revisionDesc>
             </teiHeader>

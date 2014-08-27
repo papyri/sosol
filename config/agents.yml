@@ -5,8 +5,17 @@
       :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
 
   :eagle:
-    :uri_match: "http://www.eagle-network.eu/wiki"
+    :uri_match: "http://www.eagle-network.eu"
     :transformations:
       :CTSIdentifier: "/data/xslt/cts/eagle-xml-perseids.xsl"
     :collections:
       :CTSIdentifier: "pdlepi"
+    :type: "mediawiki"
+    :api_info:
+      :url: "http://www.eagle-network.eu/wiki/api.php"
+      :data_format: "xml"
+      :auth:
+        :username: "Balmas"
+        :password: "perseidseagle"
+
+   
