@@ -1,4 +1,6 @@
 require 'nokogiri'
+require 'cts'
+
 class TreebankCiteIdentifier < CiteIdentifier   
   include OacHelper
 
@@ -370,6 +372,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       Rails.logger.info("No xml content found in #{self.name}")
       return has_any_targets
     end
+    
     my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
     # we have to just return false if we don't have any targets defined
     # in ourself
@@ -415,7 +418,8 @@ class TreebankCiteIdentifier < CiteIdentifier
             # if we don't have a passage the match should be on the work only
             if (passage.nil?)
               matching_work = my_targets['sentence'].select { |s| 
-                s['document_id'] == urn_value
+                doc_match = s['document_id'].match(/(urn:cts:.*?)$/)
+                doc_match && doc_match.captures[0] == urn_value
               }
               if (matching_work.length > 0) 
                 has_any_targets=true
@@ -425,7 +429,17 @@ class TreebankCiteIdentifier < CiteIdentifier
               work = urn_obj.getUrnWithoutPassage()
               passage.split(/-/).each do | p |
                 match = my_targets['sentence'].select { |s| 
-                  s['document_id']  == work && s['subdoc'].match(/^#{p}(\.|$)/)
+                  doc_match = s['document_id'].match(/(urn:cts:.*?)$/)
+                  subdoc_match = false
+                  if (doc_match && doc_match.captures[0] == work)
+                    s['subdoc'].split(/-/).each do |s|
+                      if (s.match(/^#{p}(\.|$)/))
+                        subdoc_match = true;
+                        break;
+                     end
+                    end
+                  end 
+                  subdoc_match
                }
                if (match.length > 0)
                  has_any_targets = true
@@ -472,6 +486,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
         :doc_id => self.id,
         :s => parameters[:s],
         :max => 50, # TODO - make max sentences configurable
@@ -489,6 +504,7 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
         :doc_id => self.id,
         :max => 50, # TODO - make max sentences configurable
         :s => parameters[:s],

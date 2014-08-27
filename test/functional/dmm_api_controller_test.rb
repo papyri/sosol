@@ -56,7 +56,7 @@ class DmmApiControllerTest < ActionController::TestCase
     assert_match(/<item>..*?<\/item>/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size 
     post :api_item_create, :identifier_type => 'TreebankCite', :init_value => "urn:cts:latinLit:tg.work.edition:1.1"
-    assert_match(/<error>Conflicting identifier/,@response.body) 
+    assert_match(/error.*?conflicting/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size
   end
 
@@ -65,7 +65,7 @@ class DmmApiControllerTest < ActionController::TestCase
     post :api_item_create, :identifier_type => 'TreebankCite'
     assert_equal 1, assigns(:publication).identifiers.size 
     post :api_item_create, :identifier_type => 'TreebankCite'
-    assert_match(/<error>Conflicting identifier/,@response.body) 
+    assert_match(/error.*?conflicting/,@response.body) 
     assert_equal 1, assigns(:publication).identifiers.size
   end
   
@@ -88,16 +88,6 @@ class DmmApiControllerTest < ActionController::TestCase
     
   end
 
-  def test_should_fail_comment_update_wrong_user
-    @request.env['RAW_POST_DATA'] = @valid_align
-    post :api_item_create, :identifier_type => 'AlignmentCite'
-    post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "review"
-    comment_id = @response.body.match(/"comment_id":(.*?),/).captures
-    @request.session[:user_id] = @creatorb.id
-    post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment_id => comment_id, :comment=>"test update", :reason => "review"
-    assert_response(403)
-  end
-  
   def test_should_succeed_comment_update_owner_user
     @request.env['RAW_POST_DATA'] = @valid_align
     post :api_item_create, :identifier_type => 'AlignmentCite'
@@ -114,6 +104,14 @@ class DmmApiControllerTest < ActionController::TestCase
     post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "spam"
     assert_response(:error)
   end
+
+  def test_should_set_default_reason
+    @request.env['RAW_POST_DATA'] = @valid_align
+    post :api_item_create, :identifier_type => 'AlignmentCite'
+    post :api_item_comments_post, :identifier_type => 'AlignmentCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test"
+    assert_match(/"reason":"general"/,@response.body)
+  end
+
 
   # TODO TEST BOARD OWNERSHIP UPDATE and COMMENT
 

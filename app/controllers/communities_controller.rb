@@ -118,13 +118,7 @@ class CommunitiesController < ApplicationController
   #Adds a member to the community members list. These are the users who can submit to the community.
   def add_member    
     @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
-
-    if nil == @community.members.find_by_id(user.id) 
-      @community.members << user
-      @community.save
-    end
-
+    @community.add_member(params[:user_id])
     redirect_to :action => "add_member_page", :id => @community.id
   end
 

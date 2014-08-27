@@ -2,7 +2,8 @@
 class DmmApiController < ApplicationController
   
   before_filter :authorize, :except => [:api_item_info, :api_item_get]
-  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append,:api_item_comments_post]
+  before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
+  before_filter :update_cookie
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
@@ -10,10 +11,7 @@ class DmmApiController < ApplicationController
   def api_item_create
     begin
       # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
+      
       params[:raw_post] = request.raw_post
       unless (params[:comment]) 
         params[:comment] = "create_from_api"
@@ -84,12 +82,7 @@ class DmmApiController < ApplicationController
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
             
-      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
-      agent = AgentHelper::agent_of(params[:raw_post])
+      agent = agent_of(params[:raw_post])
 
       begin
         response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
@@ -124,11 +117,6 @@ class DmmApiController < ApplicationController
       # we need to expire the api_get cache for the identifier now that it's been updated
       expire_api_item_cache(params[:identifier_type],params[:id])
       
-      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
       agent = AgentHelper::agent_of(params[:raw_post])
     end
   end
@@ -145,13 +133,6 @@ class DmmApiController < ApplicationController
     if (@identifier.nil?)
        return
     else
-      # Set a cookie so that the calling app can access the session
-      # TODO this should be protected by OAuth
-      # for now limit the lifetime to an hour 
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
       render :xml => @identifier.api_get(params[:q]) 
     end
   end
@@ -244,6 +225,11 @@ class DmmApiController < ApplicationController
     if (@identifier.nil?)
       return
     end
+
+    # set review as the the default reason for a comment if the 
+    # commenter is not the owne of the publication  - otherwise its general
+    default_reason = @identifier.origin.publication.owner_id != @current_user.id ? 'review' : 'general'
+    params[:reason] ||= default_reason
     # hack - need better way to control allowed reasons for commit
     if (params[:reason] !~ /^general|review$/)
       return render_error("Invalid comment reason")
@@ -259,9 +245,6 @@ class DmmApiController < ApplicationController
       end
     else 
       # we set comments on the origin only
-      # but note that the ownership guard is applied before this, on the id
-      # of the publication being commented on, which in the case of review
-      # should be the board-owned copy
       comment = Comment.new(
         {  :identifier_id => @identifier.origin.id,
            :publication_id => @identifier.publication.origin.id,
@@ -283,15 +266,19 @@ class DmmApiController < ApplicationController
   #                   or 403 FORBIDDEN if no session can be established
   ##
   def ping
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
       @current_user[:uri] = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
       render :json => @current_user
   end
 
   protected
+
+    def update_cookie
+      cookies[:csrftoken] = {
+        :value => form_authenticity_token,
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+      }
+    end
+
     
     def identifier_type 
       identifier_class_name = "#{params[:identifier_type]}Identifier"        

@@ -35,7 +35,12 @@
       = f.label :logo 
       = f.text_field :logo 
       %br
-    
+
+    = f.label :allows_self_signup
+    = f.check_box :allows_self_signup
+    %p
+      Enables users to self-signup for this community.
+    %br
     = f.submit 'Create'
     %br
   %br  
