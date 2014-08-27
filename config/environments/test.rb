@@ -32,3 +32,4 @@ require File.join(File.dirname(__FILE__), 'test_secret')
 REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'test', 'git')
 CANONICAL_CANONICAL_REPOSITORY = CANONICAL_REPOSITORY
 CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
+EXIST_STANDALONE_URL="http://localhost:8080"
