@@ -14,6 +14,23 @@ class EpiCTSIdentifier < CTSIdentifier
   # at some point would be nice to do something more intelligent  
   MAX_PREVIEW_SIZE = 50000
 
+  def titleize
+    # try to get the title from the content
+    if self.xml_content
+      xml = REXML::Document.new(content).root
+      title = REXML::XPath.first(xml, "//tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title", {'tei' => 'http://www.tei-c.org/ns/1.0'})
+      unless title.nil? 
+        title = title.text
+      end
+    end
+    # otherwise fall back to default behavior for a CTS identifier
+    if title.nil? || title == ''
+      return super() 
+    else
+      return title
+    end
+  end
+
     
   def before_commit(content)
     EpiCTSIdentifier.preprocess(content)
