@@ -312,9 +312,16 @@ class CTSIdentifier < Identifier
     File.join(RAILS_ROOT,%w{data xslt cts passage_to_subref.xsl})
   end
   
-  def self.find_matching_identifiers(match_id,match_user,match_pub)
+  def self.find_matching_identifiers(match_id,match_user,match_fuzzy)
     identifiers = []
-    possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+    if (match_fuzzy)
+      possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+      possible_conflicts = self.find(:all,
+                         :conditions => ["name like ?", "#{match_id}%"],
+                         :order => "name DESC")
+    else 
+      possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+    end
     actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == match_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
     identifiers += actual_conflicts
     return identifiers
