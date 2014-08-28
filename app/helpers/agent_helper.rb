@@ -24,6 +24,9 @@ module AgentHelper
   end
 
   def self.get_client(a_agent)
+    if (a_agent.nil?)
+       return nil
+    end
     if (a_agent[:type] == 'mediawiki')
         return MediaWikiAgent.new(a_agent[:api_info])
     else

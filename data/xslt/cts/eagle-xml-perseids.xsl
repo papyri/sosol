@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- This transform is meant to run on the output of an API request to the Eagle MediaWiki to
+     create a new translation for editing in Perseids.  
+     
+     Params:
+     
+     $agent: Will be set by Perseids to the agreed URI identifier for the Eagle Agent for Perseids
+     $id : Will be set by Perseids to the Eagle Wiki identifer that was retrieved
+     $current_user: will be set by Perseids to the URI for the current user
+     $filter: for an edit of an existing translation: set to the id of the Claim on which the new
+              translation is to be based.
+     $lang: for a new empty translation: if the $filter param is not supplied, the $lang param must be, and it should be set to the language
+             code for the new translation, which will not be pre-populated with any existing translation text.
+-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="xs"
@@ -24,7 +37,23 @@
     <xsl:variable name="itemstoedit">
         <xsl:choose>
             <xsl:when test="$filter">
-                <xsl:sequence select="$iteminwiki//claim[@id=$filter]"/>
+                <xsl:for-each select="$iteminwiki//claim[@id=$filter]">
+                    <xsl:variable name="textlang">
+                        <xsl:choose>
+                            <xsl:when test="../@id = 'p11'">en</xsl:when>
+                            <xsl:when test="../@id = 'p12'">de</xsl:when>
+                            <xsl:when test="../@id = 'p13'">it</xsl:when>
+                            <xsl:when test="../@id = 'p14'">es</xsl:when>
+                            <xsl:when test="../@id = 'p15'">fr</xsl:when>
+                            <xsl:when test="../@id= 'p19'">hu</xsl:when>
+                            <xsl:when test="../@id = 'p57'">hr</xsl:when>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:element name="wrapper">
+                        <xsl:attribute name="xml:lang"><xsl:value-of select="$textlang"/></xsl:attribute>
+                        <xsl:copy-of select="."></xsl:copy-of>
+                    </xsl:element>
+                </xsl:for-each>
             </xsl:when>
         </xsl:choose>
     </xsl:variable>
@@ -32,14 +61,14 @@
     <create urn="{$ctsurn}" pubtype="translation" type="EpiTransCTSIdentifier">
         <xsl:choose>
             <!-- if we don't have any items selected, create a new one -->
-            <xsl:when test="not($itemstoedit)">
+            <xsl:when test="count($itemstoedit/*) = 0">
                 <TEI xmlns="http://www.tei-c.org/ns/1.0">
                     <xsl:call-template name="make_header">
                         <xsl:with-param name="entity" select="$iteminwiki"/>
                         <xsl:with-param name="claim" select="()"/>
                         <xsl:with-param name="title" select="$iteminwiki//description[@language=$lang]/@value"/>
                         <xsl:with-param name="ctsurn" select="$ctsurn"/>
-                        <xsl:with-param name="lang" select="'en'"/>
+                        <xsl:with-param name="lang" select="$lang"/>
                         <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
                     </xsl:call-template>
                     <text xml:lang="{$lang}">
@@ -52,19 +81,8 @@
                 </TEI>    
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$itemstoedit/*">
-                    <xsl:variable name="property" select="parent::property/@id"/>
-                    <xsl:variable name="textlang">
-                        <xsl:choose>
-                            <xsl:when test="$property = 'p11'">en</xsl:when>
-                            <xsl:when test="$property = 'p12'">de</xsl:when>
-                            <xsl:when test="$property = 'p13'">it</xsl:when>
-                            <xsl:when test="$property = 'p14'">es</xsl:when>
-                            <xsl:when test="$property = 'p15'">fr</xsl:when>
-                            <xsl:when test="$property = 'p19'">hu</xsl:when>
-                            <xsl:when test="$property = 'p57'">hr</xsl:when>
-                        </xsl:choose>
-                    </xsl:variable>
+                <xsl:for-each select="$itemstoedit//claim">
+                    <xsl:variable name="textlang" select="parent::wrapper/@xml:lang"/>
                     <TEI xmlns="http://www.tei-c.org/ns/1.0">
                         <xsl:call-template name="make_header">
                             <xsl:with-param name="entity" select="$iteminwiki"/>
@@ -74,7 +92,7 @@
                             <xsl:with-param name="lang" select="$textlang"/>
                             <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
                         </xsl:call-template>
-                        <text xml:lang="eng">
+                        <text xml:lang="{$textlang}">
                             <body>
                                 <div xml:lang="{$textlang}" type="translation" xml:space="preserve" n="{$ctsurn}">
                                     <ab><xsl:value-of select=".//mainsnak/datavalue/@value"/></ab>
@@ -164,6 +182,11 @@
     
     <xsl:template name="make_ids">
         <xsl:param name="iteminwiki"/>
+        <!-- make the agent identifier idnos -->
+        <xsl:call-template name="make_idno">
+            <xsl:with-param name="type"><xsl:value-of select="$agent"/></xsl:with-param>
+            <xsl:with-param name="value"><xsl:value-of select="$id"></xsl:value-of></xsl:with-param>
+        </xsl:call-template>
         <xsl:choose>
             <xsl:when test="$iteminwiki//property[@id='p37']">
                 <xsl:call-template name="make_idno">

@@ -157,7 +157,6 @@ class EpiCTSIdentifier < CTSIdentifier
     formatter.width = 2**32
   
     # retrieve documents, pubtypes and languages
-    # TODO this really belongs on the epi_cts_identifier model
     REXML::XPath.each(xml, "//tei:TEI", {'tei' => 'http://www.tei-c.org/ns/1.0'}) { |doc|
       version = REXML::XPath.first(doc,"tei:text/tei:body/tei:div",{'tei' => 'http://www.tei-c.org/ns/1.0'})
       if (version.nil? || version.attributes['type'].nil? || version.attributes['xml:lang'].nil?)
@@ -172,7 +171,21 @@ class EpiCTSIdentifier < CTSIdentifier
       docs << doc
                
     }
-    Rails.logger.info("Docs = #{docs.inspect}")
     return docs
+  end
+
+  # check to see if we have a registered distributor agent, and if so
+  # send the finalization copy back to them too
+  def preprocess_for_finalization
+    xml = REXML::Document.new(content).root
+    agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+    begin
+      agent_client = AgentHelper::get_client(agent.text)
+      unless (agent_client.nil?)
+        agent_client.post_content(content)
+      end
+    rescue
+        Rails.logger.warn("Unable to send finalization copy to agent #{agent}")
+    end
   end
 end
