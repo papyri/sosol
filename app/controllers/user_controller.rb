@@ -189,24 +189,12 @@ class UserController < ApplicationController
 
     # TODO  we need a better way to trigger site-specific functionality
     # for Perseids we want to show community info on the main dashboard
-    show_comm = SITE_NAME == 'Perseids'  
+    show_comm = SITE_NAME == 'Perseids' ?  {} : { :community_id => nil }
 
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    if (show_comm)
-      @submitted_publications.concat(Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => 'IS NOT NULL', :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
-    end
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    if (show_comm)
-      @editing_publications.concat(Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => 'IS NOT NULL', :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
-    end
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    if (show_comm)
-      @new_publications.concat(Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => 'IS NOT NULL', :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
-    end
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    if (show_comm)
-      @committed_publications.concat(Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => 'IS NOT NULL', :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
-    end
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     # TODO enable more fine grained control of events that are shown
     # THIS shouldn't be merged back into master as is
     if (@current_user.admin || @current_user.developer)    
