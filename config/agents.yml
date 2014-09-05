@@ -3,4 +3,8 @@
     :uri_match: "http://pelagios.org/recogito#version1.0"
     :transformations:
       :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
-      
+  :googless:
+    :uri_match: "https://docs.google.com/spreadsheet"
+    :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"
+    :transformations:
+      :OaCiteIdentifier: "/data/xslt/cite/gs_to_oa_cite.xsl"

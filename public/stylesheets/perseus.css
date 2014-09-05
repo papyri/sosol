@@ -485,6 +485,21 @@ li.editor_menu {
   font-style:italic;
   padding-right: .5em;
 }
+
+.oa_cite_annotation .oac_title {
+  font-weight: bold;
+}
+
+.oa_cite_annotation .oac_source {
+  font-size:smaller;
+  margin-top: 1em;
+}
+
+.oa_cite_annotation .oac_label {
+  font-style:italic;
+  padding-right: .5em;
+}
+
 .edit_oac_identifier .cite_to, 
 .edit_oac_identifier .cite_from {
   width: 3em;
@@ -540,7 +555,7 @@ li.editor_menu {
   border: 1px dashed black;
 }
 
-.PContent .oac_annotation {
+.PContent .oac_annotation, .PContent .oa_cite_annotation {
 	padding-top: 1em;
 	padding-bottom: 1em;
 	border-bottom: 1px dashed black;
