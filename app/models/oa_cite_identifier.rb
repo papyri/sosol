@@ -21,8 +21,11 @@ class OaCiteIdentifier < CiteIdentifier
     a_init_value.each do | a_url |
       agent = AgentHelper.agent_of(a_url)
     end
+    # TODO this is problematic if init_value is an agent url that is
+    # just poorly formed.  The input form should prevent that but 
+    # might not always
     if agent.nil?
-      return super()
+      return super(a_publication,a_urn,a_init_value)
     end
 
     transform = agent[:transformations][:OaCiteIdentifier]

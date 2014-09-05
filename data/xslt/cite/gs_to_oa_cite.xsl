@@ -44,20 +44,41 @@
         <xsl:variable name="sourceid" select="atom:id"/>
         <xsl:variable name="index" select="position()"></xsl:variable>
         <xsl:variable name="annotations">
-            <xsl:if test="gsx:start/text() != '' or gsx:end/text() != ''">
-                <xsl:call-template name="make_date_annotation"/>    
-            </xsl:if>
-            <xsl:if test="gsx:place/text() != ''">
-                <xsl:call-template name="make_place_annotation"/>    
-            </xsl:if>
+            <!-- TODO eventually might think about better ways to make this extensible
+                 to a wider range of spreadsheet templates -->
+            <!-- this is a lexical named entity annnotation worksheet -->
+            <xsl:choose>
+                <xsl:when test="gsx:sourcedocument and gsx:place and gsx:person">
+                    <xsl:if test="gsx:place/text() != ''">
+                        <xsl:call-template name="make_place_annotation"/>    
+                    </xsl:if>
+                    <xsl:if test="gsx:person/text() != ''">
+                        <xsl:call-template name="make_person_annotation"/>    
+                    </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:if test="gsx:start/text() != '' or gsx:end/text() != ''">
+                        <xsl:call-template name="make_date_annotation"/>    
+                    </xsl:if>
+                    <xsl:if test="gsx:place/text() != ''">
+                        <xsl:call-template name="make_place_annotation"/>    
+                    </xsl:if>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
         <xsl:variable name="title">
             <xsl:apply-templates select="gsx:title"/>
         </xsl:variable>
         <xsl:variable name="updated"><xsl:value-of select="atom:updated"/></xsl:variable>
-        <xsl:variable name="orig_target" select="gsx:webpage/text()"/>
+        <xsl:variable name="orig_target">
+            <xsl:choose>
+                <xsl:when test="gsx:webpage"><xsl:value-of select="gsx:webpage/text()"/></xsl:when>
+                <xsl:when test="gsx:sourcedocument"><xsl:value-of select="gsx:sourcedocument/text()"/></xsl:when>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="expanded_target">
             <xsl:apply-templates select="gsx:webpage"/>
+            <xsl:apply-templates select="gsx:sourcedocument"/>
         </xsl:variable>
         <xsl:for-each select="$annotations/*">
             <xsl:variable name="id" select="position()"/>
@@ -143,16 +164,66 @@
         </annotation>
     </xsl:template>
     
+    <xsl:template name="make_person_annotation">    
+        <annotation>    
+            <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+            <!-- only uri identified places accepted -->
+            <body>
+                <xsl:attribute name="rdf:resource">
+                    <xsl:apply-templates select="gsx:person"/>
+                </xsl:attribute>
+            </body>
+        </annotation>
+    </xsl:template>
+    
     <xsl:template match="gsx:place">
-        <xsl:if test="matches(.,'https?:')">
-            <xsl:choose>
-                <!-- add #this identifier to pleiades uris -->
-                <xsl:when test="matches(.,'http://pleiades.stoa.org/places/\d+$')">
-                    <xsl:copy-of select="concat(normalize-space(.),'#this')"></xsl:copy-of>
-                </xsl:when>
-                <xsl:otherwise><xsl:copy-of select=" normalize-space(.)"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="matches(.,'https?:')">
+                <xsl:choose>
+                    <!-- add #this identifier to pleiades uris -->
+                    <xsl:when test="matches(.,'http://pleiades.stoa.org/places/\d+$')">
+                        <xsl:copy-of select="concat(normalize-space(.),'#this')"></xsl:copy-of>
+                    </xsl:when>
+                    <xsl:otherwise><xsl:copy-of select=" normalize-space(.)"/></xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="matches(.,'-geo')">
+                <!-- format might be A.1.abianus-geo or A.1.abianus-geo02 or A.1.abianus-geo-1 or abianus-geo -->
+                <xsl:analyze-string select="." regex="^(\w\.)?(\d+\.)?(.*?)-geo(-)?(.+)?$">
+                    <xsl:matching-substring>
+                        <xsl:choose>
+                            <xsl:when test="regex-group(4) and regex-group(5)">
+                                <xsl:value-of select="concat('http://data.perseus.org/places/smith:',regex-group(3),regex-group(4),regex-group(5),'#this')"/>
+                            </xsl:when>
+                            <xsl:when test="regex-group(5)">
+                                <xsl:value-of select="concat('http://data.perseus.org/places/smith:',regex-group(3),'-',regex-group(5),'#this')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat('http://data.perseus.org/places/smith:',regex-group(3),'#this')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:matching-substring>
+                    <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:when>
+            <xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="gsx:person">
+        <xsl:choose>
+            <xsl:when test="matches(.,'https?:')">
+                <xsl:copy-of select=" normalize-space(.)"/>
+            </xsl:when>
+            <xsl:when test="matches(.,'-bio')">
+                <!-- format might be P.1.perseus-bio-1 or just P.perseus-bio-1 or perseus-bio-1 or perseus-bio -->
+                <xsl:analyze-string select="." regex="^(\w\.)?(\d+\.)?(.*?)-bio(-.+)?$">
+                    <xsl:matching-substring><xsl:value-of select="concat('http://data.perseus.org/people/smith:',regex-group(3),regex-group(4),'#this')"/></xsl:matching-substring>
+                    <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:when>
+            <xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="gsx:start|gsx:end">
@@ -179,7 +250,7 @@
         <xsl:value-of select="concat($sign,$date)"/>
     </xsl:template>
 
-    <xsl:template match="gsx:webpage">
+    <xsl:template match="gsx:webpage|gsx:sourcedocument">
         <!-- TODO support old style hopper urls? -->
         <xsl:variable name="target">
             <target>
