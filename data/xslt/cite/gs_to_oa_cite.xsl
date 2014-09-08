@@ -201,7 +201,13 @@
             <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
             <body>
                 <xsl:attribute name="rdf:resource">
-                    <xsl:value-of select="."/>
+                    <xsl:choose>
+                        <!-- add #this identifier to pleiades uris -->
+                        <xsl:when test="matches(.,'http://pleiades.stoa.org/places/\d+$')">
+                            <xsl:copy-of select="concat(normalize-space(.),'#this')"></xsl:copy-of>
+                        </xsl:when>
+                        <xsl:otherwise><xsl:copy-of select=" normalize-space(.)"/></xsl:otherwise>
+                    </xsl:choose>
                 </xsl:attribute>
             </body>
         </annotation>
