@@ -94,7 +94,7 @@
     </xsl:template>
 
     <xsl:template match="rdfs:comment">
-        <div class="comment">
+        <div class="oac_comment">
             <span class="oac_label">Annotation Comments:</span>
             <xsl:copy-of select="text()"/>
         </div>

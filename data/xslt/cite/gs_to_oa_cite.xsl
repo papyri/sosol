@@ -46,42 +46,43 @@
         <xsl:variable name="annotations">
             <!-- TODO eventually might think about better ways to make this extensible
                  to a wider range of spreadsheet templates -->
-            <xsl:choose>
-                <!-- this is a lexical named entity annnotation worksheet -->
-                <xsl:when test="gsx:sourcedocument and gsx:resourcelink">
-                    <xsl:if test="gsx:place/text() != ''">
-                        <xsl:call-template name="make_place_annotation"/>    
-                    </xsl:if>
-                    <xsl:if test="gsx:person/text() != ''">
-                        <xsl:call-template name="make_person_annotation"/>    
-                    </xsl:if>
-                </xsl:when>
-                <!-- this is a time mapper worksheet -->
-                <xsl:otherwise>
-                    <xsl:if test="gsx:start/text() != '' or gsx:end/text() != ''">
-                        <xsl:call-template name="make_date_annotation"/>    
-                    </xsl:if>
-                    <xsl:if test="gsx:place/text() != ''">
-                        <xsl:call-template name="make_place_annotation"/>    
-                    </xsl:if>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:if test="gsx:start/text() != '' or gsx:end/text() != ''">
+                <xsl:call-template name="make_date_annotation"/>    
+            </xsl:if>
+            <xsl:if test="gsx:place/text() != ''">
+                <xsl:call-template name="make_place_annotation"/>    
+            </xsl:if>
+            <xsl:if test="gsx:person/text() != ''">
+                <xsl:call-template name="make_person_annotation"/>    
+            </xsl:if>
+            <xsl:if test="gsx:resourcelink/text() != ''">
+              <xsl:for-each select="tokenize(normalize-space(gsx:resourcelink),' ')">
+                   <xsl:call-template name="make_resource_annotation"></xsl:call-template>
+                </xsl:for-each>
+            </xsl:if>
         </xsl:variable>
         <xsl:variable name="title">
                 <xsl:choose>
-                    <xsl:when test="gsx:shortdescription">
-                        <xsl:apply-templates select="gsx:shortdescription"/>
+                    <xsl:when test="gsx:title and gsx:title != ''">
+                        <xsl:apply-templates select="gsx:title"/>
                     </xsl:when>
-                    <xsl:otherwise><xsl:apply-templates select="gsx:title"/></xsl:otherwise>
+                    <xsl:when test="gsx:shortdescription">
+                        <dcterms:title>
+                            <xsl:choose>
+                                <xsl:when test="gsx:person != ''"><xsl:value-of select="concat(gsx:person,' at ', gsx:standardreference)"/></xsl:when>
+                                <xsl:when test="gsx:place != ''"><xsl:value-of select="concat(gsx:place,' at ', gsx:standardreference)"/></xsl:when>        
+                            </xsl:choose>
+                        </dcterms:title>
+                    </xsl:when>
                 </xsl:choose> 
         </xsl:variable>
+        <xsl:variable name="comments">
+            <xsl:if test="gsx:comments">
+               <xsl:value-of select="normalize-space(gsx:comments)"/>
+            </xsl:if>
+        </xsl:variable>
         <xsl:variable name="description">
-            <xsl:if test="gsx:resourcelink and gsx:sourcedocument">
-                <xsl:choose>
-                    <xsl:when test="gsx:person != ''"><xsl:value-of select="concat(gsx:person,' at ', gsx:standardreference)"/></xsl:when>
-                    <xsl:when test="gsx:place != ''"><xsl:value-of select="concat(gsx:place,' at ', gsx:standardreference)"/></xsl:when>        
-                </xsl:choose>
-            </xsl:if>                
+            <xsl:apply-templates select="gsx:shortdescription"/>
         </xsl:variable>
         <xsl:variable name="updated"><xsl:value-of select="atom:updated"/></xsl:variable>
         <xsl:variable name="orig_target">
@@ -100,8 +101,8 @@
             <oa:Annotation rdf:about="{concat($e_baseAnnotUri,'#',$index,'-',$id)}">
                 <dcterms:source rdf:resource="{$sourceid}"/>
                 <xsl:copy-of select="$title"/>
-                <xsl:if test="gsx:comment">
-                    <rdfs:comment><xsl:value-of select="gsx:comment"/></rdfs:comment>
+                <xsl:if test="$comments != ''">
+                    <rdfs:comment><xsl:copy-of select="$comments"/></rdfs:comment>
                 </xsl:if>
                 <xsl:if test="$description != ''">
                     <dcterms:description><xsl:value-of select="$description"/></dcterms:description>
@@ -144,7 +145,7 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="gsx:title|gsx:shortdescription">
+    <xsl:template match="gsx:title">
         <dcterms:title><xsl:copy-of select="normalize-space(text())"/></dcterms:title>
     </xsl:template>
     
@@ -178,14 +179,7 @@
             <!-- only uri identified places accepted -->
             <body>
                 <xsl:attribute name="rdf:resource">
-                    <xsl:choose>
-                        <xsl:when test="gsx:resourcelink">
-                            <xsl:apply-templates select="gsx:resourcelink"/>        
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:apply-templates select="gsx:place"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
+                    <xsl:apply-templates select="gsx:place"/>
                 </xsl:attribute>
             </body>
         </annotation>
@@ -194,23 +188,26 @@
     <xsl:template name="make_person_annotation">    
         <annotation>    
             <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
-            <!-- only uri identified places accepted -->
             <body>
                 <xsl:attribute name="rdf:resource">
-                    <xsl:choose>
-                        <xsl:when test="gsx:resourcelink">
-                            <xsl:apply-templates select="gsx:resourcelink"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:apply-templates select="gsx:person"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
+                   <xsl:apply-templates select="gsx:person"/>
                 </xsl:attribute>
             </body>
         </annotation>
     </xsl:template>
     
-    <xsl:template match="gsx:place|gsx:resourcelink">
+    <xsl:template name="make_resource_annotation">
+        <annotation>    
+            <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+            <body>
+                <xsl:attribute name="rdf:resource">
+                    <xsl:value-of select="."/>
+                </xsl:attribute>
+            </body>
+        </annotation>
+    </xsl:template>
+    
+    <xsl:template match="gsx:place">
         <xsl:choose>
             <xsl:when test="matches(.,'https?:')">
                 <xsl:choose>
@@ -359,8 +356,7 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template name="make_metadata">
-        
+    <xsl:template match="gsx:shortdescription">
+        <xsl:value-of select="."></xsl:value-of>
     </xsl:template>
-   
 </xsl:stylesheet>

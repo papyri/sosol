@@ -56,6 +56,7 @@
           window.attachEvent('onload', isReady);
         }
 
+
         var e = document.createElement('script');
         e.type = 'text/javascript';
         e.id = 'janrainAuthWidget';
@@ -69,6 +70,18 @@
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(e, s);
       })();
+      // hack to override fixed width on janrain widget items 
+      // that causes them to disappear when the browser zoom set to something
+      // other than default
+      function janrainWidgetOnload() {
+        jQuery( '.janrainPage .providers li' ).each(
+          function() {
+            var style = jQuery(this).attr("style");
+            style = style.replace(/width: \d+px !important;/,'width: 10rem;');
+            jQuery(this).attr("style",style);
+          }
+        );
+      }   
 
     %style(type="text/css")
       :sass
