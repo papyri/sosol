@@ -31,13 +31,15 @@ class OaCiteIdentifier < CiteIdentifier
     transform = agent[:transformations][:OaCiteIdentifier]
     worksheet_idmatch = nil
     a_init_value.each do |a_url|
-      worksheet_idmatch = a_url.match(/key=([^&;\s]+)/)
+      # TODO This nonsense should be replaced by use of google api
+      worksheet_idmatch = a_url.match(/key=([^&;\s]+)/) || # old style url
+        a_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
       if worksheet_idmatch
         break;
       end
     end
     unless (worksheet_idmatch) 
-        raise "Invalid URL: No key parameter"
+        raise "Invalid URL: Unable to parse spreadsheet id from #{a_init_value.inspect}"
     end
 
     worksheet_id = worksheet_idmatch.captures[0] 

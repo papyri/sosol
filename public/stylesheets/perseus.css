@@ -490,6 +490,15 @@ li.editor_menu {
   font-weight: bold;
 }
 
+.oa_cite_annotation .oac_description {
+  font-size:smaller;
+}
+
+.oa_cite_annotation .oac_comment {
+  font-size:smaller;
+  font-style: italic;
+}
+
 .oa_cite_annotation .oac_source {
   font-size:smaller;
   margin-top: 1em;

@@ -46,9 +46,9 @@
         <xsl:variable name="annotations">
             <!-- TODO eventually might think about better ways to make this extensible
                  to a wider range of spreadsheet templates -->
-            <!-- this is a lexical named entity annnotation worksheet -->
             <xsl:choose>
-                <xsl:when test="gsx:sourcedocument and gsx:place and gsx:person">
+                <!-- this is a lexical named entity annnotation worksheet -->
+                <xsl:when test="gsx:sourcedocument and gsx:resourcelink">
                     <xsl:if test="gsx:place/text() != ''">
                         <xsl:call-template name="make_place_annotation"/>    
                     </xsl:if>
@@ -56,6 +56,7 @@
                         <xsl:call-template name="make_person_annotation"/>    
                     </xsl:if>
                 </xsl:when>
+                <!-- this is a time mapper worksheet -->
                 <xsl:otherwise>
                     <xsl:if test="gsx:start/text() != '' or gsx:end/text() != ''">
                         <xsl:call-template name="make_date_annotation"/>    
@@ -67,7 +68,20 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="title">
-            <xsl:apply-templates select="gsx:title"/>
+                <xsl:choose>
+                    <xsl:when test="gsx:shortdescription">
+                        <xsl:apply-templates select="gsx:shortdescription"/>
+                    </xsl:when>
+                    <xsl:otherwise><xsl:apply-templates select="gsx:title"/></xsl:otherwise>
+                </xsl:choose> 
+        </xsl:variable>
+        <xsl:variable name="description">
+            <xsl:if test="gsx:resourcelink and gsx:sourcedocument">
+                <xsl:choose>
+                    <xsl:when test="gsx:person != ''"><xsl:value-of select="concat(gsx:person,' at ', gsx:standardreference)"/></xsl:when>
+                    <xsl:when test="gsx:place != ''"><xsl:value-of select="concat(gsx:place,' at ', gsx:standardreference)"/></xsl:when>        
+                </xsl:choose>
+            </xsl:if>                
         </xsl:variable>
         <xsl:variable name="updated"><xsl:value-of select="atom:updated"/></xsl:variable>
         <xsl:variable name="orig_target">
@@ -86,6 +100,12 @@
             <oa:Annotation rdf:about="{concat($e_baseAnnotUri,'#',$index,'-',$id)}">
                 <dcterms:source rdf:resource="{$sourceid}"/>
                 <xsl:copy-of select="$title"/>
+                <xsl:if test="gsx:comment">
+                    <rdfs:comment><xsl:value-of select="gsx:comment"/></rdfs:comment>
+                </xsl:if>
+                <xsl:if test="$description != ''">
+                    <dcterms:description><xsl:value-of select="$description"/></dcterms:description>
+                </xsl:if>
                 <oa:hasTarget>
                     <xsl:choose>
                         <xsl:when test="$expanded_target/*">
@@ -124,7 +144,7 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="gsx:title">
+    <xsl:template match="gsx:title|gsx:shortdescription">
         <dcterms:title><xsl:copy-of select="normalize-space(text())"/></dcterms:title>
     </xsl:template>
     
@@ -135,12 +155,12 @@
             <oa:motivatedBy rdf:resource="http://linkedevents.org/ontology/#term-circa"/>
             <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#tagging"/>
             <body>
-                <xsl:if test="$start or $end">
+                <xsl:if test="$start != '' or $end != ''">
                 <tag>
                   <cnt:chars>
                       <xsl:choose>
-                          <xsl:when test="$start and not($end)"><xsl:value-of select="$start"/></xsl:when>
-                          <xsl:when test="$start and $end"><xsl:value-of select="concat($start,'/',$end)"/></xsl:when>
+                          <xsl:when test="$start != '' and (not($end) or $end = '')"><xsl:value-of select="$start"/></xsl:when>
+                          <xsl:when test="$start != '' and $end != ''"><xsl:value-of select="concat($start,'/',$end)"/></xsl:when>
                           <xsl:otherwise><xsl:value-of select="$end"/></xsl:otherwise>
                       </xsl:choose>
                   </cnt:chars>
@@ -158,7 +178,14 @@
             <!-- only uri identified places accepted -->
             <body>
                 <xsl:attribute name="rdf:resource">
-                    <xsl:apply-templates select="gsx:place"/>
+                    <xsl:choose>
+                        <xsl:when test="gsx:resourcelink">
+                            <xsl:apply-templates select="gsx:resourcelink"/>        
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates select="gsx:place"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:attribute>
             </body>
         </annotation>
@@ -170,13 +197,20 @@
             <!-- only uri identified places accepted -->
             <body>
                 <xsl:attribute name="rdf:resource">
-                    <xsl:apply-templates select="gsx:person"/>
+                    <xsl:choose>
+                        <xsl:when test="gsx:resourcelink">
+                            <xsl:apply-templates select="gsx:resourcelink"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates select="gsx:person"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:attribute>
             </body>
         </annotation>
     </xsl:template>
     
-    <xsl:template match="gsx:place">
+    <xsl:template match="gsx:place|gsx:resourcelink">
         <xsl:choose>
             <xsl:when test="matches(.,'https?:')">
                 <xsl:choose>
@@ -244,7 +278,9 @@
         </xsl:variable>
 
         <xsl:variable name="date">
-            <xsl:value-of select="format-number(number($parsed/*/@date), '0000')"/> 
+            <xsl:if test="$parsed/*/@date">
+                <xsl:value-of select="format-number(number($parsed/*/@date), '0000')"/>
+            </xsl:if>
         </xsl:variable>
         
         <xsl:value-of select="concat($sign,$date)"/>

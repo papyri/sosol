@@ -20,6 +20,8 @@
     <xsl:template match="oac:Annotation">
         <div class="oa_cite_annotation">
         <xsl:apply-templates select="dcterms:title"/>
+        <xsl:apply-templates select="dcterms:description"/>
+        <xsl:apply-templates select="rdfs:comment"/>
         <xsl:apply-templates select="oac:hasBody"/>
        	<xsl:choose>
    	    	<xsl:when test="rdfs:label">
@@ -83,7 +85,21 @@
             <xsl:copy-of select="text()"/>
         </div>
     </xsl:template>
+    
+    <xsl:template match="dcterms:description">
+        <div class="oac_description">
+            <span class="oac_label">Annotation Description:</span>
+            <xsl:copy-of select="text()"/>
+        </div>
+    </xsl:template>
 
+    <xsl:template match="rdfs:comment">
+        <div class="comment">
+            <span class="oac_label">Annotation Comments:</span>
+            <xsl:copy-of select="text()"/>
+        </div>
+    </xsl:template>
+    
     <xsl:template match="dcterms:source">
         <div class="oac_source">
             <span class="oac_label">Datasource:</span>

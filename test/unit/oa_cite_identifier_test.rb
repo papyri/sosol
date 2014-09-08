@@ -21,16 +21,36 @@ class OaCiteIdentifierTest < ActiveSupport::TestCase
       end
     end
 
-    should "work with gss pub url" do
+    should "work with gss key pub url" do
       init_value = ["https://docs.google.com/spreadsheet/pub?key=0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc&output=html"]
       test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
       assert_not_nil test
     end
 
-    should "work with gss link url" do
+    should "work with gss key link url" do
       init_value = ["https://docs.google.com/spreadsheet/ccc?key=0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc&usp=sharing"]
       test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
       assert_not_nil test
+    end
+
+    should "work with gss pub url" do
+      init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc/pubhtml"]
+      test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      assert_not_nil test
+    end
+
+    should "work with gss link url" do
+      init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc/edit?usp=sharing"]
+      test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      assert_not_nil test
+    end
+
+    should "raise error" do
+        init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc"]
+        exception = assert_raises(RuntimeError) {
+          test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+        }
+        assert_match(/^Invalid URL/,exception.message)
     end
 
   end
