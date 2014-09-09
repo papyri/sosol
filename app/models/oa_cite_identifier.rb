@@ -14,60 +14,34 @@ class OaCiteIdentifier < CiteIdentifier
   end
 
   def self.new_from_template(a_publication,a_urn,a_init_value)
-    # special handling for google spreadsheet urls as init value
-    # temporary hack -- we should use google apis for google drive 
-    # integration and configure google as a full fledged agent
-    agent = nil
+
+    agent_url = nil
     a_init_value.each do | a_url |
       agent = AgentHelper.agent_of(a_url)
-    end
-    # TODO this is problematic if init_value is an agent url that is
-    # just poorly formed.  The input form should prevent that but 
-    # might not always
-    if agent.nil?
-      return super(a_publication,a_urn,a_init_value)
-    end
-
-    transform = agent[:transformations][:OaCiteIdentifier]
-    worksheet_idmatch = nil
-    a_init_value.each do |a_url|
-      # TODO This nonsense should be replaced by use of google api
-      worksheet_idmatch = a_url.match(/key=([^&;\s]+)/) || # old style url
-        a_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
-      if worksheet_idmatch
+      unless agent.nil?
+        agent_url = a_url
         break;
       end
     end
-    unless (worksheet_idmatch) 
-        raise "Invalid URL: Unable to parse spreadsheet id from #{a_init_value.inspect}"
+    # defer to super class handling if we don't have any class-specific
+    # init content
+    # TODO this is problematic if init_value is an agent url that is
+    # just poorly formed.  The input form should prevent that but 
+    # might not always
+    if agent_url.nil?
+      return super(a_publication,a_urn,a_init_value)
     end
 
-    worksheet_id = worksheet_idmatch.captures[0] 
-    uri = agent[:get_url].sub(/WORKSHEET_ID/,worksheet_id)
-    uri = URI.parse(uri)
-    Rails.logger.info("Getting content from #{uri}")
-    response = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.send_request('GET',uri.request_uri)
-    end
-    unless (response.code == '200')
-      raise "Unable to retreive content from #{uri}"
-    end
-    
     temp_id = self.new(:name => self.next_object_identifier(a_urn))
+    temp_id.title = temp_id.name
     temp_id.publication = a_publication 
     if (! temp_id.collection_exists?)
       raise "Unregistered CITE Collection for #{a_urn}"
     end
+    initial_content = temp_id.file_template
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    temp_id.init_content(a_init_value)
     temp_id.save!
-    content = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(response.body),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,transform)),
-      :e_agentUri => agent[:uri_match],
-      :e_annotatorUri => temp_id.make_annotator_uri,
-      :e_annotatorName => temp_id.publication.creator.human_name,
-      :e_baseAnnotUri => SITE_CITE_COLLECTION_NAMESPACE + "/" + temp_id.urn_attribute 
-    )  
-    temp_id.set_content(content, :comment => "Created from #{a_init_value.inspect}")
     return temp_id
   end
   
@@ -77,7 +51,7 @@ class OaCiteIdentifier < CiteIdentifier
     # need to override to ensure consistent formatting of XML for all commits
     toXmlString self.rdf
   end
-  
+
    # return the RDF of the oac.xml as an REXML::Document
   def rdf
     @rdfDocX ||= REXML::Document.new(self.xml_content)
@@ -93,13 +67,6 @@ class OaCiteIdentifier < CiteIdentifier
   def set_content(content, options = {})
     @rdfDocX = nil
     super
-  end
-  
-  #initialization method for a new version of an existing CITE Object
-  def init_version_content(a_content)
-    annotation = OacHelper::add_annotator(REXML::Document.new(a_content),make_annotator_uri())
-    oacRdf = toXmlString annotation
-    self.set_xml_content(oacRdf, :comment => 'Initializing Content')
   end
   
   # make a annotator uri from the owner of the publication 
@@ -126,20 +93,9 @@ class OaCiteIdentifier < CiteIdentifier
    OacHelper::get_all_annotations(self.rdf)         
   end
   
-  def init_content(a_value)
-    # the init value must be one or more target uris
-    # todo calculate body URI and body as text
-    annot_uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute + "#1"
-    targets = []
-    if (a_value.nil?) 
-      targets.concat([''])
-    else 
-      targets.concat(a_value)
-    end 
-    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,targets,[''],"http://www.w3.org/ns/oa#linking", make_annotator_uri(),nil))
-    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
-    oacRdf = toXmlString self.rdf
-    self.set_xml_content(oacRdf, :comment => 'Initializing Content')
+  def init_content(a_init_value)
+    updated_content = self.content_from_agent(a_init_value)
+    self.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
   end
   
   # Place any actions you always want to perform on  identifier content prior to it being committed in this method
@@ -209,5 +165,54 @@ class OaCiteIdentifier < CiteIdentifier
       (orig_agents & new_agents).size > 0
     return authorized_agent && authorized_owner
       
+  end
+
+  # retrieve content for this identifier from an external agent (or agents)
+  # @param {Array} a_init_urls array of potential agent urls
+  # @returns the content as a string
+  def content_from_agent(a_init_urls)
+    agent = nil
+    agent_url = nil
+    a_init_urls.each do | a_url |
+      agent = AgentHelper.agent_of(a_url)
+      if (agent)
+        agent_url = a_url
+        break;
+      end
+    end
+    if agent.nil?
+      raise "Agent not found for #{agent_url}"
+    end
+
+    # special handling for google spreadsheets
+    # temporary hack -- we should use google apis for google drive 
+    # integration and configure google as a full fledged agent
+    worksheet_idmatch = nil
+    # TODO This nonsense should be replaced by use of google api
+    worksheet_idmatch = agent_url.match(/key=([^&;\s]+)/) || # old style url
+      agent_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
+    unless worksheet_idmatch 
+        raise "Invalid URL: Unable to parse spreadsheet id from #{agent_url}"
+    end
+
+    worksheet_id = worksheet_idmatch.captures[0] 
+    uri = agent[:get_url].sub(/WORKSHEET_ID/,worksheet_id)
+    uri = URI.parse(uri)
+    response = Net::HTTP.start(uri.host, uri.port) do |http|
+      http.send_request('GET',uri.request_uri)
+    end
+    unless (response.code == '200')
+      raise "Unable to retreive content from #{uri}"
+    end
+    transform = agent[:transformations][:OaCiteIdentifier]
+    content = JRubyXML.apply_xsl_transform(
+    JRubyXML.stream_from_string(response.body),
+    JRubyXML.stream_from_file(File.join(RAILS_ROOT,transform)),
+      :e_agentUri => agent[:uri_match],
+      :e_annotatorUri => self.make_annotator_uri,
+      :e_annotatorName => self.publication.creator.human_name,
+      :e_baseAnnotUri => SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute 
+    )  
+    return content
   end
 end

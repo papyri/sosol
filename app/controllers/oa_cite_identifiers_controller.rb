@@ -8,6 +8,11 @@ class OaCiteIdentifiersController < IdentifiersController
     render :template => 'oa_cite_identifiers/import'
   end  
 
+  def import_update
+    find_identifier
+    render :template => 'oa_cite_identifiers/import_update'
+  end  
+
   def edit
     find_publication_and_identifier
     redirect_to polymorphic_path([@publication],:action => :show)
@@ -20,12 +25,32 @@ class OaCiteIdentifiersController < IdentifiersController
     render :template => 'oa_cite_identifiers/editxml'
   end
 
+  def update_from_agent
+    find_identifier
+    params[:comment] ||= "Update from Agent #{params[:agent_url]}"
+    begin
+      updated_content =  @identifier.content_from_agent([params[:agent_url]])
+      commit_sha = @identifier.set_xml_content(updated_content,
+                                  :comment => params[:comment])
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
+        @comment.save
+      end
+      flash[:notice] = "File updated."
+      expire_publication_cache
+      redirect_to polymorphic_path([@identifier.publication],:action => :show) and return
+    rescue Exception => import_error
+      flash.now[:error] = import_error.to_str + ". This file was NOT UPDATED."
+      render :template => 'oa_cite_identifiers/import_update'
+    end
+  end
+
   def create_from_annotation
     # there is no difference between create_from_annotation and 
     # create other than create_from_annotation supports GET 
     create()
-  end
-  
+  end 
+
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
