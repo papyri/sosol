@@ -145,3 +145,5 @@
         %li      
           - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
           = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
+        %li
+          = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import' )

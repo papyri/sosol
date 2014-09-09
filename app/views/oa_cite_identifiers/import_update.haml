@@ -1,0 +1,8 @@
+- form_for :identifier, @identifier, :url => { :controller => "oa_cite_identifiers", :action => "update_from_agent" } do |f|
+  = f.error_messages
+  %br
+  %h2 Update Annotations from a Google Spreadsheet
+  %p{:class => 'hints'} The spreadsheet must already be published and adhere to a supported predefined template. You must supply the public link below. This can be either the "Link to Share" or the "Link to Published Data"
+  %label Google Spreadsheet Link:
+  %input{:name=>'agent_url', :type=>'url', :class => 'observechange', :required => true, :pattern => 'https:\/\/docs.google.com\/spreadsheets?\/.+', :title =>"Supply a valid Google Spreadsheet URL", :size => 100}
+  = f.submit "Import", :class => 'save'

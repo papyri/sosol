@@ -81,6 +81,7 @@ ActionController::Routing::Routes.draw do |map|
     publication.resources :commentary_cite_identifiers, :member => { :create => :post, :create_from_annotation => :get, :history => :get, :preview => :get, :editxml => :get, :update => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put}
     publication.resources :treebank_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
     publication.resources :alignment_cite_identifiers, :member => { :create => :post, :create_from_annotation => :get, :history => :get, :preview => :get, :editxml => :get, :updatexml => :put, :exportxml => :get, :edit => :post, :rename_review => :get, :rename => :put, :api_get => :get, :api_update => :post}
+    publication.resources :oa_cite_identifiers, :member => { :create => :post, :history => :get, :preview => :get, :annotate_xslt => :get, :editxml => :get, :import_update => :get, :updatexml => :put, :exportxml => :get, :edit_or_create => :post, :append => :post, :delete_annotation => :post, :update_from_agent => :post }
 
 
     # publication.resources :identifiers
