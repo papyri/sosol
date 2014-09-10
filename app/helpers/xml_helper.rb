@@ -24,7 +24,11 @@ module XmlHelper
   #                    or was empty
   def self.parseattributes(docstr,atts)
     parser = AttributeParser.new(atts)
-    Nokogiri::XML::SAX::Parser.new(parser).parse(docstr)
+    begin
+      Nokogiri::XML::SAX::Parser.new(parser).parse(docstr)
+    rescue Exception => a_e
+      Rails.logger.error(a_e.backtrace)
+    end
     parser.my_return
   end
 
