@@ -465,13 +465,17 @@ class TreebankCiteIdentifier < CiteIdentifier
     parser = self.xml_parser 
     t = parser.parseroot
     tool = 'alpheios'
-    parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
-      tool_uri = a_agent.text
-      agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
-      unless (agent.nil?)
-        tool = agent
-        break;
+    begin
+      parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
+        tool_uri = a_agent.text
+        agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
+        unless (agent.nil?)
+          tool = agent
+          break;
+        end
       end
+    rescue Exception => a_e
+      Rails.logger.error(a_e.backtrace)
     end
     return tool
   end
