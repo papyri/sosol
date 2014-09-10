@@ -22,6 +22,9 @@
     <xsl:param name="current_user"/>
     <xsl:param name="filter"/>
     <xsl:param name="lang"/>
+    
+    <xsl:include href="eagle-properties.xsl"/>
+    
     <xsl:template match="/">
     <xsl:variable name="iteminwiki" select="//entity[1]"/>
     <xsl:variable name="ctsurn">
@@ -39,15 +42,9 @@
             <xsl:when test="$filter">
                 <xsl:for-each select="$iteminwiki//claim[@id=$filter]">
                     <xsl:variable name="textlang">
-                        <xsl:choose>
-                            <xsl:when test="../@id = 'p11'">en</xsl:when>
-                            <xsl:when test="../@id = 'p12'">de</xsl:when>
-                            <xsl:when test="../@id = 'p13'">it</xsl:when>
-                            <xsl:when test="../@id = 'p14'">es</xsl:when>
-                            <xsl:when test="../@id = 'p15'">fr</xsl:when>
-                            <xsl:when test="../@id= 'p19'">hu</xsl:when>
-                            <xsl:when test="../@id = 'p57'">hr</xsl:when>
-                        </xsl:choose>
+                        <xsl:call-template name="proptolang">
+                            <xsl:with-param name="prop" select="parent::property/@id"/>
+                        </xsl:call-template>
                     </xsl:variable>
                     <xsl:element name="wrapper">
                         <xsl:attribute name="xml:lang"><xsl:value-of select="$textlang"/></xsl:attribute>
@@ -126,11 +123,7 @@
                 <fileDesc>
                     <titleStmt>
                         <title xml:lang="{$lang}"><xsl:value-of select="$title"/></title>
-                            <xsl:for-each select="$claim//references//property[@id='p21']/snak">
-                                <editor role="translator" xml:lang="{$lang}">
-                                <xsl:value-of select="datavalue/@value"/>
-                                </editor>
-                            </xsl:for-each>    
+                        
                         <editor role="translator" xml:lang="en">
                             <xsl:value-of select="$current_user"/>
                         </editor>
@@ -149,16 +142,29 @@
                         </availability>
                         <distributor><xsl:value-of select="$agent"/></distributor>
                     </publicationStmt>
-                    <sourceDesc>
-                        <xsl:choose>
-                            <xsl:when test="$claim//references//property[@id='p54']">
-                                <xsl:for-each select="$claim//references//property[@id='p54']/snak">
-                                    <p><xsl:value-of select="datavalue/@value"/></p>
-                                </xsl:for-each>
-                            </xsl:when>
-                            <xsl:otherwise><p/></xsl:otherwise>
-                        </xsl:choose>
-                    </sourceDesc>
+                    <xsl:if test="$claim//references//property[@id='p54'] or 
+                        $claim//references//property[@id='p21'] or
+                        $claim//references//property[@id='p41']">
+                        <sourceDesc>
+                            <xsl:if test="$claim//references//property[@id='p21'] or $claim//references//property[@id='p41']">
+                                <listPerson>
+                                    <xsl:for-each select="$claim//references//property[@id='p21']/snak">
+                                        <person><persName><xsl:value-of select="datavalue/@value"></xsl:value-of></persName></person>
+                                    </xsl:for-each>
+                                    <xsl:for-each select="$claim//references//property[@id='p41']/snak">
+                                        <org><orgName><xsl:value-of select="datavalue/@value"></xsl:value-of></orgName></org>
+                                    </xsl:for-each>
+                                </listPerson>
+                            </xsl:if>
+                            <xsl:if test="$claim//references//property[@id='p54']">
+                                <list n="p54">
+                                    <xsl:for-each select="$claim//references//property[@id='p54']/snak">
+                                        <item><xsl:value-of select="datavalue/@value"/></item>
+                                    </xsl:for-each>
+                                </list>
+                            </xsl:if>
+                        </sourceDesc>
+                    </xsl:if>
                 </fileDesc>
                 <profileDesc>
                     <langUsage>
@@ -184,9 +190,14 @@
         <xsl:param name="iteminwiki"/>
         <!-- make the agent identifier idnos -->
         <xsl:call-template name="make_idno">
-            <xsl:with-param name="type"><xsl:value-of select="$agent"/></xsl:with-param>
-            <xsl:with-param name="value"><xsl:value-of select="$id"></xsl:value-of></xsl:with-param>
+            <xsl:with-param name="type"><xsl:value-of select="'agentitemid'"/></xsl:with-param>
+            <xsl:with-param name="value"><xsl:value-of select="$iteminwiki/@id"></xsl:value-of></xsl:with-param>
         </xsl:call-template>
+        <!-- make the lastrevid identifier idno -->
+        <xsl:call-template name="make_idno">
+            <xsl:with-param name="type"><xsl:value-of select="'lastrevid'"/></xsl:with-param>
+            <xsl:with-param name="value"><xsl:value-of select="$iteminwiki/@lastrevid"></xsl:value-of></xsl:with-param>
+        </xsl:call-template>        
         <xsl:choose>
             <xsl:when test="$iteminwiki//property[@id='p37']">
                 <xsl:call-template name="make_idno">
