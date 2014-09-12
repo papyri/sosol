@@ -1,7 +1,7 @@
 class EpiTransCTSIdentifier < EpiCTSIdentifier   
   
   PATH_PREFIX = 'CTS_XML_EpiDoc'
-  TEMPORARY_COLLECTION = 'pdltmp'
+  TEMPORARY_COLLECTION = 'perseids'
   TEMPORARY_TITLE = 'New Translation'
   
   FRIENDLY_NAME = "Translation Text (EpiDoc)"

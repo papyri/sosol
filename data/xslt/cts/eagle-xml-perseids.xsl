@@ -66,7 +66,6 @@
                         <xsl:with-param name="title" select="$iteminwiki//description[@language=$lang]/@value"/>
                         <xsl:with-param name="ctsurn" select="$ctsurn"/>
                         <xsl:with-param name="lang" select="$lang"/>
-                        <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
                     </xsl:call-template>
                     <text xml:lang="{$lang}">
                         <body>
@@ -87,7 +86,6 @@
                             <xsl:with-param name="title" select="$iteminwiki//description[@language=$textlang]/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
                             <xsl:with-param name="lang" select="$textlang"/>
-                            <xsl:with-param name="default_license" select="$iteminwiki//property[@id='p25']//datavalue/@value"></xsl:with-param>
                         </xsl:call-template>
                         <text xml:lang="{$textlang}">
                             <body>
@@ -109,11 +107,11 @@
         <xsl:param name="title"/>
         <xsl:param name="lang"/>
         <xsl:param name="ctsurn"/>
-        <xsl:param name="default_license"/>
+        <xsl:param name="default_license" select="'http://creativecommons.org/licenses/by-sa/3.0/'"/>
         <!--  TODO verify how licenses are specified per translation (-->        
         <xsl:variable name="license">
             <xsl:choose>
-                <xsl:when test="$claim//property[@id='p25']">
+                <xsl:when test="$claim//property[@id='p25'] and $claim//property[@id='p25']//datavalue/@value != ''">
                     <xsl:value-of select="$claim//property[@id='p25']//datavalue/@value"/>
                 </xsl:when>
                 <xsl:otherwise><xsl:value-of select="$default_license"/></xsl:otherwise>
@@ -142,29 +140,34 @@
                         </availability>
                         <distributor><xsl:value-of select="$agent"/></distributor>
                     </publicationStmt>
-                    <xsl:if test="$claim//references//property[@id='p54'] or 
-                        $claim//references//property[@id='p21'] or
-                        $claim//references//property[@id='p41']">
-                        <sourceDesc>
-                            <xsl:if test="$claim//references//property[@id='p21'] or $claim//references//property[@id='p41']">
-                                <listPerson>
-                                    <xsl:for-each select="$claim//references//property[@id='p21']/snak">
-                                        <person><persName><xsl:value-of select="datavalue/@value"></xsl:value-of></persName></person>
-                                    </xsl:for-each>
-                                    <xsl:for-each select="$claim//references//property[@id='p41']/snak">
-                                        <org><orgName><xsl:value-of select="datavalue/@value"></xsl:value-of></orgName></org>
-                                    </xsl:for-each>
-                                </listPerson>
-                            </xsl:if>
-                            <xsl:if test="$claim//references//property[@id='p54']">
-                                <list n="p54">
-                                    <xsl:for-each select="$claim//references//property[@id='p54']/snak">
-                                        <item><xsl:value-of select="datavalue/@value"/></item>
-                                    </xsl:for-each>
-                                </list>
-                            </xsl:if>
-                        </sourceDesc>
-                    </xsl:if>
+                    <sourceDesc>
+                     <xsl:choose>
+                         <xsl:when test="$claim//references//property[@id='p54'] or 
+                            $claim//references//property[@id='p21'] or
+                            $claim//references//property[@id='p41']">
+                           
+                                <xsl:if test="$claim//references//property[@id='p21'] or $claim//references//property[@id='p41']">
+                                    <listPerson>
+                                        <xsl:for-each select="$claim//references//property[@id='p21']/snak">
+                                            <person><persName><xsl:value-of select="datavalue/@value"></xsl:value-of></persName></person>
+                                        </xsl:for-each>
+                                        <xsl:for-each select="$claim//references//property[@id='p41']/snak">
+                                            <org><orgName><xsl:value-of select="datavalue/@value"></xsl:value-of></orgName></org>
+                                        </xsl:for-each>
+                                    </listPerson>
+                                </xsl:if>
+                                <xsl:if test="$claim//references//property[@id='p54']">
+                                    <list n="p54">
+                                        <xsl:for-each select="$claim//references//property[@id='p54']/snak">
+                                            <item><xsl:value-of select="datavalue/@value"/></item>
+                                        </xsl:for-each>
+                                    </list>
+                                </xsl:if>
+                            
+                            </xsl:when>
+                            <xsl:otherwise><p/></xsl:otherwise>
+                        </xsl:choose>
+                    </sourceDesc>
                 </fileDesc>
                 <profileDesc>
                     <langUsage>

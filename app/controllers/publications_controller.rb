@@ -224,7 +224,7 @@ class PublicationsController < ApplicationController
     end
     
     #check if we need to signup to a community 
-    if params[:do_community_signup] && params[:community][:id]
+    if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
       @community = Community.find(params[:community][:id].to_s)
       unless (@community.add_member(@current_user.id))
          flash[:error] = 'Unable to signup for selected community'
@@ -352,7 +352,7 @@ class PublicationsController < ApplicationController
           @publication.identifiers.each do |id|
             #board controls this id and it has been modified
             if id.modified? && @publication.find_first_board.controls_identifier?(id) 
-              modified = id.preprocess_for_finalization
+              modified = id.preprocess_for_finalization(@publication.find_first_board.users.collect { |m| m.author_string })
               if (modified)
                 id.save
                 any_preprocessed = true
@@ -364,13 +364,14 @@ class PublicationsController < ApplicationController
           redirect_to @publication
           return
         end # end iteration through identifiers
-        # we need to rerun preprocessing until no more changes are made because a preprocessing step
-        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
-        done_preprocessing = ! any_preprocessed
+        # if we have multiple identifiers
+        # we need to rerun preprocessing until no more changes are made 
+        # because a preprocessing step can modify a related identifier, 
+        # e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = max_loops == 1 ? true : ! any_preprocessed
         if (!done_preprocessing && loop_count == max_loops)
           flash[:error] = "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
-          redirect_to @publication
-          break
+          return redirect_to @publication
         end
       end # done preprocessing 
     end # end transaction

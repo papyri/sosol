@@ -359,13 +359,6 @@ class CtsPublicationsController < PublicationsController
       @publication = new_publication
       # branch from master so we aren't just creating an empty branch
       new_publication.branch_from_master
-      # create the temporary CTS citation and inventory metadata records
-      # we can't do this until the publication has already been 
-      # branched from the master because they don't exist in the master 
-      # git repo  and are only carried along with the publication until it 
-      # is finalized
-
-      CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,version)
     end
   
     # create the new templates

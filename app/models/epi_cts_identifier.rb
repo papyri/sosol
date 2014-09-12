@@ -176,16 +176,36 @@ class EpiCTSIdentifier < CTSIdentifier
 
   # check to see if we have a registered distributor agent, and if so
   # send the finalization copy back to them too
-  def preprocess_for_finalization
+  def preprocess_for_finalization(reviewed_by)
     xml = REXML::Document.new(content).root
     agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+    if agent.nil?
+      return
+    end
     begin
-      agent_client = AgentHelper::get_client(agent.text)
+      agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+      agent = AgentHelper::agent_of(agent.text)
+      agent_client = AgentHelper::get_client(agent)
       unless (agent_client.nil?)
+        if (agent[:transformations][:EpiCTSIdentifier])
+          signed_off_messages = []
+          approved_by.each do |m|
+            signed_off_messages << m
+          end
+          transform = agent[:transformations][:EpiCTSIdentifier]
+          content = JRubyXML.apply_xsl_transform(
+            JRubyXML.stream_from_string(self.content),
+            JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)),
+             'urn' => self.urn_attribute,
+             'reviewers' => signed_off_messages.join(',')
+          )
+        end
         agent_client.post_content(content)
       end
-    rescue
-        Rails.logger.warn("Unable to send finalization copy to agent #{agent}")
+    rescue Exception => e
+      Rails.logger.error(e) 
+      Rails.logger.error(e.backtrace) 
+      raise "Unable to send finalization copy to agent #{agent.inspect}"
     end
   end
 end

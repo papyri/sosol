@@ -496,9 +496,12 @@ class Identifier < ActiveRecord::Base
     return false
   end
   
-  ## identifier classes which need further automatic processing after approval but before
-  ## finalization should override this method -- the default does nothing
-  def preprocess_for_finalization
+  ## identifier classes which need further automatic processing after 
+  ## approval but before finalization should override this method -- 
+  ## the default does nothing
+  ## @param reviewed_by set to a list of author strings for the board
+  ##        members of the finalizing board
+  def preprocess_for_finalization(reviewed_by)
     # default does nothing
     return false
   end

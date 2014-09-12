@@ -74,7 +74,7 @@ class CitationCTSIdentifier < CTSIdentifier
           parameters)
   end
   
-  def preprocess_for_finalization
+  def preprocess_for_finalization(reviewed_by)
     # what we want to do:
     # merge passage back into parent text
     # send the parent text for review
