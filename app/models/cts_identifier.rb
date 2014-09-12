@@ -222,6 +222,9 @@ class CTSIdentifier < Identifier
   # Checks to see if we can retrieve any valid citations from this text
   def has_valid_reffs?
     uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
+    if self.related_inventory.nil?
+      return false
+    end
     refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
     return ! refs.nil? && refs != ''
   end
