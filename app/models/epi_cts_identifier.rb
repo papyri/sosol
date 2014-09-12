@@ -189,7 +189,7 @@ class EpiCTSIdentifier < CTSIdentifier
       unless (agent_client.nil?)
         if (agent[:transformations][:EpiCTSIdentifier])
           signed_off_messages = []
-          approved_by.each do |m|
+          reviewed_by.each do |m|
             signed_off_messages << m
           end
           transform = agent[:transformations][:EpiCTSIdentifier]
