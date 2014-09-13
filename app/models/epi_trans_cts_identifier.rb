@@ -62,7 +62,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     if (self.related_text.nil?)
       template = self.file_template
     else 
-      self.related_text.xml_content
+      template = self.related_text.xml_content
     end
     translation_stub_xml =
       JRubyXML.apply_xsl_transform(
