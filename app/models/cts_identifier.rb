@@ -31,7 +31,6 @@ class CTSIdentifier < Identifier
 
   def self.new_from_template(publication,inventory,urn,pubtype,lang)
     temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
-    Rails.logger.info("adding identifier to pub #{temp_id}")
     temp_id.publication = publication 
     temp_id.save!
     initial_content = temp_id.file_template
@@ -41,7 +40,6 @@ class CTSIdentifier < Identifier
   
   def self.new_from_supplied(publication,inventory,urn,pubtype,lang,initial_content)
     # TODO - we shouldn't really supply pubtype and lang in param - instead parse it from the content
-    Rails.logger.info("New from supp = #{lang}")
     temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
     temp_id.publication = publication 
     temp_id.save!
@@ -59,7 +57,6 @@ class CTSIdentifier < Identifier
       #raise error
       raise temp_id.to_path + " not found on master"
     end
-    Rails.logger.info("adding identifier to pub #{temp_id}")
     # make sure we're not already editing this
     # TODO this is not correct - it needs to look only at those owned by the user
     # this looks up the master publications
@@ -84,23 +81,16 @@ class CTSIdentifier < Identifier
     # TODO - need to handle differing namespaces on tg and work
     # TODO - use exemplar for version
     newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
-    Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
-    Rails.logger.info("Edition part:#{editionPart}")
-    Rails.logger.info("DocumentPath:#{document_path}")
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
                        :limit => 1).first
     if latest.nil?
-      Rails.logger.info("NOT FOUND")
-
       # no constructed id's for this year/class
       document_number = 1
     else
-      Rails.logger.info("Found #{latest.inspect}")
-      Rails.logger.info("------Last component" + latest.to_components.last.split(/[\.;]/).last )
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
     editionPart = editionPart + document_number.to_s
@@ -242,7 +232,6 @@ class CTSIdentifier < Identifier
     # [3] edition or translation
     # [4] perseus-grc1 - edition + examplar
     # [5] 1.1 - passage
-    Rails.logger.info(temp_components.inspect)
     urn_components = []
     urn_components << temp_components[1]
     urn_components << [temp_components[2],temp_components[4]].join(".")
@@ -255,7 +244,6 @@ class CTSIdentifier < Identifier
   def to_path
     path_components = [ self.class::PATH_PREFIX ]
     temp_components = self.to_components
-    Rails.logger.info("PATH:" + temp_components.inspect)
      # should give us, e.g.
     # [0] collection = e.g. perseus
     # [1] namespace - e.g. greekLang
