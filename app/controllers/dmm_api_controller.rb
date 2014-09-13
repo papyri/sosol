@@ -58,20 +58,25 @@ class DmmApiController < ApplicationController
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
       end    
-      
-      agent = AgentHelper::agent_of(params[:raw_post])
-      new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
-    rescue Exception => e
-      Rails.logger.error(e.backtrace)
-      unless(params[:publication_id])
+     
+      # separate begin/rescue block here because
+      # we only need to destroy the publication in rescue once we've 
+      # successfully created it
+      begin 
+        agent = AgentHelper::agent_of(params[:raw_post])
+        new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
+      rescue Exception => e
+        Rails.logger.error(e.backtrace)
         #cleanup if we created a publication
-        @publication.destroy
+        if (params[:publication_id])
+          @publication.destroy
+        end
+        return render :xml => "<error>#{e}</error>", :status => 500
       end
-      render :xml => "<error>#{e}</error>", :status => 500
-      return   
+    rescue Exception => e
+      return render :xml => "<error>#{e}</error>", :status => 500
     end
-    render :xml => "<item>#{new_identifier_uri.id}</item>"
-    return 
+    return render :xml => "<item>#{new_identifier_uri.id}</item>"
   end
 
   def api_item_append
@@ -86,7 +91,7 @@ class DmmApiController < ApplicationController
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
             
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
 
       begin
         response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 

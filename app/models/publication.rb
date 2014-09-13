@@ -190,7 +190,12 @@ class Publication < ActiveRecord::Base
   end
 
   def after_destroy
-    self.owner.repository.delete_branch(self.branch)
+    # this is really destructive if it happens to get called on an incompletely
+    # initialized publication which doesn't have a branch defined yet
+    # it deletes all branches in the repo
+    if (self.branch)
+      self.owner.repository.delete_branch(self.branch)
+    end
   end
   
   #Outputs publication information and content to the Rails logger.
