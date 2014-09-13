@@ -126,7 +126,14 @@ class DmmApiController < ApplicationController
       # we need to expire the api_get cache for the identifier now that it's been updated
       expire_api_item_cache(params[:identifier_type],params[:id])
       
-      agent = AgentHelper::agent_of(params[:raw_post])
+      begin
+        agent = AgentHelper::agent_of(params[:raw_post])
+        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment])
+      rescue Exception => e
+        Rails.logger.error(e.backtrace)
+        return render :xml => "<error>#{e}</error>", :status => 500
+      end
+      render :xml => response
     end
   end
   
