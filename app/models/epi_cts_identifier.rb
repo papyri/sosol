@@ -14,6 +14,23 @@ class EpiCTSIdentifier < CTSIdentifier
   # at some point would be nice to do something more intelligent  
   MAX_PREVIEW_SIZE = 50000
 
+  def titleize
+    # try to get the title from the content
+    if self.xml_content
+      xml = REXML::Document.new(content).root
+      title = REXML::XPath.first(xml, "//tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title", {'tei' => 'http://www.tei-c.org/ns/1.0'})
+      unless title.nil? 
+        title = title.text
+      end
+    end
+    # otherwise fall back to default behavior for a CTS identifier
+    if title.nil? || title == ''
+      return super() 
+    else
+      return title
+    end
+  end
+
     
   def before_commit(content)
     EpiCTSIdentifier.preprocess(content)
@@ -132,4 +149,63 @@ class EpiCTSIdentifier < CTSIdentifier
     %w{data xslt perseus epidoc_preview.xsl}
   end
   
+  def self.parse_docs(content)
+    docs = []
+    xml = REXML::Document.new(content).root
+    formatter = PrettySsime.new
+    formatter.compact = true
+    formatter.width = 2**32
+  
+    # retrieve documents, pubtypes and languages
+    REXML::XPath.each(xml, "//tei:TEI", {'tei' => 'http://www.tei-c.org/ns/1.0'}) { |doc|
+      version = REXML::XPath.first(doc,"tei:text/tei:body/tei:div",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+      if (version.nil? || version.attributes['type'].nil? || version.attributes['xml:lang'].nil?)
+        raise "Unable to parse doc #{version}"
+      end
+      lang = version.attributes['xml:lang']    
+      modified_xml_content = ''
+      formatter.write doc, modified_xml_content
+      doc = Hash.new
+      doc[:lang] = lang
+      doc[:contents] = modified_xml_content
+      docs << doc
+               
+    }
+    return docs
+  end
+
+  # check to see if we have a registered distributor agent, and if so
+  # send the finalization copy back to them too
+  def preprocess_for_finalization(reviewed_by)
+    xml = REXML::Document.new(content).root
+    agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+    if agent.nil?
+      return
+    end
+    begin
+      agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+      agent = AgentHelper::agent_of(agent.text)
+      agent_client = AgentHelper::get_client(agent)
+      unless (agent_client.nil?)
+        if (agent[:transformations][:EpiCTSIdentifier])
+          signed_off_messages = []
+          reviewed_by.each do |m|
+            signed_off_messages << m
+          end
+          transform = agent[:transformations][:EpiCTSIdentifier]
+          content = JRubyXML.apply_xsl_transform(
+            JRubyXML.stream_from_string(self.content),
+            JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)),
+             'urn' => self.urn_attribute,
+             'reviewers' => signed_off_messages.join(',')
+          )
+        end
+        agent_client.post_content(content)
+      end
+    rescue Exception => e
+      Rails.logger.error(e) 
+      Rails.logger.error(e.backtrace) 
+      raise "Unable to send finalization copy to agent #{agent.inspect}"
+    end
+  end
 end

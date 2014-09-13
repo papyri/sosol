@@ -44,16 +44,51 @@ module AgentHelper
     end
 
     def get_content(a_uri)
-      params = { :format => @conf[:data_format], :ids => a_uri, :token_type => false }
+      params = { :format => @conf[:data_format][:get], :ids => a_uri, :token_type => false }
       @client.action("wbgetentities",params).data
     end
 
-    def post_content(a_uri,a_content,a_format)
-#      @client.prop :info, titles: a_page
-#     @client.query titles: [a_page]
-#     @client.create_page a_page, a_content
+    def post_content(a_content)
+      begin
+        parsed = JSON.parse(a_content)
+      rescue Exception => a_e
+        Rails.logger.error(a_e)
+        Rails.logger.error(a_e.backtrace)
+        raise "Error parsing content for agent submission"
+      end
+      # first we need to create a new claim
+      params = { :entity => parsed['id'],
+                 :token_type => 'edit',
+                 :baserevid => parsed['lastrevid'],
+                 :property => parsed['claim']['mainsnak']['property'],
+                 :snaktype => 'somevalue'
+               }
+      begin
+        created = @client.action("wbcreateclaim",params).data
+      rescue Exception => a_e
+        Rails.logger.error(a_e)
+        Rails.logger.error(a_e.backtrace)
+        raise "Error creating new mediawiki claim from submission"
+      end 
+      unless (created['claim']['id'])
+        raise "Unable to parse id from newly created claim"
+        Rails.logger.error("No id found in #{created.inspect}")
+      end
+      begin
+        parsed['claim']['id'] = created['claim']['id']
+        setp = { :token_type => 'edit',
+                 :baserevid => created['pageinfo']['lastrevid'],
+                 :claim => parsed['claim'].to_json }
+        @client.action("wbsetclaim",setp).data
+      rescue Exception => a_e
+        Rails.logger.error(a_e)
+        Rails.logger.error(a_e.backtrace)
+        remp = { :token_type => 'edit',
+                 :summary => 'cleaning up from failed update',
+                 :claim => created['claim']['id'] }
+        @client.action("wbremoveclaims",remp).data
+        # we need to remove the newly created but empty claim
+      end
     end
-
   end
-
 end

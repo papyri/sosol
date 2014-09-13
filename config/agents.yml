@@ -3,6 +3,22 @@
     :uri_match: "http://pelagios.org/recogito#version1.0"
     :transformations:
       :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
+  :eagle:
+    :uri_match: "http://www.eagle-network.eu"
+    :transformations:
+      :CTSIdentifier: "/data/xslt/cts/eagle-xml-perseids.xsl"
+      :EpiCTSIdentifier: "/data/xslt/cts/perseids-json-eagle.xsl"
+    :collections:
+      :CTSIdentifier: "pdlepi"
+    :type: "mediawiki"
+    :api_info:
+      :url: "http://www.eagle-network.eu/wiki/api.php"
+      :data_format: 
+        :get: "xml"
+        :post: "json"
+      :auth:
+        :username: ""
+        :password: ""
   :googless:
     :uri_match: "https://docs.google.com/spreadsheet"
     :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"

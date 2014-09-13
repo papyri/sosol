@@ -77,6 +77,7 @@ Warbler::Config.new do |config|
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
   
   config.gems << "jruby-openssl"
+  config.gems << "mediawiki_api"
 
   # Include gem dependencies not mentioned specifically
   config.gem_dependencies = true

@@ -11,7 +11,9 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     # Add URL to image service for display of related images
     @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     # find text for preview
-    @identifier[:text_html_preview] = @identifier.related_text.preview
+    if (@identifier.related_text)
+      @identifier[:text_html_preview] = @identifier.related_text.preview
+    end
   end
   
   def editxml
@@ -108,6 +110,13 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   
   def destroy
     find_identifier 
+    remaining = @identifier.publication.identifiers.select { |i| 
+      i != @identifier && (i.class == EpiTransCTSIdentifier || i.class == EpiCTSIdentifier)
+    }
+    if (remaining.size == 0)
+      flash[:error] = "This would leave the publication without any identifiers."
+      return redirect_to polymorphic_url([@identifier.publication], :action => :show)
+    end
     name = @identifier.title
     pub = @identifier.publication
     @identifier.destroy

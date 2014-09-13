@@ -23,6 +23,10 @@ class DmmApiController < ApplicationController
       else
          check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
       end
+      # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
+      # now because the syntax for find_matching_identifier is slightly 
+      # different for cts_identifier classes (3rd param is a boolean 
+      # for fuzzy matching in that case)
       existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')
@@ -59,7 +63,7 @@ class DmmApiController < ApplicationController
       # we only need to destroy the publication in rescue once we've 
       # successfully created it
       begin 
-        agent = agent_of(params[:raw_post])
+        agent = AgentHelper::agent_of(params[:raw_post])
         new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
@@ -87,7 +91,7 @@ class DmmApiController < ApplicationController
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
             
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
 
       begin
         response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
@@ -122,15 +126,7 @@ class DmmApiController < ApplicationController
       # we need to expire the api_get cache for the identifier now that it's been updated
       expire_api_item_cache(params[:identifier_type],params[:id])
       
-      begin
-        agent = agent_of(params[:raw_post])
-        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment]) 
-      rescue Exception => e
-        Rails.logger.error(e.backtrace)
-        render :xml => "<error>#{e}</error>", :status => 500
-        return
-      end
-      render :xml => response
+      agent = AgentHelper::agent_of(params[:raw_post])
     end
   end
   
@@ -340,22 +336,6 @@ class DmmApiController < ApplicationController
                       :action => 'api_item_get', 
                       :id => a_id,
                       :identifier_type => a_identifier_type)
-    end
-    
-    # looks for the software agent in the data
-    # TODO we need to decide upon a standardized approach to this
-    def agent_of(a_data)
-      unless defined? @agents
-        @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
-      end
-      agent = nil
-      @agents.keys.each do | a_agent |
-        if (a_data =~ /#{@agents[a_agent][:uri_match]}/sm)
-          agent = @agents[a_agent]
-          break
-        end
-      end
-      return agent
     end
 
     # renders an error response
