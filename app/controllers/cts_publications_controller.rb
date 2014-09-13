@@ -25,8 +25,7 @@ class CtsPublicationsController < PublicationsController
     pubtype = params[:pubtype] || CTS::CTSLib.versionTypeForUrn(sourceCollection,versionUrn)
     if pubtype.nil?
       flash[:error] = "No publication found for #{params[:urn]} in #{sourceCollection} inventory."
-      redirect_to dashboard_url
-      return
+      return redirect_to dashboard_url
     end
     
     versionIdentifier = sourceCollection + "/" + CTS::CTSLib.pathForUrn(versionUrn,pubtype)
@@ -41,91 +40,46 @@ class CtsPublicationsController < PublicationsController
     end
     
     if @publication.nil?
-       # User doesn't have the parent publication yet so create it
-       identifiers_hash = Hash.new
-       [versionIdentifier,OACIdentifier.make_name(versionIdentifier)].each do |id|
+      # User doesn't have the parent publication yet so create it
+      identifiers_hash = Hash.new
+      [versionIdentifier,OACIdentifier.make_name(versionIdentifier)].each do |id|
         key = CTS::CTSLib.getIdentifierKey(id)
         identifiers_hash[key] = Array.new()
         identifiers_hash[key] << id
-       end
-       @publication = Publication.new()
-       @publication.owner = @current_user
-       @publication.creator = @current_user
-      
-      if (existing_identifiers.length == 0) 
-        # HACK for IDigGreek to enable link in to create annotations on an edition that doesn't
-        # exist in the master repo
-        temp_id = nil
-        identifier_class = nil
-        SITE_IDENTIFIERS.split(",").each do |identifier_name|
-          ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
-          if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
-          
-            identifier_class = Object.const_get(identifier_name)
-            temp_id = identifier_class.new(:name => versionIdentifier)
-          end
-        end
-        
-        if (@publication.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
-          fullurn = "urn:cts:#{versionUrn}"
-          # fetch a title without creating from template
-          @publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(sourceCollection,fullurn,'edition','ed')).name
-          @publication.status = "new"
-          @publication.save!
-      
-          lang = params[:lang] || 'en'
-          # branch from master so we aren't just creating an empty branch
-          @publication.branch_from_master
-          new_cts = identifier_class.new_from_template(@publication,sourceCollection,fullurn, pubtype,lang)
-                     
-          # create the inventory metadata records
-          # we can't do this until the publication has already been branched from the master 
-          # because it doesn't exist in the master git repo 
-          # and is only carried along with the publication until it is finalized
-          begin
-            # first the inventory record
-            Rails.logger.info("Create inventory file from branch blank")
-            CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
-          rescue Exception => e
-            @publication.destroy
-            flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
-            redirect_to dashboard_url
-            return
-          end
-    
-        else
-          @publication.populate_identifiers_from_identifiers(
-              identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
-                     
-          if @publication.save!
-            @publication.branch_from_master
-          
-            # create the temporary CTS citation and inventory metadata records
-            # we can't do this until the publication has already been branched from the master 
-            # because they don't exist in the master git repo 
-            # and are only carried along with the publication until it is finalized
-            begin
-              # first the inventory record
-              Rails.logger.info("Create inventory file from branch")
-              CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
-            rescue Exception => e
-              @publication.destroy
-              flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
-              redirect_to dashboard_url
-              return
-            end # end creating inventory record
-  
-            # need to remove repeat against publication model
-            e = Event.new
-            e.category = "started editing"
-            e.target = @publication
-            e.owner = @current_user
-            e.save!
-          end # end saving new publication
-        end # now we have a publication
       end
-    end    
-    Rails.logger.info("Publication #{@publication.inspect} Identifiers #{@publication.identifiers.inspect}")
+      @publication = Publication.new()
+      @publication.owner = @current_user
+      @publication.creator = @current_user
+      @publication.populate_identifiers_from_identifiers(
+        identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
+                   
+      if @publication.save!
+        @publication.branch_from_master
+          
+        # create the temporary CTS citation and inventory metadata records
+        # we can't do this until the publication has already been branched from the master 
+        # because they don't exist in the master git repo 
+        # and are only carried along with the publication until it is finalized
+        begin
+          # first the inventory record
+          CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
+        rescue Exception => e
+          @publication.destroy
+          flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
+          return redirect_to dashboard_url
+        end # end creating inventory record
+  
+        # need to remove repeat against publication model
+        e = Event.new
+        e.category = "started editing"
+        e.target = @publication
+        e.owner = @current_user
+        e.save!
+      else
+        flash[:error] = "Unable to save publication for #{versionUrn}"
+        return redirect_to dashboard_url
+      end # end saving new publication
+    end # now we have a publication
     redirect_to(:controller => 'citation_cts_identifiers', 
                 :action => 'confirm_edit_or_annotate', 
                 :publication_id => @publication.id,
@@ -156,7 +110,6 @@ class CtsPublicationsController < PublicationsController
       urn = "urn:cts:#{edition}"
       # fetch a title without creating from template
       new_publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(collection,urn,'edition',lang)).name
-      Rails.logger.info("Creating new title #{new_publication.title}")
       new_publication.status = "new"
       new_publication.save!
     
