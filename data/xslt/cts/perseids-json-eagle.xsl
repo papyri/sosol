@@ -32,9 +32,11 @@
         </xsl:variable>
         <xsl:variable name="sources">
             <xsl:apply-templates select="tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:list[@n='p54']/tei:item"/>
+        </xsl:variable>
+        <xsl:variable name="reviewers">
             <xsl:for-each select="tokenize($reviewers,',')">
                 <object>
-                    <xsl:text>{"snaktype":"value","property":"</xsl:text><xsl:value-of select="'p54'"/><xsl:text>","datavalue":{"value":"</xsl:text><xsl:value-of select="concat('Review Board Member: ',.)"/><xsl:text>","type":"string"}}</xsl:text>
+                    <xsl:text>{"snaktype":"value","property":"</xsl:text><xsl:value-of select="'p58'"/><xsl:text>","datavalue":{"value":"</xsl:text><xsl:value-of select="."/><xsl:text>","type":"string"}}</xsl:text>
                 </object>
             </xsl:for-each>
         </xsl:variable>
@@ -59,17 +61,20 @@
             <!-- there has to be at least one p21 for the current owner -->
             <xsl:text>"</xsl:text><xsl:value-of select="'p21'"/><xsl:text>":[</xsl:text>
             <xsl:value-of select="string-join($p21/object/text(),',')"/>
-            <xsl:if test="$p41/object or $sources/object">
-            <xsl:text>],</xsl:text>
-            </xsl:if>
+            <xsl:text>]</xsl:text>
             <xsl:if test="$p41/object"> 
-                <xsl:text>"</xsl:text><xsl:value-of select="'p41'"/><xsl:text>":[</xsl:text>
+                <xsl:text>, "</xsl:text><xsl:value-of select="'p41'"/><xsl:text>":[</xsl:text>
                 <xsl:value-of select="string-join($p41/object/text(),',')"/>
-                <xsl:text>],</xsl:text>
+                <xsl:text>]</xsl:text>
             </xsl:if>
             <xsl:if test="$sources/object">
-                <xsl:text>"</xsl:text><xsl:value-of select="'p54'"/><xsl:text>":[</xsl:text>
+                <xsl:text>, "</xsl:text><xsl:value-of select="'p54'"/><xsl:text>":[</xsl:text>
                 <xsl:value-of select="string-join($sources/object/text(),',')"/>
+                <xsl:text>]</xsl:text>
+            </xsl:if>
+            <xsl:if test="$reviewers/object">
+                <xsl:text>, "</xsl:text><xsl:value-of select="'p58'"/><xsl:text>":[</xsl:text>
+                <xsl:value-of select="string-join($reviewers/object/text(),',')"/>
                 <xsl:text>]</xsl:text>
             </xsl:if>
             <xsl:text>} }]}}</xsl:text>

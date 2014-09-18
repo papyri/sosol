@@ -352,7 +352,7 @@ class PublicationsController < ApplicationController
           @publication.identifiers.each do |id|
             #board controls this id and it has been modified
             if id.modified? && @publication.find_first_board.controls_identifier?(id) 
-              modified = id.preprocess_for_finalization(@publication.find_first_board.users.collect { |m| m.author_string })
+              modified = id.preprocess_for_finalization(@publication.find_first_board.users.collect { |m| m.human_name })
               if (modified)
                 id.save
                 any_preprocessed = true
