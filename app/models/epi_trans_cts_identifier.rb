@@ -97,5 +97,28 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
         %w{data xslt perseus epidoc_preview.xsl})))
   end
+
+  def text_content
+    doc = REXML::Document.new(self.xml_content)
+    ab = REXML::XPath.first(doc,'/TEI/text/body/div[@type = "translation"]/ab')
+    ab.nil? ? '' : ab.text
+  end
+
+  def update_text_content(text,comment)
+    doc = REXML::Document.new(self.xml_content)
+    ab = REXML::XPath.first(doc,'/TEI/text/body/div[@type = "translation"]/ab')
+    Rails.logger.info("Updating ab #{ab}")
+    unless ab.nil?
+      Rails.logger.info("Setting text to #{text}")
+      ab.text = text
+      formatter = PrettySsime.new
+      formatter.compact = true
+      formatter.width = 2**32
+      modified_xml_content = ''
+      formatter.write doc, modified_xml_content
+      modified_xml_content
+      self.set_xml_content(modified_xml_content, :comment => comment)
+    end
+  end
   
 end

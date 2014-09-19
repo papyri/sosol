@@ -174,17 +174,23 @@ class EpiCTSIdentifier < CTSIdentifier
     return docs
   end
 
+  def agent
+    xml = REXML::Document.new(content).root
+    agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+    unless agent.nil?
+      agent = AgentHelper::agent_of(agent.text)
+    end
+    return agent
+  end
+
   # check to see if we have a registered distributor agent, and if so
   # send the finalization copy back to them too
   def preprocess_for_finalization(reviewed_by)
-    xml = REXML::Document.new(content).root
-    agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+    agent = self.agent
     if agent.nil?
       return
     end
     begin
-      agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
-      agent = AgentHelper::agent_of(agent.text)
       agent_client = AgentHelper::get_client(agent)
       unless (agent_client.nil?)
         if (agent[:transformations][:EpiCTSIdentifier])

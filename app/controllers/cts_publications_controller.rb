@@ -220,7 +220,7 @@ class CtsPublicationsController < PublicationsController
     agent = AgentHelper::agent_of(params[:agent])
     if (agent.nil? || agent[:api_info].nil?)
       flash[:error] = "Publication not created. Unrecognized API Agent #{params[:agent]}"
-      return
+      return redirect_to dashboard_url
     end
 
     collection = agent[:collections][:CTSIdentifier]
@@ -232,7 +232,7 @@ class CtsPublicationsController < PublicationsController
     rescue Exception => e
       Rails.logger.error(e.backtrace)
       flash[:error] = e.message
-      return
+      return redirect_to dashboard_url
     end
 
     # check to see if we need to transform the retried content
@@ -264,15 +264,15 @@ class CtsPublicationsController < PublicationsController
     # at minimum we need identifier type, pubtype and urn or we can't proceed
     if (identifier_type.nil? || urn.nil? || pubtype.nil?)
       Rails.logger.error("Unable to parse identifier from #{content}")
-      flash[:error] = "Publication not created. Unable to parse collection, CTS urn or pubtype from retrieved content."
-      return
+      flash[:error] = "Publication not created. Unable to parse identifier."
+      return redirect_to dashboard_url
     end
 
     begin
       urnObj = CTS::CTSLib.urnObj(urn)
     rescue
       flash[:error] = "Publication not created. Invalid URN identifier for linked text #{urn}}"
-      return
+      return redirect_to dashboard_url
     end
     
     # we must have at least a work
@@ -316,12 +316,26 @@ class CtsPublicationsController < PublicationsController
   
     # create the new templates
     begin     
+      added = 0;
+      entry_identifier = nil
       identifier_class.parse_docs(content).each{ |doc|
-        new_cts = identifier_class.new_from_supplied(@publication,collection,urn,pubtype,doc[:lang],doc[:contents])
+        ok_to_add = true
+        @publication.identifiers.each do |i|
+          if i.translation_already_in_language?(doc[:lang])
+            flash[:warning] = "You already are editing a translation in that language (#{doc[:lang]}) for this publication"
+            entry_identifier = i
+            ok_to_add = false
+          end
+        end
+        if (ok_to_add)
+          new_cts = identifier_class.new_from_supplied(@publication,collection,urn,pubtype,doc[:lang],doc[:contents])
+          added = added + 1
+          entry_identifier = new_cts
+        end
       }
       if (new_publication)
         flash[:notice] = 'Publication was successfully created.'
-      else 
+      elsif (added > 0)
         flash[:notice] = 'Document was added to existing Publication.'
       end
       expire_publication_cache
@@ -332,7 +346,7 @@ class CtsPublicationsController < PublicationsController
       flash[:notice] = 'Error creating document:' + e.to_s
       return redirect_to dashboard_url
     end
-    redirect_to @publication
+    redirect_to edit_polymorphic_path([@publication, entry_identifier])
   end
 
   protected

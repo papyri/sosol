@@ -8,6 +8,8 @@
     :transformations:
       :CTSIdentifier: "/data/xslt/cts/eagle-xml-perseids.xsl"
       :EpiCTSIdentifier: "/data/xslt/cts/perseids-json-eagle.xsl"
+    :controllers:
+      edit: "edittext"
     :collections:
       :CTSIdentifier: "pdlepi"
     :type: "mediawiki"
@@ -17,7 +19,7 @@
         :get: "xml"
         :post: "json"
       :auth:
-        :username: ""
+        :username: "Perseids"
         :password: ""
   :googless:
     :uri_match: "https://docs.google.com/spreadsheet"

@@ -1,13 +1,17 @@
 class EpiTransCtsIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:update, :updatexml]
+  before_filter :ownership_guard, :only => [:update, :updatexml, :updatetext]
 
   # require 'xml'
   # require 'xml/xslt'
   
   def edit
     find_identifier
+    override = agent_override('edit')
+    if (override)
+        return redirect_to :action => override, :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s
+    end
     # Add URL to image service for display of related images
     @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     # find text for preview
@@ -23,6 +27,40 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     @is_editor_view = true
     render :template => 'epi_trans_cts_identifiers/editxml'
   end
+
+  # Simple Edit Text action works on an ab inside of a translation element
+  # supporting just plain text within that element for now
+  def edittext
+    find_identifier
+    @is_editor_view = true
+    @identifier[:text_content] = @identifier.text_content
+    render :template => 'epi_trans_cts_identifiers/edittext'
+  end
+
+  def updatetext
+    find_identifier
+    begin
+      commit_sha = @identifier.update_text_content(params[:text_content],params[:comment])
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
+        @comment.save
+      end
+      
+      flash[:notice] = "File updated."
+      expire_leiden_cache
+      expire_publication_cache
+      if %w{new editing}.include?@identifier.publication.status
+        flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
+      end
+      unless (@identifier[:transform_messages].nil? )
+        flash[:notice] = @identifier[:transform_messages].join('<br/>')
+      end
+    rescue JRubyXML::ParseError => parse_error
+      flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
+    end
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                               :action => :edittext) and return
+  end 
   
   def create_from_selector
     publication = Publication.find(params[:publication_id].to_s)
@@ -134,6 +172,15 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   protected
     def find_identifier
       @identifier = EpiTransCTSIdentifier.find(params[:id].to_s)
+    end
+
+    def agent_override(method)
+      agent = @identifier.agent 
+      template = nil
+      unless agent.nil?
+        template = agent[:controllers][method]
+      end
+      return template
     end
     
 end
