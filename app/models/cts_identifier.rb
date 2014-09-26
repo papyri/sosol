@@ -80,9 +80,11 @@ class CTSIdentifier < Identifier
     # we want to take the text group and work from the template urn and create our own edition urn
     # TODO - need to handle differing namespaces on tg and work
     # TODO - use exemplar for version
-    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
-    document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) + "." + editionPart
+    # NOTE if there is no edition component, this ends up with a tailing "/"
+    # somewhat by accident
+    document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
@@ -93,9 +95,8 @@ class CTSIdentifier < Identifier
     else
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
-    editionPart = editionPart + document_number.to_s
     # TODO add exemplar (version) component
-    return "#{document_path}#{editionPart}"
+    return "#{document_path}#{document_number.to_s}"
   end
   
   def self.collection_names
