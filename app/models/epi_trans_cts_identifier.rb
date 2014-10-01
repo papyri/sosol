@@ -36,7 +36,11 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     langs = parsed['http://www.tei-c.org/ns/1.0 div'].select{ |e| 
       e['type'] == 'translation'
     }
-    langs.first['http://www.w3.org/XML/1998/namespace lang']
+    if (langs.size > 0) 
+      langs.first['http://www.w3.org/XML/1998/namespace lang']
+    else
+      ''
+    end
   end
   
   def translation_already_in_language?(lang)
