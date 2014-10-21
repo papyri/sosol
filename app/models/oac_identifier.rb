@@ -481,9 +481,8 @@ class OACIdentifier < Identifier
       config[:target_links]['Toponym Annotations'] << explink
       config[:target_links]['Toponym Annotations'] << {:text => implink[:text], :href => impliknk[:href], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
     end
-    Tools::Manager.link_all('treebank_editor',:create,[self.parentIdentifier.publication]).each do |link| 
-        config[:target_links]['Treebank Annotations'] << {:text => link[:text], :href => CGI.escape(link[:href]), :target_param => 'text_uri'}        
-    end
+    tblink = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
+    config[:target_links]['Treebank Annotations'] << {:text => tblink[:text], :href => CGI.escape(tblink[:href]), :target_param => 'text_uri'}        
     return config.to_json                  
   end
     

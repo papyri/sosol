@@ -39,7 +39,7 @@ development:
           :create:
             :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
             :id_param: 'doc'
-            :text: 'via Arethusa'
+            :text: 'New Treebank Annotation'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -158,7 +158,7 @@ test:
         :create:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
           :id_param: 'doc'
-          :text: 'via Arethusa'
+          :text: 'New Treebank Annotation'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -277,7 +277,7 @@ production:
         :create:
           :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?"
           :id_param: 'doc'
-          :text: 'via Arethusa'
+          :text: 'New Treebank Annotation'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'

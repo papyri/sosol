@@ -464,7 +464,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def get_editor_agent
     parser = self.xml_parser 
     t = parser.parseroot
-    tool = 'alpheios'
+    tool = 'arethusa'
     begin
       parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
         tool_uri = a_agent.text

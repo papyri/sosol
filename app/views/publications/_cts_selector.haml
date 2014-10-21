@@ -137,11 +137,8 @@
         %li
           = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
         %li
-          New Treebank Annotation
-          %ul{:class => ['perseids_sub_menu']}
-            - Tools::Manager.link_all('treebank_editor',:create,[]).each do |link|
-              %li
-                = link_to link[:text], link[:href], html_options = {'target' => link[:target]} 
+          - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
+          = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]} 
         %li      
           - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
           = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
