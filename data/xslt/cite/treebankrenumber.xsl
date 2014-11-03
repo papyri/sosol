@@ -128,7 +128,8 @@
         <xsl:param name="leading_zeros"/>
         <xsl:param name="pointer"/>
         <xsl:choose>
-            <xsl:when test="matches($to_process,'^0')">
+            <!-- only zero padding if we don't already have some non zero digits accumulated -->
+            <xsl:when test="matches($to_process,'^0') and not($pointer)">
                 <xsl:call-template name="insertion_id_parts">
                     <xsl:with-param name="to_process" select="substring-after($to_process,'0')"></xsl:with-param>
                     <xsl:with-param name="leading_zeros" select="concat($leading_zeros,'0')"></xsl:with-param>
