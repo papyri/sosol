@@ -291,7 +291,8 @@ class DmmApiController < ApplicationController
     def update_cookie
       cookies[:csrftoken] = {
         :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now, # TODO configurable
+        :domain => Rails.configuration.action_controller.session[:domain]
       }
     end
 
