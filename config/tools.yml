@@ -4,7 +4,7 @@ development:
       :method: 'get'
       :actions:
         :search:
-          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :href: 'http://services2.perseids.org/cite_mapper/find_cite?'
           :replace_param: 'cite'
   treebank_editor:
     alpheios:
@@ -107,12 +107,12 @@ development:
       :target: 'perseids-llt-review'
       :actions:
         :review:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
           :text: 'Compare'
         :gold:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
           :text: 'Compare'
@@ -123,7 +123,7 @@ test:
       :method: 'get'
       :actions:
         :search: 
-          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :href: 'http://services2.perseids.org/cite_mapper/find_cite?'
           :replace_param: 'cite'
   treebank_editor:
     alpheios:
@@ -226,12 +226,12 @@ test:
       :target: 'perseids-llt-review'
       :actions:
         :review:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
           :text: 'Compare'
         :gold:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
           :text: 'Compare'
@@ -243,7 +243,7 @@ production:
       :method: 'get'
       :actions:
         :search:
-          :href: 'http://services.perseids.org/cite_mapper/find_cite?'
+          :href: 'http://services2.perseids.org/cite_mapper/find_cite?'
           :replace_param: 'cite'
   treebank_editor:
     alpheios:
@@ -267,11 +267,11 @@ production:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :edit:
-          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
           :id_param: 'doc'
           :text: "Edit in Arethusa"
         :view:
-          :href: "http://sosol.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
           :id_param: 'doc'
           :text: "Preview in Arethusa"
         :create:
@@ -325,7 +325,7 @@ production:
       :method: 'get'
       :actions: 
         :tokenize:
-          :href: "http://services.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
   toponym_editor:
     :recogito:
       :method: 'get'
@@ -345,12 +345,12 @@ production:
       :target: 'perseids-llt-review'
       :actions:
         :review:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
           :text: 'Compare'
         :gold:
-          :href: 'http://services.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
           :text: 'Compare'
