@@ -359,9 +359,15 @@ class TreebankCiteIdentifier < CiteIdentifier
       JRubyXML.stream_from_file(File.join(RAILS_ROOT,%w{data xslt cite treebankrenumber.xsl})))  
     # TODO verify against correct schema for format
     if (! result[:messages].nil? && result[:messages].length > 0)
+      # we don't want to immediately commit
+      # the revised content -- if there were messages
+      # we will store it separately to keep the full chain of history
       self[:transform_messages] = result[:messages]
+      self[:postcommit] = result[:content]
+    else
+        content = result[:content]
     end
-    return result[:content]
+    return content
   end  
   
 
