@@ -333,8 +333,21 @@ class Identifier < ActiveRecord::Base
       
     content = before_commit(content)
     commit_sha = ""
+    # TODO - this logic seems wrong -- shouldn't it just
+    # be if !options[:validate] || is_valid_xml?(content) 
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
+    end
+
+    # this is a little bit of a hack -- if the before_commit
+    # call stores a postcommit version of the content then we
+    # do a 2nd commit so that we have a full history of the changes
+    # in the commit history
+    if self[:postcommit]  
+      if (! options[:validate] || is_valid_xml?(self[:postcommit]))
+        options[:comment] = self[:transform_messages]
+        commit_sha = self.set_content(self[:postcommit], options)
+      end
     end
     
     return commit_sha
