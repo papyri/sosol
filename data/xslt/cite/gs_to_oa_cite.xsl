@@ -60,6 +60,9 @@
                    <xsl:call-template name="make_resource_annotation"></xsl:call-template>
                 </xsl:for-each>
             </xsl:if>
+            <xsl:if test="gsx:hypothesislink/text() != ''">
+                <xsl:call-template name="make_hypothesis_annotation"/>
+            </xsl:if>
         </xsl:variable>
         <xsl:variable name="title">
                 <xsl:choose>
@@ -89,11 +92,13 @@
             <xsl:choose>
                 <xsl:when test="gsx:webpage"><xsl:value-of select="gsx:webpage/text()"/></xsl:when>
                 <xsl:when test="gsx:sourcedocument"><xsl:value-of select="gsx:sourcedocument/text()"/></xsl:when>
+                <xsl:when test="gsx:hero"><xsl:value-of select="gsx:hero/text()"/></xsl:when>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="expanded_target">
             <xsl:apply-templates select="gsx:webpage"/>
             <xsl:apply-templates select="gsx:sourcedocument"/>
+            <xsl:apply-templates select="gsx:hero"/>
         </xsl:variable>
         <xsl:for-each select="$annotations/*">
             <xsl:variable name="id" select="position()"/>
@@ -111,6 +116,9 @@
                     <xsl:choose>
                         <xsl:when test="$expanded_target/*">
                             <xsl:copy-of select="$expanded_target"/>
+                        </xsl:when>
+                        <xsl:when test="matches($expanded_target,'https?:.*')">
+                            <xsl:attribute name="rdf:resource"><xsl:value-of select="$expanded_target"/></xsl:attribute>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="rdf:resource"><xsl:value-of select="$orig_target"/></xsl:attribute>
@@ -172,6 +180,14 @@
             </body>
         </annotation>
     </xsl:template>
+    
+    <xsl:template name="make_hypothesis_annotation">    
+        <annotation>
+            <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#highlighting"/>
+            <body rdf:resource="{gsx:hypothesislink}"/>
+        </annotation>
+    </xsl:template>
+    
     
     <xsl:template name="make_place_annotation">    
         <annotation>    
@@ -256,6 +272,23 @@
                 <!-- format might be P.1.perseus-bio-1 or just P.perseus-bio-1 or perseus-bio-1 or perseus-bio -->
                 <xsl:analyze-string select="." regex="^(\w\.)?(\d+\.)?(.*?)-bio(-.+)?$">
                     <xsl:matching-substring><xsl:value-of select="concat('http://data.perseus.org/people/smith:',regex-group(3),regex-group(4),'#this')"/></xsl:matching-substring>
+                    <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:when>
+            <xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="gsx:hero">
+        <xsl:choose>
+            <xsl:when test="matches(.,'https?:')">
+                <xsl:copy-of select=" normalize-space(.)"/>
+            </xsl:when>
+            <!-- this is an annotation on the text entry for the hero in Smiths -->
+            <xsl:when test="matches(.,'-bio')">
+                <!-- format might be P.1.perseus-bio-1 or just P.perseus-bio-1 or perseus-bio-1 or perseus-bio -->
+                <xsl:analyze-string select="." regex="^(\w\.)?(\d+\.)?(.*?)-bio(-.+)?$">
+                    <xsl:matching-substring><xsl:value-of select="concat('http://data.perseus.org/citations/urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:',regex-group(3),regex-group(4))"/></xsl:matching-substring>
                     <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
                 </xsl:analyze-string>
             </xsl:when>
