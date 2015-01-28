@@ -80,6 +80,30 @@ class OaCiteIdentifiersController < IdentifiersController
     find_identifier
     @identifier[:html_preview] = @identifier.preview
   end
+
+  def convert
+    find_identifier
+    agent = AgentHelper::agent_of(params[:resource])
+    if (agent.nil?)
+      flash[:error] = "No agent for #{params[:resource]}"
+      redirect_to dashboard_url
+      return
+    end
+    agent_client = AgentHelper::get_client(agent)
+    @converted = agent_client.get_content(params[:resource])
+    if (@converted[:error]) 
+      flash[:error] = "Conversion Failed!"
+      respond_to do |format|
+        format.json { render :json => @converted[:error]  }
+        format.html { @converted[:error].to_s }
+      end
+    else 
+      respond_to do |format|
+        format.json { render :json => @converted[:data] }
+        format.html { render :partial => "oajson" }
+      end
+    end
+  end
     
   protected
     def find_identifier

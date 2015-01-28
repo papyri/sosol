@@ -11,8 +11,8 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     
     <xsl:output method="xhtml"/>
-    
-    
+    <xsl:param name="e_convertResource" select="()"/>
+     
     <xsl:template match="/rdf:RDF">
     	<xsl:apply-templates select="oac:Annotation"/>
     </xsl:template>
@@ -28,11 +28,26 @@
    	    	    <xsl:apply-templates select="rdfs:label"/>
    	    	</xsl:when>
    	    	<xsl:otherwise>
-   	    	    <xsl:apply-templates select="oac:motivatedBy" mode="label"/>
+   	    	    <xsl:apply-templates select="oac:motivatedBy" mode="label"/>   
    	    	</xsl:otherwise>	
        	</xsl:choose>
         <xsl:apply-templates select="oac:hasTarget"/>
         <xsl:apply-templates select="dcterms:source"/>
+        <xsl:variable name="convert_links">
+            <xsl:for-each select="oac:hasBody[@rdf:resource]">
+                <xsl:variable name="resource" select="string(@rdf:resource)"/>
+                <xsl:for-each select="$e_convertResource">
+                    <xsl:if test="matches($resource,.)">
+                        <div class="oac_convert">
+                            <div class="oac_convert_preview"></div>
+                            <div class="oac_convert_link"><a class="oa_agent_convert" href="convert?resource={encode-for-uri($resource)}">Export Conversion</a></div>
+                        </div>         
+                    </xsl:if>      
+                </xsl:for-each>          
+            </xsl:for-each>
+        </xsl:variable>
+        <!-- just show it once -->
+        <xsl:copy-of select="$convert_links[1]"/>
         </div>
     </xsl:template>
     

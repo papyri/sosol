@@ -26,3 +26,7 @@
     :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"
     :transformations:
       :OaCiteIdentifier: "/data/xslt/cite/gs_to_oa_cite.xsl"
+  :hypothesis:
+    :uri_match: "https://hypothes.is"
+    :type: "hypothesis"
+    :data_mapper: 'HypothesisApi::MapperPrototype::JOTH'

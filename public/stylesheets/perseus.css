@@ -509,6 +509,23 @@ li.editor_menu {
   padding-right: .5em;
 }
 
+.oa_cite_annotation .oac_convert {
+    margin-left: .5em;
+
+}
+.oa_cite_annotation .oac_convert_title {
+    font-weight: bold;
+    color: black; 
+    background-color: #EAEAEA;
+}
+
+.oa_cite_annotation .oac_convert_preview {
+    height: 400px;
+    overflow: scroll;
+    color: white;
+    background-color: black;
+}
+
 .edit_oac_identifier .cite_to, 
 .edit_oac_identifier .cite_from {
   width: 3em;
