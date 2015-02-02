@@ -86,6 +86,7 @@
                 - @identifier[:compare].each do |c|
                   %li{ :class => ''}
                     = link_to c[:text], c[:href], html_options = {'target' => c[:target], 'title' => c[:title]} 
+              %li{ :class => params[:action] == ''}= link_to 'Change Title', polymorphic_path([@identifier.publication, @identifier], :action => :edit_title)
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
