@@ -94,12 +94,12 @@ class OaCiteIdentifiersController < IdentifiersController
     if (@converted[:error]) 
       flash[:error] = "Conversion Failed!"
       respond_to do |format|
-        format.json { render :json => @converted[:error]  }
-        format.html { @converted[:error].to_s }
+        format.json { render :json => @converted  }
+        format.html { render :partial => "oajson" }
       end
     else 
       respond_to do |format|
-        format.json { render :json => @converted[:data] }
+        format.json { render :json => JSON.pretty_generate(@converted[:data]) }
         format.html { render :partial => "oajson" }
       end
     end

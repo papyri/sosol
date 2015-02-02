@@ -40,7 +40,7 @@
                     <xsl:if test="matches($resource,.)">
                         <div class="oac_convert">
                             <div class="oac_convert_preview"></div>
-                            <div class="oac_convert_link"><a class="oa_agent_convert" href="convert?resource={encode-for-uri($resource)}">Export Conversion</a></div>
+                            <div class="oac_convert_link"><a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json">Export Conversion</a></div>
                         </div>         
                     </xsl:if>      
                 </xsl:for-each>          
