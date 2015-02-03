@@ -1,4 +1,5 @@
 require 'mediawiki_api'
+require 'hypothesis-client'
 module AgentHelper
 
   # looks for the software agent in the data
@@ -9,6 +10,17 @@ module AgentHelper
       @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
     end
     @agents
+  end
+
+  def self.agents_can_convert()
+    can_convert = []
+    agents = get_agents()
+    agents.keys.each do | a_agent |
+      if agents[a_agent][:data_mapper]
+        can_convert << agents[a_agent][:uri_match];
+      end
+    end
+    can_convert
   end
   
   def self.agent_of(a_data)
@@ -29,6 +41,8 @@ module AgentHelper
     end
     if (a_agent[:type] == 'mediawiki')
         return MediaWikiAgent.new(a_agent[:api_info])
+    elsif (a_agent[:type] == 'hypothesis')
+        return HypothesisAgent.new(a_agent[:data_mapper])
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -90,5 +104,20 @@ module AgentHelper
         # we need to remove the newly created but empty claim
       end
     end
+  end
+
+  class HypothesisAgent
+    attr_accessor :conf, :client
+
+    def initialize(a_mapper)
+      mapper_class = a_mapper.constantize
+      @client = HypothesisClient::Client.new(mapper_class.new)
+    end
+
+    def get_content(a_uri)
+      @client.get(a_uri)
+    end
+
+
   end
 end

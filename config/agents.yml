@@ -29,4 +29,4 @@
   :hypothesis:
     :uri_match: "https://hypothes.is"
     :type: "hypothesis"
-    :data_mapper: 'HypothesisApi::MapperPrototype::JOTH'
+    :data_mapper: 'HypothesisClient::MapperPrototype::JOTH'

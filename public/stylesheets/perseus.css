@@ -511,15 +511,17 @@ li.editor_menu {
 
 .oa_cite_annotation .oac_convert {
     margin-left: .5em;
+    margin-top: .5em;
 
 }
 .oa_cite_annotation .oac_convert_title {
     font-weight: bold;
+    font-size: larger;
     color: black; 
     background-color: #EAEAEA;
 }
 
-.oa_cite_annotation .oac_convert_preview {
+.oa_cite_annotation .oac_convert_preview pre {
     height: 400px;
     overflow: scroll;
     color: white;
