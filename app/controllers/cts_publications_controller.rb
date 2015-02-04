@@ -51,7 +51,7 @@ class CtsPublicationsController < PublicationsController
       @publication.owner = @current_user
       @publication.creator = @current_user
       @publication.populate_identifiers_from_identifiers(
-        identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
+        identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,versionUrn))
                    
       if @publication.save!
         @publication.branch_from_master
@@ -107,7 +107,7 @@ class CtsPublicationsController < PublicationsController
       # TODO figure out language for new editions from inventory
       lang ||= 'en'
       new_publication = Publication.new(:owner => @current_user, :creator => @current_user)
-      urn = "urn:cts:#{edition}"
+      urn = edition
       # fetch a title without creating from template
       new_publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(collection,urn,'edition',lang)).name
       new_publication.status = "new"

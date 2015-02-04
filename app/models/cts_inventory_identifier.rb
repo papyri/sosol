@@ -42,7 +42,12 @@ class CTSInventoryIdentifier < Identifier
   def parse_inventory()
     atts = {}
     urnStr = self.title
-    urnStr.sub!(/TextInventory for /,'urn:cts:')
+    urnStr.sub!(/TextInventory for /,'')
+    # hack for backwards compatibility with text inventory idenfiers whose titles
+    # were missing the urn:cts bit...
+    unless urnStr =~ /^urn:cts:/
+      urnStr = "urn:cts:#{urnStr}"
+    end
     urn = CTS::CTSLib.urnObj(urnStr)
     
     atts['worktitle'] = { 'eng' =>
