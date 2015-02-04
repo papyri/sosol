@@ -78,6 +78,21 @@ class EpiTransCtsIdentifiersController < IdentifiersController
       end
       @identifier =  EpiTransCTSIdentifier.new_from_template(publication,collection,edition,'translation',lang)
     else
+      translationName = collection + "/" + CTS::CTSLib.pathForUrn(edition,'translation')
+      existing_identifiers = EpiTransCTSIdentifier.find_matching_identifiers(translationName,@current_user,nil)
+      if (existing_identifiers && existing_identifiers.length > 0) 
+        flash[:error] = "You are already editing that translation "
+        flash[:error] += '<ul>'
+        existing_identifiers.each do |conf_id|
+          begin
+            flash[:error] += "<li><a href='" + url_for(conf_id) + "'>" + conf_id.name.to_s + "</a></li>"
+          rescue
+            flash[:error] += "<li>" + conf_id.name.to_s + ":" + conf_id.publication.status + "</li>"
+          end
+        end
+        render(:template => 'epi_trans_cts_identifiers/create',:locals => {:edition => params[:CTSIdentifierEditionSelect],:collection => collection,:controller => 'epi_trans_cts_identifiers',:publication_id => params[:publication_id], :emend => :showemend})
+        return
+      end
       begin
         @identifier = EpiTransCTSIdentifier.new_from_inventory(publication,collection,edition,'translation')
       rescue Exception => e
