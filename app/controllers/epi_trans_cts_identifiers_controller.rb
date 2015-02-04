@@ -5,6 +5,20 @@ class EpiTransCtsIdentifiersController < IdentifiersController
 
   # require 'xml'
   # require 'xml/xslt'
+
+  def update_title
+    find_identifier
+    if @identifier.update_attributes(params[:epi_trans_cts_identifier]) && @identifier.update_title(params[:epi_trans_cts_identifier][:title])
+      flash[:notice] = 'Title was successfully updated.'
+    else 
+      flash[:error] = 'Update to update title.'
+    end
+    return redirect_to polymorphic_url([@identifier.publication], :action => :show)
+  end
+
+  def edit_title
+    find_identifier
+  end
   
   def edit
     find_identifier

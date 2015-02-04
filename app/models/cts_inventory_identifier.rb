@@ -27,7 +27,18 @@ class CTSInventoryIdentifier < Identifier
   def configuration 
     return @configuration
   end
-  
+
+  def update_version_label(urnStr,title,lang)
+     urn = CTS::CTSLib.urnObj(urnStr)
+     rewritten_xml = JRubyXML.apply_xsl_transform(
+       JRubyXML.stream_from_string(self.xml_content),
+       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       %w{data xslt cts update_version_title.xsl})), 
+       :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true), :label => title , :lang => lang
+      )
+     self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
+
+  end  
 
   def preview parameters = {}, xsl = nil
     "<pre>" + self.parse_inventory()['citations'].inspect + "</pre>"
