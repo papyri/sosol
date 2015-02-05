@@ -8,6 +8,12 @@ class CTSIdentifier < Identifier
   IDENTIFIER_NAMESPACE = ''
   TEMPORARY_COLLECTION = 'TempTexts'
   TEMPORARY_TITLE = 'New Transcription'
+
+  # responds to an interface request to retitle the file
+  # by updating the label for it in its related text inventory
+  def update_title new_title,lang='eng'
+    self.related_inventory.update_version_label(self.urn_attribute, title, lang)
+  end
   
   def titleize
     begin

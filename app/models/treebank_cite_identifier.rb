@@ -525,9 +525,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   
   # need to update the uris to reflect the new name
   def after_rename(options = {})
-    annot_uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute
-    # TODO update uri 
-    self.set_xml_content(updated, :comment => 'Update uris to reflect new identifier')
+    # nothing needed?
   end
 
   # find files matching this one metting the supplied conditions

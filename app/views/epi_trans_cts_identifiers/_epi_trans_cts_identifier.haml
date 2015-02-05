@@ -4,5 +4,6 @@
 - if @identifier.has_valid_reffs? && @identifier.mutable? && @identifier.publication.status != 'finalizing' 
   = link_to 'Select Passage', link_citation_publication_epi_trans_cts_identifier_path( epi_trans_cts_identifier.publication, epi_trans_cts_identifier) 
 = link_to 'Delete', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :confirm => 'Are you sure?', :method => :delete
+= link_to 'Rename', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier], :action => :edit_title)
 
 %br

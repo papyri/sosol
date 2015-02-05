@@ -32,7 +32,7 @@ class CitationCTSIdentifier < CTSIdentifier
     
     # create the identifier title by prefixing the passage component parts with their citation labels
     # from the parent cts inventory
-    urnObj = CTS::CTSLib.urnObj("urn:cts:#{passage_urn}")
+    urnObj = CTS::CTSLib.urnObj(passage_urn)
     citeLevel = urnObj.getCitationDepth()
     citeinfo = new_identifier.related_text.related_inventory.parse_inventory()
     passage = urnObj.getPassage(citeLevel);

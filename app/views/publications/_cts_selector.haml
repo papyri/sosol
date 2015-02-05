@@ -135,8 +135,6 @@
     %div{:class => ['nav_tools']}
       %ul{:class => ['nav_right','perseids_menu']}
         %li
-          = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
-        %li
           - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
           = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]} 
         %li      
