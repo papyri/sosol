@@ -131,6 +131,10 @@ ul.nav.right {
   font-size: 16px;
   color: #AAA;
 }
+table.results tr td {
+  word-wrap: break-word;
+}
+
 table.results a {
   color: #4183C4;
 }
@@ -139,6 +143,7 @@ table.results a:hover {
 }
 table.results tr:hover td {
   background-color: #E1F3FA;
+  word-wrap: break-word;
 }
 table.results tr.head:hover td {
   background-color: transparent;

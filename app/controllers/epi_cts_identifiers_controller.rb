@@ -4,9 +4,56 @@ class EpiCtsIdentifiersController < IdentifiersController
   before_filter :ownership_guard, :only => [:update, :updatexml]
 
   # GET /publications/1/epi_cts_identifiers/1/edit
+  # - Edit Text redirects to EditXML
   def edit
     find_identifier
     redirect_to :action =>"editxml",:publication=>params[:publication],:id=>params[:id]
+  end
+    
+  # GET /publications/1/epi_cts_identifiers/1/edit
+  # - Edit Text via Leiden+
+  def leiden
+    find_identifier
+    
+    begin
+      # use a fragment cache for cases where we'd need to do a leiden transform
+      if fragment_exist?(:action => 'leiden', :part => "leiden_plus_#{@identifier.id}")
+        @identifier[:leiden_plus] = read_fragment(:action => 'leiden', :part => "leiden_plus_#{@identifier.id}")
+      else
+        if(defined?(XSUGAR_STANDALONE_ENABLED) && XSUGAR_STANDALONE_ENABLED)
+          original_xml = EpiCTSIdentifier.preprocess(@identifier.xml_content)
+
+          # strip xml:id from lb's
+          original_xml = JRubyXML.apply_xsl_transform(
+            JRubyXML.stream_from_string(original_xml),
+            JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+              %w{data xslt ddb strip_lb_ids.xsl})))
+
+          # get div type=edition from XML in string format for conversion
+          abs = EpiCTSIdentifier.get_div_edition(original_xml).to_s
+          
+          if @identifier.get_broken_leiden.nil?  
+            @identifier[:leiden_plus] = abs
+          else
+            @identifier[:leiden_plus] = nil
+            @bad_leiden = true
+          end
+          
+        else
+          @identifier[:leiden_plus] = @identifier.leiden_plus
+        end
+        write_fragment({:action => 'leiden', :part => "leiden_plus_#{@identifier.id}"}, @identifier[:leiden_plus])
+      end
+      if @identifier[:leiden_plus].nil?
+        flash.now[:error] = "File loaded from broken Leiden+"
+        @identifier[:leiden_plus] = @identifier.get_broken_leiden
+      end
+    rescue RXSugar::XMLParseError => parse_error
+      flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
+      new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+      @identifier[:leiden_plus] = new_content
+    end
+    @is_editor_view = true
   end
   
   def editxml
@@ -65,35 +112,61 @@ class EpiCtsIdentifiersController < IdentifiersController
     
   end
   
-  # PUT /publications/1/epi_cts_identifiers/1/update
+  # - PUT /publications/1/epi_cts_identifiers/1/update
+  # - Update Text via Leiden+
   def update
     find_identifier
+    @bad_leiden = false
     @original_commit_comment = ''
     #if user fills in comment box at top, it overrides the bottom
     if params[:commenttop] != nil && params[:commenttop].strip != ""
       params[:comment] = params[:commenttop]
     end
-    begin
-      commit_sha = @identifier.set_xml_content(params[:tei_cts_identifier].to_s,
+    if params[:commit] == "Save With Broken Leiden+" #Save With Broken Leiden+ button is clicked
+      @identifier.save_broken_leiden_plus_to_xml(params[:epi_cts_identifier_leiden_plus].to_s, params[:comment].to_s)
+      @bad_leiden = true
+      flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
+      expire_leiden_cache
+      expire_publication_cache
+        @identifier[:leiden_plus] = params[:epi_cts_identifier_leiden_plus].to_s
+        @is_editor_view = true
+        render :template => 'epi_cts_identifiers/leiden'
+    else #Save button is clicked
+      begin
+        commit_sha = @identifier.set_leiden_plus(params[:epi_cts_identifier_leiden_plus].to_s,
                                     params[:comment].to_s)
-      if params[:comment] != nil && params[:comment].strip != ""
+        if params[:comment] != nil && params[:comment].strip != ""
           @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
           @comment.save
-      end
-      flash[:notice] = "File updated."
-      expire_publication_cache
-      if %w{new editing}.include?@identifier.publication.status
+        end
+        flash[:notice] = "File updated."
+        expire_leiden_cache
+        expire_publication_cache
+        if %w{new editing}.include?@identifier.publication.status
           flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
-      end
+        end
         
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                     :action => :edit)
+        redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                     :action => :leiden)
+      rescue RXSugar::NonXMLParseError => parse_error
+        flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED. "
+        new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
+        @identifier[:leiden_plus] = new_content
+        @bad_leiden = true
+        @original_commit_comment = params[:comment]
+        @is_editor_view = true
+        render :template => 'epi_cts_identifiers/leiden'
       rescue JRubyXML::ParseError => parse_error
         flash.now[:error] = parse_error.to_str + 
-          ".  This message is because the XML did not pass Relax NG validation.  This file was NOT SAVED. "
-        render :template => 'epi_cts_identifiers/edit'
+          ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
+        @bad_leiden = true #to keep from trying to parse the L+ as XML when render edit template
+        @identifier[:leiden_plus] = params[:epi_cts_identifier_leiden_plus]
+        @is_editor_view = true
+        render :template => 'epi_cts_identifiers/leiden'
       end #begin
+    end #when
   end
+  
   
   def commentary
     find_identifier

@@ -65,7 +65,7 @@ module CTS
       
       # method which inserts the publication type (i.e. edition or translation) into the path of a CTS urn
       def pathForUrn(a_urn,a_pubtype) 
-        path_parts = a_urn.sub!(/urn:cts:/,'').split(':')
+        path_parts = a_urn.sub(/urn:cts:/,'').split(':')
         cite_parts = path_parts[1].split(/\./)
         passage = path_parts[2]
         last_part = cite_parts.length() - 1

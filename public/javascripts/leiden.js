@@ -1,6 +1,9 @@
-function init() 
+var leiden_plus_elem; 
+
+function init(elemId) 
   {
 //stuff below is for the menu bar
+    leiden_plus_elem = elemId || 'ddb_identifier_leiden_plus';
     var menuModel = new DHTMLSuite.menuModel();
   	menuModel.addItemsFromMarkup('menuModel');
     	menuModel.setMainMenuGroupWidth(00);	
@@ -14,10 +17,9 @@ function init()
 	
   	menuBar.init();
   	//**POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
-  	showMatch('ddb_identifier_leiden_plus', '**POSSIBLE ERROR**');
+  	showMatch(leiden_plus_elem, '**POSSIBLE ERROR**');
   }
-  
-document.observe("dom:loaded", init);
+
 
 function helpDialogOpen(view)
 { // grab focus of main window textarea before open new window for IE browser only
@@ -89,7 +91,7 @@ function helpDialogOpen(view)
 
 function getFocusMain()
 {
-  element = document.getElementById('ddb_identifier_leiden_plus');
+  element = document.getElementById(leiden_plus_elem);
   element.focus();
 }
 
@@ -134,7 +136,7 @@ function insertDeletionMain(deletion_type)
   success = function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
-    showMatch('ddb_identifier_leiden_plus', 'to be deleted');
+    showMatch(leiden_plus_elem, 'to be deleted');
      }
   
   convertXMLMain(); 
@@ -201,7 +203,7 @@ function insertDivisionMain(division_type)
   onSuccess : function(resp) {
     leidenh = resp.responseText;
     insertTextMain(leidenh);
-    showMatch('ddb_identifier_leiden_plus', 'replace this with text of division');
+    showMatch(leiden_plus_elem, 'replace this with text of division');
      },
   onFailure : function(resp) {
    alert("Oops, there's been an error." + resp.responseText);   
