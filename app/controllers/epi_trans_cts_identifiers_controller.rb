@@ -91,6 +91,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
         edition = params[:CTSIdentifierEditionSelect]
       end
       @identifier =  EpiTransCTSIdentifier.new_from_template(publication,collection,edition,'translation',lang)
+      @identifier.related_inventory.add_translation(params[:CTSIdentifierEditionSelect],@identifier)
     else
       translationName = collection + "/" + CTS::CTSLib.pathForUrn(edition,'translation')
       existing_identifiers = EpiTransCTSIdentifier.find_matching_identifiers(translationName,@current_user,nil)
@@ -186,6 +187,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     end
     name = @identifier.title
     pub = @identifier.publication
+    @identifier.related_inventory.remove_translation(@identifier)
     @identifier.destroy
     
     flash[:notice] = name + ' was successfully removed from your publication.'

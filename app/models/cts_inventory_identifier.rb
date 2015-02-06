@@ -36,9 +36,53 @@ class CTSInventoryIdentifier < Identifier
        %w{data xslt cts update_version_title.xsl})), 
        :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true), :label => title , :lang => lang
       )
-     self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
-
+     self.set_xml_content(rewritten_xml, :comment => "Update version label for #{urnStr}")
   end  
+
+  def add_edition(identifier)
+    # TODO we should enable specification of citation scheme   
+    urn = CTS::CTSLib.urnObj(identifier.urn_attribute)
+    rewritten_xml = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      %w{data xslt cts add_edition.xsl})), 
+      :textgroup => urn.getTextGroup(true), 
+      :work => urn.getWork(true), 
+      :edition => urn.getVersion(true), 
+      :label => identifier.title,
+      :filepath => identifier.to_path)
+    self.set_xml_content(rewritten_xml, :comment => "Added Edition #{identifier.urn_attribute}")
+  end
+
+  def add_translation(edition, identifier)
+     editionUrn = CTS::CTSLib.urnObj(edition)
+     translationUrn = CTS::CTSLib.urnObj(identifier.urn_attribute)
+     Rails.logger.info("ADDING EDITION #{editionUrn.getTextGroup(true)} #{editionUrn.getWork(true)} #{editionUrn.getVersion(true)} #{translationUrn.getVersion(true)}")
+     rewritten_xml = JRubyXML.apply_xsl_transform(
+       JRubyXML.stream_from_string(self.xml_content),
+       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       %w{data xslt cts add_translation.xsl})), 
+       :textgroup => editionUrn.getTextGroup(true), 
+       :work => editionUrn.getWork(true), 
+       :edition => editionUrn.getVersion(true), 
+       :translation => translationUrn.getVersion(true), 
+       :lang => identifier.lang, 
+       :label => identifier.title,
+       :filepath => identifier.to_path)
+     self.set_xml_content(rewritten_xml, :comment => "Added Translation #{identifier.urn_attribute}")
+  end
+
+  def remove_translation(identifier)
+     urn = CTS::CTSLib.urnObj(identifier.urn_attribute)
+     rewritten_xml = JRubyXML.apply_xsl_transform(
+       JRubyXML.stream_from_string(self.xml_content),
+       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       %w{data xslt cts delete_translation.xsl})), 
+       :textgroup => urn.getTextGroup(true), 
+       :work => urn.getWork(true), 
+       :translation => urn.getVersion(true))
+     self.set_xml_content(rewritten_xml, :comment => "Removed Translation #{identifier.urn_attribute}")
+  end
 
   def preview parameters = {}, xsl = nil
     "<pre>" + self.parse_inventory()['citations'].inspect + "</pre>"

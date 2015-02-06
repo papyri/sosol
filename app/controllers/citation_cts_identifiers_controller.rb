@@ -66,7 +66,13 @@ class CitationCtsIdentifiersController < IdentifiersController
     elsif matches.length == 0
       pubtype ||= CTS::CTSLib.versionTypeForUrn(sourceCollection,citationUrn)
       #  we don't already have the identifier for this citation so create it
-      @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
+      begin
+        @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
+      rescue => e
+        flash[:error] = "Invalid Citation Scheme"
+        redirect_to dashboard_url
+        return
+      end
     else
       flash[:error] = "One or more conflicting matches for this citation exist. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
       redirect_to dashboard_url

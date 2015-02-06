@@ -72,7 +72,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(template),
         JRubyXML.stream_from_file(File.join(RAILS_ROOT,
-          %w{data xslt translation epi_to_translation_xsl.xsl})),
+          %w{data xslt perseus epi_to_translation_xsl.xsl})),
         :lang => lang,
         :urn => urn  
       )

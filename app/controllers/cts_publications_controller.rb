@@ -126,7 +126,8 @@ class CtsPublicationsController < PublicationsController
       # and are only carried along with the publication until it is finalized
       begin
         # first the inventory record
-        CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,edition)
+        inventory = CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,new_cts.urn_attribute)
+        inventory.add_edition(new_cts)
         # now the citation identifier 
         if params[:citation_urn]
           # TODO this needs to support direction creation from a translation as well as an edition?

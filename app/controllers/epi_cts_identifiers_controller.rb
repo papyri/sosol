@@ -70,7 +70,8 @@ class EpiCtsIdentifiersController < IdentifiersController
     collection = params[:CTSIdentifierCollectionSelect]
     
     @identifier = EpiCTSIdentifier.new_from_template(publication,collection,edition,'edition',nil)
-    
+    @identifier.related_inventory.add_edition(@identifier)
+
     flash[:notice] = "File created."
     expire_publication_cache
     redirect_to polymorphic_path([@identifier.publication, @identifier],
