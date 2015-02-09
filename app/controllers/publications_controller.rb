@@ -24,7 +24,7 @@ class PublicationsController < ApplicationController
           #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
           
           #simple paths for just this pub
-          zos.put_next_entry( id.class::FRIENDLY_NAME + "-" + id.title.gsub(/\s/,'_') + ".xml")
+          zos.put_next_entry( id.download_file_name )
           
           #full path as used in repo
           #zos.put_next_entry( id.to_path)

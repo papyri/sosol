@@ -139,4 +139,8 @@ class CTSInventoryIdentifier < Identifier
   def self.is_visible 
     return false
   end
+
+  def download_file_name
+    'cts-inventory.xml'
+  end
 end

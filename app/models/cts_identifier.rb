@@ -324,6 +324,18 @@ class CTSIdentifier < Identifier
     identifiers += actual_conflicts
     return identifiers
   end
+
+  def download_file_name
+    urnObj = CTS::CTSLib.urnObj(self.urn_attribute)
+    file = urnObj.getTextGroup(false) + "." + urnObj.getWork(false) + "." + urnObj.getVersion(false)
+    begin
+      passage = urnObj.getPassage(100)
+      file = passage ? file + "." + passage : file 
+    rescue
+    end
+    file = file + ".xml"
+    file
+  end
   
   
   # parse individual docs and metadata from a supplied TEI XML document

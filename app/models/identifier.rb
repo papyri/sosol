@@ -542,4 +542,9 @@ class Identifier < ActiveRecord::Base
     # default is a no-op
   end
 
+  def download_file_name
+   # default 
+   self.class::FRIENDLY_NAME + "-" + self.title.gsub(/\s/,'_') + ".xml"
+  end
+
 end

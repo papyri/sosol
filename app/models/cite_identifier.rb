@@ -371,6 +371,10 @@ class CiteIdentifier < Identifier
       #default is no-op
     end
 
+    def download_file_name
+      self.urn_attribute.sub(IDENTIFIER_PREFIX,'').gsub(/:/,'-') + ".xml"
+    end
+
 end
 
 
