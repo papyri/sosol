@@ -34,7 +34,7 @@ class CitationCTSIdentifier < CTSIdentifier
     # from the parent cts inventory
     urnObj = CTS::CTSLib.urnObj(passage_urn)
     citeLevel = urnObj.getCitationDepth()
-    citeinfo = new_identifier.related_text.related_inventory.parse_inventory()
+    citeinfo = new_identifier.related_text.related_inventory.parse_inventory(urnObj.getUrnWithoutPassage())
     passage = urnObj.getPassage(citeLevel);
     if (passage =~ /-/)
       new_identifier.title = passage

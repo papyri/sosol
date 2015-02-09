@@ -204,7 +204,7 @@ class CTSIdentifier < Identifier
              'lang' => r.lang,
              'item_type' => r.class.to_s,
              'item_id' => r.id.to_s,
-             'cites' => r.related_inventory.parse_inventory['citations']
+             'cites' => r.related_inventory.parse_inventory(r.urn_attribute)['citations']
           }  
       end
     end

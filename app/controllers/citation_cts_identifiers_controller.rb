@@ -69,6 +69,7 @@ class CitationCtsIdentifiersController < IdentifiersController
       begin
         @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
       rescue => e
+        Rails.logger.error(e.backtrace)
         flash[:error] = "Invalid Citation Scheme"
         redirect_to dashboard_url
         return

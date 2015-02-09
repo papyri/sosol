@@ -128,7 +128,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
            :locals => {:edition => @identifier.urn_attribute,
                        :version_id => @identifier.name,
                        :collection => @identifier.inventory,
-                       :citeinfo => @identifier.related_inventory.parse_inventory(),
+                       :citeinfo => @identifier.related_inventory.parse_inventory(@identifier.urn_attribute),
                        :controller => 'citation_cts_identifiers',
                        :publication_id => @identifier.publication.id, 
                        :pubtype => 'translation'})

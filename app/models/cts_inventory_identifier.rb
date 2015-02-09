@@ -94,14 +94,16 @@ class CTSInventoryIdentifier < Identifier
       EpiCTSIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
   end
   
-  def parse_inventory()
+  def parse_inventory(urnStr=nil)
     atts = {}
-    urnStr = self.title
-    urnStr.sub!(/TextInventory for /,'')
-    # hack for backwards compatibility with text inventory idenfiers whose titles
-    # were missing the urn:cts bit...
-    unless urnStr =~ /^urn:cts:/
-      urnStr = "urn:cts:#{urnStr}"
+    if urnStr.nil?
+      urnStr = self.title
+      urnStr.sub!(/TextInventory for /,'')
+      # hack for backwards compatibility with text inventory idenfiers whose titles
+      # were missing the urn:cts bit...
+      unless urnStr =~ /^urn:cts:/
+        urnStr = "urn:cts:#{urnStr}"
+      end
     end
     urn = CTS::CTSLib.urnObj(urnStr)
     
