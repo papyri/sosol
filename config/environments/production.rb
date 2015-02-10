@@ -5,14 +5,15 @@
 config.cache_classes = true
 
 # Use a different logger for distributed setups
-# config.logger = SysLogger.new
+config.logger = Logger.new(STDOUT)
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = false
 config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
 config.cache_store = :file_store, "/tmp/sosol/"
-#config.log_level = :warn
+
+config.log_level = :warn
 #config.action_controller.page_cache_directory        = "public/cache"
 #config.action_controller.page_cache_extension        = ".html.erb"
 # config.action_view.cache_template_loading            = true
