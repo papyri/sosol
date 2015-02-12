@@ -524,7 +524,7 @@ module CTS
           # just pass it as-is to the tokenizer
           if (a_inv.nil? && a_urn =~ /^http/)
             Rails.logger.debug("Setting passage url to #{a_urn}")
-            passage_url = a_urn
+            passage_url = urn_no_subref
           elsif (getExternalCTSHash().has_key?(inventory_code))
             passage_url = getInventoryUrl(inventory_code) + "&request=GetPassage&urn=#{urn_no_subref}"
           else
