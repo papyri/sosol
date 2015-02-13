@@ -8,7 +8,7 @@ Sosol::Application.configure do
   # Full error reports are disabled and caching is turned off
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
-  config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
+  config.action_controller.page_cache_directory = "#{Rails.root}/public/cache/"
   config.cache_store = :file_store, "/tmp/sosol/"
 
   # Specifies the header that your server uses for sending files
