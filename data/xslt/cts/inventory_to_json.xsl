@@ -15,6 +15,7 @@
         <xsl:text>{</xsl:text>
         
         <xsl:for-each select="//cts:textgroup">
+            <xsl:sort data-type="text" select="cts:groupname"/>
             <xsl:variable name="group" select="normalize-space(@projid)"/>
             <xsl:variable name="groupname" select="normalize-space(cts:groupname[1])"/>
             <xsl:variable name="group_prefix" select="normalize-space(substring-before($group,':'))"/>
@@ -33,7 +34,11 @@
             <xsl:text>"works": {</xsl:text>
             
             <!-- iterate through works -->
-            <xsl:apply-templates select="cts:work"/>
+            <xsl:for-each select="cts:work">
+                <xsl:sort data-type="text" select="cts:title"/>
+                <xsl:apply-templates select="."/>    
+            </xsl:for-each>
+            
             
             <!-- end works field -->
             <xsl:text>}</xsl:text>
