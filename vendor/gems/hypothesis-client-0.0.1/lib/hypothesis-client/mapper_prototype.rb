@@ -38,6 +38,7 @@ module HypothesisClient::MapperPrototype
       'greatgrandparent' => 'snap:GreatGrandparentOf',
       'household' => 'snap:HouseHoldOf',
       'inlawfamilyrelationship' => 'snap:InLawFamilyRelationship',
+      'intimaterelationship' => 'snap:IntimateRelationship',
       'maternalfamilyrelationship' => 'snap:MaternalFamilyRelationship',
       'mother' => 'snap:MotherOf',
       'nephew' => 'snap:NephewOf',
