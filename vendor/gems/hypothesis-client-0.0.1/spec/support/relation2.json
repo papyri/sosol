@@ -1,0 +1,74 @@
+{
+    "permissions": {
+        "update": [
+            "acct:annakrohn@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "delete": [
+            "acct:annakrohn@hypothes.is"
+        ], 
+        "admin": [
+            "acct:annakrohn@hypothes.is"
+        ]
+    }, 
+    "created": "2015-01-30T23:35:15.455964+00:00", 
+    "uri": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=C:entry+group=29:entry=clytaemnestra-bio-1", 
+    "user": "acct:annakrohn@hypothes.is", 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "target": [
+        {
+            "pos": {
+                "height": 18, 
+                "top": 302.3579406738281
+            }, 
+            "source": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=C:entry+group=29:entry=clytaemnestra-bio-1", 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[4]/div[2]/div[3]/div[2]/div[1]/div[1]", 
+                    "endOffset": 89, 
+                    "endContainer": "/div[4]/div[2]/div[3]/div[2]/div[1]/div[1]", 
+                    "startOffset": 83
+                }, 
+                {
+                    "type": "TextPositionSelector", 
+                    "start": 2306, 
+                    "end": 2312
+                }, 
+                {
+                    "suffix": ", Timandra, and Philonoe, and ha", 
+                    "type": "TextQuoteSelector", 
+                    "exact": "Castor", 
+                    "prefix": "ndareus and Leda, and sister of"
+                }
+            ]
+        }
+    ], 
+    "document": {
+        "twitter": {}, 
+        "highwire": {}, 
+        "prism": {}, 
+        "eprints": {}, 
+        "title": "\n\nA Dictionary of Greek and Roman biography and mythology,\nCaanthus, Clu'vius, Clytaemnestra  \n", 
+        "facebook": {}, 
+        "dc": {}, 
+        "reply_to": [], 
+        "link": [
+            {
+                "href": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0104%3Aalphabetic+letter%3DC%3Aentry+group%3D29%3Aentry%3Dclytaemnestra-bio-1"
+            }
+        ]
+    }, 
+    "text": "castor-bio-1", 
+    "updated": "2015-01-30T23:35:15.455990+00:00", 
+    "tags": [
+        "relation", 
+        "Brother", 
+        "Sibling", 
+        "IntimateRelationship",
+        "joth"
+    ], 
+    "id": "yDbJI15zS9GHlKBdpQTccw"
+}

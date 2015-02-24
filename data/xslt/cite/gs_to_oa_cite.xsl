@@ -288,7 +288,7 @@
             <xsl:when test="matches(.,'-bio')">
                 <!-- format might be P.1.perseus-bio-1 or just P.perseus-bio-1 or perseus-bio-1 or perseus-bio -->
                 <xsl:analyze-string select="." regex="^(\w\.)?(\d+\.)?(.*?)-bio(-.+)?$">
-                    <xsl:matching-substring><xsl:value-of select="concat('http://data.perseus.org/citations/urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:',regex-group(3),regex-group(4))"/></xsl:matching-substring>
+                    <xsl:matching-substring><xsl:value-of select="concat('http://data.perseus.org/citations/urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:',regex-group(3),replace(regex-group(4),'-','_'))"/></xsl:matching-substring>
                     <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
                 </xsl:analyze-string>
             </xsl:when>

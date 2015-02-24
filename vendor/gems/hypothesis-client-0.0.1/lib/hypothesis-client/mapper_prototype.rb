@@ -8,7 +8,11 @@ module HypothesisClient::MapperPrototype
   class JOTH
 
     # some hardcoded URIs and match strings for the mapping
+    CATALOG_URI = 'http://data.perseus.org/catalog/'
+    TEXT_URI = 'http://data.perseus.org/texts/'
     PERSEUS_URI = Regexp.new("http:\/\/data.perseus.org\/citations\/urn:cts:[^\S]+" )
+    CTS_PASSAGE_URN = Regexp.new("urn:cts:(.*?):([^\.]+)(?:\.([^\.]+))\.?(.*?)?:(.+)$")
+    CTS_URN = Regexp.new("urn:cts:(.*?):([^\.]+)\.(?:([^\.]+)\.)?([^:]+)?$")
     SMITH_HOPPER_URI = Regexp.new('Perseus:text:1999.04.0104')
     SMITH_TEXT_CTS = "urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1"
     SMITH_PERSON_URI = "http://data.perseus.org/people/smith:"
@@ -58,6 +62,12 @@ module HypothesisClient::MapperPrototype
     }
 
     OA_CONTEXT = "http://www.w3.org/ns/oa-context-20130208.json" 
+    LAWD_CITATION = "http://lawd.info/ontology/Citation"
+    LAWD_WRITTENWORK = "http://lawd.info/ontology/WrittenWork"
+    LAWD_EMBODIES = "http://lawd.info/ontology/embodies"
+    LAWD_CONCEPTUALWORK = "http://lawd.info/ontology/ConceptualWork"
+    LAWD_REPRESENTS = "http://lawd.info/ontology/represents"
+        
 
     REL_GRAPH_CONTEXT =  {
       "snap" => "http://onto.snapdrgn.net/snap#",
@@ -110,8 +120,9 @@ module HypothesisClient::MapperPrototype
         if (parts) 
            model[:motivation] ="oa:identifying"
            model[:targetPerson] = "#{SMITH_PERSON_URI}#{parts[1]}#{parts[2]}#this" 
-           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{parts[1]}#{parts[2]}"
+           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{parts[1]}#{parts[2].sub!(/-/,'_')}"
            model[:bodyUri] = []
+           model[:bodyCts] = []
            model[:relationTerms] = []
            if body_tags["relation"] && SMITH_BIO_MATCH.match(data["text"])
               model[:isRelation] = true
@@ -148,7 +159,12 @@ module HypothesisClient::MapperPrototype
              model[:isCitation] = true
              # we support just perseus uris for now
              data["text"].scan(PERSEUS_URI).each do |u|
-              model[:bodyUri] << u
+              begin
+                model[:bodyUri] << u
+                model[:bodyCts] << parse_urn(u)
+              rescue => e
+                response[:errors] << e
+              end
              end
              unless model[:bodyUri].length > 0
                response[:errors] << "No valid citation uris found"
@@ -239,9 +255,35 @@ module HypothesisClient::MapperPrototype
         }
       elsif obj[:isCitation]
          oa['hasBody'] = []
-         # oa[:hasBody] = "" # TODO graph of the citation relationships
-         obj[:bodyUri].each do |u|
-           oa['hasBody'] << { "@id" => u }
+         obj[:bodyCts].each do |u|
+           body = {
+             "@id"  => u['uri'],
+             "@type" => u['type'],
+             "foaf:homepage" => { 
+               "@id"  => u['uri']
+              }
+           }
+           conceptualwork = {  
+             '@id' => "#{TEXT_URI}#{u['work']}",
+             '@type' => LAWD_CONCEPTUALWORK
+           } 
+           writtenwork = {
+             '@id' => "#{TEXT_URI}#{u['version']}",
+             '@type' => LAWD_WRITTENWORK,
+              LAWD_EMBODIES => conceptualwork,
+              'rdfs:isDefinedBy' => { 
+                '@id' => "#{CATALOG_URI}#{u['version']}"
+              }
+           }
+           if u['type'] == LAWD_CITATION && ! u['version'].nil?
+             body[LAWD_REPRESENTS] = writtenwork
+           elsif u['type'] == LAWD_WRITTENWORK && ! u['version'].nil?
+              body[LAWD_EMBODIES] = conceptualwork
+              body['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['version']}"}
+           else
+              body['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['work']}"}
+           end
+           oa['hasBody'] << body
          end
       else
          oa['hasBody'] = []
@@ -250,6 +292,52 @@ module HypothesisClient::MapperPrototype
          end
       end
       oa
+    end
+
+    def parse_urn(uri)
+      urn_passage_parts = CTS_PASSAGE_URN.match(uri)
+      if (urn_passage_parts) 
+        ns = urn_passage_parts[1]
+        tg = urn_passage_parts[2]
+        wk = urn_passage_parts[3]
+        ver = urn_passage_parts[4]
+        psg = urn_passage_parts[5]
+      else
+        urn_parts = CTS_URN.match(uri)
+        if (urn_parts)
+          ns = urn_parts[1]
+          tg = urn_parts[2]
+          wk = urn_parts[3]
+          ver = urn_parts[4]
+        else
+         raise "Invalid urn #{urn}"
+        end
+      end
+
+      unless (ns && tg && wk)
+         raise "Invalid urn #{urn}"
+      end
+      if psg == '' || psg.nil?
+        if ver == '' || ver.nil?
+          # it's conceptual
+          type = LAWD_CONCEPTUALWORK
+        else
+          # if we have a version, it's a written work
+          type = LAWD_WRITTENWORK
+        end
+      else
+        # if we have a passage, its a citation
+        type = LAWD_CITATION
+      end
+
+      { 
+        'uri' => uri,   
+        "type" => type,
+        'textgroup' => "urn:cts:#{ns}:#{tg}",
+        'work' => "urn:cts:#{ns}:#{tg}.#{wk}",
+        'version' => ver == '' || ver.nil? ? nil : "urn:cts:#{ns}:#{tg}.#{wk}.#{ver}",
+        'passage' => type == LAWD_CITATION ? psg : nil
+      }
     end
 
     # make a descriptive title for the annotation in the form of
