@@ -10,7 +10,7 @@ module HypothesisClient::MapperPrototype
     # some hardcoded URIs and match strings for the mapping
     CATALOG_URI = 'http://data.perseus.org/catalog/'
     TEXT_URI = 'http://data.perseus.org/texts/'
-    PERSEUS_URI = Regexp.new("http:\/\/data.perseus.org\/citations\/urn:cts:[^\S]+" )
+    PERSEUS_URI = Regexp.new("http:\/\/data.perseus.org\/citations\/urn:cts:[^\S\n]+" )
     CTS_PASSAGE_URN = Regexp.new("urn:cts:(.*?):([^\.]+)(?:\.([^\.]+))\.?(.*?)?:(.+)$")
     CTS_URN = Regexp.new("urn:cts:(.*?):([^\.]+)\.(?:([^\.]+)\.)?([^:]+)?$")
     SMITH_HOPPER_URI = Regexp.new('Perseus:text:1999.04.0104')
@@ -67,6 +67,8 @@ module HypothesisClient::MapperPrototype
     LAWD_EMBODIES = "http://lawd.info/ontology/embodies"
     LAWD_CONCEPTUALWORK = "http://lawd.info/ontology/ConceptualWork"
     LAWD_REPRESENTS = "http://lawd.info/ontology/represents"
+    LAWD_ATTESTATION = "http://lawd.info/ontology/Attestation"
+    LAWD_HASATTESTATION = "http://lawd.info/ontology/hasAttestation"
         
 
     REL_GRAPH_CONTEXT =  {
@@ -163,12 +165,26 @@ module HypothesisClient::MapperPrototype
                 model[:bodyUri] << u
                 model[:bodyCts] << parse_urn(u)
               rescue => e
-                response[:errors] << e
+                response[:errors] << "Invalid Citation URN #{u}"
               end
              end
              unless model[:bodyUri].length > 0
                response[:errors] << "No valid citation uris found"
              end
+           elsif body_tags["attestation"] && PERSEUS_URI.match(data["text"])
+             model[:isAttestation] = true
+             model[:motivation] ="oa:describing"
+             # we support just perseus uris for now
+             model[:bodyText] = data["text"]
+             data["text"].scan(PERSEUS_URI).each do |u|
+                model[:bodyUri] << u
+                model[:bodyCts] << parse_urn(u)
+                # we want the text that isn't part of the uris
+                model[:bodyText].sub!(u,'')
+             end
+             model[:bodyText].sub!(/^\n/,'')
+             model[:bodyText].sub!(/\n$/,'')
+             model[:bodyText].gsub!(/\n/,' ')
            # otherwise we assume it's a plain link
            else 
              model[:motivation] ="oa:linking"
@@ -256,35 +272,30 @@ module HypothesisClient::MapperPrototype
       elsif obj[:isCitation]
          oa['hasBody'] = []
          obj[:bodyCts].each do |u|
-           body = {
-             "@id"  => u['uri'],
-             "@type" => u['type'],
-             "foaf:homepage" => { 
-               "@id"  => u['uri']
-              }
-           }
-           conceptualwork = {  
-             '@id' => "#{TEXT_URI}#{u['work']}",
-             '@type' => LAWD_CONCEPTUALWORK
-           } 
-           writtenwork = {
-             '@id' => "#{TEXT_URI}#{u['version']}",
-             '@type' => LAWD_WRITTENWORK,
-              LAWD_EMBODIES => conceptualwork,
-              'rdfs:isDefinedBy' => { 
-                '@id' => "#{CATALOG_URI}#{u['version']}"
-              }
-           }
-           if u['type'] == LAWD_CITATION && ! u['version'].nil?
-             body[LAWD_REPRESENTS] = writtenwork
-           elsif u['type'] == LAWD_WRITTENWORK && ! u['version'].nil?
-              body[LAWD_EMBODIES] = conceptualwork
-              body['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['version']}"}
-           else
-              body['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['work']}"}
-           end
-           oa['hasBody'] << body
+           oa['hasBody'] << make_citation_graph(u)
          end
+      elsif obj[:isAttestation]
+        graph = []
+        obj[:bodyCts].each_with_index do |u,i|
+          attest_uri = "#{obj[:sourceUri]}#attest-#{i+1}"
+          graph << 
+            {
+              "@id" =>  obj[:targetPerson],
+              LAWD_HASATTESTATION => attest_uri
+            }
+          graph << 
+            {
+              "@id" =>  attest_uri,
+              "@type" => [LAWD_ATTESTATION,'cnt:ContentAsText'],
+              "http://purl.org/spar/cito/citesAsEvidence" => u['uri'],
+              "cnt:chars" => obj[:bodyText]
+            }
+          graph << make_citation_graph(u)
+        end
+        oa['hasBody'] = { 
+          "@context" => REL_GRAPH_CONTEXT,
+          "@graph" => graph 
+        }
       else
          oa['hasBody'] = []
          obj[:bodyUri].each do |u|
@@ -292,6 +303,37 @@ module HypothesisClient::MapperPrototype
          end
       end
       oa
+    end
+
+    def make_citation_graph(u)
+      graph = {
+        "@id"  => u['uri'],
+        "@type" => u['type'],
+        "foaf:homepage" => { 
+          "@id"  => u['uri']
+        }
+      }
+     conceptualwork = {  
+       '@id' => "#{TEXT_URI}#{u['work']}",
+       '@type' => LAWD_CONCEPTUALWORK
+     } 
+     writtenwork = {
+       '@id' => "#{TEXT_URI}#{u['version']}",
+       '@type' => LAWD_WRITTENWORK,
+       LAWD_EMBODIES => conceptualwork,
+       'rdfs:isDefinedBy' => { 
+         '@id' => "#{CATALOG_URI}#{u['version']}"
+       }
+     }
+     if u['type'] == LAWD_CITATION && ! u['version'].nil?
+       graph[LAWD_REPRESENTS] = writtenwork
+     elsif u['type'] == LAWD_WRITTENWORK && ! u['version'].nil?
+       graph[LAWD_EMBODIES] = conceptualwork
+       graph['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['version']}"}
+     else
+       graph['rdfs:isDefinedBy'] = { '@id' => "#{CATALOG_URI}#{u['work']}"}
+     end
+     return graph
     end
 
     def parse_urn(uri)
@@ -343,7 +385,13 @@ module HypothesisClient::MapperPrototype
     # make a descriptive title for the annotation in the form of
     # bodyUri <is linked to|identifies> <text> [as <relationship>] in bodyUri
     def make_title(obj) 
-      motivation_text = obj[:motivation] == 'oa:linking' ? 'is linked to' : 'identifies'
+      if obj[:motivation] == 'oa:linking' 
+        motivation_text = 'is linked to' 
+      elsif obj[:motivation] == 'oa:describing' 
+        motivation_text = 'describes' 
+      else  
+        motivation_text = 'identifies'
+      end
       as_text = ""
       if (obj[:relationTerms].length > 0)
         as_text = " as #{obj[:relationTerms].join(", ")}" 
@@ -351,6 +399,8 @@ module HypothesisClient::MapperPrototype
         as_text = " as place"
       elsif obj[:isCitation] 
         as_text = " as citation"
+      elsif obj[:isAttestation] 
+        as_text = " with an attestation of #{obj[:bodyText]}"
       end  
       "#{obj[:bodyUri].join(", ")} #{motivation_text} #{obj[:targetSelector]['exact']}#{as_text} in #{obj[:targetCTS]}"
     end

@@ -38,11 +38,17 @@ describe HypothesisClient::MapperPrototype do
     end
 
   end
+  context "bad cites test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'testbadcite.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+    it 'reports error' do
+      expect(mapped[:errors]).to match_array(["Invalid Citation URN http://data.perseus.org/citations/urn:cts:foo"])
+    end
+  end
   context "cites test" do 
     input = File.read(File.join(File.dirname(__FILE__), 'support', 'testcite.json')) 
     let(:mapped) { client.map("test",JSON.parse(input))}
     it 'mapped the body text' do
-      puts mapped[:data]["hasBody"]
       expect(mapped[:data]["hasBody"][0]["@id"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:6.222")
       expect(mapped[:data]["hasBody"][0]["@type"]).to eq(HypothesisClient::MapperPrototype::JOTH::LAWD_CITATION)
       expect(mapped[:data]["hasBody"][0]["foaf:homepage"]["@id"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:6.222")
@@ -90,6 +96,24 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"][3]["@id"]).to eq("test#bond-2")
       expect(mapped[:data]["hasBody"]["@graph"][5]["@id"]).to eq("test#bond-3")
       expect(mapped[:data]["hasBody"]["@graph"][5]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
+    end
+  end
+  context "attestation test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'attest1.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'graphed the attestation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:describing")
+      expect(mapped[:data]["hasBody"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#attest-1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["http://purl.org/spar/cito/citesAsEvidence"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["cnt:chars"]).to eq("Abas")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@type"]).to eq(HypothesisClient::MapperPrototype::JOTH::LAWD_CITATION)
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1 describes *)Abai=os) with an attestation of Abas in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:clytaemnestra_1")
     end
   end
   context "cts urn test" do

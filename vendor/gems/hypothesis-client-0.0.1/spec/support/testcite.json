@@ -1,0 +1,68 @@
+{
+    "id": "W-tSZzBLSmCDBBbwUkvmjg", 
+    "tags": ["citation"], 
+    "text": "http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:6.222", 
+    "uri": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=D:entry+group=11:entry=diomedes-bio-1", 
+    "document": {
+        "dc": {}, 
+        "prism": {}, 
+        "facebook": {}, 
+        "title": "\n\nA Dictionary of Greek and Roman biography and mythology,\nDABAR, Di'ogas, Diome'des  \n", 
+        "highwire": {}, 
+        "reply_to": [], 
+        "twitter": {}, 
+        "eprints": {}, 
+        "link": [
+            {
+                "href": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0104%3Aalphabetic+letter%3DD%3Aentry+group%3D11%3Aentry%3Ddiomedes-bio-1"
+            }
+        ]
+    }, 
+    "updated": "2014-12-11T17:53:57.409303+00:00", 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "target": [
+        {
+            "selector": [
+                {
+                    "startContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]/p[1]/i[1]", 
+                    "type": "RangeSelector", 
+                    "startOffset": 0, 
+                    "endOffset": 332, 
+                    "endContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]/p[1]"
+                }, 
+                {
+                    "end": 2069, 
+                    "type": "TextPositionSelector", 
+                    "start": 2060
+                }, 
+                {
+                    "type": "TextQuoteSelector", 
+                    "prefix": ", while Diomedes was yet a boy (", 
+                    "exact": "II. 6.222", 
+                    "suffix": "); but he himself afterwards was"
+                }
+            ], 
+            "source": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=D:entry+group=11:entry=diomedes-bio-1", 
+            "pos": {
+                "top": 426, 
+                "height": 20
+            }
+        }
+    ], 
+    "created": "2014-12-11T17:47:15.850199+00:00", 
+    "user": "acct:balmas@hypothes.is", 
+    "permissions": {
+        "admin": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "update": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "delete": [
+            "acct:balmas@hypothes.is"
+        ]
+    }
+}
