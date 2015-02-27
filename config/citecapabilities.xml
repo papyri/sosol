@@ -107,6 +107,23 @@
     <citeCollection
         canonicalId="urn"
         class=""
+        name="misctb"
+        description="MiscTreebank Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Treebank URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Treebank Data"
+            name="xml"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
         name="align"
         description="Translation Alignment Collection">
         <namespaceMapping
