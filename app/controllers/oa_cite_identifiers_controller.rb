@@ -90,7 +90,10 @@ class OaCiteIdentifiersController < IdentifiersController
       return
     end
     agent_client = AgentHelper::get_client(agent)
-    @converted = agent_client.get_content(params[:resource])
+    collection = AgentHelper::get_target_collection(agent,:OajCiteIdentifier)
+    uri = Cite::CiteLib::object_uuid_urn(collection)
+    creator = url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @identifier.publication.creator.name, :only_path => false)
+    @converted = agent_client.get_content(params[:resource],uri,creator)
     if (@converted[:error]) 
       flash[:error] = "Conversion Failed!"
       respond_to do |format|
@@ -98,9 +101,17 @@ class OaCiteIdentifiersController < IdentifiersController
         format.html { render :partial => "oajson" }
       end
     else 
-      respond_to do |format|
-        format.json { render :json => JSON.pretty_generate(@converted[:data]) }
-        format.html { render :partial => "oajson" }
+      if params[:create]
+        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,uri,JSON.pretty_generate(@converted[:data]))
+        flash[:notice] = "File created."
+        expire_publication_cache
+        redirect_to polymorphic_path([@identifier.publication, newobj],
+                                 :action => :preview) and return
+      else
+        respond_to do |format|
+          format.json { render :json => JSON.pretty_generate(@converted[:data]) }
+          format.html { render :partial => "oajson" }
+        end
       end
     end
   end

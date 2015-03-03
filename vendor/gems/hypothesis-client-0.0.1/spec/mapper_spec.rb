@@ -149,4 +149,12 @@ describe HypothesisClient::MapperPrototype do
        expect { parsed = $mapper.parse_urn("urn:cts:greekLit:tlg0012")}.to raise_error
     end
   end
+  context "owner test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'test1.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input),'http://example.org/user/abc')}
+
+    it 'mapped the source uri' do
+      expect(mapped[:data]["annotatedBy"]['@id']).to eq('http://example.org/user/abc')
+    end
+  end
 end

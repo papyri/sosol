@@ -35,6 +35,13 @@ module AgentHelper
     return agent
   end
 
+  def self.get_target_collection(a_agent,a_type)
+    if (a_agent.nil? || a_agent[:collections].nil?)
+       return nil
+    end
+    a_agent[:collections][a_type]
+  end
+
   def self.get_client(a_agent)
     if (a_agent.nil?)
        return nil
@@ -114,8 +121,8 @@ module AgentHelper
       @client = HypothesisClient::Client.new(mapper_class.new)
     end
 
-    def get_content(a_uri)
-      @client.get(a_uri)
+    def get_content(a_uri,a_id,a_user)
+      @client.get(a_uri,a_id,a_user)
     end
 
 

@@ -82,7 +82,8 @@ module HypothesisClient::MapperPrototype
     # @param source the URI of the original hypothes.is annotation
     # @param data the Hypothes.is data
     # @param format expected output format -- only HypothesisClient::Client::FORMAT_OALD supported
-    def map(agent,source,data,format)
+    # @param owner uri for the annotation
+    def map(agent,source,data,format,owner=nil)
       response = {} 
       response[:errors] = []
       model = {}
@@ -91,7 +92,7 @@ module HypothesisClient::MapperPrototype
       begin
         model[:agentUri] = agent
         model[:sourceUri] = source
-        model[:userid] = data["user"].sub!(/^acct:/,'')
+        model[:userid] = owner.nil? ? data["user"].sub!(/^acct:/,'') : owner
         # if we have updated at, use that as annotated at, otherwise use created 
         model[:date] = data["updated"] ? data["updated"]: data["created"]
         body_tags = {}
