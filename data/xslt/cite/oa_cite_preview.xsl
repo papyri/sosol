@@ -39,19 +39,15 @@
                 <xsl:variable name="resource" select="string(@rdf:resource)"/>
                 <xsl:for-each select="$e_convertResource">
                     <xsl:if test="matches($resource,.)">
-                        <xsl:variable name="convertLink">
-                          <xsl:choose>
-                            <xsl:when test="$e_createConverted = true()">
-                              <a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json&amp;create=1">Create Conversion</a>
-                            </xsl:when>
-                            <xsl:otherwise>
-                              <a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json">Export Conversion</a>
-                            </xsl:otherwise>
-                          </xsl:choose>
+                        <xsl:variable name="createLink">
+                            <xsl:if test="$e_createConverted = true()">
+                                <div class="oac_create_link"><a class="oa_agent_convert_create" href="convert?resource={encode-for-uri($resource)}&amp;format=json&amp;create=1">Create as Annotation</a></div>
+                            </xsl:if>
                         </xsl:variable>
                         <div class="oac_convert">
                             <div class="oac_convert_preview"></div>
-                            <div class="oac_convert_link"><xsl:copy-of select="$convertLink"/></div>
+                            <div class="oac_convert_link"><a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json">Export Conversion</a></div>
+                            <xsl:copy-of select="$createLink"/>
                         </div>         
                     </xsl:if>      
                 </xsl:for-each>          

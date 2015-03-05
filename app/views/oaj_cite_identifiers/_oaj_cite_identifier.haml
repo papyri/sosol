@@ -1,3 +1,4 @@
+= link_to 'Edit', edit_publication_oaj_cite_identifier_path( oaj_cite_identifier.publication, oaj_cite_identifier)
 = link_to 'Preview', preview_publication_oaj_cite_identifier_path( oaj_cite_identifier.publication, oaj_cite_identifier)
 - if @identifier.mutable? 
   = link_to 'Delete', polymorphic_path([oaj_cite_identifier.publication, oaj_cite_identifier]), :confirm => 'Are you sure?', :method => :delete

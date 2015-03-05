@@ -3,7 +3,7 @@ class OajCiteIdentifier < CiteIdentifier
   require 'uuid'
 
 
-  FRIENDLY_NAME = "Annotation"
+  FRIENDLY_NAME = "Annotation (JSON-LD)"
   PATH_PREFIX="CITE_OA_JSON"
   FILE_TYPE="oac.json"
   ANNOTATION_TITLE = "Annotation"
@@ -17,7 +17,6 @@ class OajCiteIdentifier < CiteIdentifier
     temp_id = self.new(:name => self.next_version_identifier(a_urn))
     temp_id.publication = a_publication 
     temp_id.save!
-    Rails.logger.info("initial content #{a_init_content}")
     temp_id.set_xml_content(a_init_content, :comment => 'Created from Supplied content', :validate => true )
     return temp_id
   end

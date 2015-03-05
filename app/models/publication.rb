@@ -493,11 +493,13 @@ class Publication < ActiveRecord::Base
   #- +status_in+ the status to be set
   def set_origin_identifier_status(status_in)
       #finalizer is a user so they dont have a board, must go up until we find a board
+      #if we created an identifier on the publication during finalization it 
+      # won't have an origin and should be skipped
       board = self.find_first_board
       if board
               
         self.identifiers.each do |i|
-          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s) && i.origin
             i.origin.status = status_in
             i.origin.save
           end

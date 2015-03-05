@@ -15,7 +15,7 @@ describe HypothesisClient::MapperPrototype do
     end
 
     it 'mapped the source uri' do
-      expect(mapped[:data]["dcterms:source"]).to eq('test')
+      expect(mapped[:data]["dcterms:source"]).to eq(nil)
     end
 
     it 'mapped the body text' do

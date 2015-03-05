@@ -91,7 +91,8 @@ class OaCiteIdentifiersController < IdentifiersController
     end
     agent_client = AgentHelper::get_client(agent)
     collection = AgentHelper::get_target_collection(agent,:OajCiteIdentifier)
-    uri = Cite::CiteLib::object_uuid_urn(collection)
+    urn = Cite::CiteLib::object_uuid_urn(collection)
+    uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + urn
     creator = url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @identifier.publication.creator.name, :only_path => false)
     @converted = agent_client.get_content(params[:resource],uri,creator)
     if (@converted[:error]) 
@@ -102,7 +103,7 @@ class OaCiteIdentifiersController < IdentifiersController
       end
     else 
       if params[:create]
-        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,uri,JSON.pretty_generate(@converted[:data]))
+        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,urn,JSON.pretty_generate(@converted[:data]))
         flash[:notice] = "File created."
         expire_publication_cache
         redirect_to polymorphic_path([@identifier.publication, newobj],

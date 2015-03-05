@@ -450,7 +450,12 @@ class Identifier < ActiveRecord::Base
     change_desc_content = self.xml_content
     
     # assume context is from finalizing publication, so parent is board's copy
-    parent_classes = self.parent.owner.identifier_classes
+    if self.parent
+      parent_classes = self.parent.owner.identifier_classes
+    else
+      # if we created upon finalization we won't have a parent...
+      parent_classes = []
+    end  
     
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
       if((c.reason == "vote") && (parent_classes.include?(c.identifier.class.to_s)))
@@ -458,7 +463,6 @@ class Identifier < ActiveRecord::Base
         commit_message += " - Vote - #{c.comment} (#{c.user.human_name})\n"
       end
     end
-    
     change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)
     commit_message += " - Finalized - #{comment_text} (#{user.human_name})"
     
