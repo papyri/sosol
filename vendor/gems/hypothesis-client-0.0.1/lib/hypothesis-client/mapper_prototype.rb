@@ -79,19 +79,21 @@ module HypothesisClient::MapperPrototype
 
     # Map the data as provided by Hypothes.is to our expected data model
     # @param agent the URI for the hypothes.is software agent
-    # @param source the URI of the original hypothes.is annotation
+    # @param uri the URI for the new annotation
     # @param data the Hypothes.is data
     # @param format expected output format -- only HypothesisClient::Client::FORMAT_OALD supported
-    def map(agent,source,data,format)
+    # @param owner uri for the annotation
+    def map(agent,uri,data,format,owner=nil)
       response = {} 
       response[:errors] = []
       model = {}
       # first some general parsing to pick the pieces we want from
       # the hypothes.is data object
       begin
+        model[:id] = uri
         model[:agentUri] = agent
-        model[:sourceUri] = source
-        model[:userid] = data["user"].sub!(/^acct:/,'')
+        model[:sourceUri] = data[:sourceUri]
+        model[:userid] = owner.nil? ? data["user"].sub!(/^acct:/,'') : owner
         # if we have updated at, use that as annotated at, otherwise use created 
         model[:date] = data["updated"] ? data["updated"]: data["created"]
         body_tags = {}
@@ -216,7 +218,7 @@ module HypothesisClient::MapperPrototype
       oa['@context'] = OA_CONTEXT
       # leave oa[@id] and oa[@annotatedBy] to be set from calling code?
       # ideally we would preserve the provenance chain better here
-      oa['@id'] = obj[:sourceUri] 
+      oa['@id'] = obj[:id] 
       oa['annotatedBy'] = { 
         "@type" => "foaf:Person", 
         "@id" => obj[:userid]
@@ -230,11 +232,11 @@ module HypothesisClient::MapperPrototype
       oa['serializedBy']['@id'] = obj[:agentUri]
       oa['serializedBy']['@type'] = "prov:SoftwareAgent"
       oa['hasTarget'] = {
-        "@id" => "#{obj[:sourceUri]}#target-1",
+        "@id" => "#{obj[:id]}#target-1",
         "@type" => "oa:SpecificResource", 
         "hasSource" => { '@id' => obj[:targetCTS] },
         "hasSelector" => {
-          "@id" => "#{obj[:sourceUri]}#target-1-sel-1",
+          "@id" => "#{obj[:id]}#target-1-sel-1",
           "@type" => "oa:TextQuoteSelector",
           "exact" => obj[:targetSelector]["exact"],
           "prefix" => obj[:targetSelector]["prefix"],
@@ -246,7 +248,7 @@ module HypothesisClient::MapperPrototype
       if obj[:isRelation]
         graph = []
         obj[:relationTerms].each_with_index do |t,i|
-          bond_uri = "#{obj[:sourceUri]}#bond-#{i+1}"
+          bond_uri = "#{obj[:id]}#bond-#{i+1}"
           graph << 
               {
                 "@id" =>  obj[:targetPerson],
@@ -277,7 +279,7 @@ module HypothesisClient::MapperPrototype
       elsif obj[:isAttestation]
         graph = []
         obj[:bodyCts].each_with_index do |u,i|
-          attest_uri = "#{obj[:sourceUri]}#attest-#{i+1}"
+          attest_uri = "#{obj[:id]}#attest-#{i+1}"
           graph << 
             {
               "@id" =>  obj[:targetPerson],

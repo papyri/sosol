@@ -30,3 +30,5 @@
     :uri_match: "https://hypothes.is"
     :type: "hypothesis"
     :data_mapper: 'HypothesisClient::MapperPrototype::JOTH'
+    :collections:
+      :OajCiteIdentifier: "urn:cite:perseus:pdljann"

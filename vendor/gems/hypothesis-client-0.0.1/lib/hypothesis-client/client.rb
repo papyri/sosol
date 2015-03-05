@@ -13,7 +13,7 @@ module HypothesisClient
       @mapper = mapper
     end
 
-    def get(a_uri)
+    def get(a_uri,a_id=nil,a_owner=nil)
       respobj = {}
       begin
         uri = URI.parse(a_uri)
@@ -26,7 +26,9 @@ module HypothesisClient
         if (response.code == '200') 
           respobj = { }
           orig_annot = JSON.parse(response.body)
-          mapped = map(a_uri,orig_annot)
+          orig_annot[:sourceUri] = uri.to_s
+          new_id = a_id.nil? ? a_uri : a_id
+          mapped = map(new_id,orig_annot,a_owner)
           if (mapped[:errors].length > 0) 
             respobj[:is_error] = true
             respobj[:error] = mapped[:errors].join("\n")
@@ -47,8 +49,8 @@ module HypothesisClient
       
     end
 
-    def map(source,data)
-      @mapper.map(AGENT_URI,source,data,FORMAT_OALD)
+    def map(id,data,owner=nil)
+      @mapper.map(AGENT_URI,id,data,FORMAT_OALD,owner)
     end
 
   end

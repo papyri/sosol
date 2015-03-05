@@ -132,6 +132,7 @@ class OaCiteIdentifier < CiteIdentifier
   
   def preview parameters = {}, xsl = nil
     parameters[:e_convertResource] = AgentHelper::agents_can_convert
+    parameters[:e_createConverted] = self.publication.status == 'finalizing'
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,

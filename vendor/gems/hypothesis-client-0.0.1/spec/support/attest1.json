@@ -1,0 +1,73 @@
+{
+    "permissions": {
+        "delete": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "admin": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "update": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ]
+    }, 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "tags": [
+        "attestation"
+    ], 
+    "created": "2015-02-25T20:12:37.523941+00:00", 
+    "text": "http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1\nAbas", 
+    "target": [
+        {
+            "pos": {
+                "height": 18, 
+                "top": 308.95001220703125
+            }, 
+            "selector": [
+                {
+                    "startContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]/span[1]", 
+                    "type": "RangeSelector", 
+                    "startOffset": 0, 
+                    "endOffset": 19, 
+                    "endContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]"
+                }, 
+                {
+                    "start": 2500, 
+                    "type": "TextPositionSelector", 
+                    "end": 2510
+                }, 
+                {
+                    "exact": "*)Abai=os)", 
+                    "suffix": ", a surname of Apollo derived fr", 
+                    "type": "TextQuoteSelector", 
+                    "prefix": "M N O P Q R S T U/V X Z Abaeus \uff08"
+                }, 
+                {
+                    "type": "FragmentSelector", 
+                    "value": ""
+                }
+            ], 
+            "source": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104"
+        }
+    ], 
+    "document": {
+        "twitter": {}, 
+        "link": [
+            {
+                "href": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3atext%3a1999.04.0104"
+            }
+        ], 
+        "prism": {}, 
+        "eprints": {}, 
+        "title": "\n\nA Dictionary of Greek and Roman biography and mythology,\nAbaeus  \n", 
+        "highwire": {}, 
+        "facebook": {}, 
+        "dc": {}
+    }, 
+    "updated": "2015-02-25T20:12:37.523970+00:00", 
+    "uri": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=C:entry+group=29:entry=clytaemnestra-bio-1",
+    "user": "acct:balmas@hypothes.is", 
+    "id": "CZZbvlxmRjmV_LzfCxqPyA"
+}
