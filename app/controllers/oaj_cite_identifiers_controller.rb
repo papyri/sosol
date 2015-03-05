@@ -1,7 +1,7 @@
 class OajCiteIdentifiersController < IdentifiersController
   layout SITE_LAYOUT
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:edit, :update]
+  before_filter :ownership_guard, :only => [:edit, :update, :destroy]
 
 
   def edit
