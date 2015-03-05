@@ -526,7 +526,7 @@ li.editor_menu {
     background-color: #EAEAEA;
 }
 
-.oa_cite_annotation .oac_convert_preview pre {
+.oa_cite_annotation .oac_convert_preview pre, .oaj_cite_preview pre {
     height: 400px;
     overflow: scroll;
     color: white;

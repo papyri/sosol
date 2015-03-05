@@ -1,5 +1,6 @@
 module Cite
   require 'jruby_xml'
+  require 'uuid'
   
   class CiteError < ::StandardError
   end
@@ -140,6 +141,15 @@ module Cite
       # @param {String} a_urn
       def get_creatable_identifiers(a_urn)
         
+      end
+
+      # return an object urn that assignes a uuid as the object id
+      def object_uuid_urn(a_collection_urn)
+        if (is_collection_urn?(a_collection_urn))
+          return "#{a_collection_urn}.#{UUID.new.generate(:compact)}"
+        else 
+          raise "Invalid collection urn"
+        end
       end
     end # end class
   end # end module CiteLib

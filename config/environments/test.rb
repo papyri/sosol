@@ -33,5 +33,5 @@ REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'test', 'git')
 CANONICAL_CANONICAL_REPOSITORY = CANONICAL_REPOSITORY
 CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
 EXIST_STANDALONE_URL="http://localhost:8080"
-SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier'
+SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OajCiteIdentifier'
 SITE_CTS_INVENTORIES = 'testepi|Epi'

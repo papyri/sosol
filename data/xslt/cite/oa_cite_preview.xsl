@@ -12,6 +12,7 @@
     
     <xsl:output method="xhtml"/>
     <xsl:param name="e_convertResource" select="()"/>
+    <xsl:param name="e_createConverted" select="false()"/>
      
     <xsl:template match="/rdf:RDF">
     	<xsl:apply-templates select="oac:Annotation"/>
@@ -38,9 +39,15 @@
                 <xsl:variable name="resource" select="string(@rdf:resource)"/>
                 <xsl:for-each select="$e_convertResource">
                     <xsl:if test="matches($resource,.)">
+                        <xsl:variable name="createLink">
+                            <xsl:if test="$e_createConverted = true()">
+                                <div class="oac_create_link"><a class="oa_agent_convert_create" href="convert?resource={encode-for-uri($resource)}&amp;format=json&amp;create=1">Create as Annotation</a></div>
+                            </xsl:if>
+                        </xsl:variable>
                         <div class="oac_convert">
                             <div class="oac_convert_preview"></div>
                             <div class="oac_convert_link"><a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json">Export Conversion</a></div>
+                            <xsl:copy-of select="$createLink"/>
                         </div>         
                     </xsl:if>      
                 </xsl:for-each>          
