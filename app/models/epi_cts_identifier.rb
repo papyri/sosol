@@ -12,7 +12,7 @@ class EpiCTSIdentifier < CTSIdentifier
 
   # This is a somewhat arbitrary size restriction 
   # at some point would be nice to do something more intelligent  
-  MAX_PREVIEW_SIZE = 50000
+  MAX_PREVIEW_SIZE = 100000
 
   BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
   
