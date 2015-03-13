@@ -53,11 +53,11 @@
                <xsl:attribute name="docname"><xsl:value-of select="$filepath"/></xsl:attribute>
                <xsl:element name="validate" namespace="http://chs.harvard.edu/xmlns/cts3/ti">
                   <xsl:attribute name="schema"><xsl:value-of select="$schema"/></xsl:attribute>
+               </xsl:element>
                   <xsl:apply-templates select="cts:online/cts:namespaceMapping"/>
                   <xsl:apply-templates select="cts:online/cts:citationMapping"/>
                </xsl:element>
             </xsl:element>
-         </xsl:element>
       </xsl:if>
    </xsl:template>
 </xsl:stylesheet>
