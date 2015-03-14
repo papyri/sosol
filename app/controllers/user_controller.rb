@@ -15,9 +15,9 @@ class UserController < ApplicationController
   #default view of stats is only for the current user, see below for all users
   def usage_stats
     @comments = ActiveRecord::Base.connection.execute("select p.title AS pub_title, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at, p.status AS pub_status from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{@current_user.id} ORDER BY c.created_at;")
-    @votes = @comments.select{|x| x.reason == 'vote'}
-    @submits @comments.select{|x| x.reason == 'submit'}
-    @finalizings = @comments.select{|x| x.reason == 'finalize'}
+    @votes = @comments.select{|x| x["reason"] == 'vote'}
+    @submits = @comments.select{|x| x["reason"] == 'submit'}
+    @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
   end
 
   def all_users_links

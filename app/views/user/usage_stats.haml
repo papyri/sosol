@@ -1,7 +1,7 @@
 #main
 
   #usage_stats
-    user = @current_user
+    - user = @current_user
     %h2= user.human_name
     - if user.affiliation
       %h3= user.affiliation
@@ -22,17 +22,17 @@
 
     %br
     %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
-    - if votes.length > 0
+    - if @votes.length > 0
       = render :partial => "usage_detail", :locals => { :user => user, :comments => @votes, :type => 'vote'}
 
     %br
     %a{ :href => "#", :onclick => "Effect.toggle('submission_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Submissions
-    - if submits.length > 0
+    - if @submits.length > 0
       = render :partial => "usage_detail", :locals => { :user => user, :comments => @submits, :type => 'submission'}
 
     %br
     %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
-    - if finalizings.length > 0
+    - if @finalizings.length > 0
       = render :partial => "usage_detail", :locals => { :user => user, :comments => @finalizings, :type => 'final'}
 
     %br
