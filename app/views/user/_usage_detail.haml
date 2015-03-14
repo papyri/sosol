@@ -1,18 +1,18 @@
 #div
   %div{:id => "#{type}_list_#{user.id}"}
-    - comments.each do |comment| 
-      %span.comment   
-        - if comment.publication && comment.publication.title    
-          = link_to comment.publication.title, comment.publication
+    - comments.each do |comment|
+      %span.comment
+        - if comment.pub_title
+          = link_to comment.pub_title, "publications/#{comment.pub_id}"
           - case comment.reason
             - when 'vote'
-              = "(" + comment.identifier.title + ") &nbsp;".html_safe + "Vote "
+              = "(" + comment.id_title + ") &nbsp;".html_safe + "Vote "
             - when 'submit'
-              = " (" + comment.publication.status + ") &nbsp;".html_safe
+              = " (" + comment.pub_status + ") &nbsp;".html_safe
             - when 'finalizing'
-              - if comment.identifier && comment.identifier.title
-                = "(" + comment.identifier.title + ") &nbsp;".html_safe
-          = h comment.comment 
+              - if comment.id_title
+                = "(" + comment.id_title + ") &nbsp;".html_safe
+          = h comment.comment
           = comment.created_at.to_formatted_s(:long)
 
       %br
