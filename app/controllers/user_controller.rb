@@ -17,7 +17,7 @@ class UserController < ApplicationController
     @comments = User.stats(@current_user.id)
     @votes = @comments.select{|x| x["reason"] == 'vote'}
     @submits = @comments.select{|x| x["reason"] == 'submit'}
-    @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
+    @finalizings = @comments.select{|x| x["reason"] == 'finalizing'}
   end
 
   def all_users_links
@@ -35,6 +35,7 @@ class UserController < ApplicationController
   #view of stats for the user id page shown with optional date limitation
   def refresh_usage
     @users = [User.find_by_id(params[:save_user_id])]
+    @comments = User.stats(@users.first.id)
 
     #default to 1 year ago if date value not entered
     if params[:date_value].blank?
@@ -59,6 +60,9 @@ class UserController < ApplicationController
         @calc_date = Date.today << calc_months
     end
 
+    @votes = @comments.select{|x| x["reason"] == 'vote' && x["created_at"] > @calc_date}
+    @submits = @comments.select{|x| x["reason"] == 'submit' && x["created_at"] > @calc_date}
+    @finalizings = @comments.select{|x| x["reason"] == 'finalizing' && x["created_at"] > @calc_date}
     flash.now[:notice] = "Usage since #{@calc_date}"
     render "usage_stats"
   end
@@ -70,7 +74,7 @@ class UserController < ApplicationController
       @comments = User.stats(@users.first.id)
       @votes = @comments.select{|x| x["reason"] == 'vote'}
       @submits = @comments.select{|x| x["reason"] == 'submit'}
-      @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
+      @finalizings = @comments.select{|x| x["reason"] == 'finalizing'}
       @calc_date = ''
       respond_to do |format|
         format.html { render "usage_stats"; return }
