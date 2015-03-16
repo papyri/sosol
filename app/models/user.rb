@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
       stats = ActiveRecord::Base.connection.execute("select p.title AS pub_title, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at, p.status AS pub_status from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{user_id} ORDER BY c.created_at;")
       stats.each {|row|
         row["created_at"] = DateTime.parse(row["created_at"])
-        row["comment"] = URI.unescape(row["comment"])
+        row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
         }
     end
   end
