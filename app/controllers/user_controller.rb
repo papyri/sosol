@@ -14,7 +14,7 @@ class UserController < ApplicationController
 
   #default view of stats is only for the current user, see below for all users
   def usage_stats
-    @comments = ActiveRecord::Base.connection.execute("select p.title AS pub_title, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at, p.status AS pub_status from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{@current_user.id} ORDER BY c.created_at;")
+    @comments = User.stats(@current_user.id)
     @votes = @comments.select{|x| x["reason"] == 'vote'}
     @submits = @comments.select{|x| x["reason"] == 'submit'}
     @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
@@ -65,13 +65,16 @@ class UserController < ApplicationController
 
   #default view of stats for the user name entered/linked to
   def show
-    @users = [User.find_by_name(params[:user_name])]
-    if !@users.compact.empty?
+    @comments = User.stats(@current_user.id)
+    @votes = @comments.select{|x| x["reason"] == 'vote'}
+    @submits = @comments.select{|x| x["reason"] == 'submit'}
+    @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
+    if @comments.length > 0
       @calc_date = ''
       respond_to do |format|
         format.html { render "usage_stats"; return }
-        format.json { render :json => @users.first }
-        format.xml  { render :xml => @users.first }
+        format.json { render :json => @comments }
+        format.xml  { render :xml => @comments }
       end
     else
       flash[:error] = "User not found."
