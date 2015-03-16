@@ -4,7 +4,7 @@
       %span.comment
         - if comment['pub_title']
           = link_to comment['pub_title'], "publications/#{comment['pub_id']}"
-          - case comment.reason
+          - case comment['reason']
             - when 'vote'
               = "(" + comment['id_title'] + ") &nbsp;".html_safe + "Vote "
             - when 'submit'
