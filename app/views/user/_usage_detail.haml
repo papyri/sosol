@@ -13,6 +13,6 @@
               - if comment['id_title']
                 = "(" + comment['id_title'] + ") &nbsp;".html_safe
           = h comment['comment']
-          = comment['created_at'].to_formatted_s(:long)
+          = DateTime.parse(comment['created_at']).to_formatted_s(:long)
 
       %br
