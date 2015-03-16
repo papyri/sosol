@@ -65,16 +65,17 @@ class UserController < ApplicationController
 
   #default view of stats for the user name entered/linked to
   def show
-    @comments = User.stats(@current_user.id)
-    @votes = @comments.select{|x| x["reason"] == 'vote'}
-    @submits = @comments.select{|x| x["reason"] == 'submit'}
-    @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
-    if @comments.length > 0
+    @users = [User.find_by_name(params[:user_name])]
+    if !@users.compact.empty?
+      @comments = User.stats(@users.first.id)
+      @votes = @comments.select{|x| x["reason"] == 'vote'}
+      @submits = @comments.select{|x| x["reason"] == 'submit'}
+      @finalizings = @comments.select{|x| x["reason"] == 'finalize'}
       @calc_date = ''
       respond_to do |format|
         format.html { render "usage_stats"; return }
-        format.json { render :json => @comments }
-        format.xml  { render :xml => @comments }
+        format.json { render :json => @users.first }
+        format.xml  { render :xml => @users.first }
       end
     else
       flash[:error] = "User not found."
