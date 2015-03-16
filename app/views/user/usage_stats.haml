@@ -1,7 +1,7 @@
 #main
 
   #usage_stats
-    - user = @current_user
+    - user = @users.first
     %h2= user.human_name
     - if user.affiliation
       %h3= user.affiliation
