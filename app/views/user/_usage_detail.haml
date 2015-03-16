@@ -1,18 +1,17 @@
 #div
   %div{:id => "#{type}_list_#{user.id}"}
     - comments.each do |comment|
-      %span.comment
-        - if comment['pub_title']
+      - if comment['pub_title']
+        %span.comment
           = link_to comment['pub_title'], "publications/#{comment['pub_id']}"
           - case comment['reason']
             - when 'vote'
-              = "(" + comment['id_title'] + ") &nbsp;".html_safe + "Vote "
+              = "(" + comment['id_title'] + ")  ".html_safe + "Vote "
             - when 'submit'
-              = " (" + comment['pub_status'] + ") &nbsp;".html_safe
+              = " (" + comment['pub_status'] + ")  ".html_safe
             - when 'finalizing'
               - if comment['id_title']
-                = "(" + comment['id_title'] + ") &nbsp;".html_safe
+                = "(" + comment['id_title'] + ")  ".html_safe
           = h comment['comment']
           = comment['created_at'].to_formatted_s(:long)
-
-      %br
+        %br
