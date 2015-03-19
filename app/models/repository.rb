@@ -22,7 +22,7 @@ end
 
 class Repository
   attr_reader :master, :path, :repo, :jgit_repo
-  
+
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
   def initialize(master = nil)
@@ -37,11 +37,11 @@ class Repository
         end
       end
       FileUtils.mkdir_p(File.join(Sosol::Application.config.repository_root, @master_class_path))
-      
+
       @path = File.join(Sosol::Application.config.repository_root,
                         @master_class_path, "#{master.name}.git")
     end
-    
+
     @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
     if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
@@ -56,11 +56,11 @@ class Repository
       @jgit_repo = nil
     end
   end
-  
+
   def owner
     return @master
   end
-  
+
   def exists?(path)
     # master.has_repository?
     File.exists?(path)
@@ -76,18 +76,18 @@ class Repository
       Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace}")
     end
   end
-  
+
   def destroy
     # master.update_attribute :has_repository, false
     # destroy a git repository
-    
+
     # BEFORE DELETION: REPACK CANONICAL
     # This will pull in all objects regardless of alternates/shared status.
     # If you delete an alternates-referenced repository without repacking,
     # referenced objects will disappear, possibly making the repo unusable.
     begin
       @canonical.git.repack({})
-    
+
       canon = Repository.new
       canon.del_alternates(self)
       `rm -r "#{path}"`
@@ -96,7 +96,7 @@ class Repository
       self.destroy
     end
   end
-  
+
   #returns the blob that represents the given file
   #the given file is the filename + path to the file
   def get_blob_from_branch(file, branch = 'master')
@@ -134,12 +134,12 @@ class Repository
       return nil
     end
   end
-  
-  def get_file_from_branch(file, branch = 'master')  
+
+  def get_file_from_branch(file, branch = 'master')
     blob = get_blob_from_branch(file, branch)
     return get_blob_data(blob)
   end
-  
+
   def get_blob_data(blob)
     begin
       # blob.data gets INSANELY slow for large files in a large repo,
@@ -157,12 +157,12 @@ class Repository
       get_blob_data(blob)
     end
   end
-  
+
   def get_all_files_from_path_on_branch(path = '', branch = 'master')
     root_tree = @repo.tree(branch, [path]).contents.first
     return recurse_git_tree(root_tree, [path])
   end
-  
+
   def recurse_git_tree(tree, path)
     files = []
     tree.blobs.each do |blob|
@@ -175,15 +175,15 @@ class Repository
     end
     return files
   end
-  
+
   def get_log_for_file_from_branch(file, branch = 'master')
     @repo.log(branch, file, :follow => true).map{|commit| commit.to_hash}
   end
-  
+
   def update_master_from_canonical
     @repo.update_ref('master',@canonical.get_head('master').commit.id)
   end
-  
+
   def create_branch(name, source_name = 'master')
     # We always assume we want to branch from master by default
     if source_name == 'master'
@@ -197,11 +197,11 @@ class Repository
       Rails.logger.error("create_branch exception: #{e.inspect}\n#{e.backtrace}")
     end
   end
-  
+
   def delete_branch(name)
     org.eclipse.jgit.api.Git.new(@jgit_repo).branchDelete().setBranchNames("refs/heads/#{name}").setForce(true).call()
   end
-  
+
   #(from_branch, to_branch, from_repo)
   def copy_branch_from_repo(branch, new_branch, other_repo)
     # Lightweight (but have to watch out for side-effects of repo deletion):
@@ -212,7 +212,7 @@ class Repository
     Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     self.create_branch(new_branch, other_repo.name + "/" + branch)
   end
-  
+
   def add_remote(other_repo)
     remote_configs = org.eclipse.jgit.transport.RemoteConfig.getAllRemoteConfigs(@jgit_repo.getConfig()).to_a
     unless remote_configs.map{|c| c.getName()}.include?(other_repo.name)
@@ -221,17 +221,21 @@ class Repository
       remote_config.update(@jgit_repo.getConfig())
     end
   end
-  
+
   def fetch_objects(other_repo, branch = nil)
     Rails.logger.debug("fetch_objects: #{other_repo.name}, #{branch}")
+    Rails.logger.debug("Adding remote #{other_repo.name}")
     self.add_remote(other_repo)
+    Rails.logger.degub("Remote added")
     begin
       fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
       fetch_command.setRemote(other_repo.name)
       unless branch.nil?
         fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
       end
+      Rails.logger.debug("Running fetch")
       result = fetch_command.call()
+      Rails.logger.debug("Fetch complete")
       unless branch.nil?
         update = result.getTrackingRefUpdate("refs/remotes/" + other_repo.name + "/" + branch)
         if update.nil?
@@ -247,23 +251,23 @@ class Repository
       Rails.logger.error("fetch transport exception: #{e.inspect}\n#{e.backtrace}")
     end
   end
-  
+
   def name
     return [@master_class_path, @master.name].join('/').tr(' ', '_')
   end
-  
+
   def add_alternates(other_repo)
     @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
   end
-  
+
   def del_alternates(other_repo)
     @repo.alternates = @repo.alternates() - [ File.join(other_repo.repo.path, "objects") ]
   end
-  
+
   def branches
     org.eclipse.jgit.api.Git.new(@jgit_repo).branchList().call().map{|e| e.getName().sub(/^refs\/heads\//,'')}
   end
-  
+
   def rename_file(original_path, new_path, branch, comment, actor)
     content = get_file_from_branch(original_path, branch)
     new_blob = get_blob_from_branch(new_path, branch)
@@ -274,7 +278,7 @@ class Repository
     elsif !new_blob.nil?
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
-    
+
     # TODO: just get the object id instead of reinserting
     inserter = @jgit_repo.newObjectInserter()
     file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
@@ -302,7 +306,7 @@ class Repository
                  # nil,
                  # branch)
   end
-  
+
   # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor)
     if @path == Sosol::Application.config.canonical_repository
@@ -314,7 +318,7 @@ class Repository
       file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, data.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
 
       last_commit_id = @jgit_repo.resolve(branch)
-      
+
       jgit_tree = JGit::JGitTree.new()
       jgit_tree.load_from_repo(@jgit_repo, branch)
       jgit_tree.add_blob(file, file_id.name())
@@ -327,12 +331,12 @@ class Repository
       return nil
     end
   end
-  
+
   def self.increase_timeout
     Grit::Git.git_timeout *= 2
     Rails.logger.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
-  
+
   def safe_repo_name(name)
     java.text.Normalizer.normalize(name.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
   end
