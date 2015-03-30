@@ -33,15 +33,15 @@ Sosol::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  # Configure custom application parameters
-  config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
-  config.canonical_canonical_repository = config.canonical_repository
-  config.canonical_repository = File.join(config.repository_root, 'canonical.git')
-
   # config/environments/test_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
   # We set a placeholder RPX realm here for the test environment
   config.rpx_realm = 'sosol-test'
   require File.join(File.dirname(__FILE__), 'test_secret')
+
+  # Configure custom application parameters
+  config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
+  config.canonical_canonical_repository = config.canonical_repository
+  config.canonical_repository = File.join(config.repository_root, 'canonical.git')
 end
