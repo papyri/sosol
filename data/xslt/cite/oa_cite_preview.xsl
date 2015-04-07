@@ -41,12 +41,12 @@
                     <xsl:if test="matches($resource,.)">
                         <xsl:variable name="createLink">
                             <xsl:if test="$e_createConverted = true()">
-                                <div class="oac_create_link"><a class="oa_agent_convert_create" href="convert?resource={encode-for-uri($resource)}&amp;format=json&amp;create=1">Create as Annotation</a></div>
+                                <div class="oac_create_link"><a class="oa_agent_convert_create" href="convert?resource={encode-for-uri(normalize-space($resource))}&amp;format=json&amp;create=1">Create as Annotation</a></div>
                             </xsl:if>
                         </xsl:variable>
                         <div class="oac_convert">
                             <div class="oac_convert_preview"></div>
-                            <div class="oac_convert_link"><a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri($resource)}&amp;format=json">Export Conversion</a></div>
+                            <div class="oac_convert_link"><a class="oa_agent_convert" target="_new" href="convert?resource={encode-for-uri(normalize-space($resource))}&amp;format=json">Export Conversion</a></div>
                             <xsl:copy-of select="$createLink"/>
                         </div>         
                     </xsl:if>      

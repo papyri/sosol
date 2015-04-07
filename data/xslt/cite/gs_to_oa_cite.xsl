@@ -184,7 +184,7 @@
     <xsl:template name="make_hypothesis_annotation">    
         <annotation>
             <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#highlighting"/>
-            <body rdf:resource="{gsx:hypothesislink}"/>
+            <body rdf:resource="{normalize-space(gsx:hypothesislink)}"/>
         </annotation>
     </xsl:template>
     
