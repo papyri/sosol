@@ -124,6 +124,19 @@
     <citeCollection
         canonicalId="urn"
         class=""
+        name="vortextb"
+        description="Vortex Thematic Annotations">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+    </citeCollection>
+   <citeCollection
+        canonicalId="urn"
+        class=""
         name="align"
         description="Translation Alignment Collection">
         <namespaceMapping
