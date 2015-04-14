@@ -343,7 +343,7 @@ production:
           :id_param: 'doc'
           :text: "View in Alpheios"
         :create:
-          :href: "http://sosol.perseids.org/alpheios/app/align-entersentence-perseids.xhtml?"
+          :href: "http://www.perseids.org/apps/alignment?"
           :id_param: 'doc'
           :text: 'New Text Alignment'
   oa_editor:
