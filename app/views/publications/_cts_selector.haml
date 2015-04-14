@@ -142,3 +142,6 @@
           = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
         %li
           = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import' )
+        %li
+          - tm = Tools::Manager.link_to('theme_editor','arethusa',:create,[])
+          = link_to tm[:text], tm[:href], html_options = {'target' => tm[:target]} 

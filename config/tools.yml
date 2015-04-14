@@ -40,6 +40,23 @@ development:
             :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
             :id_param: 'doc'
             :text: 'New Treebank Annotation'
+  theme_editor:
+    arethusa:
+        :text: 'Arethusa'
+        :uri: 'http://github.com/latin-language-toolkit/arethusa'
+        :actions:
+          :edit:
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
+            :id_param: 'doc'
+            :text: "Edit in Arethusa"
+          :view:
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :id_param: 'doc'
+            :text: "Preview in Arethusa"
+          :create:
+            :href: "http://localhost/apps/thematic"
+            :id_param: 'doc'
+            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -159,6 +176,23 @@ test:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  theme_editor:
+    arethusa:
+        :text: 'Arethusa'
+        :uri: 'http://github.com/latin-language-toolkit/arethusa'
+        :actions:
+          :edit:
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
+            :id_param: 'doc'
+            :text: "Edit in Arethusa"
+          :view:
+            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :id_param: 'doc'
+            :text: "Preview in Arethusa"
+          :create:
+            :href: "http://localhost/apps/thematic"
+            :id_param: 'doc'
+            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -278,6 +312,23 @@ production:
           :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  theme_editor:
+    arethusa:
+        :text: 'Arethusa'
+        :uri: 'http://github.com/latin-language-toolkit/arethusa'
+        :actions:
+          :edit:
+            :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
+            :id_param: 'doc'
+            :text: "Edit in Arethusa"
+          :view:
+            :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :id_param: 'doc'
+            :text: "Preview in Arethusa"
+          :create:
+            :href: "http://www.perseids.org/apps/thematic"
+            :id_param: 'doc'
+            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
