@@ -26,7 +26,7 @@ describe HypothesisClient::MapperPrototype do
     end
 
     it 'mapped the sourceText' do 
-      expect(mapped[:data]["hasTarget"]["hasSource"]["@id"]).to eq("#{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:diomedes_1")
+      expect(mapped[:data]["hasTarget"]["hasSource"]["@id"]).to eq("#{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:D.diomedes_1")
     end
     
     it 'mapped the motivation' do
@@ -34,7 +34,7 @@ describe HypothesisClient::MapperPrototype do
     end
 
     it 'made a title' do
-      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001:6.222 identifies II. 6.222 as citation in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:diomedes_1")
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001:6.222 identifies II. 6.222 as citation in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:D.diomedes_1")
     end
 
   end
@@ -113,7 +113,7 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"][1]["cnt:chars"]).to eq("Abas")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@type"]).to eq(HypothesisClient::MapperPrototype::JOTH::LAWD_CITATION)
-      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1 describes *)Abai=os) with an attestation of Abas in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:clytaemnestra_1")
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1 describes *)Abai=os) with an attestation of Abas in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:C.clytaemnestra_1")
     end
   end
   context "cts urn test" do

@@ -126,9 +126,12 @@ module HypothesisClient::MapperPrototype
         if (parts) 
            # normalize the person - should be lower case
            name = parts[1].downcase
+           # smiths has a 2 level cite scheme with the first level being
+           # the alphabetical grouping
+           entry = name[0].upcase!
            model[:motivation] ="oa:identifying"
            model[:targetPerson] = "#{SMITH_PERSON_URI}#{name}#{parts[2]}#this" 
-           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{name}#{parts[2].sub!(/-/,'_')}"
+           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{entry}.#{name}#{parts[2].sub!(/-/,'_')}"
            model[:bodyUri] = []
            model[:bodyCts] = []
            model[:relationTerms] = []
