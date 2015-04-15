@@ -100,6 +100,8 @@ module HypothesisClient::MapperPrototype
         data["tags"].each do |t|
           # we do some normalization here in case tags merged
           t.split(/\s+/).each do |s|
+            # also make sure we have lower case
+            s.downcase!
             body_tags[s] = 1
           end # end split iteration
         end #end data tags iteration
@@ -122,9 +124,11 @@ module HypothesisClient::MapperPrototype
       if SMITH_HOPPER_URI.match(data["uri"])
         parts = SMITH_BIO_ENTRY_MATCH.match(data["uri"])
         if (parts) 
+           # normalize the person - should be lower case
+           name = parts[1].downcase
            model[:motivation] ="oa:identifying"
-           model[:targetPerson] = "#{SMITH_PERSON_URI}#{parts[1]}#{parts[2]}#this" 
-           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{parts[1]}#{parts[2].sub!(/-/,'_')}"
+           model[:targetPerson] = "#{SMITH_PERSON_URI}#{name}#{parts[2]}#this" 
+           model[:targetCTS] = "#{SMITH_TEXT_CTS}:#{name}#{parts[2].sub!(/-/,'_')}"
            model[:bodyUri] = []
            model[:bodyCts] = []
            model[:relationTerms] = []

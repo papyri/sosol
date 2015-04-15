@@ -1,0 +1,74 @@
+{
+    "updated": "2015-04-07T16:03:38.807314+00:00", 
+    "target": [
+        {
+            "source": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:entry=antigone-bio-1", 
+            "pos": {
+                "top": 456.566650390625, 
+                "height": 19
+            }, 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]/p[1]", 
+                    "endContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]/p[1]", 
+                    "startOffset": 406, 
+                    "endOffset": 412
+                }, 
+                {
+                    "start": 3178, 
+                    "end": 3184, 
+                    "type": "TextPositionSelector"
+                }, 
+                {
+                    "type": "TextQuoteSelector", 
+                    "prefix": "s eyes, and was obliged to quit", 
+                    "exact": "Thebes", 
+                    "suffix": ", he went to Attica guided and a"
+                }, 
+                {
+                    "type": "FragmentSelector", 
+                    "value": ""
+                }
+            ]
+        }
+    ], 
+    "created": "2015-02-16T19:30:39.838482+00:00", 
+    "text": " http://pleiades.stoa.org/places/541138 ", 
+    "tags": [
+        "place", 
+        "joth"
+    ], 
+    "uri": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:entry=antigone-bio-1", 
+    "user": "acct:bkeena01@hypothes.is", 
+    "document": {
+        "eprints": {}, 
+        "title": "\n\nA Dictionary of Greek and Roman biography and mythology,\nAnti'gone  \n", 
+        "twitter": {}, 
+        "dc": {}, 
+        "prism": {}, 
+        "highwire": {}, 
+        "link": [
+            {
+                "href": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:entry=antigone-bio-1"
+            }
+        ], 
+        "facebook": {}
+    }, 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "id": "kYl8s2BgQomSA6b-6RmqPg", 
+    "permissions": {
+        "admin": [
+            "acct:bkeena01@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "update": [
+            "acct:bkeena01@hypothes.is"
+        ], 
+        "delete": [
+            "acct:bkeena01@hypothes.is"
+        ]
+    }
+}

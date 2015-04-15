@@ -1,0 +1,53 @@
+{
+  "@context": "http://www.w3.org/ns/oa-context-20130208.json",
+  "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.6b0dbec1afe4013264d10ada42b1fd09",
+  "annotatedBy": {
+    "@type": "foaf:Person",
+    "@id": "http://data.perseus.org/sosol/users/Steve"
+    },
+  "@type": "oa:Annotation",
+  "dcterms:source": "https://hypothes.is/api/annotations/EBomMyWfRsmJMAhOVtODXg",
+  "dcterms:title": "http://data.perseus.org/people/smith:eetion-1#this identifies Eetion as snap:FatherOf in urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:andromache_1",
+  "annotatedAt": "2015-03-13T17:45:19.964839+00:00",
+  "motivatedBy": "oa:identifying",
+  "serializedBy": {
+    "@id": "https://hypothes.is",
+    "@type": "prov:SoftwareAgent"
+    },
+  "hasTarget": {
+    "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.6b0dbec1afe4013264d10ada42b1fd09#target-1",
+    "@type": "oa:SpecificResource",
+    "hasSource": {
+      "@id": "urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:andromache_1"
+            },
+    "hasSelector": {
+      "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.6b0dbec1afe4013264d10ada42b1fd09#target-1-sel-1",
+      "@type": "oa:TextQuoteSelector",
+      "exact": "Eetion",
+      "prefix": "ache （Ἀνδρομάχη), a daughter of",
+      "suffix": ", king of the Cilician Thebae, a"
+            }
+    },
+  "hasBody": {
+    "@context": {
+      "snap": "http://onto.snapdrgn.net/snap#",
+      "lawd": "http://lawd.info/ontology/",
+      "perseusrdf": "http://data.perseus.org/rdfvocab/addons/"
+            },
+    "@graph": [
+      {
+        "@id": "http://data.perseus.org/people/smith:andromache-1#this",
+        "snap:has-bond": {
+          "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.6b0dbec1afe4013264d10ada42b1fd09#bond-1"
+                                        }
+                        },
+      {
+        "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.6b0dbec1afe4013264d10ada42b1fd09#bond-1",
+        "@type": "snap:FatherOf",
+        "snap:bond-with": {
+          "@id": "http://data.perseus.org/people/smith:eetion-1#this"
+                                        }
+                        }
+    ]
+    }
+}

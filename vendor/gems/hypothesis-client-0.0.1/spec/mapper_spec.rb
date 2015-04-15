@@ -157,4 +157,24 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["annotatedBy"]['@id']).to eq('http://example.org/user/abc')
     end
   end
+  context "place test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'place2.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'produced oa' do 
+      expect(mapped[:errors]).to match_array([])
+      expect(mapped[:data]).to be_truthy
+    end
+  end
+  context "attestation plus case test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'attest2.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'graphed the attestation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:describing")
+      expect(mapped[:data]["hasBody"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
+    end
+  end
 end
