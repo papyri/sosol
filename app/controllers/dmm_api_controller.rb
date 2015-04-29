@@ -68,12 +68,17 @@ class DmmApiController < ApplicationController
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         #cleanup if we created a publication
-        if (params[:publication_id])
+        if (!params[:publication_id])
           @publication.destroy
         end
         return render :xml => "<error>#{e}</error>", :status => 500
       end
     rescue Exception => e
+      Rails.logger.error(e.backtrace)
+        #cleanup if we created a publication
+      if (!params[:publication_id])
+        @publication.destroy
+      end
       return render :xml => "<error>#{e}</error>", :status => 500
     end
     return render :xml => "<item>#{new_identifier_uri.id}</item>"
