@@ -230,6 +230,7 @@ class Repository
     begin
       fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
       fetch_command.setRemote(other_repo.name)
+      fetch_command.setThin(false)
       unless branch.nil?
         fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
       end
