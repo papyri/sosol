@@ -107,6 +107,36 @@
     <citeCollection
         canonicalId="urn"
         class=""
+        name="misctb"
+        description="MiscTreebank Collection">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Treebank URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Treebank Data"
+            name="xml"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="vortextb"
+        description="Vortex Thematic Annotations">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+    </citeCollection>
+   <citeCollection
+        canonicalId="urn"
+        class=""
         name="align"
         description="Translation Alignment Collection">
         <namespaceMapping
@@ -126,6 +156,25 @@
         class=""
         name="pdlcomm"
         description="Perseus General Commentary Collection"
+        description="Commentary Collection"
+        x-perseidsdefault="true">
+        <namespaceMapping
+            abbr="perseus"
+            fullValue="http://data.perseus.org/ns/collections"/>
+        <citeProperty
+            label="Annotation URN"
+            name="urn"
+            type="citeurn"/>
+        <citeProperty
+            label="Annotation"
+            name="oac"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="urn"
+        class=""
+        name="pdlann"
+        description="General Annotation Collection"
         x-perseidsdefault="true">
         <namespaceMapping
             abbr="perseus"

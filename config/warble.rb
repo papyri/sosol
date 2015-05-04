@@ -78,6 +78,11 @@ Warbler::Config.new do |config|
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
   
   # config.gems << "jruby-openssl"
+  # config.gems << "jruby-openssl"
+  # config.gems << "mediawiki_api"
+  # config.gems << "faraday"
+  # config.gems << "faraday-cookie_jar"
+  # config.gems << "hypothesis-client"
 
   # Include gem dependencies not mentioned specifically
   # config.gem_dependencies = true

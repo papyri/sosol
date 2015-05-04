@@ -5,6 +5,23 @@ class AlignmentCiteIdentifiersController < IdentifiersController
   before_filter :ownership_guard, :only => [:update, :updatexml]
 
 
+  def update_title
+    find_identifier
+    # TODO if we start keeping the title in the contents of the file
+    # then we need to update the xml too but for now this is only a field
+    # on the model in the mysql db
+    if @identifier.update_attributes(params[:alignment_cite_identifier])
+      flash[:notice] = 'Title was successfully updated.'
+    else
+      flash[:error] = 'Unable to update title'
+    end
+    redirect_to :action =>"edit",:id=>params[:id]
+  end
+
+  def edit_title
+    find_identifier
+  end
+
   # responds to a request to create a new file
   # @param
   def create

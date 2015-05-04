@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <Annotation xmlns="http://www.w3.org/ns/oa#">
+    <memberOf xmlns="http://purl.org/dc/dcam/" rdf:resource="urn:cite:perseus:testcoll"  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <hasTarget xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:cts:latinLit:tg.work.edition:1.1"/>
+    <hasBody xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:uuidd0e1"/>
+    <isMotivatedBy xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="oa:linking"/>
+    <serializedBy>
+      <SoftwareAgent xmlns="http://www.w3.org/ns/prov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://services.perseids.org/llt/segtok"/>
+    </serializedBy>
+    <serializedAt/>
+  </Annotation>
+  <ContentAsXML xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="urn:uuidd0e1">
+    <cnt:rest xmlns:cnt="http://www.w3.org/2008/content#" rdf:parseType="Literal">
+<aligned-text xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://alpheios.net/namespaces/aligned-text" xsi:schemaLocation="http://alpheios.net/namespaces/aligned-text ../../../../../workspace/schemas/trunk/aligned-text.xsd">
+  <language lnum="L1" xml:lang="greek" dir="ltr"/>
+  <language lnum="L2" xml:lang="en" dir="ltr"/>
+  <comment class="title">Automatic Alignment of Plato's Apology (Sentences 1-2)</comment>
+  <sentence id="1" document_id="cite/perseus/align.1.1,s=0">
+    <wds lnum="L1">
+      <comment class="uri">Perseus-text-1999.01.0169-0-sen=0</comment>
+      <w n="1-1">
+        <text>τί</text>
+        <refs nrefs="1-1"/>
+      </w>
+      <w n="1-2">
+        <text>νεώτερον</text>
+        <refs nrefs="1-2"/>
+      </w>
+      <w n="1-3">
+        <text>,</text>
+        <refs nrefs="1-6"/>
+      </w>
+      <w n="1-4">
+        <text>ὦ</text>
+      </w>
+      <w n="1-5">
+        <text>Σώκρατες</text>
+        <refs nrefs="1-7"/>
+      </w>
+      <w n="1-6">
+        <text>,</text>
+      </w>
+      <w n="1-7">
+        <text>γέγονεν</text>
+        <refs nrefs="1-3"/>
+      </w>
+      <w n="1-8">
+        <text>,</text>
+        <refs nrefs="1-8"/>
+      </w>
+      <w n="1-9">
+        <text>ὅτι</text>
+        <refs nrefs="1-9"/>
+      </w>
+      <w n="1-10">
+        <text>σὺ</text>
+        <refs nrefs="1-10"/>
+      </w>
+      <w n="1-11">
+        <text>τὰς</text>
+        <refs nrefs="1-14"/>
+      </w>
+      <w n="1-12">
+        <text>ἐν</text>
+        <refs nrefs="1-16"/>
+      </w>
+      <w n="1-13">
+        <text>Λυκείῳ</text>
+        <refs nrefs="1-18"/>
+      </w>
+      <w n="1-14">
+        <text>καταλιπὼν</text>
+        <refs nrefs="1-12"/>
+      </w>
+      <w n="1-15">
+        <text>διατριβὰς</text>
+        <refs nrefs="1-13"/>
+      </w>
+      <w n="1-16">
+        <text>ἐνθάδε</text>
+      </w>
+      <w n="1-17">
+        <text>νῦν</text>
+        <refs nrefs="1-21"/>
+      </w>
+      <w n="1-18">
+        <text>διατρίβεις</text>
+        <refs nrefs="1-22"/>
+      </w>
+      <w n="1-19">
+        <text>περὶ</text>
+      </w>
+      <w n="1-20">
+        <text>τὴν</text>
+      </w>
+      <w n="1-21">
+        <text>τοῦ</text>
+      </w>
+      <w n="1-22">
+        <text>βασιλέως</text>
+        <refs nrefs="1-27"/>
+      </w>
+      <w n="1-23">
+        <text>στοάν</text>
+        <refs nrefs="1-24"/>
+      </w>
+      <w n="1-24">
+        <text>;</text>
+        <refs nrefs="1-30"/>
+      </w>
+    </wds>
+    <wds lnum="L2">
+      <comment class="uri">Perseus-text-1999.01.0170-0-sen=0</comment>
+      <w n="1-1">
+        <text>what</text>
+        <refs nrefs="1-1"/>
+      </w>
+      <w n="1-2">
+        <text>strange</text>
+        <refs nrefs="1-2"/>
+      </w>
+      <w n="1-3">
+        <text>thing</text>
+        <refs nrefs="1-7"/>
+      </w>
+      <w n="1-4">
+        <text>has</text>
+      </w>
+      <w n="1-5">
+        <text>happened</text>
+      </w>
+      <w n="1-6">
+        <text>,</text>
+        <refs nrefs="1-3"/>
+      </w>
+      <w n="1-7">
+        <text>socrates</text>
+        <refs nrefs="1-5"/>
+      </w>
+      <w n="1-8">
+        <text>,</text>
+        <refs nrefs="1-8"/>
+      </w>
+      <w n="1-9">
+        <text>that</text>
+        <refs nrefs="1-9"/>
+      </w>
+      <w n="1-10">
+        <text>you</text>
+        <refs nrefs="1-10"/>
+      </w>
+      <w n="1-11">
+        <text>have</text>
+      </w>
+      <w n="1-12">
+        <text>left</text>
+        <refs nrefs="1-14"/>
+      </w>
+      <w n="1-13">
+        <text>your</text>
+        <refs nrefs="1-15"/>
+      </w>
+      <w n="1-14">
+        <text>accustomed</text>
+        <refs nrefs="1-11"/>
+      </w>
+      <w n="1-15">
+        <text>haunts</text>
+      </w>
+      <w n="1-16">
+        <text>in</text>
+        <refs nrefs="1-12"/>
+      </w>
+      <w n="1-17">
+        <text>the</text>
+      </w>
+      <w n="1-18">
+        <text>lyceum</text>
+        <refs nrefs="1-13"/>
+      </w>
+      <w n="1-19">
+        <text>and</text>
+      </w>
+      <w n="1-20">
+        <text>are</text>
+      </w>
+      <w n="1-21">
+        <text>now</text>
+        <refs nrefs="1-17"/>
+      </w>
+      <w n="1-22">
+        <text>haunting</text>
+        <refs nrefs="1-18"/>
+      </w>
+      <w n="1-23">
+        <text>the</text>
+      </w>
+      <w n="1-24">
+        <text>portico</text>
+        <refs nrefs="1-23"/>
+      </w>
+      <w n="1-25">
+        <text>where</text>
+      </w>
+      <w n="1-26">
+        <text>the</text>
+      </w>
+      <w n="1-27">
+        <text>king</text>
+        <refs nrefs="1-22"/>
+      </w>
+      <w n="1-28">
+        <text>archon</text>
+      </w>
+      <w n="1-29">
+        <text>sits</text>
+      </w>
+      <w n="1-30">
+        <text>?</text>
+        <refs nrefs="1-24"/>
+      </w>
+    </wds>
+  </sentence>
+  <sentence id="2" document_id="cite/perseus/align.1.1,s=1">
+    <wds lnum="L1">
+      <comment class="uri">Perseus-text-1999.01.0169-0-sen=1</comment>
+      <w n="2-1">
+        <text>οὐ</text>
+        <refs nrefs="2-3"/>
+      </w>
+      <w n="2-2">
+        <text>γάρ</text>
+        <refs nrefs="2-1"/>
+      </w>
+      <w n="2-3">
+        <text>που</text>
+      </w>
+      <w n="2-4">
+        <text>καὶ</text>
+      </w>
+      <w n="2-5">
+        <text>σοί</text>
+        <refs nrefs="2-6"/>
+      </w>
+      <w n="2-6">
+        <text>γε</text>
+      </w>
+      <w n="2-7">
+        <text>δίκη</text>
+        <refs nrefs="2-8 2-9"/>
+      </w>
+      <w n="2-8">
+        <text>τις</text>
+      </w>
+      <w n="2-9">
+        <text>οὖσα</text>
+      </w>
+      <w n="2-10">
+        <text>τυγχάνει</text>
+      </w>
+      <w n="2-11">
+        <text>πρὸς</text>
+        <refs nrefs="2-10"/>
+      </w>
+      <w n="2-12">
+        <text>τὸν</text>
+      </w>
+      <w n="2-13">
+        <text>βασιλέα</text>
+        <refs nrefs="2-12"/>
+      </w>
+      <w n="2-14">
+        <text>ὥσπερ</text>
+        <refs nrefs="2-14"/>
+      </w>
+      <w n="2-15">
+        <text>ἐμοί</text>
+        <refs nrefs="2-15"/>
+      </w>
+      <w n="2-16">
+        <text>.</text>
+        <refs nrefs="2-17"/>
+      </w>
+    </wds>
+    <wds lnum="L2">
+      <comment class="uri">Perseus-text-1999.01.0170-0-sen=1</comment>
+      <w n="2-1">
+        <text>for</text>
+        <refs nrefs="2-2"/>
+      </w>
+      <w n="2-2">
+        <text>it</text>
+      </w>
+      <w n="2-3">
+        <text>cannot</text>
+        <refs nrefs="2-1"/>
+      </w>
+      <w n="2-4">
+        <text>be</text>
+      </w>
+      <w n="2-5">
+        <text>that</text>
+      </w>
+      <w n="2-6">
+        <text>you</text>
+        <refs nrefs="2-5"/>
+      </w>
+      <w n="2-7">
+        <text>have</text>
+      </w>
+      <w n="2-8">
+        <text>an</text>
+        <refs nrefs="2-7"/>
+      </w>
+      <w n="2-9">
+        <text>action</text>
+        <refs nrefs="2-7"/>
+      </w>
+      <w n="2-10">
+        <text>before</text>
+        <refs nrefs="2-11"/>
+      </w>
+      <w n="2-11">
+        <text>the</text>
+      </w>
+      <w n="2-12">
+        <text>king</text>
+        <refs nrefs="2-13"/>
+      </w>
+      <w n="2-13">
+        <text>,</text>
+      </w>
+      <w n="2-14">
+        <text>as</text>
+        <refs nrefs="2-14"/>
+      </w>
+      <w n="2-15">
+        <text>i</text>
+        <refs nrefs="2-15"/>
+      </w>
+      <w n="2-16">
+        <text>have</text>
+      </w>
+      <w n="2-17">
+        <text>.</text>
+        <refs nrefs="2-16"/>
+      </w>
+    </wds>
+  </sentence>
+  </aligned-text>
+    </cnt:rest>
+  </ContentAsXML>
+</RDF>

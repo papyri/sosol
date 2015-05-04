@@ -17,12 +17,13 @@
     %div{:class => ['nav_tools']}
       %ul{:class => ['nav_right','perseids_menu']}
         %li
-          = link_to 'Perseids Treebanking Pilot Links', 'http://sites.tufts.edu/perseids/projects/treebanking-pilots/'
-        %li
-          New Treebank Annotation
-          %ul{:class => ['perseids_sub_menu']}
-            - Tools::Manager.link_all('treebank_editor',:create,nil).each do |link|
-              %li
-                = link_to link[:text], link[:href], html_options = {'target' => link[:target]} 
+          - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
+          = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]} 
         %li      
-          = link_to 'New Alignment Annotation', url_for(:controller => 'cite_publications', :action => 'create_from_linked_urn', :type => 'Alignment', :urn => 'urn:cite:perseus:align')
+          - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
+          = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
+        %li
+          = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import' )
+        %li
+          - tm = Tools::Manager.link_to('theme_editor','arethusa',:create,[])
+          = link_to tm[:text], tm[:href], html_options = {'target' => tm[:target]} 

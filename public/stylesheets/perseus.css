@@ -131,6 +131,10 @@ ul.nav.right {
   font-size: 16px;
   color: #AAA;
 }
+table.results tr td {
+  word-wrap: break-word;
+}
+
 table.results a {
   color: #4183C4;
 }
@@ -139,6 +143,7 @@ table.results a:hover {
 }
 table.results tr:hover td {
   background-color: #E1F3FA;
+  word-wrap: break-word;
 }
 table.results tr.head:hover td {
   background-color: transparent;
@@ -485,6 +490,49 @@ li.editor_menu {
   font-style:italic;
   padding-right: .5em;
 }
+
+.oa_cite_annotation .oac_title {
+  font-weight: bold;
+}
+
+.oa_cite_annotation .oac_description {
+  font-size:smaller;
+}
+
+.oa_cite_annotation .oac_comment {
+  font-size:smaller;
+  font-style: italic;
+}
+
+.oa_cite_annotation .oac_source {
+  font-size:smaller;
+  margin-top: 1em;
+}
+
+.oa_cite_annotation .oac_label {
+  font-style:italic;
+  padding-right: .5em;
+}
+
+.oa_cite_annotation .oac_convert {
+    margin-left: .5em;
+    margin-top: .5em;
+
+}
+.oa_cite_annotation .oac_convert_title {
+    font-weight: bold;
+    font-size: larger;
+    color: black; 
+    background-color: #EAEAEA;
+}
+
+.oa_cite_annotation .oac_convert_preview pre, .oaj_cite_preview pre {
+    height: 400px;
+    overflow: scroll;
+    color: white;
+    background-color: black;
+}
+
 .edit_oac_identifier .cite_to, 
 .edit_oac_identifier .cite_from {
   width: 3em;
@@ -540,7 +588,7 @@ li.editor_menu {
   border: 1px dashed black;
 }
 
-.PContent .oac_annotation {
+.PContent .oac_annotation, .PContent .oa_cite_annotation {
 	padding-top: 1em;
 	padding-bottom: 1em;
 	border-bottom: 1px dashed black;
@@ -881,4 +929,8 @@ ul.perseids_menu li ul.perseids_sub_menu {
 ul.perseids_menu li:hover ul.perseids_sub_menu {
     display:block;
 }
-
+.betaflag {
+    vertical-align: super;
+    font-size: small;
+    color: red;
+}

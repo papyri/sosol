@@ -3,8 +3,9 @@
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
   
-  before_filter :authorize
+  before_filter :authorize, :except => [:api_item_info, :api_item_get]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
+  before_filter :update_cookie
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
@@ -12,18 +13,23 @@ class DmmApiController < ApplicationController
   def api_item_create
     begin
       # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
+      
       params[:raw_post] = request.raw_post
       unless (params[:comment]) 
         params[:comment] = "create_from_api"
       end
       identifier_class = identifier_type
       tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,params[:init_value])
-      # TODO errors should include links to existing publications
+      if (params[:init_value] && params[:init_value].length > 0)
+         check_match = params[:init_value]
+      else
+         check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
+      end
+      # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
+      # now because the syntax for find_matching_identifier is slightly 
+      # different for cts_identifier classes (3rd param is a boolean 
+      # for fuzzy matching in that case)
+      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
       if existing_identifiers.length > 1
         list = existing_identifiers.collect{ |p|p.name}.join(',')
         render :xml => "<error>Multiple conflicting identifiers( #{list})</error>", :status => 500
@@ -34,7 +40,8 @@ class DmmApiController < ApplicationController
           expire_publication_cache
           conflicting_publication.archive
         else
-           render :xml => "<error>Conflicting identifier.( #{existing_identifiers.first.name})</error>", :status => 500
+           links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
+           render :xml => "<error xmlns:xlink=\"http://www.w3.org/1999/xlink\">You have conflicting document(s) already being edited at #{links.join(" ")} .</error>", :status => 500
            return
         end
       end # end test of possible conflicts
@@ -53,16 +60,25 @@ class DmmApiController < ApplicationController
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
       end    
-      
-      agent = agent_of(params[:raw_post])
-      new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
+     
+      # separate begin/rescue block here because
+      # we only need to destroy the publication in rescue once we've 
+      # successfully created it
+      begin 
+        agent = AgentHelper::agent_of(params[:raw_post])
+        new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
+      rescue Exception => e
+        Rails.logger.error(e.backtrace)
+        #cleanup if we created a publication
+        if (params[:publication_id])
+          @publication.destroy
+        end
+        return render :xml => "<error>#{e}</error>", :status => 500
+      end
     rescue Exception => e
-      Rails.logger.error(e.backtrace)
-      render :xml => "<error>#{e}</error>", :status => 500
-      return   
+      return render :xml => "<error>#{e}</error>", :status => 500
     end
-    render :xml => "<item>#{new_identifier_uri.id}</item>"
-    return 
+    return render :xml => "<item>#{new_identifier_uri.id}</item>"
   end
 
   def api_item_append
@@ -73,16 +89,11 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
+        return
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
             
-      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
-      agent = agent_of(params[:raw_post])
+      agent = AgentHelper::agent_of(params[:raw_post])
 
       begin
         response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
@@ -110,25 +121,19 @@ class DmmApiController < ApplicationController
     end
     find_identifier
     if (@identifier.nil?)
-      render :xml => '<error>Unrecognized Identifier Type</error>', :status => 500
+        return render_error("Unable to locate Document")
     else
       # TODO we need to look at the etags to make sure we're editing the correct version
       
       # we need to expire the api_get cache for the identifier now that it's been updated
       expire_api_item_cache(params[:identifier_type],params[:id])
       
-      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
-      agent = agent_of(params[:raw_post])
       begin
-        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment]) 
+        agent = AgentHelper::agent_of(params[:raw_post])
+        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
-        render :xml => "<error>#{e}</error>", :status => 500
-        return
+        return render :xml => "<error>#{e}</error>", :status => 500
       end
       render :xml => response
     end
@@ -144,24 +149,9 @@ class DmmApiController < ApplicationController
   def api_item_get
     find_identifier
     if (@identifier.nil?)
-      render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
+       return
     else
-      # Set a cookie so that the calling app can access the session
-      # TODO this should be protected by OAuth
-      # for now limit the lifetime to an hour 
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
-      begin
-        resp = @identifier.api_get(params[:q]) 
-        render :xml => resp
-      rescue Exception => e
-        Rails.logger.error(e)
-        Rails.logger.error(e.backtrace)
-        render :xml => "<error>#{e}</error>", :status => 500
-      end
-      return
+      render :xml => @identifier.api_get(params[:q]) 
     end
   end
   
@@ -174,13 +164,8 @@ class DmmApiController < ApplicationController
   #           use X-CSRF-Token
   def api_item_info
     find_identifier
-    
     if (@identifier.nil?)
-      if (params[:format] == 'json')
-        render :json => {:error => "Unrecognized Identifier Type"}, :status => 500
-      else
-        render :xml => {:error => "Unrecognized Identifier Type"}, :status => 500
-      end
+      return
     else
       # build up some urls to send to the model
       urls = {}
@@ -213,8 +198,7 @@ class DmmApiController < ApplicationController
       Rails.logger.error(e)
     end   
     if (identifier_class.nil?)
-      flash[:error] = "Unrecognized Identifier Type"
-      redirect_to dashboard_url
+      return render_error("Unrecognized Identifier Type")
     else
       if (params[:id])
         redirect_to :controller => identifier_class_name.underscore.pluralize,
@@ -225,16 +209,95 @@ class DmmApiController < ApplicationController
       end
     end
   end
-  
+
+  # responds to a GET request for comments for an item
+  # @param [String] identifier_type
+  # @param [String] id - the unique id of the identifier
+  # @param [String] q - optional query filter for comment type (set to reason)
+  # @returns JSON object, array of comment objects
+  def api_item_comments_get
+    find_identifier
+    if (@identifier.nil?)
+      return
+    end
+    # we get comments on the origin only
+    comments = Comment.find_all_by_identifier_id(@identifier.origin.id, :order => 'created_at').reverse
+    comments = comments.collect{ | c | c.api_get }
+    if (params[:q])
+        comments = comments.select{ | c | c[:reason] == params[:q] }
+    end 
+    render :json => comments
+  end
+
+  # responds to a POST request to create/edit a comment
+  # @param [String] identifier_type
+  # @param [String] id - the unique id of the identifier
+  # Body of the post is expected to be a JSON object which mirrors the format
+  # of the api_item_comments_get response for an individual comment
+  # e.g. 
+  #   { 'reason':'review','comment':'comment text' }
+  #   { 'reason':'review','comment':'updated comment text', 'comment_id':'1' }
+  # for a new comment no comment_id is supplied
+  def api_item_comments_post
+    find_identifier
+    if (@identifier.nil?)
+      return
+    end
+
+    # set review as the the default reason for a comment if the 
+    # commenter is not the owne of the publication  - otherwise its general
+    default_reason = @identifier.origin.publication.owner_id != @current_user.id ? 'review' : 'general'
+    params[:reason] ||= default_reason
+    # hack - need better way to control allowed reasons for commit
+    if (params[:reason] !~ /^general|review$/)
+      return render_error("Invalid comment reason")
+    end 
+    rc = false
+    if (params[:comment_id]) 
+      comment = Comment.find(params[:comment_id].to_s)
+      # only update comments that belong to this identifier's origin
+      if (comment && comment.identifier_id == @identifier.origin.id)
+        comment.comment = params[:comment]
+      else 
+         return render_error("Invalid or Inaccessible Comment")
+      end
+    else 
+      # we set comments on the origin only
+      comment = Comment.new(
+        {  :identifier_id => @identifier.origin.id,
+           :publication_id => @identifier.publication.origin.id,
+           :user_id => @current_user.id,
+           :reason => params[:reason],
+           :comment => params[:comment],
+        })
+    end
+    if (comment.save)
+      render :json => comment.api_get()
+    else 
+      render_error('Unable to save comment')
+    end
+  end
+ 
+  ##
+  # API request to verify a session exists and set the csrf cookie
+  # @returns {String} JSON representation of the user info
+  #                   or 403 FORBIDDEN if no session can be established
+  ##
   def ping
-      cookies[:csrftoken] = {
-        :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
-      }
-      render :xml => 'OK' 
+      @current_user[:uri] = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
+      render :json => @current_user
   end
 
   protected
+
+    def update_cookie
+      cookies[:csrftoken] = {
+        :value => form_authenticity_token,
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now, # TODO configurable
+        :domain => Rails.configuration.action_controller.session[:domain]
+      }
+    end
+
     
     def identifier_type 
       identifier_class_name = "#{params[:identifier_type]}Identifier"        
@@ -249,8 +312,14 @@ class DmmApiController < ApplicationController
     
     def find_identifier
       identifier_class = identifier_type  
-      unless (identifier_class.nil?)
-        @identifier = identifier_class.find(params[:id])   
+      if (identifier_class.nil?)
+       return render_error("Invalid Identifier Type")
+      else
+        begin 
+          @identifier = identifier_class.find(params[:id])   
+        rescue 
+          render_error("Invalid Identifier")
+        end
       end
     end
     
@@ -258,37 +327,43 @@ class DmmApiController < ApplicationController
       @publication ||= Publication.find(params[:publication_id].to_s)
     end
 
-    def ownership_guard
-      find_identifier
-      if !@identifier.publication.mutable_by?(@current_user)
-        flash[:error] = 'Operation not permitted.'
-        redirect_to dashboard_url
+    def authorize
+      if @current_user.nil?
+        return render_forbidden('Unable to establish session')
       end
     end
-    
+
+
+    def ownership_guard
+      find_identifier
+      if @identifier && !@identifier.publication.mutable_by?(@current_user)
+        return render_forbidden('Operation not permitted.')
+      end
+    end
+
     def expire_api_item_cache(a_identifier_type,a_id)
       expire_fragment(:controller => 'dmm_api',
                       :action => 'api_item_get', 
                       :id => a_id,
                       :identifier_type => a_identifier_type)
     end
-    
-    # looks for the software agent in the data
-    # TODO we need to decide upon a standardized approach to this
-    def agent_of(a_data)
-      unless defined? @agents
-        @agents = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config agents.yml})).read).result)[:agents]
+
+    # renders an error response
+    def render_error(a_msg,a_format=:json)
+      if (a_format == 'json') 
+        render :json => {:error => a_msg}, :status => 500
+      else 
+        render :xml => "<error>#{a_msg}</error>", :status => 500
       end
-      agent = nil
-      a_data = a_data.force_encoding("UTF-8")
-      @agents.keys.each do | a_agent |
-        uri_match = @agents[a_agent][:uri_match]
-        if (a_data =~ /#{uri_match}/mu)
-          agent = @agents[a_agent]
-          break
-        end
+    end
+
+    # renders a forbidden error response
+    def render_forbidden(a_msg,a_format=:json)
+      if (a_format == 'json') 
+        render :json => {:error => a_msg}, :status => 403
+      else 
+        render :xml => "<error>#{a_msg}</error>", :status => 403
       end
-      return agent
     end
 
 end

@@ -351,8 +351,21 @@ class Identifier < ActiveRecord::Base
       
     content = before_commit(content)
     commit_sha = ""
+    # TODO - this logic seems wrong -- shouldn't it just
+    # be if !options[:validate] || is_valid_xml?(content) 
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
+    end
+
+    # this is a little bit of a hack -- if the before_commit
+    # call stores a postcommit version of the content then we
+    # do a 2nd commit so that we have a full history of the changes
+    # in the commit history
+    if self[:postcommit]  
+      if (! options[:validate] || is_valid_xml?(self[:postcommit]))
+        options[:comment] = self[:transform_messages]
+        commit_sha = self.set_content(self[:postcommit], options)
+      end
     end
     
     return commit_sha
@@ -468,7 +481,12 @@ class Identifier < ActiveRecord::Base
     change_desc_content = self.xml_content
     
     # assume context is from finalizing publication, so parent is board's copy
-    parent_classes = self.parent.owner.identifier_classes
+    if self.parent
+      parent_classes = self.parent.owner.identifier_classes
+    else
+      # if we created upon finalization we won't have a parent...
+      parent_classes = []
+    end  
     
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
       if(parent_classes.include?(c.identifier.class.to_s))
@@ -476,7 +494,6 @@ class Identifier < ActiveRecord::Base
         commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
       end
     end
-    
     change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)
     commit_message += " - Finalized - #{comment_text} (#{user.human_name})"
     
@@ -527,9 +544,12 @@ class Identifier < ActiveRecord::Base
     return false
   end
   
-  ## identifier classes which need further automatic processing after approval but before
-  ## finalization should override this method -- the default does nothing
-  def preprocess_for_finalization
+  ## identifier classes which need further automatic processing after 
+  ## approval but before finalization should override this method -- 
+  ## the default does nothing
+  ## @param reviewed_by set to a list of author strings for the board
+  ##        members of the finalizing board
+  def preprocess_for_finalization(reviewed_by)
     # default does nothing
     return false
   end
@@ -549,6 +569,17 @@ class Identifier < ActiveRecord::Base
   ## @param a_from is up to the controller
   def self.create_title(a_from)
     ## default is a no-op
+  end
+
+  # find files matching this one metting the supplied conditions
+  # @conditions matching params
+  def matching_files(a_conditions)
+    # default is a no-op
+  end
+
+  def download_file_name
+   # default 
+   self.class::FRIENDLY_NAME + "-" + self.title.gsub(/\s/,'_') + ".xml"
   end
 
 end

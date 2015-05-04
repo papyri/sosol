@@ -16,7 +16,7 @@ class CtsOacIdentifiersController < IdentifiersController
         flash[:error] = "You can only edit annotations you created"
         redirect_to(:action => :preview,:publication_id => @identifier.publication.id, :id => @identifier.id) and return
       else
-        editor_url = Tools::Manager.link_to('oa_editor',:perseids,:edit,@identifier)[:href]
+        editor_url = Tools::Manager.link_to('oa_editor',:perseids,:edit,[@identifier])[:href]
         editor_url = editor_url.sub(/URI/,annotation_uri)
         redirect_to(editor_url) and return
       end

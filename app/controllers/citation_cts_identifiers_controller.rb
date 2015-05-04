@@ -11,7 +11,7 @@ class CitationCtsIdentifiersController < IdentifiersController
   def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
-    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary,nil)[:href] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary)[:href] 
     @is_editor_view = true
     render :template => 'citation_cts_identifiers/editxml'
   end
@@ -66,7 +66,14 @@ class CitationCtsIdentifiersController < IdentifiersController
     elsif matches.length == 0
       pubtype ||= CTS::CTSLib.versionTypeForUrn(sourceCollection,citationUrn)
       #  we don't already have the identifier for this citation so create it
-      @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
+      begin
+        @identifier = CitationCTSIdentifier.new_from_template(@publication,sourceCollection,citationUrn, pubtype)
+      rescue => e
+        Rails.logger.error(e.backtrace)
+        flash[:error] = "Invalid Citation Scheme"
+        redirect_to dashboard_url
+        return
+      end
     else
       flash[:error] = "One or more conflicting matches for this citation exist. Please delete the <a href='#{url_for(@publication)}'>conflicting publication</a> if you have not submitted it and would like to start from scratch."
       redirect_to dashboard_url
@@ -197,7 +204,7 @@ class CitationCtsIdentifiersController < IdentifiersController
     # xslt.xml = REXML::Document.new(@identifier.xml_content)
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
-    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context,nil)[:href] 
+    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     @identifier[:html_preview] = @identifier.preview
   end
   

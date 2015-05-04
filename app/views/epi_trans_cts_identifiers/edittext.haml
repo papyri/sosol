@@ -1,0 +1,17 @@
+= javascript_include_tag 'perseids-tools'
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+.main.edittext
+  = render :partial => 'identifiers/edit_bar'
+  #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      - form_for @identifier, :url => { :action => :updatetext } do |f|
+        = f.error_messages
+        %label Translation Text
+        %br
+        = text_area_tag 'text_content', @identifier[:text_content], {:disabled => !@identifier.mutable?, 'xml:lang' => @identifier.lang,  :rows => 20, :wrap => 'off', :class => 'observechange'}
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }

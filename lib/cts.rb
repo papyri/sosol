@@ -67,7 +67,7 @@ module CTS
       
       # method which inserts the publication type (i.e. edition or translation) into the path of a CTS urn
       def pathForUrn(a_urn,a_pubtype) 
-        path_parts = a_urn.sub!(/urn:cts:/,'').split(':')
+        path_parts = a_urn.sub(/urn:cts:/,'').split(':')
         cite_parts = path_parts[1].split(/\./)
         passage = path_parts[2]
         last_part = cite_parts.length() - 1
@@ -532,7 +532,7 @@ module CTS
           # just pass it as-is to the tokenizer
           if (a_inv.nil? && a_urn =~ /^http/)
             Rails.logger.debug("Setting passage url to #{a_urn}")
-            passage_url = a_urn
+            passage_url = urn_no_subref
           elsif (getExternalCTSHash().has_key?(inventory_code))
             passage_url = getInventoryUrl(inventory_code) + "&request=GetPassage&urn=#{urn_no_subref}"
           else
@@ -600,7 +600,38 @@ module CTS
             Net::HTTP.get_response(rurl)
           end
         end
-     end
+      end
+
+      ##
+      # Attempts to use the cite_mapper service to map urns to abbreviations
+      # @param a urn string
+      # @return the abbreviation or the supplied string (if matched failed)
+      def urn_abbr(a_target)
+        abbr = a_target
+        urn_match = a_target.match(/(urn:cts:.*?)$/)
+        unless urn_match
+          return abbr
+        end
+        urn = urn_match.captures[0]
+        svc_link = Tools::Manager.link_to('cite_mapper','default',:search)
+        unless svc_link
+           Rails.logger.debug("No cite_mapper service defined")
+          return abbr
+        end
+        svc_link[:href] += "&#{svc_link[:replace_param]}=#{CGI.escape(urn)}"
+        begin
+          response = Net::HTTP.get_response(URI.parse(svc_link[:href]))
+          unless (response.code == '200')
+            Rails.logger.error("Failure response from cite_mapper #{response.code}")
+            return abbr
+          end
+          resp = JSON.parse(response.body) 
+          abbr = [resp['author'],resp['work'],resp['edition'],resp['section']].compact.reject{|i| i==''}.join(' ')
+        rescue Exception => e
+         Rails.logger.error("Unable to map urn to abbreviation at #{svc_link[:href]}")
+         Rails.logger.error(e.backtrace);
+        end
+      end 
     end #class
   end #module CTSLib
 end #module CTS

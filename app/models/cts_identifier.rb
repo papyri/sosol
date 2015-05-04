@@ -8,38 +8,50 @@ class CTSIdentifier < Identifier
   IDENTIFIER_NAMESPACE = ''
   TEMPORARY_COLLECTION = 'TempTexts'
   TEMPORARY_TITLE = 'New Transcription'
+
+  # responds to an interface request to retitle the file
+  # by updating the label for it in its related text inventory
+  def update_title new_title,lang='eng'
+    self.related_inventory.update_version_label(self.urn_attribute, title, lang)
+  end
   
   def titleize
-    title = nil
-    if (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
-       title = self.class::TEMPORARY_TITLE
-    else  
-      begin
-        # if we don't have a publication associated with identifier yet, we're most likely
-        # looking for the title for the parent 'publication' which probably should be the work title
-        # and not the version-specific label
-        if nil == self.publication
-          title = CTS::CTSLib.workTitleForUrn(self.inventory,self.urn_attribute)
-        else
-          title = CTS::CTSLib.versionTitleForUrn(self.inventory,self.urn_attribute)
-        end
-      rescue Exception => e
-        Rails.logger.error("Error retrieving title: #{e.class.to_s}, #{e.to_s}")
+    begin
+      # if we don't have a publication associated with identifier yet, we're most likely
+      # looking for the title for the parent 'publication' which probably should be the work title
+      # and not the version-specific label
+      if nil == self.publication
+        title = CTS::CTSLib.workTitleForUrn(self.inventory,self.urn_attribute)
+      else
+        title = CTS::CTSLib.versionTitleForUrn(self.inventory,self.urn_attribute)
       end
+    rescue Exception => e
+      Rails.logger.error("Error retrieving title from #{self.inventory} at #{self.urn_attribute}: #{e.class.to_s}, #{e.to_s}")
     end
-    if (title.nil?)
-      title = self.name
+    if (title.nil? || title == '')
+      title = self.urn_attribute
     end
+  
     return title
   end
 
   def self.new_from_template(publication,inventory,urn,pubtype,lang)
     temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
-    Rails.logger.info("adding identifier to pub #{temp_id}")
     temp_id.publication = publication 
     temp_id.save!
     initial_content = temp_id.file_template
     temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    return temp_id
+  end
+  
+  def self.new_from_supplied(publication,inventory,urn,pubtype,lang,initial_content)
+    # TODO - we shouldn't really supply pubtype and lang in param - instead parse it from the content
+    temp_id = self.new(:name => self.next_temporary_identifier(inventory,urn,pubtype,lang))
+    temp_id.publication = publication 
+    temp_id.save!
+    ## replace work urn with version 
+    initial_content = initial_content.gsub!(/#{urn}/,temp_id.urn_attribute)
+    temp_id.set_content(initial_content, :comment => 'Created from Supplied content')
     return temp_id
   end
   
@@ -51,7 +63,6 @@ class CTSIdentifier < Identifier
       #raise error
       raise temp_id.to_path + " not found on master"
     end
-    Rails.logger.info("adding identifier to pub #{temp_id}")
     # make sure we're not already editing this
     # TODO this is not correct - it needs to look only at those owned by the user
     # this looks up the master publications
@@ -75,10 +86,11 @@ class CTSIdentifier < Identifier
     # we want to take the text group and work from the template urn and create our own edition urn
     # TODO - need to handle differing namespaces on tg and work
     # TODO - use exemplar for version
-    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) 
-    Rails.logger.info("New urn:#{newUrn}")
-    document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     editionPart = "#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
+    newUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false) + "." + editionPart
+    # NOTE if there is no edition component, this ends up with a tailing "/"
+    # somewhat by accident
+    document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "name DESC",
@@ -87,12 +99,10 @@ class CTSIdentifier < Identifier
       # no constructed id's for this year/class
       document_number = 1
     else
-      Rails.logger.info("------Last component" + latest.to_components.last.split(/[\.;]/).last )
       document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
     end
-    editionPart = editionPart + document_number.to_s
     # TODO add exemplar (version) component
-    return "#{document_path}#{editionPart}"
+    return "#{document_path}#{document_number.to_s}"
   end
   
   def self.collection_names
@@ -194,7 +204,7 @@ class CTSIdentifier < Identifier
              'lang' => r.lang,
              'item_type' => r.class.to_s,
              'item_id' => r.id.to_s,
-             'cites' => r.related_inventory.parse_inventory['citations']
+             'cites' => r.related_inventory.parse_inventory(r.urn_attribute)['citations']
           }  
       end
     end
@@ -209,6 +219,9 @@ class CTSIdentifier < Identifier
   # Checks to see if we can retrieve any valid citations from this text
   def has_valid_reffs?
     uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
+    if self.related_inventory.nil?
+      return false
+    end
     refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
     return ! refs.nil? && refs != ''
   end
@@ -226,7 +239,6 @@ class CTSIdentifier < Identifier
     # [3] edition or translation
     # [4] perseus-grc1 - edition + examplar
     # [5] 1.1 - passage
-    Rails.logger.info(temp_components.inspect)
     urn_components = []
     urn_components << temp_components[1]
     urn_components << [temp_components[2],temp_components[4]].join(".")
@@ -239,7 +251,6 @@ class CTSIdentifier < Identifier
   def to_path
     path_components = [ self.class::PATH_PREFIX ]
     temp_components = self.to_components
-    Rails.logger.info("PATH:" + temp_components.inspect)
      # should give us, e.g.
     # [0] collection = e.g. perseus
     # [1] namespace - e.g. greekLang
@@ -298,4 +309,36 @@ class CTSIdentifier < Identifier
   def passage_subref_xslt_file
     File.join(Rails.root,%w{data xslt cts passage_to_subref.xsl})
   end
+  
+  def self.find_matching_identifiers(match_id,match_user,match_fuzzy)
+    identifiers = []
+    if (match_fuzzy)
+      possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+      possible_conflicts = self.find(:all,
+                         :conditions => ["name like ?", "#{match_id}%"],
+                         :order => "name DESC")
+    else 
+      possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+    end
+    actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == match_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
+    identifiers += actual_conflicts
+    return identifiers
+  end
+
+  def download_file_name
+    urnObj = CTS::CTSLib.urnObj(self.urn_attribute)
+    file = urnObj.getTextGroup(false) + "." + urnObj.getWork(false) + "." + urnObj.getVersion(false)
+    begin
+      passage = urnObj.getPassage(100)
+      file = passage ? file + "." + passage : file 
+    rescue
+    end
+    file = file + ".xml"
+    file
+  end
+  
+  
+  # parse individual docs and metadata from a supplied TEI XML document
+  def self.parse_docs(content)
+  end  
 end

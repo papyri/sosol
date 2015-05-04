@@ -7,6 +7,8 @@
     
     <xsl:output method="xml" xml:space="default"/>
     
+    <xsl:param name="calculate_subrefs" select="false()"/>
+    
     <xsl:template match="/">
         <xsl:apply-templates select="//tei|//TEI|//tei:tei|//tei:TEI"/>
     </xsl:template>
@@ -19,8 +21,10 @@
         <xsl:variable name="thistext" select="text()"/>
         <xsl:element name="span">
             <xsl:if test="not(ancestor::tei:note) and not(ancestor::tei:head) and not(ancestor::tei:speaker)">
-                <xsl:variable name="subref" select="count(preceding::tei:w[text() = $thistext])+1"></xsl:variable>
-                <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
+                <xsl:if test="$calculate_subrefs">
+                    <xsl:variable name="subref" select="count(preceding::tei:w[text() = $thistext])+1"></xsl:variable>
+                    <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
+                </xsl:if>
                 <xsl:attribute name="class">token text</xsl:attribute>
             </xsl:if>
             <xsl:apply-templates select="@*"/>
@@ -35,8 +39,10 @@
     <xsl:template match="w">
         <xsl:variable name="thistext" select="text()"/>
         <xsl:element name="span">
-            <xsl:variable name="subref" select="count(preceding::w[text() = $thistext])+1"></xsl:variable>
-            <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
+            <xsl:if test="$calculate_subrefs">
+                <xsl:variable name="subref" select="count(preceding::w[text() = $thistext])+1"></xsl:variable>
+                <xsl:attribute name="data-ref"><xsl:value-of select="concat($thistext,'[',$subref,']')"/></xsl:attribute>
+            </xsl:if>
             <xsl:attribute name="class">text</xsl:attribute>
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="node()"/>

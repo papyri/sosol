@@ -1,0 +1,53 @@
+{
+  "@context": "http://www.w3.org/ns/oa-context-20130208.json",
+  "@id": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA",
+  "annotatedBy": {
+    "@type": "foaf:Person",
+    "@id": "SCTM@hypothes.is"
+    },
+  "@type": "oa:Annotation",
+  "dcterms:source": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA",
+  "dcterms:title": "http://data.perseus.org/people/smith:eetion-1#this identifies Eetion as snap:FatherOf in urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:andromache_1",
+  "annotatedAt": "2015-02-04T21:50:09.561419+00:00",
+  "motivatedBy": "oa:identifying",
+  "serializedBy": {
+    "@id": "https://hypothes.is",
+    "@type": "prov:SoftwareAgent"
+    },
+  "hasTarget": {
+    "@id": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA#target-1",
+    "@type": "oa:SpecificResource",
+    "hasSource": {
+      "@id": "urn:cts:pdlrefwk:viaf88890045.003.perseus-eng1:andromache_1"
+            },
+    "hasSelector": {
+      "@id": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA#target-1-sel-1",
+      "@type": "oa:TextQuoteSelector",
+      "exact": "Eetion",
+      "prefix": "ache （Ἀνδρομάχη), a daughter of",
+      "suffix": ", king of the Cilician Thebae, a"
+            }
+    },
+  "hasBody": {
+    "@context": {
+      "snap": "http://onto.snapdrgn.net/snap#",
+      "lawd": "http://lawd.info/ontology/",
+      "perseusrdf": "http://data.perseus.org/rdfvocab/addons/"
+            },
+    "@graph": [
+      {
+        "@id": "http://data.perseus.org/people/smith:andromache-1#this",
+        "snap:has-bond": {
+          "@id": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA#bond-1"
+                                        }
+                        },
+      {
+        "@id": "https://hypothes.is/a/vkOKvSE-S2qlFCNrGbUaUA#bond-1",
+        "@type": "snap:FatherOf",
+        "snap:bond-with": {
+          "@id": "http://data.perseus.org/people/smith:eetion-1#this"
+                                        }
+                        }
+    ]
+    }
+}

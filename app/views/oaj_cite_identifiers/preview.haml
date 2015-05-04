@@ -1,0 +1,8 @@
+#main
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+    .oaj_cite_preview
+      %label Preview
+      %pre
+        = @identifier[:html_preview]

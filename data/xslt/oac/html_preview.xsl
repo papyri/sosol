@@ -16,6 +16,7 @@
     <xsl:param name="delete_link"/>
     <xsl:param name="align_link"/>
     <xsl:param name="form_token"/>
+    <xsl:param name="lang"/>
     <xsl:param name="mode" select="'preview'"/>
     
     <xsl:template match="/rdf:RDF">
@@ -45,7 +46,7 @@
 	      <xsl:choose>
 	          <xsl:when test="$mode = 'edit'">
 	              <div class="edit_links">
-	                  <a href="{replace($tool_url,'URI',@rdf:about)}"><button>Edit</button></a>
+	                  <a href="{replace(replace($tool_url,'URI',@rdf:about),'LANG',$lang)}"><button>Edit</button></a>
 	                  <form method="post" action="{$delete_link}" onsubmit="return confirm('Are you sure you want to delete this annotation?');">
 	                      <input type="hidden" name="authenticity_token" value="{$form_token}"/>
 	                      <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>
@@ -63,7 +64,7 @@
 	          </xsl:when>
 	          <xsl:otherwise>
 	              <div class="edit_links">
-	                  <a href="{replace($tool_url,'URI',@rdf:about)}"><button>Preview</button></a>
+	                  <a href="{replace(replace($tool_url,'URI',@rdf:about),'LANG',$lang)}"><button>Preview</button></a>
 	              </div>
 	          </xsl:otherwise>
 	      </xsl:choose>

@@ -6,12 +6,25 @@
     <xsl:output method="xhtml"/>
     
     <xsl:param name="doc_id"/>
+    <xsl:param name="title"/>
     <xsl:param name="s" select="xs:integer(1)"/>
     <xsl:param name="max" select="xs:integer(100)"/>
     <xsl:param name="lang" select="'grc'"/>
     <xsl:param name="direction" select="'ltr'"/>
     <xsl:param name="target" select="''"/>
     <xsl:param name="tool_url" select="'http://localhost/exist/rest/db/app/treebank-editsentence-perseids.xhtml?doc=DOC&amp;s=SENT&amp;numSentences=MAX'"/>
+    <xsl:variable name="doclang">
+      <xsl:choose>
+        <xsl:when test="//treebank[@xml:lang]"><xsl:value-of select="//treebank/@xml:lang"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$lang"/></xsl:otherwise>
+      </xsl:choose> 
+    </xsl:variable>
+    <xsl:variable name="docfmt">
+      <xsl:choose>
+        <xsl:when test="//treebank[@format]"><xsl:value-of select="//treebank/@format"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="'aldt'"/></xsl:otherwise>
+      </xsl:choose> 
+    </xsl:variable>
     
     <xsl:template match="/treebank">
         <xsl:variable name="count" select="count(sentence)"/>
@@ -40,8 +53,14 @@
             </xsl:if>    
         </xsl:variable>
         <xsl:variable name="first" select="sentence[@id = $start]"/>
+        <xsl:variable name="navtitle">
+            <xsl:choose>
+                <xsl:when test="$title"><xsl:value-of select="$title"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="string-join(($first/@document_id, $first/@subdoc), ':')"></xsl:value-of></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="nav">
-        <xsl:if test="$next or $prev">
+        <xsl:if test="$next != '' or $prev !=''">
             <xsl:element name="div">
                 <xsl:attribute name="class">sentence_nav</xsl:attribute>
                 <xsl:if test="$prev != ''">
@@ -51,7 +70,7 @@
                         <xsl:text>Previous</xsl:text>
                     </xsl:element>
                 </xsl:if>
-                <xsl:element name="label"><xsl:value-of select="string-join(($first/@document_id, $first/@subdoc), ':')"></xsl:value-of></xsl:element>
+                <xsl:element name="label"><xsl:value-of select="$navtitle"/></xsl:element>
                 <xsl:if test="$next != ''">
                     <xsl:element name="span">
                         <xsl:attribute name="class">sentence_next</xsl:attribute>
@@ -91,8 +110,8 @@
                                         replace(
                                             replace($tool_url,'DOC',xs:string($doc_id)),
                                                 'SENT',@id),
-                                                    'MAX',xs:string($max)),'LANG',//treebank/@xml:lang),
-                                                        'FORMAT',//treebank/@format)
+                                                    'MAX',xs:string($max)),'LANG',$doclang),
+                                                        'FORMAT',$docfmt)
                                             "/>
                         <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
                         <xsl:apply-templates select="word"></xsl:apply-templates>

@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(:version => 20140724154655) do
     t.datetime "updated_at",         :null => false
     t.integer  "finalizer_user_id"
     t.text     "identifier_classes"
-    t.decimal  "rank"
+    t.integer  "rank",               :precision => 10, :scale => 0
     t.string   "friendly_name"
     t.integer  "community_id"
   end
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20140724154655) do
     t.integer  "board_id"
     t.integer  "publication_id"
     t.integer  "end_user_id"
-    t.boolean  "allows_self_signup"
+    t.boolean  "allows_self_signup", :default => false
   end
 
   create_table "communities_admins", :id => false, :force => true do |t|

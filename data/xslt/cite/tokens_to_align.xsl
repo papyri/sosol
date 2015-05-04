@@ -20,7 +20,7 @@
         <xsl:variable name="lang">
             <xsl:choose>
                 <xsl:when test="$e_lang"><xsl:value-of select="$e_lang"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="//*:div[@subtype='edition' or @subtype='translation']/@xml:lang|//*:text/@xml:lang"/></xsl:otherwise>
+                <xsl:otherwise><xsl:value-of select="//*:div[@type='edition' or @type='translation']/@xml:lang|//*:text/@xml:lang"/></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         
@@ -29,8 +29,8 @@
         -->
         <xsl:variable name="textdir">
             <xsl:choose>
-                <xsl:when test="//*:div[(@subtype='edition' or @subtype='translation') and (@rend='ltr' or @rend='rtl')]">
-                    <xsl:value-of select="//*:div[(@subtype='edition' or @subtype='translation')]/@rend"/>
+                <xsl:when test="//*:div[(@type='edition' or @type='translation') and (@rend='ltr' or @rend='rtl')]">
+                    <xsl:value-of select="//*:div[(@type='edition' or @type='translation')]/@rend"/>
                 </xsl:when>
                 <xsl:when test="//*:text[@rend='ltr' or @rend='rtl']">
                     <xsl:value-of select="//*:text/@rend"/>

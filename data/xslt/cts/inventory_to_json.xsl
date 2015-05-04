@@ -33,7 +33,8 @@
             <xsl:text>"works": {</xsl:text>
             
             <!-- iterate through works -->
-            <xsl:apply-templates select="cts:work"/>
+            <xsl:apply-templates select="."/>    
+            
             
             <!-- end works field -->
             <xsl:text>}</xsl:text>

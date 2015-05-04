@@ -19,14 +19,21 @@
   = 'Rank is '
 =@board.rank.to_s
 %br
-
-= form_for(@board) do |f|
+- form_for(@board) do |f|
   = f.error_messages 
   %b
-    Friendly name 
+    Update Friendly name 
     
   = f.text_field :friendly_name
-  = f.submit "Update Name"
+  %br
+  - if @available_identifier_classes.size > 0
+    %b
+      Add classes:
+    - @available_identifier_classes.each do |identifier_class|
+      = check_box_tag identifier_class
+      = identifier_class.sub(/Identifier$/,'')
+    %br
+  = f.submit "Update"
 
   -# dont let them change the name of the board...repositories depend on it 1-2010
   -#= f.label :title

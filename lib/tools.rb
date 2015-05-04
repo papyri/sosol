@@ -28,28 +28,29 @@ module Tools
         return tools.size > 0 ? tools[0] : nil
       end
       
-      def link_to(a_type,a_tool,a_action,a_identifier=nil)
-        Rails.logger.info("Link to #{a_type},#{a_tool},#{a_action}")
+      def link_to(a_type,a_tool,a_action,a_identifiers=[])
         config = tool_config(a_type)[a_tool]
         link = nil
         if (config && config[:actions][a_action])
           link = {}
           link[:href] = config[:actions][a_action][:href]
-          if (a_identifier.nil?)
-            link[:href] = link[:href].sub(/IDENTIFIER/,'')
-          else
-            link[:href] = link[:href].sub(/IDENTIFIER/, a_identifier.id.to_s)
+          id_param = config[:actions][a_action][:id_param]
+          if (id_param)
+            a_identifiers.each do | id | 
+              link[:href] = link[:href] + "&" + id_param + "=" + id.id.to_s
+            end
           end
           link[:target] = config[:actions][a_action][:target] || config[:target]
           link[:text] = config[:actions][a_action][:text] || config[:text]
+          link[:replace_param] = config[:actions][a_action][:replace_param]
         end 
         return link
       end
       
-       def link_all(a_type,a_action,a_identifier=nil,a_query=nil)
+       def link_all(a_type,a_action,a_identifiers=[],a_query=nil)
         links = []
         tool_config(a_type).keys.each do | a_tool |
-          link = link_to(a_type,a_tool,a_action,a_identifier)
+          link = link_to(a_type,a_tool,a_action,a_identifiers)
           links << link
         end 
         return links

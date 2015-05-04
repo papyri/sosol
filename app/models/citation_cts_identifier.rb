@@ -32,9 +32,9 @@ class CitationCTSIdentifier < CTSIdentifier
     
     # create the identifier title by prefixing the passage component parts with their citation labels
     # from the parent cts inventory
-    urnObj = CTS::CTSLib.urnObj("urn:cts:#{passage_urn}")
+    urnObj = CTS::CTSLib.urnObj(passage_urn)
     citeLevel = urnObj.getCitationDepth()
-    citeinfo = new_identifier.related_text.related_inventory.parse_inventory()
+    citeinfo = new_identifier.related_text.related_inventory.parse_inventory(urnObj.getUrnWithoutPassage())
     passage = urnObj.getPassage(citeLevel);
     if (passage =~ /-/)
       new_identifier.title = passage
@@ -74,7 +74,7 @@ class CitationCTSIdentifier < CTSIdentifier
         parameters)
   end
   
-  def preprocess_for_finalization
+  def preprocess_for_finalization(reviewed_by)
     # what we want to do:
     # merge passage back into parent text
     # send the parent text for review
