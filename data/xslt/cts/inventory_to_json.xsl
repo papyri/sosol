@@ -30,10 +30,10 @@
             <xsl:text>"label":"</xsl:text><xsl:value-of select="$groupname"/><xsl:text>",</xsl:text>
             
             <!-- add works field -->
-            <xsl:text>"works": {</xsl:text>
+            <xsl:text>"works": { </xsl:text>
             
             <!-- iterate through works -->
-            <xsl:apply-templates select="."/>    
+            <xsl:apply-templates select="cts:work"/>    
             
             
             <!-- end works field -->
