@@ -1,3 +1,17 @@
+GIT
+  remote: https://github.com/PerseusDL/hypothesis-client
+  revision: 802ce891ef06a5a258e86d4ba7f4608be2899048
+  specs:
+    hypothesis-client (0.0.1)
+
+GIT
+  remote: https://github.com/sosol/mediawiki-ruby-api
+  revision: 2d87ea087c1fc27c6793ce3c6488258ee5c88c3b
+  specs:
+    mediawiki_api (0.3.1)
+      faraday (~> 0.9, >= 0.9.0)
+      faraday-cookie_jar (~> 0.0, >= 0.0.6)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -57,6 +71,8 @@ GEM
     coffee-script-source (1.7.0)
     columnize (0.3.6)
     diff-lcs (1.2.5)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.0.2)
@@ -65,6 +81,11 @@ GEM
     factory_girl_rails (4.4.1)
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
+    faraday-cookie_jar (0.0.6)
+      faraday (>= 0.7.4)
+      http-cookie (~> 1.0.0)
     grit (2.4.1)
       diff-lcs (~> 1.1)
       mime-types (~> 1.15)
@@ -72,6 +93,8 @@ GEM
       tilt
     highline (1.6.21)
     hike (1.2.3)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     i18n (0.6.9)
     jdbc-mysql (5.1.28)
     jdbc-sqlite3 (3.7.2.1)
@@ -83,7 +106,6 @@ GEM
     jruby-openssl (0.9.4)
       bouncy-castle-java (>= 1.5.0147)
     jruby-rack (1.1.14)
-    json (1.5.0)
     json (1.5.0-java)
     json-jruby (1.5.0-java)
       json (= 1.5.0)
@@ -98,6 +120,7 @@ GEM
     mocha (1.0.0)
       metaclass (~> 0.0.1)
     multi_json (1.8.4)
+    multipart-post (2.0.0)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -105,15 +128,11 @@ GEM
     net-ssh (2.8.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
-    nokogiri (1.6.1)
-      mini_portile (~> 0.5.0)
     nokogiri (1.6.1-java)
       mini_portile (~> 0.5.0)
     polyglot (0.3.4)
     prototype-rails (3.2.1)
       rails (~> 3.2)
-    puma (2.8.0)
-      rack (>= 1.1, < 2.0)
     puma (2.8.0-java)
       rack (>= 1.1, < 2.0)
     rack (1.4.5)
@@ -172,6 +191,7 @@ GEM
     uglifier (2.2.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
+    unf (0.1.4-java)
     uuid (2.3.7)
       macaddr (~> 1.0)
     warbler (1.4.1)
@@ -196,11 +216,13 @@ DEPENDENCIES
   factory_girl_rails (>= 1.2)
   grit (~> 2.4.0)
   haml (>= 3.0.25)
+  hypothesis-client!
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
   jruby-openssl (>= 0.8.8)
   json
   json-jruby (>= 1.5.0)
+  mediawiki_api!
   mocha
   nokogiri
   prototype-rails
