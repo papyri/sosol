@@ -62,6 +62,8 @@ Sosol::Application.routes.draw do
   get :ask_for
   end
 
+  end
+
   resources :events
   resource :session
   match 'help' => 'user#help', :as => :help
@@ -400,7 +402,7 @@ Sosol::Application.routes.draw do
       post :append 
       post :delete_annotation 
       post :update_from_agent
-      get :convert => :get
+      get :convert
       get :rename_review 
     end
     end
