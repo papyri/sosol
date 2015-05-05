@@ -262,7 +262,7 @@ class CtsPublicationsController < PublicationsController
     end
 
     # retrieve identifier type, urn and pubtype from content 
-    parsed = XmlHelper::parseattributes(content,{'create',['urn','pubtype','type']})
+    parsed = XmlHelper::parseattributes(content,{'create' => ['urn','pubtype','type']})
     if (parsed['create'].length > 0)
       urn = parsed['create'][0]['urn']
       pubtype = parsed['create'][0]['pubtype']
