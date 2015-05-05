@@ -1,7 +1,6 @@
 XSUGAR_STANDALONE_URL="http://localhost:9999/"
 XSUGAR_STANDALONE_USE_PROXY="true"
-EXIST_STANDALONE_URL="http://localhost:8080"
-#EXIST_STANDALONE_URL="http://sosol.perseids.org:8800/"
+EXIST_STANDALONE_URL="http://localhost:8800"
 DEV_INIT_FILES = []
 
 Sosol::Application.configure do
