@@ -12,11 +12,11 @@ development:
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
           :edit:
-            :href: "http://localhost/tools/arethusa/app/#/perseids?chunk=SENT"
+            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT"
             :id_param: 'doc'
             :text: "Edit in Arethusa"
           :view:
-            :href: "http://localhost/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT&mode=viewer"
             :id_param: 'doc'
             :text: "Preview in Arethusa"
           :create:
@@ -29,11 +29,11 @@ development:
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
           :edit:
-            :href: "http://localhost/tools/arethusa/app/#/perseids?chunk=SENT"
+            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT"
             :id_param: 'doc'
             :text: "Edit in Arethusa"
           :view:
-            :href: "http://localhost/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT&mode=viewer"
             :id_param: 'doc'
             :text: "Preview in Arethusa"
           :create:

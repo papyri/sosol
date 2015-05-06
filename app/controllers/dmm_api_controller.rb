@@ -289,7 +289,7 @@ class DmmApiController < ApplicationController
   #                   or 403 FORBIDDEN if no session can be established
   ##
   def ping
-      @current_user[:uri] = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
+      @current_user[:uri] = url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
       render :json => @current_user
   end
 
@@ -298,8 +298,7 @@ class DmmApiController < ApplicationController
     def update_cookie
       cookies[:csrftoken] = {
         :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now, # TODO configurable
-        :domain => Rails.configuration.action_controller.session[:domain]
+        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
       }
     end
 

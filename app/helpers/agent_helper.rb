@@ -7,7 +7,7 @@ module AgentHelper
 
   def self.get_agents
     unless defined? @agents
-      @agents = YAML::load(ERB.new(File.new(File.join(RAILS_ROOT, %w{config agents.yml})).read).result)[:agents]
+      @agents = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config agents.yml})).read).result)[:agents]
     end
     @agents
   end

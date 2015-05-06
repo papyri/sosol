@@ -156,7 +156,6 @@
         class=""
         name="pdlcomm"
         description="Perseus General Commentary Collection"
-        description="Commentary Collection"
         x-perseidsdefault="true">
         <namespaceMapping
             abbr="perseus"

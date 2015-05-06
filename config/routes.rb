@@ -426,6 +426,7 @@ Sosol::Application.routes.draw do
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/
+  match 'cite_publications/create_from_linked_urn/:type/:urn' => 'cite_publications#create_from_linked_urn', :urn => /[^\/]*/, :type => /[^\/]*/
   match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
   match 'sparql' => 'ajax_proxy#sparql'
@@ -450,6 +451,7 @@ Sosol::Application.routes.draw do
   match 'dmm_api/item/:identifier_type/:id/return/:item_action' => 'dmm_api#api_item_return'
   match 'dmm_api/item/:identifier_type/:id/comments' => 'dmm_api#api_item_comments_get', :via => :get
   match 'dmm_api/item/:identifier_type/:id/comments' => 'dmm_api#api_item_comments_post', :via => :post
+  match 'dmm_api/ping' => 'dmm_api#ping', :via => :get
 
   match '/' => 'welcome#index'
   match '/:controller(/:action(/:id))'
