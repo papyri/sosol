@@ -176,8 +176,8 @@ class Repository
     return files
   end
 
-  def get_log_for_file_from_branch(file, branch = 'master')
-    @repo.log(branch, file, :follow => true).map{|commit| commit.to_hash}
+  def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
+    @repo.log(branch, file, {:follow => true, :max_count => limit}).map{|commit| commit.to_hash}
   end
 
   def update_master_from_canonical

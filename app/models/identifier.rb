@@ -2,24 +2,24 @@
 class Identifier < ActiveRecord::Base
 
   IDENTIFIER_SUBCLASSES = Sosol::Application.config.site_identifiers.split(",")
-  
+
   FRIENDLY_NAME = "Base Identifier"
-  
+
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
-   
+
   validates_presence_of :name, :type
-  
+
   belongs_to :publication
-  
+
   #assume we want to delete the comments along with the identifier
   has_many :comments, :dependent => :destroy
-  
+
   has_many :votes, :dependent => :destroy
-  
+
   validates_each :type do |record, attr, value|
     record.errors.add attr, "Identifier must be one of #{Sosol::Application.config.site_identifiers}" unless Sosol::Application.config.site_identifiers.split(',').include?(value)
   end
-  
+
   require 'jruby_xml'
 
 
@@ -31,23 +31,23 @@ class Identifier < ActiveRecord::Base
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
         if site_identifiers.include?(identifier_class.to_s)
             site_classes << identifier_class
-        end    
+        end
     end
     return site_classes
   end
-  
+
   # - *Returns* :
   #   - the originally created publication of this identifier (publciation that does not have a parent id)
   def origin
     self.publication.origin.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
-  
+
   # - *Returns* :
   #   - the parent publication of this identifier
   def parent
     self.publication.parent.identifiers.detect {|i| i.name == self.name && i.type == self.type}
   end
-    
+
   # - *Returns* :
   #   - all the children of the publication that contains this identifier
   def children
@@ -57,7 +57,7 @@ class Identifier < ActiveRecord::Base
     end
     return child_identifiers
   end
-  
+
   # - *Returns* :
   #   - this idenfier's origin publication and the origin children, but not self
   def relatives
@@ -67,26 +67,26 @@ class Identifier < ActiveRecord::Base
       return [self.origin] + self.origin.children - [self]
     end
   end
-  
+
   # - *Returns* :
   #   - the repository for the owner of this identifier
   def repository
     return self.publication.nil? ? Repository.new() : self.publication.owner.repository
   end
-  
+
   # - *Returns* :
   #   - the repository branch for this identifier
   def branch
     return self.publication.nil? ? 'master' : self.publication.branch
   end
-  
+
   # - *Returns* :
   #   - the cotent of the file containing this identifier from the repository
   def content
     return self.repository.get_file_from_branch(
       self.to_path, self.branch)
   end
-  
+
   # Validation of indentifier XML file against tei-epidoc.rng file
   # - *Args*  :
   #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
@@ -99,14 +99,14 @@ class Identifier < ActiveRecord::Base
     self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content))
   end
-  
-  # Put stuff in here you want to do do all identifiers before a commit is done 
+
+  # Put stuff in here you want to do do all identifiers before a commit is done
   # - currently no logic is in here - just returns whatever was passed in
   # - intended to be overridden by Identifier subclasses, if necessary
   def before_commit(content)
     return content
   end
-  
+
   # Commits identifier XML to the repository
   # - *Args*  :
   #   - +content+ -> the XML you want committed to the repository
@@ -122,21 +122,21 @@ class Identifier < ActiveRecord::Base
                                    options[:actor])
     self.modified = true
     self.save! unless self.id.nil?
-    
+
     self.publication.update_attribute(:updated_at, Time.now) unless self.publication.nil?
 
     return commit_sha
   end
-  
+
   # Retrieve the commits made to a file in the repository
   # - *Returns* :
   #   - array of commits
   def get_commits
     self.repository.get_log_for_file_from_branch(
-        self.to_path, self.branch
+        self.to_path, self.branch, 1
     )
   end
-  
+
   # Parse out most recent sha from log
   # - *Returns* :
   #   - id of latest commit as a string
@@ -146,9 +146,8 @@ class Identifier < ActiveRecord::Base
       return commits[0][:id].to_s
     end
     return ""
-    
   end
-  
+
   # Create consistent title for identifiers
   # - *Returns* :
   #   - title of identifier
@@ -162,25 +161,25 @@ class Identifier < ActiveRecord::Base
     elsif self.class == APISIdentifier
       title = self.name.split('/').last
     end
-    
+
     if title.nil?
       if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
         #puts "#{collection_name}, #{volume_number}, #{document_number}"
-        collection_name = 
+        collection_name =
           self.class.collection_names_hash[collection_name]
-        
+
         # strip leading zeros
         document_number.sub!(/^0*/,'')
 
         if collection_name.nil?
           title = self.name.split('/').last
         else
-          title = 
+          title =
            [collection_name, volume_number, document_number].reject{|i| i.blank?}.join(' ')
          end
-         
+
          if self.respond_to?("is_reprinted?") && self.is_reprinted?
            title += " (reprinted)"
          end
@@ -190,7 +189,7 @@ class Identifier < ActiveRecord::Base
     end
     return title
   end
-  
+
   # Splits out identifier file path from the identifier model name field into the separate components
   # - *Returns* :
   #   - components
@@ -202,7 +201,7 @@ class Identifier < ActiveRecord::Base
 
     return components
   end
-  
+
   # Creates an array of all the collection names for the associated identifier class (HGV, DDB, APIS)
   # - *Returns* :
   #   - array of collection names
@@ -214,7 +213,7 @@ class Identifier < ActiveRecord::Base
     end
     return @collection_names
   end
-  
+
   # Create default XML file and identifier model entry for associated identifier class
   # - *Args*  :
   #   - +publication+ -> the publication the new translation is a part of
@@ -222,7 +221,7 @@ class Identifier < ActiveRecord::Base
   #   - new identifier
   def self.new_from_template(publication)
     new_identifier = self.new(:name => self.next_temporary_identifier)
-    
+
     Identifier.transaction do
       publication.lock!
       if publication.identifiers.select{|i| i.class == self}.length > 0
@@ -232,13 +231,13 @@ class Identifier < ActiveRecord::Base
         new_identifier.save!
       end
     end
-    
+
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
-    
+
     return new_identifier
   end
-  
+
   # Processes ERB file from retrieved default XML file template for the associated identifier class
   # in data/templates/
   # - *Returns* :
@@ -246,16 +245,16 @@ class Identifier < ActiveRecord::Base
   def file_template
     template_path = File.join(Rails.root, ['data','templates'],
                               "#{self.class.to_s.underscore}.xml.erb")
-                              
+
     template = ERB.new(File.new(template_path).read, nil, '-')
-    
+
     id = self.id_attribute
     n = self.n_attribute
     title = self.xml_title_text
-    
+
     return template.result(binding)
   end
-  
+
   # Determines the next 'SoSOL' temporary name for the associated identifier
   # - starts at '1' each year
   # - *Returns* :
@@ -272,11 +271,11 @@ class Identifier < ActiveRecord::Base
     else
       document_number = latest.to_components.last.split(';').last.to_i + 1
     end
-    
+
     return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};%04d;%04d",
                    year, document_number)
   end
-  
+
   # Determines the user who own's this identifer based on the publication it is a part of
   # - *Returns* :
   #   - identifier owner
@@ -287,41 +286,41 @@ class Identifier < ActiveRecord::Base
       return nil
     end
   end
-  
+
   # Determines who can edit the identifier
-  # - owner can edit any of their stuff if it is not submitted 
+  # - owner can edit any of their stuff if it is not submitted
   # - only let the board edit if they own it
-  # - let the finalizer edit the identifier the board owns  
-  #   
+  # - let the finalizer edit the identifier the board owns
+  #
   # - *Returns* :
   #   - true/false
   def mutable?
- 
+
     #only let the board edit if they own it
     if self.publication.owner_type == "Board" && self.publication.status == "editing"
       if self.publication.owner.identifier_classes.include?(self.class.to_s)
        return true
       end
-    
-    #let the finalizer edit the id the board owns  
+
+    #let the finalizer edit the id the board owns
     elsif self.publication.status == "finalizing" &&  self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
-      return true 
-      
-    #they can edit any of their stuff if it is not submitted      
+      return true
+
+    #they can edit any of their stuff if it is not submitted
     elsif self.publication.owner_type == "User" && %w{editing new}.include?(self.publication.status)
-      return true 
+      return true
     end
-    
-    return false    
+
+    return false
 
   end
-  
+
   # - *Returns* :
   #   - the content of the associated identifier's XML file
   def xml_content
     return self.content
   end
-  
+
   # Commits identifier XML to the repository vis set_content
   # - *Args*  :
   #   - +content+ -> the XML you want committed to the repository
@@ -337,16 +336,16 @@ class Identifier < ActiveRecord::Base
     options.reverse_merge!(
       :validate => true,
       :actor    => default_actor)
-      
+
     content = before_commit(content)
     commit_sha = ""
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
     end
-    
+
     return commit_sha
   end
-  
+
   # Used to rename an identifier from the 'SoSOL' temporary name to the correct 'collection' name
   # - also renames and 'relatives' of the identifier
   # - *Args*  :
@@ -357,7 +356,7 @@ class Identifier < ActiveRecord::Base
   def rename(new_name, options = {})
     original = self.dup
     options[:original] = original
-    
+
     original_name = self.name
     original_path = self.to_path
     original_relatives = self.relatives
@@ -366,22 +365,22 @@ class Identifier < ActiveRecord::Base
       self.name = new_name
       self.title = self.titleize
       self.save!
-    
+
       new_path = self.to_path
       commit_message = "Rename #{self.class::FRIENDLY_NAME} from '#{original_name}' (#{original_path}) to '#{new_name}' (#{new_path})"
-    
+
       self.repository.rename_file(original_path,
                                   new_path,
                                   self.branch,
                                   commit_message,
                                   self.owner.jgit_actor)
-      
+
       # rename origin and children
       original_relatives.each do |relative|
         relative.name = new_name
         relative.title = self.title
         relative.save!
-        
+
         # rename the file on the relative
         relative.repository.rename_file(original_path,
                                         new_path,
@@ -392,12 +391,12 @@ class Identifier < ActiveRecord::Base
       self.after_rename(options)
     end
   end
-  
+
   # Place anything actions you need performed on all identifiers after a 'rename' has occurred
   # - nothin in here at this time
   def after_rename(options = {})
   end
-  
+
   # Determines if identifier is in a temporary collection and so needs renaming before finalization.
   # - *Returns* :
   #   - true/false
@@ -427,7 +426,7 @@ class Identifier < ActiveRecord::Base
   # - does not do a commit - just modifies XML and returns it
   # - *Args*  :
   #   - +text+ -> the comment the user/system has provided
-  #   - +user_info+ ->  used in the 'who' attribute of the 'change' tag if give, otherwise uses the publications creator 
+  #   - +user_info+ ->  used in the 'who' attribute of the 'change' tag if give, otherwise uses the publications creator
   #   - +input_content+ -> the XML you want this added to, otherwise pulls it from the repository for this identifier
   # - *Returns* :
   #   - string of the XML containing the added 'change' tag
@@ -440,7 +439,7 @@ class Identifier < ActiveRecord::Base
       :comment => text,
       :when => timestamp
     )
-    
+
     return doc.to_s
   end
 
@@ -455,39 +454,39 @@ class Identifier < ActiveRecord::Base
   def update_revision_desc(comment_text, user)
     commit_message = "Update revisionDesc\n\n"
     change_desc_content = self.xml_content
-    
+
     # assume context is from finalizing publication, so parent is board's copy
     parent_classes = self.parent.owner.identifier_classes
-    
+
     Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
       if(parent_classes.include?(c.identifier.class.to_s))
         change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content, c.created_at.localtime.xmlschema )
         commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
       end
     end
-    
+
     change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)
     commit_message += " - Finalized - #{comment_text} (#{user.human_name})"
-    
+
     self.set_xml_content(change_desc_content, :comment => commit_message)
   end
 
   # See documentation of result_actions method of board model
   def result_action_approve
-   
+
     self.status = "approved"
     self.publication.send_to_finalizer
   end
-  
+
   # See documentation of result_actions method of board model
   def result_action_reject
-   
+
     self.status = "rejected"
   end
-  
+
   # See documentation of result_actions method of board model
   def result_action_graffiti
-    
+
     #delete
   end
 
@@ -515,21 +514,21 @@ class Identifier < ActiveRecord::Base
     #no vote found
     return false
   end
-  
+
   ## identifier classes which need further automatic processing after approval but before
   ## finalization should override this method -- the default does nothing
   def preprocess_for_finalization
     # default does nothing
     return false
   end
-  
-  ## identifier classes which should not be visible to the end user (i.e. which are automatically managed) 
+
+  ## identifier classes which should not be visible to the end user (i.e. which are automatically managed)
   ## should override this to return false
-  def self.is_visible 
+  def self.is_visible
     return true
   end
 
-  ## get a link to the catalog for this identifier  
+  ## get a link to the catalog for this identifier
   def get_catalog_link
     NumbersRDF::NumbersHelper.identifier_to_url(self.name)
   end
