@@ -208,7 +208,8 @@ class Repository
     # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
     #head_ref = other_repo.jgit_repo.resolve(branch).name()
-    git-wrapper.core.fetchLite(branch, other_repo.path, @path)
+    Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path})")
+    Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
     #self.fetch_objects(other_repo, branch)
     #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     #self.create_branch(new_branch, other_repo.name + "/" + branch)
