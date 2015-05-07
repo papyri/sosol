@@ -207,12 +207,12 @@ class Repository
     # Lightweight (but have to watch out for side-effects of repo deletion):
     # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
-    head_ref = other_repo.jgit_repo.resolve(branch).name()
-    # TODO: use new lightweight fetch call here instead of the following
-    git-wrapper.core.fetchLite(branch, other_repo.path, @path)
+    #head_ref = other_repo.jgit_repo.resolve(branch).name()
+    Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path})")
+    Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
     #self.fetch_objects(other_repo, branch)
-    Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
-    self.create_branch(new_branch, other_repo.name + "/" + branch)
+    #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
+    #self.create_branch(new_branch, other_repo.name + "/" + branch)
   end
 
   def add_remote(other_repo)
