@@ -99,6 +99,7 @@
             <xsl:apply-templates select="gsx:webpage"/>
             <xsl:apply-templates select="gsx:sourcedocument"/>
             <xsl:apply-templates select="gsx:hero"/>
+            <xsl:apply-templates select="gsx:annotatedtarget"/>
         </xsl:variable>
         <xsl:for-each select="$annotations/*">
             <xsl:variable name="id" select="position()"/>
@@ -279,7 +280,7 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template match="gsx:hero">
+    <xsl:template match="gsx:hero|gsx:annotatedtarget">
         <xsl:choose>
             <xsl:when test="matches(.,'https?:')">
                 <xsl:copy-of select=" normalize-space(.)"/>
