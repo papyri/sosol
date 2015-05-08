@@ -674,11 +674,11 @@ class Publication < ActiveRecord::Base
     #   [self.parent.repository.name, self.parent.branch].join('/'))
     # this works regardless
     board_branch_point = self.origin.head
-    
-    creator_commits = self.repository.repo.commits_between(canon_branch_point,
-                                                           board_branch_point)
-    board_commits = self.repository.repo.commits_between(board_branch_point,
-                                                         self.head)
+   
+    # Grit method_missing version
+    # creator_commits = self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
+    # Naive backticks version:
+    creator_commits = `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
     
     reason_comment = self.submission_reason
     
@@ -687,9 +687,9 @@ class Publication < ActiveRecord::Base
     Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
 
     controlled_commits = creator_commits.select do |creator_commit|
-      Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
+      Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
       begin
-        controlled_commit_diffs = self.repository.repo.diff(creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+        controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
       rescue Grit::Git::GitTimeout
         Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
         controlled_commit_diffs = ['timeout']
@@ -701,7 +701,7 @@ class Publication < ActiveRecord::Base
     
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = controlled_commit.message.strip
+      message = self.repository.repo.commit(controlled_commit).message.strip
       unless message.empty?
         creator_commit_messages << " - #{message}"
       end
