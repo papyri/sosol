@@ -27,7 +27,7 @@ module AgentHelper
     agent = nil
     agents = get_agents()
     agents.keys.each do | a_agent |
-      if (a_data =~ /#{agents[a_agent][:uri_match]}/sm)
+      if (a_data =~ /#{agents[a_agent][:uri_match]}/m)
         agent = agents[a_agent]
         break
       end
