@@ -297,7 +297,8 @@ class PublicationsController < ApplicationController
       redirect_to show
     end
     Thread.new do
-      @publication.change_status("finalizing_pending")
+      @publication.status = "finalizing_pending"
+      @publication.save
       @publication.send_to_finalizer(@current_user)
     end
 
