@@ -296,8 +296,9 @@ class PublicationsController < ApplicationController
       flash[:error] = "Can't change finalizer on non-board copy of publication."
       redirect_to show
     end
+    @publication.status = "finalizing_pending"
+    @publication.save
     Thread.new do
-      @publication.change_status("finalizing_pending")
       @publication.send_to_finalizer(@current_user)
     end
 

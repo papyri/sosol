@@ -596,7 +596,8 @@ class Publication < ActiveRecord::Base
     if decree_action == "approve"
 
       #set status
-      self.change_status("approved_pending")
+      self.status = "approved_pending"
+      self.save
       self.set_origin_and_local_identifier_status("approved")
 
       #send emails
@@ -606,7 +607,7 @@ class Publication < ActiveRecord::Base
       self.send_to_finalizer
 
       self.change_status("approved")
-      
+
   #----reject-----
     elsif decree_action == "reject"
 
@@ -675,12 +676,12 @@ class Publication < ActiveRecord::Base
     #   [self.parent.repository.name, self.parent.branch].join('/'))
     # this works regardless
     board_branch_point = self.origin.head
-   
+
     # Grit method_missing version
     # creator_commits = self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
     # Naive backticks version:
     creator_commits = `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
-    
+
     reason_comment = self.submission_reason
 
 
