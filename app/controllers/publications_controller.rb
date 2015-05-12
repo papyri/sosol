@@ -300,6 +300,8 @@ class PublicationsController < ApplicationController
     @publication.save
     Thread.new do
       @publication.send_to_finalizer(@current_user)
+      @publication.status = "finalizing"
+      @publication.save
     end
 
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
