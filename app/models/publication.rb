@@ -1029,8 +1029,8 @@ class Publication < ActiveRecord::Base
 
         self.owner.repository.update_master_from_canonical
         jgit_tree = JGit::JGitTree.new()
-        jgit_tree.load_from_repo(self.origin.owner.repository.jgit_repo, 'master')
-        inserter = self.origin.owner.repository.jgit_repo.newObjectInserter()
+        jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
+        inserter = self.owner.repository.jgit_repo.newObjectInserter()
         controlled_paths_blobs.each_pair do |path, blob|
           unless blob.nil?
             file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
