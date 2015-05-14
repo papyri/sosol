@@ -6,8 +6,8 @@ class Vote < ActiveRecord::Base
   belongs_to :board
 
 
-  #Ensures vote is tallied after it is saved.
-  after_save :tally
+  #Ensures vote is tallied after it is committed.
+  after_commit :tally, :on => :create
 
   #Ensures vote is tallied for publication.
   def tally
@@ -24,9 +24,19 @@ class Vote < ActiveRecord::Base
       #decree_action = self.publication.tally_votes(related_votes)
       #self.publication.tally_votes(related_votes)
 
+      # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
+      ActiveRecord::Base.clear_active_connections!
+
       #let publication decide how to access votes
       Thread.new do
-        self.publication.tally_votes()
+        begin
+          self.publication.tally_votes()
+        ensure
+          # The new thread gets a new AR connection, so we should
+          # always close it and flush logs before we terminate
+          ActiveRecord::Base.connection.close
+          Rails.logger.flush
+        end
       end
     end
     return nil
