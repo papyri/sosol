@@ -1,14 +1,19 @@
 require 'test_helper'
+require 'thwait'
 require 'ddiff'
 
 class CommunityWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
+    threads_active_before_vote = Thread.list.select{|t| t.alive?}
     FactoryGirl.create(:vote,
             :publication_id => identifier.publication.id,
             :identifier_id => identifier.id,
             :user => user,
             :choice => (decree.get_choice_array)[rand(
               decree.get_choice_array.size)])
+    threads_active_after_vote = Thread.list.select{|t| t.alive?}
+    new_active_threads = threads_active_after_vote - threads_active_before_vote
+    ThreadsWait.all_waits(*new_active_threads)
   end
   
   
