@@ -173,14 +173,18 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
       
       teardown do
 begin        
+      ActiveRecord::Base.clear_active_connections!
+      ActiveRecord::Base.connection_pool.with_connection do |conn|
         count = 0
         [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity| 
           count = count + 1
           #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil." 
           unless entity.nil?
-            entity.destroy
-          end
+              entity.reload
+              entity.destroy
+            end
         end
+      end
 end
       end
  
@@ -315,16 +319,21 @@ end
    
        
        open_session do |meta_session|
-
+         threads_active_before_vote = Thread.list.select{|t| t.alive?}
          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
               
          Rails.logger.debug "--flash is: " + meta_session.flash.inspect              
+         threads_active_after_vote = Thread.list.select{|t| t.alive?}
+         new_active_threads = threads_active_after_vote - threads_active_before_vote
+         Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
+         Rails.logger.flush
+         ThreadsWait.all_waits(*new_active_threads)
+         Rails.logger.debug "threadwaiting done"
+         Rails.logger.flush
        end
-       
-       
-       
+       ActiveRecord::Base.clear_active_connections!
        #reload the publication to get the vote associations to go thru?
        meta_publication.reload       
        
@@ -333,6 +342,8 @@ end
          vote_str = vote_str + v.choice
        end
        Rails.logger.debug  vote_str
+       Rails.logger.debug meta_publication.inspect
+       Rails.logger.debug meta_publication.children.inspect
      
        
        #vote should have changed publication to approved and put to finalizer
@@ -351,8 +362,11 @@ end
             meta_final_identifier = id    
          end
        end
-       
+      
+       assert meta_final_identifier.content, "finalizing publication's identifier should have content" 
 
+       Rails.logger.info('meta_final_identifier')
+       Rails.logger.info(meta_final_identifier.inspect)
        # do rename
        open_session do |meta_rename_session|
         meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
@@ -360,6 +374,10 @@ end
        end
 
        meta_final_publication.reload
+       meta_final_identifier.reload
+       Rails.logger.info('meta_final_publication')
+       Rails.logger.info(meta_final_publication.inspect)
+       Rails.logger.info(meta_final_identifier.inspect)
        assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
        open_session do |meta_finalize_session|
@@ -455,14 +473,23 @@ end
 =end
        
        open_session do |text_session|
+         threads_active_before_vote = Thread.list.select{|t| t.alive?}
 
          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
               
+         threads_active_after_vote = Thread.list.select{|t| t.alive?}
+         new_active_threads = threads_active_after_vote - threads_active_before_vote
+         Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
+         Rails.logger.flush
+         ThreadsWait.all_waits(*new_active_threads)
+         Rails.logger.debug "threadwaiting done"
+         Rails.logger.flush
          Rails.logger.debug "--flash is: " + text_session.flash.inspect              
        end
        
+       ActiveRecord::Base.clear_active_connections!
        
        #reload the publication to get the vote associations to go thru?
        text_publication.reload
@@ -605,6 +632,7 @@ end
       end
       
       teardown do
+        @publication.reload
         @publication.destroy
       end
       
@@ -629,6 +657,7 @@ end
         context "voted 'approve'" do
           setup do
             @new_ddb_submitted = @ddb_board.publications.first.identifiers.first
+            @new_ddb_submitted_id = @new_ddb_submitted.id
             generate_board_votes_for_action(@ddb_board, "approve", @new_ddb_submitted)
           end
           
@@ -658,7 +687,7 @@ end
           end
           
           should "be deleted from editorial board" do
-            assert !Publication.exists?(@new_ddb_submitted.id)
+            assert !Publication.exists?(@new_ddb_submitted_id)
           end
         end # reject
       end # DDB-only
