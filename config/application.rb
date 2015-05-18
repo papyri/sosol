@@ -54,5 +54,16 @@ module Sosol
     config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
     config.site_user_namespace = 'papyri.info'
+
+    # Configure XSugar
+    # These can be overridden in config/environments/*_secret.rb
+    # Use a standalone XSugar server instead of JRuby+Rails internal transform
+    # See: https://github.com/papyri/xsugar/tree/master/src/standalone
+    config.xsugar_standalone_enabled = false
+    # Use a Rails proxy URL for the standalone XSugar server
+    # (useful if XSugar server URL would result in a cross-domain request)
+    config.xsugar_standalone_use_proxy = false
+    # URL for the standalone XSugar server
+    config.xsugar_standalone_url = ''
   end
 end
