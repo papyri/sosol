@@ -1,6 +1,7 @@
 require 'json'
 require 'uri'
 require 'net/https'
+require 'hypothesis-client/helpers'
 
 module HypothesisClient
 

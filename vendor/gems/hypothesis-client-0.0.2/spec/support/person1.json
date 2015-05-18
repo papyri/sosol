@@ -1,0 +1,75 @@
+{
+    "permissions": {
+        "update": [
+            "acct:msagal@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "delete": [
+            "acct:msagal@hypothes.is"
+        ], 
+        "admin": [
+            "acct:msagal@hypothes.is"
+        ]
+    }, 
+    "created": "2015-01-30T21:22:07.498495+00:00", 
+    "uri": "http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview",
+    "user": "acct:msagal@hypothes.is", 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "target": [
+        {
+            "pos": {
+                "height": 19, 
+                "top": 382.53125
+            }, 
+            "source": "http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0104:alphabetic+letter=A:entry+group=13:entry=alcathoe-bio-1", 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]", 
+                    "endOffset": 281, 
+                    "endContainer": "/div[3]/div[2]/div[3]/div[2]/div[1]/div[1]", 
+                    "startOffset": 274
+                }, 
+                {
+                    "type": "TextPositionSelector", 
+                    "start": 2760, 
+                    "end": 2767
+                }, 
+                {
+                    "suffix": ", and while the other women and", 
+                    "type": "TextQuoteSelector", 
+                    "exact": "Boeotia", 
+                    "prefix": "of Dionysus was introduced into"
+                }, 
+                {
+                    "value": "", 
+                    "type": "FragmentSelector"
+                }
+            ]
+        }
+    ], 
+    "document": {
+        "twitter": {}, 
+        "highwire": {}, 
+        "prism": {}, 
+        "facebook": {}, 
+        "title": "Perseids Prototype",
+        "eprints": {}, 
+        "dc": {}, 
+        "link": [
+            {
+                "href": "http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview"
+            }
+        ]
+    }, 
+    "text": "visiblewords:johndoe_1", 
+    "updated": "2015-01-30T21:22:07.498512+00:00", 
+    "tags": [
+        "person", 
+        "visiblewords", 
+        "test"
+    ], 
+    "id": "NlP4CyExRfS1gUR_hgTqXg"
+}

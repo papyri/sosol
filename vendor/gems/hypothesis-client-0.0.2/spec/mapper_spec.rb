@@ -26,7 +26,7 @@ describe HypothesisClient::MapperPrototype do
     end
 
     it 'mapped the sourceText' do 
-      expect(mapped[:data]["hasTarget"]["hasSource"]["@id"]).to eq("#{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:D.diomedes_1")
+      expect(mapped[:data]["hasTarget"]["hasSource"]["@id"]).to eq("#{HypothesisClient::Helpers::Uris::SmithText::TEXT_CTS}:D.diomedes_1")
     end
     
     it 'mapped the motivation' do
@@ -34,7 +34,7 @@ describe HypothesisClient::MapperPrototype do
     end
 
     it 'made a title' do
-      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001:6.222 identifies II. 6.222 as citation in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:D.diomedes_1")
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001:6.222 identifies II. 6.222 as citation in #{HypothesisClient::Helpers::Uris::SmithText::TEXT_CTS}:D.diomedes_1")
     end
 
   end
@@ -113,11 +113,11 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"][1]["cnt:chars"]).to eq("Abas")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@type"]).to eq(HypothesisClient::MapperPrototype::JOTH::LAWD_CITATION)
-      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1 describes *)Abai=os) with an attestation of Abas in #{HypothesisClient::MapperPrototype::JOTH::SMITH_TEXT_CTS}:C.clytaemnestra_1")
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/citations/urn:cts:greekLit:tlg0525.tlg001.perseus-eng1:10.35.1 describes *)Abai=os) with an attestation of Abas in #{HypothesisClient::Helpers::Uris::SmithText::TEXT_CTS}:C.clytaemnestra_1")
     end
   end
   context "cts urn test" do
-    $mapper = HypothesisClient::MapperPrototype::JOTH.new
+    $mapper = HypothesisClient::Helpers::Uris::Perseus.new("")
 
     it 'parsed a full urn' do 
        parsed = $mapper.parse_urn("urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1")
@@ -175,6 +175,40 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
+    end
+  end
+  context "basic visiblewords test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'person1.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'produced oa' do 
+      expect(mapped[:errors]).to match_array([])
+      expect(mapped[:data]).to be_truthy
+    end
+
+    it 'mapped the source uri' do
+      expect(mapped[:data]["dcterms:source"]).to eq(nil)
+    end
+
+    it 'mapped the body text' do
+      expect(mapped[:data]["hasBody"][0]["@id"]).to eq("http://data.perseus.org/people/visiblewords:johndoe_1#this")
+    end
+
+    it 'mapped the motivation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:identifying")
+    end
+
+    it 'made a title' do
+      expect(mapped[:data]["dcterms:title"]).to eq("http://data.perseus.org/people/visiblewords:johndoe_1#this identifies Boeotia as person in http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview")
+    end
+  end
+  context "realdata visiblewords test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'visiblewords.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'produced oa' do 
+      expect(mapped[:errors]).to match_array([])
+      expect(mapped[:data]).to be_truthy
     end
   end
 end
