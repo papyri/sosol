@@ -194,24 +194,12 @@ class DmmApiController < ApplicationController
   # @param [String] id - the unique id of the identifier
   # @param [String] item_action the action on the item to return to
   def api_item_return
-    identifier_class = nil
-    identifier_class_name = "#{params[:identifier_type]}Identifier"
-     begin
-      identifier_class_name.constantize::IDENTIFIER_NAMESPACE
-      identifier_class = Object.const_get(identifier_class_name)
-    rescue Exception => e
-      Rails.logger.error(e)
-    end   
-    if (identifier_class.nil?)
-      return render_error("Unrecognized Identifier Type")
-    else
-      if (params[:id])
-        redirect_to :controller => identifier_class_name.underscore.pluralize,
-                  :id => params[:id],
-                  :action => params[:item_action]
-      else  
-        redirect_to dashboard_url
-      end
+    if (params[:id])
+      find_identifier
+      redirect_to polymorphic_url([@identifier.publication, @identifier], :action => params[:item_action])
+
+    else  
+      redirect_to dashboard_url
     end
   end
 
