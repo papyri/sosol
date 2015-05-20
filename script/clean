@@ -1,5 +1,6 @@
 #!/bin/sh
 
+rm -f log/test.log
 rm -f db/development.sqlite3
 rm -f db/test.sqlite3
 rm -rf db/test/git/boards/*
