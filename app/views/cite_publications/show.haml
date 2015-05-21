@@ -1,0 +1,7 @@
+.main
+  .site
+    %ul  
+      - for identifier in @publications
+        %li
+          %a{:href => "#{identifier[:url]}"} #{identifier[:title]}
+
