@@ -6,7 +6,11 @@ class CitePublicationsController < PublicationsController
   
   # list items currently being edited by user,collection and matching identifier
   def user_collection_list
-    @user = User.find_by_name(params[:user_name])
+    if (params[:user_name])
+      @user = User.find_by_name(params[:user_name])
+    else 
+      @user = @current_user
+    end
     identifier_class = identifier_type
     tempid = params[:collection]
     existing_identifiers = identifier_class.find_matching_identifiers(tempid,@user,params[:item_match])
@@ -16,6 +20,9 @@ class CitePublicationsController < PublicationsController
       h[:url] =  url_for(:controller => i.class.to_s.underscore.pluralize,:id => i, :action => 'preview')
       h
     }
+    unless @publications.length > 0
+      flash[:notice] = "No matching publications found!"
+    end
     render 'show'
   end
 

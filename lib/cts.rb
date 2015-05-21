@@ -43,7 +43,21 @@ module CTS
           nil 
         end
       end
-      
+
+      # compares two cts urn objects to see if the match
+      # at the requested level (textgroup, work or version)
+      def is_cts_match?(a_urn,b_urn,a_match_level)
+        is_cts_match = false
+        if a_match_level == 'textgroup' && 
+          is_cts_match = (a_urn.getTextGroup == b_urn.getTextGroup) 
+        elsif a_match_level == 'work'
+          is_cts_match = (a_urn.getTextGroup == b_urn.getTextGroup) && (a_urn.getWork == b_urn.getWork)
+        else
+          is_cts_match = (a_urn.getTextGroup == b_urn.getTextGroup) && (a_urn.getWork == b_urn.getWork) && (a_urn.getVersion == b_urn.getVersion)
+        end
+        is_cts_match
+      end 
+
       # get a pub type for a urn from the parent inventory
       def versionTypeForUrn(a_inventory,a_urn)
         urn = urnObj(a_urn)

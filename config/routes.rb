@@ -114,8 +114,15 @@ ActionController::Routing::Routes.draw do |map|
     :identifier_type => /[^\/]*/,
     :collection => /[^\/]*/,
     :item_match => /[^\/]*/
+
+  map.connect 'cite_publications/:identifier_type/:collection/:item_match',
+    :controller => 'cite_publications',
+    :action => 'user_collection_list',
+    :conditions => { :method => :get },
+    :identifier_type => /[^\/]*/,
+    :collection => /[^\/]*/,
+    :item_match => /[^\/]*/
         
- 
   map.connect 'cite_publications/create_from_linked_urn/:type/:urn',
     :controller => 'cite_publications',
     :action => 'create_from_linked_urn',

@@ -1,4 +1,6 @@
 require 'nokogiri'
+:q!
+
 require 'cts'
 
 class TreebankCiteIdentifier < CiteIdentifier   
@@ -122,7 +124,7 @@ class TreebankCiteIdentifier < CiteIdentifier
 
     if (! a_value.nil? && a_value.length == 1) 
       init_value = a_value[0].to_s
-      if (init_value =~ /urn:cts:/)
+      if (init_value =~ /^https?:.*?urn:cts:/)
         urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
         begin
           urn_obj = CTS::CTSLib.urnObj(urn_value)
@@ -421,11 +423,31 @@ class TreebankCiteIdentifier < CiteIdentifier
             rescue
               Rails.logger.error("unable to parse passage from #{urn_value}")
             end
-            # if we don't have a passage the match should be on the work only
+            match_level = 'textgroup'
+            begin
+              ctsMatch = urn_obj.getWork()
+              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                match_level = 'work'
+              end
+              ctsMatch = urn_obj.getVersion()
+              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                match_level = 'version'
+              end
+            rescue Exception => e
+            end
             if (passage.nil?)
               matching_work = my_targets['sentence'].select { |s| 
-                doc_match = s['document_id'] ? s['document_id'].match(/#{urn_value}/) : false
-                doc_match 
+                is_cts_match = false
+                doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
+                if doc_match
+                  begin
+                    doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                    is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                  rescue Exception => e
+                    # not a valid urn? not a match
+                  end
+                end
+                is_cts_match
               }
               if (matching_work.length > 0) 
                 has_any_targets=true
@@ -435,14 +457,22 @@ class TreebankCiteIdentifier < CiteIdentifier
               work = urn_obj.getUrnWithoutPassage()
               passage.split(/-/).each do | p |
                 match = my_targets['sentence'].select { |s| 
-                  doc_match = s['document_id'].match(/(urn:cts:.*?)$/)
+                  doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
                   subdoc_match = false
-                  if (doc_match && doc_match.captures[0] == work)
-                    s['subdoc'].split(/-/).each do |s|
-                      if (s.match(/^#{p}(\.|$)/))
-                        subdoc_match = true;
-                        break;
-                     end
+                  if (doc_match)
+                    begin
+                      doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                      is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                    rescue Exception => e
+                      # not a valid urn? not a match
+                    end
+                    if is_cts_match
+                      s['subdoc'].split(/-/).each do |s|
+                        if (s.match(/^#{p}(\.|$)/))
+                          subdoc_match = true;
+                          break;
+                       end
+                      end
                     end
                   end 
                   subdoc_match
@@ -586,5 +616,4 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     return parsed_targets.uniq
   end
-
 end
