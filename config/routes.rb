@@ -100,11 +100,21 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'publications',
     :action => 'create_from_identifier',
     :id => /papyri\.info.*/
-        
+
   map.connect 'cts_publications/create_from_linked_urn/:urn',
     :controller => 'cts_publications',
     :action => 'create_from_linked_urn',
     :urn => /[^\/]*/
+
+  map.connect 'cite_publications/user/:user_name/:identifier_type/:collection/:item_match',
+    :controller => 'cite_publications',
+    :action => 'user_collection_list',
+    :conditions => { :method => :get },
+    :user_name => /[^\/]*/,
+    :identifier_type => /[^\/]*/,
+    :collection => /[^\/]*/,
+    :item_match => /[^\/]*/
+        
  
   map.connect 'cite_publications/create_from_linked_urn/:type/:urn',
     :controller => 'cite_publications',
@@ -162,7 +172,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'cts/getcapabilities/:id',
      :controller => 'cts_proxy',
      :action => 'getcapabilities'
-  
+
   map.connect 'cts/getrepos/:id',
     :controller => 'cts_proxy',
     :action => 'getrepos'
@@ -225,6 +235,7 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'dmm_api',
     :action => 'api_item_comments_post',
     :conditions => { :method => :post }
+
   
   # The priority is based upon order of creation: first created -> highest priority.
 

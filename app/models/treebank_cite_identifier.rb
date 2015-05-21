@@ -424,8 +424,8 @@ class TreebankCiteIdentifier < CiteIdentifier
             # if we don't have a passage the match should be on the work only
             if (passage.nil?)
               matching_work = my_targets['sentence'].select { |s| 
-                doc_match = s['document_id'].match(/(urn:cts:.*?)$/)
-                doc_match && doc_match.captures[0] == urn_value
+                doc_match = s['document_id'] ? s['document_id'].match(/#{urn_value}/) : false
+                doc_match 
               }
               if (matching_work.length > 0) 
                 has_any_targets=true
