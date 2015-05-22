@@ -199,7 +199,7 @@ Sosol::Application.routes.draw do
     delete :delete_frontmatter_commentary
     get :link_translation
     get :link_citation
-    get :link_alignment
+    post :link_alignment
     get :annotate_xslt
     end
     
