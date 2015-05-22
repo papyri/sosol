@@ -22,12 +22,13 @@ SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "data.perseus.org"
 SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
 SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
-EXTERNAL_CTS_REPOS = 'Annotation Sources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+EXTERNAL_CTS_REPOS = 'AnnotationSources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 SITE_EMAIL_FROM = 'admin@perseids.org'
 REPOSITORY_ROOT = "/usr/local/gitrepos"
 SITE_CTS_INVENTORIES = 'perseids-dev|Epi'
 CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
 GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
+
 
 module Sosol
   class Application < Rails::Application
