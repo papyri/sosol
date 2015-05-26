@@ -314,6 +314,7 @@ end
        end
        
        assert_not_nil  meta_identifier, "Did not find the meta identifier"
+       assert meta_identifier.content, "meta_identifier should have content"
        
        Rails.logger.debug "Found meta identifier, will vote on it"
    
