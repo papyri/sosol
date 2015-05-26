@@ -30,7 +30,9 @@ class Vote < ActiveRecord::Base
       #let publication decide how to access votes
       Thread.new do
         begin
-          self.publication.tally_votes()
+          ActiveRecord::Base.connection_pool.with_connection do |conn|
+            self.publication.tally_votes()
+          end
         ensure
           # The new thread gets a new AR connection, so we should
           # always close it and flush logs before we terminate
