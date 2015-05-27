@@ -91,7 +91,11 @@ class UserController < ApplicationController
   def signin
     
   end
-  
+
+  def terms
+
+  end
+
   def developer
     if !@current_user.developer
       redirect_to dashboard_url

@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
 
   before_filter :tab_setup
 
+  before_filter :accept_terms
+
   unless ActionController::Base.consider_all_requests_local
     rescue_from Exception, :with => :render_500
     rescue_from ActionController::RoutingError, :with => :render_404
@@ -99,6 +101,16 @@ class ApplicationController < ActionController::Base
     @current_board = nil
     @currrent_identifier = nil
     
+  end
+
+  # make sure the current user has already accepted
+  # the terms of service
+  def accept_terms
+    if @current_user.accepted_terms?
+      return true
+    else
+      redirect_to terms_url
+    end
   end
   
 end

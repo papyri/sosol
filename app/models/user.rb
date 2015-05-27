@@ -75,6 +75,13 @@ class User < ActiveRecord::Base
       return who_name = self.name
     end
   end
+
+  #*Returns*
+  # - true if the user has agreed to the site terms of service
+  # - false if the user has not agreed to the site terms of service
+  def accepted_terms?
+    return self.accepted_terms.nil? ? false : accepted_terms
+  end
   
   def grit_actor
     Grit::Actor.new(self.full_name, self.email)

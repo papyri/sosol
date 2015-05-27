@@ -1,0 +1,7 @@
+#main.site
+  - form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
+    #terms_box
+      %p We will display the terms of service here...
+    = f.check_box :accepted_terms
+    = f.submit "Submit"
+
