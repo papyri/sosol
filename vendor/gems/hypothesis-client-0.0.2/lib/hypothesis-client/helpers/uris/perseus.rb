@@ -14,7 +14,7 @@ module HypothesisClient
         def initialize(a_content)
           @content = a_content
           @can_match = false
-          @text = @content
+          @text = "#{@content}"
           @cts = []
           @uris = []
           @error = nil
@@ -54,7 +54,7 @@ module HypothesisClient
               ns = urn_parts[1]
               tg = urn_parts[2]
               wk = urn_parts[3]
-              ver = urn_parts[4]
+	      ver = urn_parts[4]
             else
              raise "Invalid Citation URN #{uri}"
             end

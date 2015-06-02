@@ -1,0 +1,74 @@
+{
+    "updated": "2015-05-18T08:14:03.147178+00:00", 
+    "target": [
+        {
+            "source": "http://sosol.perseids.org/sosol/publications/12077/epi_cts_identifiers/15838/preview", 
+            "pos": {
+                "top": 384.147705078125, 
+                "height": 17
+            }, 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[1]", 
+                    "endContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[1]", 
+                    "startOffset": 16, 
+                    "endOffset": 25
+                }, 
+                {
+                    "start": 322, 
+                    "end": 331, 
+                    "type": "TextPositionSelector"
+                }, 
+                {
+                    "type": "TextQuoteSelector", 
+                    "prefix": "Full Text: column 1 time_unit 1", 
+                    "exact": "\u1f18\u03c1\u03bc\u03bf\u03af\u03c5\u03b3\u03bf\u03c2", 
+                    "suffix": "\u039e\u03b5\u03bd\u03cc\u03ba\u03bb\u03b5\u03bf\u03c2 \u0391\u03bb\u03ba\u03bd\u03ac\u03b4\u03b7\u03c2 \u03a4\u03b7\u03bb\u03b5\u03c6\u03ac\u03bd\u03b5\u03c5\u03c2 \u1f3c"
+                }, 
+                {
+                    "type": "FragmentSelector", 
+                    "value": ""
+                }
+            ]
+        }
+    ], 
+    "created": "2015-05-18T08:14:03.147162+00:00", 
+    "text": "http://www.lgpn.ox.ac.uk/id/V1-39177", 
+    "tags": [
+        "person", 
+        "visiblewords"
+    ], 
+    "uri": "http://sosol.perseids.org/sosol/publications/12077/epi_cts_identifiers/15838/preview", 
+    "user": "acct:EP7@hypothes.is", 
+    "document": {
+        "eprints": {}, 
+        "title": "\nPerseids Prototype: epi_cts_identifiers - preview\n", 
+        "twitter": {}, 
+        "dc": {}, 
+        "prism": {}, 
+        "highwire": {}, 
+        "facebook": {}, 
+        "link": [
+            {
+                "href": "http://sosol.perseids.org/sosol/publications/12077/epi_cts_identifiers/15838/preview"
+            }
+        ]
+    }, 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "id": "T0YZnVs8R4WKMOL43G8G4A", 
+    "permissions": {
+        "admin": [
+            "acct:EP7@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "update": [
+            "acct:EP7@hypothes.is"
+        ], 
+        "delete": [
+            "acct:EP7@hypothes.is"
+        ]
+    }
+}

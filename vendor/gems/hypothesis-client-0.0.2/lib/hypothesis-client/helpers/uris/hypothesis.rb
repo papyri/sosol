@@ -1,25 +1,23 @@
 module HypothesisClient
   module Helpers
     module Uris
-      class Any
+      class Hypothesis
+
+        URI_MATCH = /^(https:\/\/hypothes\.is\/a\/[^\/]+)$/
 
         attr_accessor :can_match, :error, :uris, :cts, :text
 
         def initialize(a_content)
           @content = a_content
-          @can_match = false 
+          @can_match = false
           @uris = []
-          @text = "#{@content}"
+          @text = nil
           @cts = nil
           @error = nil
-          @content.scan(URI.regexp) do |*matches|
+          @content.scan(URI_MATCH).each do |p|
             @can_match = true
-            u = $&
+            u = p[0]
             @uris << u
-            # keep any text that isn't part of the uris
-            @text.sub!(u,'')
-            @text.sub!(/^\n/,'')
-            @text.sub!(/\n$/,'')
           end
         end
       end

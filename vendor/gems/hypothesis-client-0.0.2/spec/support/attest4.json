@@ -1,0 +1,75 @@
+{
+    "updated": "2015-05-18T23:35:40.468766+00:00", 
+    "target": [
+        {
+            "source": "http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview", 
+            "pos": {
+                "top": 386.984375, 
+                "height": 15
+            }, 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[1]/span[1]", 
+                    "endContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[1]/span[1]", 
+                    "startOffset": 0, 
+                    "endOffset": 6
+                }, 
+                {
+                    "start": 378, 
+                    "end": 384, 
+                    "type": "TextPositionSelector"
+                }, 
+                {
+                    "type": "TextQuoteSelector", 
+                    "prefix": "ts-en-2015-1 Preview Full Text:", 
+                    "exact": "Apicto", 
+                    "suffix": ""
+                }, 
+                {
+                    "type": "FragmentSelector", 
+                    "value": ""
+                }
+            ]
+        }
+    ], 
+    "created": "2015-05-18T23:35:40.468750+00:00", 
+    "text": "http://data.perseus.org/people/visiblewords:johndoe_1\nhasAttestation http://example.org", 
+    "tags": [
+        "relation", 
+        "father", 
+        "visiblewords"
+    ], 
+    "uri": "http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview", 
+    "user": "acct:balmas@hypothes.is", 
+    "document": {
+        "eprints": {}, 
+        "title": "\nPerseids Prototype: epi_cts_identifiers - preview\n", 
+        "twitter": {}, 
+        "dc": {}, 
+        "prism": {}, 
+        "highwire": {}, 
+        "facebook": {}, 
+        "link": [
+            {
+                "href": "http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview"
+            }
+        ]
+    }, 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "id": "eNh-9oskR-yADUEQ3av5rg", 
+    "permissions": {
+        "admin": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "update": [
+            "acct:balmas@hypothes.is"
+        ], 
+        "delete": [
+            "acct:balmas@hypothes.is"
+        ]
+    }
+}

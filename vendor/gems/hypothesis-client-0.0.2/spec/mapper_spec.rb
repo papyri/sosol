@@ -73,9 +73,10 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"][0]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
-      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1")
-      expect(mapped[:data]["hasBody"]["@graph"][3]["@id"]).to eq("test#bond-2")
-      expect(mapped[:data]["hasBody"]["@graph"][3]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1-1")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("test#bond-2-1")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("test#bond-2-1")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
     end
   end
   context "relation 2 test" do 
@@ -92,12 +93,29 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"][0]).to be_truthy
       expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
-      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1")
-      expect(mapped[:data]["hasBody"]["@graph"][3]["@id"]).to eq("test#bond-2")
-      expect(mapped[:data]["hasBody"]["@graph"][5]["@id"]).to eq("test#bond-3")
-      expect(mapped[:data]["hasBody"]["@graph"][5]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1-1")
+      expect(mapped[:data]["hasBody"]["@graph"][3]["@id"]).to eq("test#bond-3-1")
+      expect(mapped[:data]["hasBody"]["@graph"][3]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
     end
   end
+
+  context "relation makes up for missing relation tag  test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'relationnotag1.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+    it 'produced oa' do 
+      expect(mapped[:errors]).to match_array([])
+      expect(mapped[:data]).to be_truthy
+    end
+  end
+
+  context "missing relation and relation tag test" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'relationnotag2.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+    it 'produced error' do 
+      expect(mapped[:errors]).to match_array(["Unknown body type http://www.lgpn.ox.ac.uk/id/V1-37350 []"] )
+    end
+  end
+
   context "attestation test" do 
     input = File.read(File.join(File.dirname(__FILE__), 'support', 'attest1.json')) 
     let(:mapped) { client.map("test",JSON.parse(input))}
@@ -177,6 +195,37 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
     end
   end
+
+  context "attestation of annotation" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'attest3.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'graphed the attestation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:describing")
+      expect(mapped[:data]["hasBody"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("https://hypothes.is/a/jtsBhicGR_mEoN1tu8I8hw")
+    end
+  end
+
+  context "relation and attestation" do 
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'attest4.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+
+    it 'graphed the attestation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:identifying")
+      expect(mapped[:data]["hasBody"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("test#rel-target")
+      expect(mapped[:data]["hasBody"]["@graph"][0]["http://www.w3.org/ns/oa#hasSelector"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1-1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@type"]).to eq("snap:FatherOf")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["http://lawd.info/ontology/hasAttestation"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][1]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/visiblewords:johndoe_1#this")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@type"]).to eq("http://lawd.info/ontology/Attestation")
+    end
+  end
+
   context "basic visiblewords test" do 
     input = File.read(File.join(File.dirname(__FILE__), 'support', 'person1.json')) 
     let(:mapped) { client.map("test",JSON.parse(input))}
@@ -209,6 +258,25 @@ describe HypothesisClient::MapperPrototype do
     it 'produced oa' do 
       expect(mapped[:errors]).to match_array([])
       expect(mapped[:data]).to be_truthy
+    end
+  end
+
+  context "visiblewords hasattestation" do
+    input = File.read(File.join(File.dirname(__FILE__), 'support', 'hasattest1.json')) 
+    let(:mapped) { client.map("test",JSON.parse(input))}
+    it 'graphed the attestation' do
+      expect(mapped[:data]["motivatedBy"]).to eq("oa:describing")
+      expect(mapped[:data]["hasBody"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"]).to be_truthy
+      expect(mapped[:data]["hasBody"]["@graph"][0]["@id"]).to eq("https://hypothes.is/a/qOT8PSbRSfi12cc23SyPsQ")
+      expect(mapped[:data]["hasBody"]["@graph"][0]["http://lawd.info/ontology/hasAttestation"]).to eq("test#attest-1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#attest-1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["@type"]).to eq("http://lawd.info/ontology/Attestation")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["http://lawd.info/ontology/hasCitation"]).to eq("test#cite-1")
+      expect(mapped[:data]["hasBody"]["@graph"][1]["http://purl.org/spar/cito/citesAsEvidence"]).to eq("http://sosol.perseids.org/sosol/publications/12078/epi_cts_identifiers/15840/preview")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("test#cite-1")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["@type"]).to eq(["http://lawd.info/ontology/Citation", "cnt:ContentAsText"])
+      expect(mapped[:data]["hasBody"]["@graph"][2]["cnt:chars"]).to eq("\u03a4\u03b7\u03bb\u03ad\u03bc\u03b1\u03c7\u03bf\u03c2 \u03a0\u03b9\u03b8\u03ae\u03ba\u03bf\u03c5")
     end
   end
 end

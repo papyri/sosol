@@ -11,7 +11,7 @@ describe HypothesisClient::Helpers::Uris::Perseids do
     end
 
     it 'created the uri' do
-      expect(mapped.uris).to match_array(["http://sosol.perseids.org/sosol/publications/12018/epi_cts_identifiers/15754/preview"])
+      expect(mapped.uris).to match_array([])
     end
   end
 

@@ -1,0 +1,74 @@
+{
+    "updated": "2015-05-18T12:48:33.313601+00:00", 
+    "target": [
+        {
+            "source": "http://sosol.perseids.org/sosol/publications/12078/epi_cts_identifiers/15840/preview", 
+            "pos": {
+                "top": 460.984375, 
+                "height": 17
+            }, 
+            "selector": [
+                {
+                    "type": "RangeSelector", 
+                    "startContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[2]", 
+                    "endContainer": "/div[2]/div[1]/div[4]/div[2]/form[1]/div[2]/div[1]/div[1]/div[1]/div[2]", 
+                    "startOffset": 26, 
+                    "endOffset": 43
+                }, 
+                {
+                    "start": 358, 
+                    "end": 375, 
+                    "type": "TextPositionSelector"
+                }, 
+                {
+                    "type": "TextQuoteSelector", 
+                    "prefix": "\u03bd\u03c4\u1fd6\u03bd\u03bf\u03c2 \u0394\u03bf\u03c1\u03af\u03bb\u03bb\u03bf\u03c5 year \u0398\u03c1\u03ac\u03c3\u03b9\u03c0\u03c0\u03bf\u03c2 5", 
+                    "exact": "\u03a4\u03b7\u03bb\u03ad\u03bc\u03b1\u03c7\u03bf\u03c2 \u03a0\u03b9\u03b8\u03ae\u03ba\u03bf\u03c5", 
+                    "suffix": "\u1f08\u03bc\u03c6\u03ae\u03c1\u03b9\u03c4\u03bf\u03c2 \u1f08\u03bb\u03ba year \u039a\u03bb\u03b5\u03cc\u03c3\u03c4\u03c1\u03b1\u03c4\u03bf\u03c2"
+                }, 
+                {
+                    "type": "FragmentSelector", 
+                    "value": ""
+                }
+            ]
+        }
+    ], 
+    "created": "2015-05-18T12:48:33.313585+00:00", 
+    "text": "https://hypothes.is/a/qOT8PSbRSfi12cc23SyPsQ", 
+    "tags": [
+        "visiblewords", 
+        "hasAttestation"
+    ], 
+    "uri": "http://sosol.perseids.org/sosol/publications/12078/epi_cts_identifiers/15840/preview", 
+    "user": "acct:domgaiatheoroi@hypothes.is", 
+    "document": {
+        "eprints": {}, 
+        "title": "\nPerseids Prototype: epi_cts_identifiers - preview\n", 
+        "twitter": {}, 
+        "dc": {}, 
+        "prism": {}, 
+        "highwire": {}, 
+        "facebook": {}, 
+        "link": [
+            {
+                "href": "http://sosol.perseids.org/sosol/publications/12078/epi_cts_identifiers/15840/preview"
+            }
+        ]
+    }, 
+    "consumer": "00000000-0000-0000-0000-000000000000", 
+    "id": "4_xyj5skQ464C7Tad3xQFg", 
+    "permissions": {
+        "admin": [
+            "acct:domgaiatheoroi@hypothes.is"
+        ], 
+        "read": [
+            "group:__world__"
+        ], 
+        "update": [
+            "acct:domgaiatheoroi@hypothes.is"
+        ], 
+        "delete": [
+            "acct:domgaiatheoroi@hypothes.is"
+        ]
+    }
+}

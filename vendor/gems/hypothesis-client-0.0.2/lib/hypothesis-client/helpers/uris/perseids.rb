@@ -16,11 +16,9 @@ module HypothesisClient
  
           @content.scan(PERSEIDS_URI).each do |u|
             @can_match = true
-            @uris << u
-            # leave the cts the same as the uri for now
-            # ideally the perseids url would list it or we will
-            # do a callback for it
-            @cts << u
+            # eventually we would want to produce a full CTS URN with selector
+            # here but for now leave the uris and cts empty to 
+            # flag that the target should be used as is with its selector
           end
         end
 

@@ -1,0 +1,58 @@
+--- !ruby/object:Gem::Specification 
+name: hypothesis-client
+version: !ruby/object:Gem::Version 
+  prerelease: 
+  version: 0.0.2
+platform: ruby
+authors: []
+
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2015-06-02 00:00:00 -04:00
+default_executable: 
+dependencies: []
+
+description: 
+email: 
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+  - lib
+  - lib/hypothesis-client
+  - lib/hypothesis-client.rb
+has_rdoc: true
+homepage: 
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+  - lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.5.1
+signing_key: 
+specification_version: 3
+summary: 
+test_files: []
+
