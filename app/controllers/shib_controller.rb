@@ -18,7 +18,7 @@ class ShibController < ApplicationController
         redirect_to :controller => "signin", :action => "index"
         return 
       end
-      request = Onelogin::Saml::Authrequest.new
+      request = OneLogin::RubySaml::Authrequest.new
       redirect_to(request.create(saml_settings(idp)))
     end
 
@@ -47,8 +47,10 @@ class ShibController < ApplicationController
       # allowed_clock_drift is configured in seconds - allows for slight mismatch on time
       # between sp and idp servers
       allowed_clock_drift = @shib_config[:allowed_clock_drift] || 0
-      response          = Onelogin::Saml::Response.new(params[:SAMLResponse],{:allowed_clock_drift => allowed_clock_drift})
+      #response          = Onelogin::Saml::Response.new(params[:SAMLResponse],{:allowed_clock_drift => allowed_clock_drift})
+      response          = OneLogin::RubySaml::Response.new(params[:SAMLResponse],{:allowed_clock_drift => allowed_clock_drift})
       issuer = response.issuer
+      Rails.logger.info("Response = #{response.inspect}")
       
       # lookup the code for the idp using the entity_id for the issuer of the AuthResponse
       idp_matches = @shib_config[:idps].collect { |k,v|
@@ -63,14 +65,17 @@ class ShibController < ApplicationController
       if (idp_matches.length > 0) 
         idp = idp_matches[0]  
         response.settings = saml_settings(idp)
+        if idp && response.is_valid? 
+          Rails.logger.info("Response" + response.attributes.inspect)
+          redirect_to :controller => "user", :action => "dashboard"
         
         # verify the validity of the AuthResponse
-        if idp && response.is_valid?
+        elsif false && idp && response.is_valid? 
           
           # TODO we should test first to see if the response contained any unencrypted
           # attributes before proceeding with the AttributeQuery request
-          # this could all move to its own method too
-          att_request = Onelogin::Saml::AttributeQuery.new
+          #  this could all move to its own method too
+          att_request = OneLogin::RubySaml::AttributeQuery.new
           att_request = att_request.create(response.name_id,response.settings,{})
           uri = URI.parse(response.settings.idp_aqr_target_url)
           
@@ -88,10 +93,12 @@ class ShibController < ApplicationController
           # separate class in the one login lib and allow for more general retrieval of
           # scoped attribute values
           if (http_response.code == '200')
-            att_response = Onelogin::Saml::Response.new(http_response.body,{:allowed_clock_drift => allowed_clock_drift, :is_aq_response => true})
+            att_response = OneLogin::RubySaml::Response.new(http_response.body,{:allowed_clock_drift => allowed_clock_drift, :is_aq_response => true})
             att_response.settings = saml_settings(idp)
+            Rails.logger.info("Response" + att_response.inspect)
             begin 
               if att_response.is_valid? && att_response.scoped_targeted_id
+                Rails.logger.info(">>>>>>>>>>>>...att_reponse valid" + att_response.inspect)
                 user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
                 
                 # User Identifier already exists for this identity and no current user session so 
@@ -182,7 +189,7 @@ class ShibController < ApplicationController
       end
       get_config
   
-      settings = Onelogin::Saml::Settings.new
+      settings = OneLogin::RubySaml::Settings.new
       settings.assertion_consumer_service_url = @shib_config[:assertion_consumer_service_url]
       settings.issuer                         = @shib_config[:issuer]
       # check to be sure the issuer isn't different for this IdP
@@ -190,7 +197,7 @@ class ShibController < ApplicationController
         settings.issuer = @shib_config[:idps][idp][:issuer]
       end
       settings.sp_cert                       = File.read(@shib_config[:idps][idp][:sp_cert])
-      meta = Onelogin::Saml::Metadata.new
+      meta = OneLogin::RubySaml::Metadata.new
       render :xml => meta.generate(settings)
     end
     
@@ -248,7 +255,7 @@ class ShibController < ApplicationController
 
     def saml_settings(a_idp)
       get_config
-      settings = Onelogin::Saml::Settings.new
+      settings = OneLogin::RubySaml::Settings.new
       idp_settings = @shib_config[:idps][a_idp]
 
       # TODO GET all metadata from config
@@ -257,15 +264,17 @@ class ShibController < ApplicationController
       
       # TODO will we use a WAYF service to get list of available IdPs?
       settings.idp_sso_target_url = idp_settings[:idp_sso_target_url] 
-      settings.idp_aqr_target_url = idp_settings[:idp_aqr_target_url]
+      #settings.idp_aqr_target_url = idp_settings[:idp_aqr_target_url]
 
       settings.issuer             = @shib_config[:issuer]
       # check to be sure the issuer isn't different for this IdP
       if (idp_settings[:issuer])
         settings.issuer = idp_settings[:issuer]
       end
-      settings.idp_cert                       = File.read(idp_settings[:idp_cert]) 
+      #settings.idp_cert                       = File.read(idp_settings[:idp_cert]) 
       # TODO this is depends upon the IdP
+      settings.idp_cert_fingerprint = idp_settings[:idp_cert_fingerprint]
+      settings.idp_cert_fingerprint_algorithm = idp_settings[:idp_cert_fingerprint_algorithm]
       settings.name_identifier_format         = idp_settings[:name_identifier_format]
       # Optional for most SAML IdPs
       settings.authn_context = idp_settings[:authn_context]
