@@ -321,19 +321,21 @@ end
    
        
        open_session do |meta_session|
-         threads_active_before_vote = Thread.list.select{|t| t.alive?}
-         meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-              :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
-              :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
-              
-         Rails.logger.debug "--flash is: " + meta_session.flash.inspect              
-         threads_active_after_vote = Thread.list.select{|t| t.alive?}
-         new_active_threads = threads_active_after_vote - threads_active_before_vote
-         Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
-         Rails.logger.flush
-         ThreadsWait.all_waits(*new_active_threads)
-         Rails.logger.debug "threadwaiting done"
-         Rails.logger.flush
+         ActiveRecord::Base.connection_pool.with_connection do |conn|
+           threads_active_before_vote = Thread.list.select{|t| t.alive?}
+           meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+                :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
+                :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
+                
+           Rails.logger.debug "--flash is: " + meta_session.flash.inspect              
+           threads_active_after_vote = Thread.list.select{|t| t.alive?}
+           new_active_threads = threads_active_after_vote - threads_active_before_vote
+           Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
+           Rails.logger.flush
+           ThreadsWait.all_waits(*new_active_threads)
+           Rails.logger.debug "threadwaiting done"
+           Rails.logger.flush
+         end
        end
        ActiveRecord::Base.clear_active_connections!
        #reload the publication to get the vote associations to go thru?
@@ -476,20 +478,22 @@ end
 =end
        
        open_session do |text_session|
-         threads_active_before_vote = Thread.list.select{|t| t.alive?}
+         ActiveRecord::Base.connection_pool.with_connection do |conn|
+           threads_active_before_vote = Thread.list.select{|t| t.alive?}
 
-         text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-              :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
-              :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
-              
-         threads_active_after_vote = Thread.list.select{|t| t.alive?}
-         new_active_threads = threads_active_after_vote - threads_active_before_vote
-         Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
-         Rails.logger.flush
-         ThreadsWait.all_waits(*new_active_threads)
-         Rails.logger.debug "threadwaiting done"
-         Rails.logger.flush
-         Rails.logger.debug "--flash is: " + text_session.flash.inspect              
+           text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+                :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
+                :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
+                
+           threads_active_after_vote = Thread.list.select{|t| t.alive?}
+           new_active_threads = threads_active_after_vote - threads_active_before_vote
+           Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
+           Rails.logger.flush
+           ThreadsWait.all_waits(*new_active_threads)
+           Rails.logger.debug "threadwaiting done"
+           Rails.logger.flush
+           Rails.logger.debug "--flash is: " + text_session.flash.inspect              
+         end
        end
        
        ActiveRecord::Base.clear_active_connections!
