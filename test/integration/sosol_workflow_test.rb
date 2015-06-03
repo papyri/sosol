@@ -304,6 +304,7 @@ end
        #vote on it
        meta_publication = meta_publications.first 
        
+       assert !meta_publication.creator_commits.empty?, "submitted publication should have creator commits"
         
        #find meta identifier
        meta_identifier = nil
@@ -365,6 +366,7 @@ end
        end
       
        assert meta_final_identifier.content, "finalizing publication's identifier should have content" 
+       assert meta_final_publication.needs_rename?, "finalizing publication should need rename before being renamed"
 
        Rails.logger.info('meta_final_identifier')
        Rails.logger.info(meta_final_identifier.inspect)
