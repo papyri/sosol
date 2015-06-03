@@ -653,6 +653,18 @@ class Publication < ActiveRecord::Base
     return decree_action
   end
 
+  # returns commits by publication creator - i.e. between canon branch point
+  # and board branch point
+  def creator_commits
+    canon_branch_point = self.merge_base
+    board_branch_point = self.origin.head
+
+    # Grit method_missing version
+    # return self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
+    # Naive backticks version:
+    return `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
+  end
+
   def flatten_commits(finalizing_publication, finalizer, board_members)
     finalizing_publication.repository.fetch_objects(self.repository)
 
@@ -668,27 +680,12 @@ class Publication < ActiveRecord::Base
     #   should instead happen at submit so EB sees it?
 
     self.owner.repository.update_master_from_canonical
-    canon_branch_point = self.merge_base
-
-    # this relies on the parent being a remote, e.g. fetch_objects being used
-    # during branch copy
-    # board_branch_point = self.merge_base(
-    #   [self.parent.repository.name, self.parent.branch].join('/'))
-    # this works regardless
-    board_branch_point = self.origin.head
-
-    # Grit method_missing version
-    # creator_commits = self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
-    # Naive backticks version:
-    creator_commits = `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
-
     reason_comment = self.submission_reason
-
 
     board_controlled_paths = self.controlled_paths
     Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
 
-    controlled_commits = creator_commits.select do |creator_commit|
+    controlled_commits = self.creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
       begin
         controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
@@ -730,7 +727,6 @@ class Publication < ActiveRecord::Base
     # parent commit should ALWAYS be canonical master head
     # FIXME: handle racing during finalization
     parent_commit = Repository.new.repo.get_head('master').commit.sha
-    # parent_commit = canon_branch_point
 
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
