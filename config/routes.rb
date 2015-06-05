@@ -294,10 +294,6 @@ ActionController::Routing::Routes.draw do |map|
     :controller => "user",
     :action => "signin"
 
-  map.terms 'terms',
-    :controller => "user",
-    :action => "terms"
-    
   map.account 'account',
     :controller => "user",
     :action => "account"

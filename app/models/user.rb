@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
   # - true if the user has agreed to the site terms of service
   # - false if the user has not agreed to the site terms of service
   def accepted_terms?
-    return self.accepted_terms.nil? ? false : accepted_terms
+    return accepted_terms >= CURRENT_TERMS_VERSION
   end
   
   def grit_actor
