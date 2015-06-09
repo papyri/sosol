@@ -328,6 +328,14 @@ class UserController < ApplicationController
       begin 
         @user.update_attributes(terms)
         flash[:notice] = 'Thank you for accepting the terms of service'
+        if !session[:entry_url].blank?
+          redirect_to session[:entry_url]
+          session[:entry_url] = nil
+          return
+        else
+          redirect_to :controller => "user", :action => "dashboard"
+          return
+        end
         redirect_to dashboard_url
       rescue Exception => e
         flash[:error] = 'Error occured - user was not updated.'

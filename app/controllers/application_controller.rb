@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :tab_setup
 
-  before_filter :accept_terms , :except => [:terms, :update_terms]
+  before_filter :accept_terms , :except => [:terms, :update_terms] 
 
   unless ActionController::Base.consider_all_requests_local
     rescue_from Exception, :with => :render_500
@@ -110,6 +110,7 @@ class ApplicationController < ActionController::Base
       if @current_user.accepted_terms?
         return true
       else
+        session[:entry_url] = request.url
         redirect_to :controller => :user, :action => :terms
         return
       end
