@@ -2,7 +2,7 @@ require 'test_helper'
 require 'thwait'
 require 'ddiff'
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class SosolWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
     threads_active_before_vote = Thread.list.select{|t| t.alive?}
     FactoryGirl.create(:vote,
@@ -97,7 +97,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 end
 
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class SosolWorkflowTest < ActionController::IntegrationTest
   context "for idp3" do
 
 =begin
