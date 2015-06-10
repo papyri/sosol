@@ -58,7 +58,7 @@ class CiteIdentifier < Identifier
     end
     temp_id.save!
     initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     temp_id.init_content(a_init_value)
     return temp_id
   end
@@ -98,7 +98,7 @@ class CiteIdentifier < Identifier
     temp_id.save!
      # initialize a new version of the content from the parent content
     initial_content = temp_id.init_version_content(parent_id.content)
-    temp_id.set_content(initial_content, :comment => 'Created from Inventory', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    temp_id.set_content(initial_content, :comment => 'Created from Inventory', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     return temp_id
   end
   

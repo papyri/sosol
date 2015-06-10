@@ -39,7 +39,7 @@ class OaCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{a_urn}"
     end
     initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     temp_id.init_content(a_init_value)
     temp_id.save!
     return temp_id
