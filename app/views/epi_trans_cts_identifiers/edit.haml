@@ -7,7 +7,7 @@
     #edit  
     
       #editing_trans_text_view
-        = @identifier[:text_html_preview]    
+        = @identifier[:text_html_preview].html_safe
       
         = form_for @identifier, :url => { :action => :updatexml } do |f|
           = f.error_messages
