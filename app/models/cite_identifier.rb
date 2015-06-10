@@ -200,12 +200,12 @@ class CiteIdentifier < Identifier
        
     path_components << ns
     path_components << coll
-    path_components << "REAMDE.md"
+    path_components << "README.md"
     
     # e.g. CITE_OAC_XML/perseus/mycoll/README.md
     collection_path = File.join(path_components)
     exists = self.publication.repository.get_file_from_branch(collection_path,'master')
-    exists = ! nil
+    exists.nil? ? false : true
   end
   
   def to_path

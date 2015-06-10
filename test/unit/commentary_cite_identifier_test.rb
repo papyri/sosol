@@ -4,7 +4,7 @@ class CommentaryCiteIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = FactoryGirl.create(:user, :name => "Creator2")
+      @creator = FactoryGirl.create(:user, :name => "Creator")
       @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
 
       # branch from master so we aren't just creating an empty branch
@@ -17,7 +17,7 @@ class CommentaryCiteIdentifierTest < ActiveSupport::TestCase
         @publication.destroy
       end
       unless @creator.nil?
-        #@creator.destroy
+        @creator.destroy
       end
     end
    
