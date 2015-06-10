@@ -4,8 +4,9 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = FactoryGirl.create(:user, :name => "Creator1")
+      @creator = FactoryGirl.create(:user, :name => "Creator")
       @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      # branch from master so we aren't just creating an empty branch
 
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
@@ -17,7 +18,7 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
         @publication.destroy
       end
       unless @creator.nil?
-        #@creator.destroy
+        @creator.destroy
       end
     end
        
@@ -29,14 +30,14 @@ class TreebankCiteIdentifierTest < ActiveSupport::TestCase
       template_xml = REXML::Document.new(test.xml_content)
       assert_not_nil REXML::XPath.first(template_xml,"/treebank")
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/annotator")
-      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "http://data.perseus.org/users/Creator1"
+      assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "http://data.perseus.org/users/Creator"
       assert_not_nil REXML::XPath.first(template_xml,"/treebank/date")
       
 
     end
     
     should "create from url" do      
-      test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://nlp.perseus.tufts.edu/syntax/treebank/ldt/1.5/data/1999.02.0002.xml"]) 
+      test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://localhost/tests/treebank_data/v1.6/latin/data/phi0690.phi003.perseus-lat1.tb.xml"])
       assert_not_nil test.xml_content
       # make sure we actually retrieved something -- the bare template doesn't have word forms
       template_xml = REXML::Document.new(test.xml_content)

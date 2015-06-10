@@ -4,7 +4,7 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
   
   context "identifier test" do
     setup do
-      @creator = FactoryGirl.create(:user, :name => "Creator2")
+      @creator = FactoryGirl.create(:user, :name => "Creator")
       @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
 
       # branch from master so we aren't just creating an empty branch
@@ -17,14 +17,14 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
         @publication.destroy
       end
       unless @creator.nil?
-        #@creator.destroy
+        @creator.destroy
       end
     end
        
     should "create template dummy non-cts" do      
-      AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      CTS::CTSLib = stub("my tokenizer")
+      CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
+      CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
       test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert_not_nil test
       # ideally we should do an XML comparison
@@ -43,27 +43,27 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
     end
     
     should "see as match" do
-      AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      CTS::CTSLib = stub("my tokenizer")
+      CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
+      CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
       test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert test.is_match?(["http://test1.org","http://test2.org"])
 
     end
     
     should "not see as match" do
-      AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      CTS::CTSLib = stub("my tokenizer")
+      CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
+      CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
       test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
       assert ! test.is_match?(["http://test1.org","http://test3.org"])
 
     end
 
     should "strip uri from title" do
-      AlignmentCiteIdentifier::XML_TOKENIZER = stub("my tokenizer")
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_tokenized_passage).returns(@tokenized_lat)
-      AlignmentCiteIdentifier::XML_TOKENIZER.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      CTS::CTSLib = stub("my tokenizer")
+      CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
+      CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
       test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org/urn:cts:xxx","http://test2.org/urn:cts:yyy"])
       assert_equal "Alignment of urn:cts:xxx and urn:cts:yyy", test.title
 

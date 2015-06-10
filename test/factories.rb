@@ -27,6 +27,10 @@ FactoryGirl.define do
     "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
 
+  sequence :treebank_cite_identifier_string do |n|
+    "cite/perseus/lattb.#{n}.1"
+  end
+
   factory :board do |f|
     f.title { FactoryGirl.generate(:name) }
     f.category 'category'
@@ -142,6 +146,11 @@ FactoryGirl.define do
 
   factory :TeiCTSIdentifier do |f|
     f.name { FactoryGirl.generate(:tei_cts_identifier_string) }
+    f.title :title
+  end
+
+  factory :TreebankCiteIdentifier do |f|
+    f.name { FactoryGirl.generate(:treebank_cite_identifier_string) }
     f.title :title
   end
 
