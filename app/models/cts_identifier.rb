@@ -40,7 +40,7 @@ class CTSIdentifier < Identifier
     temp_id.publication = publication 
     temp_id.save!
     initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     return temp_id
   end
   
@@ -51,7 +51,7 @@ class CTSIdentifier < Identifier
     temp_id.save!
     ## replace work urn with version 
     initial_content = initial_content.gsub!(/#{urn}/,temp_id.urn_attribute)
-    temp_id.set_content(initial_content, :comment => 'Created from Supplied content')
+    temp_id.set_content(initial_content, :comment => 'Created from Supplied content', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     return temp_id
   end
   
