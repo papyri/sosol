@@ -8,7 +8,7 @@
   .site
     = render :partial => 'identifiers/header'
     #edit
-      - form_for @identifier, :url => { :action => :updatetext } do |f|
+      = form_for @identifier, :url => { :action => :updatetext } do |f|
         = f.error_messages
         %label Translation Text
         %br
