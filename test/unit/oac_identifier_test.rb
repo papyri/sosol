@@ -16,8 +16,8 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @test_tb1 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg001.perseus-grc1:1.1'
       @test_tb2 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg002.perseus-grc1:1.1'
       @test_title = 'Test Annotation'
-      @creator_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
-      @creator2_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
+      @creator_uri = Sosol::Application.config.site_user_namespace + @creator.name
+      @creator2_uri = Sosol::Application.config.site_user_namespace + @creator2.name
       @oac_identifier.add_annotation(@test_uri1,[@test_tb1],[@test_tb2],"oa:linking",@creator_uri,"test:agent",'test add annotation')
     end
     

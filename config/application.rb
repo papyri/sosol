@@ -19,7 +19,7 @@ SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Do
 SITE_LAYOUT = 'perseus'
 SITE_IDENTIFIERS = 'CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OaCiteIdentifier,OajCiteIdentifier'
 SITE_CATALOG_SEARCH = "View In Catalog"
-SITE_USER_NAMESPACE = "data.perseus.org"
+SITE_USER_NAMESPACE = "http://data.perseus.org/users/"
 SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
 SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
 EXTERNAL_CTS_REPOS = 'AnnotationSources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://perseids.org/annotsrc'

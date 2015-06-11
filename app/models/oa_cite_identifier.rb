@@ -71,7 +71,7 @@ class OaCiteIdentifier < CiteIdentifier
   
   # make a annotator uri from the owner of the publication 
   def make_annotator_uri()
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
   end
   
   # Converts REXML::Document / ::Element into xml string
@@ -208,11 +208,11 @@ class OaCiteIdentifier < CiteIdentifier
     transform = agent[:transformations][:OaCiteIdentifier]
     content = JRubyXML.apply_xsl_transform(
     JRubyXML.stream_from_string(response.body),
-    JRubyXML.stream_from_file(File.join(RAILS_ROOT,transform)),
+    JRubyXML.stream_from_file(File.join(Rails.root,transform)),
       :e_agentUri => agent[:uri_match],
       :e_annotatorUri => self.make_annotator_uri,
       :e_annotatorName => self.publication.creator.human_name,
-      :e_baseAnnotUri => SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute 
+      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
     )  
     return content
   end

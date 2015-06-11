@@ -47,7 +47,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
   # make a annotator uri from the owner of the publication 
   def make_annotator_uri()
-    ActionController::Integration::Session.new(Sosol::Application).url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
   end
   
   # Converts REXML::Document / ::Element into xml string
@@ -76,7 +76,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   def init_content(a_value)
     # the init value must be one or more target uris
     # todo calculate body URI and body as text
-    annot_uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute
+    annot_uri = Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute
     body_uri = annot_uri + "/commentary"
   
     atts = {}
@@ -183,7 +183,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
   # need to update the uris to reflect the new name
   def after_rename(options = {})
-    annot_uri = SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute
+    annot_uri = Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute
     body_uri = annot_uri + "/commentary"
     OacHelper::update_annotation_uris(get_annotation,annot_uri,body_uri)
     oacRdf = toXmlString self.rdf

@@ -282,7 +282,7 @@ class CiteIdentifier < Identifier
    
     # make a annotator uri from the owner of the publication 
     def make_annotator_uri()
-      ActionController::Integration::Session.new(Sosol::Application).url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+      "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
     end
     
     def self.find_matching_identifiers(match_id,match_user,match_pub)
