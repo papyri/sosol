@@ -27,6 +27,10 @@ FactoryGirl.define do
     "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
 
+  sequence :epi_cts_identifier_string do |n|
+    "perseus/greekLit/tlg0012/tlg001/edition/perseus-grc#{n}"
+  end
+
   sequence :treebank_cite_identifier_string do |n|
     "cite/perseus/lattb.#{n}.1"
   end
@@ -142,6 +146,11 @@ FactoryGirl.define do
     f.reason :reason
     f.publication_id :publicaiton_id
     
+  end
+
+  factory :EpiCTSIdentifier do |f|
+    f.name { FactoryGirl.generate(:epi_cts_identifier_string) }
+    f.title :title
   end
 
   factory :TeiCTSIdentifier do |f|

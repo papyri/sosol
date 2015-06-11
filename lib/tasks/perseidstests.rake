@@ -8,8 +8,8 @@ namespace :test do
       path.include?('cite_test') ||
       path.include?('commentary_cite') ||
       path.include?('cts_lib') ||
-      path.include?('epi_trans') 
-#      path.include?('oac_identifier') ||
+      path.include?('epi_trans') ||
+      path.include?('oac_identifier') 
 #      path.include?('oa_cite') ||
 #      path.include?('oaj_cite') 
     end

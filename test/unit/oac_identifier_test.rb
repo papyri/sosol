@@ -9,7 +9,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @parent = FactoryGirl.create(:TeiCTSIdentifier, :title => 'Test Text')
+      @parent = FactoryGirl.create(:EpiCTSIdentifier, :title => 'Test Text')
       @oac_identifier = OACIdentifier.new_from_template(@publication,@parent)
       @test_uri1 = 'http://data.perseus.org/annotations/abcd'
       @test_uri2 = 'http://data.perseus.org/annotations/efgh'
