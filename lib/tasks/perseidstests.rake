@@ -12,7 +12,9 @@ namespace :test do
       path.include?('oac_identifier') ||
       path.include?('oa_cite') ||
       path.include?('oaj_cite') ||
-      path.include?('cite_publications')
+      path.include?('cite_publications') ||
+      path.include?('commentary_cite') ||
+      path.include?('cts_publications') 
     end
   end
 end
