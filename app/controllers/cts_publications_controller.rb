@@ -33,9 +33,10 @@ class CtsPublicationsController < PublicationsController
     # check to see if the user is already working on the parent publication
     begin
       @publication = _get_existing_publication(versionIdentifier)
-    rescue
+    rescue Exception => e
       # if we have an exception, we couldn't recover from conflicting 
       # publications - error has already been flashed so just redirect
+      Rails.logger.error(e)
       return redirect_to dashboard_url
     end
     
@@ -249,10 +250,10 @@ class CtsPublicationsController < PublicationsController
     end
 
     unless (transform.nil?)
-      user = ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
+      user = "#{Sosol::Application.config.site_user_namespace}#{@current_user.name}"
       content = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)),
+      JRubyXML.stream_from_file(File.join(Rails.root, transform)),
       'agent' => params[:agent],
       'id' => params[:id],
       'current_user' => user,
@@ -338,6 +339,9 @@ class CtsPublicationsController < PublicationsController
         if (ok_to_add)
           new_cts = identifier_class.new_from_supplied(@publication,collection,urn,pubtype,doc[:lang],doc[:contents])
           added = added + 1
+          # normally on creation of new publication this should be done with publication.populate_identifiers_from_identifers
+          # but we're circumventing that method here
+          @publication.identifiers << new_cts
           entry_identifier = new_cts
         end
       }
@@ -351,6 +355,7 @@ class CtsPublicationsController < PublicationsController
       if (new_publication)
         @publication.destroy
       end
+      Rails.logger.error(e)
       flash[:notice] = 'Error creating document:' + e.to_s
       return redirect_to dashboard_url
     end
