@@ -7,13 +7,16 @@ module CTS
   CTS_JAR_PATH = File.join(File.dirname(__FILE__), *%w"java cts3.jar")  
   GROOVY_JAR_PATH = File.join(File.dirname(__FILE__), *%w"java groovy-all-1.6.2.jar")  
   CTS_NAMESPACE = "http://chs.harvard.edu/xmlns/cts3/ti"
-  if defined?(EXIST_STANDALONE_URL)
-    EXIST_HELPER_REPO = "#{EXIST_STANDALONE_URL}/exist/rest/db/xq/"
-    EXIST_HELPER_REPO_PUT = "#{EXIST_STANDALONE_URL}/exist/rest"
-  end
   
   module CTSLib
     class << self
+
+      def get_config(a_key)
+        unless defined? @config
+          @config = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config cts.yml})).read).result)[Rails.env]
+        end
+        @config[a_key]
+      end
       
       # method which returns a CtsUrn object from the java chs cts3 library
       def urnObj(a_urn)
@@ -136,9 +139,8 @@ module CTS
         if (getExternalCTSHash().has_key?(a_inventory))
           @external_cts.fetch(a_inventory).fetch('api')
         elsif (getInventoriesHash().has_key?(a_inventory))
-          EXIST_HELPER_REPO + 'CTS.xq?inv=' + a_inventory   
+          get_config(:cts_api_endpoint) + "inv=" + a_inventory   
         else
-          Rails.logger.info(@external_cts.inspect)
           raise "#{a_inventory} CTS Repository is not registered."
         end
       end
@@ -160,8 +162,9 @@ module CTS
       def getExternalCTSHash()
         unless defined? @external_cts
           @external_cts = Hash.new
-          if defined?(EXTERNAL_CTS_REPOS)
-            EXTERNAL_CTS_REPOS.split(',').each do |entry|
+          endpoints = get_config(:external_cts_api_endpoints)
+          if defined?(endpoints)
+            endpoints.split(',').each do |entry|
               info = entry.split('|')
               repo_info = Hash.new
               repo_info['api'] = info[1]
@@ -170,15 +173,15 @@ module CTS
             end
           end
         end
-        Rails.logger.info("EX:#{@external_cts.inspect}")
         return @external_cts
       end
       
       def getInventoriesHash()
         unless defined? @inventories_hash
           @inventories_hash = Hash.new
-          if defined?(SITE_CTS_INVENTORIES)
-            SITE_CTS_INVENTORIES.split(',').each do |entry|
+          endpoints = get_config(:cts_inventories)
+          if defined?(endpoints)
+            endpoints.split(',').each do |entry|
               info = entry.split('|')
               @inventories_hash[info[0]] = info[1]
             end
@@ -256,7 +259,7 @@ module CTS
       end
       
       def proxyGetValidReff(a_inventory,a_urn,a_level)  
-        uri = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetValidReff&inv=#{a_inventory}&urn=#{a_urn}&level=#{a_level}")
+        uri = URI.parse(get_config(:cts_api_endpoint) + "request=GetValidReff&inv=#{a_inventory}&urn=#{a_urn}&level=#{a_level}")
         response = Net::HTTP.start(uri.host, uri.port) do |http|
           http.send_request('GET',uri.request_uri)
         end
@@ -274,7 +277,7 @@ module CTS
       def getValidReffFromRepo(a_uuid,a_inventory,a_document,a_urn,a_level)
         begin
           # post inventory and get path for file put 
-          uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+          uri = URI.parse(get_config(:cts_extension_api_endpoint) + "request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
           response = Net::HTTP.start(uri.host, uri.port) do |http|
             headers = {'Content-Type' => 'text/xml; charset=utf-8'}
             http.send_request('POST',uri.request_uri,a_inventory,headers)
@@ -286,14 +289,14 @@ module CTS
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
               # inventory put succeeded, now put the document itself  
-              pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+              pathUri = URI.parse(get_config(:cts_extension_api_put_endpoint) + path)
               put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
                 headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                 http.send_request('PUT', pathUri.request_uri, a_document,headers)      
               end # end put of document
               if (put_response.code == '201')
                 # request valid reffs
-                rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetValidReff&inv=#{a_uuid}&urn=#{a_urn}&level=#{a_level}")
+                rurl = URI.parse(get_config(:cts_api_endpoint) + "request=GetValidReff&inv=#{a_uuid}&urn=#{a_urn}&level=#{a_level}")
                 refs_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
                   http.send_request('GET', rurl.request_uri)
                 end # end valid reffs request
@@ -317,7 +320,7 @@ module CTS
           end # end put of inventory
         ensure
           # cleanup
-          rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
+          rurl = URI.parse( get_config(:cts_extension_api_endpoint) + "request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
           Net::HTTP.get_response(rurl)
         end
       end
@@ -352,7 +355,7 @@ module CTS
           begin
             # post inventory and get path for file put 
             # TODO CTS extensions should be at different base URI (e.g. CTS-X)
-             uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+             uri = URI.parse(get_config(:cts_extension_api_endpoint) + "request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
              response = Net::HTTP.start(uri.host, uri.port) do |http|
                   headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                   http.send_request('POST',uri.request_uri,inventory,headers)
@@ -364,7 +367,7 @@ module CTS
                      %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
                 # inventory put succeeded, now put the document itself  
-                pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+                pathUri = URI.parse(get_config(:cts_extension_api_put_endpoint) + path)
                 put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
                   headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                   http.send_request('PUT', pathUri.request_uri, a_document,
@@ -372,7 +375,7 @@ module CTS
                 end # end Net::HTTP.start
                 if (put_response.code == '201')
                 # request passage
-                  rurl = URI.parse("#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{a_uuid}&urn=#{a_urn}")
+                  rurl = URI.parse(get_config(:cts_api_endpoint) + "request=GetPassage&inv=#{a_uuid}&urn=#{a_urn}")
                   psg_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
                     http.send_request('GET', rurl.request_uri)
                   end # end Net::HTTP.start
@@ -392,7 +395,7 @@ module CTS
             end # end test on GetCitationText response code
         ensure
           # cleanup
-          rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
+          rurl = URI.parse(get_config(:cts_extension_api_endpoint) + "request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
           Net::HTTP.get_response(rurl)
         end
       end
@@ -409,7 +412,7 @@ module CTS
 
         begin
           # load inventory  -> POST inventory -> returns unique identifier for inventory
-          uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
+          uri = URI.parse(get_config(:cts_extension_api_endpoint) + "request=CreateCitableText&xuuid=#{a_uuid}&urn=#{a_urn}")
           response = Net::HTTP.start(uri.host, uri.port) do |http|
             headers = {'Content-Type' => 'text/xml; charset=utf-8'}
             http.send_request('POST',uri.request_uri,a_inventory,headers)
@@ -422,7 +425,7 @@ module CTS
               JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt cts extract_reply_text.xsl})))  
             if (path != '')
-              pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+              pathUri = URI.parse(get_config(:cts_extension_api_put_endpoint) + path)
               put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
                 headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                 http.send_request('PUT', pathUri.request_uri, a_document,headers)      
@@ -430,7 +433,7 @@ module CTS
               if (put_response.code == '201')
                 Rails.logger.info("Document put ok")
                 # put passage
-                rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=UpdatePassage&inv=#{a_uuid}&urn=#{a_urn}") 
+                rurl = URI.parse(get_config(:cts_extension_api_endpoint) + "request=UpdatePassage&inv=#{a_uuid}&urn=#{a_urn}") 
                 psg_response = Net::HTTP.start(rurl.host, rurl.port) do |http|
                   headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                   http.send_request('POST',rurl.request_uri,a_psg,headers)
@@ -465,7 +468,7 @@ module CTS
          raise "Exception in proxyUpdatePassage with #{a_psg}, #{a_inventory}"
        ensure
         # cleanup
-        rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
+        rurl = URI.parse(get_config(:cts_extension_api_endpoint) + "request=DeleteCitableText&urn=#{a_urn}&xuuid=#{a_uuid}") 
         Net::HTTP.get_response(rurl)
         end
       end
@@ -474,7 +477,7 @@ module CTS
         # TODO fix catalog to support full, escaped url
         # for POC just use the work and edition
         searchid = a_identifier.to_urn_components[0] + "." + a_identifier.to_urn_components[1]
-        return SITE_CATALOG_SEARCH + searchid
+        return get_config(:catalog_search) + searchid
       end
       
        # Get the list of creatable identifiers for the supplied urn
@@ -540,7 +543,7 @@ module CTS
             inventory = documentIdentifier.related_inventory.xml_content
             temp_uuid = documentIdentifier.publication.id.to_s + proxy_urn + '_proxyreq'
             # post inventory and get path for file put 
-            uri = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=CreateCitableText&xuuid=#{temp_uuid}&urn=#{urn_no_subref}")
+            uri = URI.parse(get_config(:cts_extension_api_endpoint) + "request=CreateCitableText&xuuid=#{temp_uuid}&urn=#{urn_no_subref}")
             response = Net::HTTP.start(uri.host, uri.port) do |http|
               headers = {'Content-Type' => 'text/xml; charset=utf-8'}
               http.send_request('POST',uri.request_uri,inventory,headers)
@@ -552,14 +555,14 @@ module CTS
                 %w{data xslt cts extract_reply_text.xsl})))  
               if (path != '')
                 # inventory put succeeded, now put the document itself  
-                pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
+                pathUri = URI.parse(get_config(:cts_extension_api_put_endpoint) + path)
                 put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
                   headers = {'Content-Type' => 'text/xml; charset=utf-8'}
                   content = matches.length > 0 ? matches[0].content : documentIdentifier.content
                   http.send_request('PUT', pathUri.request_uri, content,headers)      
                 end # end Net::HTTP.start
                 if (put_response.code == '201')
-                  passage_url = "#{EXIST_HELPER_REPO}CTS.xq?request=GetPassage&inv=#{temp_uuid}&urn=#{urn_no_subref}"
+                  passage_url = get_config(:cts_api_endpoint) + "request=GetPassage&inv=#{temp_uuid}&urn=#{urn_no_subref}"
                 else 
                   raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
                 end # end test on text Put request
@@ -596,7 +599,7 @@ module CTS
         ensure
           # cleanup
           if (temp_uuid)
-            rurl = URI.parse("#{EXIST_HELPER_REPO}CTS-X.xq?request=DeleteCitableText&urn=#{urn_no_subref}&xuuid=#{temp_uuid}") 
+            rurl = URI.parse(get_config(:cts_extension_api_endpoint) + "request=DeleteCitableText&urn=#{urn_no_subref}&xuuid=#{temp_uuid}") 
             Net::HTTP.get_response(rurl)
           end
         end

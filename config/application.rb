@@ -18,14 +18,11 @@ SITE_TAG_LINE = 'powered by Son of Suda Online'
 SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
 SITE_LAYOUT = 'perseus'
 SITE_IDENTIFIERS = 'CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OaCiteIdentifier,OajCiteIdentifier'
-SITE_CATALOG_SEARCH = "View In Catalog"
 SITE_USER_NAMESPACE = "http://data.perseus.org/users/"
 SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
 SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
-EXTERNAL_CTS_REPOS = 'AnnotationSources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://perseids.org/annotsrc'
 SITE_EMAIL_FROM = 'admin@perseids.org'
 REPOSITORY_ROOT = "/usr/local/gitrepos"
-SITE_CTS_INVENTORIES = 'perseids-dev|Epi'
 CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
 GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 
@@ -144,12 +141,9 @@ module Sosol
     config.site_wiki_link = SITE_WIKI_LINK
     config.site_layout = SITE_LAYOUT
     config.site_identifiers = SITE_IDENTIFIERS
-    config.site_cts_inventories = SITE_CTS_INVENTORIES
-    config.site_catalog_search = SITE_CATALOG_SEARCH
     config.site_user_namespace = SITE_USER_NAMESPACE
     config.site_oac_namespace = SITE_OAC_NAMESPACE
     config.site_cite_collection_namespace = SITE_CITE_COLLECTION_NAMESPACE
-    config.external_cts_repos = EXTERNAL_CTS_REPOS
     config.site_email_from = SITE_EMAIL_FROM
     config.repository_root = REPOSITORY_ROOT
     config.canonical_repository = CANONICAL_REPOSITORY

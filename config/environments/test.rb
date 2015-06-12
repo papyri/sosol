@@ -44,4 +44,6 @@ Sosol::Application.configure do
   # We set a placeholder RPX realm here for the test environment
   config.rpx_realm = 'sosol-test'
   require File.join(File.dirname(__FILE__), 'test_secret')
+
+  config.site_cts_inventories = 'perseids-test|Epi'
 end
