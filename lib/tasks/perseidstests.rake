@@ -14,7 +14,9 @@ namespace :test do
       path.include?('oaj_cite') ||
       path.include?('cite_publications') ||
       path.include?('commentary_cite') ||
-      path.include?('cts_publications') 
+      path.include?('cts_publications') ||
+      path.include?('dmm_api') ||
+      path.include?('epi_cts') 
     end
   end
 end

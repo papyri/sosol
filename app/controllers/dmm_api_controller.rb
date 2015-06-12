@@ -247,7 +247,7 @@ class DmmApiController < ApplicationController
     end 
     rc = false
     if (params[:comment_id]) 
-      comment = Comment.find(params[:comment_id].to_s)
+      comment = Comment.find_by_id(params[:comment_id])
       # only update comments that belong to this identifier's origin
       if (comment && comment.identifier_id == @identifier.origin.id)
         comment.comment = params[:comment]
