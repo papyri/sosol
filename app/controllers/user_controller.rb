@@ -91,7 +91,12 @@ class UserController < ApplicationController
   def signin
     
   end
-  
+
+  def terms
+     flash[:notice] = "Please read and accept the terms of service."
+
+  end
+
   def developer
     if !@current_user.developer
       redirect_to dashboard_url
@@ -307,6 +312,41 @@ class UserController < ApplicationController
 
   end  
 
+  def update_terms
+    #only let current user change this data
+    if @current_user.id != params[:id].to_i()
+      flash[:warning] = "Invalid Access."
+
+      redirect_to ( dashboard_url ) 
+      return
+    end
+    
+    @user = User.find(params[:id])
+
+    if (params[:accept])
+      terms = {:accepted_terms => CURRENT_TERMS_VERSION}
+      begin 
+        @user.update_attributes(terms)
+        flash[:notice] = 'Thank you for accepting the terms of service'
+        if !session[:entry_url].blank?
+          redirect_to session[:entry_url]
+          session[:entry_url] = nil
+          return
+        else
+          redirect_to :controller => "user", :action => "dashboard"
+          return
+        end
+        redirect_to dashboard_url
+      rescue Exception => e
+        flash[:error] = 'Error occured - user was not updated.'
+        redirect_to :controller => "user", :action => "terms"
+      end
+    else
+      flash[:warning] = 'You must accept the terms of service to continue'
+      redirect_to :controller => "user", :action => "terms"
+    end
+  end
+  
   def update_personal
     #only let current user change this data
     if @current_user.id != params[:id].to_i()

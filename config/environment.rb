@@ -118,6 +118,7 @@ SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
 EXTERNAL_CTS_REPOS = 'perseids|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=perseids|http://perseids.org/citations,Athenaeus Sources|http://sosol.perseus.tufts.edu/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 ENVIRONMENT_BACKGROUPD = 'white'
 SITE_EMAIL_FROM = 'admin@perseids.org'
+CURRENT_TERMS_VERSION = 1
 
   
 REPOSITORY_ROOT = "/usr/local/gitrepos"

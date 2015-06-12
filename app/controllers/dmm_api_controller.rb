@@ -4,6 +4,7 @@ class DmmApiController < ApplicationController
   before_filter :authorize, :except => [:api_item_info, :api_item_get]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   before_filter :update_cookie
+  skip_before_filter :accept_terms # don't display accept_terms on api requests
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
