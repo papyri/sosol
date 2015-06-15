@@ -316,7 +316,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         ActiveRecord::Base.clear_active_connections!
         
         if ENV['TRAVIS']
-          sleep 1
+          sleep 5
         end
         
         #reload the publication to get the vote associations to go thru?
@@ -445,7 +445,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         ActiveRecord::Base.clear_active_connections!
 
         if ENV['TRAVIS']
-          sleep 1
+          sleep 5
         end
 
         #reload the publication to get the vote associations to go thru?
