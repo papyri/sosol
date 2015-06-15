@@ -296,8 +296,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found meta identifier, will vote on it"
 
         #vote on meta publication
-        open_session do |meta_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |meta_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
             meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
@@ -426,8 +426,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found text identifier, will vote on it"
         #vote on text
-        open_session do |text_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |text_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
             text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote since I yippppppp agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
