@@ -934,3 +934,30 @@ ul.perseids_menu li:hover ul.perseids_sub_menu {
     font-size: small;
     color: red;
 }
+
+#termsofservice {
+    margin-top: 2em;
+    max-height: 50%;
+    overflow: scroll;
+    top: 50%;
+    left: 50%;
+    padding: 2rem;
+    position: fixed;
+    transform: translate(-50%,-50%);
+    border: 1px solid #DDD;
+}
+#termsofservice ol {
+    list-style: roman outside;
+    padding-left: 1rem;
+
+}
+
+#termsofservice ol li ol{
+    list-style-type: lower-alpha;
+    margin-left: 2rem;
+}
+
+#termsofservice ol li ol li ol {
+    list-style-type: lower-roman;
+    margin-left: 2rem;
+}

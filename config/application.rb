@@ -148,5 +148,6 @@ module Sosol
     config.repository_root = REPOSITORY_ROOT
     config.canonical_repository = CANONICAL_REPOSITORY
     config.gitweb_base_url = GITWEB_BASE_URL
+    config.current_terms_version = 0
   end
 end

@@ -74,6 +74,17 @@ class User < ActiveRecord::Base
       return who_name = self.name
     end
   end
+
+  # Checks user acceptance against request terms version
+  #  
+  #*Args*
+  # - version the terms version to check against
+  #*Returns*
+  # - true if the user has agreed to the site terms of service
+  # - false if the user has not agreed to the site terms of service
+  def accepted_terms?(version=0)
+    return accepted_terms >= version
+  end
   
   def jgit_actor
     org.eclipse.jgit.lib.PersonIdent.new(self.full_name, self.email)
