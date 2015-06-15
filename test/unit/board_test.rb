@@ -4,6 +4,7 @@ class BoardTest < ActiveSupport::TestCase
   context "a created board" do
     setup do
       @board = FactoryGirl.create(:board)
+      Rails.logger.debug("board unit setup: #{@board.inspect}")
       @decree = FactoryGirl.create(:decree, :board => @board)
       @path = @board.repository.path
     end

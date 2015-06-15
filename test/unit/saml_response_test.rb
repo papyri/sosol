@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
+require File.expand_path(File.join(File.dirname(__FILE__), "saml_test_helper"))
 
 class RubySamlTest < Test::Unit::TestCase
 
