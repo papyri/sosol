@@ -18,8 +18,6 @@ are submitted to the sosol boards, they will be marked as coming from the end_us
 This test creates a new publication and immediately submits it to a community.
 Each community board recieves the submit, votes on it, then sends it to the finalizer.
 The finalizer finalizes it, which copies the changes back to the original submitter.
-
-
 =end
 
 class CommunityWorkflowTest < ActionController::IntegrationTest
@@ -44,20 +42,15 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
             log_diffs(aid.xml_content.to_s, bid.xml_content.to_s )
             #Rails.logger.debug "full xml a " + aid.xml_content
             #Rails.logger.debug "full xml b " + bid.xml_content
-
           end
         end
-
       end
 
       if !id_has_match
         pubs_are_matched = false
         Rails.logger.debug "--Mis matched publication. Id " + aid.title + " " + aid.class.to_s + " are different"
-
       end
-
     end
-
 
     if pubs_are_matched
       Rails.logger.debug "Publications are matched"
@@ -110,21 +103,11 @@ end
 
 class CommunityWorkflowTest < ActionController::IntegrationTest
   context "for community" do
-
-=begin
-
-    should "be a test result of somesort" do
-
-      assert_equal 5, 7
-    end
-=end
-
     context "community testing" do
       setup do
         #Rails.logger.level = :debug
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         Rails.logger.debug "*************are we in debug mode***************"
-
 
         #a user to put on the boards
         @board_user = FactoryGirl.create(:user, :name => "board_man_freaky_bob")
@@ -150,7 +133,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @test_community.members << @community_user
         @test_community.end_user_id = @end_user.id
         @test_community.save
-
 
         #set up the boards, and vote
         #@meta_board = FactoryGirl.create(:community_meta_board, :title => "meta", :community_id => @test_community.id)
@@ -189,7 +171,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #add board to community
         @test_community.boards << @text_board
 
-
         #@translation_board = FactoryGirl.create(:community_translation_board, :title => "translation", :community_id => @test_community.id)
         @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation", :community_id => @test_community.id)
 
@@ -211,15 +192,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @meta_board.rank = 1
         @text_board.rank = 2
         @translation_board.rank = 3
-=begin
-        count = 0
-         [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board, @test_community ].each do |entity|
-         count = count + 1
-         assert entity, count.to_s + " was not created."
-         end
-=end
 
-    Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz community testing setup complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz community testing setup complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
       end
 
       teardown do
@@ -240,7 +214,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         end
         Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz community testing teardown complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
       end
-
 
       should "user creates and submits publication to community"  do
         Rails.logger.debug "BEGIN TEST: user creates and submits publication to community"
@@ -271,8 +244,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           @publication.log_info
         end
 
-
-
         Rails.logger.debug "---Publication Created---"
         Rails.logger.debug "---Identifiers for publication " + @publication.title + " are:"
 
@@ -284,7 +255,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           # Rails.logger.debug pi.xml_content
         end
 
-
         #submit to the community
         Rails.logger.debug "---Submit Publication---"
         open_session do |submit_session|
@@ -293,8 +263,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end
         @publication.reload
-
-
 
         #now meta should have it
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
@@ -349,13 +317,11 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
-
         vote_str = "Votes on meta are: "
         meta_publication.votes.each do |v|
           vote_str = vote_str + v.choice
         end
         Rails.logger.debug  vote_str
-
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
@@ -394,10 +360,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug meta_finalize_session.body
         end
 
-
         meta_final_publication.reload
         assert_equal "finalized", meta_final_publication.status, "Meta final publication not finalized"
-
 
         Rails.logger.debug "Meta committed"
 
@@ -420,10 +384,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Compare board with finalizer publication"
         compare_publications(meta_publication, meta_final_publication)
 
-
         Rails.logger.debug "Compare user with meta finalizer publication"
         compare_publications(@creator_user.publications.first, meta_final_publication)
-
 
         end_publication = @end_user.publications.first
         assert_nil end_publication, "--Community end user has a publication before they should (after meta has been finalized)"
@@ -443,7 +405,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #translation board should have 0 publication
         translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
-
 
         #vote on it
         text_publication = text_publications.first
@@ -480,11 +441,9 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
 
-
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
         Rails.logger.debug "--Text publication approved"
-
 
         #now finalizer should have it, only one person on board so it should be them
         finalizer_publications = @board_user.publications
@@ -542,8 +501,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Compare user with text finalizer publication"
         compare_publications(@creator_user.publications.first, text_final_publication)
 
-
-
         #check that end user now has the publication
         end_publication = @end_user.publications.first
         assert_not_nil end_publication, "--Community end user has no publications"
@@ -552,30 +509,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @publication.destroy
 
         Rails.logger.debug "ENDED TEST: user creates and submits publication to community"
-
-
-
-        #Check that the end user can submit to sosol
-=begin
-        #submit to the nobody, thus SoSOL
-        Rails.logger.debug "---Submit Publication To SoSOL---"
-        open_session do |submit_session|
-          submit_session.post 'publications/' + end_publication.id.to_s + '/submit/?test_user_id=' + @end_user.id.to_s, \
-              :submit_comment => "I am submitting a former community pub" #, :community => { :id => @test_community.id.to_s }
-          Rails.logger.debug "--flash is: " + submit_session.flash.inspect
-        end
-        @publication.reload
-
-=end
-
-
-
-
-
       end
     end
-
-
   end
-
 end
