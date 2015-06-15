@@ -267,6 +267,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           end
         end
         ActiveRecord::Base.clear_active_connections!
+
+        if ENV['TRAVIS']
+          sleep 1
+        end
+
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -392,6 +397,10 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
 
         ActiveRecord::Base.clear_active_connections!
+
+        if ENV['TRAVIS']
+          sleep 1
+        end
 
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
