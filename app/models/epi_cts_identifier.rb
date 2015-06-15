@@ -220,7 +220,7 @@ class EpiCTSIdentifier < CTSIdentifier
           transform = agent[:transformations][:EpiCTSIdentifier]
           content = JRubyXML.apply_xsl_transform(
             JRubyXML.stream_from_string(self.content),
-            JRubyXML.stream_from_file(File.join(RAILS_ROOT, transform)),
+            JRubyXML.stream_from_file(File.join(Rails.root, transform)),
              'urn' => self.urn_attribute,
              'reviewers' => signed_off_messages.join(',')
           )
@@ -268,7 +268,7 @@ class EpiCTSIdentifier < CTSIdentifier
     # strip xml:id from lb's
     original_xml = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(original_xml),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt ddb strip_lb_ids.xsl})))
     
     original_xml_content = REXML::Document.new(original_xml)

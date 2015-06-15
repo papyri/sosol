@@ -26,7 +26,7 @@ class EpiCtsIdentifiersController < IdentifiersController
           # strip xml:id from lb's
           original_xml = JRubyXML.apply_xsl_transform(
             JRubyXML.stream_from_string(original_xml),
-            JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+            JRubyXML.stream_from_file(File.join(Rails.root,
               %w{data xslt ddb strip_lb_ids.xsl})))
 
           # get div type=edition from XML in string format for conversion
