@@ -314,11 +314,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           end
         end
         ActiveRecord::Base.clear_active_connections!
-        
-        if ENV['TRAVIS']
-          sleep 5
-        end
-        
+
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -327,6 +323,9 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           vote_str = vote_str + v.choice
         end
         Rails.logger.debug  vote_str
+
+        assert_equal 1, meta_publication.votes.length, "Meta publication should have one vote"
+        assert_equal 1, meta_publication.children.length, "Meta publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
@@ -444,12 +443,19 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         end
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 5
-        end
-
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
+
+        vote_str = "Votes on text are: "
+        text_publication.votes.each do |v|
+          vote_str = vote_str + v.choice
+        end
+        Rails.logger.debug  vote_str
+
+        assert_equal 1, text_publication.votes.length, "Text publication should have one vote"
+        Rails.logger.debug "After text publication voting, origin has children:"
+        Rails.logger.debug text_publication.origin.children.inspect
+        assert_equal 1, text_publication.children.length, "Text publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"

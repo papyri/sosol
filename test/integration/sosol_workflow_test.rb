@@ -268,10 +268,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 5
-        end
-
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -282,6 +278,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug  vote_str
         Rails.logger.debug meta_publication.inspect
         Rails.logger.debug meta_publication.children.inspect
+
+        assert_equal 1, meta_publication.votes.length, "Meta publication should have one vote"
+        assert_equal 1, meta_publication.children.length, "Meta publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
@@ -398,12 +397,13 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 5
-        end
-
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
+
+        assert_equal 1, text_publication.votes.length, "Text publication should have one vote"
+        Rails.logger.debug "After text publication voting, origin has children:"
+        Rails.logger.debug text_publication.origin.children.inspect
+        assert_equal 1, text_publication.children.length, "Text publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
