@@ -363,7 +363,7 @@ class Identifier < ActiveRecord::Base
     # in the commit history
     if self[:postcommit]  
       if (! options[:validate] || is_valid_xml?(self[:postcommit]))
-        options[:comment] = self[:transform_messages]
+        options[:comment] = self[:transform_messages].join(' ')
         commit_sha = self.set_content(self[:postcommit], options)
       end
     end
