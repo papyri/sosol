@@ -1,7 +1,7 @@
 #termsofservice
-  - form_for(@current_user, :url => { :action => "update_terms", :id => @current_user.id }) do |f|
+  = form_for(@current_user, :url => { :action => "update_terms", :id => @current_user.id }) do |f|
+    = Sosol::Application.config.terms_text.html_safe
     #terms_box
-      = render :partial => 'terms_text'
       %span{:class => "hint"} Please click the checkbox to indicate your acceptance of these terms:
       %input{ :type => "checkbox", :id => "accpet", :name => "accept", :required => "required" }
       = f.submit "Accept Terms"
