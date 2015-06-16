@@ -147,6 +147,7 @@ module Sosol
     config.site_email_from = SITE_EMAIL_FROM
     config.repository_root = REPOSITORY_ROOT
     config.canonical_repository = CANONICAL_REPOSITORY
+    config.site_catalog_search = ''
     config.gitweb_base_url = GITWEB_BASE_URL
     config.current_terms_version = 0
   end
