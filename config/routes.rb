@@ -34,7 +34,6 @@ Sosol::Application.routes.draw do
 
   resources :votes
   resources :decrees
-  resources :docos
   resources :boards do
     collection do
   get :rank
@@ -67,8 +66,6 @@ Sosol::Application.routes.draw do
   resources :events
   resource :session
   match 'help' => 'user#help', :as => :help
-  match 'build' => 'docos#build', :as => :build
-  match 'documentation' => 'docos#documentation', :as => :documentation
   match 'usage' => 'user#usage_stats', :as => :usage
   match 'all_users_links' => 'user#all_users_links', :as => :all_users_links
   match 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins
