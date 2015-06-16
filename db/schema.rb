@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811204557) do
+ActiveRecord::Schema.define(:version => 20150616144914) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -82,24 +82,6 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.datetime "updated_at",                                 :null => false
     t.string   "tally_method"
   end
-
-  create_table "docos", :force => true do |t|
-    t.decimal  "line",        :precision => 7, :scale => 2
-    t.string   "category"
-    t.string   "description"
-    t.string   "preview"
-    t.string   "leiden"
-    t.string   "xml"
-    t.string   "url"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.string   "urldisplay"
-    t.text     "note"
-    t.string   "docotype",                                  :default => "text", :null => false
-  end
-
-  add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
-  add_index "docos", ["docotype"], :name => "index_docos_on_id_and_docotype"
 
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"

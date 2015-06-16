@@ -3,7 +3,9 @@ class AddTypeToDocos < ActiveRecord::Migration
     add_column :docos, :docotype, :string, :null => false, :default => "text"
   	  add_index :docos, :docotype
   	  add_index :docos, [:id, :docotype]
-  	  Doco.update_all ["docotype = ?", "text"]
+  	  if defined?(Doco)
+        Doco.update_all ["docotype = ?", "text"]
+      end
   end
 
   def self.down
