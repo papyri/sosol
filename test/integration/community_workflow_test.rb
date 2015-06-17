@@ -296,8 +296,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found meta identifier, will vote on it"
 
         #vote on meta publication
-        open_session do |meta_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |meta_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
             meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
@@ -314,11 +314,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           end
         end
         ActiveRecord::Base.clear_active_connections!
-        
-        if ENV['TRAVIS']
-          sleep 1
-        end
-        
+
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -327,6 +323,9 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           vote_str = vote_str + v.choice
         end
         Rails.logger.debug  vote_str
+
+        assert_equal 1, meta_publication.votes.length, "Meta publication should have one vote"
+        assert_equal 1, meta_publication.children.length, "Meta publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
@@ -426,8 +425,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found text identifier, will vote on it"
         #vote on text
-        open_session do |text_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |text_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
             text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote since I yippppppp agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
@@ -444,12 +443,19 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         end
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 1
-        end
-
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
+
+        vote_str = "Votes on text are: "
+        text_publication.votes.each do |v|
+          vote_str = vote_str + v.choice
+        end
+        Rails.logger.debug  vote_str
+
+        assert_equal 1, text_publication.votes.length, "Text publication should have one vote"
+        Rails.logger.debug "After text publication voting, origin has children:"
+        Rails.logger.debug text_publication.origin.children.inspect
+        assert_equal 1, text_publication.children.length, "Text publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"

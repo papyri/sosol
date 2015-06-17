@@ -249,8 +249,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found meta identifier, will vote on it"
 
-        open_session do |meta_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |meta_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
             meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
@@ -268,10 +268,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 1
-        end
-
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -282,6 +278,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug  vote_str
         Rails.logger.debug meta_publication.inspect
         Rails.logger.debug meta_publication.children.inspect
+
+        assert_equal 1, meta_publication.votes.length, "Meta publication should have one vote"
+        assert_equal 1, meta_publication.children.length, "Meta publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", meta_publication.status, "Meta publication not approved after vote"
@@ -377,8 +376,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found text identifier, will vote on it"
 
-        open_session do |text_session|
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          open_session do |text_session|
             threads_active_before_vote = Thread.list.select{|t| t.alive?}
 
             text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
@@ -398,12 +397,13 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         ActiveRecord::Base.clear_active_connections!
 
-        if ENV['TRAVIS']
-          sleep 1
-        end
-
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
+
+        assert_equal 1, text_publication.votes.length, "Text publication should have one vote"
+        Rails.logger.debug "After text publication voting, origin has children:"
+        Rails.logger.debug text_publication.origin.children.inspect
+        assert_equal 1, text_publication.children.length, "Text publication should have one child"
 
         #vote should have changed publication to approved and put to finalizer
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
