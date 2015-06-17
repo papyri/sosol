@@ -1,6 +1,13 @@
 require 'test_helper'
 
 class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
+  def silence_warnings(&block)
+    warn_level = $VERBOSE
+    $VERBOSE = nil
+    result = block.call
+    $VERBOSE = warn_level
+    result
+  end
   
   context "identifier test" do
     setup do
@@ -11,13 +18,15 @@ class AlignmentCiteIdentifierTest < ActiveSupport::TestCase
       @publication.branch_from_master
       @tokenized_lat = File.read(File.join(File.dirname(__FILE__), 'responses', 'tokenized_lat.xml'))
       @oldcts = CTS::CTSLib
-      CTS::CTSLib = stub("my tokenizer")
-      CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
-      CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      silence_warnings {
+        CTS::CTSLib = stub("my tokenizer")
+        CTS::CTSLib.stubs(:get_tokenized_passage).returns(@tokenized_lat)
+        CTS::CTSLib.stubs(:get_subref).returns('Troiae[1]-venit[1]')
+      }
     end
     
     teardown do
-      CTS::CTSLib = @oldcts
+      silence_warnings { CTS::CTSLib = @oldcts }
       unless @publication.nil?
         @publication.destroy
       end
