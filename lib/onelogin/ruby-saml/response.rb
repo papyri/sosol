@@ -200,7 +200,7 @@ module Onelogin
 
         now = Time.now.utc
         Rails.logger.debug("Now: #{now}")
-        Rails.logger.debug("Now with drift: #{now + options[:allowed_clock_drift]}")
+        Rails.logger.debug("Now with drift: #{now + (options[:allowed_clock_drift] || 0)}")
         Rails.logger.debug("Not Before: #{not_before}")
         Rails.logger.debug("Not After: #{not_on_or_after}")
 
