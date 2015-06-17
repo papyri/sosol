@@ -188,11 +188,6 @@ class Publication < ActiveRecord::Base
   
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
-    
-    Rails.logger.info ':start:'
-    Rails.logger.info pp publication
-    Rails.logger.info ':end:'
-    
     if publication.owner.repository.branches.include?(publication.branch)
       return false
     end
