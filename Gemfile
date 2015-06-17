@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.17'
+gem 'rails', '3.2.18'
 
 # Needed for the new asset pipeline
 group :assets do
@@ -20,7 +20,6 @@ gem 'jquery-rails'
 gem 'haml', '>= 3.0.25'
 gem 'json-jruby', '>= 1.5.0', :require => 'json', :platform => :jruby
 gem 'json'
-gem 'jruby-openssl', '>= 0.8.8', :platform => :jruby, :require => false
 gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
 gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
 gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby

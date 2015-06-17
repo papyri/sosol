@@ -2,9 +2,9 @@ require 'rpx'
 
 class RpxController < ApplicationController
   #layout 'site'
-  
+
   protect_from_forgery :except => [:login_return, :associate_return]
-  
+
   def remove_openid
     user_identifier = UserIdentifier.find_by_id(params[:openid].to_s)
     if user_identifier.nil?
@@ -12,9 +12,9 @@ class RpxController < ApplicationController
       redirect_to :controller => "user", :action => "account"
       return
     end
-    
+
     user = user_identifier.user
-    
+
     if user.id == @current_user.id
       if user.user_identifiers.length > 1
         flash[:notice] = "Identity #{user_identifier.identifier} removed"
@@ -78,14 +78,14 @@ class RpxController < ApplicationController
     # This is from the RPX template code, but we don't use it.
     # identifier = session[:identifier]
     # session[:identifier] = nil
-    # 
+    #
     # if params[:confirm] == "Yes"
     #   @rpx.map identifier, @current_user.id
     #   flash[:notice] = "#{identifier} added to your account"
     # else
     #   flash[:notice] = "No OpenID was added to your account"
     # end
-    # 
+    #
     # redirect_to :controller => "site", :action => "index"
   end
 
@@ -101,8 +101,23 @@ class RpxController < ApplicationController
     data = @rpx.auth_info(params[:token].to_s, url_for(:controller => :rpx, :action => :login_return, :only_path => false))
 
     identifier = data["identifier"]
-    
+
     user_identifier = UserIdentifier.find_by_identifier(identifier)
+    unless user_identifier
+      begin
+        user = User.find_by_email(guess_email data)
+        if user
+          user_identifier = UserIdentifier.create(:identifier => identifier)
+          user.user_identifiers << user_identifier
+          user.save!
+        end
+      rescue Exception => e
+        if user_identifier
+          user_identifier.destroy
+        end
+        Rails.logger.error("identifier association error: #{e.inspect}\n#{e.backtrace}")
+      end
+    end
 
     if user_identifier
       # User Identifier exists, login and redirect to index
@@ -164,7 +179,7 @@ class RpxController < ApplicationController
 
     session[:user_id] = user.id
     session[:identifier] = nil
-    
+
     if !session[:entry_url].blank?
       redirect_to session[:entry_url]
       session[:entry_url] = nil
@@ -186,17 +201,17 @@ class RpxController < ApplicationController
     # There wasn't anything, so let the user enter a nickname.
     return ''
   end
-  
+
   def guess_email(data)
     if data['verifiedEmail']
       return data['verifiedEmail']
     elsif data['email']
       return data['email']
     end
-    
+
     return ''
   end
-  
+
   def guess_full_name(data)
     if data['name']
       if data['name']['formatted']
@@ -205,7 +220,7 @@ class RpxController < ApplicationController
         return [data['name']['givenName'], data['name']['familyName']].join(' ')
       end
     end
-    
+
     return ''
   end
 

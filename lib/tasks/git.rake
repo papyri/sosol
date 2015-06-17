@@ -46,7 +46,7 @@ namespace :git do
         if !File.exist?(Sosol::Application.config.canonical_repository)
           clone_command = ["git clone --bare",
                           CANONICAL_CLONE_URL,
-                          Sosol::Application.config.canonical_repository].join(' ')
+                          "\"#{Sosol::Application.config.canonical_repository}\""].join(' ')
           
           system(clone_command)
         end
