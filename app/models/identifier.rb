@@ -214,9 +214,19 @@ class Identifier < ActiveRecord::Base
   #   - array of collection names
   def self.collection_names
     unless defined? @collection_names
-      parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
-      raise NumbersRDF::Timeout if parts.nil?
-      @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
+      tries ||= 3
+      begin
+        parts = NumbersRDF::NumbersHelper::identifier_to_parts([NumbersRDF::NAMESPACE_IDENTIFIER, self::IDENTIFIER_NAMESPACE].join('/'))
+        raise NumbersRDF::Timeout if parts.nil?
+        @collection_names = parts.collect {|p| NumbersRDF::NumbersHelper::identifier_to_components(p).last}
+      rescue NumbersRDF::Timeout => e
+        Rails.logger.error "NumbersRDF::Timeout constructing collection names for #{self::IDENTIFIER_NAMESPACE}"
+        if (tries -= 1) > 0
+          retry
+        else
+          raise e
+        end
+      end
     end
     return @collection_names
   end

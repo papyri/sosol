@@ -308,10 +308,23 @@ class PublicationsController < ApplicationController
     end
     @publication.status = "finalizing_pending"
     @publication.save
+
+    # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
+    ActiveRecord::Base.clear_active_connections!
+
     Thread.new do
-      @publication.send_to_finalizer(@current_user)
-      @publication.status = "finalizing"
-      @publication.save
+      begin
+        ActiveRecord::Base.connection_pool.with_connection do |conn|
+          @publication.send_to_finalizer(@current_user)
+          @publication.status = "finalizing"
+          @publication.save
+        end
+      ensure
+        # The new thread gets a new AR connection, so we should
+        # always close it and flush logs before we terminate
+        ActiveRecord::Base.connection.close
+        Rails.logger.flush
+      end
     end
 
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id

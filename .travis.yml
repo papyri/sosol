@@ -1,4 +1,9 @@
 language: ruby
+env:
+  - JRUBY_OPTS=-J-Xmx1g
+jdk:
+  - oraclejdk7
+  - openjdk7
 rvm:
   - jruby
 before_script:
