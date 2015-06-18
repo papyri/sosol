@@ -237,6 +237,3 @@ DEPENDENCIES
   uuid
   warbler
   xmlcanonicalizer
-
-BUNDLED WITH
-   1.10.4
