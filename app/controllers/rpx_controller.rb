@@ -105,11 +105,13 @@ class RpxController < ApplicationController
     user_identifier = UserIdentifier.find_by_identifier(identifier)
     unless user_identifier
       begin
-        user = User.find_by_email(guess_email data)
-        if user
-          user_identifier = UserIdentifier.create(:identifier => identifier)
-          user.user_identifiers << user_identifier
-          user.save!
+        unless guess_email data == '' # some providers don't return email addresses
+          user = User.find_by_email(guess_email data)
+          if user
+            user_identifier = UserIdentifier.create(:identifier => identifier)
+            user.user_identifiers << user_identifier
+            user.save!
+          end
         end
       rescue Exception => e
         if user_identifier
