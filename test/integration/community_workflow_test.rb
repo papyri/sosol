@@ -297,7 +297,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         #vote on meta publication
         threads_active_before_vote = Thread.list.select{|t| t.alive?}
-        ActiveRecord::Base.connection_pool.with_connection do |conn|
+        # ActiveRecord::Base.connection_pool.with_connection do |conn|
           open_session do |meta_session|
             meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
@@ -306,7 +306,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
             Rails.logger.debug "--flash is: " + meta_session.flash.inspect
             
           end
-        end
+        # end
 
         threads_active_after_vote = Thread.list.select{|t| t.alive?}
         new_active_threads = threads_active_after_vote - threads_active_before_vote
@@ -430,14 +430,14 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found text identifier, will vote on it"
         #vote on text
         threads_active_before_vote = Thread.list.select{|t| t.alive?}
-        ActiveRecord::Base.connection_pool.with_connection do |conn|
+        # ActiveRecord::Base.connection_pool.with_connection do |conn|
           open_session do |text_session|
             text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote since I yippppppp agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
             Rails.logger.debug "--flash is: " + text_session.flash.inspect
           end
-        end
+        # end
 
         threads_active_after_vote = Thread.list.select{|t| t.alive?}
         new_active_threads = threads_active_after_vote - threads_active_before_vote
