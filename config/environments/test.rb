@@ -46,4 +46,6 @@ Sosol::Application.configure do
   config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
   config.canonical_canonical_repository = config.canonical_repository
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
+
+  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OaCiteIdentifier,OACIdentifier,OajCiteIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier'
 end
