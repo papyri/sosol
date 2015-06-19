@@ -31,7 +31,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
         template_xml = REXML::Document.new(test.xml_content)
         assert_not_nil REXML::XPath.first(template_xml,"/treebank")
         assert_not_nil REXML::XPath.first(template_xml,"/treebank/annotator")
-        assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "http://data.perseus.org/users/Creator"
+        assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "#{Sosol::Application.config.site_user_namespace}Creator"
         assert_not_nil REXML::XPath.first(template_xml,"/treebank/date")
         
 

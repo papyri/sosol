@@ -57,10 +57,10 @@ module Sosol
     config.dev_init_files = []
     config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
-    config.site_user_namespace = 'papyri.info'
     config.site_email_from = 'admin@localhost'
     config.site_tag_line = 'powered by Son of Suda Online'
 
+    config.site_user_namespace = 'http://data.perseus.org/users/'
     config.site_oac_namespace = 'http://data.perseus.org/annotations/sosoloacprototype'
     config.site_cite_collection_namespace = 'http://data.perseus.org/collections'
 
