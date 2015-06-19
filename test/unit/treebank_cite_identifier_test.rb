@@ -38,7 +38,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       end
       
       should "create from url" do      
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://localhost/tests/treebank_data/v1.6/latin/data/phi0690.phi003.perseus-lat1.tb.xml"])
+        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://cdn.rawgit.com/PerseusDL/treebank_data/master/v1.6/latin/data/phi0690.phi003.perseus-lat1.tb.xml"])
         assert_not_nil test.xml_content
         # make sure we actually retrieved something -- the bare template doesn't have word forms
         template_xml = REXML::Document.new(test.xml_content)
