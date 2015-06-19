@@ -49,6 +49,7 @@ namespace :git do
                           "\"#{Sosol::Application.config.canonical_repository}\""].join(' ')
           
           begin
+            $stderr.puts "Cloning from #{CANONICAL_CLONE_URL}"
             system(clone_command) or raise "Error cloning canonical repository"
           rescue Exception => e
             $stderr.puts e.message
