@@ -694,24 +694,22 @@ class PublicationsController < ApplicationController
       return
     end
 
+    #fails - publication not in correct ownership
+    if @publication.owner_type != "Board"
+      #we have a problem since no one should be voting on a publication if it is not in theirs
+      flash[:error] = "You do not have permission to vote on this publication which you do not own!"
+      #kind a harsh but send em back to their own dashboard
+      redirect_to dashboard_url
+      return
+    end
+
     Vote.transaction do
+      @publication.lock!
       #note that votes go to the publication's identifier
       @vote = Vote.new(params[:vote])
-      @vote.user_id = @current_user.id
-
       vote_identifier = @vote.identifier.lock!
-      @publication.lock!
-
-      #fails - publication not in correct ownership
-      if @publication.owner_type != "Board"
-        #we have a problem since no one should be voting on a publication if it is not in theirs
-        flash[:error] = "You do not have permission to vote on this publication which you do not own!"
-        #kind a harsh but send em back to their own dashboard
-        redirect_to dashboard_url
-        return
-      else
-        @vote.board_id = @publication.owner_id
-      end
+      @vote.user_id = @current_user.id
+      @vote.board_id = @publication.owner_id
 
       @comment = Comment.new()
       @comment.comment = @vote.choice + " - " + params[:comment][:comment]
