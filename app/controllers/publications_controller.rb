@@ -671,12 +671,12 @@ class PublicationsController < ApplicationController
     end
 
     Vote.transaction do
+      @publication.lock!
       #note that votes go to the publication's identifier
       @vote = Vote.new(params[:vote])
       @vote.user_id = @current_user.id
 
       vote_identifier = @vote.identifier.lock!
-      @publication.lock!
 
       #fails - publication not in correct ownership
       if @publication.owner_type != "Board"
