@@ -31,7 +31,9 @@ class Vote < ActiveRecord::Base
       Thread.new do
         begin
           ActiveRecord::Base.connection_pool.with_connection do |conn|
-            self.publication.tally_votes()
+            self.publication.with_lock do
+              self.publication.tally_votes()
+            end
           end
         ensure
           # The new thread gets a new AR connection, so we should
