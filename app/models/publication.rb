@@ -189,21 +189,17 @@ class Publication < ActiveRecord::Base
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
     
-    Rails.logger.info ':start:'
-    Rails.logger.info pp publication
-    Rails.logger.info ':end:'
-    
     if publication.owner.repository.branches.include?(publication.branch)
       return false
     end
   end
 
-  def after_destroy
+  after_destroy do |publication|
     # this is really destructive if it happens to get called on an incompletely
     # initialized publication which doesn't have a branch defined yet
     # it deletes all branches in the repo
-    if (self.branch)
-      self.owner.repository.delete_branch(self.branch)
+    if (publication.branch)
+      publication.owner.repository.delete_branch(publication.branch)
     end
   end
   
