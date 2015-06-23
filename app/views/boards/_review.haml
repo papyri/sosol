@@ -33,7 +33,7 @@
           %span{:class => "required"} *required
           = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote'
           -#= f.submit "Vote", :disabled => !publication.mutable?
-          = f.submit "Vote", :disabled => true, :onclick => 'preventDoubleVote()'
+          = f.submit "Vote", :id => 'vote_submit', :disabled => true, :onclick => 'preventDoubleVote()'
         
 :javascript
   $j = jQuery.noConflict();
