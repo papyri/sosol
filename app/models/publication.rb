@@ -569,8 +569,6 @@ class Publication < ActiveRecord::Base
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
-    self.reload
-
     user_votes ||= self.votes #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
