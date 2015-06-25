@@ -268,6 +268,7 @@ module JRubyXML
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
       transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new())))
+
       parameters.each do |parameter, value|
         transformer.setParameter(parameter.to_s, value)
       end
