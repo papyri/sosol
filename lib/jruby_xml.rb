@@ -221,6 +221,13 @@ module JRubyXML
     def apply_xsl_transform(xml_stream, xsl_stream, parameters = {})
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
+      transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new())))
+      parameters.each do |parameter, value|
+        transformer.setParameter(parameter.to_s, value)
+      end
+      
+      string_writer = java.io.StringWriter.new()
+      result = javax.xml.transform.stream.StreamResult.new(string_writer)
       
       parameters.each do |parameter, value|
         transformer.setParameter(parameter.to_s, value)
