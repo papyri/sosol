@@ -3,10 +3,15 @@ env:
   - JRUBY_OPTS=-J-Xmx1g
 jdk:
   - oraclejdk7
+  - oraclejdk8
   - openjdk7
 rvm:
   - jruby
 before_script:
+  - gem pristine executable-hooks
+  - gem pristine gem-wrappers
+  - gem pristine jruby-launcher
+  - gem --version
   - bundle exec cap local externals:setup
   - touch config/environments/test_secret.rb
   - bundle exec rake git:db:canonical:clone
