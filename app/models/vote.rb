@@ -37,6 +37,11 @@ class Vote < ActiveRecord::Base
               self.publication.tally_votes()
             end
           end
+        rescue ActiveRecord::StatementInvalid => e
+          Rails.logger.debug("tally_votes StatementInvalid: #{e.inspect}")
+          sleep 1
+          ActiveRecord::Base.clear_active_connections!
+          retry unless (tries -= 1).zero?
         rescue ActiveRecord::RecordNotFound => e
           Rails.logger.debug("tally_votes RecordNotFound: #{e.inspect}")
           sleep 1
