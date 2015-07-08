@@ -232,7 +232,6 @@ class Publication < ActiveRecord::Base
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
-
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
     @recent_submit_sha = ''
 
@@ -353,6 +352,10 @@ class Publication < ActiveRecord::Base
 
   #Simply pointer to submit_to_next_board method.
   def submit
+    if identifiers.select { |id| id.modified? }.empty?
+      return 'You must modify at least one part of a publication before submitting it.', nil
+    end
+
     submit_to_next_board
   end
 
