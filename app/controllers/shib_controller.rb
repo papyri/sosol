@@ -2,7 +2,8 @@ require 'ruby-saml'
 
 class ShibController < ApplicationController
    
-    protect_from_forgery :except => [:consume, :signin]
+    protect_from_forgery :except => [:consume, :signin, :metadata]
+    before_filter :authorize, :except => [:metadata, :signin, :consume]
     
     def get_config
       unless defined? @shib_config
@@ -89,24 +90,21 @@ class ShibController < ApplicationController
             session[:pending_id] = scoped_targeted_id
             @display_id = get_displayid(response.attributes,idp) || session[:pending_id] 
             @identifiers = @current_user.user_identifiers
-            render :action => "associate"
-            return
+            render :action => "associate" and return
           end
                 
           # Have current user session and the shibboleth identity is already associated with this user
           # display message and return to user account page
           if @current_user && user_identifier && @current_user.id == user_identifier.user.id
             flash[:notice] = "That identity was already associated with this account"
-            redirect_to :controller => "user", :action => "account"
-            return
+            redirect_to :controller => "user", :action => "account" and return
           end
                 
           # Have current user session and the shibboleth identity is already associated with a different
           # user account - display message and return to user account page
           if @current_user && user_identifier
             flash[:error] = "That identity is already associated with a different user account."
-            redirect_to :controller => "user", :action => "account"
-            return
+            redirect_to :controller => "user", :action => "account" and return
           end
                 
           # fall through behavior: no current session and a sosol id for this identity wasn't found so 
