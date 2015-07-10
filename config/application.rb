@@ -4,22 +4,6 @@ require File.expand_path( '../boot', __FILE__ )
 require 'rails/all'
 Bundler.require( :default, Rails.env ) if defined?( Bundler )
 
-# This should probably all be moved into an environment in config/environments/
-# RPX_BASE_URL = 'https://rpxnow.com'
-# SITE_NAME = 'Perseids'
-# SITE_FULL_NAME = 'Perseids'
-# SITE_TAG_LINE = 'powered by Son of Suda Online'
-# SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
-# SITE_LAYOUT = 'perseus'
-# SITE_IDENTIFIERS = 'CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OaCiteIdentifier,OajCiteIdentifier'
-# SITE_USER_NAMESPACE = "http://data.perseus.org/users/"
-# SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
-# SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
-# SITE_EMAIL_FROM = 'admin@perseids.org'
-# REPOSITORY_ROOT = "/usr/local/gitrepos"
-# CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
-# GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
-
 module Sosol
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
@@ -47,23 +31,11 @@ module Sosol
 
     # Configure custom application parameters
     config.site_layout = 'pn'
-    config.site_identifiers = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
     config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
     config.canonical_repository = File.join(config.repository_root, 'canonical.git')
     config.rpx_base_url = 'https://rpxnow.com'
-    config.site_name = 'SoSOL'
-    config.site_full_name = 'Son of Suda On Line'
-    config.site_wiki_link = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
     config.dev_init_files = []
-    config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
-    config.site_email_from = 'admin@localhost'
-    config.site_tag_line = 'powered by Son of Suda Online'
-
-    config.site_user_namespace = 'http://data.perseus.org/users/'
-    config.site_oac_namespace = 'http://data.perseus.org/annotations/sosoloacprototype'
-    config.site_cite_collection_namespace = 'http://data.perseus.org/collections'
-
     config.current_terms_version = 0
 
     # Configure XSugar
@@ -77,4 +49,8 @@ module Sosol
     # URL for the standalone XSugar server
     config.xsugar_standalone_url = ''
   end
+end
+
+Sosol::Application.configure do
+  require File.join(File.dirname(__FILE__), "site_#{config.site_layout}")
 end
