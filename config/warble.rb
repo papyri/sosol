@@ -12,7 +12,7 @@ Warbler::Config.new do |config|
   # config.staging_dir = "tmp/war"
 
   # Application directories to be included in the webapp.
-  config.dirs = %w(app config data lib log vendor tmp)
+  config.dirs = %w(app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/pn/navigator)
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]

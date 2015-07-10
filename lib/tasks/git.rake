@@ -46,9 +46,15 @@ namespace :git do
         if !File.exist?(Sosol::Application.config.canonical_repository)
           clone_command = ["git clone --bare",
                           CANONICAL_CLONE_URL,
-                          Sosol::Application.config.canonical_repository].join(' ')
+                          "\"#{Sosol::Application.config.canonical_repository}\""].join(' ')
           
-          system(clone_command)
+          begin
+            $stderr.puts "Cloning from #{CANONICAL_CLONE_URL}"
+            system(clone_command) or raise "Error cloning canonical repository"
+          rescue Exception => e
+            $stderr.puts e.message
+            retry
+          end
         end
       end
     end

@@ -33,11 +33,6 @@ Sosol::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  # Configure custom application parameters
-  config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
-  config.canonical_canonical_repository = config.canonical_repository
-  config.canonical_repository = File.join(config.repository_root, 'canonical.git')
-
   # config/environments/test_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
@@ -46,4 +41,11 @@ Sosol::Application.configure do
   require File.join(File.dirname(__FILE__), 'test_secret')
 
   config.site_cts_inventories = 'perseids-test|Epi'
+
+  # Configure custom application parameters
+  config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
+  config.canonical_canonical_repository = config.canonical_repository
+  config.canonical_repository = File.join(config.repository_root, 'canonical.git')
+
+  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OACIdentifier,OajCiteIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier'
 end

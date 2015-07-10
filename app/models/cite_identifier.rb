@@ -1,6 +1,6 @@
 class CiteIdentifier < Identifier  
-  # This is a superclass for objects using CTS Identifiers, including
-  # shared constants and methods. No instances of CTSIdentifier should be
+  # This is a superclass for objects using CITE Identifiers, including
+  # shared constants and methods. No instances of CiteIdentifier should be
   # created. 
   FRIENDLY_NAME = "CITE Collection Item"
   

@@ -1,8 +1,8 @@
 #Represents a system user.
 class User < ActiveRecord::Base
-  
+
   validates_uniqueness_of :name, :case_sensitive => false
-  
+
   has_many :user_identifiers, :dependent => :destroy
 
   has_many :communities_members
@@ -13,19 +13,19 @@ class User < ActiveRecord::Base
   has_many :boards_users
   has_many :boards, :through => :boards_users
   has_many :finalizing_boards, :class_name => 'Board', :foreign_key => 'finalizer_user_id'
-  
+
   has_and_belongs_to_many :emailers
-  
+
   has_many :publications, :as => :owner, :dependent => :destroy
   has_many :events, :as => :owner, :dependent => :destroy
-  
+
   has_many :comments
-  
+
   has_repository
-  
+
   after_create do |user|
     user.repository.create
-    
+
     # create some fixture publications/identifiers
     # ["p.genova/p.genova.2/p.genova.2.67.xml",
     # "sb/sb.24/sb.24.16003.xml",
@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
       if ENV['RAILS_ENV'] == 'development'
         user.admin = true
         user.save!
-      
+
         Sosol::Application.config.dev_init_files.each do |pn_id|
           p = Publication.new
           p.owner = user
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
           p.populate_identifiers_from_identifiers(pn_id)
           p.save!
           p.branch_from_master
-              
+
           e = Event.new
           e.category = "started editing"
           e.target = p
@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
       end # == development
     end # != test
   end # after_create
-  
+
   def human_name
     # get user name
     if self.full_name && self.full_name.strip != ""
@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
   def jgit_actor
     org.eclipse.jgit.lib.PersonIdent.new(self.full_name, self.email)
   end
-  
+
   # Copied from: https://raw.github.com/mojombo/grit/v2.4.1/lib/grit/actor.rb
   # Outputs an actor string for Git commits.
   #
@@ -112,16 +112,16 @@ class User < ActiveRecord::Base
   def author_string
     "#{self.full_name} <#{self.email}>"
   end
-  
+
   def git_author_string
     local_time = Time.now
     "#{self.author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
-  
+
   before_destroy do |user|
     user.repository.destroy
   end
-  
+
   #Sends an email to all users on the system that have an email address.
   #*Args*
   #- +subject_line+ the email's subject
@@ -130,17 +130,27 @@ class User < ActiveRecord::Base
     #get email addresses from all users that have them
     #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
     users = User.find_by_sql("SELECT email From users WHERE email is not null")
-    
+
     users.each do |toaddress|
       if toaddress.email.strip != ""
-        EmailerMailer.deliver_send_email_out(toaddress.email, subject_line, email_content)			
+        EmailerMailer.deliver_send_email_out(toaddress.email, subject_line, email_content)
       end
     end
-    
+
     #can use below if want to send to all addresses in 1 email
     #format 'to' addresses for actionmailer
     #addresses = users.map{|c| c.email}.join(", ")
     #EmailerMailer.deliver_send_email_out(addresses, subject_line, email_content)
-    
+
+  end
+
+  def self.stats(user_id)
+    if user_id.is_a? Integer
+      stats = ActiveRecord::Base.connection.execute("select p.id AS pub_id, p.title AS pub_title, p.status AS pub_status, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{user_id} ORDER BY c.created_at;")
+      stats.each {|row|
+        row["created_at"] = DateTime.parse(row["created_at"])
+        row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
+        }
+    end
   end
 end

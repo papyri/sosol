@@ -20,4 +20,3 @@ bundle exec cap local externals:setup
 bundle exec rake db:migrate
 bundle exec rake git:db:canonical:clone
 bundle exec rake test
-bundle exec rails server

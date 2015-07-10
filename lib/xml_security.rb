@@ -50,13 +50,15 @@ module XMLSecurity
       self.write(test,1);
       Rails.logger.info("validating #{test}")
       cert_element = REXML::XPath.first(self, "//ds:X509Certificate", { "ds"=>DSIG })
+      return false if (cert_element.nil? || !defined?(cert_element.text))
       base64_cert  = cert_element.text
       cert_text    = Base64.decode64(base64_cert)
       cert         = OpenSSL::X509::Certificate.new(cert_text)
 
       # check cert matches registered idp cert
       fingerprint = Digest::SHA1.hexdigest(cert.to_der)
-      
+
+      return false if idp_cert_fingerprint.nil?
       Rails.logger.info("Checking fingerprint #{idp_cert_fingerprint.gsub(/[^a-zA-Z0-9]/,"").downcase} == #{fingerprint}")
     
 
