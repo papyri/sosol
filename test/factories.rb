@@ -48,7 +48,7 @@ FactoryGirl.define do
           :count_decree,
           :trigger => 1.0,
           :board => nil,
-          :action => "accept",
+          :action => "approve",
           :choices => "accept"),
         decrees.association(
           :count_decree,
@@ -68,7 +68,7 @@ FactoryGirl.define do
           :percent_decree,
           :board => nil,
           :trigger => 100.0,
-          :action => "accept",
+          :action => "approve",
           :choices => "yes no"),
         decrees.association(
           :count_decree,
