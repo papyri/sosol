@@ -240,7 +240,7 @@ class OACIdentifier < Identifier
     #  6. publication owner id (i.e. user creating the annotation)
     #  7. sequential #
     # A question is what do we do when we get multiple sosol instances all wanting to collaborate on the
-    # same files.  For now, I'm assuming we can address this by setting the SITE_OAC_NAMESPACE to an instance
+    # same files.  For now, I'm assuming we can address this by setting the config.site_user_namespace to an instance
     # specific string (e.g. http://data.perseus.org/annotations/sosol1/) but this may not be a good
     # approach for a distributed environment. 
     max = 1

@@ -203,7 +203,7 @@ class UserController < ApplicationController
 
     # TODO  we need a better way to trigger site-specific functionality
     # for Perseids we want to show community info on the main dashboard
-    show_comm = SITE_NAME == 'Perseids' ?  {} : { :community_id => nil }
+    show_comm = Sosol::Application.config.site_name == 'Perseids' ?  {} : { :community_id => nil }
 
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
