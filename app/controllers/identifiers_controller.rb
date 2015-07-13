@@ -1,11 +1,6 @@
 # Superclass of the ddb (Text), hgv_Meta, and hgv_trans controllers
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
-  # def method_missing(method_name, *args)
-  #   identifier = Identifier.find(params[:id].to_s)
-  #   redirect_to :controller => identifier.class.to_s.pluralize.underscore, :action => method_name
-  # end
-  
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
