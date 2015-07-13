@@ -13,7 +13,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                          decree.get_choice_array.size)])
     threads_active_after_vote = Thread.list.select{|t| t.alive?}
     new_active_threads = threads_active_after_vote - threads_active_before_vote
+    Rails.logger.debug("generate_board_vote_for_decree threadwaiting on: #{new_active_threads.inspect}")
     new_active_threads.each(&:join)
+    Rails.logger.debug("generate_board_vote_for_decree threadwaiting done")
+    Rails.logger.flush
+    ActiveRecord::Base.clear_active_connections!
     # ThreadsWait.all_waits(*new_active_threads)
   end
 
@@ -586,9 +590,25 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert_equal User, original_finalizer.class
             different_finalizer = (@ddb_board.users - [original_finalizer]).first
             assert_not_equal original_finalizer, different_finalizer
+
+            threads_active_before_mmf = Thread.list.select{|t| t.alive?}
+
+            Rails.logger.info("MMF on pub: #{@ddb_board.publications.first.inspect}")
             open_session do |make_me_finalizer_session|
               make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
             end
+
+            threads_active_after_mmf = Thread.list.select{|t| t.alive?}
+            new_active_threads = threads_active_after_mmf - threads_active_before_mmf
+            Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
+            Rails.logger.flush
+            new_active_threads.each(&:join)
+            # ThreadsWait.all_waits(*new_active_threads)
+            Rails.logger.debug "threadwaiting done"
+            Rails.logger.flush
+
+            ActiveRecord::Base.clear_active_connections!
+
             mmf_finalizing_publication = @ddb_board.publications.first.children.first
             current_finalizer = mmf_finalizing_publication.owner
             assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
