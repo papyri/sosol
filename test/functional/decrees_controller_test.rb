@@ -5,8 +5,8 @@ class DecreesControllerTest < ActionController::TestCase
     @admin = FactoryGirl.create(:admin)
     @request.session[:user_id] = @admin.id
     @board = FactoryGirl.create(:board)
-    @decree = FactoryGirl.create(:decree, :board => @board)
-    @decree_two = FactoryGirl.create(:decree, :board => @board)
+    @decree = FactoryGirl.create(:decree, :board => @board, :action => 'approve')
+    @decree_two = FactoryGirl.create(:decree, :board => @board, :action => 'reject')
   end
   
   def teardown
@@ -31,7 +31,8 @@ class DecreesControllerTest < ActionController::TestCase
     assert_difference('Decree.count') do
       post :create, :decree => 
         { :board_id => @board.id,
-          :tally_method => Decree::TALLY_METHODS[:count] }
+          :tally_method => Decree::TALLY_METHODS[:count],
+          :action => 'approve' }
     end
 
     assert_redirected_to edit_board_path(@board.id)

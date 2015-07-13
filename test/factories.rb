@@ -41,6 +41,26 @@ FactoryGirl.define do
     f.identifier_classes ['DDBIdentifier']
   end
 
+  factory :apis_board, :parent => :board do |f|
+    f.decrees { |decrees|
+      [
+        decrees.association(
+          :count_decree,
+          :trigger => 1.0,
+          :board => nil,
+          :action => "approve",
+          :choices => "accept"),
+        decrees.association(
+          :count_decree,
+          :trigger => 1.0,
+          :board => nil,
+          :action => "reject",
+          :choices => "reject")
+      ]
+    }
+    f.identifier_classes ['APISIdentifier']
+  end
+
   factory :hgv_board, :parent => :board do |f|
     f.decrees { |decrees|
       [
@@ -48,7 +68,7 @@ FactoryGirl.define do
           :percent_decree,
           :board => nil,
           :trigger => 100.0,
-          :action => "accept",
+          :action => "approve",
           :choices => "yes no"),
         decrees.association(
           :count_decree,
@@ -162,5 +182,4 @@ FactoryGirl.define do
     f.name { FactoryGirl.generate(:treebank_cite_identifier_string) }
     f.title :title
   end
-
 end

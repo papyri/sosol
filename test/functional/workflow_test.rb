@@ -93,6 +93,18 @@ class WorkflowTest < ActiveSupport::TestCase
       teardown do
         @publication.destroy
       end
+
+      context "submitted with no modifications" do
+        setup do
+          @publication.submit
+          @publication.reload
+        end
+
+        should "not change status or be submitted" do
+          assert_equal 0, @publication.children.length
+          assert_equal "new", @publication.status
+        end
+      end
       
       context "submitted with only DDB modifications" do
         setup do
