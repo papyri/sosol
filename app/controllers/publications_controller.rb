@@ -299,6 +299,7 @@ class PublicationsController < ApplicationController
   def become_finalizer
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
+    original_publication_owner_id = @publication.owner.id
     @publication.remove_finalizer
 
     #note this can only be called on a board owned publication
@@ -329,8 +330,7 @@ class PublicationsController < ApplicationController
 
     #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     flash[:notice] = "Finalizer change running. Check back in a few minutes."
-    redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
-
+    redirect_to :controller => 'user', :action => 'dashboard', :board_id => original_publication_owner_id
   end
 
   def finalize_review
