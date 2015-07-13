@@ -577,6 +577,23 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert_equal "finalizing", finalizing_publication.status
             assert_equal User, finalizing_publication.owner.class
           end
+
+          should "be copyable to another finalizer" do
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should have one child'
+            finalizing_publication = @ddb_board.publications.first.children.first
+            original_finalizer = finalizing_publication.owner
+            assert_equal "finalizing", finalizing_publication.status
+            assert_equal User, original_finalizer.class
+            different_finalizer = (@ddb_board.users - [original_finalizer]).first
+            assert_not_equal original_finalizer, different_finalizer
+            open_session do |make_me_finalizer_session|
+              make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
+            end
+            mmf_finalizing_publication = @ddb_board.publications.first.children.first
+            current_finalizer = mmf_finalizing_publication.owner
+            assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
+          end
         end # approve
 
         context "voted 'reject'" do
