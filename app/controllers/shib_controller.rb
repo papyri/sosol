@@ -3,7 +3,7 @@ require 'ruby-saml'
 class ShibController < ApplicationController
    
     protect_from_forgery :except => [:consume, :signin, :metadata]
-    before_filter :authorize, :except => [:metadata, :signin, :consume]
+    before_filter :authorize, :except => [:metadata, :signin, :consume, :create_submit]
     
     def get_config
       unless defined? @shib_config
@@ -45,7 +45,7 @@ class ShibController < ApplicationController
       end 
       
       get_config
-      options = { :settings => saml_settings('tufts'),
+      options = { :settings => saml_settings(nil),
                   :soft => false,
                   :allowed_clock_drift => @shib_config[:allowed_clock_drift] || 0 }
       response = OneLogin::RubySaml::Response.new(params[:SAMLResponse],options)
@@ -53,7 +53,7 @@ class ShibController < ApplicationController
       
       # lookup the code for the idp using the entity_id for the issuer of the AuthResponse
       idp_matches = @shib_config[:idps].collect { |k,v|
-        if (@shib_config[:idps][k][:entity_id] = issuer)
+        if (@shib_config[:idps][k][:entity_id] == issuer)
           k
         else
           nil
@@ -63,6 +63,8 @@ class ShibController < ApplicationController
       # we must recognize the idp or we can't do anything
       if (idp_matches.length > 0) 
         idp = idp_matches[0]  
+        # update the settings for the IdP
+        response.settings = saml_settings(idp)
         if idp && response.is_valid? 
           scoped_targeted_id = response.attributes.single('urn:oid:1.3.6.1.4.1.5923.1.1.1.10')
           # TODO use config for targeted id attribute and throw error if nil or blank
@@ -195,7 +197,7 @@ class ShibController < ApplicationController
         session[:entry_url] = nil
         return
       else
-        redirect_to :controller => "welcome", :action => "index"
+        redirect_to :controller => "user", :action => "dashboard"
       end
     end
 
