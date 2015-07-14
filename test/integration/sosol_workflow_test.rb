@@ -529,8 +529,12 @@ class SosolWorkflowTest < ActionController::IntegrationTest
     end
 
     teardown do
-      ( @ddb_board.users + [ @james, @submitter,
-       @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
+      ActiveRecord::Base.clear_active_connections!
+      ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+      ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ( @ddb_board.users + [ @james, @submitter,
+        @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
+      end
     end
 
     context "a publication" do
@@ -542,8 +546,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       end
 
       teardown do
-        @publication.reload
-        @publication.destroy
+        # @publication.reload
+        # @publication.destroy
       end
 
       context "submitted with only DDB modifications" do
@@ -614,6 +618,83 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
             assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
           end
+          
+          should "not race during make-me-finalizer" do
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should have one child'
+            finalizing_publication = @ddb_board.publications.first.children.first
+            original_finalizer = finalizing_publication.owner
+            assert_equal User, original_finalizer.class
+            assert_equal "finalizing", finalizing_publication.status
+            different_finalizer = (@ddb_board.users - [original_finalizer]).first.id.to_s
+            different_finalizer_2 = (@ddb_board.users - [original_finalizer]).last.id.to_s
+            assert_not_equal original_finalizer.id.to_s, different_finalizer
+            assert_not_equal different_finalizer, different_finalizer_2
+
+            threads_active_before_mmf = Thread.list.select{|t| t.alive?}
+            mmf_publication_id = @ddb_board.publications.first.id.to_s
+
+            Rails.logger.info("MMF race on pub: #{@ddb_board.publications.first.inspect}")
+
+            ActiveRecord::Base.clear_active_connections!
+
+            new_active_threads = []
+
+            new_active_threads << Thread.new do
+              begin
+                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+                ActiveRecord::Base.connection_pool.with_connection do |conn|
+                  open_session do |make_me_finalizer_session|
+                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                  end
+                end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('MMF race become_finalizer 1 finished')
+                ActiveRecord::Base.connection.close
+                Rails.logger.flush
+              end
+            end
+
+            new_active_threads << Thread.new do
+              begin
+                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+                ActiveRecord::Base.connection_pool.with_connection do |conn|
+                  open_session do |make_me_finalizer_session|
+                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                  end
+                end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('MMF race become_finalizer 2 finished')
+                ActiveRecord::Base.connection.close
+                Rails.logger.flush
+              end
+            end
+
+            # threads_active_after_mmf = Thread.list.select{|t| t.alive?}
+            # new_active_threads = threads_active_after_mmf - threads_active_before_mmf
+            Rails.logger.debug "MMF race threadwaiting on: #{new_active_threads.inspect}"
+            Rails.logger.flush
+            new_active_threads.each(&:join)
+            # ThreadsWait.all_waits(*new_active_threads)
+            Rails.logger.debug "MMF race threadwaiting done"
+            Rails.logger.flush
+
+            ActiveRecord::Base.clear_active_connections!
+            ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+            ActiveRecord::Base.connection_pool.with_connection do |conn|
+              @ddb_board.reload
+              assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
+              mmf_finalizing_publication = @ddb_board.publications.first.children.first
+              current_finalizer = mmf_finalizing_publication.owner
+              assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
+            end
+            Rails.logger.debug "MMF race assertions done"
+            Rails.logger.flush
+          end
+
         end # approve
 
         context "voted 'reject'" do
