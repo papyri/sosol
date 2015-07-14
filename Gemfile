@@ -38,5 +38,6 @@ gem 'capistrano', '~> 2.15.0'
 gem 'warbler'
 gem 'puma'
 gem 'database_cleaner'
+gem 'sucker_punch', '~> 1.0'
 
 gem 'test_after_commit', :group => :test
