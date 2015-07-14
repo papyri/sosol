@@ -198,7 +198,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
       teardown do
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing teardown begin xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         begin
-          ActiveRecord::Base.clear_active_connections!
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
             [ @board_user, @board_user_2, @creator_user, @end_user, @community_user, @trash_user, @test_community ].each do |entity|
@@ -304,8 +303,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           
         end
         
-        ActiveRecord::Base.clear_active_connections!
-
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -422,8 +419,6 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
             :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
         end
-
-        ActiveRecord::Base.clear_active_connections!
 
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
