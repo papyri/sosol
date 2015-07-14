@@ -70,6 +70,7 @@ GEM
       execjs
     coffee-script-source (1.9.1.1)
     columnize (0.9.0)
+    database_cleaner (1.4.1)
     diff-lcs (1.2.5)
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
@@ -209,6 +210,7 @@ DEPENDENCIES
   airbrake (>= 3.0.5)
   capistrano (~> 2.15.0)
   coffee-rails (~> 3.2.1)
+  database_cleaner
   dynamic_form
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
