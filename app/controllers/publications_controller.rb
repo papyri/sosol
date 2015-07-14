@@ -304,26 +304,6 @@ class PublicationsController < ApplicationController
       SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
     end
 
-    # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
-    # ActiveRecord::Base.clear_active_connections!
-
-    # Thread.new do
-    #  begin
-    #    ActiveRecord::Base.connection_pool.with_connection do |conn|
-    #      @publication.send_to_finalizer(@current_user)
-    #      @publication.status = "finalizing"
-    #      @publication.save
-    #    end
-    #  ensure
-        # The new thread gets a new AR connection, so we should
-        # always close it and flush logs before we terminate
-    #    ActiveRecord::Base.connection.close
-    #    Rails.logger.flush
-    #  end
-    # end
-      # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
-
-    #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     flash[:notice] = "Finalizer change running. Check back in a few minutes."
     redirect_to :controller => 'user', :action => 'dashboard', :board_id => original_publication_owner_id
   end
