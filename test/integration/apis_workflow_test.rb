@@ -13,7 +13,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
                          decree.get_choice_array.size)])
     threads_active_after_vote = Thread.list.select{|t| t.alive?}
     new_active_threads = threads_active_after_vote - threads_active_before_vote
-    new_active_threads.each(&:join)
+    # new_active_threads.each(&:join)
     # ThreadsWait.all_waits(*new_active_threads)
   end
 
@@ -291,7 +291,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
         new_active_threads = threads_active_after_vote - threads_active_before_vote
         Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
         Rails.logger.flush
-        new_active_threads.each(&:join)
+        # new_active_threads.each(&:join)
         # ThreadsWait.all_waits(*new_active_threads)
         Rails.logger.debug "threadwaiting done"
         Rails.logger.flush

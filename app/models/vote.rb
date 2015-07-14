@@ -24,6 +24,8 @@ class Vote < ActiveRecord::Base
       #decree_action = self.publication.tally_votes(related_votes)
       #self.publication.tally_votes(related_votes)
 
+      TallyVotesJob.new.async.perform(self.publication.id)
+=begin
       # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
       ActiveRecord::Base.clear_active_connections!
 
@@ -59,6 +61,7 @@ class Vote < ActiveRecord::Base
           Rails.logger.flush
         end
       end
+=end
     end
     return nil
   end

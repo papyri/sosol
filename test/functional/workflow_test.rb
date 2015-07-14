@@ -18,9 +18,9 @@ class WorkflowTest < ActiveSupport::TestCase
     Rails.logger.info new_active_threads.inspect
     Rails.logger.info "waiting on threads..."
     Rails.logger.flush
-    ThreadsWait.all_waits(*new_active_threads) do |t|
-      Rails.logger.info "#{t} ended"
-    end
+    # ThreadsWait.all_waits(*new_active_threads) do |t|
+    #  Rails.logger.info "#{t} ended"
+    # end
     Rails.logger.flush
   end
   
