@@ -8,6 +8,7 @@ require 'active_support'
 require 'active_support/test_case'
 require 'test/unit'
 require 'database_cleaner'
+require 'sucker_punch/testing/inline'
 
 class Test::Unit::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method

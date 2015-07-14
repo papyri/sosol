@@ -52,7 +52,7 @@ class DecreeTest < ActiveSupport::TestCase
                     :choice => "yes")
             threads_active_after_vote = Thread.list.select{|t| t.alive?}
             new_active_threads = threads_active_after_vote - threads_active_before_vote
-            ThreadsWait.all_waits(*new_active_threads)
+            # ThreadsWait.all_waits(*new_active_threads)
           end
           
           assert @decree.perform_action?(@ddb_identifier.votes)
@@ -67,7 +67,7 @@ class DecreeTest < ActiveSupport::TestCase
                   :choice => "yes")
           threads_active_after_vote = Thread.list.select{|t| t.alive?}
           new_active_threads = threads_active_after_vote - threads_active_before_vote
-          ThreadsWait.all_waits(*new_active_threads)
+          # ThreadsWait.all_waits(*new_active_threads)
 
           assert !@decree.perform_action?(@ddb_identifier.votes)
         end
