@@ -37,4 +37,6 @@ gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
 gem 'warbler'
 gem 'puma'
+gem 'database_cleaner'
+
 gem 'test_after_commit', :group => :test

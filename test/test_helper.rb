@@ -7,6 +7,7 @@ require 'shoulda'
 require 'active_support'
 require 'active_support/test_case'
 require 'test/unit'
+require 'database_cleaner'
 
 class Test::Unit::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
@@ -60,5 +61,16 @@ class ActiveSupport::TestCase
     end
   end
   
+  def setup_database_cleaner
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
+  end
+
+  def teardown_database_cleaner
+    DatabaseCleaner.clean
+  end
+
   setup :setup_test_repository
+  setup :setup_database_cleaner
+  teardown :teardown_database_cleaner
 end
