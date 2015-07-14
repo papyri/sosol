@@ -145,7 +145,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.clear_active_connections!
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
             [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
@@ -252,8 +251,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       
         end
         
-        ActiveRecord::Base.clear_active_connections!
-
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -370,8 +367,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
         end
         
-        ActiveRecord::Base.clear_active_connections!
-
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
 
@@ -495,7 +490,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
     end
 
     teardown do
-      ActiveRecord::Base.clear_active_connections!
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do |conn|
         ( @ddb_board.users + [ @james, @submitter,
@@ -566,8 +560,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
               make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
             end
 
-            ActiveRecord::Base.clear_active_connections!
-
             mmf_finalizing_publication = @ddb_board.publications.first.children.first
             current_finalizer = mmf_finalizing_publication.owner
             assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
@@ -588,8 +580,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             mmf_publication_id = @ddb_board.publications.first.id.to_s
 
             Rails.logger.info("MMF race on pub: #{@ddb_board.publications.first.inspect}")
-
-            ActiveRecord::Base.clear_active_connections!
 
             new_active_threads = []
 

@@ -154,7 +154,6 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.clear_active_connections!
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
             [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
@@ -277,8 +276,6 @@ class ApisWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "--flash is: " + apis_session.flash.inspect
       
         end
-
-        ActiveRecord::Base.clear_active_connections!
 
         #reload the publication to get the vote associations to go thru?
         apis_publication.reload
