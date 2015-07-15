@@ -219,7 +219,7 @@ module OacHelper
   
   # make a creator uri from the owner of the publication 
   def self.make_creator_uri(a_user_id)
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => a_user_id, :only_path => false)
+    ActionController::Integration::Session.new.url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => a_user_id, :only_path => false)
   end
   
   # create a dcterms:creator element
