@@ -267,7 +267,7 @@ module JRubyXML
       message_writer = java.io.StringWriter.new()
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
-      transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new())))
+      transformer.getUnderlyingController().setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new())))
       parameters.each do |parameter, value|
         transformer.setParameter(parameter.to_s, value)
       end
@@ -307,7 +307,7 @@ module JRubyXML
       message_listener = TransformMessageListener.new()
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
-      transformer.setMessageEmitter(message_listener)
+      transformer.getUnderlyingController().setMessageEmitter(message_listener)
       parameters.each do |parameter, value|
         transformer.setParameter(parameter.to_s, value)
       end
