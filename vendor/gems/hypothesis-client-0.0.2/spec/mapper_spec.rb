@@ -76,7 +76,7 @@ describe HypothesisClient::MapperPrototype do
       expect(mapped[:data]["hasBody"]["@graph"][1]["@id"]).to eq("test#bond-1-1")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("test#bond-2-1")
       expect(mapped[:data]["hasBody"]["@graph"][2]["@id"]).to eq("test#bond-2-1")
-      expect(mapped[:data]["hasBody"]["@graph"][2]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:castor-1#this")
+      expect(mapped[:data]["hasBody"]["@graph"][2]["snap:bond-with"]["@id"]).to eq("http://data.perseus.org/people/smith:clytaemnestra-1#this")
     end
   end
   context "relation 2 test" do 

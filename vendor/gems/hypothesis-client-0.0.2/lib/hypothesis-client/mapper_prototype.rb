@@ -1,4 +1,4 @@
-# a prototype of a mapper module which takes
+#s a prototype of a mapper module which takes
 # a Hypothes.is annotation which adheres to a pre-defined
 # set of rules for tagging and contents and represents this
 # as an OA Annotation (JSON-LD serialization) using the 
@@ -255,6 +255,8 @@ module HypothesisClient::MapperPrototype
       }
       if (obj[:targetCTS]) 
         oa['hasTarget']['hasSource'] = { '@id' => obj[:targetCTS] }
+      else 
+        oa['hasTarget']['hasSource'] = { '@id' => obj[:targetUri] }
       end  
       ## THIS TECHNICALLY ISN'T VALID OA to EMBED A JSON-LD named graph without
       ## a graph id  ... fix at some point soon 
@@ -275,21 +277,27 @@ module HypothesisClient::MapperPrototype
           mainnode['http://www.w3.org/ns/oa#hasSelector']['http://www.w3.org/ns/oa#exact'] = oa['hasTarget']['hasSelector']['exact']
           mainnode['http://www.w3.org/ns/oa#hasSelector']['http://www.w3.org/ns/oa#prefix'] = oa['hasTarget']['hasSelector']['prefix']
           mainnode['http://www.w3.org/ns/oa#hasSelector']['http://www.w3.org/ns/oa#suffix'] = oa['hasTarget']['hasSelector']['suffix']
+          if (obj[:targetCTS]) 
+            mainnode['hasSource'] = { '@id' => obj[:targetCTS] }
+          else 
+            mainnode['hasSource'] = { '@id' => obj[:targetUri] }
+          end  
         end
-        bond_uris = []
+        bond_uris = Hash.new
         bonds = []
         attestations = []
         obj[:relationTerms].each_with_index do |t,i|
           obj[:bodyUri].each_with_index do |u,k|
             bond_uri = "#{obj[:id]}#bond-#{i+1}-#{k+1}"
-            bond_uris << bond_uri
+            unless bond_uris[u]
+              bond_uris[u] = []
+            end
+            bond_uris[u] << bond_uri
 	    bond =  
               {
                 "@id" => bond_uri,
                 "@type" => t,
-                "snap:bond-with" => {
-                  "@id" => u
-                }
+                "snap:bond-with" => { "@id" => mainnode["@id"] }
               }
              attest_uris = []
              if (obj[:attestUri].length > 0) 
@@ -312,12 +320,10 @@ module HypothesisClient::MapperPrototype
              bonds << bond
           end #end iteration of bond uris
         end # and iteration of relation terms 
-        if bond_uris.length == 1
-          mainnode["snap:has-bond"] = bond_uris[0]
-        else
-          mainnode["snap:has-bond"] = bond_uris
-        end
         graph << mainnode
+        bond_uris.keys.each do |u|
+           graph << { "@id" => u, "snap:has-bond" => bond_uris[u] }
+        end
         graph.concat(bonds)
         graph.concat(attestations)
         oa['hasBody'] = { 
