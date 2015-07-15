@@ -112,7 +112,7 @@ Capistrano::Configuration.instance.load do
       FileUtils.rm_rf(path)
       FileUtils.mkdir_p(shared_dir)
       if !File.exists?(destination)
-        unless system(scm.checkout(revision, destination))
+        unless system(scm.checkout(revision, "\"#{destination}\""))
           FileUtils.rm_rf(destination) if File.exists?(destination)
           raise "Error checking out #{revision} to #{destination}"
         end

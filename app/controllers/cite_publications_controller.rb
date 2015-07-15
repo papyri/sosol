@@ -4,6 +4,28 @@ class CitePublicationsController < PublicationsController
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   
   
+  # list items currently being edited by user,collection and matching identifier
+  def user_collection_list
+    if (params[:user_name])
+      @user = User.find_by_name(params[:user_name])
+    else 
+      @user = @current_user
+    end
+    identifier_class = identifier_type
+    tempid = params[:collection]
+    existing_identifiers = identifier_class.find_matching_identifiers(tempid,@user,params[:item_match])
+    @publications = existing_identifiers.map{ |i| 
+      h = Hash.new
+      h[:title] = i.title
+      h[:url] =  url_for(:controller => i.class.to_s.underscore.pluralize,:id => i, :action => 'preview')
+      h
+    }
+    unless @publications.length > 0
+      flash[:notice] = "No matching publications found!"
+    end
+    render 'show'
+  end
+
   ## Create/Update a CITE Publication from a linked URN
   def create_from_linked_urn
     # required inputs:
@@ -111,5 +133,16 @@ class CitePublicationsController < PublicationsController
   def create_from_selector
         
   end # end create_from_selector
-  
+ 
+  protected 
+    def identifier_type 
+      identifier_class_name = "#{params[:identifier_type]}Identifier"        
+      begin
+        identifier_class_name.constantize::IDENTIFIER_NAMESPACE
+        identifier_class = Object.const_get(identifier_class_name)
+      rescue Exception => e
+        Rails.logger.error(e)
+      end
+      return identifier_class
+    end
 end

@@ -6,6 +6,7 @@ class DmmApiController < ApplicationController
   before_filter :authorize, :except => [:api_item_info, :api_item_get]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   before_filter :update_cookie
+  skip_before_filter :accept_terms # don't display accept_terms on api requests
   
   # minutes for csrf session cookie expiration
   CSRF_COOKIE_EXPIRE = 60
@@ -247,7 +248,7 @@ class DmmApiController < ApplicationController
     end 
     rc = false
     if (params[:comment_id]) 
-      comment = Comment.find(params[:comment_id].to_s)
+      comment = Comment.find_by_id(params[:comment_id])
       # only update comments that belong to this identifier's origin
       if (comment && comment.identifier_id == @identifier.origin.id)
         comment.comment = params[:comment]

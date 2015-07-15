@@ -30,7 +30,6 @@ Sosol::Application.configure do
   
   config.xsugar_standalone_url = XSUGAR_STANDALONE_URL
   config.xsugar_standalone_use_proxy = XSUGAR_STANDALONE_USE_PROXY
-  config.exist_standalone_url= EXIST_STANDALONE_URL
   config.dev_init_files = DEV_INIT_FILES
   
   # config/environments/development_secret.rb should set

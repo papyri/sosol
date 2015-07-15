@@ -32,7 +32,7 @@ class CTSInventoryIdentifier < Identifier
      urn = CTS::CTSLib.urnObj(urnStr)
      rewritten_xml = JRubyXML.apply_xsl_transform(
        JRubyXML.stream_from_string(self.xml_content),
-       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       JRubyXML.stream_from_file(File.join(Rails.root,
        %w{data xslt cts update_version_title.xsl})), 
        :textgroup => urn.getTextGroup(true), :work => urn.getWork(true), :version => urn.getVersion(true), :label => title , :lang => lang
       )
@@ -44,7 +44,7 @@ class CTSInventoryIdentifier < Identifier
     urn = CTS::CTSLib.urnObj(identifier.urn_attribute)
     rewritten_xml = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+      JRubyXML.stream_from_file(File.join(Rails.root,
       %w{data xslt cts add_edition.xsl})), 
       :textgroup => urn.getTextGroup(true), 
       :work => urn.getWork(true), 
@@ -60,7 +60,7 @@ class CTSInventoryIdentifier < Identifier
      Rails.logger.info("ADDING EDITION #{editionUrn.getTextGroup(true)} #{editionUrn.getWork(true)} #{editionUrn.getVersion(true)} #{translationUrn.getVersion(true)}")
      rewritten_xml = JRubyXML.apply_xsl_transform(
        JRubyXML.stream_from_string(self.xml_content),
-       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       JRubyXML.stream_from_file(File.join(Rails.root,
        %w{data xslt cts add_translation.xsl})), 
        :textgroup => editionUrn.getTextGroup(true), 
        :work => editionUrn.getWork(true), 
@@ -76,7 +76,7 @@ class CTSInventoryIdentifier < Identifier
      urn = CTS::CTSLib.urnObj(identifier.urn_attribute)
      rewritten_xml = JRubyXML.apply_xsl_transform(
        JRubyXML.stream_from_string(self.xml_content),
-       JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+       JRubyXML.stream_from_file(File.join(Rails.root,
        %w{data xslt cts delete_translation.xsl})), 
        :textgroup => urn.getTextGroup(true), 
        :work => urn.getWork(true), 

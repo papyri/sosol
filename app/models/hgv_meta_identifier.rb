@@ -68,6 +68,25 @@ class HGVMetaIdentifier < HGVIdentifier
     return "Description of document"
   end
 
+  # Place any actions you always want to perform on HGV Meta identifier content prior to it being committed in this method
+  # - *Args*  :
+  #   - +content+ -> HGVMetaIdentifier XML as string
+  def before_commit(content)
+    HGVMetaIdentifier.preprocess(content)
+  end
+  
+  # Applies the preprocess XSLT to 'content'
+  # - *Args*  :
+  #   - +content+ -> XML as string
+  # - *Returns* :
+  #   - modified 'content'
+  def self.preprocess(content)
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt metadata preprocess.xsl})))
+  end
+
   # Retrieves a single date item (X, Y or Z) from instance variable +self[:textDate]+
   # - *Args*  :
   #   - +date_id+ → id of wanted date item, e.g. +'X'+, +'Y'+ or +'Z'+ OR +'dateAlternativeX'+, +'dateAlternativeY'+ or +'dateAlternativeZ'+
@@ -323,7 +342,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
         end
 
-        if item[:preFlag] # CL: CROMULENT GEO HACK
+        if (item.is_a? Hash) && item[:preFlag] # CL: CROMULENT GEO HACK
           offset = REXML::Element.new 'offset'
           offset.add_text 'bei'
           parent.add offset

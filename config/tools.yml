@@ -218,7 +218,7 @@ test:
       :method: 'get'
       :actions:
         :tokenize: 
-          :href: "http://localhost/exist/rest/db/xq/tokenize.xquery?splitting=false&uri="
+          :href: "http://localhost/llt/tokenize?xml=true&merging=false&splitting=false&uri="
     :lat:
       :method: 'get'
       :actions: 
@@ -354,12 +354,12 @@ production:
       :method: 'get'
       :actions:
         :tokenize: 
-          :href: "http://sosol.perseids.org/exist/rest/db/xq/tokenize.xquery?splitting=false&uri="
+          :href: "http://localhost/llt/tokenize?xml=true&merging-false&splitting=false&uri="
     :lat:
       :method: 'get'
       :actions: 
         :tokenize:
-          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+          :href: "http://localhost/llt/tokenize?xml=true&merging-false&splitting=false&uri="
   toponym_editor:
     :recogito:
       :method: 'get'

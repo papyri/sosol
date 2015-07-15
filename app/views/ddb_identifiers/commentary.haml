@@ -320,12 +320,12 @@
 
     originalleiden = $('com_sugar_content').value;
     //alert ("originalleiden" + originalleiden);
-    if (#{(!Sosol::Application.config.xsugar_standalone_use_proxy.nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_use_proxy).nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{Sosol::Application.config.xsugar_standalone_url.nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
-      request_url = "/" + request_url.split("/").slice(3).join("/");
+      request_url = "#{defined?(Sosol::Application.config.xsugar_standalone_url).nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
     //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
@@ -410,12 +410,12 @@
 
     originalleiden = $('fm_sugar_content').value;
 
-    if (#{(!Sosol::Application.config.xsugar_standalone_use_proxy.nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_use_proxy).nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{Sosol::Application.config.xsugar_standalone_url.nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
-      request_url = "/" + request_url.split("/").slice(3).join("/");
+      request_url = "#{defined?(Sosol::Application.config.xsugar_standalone_url).nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
     }
 
     //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
@@ -498,12 +498,12 @@
     originalxml = originalxml.replace(xmlnsPattern, "");
     
     //create url call
-    if (#{(!Sosol::Application.config.xsugar_standalone_use_proxy.nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_use_proxy).nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{Sosol::Application.config.xsugar_standalone_url.nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
-      request_url = "/" + request_url.split("/").slice(3).join("/");
+      request_url = "#{defined?(Sosol::Application.config.xsugar_standalone_url).nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
     // even though saved as &amp; in XML, comes here as & only
@@ -886,12 +886,12 @@
     originalxml = originalxml.replace(xmlnsPattern, '');
 
     //create url call
-    if (#{(!Sosol::Application.config.xsugar_standalone_use_proxy.nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_use_proxy).nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{Sosol::Application.config.xsugar_standalone_url.nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
-      request_url = "/" + request_url.split("/").slice(3).join("/");
+      request_url = "#{defined?(Sosol::Application.config.xsugar_standalone_url).nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
     // this is called from helper pop up page

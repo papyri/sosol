@@ -3,7 +3,7 @@
   %h1
     = "Editing " + @identifier.name
     
-  - form_for @identifier, :url => { :action => :update_title } do |f|
+  = form_for @identifier, :url => { :action => :update_title } do |f|
     = f.error_messages
 
     = f.label :title

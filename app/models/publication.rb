@@ -20,26 +20,26 @@
 require 'jgit_tree'
 require 'pp'
 
-class Publication < ActiveRecord::Base  
-    
-  
+class Publication < ActiveRecord::Base
+
+
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
-  
+
   validates_presence_of :title, :branch
-  
+
   belongs_to :creator, :polymorphic => true
   belongs_to :owner, :polymorphic => true
-  
+
   belongs_to :community
-  
+
   has_many :children, :class_name => 'Publication', :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => 'Publication'
-  
+
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   has_many :comments
-  
+
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
@@ -56,9 +56,9 @@ class Publication < ActiveRecord::Base
     end
     # not yet handling ASCII control characters
   end
-  
+
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
-  
+
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
 
@@ -82,7 +82,7 @@ class Publication < ActiveRecord::Base
     Rails.logger.info('---------------DDB xml document---------------------')
 
     Rails.logger.info text.elements["//office:document-content/office:body/office:text"].to_s
-    
+
     Rails.logger.info('------------------------------------')
 
     elder = meta.elements["//office:document-content/office:body/office:text/text:p[@text:style-name='Sammelbuch-Kopf']"]
@@ -94,7 +94,7 @@ class Publication < ActiveRecord::Base
       elder = text_element
 
     }
-    
+
     # output string
     formatter = REXML::Formatters::Default.new
     #formatter.compact = true
@@ -122,7 +122,7 @@ class Publication < ActiveRecord::Base
       #identifiers is now an array of strings like:  papyri.info/ddbdp/bgu;7;1504
       identifiers = NumbersRDF::NumbersHelper.identifiers_to_hash(identifiers)
     end
-    # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)  
+    # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)
     # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
 
 
@@ -136,16 +136,16 @@ class Publication < ActiveRecord::Base
     self.title = original_title
 
     Sosol::Application.config.site_identifiers.split(",").each do |identifier_name|
- 
+
       ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
       if identifiers.has_key?(ns)
         identifiers[ns].each do |identifier_string|
           identifier_class = Object.const_get(identifier_name)
           temp_id = identifier_class.new(:name => identifier_string)
-          # make sure we have a path on master before forking it for this publication 
+          # make sure we have a path on master before forking it for this publication
           unless (self.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
             # 2012-09-17 BALMAS it might be good to have an option to raise an error if we couldn't
-            # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)? 
+            # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)?
             self.identifiers << temp_id
             if ( self.title == original_title )
               self.title = temp_id.titleize
@@ -166,7 +166,7 @@ class Publication < ActiveRecord::Base
     #     self.identifiers << HGVMetaIdentifier.new(
     #       :name => "#{identifiers['hgv'].first}",
     #       :alternate_name => "hgv#{tm_nr}")
-    #     
+    #
     #     # Check if there's a trans, if so, add it
     #     translation = HGVTransIdentifier.new(
     #       :name => "#{identifiers['hgv'].first}",
@@ -178,35 +178,30 @@ class Publication < ActiveRecord::Base
     #   end
     # end
   end
-  
+
   # If branch hasn't been specified, create it from the title before
   # validation, replacing spaces with underscore.
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
     publication.branch ||= title_to_ref(publication.title)
   end
-  
+
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
-    
-    Rails.logger.info ':start:'
-    Rails.logger.info pp publication
-    Rails.logger.info ':end:'
-    
     if publication.owner.repository.branches.include?(publication.branch)
       return false
     end
   end
 
-  def after_destroy
+  after_destroy do |publication|
     # this is really destructive if it happens to get called on an incompletely
     # initialized publication which doesn't have a branch defined yet
     # it deletes all branches in the repo
-    if (self.branch)
-      self.owner.repository.delete_branch(self.branch)
+    if (publication.branch)
+      publication.owner.repository.delete_branch(publication.branch)
     end
   end
-  
+
   #Outputs publication information and content to the Rails logger.
    def log_info
         Rails.logger.info "-----Publication Info-----"
@@ -214,7 +209,7 @@ class Publication < ActiveRecord::Base
         Rails.logger.info "--Title: " + self.title
         Rails.logger.info "--Status: " + self.status
         Rails.logger.info "--content"
-        
+
         self.identifiers.each do |id|
           Rails.logger.info "---ID title: " + id.title
           Rails.logger.info "---ID class:" + id.class.to_s
@@ -229,10 +224,10 @@ class Publication < ActiveRecord::Base
         Rails.logger.info "==end Owner: " + self.owner.name
         Rails.logger.info "=====End Publication Info====="
     end
-      
+
 
   #Examines publication to see which board the publication should be submitted to next.
-  #Boards are sorted by rank. Each board, in order of rank, will check to see if they control any of the publication's modified and editing identifiers. 
+  #Boards are sorted by rank. Each board, in order of rank, will check to see if they control any of the publication's modified and editing identifiers.
   #If so, then the publication is submitted to that board.
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
@@ -243,21 +238,21 @@ class Publication < ActiveRecord::Base
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-    
-    Rails.logger.info "---Submittable identifiers are: " 
+
+    Rails.logger.info "---Submittable identifiers are: "
     submittable_identifiers.each do |log_si|
       Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
     end
-    
-    
+
+
     #check if we are part of a community
-   
+
     if is_community_publication?
       boards = Board.ranked_by_community_id( self.community.id )
     else
-      boards = Board.ranked  
+      boards = Board.ranked
     end
-    
+
     #check each board in order by priority rank
     boards.each do |board|
 
@@ -265,7 +260,7 @@ class Publication < ActiveRecord::Base
     boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
     if boards_identifiers.length > 0
       #submit to that board
-      Rails.logger.info "---Submittable Board identifiers are: " 
+      Rails.logger.info "---Submittable Board identifiers are: "
       boards_identifiers.each do |log_sbi|
         Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
       end
@@ -307,14 +302,14 @@ class Publication < ActiveRecord::Base
       if self.community.end_user.nil?
         #no end user has been set, so warn them and then what?
         #user can't submit to community if no end user, so this should not happen
-        
+
       else
-        
-        
+
+
         #copy to  space
-        Rails.logger.debug "----end user to get it" 
+        Rails.logger.debug "----end user to get it"
         Rails.logger.debug self.community.end_user.name
-        
+
         #community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user()
         community_copy.status = "editing"
@@ -323,72 +318,72 @@ class Publication < ActiveRecord::Base
           id.save
         end
         #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
-        
+
         #disconnect the parent/origin connections
         #community_copy.parent_id = nil
         community_copy.parent = nil
-        
+
         #reset the community id to be sosol
         #leave as is   community_copy.community_id = nil
-        
+
         #remove the original creator id (that info is now in the git history )
         community_copy.creator_id = community_copy.owner_id
-        
+
         community_copy.save!
-        
+
         #mark as committed
         self.origin.change_status("committed")
         self.save
       end
-      
+
     else
       #mark as committed
       self.origin.change_status("committed")
-      self.save    
+      self.save
     end
-    
-    
+
+
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
   end
-  
+
   def  is_community_publication?
-    return (self.community_id != nil)  &&  (self.community_id != 0)      
+    return (self.community_id != nil)  &&  (self.community_id != 0)
   end
- 
+
   #Simply pointer to submit_to_next_board method.
   def submit
     submit_to_next_board
   end
-  
+
   #Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier
   #
-  #*Args*: 
+  #*Args*:
   #-+creator+ the user who will be the owner of the publication.
   #
   #*Returns*: the new publication consiting of a DDBIdentifier and an HGVMetaIdentifier
   def self.new_from_templates(creator)
     new_publication = Publication.new(:owner => creator, :creator => creator)
-    
+
     # fetch a title without creating from template
     new_publication.title = DDBIdentifier.new(:name => DDBIdentifier.next_temporary_identifier).titleize
-    
+
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
     new_publication.save!
-    
+
     # branch from master so we aren't just creating an empty branch
     new_publication.branch_from_master
-            
+
     #create the required meta data and transcriptions
-    new_ddb = DDBIdentifier.new_from_template(new_publication)      
+    new_ddb = DDBIdentifier.new_from_template(new_publication)
     new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
-            
+
     # go ahead and create the third so we can get rid of the create button
-    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)    
-    
+    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
+
     return new_publication
   end
-  
+
   #*Returns*
   #- +true+ if any of the identifiers in the publication have been modified.
   #- +false+ if none of the identifiers in the publication have been modified.
@@ -397,10 +392,10 @@ class Publication < ActiveRecord::Base
     self.identifiers.each do |i|
       retval = retval || i.modified?
     end
-    
+
     retval
-  end 
-  
+  end
+
   #Determines if publication is in 'editing' status and is able to be changed
   #*Returns*
   #- +true+ if the publication should be changed by some user.
@@ -427,12 +422,12 @@ class Publication < ActiveRecord::Base
     else
       return true
     end
-  end 
+  end
 
   # TODO: rename actual branch after branch attribute rename
   after_create do |publication|
   end
-  
+
   #Sets the origin status for publication identifiers that this publication's board controls. Sets are made on the origin copy.
   #
   #*Args*
@@ -443,47 +438,47 @@ class Publication < ActiveRecord::Base
       # won't have an origin and should be skipped
       board = self.find_first_board
       if board
-              
+
         self.identifiers.each do |i|
           if board.identifier_classes && board.identifier_classes.include?(i.class.to_s) && i.origin
             i.origin.status = status_in
             i.origin.save
           end
         end
-        
+
       end
   end
 
 
-  #Sets the status for publication identifiers that this publication's board controls. Sets are made on the board's copy. 
+  #Sets the status for publication identifiers that this publication's board controls. Sets are made on the board's copy.
   #
   #*Args*
   #- +status_in+ the status to be set
-  def set_local_identifier_status(status_in)   
+  def set_local_identifier_status(status_in)
 
       board = self.find_first_board
       if board
-            
+
         self.identifiers.each do |i|
           if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
             i.status = status_in
             i.save
           end
         end
-        
+
       end
   end
 
   #Convenience method to combine  set_origin_identifier_status & set_local_identifier_status methods.
   def set_origin_and_local_identifier_status(status_in)
-    set_origin_identifier_status(status_in)          
-    set_local_identifier_status(status_in)          
+    set_origin_identifier_status(status_in)
+    set_local_identifier_status(status_in)
   end
 
   #Sets the board's publication identifier status. This is used when the finalizer's copy needs to change the board's copy.
   def set_board_identifier_status(status_in)
       pub = self.find_first_board_parent
-      if pub            
+      if pub
         pub.identifiers.each do |i|
           if pub.owner.identifier_classes && pub.owner.identifier_classes.include?(i.class.to_s)
             i.status = status_in
@@ -492,23 +487,23 @@ class Publication < ActiveRecord::Base
         end
       end
   end
-  
-  
+
+
   def change_status(new_status)
     Rails.logger.info("change_status to #{new_status} for #{self.inspect}")
     if (self.status != new_status) && !(self.head.nil?)
       old_branch_name = self.branch
       old_branch_leaf = old_branch_name.split('/').last
       new_branch_components = [old_branch_leaf]
-      
+
       unless new_status == 'editing'
         new_branch_components.unshift(new_status, Time.now.strftime("%Y/%m/%d"))
       end
-      
+
       if self.parent && (self.parent.owner.class == Board)
         new_branch_components.unshift(title_to_ref(self.parent.owner.title))
       end
-      
+
       new_branch_name = new_branch_components.join('/')
 
       # prevent collisions
@@ -537,15 +532,15 @@ class Publication < ActiveRecord::Base
       end
     end
   end
-  
+
   #Sets the status to archived and renames the title with the date-time to prevent future title collisions.
   def archive
     self.change_status("archived")
-    
+
     self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
     self.save!
   end
-  
+
   #Determines if the user has voted on this publication.
   #
   #*Args*
@@ -564,7 +559,7 @@ class Publication < ActiveRecord::Base
     #no vote found
     return false
   end
-  
+
   #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
   #
   #*Args*
@@ -581,19 +576,19 @@ class Publication < ActiveRecord::Base
     #vote action is determined by votes on the publication
     #any modified identifiers that the board controlls will have the change desc added.
     #Future changes may be made here if the voting logic is to be separated per identifier
-    
+
     #check that we are still taking votes
     if self.status != "voting"
       return "" #return nothing and do nothing since the voting is now over
     end
-    
+
     #need to tally votes and see if any action will take place
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
       return "" #another check to make sure only the board is voting on its copy
     else
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
-   
+
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -603,69 +598,83 @@ class Publication < ActiveRecord::Base
       e.category = "marked as \"#{decree_action}\""
       e.save!
     end
-  
+
   #----approve-----
     if decree_action == "approve"
-      
+
       #set status
-      self.change_status("approved")
+      self.status = "approved_pending"
+      self.save
       self.set_origin_and_local_identifier_status("approved")
-      
+
       #send emails
       self.owner.send_status_emails("approved", self)
-     
+
       #set up for finalizing
       self.send_to_finalizer
-      
-      
-  #----reject-----    
-    elsif decree_action == "reject"   
-     
+
+      self.change_status("approved")
+
+  #----reject-----
+    elsif decree_action == "reject"
+
       #set status
       self.origin.change_status("editing")
       self.set_origin_and_local_identifier_status("editing")
-      
+
       #send emails
       self.owner.send_status_emails("rejected", self)
-      
-      #do we want to copy ours back to the user? 
+
+      #do we want to copy ours back to the user?
       #TODO add copy to user
       #NOTE since they decided not to let editors edit we don't need to copy back to user 1-28-2010
-      
+
       self.origin.save!
-      
+
       self.destroy
-      
-  #----graffiti-----      
-    elsif decree_action == "graffiti"               
+
+  #----graffiti-----
+    elsif decree_action == "graffiti"
       # @publication.send_status_emails(decree_action)
       #do destroy after email since the email may need info in the artice
       #@publication.get_category_obj().graffiti
-      
+
       self.owner.send_status_emails("graffiti", self)
       #todo do we let one board destroy the entire document?
       #will this destroy all board copies....
-      self.origin.destroy #need to destroy related? 
+      self.origin.destroy #need to destroy related?
       self.destroy
      # redirect_to ( dashboard_url )
       #TODO we need to walk the tree and delete everything everywhere??
       #or
       #self.submit_to_next_board
-      
-  #----uknown on none-----      
+
+  #----uknown on none-----
     else
       #unknown action or no action
       #TODO allow board to return any action, and then call that action on the identifier, board or wherever it makes sense to allow the user to add to the class
       #if publication has comunity name, then it may make sense for that name to be linked to a mixin or such that contains custom methods
       #parse action name
     end
-    
+
     return decree_action
   end
-  
+
+  # returns commits by publication creator - i.e. between canon branch point
+  # and board branch point
+  def creator_commits
+    canon_branch_point = self.merge_base
+    board_branch_point = self.origin.head
+
+    # Grit method_missing version
+    return self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
+    # Naive backticks version:
+    # return `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
+  end
+
   def flatten_commits(finalizing_publication, finalizer, board_members)
     finalizing_publication.repository.fetch_objects(self.repository)
-    
+
     # flatten commits by original publication creator
     # - use the submission reason as the main comment
     # - concatenate all non-empty commit messages into a list
@@ -676,72 +685,56 @@ class Publication < ActiveRecord::Base
     # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
     # X insert a change in the XML revisionDesc header
     #   should instead happen at submit so EB sees it?
-    
+
     self.owner.repository.update_master_from_canonical
-    canon_branch_point = self.merge_base
-    
-    # this relies on the parent being a remote, e.g. fetch_objects being used
-    # during branch copy
-    # board_branch_point = self.merge_base(
-    #   [self.parent.repository.name, self.parent.branch].join('/'))
-    # this works regardless
-    board_branch_point = self.origin.head
-    
-    creator_commits = self.repository.repo.commits_between(canon_branch_point,
-                                                           board_branch_point)
-    board_commits = self.repository.repo.commits_between(board_branch_point,
-                                                         self.head)
-    
     reason_comment = self.submission_reason
-    
-    
+
     board_controlled_paths = self.controlled_paths
     Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
 
-    controlled_commits = creator_commits.select do |creator_commit|
-      Rails.logger.info("Checking Creator Commit id: #{creator_commit.id}")
+    controlled_commits = self.creator_commits.select do |creator_commit|
+      Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
       begin
-        controlled_commit_diffs = self.repository.repo.diff(creator_commit.parents.first.id, creator_commit.id, board_controlled_paths.clone)
+        controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
       rescue Grit::Git::GitTimeout
         Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
         controlled_commit_diffs = ['timeout']
-      end 
+      end
       controlled_commit_diffs.length > 0
     end
-    
+
     Rails.logger.info("Controlled Commits: #{controlled_commits.inspect}")
-    
+
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = controlled_commit.message.strip
+      message = self.repository.repo.commit(controlled_commit).message.strip
       unless message.empty?
         creator_commit_messages << " - #{message}"
       end
     end
-    
+
     controlled_blobs = board_controlled_paths.collect do |controlled_path|
       self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
     end
-    
-    controlled_paths_blobs = 
+
+    controlled_paths_blobs =
       Hash[*((board_controlled_paths.zip(controlled_blobs)).flatten)]
-    
+
     Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
     Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-    
+
     signed_off_messages = []
     board_members.each do |board_member|
       signed_off_messages << "Signed-off-by: #{board_member.author_string}"
     end
-    
+
     commit_message =
       (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
-    
+
     # parent commit should ALWAYS be canonical master head
     # FIXME: handle racing during finalization
     parent_commit = Repository.new.repo.get_head('master').commit.sha
-    # parent_commit = canon_branch_point
-    
+
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
     # (happens on the finalizer's repo)
@@ -759,9 +752,9 @@ class Publication < ActiveRecord::Base
     inserter.flush()
 
     tree_sha1 = jgit_tree.update_sha
-    
+
     Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-    
+
     commit = org.eclipse.jgit.lib.CommitBuilder.new()
     commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
     commit.setParentId(org.eclipse.jgit.lib.ObjectId.fromString(parent_commit))
@@ -776,13 +769,13 @@ class Publication < ActiveRecord::Base
 
     finalizing_publication.repository.create_branch(
       finalizing_publication.branch, flattened_commit_sha1)
-    
+
     # rewrite commits by EB
     # - write a 'Signed-off-by:' line for each Ed. Board member
     # - rewrite the committer to the finalizer
     # - change parent lineage to flattened commits
   end
-  
+
   #Finalizer is a user who is responsible for preparing the publication for the final commit to canon. They will be given a copy of the publication to edit.
   #This function sets the finalizer up with a copy of the publicaiton.
   #
@@ -790,24 +783,24 @@ class Publication < ActiveRecord::Base
   #- +finalizer+ user who will become the finalizer. If no finalizer given, a board member will be randomly choosen.
   #
   def send_to_finalizer(finalizer = nil)
-    board_members = self.owner.users   
+    board_members = self.owner.users
     if !finalizer
-      #get someone from the board    
-#      board_members = self.owner.users    
+      #get someone from the board
+#      board_members = self.owner.users
       # just select a random board member to be the finalizer
-      finalizer = board_members[rand(board_members.length)]  
+      finalizer = board_members[rand(board_members.length)]
     end
-      
+
     # finalizing_publication = copy_to_owner(finalizer)
     finalizing_publication = clone_to_owner(finalizer)
     self.flatten_commits(finalizing_publication, finalizer, board_members)
-    
+
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.change_status('finalizing')
     finalizing_publication.save!
-  end  
-  
+  end
+
   #Destroys this publication's finalizer's copy.
   def remove_finalizer
     # need to find out if there is a finalizer, and take the publication from them
@@ -819,7 +812,7 @@ class Publication < ActiveRecord::Base
       current_finalizer_publication.destroy
     end
   end
- 
+
   # Moves finalizing publication from one finalizer to another.
   #
   # *Args*
@@ -833,7 +826,7 @@ class Publication < ActiveRecord::Base
       Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
       return false
     end
-  
+
     self.transaction do
       # clone publication database record to owner
       new_finalizing_publication = old_finalizing_publication.dup
@@ -842,7 +835,7 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication.title = old_finalizing_publication.title
       new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
       new_finalizing_publication.parent = old_finalizing_publication.parent
-      
+
       new_finalizing_publication.save!
 
       # copy identifiers over to new publication
@@ -850,41 +843,41 @@ class Publication < ActiveRecord::Base
         duplicate_identifier = identifier.dup
         new_finalizing_publication.identifiers << duplicate_identifier
       end
-      
+
       # copy branch to new owner
       new_finalizing_publication.owner.repository.copy_branch_from_repo( old_finalizing_publication.branch, new_finalizing_publication.branch, old_finalizing_publication.owner.repository)
       new_finalizing_publication.save!
 
     end
-    
+
     # destroy old publication (including branch)
     old_finalizing_publication.destroy
-    
+
     return true
   end
-  
-  #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication. 
+
+  #*Returns* the +user+ who is finalizing this publication or +nil+ if no one finalizing this publication.
   def find_finalizer_user
     if find_finalizer_publication
-      return find_finalizer_publication.owner    
+      return find_finalizer_publication.owner
     end
     return nil
   end
-  
+
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
   #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
   end
-  
+
   def head
     self.owner.repository.jgit_repo.resolve(self.branch).name()
   end
-  
+
   def merge_base(branch = 'master')
     self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
   end
-  
+
   #Copies changes made to this publication back to the creator's (origin) publication.
   #Preserves commit history for changes.
   #This is intended to be called from the finalizer's publication copy.
@@ -895,26 +888,26 @@ class Publication < ActiveRecord::Base
   def copy_back_to_user(commit_comment, committer_user)
        #copies changes made to this (self) publication back to the creator's publication
        #this is intended to be called from the finalizer's publication copy
-=begin      
+=begin
       Rails.logger.info "==========COMMUNITY PUBLICATION=========="
       Rails.logger.info "----Community is " + self.community.name
       Rails.logger.info "----Board is " + self.find_first_board.name
       Rails.logger.info "====creators publication begining finalize=="
       @publication.origin.log_info
-=end            
-      #determine where to get data to build the index, 
+=end
+      #determine where to get data to build the index,
       # controlled paths are from the finalizer (this) publication
       # uncontrolled paths are from the origin publication
-   
+
       controlled_paths =  Array.new(self.controlled_paths)
       #get the controlled blobs from the local branch (the finalizer's)
       #controlled_blobs are the files that the board controls and have changed
       controlled_blobs = controlled_paths.collect do |controlled_path|
         self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
       end
-      #combine controlled paths and blobs into a hash  
+      #combine controlled paths and blobs into a hash
       controlled_paths_blobs = Hash[*((controlled_paths.zip(controlled_blobs)).flatten)]
-      
+
       #determine existing uncontrolled paths & blobs
       #uncontrolled are taken from the origin, they have not been changed by board
       origin_identifier_paths = self.origin.identifiers.collect do |i|
@@ -925,16 +918,16 @@ class Publication < ActiveRecord::Base
         self.origin.repository.get_blob_from_branch(ucp, self.origin.branch)
       end
       uncontrolled_paths_blobs = Hash[*((uncontrolled_paths.zip(uncontrolled_blobs)).flatten)]
-        
-     
-=begin     
-      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect      
+
+
+=begin
+      Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect
       Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
-    
+
       Rails.logger.info "-----Uncontrolled Blobs are:"
       uncontrolled_blobs.each do |cb|
         Rails.logger.info "-" + cb.to_s
-      end            
+      end
       Rails.logger.info "-----Controlled Blobs are:"
       controlled_blobs.each do |cb|
         Rails.logger.info "-" + cb.to_s
@@ -957,90 +950,90 @@ class Publication < ActiveRecord::Base
       #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
      #  origin_index = self.origin.owner.repository.repo.index
      #  origin_index.read_tree('master')
-      
+
      #  Rails.logger.debug "=======orign INDEX before add========"
      #  Rails.logger.debug origin_index.inspect
-      
-      
+
+
      #  #add the controlled paths to the index
      #  controlled_paths_blobs.each_pair do |path, blob|
      #     origin_index.add(path, blob.data)
      #     Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
      #  end
-      
+
      #  #need to add exiting tree to index, except for controlled blobs
      #  uncontrolled_paths_blobs.each_pair do |path, blob|
      #      origin_index.add(path, blob.data)
      #      Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
      #  end
-      
+
 
      #  Rails.logger.debug "=======orign INDEX after add========"
      #  Rails.logger.debug origin_index.inspect
- 
+
      # #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
      #  origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
-     
+
      #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
 
-      self.origin.save 
+      self.origin.save
   end
-  
-  
+
+
   def commit_to_canon
     #commit_sha is just used to return git sha reference point for comment
     commit_sha = nil
-  
+
     canon = Repository.new
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
-    
+
     # FIXME: This walks the whole rev list, should maybe use git merge-base
     # to find the branch point? Though that may do the same internally...
     # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
-    
+
     # Commits that are in canonical master but not this branch
     # Forcing method_missing here to directly call rev-list is much faster
     commits = self.owner.repository.repo.git.method_missing('rev-list',{}, canonical_sha, "^#{publication_sha}").split("\n")
-    
+
     # canon.repo.git.merge({:no_commit => true, :stat => true},
       # self.owner.repository.repo.get_head(self.branch).commit.sha)
-    
+
     # get the result of merging canon master into this branch
     # merge = Grit::Merge.new(
     #   self.owner.repository.repo.git.merge_tree({},
     #     publication_sha, canonical_sha, publication_sha))
-    
-    
+
+
     if canon_controlled_identifiers.length > 0
       if commits.length == 0
-        # nothing new from canon, trivial merge by updating HEAD 
+        # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', publication_sha)
-        
+
         self.change_status('committed')
         self.save!
       else
-        # Both the merged commit and HEAD are independent and must be tied 
+        # Both the merged commit and HEAD are independent and must be tied
         # together by a merge commit that has both of them as its parents.
-      
+
         # TODO: DRY from flatten_commits
         controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
           self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
         end
 
-        controlled_paths_blobs = 
+        controlled_paths_blobs =
           Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
 
         Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
         Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-      
+
         self.owner.repository.update_master_from_canonical
         jgit_tree = JGit::JGitTree.new()
-        jgit_tree.load_from_repo(self.origin.owner.repository.jgit_repo, 'master')
-        inserter = self.origin.owner.repository.jgit_repo.newObjectInserter()
+        jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
+        inserter = self.owner.repository.jgit_repo.newObjectInserter()
         controlled_paths_blobs.each_pair do |path, blob|
           unless blob.nil?
             file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
@@ -1065,7 +1058,7 @@ class Publication < ActiveRecord::Base
         Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
         commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
-      
+
         inserter = self.owner.repository.jgit_repo.newObjectInserter()
 
         commit = org.eclipse.jgit.lib.CommitBuilder.new()
@@ -1079,20 +1072,20 @@ class Publication < ActiveRecord::Base
         finalized_commit_sha1 = inserter.insert(commit).name()
         inserter.flush()
         inserter.release()
-      
+
         Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
-      
+
         # Update our own head first
         self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
-      
+
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
         commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
-        
+
         self.change_status('committed')
         self.save!
       end
-      
+
       # finalized, try to repack
       begin
         canon.repo.git.repack({})
@@ -1103,19 +1096,19 @@ class Publication < ActiveRecord::Base
       # nothing under canon control, just say it's committed
       self.change_status('committed')
       self.save!
-      
+
     end
     return commit_sha
   end
-  
-  
+
+
   def branch_from_master
     owner.repository.create_branch(branch)
   end
-  
-  
+
+
   #Determines which identifiers are controlled by this publication's board.
-  #*Returns* 
+  #*Returns*
   #- array of identifiers from this publication that are controlled by this publication's board
   #- empty array if this publication is not owned by a board or a finalizer
   def controlled_identifiers
@@ -1129,11 +1122,11 @@ class Publication < ActiveRecord::Base
       end
     end
   end
-  
 
-  
+
+
   #Determines paths for identifiers that are controlled by this publication's board.
-  #*Returns* 
+  #*Returns*
   #- array of paths from this publication that are controlled by this publication's board
   #- empty array if this publication is not owned by a board or a finalizer
   def controlled_paths
@@ -1141,18 +1134,18 @@ class Publication < ActiveRecord::Base
       i.to_path
     end
   end
-  
+
   def canon_controlled_identifiers
     # TODO: implement a class-level var e.g. CANON_CONTROL for this
     self.controlled_identifiers
   end
-  
+
   def canon_controlled_paths
     self.canon_controlled_identifiers.collect do |i|
       i.to_path
     end
   end
-  
+
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.repo.get_head('master').commit.sha
@@ -1169,12 +1162,12 @@ class Publication < ActiveRecord::Base
     end
     return false
   end
-  
+
   #*Returns* comment object with the publication's submit comment.
   def submission_reason
     reason = Comment.find_by_publication_id(self.origin.id, :conditions => "reason = 'submit'")
   end
-  
+
   #Finds the publication with no parent. This will be the creators copy.
   #
   #*Returns* +publication+ that is the begining of the publication workflow chain.
@@ -1215,7 +1208,7 @@ class Publication < ActiveRecord::Base
       end
     #end
   end
-  
+
   #Checks to see if user should be allowed to withdraw their submitted publication.
   #
   #*Returns*
@@ -1224,19 +1217,19 @@ class Publication < ActiveRecord::Base
   def allow_user_withdrawal?(user)
     #check any children publications for voting activity
     vote_count = 0;
-    
+
     child_publications = self.all_children
     child_publications.each do |pub|
       vote_count += pub.votes.count
     end
    return ( vote_count < 1 ) && ( user == self.creator ) && ( self.status == 'submitted' )
   end
-  
+
   #Finds the closest parent(or self) publication whose owner is a board. Returns that board.
   #
   #*Returns*
   #- +board+ that owns the publication.
-  #- +nil+ if no board owned publication found. 
+  #- +nil+ if no board owned publication found.
   def find_first_board
     board_publication = self
     while (board_publication.owner_type != "Board" && board_publication != nil) do
@@ -1247,9 +1240,9 @@ class Publication < ActiveRecord::Base
     end
     return nil
   end
-  
+
   #finds the closest parent publication whose owner is a board and returns that publication
-  
+
   #Finds the closest parent(or self) publication whose owner is a board. Returns that publication.
   #
   #*Returns*
@@ -1260,7 +1253,7 @@ class Publication < ActiveRecord::Base
     while (board_publication.owner_type != "Board" && board_publication != nil) do
       board_publication = board_publication.parent
     end
-    return board_publication      
+    return board_publication
   end
 
   #total votes for the publication children in voting status
@@ -1302,17 +1295,17 @@ class Publication < ActiveRecord::Base
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
-    
+
     # copy identifiers over to new pub
     identifiers.each do |identifier|
       duplicate_identifier = identifier.dup
       duplicate.identifiers << duplicate_identifier
     end
-    
+
     return duplicate
   end
-  
-  
+
+
   #Creates a new publication for the end_user (of a community) that is a separate copy of this publication.
   #This is similar to clone_to_owner, except the publication title is renamed to reflect the community and creator.
   #The new owner is the end_user for the publication's community.
@@ -1326,40 +1319,40 @@ class Publication < ActiveRecord::Base
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
-    
+
     # copy identifiers over to new pub
     identifiers.each do |identifier|
       duplicate_identifier = identifier.dup
       duplicate.identifiers << duplicate_identifier
     end
-    
+
     return duplicate
   end
-  
+
   def repository
     return self.owner.repository
   end
-  
+
   #copies this publication's branch to the new_owner's branch
   #returns duplicate publication with new_owner
   def copy_to_owner(new_owner)
     duplicate = self.clone_to_owner(new_owner)
-    
+
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
     )
-    
+
     return duplicate
   end
-    
-    
-  #mainly used to create new publiation title/repo name that is indicative of the publications source  
+
+
+  #mainly used to create new publiation title/repo name that is indicative of the publications source
   def copy_to_end_user()
     duplicate = self.clone_to_end_user()
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
     )
-    
+
     return duplicate
   end
   #copy a child publication repo back to the parent repo
@@ -1367,30 +1360,30 @@ class Publication < ActiveRecord::Base
      #all we need to do is copy the repo back the parents repo
      self.origin.repository.copy_branch_from_repo(self.branch, self.origin.branch, self.repository)
   end
-  
+
   # TODO: destroy branch on publication destroy
-  
+
   # entry point identifier to use when we're just coming in from a publication
   def entry_identifier
     identifiers.first
   end
-  
+
   def get_all_comments(title)
     all_built_comments = []
     xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
-    # BMA What is the purpose of limiting comments to the title rather than the id? 
-    @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at 
-                                        FROM comments a, publications b 
+    # BMA What is the purpose of limiting comments to the title rather than the id?
+    @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at
+                                        FROM comments a, publications b
                                         WHERE b.title = '#{title}'
                                           AND a.publication_id = b.id
                                      ORDER BY a.created_at DESC")
     # add comments hash to array
     @arcomments.each do |c|
       built_comment = Comment::CombineComment.new
-      
+
       built_comment.xmltype = "model"
-      
+
       if c.user && c.user.name
         built_comment.who = c.user.human_name
       else
@@ -1398,7 +1391,7 @@ class Publication < ActiveRecord::Base
       end
       # convert date to local for consistency so work in sort below
       built_comment.when = c.created_at.getlocal
-      
+
       if c.reason
         built_comment.why = c.reason
       else
@@ -1408,7 +1401,7 @@ class Publication < ActiveRecord::Base
       if c.identifier
         built_comment.why = built_comment.why + " " + c.identifier.class::FRIENDLY_NAME
       end
-      
+
       if c.comment
         built_comment.comment = c.comment
       else
@@ -1422,36 +1415,36 @@ class Publication < ActiveRecord::Base
     identifiers.each do |i|
       where_from = i.class::FRIENDLY_NAME
       ident_title = i.title
-      
+
       ident_xml = i.xml_content
       if ident_xml
         ident_xml_xpath = REXML::Document.new(ident_xml)
         comment_path = '/TEI/teiHeader/revisionDesc'
         comment_here = REXML::XPath.first(ident_xml_xpath, comment_path)
-       
+
         unless comment_here.nil?
           comment_here.each_element('//change') do |change|
             built_comment = Comment::CombineComment.new
-            
+
             built_comment.xmltype = where_from
-            
+
             if change.attributes["who"]
               built_comment.who = change.attributes["who"]
             else
               built_comment.who = "no who attribute"
             end
-            
+
             # parse will convert date to local for consistency so work in sort below
             if change.attributes["when"]
               built_comment.when = Time.parse(change.attributes["when"])
             else
               built_comment.when = Time.parse("1988-8-8")
             end
-            
+
             built_comment.why = "From "  + ident_title + " " + where_from + " XML"
-            
+
             built_comment.comment = change.text
-            
+
             all_built_comments << built_comment
             xml_only_built_comments << built_comment
           end #comment_here
@@ -1464,8 +1457,8 @@ class Publication < ActiveRecord::Base
 
   def creatable_identifiers
     creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
-    
-    #WARNING hardcoded identifier dependency hack  
+
+    #WARNING hardcoded identifier dependency hack
     #enforce creation order
     has_meta = false
     has_text = false
@@ -1498,7 +1491,7 @@ class Publication < ActiveRecord::Base
       #cant create text
       creatable_identifiers.delete("DDBIdentifier")
       #cant create trans
-      creatable_identifiers.delete("HGVTransIdentifier")     
+      creatable_identifiers.delete("HGVTransIdentifier")
     end
     creatable_identifiers.delete("BiblioIdentifier")
     # Not allowed to create any other record in association with a BiblioIdentifier publication
@@ -1509,19 +1502,19 @@ class Publication < ActiveRecord::Base
     if has_cts || has_cite
       creatable_identifiers = []
     end
-    
-    #only let user create new for non-existing        
+
+    #only let user create new for non-existing
     self.identifiers.each do |i|
       creatable_identifiers.each do |ci|
         if ci == i.class.to_s
-          creatable_identifiers.delete(ci)    
+          creatable_identifiers.delete(ci)
         end
       end
-    end  
+    end
 
     return creatable_identifiers
   end
-  
+
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)

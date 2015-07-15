@@ -426,6 +426,8 @@ Sosol::Application.routes.draw do
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/
+  match 'cite_publications/:identifier_type/:collection/:item_match' => 'cite_publications#user_collection_list', :identifier_type => /TreebankCite|AlignmentCite|CommentaryCite|OajCite|OaCite/,  :collection => /[^\/]*/, :item_match => /[^\/]*/
+  match 'cite_publications/user/:user_name/:identifier_type/:collection/:item_match' => 'cite_publications#user_collection_list', :identifier_type => /TreebankCite|AlignmentCite|CommentaryCite|OajCite|OaCite/,  :collection => /[^\/]*/, :item_match => /[^\/]*/, :user_name => /[^\/]*/
   match 'cite_publications/create_from_linked_urn/:type/:urn' => 'cite_publications#create_from_linked_urn', :urn => /[^\/]*/, :type => /[^\/]*/
   match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/

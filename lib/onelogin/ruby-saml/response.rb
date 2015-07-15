@@ -105,7 +105,7 @@ module Onelogin
       def success?
         @status_code ||= begin
           node = REXML::XPath.first(document, "/p:Response/p:Status/p:StatusCode", { "p" => PROTOCOL, "a" => ASSERTION })
-          node.attributes["Value"] == "urn:oasis:names:tc:SAML:2.0:status:Success"
+          node.nil? ? false : node.attributes["Value"] == "urn:oasis:names:tc:SAML:2.0:status:Success"
         end
       end
 
@@ -186,11 +186,15 @@ module Onelogin
       end
 
       def get_fingerprint
-        if settings.idp_cert
+        if defined?(settings.idp_cert) && settings.idp_cert
           cert = OpenSSL::X509::Certificate.new(settings.idp_cert)
           Digest::SHA1.hexdigest(cert.to_der).upcase.scan(/../).join(":")
         else
-          settings.idp_cert_fingerprint
+          if defined?(settings.idp_cert_fingerprint)
+            return settings.idp_cert_fingerprint
+          else
+            return nil
+          end
         end
       end
 
@@ -200,7 +204,7 @@ module Onelogin
 
         now = Time.now.utc
         Rails.logger.debug("Now: #{now}")
-        Rails.logger.debug("Now with drift: #{now + options[:allowed_clock_drift]}")
+        Rails.logger.debug("Now with drift: #{now + (options[:allowed_clock_drift] || 0)}")
         Rails.logger.debug("Not Before: #{not_before}")
         Rails.logger.debug("Not After: #{not_on_or_after}")
 

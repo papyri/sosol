@@ -8,6 +8,10 @@
 
    <xsl:include href="epidoc/global-varsandparams.xsl"/>
 
+   <!-- global named templates with no html, also used by start-txt -->
+   <xsl:include href="epidoc/tpl-certlow.xsl"/>
+   <xsl:include href="epidoc/tpl-text.xsl"/>
+
    <!-- html related stylesheets, these may import tei{element} stylesheets if relevant eg. htm-teigap and teigap -->
     <xsl:include href="epidoc/htm-teiab.xsl"/>
     <xsl:include href="epidoc/htm-teiaddanddel.xsl"/>
@@ -36,7 +40,7 @@
 
    <!-- tei stylesheets that are also used by start-txt -->
     <xsl:include href="epidoc/teiabbrandexpan.xsl"/>
-    <xsl:include href="epiidoc/teicertainty.xsl"/>
+    <xsl:include href="epidoc/teicertainty.xsl"/>
     <xsl:include href="epidoc/teichoice.xsl"/>
     <xsl:include href="epidoc/teihandshift.xsl"/>
     <xsl:include href="epidoc/teiheader.xsl"/>
@@ -65,11 +69,6 @@
     <xsl:include href="epidoc/htm-tpl-struct-rib.xsl"/>
     <xsl:include href="epidoc/htm-tpl-struct-iospe.xsl"/>
     <xsl:include href="epidoc/htm-tpl-struct-edh.xsl"/>
-
-   <!-- global named templates with no html, also used by start-txt -->
-    <xsl:include href="epidoc/tpl-certlow.xsl"/>
-    <xsl:include href="epidoc/tpl-text.xsl"/>
-
 
 
    <!-- HTML FILE -->

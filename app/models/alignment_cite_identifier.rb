@@ -234,7 +234,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
     formatter.width = 2**32
     content = ''
     formatter.write alignment, content
-    temp_id.set_content(content, :comment => a_comment)
+    temp_id.set_content(content, :comment => a_comment, :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     template_init = temp_id.init_version_content(content)
     temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
     return temp_id

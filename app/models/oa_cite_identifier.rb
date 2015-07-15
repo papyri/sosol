@@ -39,7 +39,7 @@ class OaCiteIdentifier < CiteIdentifier
       raise "Unregistered CITE Collection for #{a_urn}"
     end
     initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     temp_id.init_content(a_init_value)
     temp_id.save!
     return temp_id
@@ -71,7 +71,7 @@ class OaCiteIdentifier < CiteIdentifier
   
   # make a annotator uri from the owner of the publication 
   def make_annotator_uri()
-    ActionController::Integration::Session.new.url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
   end
   
   # Converts REXML::Document / ::Element into xml string
@@ -185,35 +185,19 @@ class OaCiteIdentifier < CiteIdentifier
       raise "Agent not found for #{agent_url}"
     end
 
-    # special handling for google spreadsheets
-    # temporary hack -- we should use google apis for google drive 
-    # integration and configure google as a full fledged agent
-    worksheet_idmatch = nil
-    # TODO This nonsense should be replaced by use of google api
-    worksheet_idmatch = agent_url.match(/key=([^&;\s]+)/) || # old style url
-      agent_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
-    unless worksheet_idmatch 
-        raise "Invalid URL: Unable to parse spreadsheet id from #{agent_url}"
-    end
+    agent_client = AgentHelper.get_client(agent)
+    raw_content = agent_client.get_content(agent_url) 
 
-    worksheet_id = worksheet_idmatch.captures[0] 
-    uri = agent[:get_url].sub(/WORKSHEET_ID/,worksheet_id)
-    uri = URI.parse(uri)
-    response = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.send_request('GET',uri.request_uri)
-    end
-    unless (response.code == '200')
-      raise "Unable to retreive content from #{uri}"
-    end
-    transform = agent[:transformations][:OaCiteIdentifier]
+    transform = agent_client.get_transformation(:OaCiteIdentifier)
     content = JRubyXML.apply_xsl_transform(
-    JRubyXML.stream_from_string(response.body),
-    JRubyXML.stream_from_file(File.join(RAILS_ROOT,transform)),
-      :e_agentUri => agent[:uri_match],
-      :e_annotatorUri => self.make_annotator_uri,
-      :e_annotatorName => self.publication.creator.human_name,
-      :e_baseAnnotUri => SITE_CITE_COLLECTION_NAMESPACE + "/" + self.urn_attribute 
+      JRubyXML.stream_from_string(raw_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,transform)),
+        :e_agentUri => agent[:uri_match],
+        :e_annotatorUri => self.make_annotator_uri,
+        :e_annotatorName => self.publication.creator.human_name,
+        :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
     )  
     return content
   end
+
 end

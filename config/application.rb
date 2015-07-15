@@ -1,34 +1,24 @@
-# Be sure to restart your server when you modify this file
-
-# Uncomment below to force Rails into production mode when
-# you don't control web/app server and can't set it the proper way
-ENV['RAILS_ENV'] ||= 'development'
-
 # Specifies gem version of Rails to use when vendor/rails is not present
 # RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
 require File.expand_path( '../boot', __FILE__ )
 require 'rails/all'
-require 'rexml/document'
 Bundler.require( :default, Rails.env ) if defined?( Bundler )
 
-RPX_BASE_URL = 'https://rpxnow.com'
-SITE_NAME = 'Perseids'
-SITE_FULL_NAME = 'Perseids'
-SITE_TAG_LINE = 'powered by Son of Suda Online'
-SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
-SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OaCiteIdentifier,OajCiteIdentifier'
-SITE_CATALOG_SEARCH = "View In Catalog"
-SITE_USER_NAMESPACE = "data.perseus.org"
-SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
-SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
-EXTERNAL_CTS_REPOS = 'AnnotationSources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://perseids.org/annotsrc'
-SITE_EMAIL_FROM = 'admin@perseids.org'
-REPOSITORY_ROOT = "/usr/local/gitrepos"
-SITE_CTS_INVENTORIES = 'perseids-dev|Epi'
-CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
-GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
-
+# This should probably all be moved into an environment in config/environments/
+# RPX_BASE_URL = 'https://rpxnow.com'
+# SITE_NAME = 'Perseids'
+# SITE_FULL_NAME = 'Perseids'
+# SITE_TAG_LINE = 'powered by Son of Suda Online'
+# SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'
+# SITE_LAYOUT = 'perseus'
+# SITE_IDENTIFIERS = 'CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier,CommentaryCiteIdentifier,TreebankCiteIdentifier,AlignmentCiteIdentifier,OaCiteIdentifier,OajCiteIdentifier'
+# SITE_USER_NAMESPACE = "http://data.perseus.org/users/"
+# SITE_OAC_NAMESPACE = "http://data.perseus.org/annotations/sosoloacprototype"
+# SITE_CITE_COLLECTION_NAMESPACE = "http://data.perseus.org/collections"
+# SITE_EMAIL_FROM = 'admin@perseids.org'
+# REPOSITORY_ROOT = "/usr/local/gitrepos"
+# CANONICAL_REPOSITORY = File.join( REPOSITORY_ROOT, 'canonical.git' )
+# GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
 
 module Sosol
   class Application < Rails::Application
@@ -54,105 +44,37 @@ module Sosol
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
-    
-    # Skip frameworks you're not going to use. To use Rails without a database
-    # you must remove the Active Record framework.
-    # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
-    
-    # Specify gems that this application depends on. 
-    # They can then be installed with "rake gems:install" on new installations.
-    # config.gem "bj"
-    # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-    # config.gem "aws-s3", :lib => "aws/s3"
-    # config.gem "ruby-xslt", :lib => "xml/xslt"
-    # config.gem "libxml-ruby", :lib => "xml/libxml"
-    config.gem "haml", :version => "~> 3.0.25"
-    # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
-    
-    if ( RUBY_PLATFORM == 'java' )
-      config.gem "json-jruby", :version => ">= 1.4.3.1", :lib => "json"
-    else
-      config.gem "json"
-    end
-    if ( RUBY_PLATFORM == 'java' )
-      config.gem "jruby-openssl", :lib => false
-      config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
-      config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
-      config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
-      config.gem "rack", :version => ">= 1.1.0", :lib => false
-    end
-    config.gem "shoulda", :version => ">= 2.11.3"
-    config.gem "factory_girl", :version => "~> 1.2.2"
-    config.gem 'airbrake', :version => ">= 3.0.5"
-    config.gem 'grit',
-      :lib     => 'grit',
-      :source  => 'http://gemcutter.org',
-      :version => '>= 2.0'
-    config.gem 'rubyzip', :lib => 'zip/zip', :version => ">= 0.9.5"
-    
-    # Only load the plugins named here, in the order given. By default, all plugins 
-    # in vendor/plugins are loaded in alphabetical order.
-    # :all can be used as a placeholder for all plugins not explicitly named
-    # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
-    
-    # Add additional load paths for your own custom dirs
-    # config.load_paths += %W( #{RAILS_ROOT}/extras )
-    
-    # Force all environments to use the same logger level
-    # (by default production uses :info, the others :debug)
-    # config.log_level = :debug
-    
-    # Make Time.zone default to the specified zone, and make Active Record store time values
-    # in the database in UTC, and return them converted to the specified local zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
-    config.time_zone = 'UTC'
-    
-    # Your secret key for verifying cookie session data integrity.
-    # If you change this key, all old sessions will become invalid!
-    # Make sure the secret is at least 30 characters and all random, 
-    # no regular words or you'll be exposed to dictionary attacks.
-    config.session_store( :cookie_store, {
-      :key => '_protosite_session',
-      :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6',
-      :httponly => false,
-      :domain => 'localhost'
-    })
-    
-    # Rails logging. 
-    # if defined?( Rails.logger )
-    #   Rails.logger = Logger.new( STDOUT )
-    # end
-    
-    # Use the database for sessions instead of the cookie-based default,
-    # which shouldn't be used to store highly confidential information
-    # (create the session table with "rake db:sessions:create")
-    # config.action_controller.session_store = :active_record_store
-    
-    # Use SQL instead of Active Record's schema dumper when creating the test database.
-    # This is necessary if your schema can't be completely dumped by the schema dumper,
-    # like if you have constraints or database-specific column types
-    # config.active_record.schema_format = :sql
-    
-    # Activate observers that should always be running
-    # config.active_record.observers = :cacher, :garbage_collector
-    
-    # RPX application configuration
-    config.rpx_base_url = RPX_BASE_URL
-    config.site_name = SITE_NAME
-    config.site_full_name = SITE_FULL_NAME
-    config.site_tag_line = SITE_TAG_LINE
-    config.site_wiki_link = SITE_WIKI_LINK
-    config.site_layout = SITE_LAYOUT
-    config.site_identifiers = SITE_IDENTIFIERS
-    config.site_cts_inventories = SITE_CTS_INVENTORIES
-    config.site_catalog_search = SITE_CATALOG_SEARCH
-    config.site_user_namespace = SITE_USER_NAMESPACE
-    config.site_oac_namespace = SITE_OAC_NAMESPACE
-    config.site_cite_collection_namespace = SITE_CITE_COLLECTION_NAMESPACE
-    config.external_cts_repos = EXTERNAL_CTS_REPOS
-    config.site_email_from = SITE_EMAIL_FROM
-    config.repository_root = REPOSITORY_ROOT
-    config.canonical_repository = CANONICAL_REPOSITORY
-    config.gitweb_base_url = GITWEB_BASE_URL
+
+    # Configure custom application parameters
+    config.site_layout = 'pn'
+    config.site_identifiers = 'DDBIdentifier,HGVMetaIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
+    config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
+    config.canonical_repository = File.join(config.repository_root, 'canonical.git')
+    config.rpx_base_url = 'https://rpxnow.com'
+    config.site_name = 'SoSOL'
+    config.site_full_name = 'Son of Suda On Line'
+    config.site_wiki_link = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
+    config.dev_init_files = []
+    config.site_catalog_search = 'View in PN'
+    config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
+    config.site_email_from = 'admin@localhost'
+    config.site_tag_line = 'powered by Son of Suda Online'
+
+    config.site_user_namespace = 'http://data.perseus.org/users/'
+    config.site_oac_namespace = 'http://data.perseus.org/annotations/sosoloacprototype'
+    config.site_cite_collection_namespace = 'http://data.perseus.org/collections'
+
+    config.current_terms_version = 0
+
+    # Configure XSugar
+    # These can be overridden in config/environments/*_secret.rb
+    # Use a standalone XSugar server instead of JRuby+Rails internal transform
+    # See: https://github.com/papyri/xsugar/tree/master/src/standalone
+    config.xsugar_standalone_enabled = false
+    # Use a Rails proxy URL for the standalone XSugar server
+    # (useful if XSugar server URL would result in a cross-domain request)
+    config.xsugar_standalone_use_proxy = false
+    # URL for the standalone XSugar server
+    config.xsugar_standalone_url = ''
   end
 end

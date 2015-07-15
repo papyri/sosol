@@ -1,6 +1,6 @@
 class CiteIdentifier < Identifier  
-  # This is a superclass for objects using CTS Identifiers, including
-  # shared constants and methods. No instances of CTSIdentifier should be
+  # This is a superclass for objects using CITE Identifiers, including
+  # shared constants and methods. No instances of CiteIdentifier should be
   # created. 
   FRIENDLY_NAME = "CITE Collection Item"
   
@@ -58,7 +58,7 @@ class CiteIdentifier < Identifier
     end
     temp_id.save!
     initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template')
+    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     temp_id.init_content(a_init_value)
     return temp_id
   end
@@ -98,7 +98,7 @@ class CiteIdentifier < Identifier
     temp_id.save!
      # initialize a new version of the content from the parent content
     initial_content = temp_id.init_version_content(parent_id.content)
-    temp_id.set_content(initial_content, :comment => 'Created from Inventory')
+    temp_id.set_content(initial_content, :comment => 'Created from Inventory', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     return temp_id
   end
   
@@ -200,12 +200,12 @@ class CiteIdentifier < Identifier
        
     path_components << ns
     path_components << coll
-    path_components << "REAMDE.md"
+    path_components << "README.md"
     
     # e.g. CITE_OAC_XML/perseus/mycoll/README.md
     collection_path = File.join(path_components)
     exists = self.publication.repository.get_file_from_branch(collection_path,'master')
-    exists = ! nil
+    exists.nil? ? false : true
   end
   
   def to_path
@@ -282,7 +282,7 @@ class CiteIdentifier < Identifier
    
     # make a annotator uri from the owner of the publication 
     def make_annotator_uri()
-      ActionController::Integration::Session.new(Sosol::Application).url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+      "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
     end
     
     def self.find_matching_identifiers(match_id,match_user,match_pub)

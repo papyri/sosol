@@ -38,8 +38,11 @@ class IdentifiersController < ApplicationController
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     identifier_type = params[:identifier_type].constantize
-    
-    @identifier = identifier_type.new_from_template(@publication)
+    if params[:apis_collection]
+      @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
+    else
+      @identifier = identifier_type.new_from_template(@publication)
+    end
     if @identifier.nil?
       flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
       redirect_to polymorphic_path([@publication],

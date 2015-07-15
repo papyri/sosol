@@ -225,7 +225,7 @@ class OACIdentifier < Identifier
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
-    ActionController::Integration::Session.new(Sosol::Application).url_for(:host => SITE_USER_NAMESPACE, :controller => 'user', :action => 'show', :user_name => self.publication.creator.name, :only_path => false)
+    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
   end
   
   # find the next annotation uri for appending to the oac.xml
@@ -253,7 +253,7 @@ class OACIdentifier < Identifier
       end
     }
     next_num = max+1
-    return "#{SITE_OAC_NAMESPACE}/#{self.publication.id}/#{self.parentIdentifier.id}/#{self.id}/#{self.publication.owner.id}/#{next_num}" 
+    return "#{Sosol::Application.config.site_oac_namespace}/#{self.publication.id}/#{self.parentIdentifier.id}/#{self.id}/#{self.publication.owner.id}/#{next_num}" 
   end
   
   
@@ -497,7 +497,7 @@ class OACIdentifier < Identifier
       (OacHelper::get_annotators(a_orig).include?(session_owner)) ||
       # or the publication is being finalized, in which case the session owner is not necessarily an annotator
       # TODO in case of changes during finalization, the finalizer should be added as an annotator 
-      @publication.status == 'finalizing'
+      self.publication.status == 'finalizing'
     orig_agents = OacHelper::get_software_agents(a_orig)
     new_agents = OacHelper::get_software_agents(a_new)
     

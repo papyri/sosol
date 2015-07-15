@@ -1,16 +1,16 @@
-// gray + 90 = #dadada
-!main_color = gray + 90
-!main_color_fade = !main_color + 16
-!main_color_fade_medium = !main_color + 20
-!main_color_fade_full = !main_color + 26
-!main_color_fade_max = !main_color + 37
-!main_color_darken = !main_color - 10
-!main_color_darken_medium = !main_color - 31
-!main_color_darken_full = !main_color - 67
-!pn_color = #3C2217
+// gray + 90: #dadada
+$main_color: gray + 90
+$main_color_fade: $main_color + 16
+$main_color_fade_medium: $main_color + 20
+$main_color_fade_full: $main_color + 26
+$main_color_fade_max: $main_color + 37
+$main_color_darken: $main_color - 10
+$main_color_darken_medium: $main_color - 31
+$main_color_darken_full: $main_color - 67
+$pn_color: #3C2217
 // use a blue-ish color for non-underlined link elements we
 // want to highlight
-!non_underlined_link = #4183c4
+$non_underlined_link: #4183c4
 
 *
   margin: 0
@@ -33,25 +33,25 @@
   +text_padding
   border-style: solid
   border-width: 0.1em
-  border-color = !main_color
-  background = !main_color_fade_full
+  border-color: $main_color
+  background: $main_color_fade_full
 
 =styled_button
   +helvetica
   font-size: 1.25em
-  color = !pn_color
+  color: $pn_color
   +text_padding_small
-  background = !main_color_fade_full
-  border-color = !main_color
+  background: $main_color_fade_full
+  border-color: $main_color
   border-style: outset
   border-width: 0.13em
   &:hover
-    background = !main_color
+    background: $main_color
   &:active
     background: #c0c0c0
     border-style: inset
   &:disabled
-    color = !pn_color + 140
+    color: $pn_color + 140
 
 
 #main
@@ -75,7 +75,7 @@
   //background-color: red
 
 .loading
-  background = gray + 90
+  background: gray + 90
   background-image: url('../images/ajax_loader.gif')
   background-repeat: no-repeat
   background-position: center center
@@ -109,7 +109,7 @@ styled_button
 #submit
   margin-top: .5em
   border: 1px solid gray
-  background = !main_color_fade
+  background: $main_color_fade
   padding: 1em
   
   h3
@@ -167,7 +167,7 @@ styled_button_show
     float: right
     margin-left: 3em
     a
-      color = !non_underlined_link
+      color: $non_underlined_link
       text-decoration: none
       &:hover
         text-decoration: underline
@@ -180,7 +180,7 @@ styled_button_show
   margin-top: 0.6em
   margin-bottom: 0.6em
   &:hover
-    background = !main_color
+    background: $main_color
   a
     color: black
 
@@ -253,7 +253,7 @@ styled_button_show
       margin-top: 1em
       float: right
       &:hover
-        background = #ff9999
+        background: #ff9999
       &:active
         background: #ff7777
     input.savetop
@@ -268,22 +268,10 @@ styled_button_show
       margin-bottom: .3em
       float: right
       &:hover
-        background = #ff9999
+        background: #ff9999
       &:active
         background: #ff7777
       
-#rpx_box
-  float: left
-  width: 30em
-
-#signup_box
-  float: right
-  width: 20em
-
-#signup_explanation
-  clear: both
-  
-  
 #edit_bar
   //inherit default instead font-family: Georgia,serif
   font-size: 75%
@@ -291,7 +279,7 @@ styled_button_show
   
 #identifier_menu
   width: 100%
-  background = !main_color
+  background: $main_color
   text-align: left
   clear: both
   // height: 2em
@@ -300,26 +288,26 @@ styled_button_show
   ul
     // overflow: hidden
     //height: 2em
-    background = !main_color
+    background: $main_color
     border-bottom-width: .2em
     border-bottom-style: solid
-    border-bottom-color = !main_color
+    border-bottom-color: $main_color
 
     li.active
-      background = !main_color_fade_medium
+      background: $main_color_fade_medium
 
 
     li.nav_control
-      background = !main_color_darken
+      background: $main_color_darken
       float: right
 	
     li
-      background = !main_color
+      background: $main_color
       float: left
       list-style-type: none
       height: 1.6em
       padding-top: .4em
-      border-right-color = !main_color_fade_medium
+      border-right-color: $main_color_fade_medium
       border-right-width: .13em
       border-right-style: solid
       position: relative
@@ -328,21 +316,21 @@ styled_button_show
         height: auto
         border-width: .2em
         border-style: solid
-        border-color = !main_color
+        border-color: $main_color
         display: none
         position: absolute
         width: 20em
         margin-top: .4em
-        background = !main_color_fade_max
+        background: $main_color_fade_max
         left: auto
         
         li
-          background = !main_color_fade_max
+          background: $main_color_fade_max
           clear: both
           float: left
 
       &:hover
-        background = !main_color_darken_medium
+        background: $main_color_darken_medium
         
         > ul,li
           // clear: both
@@ -353,23 +341,23 @@ styled_button_show
           color: black
           text-decoration: none
           // &:hover
-          //   color = !main_color_fade_full
+          //   color: $main_color_fade_full
       a
         padding: 1em 1.25em .3em 1.25em
-        color = black
+        color: black
         font-size: 110%
         text-decoration: none
         &:hover
           color: black
           text-decoration: none
 
-#rpx_box
+#janrainEngageEmbed
   float: left
-  width: 30em
+  margin-bottom: 2em
 
 #signup_box
   float: right
-  width: 20em
+  width: 35em
 
 #signup_explanation
   clear: both
@@ -406,11 +394,11 @@ ul.publications
 
 .identifier_sub_menu_empty
   height: .5em
-  background = !main_color
+  background: $main_color
 
 .identifier_sub_menu
   //height: 2.099em
-  background = !main_color
+  background: $main_color
   line-height: 1.5
 
   //.site
@@ -422,7 +410,7 @@ ul.publications
 
   li.active
     a
-      background = !main_color_fade_medium
+      background: $main_color_fade_medium
 
   li 
     float: left
@@ -433,9 +421,9 @@ ul.publications
       position: absolute
       top: 1em
       left: 0
-      background-color = !main_color_darken
+      background-color: $main_color_darken
       margin-left: 1.7em
-      border-color = !main_color_darken
+      border-color: $main_color_darken
       border-style: solid
       border-width: .16em
       border-top-style: none
@@ -465,7 +453,7 @@ ul.publications
     text-decoration: none
     &:hover 
       text-decoration: none
-      background-color = !main_color_darken_medium
+      background-color = $main_color_darken_medium
     &:visited
       color: black
 
@@ -474,7 +462,7 @@ ul.publications
   margin: 1em
   border-style: solid
   border-width: .16em
-  border-color = !main_color_darken
+  border-color: $main_color_darken
   
   .textpart
     margin-left: 1em
@@ -485,32 +473,32 @@ ul.publications
     li.line
       list-style-type: none
       border-bottom: 1px dotted
-      border-bottom-color = !main_color_darken
+      border-bottom-color: $main_color_darken
       padding-top: .5em
       padding-bottom: .5em
       
     li.clickable
       &:hover
-        background = !main_color
+        background: $main_color
         cursor: pointer
       
       div.form
         &:hover
-          background = !main_color
+          background: $main_color
     
     li.input
       list-style-type: none
       
       div.form
         border: 1px solid 
-        border-color = !main_color_darken
+        border-color: $main_color_darken
         border-top: none
-        background = !main_color_fade
+        background: $main_color_fade
         padding: 1em
         margin-bottom: 1em
         
         span.reference
-          color = !main_color_darken_full
+          color: $main_color_darken_full
         
         input.save_commentary
           +styled_button
@@ -522,7 +510,7 @@ ul.publications
 .frontmatter_container
   .clickable
     &:hover
-      background = !main_color
+      background: $main_color
       cursor: pointer
   
   p.label
@@ -530,8 +518,8 @@ ul.publications
   
   div.form
     border: 1px solid 
-    border-color = !main_color_darken
-    background = !main_color_fade
+    border-color: $main_color_darken
+    background: $main_color_fade
     padding: 1em
     margin-top: 1em
     margin-bottom: 1em
@@ -541,8 +529,8 @@ ul.publications
       margin-top: 0em
 
 .commit
-  background-color = !main_color_fade
-  border-color = !main_color_darken
+  background-color: $main_color_fade
+  border-color: $main_color_darken
   border-style: solid
   border-width: .16em
   display: block
@@ -560,15 +548,15 @@ ul.publications
     padding: 1em
     width: 70%
     float: left
-    border-right-color = !main_color_darken
+    border-right-color: $main_color_darken
     border-right-style: solid
     border-right-width: .16em
     .author
       margin-top: 1em
       span.type
-        color = !main_color_darken_full
+        color: $main_color_darken_full
     .date
-      color = !main_color_darken_full
+      color: $main_color_darken_full
 
 .comment_partial
   background-color: #BBBBBB
@@ -608,7 +596,7 @@ ul.publications
 .advanced_create
   padding: 1em
   border: 1em
-  border-top-color = !main_color
+  border-top-color: $main_color
   border-top-style: solid
   border-top-width: 2px
   
@@ -702,7 +690,7 @@ div.editor_nav
       padding-left: 5px
       text-decoration: none
       display: block
-      color = #5C0303
+      color: #5C0303
       &:hover
         background-color: #F8F6F4
 
@@ -710,7 +698,7 @@ li.editor_menu
   color: #5C0303
   cursor: pointer  
   &:hover
-    background-color = !main_color_fade_max
+    background-color: $main_color_fade_max
     
 .right
   float: right
@@ -723,11 +711,11 @@ li.editor_menu
   a
     text-decoration: none
     &:link
-      color = black
+      color: black
     &:visited
-      color = black
+      color: black
     &:hover
-      color = black
+      color: black
  
  
 ul.sign_in_out
@@ -742,7 +730,7 @@ ul.sign_in_out
       &:visited
         color: #F8F6F4
       &:hover
-        color = black
+        color: black
         background-color: #F8F6F4 
         
  

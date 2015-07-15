@@ -47,7 +47,7 @@ class PublicationTest < ActiveSupport::TestCase
     should "delete its branch upon destruction" do
       publication_branch = @publication.branch
       @publication.destroy
-      assert !@user.repository.branches.include?(publication_branch)
+      assert !@user.repository.branches.include?(publication_branch), "User repository branches shouldn't include publication branch '#{publication_branch}'. User repository branches:\n#{@user.repository.branches.join("\n")}"
     end
     
     should "have valid XML for templates" do
