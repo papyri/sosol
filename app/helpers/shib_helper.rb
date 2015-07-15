@@ -9,6 +9,7 @@ module ShibHelper
   # returns the number of configured IdPs
   def self.num_idps
     idps = get_idp_list()
+     Rails.logger.info("SIZE " + idps.size.to_s)
     return idps.size 
   end
   
@@ -33,6 +34,7 @@ module ShibHelper
         @idps << { :key => k, :display_name => idpconfig[k][:display_name], :logo => idpconfig[k][:logo]}
       end
     end
+    Rails.logger.info("IDPS" + @idps.inspect)
     return @idps
   end
 end

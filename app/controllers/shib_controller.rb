@@ -2,7 +2,8 @@ require 'ruby-saml'
 
 class ShibController < ApplicationController
    
-    protect_from_forgery :except => [:consume, :signin]
+    protect_from_forgery :except => [:consume, :signin, :metadata]
+    before_filter :authorize, :except => [:metadata, :signin, :consume, :create_submit]
     
     def get_config
       unless defined? @shib_config
@@ -18,7 +19,7 @@ class ShibController < ApplicationController
         redirect_to :controller => "signin", :action => "index"
         return 
       end
-      request = Onelogin::Saml::Authrequest.new
+      request = OneLogin::RubySaml::Authrequest.new
       redirect_to(request.create(saml_settings(idp)))
     end
 
@@ -44,15 +45,15 @@ class ShibController < ApplicationController
       end 
       
       get_config
-      # allowed_clock_drift is configured in seconds - allows for slight mismatch on time
-      # between sp and idp servers
-      allowed_clock_drift = @shib_config[:allowed_clock_drift] || 0
-      response          = Onelogin::Saml::Response.new(params[:SAMLResponse],{:allowed_clock_drift => allowed_clock_drift})
-      issuer = response.issuer
+      options = { :settings => saml_settings(nil),
+                  :soft => false,
+                  :allowed_clock_drift => @shib_config[:allowed_clock_drift] || 0 }
+      response = OneLogin::RubySaml::Response.new(params[:SAMLResponse],options)
+      issuer = response.issuers[0]
       
       # lookup the code for the idp using the entity_id for the issuer of the AuthResponse
       idp_matches = @shib_config[:idps].collect { |k,v|
-        if (@shib_config[:idps][k][:entity_id] = issuer)
+        if (@shib_config[:idps][k][:entity_id] == issuer)
           k
         else
           nil
@@ -62,111 +63,67 @@ class ShibController < ApplicationController
       # we must recognize the idp or we can't do anything
       if (idp_matches.length > 0) 
         idp = idp_matches[0]  
+        # update the settings for the IdP
         response.settings = saml_settings(idp)
-        
-        # verify the validity of the AuthResponse
-        if idp && response.is_valid?
-          
-          # TODO we should test first to see if the response contained any unencrypted
-          # attributes before proceeding with the AttributeQuery request
-          # this could all move to its own method too
-          att_request = Onelogin::Saml::AttributeQuery.new
-          att_request = att_request.create(response.name_id,response.settings,{})
-          uri = URI.parse(response.settings.idp_aqr_target_url)
-          
-          cert = File.read(@shib_config[:idps][idp][:sp_cert])
-          key = File.read(@shib_config[:sp_private_key])
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          headers = {'Content-Type' => 'text/xml; charset=utf-8'}
-          http.cert = OpenSSL::X509::Certificate.new(cert)
-          http.key = OpenSSL::PKey::RSA.new(key)
-          http_response = http.send_request('POST',uri.request_uri,att_request,headers)
-          
-          # check the response to the AttributeQuery request
-          # TODO we probably should make the attribute query response handling into a 
-          # separate class in the one login lib and allow for more general retrieval of
-          # scoped attribute values
-          if (http_response.code == '200')
-            att_response = Onelogin::Saml::Response.new(http_response.body,{:allowed_clock_drift => allowed_clock_drift, :is_aq_response => true})
-            att_response.settings = saml_settings(idp)
-            begin 
-              if att_response.is_valid? && att_response.scoped_targeted_id
-                user_identifier = UserIdentifier.find_by_identifier(att_response.scoped_targeted_id)
+        if idp && response.is_valid? 
+          scoped_targeted_id = response.attributes.single('urn:oid:1.3.6.1.4.1.5923.1.1.1.10')
+          # TODO use config for targeted id attribute and throw error if nil or blank
+          user_identifier = UserIdentifier.find_by_identifier(scoped_targeted_id)
                 
-                # User Identifier already exists for this identity and no current user session so 
-                # login and redirect to index or pending entry url
-                if !@current_user && user_identifier
-                  user = user_identifier.user
-                  session[:user_id] = user.id
-                  if !session[:entry_url].blank?
-                    redirect_to session[:entry_url]
-                    session[:entry_url] = nil
-                    return
-                  else
-                    redirect_to :controller => "user", :action => "dashboard"
-                    return
-                  end
-                end
-
-                # Have current user session and we don't already have a sosol user associated 
-                # with the shibboleth identity so this is an associate action - confirm before proceeding                
-                if @current_user && user_identifier.nil?
-                  # only can add a shibboleth identity to an account if there isn't already one for it 
-                  session[:pending_id] = att_response.scoped_targeted_id
-                  @display_id = get_displayid(att_response.attributes,idp) || session[:pending_id] 
-                  @identifiers = @current_user.user_identifiers
-                  render :action => "associate"
-                  return
-                end
-                
-                # Have current user session and the shibboleth identity is already associated with this user
-                # display message and return to user account page
-                if @current_user && user_identifier && @current_user.id == user_identifier.user.id
-                  flash[:notice] = "That identity was already associated with this account"
-                  redirect_to :controller => "user", :action => "account"
-                  return
-                end
-                
-                # Have current user session and the shibboleth identity is already associated with a different
-                # user account - display message and return to user account page
-                if @current_user && user_identifier
-                  flash[:error] = "That identity is already associated with a different user account."
-                  redirect_to :controller => "user", :action => "account"
-                  return
-                end
-                
-                # fall through behavior: no current session and a sosol id for this identity wasn't found so 
-                # this is the first login with this identifier - let the user supply their details and consume
-                session[:identifier] = att_response.scoped_targeted_id
-                @display_id = get_displayid(att_response.attributes,idp) || session[:identifier]
-                @email = guess_email(att_response.attributes, idp)
-                @name = guess_nickname(att_response.attributes, idp)
-                @full_name = guess_fullname(att_response.attributes, idp)
-                
-              else # Invalid AQ Response or no scoped targed id
-                Rails.logger.debug("AQ Response invalid: #{att_response.attributes.inspect}")
-                flash[:error] = "SAML AttributeQuery returned an invalid response."
-                redirect_to :controller => "signin", :action => "index"
-              end
-            rescue Exception => e # error caught checking validity of AQ Response
-                Rails.logger.error("AQ Response invalid - caught exception", e)
-                raise e
-                flash[:error] = "SAML AttributeQuery returned an invalid response."
-                redirect_to :controller => "signin", :action => "index"
+          # User Identifier already exists for this identity and no current user session so 
+          # login and redirect to index or pending entry url
+          if !@current_user && user_identifier
+            user = user_identifier.user
+            session[:user_id] = user.id
+            if !session[:entry_url].blank?
+              redirect_to session[:entry_url]
+              session[:entry_url] = nil
+              return
+            else
+              redirect_to :controller => "user", :action => "dashboard"
+              return
             end
-          else # end test on http_response code of attribute query request
-            Rails.logger.debug("AQ Request failed: #{http_response.code}")
-            flash[:error] = "SAML AttributeQuery Failed."
-            redirect_to :controller => "signin", :action => "index"
           end
+
+          # Have current user session and we don't already have a sosol user associated 
+          # with the shibboleth identity so this is an associate action - confirm before proceeding                
+          if @current_user && user_identifier.nil?
+            # only can add a shibboleth identity to an account if there isn't already one for it 
+            session[:pending_id] = scoped_targeted_id
+            @display_id = get_displayid(response.attributes,idp) || session[:pending_id] 
+            @identifiers = @current_user.user_identifiers
+            render :action => "associate" and return
+          end
+                
+          # Have current user session and the shibboleth identity is already associated with this user
+          # display message and return to user account page
+          if @current_user && user_identifier && @current_user.id == user_identifier.user.id
+            flash[:notice] = "That identity was already associated with this account"
+            redirect_to :controller => "user", :action => "account" and return
+          end
+                
+          # Have current user session and the shibboleth identity is already associated with a different
+          # user account - display message and return to user account page
+          if @current_user && user_identifier
+            flash[:error] = "That identity is already associated with a different user account."
+            redirect_to :controller => "user", :action => "account" and return
+          end
+                
+          # fall through behavior: no current session and a sosol id for this identity wasn't found so 
+          # this is the first login with this identifier - let the user supply their details and consume
+          session[:identifier] = scoped_targeted_id
+          @display_id = get_displayid(response.attributes,idp) || session[:identifier]
+          @email = guess_email(response.attributes, idp)
+          @name = guess_nickname(response.attributes, idp)
+          @full_name = guess_fullname(response.attributes, idp)
+                
         else # invalid AuthResponse 
-          Rails.logger.debug("Invalid Shib Response #{response}")
+          Rails.logger.debug("Invalid Shib Response #{response.errors.to_s}")
           flash[:error] = "SAML Authentication Failed."
           redirect_to :controller => "signin", :action => "index"
         end        
       else # end lookup test on idp issuer entity id
-        Rails.logger.debug("Invalid Shib Response #{response}")
+        Rails.logger.debug("Invalid Shib Response #{response.errors.to_s}")
         flash[:error] = "SAML Authentication Failed."
         redirect_to :controller => "signin", :action => "index"
       end
@@ -182,15 +139,16 @@ class ShibController < ApplicationController
       end
       get_config
   
-      settings = Onelogin::Saml::Settings.new
+      settings = OneLogin::RubySaml::Settings.new
       settings.assertion_consumer_service_url = @shib_config[:assertion_consumer_service_url]
       settings.issuer                         = @shib_config[:issuer]
       # check to be sure the issuer isn't different for this IdP
       if (@shib_config[:idps][idp][:issuer])
         settings.issuer = @shib_config[:idps][idp][:issuer]
       end
-      settings.sp_cert                       = File.read(@shib_config[:idps][idp][:sp_cert])
-      meta = Onelogin::Saml::Metadata.new
+      settings.idp_cert_fingerprint = @shib_config[:idps][idp][:idp_cert_fingerprint]
+      settings.certificate = File.read(@shib_config[:idps][idp][:sp_cert])
+      meta = OneLogin::RubySaml::Metadata.new
       render :xml => meta.generate(settings)
     end
     
@@ -239,70 +197,69 @@ class ShibController < ApplicationController
         session[:entry_url] = nil
         return
       else
-        redirect_to :controller => "welcome", :action => "index"
+        redirect_to :controller => "user", :action => "dashboard"
       end
     end
 
 
     private
 
+    def response_settings
+      get_config
+      { 
+        'private_key' => File.read(@shib_config[:sp_private_key]),
+      }
+    end
+
     def saml_settings(a_idp)
       get_config
-      settings = Onelogin::Saml::Settings.new
-      idp_settings = @shib_config[:idps][a_idp]
-
+      settings = OneLogin::RubySaml::Settings.new
+      settings.certificate = File.read(@shib_config[:sp_cert])
+      settings.private_key = File.read(@shib_config[:sp_private_key])
+      settings.issuer = @shib_config[:issuer]
       # TODO GET all metadata from config
       # acs url should be the Apache https proxy for the environment 
       settings.assertion_consumer_service_url = @shib_config[:assertion_consumer_service_url]
-      
-      # TODO will we use a WAYF service to get list of available IdPs?
-      settings.idp_sso_target_url = idp_settings[:idp_sso_target_url] 
-      settings.idp_aqr_target_url = idp_settings[:idp_aqr_target_url]
+      unless (a_idp.nil?)
+        idp_settings = @shib_config[:idps][a_idp]
 
-      settings.issuer             = @shib_config[:issuer]
-      # check to be sure the issuer isn't different for this IdP
-      if (idp_settings[:issuer])
-        settings.issuer = idp_settings[:issuer]
+        # TODO will we use a WAYF service to get list of available IdPs?
+        settings.idp_sso_target_url = idp_settings[:idp_sso_target_url] 
+        #settings.idp_aqr_target_url = idp_settings[:idp_aqr_target_url]
+        # check to be sure the issuer isn't different for this IdP
+        if (idp_settings[:issuer])
+          settings.issuer = idp_settings[:issuer]
+        end
+
+        if (idp_settings[:sp_cert])
+          settings.certificate = File.read(idp_settings[:sp_cert])
+        end
+
+        #settings.idp_cert                       = File.read(idp_settings[:idp_cert]) 
+        # TODO this is depends upon the IdP
+        settings.idp_cert_fingerprint = idp_settings[:idp_cert_fingerprint]
+        settings.idp_cert_fingerprint_algorithm = idp_settings[:idp_cert_fingerprint_algorithm]
+        settings.name_identifier_format         = idp_settings[:name_identifier_format]
+        # Optional for most SAML IdPs
+        settings.authn_context = idp_settings[:authn_context]
       end
-      settings.idp_cert                       = File.read(idp_settings[:idp_cert]) 
-      # TODO this is depends upon the IdP
-      settings.name_identifier_format         = idp_settings[:name_identifier_format]
-      # Optional for most SAML IdPs
-      settings.authn_context = idp_settings[:authn_context]
-      
       settings
     end
 
     def get_displayid(data,idp)
-      if data[@shib_config[:idps][idp][:attributes][:display_id]]
-        return data[@shib_config[:idps][idp][:attributes][:display_id]]
-      end
-      # There wasn't anything, so let the user enter a nickname
-      return ''
+      return data.single(@shib_config[:idps][idp][:attributes][:display_id])
     end
           
     def guess_nickname(data,idp)
-      if data[@shib_config[:idps][idp][:attributes][:nickname]]
-        return data[@shib_config[:idps][idp][:attributes][:nickname]]
-      end
-      # There wasn't anything, so let the user enter a nickname
-      return ''
+      return data.single(@shib_config[:idps][idp][:attributes][:nickname])
     end
     
     def guess_fullname(data,idp)
-      if data[@shib_config[:idps][idp][:attributes][:fullname]]
-        return data[@shib_config[:idps][idp][:attributes][:fullname]]
-      end
-      # There wasn't anything, so let the user enter a nickname
-      return ''
+      return data.single(@shib_config[:idps][idp][:attributes][:fullname])
     end
     
     def guess_email(data,idp)
-      if data[@shib_config[:idps][idp][:attributes][:email]]
-        return data[@shib_config[:idps][idp][:attributes][:email]]
-      end
-      # There wasn't anything, so let the user enter a nickname
-      return ''
+        return data.single(@shib_config[:idps][idp][:attributes][:email])
     end
 
 end
