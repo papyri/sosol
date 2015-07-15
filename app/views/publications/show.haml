@@ -57,7 +57,7 @@
               = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
               %br
-              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+              = submit_tag "Submit to Boards", 'data-disable-with' => 'Submit to Boards', :disabled => true, :class => 'submit', :id => "submit_button"
               
               - if @current_user.community_memberships.count > 0
                 - community_hash = Hash.new
