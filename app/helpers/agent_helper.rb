@@ -50,6 +50,8 @@ module AgentHelper
         return MediaWikiAgent.new(a_agent[:api_info])
     elsif (a_agent[:type] == 'hypothesis')
         return HypothesisAgent.new(a_agent[:data_mapper])
+    elsif (a_agent[:type] = 'googless')
+        return GoogleSSAgent.new(a_agent)
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -124,7 +126,39 @@ module AgentHelper
     def get_content(a_uri,a_id,a_user)
       @client.get(a_uri,a_id,a_user)
     end
-
-
   end
+
+  class GoogleSSAgent
+    attr_accessor :conf
+    def initialize(a_conf)
+      @conf = a_conf 
+    end
+
+    def get_content(a_url)
+      # temporary hack -- we should use google apis for google drive 
+      # integration and configure google as a full fledged agent
+      worksheet_idmatch = nil
+      # TODO This nonsense should be replaced by use of google api
+      worksheet_idmatch = a_url.match(/key=([^&;\s]+)/) || # old style url
+        a_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
+      unless worksheet_idmatch 
+        raise "Invalid URL: Unable to parse spreadsheet id from #{a_url}"
+      end
+      worksheet_id = worksheet_idmatch.captures[0] 
+      uri = @conf[:get_url].sub(/WORKSHEET_ID/,worksheet_id)
+      uri = URI.parse(uri)
+      response = Net::HTTP.start(uri.host, uri.port) do |http|
+        http.send_request('GET',uri.request_uri)
+      end
+      unless (response.code == '200')
+        raise "Unable to retreive content from #{uri}"
+      end
+      return response.body
+    end
+
+    def get_transformation(a_identifiertype)
+      @conf[:transformations][a_identifiertype]
+    end
+  end
+
 end

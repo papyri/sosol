@@ -1,4 +1,5 @@
 Sosol::Application.configure do
+  puts "Configure test"
   # Settings specified here will take precedence over those in config/application.rb
 
   # The test environment is used exclusively to run your application's
@@ -47,5 +48,5 @@ Sosol::Application.configure do
   config.canonical_canonical_repository = config.canonical_repository
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
 
-  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OACIdentifier,OajCiteIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier'
+  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OACIdentifier,OajCiteIdentifier,OaCiteIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier'
 end
