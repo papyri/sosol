@@ -299,38 +299,23 @@ class PublicationsController < ApplicationController
   def become_finalizer
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
-    @publication.remove_finalizer
+    original_publication_owner_id = @publication.owner.id
+    @publication.with_lock do
+      @publication.remove_finalizer
 
-    #note this can only be called on a board owned publication
-    if @publication.owner_type != "Board"
-      flash[:error] = "Can't change finalizer on non-board copy of publication."
-      redirect_to show
-    end
-    @publication.status = "finalizing_pending"
-    @publication.save
-
-    # We need to call this before spawning a thread to avoid a busy deadlock with SQLite in the test environment
-    ActiveRecord::Base.clear_active_connections!
-
-    Thread.new do
-      begin
-        ActiveRecord::Base.connection_pool.with_connection do |conn|
-          @publication.send_to_finalizer(@current_user)
-          @publication.status = "finalizing"
-          @publication.save
-        end
-      ensure
-        # The new thread gets a new AR connection, so we should
-        # always close it and flush logs before we terminate
-        ActiveRecord::Base.connection.close
-        Rails.logger.flush
+      #note this can only be called on a board owned publication
+      if @publication.owner_type != "Board"
+        flash[:error] = "Can't change finalizer on non-board copy of publication."
+        redirect_to show
       end
+      @publication.status = "finalizing_pending"
+      @publication.save
+
+      SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
     end
 
-    #redirect_to (dashboard_url) #:controller => "publications", :action => "finalize_review" , :id => new_publication_id
     flash[:notice] = "Finalizer change running. Check back in a few minutes."
-    redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.owner.id
-
+    redirect_to :controller => 'user', :action => 'dashboard', :board_id => original_publication_owner_id
   end
 
   def finalize_review

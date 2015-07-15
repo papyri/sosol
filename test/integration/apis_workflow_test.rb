@@ -1,20 +1,14 @@
 require 'test_helper'
-require 'thwait'
 require 'ddiff'
 
 class ApisWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    threads_active_before_vote = Thread.list.select{|t| t.alive?}
     FactoryGirl.create(:vote,
                        :publication_id => identifier.publication.id,
                        :identifier_id => identifier.id,
                        :user => user,
                        :choice => (decree.get_choice_array)[rand(
                          decree.get_choice_array.size)])
-    threads_active_after_vote = Thread.list.select{|t| t.alive?}
-    new_active_threads = threads_active_after_vote - threads_active_before_vote
-    new_active_threads.each(&:join)
-    # ThreadsWait.all_waits(*new_active_threads)
   end
 
   def generate_board_votes_for_action(board, action, identifier)
@@ -160,7 +154,6 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.clear_active_connections!
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
             [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
@@ -275,28 +268,14 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found apis identifier, will vote on it"
 
-        threads_active_before_vote = Thread.list.select{|t| t.alive?}
-        # ActiveRecord::Base.connection_pool.with_connection do |conn|
-          open_session do |apis_session|
-            apis_session.post 'publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-              :comment => { :comment => "I agree apis is great", :user_id => @board_user.id, :publication_id => apis_identifier.publication.id, :identifier_id => apis_identifier.id, :reason => "vote" }, \
-              :vote => { :publication_id => apis_identifier.publication.id.to_s, :identifier_id => apis_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @apis_board.id.to_s, :choice => "accept" }
+        open_session do |apis_session|
+          apis_session.post 'publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+            :comment => { :comment => "I agree apis is great", :user_id => @board_user.id, :publication_id => apis_identifier.publication.id, :identifier_id => apis_identifier.id, :reason => "vote" }, \
+            :vote => { :publication_id => apis_identifier.publication.id.to_s, :identifier_id => apis_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @apis_board.id.to_s, :choice => "accept" }
 
-            Rails.logger.debug "--flash is: " + apis_session.flash.inspect
-        
-          end
-        # end
-
-        threads_active_after_vote = Thread.list.select{|t| t.alive?}
-        new_active_threads = threads_active_after_vote - threads_active_before_vote
-        Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
-        Rails.logger.flush
-        new_active_threads.each(&:join)
-        # ThreadsWait.all_waits(*new_active_threads)
-        Rails.logger.debug "threadwaiting done"
-        Rails.logger.flush
-
-        ActiveRecord::Base.clear_active_connections!
+          Rails.logger.debug "--flash is: " + apis_session.flash.inspect
+      
+        end
 
         #reload the publication to get the vote associations to go thru?
         apis_publication.reload

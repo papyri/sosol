@@ -45,5 +45,7 @@ gem 'ruby-debug'
 gem 'mediawiki_api', :git => 'https://github.com/sosol/mediawiki-ruby-api'
 gem 'hypothesis-client', :git => 'https://github.com/PerseusDL/hypothesis-client'
 gem 'ruby-saml'
+gem 'database_cleaner'
+gem 'sucker_punch', '~> 1.0'
 
 gem 'test_after_commit', :group => :test

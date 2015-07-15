@@ -21,11 +21,6 @@ class Decree < ActiveRecord::Base
     { "Percentage" => TALLY_METHODS[:percent], "Absolute Count" => TALLY_METHODS[:count]}
   end
   
- # def self.result_actions_hash
-  #hash with friendly name for valid decree actions. Mainly for setting selection on forms.
-#    {"Approve" => "approve", "Reject" => "reject", "Graffiti" => "graffiti" } 
-#  end
-  
   #*Returns*
   #- an array of the possible choices that represent this decree. 
   def get_choice_array
