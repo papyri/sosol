@@ -185,35 +185,19 @@ class OaCiteIdentifier < CiteIdentifier
       raise "Agent not found for #{agent_url}"
     end
 
-    # special handling for google spreadsheets
-    # temporary hack -- we should use google apis for google drive 
-    # integration and configure google as a full fledged agent
-    worksheet_idmatch = nil
-    # TODO This nonsense should be replaced by use of google api
-    worksheet_idmatch = agent_url.match(/key=([^&;\s]+)/) || # old style url
-      agent_url.match(/\/([^\/]+)\/(pubhtml|edit)/) # newer url
-    unless worksheet_idmatch 
-        raise "Invalid URL: Unable to parse spreadsheet id from #{agent_url}"
-    end
+    agent_client = AgentHelper.get_client(agent)
+    raw_content = agent_client.get_content(agent_url) 
 
-    worksheet_id = worksheet_idmatch.captures[0] 
-    uri = agent[:get_url].sub(/WORKSHEET_ID/,worksheet_id)
-    uri = URI.parse(uri)
-    response = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.send_request('GET',uri.request_uri)
-    end
-    unless (response.code == '200')
-      raise "Unable to retreive content from #{uri}"
-    end
-    transform = agent[:transformations][:OaCiteIdentifier]
+    transform = agent_client.get_transformation(:OaCiteIdentifier)
     content = JRubyXML.apply_xsl_transform(
-    JRubyXML.stream_from_string(response.body),
-    JRubyXML.stream_from_file(File.join(Rails.root,transform)),
-      :e_agentUri => agent[:uri_match],
-      :e_annotatorUri => self.make_annotator_uri,
-      :e_annotatorName => self.publication.creator.human_name,
-      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
+      JRubyXML.stream_from_string(raw_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,transform)),
+        :e_agentUri => agent[:uri_match],
+        :e_annotatorUri => self.make_annotator_uri,
+        :e_annotatorName => self.publication.creator.human_name,
+        :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
     )  
     return content
   end
+
 end

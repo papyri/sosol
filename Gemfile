@@ -39,10 +39,11 @@ gem 'warbler'
 gem 'puma'
 gem 'uuid'
 gem 'xmlcanonicalizer'
-gem 'nokogiri'
+gem 'nokogiri', '>= 1.6.6.2'
 gem 'mocha'
 gem 'ruby-debug'
 gem 'mediawiki_api', :git => 'https://github.com/sosol/mediawiki-ruby-api'
 gem 'hypothesis-client', :git => 'https://github.com/PerseusDL/hypothesis-client'
+gem 'ruby-saml'
 
 gem 'test_after_commit', :group => :test
