@@ -391,12 +391,7 @@ class Publication < ActiveRecord::Base
   #- +true+ if any of the identifiers in the publication have been modified.
   #- +false+ if none of the identifiers in the publication have been modified.
   def modified?
-    retval = false
-    self.identifiers.each do |i|
-      retval = retval || i.modified?
-    end
-
-    retval
+    self.identifiers.any? {|i| i.modified?}
   end
 
   #Determines if publication is in 'editing' status and is able to be changed
