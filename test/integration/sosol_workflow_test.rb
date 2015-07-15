@@ -1,20 +1,14 @@
 require 'test_helper'
-require 'thwait'
 require 'ddiff'
 
 class SosolWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    threads_active_before_vote = Thread.list.select{|t| t.alive?}
     FactoryGirl.create(:vote,
                        :publication_id => identifier.publication.id,
                        :identifier_id => identifier.id,
                        :user => user,
                        :choice => (decree.get_choice_array)[rand(
                          decree.get_choice_array.size)])
-    threads_active_after_vote = Thread.list.select{|t| t.alive?}
-    new_active_threads = threads_active_after_vote - threads_active_before_vote
-    new_active_threads.each(&:join)
-    # ThreadsWait.all_waits(*new_active_threads)
   end
 
   def generate_board_votes_for_action(board, action, identifier)
@@ -151,7 +145,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.clear_active_connections!
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
             [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
@@ -249,29 +242,15 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found meta identifier, will vote on it"
 
-        threads_active_before_vote = Thread.list.select{|t| t.alive?}
-        # ActiveRecord::Base.connection_pool.with_connection do |conn|
-          open_session do |meta_session|
-            meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-              :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
-              :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
+        open_session do |meta_session|
+          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+            :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
+            :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
 
-            Rails.logger.debug "--flash is: " + meta_session.flash.inspect
+          Rails.logger.debug "--flash is: " + meta_session.flash.inspect
+      
+        end
         
-          end
-        # end
-
-        threads_active_after_vote = Thread.list.select{|t| t.alive?}
-        new_active_threads = threads_active_after_vote - threads_active_before_vote
-        Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
-        Rails.logger.flush
-        new_active_threads.each(&:join)
-        # ThreadsWait.all_waits(*new_active_threads)
-        Rails.logger.debug "threadwaiting done"
-        Rails.logger.flush
-
-        ActiveRecord::Base.clear_active_connections!
-
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -380,28 +359,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         Rails.logger.debug "Found text identifier, will vote on it"
 
-        threads_active_before_vote = Thread.list.select{|t| t.alive?}
-        # ActiveRecord::Base.connection_pool.with_connection do |conn|
-          open_session do |text_session|
+        open_session do |text_session|
 
-            text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-              :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
-              :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
-            Rails.logger.debug "--flash is: " + text_session.flash.inspect
-          end
-        # end
-
-        threads_active_after_vote = Thread.list.select{|t| t.alive?}
-        new_active_threads = threads_active_after_vote - threads_active_before_vote
-        Rails.logger.debug "threadwaiting on: #{new_active_threads.inspect}"
-        Rails.logger.flush
-        new_active_threads.each(&:join)
-        # ThreadsWait.all_waits(*new_active_threads)
-        Rails.logger.debug "threadwaiting done"
-        Rails.logger.flush
-
-        ActiveRecord::Base.clear_active_connections!
-
+          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+            :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
+            :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
+          Rails.logger.debug "--flash is: " + text_session.flash.inspect
+        end
+        
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
 
@@ -525,8 +490,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
     end
 
     teardown do
-      ( @ddb_board.users + [ @james, @submitter,
-       @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
+      ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+      ActiveRecord::Base.connection_pool.with_connection do |conn|
+        ( @ddb_board.users + [ @james, @submitter,
+        @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
+      end
     end
 
     context "a publication" do
@@ -538,8 +506,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       end
 
       teardown do
-        @publication.reload
-        @publication.destroy
+        # @publication.reload
+        # @publication.destroy
       end
 
       context "submitted with only DDB modifications" do
@@ -577,6 +545,97 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert_equal "finalizing", finalizing_publication.status
             assert_equal User, finalizing_publication.owner.class
           end
+
+          should "be copyable to another finalizer" do
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should have one child'
+            finalizing_publication = @ddb_board.publications.first.children.first
+            original_finalizer = finalizing_publication.owner
+            assert_equal "finalizing", finalizing_publication.status
+            assert_equal User, original_finalizer.class
+            different_finalizer = (@ddb_board.users - [original_finalizer]).first
+            assert_not_equal original_finalizer, different_finalizer
+
+            Rails.logger.info("MMF on pub: #{@ddb_board.publications.first.inspect}")
+            open_session do |make_me_finalizer_session|
+              make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
+            end
+
+            mmf_finalizing_publication = @ddb_board.publications.first.children.first
+            current_finalizer = mmf_finalizing_publication.owner
+            assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
+          end
+          
+          should "not race during make-me-finalizer" do
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should have one child'
+            finalizing_publication = @ddb_board.publications.first.children.first
+            original_finalizer = finalizing_publication.owner
+            assert_equal User, original_finalizer.class
+            assert_equal "finalizing", finalizing_publication.status
+            different_finalizer = (@ddb_board.users - [original_finalizer]).first.id.to_s
+            different_finalizer_2 = (@ddb_board.users - [original_finalizer]).last.id.to_s
+            assert_not_equal original_finalizer.id.to_s, different_finalizer
+            assert_not_equal different_finalizer, different_finalizer_2
+
+            mmf_publication_id = @ddb_board.publications.first.id.to_s
+
+            Rails.logger.info("MMF race on pub: #{@ddb_board.publications.first.inspect}")
+
+            new_active_threads = []
+
+            new_active_threads << Thread.new do
+              begin
+                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+                ActiveRecord::Base.connection_pool.with_connection do |conn|
+                  open_session do |make_me_finalizer_session|
+                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                  end
+                end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('MMF race become_finalizer 1 finished')
+                ActiveRecord::Base.connection.close
+                Rails.logger.flush
+              end
+            end
+
+            new_active_threads << Thread.new do
+              begin
+                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+                ActiveRecord::Base.connection_pool.with_connection do |conn|
+                  open_session do |make_me_finalizer_session|
+                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                  end
+                end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('MMF race become_finalizer 2 finished')
+                ActiveRecord::Base.connection.close
+                Rails.logger.flush
+              end
+            end
+
+            Rails.logger.debug "MMF race threadwaiting on: #{new_active_threads.inspect}"
+            Rails.logger.flush
+            new_active_threads.each(&:join)
+            Rails.logger.debug "MMF race threadwaiting done"
+            Rails.logger.flush
+
+            ActiveRecord::Base.clear_active_connections!
+            ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+            ActiveRecord::Base.connection_pool.with_connection do |conn|
+              @ddb_board.reload
+              assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
+              mmf_finalizing_publication = @ddb_board.publications.first.children.first
+              current_finalizer = mmf_finalizing_publication.owner
+              assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
+            end
+            Rails.logger.debug "MMF race assertions done"
+            Rails.logger.flush
+          end
+
         end # approve
 
         context "voted 'reject'" do

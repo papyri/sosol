@@ -107,10 +107,6 @@ class CommunitiesController < ApplicationController
      @publications = Publication.find_all_by_community_id(@community.id, :include => [:identifiers], :order => "updated_at DESC")
   end
 
-  #def find_member
-  #  @community = Community.find(params[:id].to_s)
-  #end
-  
   def add_member_page
     @community = Community.find(params[:id].to_s)  
   end
