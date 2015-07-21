@@ -665,7 +665,7 @@ class Publication < ActiveRecord::Base
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
-    finalizing_publication.repository.fetch_objects(self.repository)
+    # finalizing_publication.repository.fetch_objects(self.repository)
 
     # flatten commits by original publication creator
     # - use the submission reason as the main comment
@@ -784,8 +784,8 @@ class Publication < ActiveRecord::Base
     end
 
     self.remove_finalizer()
-    # finalizing_publication = copy_to_owner(finalizer)
-    finalizing_publication = clone_to_owner(finalizer)
+    finalizing_publication = copy_to_owner(finalizer)
+    # finalizing_publication = clone_to_owner(finalizer)
     self.flatten_commits(finalizing_publication, finalizer, board_members)
 
     #should we clear the modified flag so we can tell if the finalizer has done anything
