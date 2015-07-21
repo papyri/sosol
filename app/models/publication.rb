@@ -603,11 +603,10 @@ class Publication < ActiveRecord::Base
       #send emails
       self.owner.send_status_emails("approved", self)
 
-      #set up for finalizing
-      SendToFinalizerJob.new.async.perform(self.id)
-
       self.change_status("approved")
 
+      #set up for finalizing
+      SendToFinalizerJob.new.async.perform(self.id)
   #----reject-----
     elsif decree_action == "reject"
 
@@ -784,6 +783,7 @@ class Publication < ActiveRecord::Base
       finalizer = board_members[rand(board_members.length)]
     end
 
+    self.remove_finalizer()
     # finalizing_publication = copy_to_owner(finalizer)
     finalizing_publication = clone_to_owner(finalizer)
     self.flatten_commits(finalizing_publication, finalizer, board_members)

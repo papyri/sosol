@@ -10,8 +10,6 @@ class SendToFinalizerJob
       publication.with_lock do
         user = User.find(user_id) unless user_id.nil?
         publication.send_to_finalizer(user)
-        publication.status = "finalizing"
-        publication.save
       end
     end
     Rails.logger.debug('SendToFinalizerJob finished')

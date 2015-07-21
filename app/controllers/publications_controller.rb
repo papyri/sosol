@@ -301,15 +301,11 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id].to_s)
     original_publication_owner_id = @publication.owner.id
     @publication.with_lock do
-      @publication.remove_finalizer
-
       #note this can only be called on a board owned publication
       if @publication.owner_type != "Board"
         flash[:error] = "Can't change finalizer on non-board copy of publication."
         redirect_to show
       end
-      @publication.status = "finalizing_pending"
-      @publication.save
 
       SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
     end
