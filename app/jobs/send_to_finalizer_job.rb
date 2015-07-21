@@ -3,7 +3,7 @@ class SendToFinalizerJob
 
   def perform(publication_id, user_id)
     Rails.logger.debug('SendToFinalizerJob started')
-    Rails.logger.flush
+    Rails.logger.flush if Rails.logger.respond_to? :flush
     ActiveRecord::Base.connection_pool.clear_reloadable_connections!
     ActiveRecord::Base.connection_pool.with_connection do
       publication = Publication.find(publication_id)
@@ -15,6 +15,6 @@ class SendToFinalizerJob
       end
     end
     Rails.logger.debug('SendToFinalizerJob finished')
-    Rails.logger.flush
+    Rails.logger.flush if Rails.logger.respond_to? :flush
   end
 end
