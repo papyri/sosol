@@ -604,7 +604,7 @@ class Publication < ActiveRecord::Base
       self.owner.send_status_emails("approved", self)
 
       #set up for finalizing
-      self.send_to_finalizer
+      SendToFinalizerJob.new.async.perform(self.id)
 
       self.change_status("approved")
 
