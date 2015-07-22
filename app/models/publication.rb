@@ -760,7 +760,7 @@ class Publication < ActiveRecord::Base
     inserter.release()
 
     finalizing_publication.repository.create_branch(
-      finalizing_publication.branch, flattened_commit_sha1)
+      finalizing_publication.branch, flattened_commit_sha1, true)
 
     # rewrite commits by EB
     # - write a 'Signed-off-by:' line for each Ed. Board member
