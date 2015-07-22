@@ -32,8 +32,11 @@
            <xsl:when test="$iteminwiki//property[@id='p3']">
                <xsl:value-of select="concat('urn:cts:pdlepi:eagle.tm', $iteminwiki//property[@id='p3']//datavalue/@value)"/>
             </xsl:when>
+            <xsl:when test="$iteminwiki//property[@id='p69']">
+                <xsl:value-of select="concat('urn:cts:pdlepi:eagle.ides', $iteminwiki//property[@id='p69']//datavalue/@value)"/>
+            </xsl:when>
             <xsl:otherwise>
-                <!--only items with TM ids are supported for Perseids-EAGLE integration -->
+                <!--only items with TM or IDES ids are supported for Perseids-EAGLE integration -->
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
