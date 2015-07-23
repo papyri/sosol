@@ -981,25 +981,10 @@ class Publication < ActiveRecord::Base
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
 
-    # FIXME: This walks the whole rev list, should maybe use git merge-base
-    # to find the branch point? Though that may do the same internally...
-    # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
-
-    # Commits that are in canonical master but not this branch
-    # Forcing method_missing here to directly call rev-list is much faster
-    commits = self.owner.repository.repo.git.method_missing('rev-list',{}, canonical_sha, "^#{publication_sha}").split("\n")
-
-    # canon.repo.git.merge({:no_commit => true, :stat => true},
-      # self.owner.repository.repo.get_head(self.branch).commit.sha)
-
-    # get the result of merging canon master into this branch
-    # merge = Grit::Merge.new(
-    #   self.owner.repository.repo.git.merge_tree({},
-    #     publication_sha, canonical_sha, publication_sha))
-
+    merge_base = self.owner.repository.repo.git.method_missing('merge-base',{},canonical_sha,publication_sha).chomp
 
     if canon_controlled_identifiers.length > 0
-      if commits.length == 0
+      if merge_base == canonical_sha
         # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
