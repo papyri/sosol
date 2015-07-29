@@ -32,6 +32,11 @@ class TreebankCiteIdentifiersController < IdentifiersController
     @identifier[:list] = @identifier.edit(parameters = params)
     @identifier[:compare] = compare_link
   end
+
+  def review
+    find_identifier
+    @identifier[:list] = @identifier.review(parameters = params)
+  end
   
    def editxml
     find_identifier

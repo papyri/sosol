@@ -40,13 +40,21 @@ development:
             :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
             :id_param: 'doc'
             :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'
         :uri: 'http://github.com/latin-language-toolkit/arethusa'
         :actions:
           :edit:
-            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
+            :href: "http://localhost/tools/arethusa/app/#/perseids?chunk=SENT"
             :id_param: 'doc'
             :text: "Edit in Arethusa"
           :view:
@@ -176,6 +184,14 @@ test:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'
@@ -312,6 +328,14 @@ production:
           :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://www.perseids.org/toosl/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'

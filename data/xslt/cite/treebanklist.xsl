@@ -25,6 +25,14 @@
         <xsl:otherwise><xsl:value-of select="'aldt'"/></xsl:otherwise>
       </xsl:choose> 
     </xsl:variable>
+    <xsl:variable name="gold">
+        <xsl:choose>
+            <xsl:when test="//treebank/comment[@class='gold']">
+                <xsl:value-of select="//treebank/comment[@class='gold']"/>
+            </xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable> 
     
     <xsl:template match="/treebank">
         <xsl:variable name="count" select="count(sentence)"/>
@@ -104,6 +112,7 @@
                 <xsl:when test="$tool_url">
                     <xsl:element name="a">
                         <xsl:attribute name="href" select="
+                            replace(
                               replace(
                                 replace(
                                      replace(
@@ -111,7 +120,7 @@
                                             replace($tool_url,'DOC',xs:string($doc_id)),
                                                 'SENT',@id),
                                                     'MAX',xs:string($max)),'LANG',$doclang),
-                                                        'FORMAT',$docfmt)
+                                                        'FORMAT',$docfmt),'GOLD',$gold)
                                             "/>
                         <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
                         <xsl:apply-templates select="word"></xsl:apply-templates>

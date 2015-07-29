@@ -515,6 +515,29 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     return tool
   end
+
+  def get_reviewer_agent
+    parser = self.xml_parser 
+    t = parser.parseroot
+    tool = 'arethusa'
+    gold = parser.first(t,"/treebank/comment[@class='gold']")
+    unless gold && gold.text
+      return nil
+    end
+    begin
+      parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
+        tool_uri = a_agent.text
+        agent = Tools::Manager.tool_for_agent('treebank_reviewer',tool_uri)
+        unless (agent.nil?)
+          tool = agent
+          break;
+        end
+      end
+    rescue Exception => a_e
+      Rails.logger.error(a_e.backtrace)
+    end
+    return tool
+  end
   
   # preview 
   # outputs the sentence list
@@ -551,7 +574,24 @@ class TreebankCiteIdentifier < CiteIdentifier
         :target => tool_link[:target],
         :tool_url => tool_link[:href])
   end
-  
+
+  # present a review display
+  # outputs the sentence list with sentenced linked to editor in review mode
+  def review parameters = {}, xsl = nil
+    tool = self.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_reviewer',tool,:review,[self])
+    parameters[:s] ||= 1
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(RAILS_ROOT,
+        xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
+        :doc_id => self.id,
+        :max => 50, # TODO - make max sentences configurable
+        :s => parameters[:s],
+        :target => tool_link[:target],
+        :tool_url => tool_link[:href])
+ end 
   
   # need to update the uris to reflect the new name
   def after_rename(options = {})
