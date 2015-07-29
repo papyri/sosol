@@ -334,7 +334,7 @@ production:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :review:
-          :href: "http://www.perseids.org/toosl/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
           :id_param: 'doc'
   theme_editor:
     arethusa:
