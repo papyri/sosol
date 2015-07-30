@@ -110,12 +110,20 @@ class UserController < ApplicationController
   def dashboard
     #don't let someone who isn't signed in go to the dashboard
     if @current_user == nil
+      # keep any flashes as we were likely redirected here and rails 3 only
+      # keeps through one redirect by default
+      flash.keep
+
       redirect_to :controller => "user", :action => "signin"
       return
     end
 
     #show the "new" dashboard unless the specfically request the old version
     unless params[:old]
+
+      # keep any flashes as we were likely redirected here and rails 3 only
+      # keeps through one redirect by default
+      flash.keep
 
       #redirect to new dashboards
       if params[:board_id]
