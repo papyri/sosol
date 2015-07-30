@@ -981,10 +981,8 @@ class Publication < ActiveRecord::Base
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
 
-    merge_base = self.owner.repository.repo.git.method_missing('merge-base',{},canonical_sha,publication_sha).chomp
-
     if canon_controlled_identifiers.length > 0
-      if merge_base == canonical_sha
+      if self.merge_base(canonical_sha) == canonical_sha
         # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
