@@ -269,7 +269,12 @@ module JRubyXML
       transformer.setErrorListener(TransformErrorListener.new())
       transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new())))
       parameters.each do |parameter, value|
-        transformer.setParameter(parameter.to_s, value)
+        # saxon 9.x sees a bit pickier here and throws an error
+        # on params with nil values  - check for them here for backwards
+        # compatibility because calling code might send nil values
+        unless value.nil?
+          transformer.setParameter(parameter.to_s, value)
+        end
       end
       
       string_writer = java.io.StringWriter.new()
@@ -309,7 +314,12 @@ module JRubyXML
       transformer.setErrorListener(TransformErrorListener.new())
       transformer.setMessageEmitter(message_listener)
       parameters.each do |parameter, value|
-        transformer.setParameter(parameter.to_s, value)
+        unless value.nil?
+          # saxon 9.x sees a bit pickier here and throws an error
+          # on params with nil values  - check for them here for backwards
+          # compatibility because calling code might send nil values
+          transformer.setParameter(parameter.to_s, value)
+        end
       end
       
       string_writer = java.io.StringWriter.new()
