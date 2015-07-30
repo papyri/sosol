@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'cts'
 
 if Sosol::Application.config.site_identifiers.split(',').include?('EpiTransCTSIdentifier')
   class EpiTransCTSIdentifierTest < ActiveSupport::TestCase
