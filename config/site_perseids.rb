@@ -1,6 +1,6 @@
 # Used for Site specific overrides
 Sosol::Application.configure do
-  config.site_identifiers = 'AlignmentCiteIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,OajCiteIdentifier,OaCiteIdentifier,'
+  config.site_identifiers = 'TreebankCiteIdentifier,AlignmentCiteIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,OajCiteIdentifier,OaCiteIdentifier,'
   config.site_name = 'Perseids'
   config.site_full_name = 'Perseids'
   config.site_wiki_link = '<a href="http://sites.tufts.edu/perseids">Perseids Blog and Documentation</a>.'

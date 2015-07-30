@@ -18,7 +18,7 @@
 
 
 require 'jgit_tree'
-require 'pp'
+require 'shellwords'
 
 class Publication < ActiveRecord::Base
 
@@ -668,10 +668,7 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    # Grit method_missing version
-    return self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
-    # Naive backticks version:
-    # return `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    return `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
@@ -878,7 +875,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
+    `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
@@ -991,10 +988,8 @@ class Publication < ActiveRecord::Base
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
 
-    merge_base = self.owner.repository.repo.git.method_missing('merge-base',{},canonical_sha,publication_sha).chomp
-
     if canon_controlled_identifiers.length > 0
-      if merge_base == canonical_sha
+      if self.merge_base(canonical_sha) == canonical_sha
         # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
