@@ -1,6 +1,6 @@
 development:
   :shibboleth:
-    :allowed_clock_drift: 5
+    :allowed_clock_drift: 20 
     :issuer: sosol.perseids.org
     :assertion_consumer_service_url: "https://sosol-test.perseids.org/sosol/shib/consume"
     :sp_private_key: /etc/ssl/private/private.key
@@ -21,17 +21,18 @@ development:
         :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"
         :attributes:
           :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
-      ulei:
-        :issuer: "http://sosol.perseids.org/"
-        :entity_id: "https://aai.rz.uni-leipzig.de/idp/shibboleth"
-        :display_name: "University of Leipzig"
-        :logo: "uleipzig_small.gif"
-        :sp_cert: /etc/ssl/certs/sosol_perseids_org_cert.cer
-        :idp_cert: <%= Rails.root %>/data/certificates/ulei.d.crt
-        :idp_sso_target_url: "https://aai.rz.uni-leipzig.de/idp/profile/SAML2/Unsolicited/SSO?providerId=http://sosol.perseids.org/"
-        :idp_aqr_target_url: "https://aai.rz.uni-leipzig.de:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=http://sosol.perseids.org/"
+      aai:
+        :issuer: sosol-test.perseids.org
+        :entity_id: "https://login.aaiedu.hr/shib/saml2/idp/metadata.php"
+        :display_name: "AAI@EduHr Single Sign-On Service"
+        :logo: ""
+        :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
+        :idp_cert: <%= Rails.root %>/data/certificates/aai.crt
+        :idp_cert_fingerprint: "E4:3A:44:5D:1F:57:CA:B0:3A:93:93:22:9B:D3:F8:D9:22:08:D6:C2"
+        :idp_cert_fingerprint_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"
+        :idp_sso_target_url: "https://login.aaiedu.hr/shib/saml2/idp/SSOService.php"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
-        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"
         :attributes:
           :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
 test:
