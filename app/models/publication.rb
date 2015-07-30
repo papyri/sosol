@@ -18,6 +18,7 @@
 
 
 require 'jgit_tree'
+require 'shellwords'
 
 class Publication < ActiveRecord::Base
 
@@ -868,7 +869,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    self.owner.repository.repo.git.merge_base({},branch,self.head).chomp
+    `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
