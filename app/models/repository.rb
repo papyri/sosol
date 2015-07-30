@@ -191,14 +191,14 @@ class Repository
     @repo.update_ref('master',@canonical.get_head('master').commit.id)
   end
 
-  def create_branch(name, source_name = 'master')
+  def create_branch(name, source_name = 'master', force = false)
     # We always assume we want to branch from master by default
     if source_name == 'master'
       self.update_master_from_canonical
     end
 
     begin
-      ref = org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).call()
+      ref = org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).setForce(force).call()
       # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
     rescue Exception => e
       Rails.logger.error("create_branch exception: #{e.inspect}\n#{e.backtrace.join("\n")}")
@@ -239,7 +239,7 @@ class Repository
     begin
       fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
       fetch_command.setRemote(other_repo.name)
-      # Is this setting us up for name collisions?
+      fetch_command.setThin(false)
       unless branch.nil?
         fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
       end

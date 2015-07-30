@@ -613,11 +613,10 @@ class Publication < ActiveRecord::Base
       #send emails
       self.owner.send_status_emails("approved", self)
 
-      #set up for finalizing
-      self.send_to_finalizer
-
       self.change_status("approved")
 
+      #set up for finalizing
+      SendToFinalizerJob.new.async.perform(self.id)
   #----reject-----
     elsif decree_action == "reject"
 
@@ -676,7 +675,7 @@ class Publication < ActiveRecord::Base
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
-    finalizing_publication.repository.fetch_objects(self.repository)
+    # finalizing_publication.repository.fetch_objects(self.repository)
 
     # flatten commits by original publication creator
     # - use the submission reason as the main comment
@@ -771,7 +770,7 @@ class Publication < ActiveRecord::Base
     inserter.release()
 
     finalizing_publication.repository.create_branch(
-      finalizing_publication.branch, flattened_commit_sha1)
+      finalizing_publication.branch, flattened_commit_sha1, true)
 
     # rewrite commits by EB
     # - write a 'Signed-off-by:' line for each Ed. Board member
@@ -794,8 +793,9 @@ class Publication < ActiveRecord::Base
       finalizer = board_members[rand(board_members.length)]
     end
 
-    # finalizing_publication = copy_to_owner(finalizer)
-    finalizing_publication = clone_to_owner(finalizer)
+    self.remove_finalizer()
+    finalizing_publication = copy_to_owner(finalizer)
+    # finalizing_publication = clone_to_owner(finalizer)
     self.flatten_commits(finalizing_publication, finalizer, board_members)
 
     #should we clear the modified flag so we can tell if the finalizer has done anything
@@ -991,25 +991,10 @@ class Publication < ActiveRecord::Base
     publication_sha = self.head
     canonical_sha = canon.repo.get_head('master').commit.sha
 
-    # FIXME: This walks the whole rev list, should maybe use git merge-base
-    # to find the branch point? Though that may do the same internally...
-    # commits = canon.repo.commit_deltas_from(self.owner.repository.repo, 'master', self.branch)
-
-    # Commits that are in canonical master but not this branch
-    # Forcing method_missing here to directly call rev-list is much faster
-    commits = self.owner.repository.repo.git.method_missing('rev-list',{}, canonical_sha, "^#{publication_sha}").split("\n")
-
-    # canon.repo.git.merge({:no_commit => true, :stat => true},
-      # self.owner.repository.repo.get_head(self.branch).commit.sha)
-
-    # get the result of merging canon master into this branch
-    # merge = Grit::Merge.new(
-    #   self.owner.repository.repo.git.merge_tree({},
-    #     publication_sha, canonical_sha, publication_sha))
-
+    merge_base = self.owner.repository.repo.git.method_missing('merge-base',{},canonical_sha,publication_sha).chomp
 
     if canon_controlled_identifiers.length > 0
-      if commits.length == 0
+      if merge_base == canonical_sha
         # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)

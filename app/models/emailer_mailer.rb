@@ -35,8 +35,7 @@ class EmailerMailer < ActionMailer::Base
     #send note to publication creator that the pub has been withdrawn
     #they can checkout the comments to see if there is more info about the withdraw
     
-    #from "SoSOL"
-    from Sosol::Application.config.site_name
+    from Sosol::Application.config.site_email_from || Sosol::Application.config.site_name
     sent_on Time.now
     
     subject publication_title + " has been withdrawn."

@@ -56,7 +56,7 @@
               = text_area_tag 'submit_comment', "", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               %br
               %br
-              = submit_tag "Submit to Boards", :disabled => true, :class => 'submit', :id => "submit_button"
+              = submit_tag "Submit to Boards", :onclick => 'this.disabled=true;this.form.submit();', :disabled => true, :class => 'submit', :id => "submit_button"
               
               - community_hash = Hash.new
               - signup = Array.new
@@ -85,7 +85,7 @@
       -# if i am already the finalizer dont show the button
       - finalizer = @publication.find_finalizer_user
       - if !(finalizer && finalizer.id == @current_user.id)
-        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id }
+        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id, :onclick => 'this.disabled=true;return true;' }
     
     %br
     
