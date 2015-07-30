@@ -659,10 +659,7 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    # Grit method_missing version
-    return self.repository.repo.git.method_missing('rev-list',{:timeout => false}, "#{canon_branch_point}..#{board_branch_point}").split("\n")
-    # Naive backticks version:
-    # return `git rev-list --git-dir="#{self.repository.repo.path}" #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    return `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
