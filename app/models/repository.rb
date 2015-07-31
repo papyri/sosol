@@ -211,37 +211,6 @@ class Repository
     end
   end
 
-  def fetch_objects(other_repo, branch = nil)
-    Rails.logger.debug("fetch_objects: #{other_repo.name}, #{branch}")
-    Rails.logger.debug("Adding remote #{other_repo.name}")
-    self.add_remote(other_repo)
-    Rails.logger.debug("Remote added")
-    begin
-      fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
-      fetch_command.setRemote(other_repo.name)
-      fetch_command.setThin(false)
-      unless branch.nil?
-        fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
-      end
-      Rails.logger.debug("Running fetch")
-      result = fetch_command.call()
-      Rails.logger.debug("Fetch complete")
-      unless branch.nil?
-        update = result.getTrackingRefUpdate("refs/remotes/" + other_repo.name + "/" + branch)
-        if update.nil?
-          Rails.logger.debug("fetch: ref not updated")
-        else
-          Rails.logger.debug("fetch: updated #{update.getRemoteName()} #{update.getOldObjectId()} -> #{update.getNewObjectId()} with result #{update.getResult().toString()}")
-        end
-      end
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      fetch_objects(other_repo)
-    rescue Java::OrgEclipseJgitApiErrors::TransportException => e
-      Rails.logger.error("fetch transport exception: #{e.inspect}\n#{e.backtrace.join("\n")}")
-    end
-  end
-
   def name
     return [@master_class_path, @master.name].join('/').tr(' ', '_')
   end
