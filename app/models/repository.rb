@@ -66,6 +66,10 @@ class Repository
     end
   end
 
+  def repack
+    `#{self.git_command_prefix} repack`
+  end
+
   def destroy
     # master.update_attribute :has_repository, false
     # destroy a git repository
@@ -75,9 +79,8 @@ class Repository
     # If you delete an alternates-referenced repository without repacking,
     # referenced objects will disappear, possibly making the repo unusable.
     begin
-      @canonical.git.repack({})
-
       canon = Repository.new
+      canon.repack()
       canon.del_alternates(self)
       `rm -r "#{path}"`
     rescue Grit::Git::GitTimeout

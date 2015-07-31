@@ -1064,7 +1064,7 @@ class Publication < ActiveRecord::Base
       end
 
       # finalized, try to repack
-      `#{canon.git_command_prefix} repack`
+      canon.repack
       unless $?.success?
         Rails.logger.warn("Canonical repack failed after finalizing publication #{self.origin.id.to_s} (#{self.title})")
       end
