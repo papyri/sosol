@@ -12,4 +12,6 @@ Sosol::Application.configure do
   config.site_cite_collection_namespace ='http://data.perseus.org/collections'
   config.repository_root = "/usr/local/gitrepos"
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
+  config.site_cookie_domain = '.perseids.org'
+  config.site_cookie_expire_minutes = 60
 end

@@ -3,13 +3,21 @@
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
   
-  before_filter :authorize, :except => [:api_item_info, :api_item_get]
+  before_filter :authorize, :except => [:api_item_info, :api_item_get, :preflight_check]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   before_filter :update_cookie
   skip_before_filter :accept_terms # don't display accept_terms on api requests
-  
-  # minutes for csrf session cookie expiration
-  CSRF_COOKIE_EXPIRE = 60
+ 
+  # this is a temporary work around for cors preflight checks -- the way we have
+  # been deploying this so far is to let the Apache proxy deal with the cors
+  # but something has changed in rails 3 with regard to options requests - they
+  # previously weren't coming through or were just being replied to with a 200
+  # but not it seems we have to explicitly handle them. I think there isn't 
+  # any real harm here because the post is going to fail anyway but it's clearly
+  # not the right way to do this
+  def preflight_check
+        render :json => {:cors => 'ok'}, :status => 200
+  end
 
   def api_item_create
     begin
@@ -285,9 +293,11 @@ class DmmApiController < ApplicationController
   protected
 
     def update_cookie
+      expires = Sosol::Application.config.site_cookie_expire_minutes || 60
       cookies[:csrftoken] = {
         :value => form_authenticity_token,
-        :expires => CSRF_COOKIE_EXPIRE.minutes.from_now # TODO configurable
+        :domain => Sosol::Application.config.site_cookie_domain,
+        :expires => Sosol::Application.config.site_cookie_expire_minutes.minutes.from_now
       }
     end
 

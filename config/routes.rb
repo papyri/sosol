@@ -443,6 +443,7 @@ Sosol::Application.routes.draw do
   match 'cts/getrepos/:id' => 'cts_proxy#getrepos'
   match 'shib/signin/:idp' => 'shib#signin'
   match 'shib/metadata/:idp' => 'shib#metadata'
+  match 'dmm_api/*all' => 'dmm_api#preflight_check', :via => :options
   match 'dmm_api/item/:identifier_type/:id' =>'dmm_api#api_item_get', :via => :get
   match 'dmm_api/item/:identifier_type/:id' => 'dmm_api#api_item_patch', :via => :post
   match 'dmm_api/item/:identifier_type/:id/partial' => 'dmm_api#api_item_patch', :via => :post
