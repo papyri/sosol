@@ -659,7 +659,7 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    rev_list = `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    rev_list = `git --git-dir=#{Shellwords.escape(self.repository.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
     unless $?.success?
       raise "git rev-list failure in Publication#creator_commits: #{$?.inspect}"
     end
@@ -865,7 +865,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    merge_base_backticks = `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
+    merge_base_backticks = `git --git-dir=#{Shellwords.escape(self.repository.path)} merge-base #{branch} #{self.head}`.chomp
     unless $?.success?
       raise "git merge-base failure: #{$?.inspect}"
     end
@@ -1064,7 +1064,7 @@ class Publication < ActiveRecord::Base
       end
 
       # finalized, try to repack
-      `git --git-dir=#{Shellwords.escape(canon.repo.path)} repack`
+      `git --git-dir=#{Shellwords.escape(canon.path)} repack`
       unless $?.success?
         Rails.logger.warn("Canonical repack failed after finalizing publication #{self.origin.id.to_s} (#{self.title})")
       end

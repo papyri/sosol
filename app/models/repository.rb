@@ -243,11 +243,11 @@ class Repository
   end
 
   def add_alternates(other_repo)
-    @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
+    @repo.alternates = @repo.alternates() | [ File.join(other_repo.path, "objects") ]
   end
 
   def del_alternates(other_repo)
-    @repo.alternates = @repo.alternates() - [ File.join(other_repo.repo.path, "objects") ]
+    @repo.alternates = @repo.alternates() - [ File.join(other_repo.path, "objects") ]
   end
 
   def branches
