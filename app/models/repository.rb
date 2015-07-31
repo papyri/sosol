@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'jgit_tree'
+require 'shellwords'
 
 class Repository
   attr_reader :master, :path, :repo, :jgit_repo
@@ -42,6 +43,11 @@ class Repository
 
   def owner
     return @master
+  end
+
+  # Returns the appropriate git command prefix for this Repository and its path
+  def git_command_prefix
+    return "git --git-dir=#{Shellwords.escape(self.path)}"
   end
 
   def exists?(path)
