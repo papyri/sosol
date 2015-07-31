@@ -688,13 +688,8 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = self.creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      begin
-        controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
-      rescue Grit::Git::GitTimeout
-        Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
-        controlled_commit_diffs = ['timeout']
-      end
-      controlled_commit_diffs.length > 0
+      commit_touches_path = `git --git-dir=#{Shellwords.escape(self.repository.path)} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map{|p| Shellwords.escape(p)}.join(" ")}`
+      !commit_touches_path.blank?
     end
 
     Rails.logger.info("Controlled Commits: #{controlled_commits.inspect}")
