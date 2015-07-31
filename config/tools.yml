@@ -252,8 +252,6 @@ test:
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
           :text: 'Compare'
-    
-    
 production:
   cite_mapper:
     default:
@@ -292,7 +290,7 @@ production:
           :id_param: 'doc'
           :text: "Preview in Arethusa"
         :create:
-          :href: "http://sosol.perseids.org/exist/rest/db/app/treebank-entertext-arethusa.xhtml?"
+          :href: "http://www.perseids.org/apps/treebank"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
   theme_editor:
@@ -354,12 +352,12 @@ production:
       :method: 'get'
       :actions:
         :tokenize: 
-          :href: "http://localhost/llt/tokenize?xml=true&merging-false&splitting=false&uri="
+          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
     :lat:
       :method: 'get'
       :actions: 
         :tokenize:
-          :href: "http://localhost/llt/tokenize?xml=true&merging-false&splitting=false&uri="
+          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
   toponym_editor:
     :recogito:
       :method: 'get'
@@ -385,6 +383,124 @@ production:
           :text: 'Compare'
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
+          :id_param: 'gold'
+          :replace_param: 'reviewable[]'
+          :text: 'Compare'
+staging:
+  cite_mapper:
+    default:
+      :method: 'get'
+      :actions:
+        :search:
+          :href: 'http://services2.perseids.org/cite_mapper/find_cite?'
+          :replace_param: 'cite'
+  treebank_editor:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :edit:
+          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
+          :id_param: 'doc'
+          :text: "Edit in Arethusa"
+        :view:
+          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+          :id_param: 'doc'
+          :text: "Preview in Arethusa"
+        :create:
+          :href: "http://www-stage.perseids.org/apps/treebank"
+          :id_param: 'doc'
+          :text: 'New Treebank Annotation'
+  theme_editor:
+    arethusa:
+        :text: 'Arethusa'
+        :uri: 'http://github.com/latin-language-toolkit/arethusa'
+        :actions:
+          :edit:
+            :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
+            :id_param: 'doc'
+            :text: "Edit in Arethusa"
+          :view:
+            :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+            :id_param: 'doc'
+            :text: "Preview in Arethusa"
+          :create:
+            :href: "http://www-stage.perseids.org/apps/thematic"
+            :id_param: 'doc'
+            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
+  alignment_editor:
+    :alpheios:
+      :text: 'Alpheios'
+      :method: 'get'
+      :actions:
+        :edit: 
+          :href: "http://sosol-test.perseids.org/alpheios/app/align-editsentence-perseids-stage.xhtml?s=SENT&numSentences=MAX"
+          :id_param: 'doc'
+          :text: "Align in Alpheios"
+        :view:
+          :href: "http://sosol-test.perseids.org/alpheios/app/align-editsentence-perseids-stage.xhtml?s=SENT&numSentences=MAX&app=viewer"
+          :id_param: 'doc'
+          :text: "View in Alpheios"
+        :create:
+          :href: "http://www-stage.perseids.org/apps/alignment?"
+          :id_param: 'doc'
+          :text: 'New Text Alignment'
+  oa_editor:
+    :perseids:
+      :text: 'Annotation Editor'
+      :method: 'get'
+      :actions:
+        :edit:
+          :href: "http://sosol-test.perseids.org/tools/annotation-editor/perseids-annotate-stage.xhtml?uri=URI&lang=LANG"
+          :id_param: 'doc'
+          :text: "Edit"
+        :view:
+          :href: "http://sosol-test.perseids.org/tools/annotation-editor/perseids-annotate-stage.xhtml?uri=URI&app=viewer&lang=LANG"
+          :id_param: 'doc'
+  image_service:
+    :cite:
+      :method: 'get'
+      :actions:
+        :context:
+          :href: "http://services.perseus.tufts.edu/sparqlimg/api?request=GetIIPMooViewer&urn="
+        :binary:
+          :href:  "http://services.perseus.tufts.edu/sparqlimg/api?request=GetBinaryImage&urn="
+  cts_tokenizer:
+    :default:
+      :method: 'get'
+      :actions:
+        :tokenize: 
+          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+    :lat:
+      :method: 'get'
+      :actions: 
+        :tokenize:
+          :href: "http://services2.perseids.org/llt/tokenize?xml=true&merging=false&splitting=false&uri="
+  toponym_editor:
+    :recogito:
+      :method: 'get'
+      :text: 'Recogito'
+      :target: 'perseids-recogito'
+      :actions:
+        :export:
+          :href: "http://pelagios.org/recogito/edit/annotation?ctsURI="
+          :text: "Annotate Toponyms"
+        :import:
+          :href: "http://pelagios.org/recogito/api/annotations?ctsURI="
+          :text: "Import Toponymns"
+  review_service:
+    TreebankCiteIdentifier:
+      :method: 'get'
+      :text: 'Compare'
+      :target: 'perseids-llt-review'
+      :actions:
+        :review:
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
+          :id_param: 'reviewable[]'
+          :replace_param: 'gold'
+          :text: 'Compare'
+        :gold:
+          :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
           :text: 'Compare'

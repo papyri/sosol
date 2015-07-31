@@ -19,3 +19,10 @@ production:
   :cts_inventories : 'pilots|Epi,epifacs|Epi,miscellany|Epi,epidoctraining|Epi,visiblewords|Epi,vortex|Epi'
   :external_cts_api_endpoints : 'AnnotationSources|http://sosol.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://perseids.org/annotsrc'
   :catalog_search : 'http://catalog.perseus.org/catalog/'
+staging:
+  :cts_api_endpoint : 'http://localhost:8800/exist/rest/db/xq/CTS.xq?'
+  :cts_extension_api_endpoint : 'http://localhost:8800/exist/rest/db/xq/CTS-X.xq?'
+  :cts_extension_api_put_endpoint : 'http://localhost:8800/exist/rest'
+  :cts_inventories : 'pilots|Epi,epifacs|Epi,miscellany|Epi,epidoctraining|Epi,visiblewords|Epi,vortex|Epi'
+  :external_cts_api_endpoints : 'AnnotationSources|http://sosol-test.perseids.org/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://perseids.org/annotsrc'
+  :catalog_search : 'http://catalog.perseus.org/catalog/'
