@@ -309,7 +309,7 @@ module JRubyXML
     # a transformation which catches xslt transform messages
     # and returns them with the transformed content
     def apply_xsl_transform_catch_messages(xml_stream, xsl_stream, parameters = {})
-      message_listener = TransformMessageListener.new()
+      message_listener = TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new()))
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new())
       transformer.getUnderlyingController().setMessageEmitter(message_listener)
