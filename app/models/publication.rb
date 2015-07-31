@@ -659,7 +659,11 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    return `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    rev_list = `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    unless $?.success?
+      raise "git rev-list failure in Publication#creator_commits: #{$?.inspect}"
+    end
+    return rev_list
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
@@ -866,7 +870,11 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
+    merge_base_backticks = `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
+    unless $?.success?
+      raise "git merge-base failure: #{$?.inspect}"
+    end
+    return merge_base_backticks
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
@@ -1062,11 +1070,13 @@ class Publication < ActiveRecord::Base
 
       # finalized, try to repack
       `git --git-dir=#{Shellwords.escape(canon.repo.path)} repack`
+      unless $?.success?
+        Rails.logger.warn("Canonical repack failed after finalizing publication #{self.origin.id.to_s} (#{self.title})")
+      end
     else
       # nothing under canon control, just say it's committed
       self.change_status('committed')
       self.save!
-
     end
     return commit_sha
   end
