@@ -78,15 +78,10 @@ class Repository
     # This will pull in all objects regardless of alternates/shared status.
     # If you delete an alternates-referenced repository without repacking,
     # referenced objects will disappear, possibly making the repo unusable.
-    begin
-      canon = Repository.new
-      canon.repack()
-      canon.del_alternates(self)
-      `rm -r "#{path}"`
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      self.destroy
-    end
+    canon = Repository.new
+    canon.repack()
+    canon.del_alternates(self)
+    FileUtils.rm_rf(path, :secure => true)
   end
 
   #returns the blob that represents the given file
