@@ -696,8 +696,8 @@ class Publication < ActiveRecord::Base
 
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = self.repository.repo.commit(controlled_commit).message.strip
-      unless message.empty?
+      message = `git --git-dir=#{Shellwords.escape(self.repository.path)} log -1 --pretty=format:%s #{controlled_commit}`.strip
+      unless message.blank?
         creator_commit_messages << " - #{message}"
       end
     end
