@@ -12,7 +12,7 @@ Warbler::Config.new do |config|
   # config.staging_dir = "tmp/war"
 
   # Application directories to be included in the webapp.
-  config.dirs = %w(app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/pn/navigator)
+  config.dirs = %w(app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/perseus/epidoc data/xslt/pn/navigator)
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
@@ -22,7 +22,6 @@ Warbler::Config.new do |config|
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
-  config.excludes = FileList["vendor/gems*"]
 
   # Additional Java .jar files to include.  Note that if .jar files are placed
   # in lib (and not otherwise excluded) then they need not be mentioned here.
@@ -46,31 +45,11 @@ Warbler::Config.new do |config|
   # config.gems << "tzinfo"
 
   # Uncomment this if you don't want to package rails gem.
-  #config.gems -= ["rails"]
-  #config.gems += ["rails"]
-  config.gems += ["activerecord-jdbc-adapter"]
-  config.gems += ["activerecord-jdbcmysql-adapter"]
-  config.gems += ["activerecord-jdbcsqlite3-adapter"]
-  config.gems += ["airbrake"]
-  config.gems += ["builder"]
-  config.gems["canonix"] = "0.1.5"
-  config.gems += ["diff-lcs"]
-  config.gems += ["factory_girl"]
-  config.gems += ["grit"]
-  config.gems += ["haml"]
-  config.gems += ["jdbc-mysql"]
-  config.gems += ["jdbc-sqlite3"]
-  config.gems += ["json-jruby"]
-  config.gems += ["mime-types"]
-  config.gems += ["nokogiri"]
-  config.gems += ["rubyzip"]
-  config.gems += ["shoulda"]
-  config.gems += ["uuid"]
-  config.gems["rack"] = "1.1.0"
+  # config.gems -= ["rails"]
 
   # The most recent versions of gems are used.
   # You can specify versions of gems by using a hash assignment:
-  # config.gems["rails"] = "2.3.4"
+  # config.gems["rails"] = "2.0.2"
 
   # You can also use regexps or Gem::Dependency objects for flexibility or
   # fine-grained control.
@@ -78,11 +57,6 @@ Warbler::Config.new do |config|
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
   
   # config.gems << "jruby-openssl"
-  # config.gems << "jruby-openssl"
-  # config.gems << "mediawiki_api"
-  # config.gems << "faraday"
-  # config.gems << "faraday-cookie_jar"
-  # config.gems << "hypothesis-client"
 
   # Include gem dependencies not mentioned specifically
   # config.gem_dependencies = true
@@ -122,6 +96,4 @@ Warbler::Config.new do |config|
 
   # JNDI data source name
   # config.webxml.jndi = 'jdbc/rails'
-  #config.webxml.jruby.compat.version = "1.9"
-
 end
