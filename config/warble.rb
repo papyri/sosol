@@ -29,6 +29,11 @@ Warbler::Config.new do |config|
   # own versions if you directly set the value
   config.java_libs += FileList["lib/java/*.jar"]
 
+  # comment from @balmas - warble bundles without the assets group
+  # by default but seems we need the sass gems in the gems directory
+  # of the war -- they don't get loaded from vendor/cache
+  config.bundle_without = %w(development test%)
+
   # Loose Java classes and miscellaneous files to be placed in WEB-INF/classes.
   # config.java_classes = FileList["target/classes/**.*"]
 
