@@ -1061,11 +1061,7 @@ class Publication < ActiveRecord::Base
       end
 
       # finalized, try to repack
-      begin
-        canon.repo.git.repack({})
-      rescue Grit::Git::GitTimeout
-        Rails.logger.warn("Canonical repository not repacked after finalization!")
-      end
+      `git --git-dir=#{Shellwords.escape(canon.repo.path)} repack`
     else
       # nothing under canon control, just say it's committed
       self.change_status('committed')
