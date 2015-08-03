@@ -189,12 +189,28 @@ class Repository
     return [@master_class_path, @master.name].join('/').tr(' ', '_')
   end
 
+  def alternates_path
+    File.join(self.path,%w{objects info alternates})
+  end
+
+  def alternates
+    if File.exists?(self.alternates_path())
+      return File.readlines(self.alternates_path())
+    else
+      return []
+    end
+  end
+
+  def alternates=(repository_paths)
+    File.write(self.alternates_path, repository_paths.join("\n"))
+  end
+
   def add_alternates(other_repo)
-    @repo.alternates = @repo.alternates() | [ File.join(other_repo.path, "objects") ]
+    self.alternates = self.alternates() | [ File.join(other_repo.path, "objects") ]
   end
 
   def del_alternates(other_repo)
-    @repo.alternates = @repo.alternates() - [ File.join(other_repo.path, "objects") ]
+    self.alternates = self.alternates() - [ File.join(other_repo.path, "objects") ]
   end
 
   def branches
