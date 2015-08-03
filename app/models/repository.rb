@@ -148,7 +148,7 @@ class Repository
   end
 
   def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
-    @repo.log(branch, file, {:follow => true, :max_count => limit}).map{|commit| commit.to_hash}
+    `#{git_command_prefix} log -n #{limit} --follow --pretty=format:%s #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}`
   end
 
   def get_head(branch)
