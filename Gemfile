@@ -18,6 +18,7 @@ end
 gem 'jquery-rails'
 
 gem 'haml', '>= 3.0.25'
+gem 'sass'
 gem 'json-jruby', '>= 1.5.0', :require => 'json', :platform => :jruby
 gem 'json'
 gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby

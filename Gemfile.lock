@@ -249,6 +249,7 @@ DEPENDENCIES
   ruby-debug
   ruby-saml!
   rubyzip (~> 0.9.0)
+  sass
   sass-rails (~> 3.2.3)
   shoulda (>= 2.11.3)
   shoulda-matchers (>= 2.0.0)
