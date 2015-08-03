@@ -55,10 +55,14 @@ class Repository
     File.exists?(path)
   end
 
+  def fork_bare(destination_path)
+    `git clone --bare -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)}`
+  end
+
   def create
     # master.update_attribute :has_repository, true
     # create a git repository
-    @repo ||= @canonical.fork_bare(path)
+    Repository.new.fork_bare(path)
     begin
       @jgit_repo ||= org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
     rescue Exception => e
