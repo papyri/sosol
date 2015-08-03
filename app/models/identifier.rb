@@ -142,10 +142,7 @@ class Identifier < ActiveRecord::Base
   #   - id of latest commit as a string
   def get_recent_commit_sha
     commits = get_commits
-    if commits && commits.length > 0
-      return commits[0][:id].to_s
-    end
-    return ""
+    return commits.blank? ? '' : commits
   end
 
   # Create consistent title for identifiers
