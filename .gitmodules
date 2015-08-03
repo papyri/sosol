@@ -1,6 +1,0 @@
-[submodule "public/javascripts/imgspect"]
-	path = public/javascripts/imgspect
-	url = https://github.com/perseids-project/imgspect
-[submodule "public/javascripts/texAce"]
-	path = public/javascripts/texAce
-	url = http://github.com/perseids-project/texAce

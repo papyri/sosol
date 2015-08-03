@@ -70,6 +70,11 @@ Warbler::Config.new do |config|
   # will have the leading 'public/' part of the path stripped during staging.
   # config.public_html = FileList["public/**/*", "doc/**/*"]
 
+  # @balmas: I'm sure there's a better way but couldn't figure out any 
+  # how else to get warbler to include the symbolically linked javascript 
+  # dirs pulled in by cached externals
+  config.public_html += FileList["public/javascripts/imgspect/**/*", "public/javascripts/texAce/**/*"]
+
   # Pathmaps for controlling how public HTML files are copied into the .war
   # config.pathmaps.public_html = ["%{public/,}p"]
 
