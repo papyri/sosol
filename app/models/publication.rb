@@ -1027,10 +1027,7 @@ class Publication < ActiveRecord::Base
       end
 
       # finalized, try to repack
-      canon.repack
-      unless $?.success?
-        Rails.logger.warn("Canonical repack failed after finalizing publication #{self.origin.id.to_s} (#{self.title})")
-      end
+      RepackCanonical.new.async.perform()
     else
       # nothing under canon control, just say it's committed
       self.change_status('committed')

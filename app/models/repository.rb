@@ -68,6 +68,9 @@ class Repository
 
   def repack
     `#{self.git_command_prefix} repack`
+    unless $?.success?
+      Rails.logger.warn("Canonical repack failed")
+    end
   end
 
   def destroy
