@@ -722,7 +722,7 @@ class Publication < ActiveRecord::Base
 
     # parent commit should ALWAYS be canonical master head
     # FIXME: handle racing during finalization
-    parent_commit = Repository.new.repo.get_head('master').commit.sha
+    parent_commit = Repository.new.get_head('master')
 
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
@@ -980,7 +980,7 @@ class Publication < ActiveRecord::Base
 
     canon = Repository.new
     publication_sha = self.head
-    canonical_sha = canon.repo.get_head('master').commit.sha
+    canonical_sha = canon.get_head('master')
 
     if canon_controlled_identifiers.length > 0
       if self.merge_base(canonical_sha) == canonical_sha
@@ -1123,7 +1123,7 @@ class Publication < ActiveRecord::Base
 
   def diff_from_canon
     canon = Repository.new
-    canonical_sha = canon.repo.get_head('master').commit.sha
+    canonical_sha = canon.get_head('master')
     diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
     # diff = self.owner.repository.repo.git.diff(
       # {:unified => 5000, :timeout => false}, canonical_sha, self.head,

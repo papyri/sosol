@@ -148,6 +148,10 @@ class Repository
     @repo.log(branch, file, {:follow => true, :max_count => limit}).map{|commit| commit.to_hash}
   end
 
+  def get_head(branch)
+    return `#{self.git_command_prefix} rev-list -n 1 #{Shellwords.escape(branch)}`.chomp
+  end
+
   def update_master_from_canonical
     @repo.update_ref('master',@canonical.get_head('master').commit.id)
   end
