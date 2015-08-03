@@ -57,7 +57,6 @@ GEM
       execjs
     coffee-script-source (1.9.1.1)
     database_cleaner (1.4.1)
-    diff-lcs (1.2.5)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.5.2)
@@ -66,9 +65,6 @@ GEM
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
-    grit (2.4.1)
-      diff-lcs (~> 1.1)
-      mime-types (~> 1.15)
     haml (4.0.6)
       tilt
     highline (1.7.2)
@@ -179,7 +175,6 @@ DEPENDENCIES
   dynamic_form
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
-  grit (~> 2.4.0)
   haml (>= 3.0.25)
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails

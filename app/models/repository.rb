@@ -27,15 +27,12 @@ class Repository
     end
 
     if master.nil? || exists?(path)
-      @repo = Grit::Repo.new(path)
-
       begin
         @jgit_repo = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
       rescue Exception => e
         Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
       end
     else
-      @repo = nil
       @jgit_repo = nil
     end
   end
