@@ -941,36 +941,7 @@ class Publication < ActiveRecord::Base
 
     jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
-      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-     #  origin_index = self.origin.owner.repository.repo.index
-     #  origin_index.read_tree('master')
-
-     #  Rails.logger.debug "=======orign INDEX before add========"
-     #  Rails.logger.debug origin_index.inspect
-
-
-     #  #add the controlled paths to the index
-     #  controlled_paths_blobs.each_pair do |path, blob|
-     #     origin_index.add(path, blob.data)
-     #     Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-     #  end
-
-     #  #need to add exiting tree to index, except for controlled blobs
-     #  uncontrolled_paths_blobs.each_pair do |path, blob|
-     #      origin_index.add(path, blob.data)
-     #      Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-     #  end
-
-
-     #  Rails.logger.debug "=======orign INDEX after add========"
-     #  Rails.logger.debug origin_index.inspect
-
-     # #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-     #  origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
-
-     #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-
-      self.origin.save
+    self.origin.save
   end
 
 
@@ -1006,7 +977,10 @@ class Publication < ActiveRecord::Base
 
         Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
         Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-
+        
+        # roll a tree SHA1 by reading the canonical master tree,
+        # adding controlled path blobs, then writing the modified tree
+        # (happens on the finalizer's repo)
         self.owner.repository.update_master_from_canonical
         jgit_tree = JGit::JGitTree.new()
         jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
@@ -1020,18 +994,7 @@ class Publication < ActiveRecord::Base
         inserter.flush()
 
         tree_sha1 = jgit_tree.update_sha
-
-        # roll a tree SHA1 by reading the canonical master tree,
-        # adding controlled path blobs, then writing the modified tree
-        # (happens on the finalizer's repo)
-        #self.owner.repository.update_master_from_canonical
-        #index = self.owner.repository.repo.index
-        #index.read_tree('master')
-        #controlled_paths_blobs.each_pair do |path, blob|
-        #  index.add(path, blob)
-        #end
-
-        #tree_sha1 = index.write_tree(index.tree, index.current_tree)
+       
         Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
         commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
