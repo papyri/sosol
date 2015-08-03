@@ -1088,9 +1088,6 @@ class Publication < ActiveRecord::Base
     canon = Repository.new
     canonical_sha = canon.get_head('master')
     diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
-    # diff = self.owner.repository.repo.git.diff(
-      # {:unified => 5000, :timeout => false}, canonical_sha, self.head,
-      # '--', *(self.controlled_paths))
     return diff || ""
   end
 
