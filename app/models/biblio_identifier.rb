@@ -735,9 +735,8 @@ class BiblioIdentifier < HGVIdentifier
     begin
       biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
   
-      git = Grit::Repo.new(Sosol::Application.config.canonical_repository).commits.first.tree
-      biblio = git / getBiblioPath(biblioId)
-      relatedItem = REXML::Document.new(biblio.data)
+      biblio_data = Repository.new.get_file_from_branch(getBiblioPath(biblioId))
+      relatedItem = REXML::Document.new(biblio_data)
 
       result[result.length] = if relatedItem.elements["//title[starts-with(@type, 'short')]"]
         relatedItem.elements["//title[starts-with(@type, 'short')]"]
