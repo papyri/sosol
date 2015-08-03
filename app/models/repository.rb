@@ -26,7 +26,6 @@ class Repository
                         @master_class_path, "#{master.name}.git")
     end
 
-    @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
     if master.nil? || exists?(path)
       @repo = Grit::Repo.new(path)
 
