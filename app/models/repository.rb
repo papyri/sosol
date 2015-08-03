@@ -153,7 +153,7 @@ class Repository
   end
 
   def update_master_from_canonical
-    @repo.update_ref('master',@canonical.get_head('master').commit.id)
+    @repo.update_ref('master',Repository.new.get_head('master'))
   end
 
   def create_branch(name, source_name = 'master', force = false)
