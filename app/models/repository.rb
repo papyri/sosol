@@ -123,26 +123,7 @@ class Repository
   end
 
   def get_file_from_branch(file, branch = 'master')
-    blob = get_blob_from_branch(file, branch)
-    return get_blob_data(blob)
-  end
-
-  def get_blob_data(blob)
-    begin
-      # blob.data gets INSANELY slow for large files in a large repo,
-      # this uses @repo.git.show to call a git command instead:
-      #   slower than I would like but still an order of magnitude
-      #   faster (for an example see e.g.
-      #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
-      # data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
-      # BALMAS -> above problem was addressed via a patch to the GRIT modules
-      # should should be okay now to cal blob.data
-      data = blob.nil? ? nil : blob # .data
-      return data
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      get_blob_data(blob)
-    end
+    return get_blob_from_branch(file, branch)
   end
 
   def get_all_files_from_path_on_branch(path = '', branch = 'master')
@@ -289,11 +270,6 @@ class Repository
       Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace.join("\n")}")
       return nil
     end
-  end
-
-  def self.increase_timeout
-    Grit::Git.git_timeout *= 2
-    Rails.logger.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
 
   def safe_repo_name(name)
