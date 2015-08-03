@@ -241,21 +241,6 @@ class Repository
     jgit_tree.add_blob(new_path, file_id.name())
     jgit_tree.del(original_path)
     jgit_tree.commit(comment, actor)
-
-    # index = @repo.index
-    # index.read_tree(branch)
-    # do the rename here, against index.tree
-    # rename is just a simultaneous add/delete
-    # add the new data
-    # index.add(new_path, content)
-    # remove the old path from the tree
-    # index.delete(original_path)
-
-    # index.commit(comment,
-                 # @repo.commits(branch,1), # commit parent,
-                 # actor,
-                 # nil,
-                 # branch)
   end
 
   # Returns a String of the SHA1 of the commit
