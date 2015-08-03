@@ -959,7 +959,7 @@ class Publication < ActiveRecord::Base
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', publication_sha)
+        commit_sha = canon.update_ref('master', publication_sha)
 
         self.change_status('committed')
         self.save!
@@ -1016,11 +1016,11 @@ class Publication < ActiveRecord::Base
         Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
 
         # Update our own head first
-        self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
+        self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
 
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
+        commit_sha = canon.update_ref('master', finalized_commit_sha1)
 
         self.change_status('committed')
         self.save!

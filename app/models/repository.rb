@@ -149,11 +149,15 @@ class Repository
   end
 
   def get_head(branch)
-    return `#{self.git_command_prefix} rev-list -n 1 #{Shellwords.escape(branch)}`.chomp
+    return `#{self.git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}`.chomp
+  end
+
+  def update_ref(branch, sha1)
+    return `#{self.git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}`
   end
 
   def update_master_from_canonical
-    @repo.update_ref('master',Repository.new.get_head('master'))
+    self.update_ref('master',Repository.new.get_head('master'))
   end
 
   def create_branch(name, source_name = 'master', force = false)

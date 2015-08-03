@@ -300,6 +300,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
+        canonical_before_finalize = Repository.new.get_head('master')
+
         open_session do |meta_finalize_session|
 
           meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
@@ -312,6 +314,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         meta_final_publication.reload
         assert_equal "finalized", meta_final_publication.status, "Meta final publication not finalized"
+
+        canonical_after_finalize = Repository.new.get_head('master')
+        assert_not_equal canonical_before_finalize, canonical_after_finalize, 'Meta finalization should update canonical master'
 
         Rails.logger.debug "Meta committed"
 
@@ -422,6 +427,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         text_final_publication.reload
         assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
+        canonical_before_finalize = Repository.new.get_head('master')
         # actually finalize now that we've renamed
         open_session do |text_finalize_session|
 
@@ -437,6 +443,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         text_final_publication.reload
         assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
+
+        canonical_after_finalize = Repository.new.get_head('master')
+        assert_not_equal canonical_before_finalize, canonical_after_finalize, 'Text finalization should update canonical master'
 
         Rails.logger.debug "---Text publication Finalized"
 
