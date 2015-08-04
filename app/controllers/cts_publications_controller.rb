@@ -1,3 +1,5 @@
+require 'uri'
+
 class CtsPublicationsController < PublicationsController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
@@ -250,7 +252,7 @@ class CtsPublicationsController < PublicationsController
     end
 
     unless (transform.nil?)
-      user = "#{Sosol::Application.config.site_user_namespace}#{@current_user.name}"
+      user = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)}"
       content = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root, transform)),

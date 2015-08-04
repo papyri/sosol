@@ -1,3 +1,5 @@
+require 'uri'
+
 class OACIdentifier < Identifier  
   # This is a base class for OAC Annotations.
   include OacHelper
@@ -225,7 +227,7 @@ class OACIdentifier < Identifier
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
-    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
+    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
   end
   
   # find the next annotation uri for appending to the oac.xml

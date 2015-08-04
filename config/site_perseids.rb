@@ -7,7 +7,7 @@ Sosol::Application.configure do
   config.site_catalog_search = 'View in Catalog'
   config.site_email_from = 'admin@localhost'
   config.site_tag_line = 'powered by Son of Suda Online'
-  config.site_user_namespace = 'http://data.perseus.org/users/'
+  config.site_user_namespace = 'http://data.perseus.org/sosol/users/'
   config.site_oac_namespace = 'http://data.perseus.org/annotations/sosoloacprototype'
   config.site_cite_collection_namespace ='http://data.perseus.org/collections'
   config.repository_root = "/usr/local/gitrepos"

@@ -1,3 +1,5 @@
+require 'uri'
+
 class CiteIdentifier < Identifier  
   # This is a superclass for objects using CITE Identifiers, including
   # shared constants and methods. No instances of CiteIdentifier should be
@@ -282,7 +284,7 @@ class CiteIdentifier < Identifier
    
     # make a annotator uri from the owner of the publication 
     def make_annotator_uri()
-      "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
+      "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
     end
     
     def self.find_matching_identifiers(match_id,match_user,match_pub)

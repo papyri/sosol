@@ -1,3 +1,5 @@
+require 'uri'
+
 class CommentaryCiteIdentifier < CiteIdentifier   
   include OacHelper
 
@@ -47,7 +49,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   
   # make a annotator uri from the owner of the publication 
   def make_annotator_uri()
-    "#{Sosol::Application.config.site_user_namespace}#{self.publication.creator.name}"
+    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
   end
   
   # Converts REXML::Document / ::Element into xml string
