@@ -30,7 +30,6 @@ module Sosol
     config.filter_parameters += [:password]
 
     # Configure custom application parameters
-    config.site_layout = 'pn'
     config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
     config.canonical_repository = File.join(config.repository_root, 'canonical.git')
     config.rpx_base_url = 'https://rpxnow.com'
@@ -51,6 +50,3 @@ module Sosol
   end
 end
 
-Sosol::Application.configure do
-  require File.join(File.dirname(__FILE__), "site_#{config.site_layout}")
-end
