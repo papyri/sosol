@@ -60,6 +60,11 @@
                    <xsl:call-template name="make_resource_annotation"></xsl:call-template>
                 </xsl:for-each>
             </xsl:if>
+            <xsl:if test="gsx:media/text() != ''">
+                <xsl:for-each select="tokenize(normalize-space(gsx:media),' ')">
+                    <xsl:call-template name="make_image_annotation"></xsl:call-template>
+                </xsl:for-each>
+            </xsl:if>
             <xsl:if test="gsx:hypothesislink/text() != ''">
                 <xsl:call-template name="make_hypothesis_annotation"/>
             </xsl:if>
@@ -230,6 +235,15 @@
         </annotation>
     </xsl:template>
     
+    <xsl:template name="make_image_annotation">
+        <annotation>    
+            <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#linking"/>
+            <body>
+                <xsl:attribute name="rdf:resource"><xsl:copy-of select=" normalize-space(.)"/></xsl:attribute>
+            </body>
+        </annotation>
+    </xsl:template>
+    
     <xsl:template match="gsx:place">
         <xsl:choose>
             <xsl:when test="matches(.,'https?:')">
@@ -300,7 +314,7 @@
     <xsl:template match="gsx:start|gsx:end">
         <xsl:variable name="parsed">
             <parsed>
-                <xsl:analyze-string select="." regex="^\s*(-?)(\d+)\s*(AD|BCE?)" flags="i">
+                <xsl:analyze-string select="." regex="^\s*(-?)(\d+)\s*(AD|BCE?)?" flags="i">
                     <xsl:matching-substring>
                         <xsl:attribute name="prefix"><xsl:value-of select="regex-group(1)"/></xsl:attribute>
                         <xsl:attribute name="date"><xsl:value-of select="regex-group(2)"/></xsl:attribute>
