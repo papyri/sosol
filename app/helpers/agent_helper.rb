@@ -1,3 +1,4 @@
+#encoding utf-8
 require 'mediawiki_api'
 require 'hypothesis-client'
 module AgentHelper
@@ -153,7 +154,7 @@ module AgentHelper
       unless (response.code == '200')
         raise "Unable to retreive content from #{uri}"
       end
-      return response.body
+      return response.body.force_encoding("UTF-8")
     end
 
     def get_transformation(a_identifiertype)
