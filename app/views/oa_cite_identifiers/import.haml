@@ -1,4 +1,4 @@
-= form_for :publication, Publication.new, :url => { :controller => "cite_publications", :action => "create_from_linked_urn" } do |f|
+= form_for Publication.new, :url => { :controller => "cite_publications", :action => "create_from_linked_urn" } do |f|
   = f.error_messages
   %br
   %h2 Import Annotations from a Google Spreadsheet

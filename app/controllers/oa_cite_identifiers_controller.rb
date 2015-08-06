@@ -15,7 +15,7 @@ class OaCiteIdentifiersController < IdentifiersController
 
   def edit
     find_publication_and_identifier
-    redirect_to polymorphic_path([@publication],:action => :show)
+    redirect_to @publication
   end
 
   def editxml
