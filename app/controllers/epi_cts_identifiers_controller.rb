@@ -80,7 +80,14 @@ class EpiCtsIdentifiersController < IdentifiersController
   
   def link_translation
     find_identifier
-    render(:template => 'epi_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'epi_trans_cts_identifiers',:publication_id => @identifier.publication.id, :emend => :showemend})
+    render  "epi_trans_cts_identifiers/create",
+     :action => "create",
+     :locals => {
+     :edition => @identifier.urn_attribute,
+     :collection => @identifier.inventory,
+     :publication_id => @identifier.publication.id, 
+     :controller_name => 'epi_trans_cts_identifiers',
+     :emend => :showemend } and return
   end
    
   def link_citation
