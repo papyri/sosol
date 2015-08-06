@@ -401,7 +401,7 @@ Sosol::Application.routes.draw do
       post :edit_or_create 
       post :append 
       post :delete_annotation 
-      post :update_from_agent
+      put :update_from_agent
       get :convert
       get :rename_review 
     end
