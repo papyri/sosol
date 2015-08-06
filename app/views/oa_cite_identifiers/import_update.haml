@@ -1,4 +1,4 @@
-= form_for :identifier, @identifier, :url => { :controller => "oa_cite_identifiers", :action => "update_from_agent" } do |f|
+= form_for @identifier, :url => { :controller => "oa_cite_identifiers", :action => "update_from_agent" } do |f|
   = f.error_messages
   %br
   %h2 Update Annotations from a Google Spreadsheet
