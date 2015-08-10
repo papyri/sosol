@@ -38,9 +38,9 @@ class OaCiteIdentifiersController < IdentifiersController
       end
       flash[:notice] = "File updated."
       expire_publication_cache
-      redirect_to polymorphic_path([@identifier.publication],:action => :show) and return
+      redirect_to @identifier.publication and return
     rescue Exception => import_error
-      flash.now[:error] = import_error.to_str + ". This file was NOT UPDATED."
+      flash.now[:error] = "#{import_error}. This file was NOT UPDATED."
       render :template => 'oa_cite_identifiers/import_update'
     end
   end
@@ -132,3 +132,4 @@ class OaCiteIdentifiersController < IdentifiersController
     end
   
 end
+

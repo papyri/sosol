@@ -1,3 +1,4 @@
+#encoding "utf-8"
 class OaCiteIdentifier < CiteIdentifier   
   include OacHelper
 
