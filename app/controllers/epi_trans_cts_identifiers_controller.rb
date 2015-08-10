@@ -105,7 +105,14 @@ class EpiTransCtsIdentifiersController < IdentifiersController
             flash[:error] += "<li>" + conf_id.name.to_s + ":" + conf_id.publication.status + "</li>"
           end
         end
-        render(:template => 'epi_trans_cts_identifiers/create',:locals => {:edition => params[:CTSIdentifierEditionSelect],:collection => collection,:controller => 'epi_trans_cts_identifiers',:publication_id => params[:publication_id], :emend => :showemend})
+        render  "epi_trans_cts_identifiers/create",
+          :locals => {
+            :edition => params[:CTSIdentifierEditionSelect],
+            :controller_name => 'epi_trans_cts_identifiers',
+            :collection => collection,
+            :publication_id => params[:publication_id], 
+            :emend => :showemend}
+
         return
       end
       begin
@@ -129,7 +136,6 @@ class EpiTransCtsIdentifiersController < IdentifiersController
                        :version_id => @identifier.name,
                        :collection => @identifier.inventory,
                        :citeinfo => @identifier.related_inventory.parse_inventory(@identifier.urn_attribute),
-                       :controller => 'citation_cts_identifiers',
                        :publication_id => @identifier.publication.id, 
                        :pubtype => 'translation'})
   end
