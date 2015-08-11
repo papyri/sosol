@@ -23,7 +23,7 @@ class DmmApiController < ApplicationController
     begin
       # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
       
-      params[:raw_post] = request.raw_post
+      params[:raw_post] = request.raw_post.force_encoding("UTF-8")
       unless (params[:comment]) 
         params[:comment] = "create_from_api"
       end
@@ -97,7 +97,7 @@ class DmmApiController < ApplicationController
 
   def api_item_append
      # add the raw post to the session
-    params[:raw_post] = request.raw_post
+    params[:raw_post] = request.raw_post.force_encoding("UTF-8")
     unless (params[:comment]) 
       params[:comment] = "append_from_api"
     end
@@ -129,7 +129,7 @@ class DmmApiController < ApplicationController
   def api_item_patch
     identifier_class = nil
     # add the raw post to the session
-    params[:raw_post] = request.raw_post
+    params[:raw_post] = request.raw_post.force_encoding("UTF-8")
     unless (params[:comment]) 
       params[:comment] = "update_from_api"
     end
