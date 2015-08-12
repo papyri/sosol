@@ -61,6 +61,15 @@ class TreebankCiteIdentifiersController < IdentifiersController
     end  
 
   def compare_link
+    return []
+
+    # this is just too inefficient -- can't require a retrieval and parsing
+    # of all treebank files in all possible relevant branches in order
+    # to provide this functionality. We need to either have a property
+    # in the mysql db on the identifier that allows us to make this 
+    # determination efficiently or we need to hand it off to an external
+    # service to manage for us
+
     matching_files = {}
     if @identifier.publication.origin.owner_id != @current_user.id
       compare = Tools::Manager.link_to('review_service',@identifier.class.to_s,:review,[@identifier])
