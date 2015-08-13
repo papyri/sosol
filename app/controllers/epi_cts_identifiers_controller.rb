@@ -2,6 +2,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update, :updatexml]
+  before_filter :clear_cache, :only => [:update, :updatexml]
 
   # GET /publications/1/epi_cts_identifiers/1/edit
   # - Edit Text redirects to EditXML
@@ -276,5 +277,11 @@ class EpiCtsIdentifiersController < IdentifiersController
     def find_publication_and_identifier
       @publication = Publication.find(params[:publication_id].to_s)
       find_identifier
+    end
+
+    # it would be better to configure this on the cache store directly
+    # but since we're using a file based store we clear it explicitly
+    def clear_cache
+      @identifier.clear_cache
     end
 end

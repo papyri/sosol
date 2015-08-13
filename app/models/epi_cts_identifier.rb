@@ -217,6 +217,7 @@ class EpiCTSIdentifier < CTSIdentifier
   # there
   def clear_cache
     Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/agent")
+    super()
   end
 
   # check to see if we have a registered distributor agent, and if so

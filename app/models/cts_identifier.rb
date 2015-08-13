@@ -218,14 +218,30 @@ class CTSIdentifier < Identifier
   
   # Checks to see if we can retrieve any valid citations from this text
   def has_valid_reffs?
-    uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
-    if self.related_inventory.nil?
-      return false
+    # we want to cache this call because (1) it's not likely to change often 
+    # and (2) as we may call it in a request that subsequently retrieves the
+    # document for display or editing, it causes a redundant fetch from git
+    # which is especially costly on large files
+    # caching with the publication cache_key ensures that it will be 
+    # re-fetched whenever the document changes
+    Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/validreffs") do
+      uuid = self.publication.id.to_s + self.urn_attribute.gsub(':','_')
+      if self.related_inventory.nil?
+        return false
+      end
+      refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
+      return ! refs.nil? && refs != ''
     end
-    refs = CTS::CTSLib.getValidReffFromRepo(uuid,self.related_inventory.xml_content, self.xml_content, self.urn_attribute,1)
-    return ! refs.nil? && refs != ''
   end
-  
+
+  # now that we cache data, we need to allow for it to be explicitly cleared as
+  # well, although if we used a external cache like memcached it could be handled
+  # there
+  def clear_cache
+    Rails.logger.info("CLEARING VALIDREFFS")
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/validreffs")
+  end
+
   def related_inventory 
     self.publication.identifiers.select{|i| (i.class == CTSInventoryIdentifier)}.last
   end
