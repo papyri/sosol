@@ -2,6 +2,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update, :updatexml, :updatetext]
+  before_filter :clear_cache, :only => [:update, :updatexml, :updatetext]
 
   # require 'xml'
   # require 'xml/xslt'
@@ -218,6 +219,12 @@ class EpiTransCtsIdentifiersController < IdentifiersController
         template = agent[:controllers][method]
       end
       return template
+    end
+
+    # it would be better to configure this on the cache store directly
+    # but since we're using a file based store we clear it explicitly
+    def clear_cache
+      @identifier.clear_cache
     end
     
 end

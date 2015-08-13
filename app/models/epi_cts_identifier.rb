@@ -196,12 +196,27 @@ class EpiCTSIdentifier < CTSIdentifier
   end
 
   def agent
-    xml = REXML::Document.new(content).root
-    agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
-    unless agent.nil?
-      agent = AgentHelper::agent_of(agent.text)
+    # we want to cache this call because (1) it's not likely to change often 
+    # and (2) as we may call it in a request that subsequently retrieves the
+    # document for display or editing, it causes a redundant fetch from git
+    # which is especially costly on large files
+    # caching with the publication cache_key ensures that it will be 
+    # re-fetched whenever the document changes
+    Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/agent") do
+      xml = REXML::Document.new(content).root
+      agent = REXML::XPath.first(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor",{'tei' => 'http://www.tei-c.org/ns/1.0'})
+      unless agent.nil?
+        AgentHelper::agent_of(agent.text)
+      end
     end
-    return agent
+  end
+
+
+  # now that we cache data, we need to allow for it to be explicitly cleared as
+  # well, although if we used a external cache like memcached it could be handled
+  # there
+  def clear_cache
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/agent")
   end
 
   # check to see if we have a registered distributor agent, and if so
