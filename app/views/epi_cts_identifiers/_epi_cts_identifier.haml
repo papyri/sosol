@@ -3,8 +3,7 @@
 - if @identifier.allow_leiden
   = link_to 'Leiden+', leiden_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier)
 = link_to 'Preview', preview_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier)
-- if @identifier.has_valid_reffs? && @identifier.mutable? && @identifier.publication.status != 'finalizing' 
-  = link_to 'Select Passage', link_citation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier) 
 - if @identifier.mutable? && @identifier.publication.status != 'finalizing'
+  = link_to 'Select Passage', link_citation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier) 
   = link_to 'Add Translation', link_translation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier)
 %br
