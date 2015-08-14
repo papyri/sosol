@@ -186,12 +186,14 @@ class EpiCTSIdentifier < CTSIdentifier
   # with a @source attribute set to "leidenplus"
   def allow_leiden
     allow_leiden = false
-    xml = REXML::Document.new(content).root
-    REXML::XPath.each(xml,"/tei:TEI/tei:teiHeader/tei:encodingDesc/tei:editorialDecl/tei:normalization",{'tei' => 'http://www.tei-c.org/ns/1.0'}) { |n|
-      if ! n.attributes['source'].nil? && n.attributes['source'] == 'leidenplus'
-         allow_leiden = true
-      end
-    }
+    # Disabling due to performance concerns and lack of interest.
+    # If feature is desired we need a better way to enable per document
+    #xml = REXML::Document.new(content).root
+    #REXML::XPath.each(xml,"/tei:TEI/tei:teiHeader/tei:encodingDesc/tei:editorialDecl/tei:normalization",{'tei' => 'http://www.tei-c.org/ns/1.0'}) { |n|
+    #  if ! n.attributes['source'].nil? && n.attributes['source'] == 'leidenplus'
+    #     allow_leiden = true
+    #  end
+    #}
     return allow_leiden
   end
 

@@ -58,7 +58,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   end
   
   def related_text
-    self.publication.identifiers.select{|i| (i.class == EpiCTSIdentifier) && !i.is_reprinted?}.last
+    self.publication.identifiers.select{|i| (i.class == EpiCTSIdentifier)}.last
   end
   
   def stub_text_structure(lang,urn)

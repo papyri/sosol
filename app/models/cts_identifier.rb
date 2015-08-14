@@ -127,13 +127,21 @@ class CTSIdentifier < Identifier
   end
   
   def lang
-    return REXML::XPath.first(REXML::Document.new(self.xml_content),
-      "/TEI/text/@xml:lang").to_s
+    # we want to cache this call because (1) it's not likely to change often 
+    # and (2) as we may call it in a request that subsequently retrieves the
+    # document for display or editing, it causes a redundant fetch from git
+    # which is especially costly on large files
+    # caching with the publication cache_key ensures that it will be 
+    # re-fetched whenever the document changes
+    Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/lang") do
+      REXML::XPath.first(REXML::Document.new(self.xml_content),
+        "/TEI/text/@xml:lang").to_s
+    end
   end
   
   def reprinted_in
-    return REXML::XPath.first(REXML::Document.new(self.xml_content),
-      "/TEI/text/body/head/ref[@type='reprint-in']/@n")
+    # checking for reprints is not part of the CTS model
+    nil
   end
   
   def is_reprinted?
