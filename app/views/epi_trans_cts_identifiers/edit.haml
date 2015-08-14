@@ -6,9 +6,9 @@
     = render :partial => 'identifiers/header'
     #edit  
     
+      = link_to 'Show Related Text', @related_text, {:onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe}
       #editing_trans_text_view
-        = @identifier[:text_html_preview].html_safe
-      
+
         = form_for @identifier, :url => { :action => :updatexml } do |f|
           = f.error_messages
 
@@ -25,4 +25,3 @@
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
         
 = javascript_include_tag 'confirm'
-

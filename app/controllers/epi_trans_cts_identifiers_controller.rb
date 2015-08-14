@@ -31,7 +31,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     # find text for preview
     if (@identifier.related_text)
-      @identifier[:text_html_preview] = @identifier.related_text.preview
+      @related_text =  polymorphic_url([@identifier.publication, @identifier.related_text],:action => 'preview')
     end
   end
   
