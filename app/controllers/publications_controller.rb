@@ -493,7 +493,12 @@ class PublicationsController < ApplicationController
       return
     end
     @is_editor_view = true
-    @all_comments, @xml_only_comments = @publication.get_all_comments(@publication.origin.title)
+
+    # hack for performance -- not to merge in master as-is
+    # we need to have each identifier control its capability to 
+    # display comments on the publication overview screen
+    #@all_comments, @xml_only_comments = @publication.get_all_comments(@publication.origin.title)
+    @all_comments, @xml_only_comments = []
 
     @show_submit = allow_submit?
 
