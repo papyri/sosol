@@ -20,7 +20,25 @@ class AjaxProxyController < ApplicationController
     end
 
   end
-  
+
+  def js
+    built_uri = 'http://papyri.info/js/' + params[:query].to_s
+    response = Net::HTTP.get_response(URI("#{built_uri}"))
+    render :js => response.body, :layout => false
+  end
+
+  def css
+    built_uri = 'http://papyri.info/css/' + params[:query].to_s
+    response = Net::HTTP.get_response(URI("#{built_uri}"))
+    render :text => response.body, :content_type => 'text/css', :layout => false
+  end
+
+  def images
+    built_uri = 'http://papyri.info/images/' + params[:query].to_s
+    response = Net::HTTP.get_response(URI("#{built_uri}"))
+    render :text => response.body, :content_type => response['Content-Type'], :layout => false
+  end
+
   # Gets the HTTP response from PN solr query
   def get_bibliography
     searchText = (params[:searchText].to_s)
