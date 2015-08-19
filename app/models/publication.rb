@@ -784,7 +784,11 @@ class Publication < ActiveRecord::Base
     self.remove_finalizer()
     finalizing_publication = copy_to_owner(finalizer)
     # finalizing_publication = clone_to_owner(finalizer)
-    self.flatten_commits(finalizing_publication, finalizer, board_members)
+    approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+    approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+    approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+    approve_members = approve_votes.map {|v| v.user}
+    self.flatten_commits(finalizing_publication, finalizer, approve_members)
 
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
