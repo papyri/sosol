@@ -2,23 +2,7 @@
 
 require 'fileutils'
 require 'jgit_tree'
-
-class Grit::Commit
-  def to_hash
-    return {
-      :id => @id,
-      # Default for this is just first 7 chars
-      # :id_abbrev => id_abbrev,
-      :author_name => @author.name,
-      :author_email => @author.email,
-      :authored_date => @authored_date,
-      :committer_name => @committer.name,
-      :committer_email => @committer.email,
-      :committed_date => @committed_date,
-      :message => @message
-    }
-  end
-end
+require 'shellwords'
 
 class Repository
   attr_reader :master, :path, :repo, :jgit_repo
@@ -42,17 +26,13 @@ class Repository
                         @master_class_path, "#{master.name}.git")
     end
 
-    @canonical = Grit::Repo.new(Sosol::Application.config.canonical_repository)
     if master.nil? || exists?(path)
-      @repo = Grit::Repo.new(path)
-
       begin
         @jgit_repo = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
       rescue Exception => e
         Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
       end
     else
-      @repo = nil
       @jgit_repo = nil
     end
   end
@@ -61,20 +41,33 @@ class Repository
     return @master
   end
 
+  # Returns the appropriate git command prefix for this Repository and its path
+  def git_command_prefix
+    return "git --git-dir=#{Shellwords.escape(self.path)}"
+  end
+
   def exists?(path)
     # master.has_repository?
     File.exists?(path)
   end
 
+  def fork_bare(destination_path)
+    `git clone --bare -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)}`
+  end
+
   def create
     # master.update_attribute :has_repository, true
     # create a git repository
-    @repo ||= @canonical.fork_bare(path)
+    Repository.new.fork_bare(path)
     begin
       @jgit_repo ||= org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
     rescue Exception => e
       Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
     end
+  end
+
+  def repack
+    `#{self.git_command_prefix} repack`
   end
 
   def destroy
@@ -85,16 +78,10 @@ class Repository
     # This will pull in all objects regardless of alternates/shared status.
     # If you delete an alternates-referenced repository without repacking,
     # referenced objects will disappear, possibly making the repo unusable.
-    begin
-      @canonical.git.repack({})
-
-      canon = Repository.new
-      canon.del_alternates(self)
-      `rm -r "#{path}"`
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      self.destroy
-    end
+    canon = Repository.new
+    canon.repack()
+    canon.del_alternates(self)
+    FileUtils.rm_rf(path, :secure => true)
   end
 
   #returns the blob that represents the given file
@@ -136,52 +123,23 @@ class Repository
   end
 
   def get_file_from_branch(file, branch = 'master')
-    blob = get_blob_from_branch(file, branch)
-    return get_blob_data(blob)
-  end
-
-  def get_blob_data(blob)
-    begin
-      # blob.data gets INSANELY slow for large files in a large repo,
-      # this uses @repo.git.show to call a git command instead:
-      #   slower than I would like but still an order of magnitude
-      #   faster (for an example see e.g.
-      #   DDB_EpiDoc_XML/p.mich/p.mich.4.1/p.mich.4.1.224.xml)
-      # data = blob.nil? ? nil : @repo.git.show({}, blob.id.to_s)
-      # BALMAS -> above problem was addressed via a patch to the GRIT modules
-      # should should be okay now to cal blob.data
-      data = blob.nil? ? nil : blob # .data
-      return data
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      get_blob_data(blob)
-    end
-  end
-
-  def get_all_files_from_path_on_branch(path = '', branch = 'master')
-    root_tree = @repo.tree(branch, [path]).contents.first
-    return recurse_git_tree(root_tree, [path])
-  end
-
-  def recurse_git_tree(tree, path)
-    files = []
-    tree.blobs.each do |blob|
-      files << File.join(path, blob.name)
-    end
-    tree.trees.each do |this_tree|
-      path.push(this_tree.name)
-      files += recurse_git_tree(this_tree, path)
-      path.pop
-    end
-    return files
+    return get_blob_from_branch(file, branch)
   end
 
   def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
-    @repo.log(branch, file, {:follow => true, :max_count => limit}).map{|commit| commit.to_hash}
+    `#{git_command_prefix} log -n #{limit} --follow --pretty=format:%s #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}`
+  end
+
+  def get_head(branch)
+    return `#{self.git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}`.chomp
+  end
+
+  def update_ref(branch, sha1)
+    return `#{self.git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}`
   end
 
   def update_master_from_canonical
-    @repo.update_ref('master',@canonical.get_head('master').commit.id)
+    self.update_ref('master',Repository.new.get_head('master'))
   end
 
   def create_branch(name, source_name = 'master', force = false)
@@ -224,47 +182,32 @@ class Repository
     end
   end
 
-  def fetch_objects(other_repo, branch = nil)
-    Rails.logger.debug("fetch_objects: #{other_repo.name}, #{branch}")
-    Rails.logger.debug("Adding remote #{other_repo.name}")
-    self.add_remote(other_repo)
-    Rails.logger.debug("Remote added")
-    begin
-      fetch_command = org.eclipse.jgit.api.Git.new(@jgit_repo).fetch()
-      fetch_command.setRemote(other_repo.name)
-      fetch_command.setThin(false)
-      unless branch.nil?
-        fetch_command.setRefSpecs(org.eclipse.jgit.transport.RefSpec.new("+refs/heads/" + branch + ":" + "refs/remotes/" + other_repo.name + "/" + branch))
-      end
-      Rails.logger.debug("Running fetch")
-      result = fetch_command.call()
-      Rails.logger.debug("Fetch complete")
-      unless branch.nil?
-        update = result.getTrackingRefUpdate("refs/remotes/" + other_repo.name + "/" + branch)
-        if update.nil?
-          Rails.logger.debug("fetch: ref not updated")
-        else
-          Rails.logger.debug("fetch: updated #{update.getRemoteName()} #{update.getOldObjectId()} -> #{update.getNewObjectId()} with result #{update.getResult().toString()}")
-        end
-      end
-    rescue Grit::Git::GitTimeout
-      self.class.increase_timeout
-      fetch_objects(other_repo)
-    rescue Java::OrgEclipseJgitApiErrors::TransportException => e
-      Rails.logger.error("fetch transport exception: #{e.inspect}\n#{e.backtrace.join("\n")}")
-    end
-  end
-
   def name
     return [@master_class_path, @master.name].join('/').tr(' ', '_')
   end
 
+  def alternates_path
+    File.join(self.path,%w{objects info alternates})
+  end
+
+  def alternates
+    if File.exists?(self.alternates_path())
+      return File.readlines(self.alternates_path())
+    else
+      return []
+    end
+  end
+
+  def alternates=(repository_paths)
+    File.write(self.alternates_path, repository_paths.join("\n"))
+  end
+
   def add_alternates(other_repo)
-    @repo.alternates = @repo.alternates() | [ File.join(other_repo.repo.path, "objects") ]
+    self.alternates = self.alternates() | [ File.join(other_repo.path, "objects") ]
   end
 
   def del_alternates(other_repo)
-    @repo.alternates = @repo.alternates() - [ File.join(other_repo.repo.path, "objects") ]
+    self.alternates = self.alternates() - [ File.join(other_repo.path, "objects") ]
   end
 
   def branches
@@ -293,21 +236,6 @@ class Repository
     jgit_tree.add_blob(new_path, file_id.name())
     jgit_tree.del(original_path)
     jgit_tree.commit(comment, actor)
-
-    # index = @repo.index
-    # index.read_tree(branch)
-    # do the rename here, against index.tree
-    # rename is just a simultaneous add/delete
-    # add the new data
-    # index.add(new_path, content)
-    # remove the old path from the tree
-    # index.delete(original_path)
-
-    # index.commit(comment,
-                 # @repo.commits(branch,1), # commit parent,
-                 # actor,
-                 # nil,
-                 # branch)
   end
 
   # Returns a String of the SHA1 of the commit
@@ -333,11 +261,6 @@ class Repository
       Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace.join("\n")}")
       return nil
     end
-  end
-
-  def self.increase_timeout
-    Grit::Git.git_timeout *= 2
-    Rails.logger.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
   end
 
   def safe_repo_name(name)

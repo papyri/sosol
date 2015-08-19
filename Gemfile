@@ -31,7 +31,6 @@ gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '>= 3.0.5'
-gem 'grit', '~> 2.4.0'
 gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
 gem 'prototype-rails'
 gem 'dynamic_form'

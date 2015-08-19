@@ -659,7 +659,11 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    return `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    rev_list = `#{self.repository.git_command_prefix} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    unless $?.success?
+      raise "git rev-list failure in Publication#creator_commits: #{$?.inspect}"
+    end
+    return rev_list
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
@@ -684,21 +688,16 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = self.creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      begin
-        controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
-      rescue Grit::Git::GitTimeout
-        Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
-        controlled_commit_diffs = ['timeout']
-      end
-      controlled_commit_diffs.length > 0
+      commit_touches_path = `#{self.repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map{|p| Shellwords.escape(p)}.join(" ")}`
+      !commit_touches_path.blank?
     end
 
     Rails.logger.info("Controlled Commits: #{controlled_commits.inspect}")
 
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = self.repository.repo.commit(controlled_commit).message.strip
-      unless message.empty?
+      message = `#{self.repository.git_command_prefix} log -1 --pretty=format:%s #{controlled_commit}`.strip
+      unless message.blank?
         creator_commit_messages << " - #{message}"
       end
     end
@@ -723,7 +722,7 @@ class Publication < ActiveRecord::Base
 
     # parent commit should ALWAYS be canonical master head
     # FIXME: handle racing during finalization
-    parent_commit = Repository.new.repo.get_head('master').commit.sha
+    parent_commit = Repository.new.get_head('master')
 
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
@@ -866,7 +865,11 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
+    merge_base_backticks = `#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}`.chomp
+    unless $?.success?
+      raise "git merge-base failure: #{$?.inspect}"
+    end
+    return merge_base_backticks
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
@@ -938,36 +941,7 @@ class Publication < ActiveRecord::Base
 
     jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
-      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-     #  origin_index = self.origin.owner.repository.repo.index
-     #  origin_index.read_tree('master')
-
-     #  Rails.logger.debug "=======orign INDEX before add========"
-     #  Rails.logger.debug origin_index.inspect
-
-
-     #  #add the controlled paths to the index
-     #  controlled_paths_blobs.each_pair do |path, blob|
-     #     origin_index.add(path, blob.data)
-     #     Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-     #  end
-
-     #  #need to add exiting tree to index, except for controlled blobs
-     #  uncontrolled_paths_blobs.each_pair do |path, blob|
-     #      origin_index.add(path, blob.data)
-     #      Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-     #  end
-
-
-     #  Rails.logger.debug "=======orign INDEX after add========"
-     #  Rails.logger.debug origin_index.inspect
-
-     # #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-     #  origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
-
-     #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-
-      self.origin.save
+    self.origin.save
   end
 
 
@@ -977,7 +951,7 @@ class Publication < ActiveRecord::Base
 
     canon = Repository.new
     publication_sha = self.head
-    canonical_sha = canon.repo.get_head('master').commit.sha
+    canonical_sha = canon.get_head('master')
 
     if canon_controlled_identifiers.length > 0
       if self.merge_base(canonical_sha) == canonical_sha
@@ -985,7 +959,7 @@ class Publication < ActiveRecord::Base
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', publication_sha)
+        commit_sha = canon.update_ref('master', publication_sha)
 
         self.change_status('committed')
         self.save!
@@ -1003,7 +977,10 @@ class Publication < ActiveRecord::Base
 
         Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
         Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-
+        
+        # roll a tree SHA1 by reading the canonical master tree,
+        # adding controlled path blobs, then writing the modified tree
+        # (happens on the finalizer's repo)
         self.owner.repository.update_master_from_canonical
         jgit_tree = JGit::JGitTree.new()
         jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
@@ -1017,18 +994,7 @@ class Publication < ActiveRecord::Base
         inserter.flush()
 
         tree_sha1 = jgit_tree.update_sha
-
-        # roll a tree SHA1 by reading the canonical master tree,
-        # adding controlled path blobs, then writing the modified tree
-        # (happens on the finalizer's repo)
-        #self.owner.repository.update_master_from_canonical
-        #index = self.owner.repository.repo.index
-        #index.read_tree('master')
-        #controlled_paths_blobs.each_pair do |path, blob|
-        #  index.add(path, blob)
-        #end
-
-        #tree_sha1 = index.write_tree(index.tree, index.current_tree)
+       
         Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
         commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
@@ -1050,27 +1016,25 @@ class Publication < ActiveRecord::Base
         Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
 
         # Update our own head first
-        self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
+        self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
 
         # canon.fetch_objects(self.owner.repository)
         canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
+        commit_sha = canon.update_ref('master', finalized_commit_sha1)
 
         self.change_status('committed')
         self.save!
       end
 
       # finalized, try to repack
-      begin
-        canon.repo.git.repack({})
-      rescue Grit::Git::GitTimeout
-        Rails.logger.warn("Canonical repository not repacked after finalization!")
+      canon.repack
+      unless $?.success?
+        Rails.logger.warn("Canonical repack failed after finalizing publication #{self.origin.id.to_s} (#{self.title})")
       end
     else
       # nothing under canon control, just say it's committed
       self.change_status('committed')
       self.save!
-
     end
     return commit_sha
   end
@@ -1122,11 +1086,8 @@ class Publication < ActiveRecord::Base
 
   def diff_from_canon
     canon = Repository.new
-    canonical_sha = canon.repo.get_head('master').commit.sha
+    canonical_sha = canon.get_head('master')
     diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
-    # diff = self.owner.repository.repo.git.diff(
-      # {:unified => 5000, :timeout => false}, canonical_sha, self.head,
-      # '--', *(self.controlled_paths))
     return diff || ""
   end
 

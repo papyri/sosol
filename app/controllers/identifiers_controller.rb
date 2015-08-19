@@ -120,7 +120,6 @@ class IdentifiersController < ApplicationController
     @next_commit = commit_index < (@identifier.get_commits.length - 1) ? @identifier.get_commits()[commit_index+1] : nil
     
     @diff = `git --git-dir="#{@identifier.owner.repository.path}" diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]} -- "#{@identifier.to_path}"`
-    # @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id],"--",@identifier.to_path)
     if @diff.blank?
       # empty diff, probably pre-rename; go ahead and show the whole diff
       # TODO: actually track down renames? If an identifier is modified by
@@ -128,7 +127,6 @@ class IdentifiersController < ApplicationController
       # entire (giant) commit. But most of our renames will be from new
       # texts coming in with no prior history.
       @diff = `git --git-dir="#{@identifier.owner.repository.path}" diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]}`
-      # @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id])
     end
     Rails.logger.info(@commit.inspect)
     @is_editor_view = true
