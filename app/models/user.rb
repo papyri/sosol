@@ -6,9 +6,9 @@ class User < ActiveRecord::Base
   has_many :user_identifiers, :dependent => :destroy
 
   has_many :communities_members
-  has_many :community_memberships, :class_name => "Community", :foreign_key => "user_id", :through => :communities_members, :source => :user
+  has_many :community_memberships, :through => :communities_members, :source => :community
   has_many :communities_admins
-  has_many :community_admins,  :class_name => "Community", :foreign_key => "user_id", :through => :communities_admins, :source => :user
+  has_many :community_admins,  :through => :communities_admins, :source => :community
 
   has_many :boards_users
   has_many :boards, :through => :boards_users
@@ -138,7 +138,9 @@ class User < ActiveRecord::Base
       stats = ActiveRecord::Base.connection.execute("select p.id AS pub_id, p.title AS pub_title, p.status AS pub_status, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{user_id} ORDER BY c.created_at;")
       stats.each {|row|
         row["created_at"] = DateTime.parse(row["created_at"])
-        row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
+        unless row["comment"].nil?
+          row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
+        end
         }
     end
   end

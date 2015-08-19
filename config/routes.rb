@@ -331,6 +331,9 @@ Sosol::Application.routes.draw do
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/
+  match 'js/:query' => 'ajax_proxy#js', :query => /.*/
+  match 'css/:query' => 'ajax_proxy#css', :query => /.*/
+  match 'images/:query' => 'ajax_proxy#images', :query => /.*/
   match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
   match 'sparql' => 'ajax_proxy#sparql'
