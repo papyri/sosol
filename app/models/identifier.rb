@@ -131,9 +131,9 @@ class Identifier < ActiveRecord::Base
   # Retrieve the commits made to a file in the repository
   # - *Returns* :
   #   - array of commits
-  def get_commits
+  def get_commits(num_commits = 1)
     commit_ids = self.repository.get_log_for_file_from_branch(
-        self.to_path, self.branch, 1
+        self.to_path, self.branch, num_commits
     )
     commits = []
     commit_ids.each do |commit_id|
@@ -154,8 +154,8 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - id of latest commit as a string
   def get_recent_commit_sha
-    commits = get_commits
-    return commits.blank? ? '' : commits
+    commits = get_commits()
+    return commits.blank? ? '' : commits.first[:id]
   end
 
   # Create consistent title for identifiers
