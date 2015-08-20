@@ -15,16 +15,6 @@ class IdentifiersController < ApplicationController
   #   of them with URL's to click to git a 'diff' view of each commit
   def history
     find_identifier
-    @identifier.get_commits
-    @identifier.get_commits.each do |commit|
-      if commit[:message].empty?
-        commit[:message] = '(no commit message)'
-      end
-      commit[:url] = Sosol::Application.config.gitweb_base_url +
-                     ["#{@identifier.publication.owner.repository.path.sub(/^#{Sosol::Application.config.repository_root}/,'db/git')}",
-                      "a=commitdiff",
-                      "h=#{commit[:id]}"].join(';')
-    end
     @is_editor_view = true
     render :template => 'identifiers/history'
   end
@@ -113,11 +103,11 @@ class IdentifiersController < ApplicationController
   # - Show the diff view of a specific get repository commit
   def show_commit
     find_identifier
-    @identifier.get_commits
-    commit_index = @identifier.get_commits.find_index {|c| c[:id] == params[:commit_id].to_s}
-    @commit = @identifier.get_commits()[commit_index]
-    @prev_commit = commit_index > 0 ? @identifier.get_commits()[commit_index-1] : nil
-    @next_commit = commit_index < (@identifier.get_commits.length - 1) ? @identifier.get_commits()[commit_index+1] : nil
+    identifier_commits = @identifier.get_commits(20)
+    commit_index = identifier_commits.find_index {|c| c[:id] == params[:commit_id].to_s}
+    @commit = identifier_commits[commit_index]
+    @prev_commit = commit_index > 0 ? identifier_commits[commit_index-1] : nil
+    @next_commit = commit_index < (identifier_commits.length - 1) ? identifier_commits[commit_index+1] : nil
     
     @diff = `git --git-dir="#{@identifier.owner.repository.path}" diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]} -- "#{@identifier.to_path}"`
     if @diff.blank?

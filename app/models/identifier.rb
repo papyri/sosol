@@ -131,18 +131,31 @@ class Identifier < ActiveRecord::Base
   # Retrieve the commits made to a file in the repository
   # - *Returns* :
   #   - array of commits
-  def get_commits
-    self.repository.get_log_for_file_from_branch(
-        self.to_path, self.branch, 1
+  def get_commits(num_commits = 1)
+    commit_ids = self.repository.get_log_for_file_from_branch(
+        self.to_path, self.branch, num_commits
     )
+    commits = []
+    commit_ids.each do |commit_id|
+      commit = {}
+      commit[:id] = commit_id
+      commit_data = `#{self.repository.git_command_prefix} log -n 1 --pretty=format:"%s%n%an%n%cn%n%at%n%ct" #{commit_id}`.split("\n")
+      Rails.logger.info("COMMIT_DATA:\n#{commit_data}")
+      commit[:message], commit[:author_name], commit[:committer_name], commit[:authored_date], commit[:committed_date] = commit_data
+      commit[:message] = commit[:message].empty? ? '(no commit message)' : commit[:message]
+      commit[:authored_date] = Time.at(commit[:authored_date].to_i)
+      commit[:committed_date] = Time.at(commit[:committed_date].to_i)
+      commits << commit
+    end
+    return commits
   end
 
   # Parse out most recent sha from log
   # - *Returns* :
   #   - id of latest commit as a string
   def get_recent_commit_sha
-    commits = get_commits
-    return commits.blank? ? '' : commits
+    commits = get_commits()
+    return commits.blank? ? '' : commits.first[:id]
   end
 
   # Create consistent title for identifiers
