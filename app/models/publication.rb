@@ -574,16 +574,19 @@ class Publication < ActiveRecord::Base
 
     #check that we are still taking votes
     if self.status != "voting"
+      Rails.logger.warn("Publication#tally_votes for #{self.id} does not have status 'voting'")
       return "" #return nothing and do nothing since the voting is now over
     end
 
     #need to tally votes and see if any action will take place
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      Rails.logger.warn("Publication#tally_votes for #{self.id} not owned by a Board")
       return "" #another check to make sure only the board is voting on its copy
     else
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
 
+    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
