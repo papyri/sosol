@@ -118,6 +118,7 @@ class Board < ActiveRecord::Base
     
     self.decrees.each do |decree|
       if decree.perform_action?(votes)
+        Rails.logger.info("Board#tally_votes success on Board: #{self.inspect}\nFor decree: #{decree.inspect}\nWith votes: #{votes.inspect}")
         return decree.action
       end
     end
