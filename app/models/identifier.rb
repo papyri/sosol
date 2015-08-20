@@ -132,9 +132,21 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - array of commits
   def get_commits
-    self.repository.get_log_for_file_from_branch(
+    commit_ids = self.repository.get_log_for_file_from_branch(
         self.to_path, self.branch, 1
     )
+    commits = []
+    commit_ids.each do |commit_id|
+      commit = {}
+      commit[:id] = commit_id
+      commit_data = `#{self.repository.git_command_prefix} log -n 1 --pretty=format:"%s%n%an%n%cn%n%at%n%ct" #{commit_id}`.split("\n")
+      Rails.logger.info("COMMIT_DATA:\n#{commit_data}")
+      commit[:message], commit[:author_name], commit[:committer_name], commit[:authored_date], commit[:committed_date] = commit_data
+      commit[:authored_date] = Time.at(commit[:authored_date].to_i)
+      commit[:committed_date] = Time.at(commit[:committed_date].to_i)
+      commits << commit
+    end
+    return commits
   end
 
   # Parse out most recent sha from log

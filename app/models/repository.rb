@@ -127,7 +127,7 @@ class Repository
   end
 
   def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
-    `#{git_command_prefix} log -n #{limit} --follow --pretty=format:%s #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}`
+    `#{git_command_prefix} log -n #{limit} --follow --pretty=format:%H #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}`.split("\n")
   end
 
   def get_head(branch)
