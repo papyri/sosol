@@ -142,6 +142,7 @@ class Identifier < ActiveRecord::Base
       commit_data = `#{self.repository.git_command_prefix} log -n 1 --pretty=format:"%s%n%an%n%cn%n%at%n%ct" #{commit_id}`.split("\n")
       Rails.logger.info("COMMIT_DATA:\n#{commit_data}")
       commit[:message], commit[:author_name], commit[:committer_name], commit[:authored_date], commit[:committed_date] = commit_data
+      commit[:message] = commit[:message].empty? ? '(no commit message)' : commit[:message]
       commit[:authored_date] = Time.at(commit[:authored_date].to_i)
       commit[:committed_date] = Time.at(commit[:committed_date].to_i)
       commits << commit

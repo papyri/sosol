@@ -15,11 +15,6 @@ class IdentifiersController < ApplicationController
   #   of them with URL's to click to git a 'diff' view of each commit
   def history
     find_identifier
-    @identifier.get_commits.each do |commit|
-      if commit[:message].empty?
-        commit[:message] = '(no commit message)'
-      end
-    end
     @is_editor_view = true
     render :template => 'identifiers/history'
   end
