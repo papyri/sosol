@@ -351,6 +351,7 @@ Sosol::Application.routes.draw do
     get :api_get
     post :api_update 
     get :edit_title
+    get :compare
     put :update_title
     end
     end

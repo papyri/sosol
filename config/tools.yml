@@ -110,7 +110,7 @@ development:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
@@ -380,7 +380,7 @@ production:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'gold'
@@ -498,7 +498,7 @@ staging:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'gold'

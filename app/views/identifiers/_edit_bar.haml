@@ -82,10 +82,9 @@
               %li{ :class => %w{edit commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => %w{editxml}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit XML', polymorphic_path([:editxml,@identifier.publication, @identifier])
               %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
-              -if @identifier[:compare]
-                - @identifier[:compare].each do |c|
-                  %li{ :class => ''}
-                    = link_to c[:text], c[:href], html_options = {'target' => c[:target], 'title' => c[:title]} 
+              -if @can_compare
+                %li{ :class => ''}
+                  = link_to 'Compare', polymorphic_path([:compare,@identifier.publication, @identifier])
               %li{ :class => params[:action] == ''}= link_to 'Change Title', polymorphic_path([@identifier.publication, @identifier], :action => :edit_title)
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])

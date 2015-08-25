@@ -30,13 +30,12 @@ class TreebankCiteIdentifiersController < IdentifiersController
   def edit
     find_identifier
     @identifier[:list] = @identifier.edit(parameters = params)
-    @identifier[:compare] = compare_link
+    @can_compare = true
   end
   
    def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
-    @identifier[:compare] = compare_link
     @is_editor_view = true
     render :template => 'treebank_cite_identifiers/editxml'
   end
@@ -44,26 +43,12 @@ class TreebankCiteIdentifiersController < IdentifiersController
   def preview
     find_identifier
     @identifier[:html_preview] = @identifier.preview(parameters = params)
+    @can_compare = true
   end
 
-  protected
-    def find_identifier
-      @identifier = TreebankCiteIdentifier.find(params[:id].to_s)
-    end
-  
-    def find_publication_and_identifier
-      @publication = Publication.find(params[:publication_id].to_s)
-      find_identifier
-    end
-    
-     def find_publication
-      @publication = Publication.find(params[:publication_id].to_s)
-    end  
-
-  def compare_link
-    return []
-
-    # this is just too inefficient -- can't require a retrieval and parsing
+  def compare
+    find_identifier
+    # this is too inefficient -- can't require a retrieval and parsing
     # of all treebank files in all possible relevant branches in order
     # to provide this functionality. We need to either have a property
     # in the mysql db on the identifier that allows us to make this 
@@ -87,7 +72,7 @@ class TreebankCiteIdentifiersController < IdentifiersController
         end
       end
     end
-    compare_sets = []
+    @compare_list = []
     if (compare && matching_files.keys.length > 0)
       matching_files.keys.each do |s|
         if matching_files[s].length > 0
@@ -95,11 +80,26 @@ class TreebankCiteIdentifiersController < IdentifiersController
           this_set[:title] = "#{s} files"
           matching_files[s].each do |f|
             this_set[:href] += "&#{this_set[:replace_param]}=#{f.id.to_s}"
+            this_set[:text] += " #{f.name} "
           end
-          compare_sets << this_set
+          @compare_list << this_set
         end
       end
-      compare_sets
     end
   end
+
+  protected
+    def find_identifier
+      @identifier = TreebankCiteIdentifier.find(params[:id].to_s)
+    end
+  
+    def find_publication_and_identifier
+      @publication = Publication.find(params[:publication_id].to_s)
+      find_identifier
+    end
+    
+     def find_publication
+      @publication = Publication.find(params[:publication_id].to_s)
+    end  
+
 end
