@@ -498,22 +498,63 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
   
   def get_editor_agent
-    parser = self.xml_parser 
-    t = parser.parseroot
-    tool = 'arethusa'
-    begin
-      parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
-        tool_uri = a_agent.text
-        agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
-        unless (agent.nil?)
-          tool = agent
-          break;
+    # we want to cache this call because (1) it's not likely to change often 
+    # and (2) as we may call it in a request that subsequently retrieves the
+    # document for display or editing, it causes a redundant fetch from git
+    # which is especially costly on large files
+    # caching with the publication cache_key ensures that it will be 
+    # re-fetched whenever the document changes
+    Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/editor_agent") do
+      parser = self.xml_parser 
+      t = parser.parseroot
+      tool = 'arethusa'
+      begin
+        parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
+          tool_uri = a_agent.text
+          agent = Tools::Manager.tool_for_agent('treebank_editor',tool_uri)
+          unless (agent.nil?)
+            tool = agent
+            break;
+          end
+        end
+      rescue Exception => a_e
+        Rails.logger.error(a_e.backtrace)
+      end
+      tool
+     end
+  end
+
+  # checks the treebank file to see if a comment indicates
+  # that a gold standard is available and if so returns
+  # the review tool configured for the annotation environment
+  def get_reviewer_agent
+    # we want to cache this call because (1) it's not likely to change often 
+    # and (2) as we may call it in a request that subsequently retrieves the
+    # document for display or editing, it causes a redundant fetch from git
+    # which is especially costly on large files
+    # caching with the publication cache_key ensures that it will be 
+    # re-fetched whenever the document changes
+    Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/reviewer_agent") do
+      parser = self.xml_parser 
+      t = parser.parseroot
+      tool = nil
+      gold = parser.first(t,"/treebank/comment[@class='gold']")
+      if gold && gold.text
+        begin
+          parser.all(t, "/treebank/annotator/uri").each do |a_agent| 
+            tool_uri = a_agent.text
+            agent = Tools::Manager.tool_for_agent('treebank_reviewer',tool_uri)
+            unless (agent.nil?)
+              tool = agent
+              break;
+            end
+          end
+        rescue Exception => a_e
+          Rails.logger.error(a_e.backtrace)
         end
       end
-    rescue Exception => a_e
-      Rails.logger.error(a_e.backtrace)
+      tool
     end
-    return tool
   end
   
   # preview 
@@ -551,7 +592,24 @@ class TreebankCiteIdentifier < CiteIdentifier
         :target => tool_link[:target],
         :tool_url => tool_link[:href])
   end
-  
+
+  # present a review display
+  # outputs the sentence list with sentenced linked to editor in review mode
+  def review parameters = {}, xsl = nil
+    tool = self.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_reviewer',tool,:review,[self])
+    parameters[:s] ||= 1
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
+        :title => self.title,
+        :doc_id => self.id,
+        :max => 50, # TODO - make max sentences configurable
+        :s => parameters[:s],
+        :target => tool_link[:target],
+        :tool_url => tool_link[:href])
+ end 
   
   # need to update the uris to reflect the new name
   def after_rename(options = {})
@@ -616,4 +674,14 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     return parsed_targets.uniq
   end
+
+  # now that we cache data, we need to allow for it to be explicitly cleared as
+  # well, although if we used a external cache like memcached it could be handled
+  # there
+  def clear_cache
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/reviewer_agent")
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/editor_agent")
+    super()
+  end
+
 end

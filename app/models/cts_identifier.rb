@@ -246,7 +246,6 @@ class CTSIdentifier < Identifier
   # well, although if we used a external cache like memcached it could be handled
   # there
   def clear_cache
-    Rails.logger.info("CLEARING VALIDREFFS")
     Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/validreffs")
   end
 

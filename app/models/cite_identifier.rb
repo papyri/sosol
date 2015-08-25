@@ -378,6 +378,10 @@ class CiteIdentifier < Identifier
       self.urn_attribute.sub(IDENTIFIER_PREFIX,'').gsub(/:/,'-') + ".xml"
     end
 
+  def clear_cache
+    # no op
+    # override in sub classes
+  end
 end
 
 
