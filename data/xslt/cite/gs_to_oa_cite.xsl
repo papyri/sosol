@@ -7,6 +7,7 @@
     xmlns:cnt="http://www.w3.org/2011/content#"
     xmlns:dcmit="http://purl.org/dc/dcmitype/"
     xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:oa="http://www.w3.org/ns/oa#"
     xmlns:perseus="http://data.perseus.org/"
     xmlns:lawd="http://lawd.info/ontology/"
@@ -55,14 +56,12 @@
             <xsl:if test="gsx:person/text() != ''">
                 <xsl:call-template name="make_person_annotation"/>    
             </xsl:if>
+            <xsl:if test="gsx:description/text() != ''">
+                <xsl:call-template name="make_text_annotation"/>
+            </xsl:if>
             <xsl:if test="gsx:resourcelink/text() != ''">
               <xsl:for-each select="tokenize(normalize-space(gsx:resourcelink),' ')">
                    <xsl:call-template name="make_resource_annotation"></xsl:call-template>
-                </xsl:for-each>
-            </xsl:if>
-            <xsl:if test="gsx:media/text() != ''">
-                <xsl:for-each select="tokenize(normalize-space(gsx:media),' ')">
-                    <xsl:call-template name="make_image_annotation"></xsl:call-template>
                 </xsl:for-each>
             </xsl:if>
             <xsl:if test="gsx:hypothesislink/text() != ''">
@@ -95,9 +94,10 @@
         <xsl:variable name="updated"><xsl:value-of select="atom:updated"/></xsl:variable>
         <xsl:variable name="orig_target">
             <xsl:choose>
-                <xsl:when test="gsx:webpage"><xsl:value-of select="gsx:webpage/text()"/></xsl:when>
+                <xsl:when test="gsx:webpage/text() != ''"><xsl:value-of select="gsx:webpage/text()"/></xsl:when>
                 <xsl:when test="gsx:sourcedocument"><xsl:value-of select="gsx:sourcedocument/text()"/></xsl:when>
                 <xsl:when test="gsx:hero"><xsl:value-of select="gsx:hero/text()"/></xsl:when>
+                <xsl:when test="gsx:media/text() != ''"><xsl:value-of select="normalize-space(gsx:media/text())"/></xsl:when>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="expanded_target">
@@ -108,7 +108,6 @@
         </xsl:variable>
         <xsl:for-each select="$annotations/*">
             <xsl:variable name="id" select="position()"/>
-            <xsl:message><xsl:value-of select="$id"/><xsl:copy-of select="."></xsl:copy-of></xsl:message>
             <oa:Annotation rdf:about="{concat($e_baseAnnotUri,'#',$index,'-',$id)}">
                 <dcterms:source rdf:resource="{$sourceid}"/>
                 <xsl:copy-of select="$title"/>
@@ -142,6 +141,9 @@
                                 <xsl:copy-of select="body/tag/*"/>    
                             </oa:Tag>
                         </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:copy-of select="body/*"/>
+                        </xsl:otherwise>
                     </xsl:choose>
                 </oa:hasBody>
                 <oa:annotatedAt><xsl:value-of select="$updated"/></oa:annotatedAt>
@@ -163,6 +165,19 @@
         <dcterms:title><xsl:copy-of select="normalize-space(text())"/></dcterms:title>
     </xsl:template>
     
+    <xsl:template name="make_text_annotation">
+        <annotation>
+            <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#describing"/>
+            <body>
+              <cnt:ContentAstext>
+              <cnt:chars>
+                <xsl:apply-templates select="gsx:description"/>
+              </cnt:chars>
+              <dc:format>text/plain</dc:format>
+              </cnt:ContentAstext>    
+            </body>
+        </annotation>
+    </xsl:template>
     <xsl:template name="make_date_annotation">
         <xsl:variable name="start"><xsl:apply-templates select="gsx:start"/></xsl:variable>
         <xsl:variable name="end"><xsl:apply-templates select="gsx:end"/></xsl:variable>
@@ -412,5 +427,9 @@
     
     <xsl:template match="gsx:shortdescription">
         <xsl:value-of select="."></xsl:value-of>
+    </xsl:template>
+    
+    <xsl:template match="gsx:description">
+        <xsl:value-of select="normalize-space(.)"></xsl:value-of>
     </xsl:template>
 </xsl:stylesheet>
