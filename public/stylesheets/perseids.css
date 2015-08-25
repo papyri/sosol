@@ -313,6 +313,8 @@ div.nav {
   margin: 0 2px;
   cursor: pointer;
   padding: 2px;
+  height: 60px;
+  width: 120px;
 }
 #shib_login #shib_or_idp {
   font-style: italic;
