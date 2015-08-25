@@ -46,7 +46,7 @@ class OaCiteIdentifier < CiteIdentifier
     return temp_id
   end
   
-  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
+  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
     # TODO prov tracking of annotations
     # this is a no-op because change desc is not added to this file
     # need to override to ensure consistent formatting of XML for all commits

@@ -277,7 +277,7 @@ class CiteIdentifier < Identifier
     return  object_path + citeurn.getVersion() 
   end
   
-   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil)
+  def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
     # default for CITE identifiers a no-op
     self.content
    end
