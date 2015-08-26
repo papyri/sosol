@@ -1,39 +1,39 @@
 #main
 
   #usage_stats
-    - user = @current_user
-    %h2= user.human_name
-    - if user.affiliation
-      %h3= user.affiliation
-    %br
-    Member since #{user.created_at.to_date.to_s(:long_ordinal)}
-    - if user.boards.length > 0
-      %br Member of: #{user.boards.collect{|b| b.friendly_name}.join(', ')}
-    %br
-    = link_to "Usage Stats By User", all_users_links_url
-    %br
-    %br
-    = form_tag :controller => 'user', :action => "refresh_usage" do
-      = label_tag 'date_value', 'Usage for Last', :style => "font-size: medium;"
-      = text_field_tag 'date_value', nil, :maxlength => 3, :size => 2, :style => "font-size: medium;"
-      = select_tag 'date_range', options_for_select({ "Day(s)" => "day", "Month(s)" => "month", "Year(s)" => "year" }), :style => 'min-width: 5em;font-size: medium;'
-      = submit_tag "Get Usage", :disabled => false, :id => 'styled_button', :class => "submit"
-      = hidden_field_tag 'save_user_id', user.id
+    - (@users||[@current_user]).each do |user|
+      %h2= user.human_name
+      - if user.affiliation
+        %h3= user.affiliation
+      %br
+      Member since #{user.created_at.to_date.to_s(:long_ordinal)}
+      - if user.boards.length > 0
+        %br Member of: #{user.boards.collect{|b| b.friendly_name}.join(', ')}
+      %br
+      = link_to "Usage Stats By User", all_users_links_url
+      %br
+      %br
+      = form_tag :controller => 'user', :action => "refresh_usage" do
+        = label_tag 'date_value', 'Usage for Last', :style => "font-size: medium;"
+        = text_field_tag 'date_value', nil, :maxlength => 3, :size => 2, :style => "font-size: medium;"
+        = select_tag 'date_range', options_for_select({ "Day(s)" => "day", "Month(s)" => "month", "Year(s)" => "year" }), :style => 'min-width: 5em;font-size: medium;'
+        = submit_tag "Get Usage", :disabled => false, :id => 'styled_button', :class => "submit"
+        = hidden_field_tag 'save_user_id', user.id
 
-    %br
-    %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
-    - if @votes.length > 0
-      = render :partial => "usage_detail", :locals => { :user => user, :comments => @votes, :type => 'vote'}
+      %br
+      %a{ :href => "#", :onclick => "Effect.toggle('vote_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Votes
+      - if @votes.length > 0
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => @votes, :type => 'vote'}
 
-    %br
-    %a{ :href => "#", :onclick => "Effect.toggle('submission_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Submissions
-    - if @submits.length > 0
-      = render :partial => "usage_detail", :locals => { :user => user, :comments => @submits, :type => 'submission'}
+      %br
+      %a{ :href => "#", :onclick => "Effect.toggle('submission_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Submissions
+      - if @submits.length > 0
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => @submits, :type => 'submission'}
 
-    %br
-    %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
-    - if @finalizings.length > 0
-      = render :partial => "usage_detail", :locals => { :user => user, :comments => @finalizings, :type => 'final'}
+      %br
+      %a{ :href => "#", :onclick => "Effect.toggle('final_list_#{user.id}', 'blind'); return false;", :class => "headinglink"} Finalized
+      - if @finalizings.length > 0
+        = render :partial => "usage_detail", :locals => { :user => user, :comments => @finalizings, :type => 'final'}
 
-    %br
-    %br
+      %br
+      %br
