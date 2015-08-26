@@ -67,6 +67,10 @@ class ShibController < ApplicationController
         response.settings = saml_settings(idp)
         if idp && response.is_valid? 
           scoped_targeted_id = response.attributes.single('urn:oid:1.3.6.1.4.1.5923.1.1.1.10')
+          unless scoped_targeted_id
+             flash[:error] = "Missing required attributes from Identity Provider"
+             redirect_to :controller => "signin", :action => "index" and return
+          end
           # TODO use config for targeted id attribute and throw error if nil or blank
           user_identifier = UserIdentifier.find_by_identifier(scoped_targeted_id)
                 
