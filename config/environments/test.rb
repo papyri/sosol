@@ -44,4 +44,6 @@ Sosol::Application.configure do
   config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
   config.canonical_canonical_repository = config.canonical_repository
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
+  # configure email parameters
+  config.site_email_from='admin@localhost'
 end
