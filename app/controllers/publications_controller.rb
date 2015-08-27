@@ -40,9 +40,10 @@ class PublicationsController < ApplicationController
     filename = @publication.creator.name + "_" + file_friendly_name + "_" + Time.now.strftime("%a%d%b%Y_%H%M")
     filename = filename.gsub(/[\\\/:."*?<>|\s]+/, "-") + ".zip"
     #raise filename
-    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+    send_data File.read(t.path), :type => 'application/zip', :filename => filename
 
     t.close
+    t.unlink
   end
 
 
