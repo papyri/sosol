@@ -20,12 +20,12 @@
       - unless prev_commit.nil?
         %li
           prev
-          = link_to prev_commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => prev_commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
+          = link_to prev_commit[0..6], url_for(:action => 'show_commit', :commit_id => prev_commit, :id => identifier.id, :publication_id => identifier.publication.id)
       -# %li
       -#   commit
       -#   = link_to commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
       - unless next_commit.nil?
         %li
           next
-          = link_to next_commit[:id][0..6], url_for(:action => 'show_commit', :commit_id => next_commit[:id], :id => identifier.id, :publication_id => identifier.publication.id)
+          = link_to next_commit[0..6], url_for(:action => 'show_commit', :commit_id => next_commit, :id => identifier.id, :publication_id => identifier.publication.id)
     
