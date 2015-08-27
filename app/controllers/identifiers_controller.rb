@@ -15,7 +15,10 @@ class IdentifiersController < ApplicationController
   #   of them with URL's to click to git a 'diff' view of each commit
   def history
     find_identifier
-    @identifier.get_commits
+    
+    # hack fix this to get 10 commits unti we can merge 
+    # https://github.com/sosol/sosol/issues/81
+    flash[:warning] = "Only last 10 commits shown - bug fix pending."
     @identifier.get_commits.each do |commit|
       if commit[:message].empty?
         commit[:message] = '(no commit message)'
