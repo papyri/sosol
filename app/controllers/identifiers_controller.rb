@@ -16,6 +16,7 @@ class IdentifiersController < ApplicationController
   def history
     find_identifier
     @is_editor_view = true
+    @commits = @identifier.get_commits(20).map{|c| @identifier.commit_id_to_hash(c)}
     render :template => 'identifiers/history'
   end
   
@@ -104,8 +105,8 @@ class IdentifiersController < ApplicationController
   def show_commit
     find_identifier
     identifier_commits = @identifier.get_commits(20)
-    commit_index = identifier_commits.find_index {|c| c[:id] == params[:commit_id].to_s}
-    @commit = identifier_commits[commit_index]
+    commit_index = identifier_commits.find_index {|c| c == params[:commit_id].to_s}
+    @commit = @identifier.commit_id_to_hash(identifier_commits[commit_index])
     @prev_commit = commit_index > 0 ? identifier_commits[commit_index-1] : nil
     @next_commit = commit_index < (identifier_commits.length - 1) ? identifier_commits[commit_index+1] : nil
     
