@@ -1,3 +1,4 @@
+
 class OajCiteIdentifier < CiteIdentifier   
   include OacHelper
   require 'uuid'
@@ -32,7 +33,8 @@ class OajCiteIdentifier < CiteIdentifier
   def self.preprocess(content)
     # make sure it parses - it should raise an error if not
     JSON.parse(content)
-    content
+    # force the content to utf-8
+    content.force_encoding("utf-8")
   end
   
   ## method which checks the cite object for an initialization  value
@@ -42,7 +44,10 @@ class OajCiteIdentifier < CiteIdentifier
   end
   
   def preview parameters = {}, xsl = nil
-    JSON.pretty_generate(JSON.parse(self.content))
+    # it would be nice to force pretty print here
+    # but parsing causes UTF-8 to be escaped and it's a hassle to 
+    # unescape before parsing through pretty_generate
+    self.content
   end
   
   # need to update the uris to reflect the new name
