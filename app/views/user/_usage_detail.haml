@@ -3,7 +3,7 @@
     - comments.each do |comment|
       - if comment['pub_title']
         %span.comment
-          = link_to comment['pub_title'], "publications/#{comment['pub_id']}"
+          = link_to comment['pub_title'], :controller => 'publications', :id => comment['pub_id'], :action => :show
           - case comment['reason']
             - when 'vote'
               = "(" + comment['id_title'] + ")  ".html_safe + "Vote "
