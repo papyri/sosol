@@ -3,9 +3,10 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="xs"
+    xmlns:saxon="http://saxon.sf.net/" 
     version="2.0">
     
-    <xsl:output indent="yes"></xsl:output>
+    <xsl:output indent="yes" method="xml" saxon:suppress-indentation="word"></xsl:output>
     <xsl:param name="clear_relations" select="true()"/>
     
     <!-- between alpheios and arethusa, only arethusa supports blank values for heads, alpheios requires them to be 0 (root) -->
