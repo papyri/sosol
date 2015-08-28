@@ -81,7 +81,8 @@
       -# if i am already the finalizer dont show the button
       - finalizer = @publication.find_finalizer_user
       - if !(finalizer && finalizer.id == @current_user.id)
-        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id, :onclick => 'this.disabled=true;return true;' }
+        = form_tag({:controller => 'publications', :action => 'become_finalizer') do
+          = submit_tag "Make me finalizer", :onclick => 'this.disabled=true;this.form.submit();'
     
     %br
     
