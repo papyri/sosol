@@ -9,7 +9,7 @@
       = text_area_tag :comment, '', :class => :comment, :cols => '80', :rows => '5'
       = hidden_field_tag 'identifier_id', @identifier.id
       %br
-      = submit_tag "Finalize", :class => 'save'
+      = submit_tag "Finalize", :onclick => 'this.disabled=true;this.form.submit();', :class => 'save'
 
     %br
     = render :partial => 'common/diff', :object => @diff
