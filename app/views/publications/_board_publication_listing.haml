@@ -67,7 +67,8 @@
               = image_tag("show_more_ids.png", :onclick=>"toggleFinalizer(this, '#{finalizer_div_id}')" )
               -#%div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"showFinalizer(this, '#{finalizer_div_id}',false)"}
               %div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"toggleFinalizer(this, '#{finalizer_div_id}')"}
-                = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id, :onclick => 'this.disabled=true;return true;' }
+                = form_tag({:controller=>'publications', :action=>'become_finalizer', :id=>publication.id}) do
+                  = submit_tag "Make me finalizer", :onclick => 'this.disabled=true;this.form.submit();'
               
           - if list_name == "needs_review" || list_name == "waiting"
             - if publication.votes.count > 0
