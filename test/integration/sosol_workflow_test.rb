@@ -423,6 +423,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         other_finalizer = (@text_board.users - [text_final_publication.owner]).first
         assert_not_equal other_finalizer, text_final_publication.owner, 'Other finalizer should not be current finalizer'
+
+        publication_head_original = text_final_publication.head()
         # do make-me-finalizer now that we've renamed
         open_session do |mmf_session|
           mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
@@ -436,6 +438,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
         text_final_publication = text_publication.find_finalizer_publication
         assert_equal other_finalizer, text_final_publication.owner, 'Other finalizer should be finalizer after make-me-finalizer'
+        assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed then make-me-finalizered"
+        assert_equal publication_head_original, text_final_publication.head(), 'New finalizer publication should have the same commit history as the original'
 
         canonical_before_finalize = Repository.new.get_head('master')
         # actually finalize
