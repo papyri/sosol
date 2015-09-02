@@ -5,8 +5,7 @@
   .site
     = render :partial => 'identifiers/header'
     #edit  
-    
-      = link_to 'Show Related Text', @related_text, {:onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe}
+      = render :partial => 'epi_trans_cts_identifiers/related_items'
       #editing_trans_text_view
 
         = form_for @identifier, :url => { :action => :updatexml } do |f|

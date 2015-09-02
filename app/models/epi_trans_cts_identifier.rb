@@ -56,9 +56,25 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     end
      
   end
-  
+
   def related_text
-    self.publication.identifiers.select{|i| (i.class == EpiCTSIdentifier)}.last
+    self.publication.identifiers.select{|i| (i.class == EpiCTSIdentifier)}.last 
+  end
+  
+  def related_items
+    edition = self.related_text
+    unless edition.nil?
+      [ edition ]
+    else
+      Rails.cache.fetch("#{self.publication.cache_key}/#{self.id}/relateditems") do
+        related_items = []
+        xml = REXML::Document.new(self.content).root
+        REXML::XPath.each(xml,"/tei:TEI/tei:teiHeader/tei:fileDesc/tei:notesStmt/tei:relatedItem[@type='edition']/tei:ptr",{'tei' => 'http://www.tei-c.org/ns/1.0'}) do |e|
+           related_items << e.attributes['target']
+        end
+        related_items
+      end
+    end
   end
   
   def stub_text_structure(lang,urn)
@@ -123,6 +139,11 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
       modified_xml_content
       self.set_xml_content(modified_xml_content, :comment => comment)
     end
+  end
+
+  def clear_cache
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/relateditems")
+    super()
   end
   
 end

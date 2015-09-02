@@ -22,6 +22,7 @@
     <xsl:param name="current_user"/>
     <xsl:param name="filter"/>
     <xsl:param name="lang"/>
+    <xsl:param name="related_item_search" select="'http://search.eagle.research-infrastructures.eu/solr/EMF-index-cleaned/select?q=entitytype:documental AND tmid:&quot;REPLACE_TMID&quot;'"/>
     
     <xsl:include href="eagle-properties.xsl"/>
     
@@ -40,6 +41,20 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="related_items">
+        <xsl:if test="$iteminwiki//property[@id='p3']">
+            <xsl:variable name="searchresults">
+                <xsl:value-of select="doc(replace($related_item_search,'REPLACE_TMID',$iteminwiki//property[@id='p3']//datavalue/@value))/response/result/doc/arr[@name='__result']/str"></xsl:value-of>
+            </xsl:variable>
+            <xsl:if test="$searchresults">
+                <xsl:analyze-string select="$searchresults" 
+                    regex="recordSourceInfo .*?landingPage=&quot;(.*?)&quot;">
+                    <xsl:matching-substring><url><xsl:value-of select="regex-group(1)"/></url></xsl:matching-substring>
+                </xsl:analyze-string>
+            </xsl:if>
+        </xsl:if>
+    </xsl:variable>
+            
     <xsl:variable name="itemstoedit">
         <xsl:choose>
             <xsl:when test="$filter">
@@ -69,6 +84,7 @@
                         <xsl:with-param name="title" select="$iteminwiki//description[@language=$lang]/@value"/>
                         <xsl:with-param name="ctsurn" select="$ctsurn"/>
                         <xsl:with-param name="lang" select="$lang"/>
+                        <xsl:with-param name="related_items" select="$related_items"/>
                     </xsl:call-template>
                     <text xml:lang="{$lang}">
                         <body>
@@ -89,6 +105,7 @@
                             <xsl:with-param name="title" select="$iteminwiki//description[@language=$textlang]/@value"/>
                             <xsl:with-param name="ctsurn" select="$ctsurn"/>
                             <xsl:with-param name="lang" select="$textlang"/>
+                            <xsl:with-param name="related_items" select="$related_items"/>
                         </xsl:call-template>
                         <text xml:lang="{$textlang}">
                             <body>
@@ -111,6 +128,7 @@
         <xsl:param name="lang"/>
         <xsl:param name="ctsurn"/>
         <xsl:param name="default_license" select="'http://creativecommons.org/licenses/by-sa/3.0/'"/>
+        <xsl:param name="related_items"/>
         <!--  TODO verify how licenses are specified per translation (-->        
         <xsl:variable name="license">
             <xsl:choose>
@@ -143,6 +161,15 @@
                         </availability>
                         <distributor><xsl:value-of select="$agent"/></distributor>
                     </publicationStmt>
+                    <xsl:if test="count($related_items/*) > 0">
+                        <notesStmt>
+                            <xsl:for-each select="distinct-values($related_items/url)">
+                                <relatedItem type="edition">
+                                    <ptr target="{.}"/>
+                                </relatedItem>
+                            </xsl:for-each>
+                        </notesStmt>
+                    </xsl:if>
                     <sourceDesc>
                      <xsl:choose>
                          <xsl:when test="$claim//references//property[@id='p54'] or 

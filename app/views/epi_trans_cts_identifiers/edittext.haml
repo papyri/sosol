@@ -8,6 +8,7 @@
   .site
     = render :partial => 'identifiers/header'
     #edit
+      = render :partial => 'epi_trans_cts_identifiers/related_items'
       = form_for @identifier, :url => { :action => :updatetext } do |f|
         = f.error_messages
         %label Translation Text

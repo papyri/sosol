@@ -1,0 +1,4 @@
+- for t in @related_items
+  %p 
+    = link_to "Source: #{t[:text]}", t[:url], {:onclick => "window.open(this.href, 'Perseids Related Text', 'width=800, height=600, scrollbars=yes, resizable=yes'); return false;".html_safe}
+
