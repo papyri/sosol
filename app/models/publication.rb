@@ -828,7 +828,7 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
       new_finalizing_publication.title = old_finalizing_publication.title
-      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.branch = old_finalizing_publication.branch
       new_finalizing_publication.parent = old_finalizing_publication.parent
 
       new_finalizing_publication.save!
