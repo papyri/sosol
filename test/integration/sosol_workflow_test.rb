@@ -289,7 +289,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -302,7 +302,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -400,7 +400,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # try to finalize without rename
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -415,7 +415,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
@@ -425,7 +425,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         # actually finalize now that we've renamed
         open_session do |text_finalize_session|
 
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
