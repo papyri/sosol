@@ -774,7 +774,7 @@ class PublicationsController < ApplicationController
     address = @publication.creator.email
     if address && address.strip != ""
       begin
-        EmailerMailer.deliver_send_withdraw_note(address, @publication.title )
+        EmailerMailer.withdraw_note(address, @publication.title ).deliver
       rescue Exception => e
         Rails.logger.error("Error sending withdraw email: #{e.class.to_s}, #{e.to_s}")
       end
