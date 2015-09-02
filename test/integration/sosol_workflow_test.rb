@@ -402,8 +402,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect
           Rails.logger.debug text_finalize_session.body
-
-          Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
         end
 
         text_final_publication.reload
@@ -418,7 +416,23 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         text_final_publication.reload
         assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
-        # actually finalize now that we've renamed
+        other_finalizer = (@text_board.users - [text_final_publication.owner]).first
+        assert_not_equal other_finalizer, text_final_publication.owner, 'Other finalizer should not be current finalizer'
+        # do make-me-finalizer now that we've renamed
+        open_session do |mmf_session|
+          mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
+          Rails.logger.debug "--MMF flash is: " + mmf_session.flash.inspect
+          Rails.logger.debug "----MMF session data is: " + mmf_session.session.to_hash.inspect
+          Rails.logger.debug mmf_session.body
+        end
+
+        assert_raise ActiveRecord::RecordNotFound, 'Original finalization publication should be destroyed by make-me-finalizer process' do
+          Publication.find(text_final_publication.id)
+        end
+        text_final_publication = text_publication.find_finalizer_publication
+        assert_equal other_finalizer, text_final_publication.owner, 'Other finalizer should be finalizer after make-me-finalizer'
+
+        # actually finalize
         open_session do |text_finalize_session|
 
           text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
@@ -432,7 +446,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
 
         text_final_publication.reload
-        assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
+        assert_equal "finalized", text_final_publication.status, "Text final publication not finalized"
 
         Rails.logger.debug "---Text publication Finalized"
 
