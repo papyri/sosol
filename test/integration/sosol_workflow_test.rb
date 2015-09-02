@@ -104,7 +104,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         #the board memeber
         @meta_board.users << @board_user
-        #@meta_board.users << @board_user_2
 
         #the vote
         @meta_decree = FactoryGirl.create(:count_decree,
@@ -117,6 +116,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @text_board = FactoryGirl.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
+        @text_board.users << @board_user_2
         #the vote
         @text_decree = FactoryGirl.create(:count_decree,
                                           :board => @text_board,
@@ -379,13 +379,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
         Rails.logger.debug "--Text publication approved"
 
-        #now finalizer should have it, only one person on board so it should be them
-        finalizer_publications = @board_user.publications
-        assert_equal 2, finalizer_publications.length, "Finalizer does not have a new (text) publication to finalize"
-
         text_final_publication = text_publication.find_finalizer_publication
 
-        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
+        assert_not_nil text_final_publication, "Publication does not have text finalizer"
         Rails.logger.debug "---Finalizer has text publication"
 
         text_final_identifier = nil
