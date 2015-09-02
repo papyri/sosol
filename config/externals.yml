@@ -11,7 +11,7 @@ data/xslt/epidoc:
 data/xslt/perseus/epidoc:
   :type: subversion
   :repository: https://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt
-  :revision: 2186
+  :revision: 2380
 
 data/xslt/pn/navigator:
   :type: git
