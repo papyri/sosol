@@ -776,26 +776,26 @@ class Publication < ActiveRecord::Base
   #
   def send_to_finalizer(finalizer = nil)
     board_members = self.owner.users
-    if !finalizer
-      #get someone from the board
-#      board_members = self.owner.users
-      # just select a random board member to be the finalizer
+    if finalizer.nil?
+      # select a random board member to be the finalizer
       finalizer = board_members[rand(board_members.length)]
+
+      self.remove_finalizer()
+      finalizing_publication = copy_to_owner(finalizer)
+      # finalizing_publication = clone_to_owner(finalizer)
+      approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+      approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+      approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+      approve_members = approve_votes.map {|v| v.user}
+      self.flatten_commits(finalizing_publication, finalizer, approve_members)
+
+      #should we clear the modified flag so we can tell if the finalizer has done anything
+      # that way we will know in the future if we can change finalizersedidd
+      finalizing_publication.change_status('finalizing')
+      finalizing_publication.save!
+    elsif board_members.include?(finalizer)
+      self.change_finalizer(finalizer)
     end
-
-    self.remove_finalizer()
-    finalizing_publication = copy_to_owner(finalizer)
-    # finalizing_publication = clone_to_owner(finalizer)
-    approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
-    approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
-    approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
-    approve_members = approve_votes.map {|v| v.user}
-    self.flatten_commits(finalizing_publication, finalizer, approve_members)
-
-    #should we clear the modified flag so we can tell if the finalizer has done anything
-    # that way we will know in the future if we can change finalizersedidd
-    finalizing_publication.change_status('finalizing')
-    finalizing_publication.save!
   end
 
   #Destroys this publication's finalizer's copy.
@@ -819,9 +819,7 @@ class Publication < ActiveRecord::Base
     old_finalizing_publication = self.find_finalizer_publication
 
     if old_finalizing_publication.nil?
-      #some kind of error should be thrown?
-      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
-      return false
+      raise("Attempt to change finalizer on nonexistent finalize publication " + self.inspect + " .")
     end
 
     self.transaction do

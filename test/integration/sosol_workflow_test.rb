@@ -104,7 +104,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         #the board memeber
         @meta_board.users << @board_user
-        #@meta_board.users << @board_user_2
 
         #the vote
         @meta_decree = FactoryGirl.create(:count_decree,
@@ -117,6 +116,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @text_board = FactoryGirl.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
+        @text_board.users << @board_user_2
         #the vote
         @text_decree = FactoryGirl.create(:count_decree,
                                           :board => @text_board,
@@ -289,7 +289,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -304,7 +304,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -384,13 +384,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
         Rails.logger.debug "--Text publication approved"
 
-        #now finalizer should have it, only one person on board so it should be them
-        finalizer_publications = @board_user.publications
-        assert_equal 2, finalizer_publications.length, "Finalizer does not have a new (text) publication to finalize"
-
         text_final_publication = text_publication.find_finalizer_publication
 
-        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
+        assert_not_nil text_final_publication, "Publication does not have text finalizer"
         Rails.logger.debug "---Finalizer has text publication"
 
         text_final_identifier = nil
@@ -405,14 +401,12 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # try to finalize without rename
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect
           Rails.logger.debug text_finalize_session.body
-
-          Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
         end
 
         text_final_publication.reload
@@ -420,18 +414,38 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
         text_final_publication.reload
         assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
+        other_finalizer = (@text_board.users - [text_final_publication.owner]).first
+        assert_not_equal other_finalizer, text_final_publication.owner, 'Other finalizer should not be current finalizer'
+
+        publication_head_original = text_final_publication.head()
+        # do make-me-finalizer now that we've renamed
+        open_session do |mmf_session|
+          mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
+          Rails.logger.debug "--MMF flash is: " + mmf_session.flash.inspect
+          Rails.logger.debug "----MMF session data is: " + mmf_session.session.to_hash.inspect
+          Rails.logger.debug mmf_session.body
+        end
+
+        assert_raise ActiveRecord::RecordNotFound, 'Original finalization publication should be destroyed by make-me-finalizer process' do
+          Publication.find(text_final_publication.id)
+        end
+        text_final_publication = text_publication.find_finalizer_publication
+        assert_equal other_finalizer, text_final_publication.owner, 'Other finalizer should be finalizer after make-me-finalizer'
+        assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed then make-me-finalizered"
+        assert_equal publication_head_original, text_final_publication.head(), 'New finalizer publication should have the same commit history as the original'
+
         canonical_before_finalize = Repository.new.get_head('master')
-        # actually finalize now that we've renamed
+        # actually finalize
         open_session do |text_finalize_session|
 
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -442,7 +456,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
 
         text_final_publication.reload
-        assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
+        assert_equal "finalized", text_final_publication.status, "Text final publication not finalized"
 
         canonical_after_finalize = Repository.new.get_head('master')
         assert_not_equal canonical_before_finalize, canonical_after_finalize, 'Text finalization should update canonical master'
