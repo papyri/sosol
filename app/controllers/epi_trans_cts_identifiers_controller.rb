@@ -30,9 +30,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     # Add URL to image service for display of related images
     @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
     # find text for preview
-    if (@identifier.related_text)
-      @related_text =  polymorphic_url([@identifier.publication, @identifier.related_text],:action => 'preview')
-    end
+    set_related_items
   end
   
   def editxml
@@ -48,6 +46,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   def edittext
     find_identifier
     @is_editor_view = true
+    set_related_items
     @identifier[:text_content] = @identifier.text_content
     render :template => 'epi_trans_cts_identifiers/edittext'
   end
@@ -179,7 +178,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
       redirect_to polymorphic_url([@identifier.publication, @identifier], :action => :editxml)
       return
     end
-    
+    set_related_items
     @identifier[:html_preview] = @identifier.preview
   end
   
@@ -225,6 +224,19 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     # but since we're using a file based store we clear it explicitly
     def clear_cache
       @identifier.clear_cache
+    end
+
+    def set_related_items
+      @related_items = []
+      @identifier.related_items.each do |r|
+        if r =~ /^http/
+          @related_items << { :url => r, :text => r }
+        else
+         @related_items << { :url => polymorphic_url([@identifier.publication, r],:action => 'preview'), :text => 'Edition' }
+      end
+    end
+      Rails.logger.info(">>>>>>>>>.RELATED=#{@related_items.inspect}")
+
     end
     
 end
