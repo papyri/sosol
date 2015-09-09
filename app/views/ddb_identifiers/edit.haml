@@ -7,11 +7,11 @@
   
   function ajax_xml_to_leiden(was_disabled) {
     try_counter = try_counter + 1;
-    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_use_proxy).nil?) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
       request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
     }
     else {
-      request_url = "#{defined?(Sosol::Application.config.xsugar_standalone_url).nil? ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
       //request_url = "/" + request_url.split("/").slice(3).join("/");
     }
     
@@ -123,7 +123,7 @@
   }
   
   document.observe("dom:loaded", function() {
-    if (#{(!defined?(Sosol::Application.config.xsugar_standalone_enabled).nil?) && Sosol::Application.config.xsugar_standalone_enabled} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) && Sosol::Application.config.xsugar_standalone_enabled} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
       was_disabled = $('ddb_identifier_leiden_plus').disabled;
       
       Form.Element.disable('ddb_identifier_leiden_plus');
@@ -136,7 +136,7 @@
 
       ajax_xml_to_leiden(was_disabled);
     }
-    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (defined?(Sosol::Application.config.xsugar_standalone_enabled).nil? || !Sosol::Application.config.xsugar_standalone_enabled)}) {
+    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || !Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) || !Sosol::Application.config.xsugar_standalone_enabled)}) {
       Form.Element.setValue('ddb_identifier_leiden_plus',
         $('original_leiden_plus').value);
       showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");

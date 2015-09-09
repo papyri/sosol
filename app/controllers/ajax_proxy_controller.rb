@@ -67,7 +67,7 @@ class AjaxProxyController < ApplicationController
   protected
     def get_xsugar_response(params)
       begin
-        if defined?(Sosol::Application.config.xsugar_standalone_url).nil?
+        if !Sosol::Application.config.respond_to?(:xsugar_standalone_url)
           Rails.logger.info("Returning nil for XSugar proxy request as XSugar standalone url is not set")
           return nil
         else
