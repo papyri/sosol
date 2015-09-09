@@ -136,7 +136,7 @@
 
       ajax_xml_to_leiden(was_disabled);
     }
-    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || !Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) || !Sosol::Application.config.xsugar_standalone_enabled)}) {
+    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) || !Sosol::Application.config.xsugar_standalone_enabled)}) {
       Form.Element.setValue('ddb_identifier_leiden_plus',
         $('original_leiden_plus').value);
       showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");
