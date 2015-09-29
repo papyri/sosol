@@ -946,6 +946,7 @@ ul.perseids_menu li:hover ul.perseids_sub_menu {
     padding: 2rem;
     position: fixed;
     transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
     border: 1px solid #DDD;
 }
 #termsofservice ol {
