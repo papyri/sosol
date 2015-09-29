@@ -1182,9 +1182,13 @@ class Publication < ActiveRecord::Base
         child_publication.destroy
       end
       original_origin.change_status('editing')
-      original_origin.comments.each do |c|
-        c.destroy
-      end
+      # @balmas Persieds wants to allow comments to remain even after 
+      # withdrawing from review so that reviewers can do interim reviews 
+      # this should be something that is addressed in the review engine
+      # redesign and made configurable per board or community
+      #original_origin.comments.each do |c|
+      #  c.destroy
+      #end
       original_origin.identifiers.each do |i|
         i.status = 'editing'
         i.save!
