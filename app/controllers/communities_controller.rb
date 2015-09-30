@@ -202,24 +202,9 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "show", :id => @community.id
   end
 
-  def edit_end_user
-    @community = Community.find(params[:id].to_s)
-  end
-  
-  #Sets the end_user for the community. 
-  #If this is not set, then publications may not be submitted nor finalized.
-  def set_end_user
-    @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
-    
-    @community.end_user_id = user.id
-    @community.save
-    
-    redirect_to :action => "edit", :id => @community.id
-  end
-  
   
   def confirm_destroy
+      #TODO prevent destroy of default
       @community = Community.find(params[:id].to_s)
   end
   
