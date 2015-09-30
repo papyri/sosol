@@ -82,7 +82,7 @@ class TreebankCiteIdentifiersController < IdentifiersController
     if (compare && matching_files.keys.length > 0)
       matching_files.keys.each do |s|
         if matching_files[s].length > 0
-          this_set = compare
+          this_set = compare.clone
           this_set[:title] = "#{s} files"
           matching_files[s].each do |f|
             this_set[:href] += "&#{this_set[:replace_param]}=#{f.id.to_s}"
