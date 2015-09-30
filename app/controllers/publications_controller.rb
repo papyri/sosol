@@ -60,8 +60,20 @@ class PublicationsController < ApplicationController
   # POST /publications
   # POST /publications.xml
   def create
+    if params[:community_id]
+      community = Community.find_by_id(params[:community_id])
+    elsif params[:community_name]
+      community = Community.find_by_name(params[:community_id])
+    else
+      community = Community.default
+    end
+    if community.nil?
+      flash[:error] = 'No valid community found for this publication'
+      redirect_to dashboard_url and return
+    end
     @publication = Publication.new()
     @publication.owner = @current_user
+    @publication.community_id = community
     @publication.populate_identifiers_from_identifiers(
       params[:pn_id].to_s)
 
@@ -224,33 +236,31 @@ class PublicationsController < ApplicationController
         return
       end
       
-      #check if we need to signup to a community 
-      if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
-        @community = Community.find(params[:community][:id].to_s)
-        unless (@community.add_member(@current_user.id))
-           flash[:error] = 'Unable to signup for selected community'
-           redirect_to @publication
-           return
+      @community = Community.find(params[:community][:id].strip.to_s)
+
+      # we must now have a community
+      unless @community
+        flash[:error] = "Unable to find a community with the id of #{params[:community][:id]}"
+          redirect_to @publication
+          return
+      end
+
+      unless @current_user.community_memberships.include?(@community)
+        if (@community.allows_self_signup? && @community.add_member(@current_user.id))
+          flash[:notice] = "You have been signed up to #{@community.friendly_name}"
+        else
+          flash[:error] = 'Unable to signup for selected community'
+          redirect_to @publication
+          return
         end
       end
 
-      #check if we are submitting to a community
-      #community_id = params[:community_id]
-      if params[:community] && params[:community][:id]
-        community_id = params[:community][:id]
-        community_id.strip
-        if !community_id.empty? && community_id != "0" && !community_id.nil?
-          @publication.community_id = community_id
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
-        else
-          #force community id to nil for sosol
-          @publication.community_id = nil;
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
-        end
-
-      else
-        #force community id to 0 for sosol
-        @publication.community_id = nil;
+      # TODO REWRITE we want to check to see if the community is different than the one already assigned and if so, and if the previous
+      # one was not the default, we should double-check that it's okay before proceeding - maybe handled client side though...
+      if publication.community_id != @community.id
+        flash[:notice] = "This publication has been changed to the #{@community.friendly_name} Community"
+        @publication.community_id = @community.id
+        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       end
 
 
