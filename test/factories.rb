@@ -1,4 +1,5 @@
 FactoryGirl.define do
+
   sequence :name do |n|
     "name_#{n}"
   end
@@ -150,6 +151,19 @@ FactoryGirl.define do
     f.admins Array.new
   end
 
+  factory :master_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
+
+  factory :end_user_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
 
   factory :comment do |f|
     f.comment :comment
