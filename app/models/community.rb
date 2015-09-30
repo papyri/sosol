@@ -15,15 +15,6 @@ class Community < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
 
-  #The end_user is a sosol user to whom the communities' finalized publications are copied.
-  def end_user
-    if self.end_user_id.nil?
-      return nil  
-    end
-      return User.find_by_id(self.end_user_id)
-  end
-  
-  
   #Checks to see whether or not to allow members to submit to the community
   #
   #*Returns*
@@ -32,7 +23,7 @@ class Community < ActiveRecord::Base
   def is_submittable?
     #if there is nowhere for the final publication to go, don't let them submit
     #if there are no boards to review the publication, don't let them submit
-    return !self.end_user.nil? && (self.boards && self.boards.length > 0)
+    return self.boards && self.boards.length > 0
   end
   
   #*Returns* 
@@ -41,4 +32,12 @@ class Community < ActiveRecord::Base
   def format_name
     return  self.name + " ( " + self.friendly_name + " )"
   end
+
+  def self.default
+    # TODO REWRITE ENFORCE ONLY ONE
+    self.find(:all, :conditions => ["is_default = ?", true ])
+  end
+
+  # TODO REWRITE
+  # need a guard on destroy to make sure we aren't destroying the default community - this will have bad effects
 end

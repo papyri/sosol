@@ -51,9 +51,10 @@
           %td 
             = link_to 'Show', community 
           %td 
-            = link_to 'Edit', edit_community_path(community) 
+            = link_to 'Edit', edit_polymorphic_path([community]) 
           %td 
-            = link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete 
+            = link_to 'Destroy', polymorphic_path([community], :action=> :confirm_destroy) 
+
           
 
 = link_to 'New community', new_community_path 
