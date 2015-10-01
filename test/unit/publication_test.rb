@@ -9,11 +9,13 @@ class PublicationTest < ActiveSupport::TestCase
       
       @branchname = "testpublication"
       @user.repository.create_branch(@branchname)
+      @community = FactoryGirl.create(:master_community, :is_default => true, :name => 'sosolmaster')
       @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
     end
     
     teardown do
       @user.destroy
+      @community.destroy
     end
     
     should "not be saved to the database" do
@@ -24,16 +26,22 @@ class PublicationTest < ActiveSupport::TestCase
   context "a new publication from templates" do
     setup do
       @user = FactoryGirl.create(:user)
+      @community = FactoryGirl.create(:master_community, :is_default => true, :name => 'sosolmaster')
       @publication = Publication.new_from_templates(@user)
     end
 
     teardown do
       @publication.destroy unless !Publication.exists?(@publication.id)
       @user.destroy
+      @community.destroy
     end
     
     should "exist" do
       assert Publication.exists?(@publication.id)
+    end
+
+    should "have a community" do
+      assert_not_nil @publication.community_id
     end
     
     should "have an equivalent creator and owner" do
@@ -79,6 +87,7 @@ class PublicationTest < ActiveSupport::TestCase
     setup do
       @original_owner = FactoryGirl.create(:user)
       @new_owner = FactoryGirl.create(:user)
+      @community = FactoryGirl.create(:master_community, :is_default => true, :name => 'sosolmaster')
       @publication = Publication.new_from_templates(@original_owner)
       @publication_copy = @publication.copy_to_owner(@new_owner)
     end
@@ -89,6 +98,7 @@ class PublicationTest < ActiveSupport::TestCase
       
       @publication.destroy
       @original_owner.destroy
+      @community.destroy
     end
     
     should "retain the original creator" do
@@ -114,6 +124,7 @@ class PublicationTest < ActiveSupport::TestCase
       @original_branches = @user.repository.branches
       
       @unicode_title = "P.Über βρεκεκεκέξ"
+      @community = FactoryGirl.create(:master_community, :is_default => true, :name => 'sosolmaster')
       @publication = FactoryGirl.create(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
       @publication.branch_from_master
       
@@ -123,6 +134,7 @@ class PublicationTest < ActiveSupport::TestCase
     teardown do
       @publication.destroy unless !Publication.exists? @publication.id
       @user.destroy
+      @community.destroy
     end
     
     should "have content" do

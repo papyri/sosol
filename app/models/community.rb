@@ -34,8 +34,7 @@ class Community < ActiveRecord::Base
   end
 
   def self.default
-    # TODO REWRITE ENFORCE ONLY ONE
-    self.find(:all, :conditions => ["is_default = ?", true ])
+    self.where(["is_default = ?", true ]).first
   end
 
   # TODO REWRITE

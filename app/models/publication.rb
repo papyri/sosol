@@ -185,6 +185,14 @@ class Publication < ActiveRecord::Base
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
     publication.branch ||= title_to_ref(publication.title)
+    # all publications should have a community even if it's the default
+    # we will recheck this on submit though so don't crash here if
+    # the default community is missing
+    begin
+      publication.community_id ||= Community.default.id
+    rescue
+      Rails.logger.error("No default community to assign to publication")
+    end
   end
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
