@@ -25,4 +25,36 @@ class EndUserCommunity < Community
     return !self.end_user.nil? && (self.boards && self.boards.length > 0)
   end
 
+  # Promotes a publication out of the community
+  # For an EndUser community this means it gets copied
+  # to the designed end user and saved in her space
+  # 
+  # *Args* +publication+ the publication to promote
+  #
+  def promote(publication)
+    #copy to  space
+    Rails.logger.debug "----end user to get it"
+    Rails.logger.debug self.end_user.name
+
+    community_copy = publication.copy_to_owner(self.end_user, "#{self.name}/#{publication.creator.name}/#{publication.title}") #adding orginal creator to title as reminder for end_user
+    community_copy.status = "editing"
+    community_copy.identifiers.each do |id|
+      id.status = "editing"
+      id.save
+    end
+    #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
+
+    #disconnect the parent/origin connections
+    community_copy.parent = nil
+
+    #reset the community id to be the default
+    # leave as is
+    # TODO eventually this will be configurable per community
+    # community_copy.community_id = Community.default
+
+    #remove the original creator id (that info is now in the git history )
+    community_copy.creator_id = community_copy.owner_id
+    community_copy.save!
+  end
+
 end

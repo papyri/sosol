@@ -257,7 +257,7 @@ class PublicationsController < ApplicationController
 
       # TODO REWRITE we want to check to see if the community is different than the one already assigned and if so, and if the previous
       # one was not the default, we should double-check that it's okay before proceeding - maybe handled client side though...
-      if publication.community_id != @community.id
+      if @publication.community_id != @community.id
         flash[:notice] = "This publication has been changed to the #{@community.friendly_name} Community"
         @publication.community_id = @community.id
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name

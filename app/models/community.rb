@@ -37,6 +37,25 @@ class Community < ActiveRecord::Base
     self.where(["is_default = ?", true ]).first
   end
 
-  # TODO REWRITE
-  # need a guard on destroy to make sure we aren't destroying the default community - this will have bad effects
+  def promote(publication)
+    # override in subclasses to enable per community-type workflow
+  end
+
+  # Adds a user as a member of this community
+  # 
+  # *Returns*
+  #  - true if successful or user is already a member
+  #  - false if unsuccessful
+  def add_member(user_id)
+    user = User.find_by_id(user_id.to_s)
+    if user.nil? 
+      return false
+    end
+    if nil == self.members.find_by_id(user.id) 
+      self.members << user
+      self.save
+    end
+    return true
+  end
 end
+

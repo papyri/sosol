@@ -295,50 +295,9 @@ class Publication < ActiveRecord::Base
 
     Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
-    if is_community_publication?
-      if self.community.end_user.nil?
-        #no end user has been set, so warn them and then what?
-        #user can't submit to community if no end user, so this should not happen
-
-      else
-
-
-        #copy to  space
-        Rails.logger.debug "----end user to get it"
-        Rails.logger.debug self.community.end_user.name
-
-        #community_copy = copy_to_owner( self.community.end_user)
-        community_copy = copy_to_end_user()
-        community_copy.status = "editing"
-        community_copy.identifiers.each do |id|
-          id.status = "editing"
-          id.save
-        end
-        #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
-
-        #disconnect the parent/origin connections
-        #community_copy.parent_id = nil
-        community_copy.parent = nil
-
-        #reset the community id to be sosol
-        #leave as is   community_copy.community_id = nil
-
-        #remove the original creator id (that info is now in the git history )
-        community_copy.creator_id = community_copy.owner_id
-
-        community_copy.save!
-
-        #mark as committed
-        self.origin.change_status("committed")
-        self.save
-      end
-
-    else
-      #mark as committed
-      self.origin.change_status("committed")
-      self.save
-    end
-
+    self.community.promote(self)
+    self.origin.change_status("committed")
+    self.save
 
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
@@ -350,7 +309,13 @@ class Publication < ActiveRecord::Base
 
   #Simply pointer to submit_to_next_board method.
   def submit
-    submit_to_next_board
+    # we shouldn't get here without a community id but check
+    # for it just in case
+    if is_community_publication?
+      submit_to_next_board
+    else 
+      raise "Publications now need to belong to a desginated community"
+    end
   end
 
   #Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier
@@ -1260,37 +1225,18 @@ class Publication < ActiveRecord::Base
   #Creates a new publication for the new_owner that is a separate copy of this publication.
   #
   #*Args* +new_owner+ the owner for the cloned copy.
+  #       +new_title+ the new title for the cloned copy. If nill original title will be used.
   #
   #*Returns* +publication+ that is the new copy.
-  def clone_to_owner(new_owner)
+  def clone_to_owner(new_owner,new_title=nil)
     duplicate = self.dup
     duplicate.owner = new_owner
     duplicate.creator = self.creator
-    duplicate.title = self.owner.name + "/" + self.title
-    duplicate.branch = title_to_ref(duplicate.title)
-    duplicate.parent = self
-    duplicate.save!
-
-    # copy identifiers over to new pub
-    identifiers.each do |identifier|
-      duplicate_identifier = identifier.dup
-      duplicate.identifiers << duplicate_identifier
+    if (new_title.nil?)
+      duplicate.title = self.owner.name + "/" + self.title
+    else
+      duplicate.title = new_title
     end
-
-    return duplicate
-  end
-
-
-  #Creates a new publication for the end_user (of a community) that is a separate copy of this publication.
-  #This is similar to clone_to_owner, except the publication title is renamed to reflect the community and creator.
-  #The new owner is the end_user for the publication's community.
-  #
-  #*Returns* +publication+ that is the new copy.
-   def clone_to_end_user()
-    duplicate = self.dup
-    duplicate.owner = self.community.end_user
-    duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
-    duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
@@ -1310,8 +1256,8 @@ class Publication < ActiveRecord::Base
 
   #copies this publication's branch to the new_owner's branch
   #returns duplicate publication with new_owner
-  def copy_to_owner(new_owner)
-    duplicate = self.clone_to_owner(new_owner)
+  def copy_to_owner(new_owner, new_title=nil)
+    duplicate = self.clone_to_owner(new_owner,new_title)
 
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
@@ -1321,15 +1267,6 @@ class Publication < ActiveRecord::Base
   end
 
 
-  #mainly used to create new publiation title/repo name that is indicative of the publications source
-  def copy_to_end_user()
-    duplicate = self.clone_to_end_user()
-    duplicate.owner.repository.copy_branch_from_repo(
-      self.branch, duplicate.branch, self.owner.repository
-    )
-
-    return duplicate
-  end
   #copy a child publication repo back to the parent repo
   def copy_repo_to_parent_repo
      #all we need to do is copy the repo back the parents repo

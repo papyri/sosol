@@ -30,7 +30,8 @@ end
 class WorkflowTest < ActiveSupport::TestCase
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @community = FactoryGirl.create(:master_community, :is_default => true )
+      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board', :community => @community)
     
       3.times do |i|
         @ddb_board.users << FactoryGirl.create(:user)
@@ -70,7 +71,7 @@ class WorkflowTest < ActiveSupport::TestCase
 
     context "a publication" do
       setup do
-        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new", :community => @community)
         
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
