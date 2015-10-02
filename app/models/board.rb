@@ -17,10 +17,10 @@ class Board < ActiveRecord::Base
 
 
   #board rank determines workflow order for publication
+  scope :sorted_by_community_and_ranked, :order => 'community_id ASC, rank ASC' 
+
   #ranked scopes returns the boards for a given community in order of their rank
   #ranked left as default for sosol ranks
-  scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
-  
   scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
 
 
@@ -32,7 +32,7 @@ class Board < ActiveRecord::Base
   serialize :identifier_classes
   
   validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
-  validates_presence_of :title
+  validates_presence_of :title, :community
   
   has_repository
   
@@ -280,6 +280,6 @@ class Board < ActiveRecord::Base
       return self[:title]
     end
   end
-  
+
   
 end

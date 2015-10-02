@@ -29,6 +29,7 @@ FactoryGirl.define do
   end
 
   factory :board do |f|
+    f.association :community
     f.title { FactoryGirl.generate(:name) }
     f.category 'category'
     f.identifier_classes ['DDBIdentifier']

@@ -152,7 +152,7 @@ class UserController < ApplicationController
       #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
       @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
 
-      @boards = @current_user.boards.ranked
+      @boards = @current_user.boards.sorted_by_community_and_ranked
       #or do we want to use the creator id?
       #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
     end

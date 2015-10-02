@@ -67,9 +67,11 @@ class BoardsController < ApplicationController
   # GET /boards
   # GET /boards.xml
   def index
-    #@boards = Board.find(:all)
-    @boards = Board.ranked
-
+    @communities = Community.order('friendly_name ASC').all
+    @boards = {}
+    @communities.each do |c|
+      @boards[c.friendly_name] = Board.ranked_by_community_id(c.id)
+    end
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @boards }
@@ -91,7 +93,7 @@ class BoardsController < ApplicationController
   # GET /boards/new.xml
   def new
     
-    @board = Board.new    
+    @board = Board.new
     
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
@@ -101,9 +103,7 @@ class BoardsController < ApplicationController
     #  @available_identifier_classes -= b.identifier_classes
     #end
     
-    if params[:community_id].to_s
-      @board.community_id =  params[:community_id].to_s
-    end
+    @board.community_id =  params[:community_id].to_s
      
     respond_to do |format|
       format.html # new.html.erb
@@ -135,12 +135,7 @@ class BoardsController < ApplicationController
 
 
     #put the new board in last rank
-    if @board.community_id
-      @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
-    else
-      #@board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.  
-      @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
-    end
+    @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
     #just let them choose one identifer class
     #@board.identifier_classes << params[:identifier_class]
     
@@ -149,8 +144,7 @@ class BoardsController < ApplicationController
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id
     else
-      #TODO add error check to give meaningfull response to user.
-      flash[:error] = 'Board creation failed. Was your name unique?'
+      flash[:error] = "Board creation failed. #{@board.errors.to_a}"
       redirect_to dashboard_url
     end         
   end
@@ -188,25 +182,14 @@ class BoardsController < ApplicationController
   #If community_id is given then the returned boards are only for that community.
   #If no community_id is given then the "sosol" boards are returned. 
   def rank
-    if params[:community_id].to_s
-      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
-      @community_id = params[:community_id].to_s 
-    else
-      #default to sosol boards
-      @boards = Board.ranked;  
-    end
-    
+    @boards = Board.ranked_by_community_id( params[:community_id].to_s )
+    @community_id = params[:community_id].to_s 
   end
 
   #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
-    if params[:community_id].to_s
-      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
-    else
-      #default to sosol boards
-      @boards = Board.ranked;  
-    end
+    @boards = Board.ranked_by_community_id( params[:community_id].to_s )
     
     #@boards = Board.find(:all)
 
@@ -241,12 +224,8 @@ def send_board_reminder_emails
     
   addresses = Array.new 
   
-  if (params[:community_id].to_s != '')
-    boards = Board.ranked_by_community_id(params[:community_id].to_s) 
-    community = Community.find_by_id(params[:community_id].to_s) 
-  else
-    boards = Board.ranked
-  end
+  boards = Board.ranked_by_community_id(params[:community_id].to_s) 
+  community = Community.find_by_id(params[:community_id].to_s) 
     
     
   body_text = 'Greetings '

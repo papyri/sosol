@@ -248,14 +248,7 @@ class Publication < ActiveRecord::Base
       Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
     end
 
-
-    #check if we are part of a community
-
-    if is_community_publication?
-      boards = Board.ranked_by_community_id( self.community.id )
-    else
-      boards = Board.ranked
-    end
+    boards = Board.ranked_by_community_id( self.community.id )
 
     #check each board in order by priority rank
     boards.each do |board|
