@@ -123,9 +123,10 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @trash_user = FactoryGirl.create(:user, :name => "just_to_make_another_publication")
 
         #set up the community
-        @test_community = FactoryGirl.create(:community,
+        @test_community = FactoryGirl.create(:end_user_community,
                                              :name => "test_freaky_community",
                                              :friendly_name => "testy",
+                                             :allows_self_signup => true,
                                              #:abbreviation => "tc",
                                              :description => "a comunity for testing")
 

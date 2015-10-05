@@ -91,6 +91,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       setup do
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        # master community for the board
+        @community = FactoryGirl.create(:master_community, :is_default => true, :allows_self_signup => true )
         #a user to put on the boards
         @board_user = FactoryGirl.create(:user, :name => "board_man_bob")
         @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
@@ -100,7 +102,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @end_user = FactoryGirl.create(:user, :name => "end_bob")
 
         #set up the boards, and vote
-        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta")
+        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta", :community => @community)
 
         #the board memeber
         @meta_board.users << @board_user
@@ -114,7 +116,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                                           :choices => "ok")
         @meta_board.decrees << @meta_decree
 
-        @text_board = FactoryGirl.create(:board, :title => "text")
+        @text_board = FactoryGirl.create(:board, :title => "text", :community => @community)
         #the board memeber
         @text_board.users << @board_user
         #the vote
@@ -125,7 +127,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                                           :choices => "ok")
         @text_board.decrees << @text_decree
 
-        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation")
+        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation", :community => @community)
 
         #the board memeber
         @translation_board.users << @board_user
@@ -147,7 +149,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         begin
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
-            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
+            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board, @community ].each do |entity|
               count = count + 1
               #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
               unless entity.nil?
@@ -199,16 +201,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         open_session do |submit_session|
 
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
-            :submit_comment => "I made a new pub"
+          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s +
+            "&community[id]=#{@community.id.to_s}", :submit_comment => "I made a new pub"
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end
         @publication.reload
 
-        #Rails.logger.debug "Publication Community is " + @publication.community.name
-        assert_nil @publication.community, "Community is not NIL but should be for a SOSOL publication"
-        #Rails.logger.debug "Community is " + @test_community.name
+        assert_equal @community, @publication.community, "Community is not NIL but should be for a SOSOL publication"
 
         #now meta should have it
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
@@ -456,7 +456,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @community = FactoryGirl.create(:master_community, :is_default => true, :allows_self_signup => true )
+      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board', :community => @community)
 
       3.times do |i|
         @ddb_board.users << FactoryGirl.create(:user)
@@ -480,8 +481,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
       @james = FactoryGirl.create(:user, :name => "James")
 
-      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata', :community => @community)
+      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations', :community => @community)
 
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
@@ -493,7 +494,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do |conn|
         ( @ddb_board.users + [ @james, @submitter,
-        @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
+        @ddb_board, @hgv_meta_board, @hgv_trans_board, @community ] ).each {|entity| entity.destroy}
       end
     end
 

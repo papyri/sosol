@@ -24,8 +24,4 @@ class CommunityTest < ActiveSupport::TestCase
     assert_equal @community.id, Community.default.id 
   end
 
-  should "be able to add a member" do
-    @community.members << @member
-    assert_equal [@community], @member.community_memberships
-  end
 end
