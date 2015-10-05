@@ -253,50 +253,46 @@ class Publication < ActiveRecord::Base
     #check each board in order by priority rank
     boards.each do |board|
 
-    #if board.community == publication.community
-    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-    if boards_identifiers.length > 0
-      #submit to that board
-      Rails.logger.info "---Submittable Board identifiers are: "
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-      end
-
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.status = "submitted"
-            submitting_identifier.save!
-
-            #make the most recent sha for the identifier available...is this the one we want?
-            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
-          end
-
-          #copy the repo, models, etc... to the board
-          boards_copy = copy_to_owner(board)
-          boards_copy.status = "voting"
-          boards_copy.save!
-
-
-
-          #trigger emails
-          board.send_status_emails("submitted", self)
-
-          #update status on user copy
-          self.change_status("submitted")
-          self.save!
-
-          #problem here in that comment will be added to the returned id, but there may be many ids.....
-          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-          return '', boards_identifiers[0].id
+      #if board.community == publication.community
+      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+      if boards_identifiers.length > 0
+        #submit to that board
+        Rails.logger.info "---Submittable Board identifiers are: "
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
         end
-      #end
+
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = "submitted"
+          submitting_identifier.save!
+
+          #make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
+
+        #copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save!
+
+        #trigger emails
+        board.send_status_emails("submitted", self)
+
+        #update status on user copy
+        self.change_status("submitted")
+        self.save!
+
+        #problem here in that comment will be added to the returned id, but there may be many ids.....
+        #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end
     end
 
 
     Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
     self.community.promote(self)
-    self.origin.change_status("committed")
     self.save
 
     #TODO need to return something here to prevent flash error from showing true?
@@ -823,6 +819,7 @@ class Publication < ActiveRecord::Base
   end
 
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
+
   def find_finalizer_publication
   #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })

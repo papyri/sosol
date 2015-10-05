@@ -263,11 +263,6 @@ class PublicationsController < ApplicationController
         Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       end
 
-
-      #need to set id to 0
-      #raise community_id
-
-      #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
       #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
       @comment = Comment.new( {:publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
       @comment.save

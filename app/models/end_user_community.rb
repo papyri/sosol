@@ -30,6 +30,8 @@ class EndUserCommunity < Community
   #
   # For an EndUser community this means it gets copied
   # to the designed end user and saved in her space
+  # and then the original publication is flagged as
+  #  committed
   # 
   # *Args* +publication+ the publication to promote
   #
@@ -44,7 +46,6 @@ class EndUserCommunity < Community
       id.status = "editing"
       id.save
     end
-    #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
 
     #disconnect the parent/origin connections
     community_copy.parent = nil
@@ -57,6 +58,11 @@ class EndUserCommunity < Community
     #remove the original creator id (that info is now in the git history )
     community_copy.creator_id = community_copy.owner_id
     community_copy.save!
+
+    # the original publication is done now so we can
+    # set the status of the original publication
+    # to committed
+    publication.origin.change_status("committed")
   end
 
   def finalize(publication)
