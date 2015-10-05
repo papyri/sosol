@@ -303,18 +303,19 @@ class Publication < ActiveRecord::Base
     return "", nil
   end
 
-  def  is_community_publication?
+  # check to be sure the publication is valid before submitting
+  def  meets_submit_criteria?
+    # we shouldn't get here without a community id but check
+    # for it just in case
     return (self.community_id != nil)  &&  (self.community_id != 0)
   end
 
   #Simply pointer to submit_to_next_board method.
   def submit
-    # we shouldn't get here without a community id but check
-    # for it just in case
-    if is_community_publication?
+    if meets_submit_criteria?
       submit_to_next_board
     else 
-      raise "Publications now need to belong to a desginated community"
+      raise "Publications does not meet submission criteria"
     end
   end
 

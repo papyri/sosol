@@ -396,12 +396,6 @@ class PublicationsController < ApplicationController
         end
       end # done preprocessing
     end # end transaction
-    #to prevent a community publication from being finalized if there is no end_user to get the final version
-    if @publication.is_community_publication? && @publication.community.end_user.nil?
-      flash[:error] = "Error finalizing. No End User for the community."
-      redirect_to @publication
-      return
-    end
 
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
@@ -412,29 +406,26 @@ class PublicationsController < ApplicationController
       end
     end
 
-
     #copy back in any case
     @publication.copy_back_to_user(params[:comment].to_s, @current_user)
 
-    #if it is a community pub, we don't commit to canon
-    #instead we copy changes back to origin
-    if @publication.is_community_publication?
-
-      #@publication.copy_back_to_user(params[:comment].to_s, @current_user)
-
-
-    else #commit to canon
-      begin
-        canon_sha = @publication.commit_to_canon
-        expire_publication_cache(@publication.creator.id)
-        expire_fragment(/board_publications_\d+/)
-      rescue Errno::EACCES => git_permissions_error
-        flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-        redirect_to @publication
-        return
-      end
+    # finalize
+    begin
+      commit_sha = @publication.community.finalize(@publication)
+    rescue Errno::EACCES => git_permissions_error
+      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+      redirect_to @publication
+      return
+    rescue Exception => e
+      flash[:error] = "Error finalizing. Error message was: #{e.message}.Please contact your system administrator."
+      redirect_to @publication
+      return
     end
 
+    # TODO do we ever not want to expire cache and fragment? Previously this wasn't done for 
+    # community publications but it would seem that maybe that was an error?
+    expire_publication_cache(@publication.creator.id)
+    expire_fragment(/board_publications_\d+/)
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action
     @comment = Comment.new()
@@ -446,7 +437,7 @@ class PublicationsController < ApplicationController
     end
     @comment.user = @current_user
     @comment.reason = "finalizing"
-    @comment.git_hash = canon_sha
+    @comment.git_hash = commit_sha # NB this might be nil for a community publication
     #associate comment with original identifier/publication
     @comment.identifier_id = params[:identifier_id]
     @comment.publication = @publication.origin
@@ -460,7 +451,6 @@ class PublicationsController < ApplicationController
     @event.category = "committed"
     @event.save!
 
-    #TODO need to submit to next board
     #need to set status of ids
     @publication.set_origin_and_local_identifier_status("committed")
     @publication.set_board_identifier_status("committed")

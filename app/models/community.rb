@@ -37,8 +37,23 @@ class Community < ActiveRecord::Base
     self.where(["is_default = ?", true ]).first
   end
 
+  # Handles Promotion of a publication to the next 
+  # step in the workflow after finalization
+  #*Args*:
+  #- +publication+ publication to be promoted
   def promote(publication)
     # override in subclasses to enable per community-type workflow
+  end
+
+ 
+  # Community-specific finalization steps
+  # *Args*:
+  #- +publication+ publication to be finalized
+  # *Returns*
+  # - a commit sha if any commit occurs, otherwise nil
+  def finalize(publication)
+    # default is a noop
+    nil
   end
 
   # Adds a user as a member of this community

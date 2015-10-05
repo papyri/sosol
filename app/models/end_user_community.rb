@@ -25,7 +25,9 @@ class EndUserCommunity < Community
     return !self.end_user.nil? && (self.boards && self.boards.length > 0)
   end
 
-  # Promotes a publication out of the community
+  # Promotes a publication to the next step in the workflow
+  # after board approval.
+  #
   # For an EndUser community this means it gets copied
   # to the designed end user and saved in her space
   # 
@@ -55,6 +57,12 @@ class EndUserCommunity < Community
     #remove the original creator id (that info is now in the git history )
     community_copy.creator_id = community_copy.owner_id
     community_copy.save!
+  end
+
+  def finalize(publication)
+    if self.end_user.nil?
+      raise "No End User for the community. Unable to finalize"
+    end
   end
 
 end
