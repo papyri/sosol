@@ -24,4 +24,19 @@ class CommunityTest < ActiveSupport::TestCase
     assert_equal @community.id, Community.default.id 
   end
 
+  should "not be able to create another default" do
+    assert ! FactoryGirl.build(:community, :is_default => true, :name => 'sosolmaster2').valid?
+  end
+
+  should "not be able to destroy the default" do
+    assert !@community.destroy
+  end
+
+  should "be able to change default community" do
+    @community2 = FactoryGirl.create(:community, :name => 'sosolmaster2')
+    Community.change_default(@community,@community2)
+    assert @community2.is_default?
+    assert ! @community.is_default?
+  end
+
 end

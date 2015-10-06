@@ -23,4 +23,22 @@ class MasterCommunityTest < ActiveSupport::TestCase
     @community.add_member( @member2.id )
     assert_equal [@community], @member2.community_memberships
   end
+
+  should "not be able to destroy the last master community" do
+    assert ! @community.destroy  
+  end
+
+  should "be able to destroy a non-last community" do
+    @community2 = FactoryGirl.create(:master_community, :name => 'sosolmaster2')
+    assert @community2.destroy  
+  end
+
+  should "not be able to destroy a non-last default community" do
+    @community2 = FactoryGirl.create(:master_community, :name => 'sosolmaster2')
+    Community.change_default(@community,@community2)
+    assert ! @community.is_default?
+    
+    assert @community.destroy  
+    assert !@community2.destroy  
+  end
 end

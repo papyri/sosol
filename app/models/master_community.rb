@@ -1,5 +1,7 @@
 class MasterCommunity < Community
 
+  before_destroy :guard_last_master
+
   # Handles Promotion of a publication to the next 
   # step in the workflow after finalization
   # for a Master community this just
@@ -24,5 +26,16 @@ class MasterCommunity < Community
     canon_sha = publication.commit_to_canon
   end
 
+
+  # Guards against destruction
+  # can't destroy the last master community
+  def guard_last_master
+    # we should not destroy the last master community
+    # or the default
+    unless MasterCommunity.count > 1 
+      self.errors[:base] << "We can't destroy the last Master community"
+      return false
+    end
+  end
 
 end

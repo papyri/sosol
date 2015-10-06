@@ -4,7 +4,6 @@
 # of the community end-user after finalization.
 class EndUserCommunity < Community
 
-
   #The end_user is a sosol user to whom the communities' finalized publications are copied.
   def end_user
     if self.end_user_id.nil?

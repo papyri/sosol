@@ -15,6 +15,25 @@ class Community < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
 
+  attr_protected :is_default
+
+  validate :is_default_can_only_be_one
+
+  before_destroy :guard_default
+
+
+  # validates that we only set a single default community
+  # is_default must be reset in a transaction which 
+  # first removes the currnet default and then sets a new one
+  def is_default_can_only_be_one
+    if is_default && Community.default
+      errors.add(:is_default, "Can't have more than one default community")
+      return false
+    end
+  end
+
+  
+
   #Checks to see whether or not to allow members to submit to the community
   #
   #*Returns*
@@ -33,8 +52,21 @@ class Community < ActiveRecord::Base
     return  self.name + " ( " + self.friendly_name + " )"
   end
 
+  #*Returns*
+  # - the default Community
   def self.default
     self.where(["is_default = ?", true ]).first
+  end
+
+  #*Returns*
+  # - changes the default community
+  def self.change_default(old,new)
+    self.transaction do 
+      old.is_default = false
+      old.save!
+      new.is_default = true 
+      new.save!
+    end
   end
 
   # Handles Promotion of a publication to the next 
@@ -71,6 +103,16 @@ class Community < ActiveRecord::Base
       self.save
     end
     return true
+  end
+
+
+  # We cannot destroy a default community. A new default needs to
+  # be set first
+  def guard_default
+    if self.is_default?
+      self.errors[:base] << "We can't destroy the last default community"
+      return false
+    end
   end
 end
 
