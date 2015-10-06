@@ -13,6 +13,8 @@ Sosol::Application.routes.draw do
   end
 
 
+  match 'communities/select_default' => 'communities#select_default'
+  match 'communities/change_default' => 'communities#change_default', :via => :post
   resources :communities do
   
     member do

@@ -34,7 +34,8 @@ class CommunityTest < ActiveSupport::TestCase
 
   should "be able to change default community" do
     @community2 = FactoryGirl.create(:community, :name => 'sosolmaster2')
-    Community.change_default(@community,@community2)
+    Community.change_default(@community2)
+    @community.reload
     assert @community2.is_default?
     assert ! @community.is_default?
   end

@@ -35,8 +35,9 @@ class MasterCommunityTest < ActiveSupport::TestCase
 
   should "not be able to destroy a non-last default community" do
     @community2 = FactoryGirl.create(:master_community, :name => 'sosolmaster2')
-    Community.change_default(@community,@community2)
-    assert ! @community.is_default?
+    Community.change_default(@community2)
+    @community.reload
+    assert !@community.is_default?
     
     assert @community.destroy  
     assert !@community2.destroy  

@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(:version => 20150930184341) do
     t.integer  "publication_id"
     t.integer  "end_user_id"
     t.boolean  "allows_self_signup", :default => false
-    t.boolean  "is_default"
+    t.boolean  "is_default",         :default => false,              :null => false
     t.string   "type",               :default => "EndUserCommunity", :null => false
   end
 
@@ -185,7 +185,6 @@ ActiveRecord::Schema.define(:version => 20150930184341) do
     t.string   "full_name"
     t.boolean  "is_community_master_admin", :default => false
     t.boolean  "is_master_admin",           :default => false
-    t.integer  "accepted_terms",            :default => 0
   end
 
   create_table "votes", :force => true do |t|
