@@ -198,8 +198,21 @@ class CommunitiesController < ApplicationController
 
   
   def confirm_destroy
-      #TODO prevent destroy of default
       @community = Community.find(params[:id].to_s)
   end
-  
+
+  def select_default
+    @communities = Community.where(["is_default = ?", false ])
+  end
+
+  def change_default
+    @new_default = Community.find(params[:new_default].to_s)
+    if (@new_default.nil?)
+      flash[:error] = "You must select a valid community."
+      redirect_to :action => "select_default" and return
+    end
+    flash[:notice] = "Default community changed to #{@new_default.friendly_name}"
+    Community.change_default(@new_default)
+    redirect_to :action => "index" and return
+  end
 end

@@ -26,7 +26,7 @@ class Community < ActiveRecord::Base
   # is_default must be reset in a transaction which 
   # first removes the currnet default and then sets a new one
   def is_default_can_only_be_one
-    if is_default && Community.default
+    if is_default? && ! Community.default.nil?
       errors.add(:is_default, "Can't have more than one default community")
       return false
     end
@@ -60,7 +60,8 @@ class Community < ActiveRecord::Base
 
   #*Returns*
   # - changes the default community
-  def self.change_default(old,new)
+  def self.change_default(new)
+    old = self.default
     self.transaction do 
       old.is_default = false
       old.save!
