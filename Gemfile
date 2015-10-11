@@ -51,3 +51,4 @@ gem 'jruby-openssl', '>=0.9.8', :platform => :jruby
 gem 'ruby-saml', :platform => :jruby, :git => 'https://github.com/onelogin/ruby-saml', :ref => '3b81caa'
 
 gem 'test_after_commit', :group => :test
+gem 'faraday_middleware'

@@ -1,5 +1,5 @@
 require 'nokogiri'
-:q!
+require 'faraday_middleware'
 
 require 'cts'
 
@@ -138,20 +138,19 @@ class TreebankCiteIdentifier < CiteIdentifier
         end
       elsif (init_value =~ /^https?:/)
         begin
-          rurl = URI.parse(init_value)
-          response = Net::HTTP.start(rurl.host, rurl.port) do |http|
-            http.send_request('GET', rurl.request_uri)
-          end # end Net::HTTP.start
-          if (response.code == '200')
-            if (is_valid_xml?(response.body))
-                template = response.body
-            else 
-                Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
-                raise "Supplied URI does not return a valid treebank file"
-            end
-          else
-            raise "Request for template failed #{response.code} #{response.msg} #{response.body}"
-          end # end test on response code
+          conn = Faraday.new(init_value) do |c|
+            c.use Faraday::Response::Logger, Rails.logger
+            c.use FaradayMiddleware::FollowRedirects, limit: 3
+            c.use Faraday::Response::RaiseError 
+            c.use Faraday::Adapter::NetHttp  
+          end
+          response = conn.get
+          if (is_valid_xml?(response.body))
+            template = response.body
+          else 
+            Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
+            raise "Supplied URI does not return a valid treebank file"
+          end
         rescue Exception => e
           Rails.logger.error(e.backtrace)
           raise "Invalid treebank content at #{init_value}"
