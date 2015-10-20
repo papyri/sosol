@@ -1438,6 +1438,7 @@ class Publication < ActiveRecord::Base
     has_text = false
     has_biblio = false
     has_cts = false
+    has_apis = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1451,6 +1452,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CTSIdentifier/
         has_cts = true
+      end
+      if i.class.to_s == "APISIdentifier"
+        has_apis = true
       end
     end
     if !has_text
@@ -1471,6 +1475,9 @@ class Publication < ActiveRecord::Base
     #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
     if has_cts
       creatable_identifiers = []
+    end
+    if has_apis
+      creatable_identifiers.delete("APISIdentifier")
     end
 
     #only let user create new for non-existing
