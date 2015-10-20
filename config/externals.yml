@@ -1,7 +1,7 @@
 lib/rxsugar:
   :type: git
-  :repository: git://github.com/ryanfb/xsugar.git
-  :revision: rails-3
+  :repository: git://github.com/papyri/xsugar.git
+  :revision: rails-3-nfd
 
 data/xslt/epidoc:
   :type: subversion
