@@ -1,6 +1,9 @@
 class EndUserCommunitiesController < CommunitiesController
 
   before_filter :authorize
+  # anybody can create a new end user community but only community 
+  # admins can edit one
+  before_filter :enforce_community_admin, :except => [:index, :new, :create, :remove_current_user_membership]
 
   # GET /end_user_communities
   # GET /end_user_communities.json
@@ -33,6 +36,7 @@ class EndUserCommunitiesController < CommunitiesController
   # POST /end_user_communities.json
   def create
     @community = EndUserCommunity.new(params[:end_user_community])
+    @community.admins << @current_user
 
     respond_to do |format|
       if @community.save
@@ -65,21 +69,6 @@ class EndUserCommunitiesController < CommunitiesController
     end
   end
 
-  def edit_end_user
-    @community = Community.find(params[:id].to_s)
-  end
-  
-  #Sets the end_user for the community. 
-  #If this is not set, then publications may not be submitted nor finalized.
-  def set_end_user
-    @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
-    
-    @community.end_user_id = user.id
-    @community.save
-    
-    redirect_to :action => "edit", :id => @community.id
-  end
   def edit_end_user
     @community = Community.find(params[:id].to_s)
   end

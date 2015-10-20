@@ -6,7 +6,9 @@ class EndUserCommunitiesControllerTest < ActionController::TestCase
     @admin = FactoryGirl.create(:admin)
     @request.session[:user_id] = @admin.id
     @community = FactoryGirl.create(:end_user_community)
+    @community.admins << @admin
     @community_two = FactoryGirl.create(:end_user_community)
+    @community_two.admins << @admin
   end
 
   def teardown

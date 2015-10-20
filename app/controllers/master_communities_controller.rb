@@ -1,6 +1,9 @@
 class MasterCommunitiesController < CommunitiesController
 
   before_filter :authorize
+  # only admins can create, edit or update master communitities
+  # anybody can list or leave them
+  before_filter :enforce_admin, :except => [ :index, :remove_current_membership ]
 
   # GET /master_communities
   # GET /master_communities.json
@@ -33,6 +36,7 @@ class MasterCommunitiesController < CommunitiesController
   # POST /master_communities.json
   def create
     @community = MasterCommunity.new(params[:master_community])
+    @community.admins << @current_user
 
     respond_to do |format|
       if @community.save
