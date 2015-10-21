@@ -68,5 +68,5 @@
 
 - if @board.community
   %br
-  = link_to 'Edit ' + @board.community.name + ' community', :controller => 'communities', :action => 'edit', :id => @board.community.id    
+  = link_to 'Edit ' + @board.community.name + ' community', edit_polymorphic_path([@board.community]) 
     
