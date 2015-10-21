@@ -4,22 +4,25 @@ require 'ddiff'
 #require File.dirname(__FILE__) + '/session_set_controller'
 
 =begin
-This file tests the community workflow.
-The community workflow is similar to the normal sosol work flow except that the publication/identifiers
-are not committed to the canon on finalize. Instead the changes made by the finalizer are copied back to the
-submitters origin publication.
-Once the publication has been vetted by all the community boards, the "committed" version is copied to the
-communities end_user. The end_user's copy is severed from any connections to the origin publication (all changes
-are still held in the git history) and appears in the end_user's dashboard as an editing publication. Social convention
-should be that the end user is only used for collecting the communities approved publications. That way when the publications
-are submitted to the sosol boards, they will be marked as coming from the end_user associated with the community.
+This file tests the End User Community workflow.
+
+The End User Community workflow is similar to a Master Community workflow (or the default SoSOL 
+workflow) except that the publication/identifiers are not committed to the canon on finalize. 
+Instead the changes made by the finalizer are copied back to the submitters origin publication.
+Once the publication has been vetted by all the community boards, the "committed" version 
+is copied to the communities end_user. The end_user's copy is severed from any connections 
+to the origin publication (all changes are still held in the git history) and appears in the 
+end_user's dashboard as an editing publication. Social convention should be that the end user 
+is only used for collecting the communities approved publications. That way when the publications
+are submitted to the sosol boards, they will be marked as coming from the end_user associated 
+with the community.  
 
 This test creates a new publication and immediately submits it to a community.
 Each community board recieves the submit, votes on it, then sends it to the finalizer.
 The finalizer finalizes it, which copies the changes back to the original submitter.
 =end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class EndUserCommunityWorkflowTest < ActionController::IntegrationTest
   def compare_publications(a,b)
 
     pubs_are_matched = true
@@ -100,7 +103,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
   end
 end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class EndUserCommunityWorkflowTest < ActionController::IntegrationTest
   context "for community" do
     context "community testing" do
       setup do

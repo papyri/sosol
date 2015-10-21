@@ -225,7 +225,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
         @publication.reload
 
-        assert_equal @community, @publication.community, "Community is not NIL but should be for a SOSOL publication"
+        assert_equal @community, @publication.community, "Community is NIL but should be set to default community"
 
         #now meta should have it
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
@@ -466,6 +466,19 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         text_final_publication.log_info
 
         #assert_equal @meta_board.publications.first.origin, @publication, "Meta board does not have publications"
+        @publication.destroy
+
+        # @balmas this is all a bit of a hack to  test that the identifiers in the newly created and
+        # finalized  publication are indeed committed to master -- I think since it's not going to
+        # be in the numbers server we can't go through a controller method here 
+        test_identifier_path = current_creator_publication.identifiers.first.to_path
+        test_identifier_n = current_creator_publication.identifiers.first.n_attribute
+        Rails.logger.debug "--- Checking master repository for " + test_identifier_path
+        @publication = Publication.new()
+        @publication.owner = @creator_user
+        @publication.creator = @creator_user
+        @publication.repository.update_master_from_canonical
+        assert ! @publication.repository.get_file_from_branch(test_identifier_path, 'master').blank?
         @publication.destroy
       end
     end
