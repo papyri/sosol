@@ -59,4 +59,22 @@ class EndUserCommunitiesControllerTest < ActionController::TestCase
 
     assert_redirected_to :controller => 'user', :action => 'admin'
   end
+
+  test "should allow edit of end user" do
+    get :edit, id: @community
+    assert_select "a[href='/end_user_communities/edit_end_user/" + @community.id.to_s + "']" 
+  end
+
+
+  test "should get edit end user" do
+    get :edit_end_user, id: @community
+    assert_response :success
+  end
+
+  test "should edit end user" do
+    put :set_end_user, id: @community, user_id: @admin.id
+    @community.reload
+    assert_equal @admin.id, @community.end_user.id
+    assert_redirected_to edit_end_user_community_path(@community)
+  end
 end
