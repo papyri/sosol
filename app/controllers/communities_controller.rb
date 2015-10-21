@@ -1,9 +1,6 @@
 class CommunitiesController < ApplicationController
 
   before_filter :authorize
-  # default community actions are all admin - override in the 
-  # individual controllers for looser permissions
-  before_filter :enforce_admin, :except => [:index, :new]
   
   # GET /communities
   # GET /communities.xml

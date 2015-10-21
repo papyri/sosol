@@ -4,6 +4,7 @@ class MasterCommunitiesControllerTest < ActionController::TestCase
 
   def setup 
     @admin = FactoryGirl.create(:admin)
+    @user = FactoryGirl.create(:user)
     @request.session[:user_id] = @admin.id
     @community = FactoryGirl.create(:master_community)
     @community_two = FactoryGirl.create(:master_community)
@@ -12,6 +13,7 @@ class MasterCommunitiesControllerTest < ActionController::TestCase
   def teardown
     @request.session[:user_id] = nil
     @admin.destroy
+    @user.destroy
     @community.destroy unless !Community.exists? @community.id
     @community_two.destroy unless !Community.exists? @community_two.id
   end
@@ -57,4 +59,44 @@ class MasterCommunitiesControllerTest < ActionController::TestCase
 
     assert_redirected_to :controller => 'user', :action => 'admin'
   end
+  
+  test "should not allow non-admin edit" do 
+    @request.session[:user_id] = @user.id
+    get :edit, id: @community
+    assert_redirected_to '/master_communities'
+    assert_equal "This action requires administrator rights", flash[:error]
+  end
+
+  test "should not allow non-admin destroy" do 
+    @request.session[:user_id] = @user.id
+    delete :destroy,  id: @community
+    assert_redirected_to '/master_communities'
+    assert_equal "This action requires administrator rights", flash[:error]
+  end
+
+  test "should not allow non-admin update" do 
+    @request.session[:user_id] = @user.id
+    put :update, id: @community, master_community: {  }
+    assert_equal "This action requires administrator rights", flash[:error]
+    assert_redirected_to '/master_communities'
+  end 
+
+  test "should not allow community admin on master community" do 
+    @community.admins << @user
+    @request.session[:user_id] = @user.id
+
+    get :edit, id: @community
+    assert_redirected_to '/master_communities'
+    assert_equal "This action requires administrator rights", flash[:error]
+
+    put :update, id: @community
+    assert_redirected_to '/master_communities'
+    assert_equal "This action requires administrator rights", flash[:error]
+
+    delete :destroy, id: @community
+    assert_redirected_to '/master_communities'
+    assert_equal "This action requires administrator rights", flash[:error]
+
+  end
+
 end

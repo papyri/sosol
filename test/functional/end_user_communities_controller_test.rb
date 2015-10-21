@@ -4,6 +4,8 @@ class EndUserCommunitiesControllerTest < ActionController::TestCase
 
   def setup 
     @admin = FactoryGirl.create(:admin)
+    @community_admin = FactoryGirl.create(:user)
+    @user = FactoryGirl.create(:user)
     @request.session[:user_id] = @admin.id
     @community = FactoryGirl.create(:end_user_community)
     @community.admins << @admin
@@ -14,6 +16,8 @@ class EndUserCommunitiesControllerTest < ActionController::TestCase
   def teardown
     @request.session[:user_id] = nil
     @admin.destroy
+    @community_admin.destroy
+    @user.destroy
     @community.destroy unless !Community.exists? @community.id
     @community_two.destroy unless !Community.exists? @community_two.id
   end
@@ -77,4 +81,30 @@ class EndUserCommunitiesControllerTest < ActionController::TestCase
     assert_equal @admin.id, @community.end_user.id
     assert_redirected_to edit_end_user_community_path(@community)
   end
+
+  test "should not allow non-community admin changes" do 
+    @request.session[:user_id] = @user.id
+
+    get :edit, id: @community
+    assert_redirected_to '/end_user_communities'
+    assert_equal "This action requires community administrator rights", flash[:error]
+
+    get :edit_end_user, id: @community
+    assert_redirected_to '/end_user_communities'
+    assert_equal "This action requires community administrator rights", flash[:error]
+
+    put :set_end_user, id: @community
+    assert_redirected_to '/end_user_communities'
+    assert_equal "This action requires community administrator rights", flash[:error]
+
+    put :update, id: @community
+    assert_redirected_to '/end_user_communities'
+    assert_equal "This action requires community administrator rights", flash[:error]
+
+    delete :destroy, id: @community
+    assert_redirected_to '/end_user_communities'
+    assert_equal "This action requires community administrator rights", flash[:error]
+
+  end
+
 end
