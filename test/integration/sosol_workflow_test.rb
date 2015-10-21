@@ -104,6 +104,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         #set up the boards, and vote
         @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta", :community => @community)
 
+
         #the board memeber
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
@@ -143,6 +144,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @meta_board.rank = 1
         @text_board.rank = 2
         @translation_board.rank = 3
+
+        # setup additional communities for testing submit options
+
+        @community_end_user = FactoryGirl.create(:user, :name => "community_man_bob")
+        @closed_community = FactoryGirl.create(:end_user_community, :is_default => false, :allows_self_signup => false, :end_user_id => @community_end_user.id )
+        @open_community = FactoryGirl.create(:end_user_community, :is_default => false, :allows_self_signup => true, :end_user_id => @community_end_user.id )
+        @meta_community_board1 = FactoryGirl.create(:hgv_meta_board, :title => "meta", :community => @closed_community)
+        @meta_community_board2 = FactoryGirl.create(:hgv_meta_board, :title => "meta", :community => @open_community)
       end
 
       teardown do
@@ -198,6 +207,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "xml:"
           Rails.logger.debug pi.xml_content
         end
+
+        Rails.logger.debug "---Testing Submittable Communities---"
+        get 'publications/' + @publication.id.to_s + '?test_user_id=' + @creator_user.id.to_s 
+        assert assigns(:submittable_communities)
+        assert assigns(:signup_communities)
+
+        assert_equal [@open_community.id], assigns(:signup_communities)
+        assert_equal [@community.id, @open_community.id], assigns(:submittable_communities).values
 
         open_session do |submit_session|
 

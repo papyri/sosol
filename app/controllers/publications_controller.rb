@@ -53,6 +53,34 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = @publication.creatable_identifiers
   end
 
+  # Determine the list of communities which the publication can be submitted to
+  # and the list of communities which allow signup
+  # 
+  # Sets @submittable_communities to a Hash whose keys are the Community friendly name
+  # and whose values are the communit ids
+  #
+  # Sets @signup_communities to subset of the keys from the @submittable_communities has
+  # that represent the communities which the user doesn't already belong to but can signup for.
+  # The default community isn't flagged as a signup community because everyone should become a member
+  # of it by default the first time they use it
+  def determine_available_communities
+    @submittable_communities = Hash.new
+    @signup_communities = []
+    @current_user.community_memberships.each do |community|
+      if community.is_submittable? #check to see that we can submit to community
+        @submittable_communities[community.format_name] = community.id
+      end
+    end
+    (Community.all - @current_user.community_memberships).each  do |community|
+      if community.is_submittable? && community.allows_self_signup?
+        @submittable_communities[community.format_name] = community.id
+        unless community.is_default? 
+          @signup_communities << community.id # don't flag for signup if this the default community
+        end
+      end
+    end
+  end
+
   def advanced_create()
     @publication = Publication.new
   end
@@ -505,6 +533,7 @@ class PublicationsController < ApplicationController
 
 
     determine_creatable_identifiers()
+    determine_available_communities()
 
     respond_to do |format|
       format.html # show.html.erb
