@@ -24,15 +24,15 @@
         %th
           Description
       - @communities.each do |community|
-        - community[:class] = community.is_default? ? 'defaultcommunity' : ''
+        - classname = community.is_default? ? 'defaultcommunity' : ''
         %tr
-          %td{:class => community[:class]}
+          %td{:class => classname}
             = community.name 
-          %td{:class => community[:class]}
+          %td{:class => classname}
             = community.friendly_name 
-          %td{:class => community[:class]}
+          %td{:class => classname}
             = community.type
-          %td{:class => community[:class]}
+          %td{:class => classname}
             = community.description 
           -#
             %td 
