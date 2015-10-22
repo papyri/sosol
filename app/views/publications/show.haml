@@ -60,7 +60,8 @@
               = submit_tag "Submit to Boards", :onclick => 'this.disabled=true;this.form.submit();', :disabled => true, :class => 'submit', :id => "submit_button"
               
               = hidden_field_tag 'do_community_signup', @signup_communities.join(',')
-              = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();" }
+              = hidden_field_tag 'do_community_confirm', @confirm_communities.join(',')
+              = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community.id }
         - else
           %b
             Publication may not be submitted at this time.

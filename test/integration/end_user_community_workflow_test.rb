@@ -262,6 +262,7 @@ class EndUserCommunityWorkflowTest < ActionController::IntegrationTest
         open_session do |submit_session|
           submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I made a new pub", :community => { :id => @test_community.id.to_s }
+          assert_equal "Publication submitted to #{@test_community.friendly_name}.", submit_session.flash[:notice]
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end
         @publication.reload

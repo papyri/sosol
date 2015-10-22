@@ -212,14 +212,17 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         get 'publications/' + @publication.id.to_s + '?test_user_id=' + @creator_user.id.to_s 
         assert assigns(:submittable_communities)
         assert assigns(:signup_communities)
+        assert assigns(:confirm_communities)
 
         assert_equal [@open_community.id], assigns(:signup_communities)
         assert_equal [@community.id, @open_community.id], assigns(:submittable_communities).values
+        assert_equal [], assigns(:confirm_communities)
 
         open_session do |submit_session|
 
           submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s +
             "&community[id]=#{@community.id.to_s}", :submit_comment => "I made a new pub"
+          assert_equal "Publication submitted to #{@community.friendly_name}.", flash[:notice]
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end

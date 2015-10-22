@@ -53,8 +53,9 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = @publication.creatable_identifiers
   end
 
-  # Determine the list of communities which the publication can be submitted to
-  # and the list of communities which allow signup
+  # Determine the list of communities which the publication can be submitted to,
+  # the list of communities which allow signup, and the list which require
+  # confirmation
   # 
   # Sets @submittable_communities to a Hash whose keys are the Community friendly name
   # and whose values are the communit ids
@@ -66,16 +67,26 @@ class PublicationsController < ApplicationController
   def determine_available_communities
     @submittable_communities = Hash.new
     @signup_communities = []
+    @confirm_communities = []
     @current_user.community_memberships.each do |community|
       if community.is_submittable? #check to see that we can submit to community
         @submittable_communities[community.format_name] = community.id
+      end
+      if @publication.community_id != community.id && ! @publication.community.is_default?
+        @confirm_communities << community.id
       end
     end
     (Community.all - @current_user.community_memberships).each  do |community|
       if community.is_submittable? && community.allows_self_signup?
         @submittable_communities[community.format_name] = community.id
+        # don't flag for signup if this the default community
         unless community.is_default? 
-          @signup_communities << community.id # don't flag for signup if this the default community
+          @signup_communities << community.id 
+        end
+        # flag for confirmation if the community for the publication wasn't the default
+        # and would be changed by this assignment
+        if @publication.community_id != community.id && ! @publication.community.is_default?
+          @confirm_communities << community.id
         end
       end
     end
@@ -283,12 +294,10 @@ class PublicationsController < ApplicationController
         end
       end
 
-      # TODO REWRITE we want to check to see if the community is different than the one already assigned and if so, and if the previous
-      # one was not the default, we should double-check that it's okay before proceeding - maybe handled client side though...
+      # reset the community if it has changed
+      # client-side code should have alerted the user of the change
       if @publication.community_id != @community.id
-        flash[:notice] = "This publication has been changed to the #{@community.friendly_name} Community"
         @publication.community_id = @community.id
-        Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
       end
 
       #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
@@ -303,7 +312,7 @@ class PublicationsController < ApplicationController
         @comment.save
         expire_publication_cache
         expire_fragment(/board_publications_\d+/)
-        flash[:notice] = 'Publication submitted.'
+        flash[:notice] = "Publication submitted to #{@publication.community.friendly_name}."
       else
         #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
         cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
@@ -445,8 +454,8 @@ class PublicationsController < ApplicationController
       return
     end
 
-    # TODO do we ever not want to expire cache and fragment? Previously this wasn't done for 
-    # community publications but it would seem that maybe that was an error?
+    # @balmas - do we ever not want to expire cache and fragment? Previously this wasn't done for 
+    # community publications but it would seem that maybe that was an error.
     expire_publication_cache(@publication.creator.id)
     expire_fragment(/board_publications_\d+/)
 
