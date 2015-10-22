@@ -248,7 +248,14 @@ class Publication < ActiveRecord::Base
       Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
     end
 
-    boards = Board.ranked_by_community_id( self.community.id )
+    
+    if self.is_community_publication?
+      Rails.logger.info("CCCC BOARDS")
+      boards = Board.ranked_by_community_id( self.community.id )
+      Rails.logger.info(@boards.inspect)
+    else
+      boards = Board.ranked
+    end
 
     #check each board in order by priority rank
     boards.each do |board|
@@ -292,27 +299,27 @@ class Publication < ActiveRecord::Base
 
     Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
-    self.community.promote(self)
+
+    if is_community_publication?
+      self.community.promote(self)
+    else
+      # backwards compatibility
+      # mark as committed
+      self.origin.change_status("committed")
+    end
     self.save
 
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
   end
 
-  # check to be sure the publication is valid before submitting
-  def  meets_submit_criteria?
-    # we shouldn't get here without a community id but check
-    # for it just in case
+  def is_community_publication?
     return (self.community_id != nil)  &&  (self.community_id != 0)
   end
 
   #Simply pointer to submit_to_next_board method.
   def submit
-    if meets_submit_criteria?
-      submit_to_next_board
-    else 
-      raise "Publications does not meet submission criteria"
-    end
+    submit_to_next_board
   end
 
   #Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier

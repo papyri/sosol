@@ -45,14 +45,15 @@
 
 
 - if @current_user
-  
+  -# backwards compatibility 
+  - sosol_boards = @current_user.boards.ranked_by_community_id(nil)
   
   -# need list of community board ids
   - community_ids = @current_user.boards.collect{ |b| b.community_id }
   - community_ids.uniq!
   - community_ids.compact!
 
-  - if community_ids.length > 0
+  - if sosol_boards.length > 0 || community_ids.length > 0
 
     - current_board_id  = nil
     
@@ -65,10 +66,14 @@
     
  
     %li{:onclick=>"showBoardDialog(event)",  :id=>"board_menu", :class=>"editor_menu"}
-      = "Community Boards"
+      = "Boards"
   
     %div{:class => "editor_nav", :id=>"board_list"}
       %ul
+
+        - sosol_boards.each do |sb|
+          %li
+            = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
         
         - community_ids.each do |next_id|
          

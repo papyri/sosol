@@ -29,10 +29,13 @@ FactoryGirl.define do
   end
 
   factory :board do |f|
-    f.association :community
     f.title { FactoryGirl.generate(:name) }
     f.category 'category'
     f.identifier_classes ['DDBIdentifier']
+  end
+
+  factory :community_board, :parent => :board do |f|
+    f.association :community
   end
 
   factory :apis_board, :parent => :board do |f|
@@ -80,11 +83,24 @@ FactoryGirl.define do
     }
   end
 
+  factory :hgv_community_board, :parent => :hgv_board do |f|
+    f.association :community
+  end
+
   factory :hgv_meta_board, :parent => :hgv_board do |f|
     f.identifier_classes ['HGVMetaIdentifier']
   end
 
+
+  factory :hgv_meta_community_board, :parent => :hgv_community_board do |f|
+    f.identifier_classes ['HGVMetaIdentifier']
+  end
+
   factory :hgv_trans_board, :parent => :hgv_board do |f|
+    f.identifier_classes ['HGVTransIdentifier']
+  end
+
+  factory :hgv_trans_community_board, :parent => :hgv_community_board do |f|
     f.identifier_classes ['HGVTransIdentifier']
   end
 

@@ -274,30 +274,25 @@ class PublicationsController < ApplicationController
         redirect_to @publication
         return
       end
+
+      # all UI submissions should now include a community id but for backwards
+      # compatibility we will allow publications without
+      if params[:community][:id]
+        @community = Community.find(params[:community][:id].strip.to_s)
       
-      @community = Community.find(params[:community][:id].strip.to_s)
-
-      # we must now have a community
-      unless @community
-        flash[:error] = "Unable to find a community with the id of #{params[:community][:id]}"
-          redirect_to @publication
-          return
-      end
-
-      unless @current_user.community_memberships.include?(@community)
-        if (@community.allows_self_signup? && @community.add_member(@current_user.id))
-          flash[:notice] = "You have been signed up to #{@community.friendly_name}"
-        else
+        unless @current_user.community_memberships.include?(@community) || (@community.allows_self_signup? && @community.add_member(@current_user.id))
           flash[:error] = 'Unable to signup for selected community'
-          redirect_to @publication
-          return
+          redirect_to @publication and return
         end
-      end
+     
 
-      # reset the community if it has changed
-      # client-side code should have alerted the user of the change
-      if @publication.community_id != @community.id
-        @publication.community_id = @community.id
+        # reset the community if it has changed
+        # client-side code should have alerted the user of the change
+        if @publication.community_id != @community.id
+          @publication.community_id = @community.id
+        end
+      else
+          @publication.community_id = nil
       end
 
       #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
@@ -312,7 +307,8 @@ class PublicationsController < ApplicationController
         @comment.save
         expire_publication_cache
         expire_fragment(/board_publications_\d+/)
-        flash[:notice] = "Publication submitted to #{@publication.community.friendly_name}."
+        submitted_to = @publication.community ? @publication.community.friendly_name : "SoSOL"
+        flash[:notice] = "Publication submitted to #{submitted_to}."
       else
         #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
         cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
@@ -443,7 +439,12 @@ class PublicationsController < ApplicationController
 
     # finalize
     begin
-      commit_sha = @publication.community.finalize(@publication)
+      if @publication.is_community_publication?
+        commit_sha = @publication.community.finalize(@publication)
+      else
+        # backwards compatibility - commit to master
+        canon_sha = @publication.commit_to_canon 
+      end
     rescue Errno::EACCES => git_permissions_error
       flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
       redirect_to @publication

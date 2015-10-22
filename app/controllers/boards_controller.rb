@@ -72,6 +72,9 @@ class BoardsController < ApplicationController
     @communities.each do |c|
       @boards[c.friendly_name] = Board.ranked_by_community_id(c.id)
     end
+    # for backwards compatibility, include boards without communities
+    @boards['No Community'] = Board.ranked_by_community_id(nil)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @boards }
@@ -135,7 +138,12 @@ class BoardsController < ApplicationController
 
 
     #put the new board in last rank
-    @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    if @board.community_id
+      @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    else 
+      # all new boards should have communities now but we need to be backwards compatible
+      @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
+    end
     #just let them choose one identifer class
     #@board.identifier_classes << params[:identifier_class]
     
@@ -180,10 +188,14 @@ class BoardsController < ApplicationController
 
   #*Returns* array of boards sorted by rank. Lowest rank (highest priority) first.
   #If community_id is given then the returned boards are only for that community.
-  #If no community_id is given then the "sosol" boards are returned. 
+  #If no community_id is given then the now deprecated "sosol" boards are returned. 
   def rank
-    @boards = Board.ranked_by_community_id( params[:community_id].to_s )
-    @community_id = params[:community_id].to_s 
+    if params[:community_id].to_s
+      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
+      @community_id = params[:community_id].to_s 
+    else
+      @boards = Board.ranked_by_community_id( nil )
+    end
   end
 
   #Sorts board rankings by given array of board id's and saves new rankings.

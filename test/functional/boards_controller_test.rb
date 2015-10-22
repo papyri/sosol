@@ -37,12 +37,25 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should have max rank default" do
     post :create, :board => FactoryGirl.build(:board).attributes
+    Rails.logger.info(assigns(:board).rank.to_s + " != " + Board.count.to_s)
+    assert assigns(:board).rank == Board.count
+    assigns(:board).destroy
+  end
+
+  test "community board should have max rank default" do
+    post :create, :board => FactoryGirl.build(:community_board).attributes
     assert assigns(:board).rank == assigns(:board).community.boards.count
     assigns(:board).destroy
   end
     
   test "should have valid rank" do
     post :create, :board => FactoryGirl.build(:board).attributes
+    assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
+    assigns(:board).destroy
+  end
+
+  test "community board should have valid rank" do
+    post :create, :board => FactoryGirl.build(:community_board).attributes
     assert assigns(:board).rank > 0 && assigns(:board).rank <= assigns(:board).community.boards.count
     assigns(:board).destroy
   end
