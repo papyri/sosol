@@ -228,10 +228,10 @@ class CommunitiesController < ApplicationController
     end
   end
 
-  # filter to enforce community level admin access for an action
+  # filter to enforce at least community level admin access for an action
   def enforce_community_admin
     @community = Community.find(params[:id].to_s)
-    unless @community.admins.include? @current_user
+    unless (@community.admins.include? @current_user) || @current_user.admin
       flash[:error] = "This action requires community administrator rights"
       redirect_to :action => "index" and return
     end   
