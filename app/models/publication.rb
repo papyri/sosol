@@ -249,7 +249,7 @@ class Publication < ActiveRecord::Base
     end
 
     
-    boards = Board.ranked_by_community_id( self.community.id )
+    boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
 
     #check each board in order by priority rank
     boards.each do |board|
