@@ -62,6 +62,20 @@ class BoardsControllerTest < ActionController::TestCase
     assert assigns(:board).rank > 0 && assigns(:board).rank <= assigns(:board).community.boards.count
     assigns(:board).destroy
   end
+
+  test "should show non community boards by rank" do
+    get :rank 
+    assert assigns(:boards)
+    assert_equal [ @board, @board_two ], assigns(:boards)
+    assert_equal "", assigns(:community_id)
+  end
+
+  test "should show community boards by rank" do
+    get :rank, :community_id => @community_board.community.id
+    assert assigns(:boards)
+    assert_equal [ @community_board ], assigns(:boards)
+    assert_equal @community_board.community.id.to_s, assigns(:community_id)
+  end
     
   test "should show board" do    
     get :show, :id => @board.id

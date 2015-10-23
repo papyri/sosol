@@ -249,13 +249,7 @@ class Publication < ActiveRecord::Base
     end
 
     
-    if self.is_community_publication?
-      Rails.logger.info("CCCC BOARDS")
-      boards = Board.ranked_by_community_id( self.community.id )
-      Rails.logger.info(@boards.inspect)
-    else
-      boards = Board.ranked
-    end
+    boards = Board.ranked_by_community_id( self.community.id )
 
     #check each board in order by priority rank
     boards.each do |board|

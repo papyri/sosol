@@ -20,10 +20,8 @@ class Board < ActiveRecord::Base
   scope :sorted_by_community_and_ranked, :order => 'community_id ASC, rank ASC' 
 
   #ranked scopes returns the boards for a given community in order of their rank
-  scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
+  scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => { :community_id => id_in } } }
 
-   #ranked left as default for deprecated sosol ranks
-  scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
 
 
   # :identifier_classes is an array of identifier classes this board has

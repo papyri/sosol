@@ -73,7 +73,7 @@ class BoardsController < ApplicationController
       @boards[c.friendly_name] = Board.ranked_by_community_id(c.id)
     end
     # for backwards compatibility, include boards without communities
-    @boards['No Community'] = Board.ranked
+    @boards['No Community'] = Board.ranked_by_community_id(nil)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -138,12 +138,7 @@ class BoardsController < ApplicationController
 
 
     #put the new board in last rank
-    if @board.community_id
-      @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
-    else 
-      # all new boards should have communities now but we need to be backwards compatible
-      @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
-    end
+    @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
     #just let them choose one identifer class
     #@board.identifier_classes << params[:identifier_class]
     
@@ -190,18 +185,14 @@ class BoardsController < ApplicationController
   #If community_id is given then the returned boards are only for that community.
   #If no community_id is given then the now deprecated "sosol" boards are returned. 
   def rank
-    if params[:community_id].to_s
-      @boards = Board.ranked_by_community_id( params[:community_id].to_s )
-      @community_id = params[:community_id].to_s 
-    else
-      @boards = Board.ranked_by_community_id( nil )
-    end
+    @boards = Board.ranked_by_community_id( params[:community_id] )
+    @community_id = params[:community_id].to_s 
   end
 
   #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
-    @boards = Board.ranked_by_community_id( params[:community_id].to_s )
+    @boards = Board.ranked_by_community_id( params[:community_id] )
     
     #@boards = Board.find(:all)
 
@@ -236,8 +227,8 @@ def send_board_reminder_emails
     
   addresses = Array.new 
   
-  boards = Board.ranked_by_community_id(params[:community_id].to_s) 
-  community = Community.find_by_id(params[:community_id].to_s) 
+  boards = Board.ranked_by_community_id(params[:community_id]) 
+  community = Community.find_by_id(params[:community_id]) 
     
     
   body_text = 'Greetings '

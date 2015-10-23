@@ -21,7 +21,7 @@ class BoardTest < ActiveSupport::TestCase
     end
 
     should "return rank" do 
-        assert_equal [ @board ], Board.ranked
+        assert_equal [ @board ], Board.ranked_by_community_id( nil )
     end
 
     
