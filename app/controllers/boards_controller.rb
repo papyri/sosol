@@ -73,7 +73,9 @@ class BoardsController < ApplicationController
       @boards[c.friendly_name] = Board.ranked_by_community_id(c.id)
     end
     # for backwards compatibility, include boards without communities
-    @boards['No Community'] = Board.ranked_by_community_id(nil)
+    if Sosol::Application.config.allow_canonical_boards
+        @boards['No Community'] = Board.ranked_by_community_id(nil)
+    end
 
     respond_to do |format|
       format.html # index.html.erb

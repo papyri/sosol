@@ -17,3 +17,8 @@
  
   %p
     = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
+
+  -if Sosol::Application.config.allow_canonical_boards 
+    %p
+      = link_to 'New board', new_board_path
+

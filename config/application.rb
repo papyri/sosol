@@ -54,6 +54,7 @@ module Sosol
     config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
     config.site_user_namespace = 'papyri.info'
+    config.allow_canonical_boards = true
 
     # Configure XSugar
     # These can be overridden in config/environments/*_secret.rb

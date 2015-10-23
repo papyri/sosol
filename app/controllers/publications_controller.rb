@@ -90,6 +90,10 @@ class PublicationsController < ApplicationController
         end
       end
     end
+    # if canonical boards are allowed, add in the "sosol" board
+    if (Sosol::Application.config.allow_canonical_boards)
+        @submittable_communities["#{Sosol::Application.config.site_name}*"] = 0
+    end
   end
 
   def advanced_create()
@@ -106,7 +110,7 @@ class PublicationsController < ApplicationController
     else
       community = Community.default
     end
-    if community.nil?
+    if community.nil? && ! Sosol::Application.config.allow_canonical_boards
       flash[:error] = 'No valid community found for this publication'
       redirect_to dashboard_url and return
     end
@@ -275,24 +279,22 @@ class PublicationsController < ApplicationController
         return
       end
 
-      # all UI submissions should now include a community id but for backwards
-      # compatibility we will allow publications without
-      if params[:community] && params[:community][:id]
+      if params[:community] && params[:community][:id] != '0'
         @community = Community.find(params[:community][:id].strip.to_s)
       
         unless @current_user.community_memberships.include?(@community) || (@community.allows_self_signup? && @community.add_member(@current_user.id))
           flash[:error] = 'Unable to signup for selected community'
           redirect_to @publication and return
         end
-     
-
         # reset the community if it has changed
         # client-side code should have alerted the user of the change
         if @publication.community_id != @community.id
           @publication.community_id = @community.id
         end
-      else
+      elsif Sosol::Application.config.allow_canonical_boards
           @publication.community_id = nil
+      else
+          flash[:error] = "Publications require a community."
       end
 
       #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
@@ -441,9 +443,11 @@ class PublicationsController < ApplicationController
     begin
       if @publication.is_community_publication?
         commit_sha = @publication.community.finalize(@publication)
-      else
+      elsif Sosol::Application.config.allow_canonical_boards
         # backwards compatibility - commit to master
         canon_sha = @publication.commit_to_canon 
+      else
+        raise "Community required for finalization."
       end
     rescue Errno::EACCES => git_permissions_error
       flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."

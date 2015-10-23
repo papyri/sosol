@@ -46,7 +46,8 @@
 
 - if @current_user
   -# backwards compatibility 
-  - sosol_boards = @current_user.boards.ranked_by_community_id(nil)
+  - if Sosol::Application.config.allow_canonical_boards
+    - sosol_boards = @current_user.boards.ranked_by_community_id(nil)
   
   -# need list of community board ids
   - community_ids = @current_user.boards.collect{ |b| b.community_id }
