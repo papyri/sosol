@@ -90,9 +90,9 @@ class PublicationsController < ApplicationController
         end
       end
     end
-    # if canonical boards are allowed, add in the "sosol" board
-    if (Sosol::Application.config.allow_canonical_boards)
-        @submittable_communities["#{Sosol::Application.config.site_name}*"] = 0
+    # if canonical boards are allowed and canbe shown, add in the "sosol" board
+    if (Sosol::Application.config.allow_canonical_boards && Sosol::Application.config.show_canonical_boards)
+        @submittable_communities[Sosol::Application.config.site_name] = 0
     end
   end
 

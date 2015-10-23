@@ -183,7 +183,7 @@ class MasterCommunityWorkflowTest < ActionController::IntegrationTest
     assert assigns(:confirm_communities)
 
     assert_equal [@open_community.id], assigns(:signup_communities)
-    assert_equal [@community.id, @open_community.id], assigns(:submittable_communities).values
+    assert_equal [@community.id, @open_community.id,0], assigns(:submittable_communities).values
     assert_equal [], assigns(:confirm_communities)
 
     open_session do |submit_session|
