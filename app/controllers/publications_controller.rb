@@ -277,7 +277,7 @@ class PublicationsController < ApplicationController
 
       # all UI submissions should now include a community id but for backwards
       # compatibility we will allow publications without
-      if params[:community][:id]
+      if params[:community] && params[:community][:id]
         @community = Community.find(params[:community][:id].strip.to_s)
       
         unless @current_user.community_memberships.include?(@community) || (@community.allows_self_signup? && @community.add_member(@current_user.id))
