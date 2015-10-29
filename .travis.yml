@@ -8,13 +8,12 @@ jdk:
   - openjdk7
 rvm:
   - jruby
-install:
+before_script:
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
   - gem pristine jruby-launcher
   - gem --version
   - bundle exec cap local externals:setup
-before_script:
   - touch config/environments/test_secret.rb
   - bundle exec rake git:db:canonical:clone
   - bundle exec rake db:migrate
