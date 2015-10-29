@@ -49,8 +49,9 @@ class Publication < ActiveRecord::Base
     # We do not like it if:
     if value =~ /^\./ ||    # - any path component of it begins with ".", or
        value =~ /\.\./ ||   # - it has double dots "..", or
+       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
        value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /\/$/ ||    # - it ends with a "/".
+       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
        value =~ /\.lock$/   # - it ends with ".lock"
       model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
     end
@@ -1495,11 +1496,11 @@ class Publication < ActiveRecord::Base
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
     end
 
     #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
     end
 end
