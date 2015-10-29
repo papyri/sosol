@@ -31,8 +31,10 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="processing-instruction('oxygen')">
-    <xsl:processing-instruction name="oxygen"><xsl:text>RNGSchema="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="xml"</xsl:text></xsl:processing-instruction>
+ <!-- set xml-model processing instruction, converting previous oxygen processing instructions -->
+  <xsl:template match="processing-instruction('oxygen')|processing-instruction('xml-model')">
+    <xsl:processing-instruction name="xml-model"><xsl:text>href="http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text></xsl:processing-instruction>
+    <xsl:text>
+</xsl:text>
   </xsl:template>
-  
 </xsl:stylesheet>

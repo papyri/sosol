@@ -49,8 +49,9 @@ class Publication < ActiveRecord::Base
     # We do not like it if:
     if value =~ /^\./ ||    # - any path component of it begins with ".", or
        value =~ /\.\./ ||   # - it has double dots "..", or
+       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
        value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /\/$/ ||    # - it ends with a "/".
+       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
        value =~ /\.lock$/   # - it ends with ".lock"
       model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
     end
@@ -1401,6 +1402,7 @@ class Publication < ActiveRecord::Base
     has_text = false
     has_biblio = false
     has_cts = false
+    has_apis = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1414,6 +1416,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CTSIdentifier/
         has_cts = true
+      end
+      if i.class.to_s == "APISIdentifier"
+        has_apis = true
       end
     end
     if !has_text
@@ -1435,6 +1440,9 @@ class Publication < ActiveRecord::Base
     if has_cts
       creatable_identifiers = []
     end
+    if has_apis
+      creatable_identifiers.delete("APISIdentifier")
+    end
 
     #only let user create new for non-existing
     self.identifiers.each do |i|
@@ -1451,11 +1459,11 @@ class Publication < ActiveRecord::Base
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
     end
 
     #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
+      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
     end
 end
