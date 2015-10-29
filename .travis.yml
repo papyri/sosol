@@ -1,4 +1,5 @@
 language: ruby
+sudo: false
 env:
   - JRUBY_OPTS=-J-Xmx1g
 jdk:
@@ -7,12 +8,13 @@ jdk:
   - openjdk7
 rvm:
   - jruby
-before_script:
+install:
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
   - gem pristine jruby-launcher
   - gem --version
   - bundle exec cap local externals:setup
+before_script:
   - touch config/environments/test_secret.rb
   - bundle exec rake git:db:canonical:clone
   - bundle exec rake db:migrate
