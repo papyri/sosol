@@ -20,6 +20,25 @@ class PublicationTest < ActiveSupport::TestCase
       assert !@publication.save
     end
   end
+
+  context "a publication with a title with an invalid Git ref" do
+    setup do
+      @user = FactoryGirl.create(:user)
+      
+      @pubtitle = "P.Lond. Herm."
+      @user.repository.create_branch(@branchname)
+      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
+    end
+
+    teardown do
+      @user.destroy
+    end
+
+    should "have a branch with a valid Git ref" do
+      assert @publication.save
+      assert_equal "P.Lond._Herm", @publication.branch
+    end
+  end
   
   context "a new publication from templates" do
     setup do

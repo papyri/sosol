@@ -114,7 +114,7 @@ module JRubyXML
         "http://www.stoa.org/epidoc/schema/8.16/tei-epidoc.rng")
     end
   end
-  
+
   class EpiDocP4Validator < JARVValidator
     def initialize
       @verifier_factory = 
@@ -125,6 +125,16 @@ module JRubyXML
     end
   end
   
+  class HGVEpiDocValidator < JARVValidator
+    def initialize
+      @verifier_factory =
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://relaxng.org/ns/structure/1.0")
+      @schema = verifier_factory.compileSchema(
+        "http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng")
+    end
+  end
+
   class PerseusTreebankValidator < JARVValidator
     def initialize
     @verifier_factory = 

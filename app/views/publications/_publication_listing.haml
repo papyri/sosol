@@ -40,7 +40,7 @@
                   - create_type = 'Create New'           
                   - if class_type == 'APISIdentifier'
                     - options = ['Create New'] << APISIdentifier.collection_names_hash.sort
-                    - form_for :apis, :url => {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type} do |f|
+                    = form_for :apis, :url => {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type} do |f|
                       = select_tag "apis_collection", options_for_select(options.flatten.uniq), :prompt => 'Create New', :onchange => "this.form.submit()"
                   - else
                     = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_id}", :onclick => "$('#{link_id}').replace('<b #{newstyle}>Creating New...</b>');"})
