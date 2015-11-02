@@ -331,7 +331,7 @@ Sosol::Application.routes.draw do
     get :exportxml
     post :edit_or_create
     post :append
-    put :delete_annotation
+    post :delete_annotation
     get :annotate_xslt
     end
     

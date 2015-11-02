@@ -64,7 +64,9 @@ class CtsOacIdentifiersController < IdentifiersController
       end
     end    
   end
- 
+
+  # @deprecated 
+  # replaced by use of the dmm_api append route
   def append
     find_publication_and_identifier
     # TODO validate input
