@@ -1470,6 +1470,7 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CiteIdentifier/
         has_cite = true
+      end
       if i.class.to_s == "APISIdentifier"
         has_apis = true
       end
