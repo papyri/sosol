@@ -91,6 +91,10 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       setup do
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        # these tests require canonical boards configuration enabled
+        Sosol::Application.config.allow_canonical_boards = true
+        Sosol::Application.config.submit_canonical_boards = true
+
         #a user to put on the boards
         @board_user = FactoryGirl.create(:user, :name => "board_man_bob")
         @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
@@ -457,6 +461,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
   context "for IDP2" do
     setup do
+      # these tests require canonical boards configuration enabled
+      Sosol::Application.config.allow_canonical_boards = true
+      Sosol::Application.config.submit_canonical_boards = true
       @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
 
       3.times do |i|

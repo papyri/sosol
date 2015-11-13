@@ -7,9 +7,11 @@ class BoardsControllerTest < ActionController::TestCase
     @board = FactoryGirl.create(:board)
     @board_two = FactoryGirl.create(:board)
     @community_board = FactoryGirl.create(:community_board)
+    Sosol::Application.config.allow_canonical_boards = true
   end
   
   def teardown
+    Sosol::Application.config.allow_canonical_boards = true
     @request.session[:user_id] = nil
     @admin.destroy
     @board.destroy unless !Board.exists? @board.id
@@ -23,6 +25,16 @@ class BoardsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:boards)
     assert_equal [@board, @board_two], assigns(:boards)['No Community']
     assert_equal [@community_board], assigns(:boards)[@community_board.community.friendly_name]
+  end
+
+  test "should get index and obey allow_canonical_boards" do
+    Sosol::Application.config.allow_canonical_boards = false
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:boards)
+    assert_nil assigns(:boards)['No Community']
+    assert_equal [@community_board], assigns(:boards)[@community_board.community.friendly_name]
+    Sosol::Application.config.allow_canonical_boards = true
   end
 
   test "should get new" do
@@ -44,6 +56,7 @@ class BoardsControllerTest < ActionController::TestCase
     assert assigns(:board).rank == Board.where(:community_id => nil).count, "Expected #{assigns(:board).rank} to equal #{Board.where(:community_id => nil).count}"
     assigns(:board).destroy
   end
+
 
   test "community board should have max rank default" do
     post :create, :board => FactoryGirl.build(:community_board).attributes
