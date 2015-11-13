@@ -186,12 +186,18 @@ class Publication < ActiveRecord::Base
   before_validation do |publication|
     publication.branch ||= title_to_ref(publication.title)
     # all publications should have a community even if it's the default
-    # we will recheck this on submit though so don't crash here if
-    # the default community is missing
-    begin
-      publication.community_id ||= Community.default.id
-    rescue
-      Rails.logger.error("No default community to assign to publication")
+    unless publication.community_id
+      default_community = Community.default
+      if default_community.nil? 
+        # we will recheck this on submit though so don't crash here if
+        # the default community is missing unless we are operating
+        # in strict mode and not allowing canonical boards
+        if ! Sosol::Application.config.allow_canonical_boards
+          raise "Publication community has not been set"
+        end
+      else
+        publication.community_id = default_community.id
+      end
     end
   end
 

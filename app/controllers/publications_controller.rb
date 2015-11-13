@@ -85,13 +85,13 @@ class PublicationsController < ApplicationController
         end
         # flag for confirmation if the community for the publication wasn't the default
         # and would be changed by this assignment
-        if @publication.community_id != community.id && ! @publication.community.is_default?
+        if !@publication.community.nil? && @publication.community_id != community.id && ! @publication.community.is_default?
           @confirm_communities << community.id
         end
       end
     end
-    # if canonical boards are allowed and canbe shown, add in the "sosol" board
-    if (Sosol::Application.config.allow_canonical_boards && Sosol::Application.config.show_canonical_boards)
+    # if canonical boards are allowed and can be shown, add in the "sosol" board
+    if (Sosol::Application.config.allow_canonical_boards && Sosol::Application.config.submit_canonical_boards)
         @submittable_communities[Sosol::Application.config.site_name] = 0
     end
   end
@@ -109,10 +109,6 @@ class PublicationsController < ApplicationController
       community = Community.find_by_name(params[:community_id])
     else
       community = Community.default
-    end
-    if community.nil? && ! Sosol::Application.config.allow_canonical_boards
-      flash[:error] = 'No valid community found for this publication'
-      redirect_to dashboard_url and return
     end
     @publication = Publication.new()
     @publication.owner = @current_user

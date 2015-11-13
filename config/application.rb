@@ -56,8 +56,8 @@ module Sosol
     config.site_user_namespace = 'papyri.info'
     # if allow_canonical_boards=true, canonical, i.e. non-community boards, will be fully available
     config.allow_canonical_boards = true
-    # set show_canonical_boards=false to prevent new submissions to non-community boards, to allow their phase-out
-    config.show_canonical_boards = true
+    # set submit_canonical_boards=false to prevent new submissions to non-community boards, to allow their phase-out
+    config.submit_canonical_boards = true
 
     # Configure XSugar
     # These can be overridden in config/environments/*_secret.rb
