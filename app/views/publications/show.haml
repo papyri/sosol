@@ -61,7 +61,7 @@
               
               = hidden_field_tag 'do_community_signup', @signup_communities.join(',')
               = hidden_field_tag 'do_community_confirm', @confirm_communities.join(',')
-              = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community.id }
+              = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
         - else
           %b
             Publication may not be submitted at this time.
