@@ -1,4 +1,4 @@
-#encoding utf-8
+#encoding UTF-8
 require 'mediawiki_api'
 require 'hypothesis-client'
 module AgentHelper
@@ -69,7 +69,7 @@ module AgentHelper
 
     def get_content(a_uri)
       params = { :format => @conf[:data_format][:get], :ids => a_uri, :token_type => false }
-      @client.action("wbgetentities",params).data
+      @client.action("wbgetentities",params).data.force_encoding("utf-8")
     end
 
     def post_content(a_content)
@@ -102,7 +102,7 @@ module AgentHelper
         parsed['claim']['id'] = created['claim']['id']
         setp = { :token_type => 'edit',
                  :baserevid => created['pageinfo']['lastrevid'],
-                 :claim => parsed['claim'].to_json }
+                 :claim => JSON.generate(parsed['claim']) }
         @client.action("wbsetclaim",setp).data
       rescue Exception => a_e
         Rails.logger.error(a_e)
