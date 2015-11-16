@@ -79,9 +79,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jruby-jars (1.7.21)
     jruby-rack (1.1.19)
-    json (1.5.0-java)
-    json-jruby (1.5.0-java)
-      json (= 1.5.0)
+    json (1.8.3-java)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -178,8 +176,7 @@ DEPENDENCIES
   haml (>= 3.0.25)
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
-  json
-  json-jruby (>= 1.5.0)
+  json (>= 1.6.6)
   prototype-rails
   puma
   rack (>= 1.1.0)
@@ -196,4 +193,4 @@ DEPENDENCIES
   warbler
 
 BUNDLED WITH
-   1.10.5
+   1.10.6
