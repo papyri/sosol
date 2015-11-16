@@ -77,6 +77,7 @@ module Rpx
       if resp.code == '200'
         begin
           data = JSON.parse(resp.body)
+          data.each {|k, v| data[k] = v.force_encoding('UTF-8')}
         rescue JSON::ParserError => err
           raise RpxException.new(resp), 'Unable to parse JSON response'
         end
