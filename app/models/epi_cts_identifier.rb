@@ -246,6 +246,9 @@ class EpiCTSIdentifier < CTSIdentifier
           )
         end
         agent_client.post_content(content)
+        # we want to return false here because the identifier itself
+        # wasn't modified
+        return false
       end
     rescue Exception => e
       Rails.logger.error(e) 

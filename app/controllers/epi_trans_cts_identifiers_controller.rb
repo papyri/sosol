@@ -231,7 +231,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
       @identifier.related_items.each do |r|
         if r =~ /^http/
           @related_items << { :url => r, :text => r }
-        else
+        elsif r
          @related_items << { :url => polymorphic_url([@identifier.publication, r],:action => 'preview'), :text => 'Edition' }
       end
     end
