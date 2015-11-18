@@ -322,7 +322,7 @@
                     <xsl:non-matching-substring><xsl:value-of select="."/></xsl:non-matching-substring>
                 </xsl:analyze-string>
             </xsl:when>
-            <xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>
+            <xsl:otherwise><xsl:copy-of select="text()"></xsl:copy-of></xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
