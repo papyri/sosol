@@ -72,7 +72,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     @updates = {}
 
     [:X, :Y, :Z].each{|dateId|
-     index = ('X'[0] - dateId.to_s[0]).abs.to_s
+     index = ('X'[0].ord - dateId.to_s[0].ord).abs.to_s
        if params[:hgv_meta_identifier][:textDate][index]
          @updates[dateId] = {
            :when      => params[:hgv_meta_identifier][:textDate][index][:attributes][:when],
