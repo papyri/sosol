@@ -120,9 +120,7 @@ GEM
     jruby-jars (1.7.21)
     jruby-openssl (0.9.8-java)
     jruby-rack (1.1.19)
-    json (1.5.0-java)
-    json-jruby (1.5.0-java)
-      json (= 1.5.0)
+    json (1.8.3-java)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.5.4)
@@ -239,8 +237,7 @@ DEPENDENCIES
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
   jruby-openssl (>= 0.9.8)
-  json
-  json-jruby (>= 1.5.0)
+  json (>= 1.6.6)
   mediawiki_api!
   mocha
   nokogiri (>= 1.6.6.2)

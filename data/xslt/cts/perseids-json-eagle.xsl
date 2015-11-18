@@ -5,7 +5,7 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     exclude-result-prefixes="xs"
     version="2.0">
-    <xsl:output method="text"/>
+    <xsl:output method="text" encoding="UTF-8"/>
     <xsl:include href="eagle-properties.xsl"/>
     
     <xsl:param name="urn"/>
