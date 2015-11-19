@@ -96,6 +96,7 @@ class OaCiteIdentifier < CiteIdentifier
   
   def init_content(a_init_value)
     updated_content = self.content_from_agent(a_init_value)
+    Rails.logger.info(updated_content)
     self.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
   end
   

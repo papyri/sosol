@@ -185,6 +185,20 @@ class Publication < ActiveRecord::Base
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
     publication.branch ||= title_to_ref(publication.title)
+    # all publications should have a community even if it's the default
+    unless publication.community_id
+      default_community = Community.default
+      if default_community.nil? 
+        # we will recheck this on submit though so don't crash here if
+        # the default community is missing unless we are operating
+        # in strict mode and not allowing canonical boards
+        if ! Sosol::Application.config.allow_canonical_boards
+          raise "Publication community has not been set"
+        end
+      else
+        publication.community_id = default_community.id
+      end
+    end
   end
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
@@ -244,110 +258,66 @@ class Publication < ActiveRecord::Base
       Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
     end
 
-
-    #check if we are part of a community
-
-    if is_community_publication?
-      boards = Board.ranked_by_community_id( self.community.id )
-    else
-      boards = Board.ranked
-    end
+    
+    boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
 
     #check each board in order by priority rank
     boards.each do |board|
 
-    #if board.community == publication.community
-    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-    if boards_identifiers.length > 0
-      #submit to that board
-      Rails.logger.info "---Submittable Board identifiers are: "
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-      end
-
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.status = "submitted"
-            submitting_identifier.save!
-
-            #make the most recent sha for the identifier available...is this the one we want?
-            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
-          end
-
-          #copy the repo, models, etc... to the board
-          boards_copy = copy_to_owner(board)
-          boards_copy.status = "voting"
-          boards_copy.save!
-
-
-
-          #trigger emails
-          board.send_status_emails("submitted", self)
-
-          #update status on user copy
-          self.change_status("submitted")
-          self.save!
-
-          #problem here in that comment will be added to the returned id, but there may be many ids.....
-          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-          return '', boards_identifiers[0].id
+      #if board.community == publication.community
+      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+      if boards_identifiers.length > 0
+        #submit to that board
+        Rails.logger.info "---Submittable Board identifiers are: "
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
         end
-      #end
+
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = "submitted"
+          submitting_identifier.save!
+
+          #make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
+
+        #copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save!
+
+        #trigger emails
+        board.send_status_emails("submitted", self)
+
+        #update status on user copy
+        self.change_status("submitted")
+        self.save!
+
+        #problem here in that comment will be added to the returned id, but there may be many ids.....
+        #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end
     end
 
 
     Rails.logger.debug " no more parts to submit "
     #if we get to this point, there are no more boards to submit to, thus we are done
+
     if is_community_publication?
-      if self.community.end_user.nil?
-        #no end user has been set, so warn them and then what?
-        #user can't submit to community if no end user, so this should not happen
-
-      else
-
-
-        #copy to  space
-        Rails.logger.debug "----end user to get it"
-        Rails.logger.debug self.community.end_user.name
-
-        #community_copy = copy_to_owner( self.community.end_user)
-        community_copy = copy_to_end_user()
-        community_copy.status = "editing"
-        community_copy.identifiers.each do |id|
-          id.status = "editing"
-          id.save
-        end
-        #TODO may need to do more status setting ? ie will the modified identifiers and status be correctly set to allow resubmit by end user?
-
-        #disconnect the parent/origin connections
-        #community_copy.parent_id = nil
-        community_copy.parent = nil
-
-        #reset the community id to be sosol
-        #leave as is   community_copy.community_id = nil
-
-        #remove the original creator id (that info is now in the git history )
-        community_copy.creator_id = community_copy.owner_id
-
-        community_copy.save!
-
-        #mark as committed
-        self.origin.change_status("committed")
-        self.save
-      end
-
+      self.community.promote(self)
     else
-      #mark as committed
+      # backwards compatibility
+      # mark as committed
       self.origin.change_status("committed")
-      self.save
     end
-
+    self.save
 
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
   end
 
-  def  is_community_publication?
+  def is_community_publication?
     return (self.community_id != nil)  &&  (self.community_id != 0)
   end
 
@@ -866,6 +836,7 @@ class Publication < ActiveRecord::Base
   end
 
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
+
   def find_finalizer_publication
   #returns the finalizer's publication or nil if finalizer does not exist
     Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
@@ -1273,37 +1244,18 @@ class Publication < ActiveRecord::Base
   #Creates a new publication for the new_owner that is a separate copy of this publication.
   #
   #*Args* +new_owner+ the owner for the cloned copy.
+  #       +new_title+ the new title for the cloned copy. If nill original title will be used.
   #
   #*Returns* +publication+ that is the new copy.
-  def clone_to_owner(new_owner)
+  def clone_to_owner(new_owner,new_title=nil)
     duplicate = self.dup
     duplicate.owner = new_owner
     duplicate.creator = self.creator
-    duplicate.title = self.owner.name + "/" + self.title
-    duplicate.branch = title_to_ref(duplicate.title)
-    duplicate.parent = self
-    duplicate.save!
-
-    # copy identifiers over to new pub
-    identifiers.each do |identifier|
-      duplicate_identifier = identifier.dup
-      duplicate.identifiers << duplicate_identifier
+    if (new_title.nil?)
+      duplicate.title = self.owner.name + "/" + self.title
+    else
+      duplicate.title = new_title
     end
-
-    return duplicate
-  end
-
-
-  #Creates a new publication for the end_user (of a community) that is a separate copy of this publication.
-  #This is similar to clone_to_owner, except the publication title is renamed to reflect the community and creator.
-  #The new owner is the end_user for the publication's community.
-  #
-  #*Returns* +publication+ that is the new copy.
-   def clone_to_end_user()
-    duplicate = self.dup
-    duplicate.owner = self.community.end_user
-    duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
-    duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
     duplicate.branch = title_to_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
@@ -1323,8 +1275,8 @@ class Publication < ActiveRecord::Base
 
   #copies this publication's branch to the new_owner's branch
   #returns duplicate publication with new_owner
-  def copy_to_owner(new_owner)
-    duplicate = self.clone_to_owner(new_owner)
+  def copy_to_owner(new_owner, new_title=nil)
+    duplicate = self.clone_to_owner(new_owner,new_title)
 
     duplicate.owner.repository.copy_branch_from_repo(
       self.branch, duplicate.branch, self.owner.repository
@@ -1334,15 +1286,6 @@ class Publication < ActiveRecord::Base
   end
 
 
-  #mainly used to create new publiation title/repo name that is indicative of the publications source
-  def copy_to_end_user()
-    duplicate = self.clone_to_end_user()
-    duplicate.owner.repository.copy_branch_from_repo(
-      self.branch, duplicate.branch, self.owner.repository
-    )
-
-    return duplicate
-  end
   #copy a child publication repo back to the parent repo
   def copy_repo_to_parent_repo
      #all we need to do is copy the repo back the parents repo

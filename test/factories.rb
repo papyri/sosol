@@ -1,4 +1,5 @@
 FactoryGirl.define do
+
   sequence :name do |n|
     "name_#{n}"
   end
@@ -39,6 +40,10 @@ FactoryGirl.define do
     f.title { FactoryGirl.generate(:name) }
     f.category 'category'
     f.identifier_classes ['DDBIdentifier']
+  end
+
+  factory :community_board, :parent => :board do |f|
+    f.association :community
   end
 
   factory :apis_board, :parent => :board do |f|
@@ -86,11 +91,24 @@ FactoryGirl.define do
     }
   end
 
+  factory :hgv_community_board, :parent => :hgv_board do |f|
+    f.association :community
+  end
+
   factory :hgv_meta_board, :parent => :hgv_board do |f|
     f.identifier_classes ['HGVMetaIdentifier']
   end
 
+
+  factory :hgv_meta_community_board, :parent => :hgv_community_board do |f|
+    f.identifier_classes ['HGVMetaIdentifier']
+  end
+
   factory :hgv_trans_board, :parent => :hgv_board do |f|
+    f.identifier_classes ['HGVTransIdentifier']
+  end
+
+  factory :hgv_trans_community_board, :parent => :hgv_community_board do |f|
     f.identifier_classes ['HGVTransIdentifier']
   end
 
@@ -158,6 +176,19 @@ FactoryGirl.define do
     f.admins Array.new
   end
 
+  factory :master_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
+
+  factory :end_user_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
 
   factory :comment do |f|
     f.comment :comment

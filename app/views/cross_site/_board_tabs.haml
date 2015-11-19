@@ -1,8 +1,10 @@
 - if @current_user
+  -# backwards compatibility 
+  - if Sosol::Application.config.allow_canonical_boards
+    - sosol_boards = @current_user.boards.ranked_by_community_id(nil)
+  - else
+    - sosol_boards = []
   
-  
-  - sosol_boards = @current_user.boards.ranked
-
   -# need list of community board ids
   - community_ids = @current_user.boards.collect{ |b| b.community_id }
   - community_ids.uniq!
@@ -10,8 +12,6 @@
 
   - if sosol_boards.length > 0 || community_ids.length > 0
 
-
-        
     - current_board_id  = nil
     
     - if @current_board
@@ -27,11 +27,10 @@
   
     %div{:class => "editor_nav", :id=>"board_list"}
       %ul
+
         - sosol_boards.each do |sb|
           %li
             = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
-        
-    
         
         - community_ids.each do |next_id|
          

@@ -161,7 +161,7 @@ class UserController < ApplicationController
       #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
       @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
 
-      @boards = @current_user.boards.ranked
+      @boards = @current_user.boards.sorted_by_community_and_ranked
       #or do we want to use the creator id?
       #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
     end
@@ -204,19 +204,17 @@ class UserController < ApplicationController
     #render "dashboard_user"
   end
 
-  #Finds publications created by current user and are not part of a community.
+  #Finds publications created by current user and are part of the default community or not assigned toa community.
   def user_dashboard
     #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     #assuming 4 find calls faster than the above, then splits
+    cid = Community.default.id.to_s
 
-    # TODO  we need a better way to trigger site-specific functionality
-    # for Perseids we want to show community info on the main dashboard
-    show_comm = Sosol::Application.config.site_name == 'Perseids' ?  {} : { :community_id => nil }
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => [cid,nil], :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => [cid,nil], :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => [cid,nil], :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => [cid,nil], :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
 
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     # TODO enable more fine grained control of events that are shown
     # THIS shouldn't be merged back into master as is
     if (@current_user.admin || @current_user.developer)    
