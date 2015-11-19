@@ -103,6 +103,7 @@ class PublicationTest < ActiveSupport::TestCase
 
     teardown do 
       Sosol::Application.config.allow_canonical_boards = true
+    end
 
     context "a new publication from templates" do
       setup do
@@ -234,3 +235,4 @@ class PublicationTest < ActiveSupport::TestCase
     end
   end
 end
+

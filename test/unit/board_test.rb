@@ -44,7 +44,7 @@ class BoardTest < ActiveSupport::TestCase
   context "a created community board" do
     setup do
       @board = FactoryGirl.create(:community_board)
-      @decree = FactoryGirl.create(:decree, :board => @board)
+      @decree = FactoryGirl.create(:decree, :board => @board, :action => 'approve')
       @path = @board.repository.path
     end
     
