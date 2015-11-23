@@ -1,0 +1,48 @@
+= stylesheet_link_tag "community"
+
+.community
+  %h1
+    = "New community"
+  
+  = form_for(@community) do |f|
+    = f.error_messages
+  
+  
+    = f.label :name 
+    = f.text_field :name
+    %p
+      Name used to define the community, must be unique and cannot be changed after creation.
+    %br
+    
+    = f.label :friendly_name 
+    = f.text_field :friendly_name
+    %p
+      Name presented to the members of the community. This name will appear on the submit button for publications. Should be unique. Can be changed at anytime.
+    %br
+    
+    -#
+      = f.label :abbreviation 
+      = f.text_field :abbreviation 
+      %br
+     
+    = f.label :description 
+    = f.text_field :description
+    %p
+      Brief description of the purpose of the community and its goals.
+    %br
+      
+    -# 
+      = f.label :logo 
+      = f.text_field :logo 
+      %br
+
+    = f.label :allows_self_signup
+    = f.check_box :allows_self_signup
+    %p
+      Enables users to self-signup for this community.
+    %br
+    = f.submit 'Create'
+    %br
+  %br  
+  
+ 

@@ -4,9 +4,11 @@
   -# sort by community and rank? - no community boards are shown on different page
   %h1
     Editorial boards
-  - for board in @boards
-    = render :partial => "listing" , :object => board
-    %br   
+  -for c in @boards.keys
+    %h2 #{c}
+    - for board in @boards[c]
+      = render :partial => "listing" , :object => board
+      %br   
     
   %br
   %p
@@ -15,5 +17,8 @@
  
   %p
     = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
-  %p
-    = link_to 'New board', new_board_path
+
+  -if Sosol::Application.config.allow_canonical_boards 
+    %p
+      = link_to 'New board', new_board_path
+

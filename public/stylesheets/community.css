@@ -1,2 +1,13 @@
 .community h2 {
   display: inline; }
+.community .defaultcommunity {
+  font-style: italic; }
+.community table th {
+  font-weight: bold;
+  padding-right: 1em;
+  padding-left: 1em; }
+.community table td {
+  padding-right: 1em;
+  padding-left: 1em; }
+
+/*# sourceMappingURL=community.css.map */

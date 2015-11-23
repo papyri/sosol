@@ -2,6 +2,22 @@ Sosol::Application.routes.draw do
 
   root :to => 'welcome#index'
 
+  resources :end_user_communities do
+    member do
+      get :confirm_destroy
+    end
+  end
+
+  resources :master_communities do
+    member do
+      get :confirm_destroy
+    end
+  end
+
+
+  match 'communities/select_default' => 'communities#select_default'
+  match 'communities/change_default' => 'communities#change_default', :via => :post
+
   resources :communities do
   
     member do
@@ -12,6 +28,7 @@ Sosol::Application.routes.draw do
   get :add_admin
   get :add_admin_page
   get :remove_admin
+  get :confirm_destroy
   post :remove_current_user_membership
   post :remove_current_user
   end

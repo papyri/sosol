@@ -27,12 +27,7 @@ class CommunitiesController < ApplicationController
   # GET /communities/new
   # GET /communities/new.xml
   def new
-    @community = Community.new
 
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @community }
-    end
   end
 
   # GET /communities/1/edit
@@ -97,6 +92,7 @@ class CommunitiesController < ApplicationController
   end
   
   #List all the publications that belong to a community. (hidden view as of 10-10-2011)
+  # GET /communities
   def list_publications
     begin
       @community = Community.find(params[:id].to_s)
@@ -107,11 +103,13 @@ class CommunitiesController < ApplicationController
      @publications = Publication.find_all_by_community_id(@community.id, :include => [:identifiers], :order => "updated_at DESC")
   end
 
+  # GET /communities/1/add_member_page
   def add_member_page
     @community = Community.find(params[:id].to_s)  
   end
 
   #Adds a member to the community members list. These are the users who can submit to the community.
+  # GET /communities/1/add_member?user_id=1
   def add_member    
     @community = Community.find(params[:id].to_s)
     @community.add_member(params[:user_id])
@@ -119,6 +117,7 @@ class CommunitiesController < ApplicationController
   end
 
   #Removes member from the communities members list.
+  # GET /communities/1/remove_member?user_id=1
   def remove_member
     user = User.find(params[:member_id].to_s)
 
@@ -134,11 +133,13 @@ class CommunitiesController < ApplicationController
   #Removes the current user from the community members list. Used to let the user leave a community.
   def remove_current_user_membership
     @community = Community.find(params[:id].to_s)
-    
-    @community.members.delete(@current_user)
-    @community.save
-
-    #redirect_to :action => "edit", :id => (@community).id
+    # but users shouldn't be allowed to leave the default community
+    if @community.is_default?
+      flash[:notice] = "You cannot leave the default community."
+    else
+      @community.members.delete(@current_user)
+      @community.save
+    end
     redirect_to :controller => "user", :action => "admin"    
   end
 
@@ -196,25 +197,43 @@ class CommunitiesController < ApplicationController
     redirect_to :action => "show", :id => @community.id
   end
 
-  def edit_end_user
-    @community = Community.find(params[:id].to_s)
-  end
-  
-  #Sets the end_user for the community. 
-  #If this is not set, then publications may not be submitted nor finalized.
-  def set_end_user
-    @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
-    
-    @community.end_user_id = user.id
-    @community.save
-    
-    redirect_to :action => "edit", :id => @community.id
-  end
-  
-  
+
+  # GET /communities/1/confirm_destroy
   def confirm_destroy
       @community = Community.find(params[:id].to_s)
   end
-  
+
+  # GET /communities/1/select_default
+  def select_default
+    @communities = Community.where(["is_default = ?", false ])
+  end
+
+  # POST /communities/1/change_default?new_default=2
+  def change_default
+    @new_default = Community.find(params[:new_default].to_s)
+    if (@new_default.nil?)
+      flash[:error] = "You must select a valid community."
+      redirect_to :action => "select_default" and return
+    end
+    flash[:notice] = "Default community changed to #{@new_default.friendly_name}"
+    Community.change_default(@new_default)
+    redirect_to :action => "index" and return
+  end
+
+  # filter to enforce system level admin access for an action
+  def enforce_admin
+    unless @current_user.admin
+      flash[:error] = "This action requires administrator rights"
+      redirect_to :action => "index" and return
+    end
+  end
+
+  # filter to enforce at least community level admin access for an action
+  def enforce_community_admin
+    @community = Community.find(params[:id].to_s)
+    unless (@community.admins.include? @current_user) || @current_user.admin
+      flash[:error] = "This action requires community administrator rights"
+      redirect_to :action => "index" and return
+    end   
+  end
 end

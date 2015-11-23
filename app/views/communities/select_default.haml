@@ -1,0 +1,41 @@
+= stylesheet_link_tag 'community'
+.community
+  %h1
+    Select a new default Community
+
+  - if @communities.length <= 0
+  
+    %p
+      No other valid Communities available.
+    %br
+  
+  - else
+    = form_tag :controller => :communities, :action => :change_default do
+      %table
+        %tr
+          %th
+            Select
+          %th
+            Name
+          %th
+            Friendly name
+          %th
+            Type
+          %th
+            Description
+        - @communities.each do |community|
+          %tr
+            %td
+              = radio_button_tag 'new_default', community.id
+            %td 
+              = community.name 
+            %td 
+              = community.friendly_name 
+            %td 
+              = community.type
+            %td 
+              = community.description 
+      = submit_tag "Submit", :class => 'submit', :id => "submit_button"
+       
+          
+

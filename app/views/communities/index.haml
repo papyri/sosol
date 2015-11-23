@@ -1,5 +1,4 @@
-
-
+= stylesheet_link_tag 'community'
 
 .community
   
@@ -20,29 +19,20 @@
           Name
         %th
           Friendly name
-        
-        -#
-          %th
-            Abbreviation
-    
+        %th
+          Type
         %th
           Description
-        -#
-          %th
-            Logo
-    
-    
       - @communities.each do |community|
+        - classname = community.is_default? ? 'defaultcommunity' : ''
         %tr
-          %td 
+          %td{:class => classname}
             = community.name 
-          %td 
+          %td{:class => classname}
             = community.friendly_name 
-          -#
-            %td 
-              = community.abbreviation 
-      
-          %td 
+          %td{:class => classname}
+            = community.type
+          %td{:class => classname}
             = community.description 
           -#
             %td 
@@ -51,9 +41,11 @@
           %td 
             = link_to 'Show', community 
           %td 
-            = link_to 'Edit', edit_community_path(community) 
+            = link_to 'Edit', edit_polymorphic_path([community]) 
           %td 
-            = link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete 
+            = link_to 'Destroy', polymorphic_path([community], :action=> :confirm_destroy) 
+
           
 
-= link_to 'New community', new_community_path 
+= link_to 'New community', :action => :new
+= link_to 'Change default',:controller => :communities, :action => :select_default

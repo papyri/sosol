@@ -471,7 +471,7 @@ class Identifier < ActiveRecord::Base
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt common add_change.xsl})),
-      :who => ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
+      :who => "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}",
       :comment => text,
       :when => timestamp
     )

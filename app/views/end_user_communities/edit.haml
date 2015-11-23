@@ -25,19 +25,22 @@
     %br
 
     = f.submit 'Update Above'
-    %br
-  %br  
-  
+
+  %br 
+  = render :partial => "edit_end_user"
+  %br 
+  %br 
+
   %h2
     Boards
   = link_to 'Add Board', :controller => "boards", :action => "new", :community_id => @community.id |
   = link_to 'Change Priority Rank', :controller => "boards", :action => "rank", :community_id => @community.id
   %br
   %br
-    - community_boards = Board.ranked_by_community_id(@community.id)
-    - community_boards.each do |board|
-      = render :partial => "boards/listing", :object => board
-      %br
+  - community_boards = Board.ranked_by_community_id(@community.id)
+  - community_boards.each do |board|
+    = render :partial => "boards/listing", :object => board
+    %br
     -# for board in @community.boards
       = render :partial => "boards/listing" , :object => board
       

@@ -93,7 +93,7 @@ class OaCiteIdentifiersController < IdentifiersController
     collection = AgentHelper::get_target_collection(agent,:OajCiteIdentifier)
     urn = Cite::CiteLib::object_uuid_urn(collection)
     uri = Sosol::Application.config.site_cite_collection_namespace + "/" + urn
-    creator = url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @identifier.publication.creator.name, :only_path => false)
+    creator = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@identifier.publication.creator.name)}"
     @converted = agent_client.get_content(params[:resource],uri,creator)
     if (@converted[:error]) 
       flash[:error] = "Conversion Failed!"
