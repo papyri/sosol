@@ -72,7 +72,7 @@ class PublicationsController < ApplicationController
       if community.is_submittable? #check to see that we can submit to community
         @submittable_communities[community.format_name] = community.id
       end
-      if @publication.community_id != community.id && ! @publication.community.is_default?
+      if @publication.community && @publication.community_id != community.id && ! @publication.community.is_default?
         @confirm_communities << community.id
       end
     end
