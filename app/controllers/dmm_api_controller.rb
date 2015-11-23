@@ -286,7 +286,7 @@ class DmmApiController < ApplicationController
   #                   or 403 FORBIDDEN if no session can be established
   ##
   def ping
-      @current_user[:uri] = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)
+      @current_user[:uri] = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)}"
       render :json => @current_user
   end
 
