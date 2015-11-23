@@ -19,4 +19,5 @@ function confirmSignup() {
     if (msg && !(confirm(msg))) {
       select.val(select.attr("data-current"));
     } 
+    return true;
 }
