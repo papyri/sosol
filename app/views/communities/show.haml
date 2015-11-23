@@ -49,5 +49,5 @@
 %br
 %br
 
-= link_to 'Edit', edit_community_path(@community) |  
-= link_to 'Destroy', :controller => "communities", :id => @community.id, :action => "confirm_destroy"
+= link_to 'Edit', edit_polymorphic_path([@community])  |
+= link_to 'Destroy', polymorphic_path([@community], :action=> :confirm_destroy) 
