@@ -1,6 +1,19 @@
 Sosol::Application.routes.draw do
+  use_doorkeeper do
+    controllers :applications => 'api_clients'
+  end
 
   root :to => 'welcome#index'
+
+  namespace :api do
+    namespace :v1 do
+      resources :items do
+        get :index 
+        post :create
+      end
+      get '/user_info' => 'items#user_info'
+    end
+  end
 
   resources :communities do
   
@@ -466,4 +479,5 @@ Sosol::Application.routes.draw do
   match 'signout' => 'user#signout', :as => :signout
   match 'signin' => 'user#signin', :as => :signin
   match 'account' => 'user#account', :as => :account
+  
 end
