@@ -3,6 +3,8 @@ Sosol::Application.routes.draw do
     controllers :applications => 'api_clients'
   end
 
+  resources :apidocs, only: [:index]
+
   root :to => 'welcome#index'
 
   namespace :api do

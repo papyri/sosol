@@ -1,6 +1,32 @@
 # - Super-class of all identifiers
 class Identifier < ActiveRecord::Base
 
+  include Swagger::Blocks
+
+  swagger_schema :Identifier do
+    key :required, [:id, :type]
+    property :id do
+      key :type, :integer
+      key :format, :int64
+    end
+    property :type do
+      key :type, :string
+    end
+    property :collection do 
+      key :type, :string
+    end
+    property :content do 
+      key :type, :string
+    end
+    property :publication do
+      key :type, :integer
+      key :format, :int64
+    end
+    property :community_name do
+      key :type, :string
+    end
+  end
+
   IDENTIFIER_SUBCLASSES = Sosol::Application.config.site_identifiers.split(",")
 
   FRIENDLY_NAME = "Base Identifier"
