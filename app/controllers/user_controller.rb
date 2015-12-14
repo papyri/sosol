@@ -486,10 +486,10 @@ Developer:
       
     end
     filename = "board_download_#{@board.name}_#{@current_user.name}_" + Time.now.to_s + ".zip"
-    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
 
+    send_data File.read(t.path), :type => 'application/zip', :filename => filename
     t.close
-    #t.unlink
+    t.unlink
   end
 
   #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.
