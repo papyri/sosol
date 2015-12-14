@@ -267,63 +267,8 @@ class UserController < ApplicationController
 
   #Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
-      @board = Board.find_by_id(params[:board_id])
-
-      #get publications for the member to finalize
-      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-      @finalizing_publications =  @board_final_pubs.collect{|p| ((! p.parent.nil? && p.parent.owner == @board)) ? p : nil}.compact
-
-      #get publications that have been approved
-      #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
-      @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
-
-      #remove approved publications if in the finalizer list
-      @finalizing_publications.each do |fp|
-        #remove it from the list of approved publications
-        @approved_publications.each do |ap|
-         if fp.origin == ap.origin
-           @approved_publications.delete(ap)
-         end
-
-        end
-     end
-
-     # biblio voting stacked up and created huge problems (e.g. running out of heap), so
-     # we now paginate voting items 50 at a time.
-     if params[:offset]
-       @offset = Integer(params[:offset])
-     else
-       @offset = 0
-     end
-     @count = Publication.count(:conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"})
-
-     #find all pubs that are still in voting phase
-     board_voting_publications = Publication.find(:all, :conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC", :offset => @offset, :limit => 50  )
-     #find all pubs that the user needs to review
-     @needs_reviewing_publications = board_voting_publications.collect{ |p|
-        needs_review = false
-        p.identifiers.each do |id|
-          if id.needs_reviewing?(@current_user.id)
-            needs_review = true
-          end
-        end
-        needs_review ? p :nil
-     }.compact
-
-     if @needs_reviewing_publications.nil?
-       @member_already_voted_on = board_voting_publications
-     else
-       @member_already_voted_on = board_voting_publications - @needs_reviewing_publications
-     end
-
-     # move publications with votes to the front of the array
-     voted_indices = @needs_reviewing_publications.to_enum(:each_index).select {|i| @needs_reviewing_publications[i].votes.length > 0}
-     voted_indices.each {|index| @needs_reviewing_publications.unshift(@needs_reviewing_publications.delete_at(index))}
-
-     #set so the correct tab will be active
-     @current_board = @board
-     #render :layout => 'header_footer'
-
+    find_board_publications(params[:board_id], params[:offset], 50)
+    @current_board = @board
   end
 
   def archives
@@ -514,6 +459,110 @@ Developer:
     redirect_to dashboard_url
   end
 
+  def download_board_publications
+    find_board_publications(params[:board_id], "0", -1)
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+    t = Tempfile.new("board_download_#{@board.name}_#{@current_user.name}-#{request.remote_ip}")
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @finalizing_publications.each do |publication|
+          publication.identifiers.each do |id|
+            zos.put_next_entry( File.join(["finalizing",id.to_path] ))
+            zos << id.xml_content
+          end
+        end
+        @approved_publications.each do |publication|
+          publication.identifiers.each do |id|
+            zos.put_next_entry( File.join(["approved",id.to_path] ))
+            zos << id.xml_content
+          end
+        end
+        @board_voting_publications.each do |publication|
+          publication.identifiers.each do |id|
+            zos.put_next_entry( File.join(["reviewing",id.to_path] ))
+            zos << id.xml_content
+          end
+        end
+      
+    end
+    filename = "board_download_#{@board.name}_#{@current_user.name}_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+
+    t.close
+    #t.unlink
+  end
+
+  #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.
+  def download_user_publications
+
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
+
+
+    cid = params[:community_id]
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+
+    @community = Community.find_by_id(cid)
+
+    @publications = @submitted_publications + @editing_publications  + @new_publications + @committed_publications
+    t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
+
+    Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            zos << id.xml_content
+          end
+        end
+    end
+
+    # End of the block  automatically closes the zip? file.
+
+    # The temp file will be deleted some time...
+      community = "PE"
+    if @community
+      community = @community.format_name
+    end
+    filename = @current_user.name + "_" + community + "_" + Time.now.to_s + ".zip"
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => filename
+
+    t.close
+  end
+
+  #Determines which combos of boards & publication status' exist so we can ask the user which one they want to download.
+  def download_options
+
+    #has become overkill for current method, really only need to see if any of these publications exists, dont need the whole list
+    cid = nil
+    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+
+   # @community = Community.find_by_id(cid)
+
+    @communities = Hash.new
+    if @current_user.community_memberships && @current_user.community_memberships.length > 0
+        @current_user.community_memberships.each do |community|
+          #raise community.id.to_s
+          cid = community.id
+          #raise community.name
+          @communities[cid] = Hash.new
+          @communities[cid][:id] = cid
+          @communities[cid][:name] = community.format_name
+          @communities[cid][:submitted_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:editing_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:new_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:committed_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        end
+    end
+
+
+  end
 
   #Collects and downloads zip file with all of the publications of the given status and community (or PE if no community).
   def download_by_status
@@ -640,4 +689,76 @@ Developer:
 
 
   end
+
+  protected
+    # Gathers board publications for display
+    # *Args*:
+    #  - +board_id+ id of the board
+    #  - +offset+ offset index for pagination
+    #  - +max_voting+ max count of voting pubs to return
+    # Sets up view variables:
+    #  @board, @board_final_pubs, @finalizing_publications, @approved_publications,
+    #  @offset, @count, @board_voting_publications, @needs_reviewing_publications
+    #  @member_already_voted_on
+    def find_board_publications(board_id, offset, max_voting=50)
+      @board = Board.find_by_id(board_id)
+
+      #get publications for the member to finalize
+      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @finalizing_publications =  @board_final_pubs.collect{|p| ((! p.parent.nil? && p.parent.owner == @board)) ? p : nil}.compact
+
+      #get publications that have been approved
+      #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+      @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
+
+      #remove approved publications if in the finalizer list
+      @finalizing_publications.each do |fp|
+        #remove it from the list of approved publications
+        @approved_publications.each do |ap|
+         if fp.origin == ap.origin
+           @approved_publications.delete(ap)
+         end
+        end
+      end
+
+      # biblio voting stacked up and created huge problems (e.g. running out of heap), so
+      # we now paginate voting items 50 at a time.
+      if offset
+        @offset = Integer(offset)
+      else
+        @offset = 0
+      end
+      @count = Publication.count(:conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"})
+
+      if max_voting > 0
+        limit = max_voting
+      else 
+        limit = @count
+      end
+
+      #find all pubs that are still in voting phase
+      @board_voting_publications = Publication.find(:all, :conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC", :limit => limit, :offset => @offset )
+      #find all pubs that the user needs to review
+      @needs_reviewing_publications = @board_voting_publications.collect{ |p|
+        needs_review = false
+        p.identifiers.each do |id|
+          if id.needs_reviewing?(@current_user.id)
+            needs_review = true
+          end
+        end
+        needs_review ? p :nil
+      }.compact
+
+      if @needs_reviewing_publications.nil?
+        @member_already_voted_on = @board_voting_publications
+      else
+        @member_already_voted_on = @board_voting_publications - @needs_reviewing_publications
+      end
+
+      # move publications with votes to the front of the array
+      voted_indices = @needs_reviewing_publications.to_enum(:each_index).select {|i| @needs_reviewing_publications[i].votes.length > 0}
+      voted_indices.each {|index| @needs_reviewing_publications.unshift(@needs_reviewing_publications.delete_at(index))}
+
+    end
+
 end
