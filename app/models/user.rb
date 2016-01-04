@@ -1,6 +1,55 @@
 #Represents a system user.
 class User < ActiveRecord::Base
 
+  include Swagger::Blocks
+  swagger_schema :User do
+    key :required, [:id]
+    property :id do
+      key :type, :integer
+      key :format, :int64
+    end
+    property :admin do
+      key :type, :boolean
+    end
+    property :affiliation do 
+      key :type, :string
+    end
+    property :created_at do 
+      key :type, :dateTime
+    end
+    property :updated_at do 
+      key :type, :dateTime
+    end
+    property :email do
+      key :type, :string
+    end
+    property :full_name do
+      key :type, :string
+    end
+    property :has_repository do
+      key :type, :boolean
+    end
+    property :is_community_master_admin do
+      key :type, :boolean
+    end
+    property :is_master_admin do
+      key :type, :boolean
+    end
+    property :language_prefs do
+      key :type, :string
+    end
+    property :name do
+      key :type, :string
+    end
+    property :uri do
+      key :type, :string
+    end
+    property :accepted_terms do
+      key :type, :integer
+      key :format, :int64
+    end
+  end
+
   validates_uniqueness_of :name, :case_sensitive => false
 
   has_many :user_identifiers, :dependent => :destroy

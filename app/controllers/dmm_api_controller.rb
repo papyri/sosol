@@ -23,7 +23,7 @@ class DmmApiController < ApplicationController
     begin
       # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
       
-      params[:raw_post] = request.raw_post.force_encoding("UTF-8")
+      params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
       unless (params[:comment]) 
         params[:comment] = "create_from_api"
       end
@@ -297,7 +297,7 @@ class DmmApiController < ApplicationController
       cookies[:csrftoken] = {
         :value => form_authenticity_token,
         :domain => Sosol::Application.config.site_cookie_domain,
-        :expires => Sosol::Application.config.site_cookie_expire_minutes.minutes.from_now
+        :expires => expires.minutes.from_now
       }
     end
 

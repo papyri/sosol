@@ -1,4 +1,18 @@
 Sosol::Application.routes.draw do
+  use_doorkeeper do
+    controllers :applications => 'api_clients'
+  end
+
+  resources :apidocs, only: [:index]
+
+  namespace :api do
+    namespace :v1 do
+      resources :items do
+        get :index 
+      end
+      get '/user_info' => 'api#user_info'
+    end
+  end
 
   root :to => 'welcome#index'
 
@@ -13,7 +27,6 @@ Sosol::Application.routes.draw do
       get :confirm_destroy
     end
   end
-
 
   match 'communities/select_default' => 'communities#select_default'
   match 'communities/change_default' => 'communities#change_default', :via => :post
@@ -483,4 +496,5 @@ Sosol::Application.routes.draw do
   match 'signout' => 'user#signout', :as => :signout
   match 'signin' => 'user#signin', :as => :signin
   match 'account' => 'user#account', :as => :account
+  
 end
