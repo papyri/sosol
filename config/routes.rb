@@ -11,9 +11,8 @@ Sosol::Application.routes.draw do
     namespace :v1 do
       resources :items do
         get :index 
-        post :create
       end
-      get '/user_info' => 'items#user_info'
+      get '/user_info' => 'api#user_info'
     end
   end
 

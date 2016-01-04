@@ -22,7 +22,7 @@ class Identifier < ActiveRecord::Base
       key :type, :integer
       key :format, :int64
     end
-    property :community_name do
+    property :publication_community_name do
       key :type, :string
     end
   end

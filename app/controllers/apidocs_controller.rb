@@ -19,31 +19,36 @@ class ApidocsController < ActionController::Base
       key :name, 'Identifier'
       key :description, 'Identifier operations'
     end
-    key :host, 'TODOCOMEFROMCONFIG'
-    key :basePath, '/api'
+    key :host, Sosol::Application.config.api_base.sub(/https?:\/\//,'')
+    key :basePath, '/api/v1'
     key :consumes, ['application/json', 'application/xml']
     key :produces, ['application/json', 'application/xml']
     security_definition :sosol_auth do
       key :type, :oauth2
-      key :authorizationUrl, 'TODOCONTROLLERURLFORAUTHORIZE'
+      key :authorizationUrl, "#{Sosol::Application.config.api_base}/oauth/authorize"
       key :flow, :accessCode
-      key :tokenUrl, 'TODOCONTROLLERURLFORTOKEN'
+     key :tokenUrl, "#{Sosol::Application.config.api_base}/oauth/token"
+      key :flow, :accessCode
       scopes do
-        key 'write:identifiers', 'modify identifiers in your account'
-        key 'read:identifiers', 'read your identifiers'
+        key 'write', 'modify identifiers in your account'
+        key 'read', 'read your user details'
       end
     end
   end
 
   # A list of all classes that have swagger_* declarations.
   SWAGGERED_CLASSES = [
+    Api::V1::ApiController,
     Api::V1::ItemsController,
     Identifier,
+    User,
     Api::V1::ApiErrorModel,
     self,
   ].freeze
 
+
   def index
     render json: Swagger::Blocks.build_root_json(SWAGGERED_CLASSES)
   end
+
 end

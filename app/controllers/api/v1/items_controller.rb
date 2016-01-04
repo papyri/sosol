@@ -18,25 +18,15 @@ module Api::V1
     include Swagger::Blocks
  
     skip_before_filter :authorize 
-    before_filter :doorkeeper_authorize!
-
-    def user_info
-      ping
+    before_filter only: [:create, :update, :destroy] do
+      doorkeeper_authorize! :write
     end
 
-    swagger_path '/items/{identifier_type}/create' do
+    swagger_path "/items" do
       operation :post do
         key :description, 'Creates a new publication for the supplied data identifier type'
         key :operationId, 'createByIdentifierType'
         key :tags, [ 'identifier' ]
-        parameter do 
-          key :name, :identifer_type
-          key :in, :path
-          key :description, 'identifier type for the data object' 
-          key :required, true
-          key :type, :string
-          key :pattern, '^SyriacaPlace'
-        end
         parameter do 
           key :name, :content
           key :in, :body
@@ -45,7 +35,7 @@ module Api::V1
           end
         end
         security do
-          key :sosol_auth, ['write:identifiers', 'read:identifiers']
+          key :sosol_auth, ['write']
         end
         response 201 do
           key :description, 'item create response'
@@ -63,6 +53,9 @@ module Api::V1
     end
 
     def create
+      parsed_params = JSON.parse(request.raw_post.force_encoding("UTF-8"))
+      params["identifier_type"] = parsed_params["type"]
+      params["raw_post"] = parsed_params["content"]
       api_item_create
     end
 
