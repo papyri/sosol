@@ -24,6 +24,10 @@ FactoryGirl.define do
     "oai:papyri.info:identifiers:ddbdp:0001:1:#{n}"
   end
 
+  sequence :syriaca_identifier_string do |n|
+    "http://syriaca.org/place/#{n}"
+  end
+
   sequence :tei_cts_identifier_string do |n|
     "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
@@ -167,6 +171,10 @@ FactoryGirl.define do
 
   factory :DDBIdentifier do |f|
     f.name { FactoryGirl.generate(:ddb_identifier_string) }
+  end
+
+  factory :SyriacaIdentifier do |f|
+    f.name { FactoryGirl.generate(:syriaca_identifier_string) }
   end
 
   factory :community do |f|
