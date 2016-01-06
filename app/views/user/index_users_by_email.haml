@@ -1,0 +1,17 @@
+%h1
+  All Users
+
+%table{ :class => "users_all_by_email" }
+  %tr
+    %th Email
+    %th Name
+    %th Actions
+  - for user in @users
+    %tr
+      %td.user_name
+        = h user.name
+      %td.user_email
+        = h user.email
+      %td
+        = link_to "Delete", :controller=> :user, :action => :confirm_delete, :user_id => user.id
+
