@@ -452,7 +452,16 @@ class Identifier < ActiveRecord::Base
   #   - title from identifer model
   def title
     if read_attribute(:title).blank?
-      write_attribute(:title,self.titleize)
+      # because this might be called when intended to read only, a failure to save a title 
+      # shouldn't raise a fatal error here - instead flag the identifier as invalid by its title
+      begin
+          new_title = self.titleize
+      rescue  Exception => e
+          Rails.logger.error(e.backtrace)
+          Rails.logger.error("Error titleizing identifier #{self.inspect}")
+          new_title = "Invalid Identifier"
+      end
+      write_attribute(:title,new_title)
       self.save
     end
     return read_attribute(:title)
