@@ -12,7 +12,7 @@ Sosol::Application.routes.draw do
       resources :items do
         get :index 
       end
-      get '/user_info' => 'api#user_info'
+      get '/user' => 'api#user_info'
     end
   end
 

@@ -10,7 +10,7 @@ module Api::V1
       doorkeeper_authorize! :read
     end
 
-    swagger_path "/user_info" do
+    swagger_path "/user" do
       operation :get do
         key :description, 'Get current user info'
         key :operationId, 'getUserInfo'
