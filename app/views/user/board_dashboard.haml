@@ -6,6 +6,9 @@
 - page_title = page_title + @board.friendly_name + " board"
 %h2
   = page_title
+
+#download_link
+  = link_to "Download Board Publications", :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset
   
 - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
   = render :partial => "publications/publication_header", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }

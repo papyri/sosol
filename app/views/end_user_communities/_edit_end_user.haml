@@ -1,0 +1,9 @@
+%h2
+  End User
+= link_to "Change End User", :controller => "end_user_communities", :action => "edit_end_user", :id => @community.id
+%br
+- if @community.end_user
+  = @community.end_user.name
+- else
+  %b
+    = "! No end user set ! End user must be set before community can process submissions."

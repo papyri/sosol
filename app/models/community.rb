@@ -15,15 +15,25 @@ class Community < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
 
-  #The end_user is a sosol user to whom the communities' finalized publications are copied.
-  def end_user
-    if self.end_user_id.nil?
-      return nil  
+  attr_protected :is_default
+
+  validate :is_default_can_only_be_one
+
+  before_destroy :guard_default
+
+
+  # validates that we only set a single default community
+  # is_default must be reset in a transaction which 
+  # first removes the currnet default and then sets a new one
+  def is_default_can_only_be_one
+    if is_default? && ! Community.default.nil?
+      errors.add(:is_default, "Can't have more than one default community")
+      return false
     end
-      return User.find_by_id(self.end_user_id)
   end
+
   
-  
+
   #Checks to see whether or not to allow members to submit to the community
   #
   #*Returns*
@@ -32,7 +42,7 @@ class Community < ActiveRecord::Base
   def is_submittable?
     #if there is nowhere for the final publication to go, don't let them submit
     #if there are no boards to review the publication, don't let them submit
-    return !self.end_user.nil? && (self.boards && self.boards.length > 0)
+    return self.boards && self.boards.length > 0
   end
   
   #*Returns* 
@@ -43,16 +53,46 @@ class Community < ActiveRecord::Base
   end
 
   #*Returns*
-  # - true if the community is setup to allow self signup
-  # - false if the communit is not setup to allow self signup
-  def allows_self_signup?
-    return self.allows_self_signup.nil? ? false : allows_self_signup
+  # - the default Community
+  def self.default
+    self.where(["is_default = ?", true ]).first
+  end
+
+  #*Returns*
+  # - changes the default community
+  def self.change_default(new)
+    old = self.default
+    self.transaction do 
+      old.is_default = false
+      old.save!
+      new.is_default = true 
+      new.save!
+    end
+  end
+
+  # Handles Promotion of a publication to the next 
+  # step in the workflow after finalization
+  #*Args*:
+  #- +publication+ publication to be promoted
+  def promote(publication)
+    # override in subclasses to enable per community-type workflow
+  end
+
+ 
+  # Community-specific finalization steps
+  # *Args*:
+  #- +publication+ publication to be finalized
+  # *Returns*
+  # - a commit sha if any commit occurs, otherwise nil
+  def finalize(publication)
+    # default is a noop
+    nil
   end
 
   # Adds a user as a member of this community
   # 
   # *Returns*
-  #  - true if successful or user is alreadya a member
+  #  - true if successful or user is already a member
   #  - false if unsuccessful
   def add_member(user_id)
     user = User.find_by_id(user_id.to_s)
@@ -65,4 +105,14 @@ class Community < ActiveRecord::Base
     end
     return true
   end
+
+  # We cannot destroy a default community. A new default needs to
+  # be set first
+  def guard_default
+    if self.is_default?
+      self.errors[:base] << "We can't destroy the last default community"
+      return false
+    end
+  end
 end
+

@@ -46,7 +46,6 @@ class DmmApiController < ApplicationController
       elsif existing_identifiers.length == 1
         conflicting_publication = existing_identifiers.first.publication
         if (conflicting_publication.status == "committed")
-          expire_publication_cache
           conflicting_publication.archive
         else
            links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
@@ -64,10 +63,17 @@ class DmmApiController < ApplicationController
         @publication.creator = @current_user
         @publication.title = identifier_class::create_title(tempid)   
         @publication.status = "new"
-        @publication.save!
-        
-        # branch from master so we aren't just creating an empty branch
-        @publication.branch_from_master
+        if @publication.save!
+          # branch from master so we aren't just creating an empty branch
+          @publication.branch_from_master
+          e = Event.new
+          e.category = "started editing"
+          e.target = @publication
+          e.owner = @current_user
+          e.save!
+        else
+          return render :xml => "<error>Error creating new publication.</error>", :status => 500
+        end  
       end    
      
       # separate begin/rescue block here because
@@ -286,7 +292,7 @@ class DmmApiController < ApplicationController
   #                   or 403 FORBIDDEN if no session can be established
   ##
   def ping
-      @current_user[:uri] = url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @current_user.name, :only_path => false)
+      @current_user[:uri] = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)}"
       render :json => @current_user
   end
 

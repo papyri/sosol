@@ -18,7 +18,7 @@
     = "Click user name to set as end repository for community publications."
 - if @community
   
-  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "set_end_user", @community.id ) }
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("end_user_communities", "set_end_user", @community.id ) }
 
 - else
   = "nil com"

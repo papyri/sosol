@@ -4,16 +4,6 @@
     You've authenticated as
     %strong
       = h session[:identifier]
-  %p{:style => "font-size:larger"}
-    If you already have a papyri.info account and use Google as your login
-    provider, we haven't been able to link your account to your new Google+ login (
-    %a{:href => "/docs/login_change", :target => "_blank"} more info
-    ). Click
-    = mail_to "hugh.cayless@duke.edu", "HERE",
-      subject: "Account change for [YOUR USERNAME]",
-      body: session[:identifier]
-    to send us your username and login info so that we can link your new login
-    to your account.
   %p
     If you want to sign up for a new account, please fill out the form below.
   = form_for :new_user, :url => { :action => "create_submit" } do |f|

@@ -53,6 +53,49 @@ class PublicationsController < ApplicationController
     @creatable_identifiers = @publication.creatable_identifiers
   end
 
+  # Determine the list of communities which the publication can be submitted to,
+  # the list of communities which allow signup, and the list which require
+  # confirmation
+  # 
+  # Sets @submittable_communities to a Hash whose keys are the Community friendly name
+  # and whose values are the communit ids
+  #
+  # Sets @signup_communities to subset of the keys from the @submittable_communities has
+  # that represent the communities which the user doesn't already belong to but can signup for.
+  # The default community isn't flagged as a signup community because everyone should become a member
+  # of it by default the first time they use it
+  def determine_available_communities
+    @submittable_communities = Hash.new
+    @signup_communities = []
+    @confirm_communities = []
+    @current_user.community_memberships.each do |community|
+      if community.is_submittable? #check to see that we can submit to community
+        @submittable_communities[community.format_name] = community.id
+      end
+      if @publication.community && @publication.community_id != community.id && ! @publication.community.is_default?
+        @confirm_communities << community.id
+      end
+    end
+    (Community.all - @current_user.community_memberships).each  do |community|
+      if community.is_submittable? && community.allows_self_signup?
+        @submittable_communities[community.format_name] = community.id
+        # don't flag for signup if this the default community
+        unless community.is_default? 
+          @signup_communities << community.id 
+        end
+        # flag for confirmation if the community for the publication wasn't the default
+        # and would be changed by this assignment
+        if !@publication.community.nil? && @publication.community_id != community.id && ! @publication.community.is_default?
+          @confirm_communities << community.id
+        end
+      end
+    end
+    # if canonical boards are allowed and can be shown, add in the "sosol" board
+    if (Sosol::Application.config.allow_canonical_boards && Sosol::Application.config.submit_canonical_boards)
+        @submittable_communities[Sosol::Application.config.site_name] = 0
+    end
+  end
+
   def advanced_create()
     @publication = Publication.new
   end
@@ -60,8 +103,16 @@ class PublicationsController < ApplicationController
   # POST /publications
   # POST /publications.xml
   def create
+    if params[:community_id]
+      community = Community.find_by_id(params[:community_id])
+    elsif params[:community_name]
+      community = Community.find_by_name(params[:community_id])
+    else
+      community = Community.default
+    end
     @publication = Publication.new()
     @publication.owner = @current_user
+    @publication.community_id = community
     @publication.populate_identifiers_from_identifiers(
       params[:pn_id].to_s)
 
@@ -223,41 +274,25 @@ class PublicationsController < ApplicationController
         redirect_to @publication
         return
       end
+
+      if params[:community] && params[:community][:id] != '0'
+        @community = Community.find(params[:community][:id].strip.to_s)
       
-      #check if we need to signup to a community 
-      if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
-        @community = Community.find(params[:community][:id].to_s)
-        unless (@community.add_member(@current_user.id))
-           flash[:error] = 'Unable to signup for selected community'
-           redirect_to @publication
-           return
+        unless @current_user.community_memberships.include?(@community) || (@community.allows_self_signup? && @community.add_member(@current_user.id))
+          flash[:error] = 'Unable to signup for selected community'
+          redirect_to @publication and return
         end
-      end
-
-      #check if we are submitting to a community
-      #community_id = params[:community_id]
-      if params[:community] && params[:community][:id]
-        community_id = params[:community][:id]
-        community_id.strip
-        if !community_id.empty? && community_id != "0" && !community_id.nil?
-          @publication.community_id = community_id
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
-        else
-          #force community id to nil for sosol
-          @publication.community_id = nil;
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
+        # reset the community if it has changed
+        # client-side code should have alerted the user of the change
+        if @publication.community_id != @community.id
+          @publication.community_id = @community.id
         end
-
+      elsif Sosol::Application.config.allow_canonical_boards
+          @publication.community_id = nil
       else
-        #force community id to 0 for sosol
-        @publication.community_id = nil;
+          flash[:error] = "Publications require a community."
       end
 
-
-      #need to set id to 0
-      #raise community_id
-
-      #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
       #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
       @comment = Comment.new( {:publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
       @comment.save
@@ -270,7 +305,8 @@ class PublicationsController < ApplicationController
         @comment.save
         expire_publication_cache
         expire_fragment(/board_publications_\d+/)
-        flash[:notice] = 'Publication submitted.'
+        submitted_to = @publication.community ? @publication.community.friendly_name : "Perseids"
+        flash[:notice] = "Publication submitted to #{submitted_to}."
       else
         #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
         cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
@@ -387,12 +423,6 @@ class PublicationsController < ApplicationController
         end
       end # done preprocessing
     end # end transaction
-    #to prevent a community publication from being finalized if there is no end_user to get the final version
-    if @publication.is_community_publication? && @publication.community.end_user.nil?
-      flash[:error] = "Error finalizing. No End User for the community."
-      redirect_to @publication
-      return
-    end
 
     #find all modified identiers in the publication so we can set the votes into the xml
     @publication.identifiers.each do |id|
@@ -403,29 +433,33 @@ class PublicationsController < ApplicationController
       end
     end
 
-
     #copy back in any case
     @publication.copy_back_to_user(params[:comment].to_s, @current_user)
 
-    #if it is a community pub, we don't commit to canon
-    #instead we copy changes back to origin
-    if @publication.is_community_publication?
-
-      #@publication.copy_back_to_user(params[:comment].to_s, @current_user)
-
-
-    else #commit to canon
-      begin
-        canon_sha = @publication.commit_to_canon
-        expire_publication_cache(@publication.creator.id)
-        expire_fragment(/board_publications_\d+/)
-      rescue Errno::EACCES => git_permissions_error
-        flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-        redirect_to @publication
-        return
+    # finalize
+    begin
+      if @publication.is_community_publication?
+        commit_sha = @publication.community.finalize(@publication)
+      elsif Sosol::Application.config.allow_canonical_boards
+        # backwards compatibility - commit to master
+        canon_sha = @publication.commit_to_canon 
+      else
+        raise "Community required for finalization."
       end
+    rescue Errno::EACCES => git_permissions_error
+      flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+      redirect_to @publication
+      return
+    rescue Exception => e
+      flash[:error] = "Error finalizing. Error message was: #{e.message}.Please contact your system administrator."
+      redirect_to @publication
+      return
     end
 
+    # @balmas - do we ever not want to expire cache and fragment? Previously this wasn't done for 
+    # community publications but it would seem that maybe that was an error.
+    expire_publication_cache(@publication.creator.id)
+    expire_fragment(/board_publications_\d+/)
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action
     @comment = Comment.new()
@@ -437,7 +471,7 @@ class PublicationsController < ApplicationController
     end
     @comment.user = @current_user
     @comment.reason = "finalizing"
-    @comment.git_hash = canon_sha
+    @comment.git_hash = commit_sha # NB this might be nil for a community publication
     #associate comment with original identifier/publication
     @comment.identifier_id = params[:identifier_id]
     @comment.publication = @publication.origin
@@ -451,7 +485,6 @@ class PublicationsController < ApplicationController
     @event.category = "committed"
     @event.save!
 
-    #TODO need to submit to next board
     #need to set status of ids
     @publication.set_origin_and_local_identifier_status("committed")
     @publication.set_board_identifier_status("committed")
@@ -516,6 +549,7 @@ class PublicationsController < ApplicationController
 
 
     determine_creatable_identifiers()
+    determine_available_communities()
 
     respond_to do |format|
       format.html # show.html.erb
