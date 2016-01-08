@@ -6,7 +6,7 @@ module Api::V1
     end
 
     skip_before_filter :authorize 
-    before_filter do
+    before_filter only: [:user] do
       doorkeeper_authorize! :read
     end
 
@@ -27,13 +27,13 @@ module Api::V1
         response :default do
           key :description, 'unexpected error'
           schema do 
-            key :'$ref', :ApiErrorModel
+            key :'$ref', :ApiError
           end
         end
       end
     end
 
-    def user_info
+    def user
       ping
     end
   end

@@ -20,85 +20,13 @@ class DmmApiController < ApplicationController
   end
 
   def api_item_create
-    begin
-      # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      
-      params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
-      unless (params[:comment]) 
-        params[:comment] = "create_from_api"
-      end
-      identifier_class = identifier_type
-      tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-      if (params[:init_value] && params[:init_value].length > 0)
-         check_match = params[:init_value]
-      else
-         check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
-      end
-      # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
-      # now because the syntax for find_matching_identifier is slightly 
-      # different for cts_identifier classes (3rd param is a boolean 
-      # for fuzzy matching in that case)
-      existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
-      if existing_identifiers.length > 1
-        list = existing_identifiers.collect{ |p|p.name}.join(',')
-        render :xml => "<error>Multiple conflicting identifiers( #{list})</error>", :status => 500
-        return
-      elsif existing_identifiers.length == 1
-        conflicting_publication = existing_identifiers.first.publication
-        if (conflicting_publication.status == "committed")
-          conflicting_publication.archive
-        else
-           links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
-           render :xml => "<error xmlns:xlink=\"http://www.w3.org/1999/xlink\">You have conflicting document(s) already being edited at #{links.join(" ")} .</error>", :status => 500
-           return
-        end
-      end # end test of possible conflicts
-        
-      # User doesn't have conflicts so create the publication yet so create if we weren't given one
-      if (params[:publication_id])
-        find_publication
-      else
-        @publication = Publication.new()
-        @publication.owner = @current_user
-        @publication.creator = @current_user
-        @publication.title = identifier_class::create_title(tempid)   
-        @publication.status = "new"
-        if @publication.save!
-          # branch from master so we aren't just creating an empty branch
-          @publication.branch_from_master
-          e = Event.new
-          e.category = "started editing"
-          e.target = @publication
-          e.owner = @current_user
-          e.save!
-        else
-          return render :xml => "<error>Error creating new publication.</error>", :status => 500
-        end  
-      end    
-     
-      # separate begin/rescue block here because
-      # we only need to destroy the publication in rescue once we've 
-      # successfully created it
-      begin 
-        agent = AgentHelper::agent_of(params[:raw_post])
-        new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
-      rescue Exception => e
-        Rails.logger.error(e.backtrace)
-        #cleanup if we created a publication
-        if (!params[:publication_id] && @publication)
-          @publication.destroy
-        end
-        return render :xml => "<error>#{e}</error>", :status => 500
-      end
-    rescue Exception => e
-      Rails.logger.error(e.backtrace)
-        #cleanup if we created a publication
-      if (!params[:publication_id] && @publication)
-        @publication.destroy
-      end
-      return render :xml => "<error>#{e}</error>", :status => 500
+    response,status = _api_item_create
+    if (status == 200)
+      response = "<item>#{response.id}</item>"
+    else
+      response = "<error xmlns:xlink=\"http://www.w3.org/1999/xlink\">#{response}</error>"
     end
-    return render :xml => "<item>#{new_identifier_uri.id}</item>"
+    render :xml => response, :status => status
   end
 
   def api_item_append
@@ -167,7 +95,6 @@ class DmmApiController < ApplicationController
   #           Authentication should be via oauth2 - for now assume session is shared and 
   #           use X-CSRF-Token
   def api_item_get
-    find_identifier
     if (@identifier.nil?)
        return
     else
@@ -373,6 +300,85 @@ class DmmApiController < ApplicationController
       else 
         render :xml => "<error>#{a_msg}</error>", :status => 403
       end
+    end
+    def _api_item_create
+      begin
+        # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
+      
+        params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
+        unless (params[:comment]) 
+          params[:comment] = "create_from_api"
+        end
+        identifier_class = identifier_type
+        tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
+        if (params[:init_value] && params[:init_value].length > 0)
+          check_match = params[:init_value]
+        else
+          check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
+        end
+        # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
+        # now because the syntax for find_matching_identifier is slightly 
+        # different for cts_identifier classes (3rd param is a boolean 
+        # for fuzzy matching in that case)
+        existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
+        if existing_identifiers.length > 1
+          list = existing_identifiers.collect{ |p|p.name}.join(',')
+          return "Multiple conflicting identifiers(#{list})", 500
+        elsif existing_identifiers.length == 1
+          conflicting_publication = existing_identifiers.first.publication
+          if (conflicting_publication.status == "committed")
+            conflicting_publication.archive
+          else
+            links = existing_identifiers.collect{|i| "<link xlink:href=\"#{url_for i.publication}\">#{url_for i.publication}</link>"}
+           return "You have conflicting document(s) already being edited at #{links.join(" ")}", 500
+          end
+        end # end test of possible conflicts
+        
+        # User doesn't have conflicts so create the publication yet so create if we weren't given one
+        if (params[:publication_id])
+          find_publication
+        else
+          @publication = Publication.new()
+          @publication.owner = @current_user
+          @publication.creator = @current_user
+          @publication.title = identifier_class::create_title(tempid)   
+          @publication.status = "new"
+          if @publication.save!
+            # branch from master so we aren't just creating an empty branch
+            @publication.branch_from_master
+            e = Event.new
+            e.category = "started editing"
+            e.target = @publication
+            e.owner = @current_user
+            e.save!
+          else
+            return "Error creating new publication", 500
+          end  
+        end    
+     
+        # separate begin/rescue block here because
+        # we only need to destroy the publication in rescue once we've 
+        # successfully created it
+        begin 
+          agent = AgentHelper::agent_of(params[:raw_post])
+          new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
+        rescue Exception => e
+          Rails.logger.error(e.backtrace)
+          #cleanup if we created a publication
+          if (!params[:publication_id] && @publication)
+            @publication.destroy
+          end
+          return e.message, 500
+        end
+      rescue Exception => e
+        Rails.logger.error(e.backtrace)
+        #cleanup if we created a publication
+        if (!params[:publication_id] && @publication)
+          @publication.destroy
+        end
+        return e.message, 500
+      end
+      return new_identifier_uri, 200
     end
 
 end
