@@ -29,7 +29,7 @@ class SyriacaIdentifier < Identifier
       document_number = latest.to_components.last.split('-').last.to_i + 1
     end
 
-    return sprintf("#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION}/%04d;%04d",
+    return sprintf("#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION}/%04d%04d",
                    year, document_number)
   end
 

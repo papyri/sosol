@@ -124,7 +124,7 @@ module JRubyXML
       # need to convert or use JING ?
       # http://stackoverflow.com/questions/1541253/how-to-validate-an-xml-document-using-a-relax-ng-schema-and-jaxp
       @schema = verifier_factory.compileSchema(
-        "http://syriaca.org/documentation/syriaca-tei-main.rnc")
+        "#{Rails.root}/data/schemas/syriaca-tei-main.rng")
     end
   end
 
