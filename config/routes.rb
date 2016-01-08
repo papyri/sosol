@@ -9,10 +9,8 @@ Sosol::Application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :items do
-        get :index 
-      end
-      get '/user' => 'api#user_info'
+      resources :items
+      get '/user' => 'api#user'
     end
   end
 
