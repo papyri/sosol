@@ -6,11 +6,11 @@ module Api::V1
     end
 
     skip_before_filter :authorize 
-    before_filter do
+    before_filter only: [:user] do
       doorkeeper_authorize! :read
     end
 
-    swagger_path "/user_info" do
+    swagger_path "/user" do
       operation :get do
         key :description, 'Get current user info'
         key :operationId, 'getUserInfo'
@@ -27,13 +27,13 @@ module Api::V1
         response :default do
           key :description, 'unexpected error'
           schema do 
-            key :'$ref', :ApiErrorModel
+            key :'$ref', :ApiError
           end
         end
       end
     end
 
-    def user_info
+    def user
       ping
     end
   end

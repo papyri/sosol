@@ -1,0 +1,16 @@
+#confirm_delete_user
+  %h2 
+    Delete User 
+  .user_name 
+    = @user.human_name 
+  .user_email
+    = @user.email
+  .confirm Are you sure you want to delete this user? The user and repository will be deleted permanently and cannot be recovered. 
+  - if @publications.length > 0
+    #download
+      .warning Make sure to download a backup of any pending publications.
+      = button_to "Download User Publications", {:controller => "user", :action => "download_all_user_publications", :user_id => @user.id }
+  = button_to "Delete", :controller =>:user, :action=> :delete , :user_id => @user.id
+  %h1
+    = "or"
+    = link_to "Cancel", :controller=> :user, :action => :index_users_by_email

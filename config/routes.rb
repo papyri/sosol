@@ -5,16 +5,14 @@ Sosol::Application.routes.draw do
 
   resources :apidocs, only: [:index]
 
+  root :to => 'welcome#index'
+
   namespace :api do
     namespace :v1 do
-      resources :items do
-        get :index 
-      end
-      get '/user_info' => 'api#user_info'
+      resources :items
+      get '/user' => 'api#user'
     end
   end
-
-  root :to => 'welcome#index'
 
   resources :end_user_communities do
     member do

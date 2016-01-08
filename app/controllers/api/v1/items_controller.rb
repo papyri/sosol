@@ -1,8 +1,8 @@
 module Api::V1
 
-  class ApiErrorModel
+  class ApiError
     include Swagger::Blocks
-    swagger_schema :ErrorModel do
+    swagger_schema :ApiError do
       key :required, [:code, :message]
       property :code do
         key :type, :integer
@@ -12,9 +12,22 @@ module Api::V1
         key :type, :string
       end
     end
+
+    attr_accessor :code, :message
+
+    def initialize(code, message)
+      @code = code
+      @message = message
+    end
+
+    def to_str
+      "<error code=\"#{code}\" message=\"#{message}\"/>"
+    end
+
   end
     
   class ItemsController < ApiController
+    rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
     include Swagger::Blocks
  
     skip_before_filter :authorize 
@@ -46,7 +59,46 @@ module Api::V1
         response :default do
           key :description, 'unexpected error'
           schema do 
-            key :'$ref', :ApiErrorModel
+            key :'$ref', :ApiError
+          end
+        end
+      end
+    end
+    swagger_path "/items/{id}" do
+      operation :get do 
+        key :description, 'get the identifier'
+        key :operationId, 'getIdentifier'
+        key :tags, [ 'identifier' ]
+        parameter do
+          key :name, :id
+          key :in, :path
+          key :description, "item id"
+          key :required, true
+          key :type, :int64
+        end
+        parameter do
+          key :name, :q
+          key :in, :query
+          key :description, "item query"
+          key :required, false
+          key :type, :string
+        end
+        response 200 do
+          key :description, 'item get response'
+          schema do
+            key :'$ref' , :Identifier
+          end
+        end
+        response 404 do
+          key :description, 'Not Found'
+          schema do 
+            key :'$ref', :ApiError
+          end
+        end
+        response 405 do
+          key :description, 'Invalid Input'
+          schema do 
+            key :'$ref', :ApiError
           end
         end
       end
@@ -56,8 +108,56 @@ module Api::V1
       parsed_params = JSON.parse(request.raw_post.force_encoding("UTF-8"))
       params["identifier_type"] = parsed_params["type"]
       params["raw_post"] = parsed_params["content"]
-      api_item_create
+      (response,code) = _api_item_create
+      if (code != 200) 
+        render_api_error(code,response) and return
+      end
+      respond_to do |format|
+        format.json { render :json=> build_item }
+        format.xml { render :xml => "<item>#{id}</item>" } #legacy api
+      end
     end
 
+    def show
+      @identifier = Identifier.find(params[:id])
+      begin
+        # TODO need to follow best practices on retrieiving partial items
+        content = @identifier.api_get(params[:q]) 
+      rescue Exception => e 
+        render_api_error(405,e.message) and return
+      end
+      respond_to do |format|
+        format.json { render :json => build_item(content) }
+        format.xml { render :xml => content } # legacy api returns the content of object
+      end
+    end
+
+    private
+    def record_not_found
+      respond_to do |format|
+        format.json { render :json => ApiError.new(404,'Not Found'), :status => 404 }
+        format.xml { render :xml => ApiError.new(404,'Not Found'), :status => 404 }
+      end
+    end
+
+    def render_api_error(code,message)
+      response = ApiError.new(code,message)
+      respond_to do |format|
+         format.json { render :json => response, :status => code }
+         format.xml { render :xml => response, :status => code }
+       end    
+    end
+
+    def build_item(content=nil)
+      item = { }
+      item[:id] = @identifier.id
+      item[:type] = @identifier.type
+      item[:publication] = @identifier.publication.id
+      item[:collection] = @identifier.collection
+      item[:publication_community_name] = @identifier.publication.community.friendly_name
+      item[:content] = content.nil? ? @identifier.content : content
+      item
+    end
   end
 end
+

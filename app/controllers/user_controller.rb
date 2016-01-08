@@ -395,6 +395,63 @@ Developer:
 
   end
 
+   #Admin route which lists users sorted by email address
+   #Accessible to master admin only
+   #*Returns*
+   #- list of all users
+   #- redirects to dashboard if user isn't master admin
+   def index_users_by_email
+    if current_user_is_master_admin?
+      @users = User.find(:all, :order => 'email')
+    end
+   end
+
+   #Admin route to confirm delete of a user account
+   #Accessible to master admin only
+   #*Returns*
+   #- list of publications for selected user account 
+   #- redirects to dashboard if user isn't master admin
+   #- or if user for deletion is the same as the current user
+   def confirm_delete
+    if current_user_is_master_admin? 
+      @user = User.find_by_id(params[:user_id])
+      if @user == @current_user
+        flash[:error] = "You cannot delete yourself"
+        redirect_to dashboard_url and return
+      end
+      @publications = []
+      @publications.concat(Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
+      @publications.concat(Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
+      @publications.concat(Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"))
+      if (@publications.length > 0) 
+        flash[:warning] = "This user has pending publications which will be destroyed.  Consider downloading a backup first."
+      end
+    end
+   end
+
+   #Admin route to delete a user
+   #Accessible to master admin only
+   #*Returns*
+   # -redirects to dashboard after deletion
+   def delete
+    if current_user_is_master_admin?
+      @user = User.find_by_id(params[:user_id])
+      if @user == @current_user
+        flash[:error] = "You cannot delete yourself"
+        redirect_to dashboard_url and return
+      end
+      username = @user.name
+      begin 
+        @user.destroy
+        flash[:notice] = "Deleted User #{username}"
+      rescue Exception => e
+        flash[:error] = "Error deleting user #{username}"
+        Rails.logger.error(e.backtrace)
+      end
+      redirect_to dashboard_url
+    end
+   end
+
    def index_user_admins
     if current_user_is_master_admin?
       @users = User.find(:all)
@@ -490,6 +547,35 @@ Developer:
     send_data File.read(t.path), :type => 'application/zip', :filename => filename
     t.close
     t.unlink
+  end
+
+  # download all publications to for the specified user_id
+  # admin action
+  def download_all_user_publications
+    if current_user_is_master_admin?
+      @user = User.find_by_id(params[:user_id])
+      require 'zip/zip'
+      require 'zip/zipfilesystem'
+      @submitted_publications = Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @editing_publications = Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @new_publications = Publication.find_all_by_owner_id(@user.id, :conditions => {:owner_type => 'User', :creator_id => @user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @publications = @submitted_publications + @editing_publications  + @new_publications 
+      t = Tempfile.new("publication_download_#{@user.name}-#{request.remote_ip}")
+
+      Zip::ZipOutputStream.open(t.path) do |zos|
+        @publications.each do |publication|
+          publication.identifiers.each do |id|
+            #full path as used in repo
+            zos.put_next_entry( id.to_path)
+            zos << id.xml_content
+          end
+        end
+      end
+      filename = "publication_download_#{@user.name}_" + Time.now.to_s + ".zip"
+      send_data File.read(t.path), :type => 'application/zip', :filename => filename
+      t.close
+      t.unlink
+    end
   end
 
   #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.

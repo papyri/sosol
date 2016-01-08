@@ -12,7 +12,7 @@ class ApidocsController < ActionController::Base
         key :name, 'TODOCOMEFROMCONFIG'
       end
       license do
-        key :name, 'GPL 3.0'
+        key :name, 'TODOCOMEFROMCOFING'
       end
     end
     tag do
@@ -21,7 +21,7 @@ class ApidocsController < ActionController::Base
     end
     key :host, Sosol::Application.config.api_base.sub(/https?:\/\//,'')
     key :basePath, '/api/v1'
-    key :consumes, ['application/json', 'application/xml']
+    key :consumes, ['application/json']
     key :produces, ['application/json', 'application/xml']
     security_definition :sosol_auth do
       key :type, :oauth2
@@ -42,7 +42,7 @@ class ApidocsController < ActionController::Base
     Api::V1::ItemsController,
     Identifier,
     User,
-    Api::V1::ApiErrorModel,
+    Api::V1::ApiError,
     self,
   ].freeze
 
