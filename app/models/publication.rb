@@ -1397,6 +1397,7 @@ class Publication < ActiveRecord::Base
     has_cts = false
     has_cite = false
     has_apis = false
+    is_external = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1413,6 +1414,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CiteIdentifier/
         has_cite = true
+      end
+      if i.class.to_s =~ /SyriacaIdentifier/
+        is_external = true
       end
       if i.class.to_s == "APISIdentifier"
         has_apis = true
@@ -1434,7 +1438,7 @@ class Publication < ActiveRecord::Base
       creatable_identifiers = []
     end
     #  BALMAS Creating other records in association with  CTSIdentifier or CiteIdentifier publication will be enabled elsewhere
-    if has_cts || has_cite
+    if has_cts || has_cite || is_external
       creatable_identifiers = []
     end
     if has_apis

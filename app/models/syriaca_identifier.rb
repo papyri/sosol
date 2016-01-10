@@ -11,6 +11,8 @@ class SyriacaIdentifier < Identifier
   TEMPORARY_COLLECTION = 'place'
   
   XML_VALIDATOR = JRubyXML::SyriacaGazetteerValidator
+
+  NS_TEI = "http://www.tei-c.org/ns/1.0"
   
   # Determines the next 'SoSOL' temporary name for the associated identifier
   # - starts at '1' each year
@@ -81,5 +83,73 @@ class SyriacaIdentifier < Identifier
         xsl ? xsl : %w{data xslt syriaca preview.xsl})),
         parameters)
   end
-  
+
+  def self.api_parse_post_for_identifier(a_post)
+    xml = REXML::Document.new(a_post).root
+    Rails.logger.info("Parsing #{xml.to_s}")
+    uri = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="URI"]',{"tei" => NS_TEI})
+    if (uri)
+      uri.text.sub(/\/tei$/,'')
+    else
+      raise Exception.new("Missing Identifier")
+    end
+  end
+
+  # try to parse an initialization value from posted data
+  def self.api_parse_post_for_init(a_post)
+    #default is no-op
+  end
+
+  def self.api_create(a_publication,a_agent,a_body,a_comment)
+    uri = self.api_parse_post_for_identifier(a_body)
+    temp_id = self.new(:name => uri)
+    temp_id.publication = a_publication 
+    temp_id.save!
+    temp_id.set_content(a_body, :comment => a_comment, :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
+    template_init = temp_id.add_change_desc(a_comment)
+    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
+    return temp_id
+  end
+
+  def self.find_matching_identifiers(match_id,match_user,match_pub)
+    publication = nil
+    existing_identifiers = []
+
+    possible_conflicts = self.find(:all,
+               :conditions => ["name = ?", "#{match_id}"],
+               :order => "name DESC")
+          
+    actual_conflicts = possible_conflicts.select {|pc| 
+    begin
+        ((pc.publication) && 
+          (pc.publication.owner == match_user) && 
+          !(%w{archived finalized}.include?(pc.publication.status)) &&
+           pc.is_match?(match_pub)
+        )
+      rescue Exception => e
+          Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
+      end
+    }
+    existing_identifiers += actual_conflicts
+    return existing_identifiers
+  end
+
+  def titleize
+    title = self.name
+    return title
+  end
+
+  ## create a default title for a syriaca identifier
+  def self.create_title(uri)
+    type, id = uri.split('/')[3..-1]
+    "#{type}-#{id}"
+  end
+
+  def collection
+    self.to_components[3]
+  end
+
+  def get_catalog_link
+    return self.name
+  end
 end
