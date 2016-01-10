@@ -343,6 +343,9 @@ class DmmApiController < ApplicationController
           @publication.creator = @current_user
           @publication.title = identifier_class::create_title(tempid)   
           @publication.status = "new"
+          if @community
+            @publication.community = @community
+          end 
           if @publication.save!
             # branch from master so we aren't just creating an empty branch
             @publication.branch_from_master
@@ -374,7 +377,11 @@ class DmmApiController < ApplicationController
         Rails.logger.error(e.backtrace)
         #cleanup if we created a publication
         if (!params[:publication_id] && @publication)
-          @publication.destroy
+          begin
+            @publication.destroy
+          rescue Exception => e_2
+            Rails.logger.error(e_2.backtrace)
+          end
         end
         return e.message, 500
       end
