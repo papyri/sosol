@@ -447,7 +447,16 @@ Sosol::Application.routes.draw do
       get :rename_review
     end
     end
+
+    resources :syriaca_identifiers do
     
+      member do
+        get :history
+        get :preview
+        get :editxml
+        put :updatexml
+      end
+    end
 
   end
 
