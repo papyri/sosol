@@ -1,0 +1,12 @@
+#main
+  =# render :partial => 'identifiers/edit_bar'
+
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      = form_for @identifier, :url => { :action => :update }  do |f|
+        = f.error_messages
+        
+        %label Preview
+        .PContent
+          = @identifier[:html_preview].html_safe

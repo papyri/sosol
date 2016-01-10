@@ -1,0 +1,48 @@
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/imgspect.css"}
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
+:css
+  body {
+    background-color: #f9f9f9;
+  }
+//------------------------------------------------------------
+//  Content
+//------------------------------------------------------------
+.main.full.editxml
+  = render :partial => 'identifiers/edit_bar'
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+      = form_for @identifier, :url => { :action => :updatexml } do |f|
+        = f.error_messages
+        .clearfix
+        %div{:id => "editors"}
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'observechange'
+          
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+= javascript_include_tag 'confirm'
+-#-------------------------------------------------------------
+-#  imgspect includes
+-#-------------------------------------------------------------    
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
+%script{:src => "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"}
+= javascript_include_tag "imgspect/imgspect.min"
+-#-------------------------------------------------------------
+-#  texAce includes
+-#-------------------------------------------------------------
+= javascript_include_tag "texAce/src/js/texAce"
+= javascript_include_tag "texAce/third_party/ace-builds/src-noconflict/ace"
+= javascript_include_tag "texAce/third_party/jquery-cookie/jquery.cookie"
+-#-------------------------------------------------------------
+-#  Page javascript
+-#-------------------------------------------------------------
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  jQuery( document ).ready( function() {
+    debugger;
+    jQuery("#syriaca_identifier_xml_content").texAce({lang:'xml',theme_selector:true});
+  });
+
