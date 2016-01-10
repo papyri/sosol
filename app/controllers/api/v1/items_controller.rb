@@ -107,11 +107,18 @@ module Api::V1
     def create
       parsed_params = JSON.parse(request.raw_post.force_encoding("UTF-8"))
       params["identifier_type"] = parsed_params["type"]
-      params["raw_post"] = parsed_params["content"]
+      params["raw_post"] = URI.unescape(parsed_params["content"])
+      if (parsed_params["publication_community_name"])
+        @community = Community.find_by_name(parsed_params["publication_community_name"])
+        if @community.nil?
+          render_api_error(405,"Invalid Community #{parsed_params['publication_community_name']}") and return
+        end   
+      end
       (response,code) = _api_item_create
       if (code != 200) 
         render_api_error(code,response) and return
       end
+      @identifier = response
       respond_to do |format|
         format.json { render :json=> build_item }
         format.xml { render :xml => "<item>#{id}</item>" } #legacy api
