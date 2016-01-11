@@ -183,6 +183,13 @@ FactoryGirl.define do
     f.admins Array.new
   end
 
+  factory :pass_through_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
+
   factory :end_user_community do |f|
     f.name { FactoryGirl.generate(:name) }
     f.friendly_name { FactoryGirl.generate(:name) }
