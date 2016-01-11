@@ -2,7 +2,8 @@ module Api::V1
   class ApiController < DmmApiController
     include Swagger::Blocks
 
-    skip_before_filter :authorize 
+    skip_before_filter :authorize  # skip regular authentication routes
+    skip_before_filter :update_cookie # skip old api cookie handling
     before_filter only: [:user] do
       doorkeeper_authorize! :read
     end
@@ -39,7 +40,7 @@ module Api::V1
     end
     private
     def current_user
-        @current_user ||= User.find(doorkeeper_token[:resource_owner_id])
+        @current_user = User.find(doorkeeper_token[:resource_owner_id])
     end
   end
 end
