@@ -14,6 +14,12 @@ Sosol::Application.routes.draw do
     end
   end
 
+  resources :pass_through_communities do
+    member do
+      get :confirm_destroy
+    end
+  end
+
   resources :end_user_communities do
     member do
       get :confirm_destroy
