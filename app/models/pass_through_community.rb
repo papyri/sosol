@@ -44,22 +44,19 @@ class PassThroughCommunity < Community
     #copy to  space
     Rails.logger.debug "----pass through to get it"
     next_obj = self.pass_to_obj
-    Rails.logger.debug "---" + next_obj
+    Rails.logger.debug "---" + next_obj.inspect
 
     if next_obj.class.name =~ /Community/
-      community_copy = publication.copy_to_owner(next_obj, "#{self.name}/#{publication.creator.name}/#{publication.title}") #adding orginal creator to title for next community
-      community_copy.status = "editing"
-      community_copy.identifiers.each do |id|
+      # switch publication community to the new community
+      publication.community = next_obj
+      # reset everything back to editing
+      publication.status = "editing"
+      publication.identifiers.each do |id|
         id.status = "editing"
         id.save
       end
-      #disconnect the parent/origin connections
-      community_copy.parent = nil
-
-      #remove the original creator id (that info is now in the git history )
-      community_copy.creator_id = community_copy.owner_id
-      community_copy.save!
-
+      # TODO we need an event here
+      publication.submit_to_next_board
     elsif next_obj.class.name =~ /Agent/
       begin
         agent_client = AgentHelper::get_client(next_obj)

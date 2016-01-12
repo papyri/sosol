@@ -112,6 +112,10 @@ FactoryGirl.define do
     f.identifier_classes ['HGVTransIdentifier']
   end
 
+  factory :master_community_board, :parent => :hgv_community_board do |f|
+    f.identifier_classes ['DDBIdentifier','HGVMetaIdentifier','HGVTransIdentifier']
+  end
+
 
   factory :user do |f|
     f.name { FactoryGirl.generate(:name) }
