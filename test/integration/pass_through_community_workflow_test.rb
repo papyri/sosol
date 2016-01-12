@@ -127,7 +127,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
                                           :choices => "ok")
         @master_board.decrees << @master_decree
 
-        #set up the passthrough community
+        #set up the passthrough communities
         @test_community = FactoryGirl.create(:pass_through_community,
                                              :name => "test_freaky_community",
                                              :friendly_name => "testy",
@@ -176,6 +176,32 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         @text_board.rank = 2
         @translation_board.rank = 3
 
+        #mock an agent for agent based pass to test
+        @agent = stub("mockagent")
+        @client = stub("mockclient")
+        @client.stubs(:post_content).raises(Exception)
+        @client.stubs(:get_transformation).returns(nil)
+        AgentHelper.stubs(:get_client).returns(@client)
+        AgentHelper.stubs(:agent_of).returns(@agent)
+
+        @test_agent_community = FactoryGirl.create(:pass_through_community,
+                                             :name => "test_freaky_agent_community",
+                                             :friendly_name => "testy agent",
+                                             :allows_self_signup => true,
+                                             #:abbreviation => "tc",
+                                             :description => "a comunity for testing",
+                                             :pass_to => "mockagent")
+        @test_agent_community.members << @community_user
+        @test_agent_board = FactoryGirl.create(:master_community_board, :title => "MockAgent", :community_id => @test_agent_community.id)
+        @test_agent_board.users << @board_user_2
+        @test_agent_decree = FactoryGirl.create(:count_decree,
+                                          :board => @test_agent_board,
+                                          :trigger => 1.0,
+                                          :action => "approve",
+                                          :choices => "ok")
+        @test_agent_board.decrees << @test_agent_decree
+
+
         Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz passthrouhh community testing setup complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
       end
 
@@ -184,7 +210,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         begin
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
-            [ @board_user, @board_user_2, @creator_user, @master_user, @community_user, @test_community, @master_community ].each do |entity|
+            [ @board_user, @board_user_2, @creator_user, @master_user, @community_user, @test_community, @master_community, @test_agent_community ].each do |entity|
               count = count + 1
               #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
               unless entity.nil?
@@ -201,6 +227,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "BEGIN TEST: user creates and submits publication to community"
 
         assert_not_equal nil, @test_community, "Community not created"
+        assert_equal "MasterCommunity", @test_community.pass_to_obj.class.name
 
         #create a publication with a session
         open_session do |publication_session|
@@ -302,7 +329,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         # do rename
         open_session do |meta_rename_session|
           meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/hgv/9999999999'
+            :new_name => "papyri.info/hgv/#{Time.now.nsec}"
         end
 
         meta_final_publication.reload
@@ -421,7 +448,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         # do rename
         open_session do |text_rename_session|
           text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+            :new_name => "papyri.info/ddbdp/bgu;1;#{Time.now.nsec}", :set_dummy_header => false
         end
 
         text_final_publication.reload
@@ -460,6 +487,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         compare_publications(@creator_user.publications.first, text_final_publication)
 
         # should now be submitted to the master board 
+        @publication.reload
         assert_equal "submitted", @publication.status, "Publication status not resubmitted " + @publication.community_id.to_s + " id "
         Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
 
@@ -554,6 +582,176 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         @publication.destroy
 
         Rails.logger.debug "ENDED TEST: user creates and submits publication to pass through community"
+      end
+
+      should "also work with agent as pass to"  do
+        Rails.logger.debug "BEGIN TEST: user creates and submits publication to pass through to agent community"
+
+        assert_not_equal nil, @test_agent_community, "Community not created"
+ 
+        #create a publication with a session
+        open_session do |publication_session|
+          Rails.logger.debug "---Create A New Publication---"
+          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
+          Rails.logger.debug "--flash is: " + publication_session.flash.inspect
+          @publication = @creator_user.publications.first
+          @publication.log_info
+        end
+
+        Rails.logger.debug "---Publication Created---"
+        Rails.logger.debug "---Identifiers for publication " + @publication.title + " are:"
+
+        @publication.identifiers.each do |pi|
+          Rails.logger.debug "-identifier-"
+          Rails.logger.debug "title is: " +  pi.title
+          Rails.logger.debug "was it modified?: " + pi.modified?.to_s
+        end
+
+        #submit to the community
+        Rails.logger.debug "---Submit Publication---"
+        open_session do |submit_session|
+          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, :submit_comment => "I made a new pub", :community => { :id => @test_agent_community.id.to_s }
+          assert_equal "Publication submitted to #{@test_agent_community.friendly_name}.", submit_session.flash[:notice]
+          Rails.logger.debug "--flash is: " + submit_session.flash.inspect
+        end
+        @publication.reload
+
+        #now meta should have it
+        assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
+
+        Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
+
+        #agent board should have 1 publication, others should have 0
+        agent_publications = Publication.find(:all, :conditions => { :owner_id => @test_agent_board.id, :owner_type => "Board" } )
+        assert_equal 1, agent_publications.length, "Meta does not have 1 publication but rather, " + agent_publications.length.to_s + " publications"
+
+        Rails.logger.debug "Community Agent Board has publication"
+
+        #vote on it
+        agent_publication = agent_publications.first
+
+        #find identifier
+        agent_identifiers = []
+        agent_publication.identifiers.each do |id|
+          if @test_agent_board.controls_identifier?(id)
+            agent_identifiers << id
+          end
+        end
+
+        assert_equal 2,  agent_identifiers.length, "Did not have the agent identifiers"
+        Rails.logger.debug "Found agent identifier, will vote on it"
+
+        #vote on meta publication
+        open_session do |agent_session|
+          agent_session.post 'publications/vote/' + agent_publication.id.to_s + '?test_user_id=' + @board_user_2.id.to_s, \
+            :comment => { :comment => "I vote", :user_id => @board_user_2.id, :publication_id => agent_publication.id, :identifier_id => agent_identifiers[0].id, :reason => "vote" }, \
+            :vote => { :publication_id => agent_publication.id.to_s, :identifier_id => agent_identifiers[0].id.to_s, :user_id => @board_user_2.id.to_s, :board_id => @test_agent_board.id.to_s, :choice => "ok" }
+
+          Rails.logger.debug "--flash is: " + agent_session.flash.inspect
+          
+        end
+        
+        #reload the publication to get the vote associations to go thru?
+        agent_publication.reload
+
+        vote_str = "Votes on meta are: "
+        agent_publication.votes.each do |v|
+          vote_str = vote_str + v.choice
+        end
+        Rails.logger.debug  vote_str
+
+        assert_equal 1, agent_publication.votes.length, "Meta publication should have one vote"
+
+        #vote should have changed publication to approved and put to finalizer
+        assert_equal "approved", agent_publication.status, "Meta publication not approved after vote"
+        Rails.logger.debug "--Agent publication approved"
+
+        #now finalizer should have it
+        agent_final_publication = agent_publication.find_finalizer_publication
+
+        assert_equal agent_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
+        Rails.logger.debug "---Agent Finalizer has publication"
+
+        agent_final_identifiers = []
+        agent_final_publication.identifiers.each do |id|
+          if @test_agent_board.controls_identifier?(id)
+            agent_final_identifiers << id
+          end
+        end
+
+        # do rename
+        open_session do |agent_rename_session|
+          agent_rename_session.put 'publications/' + agent_final_publication.id.to_s + '/ddb_identifiers/' + agent_final_identifiers[0].id.to_s + '/rename/?test_user_id='  + @board_user_2.id.to_s,
+            :new_name => "papyri.info/ddbdp/bgu;1;#{Time.now.nsec}.", :set_dummy_header => false
+        end
+        open_session do |agent_rename_session|
+          agent_rename_session.put 'publications/' + agent_final_publication.id.to_s + '/hgv_meta_identifiers/' + agent_final_identifiers[1].id.to_s + '/rename/?test_user_id='  + @board_user_2.id.to_s,
+            :new_name => "papyri.info/hgv/#{Time.now.nsec}"
+        end
+
+        agent_final_publication.reload
+        assert !agent_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
+
+        finalizer_publications = @board_user_2.publications
+        assert_equal 1, finalizer_publications.length, "Finalizer does not have publication to finalize"
+
+        # at first, test with mock agent as setup to fail to be sure finalization fails and publication is left in finalizing state
+        open_session do |agent_finalize_session|
+          agent_finalize_session.post 'publications/' + agent_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user_2.id.to_s, \
+            :comment => 'I agree text is great and now it is final'
+
+          Rails.logger.debug "--flash is: " + agent_finalize_session.flash.inspect
+          Rails.logger.debug "----session data from text finalize is:" + agent_finalize_session.session.to_hash.inspect
+          assert_not_nil agent_finalize_session.flash[:error]
+          assert_not_equal "", agent_finalize_session.flash[:error]
+        end
+
+        finalizer_publications = @board_user_2.publications
+        assert_equal 1, finalizer_publications.length, "Finalizer does not still have a publication to finalize"
+
+        agent_final_publication = agent_publication.find_finalizer_publication
+        assert_not_nil agent_final_publication, "Publicaiton does not still have finalizer"
+        Rails.logger.debug "---Finalizer still has publication"
+
+        @client.stubs(:post_content).returns(201)
+        #now really finalize text
+        open_session do |agent_finalize_session|
+          agent_finalize_session.post 'publications/' + agent_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user_2.id.to_s, \
+            :comment => 'I agree text is great and now it is final'
+
+          Rails.logger.debug "--flash is: " + agent_finalize_session.flash.inspect
+          Rails.logger.debug "----session data from finalize is:" + agent_finalize_session.session.to_hash.inspect
+          Rails.logger.debug agent_finalize_session.body
+          Rails.logger.debug "--flash is: " + agent_finalize_session.flash.inspect
+        end
+
+
+        agent_final_publication.reload
+        agent_final_publication.log_info
+        assert_equal "finalized", agent_final_publication.status, "Text final publication not finalized"
+
+        #text finalized
+        Rails.logger.debug "---Agent publication Finalized"
+
+        #output results for visual inspection
+        current_creator_publication = @creator_user.publications.first
+        current_creator_publication.reload
+
+        current_creator_publication.log_info
+
+        Rails.logger.debug "Compare user with text finalizer publication"
+        compare_publications(@creator_user.publications.first, agent_final_publication)
+
+        # should now be commited
+        @publication.reload
+        assert_equal "committed", @publication.status, "Publication status not committed " + @publication.community_id.to_s + " id "
+        Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
+
+        #master board should have 0 publication
+        master_publications = Publication.find(:all, :conditions => { :owner_id => @master_board.id, :owner_type => "Board" } )
+        assert_equal 0, master_publications.length, "Master does not have 1 publication but rather, " + master_publications.length.to_s + " publications"
+
+        Rails.logger.debug "ENDED TEST: user creates and submits publication to pass through to agent community"
       end
     end
   end

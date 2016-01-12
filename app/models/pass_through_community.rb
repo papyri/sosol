@@ -55,46 +55,41 @@ class PassThroughCommunity < Community
         id.status = "editing"
         id.save
       end
-      # TODO we need an event here
+      # TODO maybe we need an event here?
       publication.submit_to_next_board
-    elsif next_obj.class.name =~ /Agent/
+    else
       begin
         agent_client = AgentHelper::get_client(next_obj)
         if agent_client.nil?
           raise Exception.new("Unable to get client for #{next_obj.inspect}")
         end
-        self.identifiers.each do |id|
-          transformation = agent[:transformations][id.class.name]
+        publication.identifiers.each do |id|
+          transformation = agent_client.get_transformation(id.class.name)
           unless transformation.nil?
-            signed_off_messages = []
-            # TODO reviwed_by ... how to pass
-            reviewed_by.each do |m|
-              signed_off_messages << m
+            reviewed_by = []
+            # TODO we should include all the boards
+            publication.find_first_board.users.each do |m|
+              reviewed_by << m.human_name
             end
             content = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(id.content),
               JRubyXML.stream_from_file(File.join(Rails.root, transform)),
-             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general
-             'reviewers' => signed_off_messages.join(',')
+             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
+             'reviewers' => reviewed_by.join(',')
             )
           end
           agent_client.post_content(content)
-          # we want to return false here because the identifier itself
-          # wasn't modified
+          # the original publication is done now so we can
+          # set the status of the original publication
+          # to committed
+          publication.origin.change_status("committed")
         end
       rescue Exception => e
         Rails.logger.error(e) 
         Rails.logger.error(e.backtrace) 
-        raise "Unable to send finalization copy to agent #{agent.inspect}"
+        raise Exception.new("Unable to send finalization copy to agent #{next_obj.inspect} message was #{e.message}")
       end
-    else
-      raise Exeption.new("Unknown pass_to type #{next_obj}")
     end
-
-    # the original publication is done now so we can
-    # set the status of the original publication
-    # to committed
-    publication.origin.change_status("committed")
   end
 
   def finalize(publication)
