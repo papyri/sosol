@@ -158,7 +158,11 @@ module AgentHelper
     end
 
     def get_transformation(a_identifiertype)
-      @conf[:transformations][a_identifiertype]
+      if (@conf[:transformations])
+        @conf[:transformations][a_identifiertype]
+      else
+        nil
+      end
     end
   end
 
