@@ -305,7 +305,11 @@ class Publication < ActiveRecord::Base
     #if we get to this point, there are no more boards to submit to, thus we are done
 
     if is_community_publication?
-      self.community.promote(self)
+      begin
+        self.community.promote(self)
+      rescue Exception => e
+        return e.message, nil
+      end
     else
       # backwards compatibility
       # mark as committed
