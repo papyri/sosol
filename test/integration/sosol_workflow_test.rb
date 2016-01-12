@@ -590,8 +590,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                   open_session do |make_me_finalizer_session|
                     begin
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
-                    rescue ActiveRecord::RecordNotFound => e
-                      Rails.logger.info('RecordNotFound inside MMF thread 1')
+                    rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                      Rails.logger.info("#{e.class} inside MMF thread 1")
                     end
                   end
                 end
@@ -611,8 +611,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                   open_session do |make_me_finalizer_session|
                     begin
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
-                    rescue ActiveRecord::RecordNotFound => e
-                      Rails.logger.info('RecordNotFound inside MMF thread 2')
+                    rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                      Rails.logger.info("#{e.class} inside MMF thread 2")
                     end
                   end
                 end
