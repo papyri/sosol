@@ -532,7 +532,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                     submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submission thread 1")
-                    raise e
                   end
                 end
               end
@@ -554,7 +553,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                     submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submit thread 2")
-                    raise e
                   end
                 end
               end
