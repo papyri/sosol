@@ -1,31 +1,5 @@
 module Api::V1
 
-  class ApiError
-    include Swagger::Blocks
-    swagger_schema :ApiError do
-      key :required, [:code, :message]
-      property :code do
-        key :type, :integer
-        key :format, :int32
-      end
-      property :message do
-        key :type, :string
-      end
-    end
-
-    attr_accessor :code, :message
-
-    def initialize(code, message)
-      @code = code
-      @message = message
-    end
-
-    def to_str
-      "<error code=\"#{code}\" message=\"#{message}\"/>"
-    end
-
-  end
-    
   class ItemsController < ApiController
     rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
     include Swagger::Blocks
@@ -142,13 +116,13 @@ module Api::V1
     private
     def record_not_found
       respond_to do |format|
-        format.json { render :json => ApiError.new(404,'Not Found'), :status => 404 }
-        format.xml { render :xml => ApiError.new(404,'Not Found'), :status => 404 }
+        format.json { render :json => Api::V1::ApiError.new(404,'Not Found'), :status => 404 }
+        format.xml { render :xml => Api::V1::ApiError.new(404,'Not Found'), :status => 404 }
       end
     end
 
     def render_api_error(code,message)
-      response = ApiError.new(code,message)
+      response = Api::V1::ApiError.new(code,message)
       respond_to do |format|
          format.json { render :json => response, :status => code }
          format.xml { render :xml => response, :status => code }
