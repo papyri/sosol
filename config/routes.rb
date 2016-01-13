@@ -9,8 +9,11 @@ Sosol::Application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :items
+      resources :items 
       get '/user' => 'api#user'
+      resources :publications do
+        post :submit
+      end
     end
   end
 

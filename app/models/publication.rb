@@ -21,7 +21,18 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ActiveRecord::Base
+  include Swagger::Blocks
 
+  swagger_schema :Publication do
+    key :required, [:id, :community_name]
+    property :id do
+      key :type, :integer
+      key :format, :int64
+    end
+    property :community_name do
+      key :type, :string
+    end
+  end
 
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
 

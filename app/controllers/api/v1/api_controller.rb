@@ -2,6 +2,7 @@ module Api::V1
   class ApiController < DmmApiController
     include Swagger::Blocks
 
+    skip_before_filter :verify_authenticity_token #don't invalidate any existing browser session
     skip_before_filter :authorize  # skip regular authentication routes
     skip_before_filter :update_cookie # skip old api cookie handling
     before_filter only: [:user] do
@@ -40,7 +41,35 @@ module Api::V1
     end
     private
     def current_user
-        @current_user = User.find(doorkeeper_token[:resource_owner_id])
+        if doorkeeper_token
+          @current_user = User.find(doorkeeper_token[:resource_owner_id])
+        end
     end
   end
+
+  class ApiError
+    include Swagger::Blocks
+    swagger_schema :ApiError do
+      key :required, [:code, :message]
+      property :code do
+        key :type, :integer
+        key :format, :int32
+      end
+      property :message do
+        key :type, :string
+      end
+    end
+
+    attr_accessor :code, :message
+
+    def initialize(code, message)
+      @code = code
+      @message = message
+    end
+
+    def to_str
+      "<error code=\"#{code}\" message=\"#{message}\"/>"
+    end
+  end
+
 end
