@@ -12,9 +12,6 @@ class Identifier < ActiveRecord::Base
     property :type do
       key :type, :string
     end
-    property :collection do 
-      key :type, :string
-    end
     property :content do 
       key :type, :string
     end

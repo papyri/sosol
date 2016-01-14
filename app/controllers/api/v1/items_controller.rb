@@ -134,7 +134,6 @@ module Api::V1
       item[:id] = @identifier.id
       item[:type] = @identifier.type
       item[:publication] = @identifier.publication.id
-      item[:collection] = @identifier.collection
       item[:publication_community_name] = @identifier.publication.community.friendly_name
       item[:content] = content.nil? ? @identifier.content : content
       item
