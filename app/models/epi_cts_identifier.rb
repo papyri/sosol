@@ -472,4 +472,33 @@ class EpiCTSIdentifier < CTSIdentifier
     return preprocessed_leiden
   end
 
+  def self.api_parse_post_for_identifier(a_post)
+    xml = REXML::Document.new(a_post).root
+    Rails.logger.info("Parsing #{xml.to_s}")
+    urn = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="urn:cts"]',{"tei" => NS_TEI})
+    if (urn)
+      begin
+        urnObj = CTS::CTSLib.urnObj(urn)
+      rescue
+        raise Exception.new("Invalid URN identifier #{urn}")
+      end
+      # we must have at least a work
+      work = urnObj.getWork(false)
+      if (work.nil? || work == '')
+        raise Exception.new("Missing work identifier in #{urn}")
+      end
+    
+      version = urnObj.getVersion(false)
+      if (version)
+        raise Exception.new("Creating a new version from a version URN is not yet supported")
+      end # end if editing existing edition       
+
+      # if no edition, just use a fake one for use in path processing
+      version = urn + "." + identifier_class::TEMPORARY_COLLECTION
+      identifier = collection + "/" + CTS::CTSLib.pathForUrn(version,pubtype)
+    else
+        raise Exception.new("Missing URN identifier")
+    end
+  end
+
 end

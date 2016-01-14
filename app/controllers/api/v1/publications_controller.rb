@@ -91,11 +91,10 @@ module Api::V1
     end
 
     def publication_ownership_guard
-      @publication = Publication.find(params[:publication_id])
+      @publication ||= Publication.find(params[:publication_id].to_s, :lock => true) 
       if ! @publication.mutable_by?(@current_user)
         return render_api_error('401','Operation not permitted.')
       end
-      Rails.logger.info("Mutable by #{@current_user.inspect}")
     end
 
     def expire_api_item_cache(a_identifier_type,a_id)
