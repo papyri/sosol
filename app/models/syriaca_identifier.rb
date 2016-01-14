@@ -145,10 +145,6 @@ class SyriacaIdentifier < Identifier
     "#{type}-#{id}"
   end
 
-  def collection
-    self.to_components[3]
-  end
-
   def get_catalog_link
     return self.name
   end
