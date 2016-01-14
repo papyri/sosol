@@ -17,7 +17,7 @@ class EpiCTSIdentifier < CTSIdentifier
   MAX_PREVIEW_SIZE = 100000
 
   BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
-  
+
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus
 
