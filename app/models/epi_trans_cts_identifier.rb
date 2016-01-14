@@ -145,5 +145,5 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/relateditems")
     super()
   end
-
+  
 end
