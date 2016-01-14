@@ -39,6 +39,20 @@ module Api::V1
     def user
       ping
     end
+
+    def terms
+      @terms = Sosol::Application.config.respond_to?(:site_api_terms) ? Sosol::Application.config.site_api_terms : ""
+    end
+
+    def license
+      @license = Sosol::Application.config.respond_to?(:site_api_license) ? Sosol::Application.config.site_api_license : ""
+    end
+
+    def contact
+      @name = Sosol::Application.config.respond_to?(:site_api_contact_name) ? Sosol::Application.config.site_api_contact_name : ""
+      @email = Sosol::Application.config.respond_to?(:site_api_contact_email) ? Sosol::Application.config.site_api_contact_email : ""
+    end
+
     private
     def current_user
         if doorkeeper_token
