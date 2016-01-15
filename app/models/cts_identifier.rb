@@ -97,7 +97,7 @@ class CTSIdentifier < Identifier
                        :conditions => ["name like ?", "#{document_path}%"],
                        :order => "CAST(SUBSTR(name, #{string_length+1}) AS SIGNED) DESC",
                        :limit => 1)
-    if latest.nil?
+    if latest.first.nil?
       # no constructed id's for this year/class
       document_number = 1
     else
