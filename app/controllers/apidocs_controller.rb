@@ -1,7 +1,6 @@
 class ApidocsController < ActionController::Base
   include Swagger::Blocks
 
-
   # A list of all classes that have swagger_* declarations.
   SWAGGERED_CLASSES = [
     Api::V1::ApiController,
@@ -21,6 +20,12 @@ class ApidocsController < ActionController::Base
   end
 
   def self.set_swagger_root(host,scheme,root_path,root_url)
+    # TODO need to fix this before going to production
+    # need a way to get access to the actual scheme when behind an apache
+    # proxy -- maybe needs to be forwarded by Apache to tomcat in a header
+    #if ENV['RAILS_ENV'] == 'production' || ENV['RAILS_ENV'] == 'staging'
+    #  root_url.sub!(/http:/,'https:')
+    #end 
     swagger_root do
       key :swagger, '2.0'
       info do
@@ -40,15 +45,15 @@ class ApidocsController < ActionController::Base
         key :description, 'Identifier operations'
       end
       key :host, "#{host}"
-      key :scheme, "#{scheme}"
+      key :schemes, [scheme]
       key :basePath, "#{root_path}api/v1"
       key :consumes, ['application/json']
       key :produces, ['application/json', 'application/xml']
       security_definition :sosol_auth do
         key :type, :oauth2
-        key :authorizationUrl, "#{root_path}oauth/authorize"
+        key :authorizationUrl, "#{root_url}oauth/authorize"
         key :flow, :accessCode
-        key :tokenUrl, "#{root_path}oauth/token"
+        key :tokenUrl, "#{root_url}oauth/token"
         key :flow, :accessCode
         scopes do
           key 'write', 'modify identifiers in your account'
