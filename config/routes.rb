@@ -13,7 +13,8 @@ Sosol::Application.routes.draw do
       resources :publications do
         post :submit
       end
-      get 'user' => 'api#user'
+      match 'user', to: 'api#user', via: [:get]
+      match '*all' => 'api#preflight_check', :via => :options
       get 'terms' => 'api#terms' 
       get 'license' => 'api#license'
       get 'contact' => 'api#contact'
