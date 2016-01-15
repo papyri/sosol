@@ -46,7 +46,7 @@ module Api::V1
 
     def submit
       @publication.with_lock do
-        if @publication.status != 'editing' || @publication.status != 'new'
+        if @publication.status != 'editing' && @publication.status != 'new'
           render_api_error("405","Only publications in editing or new status be submitted via the api") and return
         end
         if @publication.community_id.nil?
