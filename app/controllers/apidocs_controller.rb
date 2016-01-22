@@ -5,6 +5,7 @@ class ApidocsController < ActionController::Base
   SWAGGERED_CLASSES = [
     Api::V1::ApiController,
     Api::V1::ItemsController,
+    Api::V1::XmlItemsController,
     Api::V1::PublicationsController,
     Identifier,
     Publication,

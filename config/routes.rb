@@ -15,6 +15,7 @@ Sosol::Application.routes.draw do
       end
       match 'user', to: 'api#user', via: [:get]
       match '*all' => 'api#preflight_check', :via => :options
+      match 'xmlitems/:identifier_type' =>'xml_items#create', :via => :post
       get 'terms' => 'api#terms' 
       get 'license' => 'api#license'
       get 'contact' => 'api#contact'

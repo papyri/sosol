@@ -20,7 +20,7 @@ module Api::V1
           key :in, :path
           key :description, "publication id"
           key :required, true
-          key :type, :int64
+          key :type, :integer
         end
         parameter do 
           key :name, :comment
