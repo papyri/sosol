@@ -6,19 +6,12 @@ class User < ActiveRecord::Base
     key :required, [:id]
     property :id do
       key :type, :integer
-      key :format, :int64
     end
     property :admin do
       key :type, :boolean
     end
     property :affiliation do 
       key :type, :string
-    end
-    property :created_at do 
-      key :type, :dateTime
-    end
-    property :updated_at do 
-      key :type, :dateTime
     end
     property :email do
       key :type, :string
@@ -46,7 +39,6 @@ class User < ActiveRecord::Base
     end
     property :accepted_terms do
       key :type, :integer
-      key :format, :int64
     end
   end
 
