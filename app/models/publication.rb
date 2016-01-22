@@ -27,7 +27,6 @@ class Publication < ActiveRecord::Base
     key :required, [:id, :community_name]
     property :id do
       key :type, :integer
-      key :format, :int64
     end
     property :community_name do
       key :type, :string
