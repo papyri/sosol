@@ -596,7 +596,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
-                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                    begin
+                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                    rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                      Rails.logger.info("#{e.class} inside MMF thread 1")
+                    end
                   end
                 end
               ensure
@@ -613,7 +617,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
-                    make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                    begin
+                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                    rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                      Rails.logger.info("#{e.class} inside MMF thread 2")
+                    end
                   end
                 end
               ensure
