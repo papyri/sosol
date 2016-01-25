@@ -11,7 +11,9 @@ Sosol::Application.routes.draw do
     namespace :v1 do
       resources :items 
       resources :publications do
-        post :submit
+        member do
+          post :submit
+        end
       end
       match 'user', to: 'api#user', via: [:get]
       match '*all' => 'api#preflight_check', :via => :options

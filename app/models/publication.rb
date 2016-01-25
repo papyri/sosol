@@ -68,6 +68,8 @@ class Publication < ActiveRecord::Base
     # not yet handling ASCII control characters
   end
 
+  #validate :community_can_be_assigned?
+
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
 
   #inelegant way to pass this info, but it works
@@ -1470,6 +1472,15 @@ class Publication < ActiveRecord::Base
 
     return creatable_identifiers
   end
+
+  # validates the community assignment
+  # publication owner must be a member of the community or it must allow
+  # self-signup and the publication can't be in anything but new or editing status
+  def community_can_be_assigned?
+    %w{editing new}.include?(self.status) && 
+      (self.origin.owner.community_memberships.include?(self.community) || self.community.allows_self_signup?)
+  end
+
 
   protected
     #Returns title string in form acceptable to  ".git/refs/"
