@@ -72,6 +72,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     rescue JRubyXML::ParseError => parse_error
       flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
     end
+    flash.keep
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                :action => :edittext) and return
   end 
