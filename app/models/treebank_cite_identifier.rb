@@ -267,7 +267,11 @@ class TreebankCiteIdentifier < CiteIdentifier
   
   # try to parse an initialization value from posted data
   def self.api_parse_post_for_init(a_post)
-    targets(a_post)
+    #targets(a_post)
+    # @balmas 2016-01-25 Disabled duplicate checking on new
+    # treebank data posted via the API until we have a solution for
+    # https://github.com/perseids-project/perseids_docs/issues/273
+    []
   end
   
   def self.api_create(a_publication,a_agent,a_body,a_comment)

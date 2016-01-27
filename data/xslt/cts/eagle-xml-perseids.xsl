@@ -22,7 +22,7 @@
     <xsl:param name="current_user"/>
     <xsl:param name="filter"/>
     <xsl:param name="lang"/>
-    <xsl:param name="related_item_search" select="'http://search.eagle.research-infrastructures.eu/solr/EMF-index-cleaned/select?q=entitytype:documental%20AND%20tmid:%22REPLACE_TMID%22'"/>
+    <xsl:param name="related_item_search" select="'http://search.eagle.research-infrastructures.eu/solr/EMF-index-cleaned/select?q=entitytype:artifact%20AND%20tmid:%22REPLACE_TMID%22'"/>
     
     <xsl:include href="eagle-properties.xsl"/>
     

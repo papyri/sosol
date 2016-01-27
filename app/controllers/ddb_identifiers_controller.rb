@@ -146,13 +146,19 @@ class DdbIdentifiersController < IdentifiersController
   def commentary
     find_identifier
 
-    @identifier[:html_preview] = 
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(
-        DDBIdentifier.preprocess(@identifier.xml_content)),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt ddb commentary.xsl})),
-        {})
+    begin
+      @identifier[:html_preview] = 
+      JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(
+          DDBIdentifier.preprocess(@identifier.xml_content)),
+        JRubyXML.stream_from_file(File.join(Rails.root,
+          %w{data xslt ddb commentary.xsl})),
+          {})
+    rescue JRubyXML::ParseError => parse_error
+      flash.now[:error] = parse_error.to_str + 
+          ".  This message is because the XML is unable to be transformed by the line-by-line commentary XSLT."
+      @identifier[:html_preview] = ''
+    end
       
     @is_editor_view = true
   end
