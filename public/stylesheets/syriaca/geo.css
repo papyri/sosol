@@ -1,0 +1,24 @@
+/* Application styles could go here */
+/*
+ * Colors:
+ * Dark red: 753C28
+ * Dark orange: B3522B
+ * Light orange: E69849
+ * Pale tan: F5F2E9
+ * Dark Blue: 456889
+ * Blue/grey: A2B1B9
+ * Light Blue: DDEAF1
+ * Dark Grey #333
+ * Light Grey (text): #999
+ */
+body {background-color:#753C28;}
+#main {background-color:#F5F2E9;}
+.navbar {border-bottom:4px solid #753C28 !important;}
+/* Main content blocks */
+
+/* Typography */
+h1 {color:#E69849; padding-top:1em;}
+h2 {color:#753C28;}
+h3 {color:#333;}
+h3.underline {color:#999; border-bottom:3px solid #E69849;}
+#map {height: 180px;}

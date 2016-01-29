@@ -32,3 +32,7 @@ public/javascripts/imgspect:
   :git_enable_submodules: true
   :git_submodules_recursive: true
 
+data/xslt/syriaca:
+  :type: git
+  :repository: git://github.com/srophe/srophe-eXist-app.git
+  :revision: 7885bcfab9c2342645967030113459c8bddd5720
