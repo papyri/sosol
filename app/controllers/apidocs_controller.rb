@@ -21,6 +21,9 @@ class ApidocsController < ActionController::Base
   end
 
   def self.set_swagger_root(host,scheme,root_path,root_url)
+    api_title = Sosol::Application.config.respond_to?(:site_api_title) ? Sosol::Application.config.site_api_title : "SoSOL API"
+    api_description = Sosol::Application.config.respond_to?(:site_api_description) ? Sosol::Application.config.site_api_description : "SoSOL API"
+    api_license_name = Sosol::Application.config.respond_to?(:site_api_license_name) ? Sosol::Application.config.site_api_license_name : "SoSOL API License"
     # TODO need to fix this before going to production
     # need a way to get access to the actual scheme when behind an apache
     # proxy -- maybe needs to be forwarded by Apache to tomcat in a header
@@ -31,14 +34,15 @@ class ApidocsController < ActionController::Base
       key :swagger, '2.0'
       info do
         key :version, '1.0.0'
-        key :title, 'SoSOL'
-        key :description, 'SoSOL API'
+        key :title, api_title
+        key :description, api_description
         key :termsOfService, "#{root_url}api/v1/terms"
         contact do
           key :url, "#{root_url}api/v1/contact"
         end
         license do
-          key :name, "#{root_url}api/v1/license"
+          key :name, api_license_name
+          key :url, "#{root_url}api/v1/license"
         end
       end
       tag do
@@ -46,7 +50,7 @@ class ApidocsController < ActionController::Base
         key :description, 'Identifier operations'
       end
       key :host, "#{host}"
-      key :schemes, [scheme]
+      key :schemes, ["http","https"]
       key :basePath, "#{root_path}api/v1"
       key :consumes, ['application/json']
       key :produces, ['application/json', 'application/xml']
