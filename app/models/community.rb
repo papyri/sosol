@@ -63,8 +63,10 @@ class Community < ActiveRecord::Base
   def self.change_default(new)
     old = self.default
     self.transaction do 
-      old.is_default = false
-      old.save!
+      if old
+        old.is_default = false
+        old.save!
+      end
       new.is_default = true 
       new.save!
     end

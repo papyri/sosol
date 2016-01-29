@@ -6,8 +6,9 @@ class CTSIdentifier < Identifier
   
   IDENTIFIER_PREFIX = 'urn:cts:' 
   IDENTIFIER_NAMESPACE = ''
-  TEMPORARY_COLLECTION = 'TempTexts'
+  TEMPORARY_COLLECTION = 'perseids'
   TEMPORARY_TITLE = 'New Transcription'
+  NS_TEI = "http://www.tei-c.org/ns/1.0"
 
   # responds to an interface request to retitle the file
   # by updating the label for it in its related text inventory
@@ -79,7 +80,7 @@ class CTSIdentifier < Identifier
   def self.inventories_hash
     return CTS::CTSLib.getInventoriesHash()
   end
-  
+
   def self.next_temporary_identifier(collection,template,pubtype,lang)
     urnObj = CTS::CTSLib.urnObj(template)
     year = Time.now.year
@@ -91,15 +92,16 @@ class CTSIdentifier < Identifier
     # NOTE if there is no edition component, this ends up with a tailing "/"
     # somewhat by accident
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
+    string_length = document_path.sub(/\d+$/,'').length
     latest = self.find(:all,
                        :conditions => ["name like ?", "#{document_path}%"],
-                       :order => "name DESC",
-                       :limit => 1).first
-    if latest.nil?
+                       :order => "CAST(SUBSTR(name, #{string_length+1}) AS SIGNED) DESC",
+                       :limit => 1)
+    if latest.first.nil?
       # no constructed id's for this year/class
       document_number = 1
     else
-      document_number = latest.to_components.last.split(/[\-;]/).last.to_i + 1
+      document_number = latest.first.to_components.last.split(/[\-;]/).last.to_i + 1
     end
     # TODO add exemplar (version) component
     return "#{document_path}#{document_number.to_s}"
@@ -332,7 +334,7 @@ class CTSIdentifier < Identifier
   def passage_subref_xslt_file
     File.join(Rails.root,%w{data xslt cts passage_to_subref.xsl})
   end
-  
+
   def self.find_matching_identifiers(match_id,match_user,match_fuzzy)
     identifiers = []
     if (match_fuzzy)
@@ -359,9 +361,66 @@ class CTSIdentifier < Identifier
     file = file + ".xml"
     file
   end
-  
-  
+
+  # create a title for a publication of just this class identifier
+  def self.create_title(identifier_str)
+    identifier_str
+  end
+
   # parse individual docs and metadata from a supplied TEI XML document
   def self.parse_docs(content)
   end  
+
+  # try to parse an initialization value from posted data
+  def self.api_parse_post_for_init(a_post)
+    #default is no-op
+  end
+
+  def self.api_parse_post_for_identifier(a_post)
+    xml = REXML::Document.new(a_post).root
+    urn = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="urn:cts"]',{"tei" => NS_TEI})
+    text = REXML::XPath.first(xml,'/tei:TEI/tei:text/tei:body/tei:div',{"tei" => NS_TEI})
+    unless urn.nil?
+      urn = urn.text
+    end
+    unless text.nil?
+      lang = text.attributes['xml:lang']    
+      pubtype = text.attributes['type']
+    end
+    unless (urn && lang && pubtype)
+      raise Exception.new("Unable to parse information for new URN identifier")
+    end
+    begin
+      urnObj = CTS::CTSLib.urnObj(urn)
+    rescue
+      raise Exception.new("Invalid URN identifier #{urn}")
+    end
+    # we must have at least a work
+    work = urnObj.getWork(false)
+    if (work.nil? || work == '')
+      raise Exception.new("Missing work identifier in #{urn}")
+    end
+    version = urnObj.getVersion(false)
+    if (version)
+      raise Exception.new("Creating a new version from a version URN is not yet supported")
+    end
+    self::next_temporary_identifier(self::TEMPORARY_COLLECTION,urn,pubtype,lang)
+  end
+      
+
+  def self.api_create(a_publication,a_agent,a_body,a_comment)
+    temp_id = self.new(:name => self.api_parse_post_for_identifier(a_body))
+    temp_id.publication = a_publication 
+    temp_id.save!
+    ## replace work urn with version 
+    urn = temp_id.urn_attribute
+    urnObj = CTS::CTSLib.urnObj(urn)
+    workUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false)
+    # TODO we should really only do this explicitly in the idno header
+    a_body.gsub!(/\b#{workUrn}\b/,temp_id.urn_attribute)
+    temp_id.set_content(a_body, :comment => a_comment, :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
+    template_init = temp_id.add_change_desc(a_comment)
+    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
+    return temp_id
+  end
 end

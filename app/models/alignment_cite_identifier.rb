@@ -213,7 +213,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   def api_get(a_query)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.nil?)
-      raise "Invalid request - no sentence specified in #{a_query}"
+      raise Exception.new("Invalid request - no sentence specified in #{a_query}")
     else
       return sentence(qmatch[1])
     end

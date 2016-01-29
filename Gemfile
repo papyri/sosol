@@ -52,3 +52,5 @@ gem 'ruby-saml', :platform => :jruby, :git => 'https://github.com/onelogin/ruby-
 
 gem 'test_after_commit', :group => :test
 gem 'faraday_middleware'
+gem 'doorkeeper', "=2.2.2"
+gem 'swagger-blocks'

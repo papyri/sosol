@@ -21,7 +21,17 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ActiveRecord::Base
+  include Swagger::Blocks
 
+  swagger_schema :Publication do
+    key :required, [:id, :community_name]
+    property :id do
+      key :type, :integer
+    end
+    property :community_name do
+      key :type, :string
+    end
+  end
 
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
 
@@ -57,6 +67,8 @@ class Publication < ActiveRecord::Base
     end
     # not yet handling ASCII control characters
   end
+
+  #validate :community_can_be_assigned?
 
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
 
@@ -305,7 +317,11 @@ class Publication < ActiveRecord::Base
     #if we get to this point, there are no more boards to submit to, thus we are done
 
     if is_community_publication?
-      self.community.promote(self)
+      begin
+        self.community.promote(self)
+      rescue Exception => e
+        return e.message, nil
+      end
     else
       # backwards compatibility
       # mark as committed
@@ -1397,6 +1413,7 @@ class Publication < ActiveRecord::Base
     has_cts = false
     has_cite = false
     has_apis = false
+    is_external = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
@@ -1413,6 +1430,9 @@ class Publication < ActiveRecord::Base
       end
       if i.class.to_s =~ /CiteIdentifier/
         has_cite = true
+      end
+      if i.class.to_s =~ /SyriacaIdentifier/
+        is_external = true
       end
       if i.class.to_s == "APISIdentifier"
         has_apis = true
@@ -1434,7 +1454,7 @@ class Publication < ActiveRecord::Base
       creatable_identifiers = []
     end
     #  BALMAS Creating other records in association with  CTSIdentifier or CiteIdentifier publication will be enabled elsewhere
-    if has_cts || has_cite
+    if has_cts || has_cite || is_external
       creatable_identifiers = []
     end
     if has_apis
@@ -1452,6 +1472,15 @@ class Publication < ActiveRecord::Base
 
     return creatable_identifiers
   end
+
+  # validates the community assignment
+  # publication owner must be a member of the community or it must allow
+  # self-signup and the publication can't be in anything but new or editing status
+  def community_can_be_assigned?
+    %w{editing new}.include?(self.status) && 
+      (self.origin.owner.community_memberships.include?(self.community) || self.community.allows_self_signup?)
+  end
+
 
   protected
     #Returns title string in form acceptable to  ".git/refs/"

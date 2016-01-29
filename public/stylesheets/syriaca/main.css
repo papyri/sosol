@@ -1,0 +1,548 @@
+/* Application styles could go here */
+/*
+ * Colors:
+ * Dark red: 753C28
+ * Dark orange: B3522B
+ * Light orange: E69849
+ * Pale tan: F5F2E9
+ * Dark Blue: 456889
+ * Blue/grey: A2B1B9
+ * Light Blue: DDEAF1
+ * Dark Grey #333
+ * Light Grey (text): #999
+ */
+/* Import Font css */ 
+ @import url("syr-font-families.css");
+/* Main content blocks */
+/* This is the background color for geo */
+body {font-family: arial, sans-serif; padding-top:50px;}
+/* This is the background color for geo */
+#main {margin: 0 auto; padding:0; border-top:1px solid #753C28;}
+
+/* all backgrounds */
+#content {margin:auto; padding-top:2em; background-color:white;}
+.navbar {border-bottom:4px solid #753C28 !important;}
+.navbar-brand {margin-top:-.5em; padding-left:0;}
+.navbar-brand img {padding-left:0;}
+.navbar .advanced-search{margin-top:-.5em;}
+.navbar-form {overflow:hidden;}
+.navbar-input-group {
+  font-size: 0px; /*removes whitespace between button and input*/
+}
+.navbar-input-group input {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+.navbar-input-group .btn {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left: 0px;
+}
+.navbar-form{max-width: 250px;}
+
+/* Nav submenus*/
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+}
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-submenu:hover > a:after {
+  border-left-color: #fff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left > .dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+}
+/* Nav bar icons for submodules */
+.dropdown-menu li a{margin-left:.5em;}
+
+.nav-icons {
+    background-position: left center;
+    background-repeat: no-repeat;
+    text-indent:12px;
+}
+
+/*.sub-menu {background-color:#F8F8F8; margin:0; padding:0;}*/
+.sub-menu .nav-icons{margin-left:2em; }
+/*.sub-menu li{line-height:.75em;}*/
+
+/* Small icons for submodules in nav menus */
+.geo-sm-icon {background-image: url(../img/icons-geo-sm.png);}
+.saints-sm-icon {background-image: url(../img/icons-saints-sm.png);}
+.persons-sm-icon {background-image: url(../img/icons-persons-sm.png);}
+.authors-sm-icon {background-image: url(../img/icons-authors-sm.png);}
+.spear-sm-icon {background-image: url(../img/icons-spear-sm.png);}
+.mss-sm-icon {background-image: url(../img/icons-mss-sm.png);}
+.bhse-sm-icon {background-image: url(../img/icons-bhse-sm.png);}
+.syriaca-sm-icon {background-image: url(../img/icons-syriaca-sm.png);}
+
+footer {text-align:center; color:white;}
+
+/* Typography */
+h1 {font-size:1.5em; margin:0 0 .25em 0; color:#E69849; font-weight:500;}
+/*h2 {font-size:1.5em; margin:0 -1em; padding-left:8px; color:#E69849; font-weight:500;}*/
+h2 {font-size: 1.25em; margin:1em 0 .25em 0; padding-bottom:0; color:#753C28; font-weight:500;}
+h3 {font-size: 1.2em; margin:1em 0 .25em 0; padding-bottom:0; color:#333; font-weight:500; border-bottom:1px solid #999; padding-bottom:0; margin-bottom:1em;}
+h3.underline {color:#999; border-bottom:3px solid #E69849; padding-bottom:-.75em; margin-bottom:1em; margin-top:1em;}
+h4 {font-size: 1em; margin:0 0 .25em 0; padding-bottom:0; font-weight:bold;}
+
+h3.label {
+    background-color:#ccc;
+    line-height: 1.2em;
+    font-size: 2em;
+    float:left;
+}
+
+h3.syr{
+    margin-right:.75em;
+    margin-top:.5em;
+    float:right !important;
+}
+h4 {font-size: 1em; margin-top:1em;}
+
+/* Lables */
+.get-syriac {font-size:.55em; margin-left:1em;vertical-align:super;font-weight:normal; color: rgb(0,136,204);display:none}
+.srp-label {background-color:none; color:#999999; font-weight:bold;}
+.textBox {display:block;}
+.caveat {font-size: .785em; font-style:italic; margin-top:-.5em; padding-top:0;}
+.title {border-bottom:2px solid #666666;margin-bottom:1em; margin-top:0;padding:0;}
+.about {padding-top: .5em; border-bottom:2px solid #666666;margin-bottom:1em;}
+.caption{text-align:center; font-size:.75em;color:grey;}
+.funding {margin:1em;}
+.no-logo {font-size:1.25em; font-weight:600; font-family:serif; color:#333; margin:1em;}
+.about-tables {width:90% !important;border-collapse:collapse;}
+.about-tables td {
+    vertical-align:top;
+    padding-bottom:.75em;
+    padding-top:.75em;
+    padding-right:1.25em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    
+}
+.well-white {background-color:white;}
+.section {background-color:white; padding:0 1em;}
+.left-padding{padding-left:1em;}
+.top-padding{padding-top:1em;}
+.right-padding{padding-right:1em;}
+.bottom-padding{padding-bottom:1em;}
+
+/*.section ul {padding-left:0;}*/
+.section.type ul {padding-left:0;}
+
+/* Browse page styles */
+.syr-list{padding-right:7em; padding-top:2em; text-align: right;}
+.en-list{padding-left:5em; padding-top:2em;}
+.browse-alpha {border-bottom:1px solid #ccc; padding-left:1em; padding:0; margin-bottom:1em; text-align: justify;}
+
+.browse-alpha li + li {
+    padding-left: 1em;
+}
+
+.browse-alpha li.syr-menu + li.syr-menu {
+    padding-left: .5em;
+}
+.nav-stacked > .active > a,
+    .nav-stacked > .active > a:hover {
+      color: #000;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+      background-color: #eee;
+      cursor: pointer;
+    }
+
+.browse-map {margin:0;}
+.inline-map {margin-left:-2em; margin-bottom:1em;}
+.map-lg #map {height:400px !important;}
+.map-md #map {height:300px !important;}
+.map-sm #map {height:250px !important;} 
+.results-list {margin-left: 25px; border-bottom:1px dotted #eee; padding-top:.5em}
+.results-list-desc{display:block;}
+.results-list-desc .pers-label {background-color:#eee;}
+.results-list-desc .pers-label .footnote-refs {display:none;}
+/* footnote styles */
+.footnote-refs, .footnote-tgt {
+    font-size: .7em;
+    line-height: 0.5em;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+
+}
+.footnote-tgt {
+    margin-left:-1.5em;
+    padding-right:.5em;    
+}
+
+.anchor { 
+    position: relative; 
+    top:-75px !important;
+    visibility: hidden; 
+    }
+    
+.anchor:before {
+  content:"";
+  float: left;
+  height: 0px;
+}
+
+.title-monographic {
+	font-style: italic;
+}
+
+.heading-inline {
+	font-weight: bold;
+}
+
+/* styles for names */
+.placeName {
+ font-weight: bold;
+}
+
+/* styles for languages and scripts */
+
+:lang(en) {
+	font-family: arial, sans-serif;
+}
+
+:lang(syr),:lang(syc) {
+ font-family: "EstrangeloEdessa", "Estrangelo Edessa", Verdana, Arial, Helvetica, sans-serif;
+  /*font-size:large;*/
+  font-size:1.25em; 
+  line-height:1em;
+  
+}
+
+:lang(syr-Syrj), :lang(syc-Syrj) {
+ font-family: "SertoBatnan", "Serto Batnan", Verdana, Arial, Helvetica, sans-serif;
+  font-size:1.25em; 
+  line-height:1em;
+ 
+}
+
+:lang(syr-Syre), :lang(syc-Syre) {
+ font-family: "EastSyriacAdiabene", "East Syriac Adiabene", Verdana, Arial, Helvetica, sans-serif;
+ font-size:1.25em; 
+ line-height:1em;
+
+}
+
+:lang(ar) {
+ font-family: arial, sans-serif;
+ font-size:1.25em; 
+ line-height:1em;
+ 
+}
+
+/* Browse tabs and side menues */  	
+.tab-pane {
+	padding: 1em;
+	padding-top: 1.5em;
+	border-left: 1px solid rgb(221, 221, 221);
+	border-bottom: 1px solid rgb(221, 221, 221);
+	border-right: 1px solid rgb(221, 221, 221);
+	border-radius: 3px;
+}
+
+.tab-pane ul {
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.nav-tabs li.active {font-size:1.25em;}
+.nav-stacked > li {
+  float: none;
+}
+
+.nav-stacked > li > a {
+  margin-right: 0;
+}
+.nav-tabs.nav-stacked {
+  border-bottom: 0;
+}
+/*Fix to remove space between li's*/
+.nav-tabs.nav-stacked>li+li {
+    margin-top: 0;
+}
+.nav-tabs.nav-stacked > li > a {
+  border: 1px solid #ddd;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+.nav-tabs.nav-stacked > li:first-child > a {
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+}
+.nav-tabs.nav-stacked > li:last-child > a {
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+  border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-bottom-left-radius: 4px;
+}
+.nav-tabs.nav-stacked > li > a:hover,
+.nav-tabs.nav-stacked > li > a:focus {
+  border-color: #ddd;
+  z-index: 2;
+}
+
+.type-content {padding:1em;}
+.type-nav {width: 85%;}
+
+
+/* link icon styles (inline) */
+#link-icons{padding:0; margin:0 0 -1em 0;}
+#link-icons a {
+    display:inline-block; 
+    padding-right: .5em; 
+    }
+#link-icons > a > img {
+		box-shadow: 2px 2px 2px #888888;
+}
+
+#link-icons > a > img[title~="Pleiades"] {
+		border-radius: 12px;	
+}
+
+#link-icons > a > img[title~="Wikipedia"], 
+#link-icons > a > img[title~="Maps"], 
+#link-icons > a > img[title~="Atom"], 
+#link-icons > a > img[title~="TEI"] {
+		border-radius: 5px;	
+}
+
+#link-icons > a > img:hover {
+		box-shadow: none;
+}
+.label {font-size: 1em;}
+
+/* Helper circle for syriaca URI*/
+.helper.circle {
+	border: 1px solid rgb(0, 136, 204);
+	border-radius: 50%;
+	height: 1em;
+	width: 1em;
+	text-align: center;
+	vertical-align: center;
+    float: left;
+    margin-right: 0.5em;
+    box-shadow: 1px 1px 1px #888888;
+}
+
+.helper.circle:hover {
+	box-shadow: none;
+	cursor:help;
+}
+.helper.circle > p {
+	color: rgb(0,136,204);
+	font-size: .83em;
+	position: relative;
+	vertical-align: middle;
+	top: -.2em;
+	font-family: serif;
+	font-weight: bold;
+}
+
+#sources ul {
+	list-style-type: none;
+	padding-left: -0.1em;
+	text-indent: -1em;
+}
+
+#externals {
+	margin-top: 1em;
+}
+
+dt {
+	margin-top: 1.5em;
+}
+dd {
+	margin-top: 0.5em;
+}
+
+div[id|=place] h3 {
+	font-size: medium;
+}
+div[id|=place] > div:first-of-type {
+	width: 30%;
+	float: right;
+	padding: 1em;
+	padding-top: 0;
+	background-color: #EEE;
+}
+div[id|=place] > div:first-of-type > h3, div[id|=place] > div:first-of-type + div > h3 {
+	margin-top: 0;
+	padding-top: 0;
+}
+
+div[id|=place] > div:last-of-type {
+	margin-bottom: 3em;
+}
+
+#description li:first-letter {
+	text-transform: capitalize;
+}
+
+.pubPlace > .placeName {
+	font-weight: normal;
+}
+
+/* Search styles */
+
+.page-bottom .hit-count {display:none;}
+
+.match {
+    font-style:italic; color:blue;
+}
+.param {font-weight:bold;}
+
+.spinner {
+  display: inline-block;
+  opacity: 0;
+  width: 0;
+  -webkit-transition: opacity 0.25s, width 0.25s;
+  -moz-transition: opacity 0.25s, width 0.25s;
+  -o-transition: opacity 0.25s, width 0.25s;
+  transition: opacity 0.25s, width 0.25s;
+}
+
+.has-spinner.active {
+  cursor:progress;
+}
+
+.has-spinner.active .spinner {
+  opacity: 1;
+  width: auto; /* This doesn't work, just fix for unkown width elements */
+}
+
+.has-spinner.btn-mini.active .spinner {
+    width: 10px;
+}
+
+.has-spinner.btn-small.active .spinner {
+    width: 13px;
+}
+
+.has-spinner.btn.active .spinner {
+    width: 16px;
+}
+
+.has-spinner.btn-large.active .spinner {
+    width: 19px;
+}
+
+#toggle-relation {display:none;}
+#toggle-relation dd{padding-top:0; margin-top:0; }
+
+/* styles for forms */
+label.error {
+  color: #B94A48; /* color to match Bootstraps error class */
+}
+
+.btn-custom {
+  background-color: hsl(29, 80%, 27%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d77417", endColorstr="#7b430d");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#d77417), to(#7b430d));
+  background-image: -moz-linear-gradient(top, #d77417, #7b430d);
+  background-image: -ms-linear-gradient(top, #d77417, #7b430d);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d77417), color-stop(100%, #7b430d));
+  background-image: -webkit-linear-gradient(top, #d77417, #7b430d);
+  background-image: -o-linear-gradient(top, #d77417, #7b430d);
+  background-image: linear-gradient(#d77417, #7b430d);
+  border-color: #7b430d #7b430d hsl(29, 80%, 22%);
+  color: #fff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
+  -webkit-font-smoothing: antialiased;
+}
+.feedback {margin-top:1em;}
+
+/* -- leafletjs styles -- 
+.leaflet-control-layers-list {
+  max-height: 350px;
+  overflow: auto !important;
+  -moz-column-count: 2;
+  -moz-column-gap: 10px;
+  -webkit-column-count: 2;
+  -webkit-column-gap: 10px;
+}*/
+
+.leaflet-control-layers-toggle:after{ 
+    display:block;
+    content:"Map options";
+    font-size:small;
+    color:#000 ;
+    float:left;
+    margin-left:3em;
+}
+.leaflet-control-layers-toggle{ 
+    width:125px !important;
+    background-position: 3px 3px !important;
+    text-decoration:none;
+    line-height:36px;
+
+} 
+/*
+.modal {
+    width: 50% !important; 
+    margin-left:-25%;  
+}
+*/
+#map {height: 200px;}
+.transparent {
+    /* default fallback */
+    background: rgb(255, 255, 255) transparent;
+    /* nice browsers */
+    background: rgba(255, 255, 255, 0.8);
+    
+}
+
+.citationinfo {padding:1em; color: #555; border-top:1px solid #666666; background-color:#eee; }
+#citation {display:none;}
+.hint{margin:.5em; color: grey; font-style:italic;}
+.uri {margin:0 1em 1em; color: #999999;}
+p.single-space{padding:.25em;}
+.teiDocs {padding:.25em; border-bottom:1px solid #eee;}
+/* Facet styles */
+.label-facet {background-color:#eee; color:#666; font-weight:normal; margin:.25em; display:inline-block;}
+.facet-label {margin-left:.5em; display:block;}
+.facet .icon{margin-left:.25em;}
+
+/* Manuscripts */
+.msItem {margin:0 1em;}
+.msExtent {display:block; margin:0 1em;}
+
+/*API documentation */
+pre code {
+	line-height: 1.6em;
+	font-size: 11px;
+	}
+pre {
+	padding: 0.1em 0.5em 0.3em 0.7em;
+	border-left: 11px solid #ccc;
+	margin: 1.7em 0 1.7em 0.3em;
+	overflow: auto;
+	width: 93%;
+	max-width:inherit;
+	}
+	
+.api-path {width:15%}
+.api-param {width:20%}
+.api-desc {width:55%}
+.api-method {width:10%}
+

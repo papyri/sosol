@@ -1,0 +1,57 @@
+/* Application styles could go here */
+/*
+ * Colors:
+ * Violet: BCA7C4
+ * light grey: cccccc
+ * Dark Grey #333
+ * Light Grey (text): #999
+ */
+body {background-color:#666;}
+#main {background-color:#cccccc;}
+
+/* Main content blocks */
+.navbar {border-bottom:4px solid #333399 !important;}
+.advanced-search > a {color:#999; text-decoration:none;}
+
+/* Typography */
+h1 {color:#666; padding-top:1em;}
+h2 {color:#999;}
+h3 {color:#333;}
+h3.underline {color:#999; border-bottom:3px solid #BCA7C4;}
+.column1 h3{border-bottom:1px solid #999; padding-bottom:0; margin-bottom:1em;}
+h3.label {
+    background-color:#ccc;
+
+}
+
+.title {border-bottom:2px solid #666666;margin-bottom:1em;}
+.about {padding-top: .5em; border-bottom:2px solid #666666;margin-bottom:1em;}
+.pers-label {margin:.25em; padding:.5em; background-color: #cdcdcd; color:black; font-weight:normal; display:inline-block}
+/*.custom-map-marker {width:14px; height:14px; margin:0;padding:0; padding-right:14px;}*/
+.dl-srophe dt{width: 14px; margin-top:0; height:20px !important;}
+.dl-srophe dd {margin-left: 2em;}
+.srophe-marker
+    {
+        background-image:url('/exist/apps/srophe/resources/leaflet/images/markers-plain.png');
+        background-repeat: no-repeat;
+        background-size: 141px 18px;
+        background-position: 0 0;
+        /*width:14px;
+        height:14px;
+        padding:0;
+        padding-right:14px;
+        margin:0;*/
+        padding-right:14px;
+    }
+.born-at {
+  background-position: -14px 0;
+}
+.died-at {
+    background-position: 0 0;
+}
+.literary {
+    background-position: -56px 0;
+}
+.relation {
+    background-position: -42px 0;
+}

@@ -1,0 +1,52 @@
+/* Application styles could go here */
+/*
+ * Colors:
+ * Dark red: 753C28
+ * Dark orange: B3522B
+ * Light orange: E69849
+ * Pale tan: F5F2E9
+ * Dark Blue: 456889
+ * Blue/grey: A2B1B9
+ * Light Blue: DDEAF1
+ * Dark Grey #333
+ * Light Grey (text): #999
+ */
+body {
+    background-color:#385978;
+}
+#main {background-color:#999;}
+
+/* Main content blocks */
+.navbar {border-bottom:4px solid #456889 !important;}
+.navbar-inner {border-bottom:.5em solid #456889 !important;}
+.navbar-inner .container{height: 45px !important; padding-top:.5em; margin-left:.5em;}
+.brand {margin-top:-.75em; margin-left:40px;padding-left:0;}
+.brand img {margin-left:1.5em;padding-left:0;}
+
+.navbar-inner .nav > li > a:hover, .advanced-search > a:hover {
+        border-bottom: 4px solid #DDEAF1 !important;  
+}
+.navbar-inner > .container > .nav > li.selected {border-bottom: 4px solid #E69849 !important; }
+.advanced-search > a {color:#999; text-decoration:none;}
+.transparent {
+    /* default fallback */
+    background: rgb(255, 255, 255) transparent;
+    /* nice browsers */
+    background: rgba(255, 255, 255, 0.8);
+    
+}
+
+
+/* Typography */
+h1 {color:#456889;}
+h2 {color:#999;}
+h3 {color:#333;}
+h3.underline {color:#999; border-bottom:3px solid #456889;}
+
+h3.syr{
+    margin-right:.75em;
+    margin-top:.5em;
+    float:right !important;
+}
+
+.srp-label {background-color:none; color:#999999; font-weight:bold;}

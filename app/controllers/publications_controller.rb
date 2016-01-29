@@ -462,56 +462,61 @@ class PublicationsController < ApplicationController
     expire_fragment(/board_publications_\d+/)
 
     #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action
-    @comment = Comment.new()
+    @publication.transaction do
+      @comment = Comment.new()
 
-    if params[:comment] && params[:comment] != ""
-      @comment.comment = params[:comment]
-    else
-      @comment.comment = "no comment"
+      if params[:comment] && params[:comment] != ""
+        @comment.comment = params[:comment]
+      else
+        @comment.comment = "no comment"
+      end
+      @comment.user = @current_user
+      @comment.reason = "finalizing"
+      @comment.git_hash = commit_sha # NB this might be nil for a community publication
+      #associate comment with original identifier/publication
+      @comment.identifier_id = params[:identifier_id]
+      @comment.publication = @publication.origin
+
+      @comment.save
+
+      #create an event to show up on dashboard
+      @event = Event.new()
+      @event.owner = @current_user
+      @event.target = @publication.parent #used parent so would match approve event
+      @event.category = "committed"
+      @event.save!
+
+      #need to set status of ids
+      @publication.set_origin_and_local_identifier_status("committed")
+      @publication.set_board_identifier_status("committed")
+
+     
+      @previous_parent = @publication.parent
+
+      #send publication to the next board
+      error_text, identifier_for_comment = @publication.origin.submit_to_next_board
+
+      if error_text != ""
+        flash[:error] = error_text
+      else
+        #as it is set up the finalizer will have a parent that is a board whose status must be set
+        #check that parent is board
+        if @previous_parent && @previous_parent.owner_type == "Board"
+          @previous_parent.archive
+          @previous_parent.owner.send_status_emails("committed", @publication)
+        #else #the user is a super user
+        end
+        @publication.change_status('finalized')
+        # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+        # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+        # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+        # you get an error because the title is already taken. I'm going to add the date time to the title
+        # of the finalized publication as a workaround
+        @publication.title = @publication.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        @publication.save!
+        flash[:notice] = 'Publication finalized.'
+      end
     end
-    @comment.user = @current_user
-    @comment.reason = "finalizing"
-    @comment.git_hash = commit_sha # NB this might be nil for a community publication
-    #associate comment with original identifier/publication
-    @comment.identifier_id = params[:identifier_id]
-    @comment.publication = @publication.origin
-
-    @comment.save
-
-    #create an event to show up on dashboard
-    @event = Event.new()
-    @event.owner = @current_user
-    @event.target = @publication.parent #used parent so would match approve event
-    @event.category = "committed"
-    @event.save!
-
-    #need to set status of ids
-    @publication.set_origin_and_local_identifier_status("committed")
-    @publication.set_board_identifier_status("committed")
-
-    #as it is set up the finalizer will have a parent that is a board whose status must be set
-    #check that parent is board
-    if @publication.parent && @publication.parent.owner_type == "Board"
-      @publication.parent.archive
-      @publication.parent.owner.send_status_emails("committed", @publication)
-    #else #the user is a super user
-    end
-
-    #send publication to the next board
-    error_text, identifier_for_comment = @publication.origin.submit_to_next_board
-    if error_text != ""
-      flash[:error] = error_text
-    end
-    @publication.change_status('finalized')
-    # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
-    # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
-    # ever gets archived, so the next time the same finalizer tries to finalize the same publication
-    # you get an error because the title is already taken. I'm going to add the date time to the title
-    # of the finalized publication as a workaround
-    @publication.title = @publication.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
-    @publication.save!
-
-    flash[:notice] = 'Publication finalized.'
     redirect_to @publication
   end
 

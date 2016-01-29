@@ -191,7 +191,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     }
     if (remaining.size == 0)
       flash[:error] = "This would leave the publication without any identifiers."
-      return redirect_to polymorphic_url([@identifier.publication], :action => :show)
+      return redirect_to @identifier.publication
     end
     name = @identifier.title
     pub = @identifier.publication

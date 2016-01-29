@@ -24,6 +24,10 @@ FactoryGirl.define do
     "oai:papyri.info:identifiers:ddbdp:0001:1:#{n}"
   end
 
+  sequence :syriaca_identifier_string do |n|
+    "http://syriaca.org/place/#{n}"
+  end
+
   sequence :tei_cts_identifier_string do |n|
     "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
@@ -112,6 +116,10 @@ FactoryGirl.define do
     f.identifier_classes ['HGVTransIdentifier']
   end
 
+  factory :master_community_board, :parent => :hgv_community_board do |f|
+    f.identifier_classes ['DDBIdentifier','HGVMetaIdentifier','HGVTransIdentifier']
+  end
+
 
   factory :user do |f|
     f.name { FactoryGirl.generate(:name) }
@@ -169,6 +177,10 @@ FactoryGirl.define do
     f.name { FactoryGirl.generate(:ddb_identifier_string) }
   end
 
+  factory :SyriacaIdentifier do |f|
+    f.name { FactoryGirl.generate(:syriaca_identifier_string) }
+  end
+
   factory :community do |f|
     f.name { FactoryGirl.generate(:name) }
     f.friendly_name { FactoryGirl.generate(:name) }
@@ -177,6 +189,13 @@ FactoryGirl.define do
   end
 
   factory :master_community do |f|
+    f.name { FactoryGirl.generate(:name) }
+    f.friendly_name { FactoryGirl.generate(:name) }
+    f.description 'description'
+    f.admins Array.new
+  end
+
+  factory :pass_through_community do |f|
     f.name { FactoryGirl.generate(:name) }
     f.friendly_name { FactoryGirl.generate(:name) }
     f.description 'description'

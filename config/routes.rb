@@ -1,6 +1,34 @@
 Sosol::Application.routes.draw do
+  use_doorkeeper do
+    controllers :applications => 'api_clients'
+  end
+
+  resources :apidocs, only: [:index]
 
   root :to => 'welcome#index'
+
+  namespace :api do
+    namespace :v1 do
+      resources :items 
+      resources :publications do
+        member do
+          post :submit
+        end
+      end
+      match 'user', to: 'api#user', via: [:get]
+      match '*all' => 'api#preflight_check', :via => :options
+      match 'xmlitems/:identifier_type' =>'xml_items#create', :via => :post
+      get 'terms' => 'api#terms' 
+      get 'license' => 'api#license'
+      get 'contact' => 'api#contact'
+    end
+  end
+
+  resources :pass_through_communities do
+    member do
+      get :confirm_destroy
+    end
+  end
 
   resources :end_user_communities do
     member do
@@ -13,7 +41,6 @@ Sosol::Application.routes.draw do
       get :confirm_destroy
     end
   end
-
 
   match 'communities/select_default' => 'communities#select_default'
   match 'communities/change_default' => 'communities#change_default', :via => :post
@@ -436,7 +463,16 @@ Sosol::Application.routes.draw do
       get :rename_review
     end
     end
+
+    resources :syriaca_identifiers do
     
+      member do
+        get :history
+        get :preview
+        get :editxml
+        put :updatexml
+      end
+    end
 
   end
 
@@ -483,4 +519,5 @@ Sosol::Application.routes.draw do
   match 'signout' => 'user#signout', :as => :signout
   match 'signin' => 'user#signin', :as => :signin
   match 'account' => 'user#account', :as => :account
+  
 end

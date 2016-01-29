@@ -115,6 +115,19 @@ module JRubyXML
     end
   end
 
+  class SyriacaGazetteerValidator < JARVValidator
+    def initialize
+      @verifier_factory =  
+        org.iso_relax.verifier.VerifierFactory.newInstance(
+          "http://relaxng.org/ns/structure/1.0")
+      # this will fail as it's a compact schema
+      # need to convert or use JING ?
+      # http://stackoverflow.com/questions/1541253/how-to-validate-an-xml-document-using-a-relax-ng-schema-and-jaxp
+      @schema = verifier_factory.compileSchema(
+        "#{Rails.root}/data/schemas/syriaca-tei-main.rng")
+    end
+  end
+
   class EpiDocP4Validator < JARVValidator
     def initialize
       @verifier_factory = 
