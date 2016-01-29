@@ -1,6 +1,9 @@
 Doorkeeper.configure do
-  default_scopes :public
-  optional_scopes :write, :read
+  default_scopes :read
+  optional_scopes :write
+
+  #force_ssl_in_redirect_uri !Rails.env.development?
+  force_ssl_in_redirect_uri !Rails.env.development?
 
   resource_owner_authenticator do
     @user = User.find_by_id(session[:user_id])
