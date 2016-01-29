@@ -6,6 +6,7 @@ class DmmApiController < ApplicationController
   before_filter :authorize, :except => [:api_item_info, :api_item_get, :preflight_check]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   before_filter :update_cookie
+
   skip_before_filter :accept_terms # don't display accept_terms on api requests
  
   # this is a temporary work around for cors preflight checks -- the way we have
@@ -95,10 +96,9 @@ class DmmApiController < ApplicationController
   #           Authentication should be via oauth2 - for now assume session is shared and 
   #           use X-CSRF-Token
   def api_item_get
-    if (@identifier.nil?)
-       return
-    else
-      render :xml => @identifier.api_get(params[:q]) 
+    find_identifier
+    unless (@identifier.nil?)
+      render :xml => @identifier.api_get(params[:q]) and return
     end
   end
   
