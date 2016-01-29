@@ -105,6 +105,7 @@ module Api::V1
         # TODO need to follow best practices on retrieiving partial items
         content = @identifier.api_get(params[:q]) 
       rescue Exception => e 
+        Rails.logger.error(e.backtrace)
         render_api_error(405,e.message) and return
       end
       respond_to do |format|

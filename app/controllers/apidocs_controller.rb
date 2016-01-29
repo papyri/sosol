@@ -24,12 +24,10 @@ class ApidocsController < ActionController::Base
     api_title = Sosol::Application.config.respond_to?(:site_api_title) ? Sosol::Application.config.site_api_title : "SoSOL API"
     api_description = Sosol::Application.config.respond_to?(:site_api_description) ? Sosol::Application.config.site_api_description : "SoSOL API"
     api_license_name = Sosol::Application.config.respond_to?(:site_api_license_name) ? Sosol::Application.config.site_api_license_name : "SoSOL API License"
-    # TODO need to fix this before going to production
-    # need a way to get access to the actual scheme when behind an apache
-    # proxy -- maybe needs to be forwarded by Apache to tomcat in a header
-    #if ENV['RAILS_ENV'] == 'production' || ENV['RAILS_ENV'] == 'staging'
-    #  root_url.sub!(/http:/,'https:')
-    #end 
+    # TODO handle ssl properly and enforce for api interactions
+    if ENV['RAILS_ENV'] == 'production' 
+      root_url.sub!(/http:/,'https:')
+    end 
     swagger_root do
       key :swagger, '2.0'
       info do
@@ -50,7 +48,7 @@ class ApidocsController < ActionController::Base
         key :description, 'Identifier operations'
       end
       key :host, "#{host}"
-      key :schemes, ["http","https"]
+      key :schemes, [scheme]
       key :basePath, "#{root_path}api/v1"
       key :consumes, ['application/json']
       key :produces, ['application/json', 'application/xml']
