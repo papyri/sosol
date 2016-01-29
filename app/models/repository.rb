@@ -332,13 +332,12 @@ class Repository
       jgit_tree = JGit::JGitTree.new()
       jgit_tree.load_from_repo(@jgit_repo, branch)
       jgit_tree.add_blob(file, file_id.name())
-
       jgit_tree.commit(comment, actor)
       inserter.flush()
       inserter.release()
     rescue Exception => e
       Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace.join("\n")}")
-      return nil
+      raise Exceptions::CommitError.new("Commit failed. #{e.message}")
     end
   end
 

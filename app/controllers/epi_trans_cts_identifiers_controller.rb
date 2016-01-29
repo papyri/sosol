@@ -25,6 +25,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     find_identifier
     override = agent_override('edit')
     if (override)
+        flash.keep
         return redirect_to :action => override, :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s
     end
     # Add URL to image service for display of related images

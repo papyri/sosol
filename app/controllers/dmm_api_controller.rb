@@ -2,6 +2,7 @@
 
 # controller for the Data Management Module API
 class DmmApiController < ApplicationController
+  rescue_from Exceptions::CommitError, :with => :commit_failed
   
   before_filter :authorize, :except => [:api_item_info, :api_item_get, :preflight_check]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
@@ -282,6 +283,10 @@ class DmmApiController < ApplicationController
                       :action => 'api_item_get', 
                       :id => a_id,
                       :identifier_type => a_identifier_type)
+    end
+
+    def commit_failed(e)
+        return render_error(e.message)
     end
 
     # renders an error response
