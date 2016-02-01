@@ -1,6 +1,7 @@
 # Superclass of the ddb (Text), hgv_Meta, and hgv_trans controllers
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
+  rescue_from Exceptions::CommitError, :with => :commit_failed
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
@@ -189,6 +190,14 @@ class IdentifiersController < ApplicationController
         content_error_here << i
       end
       return content_error_here
+    end
+
+    def commit_failed(e)
+      flash[:error] = e.message
+      flash.keep
+      redirect_to polymorphic_path([@identifier.publication,@identifier],
+                              :action => :edit) and return
+    
     end
 
 end
