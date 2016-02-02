@@ -109,7 +109,7 @@ class BoardsController < ApplicationController
     #end
     
     @board.community_id =  params[:community_id].to_s
-     
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @board }
@@ -144,10 +144,24 @@ class BoardsController < ApplicationController
     #@board.identifier_classes << params[:identifier_class]
     
 
+    mailers = YAML::load_file(File.join(Rails.root, %w{config board_mailers.yml}))[:mailers]
+    mailers.each do | m |
+      m[:board_id] = @board.id
+      e = Emailer.new(m)
+      if e.save
+        @board.emailers << e
+      else 
+        flash[:warning]  = "Unable to save mailer"
+      end
+    end
+     
     if @board.save
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id
     else
+      @board.emailers.each do | m | 
+        m.destroy
+      end
       flash[:error] = "Board creation failed. #{@board.errors.to_a}"
       redirect_to dashboard_url
     end         
