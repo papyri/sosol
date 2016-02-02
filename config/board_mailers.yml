@@ -1,0 +1,37 @@
+:mailers: 
+ - 
+   :when_to_send: 'submitted'
+   :include_document: false
+   :include_comments: false
+   :send_to_owner: true
+   :send_to_all_board_members: false
+   :message: "test"
+ - 
+   :when_to_send: 'submitted'
+   :include_document: false
+   :include_comments: false
+   :send_to_owner: false
+   :send_to_all_board_members: true
+   :message: "test"
+ - 
+   :when_to_send: 'accepted'
+   :include_document: false
+   :include_comments: false
+   :send_to_owner: true
+   :send_to_all_board_members: false
+   :message: "test"
+ - 
+   :when_to_send: 'accepted'
+   :include_document: false
+   :include_comments: false
+   :send_to_owner: false
+   :send_to_all_board_members: true
+   :message: "test"
+ - 
+   :when_to_send: 'rejected'
+   :include_document: false
+   :include_comments: false
+   :send_to_owner: true
+   :send_to_all_board_members: false
+   :message: "test"
+    
