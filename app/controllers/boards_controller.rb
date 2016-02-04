@@ -144,7 +144,12 @@ class BoardsController < ApplicationController
     #@board.identifier_classes << params[:identifier_class]
     
 
-    mailers = YAML::load_file(File.join(Rails.root, %w{config board_mailers.yml}))[:mailers]
+    mailers = YAML::load_file(File.join(Rails.root, %w{config board_mailers.yml}))[:mailers] || { :default => [] }
+    if @board.community && mailers[@board.community.type] 
+      mailers =  mailers[@board.community.type]
+    else
+      mailers =  mailers[:default]
+    end
     mailers.each do | m |
       m[:board_id] = @board.id
       e = Emailer.new(m)
