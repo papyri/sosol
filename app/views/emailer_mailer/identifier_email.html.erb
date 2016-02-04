@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <%= @message.gsub(/!IDENTIFIER_LINKS/, @identifier_links.collect{|a,u| link_to a, u}.join(' ')).gsub(/!PUBLICATION_LINK/, @publication_links.collect{|a,u| link_to a, u}.join(' ')).gsub(/!BOARD_PUBLICATION_LINK/,@board_publication_links.collect{|a,u| link_to a,u}.join(' ')).html_safe %>
+    <% if(@comments.length > 0) %>
+      <p> <%= I18n.t("mailers.comments") %></p>
+        <% @comments.each do |comment| %>
+          <p><%= comment.comment %> ( <%= comment.reason %> ) <%= I18n.t("mailers.commenton") %> 
+          <% if comment.identifier %>
+            <%= comment.identifier.title %> 
+            ( <%= comment.identifier.class::FRIENDLY_NAME %> )   
+          <% end %>
+          <% if comment.user %>
+            <%= I18n.t("mailers.commentby") %> <%= comment.user.name %> 
+          <% end %>
+          <%= comment.created_at.to_formatted_s(:db) %> 
+          </p>
+        <% end %>
+    <% end %>
+  </body>
+</html>
