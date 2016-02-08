@@ -21,19 +21,5 @@ test:
 
 production:
   adapter: <%= jdbc %>mysql
-  database: sosol
-  host: perseidsmysql.cx2nagbknuom.us-east-1.rds.amazonaws.com
-  pool: 20
-  port: 3306
-  username: sosoladmin
-  password: s0s0ladm1n
-
-staging:
-  adapter: <%= jdbc %>mysql
-  database: sosol
-  host: stage-perseidsmysql.cx2nagbknuom.us-east-1.rds.amazonaws.com
-  port: 3306
-  pool: 20
-  username: sosoladmin
-  password: s0s0ladm1n
-
+  database: idp2
+  username: idp2

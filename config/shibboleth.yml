@@ -56,10 +56,9 @@ test:
           :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"      
 production:
   :shibboleth:
-    :allowed_clock_drift: 300 
+    :allowed_clock_drift: 5
     :issuer: sosol.perseids.org
     :assertion_consumer_service_url: "https://sosol.perseids.org/sosol/shib/consume"
-    :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
     :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
@@ -68,26 +67,10 @@ production:
         :logo: "tuftsidplogo.jpg"
         :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
         :idp_cert: /etc/ssl/certs/tuftsprod.crt
-        :idp_cert_fingerprint: "7F:7C:4D:23:57:D3:95:F8:53:F7:D6:29:E0:B2:62:E0:21:77:72:78"
-        :idp_cert_fingerprint_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"
         :idp_sso_target_url: "https://shib-idp.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol.perseids.org"
         :idp_aqr_target_url: "https://shib-idp.tufts.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery?providerId=sosol.perseids.org"
         :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
-        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"
-        :attributes:
-          :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
-      aai:
-        :issuer: sosol.perseids.org
-        :entity_id: "https://login.aaiedu.hr/shib/saml2/idp/metadata.php"
-        :display_name: "AAI@EduHr Single Sign-On Service"
-        :logo: "aaieduhr_logo.jpg"
-        :sp_cert: /etc/ssl/certs/perseidsshibcert.pem
-        :idp_cert: /etc/ssl/certs/aai.crt
-        :idp_cert_fingerprint: "E4:3A:44:5D:1F:57:CA:B0:3A:93:93:22:9B:D3:F8:D9:22:08:D6:C2"
-        :idp_cert_fingerprint_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"
-        :idp_sso_target_url: "https://login.aaiedu.hr/shib/saml2/idp/SSOService.php"
-        :name_identifier_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
-        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"
+        :authn_context: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
         :attributes:
           :display_id: "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"        
 staging:
@@ -95,15 +78,14 @@ staging:
     :allowed_clock_drift: 5
     :issuer: sosol-test.perseids.org
     :assertion_consumer_service_url: "https://sosol-test.perseids.org/sosol/shib/consume"
-    :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
-    :sp_private_key: /etc/ssl/private/private-test.key
+    :sp_private_key: /etc/ssl/private/private.key
     :idps:
       tufts:
-        :entity_id: "https://shib-test2.uit.tufts.edu/idp/shibboleth"
+        :entity_id: "https://shib-idp.tufts.edu/idp/shibboleth"
         :display_name: "Tufts University"
         :logo: "tuftsidplogo.jpg"
         :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
-        :idp_cert: /etc/ssl/certs/tufts-test.crt
+        :idp_cert: /etc/ssl/certs/idptest3.crt
         :idp_cert_fingerprint: "DB:4A:11:EB:45:8B:3F:0C:B5:FE:7C:D5:31:6A:79:83:81:51:6F:E0"
         :idp_cert_fingerprint_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"
         :idp_sso_target_url: "https://shib-test2.uit.tufts.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=sosol-test.perseids.org"
@@ -116,9 +98,9 @@ staging:
         :issuer: sosol-test.perseids.org
         :entity_id: "https://login.aaiedu.hr/shib/saml2/idp/metadata.php"
         :display_name: "AAI@EduHr Single Sign-On Service"
-        :logo: "aaieduhr_logo.jpg"
+        :logo: ""
         :sp_cert: /etc/ssl/certs/sosol-test.perseids.pem
-        :idp_cert: /etc/ssl/certs/aai.crt
+        :idp_cert: <%= Rails.root %>/data/certificates/aai.crt
         :idp_cert_fingerprint: "E4:3A:44:5D:1F:57:CA:B0:3A:93:93:22:9B:D3:F8:D9:22:08:D6:C2"
         :idp_cert_fingerprint_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"
         :idp_sso_target_url: "https://login.aaiedu.hr/shib/saml2/idp/SSOService.php"

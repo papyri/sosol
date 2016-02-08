@@ -23,6 +23,14 @@ development:
             :href: "http://localhost/perseids-client-apps/treebank"
             :id_param: 'doc'
             :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'
@@ -110,12 +118,12 @@ development:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: 'Compare'
+          :text: ''
     
 test:
   cite_mapper:
@@ -159,6 +167,14 @@ test:
           :href: "http://localhost/exist/rest/db/app/treebank-entertext-arethusa-test.xhtml?"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'
@@ -246,12 +262,12 @@ test:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: 'Compare'
+          :text: ''
 production:
   cite_mapper:
     default:
@@ -293,6 +309,14 @@ production:
           :href: "http://www.perseids.org/apps/treebank"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   theme_editor:
     arethusa:
         :text: 'Arethusa'
@@ -380,12 +404,12 @@ production:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: 'Compare'
+          :text: ''
 staging:
   cite_mapper:
     default:
@@ -428,6 +452,14 @@ staging:
             :href: "http://www-stage.perseids.org/apps/thematic"
             :id_param: 'doc'
             :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
+  treebank_reviewer:
+    arethusa:
+      :text: 'Arethusa'
+      :uri: 'http://github.com/latin-language-toolkit/arethusa'
+      :actions:
+        :review:
+          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :id_param: 'doc'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -498,10 +530,10 @@ staging:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: 'Compare'
+          :text: ''
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: 'Compare'
+          :text: ''
     
