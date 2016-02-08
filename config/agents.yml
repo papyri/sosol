@@ -20,7 +20,7 @@
         :post: "json"
       :auth:
         :username: "Perseids"
-        :password: ""
+        :password: "EAGLEPERSEIDS"
   :googless:
     :uri_match: "https://docs.google.com/spreadsheet"
     :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"
