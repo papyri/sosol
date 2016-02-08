@@ -72,7 +72,10 @@ class EmailerMailer < ActionMailer::Base
 
     na_text = I18n.t("mailers.notapplicable")
     @identifier_links = identifiers.length > 0 ? Hash[identifiers.map {|x| [x.title, preview_url(x)]}] : Hash[ na_text, dashboard_url ]
-    @publication_links = identifiers.length > 0 ? Hash[identifiers.first.publication.title, url_for(identifiers.first.publication)] : Hash[ na_text, dashboard_url ]
+
+    # publication title and publication link should always give us the publication of origin
+    @publication_links = identifiers.length > 0 ? Hash[identifiers.first.publication.origin.title, url_for(identifiers.first.publication.origin)] : Hash[ na_text, dashboard_url ]
+
     @board_publication_links = board_publication.nil? ? Hash[ na_text, dashboard_url ] : Hash[ board_publication.title , url_for(board_publication) ]
 
     if board_publication.nil?
@@ -86,15 +89,15 @@ class EmailerMailer < ActionMailer::Base
     # email message escapes any unsafe content 
     # (see http://makandracards.com/makandra/2579-everything-you-know-about-html_safe-is-wrong for explaination)
     @message = "".html_safe 
-    @message <<  message_content.gsub(/!IDENTIFIER_TITLES/,identifiers.collect{|ei| ei.title}.join('; ')).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.title).gsub(/!TOPIC/,topic) 
+    @message <<  message_content.gsub(/!IDENTIFIER_TITLES/,identifiers.collect{|ei| ei.title}.join('; ')).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.origin.title).gsub(/!TOPIC/,topic) 
                  .gsub(/!PUBLICATION_CREATOR_NAME/,identifiers[0].publication.origin.creator.full_name).gsub(/!BOARD_OWNER/,board_owner)
 
 
     identifier_titles = identifiers.collect{|ei| ei.title}.join('; ')
     if message_subject.nil? || message_subject == ''
-      message_subject = topic + ': ' + identifiers[0].publication.title + " " + identifier_titles
+      message_subject = topic + ': ' + identifiers[0].publication.origin.title + " " + identifier_titles
     else
-      message_subject = message_subject.gsub(/!TOPIC/,topic).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.title).gsub(/!IDENTIFIER_TITLES/,identifier_titles)
+      message_subject = message_subject.gsub(/!TOPIC/,topic).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.origin.title).gsub(/!IDENTIFIER_TITLES/,identifier_titles)
     end
     # make sure we have a decent length for the subject
     message_subject = truncate(message_subject, length:75)
