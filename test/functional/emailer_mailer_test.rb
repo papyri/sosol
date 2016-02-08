@@ -36,7 +36,8 @@ class EmailerMailerTest < ActionMailer::TestCase
       @test_comment.save
       @ddb_identifier.reload
       @publication.reload
-      @board_publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new", :title => "Board Publication Title")
+      @meta_board = FactoryGirl.create(:board, :title => "A nice board")
+      @board_publication = FactoryGirl.create(:publication, :owner => @meta_board, :creator => @creator, :status => "new", :title => "Board Publication Title")
       @publication.branch_from_master
       # branch from master so we aren't just creating an empty branch
     end
@@ -64,7 +65,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     end
 
     should "identifier_email with full parsing no comments" do
-      email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,false,"!IDENTIFIER_TITLES !IDENTIFIER_LINKS !PUBLICATION_TITLE !PUBLICATION_LINK !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK",nil).deliver
+      email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,false,"!IDENTIFIER_TITLES !IDENTIFIER_LINKS !PUBLICATION_TITLE !PUBLICATION_LINK !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK !BOARD_OWNER",nil).deliver
       assert ! ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal 'submitted: ' + @publication.title + " " + @ddb_identifier.title, email.subject
