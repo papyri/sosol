@@ -28,6 +28,10 @@
   = h @emailer.send_to_owner
 %p
   %b
+    Subject:
+  = h @emailer.subject
+%p
+  %b
     Message:
   = h @emailer.message
 = link_to 'Edit', edit_emailer_path(@emailer)
