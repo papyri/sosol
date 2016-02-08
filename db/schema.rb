@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811204557) do
+ActiveRecord::Schema.define(:version => 20160208190521) do
 
   create_table "boards", :force => true do |t|
     t.string   "title"
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20110811204557) do
     t.boolean  "send_to_owner"
     t.boolean  "send_to_all_board_members", :default => false
     t.boolean  "include_comments",          :default => false
+    t.string   "subject"
   end
 
   create_table "emailers_users", :id => false, :force => true do |t|
