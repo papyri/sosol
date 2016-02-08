@@ -49,7 +49,7 @@ class EmailerMailer < ActionMailer::Base
   #- +message_content+ message contents will be set to this. Can include one or more of
   #                    any of the following variables which will be parsed and replaced 
   #                    !IDENTIFIER_TITLES !IDENTIFIER_LINKS !PUBLICATION_TITLE !PUBLICATION_LINK
-  #                    !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK
+  #                    !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK !BOARD_OWNER
   #- +message_subject+  (optional) if not nil, will override the default system-generated subject
   #                    any of the following variables will be parsed and replaced 
   #                    !IDENTIFIER_TITLES !PUBLICATION_TITLE !TOPIC
@@ -69,9 +69,17 @@ class EmailerMailer < ActionMailer::Base
     else
       @comments = [] 
     end
-    @identifier_links = identifiers.length > 0 ? Hash[identifiers.map {|x| [x.title, preview_url(x)]}] : Hash[ "(NA)", dashboard_url ]
-    @publication_links = identifiers.length > 0 ? Hash[identifiers.first.publication.title, url_for(identifiers.first.publication)] : Hash[ "(NA)", dashboard_url ]
-    @board_publication_links = board_publication.nil? ? Hash[ "(NA)", dashboard_url ] : Hash[ board_publication.title , url_for(board_publication) ]
+
+    na_text = I18n.t("mailers.notapplicable")
+    @identifier_links = identifiers.length > 0 ? Hash[identifiers.map {|x| [x.title, preview_url(x)]}] : Hash[ na_text, dashboard_url ]
+    @publication_links = identifiers.length > 0 ? Hash[identifiers.first.publication.title, url_for(identifiers.first.publication)] : Hash[ na_text, dashboard_url ]
+    @board_publication_links = board_publication.nil? ? Hash[ na_text, dashboard_url ] : Hash[ board_publication.title , url_for(board_publication) ]
+
+    if board_publication.nil?
+      board_owner = na_text
+    else
+      board_owner = board_publication.owner.friendly_name
+    end
 
     # we want to leave it to mailer view to be able to relace the IDENTIFIER_LINK and PUBLICATION_LINK placeholders with active links
     # to the identifiers and publications but first we need to do some weird string wrangling here to make sure that the user-entered 
@@ -79,7 +87,7 @@ class EmailerMailer < ActionMailer::Base
     # (see http://makandracards.com/makandra/2579-everything-you-know-about-html_safe-is-wrong for explaination)
     @message = "".html_safe 
     @message <<  message_content.gsub(/!IDENTIFIER_TITLES/,identifiers.collect{|ei| ei.title}.join('; ')).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.title).gsub(/!TOPIC/,topic) 
-                 .gsub(/!PUBLICATION_CREATOR_NAME/,identifiers[0].publication.origin.creator.full_name)
+                 .gsub(/!PUBLICATION_CREATOR_NAME/,identifiers[0].publication.origin.creator.full_name).gsub(/!BOARD_OWNER/,board_owner)
 
 
     identifier_titles = identifiers.collect{|ei| ei.title}.join('; ')
