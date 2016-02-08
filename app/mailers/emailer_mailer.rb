@@ -52,7 +52,7 @@ class EmailerMailer < ActionMailer::Base
   #                    !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK
   #- +message_subject+  (optional) if not nil, will override the default system-generated subject
   #                    any of the following variables will be parsed and replaced 
-  #                    IDENTIFIER_TITLES PUBLICATION_TITLE TOPIC
+  #                    !IDENTIFIER_TITLES !PUBLICATION_TITLE !TOPIC
   def identifier_email(topic,identifiers,board_publication,receipients,attach_content,include_comments,message_content,message_subject=nil)
     # add attachments
     if (identifiers.length > 0 && attach_content)
@@ -69,7 +69,7 @@ class EmailerMailer < ActionMailer::Base
     else
       @comments = [] 
     end
-  
+
     @identifier_links = identifiers.length > 0 ? Hash[identifiers.map {|x| [x.title, preview_url(x)]}] : Hash[ "(NA)", dashboard_url ]
     @publication_links = identifiers.length > 0 ? Hash[identifiers.first.publication.title, url_for(identifiers.first.publication)] : Hash[ "(NA)", dashboard_url ]
     @board_publication_links = board_publication.nil? ? Hash[ "(NA)", dashboard_url ] : Hash[ board_publication.title , url_for(board_publication) ]
@@ -83,9 +83,11 @@ class EmailerMailer < ActionMailer::Base
                  .gsub(/!PUBLICATION_CREATOR_NAME/,identifiers[0].publication.origin.creator.full_name)
 
 
-    if message.subject.nil? 
-       identifier_titles = identifiers.collect{|ei| ei.title}.join('; ')
-       message_subject = topic + ': ' + identifiers[0].publication.title + " " + identifier_titles
+    identifier_titles = identifiers.collect{|ei| ei.title}.join('; ')
+    if message_subject.nil? || message_subject == ''
+      message_subject = topic + ': ' + identifiers[0].publication.title + " " + identifier_titles
+    else
+      message_subject = message_subject.gsub(/!TOPIC/,topic).gsub(/!PUBLICATION_TITLE/,identifiers[0].publication.title).gsub(/!IDENTIFIER_TITLES/,identifier_titles)
     end
     # make sure we have a decent length for the subject
     message_subject = truncate(message_subject, length:75)

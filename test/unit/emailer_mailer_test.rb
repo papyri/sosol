@@ -35,7 +35,7 @@ class EmailerMailerTest < ActionMailer::TestCase
   end
 
   test "identifier_email with simple message no parsing with comments" do
-    email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,true,"Plain message no parsing",nil).deliver
+    email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,true,"Plain message no parsing","").deliver
     assert ! ActionMailer::Base.deliveries.empty?
     assert_equal ['johndoe@example.com'], email.to
     assert_equal 'submitted: ' + @publication.title + " " + @ddb_identifier.title, email.subject
@@ -49,6 +49,24 @@ class EmailerMailerTest < ActionMailer::TestCase
     assert_equal ['johndoe@example.com'], email.to
     assert_equal 'submitted: ' + @publication.title + " " + @ddb_identifier.title, email.subject
     assert_equal read_fixture('identifier_parsing').join.gsub(/!PUBLICATION_ID/,@publication.id.to_s).gsub(/!IDENTIFIER_ID/,@ddb_identifier.id.to_s).gsub(/!BOARD_PUBLICATION_ID/,@board_publication.id.to_s), email.body.to_s
+    assert true
+  end
+
+  test "identifier_email with simple message custom subject no parsing no comments" do
+    email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,false,"Plain message no parsing","Custom Subject").deliver
+    assert ! ActionMailer::Base.deliveries.empty?
+    assert_equal ['johndoe@example.com'], email.to
+    assert_equal "Custom Subject", email.subject
+    assert_equal read_fixture('identifier_email').join, email.body.to_s
+    assert true
+  end
+
+  test "identifier_email with simple message custom parsed subject no parsing no comments" do
+    email = EmailerMailer.identifier_email("submitted",[@ddb_identifier],@board_publication,["johndoe@example.com"],false,false,"Plain message no parsing","Custom !TOPIC !IDENTIFIER_TITLES !PUBLICATION_TITLE").deliver
+    assert ! ActionMailer::Base.deliveries.empty?
+    assert_equal ['johndoe@example.com'], email.to
+    assert_equal "Custom submitted " + @ddb_identifier.title + " " + @publication.title, email.subject
+    assert_equal read_fixture('identifier_email').join, email.body.to_s
     assert true
   end
 
