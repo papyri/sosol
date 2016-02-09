@@ -83,4 +83,58 @@ class CommentsControllerTest < ActionController::TestCase
     assert_not_nil @comment
   end
 
+  def test_can_edit_own_general_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'general', :comment => "A silly comment", :user => @user)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_redirected_to :edittext
+  end
+
+  def test_can_edit_own_review_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'review', :comment => "A silly comment", :user => @user)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_redirected_to :edittext
+  end
+
+  def test_cannot_edit_own_vote_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'vote', :comment => "A silly comment", :user => @user)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_equal "Operation not permitted.", flash[:error]
+    assert_redirected_to dashboard_url
+  end
+
+  def test_cannot_edit_own_submit_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'submit', :comment => "A silly comment", :user => @user)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_equal "Operation not permitted.", flash[:error]
+    assert_redirected_to dashboard_url
+  end
+
+  def test_cannot_edit_own_finalizing_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'finalizing', :comment => "A silly comment", :user => @user)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_equal "Operation not permitted.", flash[:error]
+    assert_redirected_to dashboard_url
+  end
+
+  def test_cannot_destroy_others_general_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'general', :comment => "A silly comment", :user => @user2)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_equal "Operation not permitted.", flash[:error]
+    assert_redirected_to dashboard_url
+  end
+
+  def test_cannot_destroy_others_review_comments
+    @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'review', :comment => "A silly comment", :user => @user2)
+    @comment.save
+    get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
+    assert_equal "Operation not permitted.", flash[:error]
+    assert_redirected_to dashboard_url
+  end
+
 end

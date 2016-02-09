@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:destroy]
+  before_filter :ownership_guard, :only => [:destroy, :edittext]
   
   layout false
   # GET /comments
@@ -55,6 +55,12 @@ class CommentsController < ApplicationController
     @comment = Comment.find(params[:id].to_s)
   end
 
+  # GET /comments/1/edittext
+  def edittext
+    @comment = Comment.find(params[:id].to_s)
+    @from = params[:from]
+  end
+
   # POST /comments
   # POST /comments.xml
   def create
@@ -90,7 +96,13 @@ class CommentsController < ApplicationController
     respond_to do |format|
       if @comment.update_attributes(params[:comment])
         flash[:notice] = 'Comment was successfully updated.'
-        format.html { redirect_to(@comment) }
+        format.html { 
+          if params[:from] == 'ask_for' 
+            redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => @comment.publication_id, :identifier_id => @comment.identifier ? @comment.identifier.id : '', :method => "get" 
+          else
+            redirect_to(@comment)
+          end
+        }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -105,6 +117,7 @@ class CommentsController < ApplicationController
     @comment.destroy
 
     respond_to do |format|
+      flash[:notice] = 'Comment was successfully deleted'
       format.html { 
         if params[:publication_id]
           redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => params[:publication_id], :identifier_id => params[:identifier_id], :method => "get" 

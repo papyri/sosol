@@ -104,6 +104,7 @@ Sosol::Application.routes.draw do
   resources :comments do
     member do
   get :ask_for
+  get :edittext
   end
 
   end
