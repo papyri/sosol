@@ -13,6 +13,7 @@ end
 
 group :test do
   gem 'rake'
+  gem 'mocha'
 end
 
 gem 'jquery-rails'

@@ -1,0 +1,42 @@
+:mailers: 
+ :default:
+   - 
+     :when_to_send: 'submitted'
+     :include_document: false
+     :include_comments: false
+     :send_to_owner: true
+     :send_to_all_board_members: false
+     :subject: "!PUBLICATION_TITLE - !TOPIC"
+     :message: "Your publication !PUBLICATION_TITLE has been submitted to the Perseids !BOARD_OWNER Board. Thank you!"
+   - 
+     :when_to_send: 'submitted'
+     :include_document: false
+     :include_comments: false
+     :send_to_owner: false
+     :send_to_all_board_members: true
+     :subject: "!PUBLICATION_TITLE - !TOPIC"
+     :message: "!BOARD_PUBLICATION_LINK by !PUBLICATION_CREATOR_NAME has been submitted to the Perseids !BOARD_OWNER Board and is ready for review."
+   - 
+     :when_to_send: 'approved'
+     :include_document: false
+     :include_comments: false
+     :send_to_owner: true
+     :send_to_all_board_members: false
+     :subject: "!PUBLICATION_TITLE - !TOPIC"
+     :message: "Your publication !PUBLICATION_TITLE has been approved by the Perseids !BOARD_OWNER Board. Thank you!"
+   - 
+     :when_to_send: 'approved'
+     :include_document: false
+     :include_comments: false
+     :send_to_owner: false
+     :send_to_all_board_members: true
+     :subject: "!PUBLICATION_TITLE - !TOPIC"
+     :message: "!BOARD_PUBLICATION_LINK by !PUBLICATION_CREATOR_NAME has been approved by the Perseids !BOARD_OWNER Board and is ready to be finalized."
+   - 
+     :when_to_send: 'rejected'
+     :include_document: false
+     :include_comments: false
+     :send_to_owner: true
+     :send_to_all_board_members: false
+     :subject: "!PUBLICATION_TITLE - Returned for Revision"
+     :message: "Your publication !PUBLICATION_LINK has been returned to you for further revision by the reviewing board. Please review the comments and make the requested changes. Thank you!"
