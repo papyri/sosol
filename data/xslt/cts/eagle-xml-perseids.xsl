@@ -306,7 +306,6 @@
                                     <xsl:with-param name="type">AIO</xsl:with-param>
                                     <xsl:with-param name="value"><xsl:value-of select="$iteminwiki//property[@id='p51']//datavalue/@value"/></xsl:with-param>
                                 </xsl:call-template>         
-                                <xsl:text>AIO</xsl:text><xsl:value-of select="$iteminwiki//property[@id='p51']//datavalue/@value"/>
                             </xsl:when>
                             <xsl:when test="$iteminwiki//property[@id='p56']">
                                 <xsl:call-template name="make_idno">
