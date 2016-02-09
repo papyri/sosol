@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:destroy, :edittext]
+  before_filter :admin_guard, :only => [:index, :edit ]
   
   layout false
   # GET /comments
@@ -134,7 +135,14 @@ class CommentsController < ApplicationController
       @comment = Comment.find(params[:id].to_s)
       if @comment.user != @current_user || (@comment.reason != 'general' && @comment.reason != 'review')
         flash[:error] = 'Operation not permitted.'
-        redirect_to dashboard_url
+        redirect_to dashboard_url and return
+      end
+    end
+
+    def admin_guard
+      unless @current_user.admin
+        flash[:error] = "This action requires administrator rights"
+        redirect_to dashboard_url and return
       end
     end
 
