@@ -87,14 +87,14 @@ class CommentsControllerTest < ActionController::TestCase
     @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'general', :comment => "A silly comment", :user => @user)
     @comment.save
     get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
-    assert_redirected_to :edittext
+    assert_response :success
   end
 
   def test_can_edit_own_review_comments
     @comment = Comment.new(:identifier => @identifier, :publication => @publication, :reason => 'review', :comment => "A silly comment", :user => @user)
     @comment.save
     get :edittext, :id => @comment.id.to_s , :publication_id => @identifier.publication.id.to_s  
-    assert_redirected_to :edittext
+    assert_response :success
   end
 
   def test_cannot_edit_own_vote_comments
