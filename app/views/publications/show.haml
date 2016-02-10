@@ -67,6 +67,8 @@
           - if !@publication.modified?
             No changes have been made.
 
+    %p
+      = link_to I18n.t('publication.commentslink'), {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe
     -# if owner is a board, and it is approved, add a button to make me the finalizer
     - if @publication.owner_type == "Board" && @publication.status == "approved"
       -# if i am already the finalizer dont show the button

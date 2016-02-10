@@ -1,7 +1,12 @@
 = stylesheet_link_tag 'editor'
+=javascript_include_tag "prototype"
+=javascript_include_tag "rails"
+= csrf_meta_tag
 -# render :partial => "common/flash_all"  
 %h3
   = @publication.title
+
+= render :partial => 'common/flash_all'
 
 = form_for Comment.new(:publication_id => @publication_id, :identifier_id => @identifier_id, :reason => "general"), :url => { :controller => "comments", :action => "create" } do |form|
   = form.hidden_field :publication_id
