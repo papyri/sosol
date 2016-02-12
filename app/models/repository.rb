@@ -262,7 +262,7 @@ class Repository
       inserter.release()
     rescue Exception => e
       Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace.join("\n")}")
-      return nil
+      raise Exceptions::CommitError.new("Commit failed. #{e.message}")
     end
   end
 
