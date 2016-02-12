@@ -46,4 +46,5 @@ Sosol::Application.configure do
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
   # configure email parameters
   config.site_email_from='admin@localhost'
+  config.action_mailer.default_url_options= { host: 'localhost' }
 end
