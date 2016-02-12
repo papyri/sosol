@@ -533,6 +533,80 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         # @publication.destroy
       end
 
+      context "with only DDB modifications" do
+        setup do
+          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          @publication.reload
+        end
+
+        should "not be able to race with multiple submissions" do
+          Rails.logger.info("submission race on pub: #{@publication.inspect}")
+          submit_publication_id = @publication.id.to_s
+          submitter = @publication.owner.id.to_s
+
+          new_active_threads = []
+
+          new_active_threads << Thread.new do
+            begin
+              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+              ActiveRecord::Base.connection_pool.with_connection do |conn|
+                open_session do |submit_session|
+                  begin
+                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                  rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                    Rails.logger.info("#{e.class} inside submission thread 1")
+                  end
+                end
+              end
+            ensure
+              # The new thread gets a new AR connection, so we should
+              # always close it and flush logs before we terminate
+              Rails.logger.debug('submit race submit 1 finished')
+              ActiveRecord::Base.connection.close
+              Rails.logger.flush
+            end
+          end
+
+          new_active_threads << Thread.new do
+            begin
+              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+              ActiveRecord::Base.connection_pool.with_connection do |conn|
+                open_session do |submit_session|
+                  begin
+                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                  rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                    Rails.logger.info("#{e.class} inside submit thread 2")
+                  end
+                end
+              end
+            ensure
+              # The new thread gets a new AR connection, so we should
+              # always close it and flush logs before we terminate
+              Rails.logger.debug('submit race submit 2 finished')
+              ActiveRecord::Base.connection.close
+              Rails.logger.flush
+            end
+          end
+
+          Rails.logger.debug "submit race threadwaiting on: #{new_active_threads.inspect}"
+          Rails.logger.flush
+          new_active_threads.each(&:join)
+          Rails.logger.debug "submit race threadwaiting done"
+          Rails.logger.flush
+
+          ActiveRecord::Base.clear_active_connections!
+          ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+          ActiveRecord::Base.connection_pool.with_connection do |conn|
+            @publication.reload
+            assert_equal 1, @publication.children.length, 'submitted publication should only have one child after submissions'
+            assert_equal 1, @publication.all_children.length, 'submitted publication should only have one child after submissions'
+            assert_equal 'submitted', @publication.status, 'submitted publication should have status "submitted" after submissions'
+          end
+          Rails.logger.debug "submit race assertions done"
+          Rails.logger.flush
+        end
+      end
+
       context "submitted with only DDB modifications" do
         setup do
           @new_ddb = DDBIdentifier.new_from_template(@publication)
