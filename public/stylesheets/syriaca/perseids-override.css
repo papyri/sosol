@@ -1,0 +1,30 @@
+html {
+  font-size: 100%;
+}
+
+body {
+  background-color: #f9f9f9;
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 100%;
+  line-height: 1;
+}
+
+
+:lang(en) {
+  font-family: Helvetica, arial, sans-serif;
+}
+
+.container {
+  line-height: 1.42857143;
+  font-family: arial, sans-serif;
+}
+
+#sources {
+  padding: 19px; 
+}
+#sources ul {
+  padding: 19px; 
+}
+#sources ul li {
+  padding: 0px; 
+}

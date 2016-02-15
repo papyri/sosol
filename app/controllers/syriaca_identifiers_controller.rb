@@ -21,7 +21,12 @@ class SyriacaIdentifiersController < IdentifiersController
   # - Provides preview of what the XML from the repository will look like with stylesheets applied
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview
+    parameters = {}
+    parameters['data-root'] = "https://raw.githubusercontent.com/srophe/srophe-app-data/master/data"
+    parameters['app-root'] = "http://syriaca.org"
+    parameters['nav-base'] = "http://syriaca.org"
+    parameters['base-uri'] = "http://syriaca.org"
+    @identifier[:html_preview] = @identifier.preview(parameters)
     @is_editor_view = true
   end
   
