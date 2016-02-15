@@ -51,4 +51,5 @@ Sosol::Application.configure do
   config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,CtsOACIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OACIdentifier,OajCiteIdentifier,OaCiteIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,TreebankCiteIdentifier'
 
   config.site_email_from='admin@localhost'
+  config.action_mailer.default_url_options= { host: 'localhost' }
 end

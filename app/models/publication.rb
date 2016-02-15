@@ -587,6 +587,14 @@ class Publication < ActiveRecord::Base
       e.target = self
       e.category = "marked as \"#{decree_action}\""
       e.save!
+
+      # create an event on the original publication too
+      e2 = Event.new
+      e2.owner = self.owner
+      e2.target = self.origin
+      e2.category = "board copy marked as \"#{decree_action}\""
+      e2.save!
+
     end
 
   #----approve-----

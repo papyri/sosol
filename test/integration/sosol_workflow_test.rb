@@ -96,10 +96,10 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Sosol::Application.config.submit_canonical_boards = true
 
         #a user to put on the boards
-        @board_user = FactoryGirl.create(:user, :name => "board_man_bob")
+        @board_user = FactoryGirl.create(:user, :name => "board_man_bob", :email => "bob@example.com")
         @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
         #a user to submit publications
-        @creator_user = FactoryGirl.create(:user, :name => "creator_bob")
+        @creator_user = FactoryGirl.create(:user, :name => "creator_bob", :email => "bobcreator@example.com")
         #an end user to recieve the "finalized" publication
         @end_user = FactoryGirl.create(:user, :name => "end_bob")
 
@@ -118,6 +118,12 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                                           :action => "approve",
                                           :choices => "ok")
         @meta_board.decrees << @meta_decree
+
+        #the mailer
+        @mailer1 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => true, :send_to_all_board_members => false, :message => 'Message Text', :subject => 'Submitted to Meta')
+        @mailer2 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => false, :send_to_all_board_members => true, :message => 'Board Message Text', :subject => 'Board Member Alert')
+        @meta_board.emailers << @mailer1
+        @meta_board.emailers << @mailer2
 
         @text_board = FactoryGirl.create(:board, :title => "text")
         #the board memeber
@@ -203,6 +209,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug pi.xml_content
         end
 
+        deliveries_before = ActionMailer::Base.deliveries.size
         open_session do |submit_session|
 
           submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
@@ -216,6 +223,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         #now meta should have it
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
+        deliveries_after = ActionMailer::Base.deliveries.size
+        assert_equal 2, deliveries_after - deliveries_before
+        owner_email = ActionMailer::Base.deliveries.first
+        assert_equal "Submitted to Meta", owner_email.subject
+        assert_equal 'bobcreator@example.com', owner_email.to[0]
+        board_email = ActionMailer::Base.deliveries.last
+        assert_equal "Board Member Alert", board_email.subject
+        assert_equal 'bob@example.com', board_email.to[0]
 
         #meta board should have 1 publication, others should have 0
         meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
