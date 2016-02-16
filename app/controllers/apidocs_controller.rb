@@ -48,7 +48,7 @@ class ApidocsController < ActionController::Base
         key :description, 'Identifier operations'
       end
       key :host, "#{host}"
-      key :schemes, [scheme]
+      key :schemes, ["https","http"]
       key :basePath, "#{root_path}api/v1"
       key :consumes, ['application/json']
       key :produces, ['application/json', 'application/xml']
