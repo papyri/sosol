@@ -501,7 +501,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
 
-      @submitter = FactoryGirl.create(:user, :name => "Submitter")
+      @submitter = FactoryGirl.create(:user, :name => "Submitter", :email => "submitter@example.com")
     end
 
     teardown do
