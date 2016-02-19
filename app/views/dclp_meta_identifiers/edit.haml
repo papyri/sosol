@@ -1,0 +1,96 @@
+= stylesheet_link_tag 'meta' 
+= stylesheet_link_tag 'dclp_meta'
+#main
+  .site.metaSite
+    = render :partial => 'identifiers/header'
+    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
+
+    #edit
+      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
+        = f.error_messages
+
+        %h4.category.publication
+          %a{:name => 'Publication'}=I18n.t('dclp.legend.publication')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'dclp_meta_identifiers/publication'          
+
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.work
+          %a{:name => 'Publication'}=I18n.t('dclp.legend.work')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText }
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
+          .clear
+
+
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.object
+          %a{:name => 'Publication'}=I18n.t('dclp.legend.object')
+        .editbox{:style => 'display: none;'}
+
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
+          .clear
+          
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
+          = render :partial => 'hgv_meta_identifiers/figures'
+          .clear
+
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.general
+          %a{:name => 'General<'}=I18n.t('dclp.legend.general')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
+          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.date
+          %a{:name => 'Date'}=I18n.t('meta.legend.date')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/date'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
+
+        %h4.category.mentionedDate
+          %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/mentioned_date'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.provenance
+          %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
+        .editbox{:style => 'display: none;'}
+          %p#geoPreview
+            = @identifier[:origPlace]
+          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
+
+          %hr
+          = render :partial => 'hgv_meta_identifiers/provenance'
+
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addProvenance=I18n.t('meta.label.addProvenance')
+          %span.swifty.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
+
+        .controlPanel
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = hidden_field_tag 'expansionSet', flash[:expansionSet]
+
+= javascript_include_tag 'edit_mask'
+= javascript_include_tag 'meta'
+= javascript_include_tag 'dclp'
+= javascript_include_tag 'confirm'

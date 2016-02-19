@@ -122,6 +122,15 @@ en:
       corpora: Corpora
       series: Series
 
+  dclp:
+    legend:
+      publication: Editions & Bibliography
+      work: Auhtor & Work
+      object: Physical Description (Collection, Dimension, Layout, Material)
+      general: General Notes
+    label:
+      publicationLink: Biblio
+
   meta:
     legend:
       general: General
@@ -378,6 +387,32 @@ en:
     monthAndYearUncertain: year and month uncertain
     dayAndYearUncertain: year and day uncertain
     dayMonthAndYearUncertain: year, month and day uncertain
+
+  publication:
+    type:
+      publication: Publication
+      reference: Reference
+    subtype:
+      principal: principal
+      partial: partial
+      previous: previous
+      readings: readings
+      translation: Translation
+      study: Study
+      catalogue: Catalogue
+      palaeo: Palaeo
+      illustration: Illustration
+    ubertype:
+      principal: Principal edition
+      reference: Reference edition
+      partial: Partial edition
+      previous: Previous edition
+      readings: Readings
+      translation: Translation
+      study: Study
+      catalogue: Catalogue
+      palaeo: Palaeo
+      illustration: Illustration
 
   provenance:
     epoch:

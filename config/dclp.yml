@@ -1,0 +1,160 @@
+# attributes for elements
+#
+# :xpath (mandatory)
+# :multiple -> true | false (optional, defaults to false)
+# :optional -> true | false (optional, defaults to true)
+# :default -> default value as string, multiple entries do not support default values (optional)
+# :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional)
+# :children -> recursive element structure
+#
+# attributes for attributes
+#
+# :name (mandatory) 
+# :optional (same as above)
+# :default (same as above)
+# :pattern (same as above)
+
+:dclp:
+  :fragment:
+    :collectionInventoryNumber:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno/idno[@type='invNo']
+      :multiple: true
+      :attributes:
+        :id:
+          :name: xml:id
+          :pattern: /\AFR\d+\Z/
+  :metadata:
+    :publicationTitle:
+    :publicationExtra:
+    :collectionPlaceName:
+    :collection:
+    :collectionInventoryNumber:
+    :collectionTemporaryNotes:
+    :collectionTemporaryInventoryNumber:
+    :inventory:
+      :xpath: /tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msPart
+      :multiple: true
+      :children:
+        :settlement:
+          :xpath: placeName/settlement
+        :collection:
+          :xpath: collection
+        :inventoryNumber:
+          :xpath: idno[@type='invNo']
+          :attributes:
+            :id:
+              :name: xml:id
+    :archiveName:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']
+    :archiveLink:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']/@ref
+    :bookForm:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/@form
+    :columns:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@columns
+    :writtenLines:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines
+    :layoutDesc:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/p
+    :ldab:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
+      :pattern: /\A\d+\Z/
+    :dclpHybrid:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='dclp-hybrid']
+    :mp3:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
+      :pattern: /\A\d+(\.\d+)?\Z/ # vielleicht auch Buchstaben?!
+    :ancientEdition:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='ancientEdition']/listBibl/bibl[@type='publication']
+      :multiple: true
+      :attributes:
+        :subtype:
+          :name: subtype
+          :pattern: /\Aancient|ancientQuote\Z/
+        :corresp:
+          :name: corresp
+          :pattern: '/\A#FR\d+( #FR\d+)*\Z/' 
+      :children:
+        :author:
+          :xpath: author
+          :attributes:
+            :ref:
+              :name: ref
+              :pattern: /\Ahttp:\/\//
+          :children:
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']
+              :attributes:
+                :target:
+                  :name: target
+                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :title:
+          :xpath: title[@type='main'][@level='m']
+          :attributes:
+            :ref:
+              :name: ref
+              :pattern: /\Ahttp:\/\//
+          :children:
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']
+              :attributes:
+                :target:
+                  :name: target
+                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :extra:
+          :xpath: biblScope
+          :multiple: true
+          :attributes:
+            :type:
+              :name: type
+              :pattern: /\Avol|generic|lines|generic|fragment|page|chapter|poem\Z/
+          :children:
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']
+              :attributes:
+                :target:
+                  :name: target
+                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+    :contentText:
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords/term
+      :multiple: true
+      :attributes:
+        :class:
+          :name: type
+          :pattern: /\A(culture|religion|description)\Z/
+    :scriptType:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
+    :pagination:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
+    :publication:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl
+      :multiple: true
+      :attributes:
+        :type:
+          :name: type
+          :pattern: /\A(publication|reference)\Z/
+        :subtype:
+          :name: subtype
+          :pattern: /\A(principal|partial|previous|readings|translation|study|catalogue|palaeo)\Z/
+        :language:
+          :name: xml:lang
+          :pattern: /\A(de|en|it|es|la|fr)\Z/
+      :children:
+        :link:
+          :xpath: ptr/@target
+        :extra:
+          :xpath: biblScope
+          :multiple: true
+          :attributes:
+            :type:
+              :name: type
+              :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragment|fragments|folio|inventory|number|columns|generic|parts|pp\Z/
+            :corresp:
+              :name: corresp
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+            :from:
+              :name: from
+              :pattern: /\A\d+\Z/
+            :to:
+              :name: to
+              :pattern: /\A\d+\Z/

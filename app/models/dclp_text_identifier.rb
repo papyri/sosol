@@ -1,11 +1,17 @@
-include HgvMetaIdentifierHelper
-
-class HGVMetaIdentifier < HGVIdentifier
+class DCLPTextIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
-  PATH_PREFIX = 'HGV_meta_EpiDoc'
+  PATH_PREFIX = 'DCLP'
 
-  FRIENDLY_NAME = "HGV"
+  FRIENDLY_NAME = "DCLP Text"
+  IDENTIFIER_NAMESPACE = 'dclp'
+  
+  # cl: at the moment there are no reprints for DCLP
+  # therefore the result is always false
+  # needs a proper implementation, though (one day)
+  def is_reprinted?
+    return false
+  end
 
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :
@@ -25,7 +31,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = HgvMetaIdentifierHelper::HgvMetaConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
+    @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
 
@@ -40,7 +46,7 @@ class HGVMetaIdentifier < HGVIdentifier
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
       hgv_dir_number = ((number - 1) / 1000) + 1
-      hgv_dir_name = "HGV#{hgv_dir_number}"
+      hgv_dir_name = "#{hgv_dir_number}"
       hgv_xml_path = trimmed_name + '.xml'
 
       path_components << hgv_dir_name << hgv_xml_path
@@ -52,7 +58,7 @@ class HGVMetaIdentifier < HGVIdentifier
   
   # ?
   def id_attribute
-    return IDENTIFIER_NAMESPACE + 'TEMP'
+    return "dclpTEMP"
   end
 
   # ?
@@ -74,7 +80,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # - *Args*  :
   #   - +content+ -> HGVMetaIdentifier XML as string
   def before_commit(content)
-    HGVMetaIdentifier.preprocess(content)
+    DCLPTextIdentifier.preprocess(content)
   end
   
   # Applies the preprocess XSLT to 'content'
@@ -198,8 +204,7 @@ class HGVMetaIdentifier < HGVIdentifier
   # Side effect on +SIDEEFFECT+
   def get_epidoc_attributes_value doc, config
     if element = doc.elements[config[:xpath]]
-      value = element.class == REXML::Attribute ? element.value : element.text
-      value && !value.strip.empty? ? value.strip : config[:default]
+      element.text && !element.text.strip.empty? ? element.text.strip : config[:default]
     else
       config[:default]
     end
@@ -642,4 +647,105 @@ class HGVMetaIdentifier < HGVIdentifier
    result_item
   end
 
+  # Reads out config/hgv.yml and stores all configuration parameters in an instance variable called +@scheme+. Adds defaults and prunes invalid configuration entries.
+  class HgvMetaConfiguration
+
+    attr_reader :scheme, :keys;
+
+    # Constructor laods and complements HGV configuration from +config/hgv.yml+ and prepares a list that contains all valid HGV keys
+    # Assumes the existenz of configuration file +config/hgv.yml+, for further information about expected values and format see there
+    # Side effect on +@scheme+ and +@keys+
+    def initialize
+      @scheme = YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
+
+      add_meta_information! @scheme
+
+      @keys = @scheme.keys
+      @scheme.each_value {|item|
+        @keys += retrieve_all_keys item
+      }
+  
+    end
+
+    # Recursivle retrieves all valid keys (element key, attribute keys, child keys)
+    # - *Args*  :
+    #   - +configuration_node+ → a single element node of the hgv configuration
+    # - *Returns* :
+    #   - +Array+ of string values, containing all valid keys for HGV meta data nodes, such as [:type, :subtype, :date, :place, ...] for HGV configuration node :provenance
+    def retrieve_all_keys configuration_node
+      keys = configuration_node[:attributes] ? configuration_node[:attributes].keys : []
+      if configuration_node[:children]
+        configuration_node[:children].each_pair {|key, value|
+          keys += [key]
+          keys += retrieve_all_keys value
+        }
+      end
+      return keys
+    end
+
+    # Recursively adds optional attributes to configuration
+    # e.g. +:optional+ defaults to +true+ whereas +:multiple+ defaults to false
+    # - *Args*  :
+    #   - +configuration+ → initially the complete HGV configuration, during recursion it contains the content of the children attribute
+    # Side effect on +configuration+ (adds default values and missing attributes)
+    def add_meta_information! configuration
+      configuration.each_value {|element|
+
+        add_defaults! element
+
+        if element.keys.include? :attributes
+          element[:attributes].each_value{|attribute|
+            add_defaults! attribute
+          }
+        end
+
+        if element.keys.include? :children
+          add_meta_information! element[:children]
+        end
+
+      }
+    end
+
+    # Adds optional attributes (suchs as mulplicity or default values) to a configuration item
+    # - *Args*  :
+    #   - +item+ → may be an element or an attribute
+    # Side effect on +item+ (sets default values, adds missing attributes)
+    def add_defaults! item
+      if item.keys.include? :multiple
+        item[:multiple] = item[:multiple] ? true : false
+      else
+        item[:multiple] = false
+      end
+
+      if item.keys.include? :optional
+          item[:optional] = !item[:optional] ? false : true
+      else
+        item[:optional] = true
+      end
+
+      if !item.keys.include? :default
+        item[:default] = nil
+      end
+
+      if !item.keys.include? :pattern
+        item[:pattern] = nil
+      end
+
+    end
+
+    # Retrieves the xpath for a specified HGV key if the key belongs to a top level HGV configuration node, i.e. for HGV key +:textDate+, but not for HGV key +:when+ which is a child node of +:textDate+
+    # - *Args*  :
+    #   - +key+ → key, e.g. +:provenance+
+    # - *Returns* :
+    #   - String xpath, string will be empty if xpath cannot be given for the requested key
+    # Assumes that +config/hgv.yml+ has been loaded into +@scheme+
+    def xpath key
+      if @scheme.keys.include? key
+        @scheme[key][:xpath]
+      else
+        ''
+      end
+    end
+
+  end
 end

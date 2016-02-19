@@ -12,6 +12,114 @@ module HgvMetaIdentifierHelper
     prefix + (rand * 1000000).floor.to_s.tr('0123456789', 'ABCDEFGHIJ')
   end
   
+
+    # Reads out config/hgv.yml and stores all configuration parameters in an instance variable called +@scheme+. Adds defaults and prunes invalid configuration entries.
+  class HgvMetaConfiguration
+
+    attr_reader :scheme, :keys;
+
+    # Constructor laods and complements HGV configuration from +config/hgv.yml+ and prepares a list that contains all valid HGV keys
+    # Assumes the existenz of configuration file +config/hgv.yml+, for further information about expected values and format see there
+    # Side effect on +@scheme+ and +@keys+
+    def initialize modifier = nil
+      @scheme = YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
+
+      if modifier.class == Symbol
+        @scheme = @scheme.merge(YAML::load_file(File.join(Rails.root, ['config', modifier.to_s + '.yml']))[modifier][:metadata])
+      end
+      
+      @scheme.delete_if{|key, value| value == nil}
+
+      add_meta_information! @scheme
+
+      @keys = @scheme.keys
+      @scheme.each_value {|item|
+        @keys += retrieve_all_keys item
+      }
+  
+    end
+
+    # Recursivle retrieves all valid keys (element key, attribute keys, child keys)
+    # - *Args*  :
+    #   - +configuration_node+ → a single element node of the hgv configuration
+    # - *Returns* :
+    #   - +Array+ of string values, containing all valid keys for HGV meta data nodes, such as [:type, :subtype, :date, :place, ...] for HGV configuration node :provenance
+    def retrieve_all_keys configuration_node
+      keys = configuration_node[:attributes] ? configuration_node[:attributes].keys : []
+      if configuration_node[:children]
+        configuration_node[:children].each_pair {|key, value|
+          keys += [key]
+          keys += retrieve_all_keys value
+        }
+      end
+      return keys
+    end
+
+    # Recursively adds optional attributes to configuration
+    # e.g. +:optional+ defaults to +true+ whereas +:multiple+ defaults to false
+    # - *Args*  :
+    #   - +configuration+ → initially the complete HGV configuration, during recursion it contains the content of the children attribute
+    # Side effect on +configuration+ (adds default values and missing attributes)
+    def add_meta_information! configuration
+      configuration.each_value {|element|
+
+        add_defaults! element
+
+        if element.keys.include? :attributes
+          element[:attributes].each_value{|attribute|
+            add_defaults! attribute
+          }
+        end
+
+        if element.keys.include? :children
+          add_meta_information! element[:children]
+        end
+
+      }
+    end
+
+    # Adds optional attributes (suchs as mulplicity or default values) to a configuration item
+    # - *Args*  :
+    #   - +item+ → may be an element or an attribute
+    # Side effect on +item+ (sets default values, adds missing attributes)
+    def add_defaults! item
+      if item.keys.include? :multiple
+        item[:multiple] = item[:multiple] ? true : false
+      else
+        item[:multiple] = false
+      end
+
+      if item.keys.include? :optional
+          item[:optional] = !item[:optional] ? false : true
+      else
+        item[:optional] = true
+      end
+
+      if !item.keys.include? :default
+        item[:default] = nil
+      end
+
+      if !item.keys.include? :pattern
+        item[:pattern] = nil
+      end
+
+    end
+
+    # Retrieves the xpath for a specified HGV key if the key belongs to a top level HGV configuration node, i.e. for HGV key +:textDate+, but not for HGV key +:when+ which is a child node of +:textDate+
+    # - *Args*  :
+    #   - +key+ → key, e.g. +:provenance+
+    # - *Returns* :
+    #   - String xpath, string will be empty if xpath cannot be given for the requested key
+    # Assumes that +config/hgv.yml+ has been loaded into +@scheme+
+    def xpath key
+      if @scheme.keys.include? key
+        @scheme[key][:xpath]
+      else
+        ''
+      end
+    end
+  end
+  
   # Module for HGV geo data class definitions (provenance, place and geo)
   module HgvGeo
 

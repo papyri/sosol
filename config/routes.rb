@@ -141,6 +141,32 @@ Sosol::Application.routes.draw do
     
     end
 
+    resources :dclp_meta_identifiers do
+
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
+
+    end
+
+    resources :dclp_text_identifiers do
+
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
+
+    end
+
     resources :apis_identifiers do
     
         member do

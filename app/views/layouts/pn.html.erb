@@ -11,7 +11,7 @@
 
   <%= stylesheet_link_tag 'master_additions' %>
   <%= stylesheet_link_tag 'editor' %>
-  <% if %w{biblio_identifiers hgv_meta_identifiers apis_identifiers}.include?(controller.controller_name)  and controller.action_name == 'edit' %>
+  <% if %w{biblio_identifiers hgv_meta_identifiers dclp_meta_identifiers apis_identifiers}.include?(controller.controller_name)  and controller.action_name == 'edit' %>
   <%= stylesheet_link_tag 'biblio' %>
   <% end %>
   

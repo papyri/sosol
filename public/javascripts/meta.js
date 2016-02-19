@@ -663,7 +663,7 @@ Event.observe(window, 'load', function() {
   // submit
   $('identifier_submit').observe('click', checkNotAddedMultiples);
 
-  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('div#edit form')[0].submit();});});
 
   $('identifier_submit').observe('click', geoReferenceWizard);
 
