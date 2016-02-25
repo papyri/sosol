@@ -10,16 +10,17 @@
       = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
         = f.error_messages
 
-        %h4.category.publication
-          %a{:name => 'Publication'}=I18n.t('dclp.legend.publication')
+        %h4.category.edition
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.edition')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'dclp_meta_identifiers/publication'          
+          = render :partial => 'dclp_meta_identifiers/edition'
 
           .clear
-          .swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addEdition=I18n.t('dclp.label.addEdition')
 
         %h4.category.work
-          %a{:name => 'Publication'}=I18n.t('dclp.legend.work')
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
@@ -28,12 +29,10 @@
           = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
           .clear
 
-
-          .clear
           .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.object
-          %a{:name => 'Publication'}=I18n.t('dclp.legend.object')
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.object')
         .editbox{:style => 'display: none;'}
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }

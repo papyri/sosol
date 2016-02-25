@@ -24,6 +24,7 @@
           :name: xml:id
           :pattern: /\AFR\d+\Z/
   :metadata:
+    :publication:
     :publicationTitle:
     :publicationExtra:
     :collectionPlaceName:
@@ -126,7 +127,7 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
     :pagination:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
-    :publication:
+    :edition:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl
       :multiple: true
       :attributes:

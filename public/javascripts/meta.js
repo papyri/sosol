@@ -28,20 +28,22 @@ function provenanceOrigPlaceUnknownToggle(unknown){
 /**** publication ****/
 
 function publicationPreview(){
-  preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
-            $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
+  if($('publicationExtraFullTitle')){
+    preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
+              $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
 
-  $('multiItems_publicationExtra').select('input').each(function(input){
+    $('multiItems_publicationExtra').select('input').each(function(input){
    
-    if(input.type.toLowerCase() != 'hidden'){
-      preview += input.getValue() + ' ';
-    }
-  });
+      if(input.type.toLowerCase() != 'hidden'){
+        preview += input.getValue() + ' ';
+      }
+    });
   
-  $('publicationExtraFullTitle').innerHTML = preview;
+    $('publicationExtraFullTitle').innerHTML = preview;
+  }
 }
 
 /**** date ****/
@@ -151,8 +153,6 @@ function multiAddProvenanceRaw(e){
   var provenanceIndex = multiGetNextIndex('provenance');
   var geoPlaceKey = generateRandomId('geoPlace');
   var addPlaceKey = generateRandomId('addPlace');
-  
-  console.log('provenanceIndex: '+provenanceIndex);
 
   var item = '<li id="provenance_' + provenanceIndex + '" class="provenance">' +
              '   <p class="clear"></p>' +

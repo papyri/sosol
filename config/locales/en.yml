@@ -124,12 +124,13 @@ en:
 
   dclp:
     legend:
-      publication: Editions & Bibliography
-      work: Auhtor & Work
+      edition: Editions & Bibliography
+      work: Author & Work
       object: Physical Description (Collection, Dimension, Layout, Material)
       general: General Notes
     label:
-      publicationLink: Biblio
+      editionLink: Biblio
+      addEdition: add edition
 
   meta:
     legend:
@@ -388,7 +389,7 @@ en:
     dayAndYearUncertain: year and day uncertain
     dayMonthAndYearUncertain: year, month and day uncertain
 
-  publication:
+  edition:
     type:
       publication: Publication
       reference: Reference
@@ -413,6 +414,20 @@ en:
       catalogue: Catalogue
       palaeo: Palaeo
       illustration: Illustration
+    extra:
+      volume: Volume
+      page: Page
+      pages: Pages
+      pp: Pages
+      'no': Number
+      numbers: Numbers
+      col: Column
+      tome: Tome
+      fasc: Fascicle
+      issue: Issue
+      plate: Plate
+      side: Side
+      generic: Generic
 
   provenance:
     epoch:
