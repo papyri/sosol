@@ -20,11 +20,9 @@
           <title type="main">Dummy</title>
         </titleStmt>
         <publicationStmt>
-          <availability>
             <p>This work is licensed under a
               <ref type="license" target="http://creativecommons.org/licenses/by-sa/3.0/">Creative 
                 Commons Attribution-ShareAlike 3.0 License</ref>.</p>
-          </availability>
         </publicationStmt>
         <sourceDesc>
           <p>The contents of this document are generated from SOSOL.</p>
