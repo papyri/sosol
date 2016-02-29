@@ -14,7 +14,7 @@ class EpiCTSIdentifier < CTSIdentifier
 
   # This is a somewhat arbitrary size restriction 
   # at some point would be nice to do something more intelligent  
-  MAX_PREVIEW_SIZE = 100000
+  MAX_PREVIEW_SIZE = 500000
 
   BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
 
@@ -47,7 +47,7 @@ class EpiCTSIdentifier < CTSIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt ddb preprocess.xsl})))
+        %w{data xslt cts preprocess.xsl})))
   end
   
   def after_rename(options = {})
