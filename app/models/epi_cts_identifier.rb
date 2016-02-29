@@ -47,7 +47,7 @@ class EpiCTSIdentifier < CTSIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt ddb preprocess.xsl})))
+        %w{data xslt cts preprocess.xsl})))
   end
   
   def after_rename(options = {})
