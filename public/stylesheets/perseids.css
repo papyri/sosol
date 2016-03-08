@@ -596,11 +596,11 @@ li.editor_menu {
 	border-bottom: 1px dashed black;
 }
 
-.PContent .oac_annotation .edit_links {
+.PContent .oac_annotation .edit_links, .oa_cite_annotation .edit_links {
 	padding-top: .5em;
 }
 
-.PContent .oac_annotation .edit_links button {
+.PContent .oac_annotation .edit_links button, .oa_cite_annotation .edit_links button {
 	float: left;
 	margin-right: .5em;
 }
