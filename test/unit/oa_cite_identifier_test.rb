@@ -60,6 +60,25 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
         assert_match(/^Invalid URL/,exception.message)
       end
 
+      should "not find matching collection object" do
+        init_value = []
+        collection_urn = "urn:cite:perseus:pdlann" 
+        one = OaCiteIdentifier.new_from_template(@publication,collection_urn,init_value)
+        matching = OaCiteIdentifier.find_matching_identifiers(collection_urn,@creator,init_value)
+        assert_equal [], matching
+      end
+
+      should "find matching collection object" do
+        init_value = []
+        collection_urn = "urn:cite:perseus:pdlann" 
+        match_call = lambda do |p| return true 
+        end
+        one = OaCiteIdentifier.new_from_template(@publication,collection_urn,init_value)
+        matching = OaCiteIdentifier.find_matching_identifiers(collection_urn,@creator,match_call)
+        assert_equal [one], matching
+      end
+
+
     end
    
      # TODO new version from existing version - same annotator 

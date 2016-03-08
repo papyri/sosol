@@ -61,7 +61,10 @@ class CiteIdentifier < Identifier
     temp_id.save!
     initial_content = temp_id.file_template
     temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
-    temp_id.init_content(a_init_value)
+    if (a_init_value.length > 0)
+      temp_id.init_content(a_init_value)
+      temp_id.save!
+    end
     return temp_id
   end
   
@@ -286,13 +289,32 @@ class CiteIdentifier < Identifier
     def make_annotator_uri()
       "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
     end
-    
+   
+    # Looks for matching identifier
+    # - *Args*  :
+    #   - +match_id+ -> the canonical identifier we are trying to match (e.g. urn:cite:perseus:pdlann.1)
+    #   - +match_user+ -> the User owner we are trying to match
+    #   - +match_pub+ -> Either an array of initialization values for the identifier
+    #                    Or a call back function which receives the potentially matching
+    #                    identifier and returns true or false if it matches
+    # - *Returns* :
+    #   - array of matching identifiers
     def self.find_matching_identifiers(match_id,match_user,match_pub)
       publication = nil
       ## if urn and key value are supplied we need to check to see if the requested object exists before
       ## creating it
       is_collection_urn = Cite::CiteLib.is_collection_urn?(match_id) 
       existing_identifiers = []
+      if match_pub.is_a? Array 
+        Rails.logger.info("matchpub is an array")
+        match_call = lambda do |p| 
+          Rails.logger.info("match #{p} to #{match_pub}")
+          return p.is_match?(match_pub)
+        end
+      else
+        match_call = match_pub
+      end
+
 
       if ( is_collection_urn )
         if (match_pub)
@@ -306,7 +328,7 @@ class CiteIdentifier < Identifier
               ((pc.publication) && 
                 (pc.publication.owner == match_user) && 
                 !(%w{archived finalized}.include?(pc.publication.status)) &&
-                 pc.is_match?(match_pub)
+                 match_call.call(pc)
               )
             rescue Exception => e
               Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
