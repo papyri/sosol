@@ -306,9 +306,7 @@ class CiteIdentifier < Identifier
       is_collection_urn = Cite::CiteLib.is_collection_urn?(match_id) 
       existing_identifiers = []
       if match_pub.is_a? Array 
-        Rails.logger.info("matchpub is an array")
         match_call = lambda do |p| 
-          Rails.logger.info("match #{p} to #{match_pub}")
           return p.is_match?(match_pub)
         end
       else
