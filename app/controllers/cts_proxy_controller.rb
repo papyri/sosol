@@ -70,13 +70,15 @@ class CtsProxyController < ApplicationController
     repos = CTS::CTSLib.getExternalCTSRepos()
 
     if (params[:id])
-       identifier = Identifier.find(params[:id].to_s)
-       related = identifier.related_text_inventory
-       related.keys.each do |key|
-         urispace = root_url + "cts/getpassage"
-         repos['keys'][key.to_s] = urispace
-         repos['urispaces'][urispace] = key.to_s
-       end
+       publication = Publication.find(params[:id].to_s)
+       publication.identifiers.select { |i| i.respond_to?(:related_text_inventory) && (i.class != CitationCTSIdentifier) }.each do |identifier|
+         related = identifier.related_text_inventory
+         related.keys.each do |key|
+           urispace = root_url + "cts/getpassage"
+           repos['keys'][key.to_s] = urispace
+           repos['urispaces'][urispace] = key.to_s
+         end
+      end
     end
     render :text => JSON.generate(repos) 
   end

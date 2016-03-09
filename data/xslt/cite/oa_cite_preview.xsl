@@ -26,7 +26,7 @@
     </xsl:template>
     
     <xsl:template match="oac:Annotation">
-        <div class="oa_cite_annotation">
+        <div class="oa_cite_annotation clearfix">
         <xsl:apply-templates select="dcterms:title"/>
         <xsl:apply-templates select="dcterms:description"/>
         <xsl:apply-templates select="rdfs:comment"/>

@@ -134,12 +134,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
   def link_citation
     find_identifier
     render(:template => 'citation_cts_identifiers/select',
-           :locals => {:edition => @identifier.urn_attribute,
-                       :version_id => @identifier.name,
-                       :collection => @identifier.inventory,
-                       :citeinfo => @identifier.related_inventory.parse_inventory(@identifier.urn_attribute),
-                       :publication_id => @identifier.publication.id, 
-                       :pubtype => 'translation'})
+           :locals => {:pubtype => 'translation'})
   end
   
   def update

@@ -15,6 +15,12 @@ class OaCiteIdentifiersController < IdentifiersController
 
   def edit
     find_publication_and_identifier
+    annotation_uri = params[:annotation_uri]
+    if (annotation_uri)
+      editor_url = Tools::Manager.link_to('oa_editor',:perseids,:edit,[@identifier])[:href]
+      editor_url = editor_url.sub(/URI/,URI.escape(annotation_uri))
+      redirect_to(editor_url) and return
+    end
     @list = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(@identifier.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
@@ -75,7 +81,7 @@ class OaCiteIdentifiersController < IdentifiersController
     # create the identifier if it doesn't exist
     find_publication
     collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
-    match_call = lambda do |p| return true end
+    match_call = lambda do |p| return p.publication_id == @publication.id end
     existing_identifiers = OaCiteIdentifier.find_matching_identifiers(collection_urn,@current_user,match_call)
     if existing_identifiers.length == 1
       @identifier = existing_identifiers[0]
