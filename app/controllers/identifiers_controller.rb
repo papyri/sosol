@@ -6,7 +6,6 @@ class IdentifiersController < ApplicationController
   # - edit the XML file from the repository of the associated identifier
   def editxml
     find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'identifiers/editxml'
   end
