@@ -516,5 +516,12 @@ class OaCiteIdentifier < CiteIdentifier
     config[:target_links]['Treebank Annotations'] << {:text => tblink[:text], :href => CGI.escape(tblink[:href]), :target_param => 'text_uri'}        
     return config.to_json                  
   end
+
+ 
+  # Check to see if import should be allowed.
+  # Currently disabled for all annotations with external sources
+  def can_import?
+    OacHelper::has_externally_sourced_annotations?(self.rdf)
+  end
     
 end

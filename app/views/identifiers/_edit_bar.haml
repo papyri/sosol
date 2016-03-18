@@ -86,6 +86,10 @@
                 %li{ :class => ''}
                   = link_to 'Compare', polymorphic_path([:compare,@identifier.publication, @identifier])
               %li{ :class => params[:action] == ''}= link_to 'Change Title', polymorphic_path([@identifier.publication, @identifier], :action => :edit_title)
+            -elsif @identifier.class == OaCiteIdentifier
+              %li{ :class => ''}= link_to 'Edit (XML)', editxml_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
+              -if @identifier.can_import?
+                %li{:class => ''}= link_to 'Import', import_update_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
