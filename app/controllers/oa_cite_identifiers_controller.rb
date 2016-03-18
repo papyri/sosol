@@ -156,7 +156,7 @@ class OaCiteIdentifiersController < IdentifiersController
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite oa_cite_preview.xsl})),
         { :e_convertResource => AgentHelper::agents_can_convert,
-          :tool_url => Tools::Manager.link_to('oa_editor',:perseids,:edit,[@identifier])[:href],
+          :tool_url => Tools::Manager.link_to('oa_editor',:perseids,:view,[@identifier])[:href],
           :e_createConverted => @identifier.publication.status == 'finalizing',
           :app_base => root_url,
         })

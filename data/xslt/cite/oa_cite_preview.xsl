@@ -65,7 +65,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <div class="edit_links">
-                        <a href="{replace(replace($tool_url,'URI',encode-for-uri(@rdf:about)),'LANG',$lang)}"><button>Preview</button></a>
+                        <a href="{replace(replace($tool_url,'URI',encode-for-uri(@rdf:about)),'LANG',$lang)}"><button type="button">Preview</button></a>
                     </div>
                 </xsl:otherwise>
             </xsl:choose>
