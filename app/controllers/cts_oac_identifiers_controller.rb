@@ -1,3 +1,7 @@
+## 
+# model class is @deprecated
+# use oa_cite_identifier instead
+# 
 class CtsOacIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
@@ -32,6 +36,7 @@ class CtsOacIdentifiersController < IdentifiersController
     end  
   end
   
+  # @deprecated 
   def edit_or_create
     # create the OAC identifier if it doesn't exist
     find_publication

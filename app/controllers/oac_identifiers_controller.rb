@@ -1,4 +1,9 @@
+## 
+# model class is @deprecated
+# use oa_cite_identifier instead
+# 
 class OacIdentifiersController < IdentifiersController
+  def self.agent_of(a_data)
   layout Sosol::Application.config.site_layout
   before_filter :authorize
   
