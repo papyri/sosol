@@ -40,7 +40,7 @@ class OaCiteIdentifier < CiteIdentifier
     params = {
       :e_annotatorUri => temp_id.make_annotator_uri(),
       :e_annotatorName => temp_id.publication.creator.human_name,
-      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + temp_id.urn_attribute 
+      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + temp_id.urn_attribute  + "/"
     }
     updated_content = AgentHelper::content_from_agent(a_init_value,:OaCiteIdentifier,params)
     temp_id.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
@@ -131,7 +131,7 @@ class OaCiteIdentifier < CiteIdentifier
   #   - +targetUriMatch+ a properly quoted regex string to search for as the target
   #                      of the contained annotations
   # - *Returns* :
-  #   - an array of annotations which match. Will be empty if none matched.
+  #   - an array of of matches - each represented as a Hash { id => uri, target => matchingtarget }
   def matching_targets(targetUriMatch)
     matches = []
     OacHelper::get_all_annotations(self.rdf).each() { |el|
@@ -184,27 +184,33 @@ class OaCiteIdentifier < CiteIdentifier
   # api_get responds to a call from the data management api controller
   # to get all or a specific annotation from the parent document
   # - *Args* :
-  #   - +a_query+ -> String containing the URI of the annotaiton to retrieve
+  #   - +a_query+ -> String matching uri=<annotation_uri>
   #                  Optional. If not supplied all will be returned. 
   # - *Returns* :
-  #   - the requested annotation
+  #   - the requested annotation(s) as a string or Nil if not found
   def api_get(a_query)
     # query will contain the uri of the annotation
+    xmlobj = nil
     if (a_query)
       qmatch = /^uri=(.*?)$/.match(a_query)
       if (qmatch.nil?)
         raise "Invalid request - no uri specified in #{a_query}"
       else
-        return toXmlString get_annotation(qmatch[1])
+        xmlobj = get_annotation(qmatch[1])
       end
     else
-      return toXmlString get_annotations()
+      xmlobj = self.rdf
     end
+    unless xmlobj.nil?
+      xmlobj = toXmlString xmlobj
+    end
+    return xmlobj
   end
   
   # api_append responds to a call from the data management api controller
   # to append a new annotation to the parent document
   # - *Args* :
+  #   - +a_agent+ -> the software agent initiating the append request
   #   - +a_body+ -> String containing the raw body of the data to be appended
   #   - + a_comment+ -> String comment for the commit message
   # - *Returns* :
@@ -233,6 +239,9 @@ class OaCiteIdentifier < CiteIdentifier
   
   # api_update responds to a call from the data management api controller
   # to update an existing annotation or annotations in the parent document
+  # NB THIS CODE IS NOT CURRENTLY IN USE - IT WAS WRITTEN FOR THE RECOGITO
+  # INTEGRATION, WHICH HAS BEEN REMOVED NOW. THIS SHOULD PROBABLY ALL BE
+  # HANDLED BY AN LDP IMPLEMENTATION INSTEAD
   # - *Args* :
   #  - +a_query+ -> String parameter containing a querystring
   #                 specific to the identifier type. 
