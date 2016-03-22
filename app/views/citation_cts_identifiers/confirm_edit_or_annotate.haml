@@ -9,7 +9,7 @@
   = form_for OaCiteIdentifier.new(), :url => { :action => "edit_or_create", :controller => "oa_cite_identifiers"} do |form|
     = hidden_field_tag 'publication_id',@publication.id.to_s
     = hidden_field_tag 'target_uri',params[:target_uri]
-    = hidden_field_tag "urn", 'urn:cite:perseus:pdlann'
+    = hidden_field_tag "collection_urn", 'urn:cite:perseus:pdlann'
     = submit_tag "Annotate", :method => 'post'
     
   

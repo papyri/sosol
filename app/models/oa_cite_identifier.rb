@@ -14,22 +14,18 @@ class OaCiteIdentifier < CiteIdentifier
     return title
   end
 
+  # Create a new OaCiteIdentifier from the template
+  # - *Args* :
+  #   - +a_publication+ -> parent Publication
+  #   - +a_urn* -> String value of the CITE URN identifier for the parent collection
+  #   - +a_init_value+ -> Optional array of String values of URIs for external sources
+  #                       from which to retrieve the initial content of this document
+  #                       must match a configured Agent URI
+  #                       @see AgentHelper
   def self.new_from_template(a_publication,a_urn,a_init_value)
-
-    agent_url = nil
-    a_init_value.each do | a_url |
-      agent = AgentHelper.agent_of(a_url)
-      unless agent.nil?
-        agent_url = a_url
-        break;
-      end
-    end
     # defer to super class handling if we don't have any class-specific
     # init content
-    # TODO this is problematic if init_value is an agent url that is
-    # just poorly formed.  The input form should prevent that but 
-    # might not always
-    if agent_url.nil?
+    if a_init_value.size == 0 
       return super(a_publication,a_urn,a_init_value)
     end
 
@@ -41,15 +37,20 @@ class OaCiteIdentifier < CiteIdentifier
     end
     initial_content = temp_id.file_template
     temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
-    if (a_init_value.length > 0)
-      temp_id.init_content(a_init_value)
-    end
+    params = {
+      :e_annotatorUri => self.make_annotator_uri,
+      :e_annotatorName => self.publication.creator.human_name,
+      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
+    }
+    updated_content = AgentHelper::content_from_agent(a_init_value,:OaCiteIdentifier,params)
+    temp_id.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
     temp_id.save!
     return temp_id
   end
-  
+ 
+  # @see Identifier.add_change_desc 
   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
-    # TODO prov tracking of annotations
+    # TODO implement prov tracking of annotations
     # this is a no-op because change desc is not added to this file
     # need to override to ensure consistent formatting of XML for all commits
     toXmlString self.rdf
@@ -91,7 +92,9 @@ class OaCiteIdentifier < CiteIdentifier
     modified_xml_content
   end
   
-  # test to see if any annotations have been added to the oac.xml file yet
+  # Test to see if any annotations have been added to the annotation RDF/XML file yet
+  # - *Returns* :
+  #   - True or False
   def has_anyannotation?()
     all = OacHelper::get_all_annotations(self.rdf)
     hasany = false
@@ -106,91 +109,62 @@ class OaCiteIdentifier < CiteIdentifier
     return hasany
   end
 
-  # get the requested annotation by uri from the oac.xml 
+  # Get the requested annotation by uri from the annotation RDF/XMLfile
+  # - *Args* :
+  #   - +a_uri+ -> String value of the annotation URI to retrieve
+  # - *Returns* :
+  #  the RDF/XML of the requested annotation or Nil if not found
   def get_annotation(a_uri)
    Rails.logger.info("Get Annotation #{a_uri}")
    OacHelper::get_annotation(self.rdf,a_uri)          
   end
 
-  # get the requested annotation by uri from the oac.xml 
+  # Get all annotations from the annotation RDF/XML file
+  # - *Returns* :
+  # an Array of annotations. Will be empty if none present in the file.
   def get_annotations()
    OacHelper::get_all_annotations(self.rdf)         
   end
   
-  # look for Annotations whose target resource matches the targetUriMatch string
-  # targeUriMatch is expected to be a properly quoted regex string
-  def matching_targets(targetUriMatch,creatorUri)
+  # Look for Annotations whose target resource matches the targetUriMatch string
+  # - *Args* :
+  #   - +targetUriMatch+ a properly quoted regex string to search for as the target
+  #                      of the contained annotations
+  # - *Returns* :
+  #   - an array of annotations which match. Will be empty if none matched.
+  def matching_targets(targetUriMatch)
     matches = []
-    Rails.logger.info("ALL #{OacHelper::get_all_annotations(self.rdf).inspect}")
     OacHelper::get_all_annotations(self.rdf).each() { |el|
-      Rails.logger.info("checking #{OacHelper::get_creator(el)}")
-      if (OacHelper::get_creator(el) == creatorUri || OacHelper::get_annotators(el).include?(creatorUri)) 
-        annot_id = el.attributes['rdf:about']
-        OacHelper::get_targets(el).each() { |tgt|
-          Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
-          if tgt =~ /#{targetUriMatch}/ 
-            Rails.logger.info("Matched")
-            match = Hash.new
-            match['id'] = annot_id
-            match['target'] = tgt
-            matches << match   
-          end
-        }
-      end
+      annot_id = el.attributes['rdf:about']
+      OacHelper::get_targets(el).each() { |tgt|
+        Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
+        if tgt =~ /#{targetUriMatch}/ 
+          match = Hash.new
+          match['id'] = annot_id
+          match['target'] = tgt
+          matches << match   
+        end
+      }
     }
     return matches
   end
 
-  # create a new annotation with an empty body
+  # Inserts a new annotation in the parent document
+  # for a specified target with an empty body
+  # -*Args* :
+  #   - +a_target_uri+ -> String valueof the URI for target of the annotatoin
+  # -*Returns* :
+  #   - String value of the URI of the newly created annotation 
   def create_annotation(a_target_uri)
     annot_uri = next_annotation_uri()
     add_annotation(annot_uri,[a_target_uri],[],nil,make_creator_uri(),nil,"Create")
     return annot_uri
   end
-
-  # update a pre-existing annotation in the oac.xml file
-  def update_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agents,comment)
-    annot = OacHelper::get_annotation(self.rdf,annot_uri) 
-    Rails.logger.info("Before update #{toXmlString annot}")
-    if (annot.nil?)
-      Rails.logger.info("Not found #{annot_uri}")
-      Rails.logger.info(toXmlString self.rdf)
-      raise "Unable to find #{annot_uri}."
-    end
-    annot.elements.delete_all '*'
-    target_uris.each do |uri|
-      annot.add_element(OacHelper::make_target(uri))
-    end
-    body_uris.each do |uri|
-      annot.add_element(OacHelper::make_body(uri))
-    end
-    annot.add_element(OacHelper::make_motivation(motivation))
-    annot.add_element(OacHelper::make_annotator(creator_uri))
-    unless (agents.nil?)
-      agents.each do | a_agent | 
-        annot.add_element(OacHelper::make_software_agent(a_agent))
-      end
-    end
-    annot.add_element(OacHelper::make_annotated_at)
-    Rails.logger.info("After update #{toXmlString annot}")
-    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
-    oacRdf = toXmlString self.rdf
-    self.set_xml_content(oacRdf, :comment => comment)
-  end
   
-  # add a new annotation to the oac.xml file
-  def add_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agent,comment)
-    exists = OacHelper::get_annotation(self.rdf,annot_uri)
-    unless (exists.nil?)
-      raise "An annotation identified by #{annot_uri} already exists."
-    end
-    self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agent))
-    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
-    oacRdf = toXmlString self.rdf
-    self.set_xml_content(oacRdf, :comment => comment)
-  end
-  
-  # delete an existing annotation from the oac.xml file
+  # Delete an existing annotation from the parent document
+  # - *Args* :
+  #   - +annot_uri+ -> String value of the URI for the annotation to delete
+  #   - +comment+ -> String comment to save with the commit message
   def delete_annotation(annot_uri,comment)
     OacHelper::remove_annotation(self.rdf,annot_uri)
     unless (OacHelper::get_annotation(self.rdf,annot_uri).nil?)
@@ -201,137 +175,19 @@ class OaCiteIdentifier < CiteIdentifier
     self.set_xml_content(oacRdf, :comment => comment)
   end
   
-  def init_content(a_init_value)
-    updated_content = self.content_from_agent(a_init_value)
-    Rails.logger.info(updated_content)
-    self.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
-  end
-  
-  # Place any actions you always want to perform on  identifier content prior to it being committed in this method
-  # - *Args*  :
-  #   - +content+ -> OaCiteIdentifier XML as string
-  def before_commit(content)
-    OaCiteIdentifier.preprocess(self.urn_attribute,content)
-  end
-  
-  # Applies the preprocess XSLT to 'content'
-  # - *Args*  :
-  #   - +content+ -> XML as string
-  # - *Returns* :
-  #   - modified 'content'
-  def self.preprocess(urn,content)
-    # TODO check for missing data?
-    return content
-  end
-  
-
-  ## method which checks the cite object for an initialization  value
-  def is_match?(a_value) 
-    # for general OA Annotations we allow multiple on the same target 
-    return false
-  end
-  
-  def preview_targets parameters = {}, xsl = nil
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite oa_cite_targets.xsl})),
-        parameters)
-  end
-  
-  def preview parameters = {}, xsl = nil
-    parameters[:e_convertResource] = AgentHelper::agents_can_convert
-    parameters[:e_createConverted] = self.publication.status == 'finalizing'
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite oa_cite_preview.xsl})),
-        parameters)
-  end
-  
-  # need to update the uris to reflect the new name
+  # TODO need to update the uris to reflect the new name
   def after_rename(options = {})
      raise "Rename not supported yet!"
   end
-  
-  def can_update?(a_orig,a_new)
-    session_owner = make_creator_uri()
-    
-    authorized_owner =
-      # either the original creator is the session owner 
-      OacHelper::get_creator(a_orig) == session_owner ||
-      # or own of the annotators is the session owner 
-      (OacHelper::get_annotators(a_orig).include?(session_owner)) ||
-      # or the publication is being finalized, in which case the session owner is not necessarily an annotator
-      # TODO in case of changes during finalization, the finalizer should be added as an annotator 
-      @publication.status == 'finalizing'
-    orig_agents = OacHelper::get_software_agents(a_orig)
-    new_agents = OacHelper::get_software_agents(a_new)
-    
-    authorized_agent =
-      # if no previous agent, then anyone is authorized to update 
-      orig_agents.size == 0 ||
-      # otherwise there must be at least one common agent between the original and the updated 
-      (orig_agents & new_agents).size > 0
-    return authorized_agent && authorized_owner
-      
-  end
 
-  # retrieve content for this identifier from an external agent (or agents)
-  # @param {Array} a_init_urls array of potential agent urls
-  # @returns the content as a string
-  def content_from_agent(a_init_urls)
-    agent = nil
-    agent_url = nil
-    a_init_urls.each do | a_url |
-      agent = AgentHelper.agent_of(a_url)
-      if (agent)
-        agent_url = a_url
-        break;
-      end
-    end
-    if agent.nil?
-      raise "Agent not found for #{agent_url}"
-    end
-
-    agent_client = AgentHelper.get_client(agent)
-    raw_content = agent_client.get_content(agent_url) 
-
-    transform = agent_client.get_transformation(:OaCiteIdentifier)
-    content = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(raw_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,transform)),
-        :e_agentUri => agent[:uri_match],
-        :e_annotatorUri => self.make_annotator_uri,
-        :e_annotatorName => self.publication.creator.human_name,
-        :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
-    )  
-    return content
-  end
-
-  # make a creator uri from the owner of the publication 
-  def make_creator_uri()
-    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
-  end
-
-  # find the next annotation uri for appending to the oac.xml
-  def next_annotation_uri() 
-    max = 0
-    all = OacHelper::get_all_annotations(self.rdf)
-    all.each { |el|
-      annot_id = el.attributes['rdf:about']
-      num = annot_id.split(/#/).last.to_i
-      if (num > max)
-        max = num
-      end
-    }
-    next_num = max+1
-    return Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute  + "/#" + next_num.to_s
-  end
 
   # api_get responds to a call from the data management api controller
-  # @param [String] a_query if not nil, means use the query to 
-  #                         return part of the item
+  # to get all or a specific annotation from the parent document
+  # - *Args* :
+  #   - +a_query+ -> String containing the URI of the annotaiton to retrieve
+  #                  Optional. If not supplied all will be returned. 
+  # - *Returns* :
+  #   - the requested annotation
   def api_get(a_query)
     # query will contain the uri of the annotation
     if (a_query)
@@ -344,17 +200,19 @@ class OaCiteIdentifier < CiteIdentifier
     else
       return toXmlString get_annotations()
     end
-      
   end
   
   # api_append responds to a call from the data management api controller
-  # @param [String] a_body the raw body of the post data
-  # @param [String] a_comment an update comment
-  #
+  # to append a new annotation to the parent document
+  # - *Args* :
+  #   - +a_body+ -> String containing the raw body of the data to be appended
+  #   - + a_comment+ -> String comment for the commit message
+  # - *Returns* :
+  #   - the URI of the newly appended annotation
   def api_append(a_agent,a_body,a_comment)
     transform = nil
-    if (! a_agent.nil? && a_agent[:transformations][:OACIdentifier])
-      transform = a_agent[:transformations][:OACIdentifier]
+    if (! a_agent.nil? && a_agent[:transformations][:OaCiteIdentifier])
+      transform = a_agent[:transformations][:OaCiteIdentifier]
     end
     if (transform.nil?)
       oac = a_body
@@ -374,15 +232,17 @@ class OaCiteIdentifier < CiteIdentifier
   end
   
   # api_update responds to a call from the data management api controller
-  # @param [String] a_query  parameter containing a querystring
+  # to update an existing annotation or annotations in the parent document
+  # - *Args* :
+  #  - +a_query+ -> String parameter containing a querystring
   #                 specific to the identifier type. 
-  # @param [String] a_body the raw body of the post data
-  # @param [String] a_comment an update comment
+  #  - +a_body+ -> String containing the raw body of the data
+  #  - +a_comment+ -> String comment for the commit message
   #
   def api_update(a_agent,a_query,a_body,a_comment)
     transform = nil
-    if (! a_agent.nil? && a_agent[:transformations][:OACIdentifier])
-      transform = a_agent[:transformations][:OACIdentifier]
+    if (! a_agent.nil? && a_agent[:transformations][:OaCiteIdentifier])
+      transform = a_agent[:transformations][:OaCiteIdentifier]
     end
     if (transform.nil?)
       oac = a_body
@@ -401,7 +261,7 @@ class OaCiteIdentifier < CiteIdentifier
       annotation = get_annotation(a_annot.attributes['rdf:about'])
       agents.concat(OacHelper::get_software_agents(a_annot))
       if (annotation)
-        if (can_update?(annotation,a_annot))
+        unless (conflicting_agents?(annotation,a_annot))
           to_update << a_annot
         else
           Raise "Invalid agent for annotation" 
@@ -467,9 +327,10 @@ class OaCiteIdentifier < CiteIdentifier
     return "<success updated=\"#{to_update.size}\" inserted=\"#{to_insert.size}\"/>"
   end
   
-  # get descriptive info 
+  # get descriptive info for the identifier document
+  # TODO all of this should be moved out of here and done elsewhere
   def api_info(urls)
-    # TODO these really should come from an external config file
+    # TODO ontology definition belongs on the annotation client
     motivations = [];
     motivations << { :label => 'Has Translation', :value => 'oa:linking_translation'}
     motivations << { :label => 'Has Link', :value => 'oa:linking'}
@@ -497,21 +358,11 @@ class OaCiteIdentifier < CiteIdentifier
                          },
         :target_links => {
           :commentary => [],
-          'Toponym Annotations' => [],
           'Treebank Annotations' => []
         }
        }
     config[:target_links][:commentary] << {:text => 'Create Commentary', :href => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'}
-    # temporary solution to selectively enable the toponym editor for testing
-    # see https://github.com/PerseusDL/perseids_docs/issues/141
-    has_toponym_hook = REXML::XPath.match(self.rdf.root,"//perseids:PerseidsTool[@rdf:resource='toponym_editor']",{'perseids' => "http://data.perseus.org/ns/perseids"}).size > 0
     
-    if (Tools::Manager.tool_config(:toponym_editor) && has_toponym_hook)
-      explink = Tools::Manager.link_to('toponym_editor',:recogito,:export)
-      implink = Tools::Manager.link_to('toponym_editor',:recogito,:import) 
-      config[:target_links]['Toponym Annotations'] << explink
-      config[:target_links]['Toponym Annotations'] << {:text => implink[:text], :href => impliknk[:href], :passthrough => "#{urls['root']}/dmm_api/item/OAC/#{self.id}/partial"}  
-    end
     tblink = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
     config[:target_links]['Treebank Annotations'] << {:text => tblink[:text], :href => CGI.escape(tblink[:href]), :target_param => 'text_uri'}        
     return config.to_json                  
@@ -523,5 +374,76 @@ class OaCiteIdentifier < CiteIdentifier
   def can_import?
     OacHelper::has_externally_sourced_annotations?(self.rdf)
   end
+
+  protected
+    # private method to add a new annotation to the oac.xml file
+    def add_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agent,comment)
+      exists = OacHelper::get_annotation(self.rdf,annot_uri)
+      unless (exists.nil?)
+        raise "An annotation identified by #{annot_uri} already exists."
+      end
+      self.rdf.root.add_element(OacHelper::make_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agent))
+      # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
+      oacRdf = toXmlString self.rdf
+      self.set_xml_content(oacRdf, :comment => comment)
+    end
+  
+    # private method to update a pre-existing annotation in the parent document
+    def update_annotation(annot_uri,target_uris,body_uris,motivation,creator_uri,agents,comment)
+      annot = OacHelper::get_annotation(self.rdf,annot_uri) 
+      if (annot.nil?)
+        raise "Unable to find #{annot_uri}."
+      end
+      annot.elements.delete_all '*'
+      target_uris.each do |uri|
+        annot.add_element(OacHelper::make_target(uri))
+      end
+      body_uris.each do |uri|
+        annot.add_element(OacHelper::make_body(uri))
+      end
+      annot.add_element(OacHelper::make_motivation(motivation))
+      annot.add_element(OacHelper::make_annotator(creator_uri))
+      unless (agents.nil?)
+        agents.each do | a_agent | 
+          annot.add_element(OacHelper::make_software_agent(a_agent))
+        end
+      end
+      annot.add_element(OacHelper::make_annotated_at)
+      # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
+      oacRdf = toXmlString self.rdf
+      self.set_xml_content(oacRdf, :comment => comment)
+    end
+
+    #private method to test whether two annotations contain conflicting software agents
+    def conflicting_agents?(a_orig,a_new)
+      orig_agents = OacHelper::get_software_agents(a_orig)
+      new_agents = OacHelper::get_software_agents(a_new)
     
+      authorized_agent =
+        # if no previous agent, then anyone is authorized to update 
+        orig_agents.size == 0 ||
+        # otherwise there must be at least one common agent between the original and the updated 
+        (orig_agents & new_agents).size > 0
+      return !authorized_agent
+    end
+  
+    # private method to make a creator uri from the owner of the publication 
+    def make_creator_uri()
+      "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
+    end
+  
+    # private method to find the next annotation uri for appending to the parent document
+    def next_annotation_uri() 
+      max = 0
+      all = OacHelper::get_all_annotations(self.rdf)
+      all.each { |el|
+        annot_id = el.attributes['rdf:about']
+        num = annot_id.split(/#/).last.to_i
+        if (num > max)
+          max = num
+        end
+      }
+      next_num = max+1
+      return Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute  + "/#" + next_num.to_s
+    end
 end

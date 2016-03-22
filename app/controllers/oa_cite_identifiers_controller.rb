@@ -1,18 +1,54 @@
 class OaCiteIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:update]
+  before_filter :ownership_guard, :only => [:create, :edit_or_create, :update, :append_annotation, :delete_annotation, :update_from_agent, :convert, :destroy]
 
 
+  # Show the import form to create a new document from import
   def import
     render :template => 'oa_cite_identifiers/import'
   end  
 
+  # Show the import_update form for an existing identifier
+  # - *Params* :
+  #   - +id+ -> document identifier
   def import_update
     find_identifier
     render :template => 'oa_cite_identifiers/import_update'
   end  
 
+  # Update the content of this identifier via an import from
+  # an external agent
+  # - *Params* :
+  #   - +id+ -> document identifier
+  def update_from_agent
+    find_identifier
+    params[:comment] ||= "Update from Agent #{params[:agent_url]}"
+    begin
+      updated_content =  @identifier.content_from_agent([params[:agent_url]])
+      commit_sha = @identifier.set_xml_content(updated_content,
+                                  :comment => params[:comment])
+      if params[:comment] != nil && params[:comment].strip != ""
+        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
+        @comment.save
+      end
+      flash[:notice] = "File updated."
+      expire_publication_cache
+      redirect_to @identifier.publication and return
+    rescue Exception => import_error
+      flash.now[:error] = "#{import_error}. This file was NOT UPDATED."
+      render :template => 'oa_cite_identifiers/import_update'
+    end
+  end
+
+  # Show the edit display 
+  # 
+  # - *Params* :
+  #   - +id+ -> document identifier
+  #   - +publication_id+ -> parent publication identifier
+  #   - +annotation_uri+ -> String value of the uri of the specific 
+  #                         annotation to edit. Optional. If supplied
+  #                         directs to the configured annotation tool.
   def edit
     find_publication_and_identifier
     annotation_uri = params[:annotation_uri]
@@ -35,6 +71,11 @@ class OaCiteIdentifiersController < IdentifiersController
         })
   end
 
+  # Delete an annotation contained in the document
+  # - *Params* :
+  #   - +id+ -> document identifier
+  #   - +publication_id+ -> parent publication identifier
+  #   - +annotation_uri+ -> String value of the URI of the annotation to delete
   def delete_annotation 
     find_publication_and_identifier
     annotation_uri = params[:annotation_uri]
@@ -48,39 +89,26 @@ class OaCiteIdentifiersController < IdentifiersController
     redirect_to(:action => :edit, :publication_id => @publication.id, :id => @identifier.id) and return
   end
 
+  # Show the editxml display
+  # - *Params* :
+  #   - +id+ -> document identifier
   def editxml
     find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'oa_cite_identifiers/editxml'
   end
 
-  def update_from_agent
-    find_identifier
-    params[:comment] ||= "Update from Agent #{params[:agent_url]}"
-    begin
-      updated_content =  @identifier.content_from_agent([params[:agent_url]])
-      commit_sha = @identifier.set_xml_content(updated_content,
-                                  :comment => params[:comment])
-      if params[:comment] != nil && params[:comment].strip != ""
-        @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
-        @comment.save
-      end
-      flash[:notice] = "File updated."
-      expire_publication_cache
-      redirect_to @identifier.publication and return
-    rescue Exception => import_error
-      flash.now[:error] = "#{import_error}. This file was NOT UPDATED."
-      render :template => 'oa_cite_identifiers/import_update'
-    end
-  end
 
   # use to add annotations to an existing publication
   # we allow one oa_cite_identifier from a given collection per publication
+  # - *Params* :
+  #  - +collection_urn+ -> String value of the urn of the CITE collection to which the item should be added
+  #  - +target_uri+ -> String value of the target URI for the annotation 
+  #  - +publication_id -> String value of the parent publication identifier
   def edit_or_create
     # create the identifier if it doesn't exist
     find_publication
-    collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
+    collection_urn = params[:collection_urn] || Cite::CiteLib.get_default_collection_urn()
     match_call = lambda do |p| return p.publication_id == @publication.id end
     existing_identifiers = OaCiteIdentifier.find_matching_identifiers(collection_urn,@current_user,match_call)
     if existing_identifiers.length == 1
@@ -89,48 +117,49 @@ class OaCiteIdentifiersController < IdentifiersController
       flash[:error] = "Something went wrong - we have more than one oaciteidentifier #{existing_identifiers.to_s}"
       redirect_to dashboard_url and return
     end
-    
-    if @identifier.nil? || params[:commit] == 'Append'
+   
+    # if we don't have a matching identifier assume we can create a new one 
+    if @identifier.nil? 
       @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,[])
-      # append new
+    end
+
+    # look for any targets which reference the citation urn (regardless of source repo)
+    # including any with subreference pointers in this target
+    possible_matches = @identifier.matching_targets("#{Regexp.quote(params[:target_uri])}\#?")
+    # no matches found so we can safely create the identifier and redirect the user to edit it
+    if possible_matches.size == 0
       target_uri = params[:target_uri]
       annotation_uri = @identifier.create_annotation(target_uri)
-      # edit new
-       redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
-    else
-      # otherwise give the user the choice
-      # if it already existed, then it may have existing annotations for the requested target
-      # look for any targets which reference the citation urn (regardless of source repo)
-      # including any with subreference pointers in this target
-      possible_matches = @identifier.matching_targets("#{Regexp.quote(params[:target_uri])}\#?",@creator_uri)
-      if possible_matches.size > 0
-        render(:template => 'cts_oac_identifiers/edit_or_create',
-               :locals => {:matches => possible_matches})
-      else     
-        # append new
-        # edit new
-        target_uri = params[:target_uri]
-        annotation_uri = @identifier.create_annotation(target_uri)
-        # edit new
-        redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
-      end
-    end    
+      redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
+    end
+    # fall through to ask the user what to do
+    @matches => possible_matches
   end
 
-  def create_from_annotation
-    # there is no difference between create_from_annotation and 
-    # create other than create_from_annotation supports GET 
-    create()
-  end 
+  # Append a new annotation to an existing identifier
+  # - *Params* :
+  #   - +target_uri+ -> String value of the target URI for the new annotation
+  #   - +id+ -> String value of the identifier to append the annotation to
+  def append_annotation
+    find_identifier
+    target_uri = params[:target_uri]
+    annotation_uri = @identifier.create_annotation(target_uri)
+    # edit new
+    redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id)
+  end
 
+  # Create a new OaCiteIdentifier for a publication
+  # Not currently used
+  # - *Params+ :
+  #   - +publication_id+ -> String value of the parent publication id
+  #   - +collection_urn+ -> String value of the cite URN for the parent collection
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
     # use the default collection if one wasn't specified
-    collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
-    valid_targets = params[:init_value]
+    collection_urn = params[:collection_urn] || Cite::CiteLib.get_default_collection_urn()
 
-    # required params: publication_id, urn, init_value
+    # required params: publication_id, collection_urn
     unless (@publication && collection_urn)
       flash[:error] = "Unable to create item. Missing urn."
       redirect_to dashboard_url
@@ -144,10 +173,13 @@ class OaCiteIdentifiersController < IdentifiersController
       return
     end
 
-    @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,valid_targets)
+    @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,[])
     redirect_to polymorphic_path([@publication, @identifier],:action => :show)
   end
 
+  # Preview display
+  # - *Params+ :
+  #   - +id+ -> String value of identifier
   def preview
     find_identifier
     @html_preview =
@@ -162,6 +194,17 @@ class OaCiteIdentifiersController < IdentifiersController
         })
   end
 
+  # Convert contents to a new JSON annotation
+  # Prototype code used for imports of hypothes.is annotations
+  # to allow us to create new OA annotations from them
+  # - *Params+ :
+  #   - +id+ -> String value of identifier
+  #   - +resource+ -> String value of a URI for which conversion is 
+  #                   configured in the agents.yml
+  #   - +create+ -> Flag - if specified we will persist a new identifier
+  #                 with the results of the conversion. Otherwise we just 
+  #                 provide a preview of it.
+  #   - +format+ -> Format for the display (json or html)
   def convert
     find_identifier
     agent = AgentHelper::agent_of(params[:resource])
@@ -198,6 +241,9 @@ class OaCiteIdentifiersController < IdentifiersController
     end
   end
 
+  # Destroy this identifier
+  # - *Params* : 
+  #   - +id+ -> String value of the identifier
   def destroy
     find_identifier 
     remaining = @identifier.publication.identifiers.select { |i| 
