@@ -78,7 +78,7 @@ module AgentHelper
 
     agent_client = self.get_client(agent)
     raw_content = agent_client.get_content(agent_url) 
-    a_transform_params{:e_agentUri} = agent[:uri_match]
+    a_transform_params[:e_agentUri] = agent[:uri_match]
     transform = agent_client.get_transformation(a_model_class)
     content = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(raw_content),

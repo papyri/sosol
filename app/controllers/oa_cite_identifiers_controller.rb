@@ -133,7 +133,7 @@ class OaCiteIdentifiersController < IdentifiersController
       redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id) and return
     end
     # fall through to ask the user what to do
-    @matches => possible_matches
+    @matches = possible_matches
   end
 
   # Append a new annotation to an existing identifier

@@ -38,9 +38,9 @@ class OaCiteIdentifier < CiteIdentifier
     initial_content = temp_id.file_template
     temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     params = {
-      :e_annotatorUri => self.make_annotator_uri,
-      :e_annotatorName => self.publication.creator.human_name,
-      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute 
+      :e_annotatorUri => temp_id.make_annotator_uri(),
+      :e_annotatorName => temp_id.publication.creator.human_name,
+      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + temp_id.urn_attribute 
     }
     updated_content = AgentHelper::content_from_agent(a_init_value,:OaCiteIdentifier,params)
     temp_id.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
