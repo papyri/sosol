@@ -1,7 +1,8 @@
 class OaCiteIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
-  before_filter :ownership_guard, :only => [:create, :edit_or_create, :update, :append_annotation, :delete_annotation, :update_from_agent, :convert, :destroy]
+  before_filter :ownership_guard, :only => [:update, :delete_annotation, :update_from_agent, :convert, :destroy, :append_annotation]
+  before_filter :pub_ownership_guard, :only => [:create, :edit_or_create ]
 
 
   # Show the import form to create a new document from import
@@ -134,6 +135,7 @@ class OaCiteIdentifiersController < IdentifiersController
     end
     # fall through to ask the user what to do
     @matches = possible_matches
+    flash[:notice] = "You already have one or more annotations on this passage."
   end
 
   # Append a new annotation to an existing identifier
@@ -145,7 +147,7 @@ class OaCiteIdentifiersController < IdentifiersController
     target_uri = params[:target_uri]
     annotation_uri = @identifier.create_annotation(target_uri)
     # edit new
-    redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @publication.id, :id => @identifier.id)
+    redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @identifier.publication.id, :id => @identifier.id)
   end
 
   # Create a new OaCiteIdentifier for a publication
@@ -274,6 +276,14 @@ class OaCiteIdentifiersController < IdentifiersController
     
      def find_publication
       @publication = Publication.find(params[:publication_id].to_s)
+    end
+
+    def pub_ownership_guard
+      find_publication
+      if !@publication.mutable_by?(@current_user)
+        flash[:error] = 'Operation not permitted.'
+        redirect_to dashboard_url
+      end
     end
   
 end

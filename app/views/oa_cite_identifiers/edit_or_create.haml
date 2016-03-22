@@ -1,12 +1,16 @@
-.append_annotation
+#append_annotation
   %p
   = form_for @identifier, :url => { :action => "append_annotation", :controller => "oa_cite_identifiers"} do |form|
+    = hidden_field_tag 'id', @identifier.id.to_s
     = hidden_field_tag 'target_uri',params[:target_uri]
-    .hints 
-      You already have one one or more annotations on this passage. Click 'Review' to review these annotations and select one to 
-      edit or click 'Append' to add a new annotation for this target.
-    = link_to 'Review', preview_publication_oa_cite_identifier_path( @identifier.publication, @identifier) 
-    = submit_tag "Append"
+    %p 
+      = submit_tag "Append"
+      %span a new annotation for this target. Or choose to edit one of your existing annotations:
+    #existing_annotations
+      %ul
+        - @matches.each do |m|
+          %li
+            = link_to m['target'], edit_publication_oa_cite_identifier_path( @identifier.publication, @identifier, :annotation_uri => m['id'] )
   
   
   
