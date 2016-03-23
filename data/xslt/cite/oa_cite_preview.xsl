@@ -10,7 +10,7 @@
     xmlns:cnt="http://www.w3.org/2008/content#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     
-    <xsl:output method="xhtml"/>
+    <xsl:output method="html"/>
     <xsl:param name="e_convertResource" select="()"/>
     <xsl:param name="e_createConverted" select="false()"/>
     <xsl:param name="delete_link"/>
