@@ -18,17 +18,22 @@ class OaCiteIdentifiersController < IdentifiersController
     render :template => 'oa_cite_identifiers/import_update'
   end  
 
-  # Update the content of this identifier via an import from
+  # Update the content of an OaCiteIdentifier via an import from
   # an external agent
   # - *Params* :
   #   - +id+ -> document identifier
+  #   - +agent_url+ -> the agent url from which to retrieve the data
   def update_from_agent
     find_identifier
     params[:comment] ||= "Update from Agent #{params[:agent_url]}"
     begin
-      updated_content =  @identifier.content_from_agent([params[:agent_url]])
-      commit_sha = @identifier.set_xml_content(updated_content,
-                                  :comment => params[:comment])
+      xform_params = {
+        :e_annotatorUri => @identifier.make_annotator_uri(),
+        :e_annotatorName => @identifier.publication.creator.human_name,
+        :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + @identifier.urn_attribute  + "/"
+      }
+      updated_content = AgentHelper::content_from_agent([params[:agent_url]],:OaCiteIdentifier,xform_params)
+      commit_sha = @identifier.set_xml_content(updated_content, :comment => params[:comment])
       if params[:comment] != nil && params[:comment].strip != ""
         @comment = Comment.new( {:git_hash => commit_sha, :user_id => @current_user.id, :identifier_id => @identifier.origin.id, :publication_id => @identifier.publication.origin.id, :comment => params[:comment].to_s, :reason => "commit" } )
         @comment.save
@@ -147,6 +152,7 @@ class OaCiteIdentifiersController < IdentifiersController
     target_uri = params[:target_uri]
     annotation_uri = @identifier.create_annotation(target_uri)
     # edit new
+    flash[:notice] = "Annotation added"
     redirect_to(:action => :edit,:annotation_uri => annotation_uri, :publication_id => @identifier.publication.id, :id => @identifier.id)
   end
 
@@ -176,7 +182,7 @@ class OaCiteIdentifiersController < IdentifiersController
     end
 
     @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,[])
-    redirect_to polymorphic_path([@publication, @identifier],:action => :show)
+    redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
   end
 
   # Preview display
