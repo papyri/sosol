@@ -10,5 +10,6 @@ Sosol::Application.configure do
   config.site_user_namespace = 'http://papyri.info'
   config.site_oac_namespace = ''
   config.site_cite_collection_namespace ='http://data.perseus.org/collections'
+  config.site_cookie_expire_minutes = 60
   config.current_terms_version = 0
 end
