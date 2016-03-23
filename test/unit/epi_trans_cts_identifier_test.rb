@@ -33,13 +33,13 @@ if Sosol::Application.config.site_identifiers.split(',').include?('EpiTransCTSId
       should "set correct identifier for work" do
         urn = "urn:cts:pdlepi:eagle.tm179252"
         next_temp = CTSIdentifier.next_temporary_identifier("pdlepi",urn,"translation","fr")
-        assert_equal("pdlepi/pdlepi/eagle.tm179252/translation/TempTexts-fr-#{@year}-1", next_temp) 
+        assert_equal("pdlepi/pdlepi/eagle.tm179252/translation/perseids-fr-#{@year}-1", next_temp) 
       end
 
       should "set correct identifier ignoring version" do
         urn = "urn:cts:pdlepi:eagle.tm179252.perseids-fr-1"
         next_temp = CTSIdentifier.next_temporary_identifier("pdlepi",urn,"translation","fr")
-        assert_equal("pdlepi/pdlepi/eagle.tm179252/translation/TempTexts-fr-#{@year}-1", next_temp) 
+        assert_equal("pdlepi/pdlepi/eagle.tm179252/translation/perseids-fr-#{@year}-1", next_temp) 
       end
 
 
