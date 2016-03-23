@@ -43,8 +43,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
   #initialization method for a new version of an existing CITE Object
   def init_version_content(a_content)
     annotation = OacHelper::add_annotator(REXML::Document.new(a_content),make_annotator_uri())
-    oacRdf = toXmlString annotation
-    self.set_xml_content(oacRdf, :comment => 'Initializing Content')
+    return toXmlString annotation
   end
   
   # make a annotator uri from the owner of the publication 
