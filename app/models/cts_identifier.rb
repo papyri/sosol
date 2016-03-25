@@ -189,13 +189,17 @@ class CTSIdentifier < Identifier
 
     related = self.publication.identifiers.select{|i| 
       ( (i.id != self.id) && (i.class != CitationCTSIdentifier) && i.respond_to?('related_text'))}
+
+    # add self on for a full inventory
+    related << self
+
     if (related.size > 0)
       self_urn = CTS::CTSLib.urnObj(self.urn_attribute)
       self_tg = self_urn.getTextGroup(true)
       self_work = self_urn.getWork(false) 
-      inv[self.id.to_s] = 
+      inv[self.publication.id.to_s] = 
         { 'label' => self_tg, 
-          'urn' => self.id.to_s,
+          'urn' => self.publication.id.to_s,
           'works' => {
             self_work =>
             {  'label' => self_work,
@@ -208,7 +212,8 @@ class CTSIdentifier < Identifier
       related.each do |r|
         r_urn = CTS::CTSLib.urnObj(r.urn_attribute)
         r_ver = r_urn.getVersion(false)
-        inv[self.id.to_s]['works'][self_work]['editions'][r_ver] = 
+        r_pubtype = r.class == EpiTransCTSIdentifier ? 'translations' : 'editions'
+        inv[self.publication.id.to_s]['works'][self_work][r_pubtype][r_ver] = 
           { 'label' => r.title.gsub(/'/, "&apos;"), 
              'urn' => r.urn_attribute, 
              'lang' => r.lang,

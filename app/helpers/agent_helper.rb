@@ -73,7 +73,7 @@ module AgentHelper
       end
     end
     if agent.nil?
-      raise "Agent not found for #{agent_url}"
+      raise "Agent not found for #{a_init_urls.join " "}"
     end
 
     agent_client = self.get_client(agent)
