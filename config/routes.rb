@@ -9,7 +9,11 @@ Sosol::Application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :items 
+      resources :items do
+        member do
+          get :peek
+        end
+      end
       resources :publications do
         member do
           post :submit
