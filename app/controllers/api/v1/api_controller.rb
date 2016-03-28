@@ -41,11 +41,34 @@ module Api::V1
     end
 
     def terms
-      @terms = Sosol::Application.config.respond_to?(:site_api_terms) ? Sosol::Application.config.site_api_terms : ""
+      if (Sosol::Application.config.respond_to?(:site_api_terms)) 
+         begin
+           file_path = File.join(Rails.root,Sosol::Application.config.site_api_terms)
+           template = ERB.new(File.new(file_path).read, nil, '-')
+           @terms = template.result(binding).html_safe
+         rescue Exception => e
+           @terms = Sosol::Application.config.site_api_terms
+         end
+      else
+        @terms = ''
+      end
     end
 
     def license
-      @license = Sosol::Application.config.respond_to?(:site_api_license) ? Sosol::Application.config.site_api_license : ""
+      # if we don't have a license, assume it's the same as terms of service
+      if (Sosol::Application.config.respond_to?(:site_api_license)) 
+        @license = Sosol::Application.config.site_api_license
+      elsif (Sosol::Application.config.respond_to?(:site_api_terms)) 
+         begin
+           file_path = File.join(Rails.root,Sosol::Application.config.site_api_terms)
+           template = ERB.new(File.new(file_path).read, nil, '-')
+           @license = template.result(binding).html_safe
+         rescue Exception => e
+           @license = Sosol::Application.config.site_api_terms
+         end
+      else
+        @license = ''
+      end
     end
 
     def contact

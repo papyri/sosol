@@ -9,7 +9,11 @@ Sosol::Application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :items 
+      resources :items do
+        member do
+          get :peek
+        end
+      end
       resources :publications do
         member do
           post :submit
@@ -348,16 +352,15 @@ Sosol::Application.routes.draw do
     
     end
 
+    # the oac_identifier resource model is deprecated
     resources :oac_identifiers do
     
         member do
-    post :create
     get :history
     get :preview
     get :editxml
     put :updatexml
     get :exportxml
-    post :edit_or_create
     post :append
     get :rename_review
     put :rename
@@ -365,16 +368,15 @@ Sosol::Application.routes.draw do
     
     end
 
+    # the cts_oac_identifier resource model is deprecated
     resources :cts_oac_identifiers do
     
         member do
-    post :create
     get :history
     get :preview
     get :editxml
     put :updatexml
     get :exportxml
-    post :edit_or_create
     post :append
     post :delete_annotation
     get :annotate_xslt

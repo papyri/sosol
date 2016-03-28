@@ -1,5 +1,8 @@
+## 
+# model class is @deprecated
+# use oa_cite_identifier instead
+# 
 require 'test_helper'
-
 if Sosol::Application.config.site_identifiers.split(',').include?('OACIdentifier')
   class OACIdentifierTest < ActiveSupport::TestCase
     

@@ -52,8 +52,13 @@ class CtsProxyController < ApplicationController
   def getcapabilities
     if (params[:id] =~ /^\d+$/)  
       # get a json inventory object for the cts-enabled texts in the current publication                       
-      identifier = Identifier.find(params[:id].to_s)
-      render :json => JSON.generate(identifier.related_text_inventory)
+      publication = Publication.find(params[:id].to_s)
+      has_inv = publication.identifiers.select { |i| i.respond_to?(:related_text_inventory) && (i.class != CitationCTSIdentifier) }
+      if has_inv.size > 0
+        render :json => JSON.generate(has_inv[0].related_text_inventory)
+      else
+        render :text => "Not Found", :status => 404
+      end
    else
       response = CTS::CTSLib.proxyGetCapabilities(params[:id].to_s)
       render :json => JRubyXML.apply_xsl_transform(
@@ -70,12 +75,12 @@ class CtsProxyController < ApplicationController
     repos = CTS::CTSLib.getExternalCTSRepos()
 
     if (params[:id])
-       identifier = Identifier.find(params[:id].to_s)
-       related = identifier.related_text_inventory
-       related.keys.each do |key|
+       publication = Publication.find(params[:id].to_s)
+       has_inv = publication.identifiers.select { |i| i.respond_to?(:related_text_inventory) && (i.class != CitationCTSIdentifier) }
+       if (has_inv.size > 0) 
          urispace = root_url + "cts/getpassage"
-         repos['keys'][key.to_s] = urispace
-         repos['urispaces'][urispace] = key.to_s
+         repos['keys'][params[:id]] = urispace
+         repos['urispaces'][urispace] = params[:id]
        end
     end
     render :text => JSON.generate(repos) 

@@ -10,16 +10,23 @@
     xmlns:cnt="http://www.w3.org/2008/content#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     
-    <xsl:output method="xhtml"/>
+    <xsl:output method="html"/>
     <xsl:param name="e_convertResource" select="()"/>
     <xsl:param name="e_createConverted" select="false()"/>
+    <xsl:param name="delete_link"/>
+    <xsl:param name="form_token"/>
+    <xsl:param name="tool_url"/>
+    <xsl:param name="app_base"/>
+    <xsl:param name="lang"/>
+    <xsl:param name="align_link"/>
+    <xsl:param name="mode" select="'preview'"/> 
      
     <xsl:template match="/rdf:RDF">
     	<xsl:apply-templates select="oac:Annotation"/>
     </xsl:template>
     
     <xsl:template match="oac:Annotation">
-        <div class="oa_cite_annotation">
+        <div class="oa_cite_annotation clearfix">
         <xsl:apply-templates select="dcterms:title"/>
         <xsl:apply-templates select="dcterms:description"/>
         <xsl:apply-templates select="rdfs:comment"/>
@@ -34,6 +41,35 @@
        	</xsl:choose>
         <xsl:apply-templates select="oac:hasTarget"/>
         <xsl:apply-templates select="dcterms:source"/>
+        <!-- only provide preview and edit links if we have a tool configured and the target is a resource provided by the base app -->
+        <xsl:if test="$tool_url != '' and oac:hasTarget[starts-with(@rdf:resource,$app_base)]">    
+            <xsl:choose>
+            <!-- only provide preview and edit links if we have a tool configured and the target is a resource provided by the base app -->
+                <xsl:when test="$mode = 'edit'">
+                    <div class="edit_links">
+                        <a href="{replace(replace($tool_url,'URI',encode-for-uri(@rdf:about)),'LANG',$lang)}"><button>Edit</button></a>
+                        <form method="post" action="{$delete_link}" onsubmit="return confirm('Are you sure you want to delete this annotation?');">
+                            <input type="hidden" name="authenticity_token" value="{$form_token}"/>
+                            <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>
+                            <button type="submit">Delete</button>
+                        </form>
+                        <xsl:if test="count(oac:hasTarget) = 1 and contains(oac:hasTarget/@rdf:resource,'urn:cts')
+                            and count(oac:hasBody)  = 1 and contains(oac:hasBody/@rdf:resource,'urn:cts')">
+                            <form method="post" action="{$align_link}">
+                                <input type="hidden" name="authenticity_token" value="{$form_token}"/>
+                                <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>         	              
+                                <button type="submit">Align Text</button>
+                            </form>
+                        </xsl:if>
+                      </div>
+                </xsl:when>
+                <xsl:otherwise>
+                    <div class="edit_links">
+                        <a href="{replace(replace($tool_url,'URI',encode-for-uri(@rdf:about)),'LANG',$lang)}"><button type="button">Preview</button></a>
+                    </div>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
         <xsl:variable name="convert_links">
             <xsl:for-each select="oac:hasBody[@rdf:resource]">
                 <xsl:variable name="resource" select="string(@rdf:resource)"/>
