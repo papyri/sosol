@@ -68,6 +68,7 @@ class OaCiteIdentifiersController < IdentifiersController
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite oa_cite_preview.xsl})),
         { :tool_url => Tools::Manager.link_to('oa_editor',:perseids,:edit,[@identifier])[:href],
+          :e_convertResource => AgentHelper::agents_can_convert,
           :mode => 'edit',
           :lang => 'grc', # TODO PULL FROM ANNOTATION TEXT
           :delete_link => url_for(:controller => 'oa_cite_identifiers', :action => 'delete_annotation', :publication_id => @identifier.publication.id, :id => @identifier.id),
