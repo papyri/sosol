@@ -58,6 +58,36 @@ module AgentHelper
     end
   end
 
+  # retrieve content for this identifier from an external agent (or agents)
+  # @param {Array} a_init_urls array of potential agent urls - only the
+  #                first valid agent url is used
+  # @returns the content as a string
+  def self.content_from_agent(a_init_urls,a_model_class,a_transform_params = {})
+    agent = nil
+    agent_url = nil
+    a_init_urls.each do | a_url |
+      agent = self.agent_of(a_url)
+      if (agent)
+        agent_url = a_url
+        break;
+      end
+    end
+    if agent.nil?
+      raise "Agent not found for #{a_init_urls.join " "}"
+    end
+
+    agent_client = self.get_client(agent)
+    raw_content = agent_client.get_content(agent_url) 
+    a_transform_params[:e_agentUri] = agent[:uri_match]
+    transform = agent_client.get_transformation(a_model_class)
+    content = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(raw_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,transform)),
+        a_transform_params
+    )  
+    return content
+  end
+
   class MediaWikiAgent 
     attr_accessor :conf, :client
 

@@ -17,10 +17,21 @@ class CitationCtsIdentifiersController < IdentifiersController
   end
   
   ## provide user with choice of editing or annotating a citation 
+  # - *Params*    :
+  # - +publication_id+ -> the id of the parent publication
+  # - +collection+ -> the inventory name
+  # - +target_uri+ -> URI for the target of the annotation
+  # - +urn+ -> URN of the target passage
   def confirm_edit_or_annotate
     find_publication
   end
-  
+ 
+   
+  ## provide user with choice of editing or annotating a citation 
+  # - *Params*    :
+  # - +publication_id+ -> the id of the parent publication
+  # - +urn+ -> the urn of the citation
+  # - +collection+ -> the cts inventory
   def edit_or_create
     find_publication
     
@@ -30,14 +41,7 @@ class CitationCtsIdentifiersController < IdentifiersController
       return
     end
     
-  def annotate_xslt
-    find_identifier
-    render :xml => @identifier.parentIdentifier.passage_annotate_xslt
-  end
-    
-    versionIdentifier = params[:version_id].to_s
     sourceCollection = params[:collection].to_s
-    sourceRepo = params[:src].to_s
     citationUrn = params[:urn].to_s
     
     @identifier = nil
@@ -52,6 +56,9 @@ class CitationCtsIdentifiersController < IdentifiersController
           # A conflicting citation is one which 
           # a - is a parent of the required citation, or 
           # b - is a child of the required citation
+          # PROBLEMS REMAIN WITH THIS CODE:
+          # it won't check for overlapping citations on the same 
+          # level. E.g if you pulled lines 1-3, then 2-4, and so on.
           conflicts << pubid
         end # end test for conflicting citation
       end # end test on citation
@@ -84,21 +91,23 @@ class CitationCtsIdentifiersController < IdentifiersController
     redirect_to polymorphic_path([@publication, @identifier],
       :action => :editxml) and return  
   end
-  
+ 
+  # Responds to selection from create_from_cts_urn form
+  # - *Params*    :
+  # - +start_passage+ -> the starting passage
+  # - +end_passage+ -> the ending passage
+  # - +urn+ -> the version urn
+  # - +collection+ -> the inventory for the CTS Text
+  # - +parent_identifier+ -> identifier of parent text object in sosol
+  # - +pubtype+ -> the CTS version type of the text ('edition' or 'translation')
   def select
     find_publication
     startCite = params[:start_passage].strip
     endCite =  params[:end_passage].strip
     if (startCite == '')
-      flash[:notice] = "Supply a valid passage or passage range"
-      render(:template => 'citation_cts_identifiers/select',
-             :locals => {:edition => params[:edition].to_s,
-                        :version_id => params[:version_id].to_s,
-                        :collection => params[:collection].to_s,
-                        :citeinfo => params[:citeinfo].to_s,
-                        :controller => params[:controller].to_s,
-                        :publication_id => params[:publication_id].to_s, 
-                        :pubtype => params[:pubtype].to_s})
+      flash[:error] = "Invalid Input"
+      # TODO go back to the selection form
+      redirect_to dashboard_url
       return
     else
       urn = params[:urn] + ":" + params[:start_passage].strip
@@ -107,8 +116,9 @@ class CitationCtsIdentifiersController < IdentifiersController
       end
       redirect_to(:controller => 'cts_publications', 
                 :action => 'create_from_linked_urn',
-                :collection => params[:collection].to_s,
+                :collection => params[:collection],
                 :urn => urn,
+                :parent_identifier => params[:parent_identifier],
                 :pubtype => params[:pubtype])   
    
     end
@@ -122,9 +132,9 @@ class CitationCtsIdentifiersController < IdentifiersController
       render(:template => 'citation_cts_identifiers/create',
              :locals => {:edition => params[:edition].to_s,
                         :collection => params[:collection].to_s,
-                        :citeinfo => params[:citeinfo].to_s,
                         :controller => params[:controller].to_s,
                         :publication_id => params[:publication_id].to_s, 
+                        :parent_identifier => params[:parent_identifier].to_s,
                         :pubtype => params[:pubtype].to_s})
       return
     else
@@ -217,6 +227,11 @@ class CitationCtsIdentifiersController < IdentifiersController
     flash[:notice] = name + ' was successfully removed from your publication.'
     redirect_to pub
     return
+  end
+
+  def annotate_xslt
+    find_identifier
+    render :xml => @identifier.parentIdentifier.passage_annotate_xslt
   end
   
   protected

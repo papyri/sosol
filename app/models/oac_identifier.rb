@@ -1,3 +1,7 @@
+## 
+# model class is @deprecated
+# use oa_cite_identifier instead
+# 
 require 'uri'
 
 class OACIdentifier < Identifier  

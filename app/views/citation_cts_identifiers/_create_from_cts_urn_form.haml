@@ -1,12 +1,12 @@
 = form_for CitationCTSIdentifier.new(), :url => { :controller => "citation_cts_identifiers", :action => "select"}, :html => {:onsubmit => 'return merge_cite_components();'} do |form|
   = hidden_field_tag 'start_passage'
   = hidden_field_tag 'end_passage'
-  = hidden_field_tag 'publication_id',publication_id.to_s
-  = hidden_field_tag 'urn',edition.to_s
-  = hidden_field_tag 'version_id',version_id.to_s
-  = hidden_field_tag 'collection', collection.to_s
+  = hidden_field_tag 'parent_identifier',parent_identifier.id.to_s
+  = hidden_field_tag 'urn',parent_identifier.urn_attribute
+  = hidden_field_tag 'collection', parent_identifier.inventory
   = hidden_field_tag 'pubtype', pubtype.to_s
   = label_tag 'From:'
+  - citeinfo = parent_identifier.related_inventory.parse_inventory()
   - citeinfo['citations'].each_index do |index|
     = label_tag citeinfo['citations'][index]
     %input{:type => 'text', :name => 'cite_from_' + index.to_s, :class =>'cite_from'}     
@@ -20,3 +20,4 @@
   %br
   = form.submit "Retrieve", :class => ''
   = javascript_include_tag 'perseids-cts'
+

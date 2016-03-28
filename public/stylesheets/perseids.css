@@ -13,7 +13,7 @@ li {
 }
 a,
 a:visited {
-  color: #4183C4;
+  color: #4183C4 !important;
   text-decoration: none;
 }
 a:hover {
@@ -596,11 +596,11 @@ li.editor_menu {
 	border-bottom: 1px dashed black;
 }
 
-.PContent .oac_annotation .edit_links {
+.PContent .oac_annotation .edit_links, .oa_cite_annotation .edit_links {
 	padding-top: .5em;
 }
 
-.PContent .oac_annotation .edit_links button {
+.PContent .oac_annotation .edit_links button, .oa_cite_annotation .edit_links button {
 	float: left;
 	margin-right: .5em;
 }
@@ -985,10 +985,20 @@ ul.perseids_menu li:hover ul.perseids_sub_menu {
 }
 #confirm_delete_user .confirm {
     font-weight: bold;
-    font-weight: larger;
+    font-size: larger;
     margin-top: 1em;
 }
 #confirm_delete_user .warning {
     color: red;
 }
-  
+
+#append_annotation form {
+    margin-left: 2em;
+}
+#append_annotation ul {
+    padding: 1em;
+}
+
+#append_annotation ul li {
+    list-style-type: none;
+}

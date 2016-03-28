@@ -2,10 +2,9 @@
 %html{html_attrs('en')}
   %head
     = csrf_meta_tag
-    %meta{ 'http-equiv' => 'content-type', 'content' => 'text/html;charset=UTF-8' }
-    %meta{ 'name' => 'robots', 'content' => 'noindex, nofollow' }
-    %meta{ 'name' => 'SoSOL-Sparql-Endpoint', 'content' => 'http://services.perseids.org/fuseki/ds/query?query='}
-    %meta{ 'charset' => 'utf-8' }
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name='robots' content='noindex, nofollow' />
+    <meta name='SoSOL-Sparql-Endpoint' content='http://services.perseids.org/fuseki/ds/query?query='/>
     
     %title
       == #{Sosol::Application.config.site_name} Prototype: #{controller.controller_name} - #{controller.action_name}
@@ -33,6 +32,7 @@
     = stylesheet_link_tag Sosol::Application.config.site_layout
     = javascript_include_tag :defaults
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js'
+    = javascript_include_tag 'cross_site'
     = javascript_include_tag 'perseids-ld'
     = javascript_include_tag 'perseids-tools'
     = javascript_include_tag 'perseids-cite'
@@ -90,10 +90,9 @@
         );
       }   
 
-    %style(type="text/css")
-      :sass
-        #header
-          background: #{defined?(ENVIRONMENT_BACKGROUND) ? ENVIRONMENT_BACKGROUND : '#F0F0F0'}
+    :sass
+      #header
+        background: #{defined?(ENVIRONMENT_BACKGROUND) ? ENVIRONMENT_BACKGROUND : '#F0F0F0'}
 
   -#-------------------------------------------------------------
   -#  body content

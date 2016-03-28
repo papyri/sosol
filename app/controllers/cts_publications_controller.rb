@@ -6,7 +6,15 @@ class CtsPublicationsController < PublicationsController
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   require 'jruby_xml'  
   
-  ## Create/Update a CTS Publication from a linked URN
+  # Create/Update a CTS Publication from a linked URN
+  # - *Params*    :
+  # - +urn+ -> the CTS URN of the source passage 
+  # - +collection+ -> the CTS inventory name
+  # - +pubtype+ -> the type of CTS version ('edition' or 'translation') 
+  # - +parent_identifier+ -> the identifier of the parent text document
+  #                          in sosol to which the new citation data will
+  #                          be added (optional - if not supplied we look
+  #                          for an appropriate publication or create one)
   def create_from_linked_urn
     if (params[:urn].blank? || params[:collection].blank?)
       flash[:error] = 'You must specify a URN and a Collection.'
@@ -15,8 +23,8 @@ class CtsPublicationsController < PublicationsController
     end
     
     urnObj = CTS::CTSLib.urnObj(params[:urn].to_s)
-    sourceRepo = params[:src]
     sourceCollection = params[:collection]
+    parentIdentifier =  params[:parent_identifier]
    
     # get the Parent version URN and publication type
     versionUrn = urnObj.getUrnWithoutPassage()
@@ -34,22 +42,32 @@ class CtsPublicationsController < PublicationsController
     
     # check to see if the user is already working on the parent publication
     begin
-      @publication = _get_existing_publication(versionIdentifier)
+      # if we were passed a cts identifier, the parent publication is
+      # its publication
+      if parentIdentifier
+        @publication = Identifier.find(parentIdentifier).publication
+      # otherwise we linked in from the outside and we need to find out
+      # if we are already working on a publication for this text
+      else
+        @publication = _get_existing_publication(versionIdentifier)
+        if (@publication)
+          parentIdentifier = @publication.identifiers.select{|i| i.name == versionIdentifier}.first.id.to_s
+        end
+      end
     rescue Exception => e
       # if we have an exception, we couldn't recover from conflicting 
       # publications - error has already been flashed so just redirect
       Rails.logger.error(e)
+      Rails.logger.error(e.backtrace)
       return redirect_to dashboard_url
     end
     
     if @publication.nil?
       # User doesn't have the parent publication yet so create it
       identifiers_hash = Hash.new
-      [versionIdentifier,OACIdentifier.make_name(versionIdentifier)].each do |id|
-        key = CTS::CTSLib.getIdentifierKey(id)
-        identifiers_hash[key] = Array.new()
-        identifiers_hash[key] << id
-      end
+      key = CTS::CTSLib.getIdentifierKey(versionIdentifier)
+      identifiers_hash[key] = Array.new()
+      identifiers_hash[key] << versionIdentifier
       @publication = Publication.new()
       @publication.owner = @current_user
       @publication.creator = @current_user
@@ -58,6 +76,7 @@ class CtsPublicationsController < PublicationsController
                    
       if @publication.save!
         @publication.branch_from_master
+        parentIdentifier = @publication.identifiers.first.id.to_s
           
         # create the temporary CTS citation and inventory metadata records
         # we can't do this until the publication has already been branched from the master 
@@ -85,11 +104,10 @@ class CtsPublicationsController < PublicationsController
     end # now we have a publication
     redirect_to(:controller => 'citation_cts_identifiers', 
                 :action => 'confirm_edit_or_annotate', 
-                :publication_id => @publication.id,
-                :version_id => versionIdentifier,
+                :publication_id => @publication.id.to_s,
                 :collection => sourceCollection,
-                :urn => citationUrn,
-                :src => sourceRepo)   
+                :target_uri => "#{root_url}cts/getpassage/#{parentIdentifier}/#{params[:urn]}", 
+                :urn => citationUrn)
   end
   
   ###

@@ -31,7 +31,7 @@ class AlignmentCiteIdentifiersController < IdentifiersController
   def create_from_annotation
     @publication = Publication.find(params[:publication_id].to_s)
     
-    annotation_doc = @identifier = OACIdentifier.find(params[:a_id])
+    annotation_doc = Identifier.find(params[:a_id])
     annotation = annotation_doc.get_annotation(params[:annotation_uri])     
     # for now only support a single annotation target
     targets = OacHelper::get_targets(annotation)

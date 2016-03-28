@@ -1,4 +1,7 @@
-# derivation of OACIdentifier for working with CTS-enabled annotation target and body resources 
+## 
+# model class is @deprecated
+# use oa_cite_identifier instead
+# 
 class CtsOACIdentifier < OACIdentifier
     FRIENDLY_NAME = 'CTS Text Annotations'
 

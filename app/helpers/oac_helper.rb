@@ -440,4 +440,26 @@ module OacHelper
 
   end
 
+  
+  # Check for annotations with an external source in an oa annotation document
+  # (as specified by the serializing software agent)
+  # - *Params*    :
+  # - +doc+ -> the annotation document
+  # - *Returns*   :
+  #   - true if any are externally sourced, false if not
+  # TODO at some point it might be useful to return the list of external sourced annotations
+  # but as this code would perform very badly for large annotation sets, leaving that until we have an
+  # external collections solution for these
+  def self.has_externally_sourced_annotations?(a_doc)
+    has_external = false
+    xpath = "oa:serializedBy/prov:SoftwareAgent"
+    REXML::XPath.each(a_doc,"//oa:Annotation/oa:serializedBy/prov:SoftwareAgent",{"oa" => NS_OAC, "prov" => NS_PROV}) do |a| 
+      if AgentHelper::agent_of(a.attributes['rdf:about']) 
+        has_external = true 
+        break;
+       end
+    end
+    return has_external
+  end
+
 end

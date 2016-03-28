@@ -77,6 +77,38 @@ module Api::V1
         end
       end
     end
+    swagger_path "/items/{id}/peek" do
+      operation :get do
+        key :description, 'get item metadata only - no content'
+        key :operationId, 'peekIdentifier'
+        key :tags, [ 'identifier' ]
+        parameter do
+          key :name, :id
+          key :in, :path
+          key :description, "item id"
+          key :required, true
+          key :type, :integer
+        end
+        response 200 do
+          key :description, 'item peek response'
+          schema do
+            key :'$ref' , :Identifier
+          end
+        end
+        response 404 do
+          key :description, 'Not Found'
+          schema do 
+            key :'$ref', :ApiError
+          end
+        end
+        response 405 do
+          key :description, 'Invalid Input'
+          schema do 
+            key :'$ref', :ApiError
+          end
+        end
+      end
+    end
 
     def create
       parsed_params = JSON.parse(request.raw_post.force_encoding("UTF-8"))
@@ -114,6 +146,13 @@ module Api::V1
       end
     end
 
+    def peek
+      @identifier = Identifier.find(params[:id])
+      respond_to do |format|
+        format.json { render :json => build_item(nil,true) }
+      end
+    end
+
     private
     def record_not_found
       respond_to do |format|
@@ -130,13 +169,15 @@ module Api::V1
        end    
     end
 
-    def build_item(content=nil)
+    def build_item(content=nil,meta_only=false)
       item = { }
       item[:id] = @identifier.id
       item[:type] = @identifier.type
       item[:publication] = @identifier.publication.id
       item[:publication_community_name] = @identifier.publication.community.friendly_name
-      item[:content] = content.nil? ? @identifier.content : content
+      unless meta_only
+        item[:content] = content.nil? ? @identifier.content : content
+      end
       item
     end
   end
