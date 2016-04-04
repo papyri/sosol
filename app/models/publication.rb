@@ -1411,7 +1411,7 @@ class Publication < ActiveRecord::Base
       if i.class.to_s == "HGVMetaIdentifier"
         has_meta = true
       end
-      if i.class.to_s == "DDBIdentifier"
+      if i.class.to_s == "DDBIdentifier" && !i.is_reprinted?
        has_text = true
       end
       if i.class.to_s =~ /CTSIdentifier/
