@@ -44,6 +44,10 @@ class Board < ActiveRecord::Base
   def human_name
     return title
   end
+
+  def jgit_actor
+    org.eclipse.jgit.lib.PersonIdent.new(self.title, Sosol::Application.config.site_email_from)
+  end
   
   after_create do |board|
     board.repository.create
