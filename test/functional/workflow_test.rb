@@ -107,6 +107,10 @@ class WorkflowTest < ActiveSupport::TestCase
           should "have two 'approve' votes" do
             assert_equal 2, @new_ddb_submitted.votes.select {|v| %{yes no defer}.include?(v.choice)}.length
           end
+
+          should "be approved" do
+            assert_equal "approved", @ddb_board.publications.first.status
+          end
           
           should "be copied to a finalizer" do
             assert_equal 1, @ddb_board.publications.first.children.length
