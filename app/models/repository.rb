@@ -5,7 +5,8 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Repository
-  attr_reader :master, :path, :repo, :jgit_repo
+  attr_reader :master, :path
+  @@jgit_repo_cache = java.util.WeakHashMap.new
 
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
@@ -25,16 +26,19 @@ class Repository
       @path = File.join(Sosol::Application.config.repository_root,
                         @master_class_path, "#{master.name}.git")
     end
+  end
 
-    if master.nil? || exists?(path)
+  def jgit_repo
+    result = @@jgit_repo_cache.get(@path)
+    if result.nil? && exists?(@path)
       begin
-        @jgit_repo = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
+        result = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
+        @@jgit_repo_cache.put(@path, result)
       rescue Exception => e
         Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
       end
-    else
-      @jgit_repo = nil
     end
+    return result
   end
 
   def owner
@@ -60,7 +64,7 @@ class Repository
     # create a git repository
     Repository.new.fork_bare(path)
     begin
-      @jgit_repo ||= org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
+      @@jgit_repo_cache.put(path, org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build())
     rescue Exception => e
       Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
     end
@@ -91,14 +95,14 @@ class Repository
   #the given file is the filename + path to the file
   def get_blob_from_branch(file, branch = 'master')
     begin
-      if @jgit_repo.nil?
+      if self.jgit_repo.nil?
         # Rails.logger.info("JGIT NIL")
         return nil
       end
-      last_commit_id = @jgit_repo.resolve(branch)
-      jgit_tree = org.eclipse.jgit.revwalk.RevWalk.new(@jgit_repo).parseCommit(last_commit_id).getTree()
+      last_commit_id = self.jgit_repo.resolve(branch)
+      jgit_tree = org.eclipse.jgit.revwalk.RevWalk.new(self.jgit_repo).parseCommit(last_commit_id).getTree()
       path_filter = org.eclipse.jgit.treewalk.filter.PathFilter.create(file)
-      tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(@jgit_repo)
+      tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(self.jgit_repo)
       tree_walk.addTree(jgit_tree)
       tree_walk.setRecursive(true)
       tree_walk.setFilter(path_filter)
@@ -112,7 +116,7 @@ class Repository
       jgit_blob = ""
       begin
         Rails.logger.debug("JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name()}")
-        jgit_blob = org.apache.commons.io.IOUtils.toString(@jgit_repo.open(tree_walk.getObjectId(0)).openStream(), "UTF-8")
+        jgit_blob = org.apache.commons.io.IOUtils.toString(self.jgit_repo.open(tree_walk.getObjectId(0)).openStream(), "UTF-8")
       rescue Exception => e
         Rails.logger.error("JGIT Blob Exception for #{file} on #{branch} in #{path}: #{e.inspect}\n#{e.backtrace.join("\n")}")
         return nil
@@ -152,7 +156,7 @@ class Repository
     end
 
     begin
-      ref = org.eclipse.jgit.api.Git.new(@jgit_repo).branchCreate().setName(name).setStartPoint(source_name).setForce(force).call()
+      ref = org.eclipse.jgit.api.Git.new(self.jgit_repo).branchCreate().setName(name).setStartPoint(source_name).setForce(force).call()
       # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
     rescue Exception => e
       Rails.logger.error("create_branch exception: #{e.inspect}\n#{e.backtrace.join("\n")}")
@@ -160,7 +164,7 @@ class Repository
   end
 
   def delete_branch(name)
-    org.eclipse.jgit.api.Git.new(@jgit_repo).branchDelete().setBranchNames("refs/heads/#{name}").setForce(true).call()
+    org.eclipse.jgit.api.Git.new(self.jgit_repo).branchDelete().setBranchNames("refs/heads/#{name}").setForce(true).call()
   end
 
   #(from_branch, to_branch, from_repo)
@@ -177,11 +181,11 @@ class Repository
   end
 
   def add_remote(other_repo)
-    remote_configs = org.eclipse.jgit.transport.RemoteConfig.getAllRemoteConfigs(@jgit_repo.getConfig()).to_a
+    remote_configs = org.eclipse.jgit.transport.RemoteConfig.getAllRemoteConfigs(self.jgit_repo.getConfig()).to_a
     unless remote_configs.map{|c| c.getName()}.include?(other_repo.name)
-      remote_config = org.eclipse.jgit.transport.RemoteConfig.new(@jgit_repo.getConfig(), other_repo.name)
+      remote_config = org.eclipse.jgit.transport.RemoteConfig.new(self.jgit_repo.getConfig(), other_repo.name)
       remote_config.addURI(org.eclipse.jgit.transport.URIish.new("file://" + other_repo.path))
-      remote_config.update(@jgit_repo.getConfig())
+      remote_config.update(self.jgit_repo.getConfig())
     end
   end
 
@@ -214,7 +218,7 @@ class Repository
   end
 
   def branches
-    org.eclipse.jgit.api.Git.new(@jgit_repo).branchList().call().map{|e| e.getName().sub(/^refs\/heads\//,'')}
+    org.eclipse.jgit.api.Git.new(self.jgit_repo).branchList().call().map{|e| e.getName().sub(/^refs\/heads\//,'')}
   end
 
   def rename_file(original_path, new_path, branch, comment, actor)
@@ -229,13 +233,13 @@ class Repository
     end
 
     # TODO: just get the object id instead of reinserting
-    inserter = @jgit_repo.newObjectInserter()
+    inserter = self.jgit_repo.newObjectInserter()
     file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, content.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
     inserter.flush()
     inserter.release()
 
     jgit_tree = JGit::JGitTree.new()
-    jgit_tree.load_from_repo(@jgit_repo, branch)
+    jgit_tree.load_from_repo(self.jgit_repo, branch)
     jgit_tree.add_blob(new_path, file_id.name())
     jgit_tree.del(original_path)
     jgit_tree.commit(comment, actor)
@@ -248,13 +252,13 @@ class Repository
     end
 
     begin
-      inserter = @jgit_repo.newObjectInserter()
+      inserter = self.jgit_repo.newObjectInserter()
       file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, data.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
 
-      last_commit_id = @jgit_repo.resolve(branch)
+      last_commit_id = self.jgit_repo.resolve(branch)
 
       jgit_tree = JGit::JGitTree.new()
-      jgit_tree.load_from_repo(@jgit_repo, branch)
+      jgit_tree.load_from_repo(self.jgit_repo, branch)
       jgit_tree.add_blob(file, file_id.name())
 
       jgit_tree.commit(comment, actor)
