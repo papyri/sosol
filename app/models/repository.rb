@@ -22,7 +22,7 @@ end
 
 class Repository
   attr_reader :master, :path, :repo
-  @@jgit_repository = java.util.WeakHashMap.new
+  @@jgit_repo_cache = java.util.WeakHashMap.new
 
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
@@ -52,11 +52,11 @@ class Repository
   end
 
   def jgit_repo
-    result = @@jgit_repository.get(@path)
+    result = @@jgit_repo_cache.get(@path)
     if result.nil? && exists?(@path)
       begin
         result = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
-        @@jgit_repository.put(@path, result)
+        @@jgit_repo_cache.put(@path, result)
       rescue Exception => e
         Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
       end
@@ -78,7 +78,7 @@ class Repository
     # create a git repository
     @repo ||= @canonical.fork_bare(path)
     begin
-      @@jgit_repository.put(path, org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build())
+      @@jgit_repo_cache.put(path, org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build())
     rescue Exception => e
       Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}\n#{e.backtrace.join("\n")}")
     end
