@@ -323,6 +323,7 @@ Sosol::Application.routes.draw do
     end
   end
 
+  match 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
   match 'editor/user/info' => 'user#info'
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
