@@ -10,3 +10,4 @@ db/*.sqlite3
 protosite.war
 lib/rxsugar
 .sass-cache
+.lock-*
