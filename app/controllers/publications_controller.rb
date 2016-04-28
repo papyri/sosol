@@ -308,7 +308,7 @@ class PublicationsController < ApplicationController
         flash[:error] = "Can't change finalizer on non-board copy of publication."
         redirect_to show
       elsif @publication.advisory_lock_exists?("become_finalizer_#{@publication.id}")
-        flash[:notice] = "Another user is currently making themselves the finalizer."
+        flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
         redirect_to show
       else
         SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
