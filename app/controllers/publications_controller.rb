@@ -301,14 +301,18 @@ class PublicationsController < ApplicationController
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
     original_publication_owner_id = @publication.owner.id
+    
     @publication.with_lock do
-      #note this can only be called on a board owned publication
       if @publication.owner_type != "Board"
+        #note this can only be called on a board owned publication
         flash[:error] = "Can't change finalizer on non-board copy of publication."
         redirect_to show
+      elsif @publication.advisory_lock_exists?("become_finalizer_#{@publication.id}")
+        flash[:notice] = "Another user is currently making themselves the finalizer."
+        redirect_to show
+      else
+        SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
       end
-
-      SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
     end
 
     flash[:notice] = "Finalizer change running. Check back in a few minutes."
