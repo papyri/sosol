@@ -117,6 +117,7 @@ class Board < ActiveRecord::Base
   #- nil if no decree has been triggered
   #- decree action if the votes trigger a decree, if multiple decrees could be triggered by the vote count, only the first in the list will be returned.
   def tally_votes(votes)
+    Rails.logger.info("Board#tally_votes on Board: #{self.inspect}\nWith votes: #{votes.inspect}")
     # NOTE: assumes board controls one identifier type, and user hasn't made
     # rules where multiple decrees can be true at once
     

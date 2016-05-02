@@ -558,13 +558,13 @@ class Publication < ActiveRecord::Base
   #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
   #
   #*Args*
-  #- +user_votes+ the votes to be tallied. By default, the publicaiton's own votes are used.
+  #- +user_votes+ the votes to be tallied. By default, the publication's own votes are used.
   #*Returns*
   #- +decree_action+ determined by the vote tally or +nil+ if no decree is triggered by the tally.
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes #use the publication's votes
+    user_votes ||= self.votes(true) #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
     #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
