@@ -81,7 +81,7 @@
       -# if i am already the finalizer dont show the button
       - finalizer = @publication.find_finalizer_user
       - if !(finalizer && finalizer.id == @current_user.id)
-        = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id, :onclick => 'this.disabled=true;return true;' }
+        = button_to "Make me finalizer", { :disabled => @publication.advisory_lock_exists?("become_finalizer_#{@publication.id}"), :action => 'become_finalizer', :id => @publication.id, :onclick => 'this.disabled=true;return true;' }
     
     %br
     
