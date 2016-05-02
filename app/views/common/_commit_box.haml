@@ -3,12 +3,12 @@
     .message
       = simple_format(commit[:message])
     .author
-      = commit[:author_name]
+      = commit[:author_name].force_encoding("UTF-8")
       %span.type
         (author)
     .date
       = commit[:authored_date] > 1.week.ago ? "#{time_ago_in_words(commit[:authored_date])} ago" : commit[:authored_date].strftime("%B %d, %Y")
-    - if commit[:author_name] != commit[:committer_name]
+    - if commit[:author_name].force_encoding("UTF-8") != commit[:committer_name].force_encoding("UTF-8")
       .author
         = commit[:committer_name]
         %span.type
