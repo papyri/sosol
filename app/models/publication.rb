@@ -508,22 +508,31 @@ class Publication < ActiveRecord::Base
 
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
-      self.transaction do
-        # set to new branch
-        self.branch = new_branch_name
-        # set status to new status
-        self.status = new_status
-        begin
+      retries = 0
+      begin
+        self.transaction do
+          # set to new branch
+          self.branch = new_branch_name
+          # set status to new status
+          self.status = new_status
           self.save!
-        rescue ActiveRecord::RecordInvalid
-          self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
-          self.save!
+          # save succeeded, so perform actual git change
+          # branch from the original branch
+          self.owner.repository.create_branch(new_branch_name, old_branch_name)
+          # delete the original branch
+          self.owner.repository.delete_branch(old_branch_name)
         end
-        # save succeeded, so perform actual git change
-        # branch from the original branch
-        self.owner.repository.create_branch(new_branch_name, old_branch_name)
-        # delete the original branch
-        self.owner.repository.delete_branch(old_branch_name)
+      rescue ActiveRecord::RecordInvalid
+        self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        retry
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
+          retry
+        end
       end
     end
   end
