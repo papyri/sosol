@@ -10,6 +10,7 @@ rm -rf db/test/git/canonical.git
 rm -rf db/git/boards/*
 rm -rf db/git/users/*
 rm -rf db/git/communities/*
+rm -f .lock-*
 echo "" > db/git/canonical.git/objects/info/alternates
 bundle exec rake db:migrate:reset
 
