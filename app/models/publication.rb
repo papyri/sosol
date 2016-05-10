@@ -802,7 +802,18 @@ class Publication < ActiveRecord::Base
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.change_status('finalizing')
-    finalizing_publication.save!
+    retries = 0
+    begin
+      finalizing_publication.save!
+    rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+      Rails.logger.warn(e.message)
+      retries += 1
+      if retries <= 3
+        sleep(2 ** retries)
+        Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+        retry
+      end
+    end
   end
 
   #Destroys this publication's finalizer's copy.
