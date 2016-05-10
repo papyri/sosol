@@ -532,6 +532,8 @@ class Publication < ActiveRecord::Base
           sleep(2 ** retries)
           Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
           retry
+        else
+          raise e
         end
       end
     end
@@ -793,16 +795,31 @@ class Publication < ActiveRecord::Base
       self.remove_finalizer()
       finalizing_publication = copy_to_owner(finalizer)
       # finalizing_publication = clone_to_owner(finalizer)
+
       approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
       approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
       approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
       approve_members = approve_votes.map {|v| v.user}
+
       self.flatten_commits(finalizing_publication, finalizer, approve_members)
 
       #should we clear the modified flag so we can tell if the finalizer has done anything
       # that way we will know in the future if we can change finalizersedidd
       finalizing_publication.change_status('finalizing')
-      finalizing_publication.save!
+      retries = 0
+      begin
+        finalizing_publication.save!
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+          retry
+        else
+          raise e
+        end
+      end
     elsif board_members.include?(finalizer)
       self.change_finalizer(finalizer)
     end
