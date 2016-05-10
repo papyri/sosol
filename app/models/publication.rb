@@ -532,6 +532,8 @@ class Publication < ActiveRecord::Base
           sleep(2 ** retries)
           Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
           retry
+        else
+          raise e
         end
       end
     end
@@ -812,6 +814,8 @@ class Publication < ActiveRecord::Base
         sleep(2 ** retries)
         Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
         retry
+      else
+        raise e
       end
     end
   end
