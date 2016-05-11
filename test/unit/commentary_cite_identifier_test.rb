@@ -59,12 +59,23 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
         assert annotators.grep(test.make_annotator_uri())
       end
     
-    end
+
+      should "process a ro" do
+        test = CommentaryCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlcomm",["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"])
+         expected = {
+           'aggregates' => [ {'uri' => 'urn:cts:greekLit:tlg0012.tlg001.perseus-grc1', 'mediatype' => 'text/xml'}],
+           'annotations'=> [
+           {"about"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],
+            "dc:format"=>"http://data.perseus.org/rdfvocab/commentary"}]
+        }
+        assert_equal(expected, test.as_ro())
+      end
     
      # TODO new version from existing version - same annotator 
      # TODO new version from existing version - new annotator (adds annotator)
      # TODO commentary length exceeded
      # TODO update commentary test
+    end
 
   end
 end
