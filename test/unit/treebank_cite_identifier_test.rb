@@ -136,7 +136,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       #  assert ! test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1.xml"])
       #end
        should "parse annotation targets" do
-         file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
+         file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
          test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
          expected = {
            'aggregates' => [ {'uri' => "urn:cts:latinLit:phi1221.phi007.perseus-lat1", 'mediatype' => 'text/xml'}],
