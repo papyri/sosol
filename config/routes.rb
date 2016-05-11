@@ -25,6 +25,7 @@ Sosol::Application.routes.draw do
       get 'terms' => 'api#terms' 
       get 'license' => 'api#license'
       get 'contact' => 'api#contact'
+      get 'export_ro' => 'api#export_ro'
     end
   end
 

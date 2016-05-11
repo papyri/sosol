@@ -1,6 +1,7 @@
 module Api::V1
   class ApiController < DmmApiController
     include Swagger::Blocks
+    require 'uuid'
 
     skip_before_filter :verify_authenticity_token #don't invalidate any existing browser session
     skip_before_filter :authorize  # skip regular authentication routes
@@ -40,6 +41,74 @@ module Api::V1
       ping
     end
 
+    def export_ro
+      manifest = {}
+      manifest["@context"] = ["https://w3id.org/bundle/context"]
+      manifest["@id"] = UUID.generate
+      manifest["createdOn"] =  Time.new
+      manifest["createdBy"] = { 
+        "name" => @current_user.full_name,
+        "uri" => "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)}"
+      }
+      manifest['aggregates'] = []
+      manifest['annotations'] = []
+      annotations = {}
+      params[:publication_id].each do |p|
+        begin
+          pub = Publication.find(p)
+        rescue
+          next
+        end 
+        pub.identifiers.each do |i|
+          unless i.respond_to?(:as_ro)
+            next
+          end
+          ro = i.as_ro
+          manifest["aggregates"].concat(ro['aggregates'])
+          annotations[i.id] = ro['annotations']
+        end
+      end    
+      redirect_svc = "http://catalog.perseus.org/cite-collections/api/versions/redirect?format=json&version=REPLACE_VERSION"
+      redirected = {}
+      manifest['aggregates'].each do |a|
+        if redirected[a['uri']]
+          next
+        end
+        url = URI.parse(redirect_svc.sub(/REPLACE_VERSION/,a['uri']))
+        response = Net::HTTP.start(url.host, url.port) do |http|
+          http.send_request('GET',url.request_uri)
+        end
+        unless (response.code == '200')
+          # to do handle error
+        end
+        redirect = JSON.parse(response.body.force_encoding("UTF-8"))
+        if redirect && redirect.size > 0
+          new_uri = redirect[0]['version']
+          redirected[a['uri']] = new_uri
+          a['uri'] = new_uri
+        end
+      end
+      annotations.each do |identifier,arr|
+        item_api_url = url_for(:controller => 'items') + "/#{identifier}"
+        arr.each do |a|
+          a['about'].each_with_index do |u,i|
+            redirected.each do |k,v|
+              if u =~ /^#{k}:|$/
+                a['about'][i]  = u.sub(k,v)
+              end
+            end
+          end
+          if (a['query']) 
+            annotation_url = item_api_url + "?q=" + URI.escape(a['query'])
+          else
+            annotation_url = item_api_url
+          end
+          manifest['annotations'] << { 'about' => a['about'], 'content' => annotation_url, 'dc:format' => a['dc:format'] }
+        end
+      end
+      render :json => manifest 
+    end
+
     def terms
       if (Sosol::Application.config.respond_to?(:site_api_terms)) 
          begin
@@ -49,12 +118,12 @@ module Api::V1
          rescue Exception => e
            @terms = Sosol::Application.config.site_api_terms
          end
-      else
-        @terms = ''
-      end
-    end
+      else 
+        @terms = '' 
+      end 
+    end 
 
-    def license
+    def license 
       # if we don't have a license, assume it's the same as terms of service
       if (Sosol::Application.config.respond_to?(:site_api_license)) 
         @license = Sosol::Application.config.site_api_license
