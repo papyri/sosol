@@ -44,6 +44,10 @@ class Board < ActiveRecord::Base
   def human_name
     return title
   end
+
+  def jgit_actor
+    org.eclipse.jgit.lib.PersonIdent.new(self.title, Sosol::Application.config.site_email_from)
+  end
   
   after_create do |board|
     board.repository.create
@@ -113,11 +117,13 @@ class Board < ActiveRecord::Base
   #- nil if no decree has been triggered
   #- decree action if the votes trigger a decree, if multiple decrees could be triggered by the vote count, only the first in the list will be returned.
   def tally_votes(votes)
+    Rails.logger.info("Board#tally_votes on Board: #{self.inspect}\nWith votes: #{votes.inspect}")
     # NOTE: assumes board controls one identifier type, and user hasn't made
     # rules where multiple decrees can be true at once
     
     self.decrees.each do |decree|
       if decree.perform_action?(votes)
+        Rails.logger.info("Board#tally_votes success on Board: #{self.inspect}\nFor decree: #{decree.inspect}\nWith votes: #{votes.inspect}")
         return decree.action
       end
     end

@@ -512,22 +512,33 @@ class Publication < ActiveRecord::Base
 
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
-      self.transaction do
-        # set to new branch
-        self.branch = new_branch_name
-        # set status to new status
-        self.status = new_status
-        begin
+      retries = 0
+      begin
+        self.transaction do
+          # set to new branch
+          self.branch = new_branch_name
+          # set status to new status
+          self.status = new_status
           self.save!
-        rescue ActiveRecord::RecordInvalid
-          self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
-          self.save!
+          # save succeeded, so perform actual git change
+          # branch from the original branch
+          self.owner.repository.create_branch(new_branch_name, old_branch_name)
+          # delete the original branch
+          self.owner.repository.delete_branch(old_branch_name)
         end
-        # save succeeded, so perform actual git change
-        # branch from the original branch
-        self.owner.repository.create_branch(new_branch_name, old_branch_name)
-        # delete the original branch
-        self.owner.repository.delete_branch(old_branch_name)
+      rescue ActiveRecord::RecordInvalid
+        self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        retry
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
+          retry
+        else
+          raise e
+        end
       end
     end
   end
@@ -562,13 +573,13 @@ class Publication < ActiveRecord::Base
   #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
   #
   #*Args*
-  #- +user_votes+ the votes to be tallied. By default, the publicaiton's own votes are used.
+  #- +user_votes+ the votes to be tallied. By default, the publication's own votes are used.
   #*Returns*
   #- +decree_action+ determined by the vote tally or +nil+ if no decree is triggered by the tally.
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes #use the publication's votes
+    user_votes ||= self.votes(true) #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
     #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
@@ -578,16 +589,19 @@ class Publication < ActiveRecord::Base
 
     #check that we are still taking votes
     if self.status != "voting"
+      Rails.logger.warn("Publication#tally_votes for #{self.id} does not have status 'voting'")
       return "" #return nothing and do nothing since the voting is now over
     end
 
     #need to tally votes and see if any action will take place
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      Rails.logger.warn("Publication#tally_votes for #{self.id} not owned by a Board")
       return "" #another check to make sure only the board is voting on its copy
     else
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
 
+    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -794,7 +808,20 @@ class Publication < ActiveRecord::Base
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.change_status('finalizing')
-    finalizing_publication.save!
+    retries = 0
+    begin
+      finalizing_publication.save!
+    rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+      Rails.logger.warn(e.message)
+      retries += 1
+      if retries <= 3
+        sleep(2 ** retries)
+        Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+        retry
+      else
+        raise e
+      end
+    end
   end
 
   #Destroys this publication's finalizer's copy.
@@ -1452,7 +1479,7 @@ class Publication < ActiveRecord::Base
       if i.class.to_s == "HGVMetaIdentifier"
         has_meta = true
       end
-      if i.class.to_s == "DDBIdentifier"
+      if i.class.to_s == "DDBIdentifier" && !i.is_reprinted?
        has_text = true
       end
       if i.class.to_s =~ /CTSIdentifier/

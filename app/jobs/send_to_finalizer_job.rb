@@ -9,8 +9,10 @@ class SendToFinalizerJob
       ActiveRecord::Base.connection_pool.with_connection do
         publication = Publication.find(publication_id)
         publication.with_lock do
-          user = User.find(user_id) unless user_id.nil?
-          publication.send_to_finalizer(user)
+          publication.with_advisory_lock("become_finalizer_#{publication_id}") do
+            user = User.find(user_id) unless user_id.nil?
+            publication.send_to_finalizer(user)
+          end
         end
       end
     ensure
