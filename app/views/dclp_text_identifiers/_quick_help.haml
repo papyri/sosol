@@ -1,0 +1,6 @@
+- pseudoId = rand(1000000).to_s
+%span.quickHelp{:class => 'quickHelp_' + i18nId.gsub(/\./, '_')}
+  %span.hook{:onmouseover => "Effect.Appear('" + pseudoId + "');", :onmouseout => "Effect.Fade('" + pseudoId + "');"}
+    ?
+    %span.message{:id => pseudoId, :style => 'display: none' }
+      = I18n.t(i18nId)

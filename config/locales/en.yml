@@ -131,6 +131,22 @@ en:
     label:
       editionLink: Biblio
       addEdition: add edition
+      workAuthorName: TLG Name
+      workAuthorNumber: TLG Number
+      workInternetResources: Internet Resources
+      workInternetResourcesDescription: e.g. classical works, knowledge base
+      workCertainty: Certainty
+      workName: TM Work
+      workNumber: TM Work Number
+      workDate: Year of Creation
+      workDateDescription: e.g. -412 to 120
+      workDateTo: to
+      workAddAlternative: add alternative
+      workMentionAlternative: is alternative to
+      workDisplayName: Display Name
+      workLegacy: Description
+      workExtra: Passage
+      workExtraBookNumber: Book Number
 
   meta:
     legend:
@@ -428,6 +444,18 @@ en:
       plate: Plate
       side: Side
       generic: Generic
+
+  work:
+    subtype:
+      primary: Primary
+      secondary: Citation
+    extra:
+      generic: generic
+      lines: lines
+      fragment: fragment
+      page: page
+      chapter: chapter
+      poem: poem
 
   provenance:
     epoch:

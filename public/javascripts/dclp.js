@@ -1,3 +1,15 @@
+/* **** W O R K **** */
+
+function workAuthorNameChange(el){
+  //console.log('workAuthorChange');
+}
+
+function workAuthorNumberChange(el){
+  //console.log('workAuthorNumberChange');
+}
+
+/* **** E D I T I O N **** */
+
 function editionLinkChange(el){
   new Ajax.Updater(el.identify().replace('link', 'biblioPreview'), '/dclp_meta_identifiers/biblio_preview', { parameters: {biblio: el.getValue()} });
 }

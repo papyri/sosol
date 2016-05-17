@@ -176,4 +176,136 @@ module DclpMetaIdentifierHelper
     
     end
   end
+
+  module DclpWork
+
+    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
+    def DclpWork.subtypeOptions
+      [
+        [I18n.t('work.subtype.primary'),   :primary],
+        [I18n.t('work.subtype.secondary'), :secondary]
+      ]
+    end
+
+    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
+    def DclpWork.languageOptions
+      [
+        ['', ''],
+        [I18n.t('language.la'), :la],
+        [I18n.t('language.el'), :grc],
+      ]
+    end
+
+    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
+    def DclpWork.certaintyOptions
+      [
+        ['', ''],
+        [I18n.t('work.type.high'), :high],
+        [I18n.t('work.type.low'),  :low]
+      ]
+    end
+
+    # Data structure for publication information
+    class Author
+      attr_accessor :name, :language, :tlg, :cwkb, :certainty, :ref, :refList, :corresp
+      def initialize init = nil
+        @name      = init[:value]
+        @language  = init[:attributes][:language]
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : nil
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : nil
+        @certainty = init[:children][:certainty] ? init[:children][:certainty][:attributes][:target] : nil
+        @corresp   = init[:attributes][:corresp]
+        @ref       = init[:attributes][:ref]
+        @refList   = ref.split(' ')
+      end
+    end
+
+    # Data structure for publication information
+    class Title
+      attr_accessor :name, :language, :tlg, :cwkb, :certainty, :ref, :date, :from, :to, :corresp
+      def initialize init = nil
+        @name      = init[:value]
+        @language  = init[:attributes][:language]
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : nil
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : nil
+        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
+        @ref       = init[:attributes][:ref]
+        @date      = init[:children][:date] ? init[:children][:date][:value] : nil
+        @from      = init[:children][:date] ? init[:children][:date][:attributes][:from] : nil
+        @to        = init[:children][:date] ? init[:children][:date][:attributes][:to] : nil
+        @corresp   = init[:attributes][:corresp]
+      end
+    end
+
+    # Data structure for publication information
+    class Extra
+      attr_accessor :value, :type, :certainty, :from, :to, :corresp
+
+      def initialize init = nil
+        @value     = init[:value]
+        @type      = init[:attributes][:type]
+        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
+        @from      = init[:attributes][:from]
+        @to        = init[:attributes][:to]
+        @corresp   = init[:attributes][:corresp]
+      end
+    end
+
+    class Work
+      # +Array+ of a valid values for TEI:provenance|@type
+      @@subtypeList = [:primary, :secondary]
+      @@atomList = [:subtype]
+
+      attr_accessor :subtype, :author, :title, :extraList
+
+      # Constructor
+      # - *Args*  :
+      #   - +init+ → +Hash+ object containing provenance data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
+      # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
+      def initialize init = nil
+        @subtype   = nil
+        @author    = nil
+        @title     = nil
+        @extraList = []
+
+        if init
+          if init[:attributes]
+            self.populateAtomFromHash init[:attributes]
+          end
+          if init[:children]
+            if init[:children][:author]
+              @author = Author.new(init[:children][:author])
+            end
+            if init[:children][:title]
+              @title = Title.new(init[:children][:title])
+            end
+            if init[:children][:extra]
+              init[:children][:extra].each {|extra|
+                @extraList << Extra.new(extra[:value], extra[:attributes][:type], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
+              }
+            end
+          end
+        end
+      end
+
+      # Updates instance variables from a hash
+      # - *Args*  :
+      #   - +epiDocList+ → data contained in +BiblioIdentifier+'s +:provenance+ attribute
+      # - *Returns* :
+      #   - +Array+ of +HgvGeo::Provenance+ objects
+      # Side effect on all member variables that are declared in +@@atomList+
+      def populateAtomFromHash hash
+        @@atomList.each {|member|
+          self.send((member.to_s + '=').to_sym, hash[member] || nil)
+        }
+      end
+
+    end
+  end
 end

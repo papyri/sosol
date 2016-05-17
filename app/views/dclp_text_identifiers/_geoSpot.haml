@@ -1,0 +1,45 @@
+- key = HgvMetaIdentifierHelper::generateRandomId 'geoSpot'
+
+.multi.geoSpot{:id => 'multi_' + key.to_s}
+  %ul.items{:id => 'multiItems_' + key.to_s}
+    - geoSpotList.each_index do |index|
+      - geoBase = placeBaseChildren + '[geo][' + index.to_s + ']'
+      - geoBaseAttributes = geoBase + '[attributes]'
+      - geoBaseChildren = geoBase + '[children]'
+      - geo = geoSpotList[index]
+      %li
+        = select_tag geoBaseAttributes + '[type]', options_for_select(HgvProvenance.epochOptions, geo.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
+        = select_tag geoBaseAttributes + '[subtype]', options_for_select(HgvProvenance.territoryOptions, geo.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
+        = select_tag geoBaseChildren + '[offset][value]', options_for_select(HgvProvenance.offsetOptions, geo.offset), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
+        = text_field_tag geoBase + '[value]', geo.name, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName'
+        = check_box_tag geoBaseAttributes + '[certainty]', :low, geo.certain?, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty'
+        = label_tag geoBaseAttributes + '[certainty]', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain'
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('meta.tooltip.multiMove')} o
+
+        .paragraph.geoReferenceContainer{ :style => 'display: none;' }
+          = hidden_field_tag geoBaseAttributes + '[reference]', geo.referenceList.join(' '), :class => 'observechange provenanceGeoReference'
+          .clear
+          = label_tag geoBaseAttributes + '[reference]', I18n.t('meta.label.reference')
+          = render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => geo.referenceList}
+          .clear
+
+  .add{:id => 'multiPlus_' + key.to_s}
+
+    = select_tag key + '_type', options_for_select(HgvProvenance.epochOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
+    = select_tag key + '_subtype', options_for_select(HgvProvenance.territoryOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
+    = select_tag key + '_offset', options_for_select(HgvProvenance.offsetOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
+    = text_field_tag key + '_name', nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName'
+    = check_box_tag key + '_certainty', :low, false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty'
+    = label_tag key + '_certainty', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain'
+    
+    %span{:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('label.multiAdd')
+    
+    .paragraph.geoReferenceContainer{ :style => 'display: none;' }
+      = hidden_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference'
+      .clear
+      = label_tag 'reference', I18n.t('meta.label.reference')
+      = render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => []}
+      .clear
+
+  = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

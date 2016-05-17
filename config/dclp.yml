@@ -65,7 +65,7 @@
     :mp3:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
       :pattern: /\A\d+(\.\d+)?\Z/ # vielleicht auch Buchstaben?!
-    :ancientEdition:
+    :work:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='ancientEdition']/listBibl/bibl[@type='publication']
       :multiple: true
       :attributes:
@@ -79,10 +79,19 @@
         :author:
           :xpath: author
           :attributes:
+            :language:
+              :name: xml:lang
+              :pattern: /\Agrc|la\Z/
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
           :children:
+            :tlg:
+              :xpath: idno[@type='tlg']
+              :pattern: /\A\d+\Z/
+            :cwkb:
+              :xpath: idno[@type='cwkb']
+              :pattern: /\A\d+\Z/
             :certainty:
               :xpath: certainty[@cert='low'][@locus='value']
               :attributes:
@@ -92,10 +101,28 @@
         :title:
           :xpath: title[@type='main'][@level='m']
           :attributes:
+            :language:
+              :name: xml:lang
+              :pattern: /\Agrc|la\Z/
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
           :children:
+            :tlg:
+              :xpath: idno[@type='tlg']
+              :pattern: /\A\d+\Z/
+            :cwkb:
+              :xpath: idno[@type='cwkb']
+              :pattern: /\A\d+\Z/
+            :date:
+              :xpath: date
+              :attributes:
+                :from:
+                  :name: from
+                  :pattern: '/\A\d\d\d\d\Z/'
+                :to:
+                  :name: to
+                  :pattern: '/\A\d\d\d\d\Z/'
             :certainty:
               :xpath: certainty[@cert='low'][@locus='value']
               :attributes:

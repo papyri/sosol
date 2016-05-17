@@ -21,7 +21,9 @@
 
         %h4.category.work
           %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
-        .editbox{:style => 'display: none;'}
+        .editbox{:style => 'display: block;'}
+          = render :partial => 'dclp_meta_identifiers/work'
+
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
 
