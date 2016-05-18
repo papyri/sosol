@@ -41,8 +41,8 @@
        	</xsl:choose>
         <xsl:apply-templates select="oac:hasTarget"/>
         <xsl:apply-templates select="dcterms:source"/>
-        <!-- only provide preview and edit links if we have a tool configured and the target is a resource provided by the base app -->
-        <xsl:if test="$tool_url != '' and oac:hasTarget[starts-with(@rdf:resource,$app_base)]">    
+        <!-- only provide preview and edit links if we have a tool configured and the target is a resource provided by the base app or is a plain cts urn -->
+        <xsl:if test="$tool_url != '' and (oac:hasTarget[starts-with(@rdf:resource,$app_base)] or oac:hasTarget[starts-with(@rdf:resource,'urn:cts:')])">    
             <xsl:choose>
             <!-- only provide preview and edit links if we have a tool configured and the target is a resource provided by the base app -->
                 <xsl:when test="$mode = 'edit'">
@@ -97,8 +97,11 @@
     <xsl:template match="oac:hasTarget">
         <div class="oac_target">
             <xsl:choose>
-                <xsl:when test="@rdf:resource">
+                <xsl:when test="matches(@rdf:resource,'^http')">
                     <a href="{@rdf:resource}" target="_blank"><xsl:value-of select="@rdf:resource"/></a>        
+                </xsl:when>
+                <xsl:when test="@rdf:resource">
+                    <span class="ctsurn"><xsl:value-of select="@rdf:resource"/></span>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates/>

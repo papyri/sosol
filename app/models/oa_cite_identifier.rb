@@ -30,7 +30,19 @@ class OaCiteIdentifier < CiteIdentifier
     end
 
     temp_id = self.new(:name => self.next_object_identifier(a_urn))
-    temp_id.title = temp_id.name
+    cts_targets = []
+    a_init_value.each do |a|
+      if  a =~ /urn:cts/
+        abbr = CTS::CTSLib.urn_abbr(a)
+        cts_targets << abbr 
+      end
+    end
+    # if we have all cts targets we use them in the title
+    if (cts_targets.size == a_init_value.size) 
+      temp_id.title = "On #{cts_targets.join(',')}"
+    else
+      temp_id.title = temp_id.name
+    end
     temp_id.publication = a_publication 
     if (! temp_id.collection_exists?)
       raise "Unregistered CITE Collection for #{a_urn}"

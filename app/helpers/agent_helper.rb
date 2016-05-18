@@ -51,8 +51,10 @@ module AgentHelper
         return MediaWikiAgent.new(a_agent[:api_info])
     elsif (a_agent[:type] == 'hypothesis')
         return HypothesisAgent.new(a_agent[:data_mapper])
-    elsif (a_agent[:type] = 'googless')
+    elsif (a_agent[:type] == 'googless')
         return GoogleSSAgent.new(a_agent)
+    elsif (a_agent[:type] == 'cts')
+        return CtsAgent.new(a_agent)
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -142,6 +144,31 @@ module AgentHelper
                  :claim => created['claim']['id'] }
         @client.action("wbremoveclaims",remp).data
         # we need to remove the newly created but empty claim
+      end
+    end
+  end
+
+  class CtsAgent
+    attr_accessor :conf, :client
+    def initialize(a_conf)
+      @conf = a_conf 
+    end
+    def get_content(a_uri)
+      url = @conf[:get_url].sub(/URN/,a_uri)
+      url = URI.parse(url)
+      response = Net::HTTP.start(url.host, url.port) do |http|
+        http.send_request('GET',url.request_uri)
+      end
+      unless (response.code == '200')
+        raise "Unable to retreive content from #{url}"
+      end
+      return response.body.force_encoding("UTF-8")
+    end
+    def get_transformation(a_identifiertype)
+      if (@conf[:transformations])
+        @conf[:transformations][a_identifiertype]
+      else
+        nil
       end
     end
   end

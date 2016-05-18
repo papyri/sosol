@@ -24,6 +24,7 @@
   :googless:
     :uri_match: "https://docs.google.com/spreadsheet"
     :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"
+    :type: "googless"
     :transformations:
       :OaCiteIdentifier: "/data/xslt/cite/gs_to_oa_cite.xsl"
   :hypothesis:
@@ -32,3 +33,9 @@
     :data_mapper: 'HypothesisClient::MapperPrototype::JOTH'
     :collections:
       :OajCiteIdentifier: "urn:cite:perseus:pdljann"
+  :cts:
+    :uri_match: "^urn:cts:"
+    :type: "cts"
+    :get_url: "http://cts.perseids.org/api/cts/?request=GetPassage&urn=URN"
+    :transformations:
+      :OaCiteIdentifier: "/data/xslt/cite/cts5_to_oa_cite.xsl"
