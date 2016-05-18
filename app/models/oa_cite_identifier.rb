@@ -351,20 +351,6 @@ class OaCiteIdentifier < CiteIdentifier
   # get descriptive info for the identifier document
   # TODO all of this should be moved out of here and done elsewhere
   def api_info(urls)
-    # TODO ontology definition belongs on the annotation client
-    motivations = [];
-    motivations << { :label => 'Has Translation', :value => 'oa:linking_translation'}
-    motivations << { :label => 'Has Link', :value => 'oa:linking'}
-    motivations << { :label => 'Has Identity', :value => 'oa:identifying'}
-    motivations << { :label => 'Has Classification', :value => 'oa:classifying'}
-    motivations << { :label => 'Has Comment', :value => 'oa:commenting'}
-    motivations << { :label => 'Has Fragment', :value => 'http://erlangen-crm.org/efrbroo/R15_has_fragment'}
-    motivations << { :label => 'Is Fragment Of', :value => 'http://erlangen-crm.org/efrbroo/R15i_is_fragment_of'}
-    motivations << { :label => 'Is Longer Version Of', :value => 'http://purl.org/saws/ontology#isLongerVersionOf'}
-    motivations << { :label => 'Is Shorter Version Of', :value => 'http://purl.org/saws/ontology#isShorterVersionOf'}
-    motivations << { :label => 'Is Variant Of', :value => 'http://purl.org/saws/ontology#isVariantOf'}
-    motivations << { :label => 'Is Verbatim Of', :value => 'http://purl.org/saws/ontology#isVerbatimOf'}
-    
     tokenizer = {}
     Tools::Manager.tool_config('cts_tokenizer',false).keys.each do |name|
       tokenizer[name] =  Tools::Manager.link_to('cts_tokenizer',name,:tokenize)[:href]
@@ -372,7 +358,6 @@ class OaCiteIdentifier < CiteIdentifier
       
     config = 
       { :tokenizer => tokenizer,
-        :motivations => motivations,
         :cts_services => { 'repos' => "#{urls['root']}cts/getrepos/#{self.publication.id}",
                            'capabilities' => "#{urls['root']}cts/getcapabilities/",
                            'passage' => "#{urls['root']}cts/getpassage/"
