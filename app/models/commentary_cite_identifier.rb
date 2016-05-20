@@ -191,4 +191,34 @@ class CommentaryCiteIdentifier < CiteIdentifier
     # TODO should either update annotatedAt or set updatedAt (does that exist??)
     self.set_xml_content(oacRdf, :comment => 'Update uris to reflect new identifier')
   end
+
+  def as_ro
+    ro = {'aggregates' => [], 'annotations' => []}
+    urns = []
+    targets = OacHelper::get_targets(get_annotation)
+    Rails.logger.info("TARGETS = #{targets.inspect}")
+    targets.each do |t| 
+      if (t =~ /urn:cts:/)
+        urn_value = t.match(/(urn:cts:.*)$/).captures[0]
+        begin
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+        rescue
+          Rails.logger.error("Invalid CTS URN #{urn_value}")
+        end
+        if urn_obj.nil?
+          next
+        end
+        urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+        ro['annotations'] << { "about" => [urn_value], 'dc:format' => 'http://data.perseus.org/rdfvocab/commentary' }
+      end 
+    end
+    urns.uniq.each do |u|
+      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    end
+    return ro
+  end
+
+  def api_get(a_query)
+    return self.xml_content
+  end
 end

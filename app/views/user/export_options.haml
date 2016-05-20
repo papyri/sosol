@@ -1,0 +1,25 @@
+= javascript_include_tag 'export'
+#export_options
+  .hints Select one or more publications and...
+  = form_tag({:controller => 'api/v1', :action => :export_ro}, {:method => :get}) do
+    = submit_tag "Export As RO Manifest"
+    - if @new_publications && @new_publications.length > 0
+      = render :partial => "publications/publication_header", :locals => {:status => "New", :view_type => "user", :list_name => "new"}
+      = render :partial => "publications/publication_listing", :locals => {:publications => @new_publications, :view_type => "user", :list_name => "new", :selectable => true}
+
+    - if @editing_publications && @editing_publications.length > 0
+      = render :partial => "publications/publication_header", :locals => {:status => "Editing", :view_type => "user", :list_name => "editing" }
+      = render :partial => "publications/publication_listing", :locals => {:publications => @editing_publications, :view_type => "user", :list_name => "editing" , :selectable => true}
+
+    - if @submitted_publications && @submitted_publications.length > 0
+      = render :partial => "publications/publication_header", :locals => {:status => "Submitted", :view_type => "user", :list_name => "submitted" }
+      = render :partial => "publications/publication_listing", :locals => {:publications => @submitted_publications, :view_type => "user", :list_name => "submitted", :selectable => true }
+ 
+    - if @finalizing_publications && @finalizing_publications.length > 0
+      = render :partial => "publications/publication_header", :locals => {:status => "Finalizing", :view_type => "user", :list_name => "finalizing" }
+      = render :partial => "publications/publication_listing", :locals => {:publications => @finalizing_publications, :view_type => "user", :list_name => "finalizing", :selectable => true }
+ 
+    - if @committed_publications && @committed_publications.length > 0
+      = render :partial => "publications/publication_header", :locals => {:status => "Committed", :view_type => "user", :list_name => "committed" }
+      = render :partial => "publications/publication_listing", :locals => {:publications => @committed_publications, :view_type => "user", :list_name => "committed" , :selectable => true}
+%br

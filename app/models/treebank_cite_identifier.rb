@@ -640,6 +640,46 @@ class TreebankCiteIdentifier < CiteIdentifier
     review_files
   end
 
+  def as_ro
+    ro = {'aggregates' => [], 'annotations' => []}
+    urns = []
+    parsed = XmlHelper::parseattributes(content,
+      {"sentence" => ['document_id','subdoc','id']})
+    last_target = nil
+    parsed['sentence'].each do |s|
+      document_id = s['document_id']
+      subdoc = s['subdoc']
+      if (! document_id.nil?)
+        full_uri = document_id
+        # we only know how to make subdocs part of the uri 
+        # if we are dealing with cts urns
+        if (document_id =~ /urn:cts:/)
+          urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+            passage = urn_obj.getPassage(100)
+          rescue
+          end
+        end
+        if (! urn_obj.nil? && ! subdoc.nil?)
+          if (passage.nil?)
+            full_urn = "#{urn_value}:#{subdoc}"
+          else
+            full_urn = "#{urn_value}.#{subdoc}"
+          end
+        end # end test for cts and subdoc
+        if full_urn
+          urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          ro['annotations'] << { "about" => [full_urn], "query" => "s=#{s['id']}" , 'dc:format' => 'http://data.perseus.org/rdfvocab/treebank' }
+        end
+      end # end test for document_id
+    end
+    urns.uniq.each do |u|
+      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    end
+    return ro
+  end
+
   # parse the supplied content for annotation targets
   # @param [String] content should be a valid treebank document
   def self.targets(content)
