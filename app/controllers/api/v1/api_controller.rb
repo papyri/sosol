@@ -41,6 +41,33 @@ module Api::V1
       ping
     end
 
+    swagger_path "/export_ro" do
+      operation :get do
+        key :description, 'Prototype of an API call to export a Research Object bundle of a user\'s publications. WIP'
+        key :operationId, 'exportRo'
+        key :tags, [ 'user' ]
+        security do
+          key :sosol_auth, ['read']
+        end
+        parameter do
+          key :name, 'publication_id[]'
+          key :in, :query
+          key :description, "publication id(s) to export"
+          key :required, true
+          key :type, :array
+          key :items, {  :type => :string }
+        end
+        response 200 do
+          key :description, 'will eventually be a BagIt archive of a Research Object Bundle'
+        end
+        response :default do
+          key :description, 'unexpected error'
+          schema do 
+            key :'$ref', :ApiError
+          end
+        end
+      end
+    end
     def export_ro
       manifest = {}
       manifest["@context"] = ["https://w3id.org/bundle/context"]
@@ -82,7 +109,7 @@ module Api::V1
           # to do handle error
         end
         redirect = JSON.parse(response.body.force_encoding("UTF-8"))
-        if redirect && redirect.size > 0
+        if redirect && redirect.size > 0 
           new_uri = redirect[0]['version']
           redirected[a['uri']] = new_uri
           a['uri'] = new_uri
