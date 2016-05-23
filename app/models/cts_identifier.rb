@@ -376,11 +376,6 @@ class CTSIdentifier < Identifier
   def self.parse_docs(content)
   end  
 
-  # try to parse an initialization value from posted data
-  def self.api_parse_post_for_init(a_post)
-    #default is no-op
-  end
-
   def self.api_parse_post_for_identifier(a_post)
     xml = REXML::Document.new(a_post).root
     urn = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="urn:cts"]',{"tei" => NS_TEI})

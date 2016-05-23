@@ -318,8 +318,6 @@ class DmmApiController < ApplicationController
         tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
         if (params[:init_value] && params[:init_value].length > 0)
           check_match = params[:init_value]
-        else
-          check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
         end
         # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
         # now because the syntax for find_matching_identifier is slightly 

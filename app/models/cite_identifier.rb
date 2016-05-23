@@ -389,11 +389,6 @@ class CiteIdentifier < Identifier
       end
     end
 
-    # try to parse an initialization value from posted data
-    def self.api_parse_post_for_init(a_post)
-      #default is no-op
-    end
-
     def download_file_name
       self.urn_attribute.sub(IDENTIFIER_PREFIX,'').gsub(/:/,'-') + ".xml"
     end
