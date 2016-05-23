@@ -9,6 +9,8 @@
 %div{:class => "publication_list_holder", :id => list_id }
   %table{:class=>"results", :width=>"100%"}
     %tr{:class=>"head"}
+      - if defined? selectable
+        %td{:width => "5%"}
       %td{:width=>"20%"}
         = Publication
       - Identifier.site_identifier_classes.each do |i|
@@ -17,6 +19,9 @@
             = i.constantize::FRIENDLY_NAME
     - publications.each do |publication|
       %tr
+        - if defined? selectable
+          %td{:width => "5%"} 
+            = check_box_tag 'publication_id[]', publication.id.to_s
         %td
           - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")"
           = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago"

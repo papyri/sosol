@@ -25,6 +25,7 @@ Sosol::Application.routes.draw do
       get 'terms' => 'api#terms' 
       get 'license' => 'api#license'
       get 'contact' => 'api#contact'
+      get 'export_ro' => 'api#export_ro'
     end
   end
 
@@ -126,6 +127,7 @@ Sosol::Application.routes.draw do
   match 'sendmsg' => 'user#create_email_everybody', :as => :sendmsg
   match 'master_list' => 'publications#master_list', :as => :master_list
   match 'publications/archive_all' => 'publications#archive_all', :via => :post
+  match 'export_options' => 'user#export_options'
   resources :publications do
     collection do
   get :advanced_create
