@@ -173,10 +173,6 @@ class CiteIdentifier < Identifier
     Cite::CiteLib.get_collection_urn(self.urn_attribute)
   end
    
-  def related_inventory 
-    self.publication.identifiers.select{|i| (i.class == CiteInventoryIdentifier)}.last
-  end
-  
   def to_urn_components
     temp_components = self.to_components
     # should give us, e.g.
