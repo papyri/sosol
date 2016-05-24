@@ -363,14 +363,11 @@ class OaCiteIdentifier < CiteIdentifier
                            'passage' => "#{urls['root']}cts/getpassage/"
                          },
         :target_links => {
-          :commentary => [],
-          'Treebank Annotations' => []
+          :commentary => []
         }
        }
     config[:target_links][:commentary] << {:text => 'Create Commentary', :href => "#{urls['root']}commentary_cite_identifiers/create_from_annotation?publication_id=#{self.publication.id}", :target_param => 'init_value[]'}
     
-    tblink = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
-    config[:target_links]['Treebank Annotations'] << {:text => tblink[:text], :href => CGI.escape(tblink[:href]), :target_param => 'text_uri'}        
     return config.to_json                  
   end
 

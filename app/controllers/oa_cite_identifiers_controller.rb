@@ -72,7 +72,6 @@ class OaCiteIdentifiersController < IdentifiersController
           :mode => 'edit',
           :lang => 'grc', # TODO PULL FROM ANNOTATION TEXT
           :delete_link => url_for(:controller => 'oa_cite_identifiers', :action => 'delete_annotation', :publication_id => @identifier.publication.id, :id => @identifier.id),
-          :align_link => url_for(:controller => 'alignment_cite_identifiers', :publication_id => @identifier.publication.id.to_s, :a_id => @identifier.id.to_s, :action => :create_from_annotation),
           :app_base => root_url,
           :form_token => form_authenticity_token 
         })

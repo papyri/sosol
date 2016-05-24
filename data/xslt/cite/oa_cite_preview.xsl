@@ -53,7 +53,7 @@
                             <input type="hidden" name="annotation_uri" value="{@rdf:about}"/>
                             <button type="submit">Delete</button>
                         </form>
-                        <xsl:if test="count(oac:hasTarget) = 1 and contains(oac:hasTarget/@rdf:resource,'urn:cts')
+                        <xsl:if test="$align_link and count(oac:hasTarget) = 1 and contains(oac:hasTarget/@rdf:resource,'urn:cts')
                             and count(oac:hasBody)  = 1 and contains(oac:hasBody/@rdf:resource,'urn:cts')">
                             <form method="post" action="{$align_link}">
                                 <input type="hidden" name="authenticity_token" value="{$form_token}"/>
