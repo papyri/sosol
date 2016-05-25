@@ -7,8 +7,7 @@ class OajCiteIdentifier < CiteIdentifier
   FRIENDLY_NAME = "Annotation (JSON-LD)"
   PATH_PREFIX="CITE_OA_JSON"
   FILE_TYPE="oac.json"
-  ANNOTATION_TITLE = "Annotation"
-  
+
   def titleize
     title = self.name
     return title

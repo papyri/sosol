@@ -102,10 +102,37 @@ class CitePublicationsController < PublicationsController
       begin
         if is_collection_urn
           # we are creating a new object
-          new_cite = identifier_class.new_from_template(@publication,params[:urn],params[:init_value])
+          new_cite = identifier_class.new_from_template(@publication,params[:urn])
+          if params[:init_value]
+            case identifier_name
+            when "CommentaryCiteIdentifier"
+              new_cite.update_targets(params[:init_value])
+            when "OaCiteIdentifier"
+              params = {
+                :e_annotatorUri => new_cite.make_annotator_uri(),
+                :e_annotatorName => @publication.creator.human_name,
+                :e_baseAnnotUri => new_cite.next_annotation_uri()
+              }
+              a_init_value.each do |a|
+                if  a =~ /urn:cts/
+                  abbr = CTS::CTSLib.urn_abbr(a)
+                  cts_targets << abbr
+                end
+              end
+              # if we have all cts targets we use them in the title
+              if (cts_targets.size == a_init_value.size)
+                new_cite.title = "On #{cts_targets.join(',')}"
+              end
+              agent_content = (AgenttHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,params))
+              new_cite.set_xml_content(agent_content, :comment => "Initializing Content from #{a_init_value}")
+              temp_id.save!
+            else
+            end
+          end
+          new_cite =
+          content = identifier.
         else
-          # we are creating a new version of an existing object
-          new_cite = identifier_class.new_from_inventory(@publication,params[:urn])
+          flash[:error] = 'Cite Versions not supported.'
         end
         flash[:notice] = 'Publication was successfully created.'      
       rescue Exception => e

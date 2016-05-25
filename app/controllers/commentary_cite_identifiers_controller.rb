@@ -33,10 +33,13 @@ class CommentaryCiteIdentifiersController < IdentifiersController
     end
 
     conflicts = []
-    for pubid in @publication.identifiers do 
-      ## only allow one commentary item per target and collection
-      if (pubid.kind_of?(CommentaryCiteIdentifier) && 
-          pubid.collection == Cite::CiteLib.get_collection_urn(collection_urn) &&
+    # Matching items in the requested collection
+    # where the publication itself is the collection
+    # pub_pid = @publication.pid
+    # Collections::API::matches(pub_pid, params[:init_value])
+    for pubid in @publication.identifiers do
+      ## only allow one commentary item per target
+      if (pubid.kind_of?(CommentaryCiteIdentifier) &&
           pubid.is_match?(valid_targets))
         conflicts << pubid
       end
@@ -56,8 +59,11 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   def edit
     find_publication_and_identifier
     @identifier[:action] = 'update'  
-    @identifier[:targets] = @identifier.preview_targets(params)
-    params[:commentary_text] ||= @identifier.get_commentary_text()
+    @identifier[:targets] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite commentary_cite_targets.xsl})),
+        params)
   end
   
   def update 
@@ -92,9 +98,13 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview
+    @identifier[:html_preview] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite commentary_cite_html_preview.xsl})),
+        params)
   end
-    
+
   protected
     def find_identifier
       @identifier = CommentaryCiteIdentifier.find(params[:id].to_s)
@@ -108,5 +118,5 @@ class CommentaryCiteIdentifiersController < IdentifiersController
      def find_publication
       @publication = Publication.find(params[:publication_id].to_s)
     end
-  
+
 end

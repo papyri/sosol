@@ -9,17 +9,23 @@ class TreebankCiteIdentifier < CiteIdentifier
   FRIENDLY_NAME = "Treebank Annotation"
   PATH_PREFIX="CITE_TREEBANK_XML"
   FILE_TYPE="tb.xml"
-  ANNOTATION_TITLE = "Treebank Annotation"
-  TEMPLATE = "template"
+
   NS_DCAM = "http://purl.org/dc/dcam/"
   NS_TREEBANK = "http://nlp.perseus.tufts.edu/syntax/treebank/1.5"
   NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   DOM_PARSER = 'REXML'
 
-
-  
   # TODO Validator depends upon treebank format
   XML_VALIDATOR = JRubyXML::PerseusTreebankValidator
+
+
+  def self.parse_for_identifier(a_content)
+    language = XmlHelper::parseattributes(a_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
+    unless (language)
+      language = "misc"
+    else
+    DEFAULT_COLLECTION.sub(/<lang>/,language)
+  end
 
   # Get a dom parser for my xml content
   # @return dom parser
@@ -78,122 +84,6 @@ class TreebankCiteIdentifier < CiteIdentifier
     return title
   end
   
-  # initialization method for a new version of an existing Annotation Object
-  # adds the creator as a top-level annotator and creates/updates the date
-  # @param a_content the original content
-  # @return the updated content
-  def init_version_content(a_content)
-    parser = XmlHelper::getDomParser(a_content,DOM_PARSER)
-    treebank = parser.parseroot
-    parser.all(treebank,"date").each do |d|
-      parser.delete_child(treebank,d)
-    end
-    date = parser.make_text_elem('date',nil,Time.new.inspect)
-    parser.insert_before(treebank,"*[1]",date)
-    creator_uri = make_annotator_uri
-    xpath = "annotator/uri"
-    all_annotators = parser.all(treebank, xpath)
-    add = true
-    all_annotators.each do |ann|
-      if  ann == creator_uri
-        add = false
-      end
-    end
-    if (add)
-      annotator = parser.make_elem("annotator")
-      short = parser.make_text_elem("short",nil,self.publication.creator.name)
-      persname = parser.make_text_elem("name",nil,self.publication.creator.human_name)
-      address = parser.make_text_elem("address",nil,self.publication.creator.email)
-      uri = parser.make_text_elem("uri",nil,creator_uri)
-      parser.add_child(annotator,short)
-      parser.add_child(annotator,persname)
-      parser.add_child(annotator,address)
-      parser.add_child(annotator,uri)
-      parser.insert_before(treebank,"sentence[1]",annotator)
-    end
-    parser.to_s
-  end
-  
-  # Initializes a treebank template
-  # First looks in the repository to see if we already have a template
-  # for the requested URN target. If so, we just use that. Otherwise
-  # we send a job to the annotation service to create one
-  # @param [String] a_value is the initialization value - in this case the target urn 
-  def init_content(a_value)
-    template = self.content
-
-    if (! a_value.nil? && a_value.length == 1) 
-      init_value = a_value[0].to_s
-      if (init_value =~ /^https?:.*?urn:cts:/)
-        urn_value = init_value.match(/^https?:.*?(urn:cts:.*)$/).captures[0]
-        begin
-          urn_obj = CTS::CTSLib.urnObj(urn_value)
-          unless (urn_obj.nil?)
-            base_uri = init_value.match(/^(http?:\/\/.*?)\/urn:cts.*$/).captures[0]
-            template_path = path_for_target(TEMPLATE,base_uri,urn_obj)
-            template = self.publication.repository.get_file_from_branch(template_path, 'master') 
-          end
-        rescue Exception => e
-            raise "Invalid URN: #{e}" 
-        end
-      elsif (init_value =~ /^https?:/)
-        begin
-          conn = Faraday.new(init_value) do |c|
-            c.use Faraday::Response::Logger, Rails.logger
-            c.use FaradayMiddleware::FollowRedirects, limit: 3
-            c.use Faraday::Response::RaiseError 
-            c.use Faraday::Adapter::NetHttp  
-          end
-          response = conn.get
-          if (is_valid_xml?(response.body))
-            template = response.body
-          else 
-            Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
-            raise "Supplied URI does not return a valid treebank file"
-          end
-        rescue Exception => e
-          Rails.logger.error(e.backtrace)
-          raise "Invalid treebank content at #{init_value}"
-        end
-      else 
-        # otherwise raise an error
-        Rails.logger.error(e.backtrace)
-        raise e
-      end
-    end
-    template_init = init_version_content(template)
-    self.set_xml_content(template_init, :comment => 'Initializing Content')
-  end
-  
-  # Path for treebank file for target text
-  # @param [String] a_type (template or data) 
-  # @param [String] a_base_uri the base uri
-  # @param [JCtsUrn] a_target_urn
-  # @return [String] the repository path
-  def path_for_target(a_type,a_base_uri,a_target_urn)
-    uri = a_base_uri.gsub(/^http?:\/\//, '')
-    parts = []
-    #  PATH_PREFIX/type/uri/namespace/textgroup/work/textgroup.work.edition.passage.FILE_TYPE
-    parts << PATH_PREFIX
-    parts << a_type
-    parts << uri
-    tgparts = a_target_urn.getTextGroup().split(/:/)
-    work  = a_target_urn.getWork(false)
-    parts << tgparts[0]
-    parts << tgparts[1]
-    parts << work
-    file_parts = []
-    file_parts << tgparts[1]
-    file_parts << work
-    file_parts <<  a_target_urn.getVersion(false)
-    if (a_target_urn.passageComponent)
-      file_parts << a_target_urn.getPassage(100)
-    end
-    file_parts << FILE_TYPE
-    parts << file_parts.join(".")
-    File.join(parts)
-  end
-  
   # get a sentence
   # @param [String] a_id the sentence id
   # @return [String] the sentence xml 
@@ -246,53 +136,24 @@ class TreebankCiteIdentifier < CiteIdentifier
     return d.nil? ? 'ltr' : d
   end
   
-  # api_get responds to a call from the data management api controller
-  # @param [String] a_query if not nil, means use the query to 
-  #                         return part of the item
-  # TODO the query should really be an XPath 
-  def api_get(a_query)
+  # @see CiteIdentifier.fragment
+  def fragment(a_query)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch.nil?)
-      return self.xml_content
-    else
-      return sentence(qmatch[1])
+      raise Exception.new("Invalid request - no sentence specified in #{a_query}")
     end
+    return sentence(qmatch[1])
   end
 
+  def patch(a_agent,a_query,a_body,a_comment)
   def self.api_parse_post_for_identifier(a_post)
     dcam = XmlHelper::parseattributes(a_post, {
       "#{NS_DCAM} memberOf" => ["#{NS_RDF} resource"]})
-    dcam["#{NS_DCAM} memberOf"][0]["#{NS_RDF} resource"] 
+    dcam["#{NS_DCAM} memberOf"][0]["#{NS_RDF} resource"]
   end
-  
-  def self.api_create(a_publication,a_agent,a_body,a_comment)
-    urn = api_parse_post_for_identifier(a_body) 
-    unless (urn)
-      raise "Unspecified Collection for #{urn}"
-    end
-    temp_id = self.new(:name => self.next_object_identifier(urn))
-    temp_id.publication = a_publication 
-    if (! temp_id.collection_exists?)
-      raise "Unregistered CITE Collection for #{urn}"
-    end
-    temp_id.save!
-    parser = XmlHelper::getDomParser(a_body,DOM_PARSER)
-    oacxml = parser.parseroot 
-    treebank = parser.first(oacxml,"//treebank")
-    unless (treebank)
-        Rails.logger.error("unable to parse treebank from post")
-        raise "Unable to parse treebank for post"
-    end
-    content = parser.to_s(treebank)
-    # use set_xml_content to prevent an invalid file from being initialized
-    temp_id.set_xml_content(content, :comment => a_comment)
-    template_init = temp_id.init_version_content(content)
-    temp_id.set_xml_content(template_init, :comment => 'Initializing Content')
-    return temp_id
-  end
-  
+
   # api_update responds to a call from the data management api controller
-  def api_update(a_agent,a_query,a_body,a_comment)
+  def patch(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch && qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_body,a_comment)
@@ -550,60 +411,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       tool
     end
   end
-  
-  # preview 
-  # outputs the sentence list
-  def preview parameters = {}, xsl = nil
-    tool = self.get_editor_agent()
-    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,[self])
-    parameters[:s] ||= 1
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
-        :title => self.title,
-        :doc_id => self.id,
-        :s => parameters[:s],
-        :max => 50, # TODO - make max sentences configurable
-        :target => tool_link[:target],
-        :tool_url => tool_link[:href])
- end
-  
-  # edit 
-  # outputs the sentence list with sentences linked to editor
-  def edit parameters = {}, xsl = nil
-    tool = self.get_editor_agent()
-    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,[self])
-    parameters[:s] ||= 1
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
-        :title => self.title,
-        :doc_id => self.id,
-        :max => 50, # TODO - make max sentences configurable
-        :s => parameters[:s],
-        :target => tool_link[:target],
-        :tool_url => tool_link[:href])
-  end
-
-  # present a review display
-  # outputs the sentence list with sentenced linked to editor in review mode
-  def review parameters = {}, xsl = nil
-    tool = self.get_editor_agent()
-    tool_link = Tools::Manager.link_to('treebank_reviewer',tool,:review,[self])
-    parameters[:s] ||= 1
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite treebanklist.xsl})),
-        :title => self.title,
-        :doc_id => self.id,
-        :max => 50, # TODO - make max sentences configurable
-        :s => parameters[:s],
-        :target => tool_link[:target],
-        :tool_url => tool_link[:href])
- end 
   
   # need to update the uris to reflect the new name
   def after_rename(options = {})

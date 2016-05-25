@@ -30,15 +30,41 @@ class TreebankCiteIdentifiersController < IdentifiersController
   
   def edit
     find_identifier
-    @identifier[:list] = @identifier.edit(parameters = params)
     @can_compare = true
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,[self])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @identifier[:list] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite treebanklist.xsl})),
+        parameters)
   end
 
   def review
     find_identifier
-    @identifier[:list] = @identifier.review(parameters = params)
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,[self])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @identifier[:list] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite treebanklist.xsl})),
+        parameters)
   end
-  
+
    def editxml
     find_identifier
     @identifier[:xml_content] = @identifier.xml_content
@@ -46,11 +72,27 @@ class TreebankCiteIdentifiersController < IdentifiersController
     render :template => 'treebank_cite_identifiers/editxml'
   end
   
+  # preview
+  # outputs the sentence list
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview(parameters = params)
     @can_compare = true
-  end
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,[self])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @identifier[:html_preview] = @identifier.preview(parameters = params)
+    JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite treebanklist.xsl})),
+        parameters)
+ end
 
   def compare
     find_identifier

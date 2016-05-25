@@ -411,9 +411,21 @@ module OacHelper
     annot.add_element(make_motivation(a_atts['motivation']))
     annot.add_element(make_annotated_at)
     return annot
-  end    
-  
+  end
 
+  # update the targets of the supplied annotation
+  def self.update_targets(a_annotation,a_targets)
+    xpath = "oa:hasTarget"
+    # delete any the existing targetts
+    REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF}) { |target|
+      a_annotation.root.elements.delete target
+    }
+    # add new targets
+    a_atts['target_uris'].each do |uri|
+      a_annotation.add_element(make_target(uri))
+    end
+    return a_annotation
+  end
   
   def self.add_annotator(a_annotation,a_uri)
      xpath = "oa:Annotation"

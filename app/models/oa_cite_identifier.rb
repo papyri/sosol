@@ -6,7 +6,6 @@ class OaCiteIdentifier < CiteIdentifier
   FRIENDLY_NAME = "Annotation"
   PATH_PREFIX="CITE_OA_XML"
   FILE_TYPE="oac.xml"
-  ANNOTATION_TITLE = "Annotation"
   XML_VALIDATOR = JRubyXML::RDFValidator
   
   def titleize
@@ -14,53 +13,7 @@ class OaCiteIdentifier < CiteIdentifier
     return title
   end
 
-  # Create a new OaCiteIdentifier from the template
-  # - *Args* :
-  #   - +a_publication+ -> parent Publication
-  #   - +a_urn* -> String value of the CITE URN identifier for the parent collection
-  #   - +a_init_value+ -> Optional array of String values of URIs for external sources
-  #                       from which to retrieve the initial content of this document
-  #                       must match a configured Agent URI
-  #                       @see AgentHelper
-  def self.new_from_template(a_publication,a_urn,a_init_value)
-    # defer to super class handling if we don't have any class-specific
-    # init content
-    if a_init_value.size == 0 
-      return super(a_publication,a_urn,a_init_value)
-    end
-
-    temp_id = self.new(:name => self.next_object_identifier(a_urn))
-    cts_targets = []
-    a_init_value.each do |a|
-      if  a =~ /urn:cts/
-        abbr = CTS::CTSLib.urn_abbr(a)
-        cts_targets << abbr 
-      end
-    end
-    # if we have all cts targets we use them in the title
-    if (cts_targets.size == a_init_value.size) 
-      temp_id.title = "On #{cts_targets.join(',')}"
-    else
-      temp_id.title = temp_id.name
-    end
-    temp_id.publication = a_publication 
-    if (! temp_id.collection_exists?)
-      raise "Unregistered CITE Collection for #{a_urn}"
-    end
-    initial_content = temp_id.file_template
-    temp_id.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
-    params = {
-      :e_annotatorUri => temp_id.make_annotator_uri(),
-      :e_annotatorName => temp_id.publication.creator.human_name,
-      :e_baseAnnotUri => Sosol::Application.config.site_cite_collection_namespace + "/" + temp_id.urn_attribute  + "/"
-    }
-    updated_content = AgentHelper::content_from_agent(a_init_value,:OaCiteIdentifier,params)
-    temp_id.set_xml_content(updated_content, :comment => "Initializing Content from #{a_init_value}")
-    temp_id.save!
-    return temp_id
-  end
- 
-  # @see Identifier.add_change_desc 
+  # @see Identifier.add_change_desc
   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
     # TODO implement prov tracking of annotations
     # this is a no-op because change desc is not added to this file
@@ -83,11 +36,6 @@ class OaCiteIdentifier < CiteIdentifier
   def set_content(content, options = {})
     @rdfDocX = nil
     super
-  end
-  
-  # make a annotator uri from the owner of the publication 
-  def make_annotator_uri()
-    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
   end
   
   # Converts REXML::Document / ::Element into xml string
@@ -192,27 +140,15 @@ class OaCiteIdentifier < CiteIdentifier
      raise "Rename not supported yet!"
   end
 
-
-  # api_get responds to a call from the data management api controller
-  # to get all or a specific annotation from the parent document
-  # - *Args* :
-  #   - +a_query+ -> String matching uri=<annotation_uri>
-  #                  Optional. If not supplied all will be returned. 
-  # - *Returns* :
-  #   - the requested annotation(s) as a string or Nil if not found
-  def api_get(a_query)
+  # @see CiteIdentifier.fragment
+  def fragment(a_query)
     # query will contain the uri of the annotation
     xmlobj = nil
-    if (a_query)
-      qmatch = /^uri=(.*?)$/.match(a_query)
-      if (qmatch.nil?)
-        raise "Invalid request - no uri specified in #{a_query}"
-      else
-        xmlobj = get_annotation(qmatch[1])
-      end
-    else
-      xmlobj = self.rdf
+    qmatch = /^uri=(.*?)$/.match(a_query)
+    if (qmatch.nil?)
+      raise Exception.new("Invalid request - no uri specified in #{a_query}")
     end
+    xmlobj = get_annotation(qmatch[1])
     unless xmlobj.nil?
       xmlobj = toXmlString xmlobj
     end

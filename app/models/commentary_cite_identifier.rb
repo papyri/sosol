@@ -7,16 +7,22 @@ class CommentaryCiteIdentifier < CiteIdentifier
   FRIENDLY_NAME = "Commentary Annotation"
   PATH_PREFIX="CITE_COMMENTARY_XML"
   FILE_TYPE="oac.xml"
-  ANNOTATION_TITLE = "Commentary Annotation"
+  MAX_COMMENTARY_LENGTH = 525
   
-  #XML_VALIDATOR = JRubyXML::OacMarkdownValidator
-  
-  def titleize
-    # TODO should say Commentary on Target URI
-    title = self.name
-    return title
+  def file_template()
+    template_path = File.join(Rails.root, ['data','templates'],
+                              "#{self.class.to_s.underscore}.xml.erb")
+
+    template = ERB.new(File.new(template_path).read, nil, '-')
+    annotation_uri = Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute
+    body_uri = annotation_uri + "/commentary"
+    # TODO support user default for commentary language
+    body_language = 'eng'
+    date = Time.new
+    annotator_uri = make_annotator_uri()
+    return template.result(binding)
   end
-  
+
   def add_change_desc(text = "", user_info = self.publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
     # this is a no-op because change desc is not added to this file
     # need to override to ensure consistent formatting of XML for all commits
@@ -40,17 +46,6 @@ class CommentaryCiteIdentifier < CiteIdentifier
     super
   end
   
-  #initialization method for a new version of an existing CITE Object
-  def init_version_content(a_content)
-    annotation = OacHelper::add_annotator(REXML::Document.new(a_content),make_annotator_uri())
-    return toXmlString annotation
-  end
-  
-  # make a annotator uri from the owner of the publication 
-  def make_annotator_uri()
-    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
-  end
-  
   # Converts REXML::Document / ::Element into xml string
   # - *Args*  :
   #   - +xmlObject+ → REXML::Document / ::Element
@@ -65,7 +60,8 @@ class CommentaryCiteIdentifier < CiteIdentifier
     modified_xml_content
   end
   
-  # get the requested annotation by uri from the oac.xml 
+
+  # get the requested annotation by uri from the oac.xml
   def get_annotation()
    OacHelper::get_first_annotation(self.rdf)         
   end
@@ -74,29 +70,6 @@ class CommentaryCiteIdentifier < CiteIdentifier
     OacHelper::get_body_language(get_annotation)
   end
 
-  def init_content(a_value)
-    # the init value must be one or more target uris
-    # todo calculate body URI and body as text
-    annot_uri = Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute
-    body_uri = annot_uri + "/commentary"
-  
-    atts = {}
-    atts['uri'] = annot_uri
-    atts['target_uris'] = a_value
-    atts['body_uri'] = body_uri
-    # TODO support user default for commentary language
-    atts['body_language'] = 'eng'
-    atts['annotator_uri'] = make_annotator_uri()
-
-    # defaults
-    atts['motivation'] = "http://www.w3.org/ns/oa#commenting"  
-    
-    self.rdf.root.add_element(OacHelper::make_text_annotation(atts))
-    # calling toXmlString to ensure consistent formatting throughout lifecycle of the file
-    oacRdf = toXmlString self.rdf
-    self.set_xml_content(oacRdf, :comment => 'Initializing Content')
-  end
-  
   def get_commentary_text()
     OacHelper::get_body_text(get_annotation)
   end
@@ -107,7 +80,13 @@ class CommentaryCiteIdentifier < CiteIdentifier
     # TODO should either update annotatedAt or set updatedAt (does that exist??)
     self.set_xml_content(oacRdf, :comment => a_comment)
   end
-  
+
+  def update_targets(a_targets)
+    OacHelper::update_targets(get_annotation,a_targets)
+    oacRdf = toXmlString self.rdf
+    self.save!
+  end
+
   # Place any actions you always want to perform on  identifier content prior to it being committed in this method
   # - *Args*  :
   #   - +content+ -> CommentaryCiteIdentifier XML as string
@@ -126,7 +105,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
     #  rules per language
     #  default for base class is to allow any word length so 
     #  will just return the original content
-    max = Cite::CiteLib.get_collection_field_max(urn)
+    max = MAX_COMMENTARY_LENGTH
     # -1 or undefined means no limit
     if (max.nil? || max < 0) 
       return content
@@ -146,7 +125,6 @@ class CommentaryCiteIdentifier < CiteIdentifier
    end
   end
   
-
   ## method which checks the cite object for an initialization  value
   def is_match?(a_value) 
     # for a commentary annotation, the match will be on the target uri
@@ -158,23 +136,6 @@ class CommentaryCiteIdentifier < CiteIdentifier
       end 
     end
     return has_all_targets
-  end
-  
-  def preview_targets parameters = {}, xsl = nil
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite commentary_cite_targets.xsl})),
-        parameters)
-  end
-  
-  def preview parameters = {}, xsl = nil
-    # TODO 
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt cite commentary_cite_html_preview.xsl})),
-        parameters)
   end
   
   ## TODO
@@ -216,9 +177,5 @@ class CommentaryCiteIdentifier < CiteIdentifier
       ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
     end
     return ro
-  end
-
-  def api_get(a_query)
-    return self.xml_content
   end
 end

@@ -365,8 +365,32 @@ class DmmApiController < ApplicationController
         # separate begin/rescue block here because
         # we only need to destroy the publication in rescue once we've 
         # successfully created it
-        begin 
+        begin
           agent = AgentHelper::agent_of(params[:raw_post])
+          #backwards compatibility - we used to wrap api input in Oa wrappers
+          case identifier_class
+          when AlignmentCiteIdentifier
+            oacxml = REXML::Document.new(a_body).root
+            alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
+            if (alignment)
+              formatter = PrettySsime.new
+              formatter.compact = true
+              formatter.width = 2**32
+              content = ''
+              formatter.write alignment, content
+            end
+          when TreebankCiteIdentifier
+            parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
+            oacxml = parser.parseroot
+            treebank = parser.first(oacxml,"//treebank")
+            if (treebank)
+              content = parser.to_s(treebank)
+            end
+          end
+          if content.nil?
+            content = params[:raw_post]
+          end
+          # TODO s/b create from supplied
           new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
         rescue Exception => e
           Rails.logger.error(e.backtrace)

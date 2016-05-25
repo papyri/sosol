@@ -28,30 +28,20 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     
   end
   
-  def create_from_annotation
-    @publication = Publication.find(params[:publication_id].to_s)
-    
-    annotation_doc = Identifier.find(params[:a_id])
-    annotation = annotation_doc.get_annotation(params[:annotation_uri])     
-    # for now only support a single annotation target
-    targets = OacHelper::get_targets(annotation)
-    bodies = OacHelper::get_bodies(annotation)
-    if (targets.size != 1 || bodies.size != 1)
-      flash[:error] = "Unable to create alignment item. Need a single uri for each sentence but got #{targets.inspect} and #{bodies.inspect}"
-      redirect_to dashboard_url
-      return
-    end 
-
-    init_value = []
-    init_value << CGI::unescape(targets[0])
-    init_value << CGI::unescape(bodies[0])
-    @identifier = AlignmentCiteIdentifier.new_from_template(@publication,AlignmentCiteIdentifier::COLLECTION,init_value)
-    redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
-  end
-  
   def edit
     find_identifier
-    @identifier[:list] = @identifier.edit(parameters = params)
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[self])[:href]
+    @identifier[:list] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite alignment_list.xsl})),
+        parameters)
   end
   
    def editxml
@@ -63,9 +53,19 @@ class AlignmentCiteIdentifiersController < IdentifiersController
   
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview(parameters = params)
-  end
-      
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[self])[:href]
+    @identifier[:html_preview] = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite alignment_list.xsl})),
+        parameters)
+ end
+
   def destroy
     find_identifier 
     name = @identifier.title
