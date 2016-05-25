@@ -32,25 +32,6 @@ class CommentaryCiteIdentifiersController < IdentifiersController
       return
     end
 
-    conflicts = []
-    # Matching items in the requested collection
-    # where the publication itself is the collection
-    # pub_pid = @publication.pid
-    # Collections::API::matches(pub_pid, params[:init_value])
-    for pubid in @publication.identifiers do
-      ## only allow one commentary item per target
-      if (pubid.kind_of?(CommentaryCiteIdentifier) &&
-          pubid.is_match?(valid_targets))
-        conflicts << pubid
-      end
-    end 
-    
-    if (conflicts.length > 0) 
-      flash[:notice] = "You already are editing a commentary for this target."
-      redirect_to polymorphic_path([@publication, conflicts[0]],:action => :edit)
-      return
-    end
-    
     @identifier = CommentaryCiteIdentifier.new_from_template(@publication,collection_urn,valid_targets)
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
 
