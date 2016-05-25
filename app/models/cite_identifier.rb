@@ -38,21 +38,7 @@ class CiteIdentifier < Identifier
   # - *Returns* :
   #   - identifier name
   def self.next_temporary_identifier
-    sequencer_callback = lambda do |a_collection_urn|
-      lookup_path = self.path_for_collection(a_collection_urn)
-      latest = self.find(:all,
-        :conditions => ["name like ?", "#{lookup_path}%"],
-        :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
-        :limit => 1).first
-      if latest.nil?
-        next_in_squence = 1
-      else
-        citeurn = Cite::CiteLib.urn_obj(latest.urn_attribute)
-        next_in_sequence = citeurn.getObjectId().to_i + 1
-      end
-      return next_in_sequence
-    end
-    return self.path_for_version_urn(Cite::CiteLib.pid(self.class.name,{},sequencer_callback))
+    return self.path_for_version_urn(Cite::CiteLib.pid(self.class.name,{},self.sequencer))
   end
 
   ##################################################
@@ -89,7 +75,7 @@ class CiteIdentifier < Identifier
 
   # Return the identifier name path for a CiteIdentifier Object URN (with version)
   # - *Args* :
-  #   - +a_urn+ the cite object urn
+  #   - +a_urn+ -> the cite object urn
   # - *Returns* :
   #   - identifier path for the full urn
   def self.path_for_version_urn(a_urn)
@@ -98,14 +84,32 @@ class CiteIdentifier < Identifier
     return  object_path + citeurn.getVersion()
   end
 
+  # Sequencer method for incrementing identifiers
+  # - *Args*:
+  #   - +a_collection_urn+ -> cite collection urn
+  # - *Returns*
+  #   - next in sequence
+  self.sequencer(a_collection_urn)
+    sequencer_callback = lambda do |a_collection_urn|
+      lookup_path = self.path_for_collection(a_collection_urn)
+      latest = self.find(:all,
+        :conditions => ["name like ?", "#{lookup_path}%"],
+        :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
+        :limit => 1).first
+      if latest.nil?
+        next_in_squence = 1
+      else
+        citeurn = Cite::CiteLib.urn_obj(latest.urn_attribute)
+        next_in_sequence = citeurn.getObjectId().to_i + 1
+      end
+      return next_in_sequence
+    end
+
+
   ##################################################
   # Public Instance Method Overrides
   ##################################################
 
-  # Return the identifier formatted as full urn for inclusion in an XML attribute
-  def urn_attribute
-     return IDENTIFIER_PREFIX + self.to_urn_components.join(":")
-  end
 
   # Return the identifier formatted for inclusion in an xml:id attribute
   def id_attribute
@@ -186,6 +190,11 @@ class CiteIdentifier < Identifier
   ##################################################
   # Public CITE Identifier Only Instance Methods
   ##################################################
+
+  # Return the identifier formatted as full urn for inclusion in an XML attribute
+  def urn_attribute
+     return IDENTIFIER_PREFIX + self.to_urn_components.join(":")
+  end
 
   # Updates External Collection from the Identifier Content
   # Cite Identifier Specific Method
