@@ -626,11 +626,4 @@ class Identifier < ActiveRecord::Base
    self.class::FRIENDLY_NAME + "-" + self.title.gsub(/\s/,'_') + ".xml"
   end
 
-  # this is used when trying to determine if an identifier with the same name
-  # as the current one contains matching contents
-  def is_match?(a_value)
-    # default is to assume any identifier passed in is a match
-    return true
-  end
-
 end

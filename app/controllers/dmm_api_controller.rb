@@ -306,6 +306,7 @@ class DmmApiController < ApplicationController
         render :xml => "<error>#{a_msg}</error>", :status => 403
       end
     end
+
     def _api_item_create
       begin
         # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
@@ -315,10 +316,8 @@ class DmmApiController < ApplicationController
           params[:comment] = "create_from_api"
         end
         identifier_class = identifier_type
-        tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-        if (params[:init_value] && params[:init_value].length > 0)
-          check_match = params[:init_value]
-        end
+        tempid = identifier_class.parse_content_for_identifier(params[:raw_post])
+
         # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
         # now because the syntax for find_matching_identifier is slightly 
         # different for cts_identifier classes (3rd param is a boolean 
@@ -391,7 +390,7 @@ class DmmApiController < ApplicationController
             content = params[:raw_post]
           end
           # TODO s/b create from supplied
-          new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
+          new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,params[:raw_post],params[:comment])
         rescue Exception => e
           Rails.logger.error(e.backtrace)
           #cleanup if we created a publication

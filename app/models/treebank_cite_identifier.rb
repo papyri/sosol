@@ -145,13 +145,6 @@ class TreebankCiteIdentifier < CiteIdentifier
     return sentence(qmatch[1])
   end
 
-  def patch(a_agent,a_query,a_body,a_comment)
-  def self.api_parse_post_for_identifier(a_post)
-    dcam = XmlHelper::parseattributes(a_post, {
-      "#{NS_DCAM} memberOf" => ["#{NS_RDF} resource"]})
-    dcam["#{NS_DCAM} memberOf"][0]["#{NS_RDF} resource"]
-  end
-
   # api_update responds to a call from the data management api controller
   def patch(a_agent,a_query,a_body,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)

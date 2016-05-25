@@ -376,8 +376,8 @@ class CTSIdentifier < Identifier
   def self.parse_docs(content)
   end  
 
-  def self.api_parse_post_for_identifier(a_post)
-    xml = REXML::Document.new(a_post).root
+  def self.parse_content_for_identifier(a_content)
+    xml = REXML::Document.new(a_content).root
     urn = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="urn:cts"]',{"tei" => NS_TEI})
     text = REXML::XPath.first(xml,'/tei:TEI/tei:text/tei:body/tei:div',{"tei" => NS_TEI})
     unless urn.nil?
@@ -408,8 +408,8 @@ class CTSIdentifier < Identifier
   end
       
 
-  def self.api_create(a_publication,a_agent,a_body,a_comment)
-    temp_id = self.new(:name => self.api_parse_post_for_identifier(a_body))
+  def self.create_from_supplied(a_publication,a_agent,a_body,a_comment)
+    temp_id = self.new(:name => self.parse_content_for_identifier(a_body))
     temp_id.publication = a_publication 
     temp_id.save!
     ## replace work urn with version 

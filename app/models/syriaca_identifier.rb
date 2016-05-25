@@ -84,8 +84,8 @@ class SyriacaIdentifier < Identifier
         parameters)
   end
 
-  def self.api_parse_post_for_identifier(a_post)
-    xml = REXML::Document.new(a_post).root
+  def self.parse_content_for_identifier(a_content)
+    xml = REXML::Document.new(a_content).root
     Rails.logger.info("Parsing #{xml.to_s}")
     uri = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="URI"]',{"tei" => NS_TEI})
     if (uri)
@@ -95,8 +95,8 @@ class SyriacaIdentifier < Identifier
     end
   end
 
-  def self.api_create(a_publication,a_agent,a_body,a_comment)
-    uri = self.api_parse_post_for_identifier(a_body)
+  def self.create_from_supplied(a_publication,a_agent,a_body,a_comment)
+    uri = self.parse_content_for_identifier(a_body)
     temp_id = self.new(:name => uri)
     temp_id.publication = a_publication 
     temp_id.save!
@@ -118,8 +118,7 @@ class SyriacaIdentifier < Identifier
     begin
         ((pc.publication) && 
           (pc.publication.owner == match_user) && 
-          !(%w{archived finalized}.include?(pc.publication.status)) &&
-           pc.is_match?(match_pub)
+          !(%w{archived finalized}.include?(pc.publication.status))
         )
       rescue Exception => e
           Rails.logger.error("Error checking for conflicts #{pc.publication.status} : #{e.backtrace}")
