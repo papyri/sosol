@@ -18,22 +18,29 @@ class TreebankCiteIdentifier < CiteIdentifier
   # TODO Validator depends upon treebank format
   XML_VALIDATOR = JRubyXML::PerseusTreebankValidator
 
+  ###################################
+  # Public Class Method Overrides
+  ###################################
 
-  def self.parse_for_identifier(a_content)
+  # @overrides CiteIdentifier#next_temporary_identifier
+  # Determines the next identifier  for this class
+  # Delegates to the CITE PID Provider, supplying
+  # the language of the content as a property
+  # - *Returns* :
+  #   - identifier name
+  def self.next_temporary_identifier
     language = XmlHelper::parseattributes(a_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
     unless (language)
       language = "misc"
-    else
-    DEFAULT_COLLECTION.sub(/<lang>/,language)
+    end
+    return self.path_for_version_urn(Cite::CiteLib.pid(self.class.name,{'language' => language},self.sequencer_callback))
   end
 
-  # Get a dom parser for my xml content
-  # @return dom parser
-  def xml_parser
-    XmlHelper::getDomParser(self.xml_content,DOM_PARSER)
-  end
-  
-  # Overrides Identifier#set_content to make sure content is preprocessed first
+  ###################################
+  # Public Instance Method Overrides
+  ###################################
+
+  # @overrides Identifier#set_content to make sure content is preprocessed first
   # - *Args*  :
   #   - +content+ -> the XML you want committed to the repository
   #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
@@ -44,6 +51,10 @@ class TreebankCiteIdentifier < CiteIdentifier
     super
   end
   
+  # @overrides Identifier#titleize
+  # to set title of a treebank from its content
+  # calls on external service to map cts urns
+  # to their abbreviations
   def titleize
     title = self.name
     # TODO should say Treebank on Target URI
@@ -83,120 +94,44 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     return title
   end
-  
-  # get a sentence
-  # @param [String] a_id the sentence id
-  # @return [String] the sentence xml 
-  def sentence(a_id)
-    parser = self.xml_parser
-    t = parser.parseroot
-    s = parser.first(t,"/treebank/sentence[@id=#{a_id}]")
-    parser.to_s(s)
-  end
-  
-  # get descriptive info for a treebank file
-  def api_info(urls)
-    # TODO eventually this will be customized per user/file - for now return the default
-    template_path = File.join(Rails.root, ['data','templates'],
-                              "treebank-desc-#{self.format}.xml.erb")
-    template = ERB.new(File.new(template_path).read, nil, '-')
 
-    # we don't use the attribute lookup methods here because they would
-    # each parse the document again
-    root_atts = XmlHelper::parseattributes(self.xml_content, 
-      {'treebank' => ['format','http://www.w3.org/XML/1998/namespace lang','direction'],
-       'sentence' => ['document_id']
-      } );
-    format = root_atts['treebank'][0]['format']
-    lang = root_atts['treebank'][0]['http://www.w3.org/XML/1998/namespace lang']
-    direction = root_atts['treebank'][0]['direction'].nil? ? 'ltr' : root_atts['treebank'][0]['direction']
-    size = root_atts['sentence'].length
-    return template.result(binding)
-  end
-  
-  # get the format for the treebank file
-  def format()
-    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['format']})["treebank"][0]['format']
-  end
-  
-  
-  # get the language for the treebank file
-  def language()
-    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
-  end
-  
-  # get the number of sentences in the treebank file
-  def size()
-    XmlHelper::parseattributes(self.xml_content,{"sentence"=>['document_id']})
-  end
-  
-   # get the direction of text in the treebank file
-  def direction(t = nil)
-    d = XmlHelper::parseattributes(self.xml_content,{"treebank"=>['direction']})["treebank"][0]['direction']
-    return d.nil? ? 'ltr' : d
-  end
-  
-  # @see CiteIdentifier.fragment
-  def fragment(a_query)
-    qmatch = /^s=(\d+)$/.match(a_query)
+  # @overrides Identifier.fragment
+  # - *Args* :
+  #   - +query+ -> the query string in the format
+  #                "s=<sentencenum>"
+  # - *Returns: the sentence or nil if not found
+  def fragment(query)
+    qmatch = /^s=(\d+)$/.match(query)
     if (qmatch.nil?)
-      raise Exception.new("Invalid request - no sentence specified in #{a_query}")
+      raise Exception.new("Invalid request - no sentence specified in #{query}")
     end
     return sentence(qmatch[1])
   end
 
-  # api_update responds to a call from the data management api controller
-  def patch(a_agent,a_query,a_body,a_comment)
+  # @overrides Identifier.patch_content
+  # - *Args* :
+  #   - +a_agent+ -> String URI identifying source of content
+  #   - +a_query+ -> the query string in the format
+  #                "s=<sentencenum>"
+  #   - +a_content+ -> the new content
+  #   - +a_comment+ -> a commit comment
+  def patch_content(a_agent,a_query,a_content,a_comment)
     qmatch = /^s=(\d+)$/.match(a_query)
     if (qmatch && qmatch.size == 2)
-      return self.update_sentence(qmatch[1],a_body,a_comment)
+      return self.update_sentence(qmatch[1],a_content,a_comment)
     else
       # if no query, assume it's an entire document
-      return self.update_document(a_body,a_comment)
+      return self.update_document(a_content,a_comment)
     end
-  end
- 
-  def update_document(a_body,a_comment) 
-    self.set_xml_content(a_body, :comment => a_comment)
-    return self.xml_content
   end
 
-  def update_sentence(a_id,a_body,a_comment)
-    begin
-      s_parser = XmlHelper::getDomParser(a_body,DOM_PARSER)
-      old_parser = self.xml_parser
-      new_sentence = s_parser.parseroot
-      t = old_parser.parseroot
-      old_sentence = old_parser.first(t,"/treebank/sentence[@id=#{a_id}]")
-      if (old_sentence.nil?)
-        raise "Invalid Sentence Identifier"
-      end
-      old_parser.all(old_sentence,"word").each { |w|
-         s_parser.delete_child(old_sentence,w)
-      }
-      new_words = s_parser.all(new_sentence,"word")
-      # try with namespace (Alpheios used it)
-      if (new_words.length == 0)
-        new_words = s_parser.all(new_sentence,"tb:word",{'tb' => NS_TREEBANK})
-      end
-      new_words.each { |w|
-         old_parser.add_child_strip_ns(old_sentence,w.clone) 
-      }
-    rescue Exception => e
-      raise e
-    end
-    updated = old_parser.to_s
-    self.set_xml_content(updated, :comment => a_comment)
-    return updated
-  end
-  
   # Place any actions you always want to perform on  identifier content prior to it being committed in this method
   # - *Args*  :
   #   - +content+ -> TreebankCiteIdentifier XML as string
   def before_commit(content)
     self.preprocess(content)
   end
-  
+
   # Applies the preprocess XSLT to 'content'
   # - *Args*  :
   #   - +content+ -> XML as string
@@ -206,7 +141,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     # autoadjust sentence numbering
     result = JRubyXML.apply_xsl_transform_catch_messages(
       JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite treebankrenumber.xsl})))  
+      JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite treebankrenumber.xsl})))
     # TODO verify against correct schema for format
     if (! result[:messages].nil? && result[:messages].length > 0)
       # we don't want to immediately commit
@@ -218,133 +153,50 @@ class TreebankCiteIdentifier < CiteIdentifier
         content = result[:content]
     end
     return content
-  end  
-  
+  end
 
-  ## method which checks the cite object for an initialization  value
-  def is_match?(a_value) 
-    has_any_targets = false
-    unless (self.xml_content)
-      Rails.logger.info("No xml content found in #{self.name}")
-      return has_any_targets
-    end
-    
-    my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
-    # we have to just return false if we don't have any targets defined
-    # in ourself
-    if (my_targets['sentence'].length == 0)
-      return has_any_targets
-    end
-    # for a treebank annotation, the match will be on the target urns
-    a_value.each do | uri |
-      if has_any_targets
-         # one match is enough
-         break
-      end
-      urn_match = uri.match(/^.*?(urn:cts:.*)$/)
-      if (urn_match.nil?) 
-        # not a cts urn, match will just require match on the document_id 
-        # only because we don't know how to parse the subdoc from the uri
-        match = my_targets['sentence'].select { |s| 
-          s['document_id']  == uri 
-        }
-        if (match.length > 0)
-          has_any_targets = true
-          break
-        end
-      else
-        urn_value = urn_match.captures[0]
-        begin
-          urn_obj = CTS::CTSLib.urnObj(urn_value)
-        rescue Exception => e
-          # if we get an exception it's invalid urn
-          # quietly log an error about the invalid urn
-          # and fall through to default for no matches
-          Rails.logger.error("Fail to parse urn from #{uri}")
-          Rails.logger.error(e.backtrace)
-        end
-        unless (urn_obj.nil?)
-          begin
-            passage = nil
-            begin
-              passage = urn_obj.getPassage(100)
-            rescue
-              Rails.logger.error("unable to parse passage from #{urn_value}")
-            end
-            match_level = 'textgroup'
-            begin
-              ctsMatch = urn_obj.getWork()
-              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
-                match_level = 'work'
-              end
-              ctsMatch = urn_obj.getVersion()
-              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
-                match_level = 'version'
-              end
-            rescue Exception => e
-            end
-            if (passage.nil?)
-              matching_work = my_targets['sentence'].select { |s| 
-                is_cts_match = false
-                doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
-                if doc_match
-                  begin
-                    doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
-                    is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
-                  rescue Exception => e
-                    # not a valid urn? not a match
-                  end
-                end
-                is_cts_match
-              }
-              if (matching_work.length > 0) 
-                has_any_targets=true
-                break
-              end
-            elsif (passage)
-              work = urn_obj.getUrnWithoutPassage()
-              passage.split(/-/).each do | p |
-                match = my_targets['sentence'].select { |s| 
-                  doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
-                  subdoc_match = false
-                  if (doc_match)
-                    begin
-                      doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
-                      is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
-                    rescue Exception => e
-                      # not a valid urn? not a match
-                    end
-                    if is_cts_match
-                      s['subdoc'].split(/-/).each do |s|
-                        if (s.match(/^#{p}(\.|$)/))
-                          subdoc_match = true;
-                          break;
-                       end
-                      end
-                    end
-                  end 
-                  subdoc_match
-               }
-               if (match.length > 0)
-                 has_any_targets = true
-                 break
-                end
-              end 
-            else
-              # give up for now if we can't parse the cts urn of 
-              # either the document or subdoc
-            end 
-          rescue Exception => e
-            # if we can't parse the urn we can't test it 
-            # so just assume it's not a match
-            Rails.logger.error(e.backtrace)
-          end # end transation on passage calculations
-        end # end test on non-null urnObj
-      end # end test on urn string
-    end
-    return has_any_targets
+  ############################################################
+  # Public TreebankCiteIdentifier Specific Instance Methods
+  ############################################################
+
+  # get a sentence
+  # - *Args* :
+  #  - +a_id+ -> String the sentence id
+  # - *Returns* : the sentence
+  def sentence(a_id)
+    parser = self.xml_parser
+    t = parser.parseroot
+    s = parser.first(t,"/treebank/sentence[@id=#{a_id}]")
+    parser.to_s(s)
   end
   
+  # get the format for the treebank file
+  # - *Returns* : the format
+  def format()
+    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['format']})["treebank"][0]['format']
+  end
+  
+  # get the language for the treebank file
+  # - *Returns* : the language
+  def language()
+    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
+  end
+  
+  # get the number of sentences in the treebank file
+  # - *Returns* : the number of sentences
+  def size()
+    XmlHelper::parseattributes(self.xml_content,{"sentence"=>['document_id']})
+  end
+  
+  # get the direction of text in the treebank file
+  # - *Returns* : the text direction
+  def direction(t = nil)
+    d = XmlHelper::parseattributes(self.xml_content,{"treebank"=>['direction']})["treebank"][0]['direction']
+    return d.nil? ? 'ltr' : d
+  end
+  
+  # get the editor agent
+  # - *Returns* : the editor agent uri
   def get_editor_agent
     # we want to cache this call because (1) it's not likely to change often 
     # and (2) as we may call it in a request that subsequently retrieves the
@@ -404,11 +256,19 @@ class TreebankCiteIdentifier < CiteIdentifier
       tool
     end
   end
-  
-  # need to update the uris to reflect the new name
-  def after_rename(options = {})
-    # nothing needed?
+
+  # now that we cache data, we need to allow for it to be explicitly cleared as
+  # well, although if we used a external cache like memcached it could be handled
+  # there
+  def clear_cache
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/reviewer_agent")
+    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/editor_agent")
+    super()
   end
+
+  ###########################
+  # PROTOTYPE METHODS
+  ###########################
 
   # find files matching this one metting the supplied conditions
   # @conditions matching params
@@ -431,6 +291,8 @@ class TreebankCiteIdentifier < CiteIdentifier
     review_files
   end
 
+  # Used to prototype export of CITE Annotations as part
+  # of a CTS-Centered Research Object Bundle
   def as_ro
     ro = {'aggregates' => [], 'annotations' => []}
     urns = []
@@ -509,13 +371,173 @@ class TreebankCiteIdentifier < CiteIdentifier
     return parsed_targets.uniq
   end
 
-  # now that we cache data, we need to allow for it to be explicitly cleared as
-  # well, although if we used a external cache like memcached it could be handled
-  # there
-  def clear_cache
-    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/reviewer_agent")
-    Rails.cache.delete("#{self.publication.cache_key}/#{self.id}/editor_agent")
-    super()
-  end
 
+  ########################
+  # Private Helper Methods
+  ########################
+  protected
+    def update_document(a_body,a_comment)
+      self.set_xml_content(a_body, :comment => a_comment)
+      return self.xml_content
+    end
+
+    def update_sentence(a_id,a_body,a_comment)
+      begin
+        s_parser = XmlHelper::getDomParser(a_body,DOM_PARSER)
+        old_parser = self.xml_parser
+        new_sentence = s_parser.parseroot
+        t = old_parser.parseroot
+        old_sentence = old_parser.first(t,"/treebank/sentence[@id=#{a_id}]")
+        if (old_sentence.nil?)
+          raise "Invalid Sentence Identifier"
+        end
+        old_parser.all(old_sentence,"word").each { |w|
+          s_parser.delete_child(old_sentence,w)
+        }
+        new_words = s_parser.all(new_sentence,"word")
+        # try with namespace (Alpheios used it)
+        if (new_words.length == 0)
+          new_words = s_parser.all(new_sentence,"tb:word",{'tb' => NS_TREEBANK})
+        end
+        new_words.each { |w|
+          old_parser.add_child_strip_ns(old_sentence,w.clone)
+        }
+      rescue Exception => e
+        raise e
+      end
+      updated = old_parser.to_s
+      self.set_xml_content(updated, :comment => a_comment)
+      return updated
+    end
+
+    ## private method which checks to see if the supplied value is
+    ## present in the document_id or subdoc attributes of this treebank file
+    def is_match?(a_value)
+      has_any_targets = false
+      unless (self.xml_content)
+        Rails.logger.info("No xml content found in #{self.name}")
+        return has_any_targets
+      end
+
+      my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
+      # we have to just return false if we don't have any targets defined
+      # in ourself
+      if (my_targets['sentence'].length == 0)
+        return has_any_targets
+      end
+      # for a treebank annotation, the match will be on the target urns
+      a_value.each do | uri |
+        if has_any_targets
+           # one match is enough
+           break
+        end
+        urn_match = uri.match(/^.*?(urn:cts:.*)$/)
+        if (urn_match.nil?)
+          # not a cts urn, match will just require match on the document_id
+          # only because we don't know how to parse the subdoc from the uri
+          match = my_targets['sentence'].select { |s|
+            s['document_id']  == uri
+          }
+          if (match.length > 0)
+            has_any_targets = true
+            break
+          end
+        else
+          urn_value = urn_match.captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+          rescue Exception => e
+            # if we get an exception it's invalid urn
+            # quietly log an error about the invalid urn
+            # and fall through to default for no matches
+            Rails.logger.error("Fail to parse urn from #{uri}")
+            Rails.logger.error(e.backtrace)
+          end
+          unless (urn_obj.nil?)
+            begin
+              passage = nil
+              begin
+                passage = urn_obj.getPassage(100)
+              rescue
+                Rails.logger.error("unable to parse passage from #{urn_value}")
+              end
+              match_level = 'textgroup'
+              begin
+                ctsMatch = urn_obj.getWork()
+                if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                  match_level = 'work'
+                end
+                ctsMatch = urn_obj.getVersion()
+                if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                  match_level = 'version'
+                end
+              rescue Exception => e
+              end
+              if (passage.nil?)
+                matching_work = my_targets['sentence'].select { |s|
+                  is_cts_match = false
+                  doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
+                  if doc_match
+                    begin
+                      doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                      is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                    rescue Exception => e
+                      # not a valid urn? not a match
+                    end
+                  end
+                  is_cts_match
+                }
+                if (matching_work.length > 0)
+                  has_any_targets=true
+                  break
+                end
+              elsif (passage)
+                work = urn_obj.getUrnWithoutPassage()
+                passage.split(/-/).each do | p |
+                  match = my_targets['sentence'].select { |s|
+                    doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
+                    subdoc_match = false
+                    if (doc_match)
+                      begin
+                        doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                        is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                      rescue Exception => e
+                        # not a valid urn? not a match
+                      end
+                      if is_cts_match
+                        s['subdoc'].split(/-/).each do |s|
+                          if (s.match(/^#{p}(\.|$)/))
+                            subdoc_match = true;
+                            break;
+                         end
+                        end
+                      end
+                    end
+                    subdoc_match
+                 }
+                 if (match.length > 0)
+                   has_any_targets = true
+                   break
+                  end
+                end
+              else
+                # give up for now if we can't parse the cts urn of
+                # either the document or subdoc
+              end
+            rescue Exception => e
+              # if we can't parse the urn we can't test it
+              # so just assume it's not a match
+              Rails.logger.error(e.backtrace)
+            end # end transation on passage calculations
+          end # end test on non-null urnObj
+        end # end test on urn string
+     end
+     return has_any_targets
+    end
+
+    # Get a dom parser for my xml content
+    # @return dom parser
+    def xml_parser
+      XmlHelper::getDomParser(self.xml_content,DOM_PARSER)
+    end
 end
