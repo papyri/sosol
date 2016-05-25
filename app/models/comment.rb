@@ -26,18 +26,6 @@ class Comment < ActiveRecord::Base
     CGI.unescape(read_attribute(:comment) || '')
   end
 
-  # Get an api exposable version of the comment
-  def api_get()
-    return { 
-        :comment_id => self.id, 
-        :user => self.user.human_name, 
-        :reason => self.reason, 
-        :created_at => self.created_at,
-        :updated_at => self.updated_at,
-        :comment => self.comment
-    }
-  end
-  
   class CombineComment
     attr_accessor :xmltype, :who, :when, :why, :comment 
     
