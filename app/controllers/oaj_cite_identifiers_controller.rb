@@ -68,7 +68,10 @@ class OajCiteIdentifiersController < IdentifiersController
 
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview
+    # it would be nice to force pretty print here
+    # but parsing causes UTF-8 to be escaped and it's a hassle to
+    # unescape before parsing through pretty_generate
+    @identifier[:html_preview] = @identifier.content
   end
 
   def destroy
