@@ -28,10 +28,6 @@ FactoryGirl.define do
     "http://syriaca.org/place/#{n}"
   end
 
-  sequence :tei_cts_identifier_string do |n|
-    "perseus/greekLang/tlg0012/tlg001/edition/perseus-grc#{n}"
-  end
-
   sequence :epi_cts_identifier_string do |n|
     "perseus/greekLit/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
