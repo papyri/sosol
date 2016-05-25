@@ -113,7 +113,7 @@ class CitePublicationsController < PublicationsController
                 :e_annotatorName => @publication.creator.human_name,
                 :e_baseAnnotUri => new_cite.next_annotation_uri()
               }
-              a_init_value.each do |a|
+              params[:init_value].each do |a|
                 if  a =~ /urn:cts/
                   abbr = CTS::CTSLib.urn_abbr(a)
                   cts_targets << abbr
@@ -124,13 +124,31 @@ class CitePublicationsController < PublicationsController
                 new_cite.title = "On #{cts_targets.join(',')}"
               end
               agent_content = (AgenttHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,params))
-              new_cite.set_xml_content(agent_content, :comment => "Initializing Content from #{a_init_value}")
-              temp_id.save!
+              new_cite.set_xml_content(agent_content,
+                :comment => "Initializing Content with #{params[:init_value].join(',')}")
+            when "TreebankCiteIdentifier"
+              init_value = params[:init_value][0].to_s
+              if (init_value =~ /^https?/)
+                conn = Faraday.new(init_value) do |c|
+                  c.use Faraday::Response::Logger, Rails.logger
+                  c.use FaradayMiddleware::FollowRedirects, limit: 3
+                  c.use Faraday::Response::RaiseError
+                  c.use Faraday::Adapter::NetHttp
+                end
+                response = conn.get
+                if (new_cite.is_valid_xml?(response.body))
+                  new_cite.set_xml_content(response.body,
+                    :comment => "Initializing Content from #{init_value}"
+                else
+                  Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
+                  raise "Supplied URI does not return a valid treebank file"
+                end
+              else
+                Rails.logger.error("Unrecognized init value")
+              end
             else
             end
           end
-          new_cite =
-          content = identifier.
         else
           flash[:error] = 'Cite Versions not supported.'
         end
