@@ -12,8 +12,8 @@ class CitePublicationsController < PublicationsController
       @user = @current_user
     end
     identifier_class = identifier_type
-    tempid = params[:collection]
-    existing_identifiers = identifier_class.find_matching_identifiers(tempid,@user,params[:item_match])
+    match_callback = lambda do |i| return i.name == params[:item_match] end
+    existing_identifiers = identifier_class.find_like_identifiers(path_for_collection(params[:collection]),@user,match_callback)
     @publications = existing_identifiers.map{ |i| 
       h = Hash.new
       h[:title] = i.title
@@ -54,8 +54,11 @@ class CitePublicationsController < PublicationsController
     @publication = nil
     ## if urn and key value are supplied we need to check to see if the requested object exists before
     ## creating it
-    is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn]) 
-    existing_identifiers = identifier_class.find_matching_identifiers(params[:urn],@current_user,params[:init_value])
+    is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn])
+    # for now match only only exact match on identifier name
+    # we want to be able to match on contents too but requires a more peformant solution
+    match_callback = lambda do |i| return true end
+    existing_identifiers = identifier_class.find_like_identifiers(path_for_collection(params[:urn]),@current_user,match_callback)
 
     if existing_identifiers.length > 1
         flash[:error] = 'Error creating publication: multiple conflicting identifiers'
@@ -92,7 +95,7 @@ class CitePublicationsController < PublicationsController
       # fetch a title without creating from template
       
      
-      @publication.title = identifier_class::create_title(params[:urn])   
+      @publication.title = identifier_class::create_title(params[:urn])
       @publication.status = "new"
       @publication.save!
     
@@ -190,4 +193,5 @@ class CitePublicationsController < PublicationsController
       end
       return identifier_class
     end
+
 end
