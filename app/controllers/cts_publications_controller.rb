@@ -385,7 +385,14 @@ class CtsPublicationsController < PublicationsController
   protected
 
   def _get_existing_publication(a_identifier,a_fuzzy = false)
-    existing_identifiers = CTSIdentifier::find_matching_identifiers(a_identifier,@current_user,a_fuzzy)
+    if (fuzzy)
+      # a fuzzy match assumes any found identifier is a match
+      match_callback = lambda do |b| return true end
+    else
+      # a non-fuzzy match requires an exact match on identifier name
+      match_callback = lambda do |b| return b.name == a_identifier end
+    end
+    existing_identifiers = CTSIdentifier::find_like_identifiers(a_identifier,@current_user,match_callback)
 
     if existing_identifiers.length > 0
       conflicting_publication = existing_identifiers.first.publication
