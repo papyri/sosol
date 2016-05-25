@@ -280,6 +280,33 @@ class Identifier < ActiveRecord::Base
     return new_identifier
   end
 
+  # Create file and identifier model entry for associated identifier class
+  # from the supplied content
+  # - *Args*  :
+  #   - +publication+ -> the publication the new translation is a part of
+  #   - +agent+ -> String URI identifying the source of the content
+  #   - +content+ -> the content
+  #   - +comment+ -> a commit comment
+  # - *Returns* :
+  #   - new identifier
+  def self.new_from_supplied(publication,agent,content,comment)
+    new_identifier = self.new(:name => self.identifier_from_content(agent,content))
+    Identifier.transaction do
+      publication.lock!
+      if publication.identifiers.select{|i| i.class == self}.length > 0
+        return nil
+      else
+        new_identifier.publication = publication
+        new_identifier.save!
+      end
+    end
+
+    new_identifier.set_content(content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    template_init = new_identifier.add_change_desc(comment)
+    new_identifier.set_xml_content(template_init, :comment => 'Initializing Content')
+    return new_identifier
+  end
+
   # Processes ERB file from retrieved default XML file template for the associated identifier class
   # in data/templates/
   # - *Returns* :
@@ -316,6 +343,18 @@ class Identifier < ActiveRecord::Base
 
     return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};%04d;%04d",
                    year, document_number)
+  end
+
+  # Method which can use uses supplied content to determine the associated identifier name
+  # - *Args* :
+  #   - +agent+ -> the source of the content
+  #   - +content+ -> the content
+  # - *Returns* :
+  #   - identifier name
+  def self.identifier_from_content(agent,content)
+    # Identifier specific functionality
+    # Default behavior is to just defer to next_tempoary_identifier
+    return self.next_temporary_identifier
   end
 
   # Determines the user who own's this identifer based on the publication it is a part of
@@ -612,18 +651,58 @@ class Identifier < ActiveRecord::Base
   ## create a default title for an identifier
   ## @param a_from is up to the controller
   def self.create_title(a_from)
-    ## default is a no-op
-  end
-
-  # find files matching this one metting the supplied conditions
-  # @conditions matching params
-  def matching_files(a_conditions)
-    # default is a no-op
+    ## default just returns the passed string
+    return a_from
   end
 
   def download_file_name
    # default 
    self.class::FRIENDLY_NAME + "-" + self.title.gsub(/\s/,'_') + ".xml"
+  end
+
+  # patch identifier content - possibly from an external agent
+  # - +Args+ :
+  #  - +a_agent+ -> String URI identifying source of the updated content
+  #  - +a_query+ -> String identifier specific query to identify fragment to update
+  #  - +a_content+ -> The content fragment
+  #  - +a_commment+ -> Commit comment
+  def patch_content(a_agent,a_query,a_content,a_comment)
+    raise Exception.new("patch not implemented for #{self.class.name}")
+  end
+
+  # return a fragment of the content as requested by the supplied query
+  # which is specified in an identifier-specific manner
+  # - *Args* :
+  #   - +a_query+ -> Query String
+  # - *Returns* :
+  #   - the requested fragment as a String or Nil if not found
+  def fragment(a_query)
+    raise Exception.new("get_fragment not implemented for #{self.class.name}")
+  end
+
+  # Looks for active identifiers that named like supplied name
+  # - *Args*  :
+  #   - +match_id+ -> the name of the identifier we are trying to match
+  #   - +match_user+ -> the User owner we are trying to match
+  #   - +match_callback+ -> Callback function which receives the potentially matching
+  #                         identifier and returns true if it matches, false if not
+  # - *Returns* :
+  #   - array of matching identifiers
+  def self.find_like_identifiers(match_id,match_user,match_callback)
+    identifiers = []
+    possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
+    possible_conflicts = self.find(:all,
+                       :conditions => ["name like ?", "#{match_id}%"],
+                       :order => "name DESC")
+    actual_conflicts = possible_conflicts.select {|pc|
+      ( (pc.publication) &&
+        (pc.publication.owner == match_user) &&
+        !(%w{archived finalized}.include?(pc.publication.status)) &&
+        match_callback.call(pc)
+       )
+     }
+    identifiers += actual_conflicts
+    return identifiers
   end
 
 end
