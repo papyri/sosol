@@ -117,7 +117,7 @@ class OaCiteIdentifiersController < IdentifiersController
     find_publication
     collection_urn = params[:collection_urn] || Cite::CiteLib.get_default_collection_urn()
     match_call = lambda do |p| return p.publication_id == @publication.id end
-    existing_identifiers = OaCiteIdentifier.find_matching_identifiers(collection_urn,@current_user,match_call)
+    existing_identifiers = OaCiteIdentifier.find_like_identifiers(collection_urn,@current_user,match_call)
     if existing_identifiers.length == 1
       @identifier = existing_identifiers[0]
     elsif  existing_identifiers.length > 1
