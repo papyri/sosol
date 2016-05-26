@@ -421,7 +421,7 @@ module OacHelper
       a_annotation.root.elements.delete target
     }
     # add new targets
-    a_atts['target_uris'].each do |uri|
+    a_targets.each do |uri|
       a_annotation.add_element(make_target(uri))
     end
     return a_annotation

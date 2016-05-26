@@ -97,7 +97,7 @@ class CiteIdentifier < Identifier
       :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
       :limit => 1).first
     if latest.nil?
-      next_in_squence = 1
+      next_in_sequence = 1
     else
       citeurn = Cite::CiteLib.urn_obj(latest.urn_attribute)
       next_in_sequence = citeurn.getObjectId().to_i + 1

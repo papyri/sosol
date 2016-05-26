@@ -263,7 +263,6 @@ class Identifier < ActiveRecord::Base
   #   - new identifier
   def self.new_from_template(publication)
     new_identifier = self.new(:name => self.next_temporary_identifier)
-
     Identifier.transaction do
       publication.lock!
       if publication.identifiers.select{|i| i.class == self}.length > 0
