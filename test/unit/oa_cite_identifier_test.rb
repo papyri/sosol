@@ -33,6 +33,18 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
           end
         end
 
+        should "find_like_identifiers handles false response from callback" do
+          match_call = lambda do |p| return p.name != @identifier.name end
+          matching = Identifier.find_like_identifiers("cite/perseus/pdlann",@creator,match_call)
+          assert_equal [], matching
+        end
+
+        should "find_like_identifiers handles true response from callback" do
+          match_call = lambda do |p| return p.name == @identifier.name end
+          matching = Identifier.find_like_identifiers("cite/perseus/pdlann",@creator,match_call)
+          assert_equal [@identifier], matching
+        end
+
         should "new_from_template creates empty document" do
           assert_not_nil @identifier
           assert_equal [], @identifier.get_annotations()
