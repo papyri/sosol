@@ -176,10 +176,10 @@ class PublicationTest < ActiveSupport::TestCase
       end
     
       teardown do
-        @publication_copy.destroy
+        @publication_copy.destroy unless @publication_copy.nil? || !Publication.exists?(@publication_copy.id)
         @new_owner.destroy
       
-        @publication.destroy
+        @publication.destroy unless @publication.nil? || !Publication.exists?(@publication.id)
         @original_owner.destroy
         @community.destroy
       end
