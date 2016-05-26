@@ -36,41 +36,26 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
         end
       end
          
-      should "create template dummy non-cts" do      
-        test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
+      should "create new from template" do
+        test = AlignmentCiteIdentifier.new_from_template(@publication)
         assert_not_nil test
-        # ideally we should do an XML comparison
-        template = REXML::Document.new(test.content).root
-        # make sure things got set from the transformed tokenized passage
-        assert_equal 'lat', REXML::XPath.first(template,"//align:language[@lnum='L1']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['xml:lang']
-        assert_equal 'lat', REXML::XPath.first(template,"//align:language[@lnum='L2']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['xml:lang']
-        assert_equal 'ltr', REXML::XPath.first(template,"//align:language[@lnum='L1']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['dir']
-        assert_equal 'ltr', REXML::XPath.first(template,"//align:language[@lnum='L2']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['dir']
-        assert_equal 'cite/perseus/align.1.1', REXML::XPath.first(template,"//align:sentence",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).attributes['document_id']
-        assert_equal 12, REXML::XPath.match(template,"//align:sentence/align:wds[@lnum='L1']/align:w",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).length
-        assert_equal 12, REXML::XPath.match(template,"//align:sentence/align:wds[@lnum='L2']/align:w",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).length
-        assert_equal 'http://test1.org', REXML::XPath.first(template,"//align:sentence/align:wds[@lnum='L1']/align:comment[@class='uri']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).text
-        assert_equal 'http://test2.org', REXML::XPath.first(template,"//align:sentence/align:wds[@lnum='L2']/align:comment[@class='uri']",{"align" => AlignmentCiteIdentifier::NS_ALIGN}).text
-        assert_equal "Alignment of http://test1.org and http://test2.org", test.title
       end
       
-      should "see as match" do
-        test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
-        assert test.is_match?(["http://test1.org","http://test2.org"])
-
-      end
-      
-      should "not see as match" do
-        test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org","http://test2.org"])
-        assert ! test.is_match?(["http://test1.org","http://test3.org"])
-
+      should "create new from supplied" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'align1.xml'))
+        test = AlignmentCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New alignment")
+        assert_not_nil test
+        # title from comment uris
+        assert_equal "urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:1-1 and urn:cts:greekLit:tlg0020.tlg001.perseus-eng2:1-1", test.title
+        # 1 sentence
+        assert_equal 1, test.size
       end
 
-      should "strip uri from title" do
-        test = AlignmentCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:align",["http://test1.org/urn:cts:xxx","http://test2.org/urn:cts:yyy"])
-        assert_equal "Alignment of urn:cts:xxx and urn:cts:yyy", test.title
-
-      end
+      # TODO
+      # test title from title
+      # test fragment
+      # test patch_content
+      # test size
       
      end  
      

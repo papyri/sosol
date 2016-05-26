@@ -30,7 +30,7 @@ module Cite
       # Mock PITTypes API
       ######################################
       def pid(datatype, properties, sequencer_callback)
-        config = get_config(datatype])
+        config = get_config(datatype)
         if config.nil?
           raise Exception.new("Unknown datatype #{datatype}")
         end
@@ -45,11 +45,11 @@ module Cite
         end
         case config[:object_type]
         when OBJECT_TYPE_SEQUENCE
-          next_object_id = sequencer_callback(urn)
+          next_object_id = sequencer_callback.call(urn)
         when OBJECT_TYPE_UUID
           next_object_id = object_uuid_urn()
         else
-          raise Exception.new("Unrecognized urn object type #{config[:object_type]}"
+          raise Exception.new("Unrecognized urn object type #{config[:object_type]}")
         end
         urn = urn + "." + next_object_id.to_s
         urn = add_version(urn)

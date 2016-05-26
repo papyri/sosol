@@ -476,3 +476,6 @@ en:
     confirmdestroy: 'Are you sure?'
   publication:
     commentslink: 'Comments'
+  identifiers:
+    comment_create_from_template: 'Created from SoSOL Template'
+

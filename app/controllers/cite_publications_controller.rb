@@ -141,7 +141,7 @@ class CitePublicationsController < PublicationsController
                 response = conn.get
                 if (new_cite.is_valid_xml?(response.body))
                   new_cite.set_xml_content(response.body,
-                    :comment => "Initializing Content from #{init_value}"
+                    :comment => "Initializing Content from #{init_value}")
                 else
                   Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
                   raise "Supplied URI does not return a valid treebank file"

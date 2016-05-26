@@ -33,7 +33,8 @@ class TreebankCiteIdentifier < CiteIdentifier
     unless (language)
       language = "misc"
     end
-    return self.path_for_version_urn(Cite::CiteLib.pid(self.class.name,{'language' => language},self.sequencer_callback))
+    callback = lambda do |u| return self.sequencer(u) end
+    return self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{'language' => language},callback))
   end
 
   ###################################

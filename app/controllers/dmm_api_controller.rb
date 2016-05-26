@@ -406,8 +406,7 @@ class DmmApiController < ApplicationController
           if content.nil?
             content = params[:raw_post]
           end
-          # TODO s/b create from supplied
-          new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,params[:raw_post],params[:comment])
+          new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
         rescue Exception => e
           Rails.logger.error(e.backtrace)
           #cleanup if we created a publication

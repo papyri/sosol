@@ -38,7 +38,8 @@ class CiteIdentifier < Identifier
   # - *Returns* :
   #   - identifier name
   def self.next_temporary_identifier
-    return self.path_for_version_urn(Cite::CiteLib.pid(self.class.name,{},self.sequencer))
+    callback = lambda do |u| return self.sequencer(u) end
+    return self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{},callback))
   end
 
   ##################################################
@@ -89,21 +90,20 @@ class CiteIdentifier < Identifier
   #   - +a_collection_urn+ -> cite collection urn
   # - *Returns*
   #   - next in sequence
-  self.sequencer(a_collection_urn)
-    sequencer_callback = lambda do |a_collection_urn|
-      lookup_path = self.path_for_collection(a_collection_urn)
-      latest = self.find(:all,
-        :conditions => ["name like ?", "#{lookup_path}%"],
-        :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
-        :limit => 1).first
-      if latest.nil?
-        next_in_squence = 1
-      else
-        citeurn = Cite::CiteLib.urn_obj(latest.urn_attribute)
-        next_in_sequence = citeurn.getObjectId().to_i + 1
-      end
-      return next_in_sequence
+  def self.sequencer(a_collection_urn)
+    lookup_path = self.path_for_collection(a_collection_urn)
+    latest = self.find(:all,
+      :conditions => ["name like ?", "#{lookup_path}%"],
+      :order => "CAST(SUBSTR(name, #{lookup_path.length+1}) AS SIGNED) DESC",
+      :limit => 1).first
+    if latest.nil?
+      next_in_squence = 1
+    else
+      citeurn = Cite::CiteLib.urn_obj(latest.urn_attribute)
+      next_in_sequence = citeurn.getObjectId().to_i + 1
     end
+    return next_in_sequence
+  end
 
 
   ##################################################
