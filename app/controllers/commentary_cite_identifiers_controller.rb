@@ -13,26 +13,17 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
-    # use the default collection if one wasn't specified
-    collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
-        
     valid_targets = params[:init_value]
 
-    # required params: publication_id, urn, init_value
-    unless (@publication && collection_urn && valid_targets)
-      flash[:error] = "Unable to create commentary item. Missing urn and initial value."
+    # required params: publication_id, init_value
+    unless (@publication && valid_targets)
+      flash[:error] = "Unable to create commentary item. Missing initial value."
       redirect_to dashboard_url
       return
     end
     
-    # make sure we have a valid collection 
-    if Cite::CiteLib::get_collection(collection_urn).nil?
-      flash[:error] = "Unable to create commentary item. Unknown collection."
-      redirect_to dashboard_url
-      return
-    end
-
-    @identifier = CommentaryCiteIdentifier.new_from_template(@publication,collection_urn,valid_targets)
+    @identifier = CommentaryCiteIdentifier.new_from_template(@publication)
+    @identifier.update_targets(params[:init_value])
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
 
   end

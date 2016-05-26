@@ -28,14 +28,6 @@ class CitePublicationsController < PublicationsController
 
   ## Create/Update a CITE Publication from a linked URN
   def create_from_linked_urn
-    # required inputs:
-    ## params[:urn] = CITE_URN (Collection or Object or Version)
-    if (params[:urn].blank?)
-      flash[:error] = 'You must specify an Object URN.'
-      redirect_to dashboard_url
-      return
-    end
-    
     ## params[:type] - subclass of CiteIdentifier (e.g. Commentary)
     if (params[:type].blank?)
       flash[:error] = 'You must specify an Object Type.'
@@ -51,128 +43,102 @@ class CitePublicationsController < PublicationsController
     ## params[:init_value]  - some string value to use to initialize the object
     ## params[:pub] - publication title
     
-    @publication = nil
     ## if urn and key value are supplied we need to check to see if the requested object exists before
     ## creating it
-    is_collection_urn = Cite::CiteLib.is_collection_urn?(params[:urn])
-    # for now match only only exact match on identifier name
-    # we want to be able to match on contents too but requires a more peformant solution
-    match_callback = lambda do |i| return true end
-    existing_identifiers = identifier_class.find_like_identifiers(path_for_collection(params[:urn]),@current_user,match_callback)
+    if params[:urn] && ! Cite::CiteLib.is_collection_urn?(params[:urn])
+      flash[:error] = 'Creating a new version of an existing CITE object is no longer supported via this method'
+    end
 
-    if existing_identifiers.length > 1
-        flash[:error] = 'Error creating publication: multiple conflicting identifiers'
-        flash[:error] += '<ul>'
-        existing_identifiers.each do |conf_id|
-          begin
-            flash[:error] += "<li><a href='" + url_for(conf_id) + "'>" + conf_id.name.to_s + "</a></li>"
-          rescue
-            flash[:error] += "<li>" + conf_id.name.to_s + ":" + conf_id.publication.status + "</li>"
-          end
-        end
-        flash[:error] += '</ul>'
-        redirect_to dashboard_url
-        return
-    elsif existing_identifiers.length == 1
-      conflicting_publication = existing_identifiers.first.publication
-      if (conflicting_publication.status == "committed")
-        expire_publication_cache
-        conflicting_publication.archive
-      else
-        @publication = conflicting_publication 
-      end
-    end # end test of possible conflicts
+    # this method will now always create a new publication until we are able to
+    # implement performant support for collection item matching
+
+    @publication = Publication.new()
+    @publication.owner = @current_user
+    @publication.creator = @current_user
       
-    if @publication.nil?
-      # User doesn't have the  publication yet so create it
-     
-      @publication = Publication.new()
-      @publication.owner = @current_user
-      @publication.creator = @current_user
-      
-      ## we will always create a new version in the master repo, just a question of 
-      ## whether we start fresh or from an existing object
-      # fetch a title without creating from template
-      
-     
-      @publication.title = identifier_class::create_title(params[:urn])
-      @publication.status = "new"
-      @publication.save!
+    ## we will always create a new version in the master repo, just a question of
+    ## whether we start fresh or from an existing object
+    # fetch a title without creating from template
+
+    @publication.title = identifier_class::create_title(params[:urn])
+    @publication.status = "new"
+    @publication.save!
     
-      # branch from master so we aren't just creating an empty branch
-      @publication.branch_from_master
+    # branch from master so we aren't just creating an empty branch
+    @publication.branch_from_master
       
-      begin
-        if is_collection_urn
-          # we are creating a new object
-          new_cite = identifier_class.new_from_template(@publication,params[:urn])
-          if params[:init_value]
-            case identifier_name
-            when "CommentaryCiteIdentifier"
-              new_cite.update_targets(params[:init_value])
-            when "OaCiteIdentifier"
-              params = {
-                :e_annotatorUri => new_cite.make_annotator_uri(),
-                :e_annotatorName => @publication.creator.human_name,
-                :e_baseAnnotUri => new_cite.next_annotation_uri()
-              }
-              params[:init_value].each do |a|
-                if  a =~ /urn:cts/
-                  abbr = CTS::CTSLib.urn_abbr(a)
-                  cts_targets << abbr
-                end
-              end
-              # if we have all cts targets we use them in the title
-              if (cts_targets.size == a_init_value.size)
-                new_cite.title = "On #{cts_targets.join(',')}"
-              end
-              agent_content = (AgenttHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,params))
-              new_cite.set_xml_content(agent_content,
-                :comment => "Initializing Content with #{params[:init_value].join(',')}")
-            when "TreebankCiteIdentifier"
-              init_value = params[:init_value][0].to_s
-              if (init_value =~ /^https?/)
-                conn = Faraday.new(init_value) do |c|
-                  c.use Faraday::Response::Logger, Rails.logger
-                  c.use FaradayMiddleware::FollowRedirects, limit: 3
-                  c.use Faraday::Response::RaiseError
-                  c.use Faraday::Adapter::NetHttp
-                end
-                response = conn.get
-                if (new_cite.is_valid_xml?(response.body))
-                  new_cite.set_xml_content(response.body,
-                    :comment => "Initializing Content from #{init_value}")
-                else
-                  Rails.logger.error("Failed to retrieve file at #{init_value} #{response.code}")
-                  raise "Supplied URI does not return a valid treebank file"
-                end
-              else
-                Rails.logger.error("Unrecognized init value")
-              end
-            else
+    begin
+      # we are creating a new object
+      @identifier = identifier_class.new_from_template(@publication)
+
+      # Eventually it would be nice to deprecate this in favor of the API
+      # but the ability to allow links in is a lightweight way to suppport
+      # some customized usage without requiring client programming
+      if params[:init_value]
+        case identifier_name
+        when "CommentaryCiteIdentifier"
+          @identifier.update_targets(params[:init_value])
+        when "OaCiteIdentifier"
+          xform_params = {
+            :e_annotatorUri => @identifier.make_annotator_uri(),
+            :e_annotatorName => @publication.creator.human_name,
+            :e_baseAnnotUri => @identifier.next_annotation_uri()
+          }
+          params[:init_value].each do |a|
+            if  a =~ /urn:cts/
+              abbr = CTS::CTSLib.urn_abbr(a)
+              cts_targets << abbr
             end
           end
-        else
-          flash[:error] = 'Cite Versions not supported.'
+          # if we have all cts targets we use them in the title
+          if (cts_targets.size == a_init_value.size)
+            @identifier.title = "On #{cts_targets.join(',')}"
+          end
+          agent_content = (AgenttHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,xform_params))
+          @identifier.set_xml_content(agent_content,
+              :comment => "Initializing Content with #{params[:init_value].join(',')}")
+        when "TreebankCiteIdentifier"
+          init_value = params[:init_value][0].to_s
+          if (init_value =~ /^https?/)
+            conn = Faraday.new(init_value) do |c|
+              c.use Faraday::Response::Logger, Rails.logger
+              c.use FaradayMiddleware::FollowRedirects, limit: 3
+              c.use Faraday::Response::RaiseError
+              c.use Faraday::Adapter::NetHttp
+            end
+            response = conn.get
+            if (@identifier.is_valid_xml?(response.body))
+              @identifier.set_xml_content(response.body,
+                :comment => "Initializing Content from #{init_value}")
+            else
+              raise Exception.new("Failed to retrieve file at #{init_value} #{response.code}")
+            end
+          else
+            raise Exception.new("Unrecognized init value")
+          end
         end
-        flash[:notice] = 'Publication was successfully created.'      
-      rescue Exception => e
-        Rails.logger.error(e)
-        Rails.logger.info(e.backtrace)
-        @publication.destroy
-        flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s
-        redirect_to dashboard_url
-        return
       end
-    else
-      new_cite = existing_identifiers.first
-      flash[:notice] = 'Edit existing publication.'   
+      flash[:notice] = 'Publication was successfully created.'
+      # we used to support supplying a custom CITE collection in the link, but it wasn't really uesd
+      # so we are using default collections per type now.  At some point when we have a full-featured
+      # collections API we may re-enable this, but for now we will just issue a warning if the item
+      # went into a different collection than requested
+      if @identifier.urn_attribute !~ /#{params[:urn]}/
+        flash[:warning] = "The requested CITE collection for this Publication is not available. It has been placed in the defaullt collection for it's type"
+      end
+    rescue Exception => e
+      Rails.logger.error(e)
+      Rails.logger.error(e.backtrace)
+      @publication.destroy
+      flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s
+      redirect_to dashboard_url
+      return
     end
     redirect_to polymorphic_path([@publication, @identifier],
                                    :action => :edit,
                                    :publication_id => @publication.id,
-                                   :id => new_cite.id,
-                                   :urn => new_cite.urn_attribute)
+                                   :id => @identifier.id,
+                                   :urn => @identifier.urn_attribute)
   end
   
   ###
