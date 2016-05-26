@@ -55,17 +55,6 @@ class AlignmentCiteIdentifier < CiteIdentifier
     end
   end
   
-  ##################################################
-  # Public AlignmentCiteIdentifier Instance Methods
-  ##################################################
-
-  # get the number of sentences in the alignment file
-  # for pagination
-  def size
-    t = REXML::Document.new(self.xml_content)
-    REXML::XPath.match(t,"/align:aligned-text/align:sentence",{"align" => NS_ALIGN}).size.to_s
-  end
-
   ########################
   # Private Helper Methods
   ########################

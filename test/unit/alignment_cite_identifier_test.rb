@@ -47,16 +47,13 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
         assert_not_nil test
         # title from comment uris
         assert_equal "urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:1-1 and urn:cts:greekLit:tlg0020.tlg001.perseus-eng2:1-1", test.title
-        # 1 sentence
-        assert_equal 1, test.size
       end
 
       # TODO
       # test title from title
       # test fragment
       # test patch_content
-      # test size
-      
+
      end  
      
 
