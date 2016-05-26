@@ -47,7 +47,7 @@ module Cite
         when OBJECT_TYPE_SEQUENCE
           next_object_id = sequencer_callback.call(urn)
         when OBJECT_TYPE_UUID
-          next_object_id = object_uuid_urn()
+          next_object_id = object_uuid_urn(urn)
         else
           raise Exception.new("Unrecognized urn object type #{config[:object_type]}")
         end
@@ -137,7 +137,7 @@ module Cite
       # return an object urn that assignes a uuid as the object id
       def object_uuid_urn(a_collection_urn)
         if (is_collection_urn?(a_collection_urn))
-          return "#{a_collection_urn}.#{UUID.new.generate(:compact)}"
+          return UUID.new.generate(:compact)
         else 
           raise "Invalid collection urn"
         end

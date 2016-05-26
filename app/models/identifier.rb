@@ -289,7 +289,8 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - new identifier
   def self.new_from_supplied(publication,agent,content,comment)
-    new_identifier = self.new(:name => self.identifier_from_content(agent,content))
+    id,updated_content = self.identifier_from_content(agent,content)
+    new_identifier = self.new(:name => id)
     Identifier.transaction do
       publication.lock!
       if publication.identifiers.select{|i| i.class == self}.length > 0
@@ -300,7 +301,7 @@ class Identifier < ActiveRecord::Base
       end
     end
 
-    new_identifier.set_content(content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    new_identifier.set_content(updated_content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     template_init = new_identifier.add_change_desc(comment)
     new_identifier.set_xml_content(template_init, :comment => 'Initializing Content')
     return new_identifier
@@ -349,11 +350,11 @@ class Identifier < ActiveRecord::Base
   #   - +agent+ -> the source of the content
   #   - +content+ -> the content
   # - *Returns* :
-  #   - identifier name
+  #   - identifier name and the content (it may have been updated)
   def self.identifier_from_content(agent,content)
     # Identifier specific functionality
     # Default behavior is to just defer to next_tempoary_identifier
-    return self.next_temporary_identifier
+    return self.next_temporary_identifier, content
   end
 
   # Determines the user who own's this identifer based on the publication it is a part of

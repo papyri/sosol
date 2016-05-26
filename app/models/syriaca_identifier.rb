@@ -43,15 +43,16 @@ class SyriacaIdentifier < Identifier
   # to parse the identifier from a supplied gazetteer document
   # - *Args* :
   #   - +content+ -> the supplied content
-  # - *Returns*: the identifier
-  def self.identifier_from_content(content)
+  # - *Returns*: the identifier, and unchanged content
+  def self.identifier_from_content(agent,content)
     xml = REXML::Document.new(content).root
     uri = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type="URI"]',{"tei" => NS_TEI})
     if (uri)
-      uri.text.sub(/\/tei$/,'')
+      uri = uri.text.sub(/\/tei$/,'')
     else
       raise Exception.new("Missing Identifier")
     end
+    return uri,content
   end
 
   ## create a default title for a syriaca identifier

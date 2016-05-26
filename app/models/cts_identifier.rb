@@ -15,32 +15,6 @@ class CTSIdentifier < Identifier
   # Public Class Method Overrides
   ###################################
 
-  # @Overrides Identifier#new_from_supplied
-  # in additionl to pulling identifier from supplied content
-  # it updates the identifier in the content to replace
-  # a work urn with the new version urn identifier
-  def self.new_from_supplied(publication,agent,content,comment)
-    new_identifier = self.new(:name => self.identifier_from_content(agent,content))
-    Identifier.transaction do
-      publication.lock!
-      if publication.identifiers.select{|i| i.class == self}.length > 0
-        return nil
-      else
-        new_identifier.publication = publication
-        new_identifier.save!
-      end
-    end
-    urn = new_identifier.urn_attribute
-    urnObj = CTS::CTSLib.urnObj(urn)
-    workUrn = "urn:cts:" + urnObj.getTextGroup(true) + "." + urnObj.getWork(false)
-    # TODO we should really only do this explicitly in the idno header
-    content.gsub(/\b#{workUrn}\b/,temp_id.urn_attribute)
-    new_identifier.set_content(body, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
-    template_init = new_identifier_id.add_change_desc(comment)
-    new_identifier.set_xml_content(template_init, :comment => 'Initializing Content')
-    return new_identifier
-  end
-
   # @Overrides Identifier#identifier_from_content
   # to parse a work urn from supplied content
   def self.identifier_from_content(agent,content)
@@ -71,7 +45,9 @@ class CTSIdentifier < Identifier
     if (version)
       raise Exception.new("Creating a new version from a version URN is not yet supported")
     end
-    self::next_temporary_identifier(self::TEMPORARY_COLLECTION,urn,pubtype,lang)
+    id = self::next_temporary_identifier(self::TEMPORARY_COLLECTION,urn,pubtype,lang)
+    content.gsub(/\b#{workUrn}\b/,id.urn_attribute)
+    return id,content
   end
 
   ###########################################

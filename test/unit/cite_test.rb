@@ -14,6 +14,11 @@ class CiteTest < ActiveSupport::TestCase
       cb = lambda do |u| return 1 end
       assert_equal "urn:cite:perseus:grctb.1.1", Cite::CiteLib.pid("TreebankCiteIdentifier",{"language" => "grc"},cb)
     end
+
+    should "return a uuid urn" do
+      cb = lambda do |u| return 1 end
+      assert_match /^urn:cite:perseus:pdlann.\w+\.1$/, Cite::CiteLib.pid("OaCiteIdentifier",{},nil)
+    end
  end
 
  context "cite api test" do

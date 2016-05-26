@@ -35,7 +35,7 @@ class OaCiteIdentifier < CiteIdentifier
 
   # TODO need to update the uris to reflect the new name
   def after_rename(options = {})
-     raise "Rename not supported yet!"
+     raise Exception.new("Rename not supported yet!")
   end
 
   # @overrides Identifier.fragment
@@ -58,7 +58,6 @@ class OaCiteIdentifier < CiteIdentifier
     return xmlobj
   end
 
-
   # @overrides Identifier.patch_content
   # - *Args* :
   #   - +a_agent+ -> String URI identifying the agent making the patch
@@ -71,7 +70,7 @@ class OaCiteIdentifier < CiteIdentifier
   def patch_content(a_agent,a_query,a_content,a_comment)
     # append is a special case of patch
     if (a_query) == 'APPEND'
-      return self.append(a_agent,a_query,a_content,a_comment)
+      return self.append(a_agent,a_content,a_comment)
     end
     transform = nil
     if (! a_agent.nil? && a_agent[:transformations][:OaCiteIdentifier])

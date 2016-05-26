@@ -7,4 +7,16 @@ class IdentifierTest < ActiveSupport::TestCase
      identifier.stubs(:titleize).raises("Unable to Save")
      assert_equal "Invalid Identifier", identifier.title
   end
+
+  test "find_like_identifiers handles false response from callback" do
+    match_call = lambda do |p| return p.name != @identifier.name end
+    matching = Identifier.find_like_identifiers("papyri.info/ddb/bgu;1",@creator,match_call)
+    assert_equal [], matching
+  end
+
+  test "find_like_identifiers handles true response from callback" do
+    match_call = lambda do |p| return p.name == @identifier.name end
+    matching = Identifier.find_like_identifiers("papyri.info/ddb/bgu;1",@creator,match_call)
+    assert_equal [], matching
+  end
 end
