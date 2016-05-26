@@ -22,19 +22,24 @@ class TreebankCiteIdentifier < CiteIdentifier
   # Public Class Method Overrides
   ###################################
 
-  # @overrides CiteIdentifier#next_temporary_identifier
+  # @overrides Identifier#identifier_from_content
   # Determines the next identifier  for this class
   # Delegates to the CITE PID Provider, supplying
   # the language of the content as a property
+  # - *Args* :
+  #   - +agent+ -> the source of the content
+  #   - +content+ -> the content
   # - *Returns* :
-  #   - identifier name
-  def self.next_temporary_identifier
-    language = XmlHelper::parseattributes(a_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
+  #   - identifier name and the content
+  def self.identifier_from_content(agent,content)
+    language = XmlHelper::parseattributes(content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
     unless (language)
       language = "misc"
     end
     callback = lambda do |u| return self.sequencer(u) end
-    return self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{'language' => language},callback))
+    id = self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{'language' => language},callback))
+    # TODO NOW WE SHOULD INSERT THE URN INTO THE CONTENT
+    return id,content
   end
 
   ###################################
@@ -372,6 +377,132 @@ class TreebankCiteIdentifier < CiteIdentifier
     return parsed_targets.uniq
   end
 
+  ## method which checks to see if the supplied value is
+  ## present in the document_id or subdoc attributes of this treebank file
+  def is_match?(a_value)
+    has_any_targets = false
+    unless (self.xml_content)
+      Rails.logger.info("No xml content found in #{self.name}")
+      return has_any_targets
+    end
+
+    my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
+    # we have to just return false if we don't have any targets defined
+    # in ourself
+    if (my_targets['sentence'].length == 0)
+      return has_any_targets
+    end
+    # for a treebank annotation, the match will be on the target urns
+    a_value.each do | uri |
+      if has_any_targets
+         # one match is enough
+         break
+      end
+      urn_match = uri.match(/^.*?(urn:cts:.*)$/)
+      if (urn_match.nil?)
+        # not a cts urn, match will just require match on the document_id
+        # only because we don't know how to parse the subdoc from the uri
+        match = my_targets['sentence'].select { |s|
+          s['document_id']  == uri
+        }
+        if (match.length > 0)
+          has_any_targets = true
+          break
+        end
+      else
+        urn_value = urn_match.captures[0]
+        begin
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+        rescue Exception => e
+          # if we get an exception it's invalid urn
+          # quietly log an error about the invalid urn
+          # and fall through to default for no matches
+          Rails.logger.error("Fail to parse urn from #{uri}")
+          Rails.logger.error(e.backtrace)
+        end
+        unless (urn_obj.nil?)
+          begin
+            passage = nil
+            begin
+              passage = urn_obj.getPassage(100)
+            rescue
+              Rails.logger.error("unable to parse passage from #{urn_value}")
+            end
+            match_level = 'textgroup'
+            begin
+              ctsMatch = urn_obj.getWork()
+              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                match_level = 'work'
+              end
+              ctsMatch = urn_obj.getVersion()
+              if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
+                match_level = 'version'
+              end
+            rescue Exception => e
+            end
+            if (passage.nil?)
+              matching_work = my_targets['sentence'].select { |s|
+                is_cts_match = false
+                doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
+                if doc_match
+                  begin
+                    doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                    is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                  rescue Exception => e
+                    # not a valid urn? not a match
+                  end
+                end
+                is_cts_match
+              }
+              if (matching_work.length > 0)
+                has_any_targets=true
+                break
+              end
+            elsif (passage)
+              work = urn_obj.getUrnWithoutPassage()
+              passage.split(/-/).each do | p |
+                match = my_targets['sentence'].select { |s|
+                  doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
+                  subdoc_match = false
+                  if (doc_match)
+                    begin
+                      doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
+                      is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
+                    rescue Exception => e
+                      # not a valid urn? not a match
+                    end
+                    if is_cts_match
+                      s['subdoc'].split(/-/).each do |s|
+                        if (s.match(/^#{p}(\.|$)/))
+                          subdoc_match = true;
+                          break;
+                       end
+                      end
+                    end
+                  end
+                  subdoc_match
+               }
+               if (match.length > 0)
+                 has_any_targets = true
+                 break
+                end
+              end
+            else
+              # give up for now if we can't parse the cts urn of
+              # either the document or subdoc
+            end
+          rescue Exception => e
+            # if we can't parse the urn we can't test it
+            # so just assume it's not a match
+            Rails.logger.error(e.backtrace)
+          end # end transation on passage calculations
+        end # end test on non-null urnObj
+      end # end test on urn string
+   end
+   return has_any_targets
+  end
+
+
 
   ########################
   # Private Helper Methods
@@ -409,131 +540,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       updated = old_parser.to_s
       self.set_xml_content(updated, :comment => a_comment)
       return updated
-    end
-
-    ## private method which checks to see if the supplied value is
-    ## present in the document_id or subdoc attributes of this treebank file
-    def is_match?(a_value)
-      has_any_targets = false
-      unless (self.xml_content)
-        Rails.logger.info("No xml content found in #{self.name}")
-        return has_any_targets
-      end
-
-      my_targets = XmlHelper::parseattributes(self.xml_content, {"sentence" => ['document_id','subdoc']})
-      # we have to just return false if we don't have any targets defined
-      # in ourself
-      if (my_targets['sentence'].length == 0)
-        return has_any_targets
-      end
-      # for a treebank annotation, the match will be on the target urns
-      a_value.each do | uri |
-        if has_any_targets
-           # one match is enough
-           break
-        end
-        urn_match = uri.match(/^.*?(urn:cts:.*)$/)
-        if (urn_match.nil?)
-          # not a cts urn, match will just require match on the document_id
-          # only because we don't know how to parse the subdoc from the uri
-          match = my_targets['sentence'].select { |s|
-            s['document_id']  == uri
-          }
-          if (match.length > 0)
-            has_any_targets = true
-            break
-          end
-        else
-          urn_value = urn_match.captures[0]
-          begin
-            urn_obj = CTS::CTSLib.urnObj(urn_value)
-          rescue Exception => e
-            # if we get an exception it's invalid urn
-            # quietly log an error about the invalid urn
-            # and fall through to default for no matches
-            Rails.logger.error("Fail to parse urn from #{uri}")
-            Rails.logger.error(e.backtrace)
-          end
-          unless (urn_obj.nil?)
-            begin
-              passage = nil
-              begin
-                passage = urn_obj.getPassage(100)
-              rescue
-                Rails.logger.error("unable to parse passage from #{urn_value}")
-              end
-              match_level = 'textgroup'
-              begin
-                ctsMatch = urn_obj.getWork()
-                if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
-                  match_level = 'work'
-                end
-                ctsMatch = urn_obj.getVersion()
-                if ! (ctsMatch.nil? || ctsMatch.match(/:null/))
-                  match_level = 'version'
-                end
-              rescue Exception => e
-              end
-              if (passage.nil?)
-                matching_work = my_targets['sentence'].select { |s|
-                  is_cts_match = false
-                  doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
-                  if doc_match
-                    begin
-                      doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
-                      is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
-                    rescue Exception => e
-                      # not a valid urn? not a match
-                    end
-                  end
-                  is_cts_match
-                }
-                if (matching_work.length > 0)
-                  has_any_targets=true
-                  break
-                end
-              elsif (passage)
-                work = urn_obj.getUrnWithoutPassage()
-                passage.split(/-/).each do | p |
-                  match = my_targets['sentence'].select { |s|
-                    doc_match = s['document_id'] && s['document_id'].match(/(urn:cts:.*?)$/)
-                    subdoc_match = false
-                    if (doc_match)
-                      begin
-                        doc_urn = CTS::CTSLib.urnObj(doc_match.captures[0])
-                        is_cts_match = CTS::CTSLib.is_cts_match?(urn_obj,doc_urn,match_level)
-                      rescue Exception => e
-                        # not a valid urn? not a match
-                      end
-                      if is_cts_match
-                        s['subdoc'].split(/-/).each do |s|
-                          if (s.match(/^#{p}(\.|$)/))
-                            subdoc_match = true;
-                            break;
-                         end
-                        end
-                      end
-                    end
-                    subdoc_match
-                 }
-                 if (match.length > 0)
-                   has_any_targets = true
-                   break
-                  end
-                end
-              else
-                # give up for now if we can't parse the cts urn of
-                # either the document or subdoc
-              end
-            rescue Exception => e
-              # if we can't parse the urn we can't test it
-              # so just assume it's not a match
-              Rails.logger.error(e.backtrace)
-            end # end transation on passage calculations
-          end # end test on non-null urnObj
-        end # end test on urn string
-     end
-     return has_any_targets
     end
 
     # Get a dom parser for my xml content
