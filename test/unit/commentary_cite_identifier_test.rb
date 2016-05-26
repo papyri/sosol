@@ -10,9 +10,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
         @publication.branch_from_master
         @publication2 = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new", :title => "pub2")
         @publication2.branch_from_master
-
-        # branch from master so we aren't just creating an empty branch
-        @publication.branch_from_master
+        @publication2.branch_from_master
       
       end
       
