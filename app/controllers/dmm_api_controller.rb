@@ -327,13 +327,15 @@ class DmmApiController < ApplicationController
     def _api_item_create
       begin
         # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      
+
+
         params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
-        unless (params[:comment]) 
+        agent = AgentHelper::agent_of(params[:raw_post])
+        unless (params[:comment])
           params[:comment] = "create_from_api"
         end
         identifier_class = identifier_type
-        tempid = identifier_class.parse_content_for_identifier(params[:raw_post])
+        tempid = identifier_class.identifier_from_content(agent,params[:raw_post])
 
         # require an exact match on identifier name
         # we want to be able to refine this per identifier type and contents but
@@ -378,43 +380,30 @@ class DmmApiController < ApplicationController
           end  
         end    
      
-        # separate begin/rescue block here because
-        # we only need to destroy the publication in rescue once we've 
-        # successfully created it
-        begin
-          agent = AgentHelper::agent_of(params[:raw_post])
-          #backwards compatibility - we used to wrap api input in Oa wrappers
-          case identifier_class
-          when AlignmentCiteIdentifier
-            oacxml = REXML::Document.new(a_body).root
-            alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
-            if (alignment)
-              formatter = PrettySsime.new
-              formatter.compact = true
-              formatter.width = 2**32
-              content = ''
-              formatter.write alignment, content
-            end
-          when TreebankCiteIdentifier
-            parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
-            oacxml = parser.parseroot
-            treebank = parser.first(oacxml,"//treebank")
-            if (treebank)
-              content = parser.to_s(treebank)
-            end
+        #backwards compatibility - we used to wrap api input in Oa wrappers
+        case identifier_class
+        when AlignmentCiteIdentifier
+          oacxml = REXML::Document.new(a_body).root
+          alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
+          if (alignment)
+            formatter = PrettySsime.new
+            formatter.compact = true
+            formatter.width = 2**32
+            content = ''
+            formatter.write alignment, content
           end
-          if content.nil?
-            content = params[:raw_post]
+        when TreebankCiteIdentifier
+          parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
+          oacxml = parser.parseroot
+          treebank = parser.first(oacxml,"//treebank")
+          if (treebank)
+            content = parser.to_s(treebank)
           end
-          new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
-        rescue Exception => e
-          Rails.logger.error(e.backtrace)
-          #cleanup if we created a publication
-          if (!params[:publication_id] && @publication)
-            @publication.destroy
-          end
-          return e.message, 500
         end
+        if content.nil?
+          content = params[:raw_post]
+        end
+        new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         #cleanup if we created a publication

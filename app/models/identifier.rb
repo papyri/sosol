@@ -296,8 +296,8 @@ class Identifier < ActiveRecord::Base
       if publication.identifiers.select{|i| i.class == self}.length > 0
         return nil
       else
-        new_identifier.publication = publication
-        new_identifier.save!
+       new_identifier.publication = publication
+       new_identifier.save!
       end
     end
 
@@ -394,10 +394,6 @@ class Identifier < ActiveRecord::Base
 
     return false
 
-  end
-  
-  def xml_content_attr( _xml )
-    self[:xml_content] = _xml
   end
   
   # - *Returns* :
