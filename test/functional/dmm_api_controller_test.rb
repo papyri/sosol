@@ -63,20 +63,11 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     end
     
     
-     def test_should_fail_create_duplicate_identifier_using_init
-      @request.env['RAW_POST_DATA'] = @valid_tb
-      post :api_item_create, :identifier_type => 'TreebankCite'
-      assert_match(/<item>..*?<\/item>/,@response.body) 
-      assert_equal 1, assigns(:publication).identifiers.size 
-      post :api_item_create, :identifier_type => 'TreebankCite', :init_value => "urn:cts:latinLit:tg.work.edition:1.1"
-      assert_match(/error.*?conflicting/,@response.body) 
-      assert_equal 1, assigns(:publication).identifiers.size
-    end
-
      def test_should_create_duplicate_identifier_using_post
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      assert_equal 1, assigns(:publication).identifiers.size 
+      assert_not_nil assigns(:identifier)
+      assert_not_nil assigns(:publication)
       post :api_item_create, :identifier_type => 'TreebankCite'
       assert_response(200)
     end

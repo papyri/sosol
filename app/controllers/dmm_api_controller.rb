@@ -381,8 +381,8 @@ class DmmApiController < ApplicationController
         end    
      
         #backwards compatibility - we used to wrap api input in Oa wrappers
-        case identifier_class
-        when AlignmentCiteIdentifier
+        case identifier_class.to_s
+        when 'AlignmentCiteIdentifier'
           oacxml = REXML::Document.new(a_body).root
           alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
           if (alignment)
@@ -392,7 +392,8 @@ class DmmApiController < ApplicationController
             content = ''
             formatter.write alignment, content
           end
-        when TreebankCiteIdentifier
+        when 'TreebankCiteIdentifier'
+          puts "is treebank"
           parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
           oacxml = parser.parseroot
           treebank = parser.first(oacxml,"//treebank")
@@ -403,7 +404,7 @@ class DmmApiController < ApplicationController
         if content.nil?
           content = params[:raw_post]
         end
-        new_identifier_uri = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
+        @identifier = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         #cleanup if we created a publication
@@ -416,7 +417,7 @@ class DmmApiController < ApplicationController
         end
         return e.message, 500
       end
-      return new_identifier_uri, 200
+      return @identifier, 200
     end
 
     # format a comment for the API

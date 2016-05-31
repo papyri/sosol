@@ -21,6 +21,9 @@ class TreebankCiteIdentifier < CiteIdentifier
   ###################################
   # Public Class Method Overrides
   ###################################
+  def self.new_from_supplied(publication,agent,content,comment)
+    super
+  end
 
   # @overrides Identifier#identifier_from_content
   # Determines the next identifier  for this class

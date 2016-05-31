@@ -295,11 +295,11 @@ class Identifier < ActiveRecord::Base
       publication.lock!
       if publication.identifiers.select{|i| i.class == self}.length > 0
         return nil
-      else
-       new_identifier.publication = publication
-       new_identifier.save!
-      end
+    else
+      new_identifier.publication = publication
+      new_identifier.save!
     end
+  end
 
     new_identifier.set_content(updated_content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     template_init = new_identifier.add_change_desc(comment)
