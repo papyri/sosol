@@ -46,6 +46,40 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     #TODO
     # test_should_use_supplied_title
     # test_should_use_temporary_title
-    
+
+     # TODO IMPORT SCENARIOS
+     #should "new_from_template works with gss key pub url as init_value" do
+      #  init_value = ["https://docs.google.com/spreadsheet/pub?key=0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc&output=html"]
+      #  test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      #  assert_not_nil test
+      #  assert_equal 9, test.get_annotations().size
+      #end
+      #should "new_from_template works with gss key link url as init_value" do
+      #  init_value = ["https://docs.google.com/spreadsheet/ccc?key=0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc&usp=sharing"]
+      #  test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      #  assert_not_nil test
+      #  assert_equal 9, test.get_annotations().size
+      #end
+      #should "new_from_template work with gss pub url as init_value" do
+      #  init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc/pubhtml"]
+      #  test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      #  assert_not_nil test
+      #  assert_equal 9, test.get_annotations().size
+      #end
+
+      #should "new_from_template should work with gss link url as init_value" do
+      #  init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc/edit?usp=sharing"]
+      #  test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      #  assert_not_nil test
+      #  assert_equal 9, test.get_annotations().size
+      #end
+
+      #should "new_from_template raises error with invalid google url as init_value" do
+      #  init_value = ["https://docs.google.com/spreadsheets/d/0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc"]
+      #  @client.stubs(:get_content).raises("Invalid URL")
+      #  exception = assert_raises(RuntimeError) {
+      #    test = OaCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:pdlann",init_value)
+      #
+
   end
 end

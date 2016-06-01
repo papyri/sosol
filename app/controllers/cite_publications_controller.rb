@@ -13,7 +13,7 @@ class CitePublicationsController < PublicationsController
     end
     identifier_class = identifier_type
     match_callback = lambda do |i| return i.name == params[:item_match] end
-    existing_identifiers = identifier_class.find_like_identifiers(path_for_collection(params[:collection]),@user,match_callback)
+    existing_identifiers = identifier_class.find_like_identifiers(identifier_class.path_for_collection(params[:collection]),@user,match_callback)
     @publications = existing_identifiers.map{ |i| 
       h = Hash.new
       h[:title] = i.title
