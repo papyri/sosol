@@ -7,7 +7,7 @@
     %p{:class => ['cts_selector_hint']}== Select a publication to work with:
     = hidden_field_tag 'IdentifierClass','CTSIdentifier'
     - [CTSIdentifier].each do |identifier_class|
-      = select_tag("#{identifier_class}CollectionSelect", options_for_select(CTS::CTSLib.getInventoriesHash().keys)
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
     = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
     = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
     = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
