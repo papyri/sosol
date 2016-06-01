@@ -22,12 +22,6 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     find_identifier
   end
 
-  # responds to a request to create a new file
-  # @param
-  def create
-    
-  end
-  
   def edit
     find_identifier
     parameters = {}
@@ -35,10 +29,9 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     parameters[:title] = @identifier.title
     parameters[:doc_id] = @identifier.id.to_s
     parameters[:max] = 50 # TODO - make max sentences configurable
-    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[self])[:href]
-    @identifier[:list] = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_string(content),
+    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[@identifier])[:href]
+    @list = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite alignment_list.xsl})),
         parameters)
@@ -58,9 +51,9 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     parameters[:title] = @identifier.title
     parameters[:doc_id] = @identifier.id.to_s
     parameters[:max] = 50 # TODO - make max sentences configurable
-    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[self])[:href]
-    @identifier[:html_preview] = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
+    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[@identifier])[:href]
+    @list = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite alignment_list.xsl})),
         parameters)
@@ -68,6 +61,13 @@ class AlignmentCiteIdentifiersController < IdentifiersController
 
   def destroy
     find_identifier 
+    remaining = @identifier.publication.identifiers.select { |i|
+      i != @identifier
+    }
+    if (remaining.size == 0)
+      flash[:error] = "This would leave the publication without any identifiers."
+      return redirect_to @identifier.publication
+    end
     name = @identifier.title
     pub = @identifier.publication
     @identifier.destroy
