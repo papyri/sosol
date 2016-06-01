@@ -20,7 +20,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
       assert_match(/<item>..*?<\/item>/,@response.body) 
-      assert_equal 1, assigns(:publication).identifiers.size 
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
     end
     
     #def test_should_create_publication_and_alignment_identifier
@@ -33,32 +34,32 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     def test_should_succeed_update
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      assert_equal 1, assigns(:publication).identifiers.size 
-      identifier = assigns(:publication).identifiers[0]
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
       @request.env['RAW_POST_DATA'] = @update_tb
-      post :api_item_patch, :identifier_type => 'TreebankCite', :id => identifier.id.to_s
+      post :api_item_patch, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s
       assert_response(:success)
     end
 
     def test_should_fail_update_invalid_user
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      assert_equal 1, assigns(:publication).identifiers.size 
-      identifier = assigns(:publication).identifiers[0]
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
       @request.env['RAW_POST_DATA'] = @valid_tb
       @request.session[:user_id] = @creatorb.id
-      post :api_item_patch, :identifier_type => 'TreebankCite', :id => identifier.id.to_s
+      post :api_item_patch, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s
       assert_response(403)
     end
 
     def test_should_fail_update_commit_failure
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      assert_equal 1, assigns(:publication).identifiers.size 
-      identifier = assigns(:publication).identifiers[0]
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
       @request.env['RAW_POST_DATA'] = @update_tb
-      identifier.repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new("Commit failed"))
-      post :api_item_patch, :identifier_type => 'TreebankCite', :id => identifier.id.to_s
+      assigns(:identifier).repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new("Commit failed"))
+      post :api_item_patch, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s
       assert_response(500)
     end
     
@@ -85,7 +86,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     def test_should_succeed_comment_create
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "review"
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test", :reason => "review"
       assert_match(/"comment_id":(.*?),/,@response.body)
       
     end
@@ -93,9 +94,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     def test_should_succeed_comment_update_owner_user
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "review"
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test", :reason => "review"
       comment_id = @response.body.match(/"comment_id":(.*?),/).captures
-      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment_id => comment_id, :comment=>"test update", :reason => "review"
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment_id => comment_id, :comment=>"test update", :reason => "review"
       assert_match(/"comment_id":#{comment_id}/,@response.body)
       assert_match(/"comment":"test update"/,@response.body)
     end
@@ -103,14 +104,14 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     def test_should_fail_invalid_reason
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test", :reason => "spam"
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test", :reason => "spam"
       assert_response(:error)
     end
 
     def test_should_set_default_reason
       @request.env['RAW_POST_DATA'] = @valid_tb
       post :api_item_create, :identifier_type => 'TreebankCite'
-      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:publication).identifiers[0].id.to_s, :comment=>"test"
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test"
       assert_match(/"reason":"general"/,@response.body)
     end
 

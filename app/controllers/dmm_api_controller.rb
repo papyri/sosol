@@ -393,7 +393,6 @@ class DmmApiController < ApplicationController
             formatter.write alignment, content
           end
         when 'TreebankCiteIdentifier'
-          puts "is treebank"
           parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
           oacxml = parser.parseroot
           treebank = parser.first(oacxml,"//treebank")
