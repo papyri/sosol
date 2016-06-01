@@ -96,8 +96,6 @@
           = image_tag('hgv.gif')
         - if identifier.class == APISIdentifier
           = image_tag('apis.png')
-        - if identifier.class == OACIdentifier
-          = image_tag('oac-logo-ds.png')
         - if identifier.needs_reviewing?(@current_user.id)
           -#%b !
           = image_tag('review_flag.png')
