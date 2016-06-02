@@ -10,6 +10,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
         @client = stub("googless")
         @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'google1.xml')))
         @client.stubs(:get_transformation).returns("/data/xslt/cite/gs_to_oa_cite.xsl")
+        @urlc = stub("url")
+        @urlc.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'updatetb.xml')))
         AgentHelper.stubs(:get_client).returns(@client)
     end
     
@@ -38,11 +40,55 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
 
     def test_should_flash_error_if_deprecated_version_urn_feature_used
       get :create_from_linked_urn, :urn => "urn:cite:perseus:lattb.1.1", :type => 'Treebank' 
-      assert_not_nil assigns(:publication)
+      assert_nil assigns(:publication)
       assert_nil assigns(:identifier)
       assert_equal 'Creating a new version of an existing CITE object is no longer supported via this method', flash[:error]
     end
-    
+
+    def test_user_collection_list
+      #TODO
+    end
+
+    context "with stubbed url agent" do
+
+      setup do
+        @client = stub("url")
+        @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'updatetb.xml')))
+        AgentHelper.stubs(:get_client).returns(@client)
+      end
+
+      teardown do
+      end
+
+      should "create_from_linked_urn_with_treebank_template_url" do
+        get :create_from_linked_urn, :init_value => ["https://example.org/mytemplate.xml"], :type => 'Treebank'
+        assert_not_nil assigns(:publication)
+        assert_not_nil assigns(:identifier)
+        assert_equal 'Publication was successfully created.', flash[:notice]
+        assert_redirected_to edit_publication_treebank_cite_identifier_path(assigns(:publication), assigns(:identifier))
+      end
+
+      should "not_create_from_linked_urn_with_bad_treebank_template_data" do
+        @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'badtb.xml')))
+        get :create_from_linked_urn, :init_value => ["https://example.org/mytemplate.xml"], :type => 'Treebank'
+        assert_match /Error creating publication/, flash[:error]
+        assert_redirected_to dashboard_url
+      end
+
+
+    end
+
+    context "with stubbed googless agent" do
+      setup do
+        @client = stub("url")
+        @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'updatetb.xml')))
+        AgentHelper.stubs(:get_client).returns(@client)
+      end
+
+      teardown do
+      end
+
+    end
     #TODO
     # test_should_use_supplied_title
     # test_should_use_temporary_title

@@ -5,6 +5,11 @@ class CitePublicationsController < PublicationsController
   
   
   # list items currently being edited by user,collection and matching identifier
+  # - *Params* :
+  #   - +user_name+ -> the name of a User (optional - defaults to current user)
+  #   - +item_match+ -> an IdentifierType specific match string for comparison
+  #   - +collection+ -> the collection to query
+  #   - +identifier_type+ -> the type of identifier to limit the response to
   def user_collection_list
     if (params[:user_name])
       @user = User.find_by_name(params[:user_name])
@@ -12,7 +17,8 @@ class CitePublicationsController < PublicationsController
       @user = @current_user
     end
     identifier_class = identifier_type
-    match_callback = lambda do |i| return i.name == params[:item_match] end
+    #
+    match_callback = lambda do |i| return i.respond_to? :is_match? ? i.is_match?(params[:item_match]) : true end
     existing_identifiers = identifier_class.find_like_identifiers(identifier_class.path_for_collection(params[:collection]),@user,match_callback)
     @publications = existing_identifiers.map{ |i| 
       h = Hash.new
@@ -31,7 +37,7 @@ class CitePublicationsController < PublicationsController
     ## params[:type] - subclass of CiteIdentifier (e.g. Commentary)
     if (params[:type].blank?)
       flash[:error] = 'You must specify an Object Type.'
-      redirect_to dashboard_url
+      redirect_to dashboard_url and return
       return
     end
     
@@ -47,6 +53,7 @@ class CitePublicationsController < PublicationsController
     ## creating it
     if params[:urn] && ! Cite::CiteLib.is_collection_urn?(params[:urn])
       flash[:error] = 'Creating a new version of an existing CITE object is no longer supported via this method'
+      redirect_to dashboard_url and return
     end
 
     # this method will now always create a new publication until we are able to
@@ -68,17 +75,16 @@ class CitePublicationsController < PublicationsController
     @publication.branch_from_master
       
     begin
-      # we are creating a new object
-      @identifier = identifier_class.new_from_template(@publication)
-
       # Eventually it would be nice to deprecate this in favor of the API
       # but the ability to allow links in is a lightweight way to suppport
       # some customized usage without requiring client programming
       if params[:init_value]
         case identifier_name
         when "CommentaryCiteIdentifier"
+          @identifier = identifier_class.new_from_template(@publication)
           @identifier.update_targets(params[:init_value])
         when "OaCiteIdentifier"
+          @identifier = identifier_class.new_from_template(@publication)
           xform_params = {
             :e_annotatorUri => @identifier.make_annotator_uri(),
             :e_annotatorName => @publication.creator.human_name,
@@ -98,25 +104,18 @@ class CitePublicationsController < PublicationsController
           @identifier.set_xml_content(agent_content,
               :comment => "Initializing Content with #{params[:init_value].join(',')}")
         when "TreebankCiteIdentifier"
+          # backwards compatibility which allows creation of a treebank file from
+          # a uri which resolves to a treebank template
           init_value = params[:init_value][0].to_s
           if (init_value =~ /^https?/)
-            conn = Faraday.new(init_value) do |c|
-              c.use Faraday::Response::Logger, Rails.logger
-              c.use FaradayMiddleware::FollowRedirects, limit: 3
-              c.use Faraday::Response::RaiseError
-              c.use Faraday::Adapter::NetHttp
-            end
-            response = conn.get
-            if (@identifier.is_valid_xml?(response.body))
-              @identifier.set_xml_content(response.body,
-                :comment => "Initializing Content from #{init_value}")
-            else
-              raise Exception.new("Failed to retrieve file at #{init_value} #{response.code}")
-            end
+            content = AgentHelper::get_client({:type => 'url'}).get_content(init_value)
+            @identifier = identifier_class.new_from_supplied(@publication,init_value,content,"Initializing Content from #{init_value}")
           else
             raise Exception.new("Unrecognized init value")
           end
         end
+      else
+        @identifier = identifier_class.new_from_template(@publication)
       end
       flash[:notice] = 'Publication was successfully created.'
       # we used to support supplying a custom CITE collection in the link, but it wasn't really uesd
@@ -130,15 +129,14 @@ class CitePublicationsController < PublicationsController
       Rails.logger.error(e)
       Rails.logger.error(e.backtrace)
       @publication.destroy
-      flash[:notice] = 'Error creating publication (during creation of collection object):' + e.to_s
+      flash[:error] = 'Error creating publication (during creation of collection object):' + e.to_s
       redirect_to dashboard_url
       return
     end
     redirect_to polymorphic_path([@publication, @identifier],
                                    :action => :edit,
                                    :publication_id => @publication.id,
-                                   :id => @identifier.id,
-                                   :urn => @identifier.urn_attribute)
+                                   :id => @identifier.id)
   end
   
   ###

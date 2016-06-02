@@ -291,6 +291,10 @@ class Identifier < ActiveRecord::Base
   def self.new_from_supplied(publication,agent,content,comment)
     id,updated_content = self.identifier_from_content(agent,content)
     new_identifier = self.new(:name => id)
+    # don't try to create an identifier from invalid content
+    unless new_identifier.is_valid_xml?(updated_content)
+      raise Exception.new("Invalid content")
+    end
     Identifier.transaction do
       publication.lock!
       if publication.identifiers.select{|i| i.class == self}.length > 0
@@ -420,8 +424,6 @@ class Identifier < ActiveRecord::Base
 
     content = before_commit(content)
     commit_sha = ""
-    # TODO - this logic seems wrong -- shouldn't it just
-    # be if !options[:validate] || is_valid_xml?(content) 
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
     end
