@@ -5,7 +5,7 @@ class APISIdentifier < HGVMetaIdentifier
   PATH_PREFIX = 'APIS'
   IDENTIFIER_NAMESPACE = 'apis'
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-  
+
   FRIENDLY_NAME = "APIS"
 
   def temporary_path
@@ -22,7 +22,7 @@ class APISIdentifier < HGVMetaIdentifier
         xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
         parameters)
   end
-  
+
   after_initialize :post_initialization_configuration
   # Loads +ApisConfiguration+ object (APIS xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
@@ -31,23 +31,23 @@ class APISIdentifier < HGVMetaIdentifier
     @valid_epidoc_attributes = @configuration.keys
   end
 
-  
+
   # Creates a hash of the names of all the APIS Collections available in SoSOL
   # Overrides method in Identifier
   # - used in selector
   def self.collection_names_hash
     self.collection_names
-    
+
     unless defined? @collection_names_hash
       @collection_names_hash = {}
       @collection_names.each do |collection_name|
         @collection_names_hash[collection_name] = collection_name
       end
     end
-    
+
     return @collection_names_hash
   end
-  
+
   # Determines the next 'SoSOL' temporary name for the associated identifier
   # This overrides the identifier superclass definition so that SoSOL-side APIS
   # id's will be e.g. papyri.info/apis/yale.apis.2011-0001 instead of papyri.info/apis/SoSOL;2011;0001
@@ -66,11 +66,11 @@ class APISIdentifier < HGVMetaIdentifier
     else
       document_number = latest.to_components.last.split(';').last.to_i + 1
     end
-    
+
     return sprintf("papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.%04d-%04d",
                    year, document_number)
   end
-  
+
   # Create default XML file and identifier model entry for associated identifier class
   # - *Args*  :
   #   - +publication+ -> the publication the new translation is a part of
