@@ -39,7 +39,6 @@ class AlignmentCiteIdentifiersController < IdentifiersController
   
    def editxml
     find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'alignment_cite_identifiers/editxml'
   end
