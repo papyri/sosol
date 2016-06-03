@@ -69,8 +69,11 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifie
         # create an item in a collection
         get :create_from_linked_urn, :init_value => ["https://example.org/mytemplate.xml"], :identifier_type => 'Treebank'
         assert_not_nil assigns(:identifier)
+        @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'tb3.xml')))
+        get :create_from_linked_urn, :init_value => ["https://example.org/mytemplate.xml"], :identifier_type => 'Treebank'
+        assert_not_nil assigns(:identifier)
         # see that it's returned in the user collection list
-        get :user_collection_list, :item_match => "urn:cts:latinLit:tg.work.edition", :collection => "urn:cite:perseus:lattb"
+        get :user_collection_list, :item_match => "urn:cts:latinLit:tg.work2.edition", :collection => "urn:cite:perseus:lattb"
         assert_response :success
         assert_select 'li', 1
       end
@@ -84,7 +87,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifie
         assert_response :success
         assert_equal "No matching publications found!", flash[:notice]
         # request a different urn target, returns no items
-        get :user_collection_list, :item_match => "urn:cts:latinLit:tg.work2.edition", :collection => "urn:cite:perseus:lattb"
+        get :user_collection_list, :item_match => "urn:cts:latinLit:tg.workbad.edition", :collection => "urn:cite:perseus:lattb"
         assert_response :success
         assert_equal "No matching publications found!", flash[:notice]
       end
