@@ -74,7 +74,6 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifie
         assert_not_nil assigns(:identifier)
         # see that it's returned in the user collection list
         get :user_collection_list, :item_match => "urn:cts:latinLit:tg.work2.edition", :collection => "urn:cite:perseus:lattb"
-        puts @response.body
         assert_response :success
         assert_select 'div.cite_list' do
           assert_select 'ul' do

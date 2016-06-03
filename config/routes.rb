@@ -456,7 +456,7 @@ Sosol::Application.routes.draw do
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/
   match 'cite_publications/:identifier_type/:collection/:item_match' => 'cite_publications#user_collection_list', :identifier_type => /TreebankCite|AlignmentCite|CommentaryCite|OajCite|OaCite/,  :collection => /[^\/]*/, :item_match => /[^\/]*/
   match 'cite_publications/user/:user_name/:identifier_type/:collection/:item_match' => 'cite_publications#user_collection_list', :identifier_type => /TreebankCite|AlignmentCite|CommentaryCite|OajCite|OaCite/,  :collection => /[^\/]*/, :item_match => /[^\/]*/, :user_name => /[^\/]*/
-  match 'cite_publications/create_from_linked_urn/:type/:urn' => 'cite_publications#create_from_linked_urn', :urn => /[^\/]*/, :type => /[^\/]*/
+  match 'cite_publications/create_from_linked_urn/:identifier_type/:urn' => 'cite_publications#create_from_linked_urn', :urn => /[^\/]*/, :identifier_type => /[^\/]*/
   match 'js/:query' => 'ajax_proxy#js', :query => /.*/
   match 'css/:query' => 'ajax_proxy#css', :query => /.*/
   match 'images/:query' => 'ajax_proxy#images', :query => /.*/
