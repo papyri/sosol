@@ -240,6 +240,21 @@ class OaCiteIdentifier < CiteIdentifier
     OacHelper::has_externally_sourced_annotations?(self.rdf)
   end
 
+  # method to find the next annotation uri for appending to the parent document
+  def next_annotation_uri()
+    max = 0
+    all = OacHelper::get_all_annotations(self.rdf)
+    all.each { |el|
+      annot_id = el.attributes['rdf:about']
+      num = annot_id.split(/#/).last.to_i
+      if (num > max)
+        max = num
+      end
+    }
+    next_num = max+1
+    return Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute  + "/#" + next_num.to_s
+  end
+
   #########################################
   # Private Helper Methods
   #########################################
@@ -301,20 +316,6 @@ class OaCiteIdentifier < CiteIdentifier
       "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}"
     end
   
-    # private method to find the next annotation uri for appending to the parent document
-    def next_annotation_uri() 
-      max = 0
-      all = OacHelper::get_all_annotations(self.rdf)
-      all.each { |el|
-        annot_id = el.attributes['rdf:about']
-        num = annot_id.split(/#/).last.to_i
-        if (num > max)
-          max = num
-        end
-      }
-      next_num = max+1
-      return Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute  + "/#" + next_num.to_s
-    end
 
     # append a new annotation at the end of the document
     def append(a_agent,a_body,a_comment)

@@ -9,7 +9,7 @@ class CitePublicationsController < PublicationsController
   #   - +user_name+ -> the name of a User (optional - defaults to current user)
   #   - +item_match+ -> an IdentifierType specific match string for comparison
   #   - +collection+ -> the collection to query
-  #   - +identifier_type+ -> the type of identifier to limit the response to
+  #   - +identifier_type+ -> String containing the subtype of CiteIdentifier to create in the new publication
   def user_collection_list
     if (params[:user_name])
       @user = User.find_by_name(params[:user_name])
@@ -18,7 +18,7 @@ class CitePublicationsController < PublicationsController
     end
     identifier_class = identifier_type
     #
-    match_callback = lambda do |i| return i.respond_to? :is_match? ? i.is_match?(params[:item_match]) : true end
+    match_callback = lambda do |i| return i.respond_to?(:is_match?) ? i.is_match?([params[:item_match]]) : true end
     existing_identifiers = identifier_class.find_like_identifiers(identifier_class.path_for_collection(params[:collection]),@user,match_callback)
     @publications = existing_identifiers.map{ |i| 
       h = Hash.new
@@ -32,40 +32,36 @@ class CitePublicationsController < PublicationsController
     render 'show'
   end
 
-  ## Create/Update a CITE Publication from a linked URN
+  # Create/Update a CITE Publication from a linked URN
+  # This is an api-ish alternative which enables creation of links into SoSOL from
+  # external applications and sites without requiring client side programming of a
+  # an api client.
+  # - *Params* :
+  #   - +identifier_type+ -> String containing the subtype of CiteIdentifier to create in the new publication
+  #   - +init_value+ -> Array of String initialization values, which are type-specific
+  #   - +
   def create_from_linked_urn
-    ## params[:type] - subclass of CiteIdentifier (e.g. Commentary)
-    if (params[:type].blank?)
+    if (params[:identifier_type].blank?)
       flash[:error] = 'You must specify an Object Type.'
       redirect_to dashboard_url and return
       return
     end
     
-    identifier_name = "#{params[:type]}CiteIdentifier"
-    identifier_name.constantize::IDENTIFIER_NAMESPACE
-    identifier_class = Object.const_get(identifier_name)
-    
-    # other optional inputs
-    ## params[:init_value]  - some string value to use to initialize the object
-    ## params[:pub] - publication title
-    
-    ## if urn and key value are supplied we need to check to see if the requested object exists before
-    ## creating it
+    identifier_class = identifier_type
+
     if params[:urn] && ! Cite::CiteLib.is_collection_urn?(params[:urn])
       flash[:error] = 'Creating a new version of an existing CITE object is no longer supported via this method'
       redirect_to dashboard_url and return
     end
 
     # this method will now always create a new publication until we are able to
-    # implement performant support for collection item matching
+    # implement performant support for collection item matching to find if the user
+    # already has followed an identical link
 
     @publication = Publication.new()
     @publication.owner = @current_user
     @publication.creator = @current_user
       
-    ## we will always create a new version in the master repo, just a question of
-    ## whether we start fresh or from an existing object
-    # fetch a title without creating from template
 
     @publication.title = identifier_class::create_title(params[:urn])
     @publication.status = "new"
@@ -79,7 +75,7 @@ class CitePublicationsController < PublicationsController
       # but the ability to allow links in is a lightweight way to suppport
       # some customized usage without requiring client programming
       if params[:init_value]
-        case identifier_name
+        case identifier_class.to_s
         when "CommentaryCiteIdentifier"
           @identifier = identifier_class.new_from_template(@publication)
           @identifier.update_targets(params[:init_value])
@@ -90,6 +86,7 @@ class CitePublicationsController < PublicationsController
             :e_annotatorName => @publication.creator.human_name,
             :e_baseAnnotUri => @identifier.next_annotation_uri()
           }
+          cts_targets = []
           params[:init_value].each do |a|
             if  a =~ /urn:cts/
               abbr = CTS::CTSLib.urn_abbr(a)
@@ -97,10 +94,10 @@ class CitePublicationsController < PublicationsController
             end
           end
           # if we have all cts targets we use them in the title
-          if (cts_targets.size == a_init_value.size)
+          if (cts_targets.size == params[:init_value].size)
             @identifier.title = "On #{cts_targets.join(',')}"
           end
-          agent_content = (AgenttHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,xform_params))
+          agent_content = (AgentHelper::content_from_agent(params[:init_value],:OaCiteIdentifier,xform_params))
           @identifier.set_xml_content(agent_content,
               :comment => "Initializing Content with #{params[:init_value].join(',')}")
         when "TreebankCiteIdentifier"
@@ -139,16 +136,9 @@ class CitePublicationsController < PublicationsController
                                    :id => @identifier.id)
   end
   
-  ###
-  # Creates a new CITE Publication from a selector element
-  ###
-  def create_from_selector
-        
-  end # end create_from_selector
- 
-  protected 
-    def identifier_type 
-      identifier_class_name = "#{params[:identifier_type]}Identifier"        
+  protected
+    def identifier_type
+      identifier_class_name = "#{params[:identifier_type]}CiteIdentifier"
       begin
         identifier_class_name.constantize::IDENTIFIER_NAMESPACE
         identifier_class = Object.const_get(identifier_class_name)
