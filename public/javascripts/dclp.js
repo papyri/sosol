@@ -90,8 +90,8 @@ function multiAddEditionRaw(e){
 '  <label title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'principalEdition\']/listBibl/bibl" for="hgv_meta_identifier_edition_' + editionIndex + '_children_link" class="meta editionLink">Biblio</label>' +
 '  <input type="text" onchange="editionLinkChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][link]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_link" class="observechange editionLink">' +
 '  <label title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'principalEdition\']/listBibl/bibl" for="hgv_meta_identifier_edition_' + editionIndex + '_attributes_type" class="meta editionType">Type</label>' +
-'  <input type="text" value="publication" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][type]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_type" class="observechange editionType">' +
-'  <input type="text" value="principal" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][subtype]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_subtype" class="observechange editionSubtype">' +
+'  <input type="hidden" value="publication" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][type]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_type" class="observechange editionType">' +
+'  <input type="hidden" value="principal" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][subtype]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_subtype" class="observechange editionSubtype">' +
 '  <select name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][ubertype]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_ubertype" class="observechange editionubertype" onchange="editionUbertypeChange(this);"><optgroup label=""><option value="principal">Principal edition</option>' +
 '  <option value="reference">Reference edition</option>' +
 '  <option value="partial">Partial edition</option>' +
@@ -182,7 +182,8 @@ function multiAddEditionRaw(e){
 '  </div>' +
 '  <span title="delete" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
 '  <span title="move" class="move">o</span>' +
-'</li>';
+'</li>' +
+"<script>jQuery('.editionLink').autocomplete({ source: '/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });</script>";
 
   multiUpdate('edition', item);
 }

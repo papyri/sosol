@@ -1,5 +1,7 @@
 include DclpMetaIdentifierHelper
 
+require 'net/http'
+
 class DclpMetaIdentifiersController < HgvMetaIdentifiersController
 
   def edit
@@ -13,18 +15,38 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   # Side effect on +@update+
   def biblio_preview
     @update = '';
-    if !params[:biblio].nil?
-      @update = '#' + params[:biblio] + ' ' + [
-        'Alexander Jones, Astronomical Papyri from Oxyrhynchus (P. Oxy. 4133-4300a). Volumes I and II., (Philadelphia 1999).',
-        'Orsolina MONTEVECCHI, Bibbia e papiri. Luce dai papiri sulla Bibbia greca., (Barcelona 1999).',
-        'Fabrizio CONCA ed., Ricordando Raffaele Cantarella. Miscellanea di studi, (Milano 1999).',
-        'David G. MARTINEZ, P. Michigan XIX. Baptized for Our Sakes: A Leather Trisagion from Egypt (P. Mich. 799)., (Stuttgart Leipzig 1999).'
-      ][rand(0..3)]
+    if !params[:biblio].nil? && /\A\d+\Z/.match(params[:biblio])
+      uri = URI('http://localhost:8080/exist/apps/papyrillio/snippet.html?biblio=' + params[:biblio])
+      @update = Net::HTTP.get(uri).gsub(/(<html[^>]*>|<[^>]*html>)/, '')
     end
   end
 
+  # Call to test
+  # localhost:3000/dclp_meta_identifiers/biblio_autocomplete?term=Clio
+  def biblio_autocomplete
+    data = {}
+    if !params[:term].nil? && /\A[^\d][^\d][^\d][^\d].*\Z/.match(params[:term])
+      uri = URI.parse('http://localhost:8080/exist/apps/papyrillio/autocomplete_json.xml?term=' + params[:term])
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.basic_auth("admin", "papy")
+      response = http.request(request)
+      data = JSON.parse(response.body)
+
+
+      data_array = []
+      data.each do |key, value|
+        if /\Ab\d+\Z/.match(key)
+          data_array.push({:label => value, :value => key[1..-1]})
+        end
+      end
+
+    end
+    render json: data_array, content_type: 'application/json'
+  end
+
   protected
-  
+
     # Sets the identifier instance variable values
     # - *Params*  :
     #   - +id+ -> id from identifier table of the DCLP Text
