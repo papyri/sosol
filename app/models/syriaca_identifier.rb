@@ -66,6 +66,10 @@ class SyriacaIdentifier < Identifier
     
     return File.join(path_components)
   end
+
+  def to_remote_path
+    "data/places/#{id}.xml"
+  end
   
   def after_rename(options = {})
     raise "Rename not supported"

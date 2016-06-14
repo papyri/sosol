@@ -39,3 +39,8 @@
     :get_url: "http://cts.perseids.org/api/cts/?request=GetPassage&urn=URN"
     :transformations:
       :OaCiteIdentifier: "/data/xslt/cite/cts5_to_oa_cite.xsl"
+  :syriaca_github:
+    :uri_match: "https://github.com/perseids-project/srophe-app-data"
+    :type: "github"
+    :post_url: "http://services2.perseids.org/flaskgitproxy/perseids_syriaca/<PATH>"
+    :timeout: 3600

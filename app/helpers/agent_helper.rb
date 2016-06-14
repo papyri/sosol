@@ -55,6 +55,8 @@ module AgentHelper
         return GoogleSSAgent.new(a_agent)
     elsif (a_agent[:type] == 'cts')
         return CtsAgent.new(a_agent)
+    elsif (a_agent[:type] == 'github')
+        return GitHubProxyAgent.new(a_agent)
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -223,4 +225,34 @@ module AgentHelper
     end
   end
 
+  class GitHubProxyAgent
+    attr_accessor :conf
+    def initialize(a_conf)
+      @conf = a_conf
+    end
+
+    def post_content(identifier,a_content)
+        path = identifier.respond_to?(:to_remote_path) ? identifier.to_remote_path : identifier.to_path
+        url = URI.parse(@conf[:post_url].sub('<PATH>',path))
+        response = Net::HTTP.start(url.host, url.port) do |http|
+          headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+          if (@conf[:timeout])
+            http.read_timeout = conf[:timeout]
+          end
+          http.send_request('POST',url.request_uri,a_content,headers)
+        end
+        if (response.code == '200')
+          # TODO parse response
+        else
+          raise Exception.new("Received error response #{response.code} #{response.msg} POSTING to #{url.request_uri}")
+        end
+    end
+    def get_transformation(a_identifiertype)
+      if (@conf[:transformations])
+        @conf[:transformations][a_identifiertype]
+      else
+        nil
+      end
+    end
+  end
 end

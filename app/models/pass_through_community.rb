@@ -74,15 +74,11 @@ class PassThroughCommunity < Community
             content = JRubyXML.apply_xsl_transform(
               JRubyXML.stream_from_string(id.content),
               JRubyXML.stream_from_file(File.join(Rails.root, transform)),
-             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
-             'reviewers' => reviewed_by.join(',')
-            )
+                'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
+                'reviewers' => reviewed_by.join(',')
+              )
           end
-          agent_client.post_content(content)
-          # the original publication is done now so we can
-          # set the status of the original publication
-          # to committed
-          publication.origin.change_status("committed")
+          agent_client.post_content(id,content)
         end
       rescue Exception => e
         Rails.logger.error(e) 
