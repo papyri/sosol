@@ -79,6 +79,11 @@ class PassThroughCommunity < Community
               )
           end
           agent_client.post_content(id,content)
+          # the original publication is done now so we can
+          # set the status of the original publication
+          # to committed
+          publication.origin.change_status("committed")
+
         end
       rescue Exception => e
         Rails.logger.error(e) 
