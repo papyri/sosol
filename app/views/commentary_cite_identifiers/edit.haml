@@ -16,12 +16,15 @@
     = render :partial => 'identifiers/header'
   .edit
     %p
-    = form_for @identifier, :url => { :action => @identifier[:action], :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
+    = form_for @identifier, :url => { :action => 'update', :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
       = hidden_field_tag 'publication_id',@publication.id
       = hidden_field_tag 'id',@identifier.id
       = hidden_field_tag 'commentary_language', @identifier.language
       .targets
-        = @identifier[:targets].html_safe
+        %span{:class =>"oac_label"} Commentary On
+        = @identifier.get_targets().each do |t|
+          .oac_target
+            %a{:href =>"#{t}", :target =>"_blank"} #{t}
       #edit-panel
         .wmd-panel{:id=>'wmd-panel'}
           .wmd-preview{:id => 'wmd-preview'} 

@@ -3,13 +3,21 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update]
 
-  
+
+  # Create a new CommentaryCiteIdentifier from an existing Annotation
+  # there is no difference between create_from_annotation and create other than
+  # create_from_annotation supports GET
+  # - *Params* :
+  #   - +publication_id+ -> String identifier for the parent publication
+  #   - +init_value+ -> List of string URI values of the targets of the commentary annotation
   def create_from_annotation
-    # there is no difference between create_from_annotation and create other than
-    # create_from_annotation supports GET 
     create()
   end
   
+  # Create a new CommentaryCiteIdentifier
+  # - *Params* :
+  #   - +publication_id+ -> String identifier for the parent publication
+  #   - +init_value+ -> List of string URI values of the targets of the commentary annotation
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
@@ -23,19 +31,13 @@ class CommentaryCiteIdentifiersController < IdentifiersController
     end
     
     @identifier = CommentaryCiteIdentifier.new_from_template(@publication)
-    @identifier.update_targets(params[:init_value])
+    @identifier.update_targets(params[:init_value],"Set targets from init.")
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
 
   end
 
   def edit
     find_publication_and_identifier
-    @identifier[:action] = 'update'  
-    @identifier[:targets] = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt cite commentary_cite_targets.xsl})),
-        params)
   end
   
   def update 
@@ -70,7 +72,7 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   
   def preview
     find_identifier
-    @identifier[:html_preview] = JRubyXML.apply_xsl_transform(
+    @html_preview = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite commentary_cite_html_preview.xsl})),

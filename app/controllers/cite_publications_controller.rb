@@ -78,7 +78,7 @@ class CitePublicationsController < PublicationsController
         case identifier_class.to_s
         when "CommentaryCiteIdentifier"
           @identifier = identifier_class.new_from_template(@publication)
-          @identifier.update_targets(params[:init_value])
+          @identifier.update_targets(params[:init_value],"Setting targets from init.")
         when "OaCiteIdentifier"
           @identifier = identifier_class.new_from_template(@publication)
           xform_params = {

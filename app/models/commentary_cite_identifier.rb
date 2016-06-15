@@ -125,7 +125,12 @@ class CommentaryCiteIdentifier < CiteIdentifier
   def get_commentary_text()
     OacHelper::get_body_text(get_annotation)
   end
-  
+
+  # Get the target of the commentary
+  def get_targets()
+    OacHelper::get_targets(get_annotation)
+  end
+
   # Update the commentary
   def update_commentary(a_lang,a_text,a_comment)
     OacHelper::update_body_text(get_annotation,a_lang,a_text)
@@ -135,10 +140,10 @@ class CommentaryCiteIdentifier < CiteIdentifier
   end
 
   # Update the commentary targets
-  def update_targets(a_targets)
+  def update_targets(a_targets,a_comment)
     OacHelper::update_targets(get_annotation,a_targets)
     oacRdf = toXmlString self.rdf
-    self.save!
+    self.set_xml_content(oacRdf, :comment => a_comment)
   end
 
   #################################################

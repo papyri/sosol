@@ -415,10 +415,10 @@ module OacHelper
 
   # update the targets of the supplied annotation
   def self.update_targets(a_annotation,a_targets)
-    xpath = "oa:hasTarget"
+    xpath = "//oa:hasTarget"
     # delete any the existing targetts
     REXML::XPath.each(a_annotation, xpath, {"oa" => NS_OAC, "rdf" => NS_RDF}) { |target|
-      a_annotation.root.elements.delete target
+       a_annotation.delete target
     }
     # add new targets
     a_targets.each do |uri|
