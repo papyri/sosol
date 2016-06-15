@@ -49,7 +49,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
 
       should "process a ro" do
         test = CommentaryCiteIdentifier.new_from_template(@publication)
-        test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"])
+        test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],"test")
          expected = {
            'aggregates' => [ {'uri' => 'urn:cts:greekLit:tlg0012.tlg001.perseus-grc1', 'mediatype' => 'text/xml'}],
            'annotations'=> [
