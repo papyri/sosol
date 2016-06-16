@@ -128,7 +128,7 @@ class DmmApiController < ApplicationController
       end
       info =
         { :tokenizer => tokenizer,
-          :cts_services => { 'repos' => "#{root_url}cts/getrepos/#{self.publication.id}",
+          :cts_services => { 'repos' => "#{root_url}cts/getrepos/#{@identifier.publication.id}",
                              'capabilities' => "#{root_url}cts/getcapabilities/",
                              'passage' => "#{root_url}cts/getpassage/"
                            },
