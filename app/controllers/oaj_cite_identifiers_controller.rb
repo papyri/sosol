@@ -4,6 +4,11 @@ class OajCiteIdentifiersController < IdentifiersController
   before_filter :ownership_guard, :only => [:edit, :update, :destroy]
 
 
+  # create is not exposed for OajCiteIdentiifers .. these identifiers are for prototype functionality
+  # and can currently only be created through conversion of an OaCiteIdentifier which was created via
+  # import of a Hypothes.is annotation
+  # @see oa_cite_identifiers_controller#convert
+
   def edit
     find_identifier
     @is_editor_view = true
@@ -29,49 +34,14 @@ class OajCiteIdentifiersController < IdentifiersController
       end
     rescue => parse_error
       Rails.logger.info(parse_error.backtrace)
-      @identifier[:xml_content] = xml_content
-      flash[:error] = parse_error.to_str + ". This file was NOT SAVED."
-      render :template => 'oaj_cite_identifiers/edit'
-      return
+      flash[:error] = "#{parse_error}. This file was NOT SAVED."
     end
     redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :edit) and return
   end
 
-  def create
-    @publication = Publication.find(params[:publication_id].to_s)
-    
-    # use the default collection if one wasn't specified
-    urn = params[:urn]
-    content = params[:init_value]
-
-    # required params: publication_id, urn, init_value
-    unless (@publication && urn)
-      flash[:error] = "Unable to create item. Missing urn."
-      redirect_to dashboard_url
-      return
-    end
-    
-    # make sure we have a valid collection 
-    if Cite::CiteLib::get_collection(collection_urn).nil?
-      flash[:error] = "Unable to create item. Unknown collection."
-      redirect_to dashboard_url
-      return
-    end
-
-    newobj = OajCiteIdentifier.new_from_supplied(@publication,collection_urn,valid_targets)
-    flash[:notice] = "File created."
-    expire_publication_cache
-    redirect_to polymorphic_path([@identifier.publication, newobj],
-                                 :action => :preview) and return
-  end
-
   def preview
     find_identifier
-    # it would be nice to force pretty print here
-    # but parsing causes UTF-8 to be escaped and it's a hassle to
-    # unescape before parsing through pretty_generate
-    @identifier[:html_preview] = @identifier.content
   end
 
   def destroy

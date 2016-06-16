@@ -1,0 +1,56 @@
+{
+  "@context": "http://www.w3.org/ns/oa-context-20130208.json",
+  "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603",
+  "annotatedBy": {
+    "@type": "foaf:Person",
+    "@id": "http://data.perseus.org/sosol/users/Bridget%20Almas"
+  },
+  "@type": "oa:Annotation",
+  "dcterms:source": "https://hypothes.is/api/annotations/hVJUEuuiTGyPToYvKCmtaw",
+  "dcterms:title": "http://www.lgpn.ox.ac.uk/id/V1-39353 identifies Φανίππος as snap:FatherOf in http://sosol.perseids.org/sosol/publications/12053/epi_cts_identifiers/15797/preview",
+  "annotatedAt": "2015-06-07T20:02:47.875018+00:00",
+  "motivatedBy": "oa:identifying",
+  "serializedBy": {
+    "@id": "https://hypothes.is",
+    "@type": "prov:SoftwareAgent"
+  },
+  "hasTarget": {
+    "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#target-1",
+    "@type": "oa:SpecificResource",
+    "hasSelector": {
+      "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#target-1-sel-1",
+      "@type": "oa:TextQuoteSelector",
+      "exact": "Φανίππος",
+      "prefix": "Εὔχρις ΛύδουἈρισταγόρης Δαμνίος",
+      "suffix": "Δημωνάκτος Ἠγησάρχος Πολυφάντου"
+    }
+  },
+  "hasBody": {
+    "@context": {
+      "lawd": "http://lawd.info/ontology/",
+      "snap": "http://onto.snapdrgn.net/snap#",
+      "perseusrdf": "http://data.perseus.org/rdfvocab/addons/"
+    },
+    "@graph": [
+      {
+        "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#rel-target",
+        "@type": "http://www.w3.org/ns/oa#SpecificResource",
+        "http://www.w3.org/ns/oa#hasSelector": {
+          "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#target-1-sel-1",
+          "@type": "http://www.w3.org/ns/oa#TextQuoteSelector",
+          "http://www.w3.org/ns/oa#exact": "Φανίππος",
+          "http://www.w3.org/ns/oa#prefix": "Εὔχρις ΛύδουἈρισταγόρης Δαμνίος",
+          "http://www.w3.org/ns/oa#suffix": "Δημωνάκτος Ἠγησάρχος Πολυφάντου"
+        },
+        "snap:has-bond": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#bond-1-1"
+      },
+      {
+        "@id": "http://data.perseus.org/collections/urn:cite:perseus:pdljann.2a7e9bc015f7013426b40a092298b603#bond-1-1",
+        "@type": "snap:FatherOf",
+        "snap:bond-with": {
+          "@id": "http://www.lgpn.ox.ac.uk/id/V1-39353"
+        }
+      }
+    ]
+  }
+}

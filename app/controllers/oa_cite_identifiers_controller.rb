@@ -232,7 +232,7 @@ class OaCiteIdentifiersController < IdentifiersController
       end
     else 
       if params[:create]
-        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,urn,JSON.pretty_generate(@converted[:data]))
+        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,@identifier.urn_attribute,JSON.pretty_generate(@converted[:data]),"Converting from #{@identifier.urn_attribute}")
         flash[:notice] = "File created."
         expire_publication_cache
         redirect_to polymorphic_path([@identifier.publication, newobj],
