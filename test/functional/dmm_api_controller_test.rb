@@ -102,8 +102,23 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       post :api_item_create, :identifier_type => 'TreebankCite'
       post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test", :reason => "review"
       assert_match(/"comment_id":(.*?),/,@response.body)
-      
     end
+
+    def test_should_succeed_comment_get
+      @request.env['RAW_POST_DATA'] = @valid_tb
+      post :api_item_create, :identifier_type => 'TreebankCite'
+      post :api_item_comments_post, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s, :comment=>"test", :reason => "review"
+      get :api_item_comments_get, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s
+      assert_response(:success)
+      comments = JSON.parse(@response.body)
+      assert_not_nil(comments[0]['comment_id'])
+      assert_not_nil(comments[0]['created_at'])
+      assert_not_nil(comments[0]['updated_at'])
+      assert_equal(@creator.human_name,comments[0]['user'])
+      assert_equal('review',comments[0]['reason'])
+      assert_equal('test',comments[0]['comment'])
+    end
+
 
     def test_should_succeed_comment_update_owner_user
       @request.env['RAW_POST_DATA'] = @valid_tb
@@ -142,9 +157,5 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       assert_not_nil json['target_links']
       assert_not_nil json['target_links']['commentary']
     end
-
-
-    # TODO TEST BOARD OWNERSHIP UPDATE and COMMENT
-
   end
 end
