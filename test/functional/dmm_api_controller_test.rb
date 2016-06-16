@@ -157,5 +157,17 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       assert_not_nil json['target_links']
       assert_not_nil json['target_links']['commentary']
     end
+
+    def test_item_return_to_item
+      @request.env['RAW_POST_DATA'] = @valid_tb
+      post :api_item_create, :identifier_type => 'TreebankCite'
+      get :api_item_return, :identifier_type => 'TreebankCite', :id => assigns(:identifier.id.to_s), :item_action => 'edit'
+      assert_redirected_to polymorphic_url([assigns(:identifier).publication, assigns(:identifier)]), :action => 'edit'
+    end
+
+    def test_item_return_to_item
+      get :api_item_return
+      assert_redirected_to dashboard_url
+    end
   end
 end
