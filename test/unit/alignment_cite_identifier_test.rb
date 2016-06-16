@@ -49,13 +49,32 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
         assert_equal "urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:1-1 and urn:cts:greekLit:tlg0020.tlg001.perseus-eng2:1-1", test.title
       end
 
-      # TODO
-      # test title from title
-      # test fragment
-      # test patch_content
+      should "retrieve fragment" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'align1.xml'))
+        test = AlignmentCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New alignment")
+        assert_not_nil test
+        assert_match /<sentence id="1" document_id="urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:1-1">/, test.fragment("s=1")
+      end
 
-     end  
-     
+      should "raise exceptin on invalid fragment query" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'align1.xml'))
+        test = AlignmentCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New alignment")
+        assert_not_nil test
+        assert_raises(Exception){
+          test.fragment("1")
+        }
+      end
 
+      should "patch_content" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'align1.xml'))
+        sentence = File.read(File.join(File.dirname(__FILE__), 'data', 'alignsentence1.xml'))
+        test = AlignmentCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New alignment")
+        assert_not_nil test
+        assert_no_match /nrefs="1-1"/, test.fragment("s=1")
+        test.patch_content("http://example.org","s=1",sentence,"test")
+        test.reload
+        assert_match /nrefs="1-1"/, test.fragment("s=1")
+      end
+     end
   end
 end

@@ -51,7 +51,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
     if (qmatch.size == 2)
       return self.update_sentence(qmatch[1],a_content,a_comment)
     else
-      raise "Sentence Identifier Missing"
+      raise Exception.new("Sentence Identifier Missing")
     end
   end
   
