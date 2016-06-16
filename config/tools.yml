@@ -4,7 +4,7 @@ development:
       :method: 'get'
       :actions:
         :search:
-          :href: 'http://localhost/cite_mapper/find_cite?'
+          :href: 'http://services2.perseids.org/cite_mapper/find_cite?'
           :replace_param: 'cite'
   treebank_editor:
     arethusa:
@@ -31,23 +31,6 @@ development:
         :review:
           :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
           :id_param: 'doc'
-  theme_editor:
-    arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT"
-            :id_param: 'doc'
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://localhost/tools/arethusa/app/#/perseids_local?chunk=SENT&mode=viewer"
-            :id_param: 'doc'
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://localhost/perseids-client-apps/thematic"
-            :id_param: 'doc'
-            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -90,7 +73,7 @@ development:
       :method: 'get'
       :actions:
         :tokenize: 
-          :href: "http://localhost/llt/tokenize?xml=true&merging-false&splitting=false&uri="
+          :href: "http://localhost/llt/tokenize?xml=true&merging=false&splitting=false&uri="
     :lat:
       :method: 'get'
       :actions: 
@@ -118,12 +101,12 @@ development:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: ''
+          :text: 'Compare'
         :gold:
           :href: 'http://localhost/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: ''
+          :text: 'Compare'
     
 test:
   cite_mapper:
@@ -175,23 +158,6 @@ test:
         :review:
           :href: "http://localhost/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
           :id_param: 'doc'
-  theme_editor:
-    arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT"
-            :id_param: 'doc'
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://localhost/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
-            :id_param: 'doc'
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://localhost/apps/thematic"
-            :id_param: 'doc'
-            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -262,12 +228,12 @@ test:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: ''
+          :text: 'Compare'
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-dev'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: ''
+          :text: 'Compare'
 production:
   cite_mapper:
     default:
@@ -317,23 +283,6 @@ production:
         :review:
           :href: "http://www.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
           :id_param: 'doc'
-  theme_editor:
-    arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
-            :id_param: 'doc'
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
-            :id_param: 'doc'
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://www.perseids.org/apps/thematic"
-            :id_param: 'doc'
-            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   alignment_editor:
     :alpheios:
       :text: 'Alpheios'
@@ -404,12 +353,12 @@ production:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: ''
+          :text: 'Compare'
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: ''
+          :text: 'Compare'
 staging:
   cite_mapper:
     default:
@@ -435,23 +384,6 @@ staging:
           :href: "http://www-stage.perseids.org/apps/treebank"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
-  theme_editor:
-    arethusa:
-        :text: 'Arethusa'
-        :uri: 'http://github.com/latin-language-toolkit/arethusa'
-        :actions:
-          :edit:
-            :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
-            :id_param: 'doc'
-            :text: "Edit in Arethusa"
-          :view:
-            :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
-            :id_param: 'doc'
-            :text: "Preview in Arethusa"
-          :create:
-            :href: "http://www-stage.perseids.org/apps/thematic"
-            :id_param: 'doc'
-            :text: 'New Thematic Annotation <span class="betaflag">(BETA)</span>'
   treebank_reviewer:
     arethusa:
       :text: 'Arethusa'
@@ -530,10 +462,10 @@ staging:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'reviewable[]'
           :replace_param: 'gold'
-          :text: ''
+          :text: 'Compare'
         :gold:
           :href: 'http://services2.perseids.org/llt/treebank/diff/html?backend=perseids-stage'
           :id_param: 'gold'
           :replace_param: 'reviewable[]'
-          :text: ''
+          :text: 'Compare'
     
