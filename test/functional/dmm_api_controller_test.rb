@@ -129,6 +129,20 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       assert_match(/"reason":"general"/,@response.body)
     end
 
+    def test_should_return_api_item_info
+      @request.env['RAW_POST_DATA'] = @valid_oa
+      post :api_item_create, :identifier_type => 'OaCite'
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
+      get :api_item_info, :identifier_type => 'OaCite', :id => assigns(:identifier).id.to_s, :format => 'json'
+      assert_response(:success)
+      json = JSON.parse(response.body)
+      assert_not_nil json['tokenizer']
+      assert_not_nil json['cts_services']
+      assert_not_nil json['target_links']
+      assert_not_nil json['target_links']['commentary']
+    end
+
 
     # TODO TEST BOARD OWNERSHIP UPDATE and COMMENT
 
