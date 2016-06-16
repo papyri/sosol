@@ -9,6 +9,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       @valid_tb = File.read(File.join(File.dirname(__FILE__), 'data', 'validtb.xml'))
       @valid_align = File.read(File.join(File.dirname(__FILE__), 'data', 'validalign.xml'))
       @update_tb = File.read(File.join(File.dirname(__FILE__), 'data', 'updatetb.xml'))
+      @valid_oa = File.read(File.join(File.dirname(__FILE__), 'data', 'validoa.xml'))
+      @oa_append = File.read(File.join(File.dirname(__FILE__), 'data', 'oaappend.xml'))
     end
     
     def teardown
@@ -39,6 +41,18 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       @request.env['RAW_POST_DATA'] = @update_tb
       post :api_item_patch, :identifier_type => 'TreebankCite', :id => assigns(:identifier).id.to_s
       assert_response(:success)
+    end
+
+    def test_should_succeed_append
+      @request.env['RAW_POST_DATA'] = @valid_oa
+      post :api_item_create, :identifier_type => 'OaCite'
+      assert_not_nil assigns(:publication)
+      assert_not_nil assigns(:identifier)
+      assert_equal 1, assigns(:identifier).get_annotations().size
+      @request.env['RAW_POST_DATA'] = @oa_append
+      post :api_item_append, :identifier_type => 'OaCite', :id => assigns(:identifier).id.to_s
+      assert_response(:success)
+      assert_equal 2, assigns(:identifier).get_annotations().size
     end
 
     def test_should_fail_update_invalid_user
