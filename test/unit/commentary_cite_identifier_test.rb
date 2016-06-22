@@ -47,6 +47,69 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
       assert test1.to_path == "CITE_COMMENTARY_XML/perseus/pdlcomm/1/pdlcomm.1.1.oac.xml"
      end
 
+     should "update commentary text" do
+      test1 = CommentaryCiteIdentifier.new_from_template(@publication)
+      text ="this is a test comment"
+      test1.update_commentary("eng",text,"test")
+      assert_equal text, test1.get_commentary_text
+     end
+
+     should "fail commentary text exceeds max" do
+      test1 = CommentaryCiteIdentifier.new_from_template(@publication)
+      text = "1xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "2xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "3xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "4xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "5xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "6xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "7xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "8xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "9xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "1xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "2xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "3xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "4xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "5xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "6xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "7xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "8xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "9xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "1xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "2xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "3xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "4xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "5xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "6xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "7xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "8xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "9xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "1xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "2xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "3xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "4xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "5xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "6xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "7xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "8xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "9xx 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x" +
+        "10x 2xx 3xx 4xx 5xx 6xx 7xx 8xx 9xx 10x 11x 12x"
+      assert_raise Cite::CiteError do
+        test1.update_commentary("eng",text,"test")
+      end
+     end
+
       should "process a ro" do
         test = CommentaryCiteIdentifier.new_from_template(@publication)
         test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],"test")
