@@ -23,7 +23,7 @@ require 'shellwords'
 class Publication < ActiveRecord::Base
 
 
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
 
   validates_presence_of :title, :branch
 
@@ -42,6 +42,9 @@ class Publication < ActiveRecord::Base
 
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
+
+  validates :status,
+    :inclusion => { :in => PUBLICATION_STATUS, :message => "%{value} is not a valid publication status" }
 
   validates_each :branch do |model, attr, value|
     # Excerpted from git/refs.c:
