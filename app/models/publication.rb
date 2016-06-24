@@ -23,7 +23,7 @@ require 'shellwords'
 class Publication < ActiveRecord::Base
 
 
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
 
   validates_presence_of :title, :branch
 
