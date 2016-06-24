@@ -11,7 +11,7 @@ function workAuthorNumberChange(el){
 /* **** E D I T I O N **** */
 
 function editionLinkChange(el){
-  var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview' ;
+  var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview';
   new Ajax.Updater(el.identify().replace('link', 'biblioPreview'), url, { parameters: {biblio: el.getValue()} });
 }
 

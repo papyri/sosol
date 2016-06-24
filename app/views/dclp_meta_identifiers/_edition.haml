@@ -36,6 +36,7 @@
 
     :javascript
       Sortable.create('multiItems_edition', {overlap: 'horizontal', constraint: false, handle: 'move'});
-      jQuery('.editionLink').autocomplete({ source: '/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });
+      var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_autocomplete' : '/dclp_meta_identifiers/biblio_autocomplete';
+      jQuery('.editionLink').autocomplete({ source: url, delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });
    
   .clear
