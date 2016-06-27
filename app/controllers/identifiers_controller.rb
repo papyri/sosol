@@ -40,14 +40,12 @@ class IdentifiersController < ApplicationController
         @identifier = identifier_type.new_from_template(@publication)
       rescue Exception => e
         flash[:error] = e.message
-        redirect_to polymorphic_path([@publication],
-                                   :action => :show) and return
+        redirect_to publication_path(@publication.id) and return
       end
     end
     if @identifier.nil?
       flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
-      redirect_to polymorphic_path([@publication],
-                                   :action => :show) and return
+      redirect_to publication_path(@publication.id) and return
     else
       flash[:notice] = "File created."
       expire_publication_cache
