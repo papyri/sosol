@@ -1523,6 +1523,10 @@ class Publication < ActiveRecord::Base
     return creatable_identifiers
   end
 
+  def related_text
+    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+  end
+
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)

@@ -53,7 +53,7 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Returns* :
   #   - new translation identifier
   def self.new_from_template(publication)
-    if self.related_text.nil?
+    if publication.related_text.nil?
       raise 'No related text to create translation from—this error may occur because the only text associated with this publication is a reprint stub.'
       return nil
     end
@@ -66,7 +66,7 @@ class HGVTransIdentifier < HGVIdentifier
   
   # Returns the 'last' DDB Text identifier that is not a reprint in this tranlsations publication
   def related_text
-    self.publication.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+    self.publication.related_text
   end
   
   # Place any actions you always want to perform on translation identifier content prior to it being committed in this method
