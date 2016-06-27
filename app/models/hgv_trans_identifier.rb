@@ -52,6 +52,10 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Returns* :
   #   - new translation identifier
   def self.new_from_template(publication)
+    if self.related_text.nil?
+      raise 'No related text to create translation from—this error may occur because the only text associated with this publication is a reprint stub.'
+      return nil
+    end
     new_identifier = super(publication)
     
     new_identifier.stub_text_structure('en')

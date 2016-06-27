@@ -36,7 +36,13 @@ class IdentifiersController < ApplicationController
     if params[:apis_collection]
       @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
     else
-      @identifier = identifier_type.new_from_template(@publication)
+      begin
+        @identifier = identifier_type.new_from_template(@publication)
+      rescue Exception => e
+        flash[:error] = e.message
+        redirect_to polymorphic_path([@publication],
+                                   :action => :show) and return
+      end
     end
     if @identifier.nil?
       flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
