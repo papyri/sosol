@@ -1,3 +1,4 @@
+# encoding: utf-8
 # - Sub-class of HGVIdentifier
 # - Includes acts_as_translation defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class HGVTransIdentifier < HGVIdentifier
