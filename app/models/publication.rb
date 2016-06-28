@@ -1490,6 +1490,34 @@ class Publication < ActiveRecord::Base
   end
 
 
+  # send the contents of this publication to an external agent
+  # *Args*:
+  #   +agent_client+ -> the Agent object
+  def send_to_agent(agent_client)
+    self.identifiers.each do |id|
+      transformation = agent_client.get_transformation(id.class.name)
+      unless transformation.nil?
+        reviewed_by = []
+        # TODO we should include all the boards
+        board = self.find_first_board
+        if board
+          board.users.each do |m|
+            reviewed_by << m.human_name
+          end
+        end
+        content = JRubyXML.apply_xsl_transform(
+          JRubyXML.stream_from_string(id.content),
+          JRubyXML.stream_from_file(File.join(Rails.root, transform)),
+            'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
+            'reviewers' => reviewed_by.join(',')
+          )
+        agent_client.post_content(id,content)
+      end
+    end
+  end
+
+
+
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)

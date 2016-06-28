@@ -857,6 +857,56 @@ class PublicationsController < ApplicationController
     end
   end
 
+  # send a publication to an external agent
+  # only appliable for publications which belong to pass-through communities configured with an external agent
+  # *Params*
+  #   +id+ -> publication id
+  def send_to_agent
+    begin
+      @publication = Publication.find(params[:id].to_s)
+      if @publication.community && @publication.community.respond_to?(:pass_to_obj) && ! @publication.community.pass_to_obj.nil?
+        # we should only do this for publications which have been archived already -- this is a fallback solution
+        # to allow for recovery if we received a callback that the submission to the external agent failed
+        unless (@publication.owner_type == 'Board' && @publication.status == 'archived')
+          raise Exception.new("Publication does not meet the conditions for sending.")
+        end
+        agent_client = AgentHelper::get_client(@board.pass_to_obj)
+        if agent_client.nil?
+          raise Exception.new("Unable to get client")
+        end
+        publication.send_to_agent(agent_client)
+        flash[:notice] = "Publication resent to agent."
+      else
+        flash[:error] = "This publication is not owned by a passthrough community board"
+      end
+    rescue Exception => e
+      flash[:error] = e.message
+    end
+    redirect_to dashboard_url
+  end
+
+  # recover from a failed submission to an external agent
+  # we want to just send an email to the community board and ask them to address it
+  def agent_failure_callback
+      @publication = Publication.find(params[:id].to_s)
+      addresses = []
+      # this is an exception scenario so send the email to the site admins
+      User.where(:admin => true).each do | admin |
+        addresses << admin.email
+      end
+      # we may also want to send to the board members but for now let's just notify the admins
+      # it should be a board publication so send to the board members too
+      #if (@publication.owner_type == 'Board')
+      #  @publication.owner.users.each do |board_user|
+      #    addresses << user.email
+      #  end
+      #end
+      retry_url = url_for(:controller => :publications, :id => @publication.id, :action => :send_to_agent)
+      body_content = "Failure posting publication to external agent. Reissue the request via #{retry_url}"
+      EmailerMailer::general_email(addresses, "Failed to post to agent", body_content, article_content=nil).deliver
+      render :text => "", :status => 200
+  end
+
   protected
     def find_publication
       @publication ||= Publication.find(params[:id].to_s)
@@ -1023,4 +1073,5 @@ class PublicationsController < ApplicationController
       @publication = Publication.find(pub_id)
       @publication.archive
     end
+
 end
