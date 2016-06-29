@@ -78,7 +78,7 @@ class PassThroughCommunity < Community
 
   def finalize(publication)
     if self.pass_to_obj.nil?
-      raise "No pass through point for the community. Unable to finalize"
+      raise Exception("No pass through point for the community. Unable to finalize")
     end
   end
 

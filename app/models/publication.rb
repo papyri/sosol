@@ -1511,8 +1511,8 @@ class Publication < ActiveRecord::Base
             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
             'reviewers' => reviewed_by.join(',')
           )
-        agent_client.post_content(id,content)
       end
+      agent_client.post_content(id,content)
     end
   end
 
