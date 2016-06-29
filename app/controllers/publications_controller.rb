@@ -865,19 +865,19 @@ class PublicationsController < ApplicationController
     begin
       @publication = Publication.find(params[:id].to_s)
       if @publication.community && @publication.community.respond_to?(:pass_to_obj) && ! @publication.community.pass_to_obj.nil?
-        # we should only do this for publications which have been archived already -- this is a fallback solution
+        # we should only do this for publications which have been finalized already -- this is a fallback solution
         # to allow for recovery if we received a callback that the submission to the external agent failed
-        unless (@publication.owner_type == 'Board' && @publication.status == 'archived')
+        unless (@publication.status == 'finalized')
           raise Exception.new("Publication does not meet the conditions for sending.")
         end
-        agent_client = AgentHelper::get_client(@board.pass_to_obj)
+        agent_client = AgentHelper::get_client(@publication.community.pass_to_obj)
         if agent_client.nil?
           raise Exception.new("Unable to get client")
         end
-        publication.send_to_agent(agent_client)
+        @publication.send_to_agent(agent_client)
         flash[:notice] = "Publication resent to agent."
       else
-        flash[:error] = "This publication is not owned by a passthrough community board"
+        flash[:error] = "This publication is not owned by a passthrough community"
       end
     rescue Exception => e
       flash[:error] = e.message
@@ -887,7 +887,22 @@ class PublicationsController < ApplicationController
 
   # recover from a failed submission to an external agent
   # we want to just send an email to the community board and ask them to address it
+  # *Params*:
+  #  +id+ -> publication id
+  #  +agent_uri+ -> agent uri
+  #  +sha+ -> shared secret
   def agent_failure_callback
+      # verify the shared secret for this agent
+      agent = AgentHelper::agent_of(params[:agent_uri])
+      if (agent)
+        agent_client = AgentHelper::get_client(agent)
+      end
+      unless agent_client
+        return render :text => 'INVALID AGENT', :status => 500
+      end
+      unless agent_client && agent_client.verify_secret?(params[:sha])
+        return render :text => 'FAILED SECRET', :status => 500
+      end
       @publication = Publication.find(params[:id].to_s)
       addresses = []
       # this is an exception scenario so send the email to the site admins
@@ -904,7 +919,7 @@ class PublicationsController < ApplicationController
       retry_url = url_for(:controller => :publications, :id => @publication.id, :action => :send_to_agent)
       body_content = "Failure posting publication to external agent. Reissue the request via #{retry_url}"
       EmailerMailer::general_email(addresses, "Failed to post to agent", body_content, article_content=nil).deliver
-      render :text => "", :status => 200
+      render :text => "OK", :status => 200
   end
 
   protected

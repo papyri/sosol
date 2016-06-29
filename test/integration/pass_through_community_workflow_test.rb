@@ -751,6 +751,14 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         master_publications = Publication.find(:all, :conditions => { :owner_id => @master_board.id, :owner_type => "Board" } )
         assert_equal 0, master_publications.length, "Master does not have 1 publication but rather, " + master_publications.length.to_s + " publications"
 
+        # verify that we can resend to the agent after finalization if need be
+        open_session do |resend_session|
+          get "publications/#{agent_final_publication.id.to_s}/send_to_agent?&test_user_id=#{@board_user_2.id.to_s}"
+          assert_response :redirect
+          puts flash.inspect
+          assert_equal "Publication resent to agent.", flash[:notice]
+        end
+
         Rails.logger.debug "ENDED TEST: user creates and submits publication to pass through to agent community"
       end
     end
