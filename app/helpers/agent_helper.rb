@@ -1,6 +1,7 @@
 #encoding UTF-8
 require 'mediawiki_api'
 require 'hypothesis-client'
+require 'base64'
 module AgentHelper
 
   # looks for the software agent in the data
@@ -232,14 +233,27 @@ module AgentHelper
     end
 
     def post_content(identifier,a_content)
+        encoded = Base64.encode64(a_content)
         path = identifier.respond_to?(:to_remote_path) ? identifier.to_remote_path : identifier.to_path
-        url = URI.parse(@conf[:post_url].sub('<PATH>',path))
+        params = {}
+        params['author'] = identifier.publication.creator.name
+        params['date'] = Time.now.xmlschema
+        params['logs'] = "Edited via Perseids (Details in changeDesc)"
+        params['branch'] = identifier.publication.creator.name + "/" + identifier.branch
+        url = @conf[:post_url].sub('<PATH>',path)
+        url = url + "?" unless url =~ /\?$/
+        params.each do |k,v|
+          url = url + "&#{k}=#{CGI.escape(v)}"
+        end
+        url = URI.parse(url)
+        Rails.logger.info("Sending to #{url.request_uri}")
+        Rails.logger.info("Content is #{encoded}")
         response = Net::HTTP.start(url.host, url.port) do |http|
           headers = {'Content-Type' => 'text/xml; charset=utf-8'}
           if (@conf[:timeout])
             http.read_timeout = conf[:timeout]
           end
-          http.send_request('POST',url.request_uri,a_content,headers)
+          http.send_request('POST',url.request_uri,encoded,headers)
         end
         if (response.code == '200')
           # TODO parse response

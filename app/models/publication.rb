@@ -1496,6 +1496,7 @@ class Publication < ActiveRecord::Base
   def send_to_agent(agent_client)
     self.identifiers.each do |id|
       transformation = agent_client.get_transformation(id.class.name)
+      content = id.content
       unless transformation.nil?
         reviewed_by = []
         # TODO we should include all the boards
@@ -1506,7 +1507,7 @@ class Publication < ActiveRecord::Base
           end
         end
         content = JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(id.content),
+          JRubyXML.stream_from_string(content),
           JRubyXML.stream_from_file(File.join(Rails.root, transform)),
             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
             'reviewers' => reviewed_by.join(',')
