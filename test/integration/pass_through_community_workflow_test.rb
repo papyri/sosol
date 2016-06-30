@@ -191,6 +191,7 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
                                              #:abbreviation => "tc",
                                              :description => "a comunity for testing",
                                              :pass_to => "mockagent")
+
         @test_agent_community.members << @community_user
         @test_agent_board = FactoryGirl.create(:master_community_board, :title => "MockAgent", :community_id => @test_agent_community.id)
         @test_agent_board.users << @board_user_2
@@ -554,6 +555,9 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
 
         master_final_publication.reload
         assert_equal "finalized", master_final_publication.status, "Text final publication not finalized"
+        master_final_publication.identifiers.each do |id|
+          assert_match /#{@board_user.name}">Vote/, id.content, "Vote not included in revDesc of finalized publication"
+        end
 
         #text finalized
         Rails.logger.debug "---Master publication Finalized"
@@ -755,7 +759,6 @@ class PassThroughCommunityWorkflowTest < ActionController::IntegrationTest
         open_session do |resend_session|
           get "publications/#{agent_final_publication.id.to_s}/send_to_agent?&test_user_id=#{@board_user_2.id.to_s}"
           assert_response :redirect
-          puts flash.inspect
           assert_equal "Publication resent to agent.", flash[:notice]
         end
 

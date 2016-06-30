@@ -503,7 +503,7 @@ class Identifier < ActiveRecord::Base
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt common add_change.xsl})),
-      :who => "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.publication.creator.name)}",
+      :who => "#{Sosol::Application.config.site_user_namespace}#{URI.escape(user_info.name)}",
       :comment => text,
       :when => timestamp
     )

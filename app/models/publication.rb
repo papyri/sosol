@@ -1500,10 +1500,12 @@ class Publication < ActiveRecord::Base
       unless transformation.nil?
         reviewed_by = []
         # TODO we should include all the boards
-        board = self.find_first_board
-        if board
-          board.users.each do |m|
-            reviewed_by << m.human_name
+        board_publication = self.find_first_board_parent
+        if board_publication
+          board_publication.owner.users.each do |m|
+            if (board_publication.user_has_voted?(m.id))
+              reviewed_by << m.human_name
+            end
           end
         end
         content = JRubyXML.apply_xsl_transform(
