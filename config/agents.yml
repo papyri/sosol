@@ -44,3 +44,5 @@
     :type: "github"
     :post_url: "http://services2.perseids.org/flaskgitproxy/perseids_syriaca/<PATH>"
     :timeout: 3600
+    :client_secret: "FlaskGitHubProxyIsCool"
+    :log_message: "Edited via Perseids. Details in revisionDesc"

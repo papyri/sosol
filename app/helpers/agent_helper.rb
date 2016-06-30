@@ -2,6 +2,7 @@
 require 'mediawiki_api'
 require 'hypothesis-client'
 require 'base64'
+require 'openssl'
 module AgentHelper
 
   # looks for the software agent in the data
@@ -236,28 +237,31 @@ module AgentHelper
         encoded = Base64.encode64(a_content)
         path = identifier.respond_to?(:to_remote_path) ? identifier.to_remote_path : identifier.to_path
         params = {}
-        params['author'] = identifier.publication.creator.name
+        params['author_name'] = identifier.publication.creator.name
+        params['author_email'] = identifier.publication.creator.email
         params['date'] = Time.now.xmlschema
-        params['logs'] = "Edited via Perseids (Details in changeDesc)"
+        params['logs'] = @conf[:log_message]
         params['branch'] = identifier.publication.creator.name + "/" + identifier.branch
+        # params['callback_url'] = ....
         url = @conf[:post_url].sub('<PATH>',path)
         url = url + "?" unless url =~ /\?$/
         params.each do |k,v|
           url = url + "&#{k}=#{CGI.escape(v)}"
         end
         url = URI.parse(url)
-        Rails.logger.info("Sending to #{url.request_uri}")
-        Rails.logger.info("Content is #{encoded}")
+
+        #hmac = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), @conf[:client_secret], encoded+@conf[:client_secret]).strip()
+        sha = Digest::SHA256.hexdigest(encoded + @conf[:client_secret])
         response = Net::HTTP.start(url.host, url.port) do |http|
-          headers = {'Content-Type' => 'text/xml; charset=utf-8'}
+          headers = {'Content-Type' => 'text/xml; charset=utf-8',
+                     'Content-Transfer-Encoding' => 'BASE64',
+                     'fproxy-secure-hash' => sha}
           if (@conf[:timeout])
             http.read_timeout = conf[:timeout]
           end
           http.send_request('POST',url.request_uri,encoded,headers)
         end
-        if (response.code == '200')
-          # TODO parse response
-        else
+        if (response.code != '201')
           raise Exception.new("Received error response #{response.code} #{response.msg} POSTING to #{url.request_uri}")
         end
     end
