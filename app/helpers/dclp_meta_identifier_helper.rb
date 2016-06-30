@@ -243,6 +243,41 @@ module DclpMetaIdentifierHelper
       end
     end
 
+    # ContentText, genre, religtion, culture and other keywords
+    class ContentText
+      attr_accessor :genre, :religion, :culture, :keywords
+      def initialize init = nil
+        @genre    = []
+        @religion = []
+        @culture  = []
+        @keywords = []
+        puts '------------------- HALLO?! -------------------'
+        puts init
+        if init && init[:contentText]
+          puts '------------------- init contentText'
+          puts init[:contentText]
+          init[:contentText].each{|keyword|
+            puts '------------------- keyword contentText'
+            puts keyword
+            if keyword[:attributes] && keyword[:attributes][:class]
+              puts '------------------- class contentText'
+              puts keyword[:attributes][:class]
+              case keyword[:attributes][:class]
+                when 'culture'
+                  @culture  << keyword[:value]
+                when 'religion'
+                  @religion << keyword[:value]
+                when 'description'
+                  @genre    << keyword[:value]
+                else
+                  @keywords << keyword[:value]
+              end
+            end
+          }
+        end
+      end
+    end
+
     # Data structure for publication information
     class Extra
       attr_accessor :value, :type, :certainty, :from, :to, :corresp

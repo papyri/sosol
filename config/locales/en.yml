@@ -131,6 +131,11 @@ en:
     label:
       editionLink: Biblio
       addEdition: add edition
+      titleStmt: Display Name (Description)
+      contentTextGenre: Genre
+      contentTextReligion: Religion
+      contentTextCulture: Culture
+      contentTextKeywords: Keywords
       workAuthorName: TLG Name
       workAuthorNumber: TLG Number
       workInternetResources: Internet Resources

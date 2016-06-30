@@ -33,7 +33,6 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
       response = http.request(request)
       data = JSON.parse(response.body)
 
-
       data_array = []
       data.each do |key, value|
         if /\Ab\d+\Z/.match(key)
