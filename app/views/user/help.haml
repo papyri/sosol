@@ -2,17 +2,13 @@
   %h1
     SoSOL Help
   %br
-  = link_to 'Text Leiden+ Help', documentation_url(:docotype => "text")#, :onclick => "window.open(this.href);return false;"
+  = link_to 'Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus'
   %br
   %br
-  = link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation")
+  = link_to 'Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation'
   %br
   %br
   %br
-  %h1
-    SoSOL Help Videos
-  %br
-  = link_to 'Add/Change Account Attributes', url_for(:controller=>'docovideos',:action=>'account'), :onclick => "window.open(this.href);return false;"
   %p
     - if @current_user && @current_user.admin 
       %br
@@ -20,24 +16,13 @@
       %h1
         Admin Functions
       %br
-      = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
+      = link_to 'Edit Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus'
       %br
       %br
-      = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+      = link_to 'Edit Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation'
       %br
       %br
       %br
-      %h1
-        Admin Help Videos
-      %br
-      = link_to 'Add Member to Editorial Board', url_for(:controller=>'docovideos',:action=>'ebaddmember'), :onclick => "window.open(this.href);return false;"
-      %br
-      %br
-      = link_to 'Add Decree to Editorial Board', url_for(:controller=>'docovideos',:action=>'ebadddecree'), :onclick => "window.open(this.href);return false;"
-      %br
-      %br
-      = link_to 'Show Editorial Board Attributes', url_for(:controller=>'docovideos',:action=>'ebshow'), :onclick => "window.open(this.href);return false;"
-
 
 
       %h1
