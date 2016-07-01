@@ -477,6 +477,7 @@ Sosol::Application.routes.draw do
         get :history
         get :preview
         get :editxml
+        get :rename_review
         put :updatexml
       end
     end
