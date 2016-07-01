@@ -24,7 +24,7 @@
         .editbox{:style => 'display: block;'}
           = @identifier[:contentText]
 
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
+          = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt', :title => @identifier.configuration.xpath(:titleStmt)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
 
           - base = 'hgv_meta_identifier[contentText]'
