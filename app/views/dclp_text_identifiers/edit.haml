@@ -1,200 +1,164 @@
-= stylesheet_link_tag 'meta' 
+:javascript
+  var try_counter = 0;
+
+  //*******************************************************************
+  //formats and executes ajax call to convert XML to Leiden+
+  //*******************************************************************
+  
+  function ajax_xml_to_leiden(was_disabled) {
+    try_counter = try_counter + 1;
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: $F('ddb_identifier_leiden_plus'), type: 'epidoc', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+        $('ddb_identifier_leiden_plus').toggleClassName('loading');
+        
+        if ("exception" in json) {
+          insert_flash_error('Error converting XML to Leiden+ approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+                    
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column)
+          Form.Element.setValue('ddb_identifier_leiden_plus',error_content);
+          Form.Element.enable('ddb_identifier_leiden_plus');
+          //showMatch function in confirm.js included at the bottom
+          showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
+        }
+        else {
+          //remove exisiting flash error if it is there when successfully completed
+          if ($('flasherror')) 
+            {
+              $('flasherror').remove();
+            }
+          Form.Element.setValue('ddb_identifier_leiden_plus',json.content);
+          if (!was_disabled) {
+            Form.Element.enable('ddb_identifier_leiden_plus');
+            Form.Element.enable('identifier_submit_top');
+            Form.Element.enable('identifier_submit');
+            Form.Element.focus('ddb_identifier_leiden_plus');
+          }
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        insert_flash_error('Transform has timed out - system will automatically try again in 10 seconds - try# ' + try_counter);
+                
+        setTimeout("ajax_xml_to_leiden(" + was_disabled + ")",10000);
+      }
+    });
+  }
+  
+  //*******************************************************************
+  //updates flash error message if it is already there, adds it if not
+  //*******************************************************************
+  
+  function insert_flash_error(msg){
+    
+    if ($('flasherror')) 
+      {
+        $('flasherror').update(msg);
+      }
+      else
+      {
+        $$('div#main > div.site').first().insert({
+          top: new Element('div',{'id': 'flasherror'}).update(msg)
+        });
+
+        //add class after the original insert to get the flash highlighting to work in IE browser
+        $('flasherror').addClassName('flash error');
+      }
+  }
+
+  //*******************************************************************
+  //places '**POSSIBLE ERROR**' in correct location of XML
+  //*******************************************************************
+  
+  function insert_error_here(content, line, column){
+      //copied this function/logic from identifiers_controller.rb
+      // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+      // occurs by taking the line and column from the message and giving the user the place in the content
+      // the parse error occured in xsugars processing - may or may not be where the real error is depending
+      // on what the error is - this processing is by character because there are multiple byte characters
+      // possible in the text and a way to place msg with taking that into account
+      //
+      // line starts at 1 because first character is on first line before incrementing in loop
+      // same logic for column, already on first character before incrementing in loop 
+      // 'col' check has to come before 'new line' check in case error is on last char in the line
+      var line_cnt = 1;
+      var col_cnt = 1;
+      var content_error_here = new Array();
+      var add_error = false;
+      
+      for (i=0;i<=content.length;i++){
+
+        if (line_cnt == line){
+          if (col_cnt == column) {
+            content_error_here.push("**POSSIBLE ERROR**");
+            add_error = true;
+          }
+          // if on the line with error but at the end without putting in the message, then put the message in
+          if (content.charAt(i) == "\n" && add_error == false){
+              content_error_here.push("**POSSIBLE ERROR**");
+              add_error = true;
+          }
+          col_cnt++;
+        }
+        
+        if (content.charAt(i) == "\n"){
+          line_cnt++;
+        }
+        content_error_here.push(content.charAt(i));
+      }
+
+      return content_error_here.join("");
+  }
+  
+  document.observe("dom:loaded", function() {
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) && Sosol::Application.config.xsugar_standalone_enabled} && !#{defined?(@bad_leiden) ? @bad_leiden : false}) {
+      was_disabled = $('ddb_identifier_leiden_plus').disabled;
+      
+      Form.Element.disable('ddb_identifier_leiden_plus');
+      Form.Element.disable('identifier_submit_top');
+      Form.Element.disable('identifier_submit');
+      
+      $('ddb_identifier_leiden_plus').toggleClassName('loading');
+      Form.Element.setValue('ddb_identifier_leiden_plus',
+        $('original_leiden_plus').value);
+
+      ajax_xml_to_leiden(was_disabled);
+    }
+    else if (#{(defined?(@bad_leiden) ? @bad_leiden : false) || (Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) || !Sosol::Application.config.xsugar_standalone_enabled)}) {
+      Form.Element.setValue('ddb_identifier_leiden_plus',
+        $('original_leiden_plus').value);
+      showMatch("ddb_identifier_leiden_plus", "**POSSIBLE ERROR**");
+    }
+  });
+
 #main
-  .site.metaSite
+  =# render :partial => 'identifiers/edit_bar'
+  .site
     = render :partial => 'identifiers/header'
-    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
-    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
+    = render :partial => 'leiden_helpers', :locals => { :identifier => @identifier}
 
     #edit
-      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
+      = form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
         = f.error_messages
+        %br
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :top }
+        = f.label "Leiden+"
+        = clippy "ddb_identifier_leiden_plus"
+        %br
+        = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
+      = text_area_tag 'original_leiden_plus', @identifier[:leiden_plus].force_encoding('UTF-8'), :class => 'invisible'
 
-        %h4.category.date
-          %a{:name => 'Date'}=I18n.t('meta.legend.date')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/date'
-          .clear
-          %span.swifty.quickSave=I18n.t('label.quickSave')
-          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
-
-        %h4.category.mentionedDate
-          %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/mentioned_date'
-          .clear
-          %span.swifty.quickSave=I18n.t('label.quickSave')
-
-        %h4.category.general
-          %a{:name => 'General<'}=I18n.t('meta.legend.general')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText }
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
-          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease }
-          .clear
-          .swifty.quickSave=I18n.t('label.quickSave')
-
-        %h4.category.publication
-          %a{:name => 'Publication'}=I18n.t('meta.legend.publication')
-        .editbox{:style => 'display: none;'}
-          %p#publicationExtraFullTitle &nbsp;
-          %span.swifty.publicationPreview{:onclick => "publicationPreview()"}=I18n.t('meta.label.publicationPreview')
-
-          %hr
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationTitle }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationTitle }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' }
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :tmNo }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.tmNo' }
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'hgv_meta_identifier[publicationExtra][0][attributes][type]', :volume
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' }
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationFascicle }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'hgv_meta_identifier[publicationExtra][1][attributes][type]', :fascicle
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'hgv_meta_identifier[publicationExtra][2][attributes][type]', :numbers
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationSide }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
-          = hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
-          .clear
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationExtra }
-          = render :partial => 'hgv_meta_identifiers/publicationExtra'
-
-          .clear
-          .swifty.quickSave=I18n.t('label.quickSave')
-
-        %h4.category.collection
-          %a{:name => 'Collection'}=I18n.t('meta.legend.collection')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collection }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collection }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collection' }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionInventoryNumber }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionInventoryNumber }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionInventoryNumber' }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryNotes }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryNotes }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryNotes' }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber }
-          = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' }
-          .clear
-          .swifty.quickSave=I18n.t('label.quickSave')
-
-        %h4.category.provenance
-          %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
-        .editbox{:style => 'display: none;'}
-          %p#geoPreview
-            = @identifier[:origPlace]
-          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
-
-          %hr
-          = render :partial => 'hgv_meta_identifiers/provenance'
-
-          .clear
-          %span.swifty.quickSave=I18n.t('label.quickSave')
-          %span.swifty.addProvenance=I18n.t('meta.label.addProvenance')
-          %span.swifty.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
-
-        %h4.category.reference
-          %a{:name => 'Reference'}=I18n.t('meta.legend.reference')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography }
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget }
-          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pointer] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination }
-          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pagination] && @identifier[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
-          
-          .clear
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :citedLiterature}
-          = render :partial => 'hgv_meta_identifiers/biblio', :locals => { :key => :citedLiterature}
-          
-          .clear
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
-          = render :partial => 'hgv_meta_identifiers/figures'
-          
-          .clear
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :illustrations }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :illustrations }
-          
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :otherPublications }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :otherPublications }
-          
-          .clear
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl }
-          = render :partial => 'hgv_meta_identifiers/bl'
-          .clear
-          .swifty.quickSave=I18n.t('label.quickSave')
-
-        %h4.category.translation
-          %a{:name => 'Translation'}=I18n.t('meta.legend.translation')
-        .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsDe }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsDe }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEn }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEn }
-         
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEs }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEs }
-         
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsIt }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsIt }
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa }
-          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa }
-          .clear      
-          .swifty.quickSave=I18n.t('label.quickSave')    
-
-        .controlPanel
-          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
-          = hidden_field_tag 'expansionSet', flash[:expansionSet]
-
-= javascript_include_tag 'edit_mask'
-= javascript_include_tag 'meta'
 = javascript_include_tag 'confirm'

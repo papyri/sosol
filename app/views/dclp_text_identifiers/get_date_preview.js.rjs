@@ -1,5 +1,0 @@
-[:X, :Y, :Z].each{|dateId|
-  [:when, :notBefore, :notAfter, :format].each{|field|
-    page.replace_html(field.to_s + dateId.to_s , @updates[dateId] ? @updates[dateId][field] : nil)
-  }
-}

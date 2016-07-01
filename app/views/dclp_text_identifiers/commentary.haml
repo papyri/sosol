@@ -1,0 +1,982 @@
+= javascript_include_tag 'menu-for-applications'
+
+= stylesheet_link_tag 'menu-item'
+= stylesheet_link_tag 'menu-bar'
+
+:javascript
+  helpComView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
+  var forceChangeTrue = false; //declared to make showmatch function work
+  if(Prototype.Browser.IE){
+    var rangeIE = document.body.createTextRange(); //temporary - selectText function sets for real
+  }
+
+  document.observe("dom:loaded", function() {
+    $$('.commentary#edition li').invoke('observe','click',addCommentary);
+    $$('.commentary#edition li').each(loadExistingCommentary);
+    if ($('frontmatter_commentary_add')) //only one or the other will exist
+      {
+        $('frontmatter_commentary_add').observe('click',addFrontmatterCommentary);
+      }
+    else 
+      {
+        $('frontmatter_commentary').observe('click',transformExistingFrontmatterCommentary);
+      }
+    if (#{!@identifier.mutable?}) {removeAllClickable();}
+  });
+
+  //###########################################################################################
+  // addObs - add observer for selecting a text highlighted in appropriate form - for IE browser
+  //###########################################################################################
+    
+  function addObs() {
+    
+    if ($('fm_sugar_content')) //if front matter commentary form is there
+      {
+        $('fm_sugar_content').observe('select', selectText);
+
+        //if(Prototype.Browser.IE){
+          document.detachEvent('onclick', addObs);
+        //}
+      }
+    
+    if ($('com_sugar_content')) //if line by line commentary form is there
+      {
+        $('com_sugar_content').observe('select', selectText);
+
+        //if(Prototype.Browser.IE){
+          document.detachEvent('onclick', addObs);
+        //}
+      }
+    
+  }
+
+  //###########################################################################################
+  // loadExistingCommentary - load all existing Line by Line Commentary to the page for user
+  //###########################################################################################
+    
+  function loadExistingCommentary(commentary_li) {
+    existing_comments = $$(".comment-on-" + commentary_li.id);
+    existing_comments.reverse().each(function (comment) {
+      comment.addClassName('clickable');
+      comment.addClassName('existing_comment');
+      comment.observe('click',transformExistingCommentary);
+      commentary_li.removeClassName('clickable');
+      commentary_li.stopObserving('click');
+      commentary_li.insert({
+        after: comment
+      });
+    });
+  }
+  
+  //###########################################################################################
+  // removeAllClickable - make nothing on the page available to click for further action
+  //###########################################################################################
+    
+  function removeAllClickable() {
+    $$(".clickable").each(function (clickable) {
+      clickable.stopObserving('click');
+      clickable.removeClassName('clickable');
+    });
+  }
+  
+  //###########################################################################################
+  // transformExistingCommentary - transform existing Line by Line Commentary from
+  // XML to Commentary Grammar and place in editable textarea
+  //###########################################################################################
+    
+  function transformExistingCommentary(event) {
+    removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+    
+    var comment_li = Event.element(event).up('li.input');  
+    
+        //get the original xml fragment
+    var originalxmls = $(comment_li).select('textarea.originalxml');
+    var originalxml = "";
+    if (originalxmls.length > 0)
+    {
+      //originalxml = originalxmls[0].innerHTML;
+      originalxml = originalxmls[0].value;
+    }
+    
+    comment_div_container = comment_li.childElements().first();
+    
+    comment_div = comment_div_container.childElements().first();
+    
+    nval_node = comment_div.childElements().first();
+    nval = nval_node.innerHTML;
+    nval_node.remove();
+    
+    comment_on = comment_li.classNames().toArray().first().replace(/comment-on-/,'');
+    content = comment_div.innerHTML.strip();
+    
+    Effect.SlideUp(comment_div_container.id, {duration: 0.5});
+    
+    $(comment_li).insert({
+      after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
+    });
+    
+    menuInit();
+
+    Form.Element.disable('com_sugar_content');
+    Form.Element.disable('save_com');
+
+    $('com_sugar_content').toggleClassName('loading');
+
+    Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+    
+    //translate the xml to commentary sugar
+    getSugar(originalxml, 'LBL');
+    
+    if(Prototype.Browser.IE){
+      document.attachEvent('onclick', addObs);  //do get IE browser to add observer
+    }
+  }
+  
+  //###########################################################################################
+  // generateDeleteForm - create link to delete Line by Line Commentary from a text
+  //###########################################################################################
+    
+  function generateDeleteForm(id,original_item_id) {
+    if(original_item_id == '') {
+      return '';
+    }
+    else {
+    return '#{form_tag({:action => :delete_commentary}, :method => :delete, :id => "delete_form").chomp()}' +
+        '<input type="hidden" name="line_id" value="' + id + '"/>' +
+        '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+        '<span style="float:right;position:relative;top:-1.5em">' +
+          '<a href="#{url_for({:action => :delete_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete this commentary entry?\')) {$(\'delete_form\').submit();};return false;">delete</a>'
+        '</span>' +
+      '</form>';
+    }
+  }
+  
+  //###########################################################################################
+  // generateDeleteFrontmatterForm - create link to delete Front Matter Commentary from a text
+  //###########################################################################################
+    
+  function generateDeleteFrontmatterForm(content) {
+    if(content == '') {
+      return '';
+    }
+    else {
+      return '#{form_tag({:action => :delete_frontmatter_commentary}, :method => :delete, :id => "delete_frontmatter_form").chomp()}' +
+          '<span style="float:right;position:relative;top:-1.5em">' +
+            '<a href="#{url_for({:action => :delete_frontmatter_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete the front matter commentary?\')) {$(\'delete_frontmatter_form\').submit();};return false;">delete</a>'
+          '</span>' +
+        '</form>';
+    }
+  }
+  
+  //###########################################################################################
+  // generateCommentaryForm - create form to enter Line by Line Commentary Grammar
+  // and the Commentary Helper Menu
+  //###########################################################################################
+    
+  function generateCommentaryForm(id,nval,content,original_item_id) {
+    
+    if(content === undefined) {content = "";}
+    if(original_item_id === undefined) {original_item_id = "";}
+
+    return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
+    '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
+    '<input type="hidden" name="line_id" value="' + id + '"/>' +
+    '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
+    '<ul id="menuModel" style="display:inherit">' +
+    '  <li id="1">' +
+    '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
+    '    <ul width="255">' +
+    '      <li id="101" jsFunction="insertEmphasis(\'com_sugar_content\',\'bold\')">' +
+    '        <a href="#" title="Make Selected Text Bold">Bold</a>' +
+    '      </li>' +
+    '      <li id="102" itemType="separator"/>' +
+    '      <li id="103" jsFunction="insertEmphasis(\'com_sugar_content\',\'italics\')">' +
+    '        <a href="#" title="Make Selected Text Italics">Italics</a>' + 
+    '      </li>' +
+    '      <li id="104" itemType="separator"/>' +
+    '      <li id="105" jsFunction="insertEmphasis(\'com_sugar_content\',\'underline\')">' +
+    '        <a href="#" title="Make Selected Text Underlined">Underline</a>' + 
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="2" itemType="separator"/>' +
+    '  <li id="3">' +
+    '    <a href="#" title="Insert Helpers">Insert</a>' +
+    '    <ul width="255">' +
+    '      <li id="301" jsFunction="helpComOpen(\'insertLinkPN\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+    '      </li>' +
+    '      <li id="302" itemType="separator"/>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertLinkBiblio\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to Bibliography">Insert Bibliography Link</a>' +
+    '      </li>' +
+    '      <li id="304" itemType="separator"/>' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertlink\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="306" itemType="separator"/>' +
+    '      <li id="307" jsFunction="helpComOpen(\'insertFootnote\', \'com_sugar_content\')">' +
+    '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="4" itemType="separator"/>' +
+    '  <li id="5" jsFunction="showMatch(\'com_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+    '    <a href="#" title="Find Possible Error">Find Error</a>' +
+    '  </li>' +
+    '  <li id="6" itemType="separator"/>' +
+    '</ul>' +
+    '<div id="menuDiv"></div>' +
+    '<br/>' +
+    '<label>Line(s): </label><input type="text" size="5" name="reference" value="'+nval+'"/>' +
+    '<textarea rows="5" cols="20" name="content" id="com_sugar_content">' + content + '</textarea>' +
+    '<input class="save_commentary" type="button" id="save_com" value="Save" onclick ="validateComSugar()"/>' + 
+    ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
+    '</form>' +
+    generateDeleteForm(id,original_item_id) +
+    '</div></div>';
+ 
+  }
+  
+  //###########################################################################################
+  // generateFrontmatterCommentaryForm - create form to enter Front matter Commentary Grammar
+  // and the Commentary Helper Menu
+  //###########################################################################################
+    
+  function generateFrontmatterCommentaryForm(content) {
+    if(content === undefined) {content = "";}
+    
+    return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
+    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
+    '<ul id="menuModel" style="display:inherit">' +
+    '  <li id="1">' +
+    '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
+    '    <ul width="255">' +
+    '      <li id="101" jsFunction="insertEmphasis(\'fm_sugar_content\',\'bold\')">' +
+    '        <a href="#" title="Make Selected Text Bold">Bold</a>' +
+    '      </li>' +
+    '      <li id="102" itemType="separator"/>' +
+    '      <li id="103" jsFunction="insertEmphasis(\'fm_sugar_content\',\'italics\')">' +
+    '        <a href="#" title="Make Selected Text Italics">Italics</a>' + 
+    '      </li>' +
+    '      <li id="104" itemType="separator"/>' +
+    '      <li id="105" jsFunction="insertEmphasis(\'fm_sugar_content\',\'underline\')">' +
+    '        <a href="#" title="Make Selected Text Underlined">Underline</a>' + 
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="2" itemType="separator"/>' +
+    '  <li id="3">' +
+    '    <a href="#" title="Insert Helpers">Insert</a>' +
+    '    <ul width="255">' +
+    '      <li id="301" jsFunction="helpComOpen(\'insertLinkPN\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to PN Publication">Insert PN Link</a>' +
+    '      </li>' +
+    '      <li id="302" itemType="separator"/>' +
+    '      <li id="303" jsFunction="helpComOpen(\'insertLinkBiblio\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to Bibliography">Insert Bibliography Link</a>' +
+    '      </li>' +
+    '      <li id="304" itemType="separator"/>' +
+    '      <li id="305" jsFunction="helpComOpen(\'insertlink\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert Link to External Publication">Insert External Link</a>' +
+    '      </li>' +
+    '      <li id="306" itemType="separator"/>' +
+    '      <li id="307" jsFunction="helpComOpen(\'insertFootnote\', \'fm_sugar_content\')">' +
+    '        <a href="#" title="Insert A Footnote">Insert Foot Note</a>' +
+    '      </li>' +
+    '    </ul>' +
+    '  </li>' +
+    '  <li id="4" itemType="separator"/>' +
+    '  <li id="5" jsFunction="showMatch(\'fm_sugar_content\', \'**POSSIBLE ERROR**\')">' +
+    '    <a href="#" title="Find Possible Error">Find Error</a>' +
+    '  </li>' +
+    '  <li id="6" itemType="separator"/>' +
+    '</ul>' +
+    '<div id="menuDiv"></div>' +
+    '<br/>' +
+    '<textarea rows="10" cols="20" name="content" id="fm_sugar_content" style="height: auto">' + content + '</textarea>' +
+    '<input class="save_commentary" type="button" id="save_fm" value="Save" onclick ="validateFMSugar()"/>' + 
+    ' or <a href="#{url_for({:action => :commentary})}" style="color:red">cancel</a>' +
+    '</form>' +
+    generateDeleteFrontmatterForm(content) +
+    '</div></div>';
+  }
+
+  //###########################################################################################
+  // validateComSugar - convert Line by Line Commentary Grammar to XML
+  //###########################################################################################
+    
+  function validateComSugar()
+  {
+    console.log('validateComSugar');
+    //disable form for ajax call to server
+    Form.Element.disable('com_sugar_content');
+    Form.Element.disable('save_com');
+    $('com_sugar_content').toggleClassName('loading');
+
+    originalleiden = $('com_sugar_content').value;
+    //alert ("originalleiden" + originalleiden);
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+      console.log('use proxy');
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      console.log('no proxy');
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    console.log(request_url);
+    
+    //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
+    if (originalleiden.indexOf("\n\n") == 0){
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:" + originalleiden.replace(/&/g,'%26') + ":W>";
+    }
+    else{
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:\n\n" + originalleiden.replace(/&/g,'%26') + ":W>";
+    }
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          if ($('notice_notice')) //update if already there, add if not
+          {
+            $('notice_notice').update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.')
+            });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
+            $('notice_notice').addClassName('flash error');
+          }
+         
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          $('com_sugar_content').value = error_content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          
+          //enable form after error
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.enable('com_sugar_content');
+          Form.Element.enable('save_com');
+
+          //showMatch function in confirm.js included at the bottom
+          showMatch("com_sugar_content", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
+        }
+        else 
+        {
+          //temporarily enable so can set the are to the XML value for the form submit to pick up
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.enable('com_sugar_content');
+
+          //remove wrap tags and namespace before call action to save to XML
+          // hack for ampersand in URL's - change from encoding to XML encoding to save in XML
+          $('com_sugar_content').value = json.content.replace(/%26/g,'&amp;').replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+          console.log('submitting update_commentary_form');
+
+          $('update_commentary_form').submit();
+          
+          //disable form again while server processes the new XML - will automatically reset on return from server
+          $('com_sugar_content').toggleClassName('loading');
+          Form.Element.disable('com_sugar_content');
+          Form.Element.disable('save_com');
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("validateComSugar(" + wrapped_content + ")",10000);
+      }
+    });
+  }
+
+  //###########################################################################################
+  // validateFMSugar - convert Front Matter Commentary Grammar to XML
+  //###########################################################################################
+  
+  function validateFMSugar()
+  {
+    //disable form for ajax call to server
+    Form.Element.disable('fm_sugar_content');
+    Form.Element.disable('save_fm');
+    $('fm_sugar_content').toggleClassName('loading');
+
+    originalleiden = $('fm_sugar_content').value;
+
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+
+    //force first entry to be inside a paragraph tag markup - will remove first one for display on transform back
+    if (originalleiden.indexOf("\n\n") == 0){
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:" + originalleiden.replace(/&/g,'%26') + ":W>";
+    }
+    else{
+      // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+      wrapped_content = "<W:\n\n" + originalleiden.replace(/&/g,'%26') + ":W>";
+    }
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'nonxml2xml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          if ($('notice_notice')) //update if already there, add if not
+          {
+            $('notice_notice').update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting Commentary Grammar to XML approximately at line ' + json.exception.line + ' column ' + json.exception.column + '.  This file was NOT SAVED.  Please correct the error below.')
+            });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
+            $('notice_notice').addClassName('flash error');
+          }
+             
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          $('fm_sugar_content').value = error_content.replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          
+          //enable form after error
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.enable('fm_sugar_content');
+          Form.Element.enable('save_fm');
+
+          //showMatch function in confirm.js included at the bottom
+          showMatch("fm_sugar_content", "**POSSIBLE ERROR**");
+          // **POSSIBLE ERROR** defined in insert_error_here function below
+        }
+        else 
+        {
+          //temporarily enable so can set the are to the XML value for the form submit to pick up
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.enable('fm_sugar_content');
+
+          //remove wrap tags and namespace before call action to save to XML
+          // hack for ampersand in URL's - change from encoding to XML encoding to save in XML
+          $('fm_sugar_content').value = json.content.replace(/%26/g,'&amp;').replace(/^\<wrap(.*?)\>/,'').replace(/\<\/wrap\>$/,'').strip();
+
+          $('update_frontmatter_form').submit();
+          
+          //disable form again while server processes the new XML - will automatically reset on return from server
+          $('fm_sugar_content').toggleClassName('loading');
+          Form.Element.disable('fm_sugar_content');
+          Form.Element.disable('save_fm');
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("validateFMSugar(" + wrapped_content + ")",10000);
+      }
+    });
+  }
+
+  //###########################################################################################
+  // getSugar - convert XML to Commentary Grammar - used for line by line and front matter
+  //###########################################################################################
+  
+  function getSugar(originalxml, wherefrom)
+  {
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(" xmlns[^\"]*\"[^\"]*\"", "gi");
+    originalxml = originalxml.replace(xmlnsPattern, "");
+    
+    //create url call
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    // even though saved as &amp; in XML, comes here as & only
+    // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+    wrapped_content = "<wrap>" + originalxml.replace(/&/g,'%26').strip() + "</wrap>";
+
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+        json = response.responseText.evalJSON();
+      
+        if ("exception" in json) {
+          if ($('notice_notice')) //update if already there, add if not
+          {
+            $('notice_notice').update('Error converting XML to Commentary Grammar approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.');
+          }
+          else
+          {
+            $$('div#main > div.site').first().insert({
+              top: new Element('div',{'id': 'notice_notice'}).update('Error converting XML to Commentary Grammar approximately at line ' + json.exception.line + ' column ' + json.exception.column + '. Please correct the error <a href="' + '#{polymorphic_path([@identifier.publication, @identifier], :action => :editxml)}' + '">on the XML page</a>.')
+            });
+            
+            //add class after the original insert to get the flash highlighting to work in IE browser
+            $('notice_notice').addClassName('flash error');
+          }
+         
+          var error_content = ' ';
+          error_content = insert_error_here(json.content, json.exception.line, json.exception.column);
+          
+          if (wherefrom == "FM")
+            {
+              //$('fm_sugar_content').value = error_content.replace(/^\<wrap\>/,'').replace(/\<\/wrap\>$/,'').strip();
+              $('fm_sugar_content').value = error_content.strip();
+
+              //enable form after error
+              $('fm_sugar_content').toggleClassName('loading');
+              Form.Element.enable('fm_sugar_content');
+              Form.Element.enable('save_fm');
+
+              //showMatch function in confirm.js included at the bottom
+              showMatch("fm_sugar_content", "**POSSIBLE ERROR**");
+              // **POSSIBLE ERROR** defined in insert_error_here function below
+            }
+          else
+            {
+              //$('com_sugar_content').value = error_content.replace(/^\<wrap\>/,'').replace(/\<\/wrap\>$/,'').strip();
+              $('com_sugar_content').value = error_content.strip();
+
+              //enable form after error
+              $('com_sugar_content').toggleClassName('loading');
+              Form.Element.enable('com_sugar_content');
+              Form.Element.enable('save_com');
+
+              //showMatch function in confirm.js included at the bottom
+              showMatch("com_sugar_content", "**POSSIBLE ERROR**");
+              // **POSSIBLE ERROR** defined in insert_error_here function below
+            }
+        }
+        else {
+          // remove the 2 new lines for the first paragraph just to not use up extra screen space
+          // will automatically put back in on a save if a user does not
+          if (wherefrom == "FM")
+            {
+              // hack for ampersand in URL's - change from encoding to & for display
+              $('fm_sugar_content').value = json.content.replace(/%26/g,'&').replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              $('fm_sugar_content').toggleClassName('loading');
+              Form.Element.enable('fm_sugar_content');
+              Form.Element.enable('save_fm');
+            }
+          else
+            {
+              // hack for ampersand in URL's - change from encoding to & for display
+              $('com_sugar_content').value = json.content.replace(/%26/g,'&').replace(/^\<W\:\n\n/,'').replace(/\:W\>$/,'');
+              $('com_sugar_content').toggleClassName('loading');
+              Form.Element.enable('com_sugar_content');
+              Form.Element.enable('save_com');
+            }
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getSugar(" + originalxml + ")",10000);
+      }
+    });
+  }
+
+  //###########################################################################################
+  // addCommentary - create editable textarea to add line by line commentary
+  //###########################################################################################
+  
+  function addCommentary(event) {
+    removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+  
+    var element = Event.element(event);
+    if (!element.hasClassName('line')) {element = element.up('li.line');}
+    nval = $("n-" + element.id).innerHTML;
+    element.insert({
+      after: '<li class="input"/>' + generateCommentaryForm(element.id,nval)
+    });
+
+    menuInit();
+    
+    Effect.SlideDown("form-"+element.id);
+    element.stopObserving('click');
+    element.removeClassName('clickable');
+  }
+
+  //###########################################################################################
+  // addFrontmatterCommentary - create editable textarea to add front matter commentary
+  //###########################################################################################
+
+  function addFrontmatterCommentary(event) {
+    removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+    
+    var element = Event.element(event);
+    
+    var original_content = $$('#frontmatter_commentary_container textarea');
+    if(original_content.size() == 0) {
+      original_content = '';
+    }
+    else {
+      original_content = original_content[0].value;
+    }
+
+    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    $("frontmatter_commentary_container").insert({
+      after: generateFrontmatterCommentaryForm(original_content)
+    });
+        
+    menuInit();
+
+    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+    
+    element.stopObserving('click');
+    event.stop();
+  }
+
+  //###########################################################################################
+  // transformExistingFrontmatterCommentary - transform existing Front Matter Commentary from
+  // XML to Commentary Grammar and place in editable textarea
+  //###########################################################################################
+  
+  function transformExistingFrontmatterCommentary(event) {
+    removeAllClickable();
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+    var original_content = $$('#frontmatter_commentary_container textarea');
+    if(original_content.size() == 0) {
+      original_content = '';
+    }
+    else {
+      original_content = original_content[0].value;
+    }
+    
+    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    $("frontmatter_commentary_container").insert({
+      after: generateFrontmatterCommentaryForm(original_content)
+    });
+
+    menuInit();
+
+    Form.Element.disable('fm_sugar_content');
+    Form.Element.disable('save_fm');
+
+    $('fm_sugar_content').toggleClassName('loading');
+
+    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+
+    //translate the xml to commentary sugar
+    getSugar(original_content, 'FM');
+
+    if(Prototype.Browser.IE){
+      document.attachEvent('onclick', addObs);  //do get IE browser to add observer
+    }
+  }
+
+  //###########################################################################################
+  // menuInit - initialize the Commentary Helper
+  //###########################################################################################
+  
+  function menuInit(){
+    //stuff below is for the menu bar
+    var menuModel = new DHTMLSuite.menuModel();
+    menuModel.addItemsFromMarkup('menuModel');
+    menuModel.setMainMenuGroupWidth(00);	
+    menuModel.init();
+    
+    var menuBar = new DHTMLSuite.menuBar();
+    menuBar.addMenuItems(menuModel);
+    menuBar.setMenuItemCssPrefix('Custom_');
+    menuBar.setCssPrefix('Custom_');
+    menuBar.setTarget('menuDiv');
+    
+    menuBar.init();
+  }
+
+  //###########################################################################################
+  // insert_error_here - 
+  // copied this function/logic from identifiers_controller.rb
+  // this routine is to place the error message below in the Leiden+ or XML returned when a parse error
+  // occurs by taking the line and column from the message and giving the user the place in the content
+  // the parse error occured in xsugars processing - may or may not be where the real error is depending
+  // on what the error is - this processing is by character because there are multiple byte characters
+  // possible in the text and a way to place msg with taking that into account
+  //
+  // line starts at 1 because first character is on first line before incrementing in loop
+  // same logic for column, already on first character before incrementing in loop 
+  // 'col' check has to come before 'new line' check in case error is on last char in the line
+  //###########################################################################################
+  
+  function insert_error_here(content, line, column){
+
+    var line_cnt = 1;
+    var col_cnt = 1;
+    var content_error_here = new Array();
+    var add_error = false;
+
+    for (i=0;i<=content.length;i++){
+
+      if (line_cnt == line){
+        if (col_cnt == column) {
+          content_error_here.push("**POSSIBLE ERROR**");
+          add_error = true;
+        }
+        // if on the line with error but at the end without putting in the message, then put the message in
+        if (content.charAt(i) == "\n" && add_error == false){
+            content_error_here.push("**POSSIBLE ERROR**");
+            add_error = true;
+        }
+        col_cnt++;
+      }
+
+      if (content.charAt(i) == "\n"){
+        line_cnt++;
+      }
+      content_error_here.push(content.charAt(i));
+    }
+
+    return content_error_here.join("");
+  }
+
+  //###########################################################################################
+  // helpComOpen - open new window for capturing user input to insert Commentary Grammar
+  //###########################################################################################
+
+  function helpComOpen(view, wherefrom){
+
+    //set textarea to the value the window opened will insert to - either the frontmatter or commentary
+    $('fm_or_com').value = wherefrom;
+
+    //remove exisiting notification error if it there before loading the new form
+    if ($('notice_notice')) 
+      {
+        $('notice_notice').remove();
+      }
+    
+    // grab focus of main window textarea before open new window for IE browser only
+    // as non-IE gets focus again in insertMarkUp function
+    getFocus(wherefrom);
+
+    switch (view)
+    {
+    case "insertFootnote":
+      {
+        openconfig = config='height=350, width=700, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    case "insertLinkPN":
+      {
+        openconfig = config='height=350, width=600, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    case "insertlink":
+      {
+        openconfig = config='height=350, width=625, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    case "insertLinkBiblio":
+      {
+        openconfig = config='height=750, width=1275, left=150, top=50, toolbar=no, menubar=no, scrollbars=yes, resizable=yes, location=no, directories=no, status=no';
+        break;
+      }
+    default: // nopts is default and need to clear optional xml values and leave diachar filled in 
+      {
+        alert("Oops, error, this is not a valid helper dialog page " + view);
+      }
+    };
+    //helpComView is global variable defined with Ruby url_for in inline javascript at the top 
+    newWindowURL = helpComView.replace("wheretogo", view);
+    window.open (newWindowURL, '', openconfig); 
+  }
+
+  //###########################################################################################
+  // getFocusMain - get focus for where selecting and/or inserting 
+  //###########################################################################################
+
+  function getFocus(focusthis){
+  
+    element = document.getElementById(focusthis);
+    element.focus();
+  }
+
+  //###########################################################################################
+  // selectText - set range of selected text in IE browser only
+  //###########################################################################################
+
+  function selectText(){
+
+    if(Prototype.Browser.IE){
+      rangeIE = document.selection.createRange();
+    }
+  }
+
+  //###########################################################################################
+  // insertEmphasis - apply Commentary Grammar to selected text
+  //###########################################################################################
+
+  function insertEmphasis(wherefrom, whatdo){
+    
+    switch (whatdo)
+    {
+      case "bold":
+        {markupChar = "*"; break; }
+      case "italics":
+        {markupChar = "|"; break;}
+      case "underline":
+        {markupChar = "_"; break;}
+    }
+
+    if(Prototype.Browser.IE){
+
+      // rangeIE is a global variable created at the top for IE use set in selectText function
+
+      var newtext = markupChar + rangeIE.text + markupChar;
+
+      rangeIE.text = newtext;
+      rangeIE.select();
+      rangeIE.collapse(false);
+    }
+    else {
+      // need to grab focus of window textarea again for non-IE browsers
+      element = document.getElementById(wherefrom);
+      element.focus(); 
+
+      var start = element.selectionStart;
+      var end = element.selectionEnd;
+      var newtext = markupChar + element.value.substring(start, end) + markupChar;
+
+      element.value = element.value.substr(0, start) + newtext + element.value.substr(end);
+      
+      element.focus();
+    }
+  }
+  
+  //###########################################################################################
+  // getMarkUp - set up and make ajax call to xsugar to convert XML to non-XML
+  //###########################################################################################
+  
+  function getMarkUp(originalxml)
+  {
+
+    //remove  namespaces that break sugar
+    var xmlnsPattern = new RegExp(' xmlns[^\"]*\"[^\"]*\"', 'gi');
+    originalxml = originalxml.replace(xmlnsPattern, '');
+
+    //create url call
+    if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
+      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+    }
+    else {
+      request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";
+      //request_url = "/" + request_url.split("/").slice(3).join("/");
+    }
+    
+    // this is called from helper pop up page
+    // hack for ampersand in URL's - change to encoding to go through xsugar grammar
+    wrapped_content = "<wrap>" + originalxml.replace(/&/g,'%26') + "</wrap>";
+    
+    new Ajax.Request(request_url, {
+      method: 'post',
+      parameters: $H({content: wrapped_content, type: 'commentary', direction: 'xml2nonxml'}),
+      onSuccess: function(response) {
+
+        json = response.responseText.evalJSON();
+
+        if ("exception" in json){
+          alert("Grammar conversion error line " + json.exception.line + " column " + json.exception.column + " of this XML \n" + json.content);
+        }
+        else {
+          // hack for ampersand in URL's - change from encoding to & for display
+          leidenh = json.content.replace(/%26/g,'&').replace(/^\<W\:/,'').replace(/\:W\>$/,'').strip();
+          
+          insertMarkUp(leidenh);
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getMarkUp(" + originalxml + ")",10000);
+      }
+    });
+  }
+  
+  //###########################################################################################
+  // insertMarkup - insert actual markup into commentary input form
+  //###########################################################################################
+
+  function insertMarkUp(vti){
+
+    //get where to insert markup from value set before open window
+    insertHere = document.getElementById("fm_or_com").value;
+    if(typeof document.selection != 'undefined'){ // means IE browser 
+  
+      var range = document.selection.createRange();
+  
+      range.text = vti;
+      range.select();
+      range.collapse(false);
+    }
+    else {
+      // need to grab focus of main window textarea again for non-IE browsers only
+      element = document.getElementById(insertHere);
+      element.focus();
+  
+      if(typeof element.selectionStart != 'undefined'){ // means Mozilla browser 
+  
+        var start = element.selectionStart;
+        var end = element.selectionEnd;
+        element.value = element.value.substr(0, start) + vti + element.value.substr(end);
+        var pos = start + vti.length;
+        element.selectionStart = pos;
+        element.selectionEnd = pos;
+        //below is to get focus back to textarea in main page - not work in safari - does is ff
+        element = document.getElementById(insertHere);
+        element.focus();
+      }
+      else{ // not sure what browser 
+  
+        element.value = element.value+vti;
+      }
+    }
+  }
+
+#main
+  =# render :partial => 'identifiers/edit_bar'
+  
+  .site
+    = render :partial => 'identifiers/header'
+    #edit
+        
+      %label Commentary
+      .PContent
+        :preserve
+          #{@identifier[:html_preview]}
+%textarea{:id => "fm_or_com", :style => "display:none"}
+= javascript_include_tag 'confirm'

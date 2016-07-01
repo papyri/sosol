@@ -1,0 +1,176 @@
+:javascript
+  // used to form URL to open pop-up window
+  helpView = "#{url_for(:controller => 'helper', :action => 'wheretogo')}";
+  // 2 variables below used in ajax calls for conversion
+  convXML2Leiden = "#{url_for(:controller => 'leiden', :action => 'xml2leiden')}";
+  convLeiden2XML = "#{url_for(:controller => 'leiden', :action => 'leiden2xml')}";
+= javascript_include_tag 'leiden'
+= javascript_include_tag 'menu-for-applications'
+
+= stylesheet_link_tag 'menu-item'
+= stylesheet_link_tag 'menu-bar'
+/The helper menu is somewhat keyed off the numbering scheme in the li elements and indentations
+/have a smart number associated with them.  It starts off with a 1 digit number (when this level goes to
+/2 digits, no drop down data is associated).  From then on there are 2 digit numbers used e.g 101, 
+/102, etc. meaning the first, second and third level menu items under item 1.  Then the next level
+/continues this with 10101, 10102, 10102 meaning the first, second and third level menu items
+/under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works
+/in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications 
+/javascript.
+-# All the javascript functions called below are in leiden.js other than showMatch which is in confirm.js
+%ul#menuModel{:style => "display:inherit"}
+  %li#1
+    %a{:href => "#", :title => "Leiden+ Input Markup"} Markup
+    %ul{ :width => "255"}
+      %li#101{ :jsFunction => "helpDialogOpen('abbrev')"}
+        %a{ :href => "#"} Abbreviations
+      %li#102{ :itemType => "separator"}
+      %li#103
+        %a{ :href => "#"} Apparatus
+        %ul{ :width => "225"}
+          %li#10301{ :jsFunction => "helpDialogOpen('appreg')"}
+            %a{ :href => "#"}Modern regularization
+          %li#10302{ :itemType => "separator"}
+          %li#10303{ :jsFunction => "helpDialogOpen('appcorr')"}
+            %a{ :href => "#"}Modern correction
+          %li#10304{ :itemType => "separator"}
+          %li#10305{ :jsFunction => "helpDialogOpen('appsubst')"}
+            %a{ :href => "#"}Scribal correction/substitution
+          %li#10306{ :itemType => "separator"}
+          %li#10307{ :jsFunction => "helpDialogOpen('appalt')"}
+            %a{ :href => "#"}Alternate readings
+          %li#10308{ :itemType => "separator"}
+          %li#10309{ :jsFunction => "helpDialogOpen('appedit')"}
+            %a{ :href => "#"}Editorial correction
+      %li#104{ :itemType => "separator"}
+      %li#105
+        %a{ :href => "#"}Deletion/cancellation
+        %ul{ :width => "225"}
+          %li#10501{ :jsFunction => "insertDeletionMain('slashes')"}
+            %a{ :href => "#"}Deletion by slashes (///)
+          %li#10502{ :itemType => "separator"}
+          %li#10503{ :jsFunction => "insertDeletionMain('cross-strokes')"}
+            %a{ :href => "#"}Deletion by cross-strokes (XXX)
+          %li#10504{ :itemType => "separator"}
+          %li#10505{ :jsFunction => "insertDeletionMain('erasure')"}
+            %a{ :href => "#"}Deletion by any other means
+      %li#106{ :itemType => "separator"}
+      %li#107
+        %a{ :href => "#"}Document Divisions
+        %ul{ :width => "225"}
+          %li#10701{ :jsFunction => "insertDivisionMain('r')"}
+            %a{ :href => "#"}Recto
+          %li#10702{ :itemType => "separator"}
+          %li#10703{ :jsFunction => "insertDivisionMain('v')"}
+            %a{ :href => "#"}Verso
+          %li#10704{ :itemType => "separator"}
+          %li#10705{ :jsFunction => "insertDivisionMain('column')"}
+            %a{ :href => "#"}Column
+          %li#10706{ :itemType => "separator"}
+          %li#10707{ :jsFunction => "insertDivisionMain('document')"}
+            %a{ :href => "#"}Document
+          %li#10708{ :itemType => "separator"}
+          %li#10709{ :jsFunction => "insertDivisionMain('folio')"}
+            %a{ :href => "#"}Folio
+          %li#10710{ :itemType => "separator"}
+          %li#10711{ :jsFunction => "insertDivisionMain('fragment')"}
+            %a{ :href => "#"}Fragment
+          %li#10712{ :itemType => "separator"}
+          %li#10713{ :jsFunction => "helpDialogOpen('division')"}
+            %a{ :href => "#"}Other
+      %li#108{ :itemType => "separator"}
+      %li#109{ :jsFunction => "helpDialogOpen('gapall')"}
+        %a{ :href => "#"} Missing, illegible, or not transcribed
+      %li#110{ :itemType => "separator"}
+      %li#111{ :jsFunction => "helpDialogOpen('number')"}
+        %a{ :href => "#"} Numbers
+  %li#2{ :itemType => "separator"}
+  %li#3
+    %a{:href => "#", :title => "Leiden+ Symbols"} Symbols
+    %ul{ :width => "240"}
+      %li#301
+        %a{ :href => "#"} Numerical Characters
+        %ul{ :width => "135"}
+          -# this is unicode character u10175
+          %li#30101{ :jsFunction => "insertSpecialCharMain('𐅵')"}
+            %a{ :href => "#"}1/2
+          %li#30102{ :itemType => "separator"}
+          -# this is unicode character u10177
+          %li#30103{ :jsFunction => "insertSpecialCharMain('𐅷')"}
+            %a{ :href => "#"}2/3
+          %li#30104{ :itemType => "separator"}
+          -# this is unicode character u10178
+          %li#30105{ :jsFunction => "insertSpecialCharMain('𐅸')"}
+            %a{ :href => "#"}3/4
+          %li#30106{ :itemType => "separator"}
+          %li#30107{ :jsFunction => "insertSpecialCharMain('\\u03DB')"}
+            %a{ :href => "#"}Stigma small
+          %li#30108{ :itemType => "separator"}
+          %li#30109{ :jsFunction => "insertSpecialCharMain('\\u03DA')"}
+            %a{ :href => "#"}Stigma capital
+          %li#30110{ :itemType => "separator"}
+          %li#30111{ :jsFunction => "insertSpecialCharMain('\\u03D9')"}
+            %a{ :href => "#"}Koppa small
+          %li#30112{ :itemType => "separator"}
+          %li#30113{ :jsFunction => "insertSpecialCharMain('\\u03E1')"}
+            %a{ :href => "#"}Sampi small
+          -#%li#30114{ :itemType => "separator"}
+          -#%li#30115{ :jsFunction => "insertSpecialCharMain('\\u00AF')"}
+          -#  %a{ :href => "#"}Supraline Spacing Macron
+      %li#302{ :itemType => "separator"}
+      %li#303
+        %a{ :href => "#"} Ancient Diacriticals
+        %ul{ :width => "135"}
+          %li#30301{ :jsFunction => "insertDiacriticalMain('acute')"}
+            %a{ :href => "#"}Acute
+          %li#30302{ :itemType => "separator"}
+          %li#30303{ :jsFunction => "insertDiacriticalMain('asper')"}
+            %a{ :href => "#"}Asper
+          %li#30304{ :itemType => "separator"}
+          %li#30305{ :jsFunction => "insertDiacriticalMain('circumflex')"}
+            %a{ :href => "#"}Circumflex
+          %li#30306{ :itemType => "separator"}
+          %li#30307{ :jsFunction => "insertDiacriticalMain('diaeresis')"}
+            %a{ :href => "#"}Diaeresis
+          %li#30308{ :itemType => "separator"}
+          %li#30309{ :jsFunction => "insertDiacriticalMain('grave')"}
+            %a{ :href => "#"}Grave
+          %li#30310{ :itemType => "separator"}
+          %li#30311{ :jsFunction => "insertDiacriticalMain('lenis')"}
+            %a{ :href => "#"}Lenis
+          %li#30312{ :itemType => "separator"}
+          %li#30313{ :jsFunction => "helpDialogOpen('ancientdia')"}
+            %a{ :href => "#"}Double
+      %li#304{ :itemType => "separator"}
+      %li#305{ :jsFunction => "insertMilestoneMain('paragraphos')"}
+        %a{ :href => "#"}Paragraphos
+      %li#306{ :itemType => "separator"}
+      %li#307{ :jsFunction => "insertMilestoneMain('horizontal-rule')"}
+        %a{ :href => "#"}Horizontal Rule
+      %li#308{ :itemType => "separator"}
+      %li#309{ :jsFunction => "insertSpecialCharMain('\\u0304')"}
+        %a{ :href => "#"}Supralinear Stroke
+      %li#310{ :itemType => "separator"}
+      %li#311{ :jsFunction => "insertSpecialCharMain('\\u0342')"}
+        %a{ :href => "#"}Circumflex on short vowel
+      %li#312{ :itemType => "separator"}
+      %li#313{ :jsFunction => "insertSpecialCharMain('\\u0345')"}
+        %a{ :href => "#"}Iota subscript below short vowel
+  %li#4{ :itemType => "separator"}
+  %li#5{ :jsFunction => "window.open('#{documentation_url(:docotype => "text")}')"}
+    %a{ :href => "#", :title => "Leiden+ Help Page"}Leiden+ Help
+  %li#6{ :itemType => "separator"}
+  %li#7{ :jsFunction => "insertSpecialCharMain('\\u0323')"}
+    %a{ :href => "#", :title => "Insert Underdot"}UnderDot
+  %li#8{ :itemType => "separator"}
+  %li#9{ :jsFunction => "helpDialogOpen('tryit')"}
+    %a{ :href => "#", :title => "Try Leiden+ Conversion"}Try It
+  %li#10{ :itemType => "separator"}
+  %li#11{ :jsFunction => "showMatch('ddb_identifier_leiden_plus', \'**POSSIBLE ERROR**\')"}
+    %a{ :href => "#", :title => "Find Possible Error"}Find Error
+  %li#12{ :itemType => "separator"}
+%p
+  -if identifier.mutable?
+    %div#menuDiv
+  -else
+    %div#menuDiv{ :style => "display:none"}
