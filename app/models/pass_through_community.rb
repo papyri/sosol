@@ -71,7 +71,7 @@ class PassThroughCommunity < Community
       rescue Exception => e
         Rails.logger.error(e) 
         Rails.logger.error(e.backtrace) 
-        raise Exception.new("Unable to send finalization copy to agent #{next_obj.inspect} message was #{e.message}")
+        raise Exception.new("Unable to send finalization copy to agent. Message was #{e.message}")
       end
     end
   end
