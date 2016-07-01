@@ -45,4 +45,4 @@
     :post_url: "http://services2.perseids.org/flask-github-proxy/perseids_syriaca/push/<PATH>"
     :timeout: 3600
     :client_secret: "yoursecrethere"
-    :log_message: "<ID> Edited by <USER> via Perseids.
+    :log_message: "<ID> Edited by <USER> via Perseids."
