@@ -1,4 +1,4 @@
-class DCLPTextIdentifier < HGVIdentifier
+class DCLPTextIdentifier < DDBIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
   PATH_PREFIX = 'DCLP'
