@@ -240,7 +240,7 @@ module AgentHelper
         params['author_name'] = identifier.publication.creator.name
         params['author_email'] = identifier.publication.creator.email
         params['date'] = Time.now.xmlschema
-        params['logs'] = @conf[:log_message]
+        params['logs'] = @conf[:log_message].sub('<USER>',identifier.publication.creator.human_name).sub('<ID>',identifier.id_attribute)
         params['branch'] = identifier.publication.creator.name + "/" + identifier.branch
         # params['callback_url'] = ....
         url = @conf[:post_url].sub('<PATH>',path)

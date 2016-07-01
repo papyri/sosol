@@ -68,7 +68,8 @@ class SyriacaIdentifier < Identifier
   end
 
   def to_remote_path
-    "data/places/#{id}.xml"
+    type, id = self.to_components[3..-1]
+    "data/places/tei/#{id}.xml"
   end
   
   def after_rename(options = {})
@@ -107,7 +108,7 @@ class SyriacaIdentifier < Identifier
   def self.api_create(a_publication,a_agent,a_body,a_comment)
     uri = self.api_parse_post_for_identifier(a_body)
     temp_id = self.new(:name => uri)
-    temp_id.publication = a_publication 
+    temp_id.publication = a_publication
     temp_id.save!
     temp_id.set_content(a_body, :comment => a_comment, :actor => (a_publication.owner.class == User) ? a_publication.owner.jgit_actor : a_publication.creator.jgit_actor)
     template_init = temp_id.add_change_desc(a_comment)

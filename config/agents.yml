@@ -42,7 +42,7 @@
   :syriaca_github:
     :uri_match: "https://github.com/perseids-project/srophe-app-data"
     :type: "github"
-    :post_url: "http://services2.perseids.org/flaskgitproxy/perseids_syriaca/<PATH>"
+    :post_url: "http://services2.perseids.org/flask-github-proxy/perseids_syriaca/push/<PATH>"
     :timeout: 3600
-    :client_secret: "FlaskGitHubProxyIsCool"
-    :log_message: "Edited via Perseids. Details in revisionDesc"
+    :client_secret: "yoursecrethere"
+    :log_message: "<ID> Edited by <USER> via Perseids.
