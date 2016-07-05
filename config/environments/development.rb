@@ -27,5 +27,7 @@ Sosol::Application.configure do
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
   require File.join(File.dirname(__FILE__), 'development_secret')
+  # configure email parameters
+  config.site_email_from='admin@localhost'
 end
 
