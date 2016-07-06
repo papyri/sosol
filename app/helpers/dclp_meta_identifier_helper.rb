@@ -222,7 +222,7 @@ module DclpMetaIdentifierHelper
         @certainty = init[:children][:certainty] ? init[:children][:certainty][:attributes][:target] : nil
         @corresp   = init[:attributes][:corresp]
         @ref       = init[:attributes][:ref]
-        @refList   = ref.split(' ')
+        @refList   = @ref ? @ref.split(' ') : ''
       end
     end
 
