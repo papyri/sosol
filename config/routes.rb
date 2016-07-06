@@ -160,6 +160,11 @@ Sosol::Application.routes.draw do
     put :updatexml
     get :rename_review
     put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
     end
 
     end
