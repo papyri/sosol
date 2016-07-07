@@ -1,0 +1,33 @@
+- base = 'hgv_meta_identifier[contentText]'
+- contentText = DclpWork::ContentText.new(:contentText => @identifier[:contentText])
+.contentText.genre
+  %h5.contentText=I18n.t('dclp.label.contentTextGenre')
+  = text_field_tag base + '[0]', contentText.genre.size > 0 ? contentText.genre[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[1]', contentText.genre.size > 1 ? contentText.genre[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.contentText.religion
+  %h5.contentText=I18n.t('dclp.label.contentTextReligion')
+  = text_field_tag base + '[2]', contentText.religion.size > 0 ? contentText.religion[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[3]', contentText.religion.size > 1 ? contentText.religion[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.contentText.culture
+  %h5.contentText=I18n.t('dclp.label.contentTextCulture')
+  = text_field_tag base + '[4]', contentText.culture.size > 0 ? contentText.culture[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[5]', contentText.culture.size > 1 ? contentText.culture[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.contentText.keywords
+  = contentText.keywords
+  %h5.contentText=I18n.t('dclp.label.contentTextKeywords')
+  .multi{:id => 'multi_keywords'}
+    %ul.items{:id => 'multiItems_keywords'}
+      - contentText.keywords.each_index do |index|
+        - itemIndex = index + 6
+        %li
+          = text_field_tag base + '[' + itemIndex.to_s + ']', contentText.keywords[index], :disabled => !@identifier.mutable?, :class => 'observechange'
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
+    %p.add{:id => 'multiPlus_keywords'}
+      %input.observechange
+      %span{:onclick => "multiAdd('keywords')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+
+    = javascript_tag "Sortable.create('multiItems_keywords', {overlap: 'horizontal', constraint: false, handle: 'move'});"

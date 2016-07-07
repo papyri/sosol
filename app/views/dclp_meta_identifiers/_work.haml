@@ -1,6 +1,4 @@
 .workContainer
-  = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt', :title => @identifier.configuration.xpath(:titleStmt)
-  = text_field_tag 'titleStmt', @identifier[:titleStmt], :disabled => !@identifier.mutable?, :class => 'observechange titleStmt'
 
   .clear
   .multi.work{:id => 'multi_work'}
