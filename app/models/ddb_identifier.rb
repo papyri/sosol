@@ -249,6 +249,10 @@ class DDBIdentifier < Identifier
     if get_broken_leiden(original_xml_content).nil?
       # get div type=edition from XML in string format for conversion
       abs = DDBIdentifier.get_div_edition(original_xml).join('')
+      # if there’s only an empty stub, add a single line to make it valid for xsugar grammar
+      if /\A<div[^>]+\/>\Z/ =~ abs then
+        abs = abs[0..-3] + ' ><ab><lb n="1"/></ab></div>'
+      end
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       
