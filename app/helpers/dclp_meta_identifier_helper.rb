@@ -251,27 +251,22 @@ module DclpMetaIdentifierHelper
         @religion = []
         @culture  = []
         @keywords = []
-        puts '------------------- HALLO?! -------------------'
         puts init
         if init && init[:contentText]
-          puts '------------------- init contentText'
-          puts init[:contentText]
           init[:contentText].each{|keyword|
-            puts '------------------- keyword contentText'
-            puts keyword
             if keyword[:attributes] && keyword[:attributes][:class]
-              puts '------------------- class contentText'
-              puts keyword[:attributes][:class]
               case keyword[:attributes][:class]
                 when 'culture'
                   @culture  << keyword[:value]
                 when 'religion'
                   @religion << keyword[:value]
                 when 'description'
-                  @genre    << keyword[:value]
+                  @genre << keyword[:value]
                 else
                   @keywords << keyword[:value]
               end
+            else
+              @keywords << keyword[:value]
             end
           }
         end
