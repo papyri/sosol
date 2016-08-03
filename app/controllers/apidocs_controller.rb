@@ -25,7 +25,7 @@ class ApidocsController < ActionController::Base
     api_description = Sosol::Application.config.respond_to?(:site_api_description) ? Sosol::Application.config.site_api_description : "SoSOL API"
     api_license_name = Sosol::Application.config.respond_to?(:site_api_license_name) ? Sosol::Application.config.site_api_license_name : "SoSOL API License"
     # TODO handle ssl properly and enforce for api interactions
-    if ENV['RAILS_ENV'] == 'production' 
+    if ENV['RAILS_ENV'] == 'production' || ENV['RAILS_ENV'] == 'staging'
       root_url.sub!(/http:/,'https:')
     end 
     swagger_root do
