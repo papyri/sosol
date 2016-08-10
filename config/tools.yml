@@ -373,15 +373,15 @@ staging:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :edit:
-          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT"
           :id_param: 'doc'
           :text: "Edit in Arethusa"
         :view:
-          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids?chunk=SENT&mode=viewer"
           :id_param: 'doc'
           :text: "Preview in Arethusa"
         :create:
-          :href: "http://www-stage.perseids.org/apps/treebank"
+          :href: "http://www.perseids.org/apps/treebank"
           :id_param: 'doc'
           :text: 'New Treebank Annotation'
   treebank_reviewer:
@@ -390,7 +390,7 @@ staging:
       :uri: 'http://github.com/latin-language-toolkit/arethusa'
       :actions:
         :review:
-          :href: "http://www-stage.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
+          :href: "http://www.perseids.org/tools/arethusa/app/#/perseids_hidden_review?chunk=SENT&gold=GOLD"
           :id_param: 'doc'
   alignment_editor:
     :alpheios:
@@ -406,7 +406,7 @@ staging:
           :id_param: 'doc'
           :text: "View in Alpheios"
         :create:
-          :href: "http://www-stage.perseids.org/apps/alignment?"
+          :href: "http://www.perseids.org/apps/alignment?"
           :id_param: 'doc'
           :text: 'New Text Alignment'
   oa_editor:

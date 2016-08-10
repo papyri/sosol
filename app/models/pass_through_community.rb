@@ -63,38 +63,22 @@ class PassThroughCommunity < Community
         if agent_client.nil?
           raise Exception.new("Unable to get client for #{next_obj.inspect}")
         end
-        publication.identifiers.each do |id|
-          transformation = agent_client.get_transformation(id.class.name)
-          unless transformation.nil?
-            reviewed_by = []
-            # TODO we should include all the boards
-            publication.find_first_board.users.each do |m|
-              reviewed_by << m.human_name
-            end
-            content = JRubyXML.apply_xsl_transform(
-              JRubyXML.stream_from_string(id.content),
-              JRubyXML.stream_from_file(File.join(Rails.root, transform)),
-             'urn' => id.urn_attribute, # TODO not urn attribute ... something more general?
-             'reviewers' => reviewed_by.join(',')
-            )
-          end
-          agent_client.post_content(content)
-          # the original publication is done now so we can
-          # set the status of the original publication
-          # to committed
-          publication.origin.change_status("committed")
-        end
+        publication.send_to_agent(agent_client)
+        # the original publication is done now so we can
+        # set the status of the original publication
+        # to committed
+        publication.origin.change_status("committed")
       rescue Exception => e
         Rails.logger.error(e) 
         Rails.logger.error(e.backtrace) 
-        raise Exception.new("Unable to send finalization copy to agent #{next_obj.inspect} message was #{e.message}")
+        raise Exception.new("Unable to send finalization copy to agent. Message was #{e.message}")
       end
     end
   end
 
   def finalize(publication)
     if self.pass_to_obj.nil?
-      raise "No pass through point for the community. Unable to finalize"
+      raise Exception("No pass through point for the community. Unable to finalize")
     end
   end
 

@@ -1,6 +1,8 @@
 #encoding UTF-8
 require 'mediawiki_api'
 require 'hypothesis-client'
+require 'base64'
+require 'openssl'
 module AgentHelper
 
   # looks for the software agent in the data
@@ -57,6 +59,8 @@ module AgentHelper
         return CtsAgent.new(a_agent)
     elsif (a_agent[:type] == 'url')
         return UrlAgent.new(a_agent)
+    elsif (a_agent[:type] == 'github')
+        return GitHubProxyAgent.new(a_agent)
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -242,4 +246,50 @@ module AgentHelper
     end
   end
 
+  class GitHubProxyAgent
+    attr_accessor :conf
+    def initialize(a_conf)
+      @conf = a_conf
+    end
+
+    def post_content(identifier,a_content)
+        encoded = Base64.encode64(a_content)
+        path = identifier.respond_to?(:to_remote_path) ? identifier.to_remote_path : identifier.to_path
+        params = {}
+        params['author_name'] = identifier.publication.creator.name
+        params['author_email'] = identifier.publication.creator.email
+        params['date'] = Time.now.xmlschema
+        params['logs'] = @conf[:log_message].sub('<USER>',identifier.publication.creator.human_name).sub('<ID>',identifier.id_attribute)
+        params['branch'] = identifier.repository.name + "/" + identifier.branch
+        # params['callback_url'] = ....
+        url = @conf[:post_url].sub('<PATH>',path)
+        url = url + "?" unless url =~ /\?$/
+        params.each do |k,v|
+          url = url + "&#{k}=#{CGI.escape(v)}"
+        end
+        url = URI.parse(url)
+
+        #hmac = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), @conf[:client_secret], encoded+@conf[:client_secret]).strip()
+        sha = Digest::SHA256.hexdigest(encoded + @conf[:client_secret])
+        response = Net::HTTP.start(url.host, url.port) do |http|
+          headers = {'Content-Type' => 'text/xml; charset=utf-8',
+                     'Content-Transfer-Encoding' => 'BASE64',
+                     'fproxy-secure-hash' => sha}
+          if (@conf[:timeout])
+            http.read_timeout = conf[:timeout]
+          end
+          http.send_request('POST',url.request_uri,encoded,headers)
+        end
+        if (response.code != '201')
+          raise Exception.new("Received error response #{response.code} #{response.msg} POSTING to #{url.request_uri}")
+        end
+    end
+    def get_transformation(a_identifiertype)
+      if (@conf[:transformations])
+        @conf[:transformations][a_identifiertype]
+      else
+        nil
+      end
+    end
+  end
 end

@@ -115,6 +115,14 @@ class SyriacaIdentifier < Identifier
     raise "Rename not supported"
   end
 
+  # retrieve the remote path for finalization
+  # eventually this should be found in the metadata
+  # in the identifier contents
+  def to_remote_path
+    type, id = self.to_components[3..-1]
+    "data/places/tei/#{id}.xml"
+  end
+  
   # @overrides Identifier#get_catalog_link
   # links to the original gazetteer entry on syriaca
   def get_catalog_link

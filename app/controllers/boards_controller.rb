@@ -249,88 +249,88 @@ class BoardsController < ApplicationController
   end
 
 
-def send_board_reminder_emails
+  def send_board_reminder_emails
     
-  addresses = Array.new 
-  
-  boards = Board.ranked_by_community_id(params[:community_id]) 
-  community = Community.find_by_id(params[:community_id]) 
-    
-    
-  body_text = 'Greetings '
-  if community
-    body_text += community.name + " "
-  end
-  time_str = Time.now.strftime("%Y-%m-%d")
-  body_text += "Board Members, as of " + time_str  + ", "
-  boards.each do |board|
-    #grab addresses for this board 
-    board.users.each do |board_user|          
-      addresses << board_user.email        
-    end
-  
-    body_text += "\n" + board.name + " has " 
-      
-    #find all pubs that are still in voting phase         
-    voting_publications = board.publications.collect{|p| p.status == 'voting' ? p : nil}.compact
-    #voting_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => 'Board', :status => "voting"}  )
-    if voting_publications
-      body_text += voting_publications.length.to_s
-    else
-      body_text += "no"
-    end
-    body_text += " publications requiring voting action, "
-    
-    body_text += " and "
-  
-    approved_publications = board.publications.collect{|p| p.status == 'approved' ? p : nil}.compact
-    #approved_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => "Board", :status => "approved" }  )
-    if approved_publications
-      body_text += approved_publications.length.to_s
-    else
-      body_text += "no"
-    end
-    body_text += " approved publications waiting to be finalized.  "    
-    
-    
-    completed_publications = board.publications.collect{|p| (p.status == 'committed' || p.status == 'archived') ? p : nil}.compact
-    
-    if completed_publications
-      body_text += completed_publications.length.to_s
-    else
-      body_text += "No"
-    end
-    body_text += " publications have been committed."
-    
-    
-    subject_line = ""
+    addresses = Array.new
+
+    boards = Board.ranked_by_community_id(params[:community_id])
+    community = Community.find_by_id(params[:community_id])
+
+
+    body_text = 'Greetings '
     if community
-      subject_line += community.name + " "
-    end  
-    subject_line += "Board Publication Status Reminder " 
-    
-    addresses.each do |address|
-      if address && address.strip != ""
-        begin
-          EmailerMailer.general_email(address, subject_line, body_text).deliver
-        rescue Exception => e
-          Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
+      body_text += community.name + " "
+    end
+    time_str = Time.now.strftime("%Y-%m-%d")
+    body_text += "Board Members, as of " + time_str  + ", "
+    boards.each do |board|
+      #grab addresses for this board
+      board.users.each do |board_user|
+        addresses << board_user.email
+      end
+
+      body_text += "\n" + board.name + " has "
+
+      #find all pubs that are still in voting phase
+      voting_publications = board.publications.collect{|p| p.status == 'voting' ? p : nil}.compact
+      #voting_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => 'Board', :status => "voting"}  )
+      if voting_publications
+        body_text += voting_publications.length.to_s
+      else
+        body_text += "no"
+      end
+      body_text += " publications requiring voting action, "
+
+      body_text += " and "
+
+      approved_publications = board.publications.collect{|p| p.status == 'approved' ? p : nil}.compact
+      #approved_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => "Board", :status => "approved" }  )
+      if approved_publications
+        body_text += approved_publications.length.to_s
+      else
+        body_text += "no"
+      end
+      body_text += " approved publications waiting to be finalized.  "
+
+
+      completed_publications = board.publications.collect{|p| (p.status == 'committed' || p.status == 'archived') ? p : nil}.compact
+
+      if completed_publications
+        body_text += completed_publications.length.to_s
+      else
+        body_text += "No"
+      end
+      body_text += " publications have been committed."
+
+
+      subject_line = ""
+      if community
+        subject_line += community.name + " "
+      end
+      subject_line += "Board Publication Status Reminder "
+
+      addresses.each do |address|
+        if address && address.strip != ""
+          begin
+            EmailerMailer.general_email(address, subject_line, body_text).deliver
+          rescue Exception => e
+            Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
+          end
         end
       end
-    end   
-  end
-  
-  
-  if community 
-    flash[:notice] = "Notifications sent to all " + community.name + " board members."
-  else
-    flash[:notice] = "Notifications sent to all PE board members."
-  end
-  redirect_to dashboard_url
-end
+    end
 
-def confirm_destroy
-  @board = Board.find(params[:id].to_s)
-end
+
+    if community
+      flash[:notice] = "Notifications sent to all " + community.name + " board members."
+    else
+      flash[:notice] = "Notifications sent to all PE board members."
+    end
+    redirect_to dashboard_url
+  end
+
+  def confirm_destroy
+    @board = Board.find(params[:id].to_s)
+  end
 
 end
