@@ -40,7 +40,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
     end
 
     should "create" do
-      post :create_from_annotation, :publication_id => @publication.id.to_s,
+      post :create, :publication_id => @publication.id.to_s,
         :init_value => ["urn:cts:greekLit:tlg0012.tlg001:1.1"]
       assert_not_nil assigns(:identifier)
       assert_equal ["urn:cts:greekLit:tlg0012.tlg001:1.1"], assigns(:identifier).get_targets()
