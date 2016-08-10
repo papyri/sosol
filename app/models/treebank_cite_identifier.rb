@@ -42,6 +42,18 @@ class TreebankCiteIdentifier < CiteIdentifier
     return id,content
   end
 
+  # @overrides Identifier#next_temporary_identifier
+  # Determines the next identifier  for this class
+  # Delegates to the CITE PID Provider
+  # - *Returns* :
+  #   - identifier name
+  def self.next_temporary_identifier
+    callback = lambda do |u| return self.sequencer(u) end
+    # this isn't really used right now, but if we ever want to we need a way to retrieve the language
+    # for the urn template
+    return self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{'language' => 'lat'},callback))
+  end
+
   ###################################
   # Public Instance Method Overrides
   ###################################
@@ -174,31 +186,6 @@ class TreebankCiteIdentifier < CiteIdentifier
     t = parser.parseroot
     s = parser.first(t,"/treebank/sentence[@id=#{a_id}]")
     parser.to_s(s)
-  end
-  
-  # get the format for the treebank file
-  # - *Returns* : the format
-  def format()
-    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['format']})["treebank"][0]['format']
-  end
-  
-  # get the language for the treebank file
-  # - *Returns* : the language
-  def language()
-    XmlHelper::parseattributes(self.xml_content,{"treebank"=>['http://www.w3.org/XML/1998/namespace lang']})["treebank"][0]['http://www.w3.org/XML/1998/namespace lang']
-  end
-  
-  # get the number of sentences in the treebank file
-  # - *Returns* : the number of sentences
-  def size()
-    XmlHelper::parseattributes(self.xml_content,{"sentence"=>['document_id']})
-  end
-  
-  # get the direction of text in the treebank file
-  # - *Returns* : the text direction
-  def direction(t = nil)
-    d = XmlHelper::parseattributes(self.xml_content,{"treebank"=>['direction']})["treebank"][0]['direction']
-    return d.nil? ? 'ltr' : d
   end
   
   # get the editor agent

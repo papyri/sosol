@@ -11,7 +11,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
 
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
-      
+        CTS::CTSLib.stubs(:urn_abbr).returns("Latin Work")
       end
       
       teardown do
@@ -22,7 +22,77 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
           @creator.destroy
         end
       end
-         
+
+
+      should "get identifier_from_content" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
+        (id,content) = TreebankCiteIdentifier.identifier_from_content("http://example.org",file)
+        assert_match /^cite\/perseus\/lattb/, id
+        # we don't change the content yet
+        assert_equal file, content
+      end
+
+      should "create new from template" do
+        test = TreebankCiteIdentifier.new_from_template(@publication)
+        assert_not_nil test
+      end
+
+      should "create new from supplied" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_equal "Treebank of Latin Work", test.title
+      end
+
+      should "retrieve fragment" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_match /<sentence id="1" document_id="urn:cts:latinLit:phi1221.phi007.perseus-lat1"/, test.fragment("s=1")
+
+      end
+
+      should "raise exception on invalid fragment query" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_raises(Exception){
+          test.fragment("1")
+        }
+      end
+
+      should "patch_content" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        updated = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb2.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_no_match /form="extra"/, test.fragment("s=1")
+        test.patch_content("http://example.org",nil,updated,"test")
+        test.reload
+        # new form added
+        assert_match /form="extra"/, test.fragment("s=1")
+        # and the word count should be renumbered
+        assert_match /word id="19" form="."/, test.fragment("s=1")
+      end
+
+      should "get_editor_agent" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        editor_agent = test.get_editor_agent
+        assert_not_nil editor_agent
+        assert_equal 'arethusa', editor_agent
+      end
+
+      should "get_reviewer_agent" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstbgold.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        reviewer_agent = test.get_reviewer_agent
+        assert_not_nil reviewer_agent
+        assert_equal 'arethusa', reviewer_agent
+      end
+
       should "match_on_url" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
         test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
