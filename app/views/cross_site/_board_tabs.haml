@@ -18,10 +18,10 @@
       - current_board_id = @current_board.id
     - elsif false && @current_publication && @current_publication.owner_type == "Board"
       - current_board_id = @current_publication.owner.id
-    
 
-    
- 
+
+
+
     %li{:onclick=>"showBoardDialog(event)",  :id=>"board_menu", :class=>"editor_menu"}
       = "Boards"
   
@@ -37,7 +37,6 @@
           - community_boards = @current_user.boards.ranked_by_community_id(next_id)
           - current_name = Community.find(next_id).friendly_name
           
-
           %li
             = current_name    
           - community_boards.each do |cb|
