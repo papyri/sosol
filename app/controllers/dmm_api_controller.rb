@@ -327,15 +327,13 @@ class DmmApiController < ApplicationController
     def _api_item_create
       begin
         # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-
-
         params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
         agent = AgentHelper::agent_of(params[:raw_post])
         unless (params[:comment])
           params[:comment] = "create_from_api"
         end
         identifier_class = identifier_type
-        tempid = identifier_class.identifier_from_content(agent,params[:raw_post])
+        tempid, content = identifier_class.identifier_from_content(agent,params[:raw_post])
 
         # require an exact match on identifier name
         # we want to be able to refine this per identifier type and contents but
@@ -383,8 +381,8 @@ class DmmApiController < ApplicationController
         #backwards compatibility - we used to wrap api input in Oa wrappers
         case identifier_class.to_s
         when 'AlignmentCiteIdentifier'
-          oacxml = REXML::Document.new(a_body).root
-          alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => NS_ALIGN})
+          oacxml = REXML::Document.new(params[:raw_post]).root
+          alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => "http://alpheios.net/namespaces/aligned-text"})
           if (alignment)
             formatter = PrettySsime.new
             formatter.compact = true

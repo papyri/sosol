@@ -688,7 +688,6 @@ class Identifier < ActiveRecord::Base
   #   - array of matching identifiers
   def self.find_like_identifiers(match_id,match_user,match_callback)
     identifiers = []
-    possible_conflicts = Identifier.find_all_by_name(match_id, :include => :publication)
     possible_conflicts = self.find(:all,
                        :conditions => ["name like ?", "#{match_id}%"],
                        :order => "name DESC")
