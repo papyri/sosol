@@ -38,6 +38,7 @@ class CommentaryCiteIdentifiersController < IdentifiersController
 
   def edit
     find_publication_and_identifier
+    params[:commentary_text] ||= @identifier.get_commentary_text()
   end
   
   def update 
@@ -73,7 +74,7 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   def preview
     find_identifier
     @html_preview = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_string(@identifier.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite commentary_cite_html_preview.xsl})),
         params)

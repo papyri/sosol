@@ -65,17 +65,19 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
       assert_match /File updated/, flash[:notice]
       @identifier.reload
       assert_equal "my commentary", @identifier.get_commentary_text()
+      # make sure edit now displays the updated text
+      get :edit, :publication_id => @publication2.id.to_s, :id => @identifier.id.to_s
+      assert_response :success
+      assert_select 'textarea', "my commentary"
     end
 
     should "display preview" do
       @identifier.update_targets(["urn:cts:greekLit:tlg0012.tlg001:1.1"],"test")
       @identifier.reload
-      get :edit, :publication_id => @publication2.id.to_s, :id => @identifier.id.to_s
+      get :preview, :publication_id => @publication2.id.to_s, :id => @identifier.id.to_s
       assert_response :success
-      assert_select '.targets' do
-        assert_select '.oac_target' do
-          assert_select 'a[href="urn:cts:greekLit:tlg0012.tlg001:1.1"]'
-        end
+      assert_select '.oac_target' do
+        assert_select 'a[href="urn:cts:greekLit:tlg0012.tlg001:1.1"]'
       end
     end
   end
