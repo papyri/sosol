@@ -170,9 +170,10 @@ class CtsPublicationsController < PublicationsController
     elsif (params[:edition_urn])
       begin
         existing =  _get_existing_publication(identifier)
-      rescue
+      rescue Exception => e
         # if we have an exception, we couldn't recover from conflicting 
         # publications - error has already been flashed so just redirect
+        flash[:error] = e.message
         return redirect_to dashboard_url
       end
       unless (existing.nil?)
@@ -385,7 +386,7 @@ class CtsPublicationsController < PublicationsController
   protected
 
   def _get_existing_publication(a_identifier,a_fuzzy = false)
-    if (fuzzy)
+    if (a_fuzzy)
       # a fuzzy match assumes any found identifier is a match
       match_callback = lambda do |b| return true end
     else
@@ -399,13 +400,13 @@ class CtsPublicationsController < PublicationsController
       conflicting_publications = existing_identifiers.collect {|ci| ci.publication}.uniq
   
       if conflicting_publications.length > 1
-        flash[:error] = 'Error creating publication: multiple conflicting publications'
-        flash[:error] += '<ul>'
+        error = 'Error creating publication: multiple conflicting publications'
+        error += '<ul>'
         conflicting_publications.each do |conf_pub|
-          flash[:error] += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
+          error += "<li><a href='#{url_for(conf_pub)}'>#{conf_pub.title}</a></li>"
         end
-        flash[:error] += '</ul>'
-        raise "Conflicts"
+        error += '</ul>'
+        raise Exception.new(error)
       end # end more than one conflicting publication
   
       if (conflicting_publication.status == "committed")
