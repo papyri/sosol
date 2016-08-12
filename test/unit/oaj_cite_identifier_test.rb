@@ -24,18 +24,15 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OajCiteIdenti
 
       should "work with valid" do
         init_value = File.read(File.join(File.dirname(__FILE__), 'data', 'valid.json'))
-        urn = "urn:cite:perseus:pdljann.123456"
-        test = OajCiteIdentifier.new_from_supplied(@publication,urn,init_value)
+        test = OajCiteIdentifier.new_from_supplied(@publication,"http://example.org",init_value,"imported")
         assert_not_nil test
-        assert_equal "urn:cite:perseus:pdljann.123456.1", test.urn_attribute
       end
 
       should "raise error" do
-        urn = "urn:cite:perseus:pdljann.123456"
         init_value = "<xml>junk</xml>"
         exception = assert_raises(JSON::ParserError) {
-          test = OajCiteIdentifier.new_from_supplied(@publication,urn,init_value)
-         }
+          test = OajCiteIdentifier.new_from_supplied(@publication,"http://example.org",init_value,"imported")
+        }
       end
 
     end

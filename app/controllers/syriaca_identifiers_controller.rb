@@ -26,7 +26,11 @@ class SyriacaIdentifiersController < IdentifiersController
     parameters['app-root'] = "http://syriaca.org"
     parameters['nav-base'] = "http://syriaca.org"
     parameters['base-uri'] = "http://syriaca.org"
-    @identifier[:html_preview] = @identifier.preview(parameters)
+    @html_preview = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt syriaca srophe-app resources xsl tei2html.xsl})),
+        parameters)
     @is_editor_view = true
   end
   

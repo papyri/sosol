@@ -135,7 +135,11 @@ module Api::V1
       @identifier = Identifier.find(params[:id])
       begin
         # TODO need to follow best practices on retrieiving partial items
-        content = @identifier.api_get(params[:q]) 
+        if (parmas[:q])
+          content = @identifier.fragment(params[:q])
+        else
+          content = @identifier.content
+        end
       rescue Exception => e 
         Rails.logger.error(e.backtrace)
         render_api_error(405,e.message) and return

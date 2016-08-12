@@ -17,11 +17,5 @@ if Sosol::Application.config.site_identifiers.split(',').include?('EpiCTSIdentif
       @publication.destroy
     end
      
-    def test_should_require_param
-      get :link_alignment,  :publication_id => @publication.id.to_s, :id => @cts_identifier.id.to_s
-      assert_equal 'Missing input details for annotation.', flash[:error] 
-    end
-    
-      
   end
 end

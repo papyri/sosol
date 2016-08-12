@@ -5,6 +5,9 @@ class TreebankCiteIdentifiersController < IdentifiersController
   before_filter :ownership_guard, :only => [:update, :updatexml]
   before_filter :clear_cache, :only => [:update, :updatexml]
 
+  # Creation of Treebank Cite Identifiers is done only
+  # via the api
+
   def update_title
     find_identifier
     # TODO if we start keeping the title in the contents of the file
@@ -22,36 +25,65 @@ class TreebankCiteIdentifiersController < IdentifiersController
     find_identifier
   end
 
-  # responds to a request to create a new file
-  # @param
-  def create
-    
-  end
-  
   def edit
     find_identifier
-    @identifier[:list] = @identifier.edit(parameters = params)
     @can_compare = true
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:edit,[@identifier])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @list = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite treebanklist.xsl})),
+        parameters)
   end
 
-  def review
-    find_identifier
-    @identifier[:list] = @identifier.review(parameters = params)
-  end
-  
+
    def editxml
     find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'treebank_cite_identifiers/editxml'
   end
   
+  # preview
+  # outputs the sentence list
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview(parameters = params)
     @can_compare = true
-  end
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_editor',tool,:view,[@identifier])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @list = JRubyXML.apply_xsl_transform(
+        JRubyXML.stream_from_string(@identifier.content),
+        JRubyXML.stream_from_file(File.join(Rails.root,
+          %w{data xslt cite treebanklist.xsl})),
+          parameters)
+ end
 
+  # Identify a set of treebank files which are comparable to the actionable identifier
+  # and present the user with a list of links to the review service tool
+  # If the current user is NOT the owner of the actionable identifier, the current users files
+  # are searched for comparable files and the current users file is considered as the "gold standard" in the review
+  # with the actionable identifier being the one which is reviewed. (This is the use case where a reviewer starts from
+  # a file submitted to a board or sent to them as a link and wants to compare it against their own equivalent file)
+  # If the current user is the owner and the current user is a board member, then the boards the current
+  # user belongs to are searched for comparable files and the actionable file is considered as the "gold standard"
+  # in the review. (This is the use case where a user starts from their own gold standard in their own account
+  # and compares it to the equivalent files in the boards they are a member of, to find submissions they need to review)
+  # - *Params* :
+  #   - +id+ -> Identifier of the actionable treebank file
   def compare
     find_identifier
     # this is too inefficient -- can't require a retrieval and parsing
@@ -92,6 +124,35 @@ class TreebankCiteIdentifiersController < IdentifiersController
         end
       end
     end
+  end
+
+  # Displays the sentences of the treebank file linked to
+  # the treebank_reviewer tool.
+  #
+  # The transformation of the treebank data
+  # to the sentence list expects there to be a comment in the treebank
+  # file specifying the identifier of another treebank file in the
+  # system which is to be used as the gold standard, e.g.
+  # <comment class="gold">ID</comment> (as a child of the parent <treebank/> element)
+  # - *Params* :
+  #   - +id+ -> Identifier of the treebank file
+  #   - +s+ -> id of the starting sentence (Optional, default is 1)
+  def review
+    find_identifier
+    tool = @identifier.get_editor_agent()
+    tool_link = Tools::Manager.link_to('treebank_reviewer',tool,:review,[@identifier])
+    parameters = {}
+    parameters[:s] = params[:s] || 1
+    parameters[:title] = @identifier.title
+    parameters[:doc_id] = @identifier.id.to_s
+    parameters[:max] = 50 # TODO - make max sentences configurable
+    parameters[:target] = tool_link[:target]
+    parameters[:tool_url] = tool_link[:href]
+    @list = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite treebanklist.xsl})),
+        parameters)
   end
 
   protected

@@ -31,6 +31,7 @@ class DmmApiController < ApplicationController
     render :xml => response, :status => status
   end
 
+  # TODO DEPRECATE APPEND --  ITS JUST A SPECIAL CASE OF PATCH
   def api_item_append
      # add the raw post to the session
     params[:raw_post] = request.raw_post.force_encoding("UTF-8")
@@ -46,7 +47,7 @@ class DmmApiController < ApplicationController
       agent = AgentHelper::agent_of(params[:raw_post])
 
       begin
-        response = @identifier.api_append(agent,params[:raw_post],params[:comment]) 
+        response = @identifier.patch_content(agent,"APPEND",params[:raw_post],params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         render :xml => "<error>#{e}</error>", :status => 500
@@ -80,7 +81,7 @@ class DmmApiController < ApplicationController
       
       begin
         agent = AgentHelper::agent_of(params[:raw_post])
-        response = @identifier.api_update(agent,params[:q],params[:raw_post],params[:comment])
+        response = @identifier.patch_content(agent,params[:q],params[:raw_post],params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         return render :xml => "<error>#{e}</error>", :status => 500
@@ -99,7 +100,11 @@ class DmmApiController < ApplicationController
   def api_item_get
     find_identifier
     unless (@identifier.nil?)
-      render :xml => @identifier.api_get(params[:q]) and return
+      if (params[:q] && params[:q] != '')
+        render :xml => @identifier.fragment(params[:q]) and return
+      else
+        render :xml => @identifier.xml_content() and return
+      end
     end
   end
   
@@ -115,19 +120,30 @@ class DmmApiController < ApplicationController
     if (@identifier.nil?)
       return
     else
-      # build up some urls to send to the model
-      urls = {}
-      urls['self'] = polymorphic_url([@identifier.publication,@identifier])
-      if (@identifier.respond_to? :parentIdentifier)
-        urls['parent']  = polymorphic_url([@identifier.publication,@identifier.parentIdentifier]) 
-      else
-        urls['parent'] = nil
+      # build up some service info to send to the client
+      # backwards compatibility -- should eliminate entirely
+      tokenizer = {}
+      Tools::Manager.tool_config('cts_tokenizer',false).keys.each do |name|
+        tokenizer[name] =  Tools::Manager.link_to('cts_tokenizer',name,:tokenize)[:href]
       end
-      urls['root'] = "#{root_url}"
+      info =
+        { :tokenizer => tokenizer,
+          :cts_services => { 'repos' => "#{root_url}cts/getrepos/#{@identifier.publication.id}",
+                             'capabilities' => "#{root_url}cts/getcapabilities/",
+                             'passage' => "#{root_url}cts/getpassage/"
+                           },
+          :target_links => {
+            :commentary => [
+              {:text => 'Create Commentary',
+               :href => "#{root_url}commentary_cite_identifiers/create_from_annotation?publication_id=#{@identifier.publication.id}", :target_param => 'init_value[]'
+              }
+            ],
+          }
+        }
       if (params[:format] == 'json')
-        render :json => @identifier.api_info(urls)
+        render :json => info
       else
-        render :xml => @identifier.api_info(urls)
+        render :xml => info
       end
     end
   end
@@ -158,7 +174,7 @@ class DmmApiController < ApplicationController
     end
     # we get comments on the origin only
     comments = Comment.find_all_by_identifier_id(@identifier.origin.id, :order => 'created_at').reverse
-    comments = comments.collect{ | c | c.api_get }
+    comments = comments.collect{ | c | format_comment(c) }
     if (params[:q])
         comments = comments.select{ | c | c[:reason] == params[:q] }
     end 
@@ -207,9 +223,10 @@ class DmmApiController < ApplicationController
            :comment => params[:comment],
         })
     end
+
     if (comment.save)
-      render :json => comment.api_get()
-    else 
+      render :json => format_comment(comment)
+    else
       render_error('Unable to save comment')
     end
   end
@@ -306,26 +323,23 @@ class DmmApiController < ApplicationController
         render :xml => "<error>#{a_msg}</error>", :status => 403
       end
     end
+
     def _api_item_create
       begin
         # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
-      
         params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
-        unless (params[:comment]) 
+        agent = AgentHelper::agent_of(params[:raw_post])
+        unless (params[:comment])
           params[:comment] = "create_from_api"
         end
         identifier_class = identifier_type
-        tempid = identifier_class.api_parse_post_for_identifier(params[:raw_post])
-        if (params[:init_value] && params[:init_value].length > 0)
-          check_match = params[:init_value]
-        else
-          check_match = identifier_class.api_parse_post_for_init(params[:raw_post])
-        end
-        # NOTE 2014-08-27 BALMAS this works only for cite_identifier classes right
-        # now because the syntax for find_matching_identifier is slightly 
-        # different for cts_identifier classes (3rd param is a boolean 
-        # for fuzzy matching in that case)
-        existing_identifiers = identifier_class.find_matching_identifiers(tempid,@current_user,check_match)
+        tempid, content = identifier_class.identifier_from_content(agent,params[:raw_post])
+
+        # require an exact match on identifier name
+        # we want to be able to refine this per identifier type and contents but
+        # need a performant solution for that first
+        match_callback = lambda do |i| return true end
+        existing_identifiers = identifier_class.find_like_identifiers(tempid,@current_user,match_callback)
         if existing_identifiers.length > 1
           list = existing_identifiers.collect{ |p|p.name}.join(',')
           return "Multiple conflicting identifiers(#{list})", 500
@@ -364,20 +378,30 @@ class DmmApiController < ApplicationController
           end  
         end    
      
-        # separate begin/rescue block here because
-        # we only need to destroy the publication in rescue once we've 
-        # successfully created it
-        begin 
-          agent = AgentHelper::agent_of(params[:raw_post])
-          new_identifier_uri = identifier_class.api_create(@publication,agent,params[:raw_post],params[:comment])
-        rescue Exception => e
-          Rails.logger.error(e.backtrace)
-          #cleanup if we created a publication
-          if (!params[:publication_id] && @publication)
-            @publication.destroy
+        #backwards compatibility - we used to wrap api input in Oa wrappers
+        case identifier_class.to_s
+        when 'AlignmentCiteIdentifier'
+          oacxml = REXML::Document.new(params[:raw_post]).root
+          alignment = REXML::XPath.first(oacxml,'//align:aligned-text',{"align" => "http://alpheios.net/namespaces/aligned-text"})
+          if (alignment)
+            formatter = PrettySsime.new
+            formatter.compact = true
+            formatter.width = 2**32
+            content = ''
+            formatter.write alignment, content
           end
-          return e.message, 500
+        when 'TreebankCiteIdentifier'
+          parser = XmlHelper::getDomParser(params[:raw_post],'REXML')
+          oacxml = parser.parseroot
+          treebank = parser.first(oacxml,"//treebank")
+          if (treebank)
+            content = parser.to_s(treebank)
+          end
         end
+        if content.nil?
+          content = params[:raw_post]
+        end
+        @identifier = identifier_class.new_from_supplied(@publication,agent,content,params[:comment])
       rescue Exception => e
         Rails.logger.error(e.backtrace)
         #cleanup if we created a publication
@@ -390,7 +414,19 @@ class DmmApiController < ApplicationController
         end
         return e.message, 500
       end
-      return new_identifier_uri, 200
+      return @identifier, 200
+    end
+
+    # format a comment for the API
+    def format_comment(c)
+      return {
+        :comment_id => c.id,
+        :user => c.user.human_name,
+        :reason => c.reason,
+        :created_at => c.created_at,
+        :updated_at => c.updated_at,
+        :comment => c.comment
+      }
     end
 
 end

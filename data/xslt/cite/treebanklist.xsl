@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     version="2.0">
     
-    <xsl:output method="xhtml"/>
+    <xsl:output method="xhtml" omit-xml-declaration="yes"/>
     
     <xsl:param name="doc_id"/>
     <xsl:param name="title"/>

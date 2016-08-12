@@ -3,60 +3,41 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:update]
 
-  
+
+  # Create a new CommentaryCiteIdentifier from an existing Annotation
+  # there is no difference between create_from_annotation and create other than
+  # create_from_annotation supports GET
+  # - *Params* :
+  #   - +publication_id+ -> String identifier for the parent publication
+  #   - +init_value+ -> List of string URI values of the targets of the commentary annotation
   def create_from_annotation
-    # there is no difference between create_from_annotation and create other than
-    # create_from_annotation supports GET 
     create()
   end
   
+  # Create a new CommentaryCiteIdentifier
+  # - *Params* :
+  #   - +publication_id+ -> String identifier for the parent publication
+  #   - +init_value+ -> List of string URI values of the targets of the commentary annotation
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
-    # use the default collection if one wasn't specified
-    collection_urn = params[:urn] || Cite::CiteLib.get_default_collection_urn()
-        
     valid_targets = params[:init_value]
 
-    # required params: publication_id, urn, init_value
-    unless (@publication && collection_urn && valid_targets)
-      flash[:error] = "Unable to create commentary item. Missing urn and initial value."
+    # required params: publication_id, init_value
+    unless (@publication && valid_targets)
+      flash[:error] = "Unable to create commentary item. Missing initial value."
       redirect_to dashboard_url
       return
     end
     
-    # make sure we have a valid collection 
-    if Cite::CiteLib::get_collection(collection_urn).nil?
-      flash[:error] = "Unable to create commentary item. Unknown collection."
-      redirect_to dashboard_url
-      return
-    end
-
-    conflicts = []
-    for pubid in @publication.identifiers do 
-      ## only allow one commentary item per target and collection
-      if (pubid.kind_of?(CommentaryCiteIdentifier) && 
-          pubid.collection == Cite::CiteLib.get_collection_urn(collection_urn) &&
-          pubid.is_match?(valid_targets))
-        conflicts << pubid
-      end
-    end 
-    
-    if (conflicts.length > 0) 
-      flash[:notice] = "You already are editing a commentary for this target."
-      redirect_to polymorphic_path([@publication, conflicts[0]],:action => :edit)
-      return
-    end
-    
-    @identifier = CommentaryCiteIdentifier.new_from_template(@publication,collection_urn,valid_targets)
+    @identifier = CommentaryCiteIdentifier.new_from_template(@publication)
+    @identifier.update_targets(params[:init_value],"Set targets from init.")
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
 
   end
 
   def edit
     find_publication_and_identifier
-    @identifier[:action] = 'update'  
-    @identifier[:targets] = @identifier.preview_targets(params)
     params[:commentary_text] ||= @identifier.get_commentary_text()
   end
   
@@ -92,9 +73,13 @@ class CommentaryCiteIdentifiersController < IdentifiersController
   
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview
+    @html_preview = JRubyXML.apply_xsl_transform(
+      JRubyXML.stream_from_string(@identifier.xml_content),
+      JRubyXML.stream_from_file(File.join(Rails.root,
+        %w{data xslt cite commentary_cite_html_preview.xsl})),
+        params)
   end
-    
+
   protected
     def find_identifier
       @identifier = CommentaryCiteIdentifier.find(params[:id].to_s)
@@ -108,5 +93,5 @@ class CommentaryCiteIdentifiersController < IdentifiersController
      def find_publication
       @publication = Publication.find(params[:publication_id].to_s)
     end
-  
+
 end

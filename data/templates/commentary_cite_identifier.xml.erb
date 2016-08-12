@@ -4,4 +4,20 @@
   xmlns:dcterms="http://purl.org/dc/terms/"  
   xmlns:foaf="http://xmlns.com/foaf/0.1/"  
   xmlns:oac="http://www.openannotation.org/ns/"  
-  xmlns:cnt="http://www.w3.org/2008/content#"/>
+  xmlns:cnt="http://www.w3.org/2008/content#">
+  <Annotation xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="<%= annotation_uri %>">
+    <hasTarget xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource=""/>
+    <hasBody xmlns="http://www.w3.org/ns/oa#">
+      <ContentAsText xmlns="http://www.w3.org/2008/content#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="<%= body_uri %>">
+        <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://purl.org/dc/dcmitype/Text"/>
+        <format xmlns="http://purl.org/dc/elements/1.1/">text/plain</format>
+        <language xmlns="http://purl.org/dc/elements/1.1/"><%= body_language %></language>
+      </ContentAsText>
+    </hasBody>
+    <annotatedBy xmlns="http://www.w3.org/ns/oa#">
+      <Person xmlns="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="<%= annotator_uri %>"/>
+    </annotatedBy>
+    <motivatedBy xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/ns/oa#commenting"/>
+    <annotatedAt xmlns="http://www.w3.org/ns/oa#"><%= date %></annotatedAt>
+  </Annotation>
+</rdf:RDF>

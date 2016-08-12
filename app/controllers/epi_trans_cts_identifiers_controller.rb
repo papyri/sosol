@@ -96,7 +96,8 @@ class EpiTransCtsIdentifiersController < IdentifiersController
       @identifier.related_inventory.add_translation(params[:CTSIdentifierEditionSelect],@identifier)
     else
       translationName = collection + "/" + CTS::CTSLib.pathForUrn(edition,'translation')
-      existing_identifiers = EpiTransCTSIdentifier.find_matching_identifiers(translationName,@current_user,nil)
+      match_callback = lambda do |i| return true end
+      existing_identifiers = EpiTransCTSIdentifier.find_like_identifiers(translationName,@current_user,match_callback)
       if (existing_identifiers && existing_identifiers.length > 0) 
         flash[:error] = "You are already editing that translation "
         flash[:error] += '<ul>'

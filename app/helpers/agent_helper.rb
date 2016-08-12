@@ -57,6 +57,8 @@ module AgentHelper
         return GoogleSSAgent.new(a_agent)
     elsif (a_agent[:type] == 'cts')
         return CtsAgent.new(a_agent)
+    elsif (a_agent[:type] == 'url')
+        return UrlAgent.new(a_agent)
     elsif (a_agent[:type] == 'github')
         return GitHubProxyAgent.new(a_agent)
     else
@@ -187,6 +189,23 @@ module AgentHelper
 
     def get_content(a_uri,a_id,a_user)
       @client.get(a_uri,a_id,a_user)
+    end
+  end
+
+  # A generic agent for retrieving content from a URL
+  class UrlAgent
+    def get_content(a_uri)
+      if (a_uri =~ /^https?/)
+        conn = Faraday.new(a_uri) do |c|
+          c.use Faraday::Response::Logger, Rails.logger
+          c.use FaradayMiddleware::FollowRedirects, limit: 3
+          c.use Faraday::Response::RaiseError
+          c.use Faraday::Adapter::NetHttp
+        end
+        conn.get.body
+      else
+        raise "Invalid URL #{a_uri}"
+      end
     end
   end
 

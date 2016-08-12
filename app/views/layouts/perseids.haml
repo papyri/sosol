@@ -131,7 +131,7 @@
         -#-------------------------------------------------------------
         -if ( @current_user && controller.action_name == 'user_dashboard' )
           #cts_selector 
-            = render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications' })
+            = render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys })
             %div{ :style => 'clear:both' }
      
     -#-------------------------------------------------------------

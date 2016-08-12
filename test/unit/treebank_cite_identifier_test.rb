@@ -11,7 +11,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
 
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
-      
+        CTS::CTSLib.stubs(:urn_abbr).returns("Latin Work")
       end
       
       teardown do
@@ -22,97 +22,92 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
           @creator.destroy
         end
       end
-         
-      should "create from template in repo" do      
-        test_path = "CITE_TREEBANK_XML/template/data.perseus.org/citations/latinLit/phi0631/phi002/phi0631.phi002.perseus-lat1.1-4.tb.xml"
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert_not_nil test.xml_content
-        assert test.is_valid_xml?(test.xml_content)
-        template_xml = REXML::Document.new(test.xml_content)
-        assert_not_nil REXML::XPath.first(template_xml,"/treebank")
-        assert_not_nil REXML::XPath.first(template_xml,"/treebank/annotator")
-        assert_equal REXML::XPath.first(template_xml,"/treebank/annotator/uri").text.strip, "#{Sosol::Application.config.site_user_namespace}Creator"
-        assert_not_nil REXML::XPath.first(template_xml,"/treebank/date")
-        
+
+
+      should "get identifier_from_content" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
+        (id,content) = TreebankCiteIdentifier.identifier_from_content("http://example.org",file)
+        assert_match /^cite\/perseus\/lattb/, id
+        # we don't change the content yet
+        assert_equal file, content
+      end
+
+      should "create new from template" do
+        test = TreebankCiteIdentifier.new_from_template(@publication)
+        assert_not_nil test
+      end
+
+      should "create new from supplied" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_equal "Treebank of Latin Work", test.title
+      end
+
+      should "retrieve fragment" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_match /<sentence id="1" document_id="urn:cts:latinLit:phi1221.phi007.perseus-lat1"/, test.fragment("s=1")
 
       end
 
-# commenting out until I have time to implement remote request as a mock      
-#      should "create from url" do      
-#        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://cdn.rawgit.com/PerseusDL/treebank_data/master/v1.6/latin/data/phi0690.phi003.perseus-lat1.tb.xml"])
-#        assert_not_nil test.xml_content
-#        # make sure we actually retrieved something -- the bare template doesn't have word forms
-#        template_xml = REXML::Document.new(test.xml_content)
-#        assert_not_equal("",REXML::XPath.first(template_xml,"/treebank/sentence/word").attributes["form"])
-#        assert_equal("CITE_TREEBANK_XML/perseus/testcoll/1/testcoll.1.1.tb.xml",test.to_path())
-#      end
-      
-      should "fail from url" do      
-        exception = assert_raises(RuntimeError) {
-          test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://www.perseus.tufts.edu/hopper/xmlchunk?doc=Perseus%3Atext%3A1999.02.0003%3Apoem%3D1"])
+      should "raise exception on invalid fragment query" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_raises(Exception){
+          test.fragment("1")
         }
-        assert_equal("Invalid treebank content at http://www.perseus.tufts.edu/hopper/xmlchunk?doc=Perseus%3Atext%3A1999.02.0003%3Apoem%3D1",exception.message)
       end
 
-      should "match_on_urn" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]
+      should "patch_content" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        updated = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb2.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        assert_no_match /form="extra"/, test.fragment("s=1")
+        test.patch_content("http://example.org",nil,updated,"test")
+        test.reload
+        # new form added
+        assert_match /form="extra"/, test.fragment("s=1")
+        # and the word count should be renumbered
+        assert_match /word id="19" form="."/, test.fragment("s=1")
       end
 
-      should "match_on_urn_other_provider" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match? ["http://other.org/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]
+      should "get_editor_agent" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        editor_agent = test.get_editor_agent
+        assert_not_nil editor_agent
+        assert_equal 'arethusa', editor_agent
       end
 
-      should "match_on_urn_part" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1:1"]
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1:4"]
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1"]
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1"]
-        assert test.is_match? ["urn:cts:latinLit:phi0631.phi002.perseus-lat1:2"]
-      end
-
-      should "fail_match_on_urn" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert ! (test.is_match?(["urn:cts:latinLit:phi0632.phi002.perseus-lat1:1-4"]))
-      end
-
-      should "match_on_work_and_passage" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match?(["urn:cts:latinLit:phi0631.phi002:1-4"])
-      end
-
-      should "match_on_work" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match?(["urn:cts:latinLit:phi0631.phi002"])
-      end
-
-      should "not_match_on_partial_work" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert !(test.is_match?(["urn:cts:latinLit:phi0631.phi00"]))
-      end
-
-      should "match_on_textgroup" do
-        test = TreebankCiteIdentifier.new_from_template(@publication,"urn:cite:perseus:testcoll",["http://data.perseus.org/citations/urn:cts:latinLit:phi0631.phi002.perseus-lat1:1-4"]) 
-        assert test.is_match?(["urn:cts:latinLit:phi0631"])
+      should "get_reviewer_agent" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstbgold.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        reviewer_agent = test.get_reviewer_agent
+        assert_not_nil reviewer_agent
+        assert_equal 'arethusa', reviewer_agent
       end
 
       should "match_on_url" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
-        test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
         assert test.is_match?(["http://bobsfiles.com/1.xml"])
       end
 
       should "match_on_url_urn" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
-        test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
         assert test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
       end
 
       should "match_on_url_urn_with_urn" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
-        test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
         assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
         assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"])
         assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"])
@@ -122,7 +117,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
 
       should "match_on_url_urn_with_urn_no_range" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurlnorange.xml'))
-        test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
         assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"])
         assert test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"])
         assert ! test.is_match?(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.2"])
@@ -132,12 +127,12 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
       # bit -- reenable test when we upgrade to CTS 5
       #should "not_match_on_url_urn_with_extension" do
       #  file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctsurl.xml'))
-      #  test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+      #  test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
       #  assert ! test.is_match?(["http://perseids.org/annotsrc/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1.xml"])
       #end
        should "parse annotation targets" do
          file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
-         test = TreebankCiteIdentifier.api_create(@publication,"http://testapp",file,"apicreate")
+         test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
          expected = {
            'aggregates' => [ {'uri' => "urn:cts:latinLit:phi1221.phi007.perseus-lat1", 'mediatype' => 'text/xml'}],
            'annotations'=> [

@@ -15,7 +15,12 @@ class OaCiteIdentifiersController < IdentifiersController
   #   - +id+ -> document identifier
   def import_update
     find_identifier
-    render :template => 'oa_cite_identifiers/import_update'
+    if @identifier.can_import?
+      render :template => 'oa_cite_identifiers/import_update'
+    else
+      flash[:error] = "Import is not allowed for this content."
+      redirect_to dashboard_url
+    end
   end  
 
   # Update the content of an OaCiteIdentifier via an import from
@@ -114,9 +119,10 @@ class OaCiteIdentifiersController < IdentifiersController
   def edit_or_create
     # create the identifier if it doesn't exist
     find_publication
-    collection_urn = params[:collection_urn] || Cite::CiteLib.get_default_collection_urn()
+    collection_urn = params[:collection_urn]
+    # find existing identifiers for this collection in the current publication
     match_call = lambda do |p| return p.publication_id == @publication.id end
-    existing_identifiers = OaCiteIdentifier.find_matching_identifiers(collection_urn,@current_user,match_call)
+    existing_identifiers = OaCiteIdentifier.find_like_identifiers(OaCiteIdentifier::path_for_collection(params[:collection_urn]),@current_user,match_call)
     if existing_identifiers.length == 1
       @identifier = existing_identifiers[0]
     elsif  existing_identifiers.length > 1
@@ -126,7 +132,7 @@ class OaCiteIdentifiersController < IdentifiersController
    
     # if we don't have a matching identifier assume we can create a new one 
     if @identifier.nil? 
-      @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,[])
+      @identifier = OaCiteIdentifier.new_from_template(@publication)
     end
 
     # look for any targets which reference the citation urn (regardless of source repo)
@@ -164,24 +170,14 @@ class OaCiteIdentifiersController < IdentifiersController
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     
-    # use the default collection if one wasn't specified
-    collection_urn = params[:collection_urn] || Cite::CiteLib.get_default_collection_urn()
-
-    # required params: publication_id, collection_urn
-    unless (@publication && collection_urn)
-      flash[:error] = "Unable to create item. Missing urn."
+    # required params: publication_id
+    unless (@publication)
+      flash[:error] = "Unable to create item. Missing publication."
       redirect_to dashboard_url
       return
     end
     
-    # make sure we have a valid collection 
-    if Cite::CiteLib::get_collection(collection_urn).nil?
-      flash[:error] = "Unable to create item. Unknown collection."
-      redirect_to dashboard_url
-      return
-    end
-
-    @identifier = OaCiteIdentifier.new_from_template(@publication,collection_urn,[])
+    @identifier = OaCiteIdentifier.new_from_template(@publication)
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
   end
 
@@ -235,7 +231,7 @@ class OaCiteIdentifiersController < IdentifiersController
       end
     else 
       if params[:create]
-        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,urn,JSON.pretty_generate(@converted[:data]))
+        newobj = OajCiteIdentifier.new_from_supplied(@identifier.publication,@identifier.urn_attribute,JSON.pretty_generate(@converted[:data]),"Converting from #{@identifier.urn_attribute}")
         flash[:notice] = "File created."
         expire_publication_cache
         redirect_to polymorphic_path([@identifier.publication, newobj],

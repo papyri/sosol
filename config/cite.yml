@@ -1,0 +1,45 @@
+development:
+  TreebankCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:<property_language>tb'
+    :object_type: 'sequence'
+    :versionable: false
+  AlignmentCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:align'
+    :object_type: 'sequence'
+    :versionable: false
+  CommentaryCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdlcomm'
+    :object_type: 'sequence'
+    :versionable: false
+  OaCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdlann'
+    :object_type: 'uuid'
+    :versionable: false
+  OajCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdljann'
+    :object_type: 'uuid'
+    :versionable: false
+test:
+  TreebankCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:<property_language>tb'
+    :object_type: 'sequence'
+    :versionable: false
+  AlignmentCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:align'
+    :object_type: 'sequence'
+    :versionable: false
+  CommentaryCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdlcomm'
+    :object_type: 'sequence'
+    :versionable: false
+  OaCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdlann'
+    :object_type: 'uuid'
+    :versionable: false
+  OajCiteIdentifier:
+    :urn_template: 'urn:cite:perseus:pdljann'
+    :object_type: 'uuid'
+    :versionable: false
+production:
+
+staging:

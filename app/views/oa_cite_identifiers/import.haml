@@ -5,6 +5,5 @@
   %p{:class => 'hints'} The spreadsheet must already be published and adhere to a supported predefined template. You must supply the public link below. This can be either the "Link to Share" or the "Link to Published Data"
   %label Google Spreadsheet Link:
   %input{:name=>'init_value[]', :type=>'url', :class => 'observechange', :required => true, :pattern => 'https:\/\/docs.google.com\/spreadsheets?\/.+', :title =>"Supply a valid Google Spreadsheet URL", :size => 100}
-  = hidden_field_tag "urn", 'urn:cite:perseus:pdlann'
-  = hidden_field_tag "type", 'Oa'
+  = hidden_field_tag "identifier_type", 'Oa'
   = f.submit "Import", :class => 'save'

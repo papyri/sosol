@@ -8,11 +8,69 @@ module Cite
   CITE_JAR_PATH = File.join("#{Rails.root}", 'lib', *%w"java cite-0.12.22.jar")  
   GROOVY_JAR_PATH = File.join("#{Rails.root}", 'lib', *%w"java groovy-all-2.0.0-rc-3.jar")  
   NS_CITE = "http://chs.harvard.edu/xmlns/cite"
-  module CiteLib 
-    
 
+  OBJECT_TYPE_SEQUENCE = 'sequence'
+  OBJECT_TYPE_UUID = 'uuid'
+
+  module CiteLib
     
     class << self
+
+      ######################################
+      # Configuration Methods
+      ######################################
+      def get_config(a_key)
+        unless defined? @config
+          @config = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config cite.yml})).read).result)[Rails.env]
+        end
+        @config[a_key]
+      end
+
+      ######################################
+      # Mock PITTypes API
+      ######################################
+      def pid(datatype, properties, sequencer_callback)
+        config = get_config(datatype)
+        if config.nil?
+          raise Exception.new("Unknown datatype #{datatype}")
+        end
+        urn = config[:urn_template]
+        if urn =~ /<property/
+          properties.each do |key,value|
+            urn = urn.gsub(/<property_#{key}>/,value)
+          end
+          if urn =~ /<property/
+            raise Exception.new("Unable to complete urn template from properties #{urn}")
+          end
+        end
+        case config[:object_type]
+        when OBJECT_TYPE_SEQUENCE
+          next_object_id = sequencer_callback.call(urn)
+        when OBJECT_TYPE_UUID
+          next_object_id = object_uuid_urn(urn)
+        else
+          raise Exception.new("Unrecognized urn object type #{config[:object_type]}")
+        end
+        urn = urn + "." + next_object_id.to_s
+        urn = add_version(urn)
+        return urn
+      end
+
+
+      ######################################
+      # CITE Collections API
+      ######################################
+
+      def getCapabilities
+        # TODO Build up a Cite Inventory from the config
+        # Perseids currnetly supports only a single type of Cite Collection, one which is made up of
+        # a single Annotation string property.
+      end
+
+      ######################################
+      # CITE URN Helper Methods
+      ######################################
+
       # method which returns a CITE Urn object from the java chs cite library
       def urn_obj(a_urn)
         if(RUBY_PLATFORM == 'java')
@@ -76,80 +134,18 @@ module Cite
         return valid_version_urn
       end
       
-      # lookup the max size of a field (perseids extension of standard cite functionality)
-      # only one restricted field allowed per collection
-      def get_collection_field_max(a_urn)
-        coll = get_collection(a_urn)
-        field = coll.elements["*[@x-perseidsmax]"]
-        if field.nil?
-          # not defined - unlimited
-          return -1
-        else
-          return field.attributes['x-perseidsmax'].to_i
-        end
-      end
-      
-      # lookup the collection in the Inventory and return the descriptive title
-      def get_collection_title(a_urn)
-        coll = get_collection(a_urn)
-        if coll.nil?
-          raise "Invalid Collection"
-        else
-           coll.attributes['description']
-        end
-      end
-      
-      def get_collection_urn(a_urn)
-        urnObj = urn_obj(a_urn)
-        urnObj.getNs() + ":" + urnObj.getCollection()
-      end
-      
-      # lookup the collection in the Inventory
-      def get_collection(a_urn)
-        if (is_collection_urn?(a_urn))
-          a_urn + a_urn + ".0.0"
-        end
-        urnObj = urn_obj(a_urn)
-        name = urnObj.getCollection()
-        ns = urnObj.getNs()
-        xpath = "//cite:citeCollection[@name='#{name}' and cite:namespaceMapping[@abbr='#{ns}']]"
-        return REXML::XPath.first(inventory(),xpath,{'cite' => NS_CITE})
-      end
-      
-      # lookup the default collection in the Inventory
-      def get_default_collection_urn()
-        xpath = "//cite:citeCollection[@x-perseidsdefault='true']"
-        coll = REXML::XPath.first(inventory(),xpath,{'cite' => NS_CITE})
-        if (coll.nil?)
-          return nil
-        else
-          ns = REXML::XPath.first(coll,"cite:namespaceMapping",{'cite' => NS_CITE})
-          ns.attributes['abbr']
-          "urn:cite:#{ns.attributes['abbr']}:#{coll.attributes['name']}"
-        end
-        
-      end
-      
-      def inventory
-        unless defined? @inventory
-          @inventory = REXML::Document.new File.new(File.join("#{Rails.root}",'config','citecapabilities.xml'))
-        end
-        return @inventory
-      end
-      
-      # Get the list of creatable identifiers for the supplied urn
-      # @param {String} a_urn
-      def get_creatable_identifiers(a_urn)
-        
-      end
-
       # return an object urn that assignes a uuid as the object id
       def object_uuid_urn(a_collection_urn)
         if (is_collection_urn?(a_collection_urn))
-          return "#{a_collection_urn}.#{UUID.new.generate(:compact)}"
+          return UUID.new.generate(:compact)
         else 
           raise "Invalid collection urn"
         end
+      end
+
+      # placeholder function for if/when we support versioning of CITE URN identified objects
+      def add_version(a_urn)
+        a_urn + ".1"
       end
     end # end class
   end # end module CiteLib

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cnt="http://www.w3.org/2011/content#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:lawd="http://lawd.info/ontology/"
+         xmlns:dcmit="http://purl.org/dc/dcmitype/"
+         xmlns:oa="http://www.w3.org/ns/oa#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:perseus="http://data.perseus.org/"
+         xmlns:lode="http://linkedevents.org/ontology/#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:prov="http://www.w3.org/ns/prov#">
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#1-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cokwr"/>
+      <dcterms:title>perseus-bio-1 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>very certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*perse%2Fwn&amp;la=greek&amp;can=*perse%2Fwn0&amp;prior=a)llh/loisi"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/people/smith:perseus-1#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#1-2">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cokwr"/>
+      <dcterms:title>perseus-bio-1 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>very certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*perse%2Fwn&amp;la=greek&amp;can=*perse%2Fwn0&amp;prior=a)llh/loisi"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://en.wikipedia.org/wiki/Perseus"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#1-3">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cokwr"/>
+      <dcterms:title>perseus-bio-1 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>very certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*perse%2Fwn&amp;la=greek&amp;can=*perse%2Fwn0&amp;prior=a)llh/loisi"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://www.greekmythology.com/Myths/Heroes/Perseus/perseus.html"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#2-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cpzh4"/>
+      <dcterms:title> http://pleiades.stoa.org/places/570106 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>extra certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*%29%2Fargos&amp;la=greek&amp;can=*%29%2Fargos1&amp;prior=de\"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://pleiades.stoa.org/places/570106#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#2-2">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cpzh4"/>
+      <dcterms:title> http://pleiades.stoa.org/places/570106 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>extra certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*%29%2Fargos&amp;la=greek&amp;can=*%29%2Fargos1&amp;prior=de\"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://en.wikipedia.org/wiki/Argos"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#3-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/cre1l"/>
+      <dcterms:title>A.abaeus-bio-1 at Il 1.1</dcterms:title>
+      <rdfs:comment>not really certain</rdfs:comment>
+      <dcterms:description>Some description</dcterms:description>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*%29%2Fabas&amp;la=greek&amp;can=*%29%2Fabas0&amp;prior=kai\"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/people/smith:abaeus-1#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#4-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/chk2m"/>
+      <dcterms:title>A.1.abammon-magister-bio-1 at Od 1.1</dcterms:title>
+      <oa:hasTarget rdf:resource="http://sosol.perseids.org/tools/arethusa/app/#/perseids?chunk=1&amp;doc=4466"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/people/smith:abammon-magister-1#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#5-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/ciyn3"/>
+      <dcterms:title>A.1.abianus-geo at </dcterms:title>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=*%29abiano%2Fs&amp;la=greek"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/places/smith:abianus#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#6-1">
+      <dcterms:source rdf:resource="https://spreadsheets.google.com/feeds/list/1GDhS_x2ycvXWTV18N41VQX9WKffA9zPPe_xoqUsODmc/od6/public/values/ckd7g"/>
+      <dcterms:title>A.10.antiocheia-geo02 at </dcterms:title>
+      <oa:hasTarget rdf:resource="http://www.perseus.tufts.edu/hopper/morph?l=ANTIOCHEIA&amp;la=la&amp;can=antiocheia0&amp;d=Perseus:text:1999.04.0064:alphabetic%20letter=A:entry%20group=10:entry=antiocheia-geo02&amp;i=2"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/places/smith:antiocheia-02#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://docs.google.com/spreadsheet"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+</rdf:RDF>

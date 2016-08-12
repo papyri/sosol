@@ -10,7 +10,7 @@
     xmlns:cnt="http://www.w3.org/2008/content#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     
-    <xsl:output method="xhtml" indent="yes"/>
+    <xsl:output method="xhtml" indent="yes" omit-xml-declaration="yes"/>
     
     <xsl:template match="/rdf:RDF">
     	<xsl:apply-templates select="oac:Annotation"/>

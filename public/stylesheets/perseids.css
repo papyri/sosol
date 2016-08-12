@@ -435,47 +435,6 @@ li.editor_menu {
   height: 30%;
   float: left;
 }
-.edit_oac_identifier {
-  margin-left: .5em;
-}
-.edit_oac_identifier #target_content, 
-.edit_oac_identifier #body_content  {
-  height: 200px;
-  overflow: scroll;
-  border: 1px solid black;
-
-}
-.edit_oac_identifier #target_content .token {}
-.edit_oac_identifier .target_uri,
-.edit_oac_identifier .body_uri  {
-  width: 98%;
-  font-size: small;
-}
-.edit_oac_identifier #target_content .token.highlighted,
-.edit_oac_identifier #body_content .token.highlighted {
-  background-color: #FFFF99;
-}
-.edit_oac_identifier #target_content .token.highlighted.selected,
-.edit_oac_identifier #body_content .token.highlighted.selected {
-  font-weight: bold;
-}
-.edit_oac_identifier #annotation_target_input,
-.edit_oac_identifier #annotation_body_input {
-  float: left;  
-  width: 48%;
-  padding: .25em;
-  border: 1.5px solid black;
-}
-.edit_oac_identifier #annotation_motivation_input {
-  margin: .25em;
-  float: right;
-}
-.edit_oac_identifier #annotation_form_submit {
-  clear: both;
-}
-.edit_oac_identifier .add_target {
-  text-align: right;
-}
 
 .hints {
     margin-bottom: .5em;
@@ -535,19 +494,6 @@ li.editor_menu {
     background-color: black;
 }
 
-.edit_oac_identifier .cite_to, 
-.edit_oac_identifier .cite_from {
-  width: 3em;
-  font-size: smaller;
-}
-.edit_oac_identifier .cite_from_label, 
-.cite_to_label {
-  font-size: smaller;
-}
-.edit_oac_identifier .cite_span_label {
-  font-style: italic;
-  font-size: smaller;
-}
 #to_alpheios_align {
   margin-left:.5em;
 }
@@ -556,9 +502,6 @@ li.editor_menu {
   background-color:#73Cdde;
   margin-right: 2em;
   margin-top: -1.5em;
-}
-.edit_oac_identifier #annotation_target_input #title_placeholder {
-  min-height: 2em;
 }
 .annotation_header {
   font-weight: bold;

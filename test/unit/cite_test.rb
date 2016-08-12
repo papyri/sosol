@@ -2,7 +2,32 @@ require 'test_helper'
 
 class CiteTest < ActiveSupport::TestCase
   
- context "lib test" do
+ context "pid api test" do
+    # TODO test pid with sequencer
+    # TODO test UUID
+    should "return a sequenced urn not parsing any props" do
+      cb = lambda do |u| return 1 end
+      assert_equal "urn:cite:perseus:pdlcomm.1.1", Cite::CiteLib.pid("CommentaryCiteIdentifier",{},cb)
+    end
+
+    should "return a sequenced urn parsing props" do
+      cb = lambda do |u| return 1 end
+      assert_equal "urn:cite:perseus:grctb.1.1", Cite::CiteLib.pid("TreebankCiteIdentifier",{"language" => "grc"},cb)
+    end
+
+    should "return a uuid urn" do
+      cb = lambda do |u| return 1 end
+      assert_match /^urn:cite:perseus:pdlann.\w+\.1$/, Cite::CiteLib.pid("OaCiteIdentifier",{},nil)
+    end
+ end
+
+ context "cite api test" do
+    # TODO test getCapabilities
+    # TODO test getValidReff
+    # TODO test getObject
+ end
+
+ context "cite lib test" do
   
   should "test valid urn" do
     urnObj = Cite::CiteLib.urn_obj('urn:cite:perseus:mythcoll.1.1') 
@@ -10,30 +35,13 @@ class CiteTest < ActiveSupport::TestCase
     assert urnObj.getVersion() == '1'
     assert urnObj.getObjectId() == '1'
     assert urnObj.getCollection() == 'mythcoll'
-  end 
-   
-  should "assert collection urn" do 
-    # TODO
-  end  
-   
-  should "test collection title" do
-    # TODO need test capabilities xml 
-    assert_nothing_raised do Cite::CiteLib.get_collection_title('urn:cite:perseus:pdlann') end
-    assert_nothing_raised do Cite::CiteLib.get_collection_title('urn:cite:perseus:pdlann.1.1') end 
   end
-  
-  should "test collection field max" do
-    # TODO need test capabilities xml 
-    max = Cite::CiteLib.get_collection_field_max('urn:cite:perseus:mythcomm.1.1')
-    assert_equal(525,max)
-    max2 = Cite::CiteLib.get_collection_field_max('urn:cite:perseus:pdlann.1.1')
-    assert_equal(-1,max2)
-  end
-  
-  should "test default collection" do
-    coll = Cite::CiteLib.get_default_collection_urn()
-    assert coll == 'urn:cite:perseus:pdlcomm'
-  end
+
+    # TODO test is_collection_urn?
+    # TODO test is_object_urn?
+    # TODO test is_version_urn?
+    # TODO test object_uuid_urn
+    # TODO test add_version
 
  end
    

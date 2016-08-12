@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <Annotation xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.316.1/#1">
+    <hasTarget xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:1.1-1.10@ἀνδρῶν[1]"/>
+    <hasBody xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://perseids.org/annotsrc/urn:cts:latinLit:stoa0121g.stoa005.opp-lat1:1@Quid[1]"/>
+    <motivatedBy xmlns="http://www.w3.org/ns/oa#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://erlangen-crm.org/efrbroo/R15_has_fragment"/>
+    <annotatedBy xmlns="http://www.w3.org/ns/oa#">
+      <Person xmlns="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas"/>
+    </annotatedBy>
+    <serializedBy xmlns="http://www.w3.org/ns/oa#">
+      <SoftwareAgent xmlns="http://www.w3.org/ns/prov#" rdf:about="http://perseids.org/perseids-annotator#0.0.1"/>
+    </serializedBy>
+    <annotatedAt xmlns="http://www.w3.org/ns/oa#">2016-05-24T01:33:02+00:00</annotatedAt>
+  </Annotation>
+</RDF>

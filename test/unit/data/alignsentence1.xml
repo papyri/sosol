@@ -1,0 +1,151 @@
+<aligned-text xmlns="http://alpheios.net/namespaces/aligned-text">
+    <language lnum="L1" xml:lang="grc" dir="ltr"/>
+    <language lnum="L2" xml:lang="eng" dir="ltr"/>
+    <sentence>
+        <wds lnum="L1">
+            <comment class="uri">urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:1-1</comment>
+            <w n="1-1">
+                <text>μουσάων</text>
+                <refs nrefs="1-1"/>
+            </w>
+            <w n="1-2">
+                <text>Ἑλικωνιάδων</text>
+            </w>
+            <w n="1-3">
+                <text>ἀρχώμεθʼ</text>
+            </w>
+            <w n="1-4">
+                <text>ἀείδειν</text>
+            </w>
+            <w n="1-5">
+                <text>,</text>
+            </w>
+        </wds>
+        <wds lnum="L2">
+            <comment class="uri">urn:cts:greekLit:tlg0020.tlg001.perseus-eng2:1-1</comment>
+            <w n="1-1">
+                <text>From</text>
+            </w>
+            <w n="1-2">
+                <text>the</text>
+            </w>
+            <w n="1-3">
+                <text>Heliconian</text>
+            </w>
+            <w n="1-4">
+                <text>Muses</text>
+            </w>
+            <w n="1-5">
+                <text>let</text>
+            </w>
+            <w n="1-6">
+                <text>us</text>
+            </w>
+            <w n="1-7">
+                <text>begin</text>
+            </w>
+            <w n="1-8">
+                <text>to</text>
+            </w>
+            <w n="1-9">
+                <text>sing</text>
+            </w>
+            <w n="1-10">
+                <text>,</text>
+            </w>
+            <w n="1-11">
+                <text>who</text>
+            </w>
+            <w n="1-12">
+                <text>hold</text>
+            </w>
+            <w n="1-13">
+                <text>the</text>
+            </w>
+            <w n="1-14">
+                <text>great</text>
+            </w>
+            <w n="1-15">
+                <text>and</text>
+            </w>
+            <w n="1-16">
+                <text>holy</text>
+            </w>
+            <w n="1-17">
+                <text>mount</text>
+            </w>
+            <w n="1-18">
+                <text>of</text>
+            </w>
+            <w n="1-19">
+                <text>Helicon</text>
+            </w>
+            <w n="1-20">
+                <text>,</text>
+            </w>
+            <w n="1-21">
+                <text>and</text>
+            </w>
+            <w n="1-22">
+                <text>dance</text>
+            </w>
+            <w n="1-23">
+                <text>on</text>
+            </w>
+            <w n="1-24">
+                <text>soft</text>
+            </w>
+            <w n="1-25">
+                <text>feet</text>
+            </w>
+            <w n="1-26">
+                <text>about</text>
+            </w>
+            <w n="1-27">
+                <text>the</text>
+            </w>
+            <w n="1-28">
+                <text>deep</text>
+            </w>
+            <w n="1-29">
+                <text>-</text>
+            </w>
+            <w n="1-30">
+                <text>blue</text>
+            </w>
+            <w n="1-31">
+                <text>spring</text>
+            </w>
+            <w n="1-32">
+                <text>and</text>
+            </w>
+            <w n="1-33">
+                <text>the</text>
+            </w>
+            <w n="1-34">
+                <text>altar</text>
+            </w>
+            <w n="1-35">
+                <text>of</text>
+            </w>
+            <w n="1-36">
+                <text>the</text>
+            </w>
+            <w n="1-37">
+                <text>almighty</text>
+            </w>
+            <w n="1-38">
+                <text>son</text>
+            </w>
+            <w n="1-39">
+                <text>of</text>
+            </w>
+            <w n="1-40">
+                <text>Cronos</text>
+            </w>
+            <w n="1-41">
+                <text>,</text>
+            </w>
+        </wds>
+    </sentence>
+ </aligned-text>
