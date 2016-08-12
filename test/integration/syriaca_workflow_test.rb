@@ -117,13 +117,23 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           @community_user = FactoryGirl.create(:user, :name => "community_freaky_bob")
 
 
+          #mock an agent for agent based pass to test
+          @agent = stub("mockagent")
+          @client = stub("mockclient")
+          @client.stubs(:post_content).returns(201)
+          @client.stubs(:get_transformation).returns(nil)
+          AgentHelper.stubs(:get_client).returns(@client)
+          AgentHelper.stubs(:agent_of).returns(@agent)
+
+          # a complete integration test would pass to a test instance of the flask-github-proxy
+          #:pass_to => "https://github.com/perseids-project/srophe-app-data")
           @test_agent_community = FactoryGirl.create(:pass_through_community,
                                                :name => "test_syriaca_community",
                                                :friendly_name => "testy agent",
                                                :allows_self_signup => true,
                                                #:abbreviation => "tc",
                                                :description => "a syriaca comunity for testing",
-                                               :pass_to => "https://github.com/perseids-project/srophe-app-data")
+                                               :pass_to => "mockagent")
 
           @test_agent_community.members << @community_user
           @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id)
