@@ -7,7 +7,7 @@ module Api::V1
     skip_before_filter :authorize  # skip regular authentication routes
     skip_before_filter :update_cookie # skip old api cookie handling
     before_filter only: [:user] do
-      doorkeeper_authorize! :read
+      doorkeeper_authorize! :read, :write
     end
 
     before_filter do
@@ -20,7 +20,7 @@ module Api::V1
         key :operationId, 'getUserInfo'
         key :tags, [ 'user' ]
         security do
-          key :sosol_auth, ['read']
+          key :sosol_auth, ['read','write']
         end
         response 201 do
           key :description, 'user info response'
