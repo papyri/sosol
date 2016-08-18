@@ -93,10 +93,10 @@ module DclpMetaIdentifierHelper
 
     # Data structure for publication information
     class Extra
-      attr_accessor :value, :type, :corresp, :from, :to
-      def initialize value, type, corresp = nil, from = nil, to = nil
+      attr_accessor :value, :unit, :corresp, :from, :to
+      def initialize value, unit, corresp = nil, from = nil, to = nil
         @value   = value
-        @type    = type.to_sym
+        @unit    = unit.to_sym
         @corresp = corresp
         @from    = from
         @to      = to
@@ -104,11 +104,11 @@ module DclpMetaIdentifierHelper
     end
 
     class Edition
-      # +Array+ of a valid values for TEI:provenance|@type
+      # +Array+ of a valid values for @type
       @@typeList          = [:publication, :reference]
-      # +Array+ of a valid values for TEI:provenance|@subtype
+      # +Array+ of a valid values for @subtype
       @@subtypeList       = [:principal, :partial, :previous, :readings, :translation, :study, :catalogue, :palaeo]
-      # +Array+ of a valid values for TEI:provenance|@subtype
+      # +Array+ of a valid values for @xml:lang
       @@languageList       = [:de, :en, :it, :es, :la, :fr]
       # +Array+ of all String member attributes that have a TEI equivalent
       @@atomList          = [:type, :subtype, :ubertype, :language, :link]
@@ -136,7 +136,7 @@ module DclpMetaIdentifierHelper
             end
             if init[:edition][:children][:extra]
               init[:edition][:children][:extra].each {|extra|
-                @extraList << Extra.new(extra[:value], extra[:attributes][:type], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
+                @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
               }
             end
 
@@ -275,11 +275,11 @@ module DclpMetaIdentifierHelper
 
     # Data structure for publication information
     class Extra
-      attr_accessor :value, :type, :certainty, :from, :to, :corresp
+      attr_accessor :value, :unit, :certainty, :from, :to, :corresp
 
       def initialize init = nil
         @value     = init[:value]
-        @type      = init[:attributes][:type]
+        @unit      = init[:attributes][:unit]
         @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
         @from      = init[:attributes][:from]
         @to        = init[:attributes][:to]
@@ -288,7 +288,7 @@ module DclpMetaIdentifierHelper
     end
 
     class Work
-      # +Array+ of a valid values for TEI:provenance|@type
+      # +Array+ of a valid values for @subtype
       @@subtypeList = [:primary, :secondary]
       @@atomList = [:subtype]
 
@@ -317,7 +317,7 @@ module DclpMetaIdentifierHelper
             end
             if init[:children][:extra]
               init[:children][:extra].each {|extra|
-                @extraList << Extra.new(extra[:value], extra[:attributes][:type], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
+                @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
               }
             end
           end

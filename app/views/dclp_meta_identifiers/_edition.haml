@@ -7,7 +7,7 @@
 
     %ul.items{:id => 'multiItems_edition'}
       - @identifier[:edition].each_index do |editionIndex|
-        - edition = DclpEdition::Edition.new( :edition => @identifier[:edition][editionIndex])
+        - edition = DclpEdition::Edition.new(:edition => @identifier[:edition][editionIndex])
         - base = 'hgv_meta_identifier[edition][' + editionIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
         - baseChildren = base + '[children]'

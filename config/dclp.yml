@@ -133,8 +133,8 @@
           :xpath: biblScope
           :multiple: true
           :attributes:
-            :type:
-              :name: type
+            :unit:
+              :name: unit
               :pattern: /\Avol|generic|lines|generic|fragment|page|chapter|poem\Z/
           :children:
             :certainty:
@@ -174,8 +174,8 @@
           :xpath: biblScope
           :multiple: true
           :attributes:
-            :type:
-              :name: type
+            :unit:
+              :name: unit
               :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragment|fragments|folio|inventory|number|columns|generic|parts|pp\Z/
             :corresp:
               :name: corresp
