@@ -449,6 +449,34 @@ Sosol::Application.routes.draw do
       end
     end
 
+    # the cts_oac_identifier resource model is deprecated
+    resources :cts_oac_identifiers do
+    
+      member do
+        get :history
+        get :preview
+        get :editxml
+        put :updatexml
+        get :exportxml
+        post :append
+        post :delete_annotation
+        get :annotate_xslt
+      end
+    end
+    # the oac_identifier resource model is deprecated
+    resources :oac_identifiers do
+      member do
+        get :history
+        get :preview
+        get :editxml
+        put :updatexml
+        get :exportxml
+        post :append
+        get :rename_review
+        put :rename
+      end
+    end
+
   end
 
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
