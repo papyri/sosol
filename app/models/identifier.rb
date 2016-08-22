@@ -702,4 +702,13 @@ class Identifier < ActiveRecord::Base
     return identifiers
   end
 
+  # return a poth to this identifier for use in a remote repository
+  # - *Returns% :
+  #   - a path to use to store the file on a remote repo
+  def to_remote_path
+    # by default we will just use the local path
+    # to override by identifier type
+    self.to_path
+  end
+
 end

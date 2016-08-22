@@ -490,6 +490,21 @@ class TreebankCiteIdentifier < CiteIdentifier
   end
 
 
+  # @overrides Identifier#to_remote_path
+  # checks for remote path in comments otherwise delegates
+  # to super class
+  def to_remote_path
+    parser = self.xml_parser
+    t = parser.parseroot
+    path = parser.first(t,"/treebank/comment[@class='remote_path']")
+    if path && path.text
+      path.text
+    else
+      super()
+    end
+  end
+
+
 
   ########################
   # Private Helper Methods

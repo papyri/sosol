@@ -151,7 +151,20 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
          }
          assert_equal(expected, test.as_ro())
        end
-     end  
+
+        should "return default remote_path" do
+          file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+          test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
+          assert_equal 'CITE_TREEBANK_XML/perseus/lattb/1/lattb.1.1.tb.xml', test.to_remote_path
+        end
+
+        should "return override remote_path" do
+          file = File.read(File.join(File.dirname(__FILE__), 'data', 'remotetb.xml'))
+          test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
+          assert_equal 'data/caesar.tb.xml', test.to_remote_path
+        end
+
+     end
 
   end
 end
