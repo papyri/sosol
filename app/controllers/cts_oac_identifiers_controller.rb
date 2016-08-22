@@ -28,8 +28,6 @@ class CtsOacIdentifiersController < IdentifiersController
       params[:creator_uri] = @identifier.make_creator_uri()  
       params[:delete_link] = 
         url_for(:controller => 'cts_oac_identifiers', :action => 'delete_annotation', :publication_id => @identifier.publication.id, :id => @identifier.id, :annotation_uri => annotation_uri)
-      params[:align_link] = 
-        polymorphic_url([:link_alignment,@identifier.parentIdentifier.publication,@identifier.parentIdentifier],:a_id => @identifier.id.to_s, :annotation_uri => annotation_uri)        
       params[:form_token] = form_authenticity_token 
       params[:mode] = @identifier.mutable? ? 'edit' : 'preview'
       @identifier[:list] = @identifier.edit(parameters = params)
