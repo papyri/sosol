@@ -477,6 +477,23 @@ Sosol::Application.routes.draw do
       end
     end
 
+    # the tei_cts_identifier model is deprecated
+    resources :tei_cts_identifiers do
+    
+      member do
+        get :history
+        get :preview
+      end
+    end
+
+    # the tei_trans_cts_identifier model is deprecated
+    resources :tei_trans_cts_identifiers do
+      member do
+        get :history
+        get :preview
+      end
+    end
+
   end
 
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
