@@ -58,7 +58,7 @@ module AgentHelper
     elsif (a_agent[:type] == 'cts')
         return CtsAgent.new(a_agent)
     elsif (a_agent[:type] == 'url')
-        return UrlAgent.new(a_agent)
+        return UrlAgent.new()
     elsif (a_agent[:type] == 'github')
         return GitHubProxyAgent.new(a_agent)
     else
@@ -202,7 +202,7 @@ module AgentHelper
           c.use Faraday::Response::RaiseError
           c.use Faraday::Adapter::NetHttp
         end
-        conn.get.body
+        conn.get.body.force_encoding("UTF-8")
       else
         raise "Invalid URL #{a_uri}"
       end
