@@ -38,7 +38,16 @@ class TreebankCiteIdentifier < CiteIdentifier
     end
     callback = lambda do |u| return self.sequencer(u) end
     id = self.path_for_version_urn(Cite::CiteLib.pid(self.to_s,{'language' => language},callback))
+    parser = XmlHelper::getDomParser(content,DOM_PARSER)
+    treebank = parser.parseroot
+    parser.all(treebank,"date").each do |d|
+      parser.delete_child(treebank,d)
+    end
+    date = parser.make_text_elem('date',nil,Time.new.inspect)
+    parser.insert_before(treebank,"*[1]",date)
     # TODO NOW WE SHOULD INSERT THE URN INTO THE CONTENT
+    content = parser.to_s
+
     return id,content
   end
 
@@ -156,6 +165,31 @@ class TreebankCiteIdentifier < CiteIdentifier
   # - *Returns* :
   #   - modified 'content'
   def preprocess(content)
+    parser = XmlHelper::getDomParser(content,DOM_PARSER)
+    treebank = parser.parseroot
+    # make sure we have the creator saved as the annotator
+    creator_uri = make_annotator_uri
+    xpath = "annotator/uri"
+    all_annotators = parser.all(treebank, xpath)
+    add = true
+    all_annotators.each do |ann|
+      if  ann == creator_uri
+        add = false
+      end
+    end
+    if (add)
+      annotator = parser.make_elem("annotator")
+      short = parser.make_text_elem("short",nil,self.publication.creator.name)
+      persname = parser.make_text_elem("name",nil,self.publication.creator.human_name)
+      address = parser.make_text_elem("address",nil,self.publication.creator.email)
+      uri = parser.make_text_elem("uri",nil,creator_uri)
+      parser.add_child(annotator,short)
+      parser.add_child(annotator,persname)
+      parser.add_child(annotator,address)
+      parser.add_child(annotator,uri)
+      parser.insert_before(treebank,"sentence[1]",annotator)
+    end
+    content = parser.to_s
     # autoadjust sentence numbering
     result = JRubyXML.apply_xsl_transform_catch_messages(
       JRubyXML.stream_from_string(content),

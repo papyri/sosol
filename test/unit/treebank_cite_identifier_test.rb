@@ -28,8 +28,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'bobstb1.xml'))
         (id,content) = TreebankCiteIdentifier.identifier_from_content("http://example.org",file)
         assert_match /^cite\/perseus\/lattb/, id
-        # we don't change the content yet
-        assert_equal file, content
+        # we should have the date now
+        assert_match /<date>.*<\/date>/, content
       end
 
       should "create new from template" do
@@ -73,6 +73,14 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
         assert_match /form="extra"/, test.fragment("s=1")
         # and the word count should be renumbered
         assert_match /word id="19" form="."/, test.fragment("s=1")
+      end
+
+      should "add annotator" do
+        file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
+        test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
+        assert_not_nil test
+        creator_uri = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@publication.creator.name)}"
+        assert_match /<uri>#{creator_uri}/, test.content
       end
 
       should "get_editor_agent" do
