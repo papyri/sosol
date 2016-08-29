@@ -67,17 +67,6 @@ class TreebankCiteIdentifier < CiteIdentifier
   # Public Instance Method Overrides
   ###################################
 
-  # @overrides Identifier#set_content to make sure content is preprocessed first
-  # - *Args*  :
-  #   - +content+ -> the XML you want committed to the repository
-  #   - +options+ -> hash of options to pass to repository (ex. - :comment, :actor)
-  # - *Returns* :
-  #   - a String of the SHA1 of the commit
-  def set_content(content, options = {})
-    content = preprocess(content)
-    super
-  end
-  
   # @overrides Identifier#titleize
   # to set title of a treebank from its content
   # calls on external service to map cts urns
@@ -173,7 +162,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     all_annotators = parser.all(treebank, xpath)
     add = true
     all_annotators.each do |ann|
-      if  ann == creator_uri
+      if  ann.text == creator_uri
         add = false
       end
     end

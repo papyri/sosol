@@ -80,7 +80,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
         test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New treebank")
         assert_not_nil test
         creator_uri = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@publication.creator.name)}"
-        assert_match /<uri>#{creator_uri}/, test.content
+        assert_equal 1, test.content.scan(/<uri>#{creator_uri}/).size
       end
 
       should "get_editor_agent" do
