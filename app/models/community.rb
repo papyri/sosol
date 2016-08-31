@@ -2,7 +2,26 @@
 #The workflow and boards work the same as the standard SoSOL workflow with the exception that the finalized publications is not committed to canonical. Instead it is copied to the chosen end_user for the community.
 
 class Community < ActiveRecord::Base
-  
+
+  include Swagger::Blocks
+
+  swagger_schema :Community do
+    key :required, [:id, :name, :friendly_name, :description]
+    property :id do
+      key :type, :integer
+      key :format, :int64
+    end
+    property :name do
+      key :type, :string
+    end
+    property :friendly_name do
+      key :type, :string
+    end
+    property :description do
+      key :type, :string
+    end
+  end
+
   has_many :communities_members
   has_many :members, :class_name => "User", :source => :user, :foreign_key => "community_id", :through => :communities_members
   has_many :communities_admins
@@ -116,5 +135,6 @@ class Community < ActiveRecord::Base
       return false
     end
   end
+
 end
 

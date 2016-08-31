@@ -7,9 +7,11 @@ class ApidocsController < ActionController::Base
     Api::V1::ItemsController,
     Api::V1::XmlItemsController,
     Api::V1::PublicationsController,
+    Api::V1::CommunitiesController,
     Identifier,
     Publication,
     User,
+    Community,
     Api::V1::ApiError,
     self,
   ].freeze
@@ -48,7 +50,7 @@ class ApidocsController < ActionController::Base
         key :description, 'Identifier operations'
       end
       key :host, "#{host}"
-      key :schemes, ["https","http"]
+      key :schemes, ["http","https"]
       key :basePath, "#{root_path}api/v1"
       key :consumes, ['application/json']
       key :produces, ['application/json', 'application/xml']
