@@ -14,10 +14,17 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   # Assumes that hgv metadata is passed in via post and uses the values containd in hash entry »:textDate« to generate preview snippets for hgv date.
   # Side effect on +@update+
   def biblio_preview
-    @update = '';
+    @update = 'No preview available';
     if !params[:biblio].nil? && /\A\d+\Z/.match(params[:biblio])
       uri = URI('http://localhost:8080/exist/apps/papyrillio/snippet.html?biblio=' + params[:biblio])
-      @update = Net::HTTP.get(uri).gsub(/(<html[^>]*>|<[^>]*html>)/, '')
+      # @update = Net::HTTP.get(uri).gsub(/(<html[^>]*>|<[^>]*html>)/, '')
+
+      response = Net::HTTP.get_response(uri)
+      if response.code == '200'
+        @update = response.body.gsub(/(<html[^>]*>|<[^>]*html>)/, '')
+      else
+        @update = 'No preview available for ' + params[:biblio];
+      end
     end
   end
 
