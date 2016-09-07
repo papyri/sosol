@@ -12,7 +12,8 @@ function workAuthorNumberChange(el){
 
 function editionLinkChange(el){
   var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview';
-  new Ajax.Updater(el.identify().replace('link', 'biblioPreview'), url, { parameters: {biblio: el.getValue()} });
+  var updatee = el.identify().replace('link', 'biblioPreview');
+  new Ajax.Updater({ success: updatee}, url, { parameters: {biblio: el.getValue()}, onFailure: function(){ console.log(updatee); $(updatee).update('<i>Loading review data failed…</i>'); } });
 }
 
 function editionUbertypeChange(el) {
