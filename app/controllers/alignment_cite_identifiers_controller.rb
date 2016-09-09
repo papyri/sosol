@@ -29,7 +29,7 @@ class AlignmentCiteIdentifiersController < IdentifiersController
     parameters[:title] = @identifier.title
     parameters[:doc_id] = @identifier.id.to_s
     parameters[:max] = 50 # TODO - make max sentences configurable
-    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:view,[@identifier])[:href]
+    parameters[:tool_url] = Tools::Manager.link_to('alignment_editor',:alpheios,:edit,[@identifier])[:href]
     @list = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(@identifier.content),
       JRubyXML.stream_from_file(File.join(Rails.root,
