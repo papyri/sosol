@@ -23,8 +23,7 @@ module DclpMetaIdentifierHelper
         [I18n.t('edition.subtype.translation'),  :translation],
         [I18n.t('edition.subtype.study'),        :study],
         [I18n.t('edition.subtype.catalogue'),    :catalogue],
-        [I18n.t('edition.subtype.palaeo'),       :palaeo],
-        [I18n.t('edition.subtype.illustration'), :illustration]
+        [I18n.t('edition.subtype.palaeo'),       :palaeo]
       ]
     end
 
@@ -49,8 +48,7 @@ module DclpMetaIdentifierHelper
         [I18n.t('edition.ubertype.translation'),  :translation],
         [I18n.t('edition.ubertype.study'),        :study],
         [I18n.t('edition.ubertype.catalogue'),    :catalogue],
-        [I18n.t('edition.ubertype.palaeo'),       :palaeo],
-        [I18n.t('edition.ubertype.illustration'), :illustration]
+        [I18n.t('edition.ubertype.palaeo'),       :palaeo]
       ]
     end
 

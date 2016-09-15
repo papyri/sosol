@@ -23,7 +23,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
       if response.code == '200'
         @update = response.body.gsub(/(<html[^>]*>|<[^>]*html>)/, '')
       else
-        @update = 'No preview available for ' + params[:biblio];
+        @update = 'No preview available for ' + params[:biblio]
       end
     end
   end

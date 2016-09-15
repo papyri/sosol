@@ -130,6 +130,9 @@ en:
       general: General Notes
     label:
       editionLink: Biblio
+      illustration: Illustrations
+      illustrationPrinted: Printed Images
+      illustrationOnline: Online Resources
       addEdition: add edition
       titleStmt: Display Name (Description)
       contentTextGenre: Genre

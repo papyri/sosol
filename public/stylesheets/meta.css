@@ -489,3 +489,32 @@ div.metaSite div#edit div#dateContainer p {
 
 div#edit p#multiPlus_publicationExtra label {
   width: 7em; }
+
+/* DCLP */
+
+div.genre, div.religion, div.culture {
+  float: left;
+}
+
+div.keywords {
+  clear: both;
+  display: block;
+  width: auto;
+  position: relative;
+  background-color: green;
+}
+
+div#edit div.keywords li {
+  width: auto;
+  float: left;
+  background: blue;
+  clear: none;
+}
+
+div#edit ul#multiItems_printedIllustration input,
+div#edit ul#multiItems_onlineResource input,
+div#edit p#multiPlus_printedIllustration input,
+div#edit p#multiPlus_onlineResource input
+{
+  width: 42em;
+}

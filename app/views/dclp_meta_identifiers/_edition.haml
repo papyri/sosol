@@ -5,9 +5,11 @@
     %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} bibliography
     on Papyri.info
 
+    - bibliographicalItems = @identifier[:edition]
+    %hr
     %ul.items{:id => 'multiItems_edition'}
-      - @identifier[:edition].each_index do |editionIndex|
-        - edition = DclpEdition::Edition.new(:edition => @identifier[:edition][editionIndex])
+      - bibliographicalItems.each_index do |editionIndex|
+        - edition = DclpEdition::Edition.new(:edition => bibliographicalItems[editionIndex])
         - base = 'hgv_meta_identifier[edition][' + editionIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
         - baseChildren = base + '[children]'

@@ -7,7 +7,7 @@
     %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
 
     #edit
-      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| 
+      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f|
         = f.error_messages
 
         %h4.category.edition
@@ -16,6 +16,10 @@
           = render :partial => 'dclp_meta_identifiers/edition'
 
           .clear
+          
+          = render :partial => 'dclp_meta_identifiers/illustration'
+          .clear
+          
           %span.swifty.quickSave=I18n.t('label.quickSave')
           %span.swifty.addEdition=I18n.t('dclp.label.addEdition')
 
@@ -31,8 +35,6 @@
           
           = render :partial => 'dclp_meta_identifiers/contentText'
 
-
-
           = render :partial => 'dclp_meta_identifiers/work'
 
           .clear
@@ -45,12 +47,6 @@
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
-          .clear
-          
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures}
-          = render :partial => 'hgv_meta_identifiers/figures'
-          .clear
-
           .clear
           .swifty.quickSave=I18n.t('label.quickSave')
 

@@ -32,8 +32,10 @@
     :collectionInventoryNumber:
     :collectionTemporaryNotes:
     :collectionTemporaryInventoryNumber:
+    :figures:
+    :illustrations:
     :inventory:
-      :xpath: /tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msPart
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msPart
       :multiple: true
       :children:
         :settlement:
@@ -154,6 +156,19 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
     :pagination:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
+    :printedIllustration:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/listBibl/bibl[@type='printed']
+      :multiple: true
+    :onlineResource:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/listBibl/bibl[@type='online']
+      :multiple: true
+      :children:
+        :link:
+          :xpath: ptr
+          :attributes:
+            :target:
+              :name: target
+              :pattern: '/\Ahttp:\/\//'
     :edition:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl
       :multiple: true

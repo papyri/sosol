@@ -12,6 +12,17 @@ module HgvMetaIdentifierHelper
     prefix + (rand * 1000000).floor.to_s.tr('0123456789', 'ABCDEFGHIJ')
   end
   
+  def getValueFromHashByMultidimensionalKey(hsh, key)
+    #key = key.dup
+    if !hsh.kind_of?(Hash) || !key.kind_of?(Array) || !hsh.length || !key.length || !defined?(hsh[key[0]])
+      return hsh
+    end
+    if key.length == 1
+      return hsh[key[0]]
+    else
+      return getValueFromHashByMultidimensionalKey(hsh[key[0]], key[1..-1])
+    end
+  end
 
     # Reads out config/hgv.yml and stores all configuration parameters in an instance variable called +@scheme+. Adds defaults and prunes invalid configuration entries.
   class HgvMetaConfiguration

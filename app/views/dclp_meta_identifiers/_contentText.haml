@@ -15,8 +15,8 @@
   = text_field_tag base + '[4]', contentText.culture.size > 0 ? contentText.culture[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
   .clear
   = text_field_tag base + '[5]', contentText.culture.size > 1 ? contentText.culture[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.clear
 .contentText.keywords
-  = contentText.keywords
   %h5.contentText=I18n.t('dclp.label.contentTextKeywords')
   .multi{:id => 'multi_keywords'}
     %ul.items{:id => 'multiItems_keywords'}
