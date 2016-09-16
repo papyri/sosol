@@ -501,13 +501,11 @@ div.keywords {
   display: block;
   width: auto;
   position: relative;
-  background-color: green;
 }
 
 div#edit div.keywords li {
   width: auto;
   float: left;
-  background: blue;
   clear: none;
 }
 
@@ -517,4 +515,8 @@ div#edit p#multiPlus_printedIllustration input,
 div#edit p#multiPlus_onlineResource input
 {
   width: 42em;
+}
+
+div#edit label.displayName {
+  width: auto;
 }

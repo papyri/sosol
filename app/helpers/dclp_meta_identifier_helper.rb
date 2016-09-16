@@ -1,6 +1,6 @@
 module DclpMetaIdentifierHelper
   module DclpEdition
-    
+
     # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
@@ -10,7 +10,7 @@ module DclpMetaIdentifierHelper
         [I18n.t('edition.type.reference'),      :reference]
       ]
     end
-    
+
     # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
@@ -39,7 +39,7 @@ module DclpMetaIdentifierHelper
         [I18n.t('edition.ubertype.readings'),    :readings]
       ]
     end
-    
+
     # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
@@ -276,12 +276,25 @@ module DclpMetaIdentifierHelper
       attr_accessor :value, :unit, :certainty, :from, :to, :corresp
 
       def initialize init = nil
-        @value     = init[:value]
-        @unit      = init[:attributes][:unit]
-        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
-        @from      = init[:attributes][:from]
-        @to        = init[:attributes][:to]
-        @corresp   = init[:attributes][:corresp]
+        @value     = nil
+        @unit      = nil
+        @certainty = nil
+        @from      = nil
+        @to        = nil
+        @corresp   = nil
+
+        if init
+          @value     = defined?(init[:value]) ? init[:value] : nil
+          if init[:attributes]
+            @unit      = defined?(init[:attributes][:unit]) ? init[:attributes][:unit] : nil
+            @from      = defined?(init[:attributes][:from]) ? init[:attributes][:from] : nil
+            @to        = defined?(init[:attributes][:to]) ? init[:attributes][:to] : nil
+            @corresp   = defined?(init[:attributes][:corresp]) ? init[:attributes][:corresp] : nil
+          end
+          if init[:children] && init[:children][:certainty] && init[:children][:certainty][:attributes] && init[:children][:certainty][:attributes][:target]
+            @certainty = init[:children][:certainty][:attributes][:target]
+          end
+        end
       end
     end
 
@@ -315,7 +328,7 @@ module DclpMetaIdentifierHelper
             end
             if init[:children][:extra]
               init[:children][:extra].each {|extra|
-                @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
+                @extraList << Extra.new(extra)
               }
             end
           end

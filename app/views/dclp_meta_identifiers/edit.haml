@@ -26,14 +26,13 @@
         %h4.category.work
           %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
         .editbox{:style => 'display: block;'}
-          = @identifier[:contentText]
-          .clear
 
-          = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt', :title => @identifier.configuration.xpath(:titleStmt)
+          = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt displayName', :title => @identifier.configuration.xpath(:titleStmt)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
           .clear
           
           = render :partial => 'dclp_meta_identifiers/contentText'
+          .clear
 
           = render :partial => 'dclp_meta_identifiers/work'
 
