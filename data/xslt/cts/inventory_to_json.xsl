@@ -38,7 +38,7 @@
             <xsl:text>"urn":"</xsl:text><xsl:value-of select="$group"/><xsl:text>",</xsl:text>
             
             <!-- add groupname field -->
-            <xsl:text>"label":"</xsl:text><xsl:value-of select="$groupname"/><xsl:text>",</xsl:text>
+            <xsl:text>"label":"</xsl:text><xsl:value-of select="replace($groupname,'&quot;','')"/><xsl:text>",</xsl:text>
             
             <!-- add works field -->
             <xsl:text>"works": { </xsl:text>
@@ -115,7 +115,7 @@
         <xsl:text>"</xsl:text><xsl:value-of select="$key"/><xsl:text>": {</xsl:text>
       
         <!-- add label field -->
-        <xsl:text>"label":"</xsl:text><xsl:value-of select="$label"/><xsl:text>",</xsl:text>
+        <xsl:text>"label":"</xsl:text><xsl:value-of select="replace($label,'&quot;','')"/><xsl:text>",</xsl:text>
         <xsl:text>"urn":"</xsl:text><xsl:value-of select="$urn"/><xsl:text>"</xsl:text>
         
         <xsl:if test="cts:edition|cts5:edition">
@@ -232,7 +232,7 @@
         <!-- edition obj -->
         <xsl:text>{</xsl:text>
         <xsl:text>"label": "</xsl:text><xsl:value-of select="$label"/><xsl:text>",</xsl:text>
-        <xsl:text>"lang": "</xsl:text><xsl:value-of select="$lang"/><xsl:text>",</xsl:text>
+        <xsl:text>"lang": "</xsl:text><xsl:value-of select="replace($lang,'&quot;','')"/><xsl:text>",</xsl:text>
         <xsl:text>"urn":"</xsl:text><xsl:value-of select="$urn"/><xsl:text>",</xsl:text>
         <xsl:text>"cites":[</xsl:text><xsl:value-of select="$cites"/><xsl:text>]</xsl:text>
         <xsl:text>}</xsl:text>
