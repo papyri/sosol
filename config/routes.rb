@@ -19,6 +19,11 @@ Sosol::Application.routes.draw do
           post :submit
         end
       end
+      resources :communities do
+        member do
+          get :index
+        end
+      end
       match 'user', to: 'api#user', via: [:get]
       match '*all' => 'api#preflight_check', :via => :options
       match 'xmlitems/:identifier_type' =>'xml_items#create', :via => :post
