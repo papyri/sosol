@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <%= csrf_meta_tag %>
+    <meta name='robots' content='noindex, nofollow' />
+    <meta name='SoSOL-Sparql-Endpoint' content='http://services.perseids.org/fuseki/ds/query?query='/>
+    <title>
+      <%= "#{Sosol::Application.config.site_name}: #{controller.controller_name} - #{controller.action_name}" %>
+    </title>
+    <%= stylesheet_link_tag 'perseids' %>
+    <%= stylesheet_link_tag 'master_additions' %>
+    <%= stylesheet_link_tag 'editor' %>
+    <%= javascript_include_tag :defaults %>
+    <%= javascript_include_tag "dashboard" %>
+  	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.slim.min.js"></script>
+    <%= javascript_include_tag "cross_site" %>
+    <script language="javascript" type="text/javascript">
+      jQuery.noConflict();
+  		$(document).ready(function() {
+  			$(".more").on("click", function(e) { e.preventDefault(); $("#main-menu").toggleClass("off"); });
+  			$(".p-dropdown a").on("click", function(e) {
+  				e.preventDefault();
+  				var that = $(this),
+  					target = that.attr("href");
+  				$(target).toggleClass("visible");
+  				that.parent().toggleClass("active");
+  			});
+  			$(".select-container .carret").on("click", function(e) {
+  				e.preventDefault();
+  				$(this).prev("select").get(0).dispatchEvent(e);
+  			});
+  		});
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-72072451-1', 'auto');
+      ga('send', 'pageview');
+  	</script>
+    <script type="text/javascript" async ='', src='//www.google-analytics.com/analytics.js'></script>
+    <%= javascript_include_tag 'perseids-ld' %>
+    <%= javascript_include_tag 'perseids-tools' %>
+    <%= javascript_include_tag 'perseids-cite' %>
+    <%= javascript_include_tag 'perseids-pages' %>
+    <%= javascript_include_tag 'perseids-design' %>
+    <script type="text/javascript">
+      (function() {
+          if (typeof window.janrain !== 'object') window.janrain = {};
+          if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
+
+          janrain.settings.tokenUrl = '<%= url_for(:controller => :rpx, :action => :login_return, :only_path => false) %>';
+
+          function isReady() { janrain.ready = true; };
+          if (document.addEventListener) {
+            document.addEventListener("DOMContentLoaded", isReady, false);
+          } else {
+            window.attachEvent('onload', isReady);
+          }
+
+          var e = document.createElement('script');
+          e.type = 'text/javascript';
+          e.id = 'janrainAuthWidget';
+
+          if (document.location.protocol === 'https:') {
+            e.src = 'https://rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
+          } else {
+            e.src = 'http://widget-cdn.rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
+          }
+
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(e, s);
+      })();
+
+      // hack to override fixed width on janrain widget items
+      // that causes them to disappear when the browser zoom set to something
+      // other than default
+      function janrainWidgetOnload() {
+        jQuery( '.janrainPage .providers li' ).each(
+          function() {
+            var style = jQuery(this).attr("style");
+            style = style.replace(/width: \d+px !important;/,'width: 10rem;');
+            jQuery(this).attr("style",style);
+          }
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <%= render "common/flash_all"  %>
+    <div id="main-menu" class="off">
+      <div id="logo-container">
+	      <div class="logo"><%= image_tag('logo.png',{:alt=>"Perseids"}) %></div>
+	      <a class="more" href="#"><%= image_tag('more.png') %> /></a>
+	  </div>
+    <%= render "user/user_welcome" %>
+	  <!--nav>
+	  	<div class="news">
+	  	</div>
+	  </nav-->
+	  <nav>
+	    <%= render('user/perseids_user_box') %>
+	  </nav>
+    </div>
+    <div id="main-wrapper">
+    	<div id="container">
+        <%= render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys }) %>
+        <%= yield %>
+   		</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+- if @current_user
+  - md5 = Digest::MD5.new
+  - md5.update @current_user.email
+  .welcome
+
+    %img{:class => "user-picture", :src=> "https://www.gravatar.com/avatar/#{md5}?d=mm", :width=>"150"}
+    %p
+      %em Welcome back
+      %br
+        = @current_user.human_name
+
