@@ -1,4 +1,5 @@
 
+= render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys })
 - if @community
   %h2
     = @community.format_name + " community publications."

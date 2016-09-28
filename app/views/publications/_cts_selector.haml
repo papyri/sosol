@@ -18,8 +18,8 @@
       %ul{:class => ['nav_right','perseids_menu']}
         %li
           - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
-          = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]} 
-        %li      
+          = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]}
+        %li
           - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
           = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
         %li

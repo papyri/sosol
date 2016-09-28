@@ -48,8 +48,6 @@
                 = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
     %li
       = link_to 'about', 'http://sites.tufts.edu/perseids', :onclick => "window.open(this.href);return false;"
-    %li
-      = link_to 'sign out', signout_url
     - if @current_user.admin
       %li
         = link_to 'Manage Boards', boards_url
@@ -61,7 +59,11 @@
     - if @current_user.is_community_master_admin
       %li
         = link_to "Manage Communities", :controller => "communities"
+    %li
+      = link_to 'sign out', signout_url
 
 - elsif (controller.action_name != 'consume' && controller.action_name != 'signin')
-  #signin
-    = link_to 'Sign In', signin_url
+  %nav{:class=>"logins"}
+    %ul
+      %li{:href => "#", :class =>"openid"}
+        = link_to 'Sign In', signin_url

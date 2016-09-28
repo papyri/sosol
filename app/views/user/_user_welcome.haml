@@ -8,4 +8,14 @@
       %em Welcome back
       %br
         = @current_user.human_name
+-else
+  %nav{:class=>"logins"}
+    %ul
+      %li{:href => "#", :class =>"yahoo"}
+        %a
+          %span{:class => "text"}Read More
+      %li{:href => "#", :class =>"aol"}
+        %a
+          %span{:class => "text"}Sample Publications
+
 

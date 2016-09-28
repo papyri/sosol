@@ -84,7 +84,6 @@
     </script>
   </head>
   <body>
-    <%= render "common/flash_all"  %>
     <div id="main-menu" class="off">
       <div id="logo-container">
 	      <div class="logo"><%= image_tag('logo.png',{:alt=>"Perseids"}) %></div>
@@ -101,7 +100,7 @@
     </div>
     <div id="main-wrapper">
     	<div id="container">
-        <%= render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys }) %>
+        <%= render "common/flash_all"  %>
         <%= yield %>
    		</div>
     </div>
