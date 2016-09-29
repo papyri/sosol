@@ -1,0 +1,6 @@
+- if identifier.class == DDBIdentifier
+  = image_tag('ddb.gif')
+- if identifier.class == HGVIdentifier || identifier.class == HGVTransIdentifier
+  = image_tag('hgv.gif')
+- if identifier.class == APISIdentifier
+  = image_tag('apis.png')

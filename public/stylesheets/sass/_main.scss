@@ -1,0 +1,335 @@
+body, .columns {
+  display: -webkit-flex;
+  -webkit-flex-direction: row;
+
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  @include phone {
+    flex-direction: column; /* affichage vertical */
+  }
+}
+#main-wrapper {
+  	flex: 1 1 auto; /* occupe la hauteur restante */
+	> #container {
+		padding:20px 80px 0 80px;
+		@include medium {
+			padding:25px 25px 0 25px;
+		}
+		@include small {
+			padding:25px 25px 0 25px;
+		}
+		@include phone {
+			padding:0;
+		}
+		> .card {
+			margin-bottom:$MARGIN_BIG;
+		}
+		> header {
+			color:$COLOR_PRI;
+			border-bottom:2px solid $COLOR_PRI;
+			display: inline-block;
+			min-width: 50%;
+			> * {
+				margin:0;
+				padding:0;
+			}
+			padding-right:3em;
+			padding-bottom:0.5em;
+			
+			margin:3em 0 3em 0;	
+			&:first-child {
+				margin:0 0 3em 0;	
+			}
+
+			padding:0 3em 0.5em 0;
+			@include phone {
+				border-bottom:none;
+				padding:2em;
+			}
+		}
+	}
+}
+.columns {
+	@include small {
+    	flex-direction: column; /* affichage vertical */
+	}
+}
+.rows {
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
+
+  display: flex;
+  flex-direction: column;
+}*
+.columns > * {
+	width:50%;
+	&.card {
+		margin-bottom:0;
+	}
+	@include small {
+		width:100%;
+		&.card {
+			//flex:none;
+		}
+	}
+	@include phone {
+		width:100%;
+	}
+}
+.rows > *, .columns > * {
+	@include phone {
+		margin:$MARGIN_SMALL  0;
+	}
+	@include small {
+		margin:$MARGIN_SMALL  0;
+	}
+}
+.rows > .card {
+	&:last-child {
+		margin-bottom:0;
+	}
+}
+
+.columns > .rows {
+	padding:0 !important;
+	@extend .no-sdw;
+}
+.columns > .rows {
+	margin-top:0;
+	padding:$MARGIN_SMALL $MARGIN_SMALL;
+}
+.card {
+	margin:$MARGIN_SMALL;
+	flex:1 1 auto;
+	@extend .bg-sdw;
+	padding:$MARGIN_BIG;
+	background-color:$COLOR_FOREGROUND;
+	> h2, > h3 {
+		@extend .font-subheading;
+		color:$COLOR_SEC;
+	}
+	&.no-padding {
+		padding:0;
+	}
+	&.third-size {
+		flex:1 0.33 auto;
+		width:33%;
+		@include phone-and-small {
+			flex:1 1 auto;
+			width:100%;
+		}
+	}
+
+	label {
+		display:block;
+		margin:$MARGIN_BIG 0;
+	}
+	input {
+		@extend .fg-sdw;
+		height:$CARD_BUTTON_HEIGHT;
+	}
+	input:not([type="button"]){
+		border:$OUTLINE_SIZE solid $COLOR_PRI;
+		width:75%;
+		padding-left:1em;
+		@extend .font-button ;
+		text-transform: none!important;
+		&:focus {
+			border-color:$COLOR_SEC;
+		}
+	}
+	textarea.input {
+		border:$OUTLINE_SIZE solid $COLOR_PRI;
+		width:100%;
+		height:60px;
+		padding-left:1em;
+		text-align:left;
+		padding:$MARGIN_SMALL;
+		&:focus {
+			border-color:$COLOR_SEC;
+		}
+	}
+	input[type="submit"] {
+		text-transform: uppercase;
+		background-color:$COLOR_PRI;
+		color: $COLOR_FOREGROUND;
+	 	border:none;
+	 	width: $BUTTON_WIDTH;
+	 	text-align: center;
+		border:1px solid $COLOR_PRI; 
+		margin-top: $BUTTON_HEIGHT;
+		padding:0;
+	 	&:active, &:hover, &:focus {
+	 		border:1px solid $COLOR_PRI;
+			height:$CARD_BUTTON_HEIGHT;
+	 	}
+	}
+	select {
+	 	min-width: $BUTTON_WIDTH*1.5;
+		height:$CARD_BUTTON_HEIGHT;
+		font-size:$BUTTON_FONT_SIZE;
+		background-color:transparent;
+		border:none;
+		border-right:none;
+		overflow: hidden;
+	    appearance:none;
+	    -moz-appearance:none; /* Firefox */
+	    -webkit-appearance:none; /* Safari and Chrome */
+	    width:$BUTTON_WIDTH;
+	    cursor:pointer;
+	}
+	.select-container {
+		display:inline-block;
+		cursor:pointer;
+		position:relative;
+		border:$OUTLINE_SIZE solid $COLOR_PRI;
+		background-color:$COLOR_FOREGROUND;
+		//overflow: hidden;
+		select {
+			padding-right: $CARD_BUTTON_HEIGHT + $OUTLINE_SIZE;
+			height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+			overflow: hidden;
+			z-index: 99;
+		}
+		.carret {
+			display:none;
+		}
+		&:after{
+			pointer-events: none;
+			z-index: 1;
+			position: absolute;
+			right:0;
+			background-color:$COLOR_PRI;
+			top:0;
+			display:block;
+			width:$CARD_BUTTON_HEIGHT;
+			height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+			line-height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+			content:"";
+			color:white;
+			text-align:center;
+		    font-size: 40px;
+		    vertical-align: baseline;
+		    @extend .fa;
+		}
+	}
+}
+.margin-left {
+	margin-left:$MARGIN_BIG;
+}
+
+nav.card {
+	padding:0;
+	ul.menu {
+		list-style-type:none;
+		padding:0;
+		margin:0;
+		display:flex;
+		flex-direction:row;
+
+		@include phone-and-small {
+			flex-direction: column;
+		}
+
+		> li {
+			display:inline-block;
+			flex-grow:1;
+			cursor:pointer;
+			position:relative;
+			background-color:$COLOR_FOREGROUND;
+			> a, a:link, a:hover, a:visited, a:focus, a:active {
+				@include phone-and-small {
+					flex-direction: column;
+					height:$XS_BUTTON_HEIGHT;
+					line-height:$XS_BUTTON_HEIGHT;
+					font-size: $XS_BUTTON_FONT_SIZE;
+					border-bottom:1px solid $COLOR_GRAY;
+					border-right:$OUTLINE_SIZE solid $COLOR_FOREGROUND;
+				}
+				display:block;
+				box-sizing: border-box;
+
+				height:$CARD_BUTTON_HEIGHT;
+				color:$COLOR_PRI;
+
+				line-height:$CARD_BUTTON_HEIGHT;
+				@extend .font-button;
+				text-align:center;
+
+				border-bottom:$OUTLINE_SIZE solid $COLOR_FOREGROUND;
+				&:active, &.active, &:focus {
+					border-bottom:$OUTLINE_SIZE solid $COLOR_PRI;
+					@include phone {
+						border-bottom:1px solid $COLOR_GRAY;
+						border-right:$OUTLINE_SIZE solid $COLOR_PRI;
+					}
+				}
+			}
+		}
+	}
+}
+ol.sentences {
+	margin:0;
+	padding:0;
+	counter-reset: item;
+	list-style-type:none;
+	> li {
+	    position:relative;
+		padding:0 0 0 20px;
+		color:black;
+		&:before {
+			display:block;
+		    content: counter(item) ".";
+		    counter-increment: item;
+		    width: 3em;
+		    position:absolute;
+		    left:0;
+			height:$CARD_BUTTON_HEIGHT;
+			line-height:$CARD_BUTTON_HEIGHT;
+			text-align:right;
+			color:$COLOR_PRI;
+		}
+		&:after { display:none; }
+		&:hover, &:hover:before {
+			background:$COLOR_PRI;
+			color:white;
+		}
+		a {
+			margin-left:3em;
+			height:$CARD_BUTTON_HEIGHT;
+			line-height:$CARD_BUTTON_HEIGHT;
+			display:inline-block;
+			overflow:hidden;
+			&:active, &:link, &:visited, &:hover {
+				color:inherit;
+				text-decoration:none;
+			}
+		}
+	}
+}
+.columns-btn {
+	display:flex;
+	flex-direction:row;
+	@include phone-and-small {
+		flex-direction: column;
+	}
+	.container-btn {
+		margin:$MARGIN_SMALL;
+		display:flex;
+		flex-direction: column;
+		
+		@include phone-and-small {
+			flex-direction: row;
+		}
+		flex: 1 1 auto;
+		justify-content: space-between;
+		.btn {
+			height:$CARD_BUTTON_HEIGHT;
+			line-height:$CARD_BUTTON_HEIGHT;
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}

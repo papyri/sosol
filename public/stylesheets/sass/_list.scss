@@ -1,0 +1,30 @@
+
+ul.unstyled {
+	padding: 0;
+	& > li {
+		padding: 0;
+		margin: 2px;
+		list-style: none;
+	} 
+}
+ul.dashed {
+  list-style-type: none;
+  & > li {
+	  padding: 5px;
+	  &:before {
+	  	 content: "- ";
+	  }
+	}
+}
+ul.btns {
+	> li {
+		height:$BUTTON_HEIGHT+2;
+		line-height: $BUTTON_HEIGHT+2;
+		.btn {
+			margin:0;
+		}
+		&:before {
+			clear:both;
+		}
+	}
+}

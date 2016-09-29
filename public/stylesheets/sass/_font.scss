@@ -1,0 +1,71 @@
+/**
+ *
+ * Fonts
+ *
+ */
+.font-title {
+	font-family: Roboto;
+	font-weight: 300;
+	font-style: normal;
+	font-size: 45px;
+}
+.font-button {
+	&:link {
+		text-decoration: none!important;
+	}
+	font-family: Roboto;
+	font-weight: 500;
+	font-style: normal;
+	font-size: $BUTTON_FONT_SIZE;
+	text-transform: uppercase;
+	@include phone {
+  		font-size: $MD_BUTTON_FONT_SIZE;
+	}
+	@include medium {
+  		font-size: $MD_BUTTON_FONT_SIZE;
+	}
+}
+
+.font-subheading {
+	font-family: Roboto;
+	font-weight: 500;
+	font-style: normal;
+	font-size: 15px;
+	text-transform:uppercase;
+}
+
+.font-body, body {
+	font-family: Roboto;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 15px;
+}
+
+.font-link, a, a:visited, a:hover, a:focus, a:link {
+	font-family: Roboto;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 15px;
+	line-height:15px;
+	text-decoration:underline;
+	color:black;
+}
+
+em {
+	font-family: Roboto;
+	font-weight: 500;
+	font-style: normal;
+}
+
+.color-secondary {
+	color:$COLOR_SEC;
+}
+.right {
+	float:right;
+}
+.left {
+	float:left;
+}
+.text-center {
+	text-align:center;
+}

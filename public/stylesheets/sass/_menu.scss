@@ -1,0 +1,229 @@
+
+#main-menu {
+	flex-basis:$MENU_WIDTH;
+	min-width:$MENU_WIDTH;
+	margin-left:$MARGIN_BIG;
+	background-color: $COLOR_FOREGROUND;
+	@extend .bg-sdw;
+	text-align:center;
+	padding-bottom:$BUTTON_HEIGHT/3*2;
+
+	@include medium {
+		flex-basis:$MD_MENU_WIDTH;
+		min-width:$MD_MENU_WIDTH;
+	}
+
+	@include phone {
+		flex-basis:$XS_MENU_WIDTH;
+		margin:0 0 0 0;
+		padding-bottom:0;
+		margin-bottom:20px;
+	}
+	// When collapsed
+	&.off {
+		@include phone {
+			.welcome, .user-picture, nav {
+				display:none;
+				height:0;
+				-webkit-transition: height 0.7s ease-out;
+				transition: height 0.7s ease-out;
+			}
+		}
+	}
+	// Div containing the logo and the three dot container
+	#logo-container {
+	    @include phone { display: flex; }
+	}
+
+	// Three dots container used to collapse the menu in mobile view
+	.more {
+		display:none;
+		@include phone {
+		    display: block;
+		    width:auto;
+		    text-align:right;
+			line-height: 2*$MD_BUTTON_HEIGHT;
+			flex: 2 0px; 
+			padding-right:1em;
+		}
+		// Three dot image
+		img {
+			height:30px;
+		}
+	}
+
+
+	> div, > nav {
+		margin-bottom:$BUTTON_HEIGHT/3*2;
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+	.logo, .user-picture {
+		display:block;
+		margin:0 auto;
+	}
+	.logo {
+		@include phone {
+			flex: 1 auto;
+		}
+		> img {
+			margin-top:10px;
+			width:90%;
+			margin:5%;
+			@include phone {
+				margin:0;
+				height:2*$MD_BUTTON_HEIGHT;
+				width:auto;
+			}
+		}	
+	}
+
+	.user-picture {
+		@extend .img-circle;
+		@extend .outline-secondary;
+		width:70%;
+		@include phone {
+			width:40%;
+		}
+	}
+
+	nav {
+		border-top:1px solid $COLOR_GRAY;
+		/*
+			News block
+		*/
+		> .news {
+			padding:$MARGIN_SMALL;
+			min-height: $BUTTON_HEIGHT;
+			border-bottom:1px solid $COLOR_GRAY;
+			border-right: $OUTLINE_SIZE solid $COLOR_SEC;
+			font-size:14px;
+		}
+		/*
+			Navigation menu
+		*/
+		ul {
+			list-style: none;
+			margin:0;
+			padding:0;
+			display:block;
+			li {
+				display:block;
+				 a, a:visited, a:focus, a:link, a:active {
+				 	cursor:pointer;
+				 	display:block;
+					height: $BUTTON_HEIGHT;
+					line-height: $BUTTON_HEIGHT;
+					border-bottom:1px solid $COLOR_GRAY;
+					@extend .font-button;
+					color: black;
+					text-decoration: none!important;
+				}
+				&.active {
+					a {
+						border-right: $OUTLINE_SIZE solid $COLOR_PRI;
+					}
+				}
+
+				/*
+					Dropdown link container
+					.label is the text of the dropdown
+					.caret-container is the arrow
+					.when-off and .when-on are used to switch arrow sense
+				*/
+				&.p-dropdown {
+					.label {
+						display:inline-block;
+					}
+					.caret-container {
+						display:inline-block;
+						height:100%;
+						max-width:2em;
+						margin-right:1em;
+						float:right;
+						text-align:right;
+						line-height: $BUTTON_HEIGHT;
+					}
+					&.active a{
+						border-right:none;
+						border-top:$OUTLINE_SIZE solid $COLOR_PRI;
+					}
+					.when-off {
+						display:inline;
+					}
+					.when-on {
+						display:none;
+					}
+					&.active {
+						.when-on {
+							display:inline;
+						}
+						.when-off {
+							display:none;
+						}
+					}
+				}
+
+				/*
+					Perseids Dropdown Container in Menu have a children ul
+				*/
+				&.p-dropdown-container {
+					display:none;
+					&.visible {
+						display:block;
+						background-color:#e5e5e5;
+						border-bottom: $OUTLINE_SIZE solid $COLOR_PRI;
+						a {
+							font-size: 95%;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.logins {
+		margin-bottom:$BUTTON_HEIGHT/3*4;
+		border-top:none;
+		h3 {
+			margin-bottom: $BUTTON_HEIGHT/3*1;
+		}
+		ul li {
+			a, a:visited, a:focus, a:link, a:active  {
+				height: $CARD_BUTTON_HEIGHT;
+				line-height: $CARD_BUTTON_HEIGHT;
+				img {
+					height:94%;
+					padding:2%;
+					width:auto;
+				}
+			}
+			&.google, &.yahoo, &.aol, &.openid {
+				a, a:visited, a:focus, a:link, a:active  {
+					color:white;
+					border:none;
+					.fa {
+						line-height: $CARD_BUTTON_HEIGHT;
+						margin:0 0.5em 0 0.5em;
+					}
+				}
+			}
+			&.google {
+				background-color:#f44336;
+			}
+			&.yahoo {
+				background-color:#7b0099;
+			}
+			&.aol {
+				background-color:#00a8ff;
+			}
+			&.openid {
+				background-color:#f7931e;
+			}
+			
+
+		}
+	}
+	
+}

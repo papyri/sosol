@@ -10,7 +10,6 @@
     </title>
     <%= stylesheet_link_tag 'perseids' %>
     <%= stylesheet_link_tag 'master_additions' %>
-    <%= stylesheet_link_tag 'editor' %>
     <%= javascript_include_tag :defaults %>
     <%= javascript_include_tag "dashboard" %>
   	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.slim.min.js"></script>
@@ -98,11 +97,7 @@
 	    <%= render('user/perseids_user_box') %>
 	  </nav>
     </div>
-    <div id="main-wrapper">
-    	<div id="container">
-        <%= render "common/flash_all"  %>
-        <%= yield %>
-   		</div>
-    </div>
+    <%= render "common/flash_all"  %>
+    <%= yield %>
   </body>
 </html>

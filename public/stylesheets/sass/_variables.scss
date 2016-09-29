@@ -1,0 +1,95 @@
+$MD_SCREEN: 1200px;
+$SM_SCREEN:1000px;
+$XS_SCREEN: 799px;
+/**
+ * Color variables
+*/
+$COLOR_FOREGROUND: white;
+$COLOR_PRI: #7986cb;
+$COLOR_SEC: #ffb74d;
+$COLOR_Passage: #f8bbd0;
+$COLOR_Annotations: #81d4fa;
+$COLOR_Treebank: #a5d6a7;
+$COLOR_Text_Alignment: #ef9a9a;
+$COLOR_Transcription: #ffe082;
+$COLOR_Text_Annotations: #bcaaa4;
+$COLOR_Commentary: #ce93d8;
+$COLOR_Translation: #bfcf2d;
+$COLOR_GRAY: #bdbdbd;
+$COLOR_BACKGROUND: #eceff1;
+
+/**
+ *
+ * Sizes
+ *
+ */
+ $BUTTON_HEIGHT: 45px;
+ $CARD_BUTTON_HEIGHT: 60px;
+ $BUTTON_WIDTH: 250px;
+ $BUTTON_FONT_SIZE:20px;
+
+ $MD_BUTTON_HEIGHT:45px;
+ $MD_BUTTON_WIDTH:180px;
+ $MD_BUTTON_FONT_SIZE:16px;
+
+ $XS_BUTTON_HEIGHT:45px;
+ $XS_BUTTON_WIDTH:180px;
+ $XS_BUTTON_FONT_SIZE:16px;
+
+ $OUTLINE_SIZE: 5px;
+ $MARGIN_SMALL: 5px;
+ $MARGIN:0 $MARGIN_SMALL $MARGIN_SMALL 0;
+ $MARGIN_BIG: 20px;
+
+/**
+ *
+ * Columns
+ */
+$MD_MENU_WIDTH: $MD_BUTTON_WIDTH;
+$XS_MENU_WIDTH: 100%;
+$MENU_WIDTH: $BUTTON_WIDTH;
+ /**
+  *
+  *
+  *
+  */
+.bg-sdw {
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+ }
+.no-sdw {
+  -webkit-box-shadow:none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+ }
+ .fg-sdw {
+	-webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+ }
+
+
+@mixin phone {
+  @media (max-width: #{$XS_SCREEN}) and (-webkit-min-device-pixel-ratio: 2) {
+    @content;
+  }
+}
+
+@mixin medium {
+  @media (min-width: #{$SM_SCREEN + 1}) and (max-width: #{$MD_SCREEN}) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (min-width: #{$XS_SCREEN + 1}) and (max-width: #{$SM_SCREEN}) {
+    @content;
+  }
+}
+
+@mixin phone-and-small {
+  @media (max-width: #{$SM_SCREEN}) {
+    @content;
+  }
+}
