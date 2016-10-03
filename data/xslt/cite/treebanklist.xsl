@@ -4,7 +4,7 @@
     version="2.0">
     
     <xsl:output method="xhtml" omit-xml-declaration="yes"/>
-    
+
     <xsl:param name="doc_id"/>
     <xsl:param name="title"/>
     <xsl:param name="s" select="xs:integer(1)"/>
@@ -17,13 +17,13 @@
       <xsl:choose>
         <xsl:when test="//treebank[@xml:lang]"><xsl:value-of select="//treebank/@xml:lang"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="$lang"/></xsl:otherwise>
-      </xsl:choose> 
+      </xsl:choose>
     </xsl:variable>
     <xsl:variable name="docfmt">
       <xsl:choose>
         <xsl:when test="//treebank[@format]"><xsl:value-of select="//treebank/@format"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="'aldt'"/></xsl:otherwise>
-      </xsl:choose> 
+      </xsl:choose>
     </xsl:variable>
     <xsl:variable name="gold">
         <xsl:choose>
@@ -32,8 +32,8 @@
             </xsl:when>
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
-    </xsl:variable> 
-    
+    </xsl:variable>
+
     <xsl:template match="/treebank">
         <xsl:variable name="count" select="count(sentence)"/>
         <xsl:variable name="start">
@@ -42,7 +42,7 @@
                     <xsl:value-of select="$s"/>
                 </xsl:when>
                 <xsl:otherwise><xsl:value-of select="xs:integer(1)"/></xsl:otherwise>
-            </xsl:choose>    
+            </xsl:choose>
         </xsl:variable>
         <xsl:variable name="prev">
         <xsl:choose>
@@ -58,7 +58,7 @@
         <xsl:variable name="next">
             <xsl:if test="sentence[@id=$start + $max]">
                 <xsl:value-of select="$start + $max"/>
-            </xsl:if>    
+            </xsl:if>
         </xsl:variable>
         <xsl:variable name="first" select="sentence[@id = $start]"/>
         <xsl:variable name="navtitle">
@@ -78,7 +78,6 @@
                         <xsl:text>Previous</xsl:text>
                     </xsl:element>
                 </xsl:if>
-                <xsl:element name="label"><xsl:value-of select="$navtitle"/></xsl:element>
                 <xsl:if test="$next != ''">
                     <xsl:element name="span">
                         <xsl:attribute name="class">sentence_next</xsl:attribute>
@@ -90,8 +89,10 @@
         </xsl:if>
         </xsl:variable>
         <xsl:copy-of select="$nav"/>
-        <xsl:element name="ul">
-            <xsl:attribute name="class">sentence_list</xsl:attribute>
+        <xsl:element name="ol">
+            <xsl:attribute name="class">sentences</xsl:attribute>
+            <xsl:attribute name="start" select="$start"/>
+            <xsl:attribute name="style">counter-reset: item <xsl:value-of select="$start - 1"/></xsl:attribute>
             <xsl:for-each select="sentence[(xs:integer(@id) &gt;= $start) and (xs:integer(@id) &lt; $start + $max)]">
                 <xsl:apply-templates select="."/>
             </xsl:for-each>
@@ -102,12 +103,7 @@
     <xsl:template match="sentence">
         <xsl:element name="li">
             <xsl:attribute name="data-s"><xsl:value-of select="@id"/></xsl:attribute>
-            <xsl:attribute name="class">sentence</xsl:attribute>
             <xsl:attribute name="title"><xsl:value-of select="string-join((@document_id,@subdoc,@span), ':')"/></xsl:attribute>
-            <xsl:element name="span">
-                <xsl:attribute name="class">sentence_num</xsl:attribute>
-                <xsl:value-of select="@id"/>
-            </xsl:element>
             <xsl:choose>
                 <xsl:when test="$tool_url">
                     <xsl:element name="a">
