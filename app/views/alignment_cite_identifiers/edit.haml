@@ -1,12 +1,11 @@
 = javascript_include_tag 'confirm'
 = javascript_include_tag 'treebank-cite'
   
-#main
-  = render :partial => 'identifiers/edit_bar'
-  .site
-    = render :partial => 'identifiers/header'
-    #edit
-      .hints Click a sentence to edit it in Alpheios
-      .PContent
+#main-wrapper
+  #container
+    = render :partial => 'identifiers/edit_bar_perseids'
+    .card
+      = render :partial => 'identifiers/header'
+      .hints Select a sentence to Edit in Alpheios
+    %div{:class => 'card no-padding'}
       = @list.html_safe
-       

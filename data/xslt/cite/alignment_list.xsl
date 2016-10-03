@@ -70,8 +70,9 @@
         </xsl:if>
         </xsl:variable>
         <xsl:copy-of select="$nav"/>
-        <xsl:element name="ul">
-            <xsl:attribute name="class">sentence_list</xsl:attribute>
+        <xsl:element name="ol">
+            <xsl:attribute name="class">sentences</xsl:attribute>
+            <xsl:attribute name="style">counter-reset: item <xsl:value-of select="$start - 1"/></xsl:attribute>
             <xsl:for-each select="align:sentence[(xs:integer(@id) &gt;= $start) and (xs:integer(@id) &lt; $start + $max)]">
                 <xsl:apply-templates select="."/>
             </xsl:for-each>
@@ -84,10 +85,6 @@
             <xsl:attribute name="data-s"><xsl:value-of select="@id"/></xsl:attribute>
             <xsl:attribute name="class">sentence</xsl:attribute>
             <xsl:attribute name="title"><xsl:value-of select="align:wds/align:comment[@class='uri']"/></xsl:attribute>
-            <xsl:element name="span">
-                <xsl:attribute name="class">sentence_num</xsl:attribute>
-                <xsl:value-of select="@id"/>
-            </xsl:element>
             <xsl:choose>
                 <xsl:when test="$tool_url">
                     <xsl:element name="a">

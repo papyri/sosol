@@ -12,9 +12,11 @@
         = link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
     -elsif @identifier.class == TreebankCiteIdentifier || @identifier.class == AlignmentCiteIdentifier
       %li
-        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit preview update}.include?(params[:action]) ? 'active' : ''
+        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit}.include?(params[:action]) ? 'active' : ''
       %li
         = link_to 'Edit XML', polymorphic_path([:editxml,@identifier.publication, @identifier]), :class => %w{editxml}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to 'Preview',polymorphic_path([:preview,@identifier.publication, @identifier]), :class => %w{preview}.include?(params[:action]) ? 'active' : ''
       %li
         = link_to "Download Copy", {:controller => 'publications', :id => @identifier.publication.id, :action => "download"}
       -if @can_compare

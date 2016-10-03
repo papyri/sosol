@@ -1,14 +1,11 @@
 = javascript_include_tag 'confirm'
-  
-#main
-  = render :partial => 'identifiers/edit_bar'
+= javascript_include_tag 'treebank-cite'
 
-  .site
-    #edit
-      = form_for @identifier, :url => { :action => :update }  do |f|
-        = f.error_messages
-        %h2 Preview
-        .hints Click a sentence to view it in Alpheios
-        .PContent
-          = @list.html_safe
-       
+#main-wrapper
+  #container
+    = render :partial => 'identifiers/edit_bar_perseids'
+    .card
+      = render :partial => 'identifiers/header'
+      .hints Select a sentence to Preview in Alpheios
+    %div{:class => 'card no-padding'}
+      = @list.html_safe
