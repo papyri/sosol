@@ -1,0 +1,10 @@
+
+@import "variables";
+#wayf_select_form img {
+  border: 2px outset $COLOR_PRI;
+  margin: 0 2px;
+  cursor: pointer;
+  padding: 2px;
+  height: 60px;
+  width: 120px;
+}

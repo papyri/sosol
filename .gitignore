@@ -13,3 +13,4 @@ protosite.war
 lib/rxsugar
 .sass-cache
 *.swp
+*.css.map
