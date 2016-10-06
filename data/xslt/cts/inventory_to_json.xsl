@@ -209,13 +209,13 @@
         <xsl:variable name="label">
             <xsl:choose>
                 <xsl:when test="$e_lang and (cts:label[@xml:lang=$e_lang]|cts5:label[@xml:lang=$e_lang])">
-                    <xsl:value-of select="normalize-space(cts:label[@xml:lang=$e_lang]|cts5:label[@xml:lang=$e_lang])"/>
+                    <xsl:value-of select="replace(normalize-space(cts:label[@xml:lang=$e_lang]|cts5:label[@xml:lang=$e_lang]),'&quot;','')"/>
                 </xsl:when>
                 <xsl:when test="cts:label|cts5:label">
-                    <xsl:value-of select="translate(normalize-space((cts:label[1]|cts5:label[1])),':',',')"/>
+                    <xsl:value-of select="replace(translate(normalize-space((cts:label[1]|cts5:label[1])),':',','),'&quot;','')"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
+                    <xsl:value-of select="replace(normalize-space(substring-after(@projid,':')),'&quot;','')"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
