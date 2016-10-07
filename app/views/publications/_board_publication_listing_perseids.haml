@@ -1,0 +1,41 @@
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+%div{:class => "publication-column", :id => list_id }
+  - publications.each do |publication|
+    %div{:class => 'fix-sdw'}
+      %div{:class => 'publication'}
+        %span{:class => 'legend'}
+          - display_title = publication.title
+          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name
+        - if list_name == "approved"
+          - if publication.find_finalizer_user
+            - finalizer_div_id = "finalizer_" + publication.id.to_s
+            %br
+            = publication.find_finalizer_user.human_name
+            = " is finalizing. "
+            = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id, :onclick => 'this.disabled=true;return true;' }
+        - if list_name == "needs_review" || list_name == "waiting"
+          - if publication.votes.count > 0
+            %div{:class=>"votes dropdown-container"}
+              %ul{:class => "type-dropdown"}
+                %li{:class => "active votes"}
+                  = publication.votes.count
+                  = publication.votes.count == 1 ? " vote" : " votes"
+                - publication.votes.each do |vote|
+                  %li{:class => "votes"}
+                    = vote.user.human_name + " (" + vote.user.name + ") "
+                    = vote.choice
+        %div{:class => "dropdown-container"}
+          %ul{:class => "type-dropdown"}
+            - Identifier.site_identifier_classes.each do |i|
+              - has_active = false
+              - if i.constantize::is_visible
+                - publication.identifiers.each do |m|
+                  - if m.type == i
+                    %li{:class => m.class}
+                      = link_to m.class::FRIENDLY_NAME, edit_polymorphic_path([publication,m]), {:title => m.title}
+:javascript
+  jQuery(document).ready(
+    function() { perseids_publication_selector(); });

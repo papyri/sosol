@@ -3032,22 +3032,24 @@ ul.btns > li {
           text-decoration: none; }
           .publication .dropdown-container .type-dropdown > li a:active:hover, .publication .dropdown-container .type-dropdown > li a:link:hover, .publication .dropdown-container .type-dropdown > li a:hover:hover, .publication .dropdown-container .type-dropdown > li a:visited:hover {
             text-decoration: underline; }
-        .publication .dropdown-container .type-dropdown > li.treebank {
+        .publication .dropdown-container .type-dropdown > li.TreebankCiteIdentifier {
           background-color: #a5d6a7; }
-        .publication .dropdown-container .type-dropdown > li.transcription {
+        .publication .dropdown-container .type-dropdown > li.EpiCTSIdentifier {
           background-color: #ffe082; }
-        .publication .dropdown-container .type-dropdown > li.commentary {
+        .publication .dropdown-container .type-dropdown > li.CommentaryCiteIdentifier {
           background-color: #ce93d8; }
-        .publication .dropdown-container .type-dropdown > li.text-alignment {
+        .publication .dropdown-container .type-dropdown > li.AlignmentCiteIdentifier {
           background-color: #ef9a9a; }
-        .publication .dropdown-container .type-dropdown > li.passage {
+        .publication .dropdown-container .type-dropdown > li.CitationCTSIdentifier {
           background-color: #f8bbd0; }
-        .publication .dropdown-container .type-dropdown > li.annotations {
+        .publication .dropdown-container .type-dropdown > li.OaCiteIdentifier {
           background-color: #81d4fa; }
-        .publication .dropdown-container .type-dropdown > li.text-annotations {
+        .publication .dropdown-container .type-dropdown > li.OACIdentifier {
           background-color: #bcaaa4; }
-        .publication .dropdown-container .type-dropdown > li.translation {
+        .publication .dropdown-container .type-dropdown > li.EpiTransCTSIdentifier {
           background-color: #bfcf2d; }
+        .publication .dropdown-container .type-dropdown > li.votes {
+          background-color: #bdbdbd; }
       .publication .dropdown-container .type-dropdown:hover {
         position: absolute;
         right: 0;
@@ -3055,3 +3057,9 @@ ul.btns > li {
         z-index: 100; }
         .publication .dropdown-container .type-dropdown:hover > li {
           display: block; }
+  .publication .dropdown-container.votes {
+    width: 180px; }
+    .publication .dropdown-container.votes .type-dropdown {
+      text-align: left; }
+
+/*# sourceMappingURL=perseids.css.map */

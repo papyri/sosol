@@ -16,20 +16,6 @@
     <%= javascript_include_tag "cross_site" %>
     <script language="javascript" type="text/javascript">
       jQuery.noConflict();
-  		$(document).ready(function() {
-  			$(".more").on("click", function(e) { e.preventDefault(); $("#main-menu").toggleClass("off"); });
-  			$(".p-dropdown a").on("click", function(e) {
-  				e.preventDefault();
-  				var that = $(this),
-  					target = that.attr("href");
-  				$(target).toggleClass("visible");
-  				that.parent().toggleClass("active");
-  			});
-  			$(".select-container .carret").on("click", function(e) {
-  				e.preventDefault();
-  				$(this).prev("select").get(0).dispatchEvent(e);
-  			});
-  		});
       window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
       ga('create', 'UA-72072451-1', 'auto');
       ga('send', 'pageview');

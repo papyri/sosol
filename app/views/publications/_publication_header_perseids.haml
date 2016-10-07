@@ -1,0 +1,9 @@
+- if defined?(list_name)
+  %header
+    - list_id = "publication_list_holder_" + list_name
+    %h1{:class => "lesslink", :id => 'less_' + list_id, :onclick => "Effect.SlideUp('#{list_id}'); $('less_#{list_id}').hide(); $('more_#{list_id}').show(); return false;"}
+      = "-" + status
+    %h1{:style => "display:none;", :class => "more_less morlink", :id => 'more_' + list_id, :onclick => "Effect.SlideDown('#{list_id}'); $('more_#{list_id}').hide(); $('less_#{list_id}').show(); return false;"}
+      = "+" + status
+  
+

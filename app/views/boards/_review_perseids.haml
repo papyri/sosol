@@ -1,0 +1,57 @@
+- if identifier.modified?
+  %h1 Votes
+  - user_has_voted = identifier.publication.user_has_voted?(@current_user.id)
+  %ul
+    - if identifier.publication.votes.length == 0
+      %li No votes yet.
+    - else
+      - identifier.publication.votes.each do |vote|
+        %li
+          = vote.choice
+          = vote.user.name
+  %br
+  - if !user_has_voted && identifier.publication.status == "voting"
+    = form_for Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :as => :vote, :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
+      #submit
+        = f.hidden_field :publication_id
+        = f.hidden_field :identifier_id
+        %div
+          Your Vote (Required)
+          - choices = Hash.new
+          - identifier.publication.owner.decrees.each do |d|
+            - d.get_choice_array.each do |c|
+              - choices[c] = c
+          .select-container
+            = select "vote", "choice", choices, {:include_blank => true}
+            .carret
+              %i{:class => "fa fa-caret-down"}
+      %div
+        = label_tag "comment", "Your Comment (Required)"
+        = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote input'
+        = f.submit "Vote", :id => 'vote_submit', :disabled => true, :onclick => 'preventDoubleVote()'
+  %hr
+        
+:javascript
+  $j = jQuery.noConflict();
+  
+  //------------------------------------------------------------
+  //  Runs whenever vote text area or drop-down is changed
+  //------------------------------------------------------------
+  function checkForComment() { 
+    comment_text = $j('#comment_comment').val();
+    if ( comment_text.replace(/^\s+|\s+$/g, '') != "" && $j('#vote_choice').val() != "" ) {
+      $j('#vote_submit').attr('disabled', false );       
+    }
+    else {
+      $j('#vote_submit').attr('disabled', true );
+    }
+  }
+  
+  function preventDoubleVote() { 
+    set_conf_false_vote();
+    $j('#vote_submit').hide();
+  }
+  
+  $j('#vote_choice').change( function(){
+    checkForComment();
+  });

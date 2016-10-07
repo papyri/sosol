@@ -78,29 +78,32 @@
 						text-decoration:underline;
 					}
 				}
-				&.treebank {
+				&.TreebankCiteIdentifier {
 					background-color: $COLOR_Treebank;
 				}
-				&.transcription {
+				&.EpiCTSIdentifier {
 					background-color: $COLOR_Transcription;
 				}
-				&.commentary {
+				&.CommentaryCiteIdentifier {
 					background-color: $COLOR_Commentary;
 				}
-				&.text-alignment {
+				&.AlignmentCiteIdentifier {
 					background-color: $COLOR_Text_Alignment;
 				}
-				&.passage {
+				&.CitationCTSIdentifier {
 					background-color: $COLOR_Passage;
 				}
-				&.annotations {
+				&.OaCiteIdentifier {
 					background-color: $COLOR_Annotations;
 				}
-				&.text-annotations {
+				&.OACIdentifier {
 					background-color: $COLOR_Text_Annotations;
 				}
-				&.translation {
+				&.EpiTransCTSIdentifier {
 					background-color: $COLOR_Translation;
+				}
+				&.votes {
+					background-color: $COLOR_GRAY;
 				}
 			}
 			&:hover {
@@ -113,6 +116,12 @@
 				}
 			}
 		}	
+	}
+	.dropdown-container.votes {
+		width:$MD_BUTTON_WIDTH;
+		.type-dropdown {
+			text-align: left;
+		}
 	}
 
 }

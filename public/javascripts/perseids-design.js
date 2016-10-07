@@ -16,4 +16,11 @@ function perseids_user_box() {
   });
 }
 
+function perseids_publication_selector() {
+  jQuery(".publication ul.type-dropdown").each(
+    function() {
+      jQuery("li:first",this).addClass('active')
+    });
+}
+
 
