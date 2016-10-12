@@ -7,31 +7,32 @@
     %header
       %h1
         = page_title
-      #download_link
-        = link_to "Download Board Publications", :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset
-  
-        - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
-          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
-
-        - if @finalizing_publications && @finalizing_publications.length > 0
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
-          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
-
-        - if @approved_publications && @approved_publications.length > 0
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
-          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
-        -if @count > 50
-          %p
-          -if @offset > 0
-            = link_to "< Previous 50", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset-50
-          = link_to "Next 50 >", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset+50
-
-        - if @member_already_voted_on && @member_already_voted_on.length > 0
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Waiting", :view_type => "board", :list_name => "waiting" }
-          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
-
-
-        %br
-        .archive_link
+    %nav.card
+      %ul.menu
+        %li
+          = link_to "Download Board Publications", { :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset }, :class => 'btn autosize'
+        %li
           = link_to "Archived", :controller => 'user', :action => 'archives', :board_id => @board.id
+
+    - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
+      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
+      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
+
+    - if @finalizing_publications && @finalizing_publications.length > 0
+      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
+      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
+
+    - if @approved_publications && @approved_publications.length > 0
+      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
+      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
+    -if @count > 50
+      %p
+      -if @offset > 0
+        = link_to "< Previous 50", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset-50
+        = link_to "Next 50 >", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset+50
+
+    - if @member_already_voted_on && @member_already_voted_on.length > 0
+      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Waiting", :view_type => "board", :list_name => "waiting" }
+      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
+
+

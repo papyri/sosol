@@ -34,8 +34,8 @@
       
     -# render :partial => "common/flash_all"    
 
-    #submit.card
-      - if %w{new editing}.include?(@publication.status)
+    - if %w{new editing}.include?(@publication.status)
+      #submit.card
         - if @show_submit
           %h2 Submit
           %p   
@@ -58,55 +58,15 @@
               Publication may not be submitted at this time.
           - if !@publication.modified?
             No changes have been made.
-      .columns
-        - if @show_submit
-          .text-center
-            .select-container
-              = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
-              .carret
-                %i{:class => "fa fa-caret-down"}
-            = submit_tag "Submit to Boards", :onclick => 'this.disabled=true;this.form.submit();', :disabled => true, :class => 'submit margin-left', :id => "submit_button"
-        .text-left
-          %ul{:class => "unstyled"}
-            %li
-              = link_to I18n.t('publication.commentslink'), {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe, :class => 'btn fullsize'
-            - if @publication.allow_user_withdrawal?(@current_user)
-              %li
-                = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn fullsize"
-            - if @allow_delete
-              %li
-                = link_to "Delete", {:controller => 'publications', :id => @publication.id, :action => "confirm_delete"}, :class => "btn fullsize"
-            - if %w{approved voting finalizing}.include?(@publication.status)
-              %li
-                = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn fullsize"
-            - if @publication.status == "committed"
-              %li
-                = link_to "Archive", {:controller => 'publications', :id => @publication.id, :action => "confirm_archive"}, :class => "btn fullsize"
-            - if @current_user.developer
-              %li
-                = link_to "developer immediate delete", @publication, :method => :delete, :class => "btn fullsize"
-            - if %w{new editing submitted approved voting committed}.include? @publication.status
-              %li
-                = link_to "Download Copy", {:controller => 'publications', :id => @publication.id, :action => "download"}, :class => "btn fullsize"
-            -# if owner is a board, and it is approved, add a button to make me the finalizer
-            - if @publication.owner_type == "Board" && @publication.status == "approved"
-              -# if i am already the finalizer dont show the button
-              - finalizer = @publication.find_finalizer_user
-              - if !(finalizer && finalizer.id == @current_user.id)
-                %li
-                  = button_to "Make me finalizer", { :action => 'become_finalizer', :id => @publication.id, :onclick => 'this.disabled=true;return true;', :class => 'btn fullsize' }
-            - if %w{editing new}.include?(@publication.status)
-              - for class_type in @creatable_identifiers
-                - link_type = class_type.constantize::FRIENDLY_NAME
-                - create_type = 'Create new ' + link_type
-                - newstyle = 'style="color:white; background-color:#005DAA"'
-                %li
-                  - if class_type == 'APISIdentifier'
-                    - options = ['Create new APIS'] << APISIdentifier.collection_names_hash.sort
-                    - form_for :apis, :url => {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type} do |f|
-                      = select_tag 'apis_collection', options_for_select(options.flatten.uniq), :onchange => "this.form.submit()"
-                  - else
-                    = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');", :class => 'btn fullsize'})
+        .columns
+          - if @show_submit
+            .text-center
+              .select-container
+                = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
+                .carret
+                  %i{:class => "fa fa-caret-down"}
+              = submit_tag "Submit to Boards", :onclick => 'this.disabled=true;this.form.submit();', :disabled => true, :class => 'submit margin-left', :id => "submit_button"
+    = render :partial => 'action_bar'
 
     - if @current_user.developer
       - if @publication.modified?
