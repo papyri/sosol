@@ -25,6 +25,19 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
 		}
 	}
 
+	&.TreebankCiteIdentifier {
+		background-color: $COLOR_Treebank;
+		color: white;
+	}
+	&.AlignmentCiteIdentifier {
+		background-color: $COLOR_Text_Alignment;
+		color: white;
+	}
+	&.OaCiteIdentifier {
+		background-color: $COLOR_Annotations;
+		color: white;
+	}
+
 	@include medium {
   		width:$MD_BUTTON_WIDTH;
 		height: $MD_BUTTON_HEIGHT;

@@ -1,26 +1,34 @@
-%div{:id => 'publications-_cts_selector'}
-%input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
-- cache(:action => 'dashboard', :part => 'publication_selector') do
-  - unless defined? hide_text
-    %p== Existing publication:
-  = form_tag :controller => controller, :action => "create_from_selector" do
-    %p{:class => ['cts_selector_hint']}== Select a publication to work with:
-    = hidden_field_tag 'IdentifierClass','CTSIdentifier'
-    - [CTSIdentifier].each do |identifier_class|
-      = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
-    = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-    = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-    //= text_field_tag('passage')
-    = submit_tag "Emend", :disabled => true, :id => 'emend_button'
-    = submit_tag "Create Edition", :disabled => true, :id => 'create_button'
-    %div{:class => ['nav_tools']}
-      %ul{:class => ['nav_right','perseids_menu']}
-        %li
-          - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
-          = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target]}
-        %li
-          - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
-          = link_to align[:text], align[:href], html_options = { 'target' => align[:target]}
-        %li
-          = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import' )
+.card
+  %nav
+    - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
+    = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target], :class => 'btn TreebankCiteIdentifier autosize'}
+    - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
+    = link_to align[:text], align[:href], html_options = { 'target' => align[:target], :class => 'btn AlignmentCiteIdentifier autosize'}
+    = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import'), :class => 'btn OaCiteIdentifier autosize'
+  %br
+  %div{:id => 'publications-_cts_selector'}
+    %input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
+    - cache(:action => 'dashboard', :part => 'publication_selector') do
+      = form_tag :controller => controller, :action => "create_from_selector" do
+        %h2== Or select a text to work with:
+        = hidden_field_tag 'IdentifierClass','CTSIdentifier'
+        .text-left
+          - [CTSIdentifier].each do |identifier_class|
+            .select-container
+              = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
+              .carret
+                %i{:class => "fa fa-caret-down"}
+          .select-container
+            = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+            .carret
+              %i{:class => "fa fa-caret-down"}
+          .select-container
+            = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+            .carret
+              %i{:class => "fa fa-caret-down"}
+          .select-container
+            = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+            .carret
+              %i{:class => "fa fa-caret-down"}
+          = submit_tag "Emend", :disabled => true, :id => 'emend_button', :class => 'submit'
+          = submit_tag "Create Edition", :disabled => true, :id => 'create_button', :class => 'submit'

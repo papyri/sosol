@@ -139,7 +139,7 @@ body, .columns {
 			border-color:$COLOR_SEC;
 		}
 	}
-	textarea.input {
+	textarea.input, input[type="text"] {
 		border:$OUTLINE_SIZE solid $COLOR_PRI;
 		width:100%;
 		height:60px;
@@ -148,6 +148,9 @@ body, .columns {
 		padding:$MARGIN_SMALL;
 		&:focus {
 			border-color:$COLOR_SEC;
+		}
+		&.xml-content {
+			height: 100%;
 		}
 	}
 	input[type="submit"] {
@@ -219,8 +222,7 @@ body, .columns {
 	margin-left:$MARGIN_BIG;
 }
 
-nav.card {
-	padding:0;
+.card {
 	ul.menu {
 		list-style-type:none;
 		padding:0;

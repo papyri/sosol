@@ -2325,19 +2325,19 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), nav.card ul.menu > li > a, nav.card ul.menu > li a:link, nav.card ul.menu > li a:hover, nav.card ul.menu > li a:visited, nav.card ul.menu > li a:focus, nav.card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+.font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, .card input:link:not([type="button"]), nav.card ul.menu > li a:link, #main-menu nav ul li a:link {
+  .font-button:link, button:link, .btn:link, .card input:link:not([type="button"]), .card ul.menu > li a:link, #main-menu nav ul li a:link {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), nav.card ul.menu > li > a, nav.card ul.menu > li a:link, nav.card ul.menu > li a:hover, nav.card ul.menu > li a:visited, nav.card ul.menu > li a:focus, nav.card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), nav.card ul.menu > li > a, nav.card ul.menu > li a:link, nav.card ul.menu > li a:hover, nav.card ul.menu > li a:visited, nav.card ul.menu > li a:focus, nav.card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
       font-size: 16px; } }
 
 .font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
@@ -2464,6 +2464,15 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
     button.autosize:active, .btn.autosize:active, .btn:hover.autosize:active, .btn:visited.autosize:active, .btn:focus.autosize:active, .btn:link.autosize:active {
       border: 1px solid white;
       padding: 0 22.5px; }
+  button.TreebankCiteIdentifier, .btn.TreebankCiteIdentifier, .btn:hover.TreebankCiteIdentifier, .btn:visited.TreebankCiteIdentifier, .btn:focus.TreebankCiteIdentifier, .btn:link.TreebankCiteIdentifier {
+    background-color: #a5d6a7;
+    color: white; }
+  button.AlignmentCiteIdentifier, .btn.AlignmentCiteIdentifier, .btn:hover.AlignmentCiteIdentifier, .btn:visited.AlignmentCiteIdentifier, .btn:focus.AlignmentCiteIdentifier, .btn:link.AlignmentCiteIdentifier {
+    background-color: #ef9a9a;
+    color: white; }
+  button.OaCiteIdentifier, .btn.OaCiteIdentifier, .btn:hover.OaCiteIdentifier, .btn:visited.OaCiteIdentifier, .btn:focus.OaCiteIdentifier, .btn:link.OaCiteIdentifier {
+    background-color: #81d4fa;
+    color: white; }
   @media (min-width: 1001px) and (max-width: 1200px) {
     button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
       width: 180px;
@@ -2615,15 +2624,17 @@ body, .columns {
     text-transform: none !important; }
     .card input:not([type="button"]):focus {
       border-color: #ffb74d; }
-  .card textarea.input {
+  .card textarea.input, .card input[type="text"] {
     border: 5px solid #7986cb;
     width: 100%;
     height: 60px;
     padding-left: 1em;
     text-align: left;
     padding: 5px; }
-    .card textarea.input:focus {
+    .card textarea.input:focus, .card input[type="text"]:focus {
       border-color: #ffb74d; }
+    .card textarea.input.xml-content, .card input[type="text"].xml-content {
+      height: 100%; }
   .card input[type="submit"] {
     text-transform: uppercase;
     background-color: #7986cb;
@@ -2685,45 +2696,43 @@ body, .columns {
 .margin-left {
   margin-left: 20px; }
 
-nav.card {
-  padding: 0; }
-  nav.card ul.menu {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: row; }
-    @media (max-width: 1000px) {
-      nav.card ul.menu {
-        flex-direction: column; } }
-    nav.card ul.menu > li {
-      display: inline-block;
-      flex-grow: 1;
-      cursor: pointer;
-      position: relative;
-      background-color: white; }
-      nav.card ul.menu > li > a, nav.card ul.menu > li a:link, nav.card ul.menu > li a:hover, nav.card ul.menu > li a:visited, nav.card ul.menu > li a:focus, nav.card ul.menu > li a:active {
-        display: block;
-        box-sizing: border-box;
-        height: 60px;
-        color: #7986cb;
-        line-height: 60px;
-        text-align: center;
-        border-bottom: 5px solid white; }
-        @media (max-width: 1000px) {
-          nav.card ul.menu > li > a, nav.card ul.menu > li a:link, nav.card ul.menu > li a:hover, nav.card ul.menu > li a:visited, nav.card ul.menu > li a:focus, nav.card ul.menu > li a:active {
-            flex-direction: column;
-            height: 45px;
-            line-height: 45px;
-            font-size: 16px;
+.card ul.menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row; }
+  @media (max-width: 1000px) {
+    .card ul.menu {
+      flex-direction: column; } }
+  .card ul.menu > li {
+    display: inline-block;
+    flex-grow: 1;
+    cursor: pointer;
+    position: relative;
+    background-color: white; }
+    .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active {
+      display: block;
+      box-sizing: border-box;
+      height: 60px;
+      color: #7986cb;
+      line-height: 60px;
+      text-align: center;
+      border-bottom: 5px solid white; }
+      @media (max-width: 1000px) {
+        .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active {
+          flex-direction: column;
+          height: 45px;
+          line-height: 45px;
+          font-size: 16px;
+          border-bottom: 1px solid #bdbdbd;
+          border-right: 5px solid white; } }
+      .card ul.menu > li > a:active, .card ul.menu > li > a.active, .card ul.menu > li > a:focus, .card ul.menu > li a:link:active, .card ul.menu > li a:link.active, .card ul.menu > li a:link:focus, .card ul.menu > li a:hover:active, .card ul.menu > li a:hover.active, .card ul.menu > li a:hover:focus, .card ul.menu > li a:visited:active, .card ul.menu > li a:visited.active, .card ul.menu > li a:visited:focus, .card ul.menu > li a:focus:active, .card ul.menu > li a:focus.active, .card ul.menu > li a:focus:focus, .card ul.menu > li a:active:active, .card ul.menu > li a:active.active, .card ul.menu > li a:active:focus {
+        border-bottom: 5px solid #7986cb; }
+        @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
+          .card ul.menu > li > a:active, .card ul.menu > li > a.active, .card ul.menu > li > a:focus, .card ul.menu > li a:link:active, .card ul.menu > li a:link.active, .card ul.menu > li a:link:focus, .card ul.menu > li a:hover:active, .card ul.menu > li a:hover.active, .card ul.menu > li a:hover:focus, .card ul.menu > li a:visited:active, .card ul.menu > li a:visited.active, .card ul.menu > li a:visited:focus, .card ul.menu > li a:focus:active, .card ul.menu > li a:focus.active, .card ul.menu > li a:focus:focus, .card ul.menu > li a:active:active, .card ul.menu > li a:active.active, .card ul.menu > li a:active:focus {
             border-bottom: 1px solid #bdbdbd;
-            border-right: 5px solid white; } }
-        nav.card ul.menu > li > a:active, nav.card ul.menu > li > a.active, nav.card ul.menu > li > a:focus, nav.card ul.menu > li a:link:active, nav.card ul.menu > li a:link.active, nav.card ul.menu > li a:link:focus, nav.card ul.menu > li a:hover:active, nav.card ul.menu > li a:hover.active, nav.card ul.menu > li a:hover:focus, nav.card ul.menu > li a:visited:active, nav.card ul.menu > li a:visited.active, nav.card ul.menu > li a:visited:focus, nav.card ul.menu > li a:focus:active, nav.card ul.menu > li a:focus.active, nav.card ul.menu > li a:focus:focus, nav.card ul.menu > li a:active:active, nav.card ul.menu > li a:active.active, nav.card ul.menu > li a:active:focus {
-          border-bottom: 5px solid #7986cb; }
-          @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-            nav.card ul.menu > li > a:active, nav.card ul.menu > li > a.active, nav.card ul.menu > li > a:focus, nav.card ul.menu > li a:link:active, nav.card ul.menu > li a:link.active, nav.card ul.menu > li a:link:focus, nav.card ul.menu > li a:hover:active, nav.card ul.menu > li a:hover.active, nav.card ul.menu > li a:hover:focus, nav.card ul.menu > li a:visited:active, nav.card ul.menu > li a:visited.active, nav.card ul.menu > li a:visited:focus, nav.card ul.menu > li a:focus:active, nav.card ul.menu > li a:focus.active, nav.card ul.menu > li a:focus:focus, nav.card ul.menu > li a:active:active, nav.card ul.menu > li a:active.active, nav.card ul.menu > li a:active:focus {
-              border-bottom: 1px solid #bdbdbd;
-              border-right: 5px solid #7986cb; } }
+            border-right: 5px solid #7986cb; } }
 
 ol.sentences {
   margin: 0;
