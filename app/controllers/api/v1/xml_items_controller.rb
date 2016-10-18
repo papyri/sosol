@@ -49,7 +49,7 @@ module Api::V1
       end
       @identifier = response
       respond_to do |format|
-        format.json { render :json=> build_item }
+        format.json { render :json=> ApiHelper::build_identifier(@identifier) }
         format.xml { render :xml => "<item>#{id}</item>" } #legacy api
       end
     end
