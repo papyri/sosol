@@ -255,6 +255,11 @@ class OaCiteIdentifier < CiteIdentifier
     return Sosol::Application.config.site_cite_collection_namespace + "/" + self.urn_attribute  + "/#" + next_num.to_s
   end
 
+  # @overrides Identifier.mimetype
+  def mimetype
+    "application/rdf+xml"
+  end
+
   #########################################
   # Private Helper Methods
   #########################################

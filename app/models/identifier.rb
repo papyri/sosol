@@ -12,6 +12,9 @@ class Identifier < ActiveRecord::Base
     property :type do
       key :type, :string
     end
+    property :mimetype do
+      key :type, :string
+    end
     property :content do 
       key :type, :string
     end
@@ -709,6 +712,13 @@ class Identifier < ActiveRecord::Base
     # by default we will just use the local path
     # to override by identifier type
     self.to_path
+  end
+
+  # return the mimetype of the identifier content
+  # - *Returns% :
+  #   - the mimetype of the identifier content
+  def mimetype
+    "application/xml"
   end
 
 end

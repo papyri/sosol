@@ -11,6 +11,27 @@ module Api::V1
     before_filter :publication_ownership_guard, :only => [:submit, :update]
 
     swagger_path "/publications/{id}" do
+      operation :get do
+        key :description, 'Gets a publication and its identifiers'
+        key :operationId, 'getPublication'
+        key :tags, [ 'publication' ]
+        parameter do 
+          key :name, :id
+          key :in, :path
+          key :description, "publication id"
+          key :required, true
+          key :type, :integer
+        end
+        response 200 do
+          key :description, 'publication submit response'
+        end
+        response :default do
+          key :description, 'unexpected error'
+          schema do 
+            key :'$ref', :ApiError
+          end
+        end
+      end
       operation :put do
         key :description, "Updates a publication"
         key :operationId, 'updatePublication'
@@ -75,6 +96,18 @@ module Api::V1
             key :'$ref', :ApiError
           end
         end
+      end
+    end
+
+    def show
+      begin
+      	@publication = Publication.find(params[:id].to_s, :lock => true)
+        identifiers = @publication.identifiers.collect do |i|
+            ApiHelper::build_identifier(i)
+        end
+        render :json => { :id => @publication.id, :community_name => @publication.community.nil? ? '' : @publication.community.name, :identifiers => identifiers }, :status => 200
+      rescue Exception => e
+        render_api_error(500,e.message)
       end
     end
 

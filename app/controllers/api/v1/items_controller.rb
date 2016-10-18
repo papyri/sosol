@@ -126,7 +126,7 @@ module Api::V1
       end
       @identifier = response
       respond_to do |format|
-        format.json { render :json=> build_item }
+        format.json { render :json=> ApiHelper::build_identifier(@identifier) }
         format.xml { render :xml => "<item>#{id}</item>" } #legacy api
       end
     end
@@ -135,7 +135,7 @@ module Api::V1
       @identifier = Identifier.find(params[:id])
       begin
         # TODO need to follow best practices on retrieiving partial items
-        if (parmas[:q])
+        if (params[:q])
           content = @identifier.fragment(params[:q])
         else
           content = @identifier.content
@@ -145,7 +145,7 @@ module Api::V1
         render_api_error(405,e.message) and return
       end
       respond_to do |format|
-        format.json { render :json => build_item(content) }
+        format.json { render :json => ApiHelper::build_identifier(@identifier,content) }
         format.xml { render :xml => content } # legacy api returns the content of object
       end
     end
@@ -153,7 +153,7 @@ module Api::V1
     def peek
       @identifier = Identifier.find(params[:id])
       respond_to do |format|
-        format.json { render :json => build_item(nil,true) }
+        format.json { render :json => ApiHelper::build_identifier(@identifier,nil,true) }
       end
     end
 
@@ -173,22 +173,6 @@ module Api::V1
        end    
     end
 
-    def build_item(content=nil,meta_only=false)
-      item = { }
-      item[:id] = @identifier.id
-      item[:type] = @identifier.type
-      item[:publication] = @identifier.publication.id
-      # all api-created pubs should have a community but for backwards
-      # compatibility with data created through the ui
-      # we need to check to be sure
-      if @identifier.publication.community
-        item[:publication_community_name] = @identifier.publication.community.friendly_name
-      end
-      unless meta_only
-        item[:content] = content.nil? ? @identifier.content : content
-      end
-      item
-    end
   end
 end
 
