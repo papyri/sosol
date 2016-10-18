@@ -129,10 +129,4 @@ class SyriacaIdentifier < Identifier
     return self.name
   end
 
-  # @overrides Identifier#is_valid_xml?
-  # temporarily for workflow testing
-  def is_valid_xml?(content)
-    return true
-  end
-
 end
