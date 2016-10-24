@@ -18,11 +18,12 @@
               = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
               .carret
                 %i{:class => "fa fa-caret-down"}
-          .select-container
+          %input{:type => 'text',:id => 'cts_selector_text', :placeholder => 'Type work title...'}
+          .select-container{:style => 'display:none;'}
             = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
             .carret
               %i{:class => "fa fa-caret-down"}
-          .select-container
+          .select-container{:style => 'display:none;'}
             = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
             .carret
               %i{:class => "fa fa-caret-down"}
