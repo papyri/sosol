@@ -96,8 +96,13 @@ class PublicationsController < ApplicationController
     end
 
     identifier = params[:id]
+    related_identifiers = nil
 
-    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    if !(/dclp/ =~ identifier) # cromulent dclp hack to circumvent number server
+      related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    else
+      related_identifiers = [identifier]
+    end
 
     publication_from_identifier(identifier, related_identifiers)
   end
