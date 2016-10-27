@@ -6,11 +6,11 @@
     = link_to align[:text], align[:href], html_options = { 'target' => align[:target], :class => 'btn AlignmentCiteIdentifier autosize'}
     = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import'), :class => 'btn OaCiteIdentifier autosize'
   %br
-  %div{:id => 'publications-_cts_selector'}
+  %a{:id => "cts_selector_widget", :href => "#"}== Or click select a text to work with.
+  %div{:id => 'publications-_cts_selector', :style => "display:none;" }
     %input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
     - cache(:action => 'dashboard', :part => 'publication_selector') do
       = form_tag :controller => controller, :action => "create_from_selector" do
-        %h2== Or select a text to work with:
         = hidden_field_tag 'IdentifierClass','CTSIdentifier'
         .text-left
           - [CTSIdentifier].each do |identifier_class|

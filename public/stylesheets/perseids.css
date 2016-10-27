@@ -108,7 +108,7 @@
   src: url("../fonts/fontawesome-webfont.eot?#iefix&v=4.6.3") format("embedded-opentype"), url("../fonts/fontawesome-webfont.woff2?v=4.6.3") format("woff2"), url("../fonts/fontawesome-webfont.woff?v=4.6.3") format("woff"), url("../fonts/fontawesome-webfont.ttf?v=4.6.3") format("truetype"), url("../fonts/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal; }
-.fa, .card .select-container:after, .publication .dropdown-container .type-dropdown:after {
+.fa, .card .select-container:after {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -165,9 +165,9 @@
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .card .fa-pull-left.select-container:after, .publication .dropdown-container .fa-pull-left.type-dropdown:after {
+.fa.fa-pull-left, .card .fa-pull-left.select-container:after {
   margin-right: .3em; }
-.fa.fa-pull-right, .card .fa-pull-right.select-container:after, .publication .dropdown-container .fa-pull-right.type-dropdown:after {
+.fa.fa-pull-right, .card .fa-pull-right.select-container:after {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
@@ -177,9 +177,9 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, .card .pull-left.select-container:after, .publication .dropdown-container .pull-left.type-dropdown:after {
+.fa.pull-left, .card .pull-left.select-container:after {
   margin-right: .3em; }
-.fa.pull-right, .card .pull-right.select-container:after, .publication .dropdown-container .pull-right.type-dropdown:after {
+.fa.pull-right, .card .pull-right.select-container:after {
   margin-left: .3em; }
 
 .fa-spin {
@@ -2309,7 +2309,7 @@
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input {
+.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
@@ -2325,19 +2325,19 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+.font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, .card input:link:not([type="button"]), .card ul.menu > li a:link, #main-menu nav ul li a:link {
+  .font-button:link, button:link, .btn:link, .card input:link:not([type="button"]), .card ul.menu > li a:link, #main-menu nav ul li a:link, .modal input:link:not([type="button"]) {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active {
+    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
       font-size: 16px; } }
 
 .font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
@@ -2439,7 +2439,7 @@ h2, h3, h4, h5, h6 {
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input {
+.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
@@ -2911,7 +2911,9 @@ ul.btns > li {
           line-height: 45px;
           border-bottom: 1px solid #bdbdbd;
           color: black;
-          text-decoration: none !important; }
+          text-decoration: none !important;
+          text-overflow: ellipsis;
+          overflow: hidden; }
         #main-menu nav ul li.active a {
           border-right: 5px solid #7986cb; }
         #main-menu nav ul li.p-dropdown .label {
@@ -2958,7 +2960,7 @@ ul.btns > li {
     #main-menu .logins ul li.google a, #main-menu .logins ul li.google a:visited, #main-menu .logins ul li.google a:focus, #main-menu .logins ul li.google a:link, #main-menu .logins ul li.google a:active, #main-menu .logins ul li.yahoo a, #main-menu .logins ul li.yahoo a:visited, #main-menu .logins ul li.yahoo a:focus, #main-menu .logins ul li.yahoo a:link, #main-menu .logins ul li.yahoo a:active, #main-menu .logins ul li.aol a, #main-menu .logins ul li.aol a:visited, #main-menu .logins ul li.aol a:focus, #main-menu .logins ul li.aol a:link, #main-menu .logins ul li.aol a:active, #main-menu .logins ul li.openid a, #main-menu .logins ul li.openid a:visited, #main-menu .logins ul li.openid a:focus, #main-menu .logins ul li.openid a:link, #main-menu .logins ul li.openid a:active {
       color: white;
       border: none; }
-      #main-menu .logins ul li.google a .fa, #main-menu .logins ul li.google a .card .select-container:after, .card #main-menu .logins ul li.google a .select-container:after, #main-menu .logins ul li.google a .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.google a .type-dropdown:after, #main-menu .logins ul li.google a:visited .fa, #main-menu .logins ul li.google a:visited .card .select-container:after, .card #main-menu .logins ul li.google a:visited .select-container:after, #main-menu .logins ul li.google a:visited .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.google a:visited .type-dropdown:after, #main-menu .logins ul li.google a:focus .fa, #main-menu .logins ul li.google a:focus .card .select-container:after, .card #main-menu .logins ul li.google a:focus .select-container:after, #main-menu .logins ul li.google a:focus .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.google a:focus .type-dropdown:after, #main-menu .logins ul li.google a:link .fa, #main-menu .logins ul li.google a:link .card .select-container:after, .card #main-menu .logins ul li.google a:link .select-container:after, #main-menu .logins ul li.google a:link .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.google a:link .type-dropdown:after, #main-menu .logins ul li.google a:active .fa, #main-menu .logins ul li.google a:active .card .select-container:after, .card #main-menu .logins ul li.google a:active .select-container:after, #main-menu .logins ul li.google a:active .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.google a:active .type-dropdown:after, #main-menu .logins ul li.yahoo a .fa, #main-menu .logins ul li.yahoo a .card .select-container:after, .card #main-menu .logins ul li.yahoo a .select-container:after, #main-menu .logins ul li.yahoo a .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.yahoo a .type-dropdown:after, #main-menu .logins ul li.yahoo a:visited .fa, #main-menu .logins ul li.yahoo a:visited .card .select-container:after, .card #main-menu .logins ul li.yahoo a:visited .select-container:after, #main-menu .logins ul li.yahoo a:visited .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.yahoo a:visited .type-dropdown:after, #main-menu .logins ul li.yahoo a:focus .fa, #main-menu .logins ul li.yahoo a:focus .card .select-container:after, .card #main-menu .logins ul li.yahoo a:focus .select-container:after, #main-menu .logins ul li.yahoo a:focus .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.yahoo a:focus .type-dropdown:after, #main-menu .logins ul li.yahoo a:link .fa, #main-menu .logins ul li.yahoo a:link .card .select-container:after, .card #main-menu .logins ul li.yahoo a:link .select-container:after, #main-menu .logins ul li.yahoo a:link .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.yahoo a:link .type-dropdown:after, #main-menu .logins ul li.yahoo a:active .fa, #main-menu .logins ul li.yahoo a:active .card .select-container:after, .card #main-menu .logins ul li.yahoo a:active .select-container:after, #main-menu .logins ul li.yahoo a:active .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.yahoo a:active .type-dropdown:after, #main-menu .logins ul li.aol a .fa, #main-menu .logins ul li.aol a .card .select-container:after, .card #main-menu .logins ul li.aol a .select-container:after, #main-menu .logins ul li.aol a .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.aol a .type-dropdown:after, #main-menu .logins ul li.aol a:visited .fa, #main-menu .logins ul li.aol a:visited .card .select-container:after, .card #main-menu .logins ul li.aol a:visited .select-container:after, #main-menu .logins ul li.aol a:visited .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.aol a:visited .type-dropdown:after, #main-menu .logins ul li.aol a:focus .fa, #main-menu .logins ul li.aol a:focus .card .select-container:after, .card #main-menu .logins ul li.aol a:focus .select-container:after, #main-menu .logins ul li.aol a:focus .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.aol a:focus .type-dropdown:after, #main-menu .logins ul li.aol a:link .fa, #main-menu .logins ul li.aol a:link .card .select-container:after, .card #main-menu .logins ul li.aol a:link .select-container:after, #main-menu .logins ul li.aol a:link .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.aol a:link .type-dropdown:after, #main-menu .logins ul li.aol a:active .fa, #main-menu .logins ul li.aol a:active .card .select-container:after, .card #main-menu .logins ul li.aol a:active .select-container:after, #main-menu .logins ul li.aol a:active .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.aol a:active .type-dropdown:after, #main-menu .logins ul li.openid a .fa, #main-menu .logins ul li.openid a .card .select-container:after, .card #main-menu .logins ul li.openid a .select-container:after, #main-menu .logins ul li.openid a .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.openid a .type-dropdown:after, #main-menu .logins ul li.openid a:visited .fa, #main-menu .logins ul li.openid a:visited .card .select-container:after, .card #main-menu .logins ul li.openid a:visited .select-container:after, #main-menu .logins ul li.openid a:visited .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.openid a:visited .type-dropdown:after, #main-menu .logins ul li.openid a:focus .fa, #main-menu .logins ul li.openid a:focus .card .select-container:after, .card #main-menu .logins ul li.openid a:focus .select-container:after, #main-menu .logins ul li.openid a:focus .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.openid a:focus .type-dropdown:after, #main-menu .logins ul li.openid a:link .fa, #main-menu .logins ul li.openid a:link .card .select-container:after, .card #main-menu .logins ul li.openid a:link .select-container:after, #main-menu .logins ul li.openid a:link .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.openid a:link .type-dropdown:after, #main-menu .logins ul li.openid a:active .fa, #main-menu .logins ul li.openid a:active .card .select-container:after, .card #main-menu .logins ul li.openid a:active .select-container:after, #main-menu .logins ul li.openid a:active .publication .dropdown-container .type-dropdown:after, .publication .dropdown-container #main-menu .logins ul li.openid a:active .type-dropdown:after {
+      #main-menu .logins ul li.google a .fa, #main-menu .logins ul li.google a .card .select-container:after, .card #main-menu .logins ul li.google a .select-container:after, #main-menu .logins ul li.google a:visited .fa, #main-menu .logins ul li.google a:visited .card .select-container:after, .card #main-menu .logins ul li.google a:visited .select-container:after, #main-menu .logins ul li.google a:focus .fa, #main-menu .logins ul li.google a:focus .card .select-container:after, .card #main-menu .logins ul li.google a:focus .select-container:after, #main-menu .logins ul li.google a:link .fa, #main-menu .logins ul li.google a:link .card .select-container:after, .card #main-menu .logins ul li.google a:link .select-container:after, #main-menu .logins ul li.google a:active .fa, #main-menu .logins ul li.google a:active .card .select-container:after, .card #main-menu .logins ul li.google a:active .select-container:after, #main-menu .logins ul li.yahoo a .fa, #main-menu .logins ul li.yahoo a .card .select-container:after, .card #main-menu .logins ul li.yahoo a .select-container:after, #main-menu .logins ul li.yahoo a:visited .fa, #main-menu .logins ul li.yahoo a:visited .card .select-container:after, .card #main-menu .logins ul li.yahoo a:visited .select-container:after, #main-menu .logins ul li.yahoo a:focus .fa, #main-menu .logins ul li.yahoo a:focus .card .select-container:after, .card #main-menu .logins ul li.yahoo a:focus .select-container:after, #main-menu .logins ul li.yahoo a:link .fa, #main-menu .logins ul li.yahoo a:link .card .select-container:after, .card #main-menu .logins ul li.yahoo a:link .select-container:after, #main-menu .logins ul li.yahoo a:active .fa, #main-menu .logins ul li.yahoo a:active .card .select-container:after, .card #main-menu .logins ul li.yahoo a:active .select-container:after, #main-menu .logins ul li.aol a .fa, #main-menu .logins ul li.aol a .card .select-container:after, .card #main-menu .logins ul li.aol a .select-container:after, #main-menu .logins ul li.aol a:visited .fa, #main-menu .logins ul li.aol a:visited .card .select-container:after, .card #main-menu .logins ul li.aol a:visited .select-container:after, #main-menu .logins ul li.aol a:focus .fa, #main-menu .logins ul li.aol a:focus .card .select-container:after, .card #main-menu .logins ul li.aol a:focus .select-container:after, #main-menu .logins ul li.aol a:link .fa, #main-menu .logins ul li.aol a:link .card .select-container:after, .card #main-menu .logins ul li.aol a:link .select-container:after, #main-menu .logins ul li.aol a:active .fa, #main-menu .logins ul li.aol a:active .card .select-container:after, .card #main-menu .logins ul li.aol a:active .select-container:after, #main-menu .logins ul li.openid a .fa, #main-menu .logins ul li.openid a .card .select-container:after, .card #main-menu .logins ul li.openid a .select-container:after, #main-menu .logins ul li.openid a:visited .fa, #main-menu .logins ul li.openid a:visited .card .select-container:after, .card #main-menu .logins ul li.openid a:visited .select-container:after, #main-menu .logins ul li.openid a:focus .fa, #main-menu .logins ul li.openid a:focus .card .select-container:after, .card #main-menu .logins ul li.openid a:focus .select-container:after, #main-menu .logins ul li.openid a:link .fa, #main-menu .logins ul li.openid a:link .card .select-container:after, .card #main-menu .logins ul li.openid a:link .select-container:after, #main-menu .logins ul li.openid a:active .fa, #main-menu .logins ul li.openid a:active .card .select-container:after, .card #main-menu .logins ul li.openid a:active .select-container:after {
         line-height: 60px;
         margin: 0 0.5em 0 0.5em; }
     #main-menu .logins ul li.google {
@@ -2970,105 +2972,255 @@ ul.btns > li {
     #main-menu .logins ul li.openid {
       background-color: #f7931e; }
 
-.publication-column {
-  -moz-column-count: 2;
-  -webkit-column-count: 2;
-  column-count: 2;
-  -moz-column-gap: 1em;
-  -webkit-column-gap: 1em;
-  column-gap: 1em; }
+.card label, .modal label {
+  display: block;
+  margin: 20px 0; }
+.card input, .modal input {
+  height: 60px; }
+.card input:not([type="button"]), .modal input:not([type="button"]) {
+  border: 5px solid #7986cb;
+  width: 75%;
+  padding-left: 1em;
+  text-transform: none !important; }
+  .card input:not([type="button"]):focus, .modal input:not([type="button"]):focus {
+    border-color: #ffb74d; }
+.card textarea.input, .modal textarea.input {
+  border: 5px solid #7986cb;
+  width: 100%;
+  height: 60px;
+  padding-left: 1em;
+  text-align: left;
+  padding: 5px; }
+  .card textarea.input:focus, .modal textarea.input:focus {
+    border-color: #ffb74d; }
+.card input[type="submit"], .modal input[type="submit"] {
+  text-transform: uppercase;
+  background-color: #7986cb;
+  color: white;
+  border: none;
+  width: 250px;
+  text-align: center;
+  border: 1px solid #7986cb;
+  margin-top: 45px;
+  padding: 0; }
+  .card input[type="submit"]:active, .card input[type="submit"]:hover, .card input[type="submit"]:focus, .modal input[type="submit"]:active, .modal input[type="submit"]:hover, .modal input[type="submit"]:focus {
+    border: 1px solid #7986cb;
+    height: 60px; }
 
-.fix-sdw {
-  padding: 0 0 20px; }
+.publication-container {
+  clear: both; }
+  .publication-container:before, .publication-container:after {
+    clear: both; }
 
 .publication {
   background-color: white;
-  display: flex;
-  flex-direction: row;
-  width: 95%;
+  width: 30%;
+  margin-right: 2%;
+  margin-top: 0;
+  display: inline-block;
+  float: left;
   height: 60px;
-  align-items: center;
-  justify-content: center; }
-  .publication .legend {
-    display: block;
+  margin-bottom: 20px;
+  position: relative; }
+  @media (min-width: 1001px) and (max-width: 1200px) {
+    .publication {
+      width: 45%;
+      margin-right: 5%; } }
+  @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
+    .publication {
+      width: 100%;
+      margin-right: 0; } }
+  .publication .publication-validate {
+    display: none;
+    height: 100%;
+    line-height: 60px;
+    width: 60px;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    background-color: #7986cb;
+    color: white; }
+  .publication:hover {
+    /*
+    // Not sure about this part
+    .legend {
+    	margin-left:$CARD_BUTTON_HEIGHT + 2 * $OUTLINE_SIZE;
+    }
+    */ }
+    .publication:hover .publication-validate {
+      display: block; }
+  .publication .legend_container {
+    display: inline-block;
+    float: left;
     padding: 5px;
-    flex: auto;
     width: auto; }
-  .publication .dropdown-container {
-    position: relative;
+  .publication .legend_container:nth-child(2):after {
+    content: "...";
+    display: inline; }
+  .publication .legend_container .legend {
+    display: none; }
+  .publication .legend_container:first-child .legend {
+    display: inline-block;
+    text-overflow: hidden;
+    overflow: hidden; }
+  .publication .border {
+    position: absolute;
+    right: 0;
     height: 60px;
-    width: 250px; }
-    .publication .dropdown-container .type-dropdown {
-      height: 60px;
-      line-height: 60px;
-      text-align: center;
+    width: 250px;
+    list-style: none;
+    margin: 0;
+    height: 0; }
+    .publication .border > li {
+      text-overflow: hidden;
+      overflow: hidden;
+      color: white;
+      float: right;
       display: block;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      width: 250px; }
-      .publication .dropdown-container .type-dropdown:after {
-        pointer-events: none;
-        z-index: 1;
-        position: absolute;
-        right: 0;
-        background-color: transparent;
-        top: 0;
+      width: 10px;
+      padding-left: 10px; }
+      .publication .border > li a:active, .publication .border > li a:link, .publication .border > li a:hover, .publication .border > li a:visited {
         display: block;
-        width: 60px;
         height: 60px;
         line-height: 60px;
-        content: "";
+        width: auto;
         color: white;
-        text-align: center;
-        font-size: 40px;
-        vertical-align: baseline; }
-      .publication .dropdown-container .type-dropdown > li.active {
-        display: block; }
-      .publication .dropdown-container .type-dropdown > li {
-        color: white;
-        display: none; }
-        .publication .dropdown-container .type-dropdown > li a:active, .publication .dropdown-container .type-dropdown > li a:link, .publication .dropdown-container .type-dropdown > li a:hover, .publication .dropdown-container .type-dropdown > li a:visited {
-          display: block;
-          height: 60px;
-          line-height: 60px;
-          width: auto;
-          color: white;
-          font-family: Roboto;
-          font-weight: 500;
-          font-style: normal;
-          font-size: 20px;
-          text-decoration: none; }
-          .publication .dropdown-container .type-dropdown > li a:active:hover, .publication .dropdown-container .type-dropdown > li a:link:hover, .publication .dropdown-container .type-dropdown > li a:hover:hover, .publication .dropdown-container .type-dropdown > li a:visited:hover {
-            text-decoration: underline; }
-        .publication .dropdown-container .type-dropdown > li.TreebankCiteIdentifier {
-          background-color: #a5d6a7; }
-        .publication .dropdown-container .type-dropdown > li.EpiCTSIdentifier {
-          background-color: #ffe082; }
-        .publication .dropdown-container .type-dropdown > li.CommentaryCiteIdentifier {
-          background-color: #ce93d8; }
-        .publication .dropdown-container .type-dropdown > li.AlignmentCiteIdentifier {
-          background-color: #ef9a9a; }
-        .publication .dropdown-container .type-dropdown > li.CitationCTSIdentifier {
-          background-color: #f8bbd0; }
-        .publication .dropdown-container .type-dropdown > li.OaCiteIdentifier {
-          background-color: #81d4fa; }
-        .publication .dropdown-container .type-dropdown > li.OACIdentifier {
-          background-color: #bcaaa4; }
-        .publication .dropdown-container .type-dropdown > li.EpiTransCTSIdentifier {
-          background-color: #bfcf2d; }
-        .publication .dropdown-container .type-dropdown > li.votes {
-          background-color: #bdbdbd; }
-      .publication .dropdown-container .type-dropdown:hover {
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 100; }
-        .publication .dropdown-container .type-dropdown:hover > li {
-          display: block; }
+        font-family: Roboto;
+        font-weight: 500;
+        font-style: normal;
+        font-size: 20px;
+        text-decoration: none; }
+        .publication .border > li a:active:hover, .publication .border > li a:link:hover, .publication .border > li a:hover:hover, .publication .border > li a:visited:hover {
+          text-decoration: underline; }
+      .publication .border > li.treebank {
+        background-color: #a5d6a7; }
+      .publication .border > li.transcription {
+        background-color: #ffe082; }
+      .publication .border > li.commentary {
+        background-color: #ce93d8; }
+      .publication .border > li.text-alignment {
+        background-color: #ef9a9a; }
+      .publication .border > li.passage {
+        background-color: #f8bbd0; }
+      .publication .border > li.annotations {
+        background-color: #81d4fa; }
+      .publication .border > li.text-annotations {
+        background-color: #bcaaa4; }
+      .publication .border > li.translation {
+        background-color: #bfcf2d; }
+      .publication .border > li.TreebankCiteIdentifier {
+        background-color: #a5d6a7; }
+      .publication .border > li.EpiCTSIdentifier {
+        background-color: #ffe082; }
+      .publication .border > li.CommentaryCiteIdentifier {
+        background-color: #ce93d8; }
+      .publication .border > li.AlignmentCiteIdentifier {
+        background-color: #ef9a9a; }
+      .publication .border > li.CitationCTSIdentifier {
+        background-color: #f8bbd0; }
+      .publication .border > li.OaCiteIdentifier {
+        background-color: #81d4fa; }
+      .publication .border > li.OACIdentifier {
+        background-color: #bcaaa4; }
+      .publication .border > li.EpiTransCTSIdentifier {
+        background-color: #bfcf2d; }
+      .publication .border > li.votes {
+        background-color: #bdbdbd; }
+      .publication .border > li:hover {
+        width: auto;
+        padding-right: 10px; }
   .publication .dropdown-container.votes {
     width: 180px; }
     .publication .dropdown-container.votes .type-dropdown {
       text-align: left; }
+
+#filter {
+  box-sizing: border-box;
+  margin: 5px;
+  border: 5px solid #7986cb;
+  height: 55px;
+  background-color: white;
+  display: inline-block;
+  padding: 0;
+  width: auto; }
+  #filter > * {
+    vertical-align: middle; }
+  #filter button {
+    width: 125px;
+    margin: 0;
+    background-color: white;
+    border: none; }
+    #filter button[data-target].active {
+      background-color: #7986cb;
+      color: white;
+      border: 1px solid #bdbdbd;
+      border-right: 5px solid #7986cb;
+      padding: 0; }
+  #filter input[type="text"] {
+    border: none;
+    background-color: #DDDDDD;
+    line-height: 45px;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    padding: 0 5px; }
+  #filter #filter-count {
+    width: auto;
+    display: none; }
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: black;
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */ }
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 0;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */ }
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold; }
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer; }
+
+.modal .code {
+  overflow: auto; }
+
+.modal .btn-list {
+  display: block;
+  width: 250px;
+  margin: 0 auto; }
+
+.modal form {
+  padding: 10px; }
 
 /*# sourceMappingURL=perseids.css.map */

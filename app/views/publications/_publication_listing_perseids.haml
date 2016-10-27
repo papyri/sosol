@@ -2,24 +2,28 @@
   - list_id = "publication_list_holder_" + list_name
 - else
   - list_id = "publication_list_holder"
-%div{:class => "publication-column", :id => list_id }
+%div{:class => "publication_card", :id => list_id }
   - publications.each do |publication|
-    %div{:class => 'fix-sdw'}
-      %div{:class => 'publication'}
-        %span{:class => 'legend'}
-          - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")"
-          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago"
-          - if view_type && view_type == "community"
-            = publication.owner.name
-        %div{:class => "dropdown-container"}
-          %ul{:class => "type-dropdown"}
-            - Identifier.site_identifier_classes.each do |i|
-              - has_active = false
-              - if i.constantize::is_visible
-                - publication.identifiers.each do |m|
-                  - if m.type == i
-                    %li{:class => m.class}
-                      = link_to m.class::FRIENDLY_NAME, edit_polymorphic_path([publication,m]), {:title => m.title}
+    - data = {}
+    - publication.identifiers.collect do |i|
+      - unless data[i.type]
+        - data[i.type] = []
+      - data[i.type] << i
+    %div{:class => 'publication'}
+      - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")" +  view_type && view_type == "community" ? publication.owner.name : ''
+      - Identifier.site_identifier_classes.each do |c|
+        - if c.constantize::is_visible && data[c]
+          - data[c].each do |i|
+            %div{:class => 'legend_container'}
+              %span{:class => 'legend'}
+                = link_to i.title, edit_polymorphic_path([publication,i]), {:title => i.class::FRIENDLY_NAME}
+      %ul{:class => 'border'}
+        - Identifier.site_identifier_classes.each do |c|
+          - has_active = false
+          - if c.constantize::is_visible && data[c]
+            - data[c].each do |i|
+              %li{:class => "#{has_active} #{i.class}"}
+                = link_to i.class::FRIENDLY_NAME, edit_polymorphic_path([publication,i]), {:title => i.title}
 
 :javascript
   jQuery(document).ready(

@@ -1,0 +1,40 @@
+#filter {
+
+box-sizing: border-box;
+	margin:$OUTLINE_SIZE;
+	border:$OUTLINE_SIZE solid $COLOR_PRI;
+	height: $BUTTON_HEIGHT + 2*$OUTLINE_SIZE;
+	background-color:white;	
+	display:inline-block;
+	padding:0;
+	width:auto;
+	> * {
+		vertical-align: middle
+	}
+	button {
+		width:$BUTTON_WIDTH/2;
+		margin:0;
+		background-color:white;
+		border:none;
+		&[data-target].active {
+			background-color: $COLOR_PRI;
+			color:white;
+	 		border:1px solid $COLOR_GRAY; 
+	 		border-right:$OUTLINE_SIZE solid $COLOR_PRI;
+			padding:0;
+	 	}
+	}
+	input[type="text"] {
+		border:none;
+		background-color:#DDDDDD;
+		line-height: $BUTTON_HEIGHT;
+		padding:0;
+		margin:0;
+		display:inline-block;
+		padding:0 $OUTLINE_SIZE;
+	}
+	#filter-count {
+		width:auto;
+		display:none;
+	}
+}

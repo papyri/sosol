@@ -69,6 +69,10 @@ CtsSelector = function() {
 
 CtsSelector.prototype.eventListeners = function() {
   var self = this;
+  jQuery('#cts_selector_widget').on('click', function() {
+      jQuery(this).next().toggle();
+  });
+    
   jQuery( '#CTSIdentifierCollectionSelect' ).on( 'change', function( _e ) {
     self.get_inventory();
     jQuery('emend_button').disabled='';

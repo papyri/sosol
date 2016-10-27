@@ -119,6 +119,8 @@
 					@extend .font-button;
 					color: black;
 					text-decoration: none!important;
+					text-overflow: ellipsis;
+					overflow:hidden;
 				}
 				&.active {
 					a {

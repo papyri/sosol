@@ -1,0 +1,21 @@
+#filter
+  %button{:class => "filter active", "data-target" => "all"}
+    All
+  - if has_new
+    %button{:class => "filter", "data-target" => "new-column"}
+      New
+  - if has_editing
+    %button{:class => "filter", "data-target" => "editing-column"}
+      Editing
+  - if has_submitted
+    %button{:class => "filter", "data-target" => "submitted-column"}
+      Submitted
+  - if has_committed
+    %button{:class => "filter", "data-target" => "committed-column"}
+      Committed
+  - if has_finalizing
+    %button{:class => "filter", "data-target" => "finalizing-column"}
+      Finalizing
+  %input{:type => 'text', :class => 'input', :id => 're-search', :placeholder => "Search"}
+  %button{:class => "filter", :id => 'filter-count'}
+    Search
