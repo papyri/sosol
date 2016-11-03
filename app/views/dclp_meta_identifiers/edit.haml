@@ -1,5 +1,5 @@
 = stylesheet_link_tag 'meta' 
-= stylesheet_link_tag 'dclp_meta'
+
 #main
   .site.metaSite
     = render :partial => 'identifiers/header'
@@ -35,10 +35,10 @@
           .clear
 
           = render :partial => 'dclp_meta_identifiers/work'
-
           .clear
 
-          .swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addWork=I18n.t('dclp.label.addWork')
 
         %h4.category.object
           %a{:name => 'Edition'}=I18n.t('dclp.legend.object')

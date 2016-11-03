@@ -134,27 +134,38 @@ en:
       illustrationPrinted: Printed Images
       illustrationOnline: Online Resources
       addEdition: add edition
+      addWork: add work
       titleStmt: Display Name (Description)
+      overview: Legacy Display Name
       contentTextGenre: Genre
       contentTextReligion: Religion
       contentTextCulture: Culture
       contentTextKeywords: Keywords
       workAuthorName: TLG Name
-      workAuthorNumber: TLG Number
+      workTitleName: TM Work
+      workTlg: TLG
+      workPhi: Phi
+      workTm: TM
+      workCwkb: CWKB
+      workStoa: Stoa
       workInternetResources: Internet Resources
       workInternetResourcesDescription: e.g. classical works, knowledge base
       workCertainty: Certainty
+      workCorresp: Corresp
       workName: TM Work
-      workNumber: TM Work Number
+      workTm: TM
       workDate: Year of Creation
-      workDateDescription: e.g. -412 to 120
       workDateTo: to
       workAddAlternative: add alternative
       workMentionAlternative: is alternative to
       workDisplayName: Display Name
       workLegacy: Description
       workExtra: Passage
+      workExtraAddAnd: add and
       workExtraBookNumber: Book Number
+    help:
+      illustrationOnline: e.g. classical works, knowledge base
+      workTitleDate: e.g. -412 to 120
 
   meta:
     legend:
@@ -455,8 +466,8 @@ en:
 
   work:
     subtype:
-      primary: Primary
-      secondary: Citation
+      ancient: Primary
+      ancientQuote: Citation
     extra:
       generic: generic
       lines: lines

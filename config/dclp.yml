@@ -4,7 +4,7 @@
 # :multiple -> true | false (optional, defaults to false)
 # :optional -> true | false (optional, defaults to true)
 # :default -> default value as string, multiple entries do not support default values (optional)
-# :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional)
+# :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional) 
 # :children -> recursive element structure
 #
 # attributes for attributes
@@ -13,6 +13,7 @@
 # :optional (same as above)
 # :default (same as above)
 # :pattern (same as above)
+# :split -> value is list of items separated by a delimiter, e.g. a space (' ') to separate several urls within a @ref attribute
 
 :dclp:
   :fragment:
@@ -87,9 +88,16 @@
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
+              :split: ' '
           :children:
-            :tlg:
+            :tlg: # http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
               :xpath: idno[@type='tlg']
+              :pattern: /\A\d+\Z/
+            :phi: # http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
+              :xpath: idno[@type='phi']
+              :pattern: /\A\d+\Z/
+            :stoa: # http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040 (Latin)
+              :xpath: idno[@type='stoa']
               :pattern: /\A\d+\Z/
             :cwkb:
               :xpath: idno[@type='cwkb']
@@ -109,9 +117,16 @@
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
+              :split: ' '
           :children:
-            :tlg:
+            :tm: # http://www.trismegistos.org/authorwork/1146
+              :xpath: idno[@type='tm']
+              :pattern: /\A\d+\Z/
+            :tlg: # http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018
               :xpath: idno[@type='tlg']
+              :pattern: /\A\d+\Z/
+            :stoa: # stoa http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016
+              :xpath: idno[@type='stoa']
               :pattern: /\A\d+\Z/
             :cwkb:
               :xpath: idno[@type='cwkb']
@@ -119,6 +134,9 @@
             :date:
               :xpath: date
               :attributes:
+                :when:
+                  :name: when
+                  :pattern: '/\A\d\d\d\d\Z/'
                 :from:
                   :name: from
                   :pattern: '/\A\d\d\d\d\Z/'
@@ -151,7 +169,7 @@
       :attributes:
         :class:
           :name: type
-          :pattern: /\A(culture|religion|description)\Z/
+          :pattern: /\A(culture|religion|description|overview)\Z/
     :scriptType:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
     :pagination:

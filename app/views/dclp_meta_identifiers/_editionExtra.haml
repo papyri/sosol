@@ -8,7 +8,7 @@
         = text_field_tag baseChildren + '[extra][' + (index).to_s + '][corresp]', extra.corresp, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
         = text_field_tag baseChildren + '[extra][' + (index).to_s + '][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
         = text_field_tag baseChildren + '[extra][' + (index).to_s + '][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
-    %li
+
     - if extraList.length < 3
       - extraList.length.upto(2) do |index|
         %li

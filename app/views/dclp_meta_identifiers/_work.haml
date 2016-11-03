@@ -4,8 +4,6 @@
   .multi.work{:id => 'multi_work'}
     %ul.items{:id => 'multiItems_work'}
       - @identifier[:work].each_with_index do |work, workIndex|
-        = workIndex
-        = work
         - work = DclpWork::Work.new(work)
         - base = 'hgv_meta_identifier[work][' + workIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
@@ -14,35 +12,103 @@
         %li.work{:id => 'work_' + workIndex.to_s }
           = select_tag baseAttributes + '[subtype]', options_for_select(DclpWork.subtypeOptions, work.subtype), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
-          
+
           %h5
             Author
           = label_tag baseChildren + '[author][name]', I18n.t('dclp.label.workAuthorName'), :class => 'meta workAuthorName', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][name]', work.author.name, :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName', :onchange => "workAuthorNameChange(this);"
-          
-          = label_tag baseChildren + '[author][number]', I18n.t('dclp.label.workAuthorNumber'), :class => 'meta workAuthorNumber', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][number]', work.author.tlg, :disabled => !@identifier.mutable?, :class => 'observechange workAuthorNumber', :onchange => "workAuthorNumberChange(this);"
-          
-          = label_tag baseChildren + '[author][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workAuthorCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][certainty]', work.author.certainty, :disabled => !@identifier.mutable?, :class => 'observechange workAuthorCertainty'
+          = text_field_tag baseChildren + '[author][name]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName', :onchange => "workAuthorNameChange(this);"
+
+          = label_tag baseChildren + '[author][language]', I18n.t('biblio.label.language'), :class => 'meta workAuthorLanguage', :title => @identifier.configuration.xpath(:work)
+          = select_tag baseChildren + '[author][language]', options_for_select(DclpWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          .clear
+
+          = label_tag baseChildren + '[author][tlg]', I18n.t('dclp.label.workTlg'), :class => 'meta workAuthorTlg', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][tlg]', (work.author ? work.author.tlg : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorTlg', :onchange => "workAuthorTlgChange(this);"
+
+          = label_tag baseChildren + '[author][cwkb]', I18n.t('dclp.label.workCwkb'), :class => 'meta workAuthorCwkb', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][cwkb]', (work.author ? work.author.cwkb : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorCwkb'
           .clear
           
+          = label_tag baseChildren + '[author][stoa]', I18n.t('dclp.label.workStoa'), :class => 'meta workAuthorStoa', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][stoa]', (work.author ? work.author.stoa : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorStoa'
+          
+          = label_tag baseChildren + '[author][phi]', I18n.t('dclp.label.workPhi'), :class => 'meta workAuthorPhi', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][phi]', (work.author ? work.author.phi : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorPhi'
+          .clear
+
+          = label_tag baseChildren + '[author][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][certainty]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          .clear
+          = label_tag baseChildren + '[author][corresp]', I18n.t('dclp.label.workCorresp'), :class => 'meta workCorresp', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][corresp]', (work.author ? work.author.corresp : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
+          .clear
+          
+          %h6=I18n.t('dclp.label.illustrationOnline')
+          =I18n.t('dclp.help.illustrationOnline')
+          .clear
+          .multi.multi_ref
+            = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => 'work_' +  workIndex.to_s + '_children_author_attributes_ref', :multiList => (work.author ? work.author.ref : []) }
+
+          .clear
+
           %h5
             Work
-          = work.title
+          = label_tag baseChildren + '[title][name]', I18n.t('dclp.label.workTitleName'), :class => 'meta workTitleName', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][name]', (work.title ?  work.title.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleName', :onchange => "workTitleNameChange(this);"
+
+          = label_tag baseChildren + '[title][language]', I18n.t('biblio.label.language'), :class => 'meta workTitleLanguage', :title => @identifier.configuration.xpath(:work)
+          = select_tag baseChildren + '[title][language]', options_for_select(DclpWork.languageOptions, (work.title ? work.title.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          .clear
+
+          = label_tag baseChildren + '[title][tlg]', I18n.t('dclp.label.workTlg'), :class => 'meta workTitleTlg', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][tlg]', (work.title ? work.title.tlg : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleTlg', :onchange => "workTitleTlgChange(this);"
+
+          = label_tag baseChildren + '[title][cwkb]', I18n.t('dclp.label.workCwkb'), :class => 'meta workTitleCwkb', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][cwkb]', (work.title ? work.title.cwkb : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleCwkb'
+          .clear
+          
+          = label_tag baseChildren + '[title][stoa]', I18n.t('dclp.label.workStoa'), :class => 'meta workTitleStoa', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][stoa]', (work.title ? work.title.stoa : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleStoa'
+          
+          = label_tag baseChildren + '[title][tm]', I18n.t('dclp.label.workTm'), :class => 'meta workTitleTm', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][tm]', (work.title ? work.title.tm : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleTm'
+          .clear
+          
+          = label_tag baseChildren + '[title][date][from]', I18n.t('dclp.label.workDate'), :class => 'meta workDate workDateFrom', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][date][from]', (work.title ? work.title.from : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateFrom'
+          
+          = label_tag baseChildren + '[title][date][to]', I18n.t('dclp.label.workDateTo'), :class => 'meta workDate workDateTo', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][date][to]', (work.title ? work.title.to : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateTo'
+          .clear
+          =I18n.t('dclp.help.workTitleDate')
+          .clear
+
+          = label_tag baseChildren + '[title][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][certainty]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          .clear
+          = label_tag baseChildren + '[title][corresp]', I18n.t('dclp.label.workCorresp'), :class => 'meta workCorresp', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][corresp]', (work.title ? work.title.corresp : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
+          .clear
+
+          %h6=I18n.t('dclp.label.illustrationOnline')
+          =I18n.t('dclp.help.illustrationOnline')
+          .clear
+          = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => 'work_' +  workIndex.to_s + '_children_title_attributes_ref', :multiList => (work.title ? work.title.ref : []) }
           .clear
           
           %h5
             Passage
-          = work.extraList
 
           .extraContainer
-            =render :partial => 'dclp_meta_identifiers/editionExtra', :locals => {:extraList => work.extraList, :baseChildren => baseChildren, :workIndex => workIndex}
+            =render :partial => 'dclp_meta_identifiers/workExtra', :locals => {:extraList => work.extraList, :baseChildren => baseChildren, :workIndex => workIndex}
             .clear
 
+          = text_field_tag baseAttributes + '[corresp]', work.corresp, :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
+          
           %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
           %span.move{:title => I18n.t('tooltip.multiMove')} o
 
-    = javascript_tag "Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    :javascript
+      Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
    
   .clear

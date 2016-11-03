@@ -1,0 +1,21 @@
+%hr
+.multi
+  %ul.items.multiItems_workExtra{:id => 'multiItems_workExtra' + workIndex.to_s}
+    - extraList.each_with_index do |extra, index|
+      %li
+        -if extra.value == 'and'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :disabled => :diabled, :class => 'workExtraAnd', :onchange => "editionExtraChange(this);"
+        -elsif
+          = select_tag baseChildren + '[extra][' + (index).to_s + '][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][corresp]', extra.corresp, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+        %span.move{:title => I18n.t('tooltip.multiMove')} o
+  %p.add#multiPlus_workExtra
+    %span{:onclick => "multiAddWorkExtra(this)",    :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+    %span{:onclick => "multiAddWorkExtraAnd(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('dclp.label.workExtraAddAnd')
+
+  :javascript
+    Sortable.create('multiItems_workExtra#{workIndex}', {overlap: 'horizontal', constraint: false, handle: 'move'});

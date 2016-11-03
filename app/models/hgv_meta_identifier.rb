@@ -172,6 +172,9 @@ class HGVMetaIdentifier < HGVIdentifier
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
           node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
+          if attribute_config[:split]
+            node[:attributes][attribute_key] = node[:attributes][attribute_key].split(attribute_config[:split].empty? ? attribute_config[:split] : ' ')
+          end
         }
       end
 

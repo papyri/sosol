@@ -1,20 +1,27 @@
 - base = 'hgv_meta_identifier[contentText]'
 - contentText = DclpWork::ContentText.new(:contentText => @identifier[:contentText])
+
+%div
+  = label_tag 'overview', I18n.t('dclp.label.overview'), :class => 'meta displayName overview', :title => @identifier.configuration.xpath(:contentText)
+  = text_field_tag 'hgv_meta_identifier[overview]', contentText.overview, :disabled => !@identifier.mutable?, :class => 'observechange displayName'
+  %span{ :title => 'delete', :onclick => "if(confirm('Are you sure you want to delete the legacy display name?')){console.log($(this).up().select('input')); $(this).up().select('input')[0].setValue(''); $(this).up().hide(); }", :class => 'delete'}x
+.clear
+
 .contentText.genre
   %h5.contentText=I18n.t('dclp.label.contentTextGenre')
-  = text_field_tag base + '[0]', contentText.genre.size > 0 ? contentText.genre[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[0]', contentText.genre[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
   .clear
-  = text_field_tag base + '[1]', contentText.genre.size > 1 ? contentText.genre[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[1]', contentText.genre[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
 .contentText.religion
   %h5.contentText=I18n.t('dclp.label.contentTextReligion')
-  = text_field_tag base + '[2]', contentText.religion.size > 0 ? contentText.religion[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[2]', contentText.religion[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
   .clear
-  = text_field_tag base + '[3]', contentText.religion.size > 1 ? contentText.religion[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[3]', contentText.religion[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
 .contentText.culture
   %h5.contentText=I18n.t('dclp.label.contentTextCulture')
-  = text_field_tag base + '[4]', contentText.culture.size > 0 ? contentText.culture[0] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[4]', contentText.culture[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
   .clear
-  = text_field_tag base + '[5]', contentText.culture.size > 1 ? contentText.culture[1] : '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  = text_field_tag base + '[5]', contentText.culture[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
 .clear
 .contentText.keywords
   %h5.contentText=I18n.t('dclp.label.contentTextKeywords')

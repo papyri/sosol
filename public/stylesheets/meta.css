@@ -110,7 +110,9 @@ div#edit input#hgv_meta_identifier_publicationExtra_2_value,
 div#edit input#hgv_meta_identifier_publicationExtra_3_value {
   width: 7.5em; }
 
-div#edit input#hgv_meta_identifier_titleStmt {
+div#edit input#hgv_meta_identifier_titleStmt,
+div#edit input#hgv_meta_identifier_overview
+ {
   width: 27em; }
 
 div#edit input#hgv_meta_identifier_material {
@@ -512,11 +514,35 @@ div#edit div.keywords li {
 div#edit ul#multiItems_printedIllustration input,
 div#edit ul#multiItems_onlineResource input,
 div#edit p#multiPlus_printedIllustration input,
-div#edit p#multiPlus_onlineResource input
-{
+div#edit p#multiPlus_onlineResource input {
   width: 42em;
 }
 
+
+div#edit input.workExtraAnd{
+  border: none;
+  background: transparent;
+  color: black;
+}
+
+div#edit input.workCertainty,
+div#edit input.workCorresp,
+div#edit div.ref input {
+  width: 32em;
+}
+
 div#edit label.displayName {
+  width: 14em;
+}
+
+div#edit label.workDateTo {
+  width: 2em;
+}
+
+div#edit label.workDateFrom {
+  width: 8em;
+}
+
+div#edit div.multi {
   width: auto;
 }

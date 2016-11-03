@@ -182,8 +182,8 @@ module DclpMetaIdentifierHelper
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpWork.subtypeOptions
       [
-        [I18n.t('work.subtype.primary'),   :primary],
-        [I18n.t('work.subtype.secondary'), :secondary]
+        [I18n.t('work.subtype.ancient'),   :ancient],
+        [I18n.t('work.subtype.ancientQuote'), :ancientQuote]
       ]
     end
 
@@ -208,48 +208,96 @@ module DclpMetaIdentifierHelper
         [I18n.t('work.type.low'),  :low]
       ]
     end
+    
+    def DclpWork.getIdFromUrl(urlList, type)
+      id = ''
+      urlList.each{|url|
+       
+       case type
+       when :tlg
+         if /\A.*tlg(?<id>\d+)\Z/ =~ url
+           return id
+         end
+       when :tm
+         if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
+           return id
+         end
+       when :stoa
+         if /\A.*stoa(?<id>\d+)\Z/ =~ url
+           return id
+         end
+       when :phi
+         if /\A.*phi(?<id>\d+)\Z/ =~ url
+           return id
+         end
+       when :cwkb
+       else
+         return nil
+       end
+
+     }
+     return nil
+    end
 
     # Data structure for publication information
     class Author
-      attr_accessor :name, :language, :tlg, :cwkb, :certainty, :ref, :refList, :corresp
+      attr_accessor :name, :language, :tlg, :cwkb, :phi, :stoa, :certainty, :ref, :corresp
       def initialize init = nil
         @name      = init[:value]
         @language  = init[:attributes][:language]
-        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : nil
-        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : nil
+
+        @ref       = init[:attributes][:ref]
+        @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
+        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        
         @certainty = init[:children][:certainty] ? init[:children][:certainty][:attributes][:target] : nil
         @corresp   = init[:attributes][:corresp]
-        @ref       = init[:attributes][:ref]
-        @refList   = @ref ? @ref.split(' ') : ''
+      end
+
+      def to_s()
+        '[AUTHOR ' + (@name ? @name : '-') + ' | language ' + (@language || '') + ' | tlg ' + (@tlg || '') + ' | cwkb ' + (@cwkb || '') + ' | phi ' + (@phi || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ']'
       end
     end
 
     # Data structure for publication information
     class Title
-      attr_accessor :name, :language, :tlg, :cwkb, :certainty, :ref, :date, :from, :to, :corresp
+      attr_accessor :name, :language, :tlg, :cwkb, :tm, :stoa, :certainty, :ref, :date, :from, :to, :corresp
       def initialize init = nil
         @name      = init[:value]
         @language  = init[:attributes][:language]
-        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : nil
-        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : nil
-        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
+        
         @ref       = init[:attributes][:ref]
+        @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DclpWork.getIdFromUrl(@ref, :tm)
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
+        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        
+        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
         @date      = init[:children][:date] ? init[:children][:date][:value] : nil
-        @from      = init[:children][:date] ? init[:children][:date][:attributes][:from] : nil
+        @when      = init[:children][:date] ? init[:children][:date][:attributes][:when] : nil
+        @from      = init[:children][:date] ? init[:children][:date][:attributes][:from] : @when
         @to        = init[:children][:date] ? init[:children][:date][:attributes][:to] : nil
         @corresp   = init[:attributes][:corresp]
+        
+      end
+
+      def to_s()
+        '[TITLE ' + (@name ? @name : '-') + ' | language ' + (@language || '') + ' | tm ' + (@tm || '') + ' | cwkb ' + (@cwkb || '') + ' | tlg ' + (@tlg || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ' | date ' + (@date || '') + (@when || @from || @to ? '(' + (@when || '') + (@from || '') + (@to ? '-' + @to : '') + ')' : '') + ']'
       end
     end
 
     # ContentText, genre, religtion, culture and other keywords
     class ContentText
-      attr_accessor :genre, :religion, :culture, :keywords
+      attr_accessor :genre, :religion, :culture, :keywords, :overview
       def initialize init = nil
         @genre    = []
         @religion = []
         @culture  = []
         @keywords = []
-        puts init
+        @overview = ''
+
         if init && init[:contentText]
           init[:contentText].each{|keyword|
             if keyword[:attributes] && keyword[:attributes][:class]
@@ -260,6 +308,8 @@ module DclpMetaIdentifierHelper
                   @religion << keyword[:value]
                 when 'description'
                   @genre << keyword[:value]
+                when 'overview'
+                  @overview = keyword[:value]
                 else
                   @keywords << keyword[:value]
               end
@@ -300,10 +350,10 @@ module DclpMetaIdentifierHelper
 
     class Work
       # +Array+ of a valid values for @subtype
-      @@subtypeList = [:primary, :secondary]
-      @@atomList = [:subtype]
+      @@subtypeList = [:ancient, :ancientQuote]
+      @@atomList = [:subtype, :corresp]
 
-      attr_accessor :subtype, :author, :title, :extraList
+      attr_accessor :subtype, :corresp, :author, :title, :extraList
 
       # Constructor
       # - *Args*  :
@@ -311,6 +361,7 @@ module DclpMetaIdentifierHelper
       # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
       def initialize init = nil
         @subtype   = nil
+        @corresp   = nil
         @author    = nil
         @title     = nil
         @extraList = []
@@ -330,6 +381,9 @@ module DclpMetaIdentifierHelper
               init[:children][:extra].each {|extra|
                 @extraList << Extra.new(extra)
               }
+              
+             @extraList << Extra.new({:value => 'and'})
+             @extraList << Extra.new({:value => '23', :unit => 'volume'})
             end
           end
         end
@@ -345,6 +399,12 @@ module DclpMetaIdentifierHelper
         @@atomList.each {|member|
           self.send((member.to_s + '=').to_sym, hash[member] || nil)
         }
+      end
+      
+      def to_s()
+        if @subtype
+          '[WORK Subtype: ' + @subtype + ' | ' + @author.to_s + ' | ' + @title.to_s + ' | count extra: ' + @extraList.length.to_s + ']'
+        end
       end
 
     end
