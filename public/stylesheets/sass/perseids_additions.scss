@@ -12,3 +12,15 @@
 nav#archive_links {
   clear:both;
 }
+
+#themeSelector {
+  display: none;
+
+}
+#imgspect *, #imgspect *:before, #imgspect *:after {
+  -webkit-box-sizing: unset;
+     -moz-box-sizing: unset;
+          box-sizing: unset;
+}
+
+

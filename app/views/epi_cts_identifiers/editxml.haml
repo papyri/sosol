@@ -3,17 +3,13 @@
 //------------------------------------------------------------
 %link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/imgspect/imgspect.css"}
 %link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
-:css
-  body {
-    background-color: #f9f9f9;
-  }
 //------------------------------------------------------------
 //  Content
 //------------------------------------------------------------
-.main.full.editxml
-  = render :partial => 'identifiers/edit_bar'
-  .site
-    = render :partial => 'identifiers/header'
+#main-wrapper.editxml
+  #container
+    = render :partial => 'identifiers/header_perseids'
+    = render :partial => 'identifiers/edit_bar_perseids'
     #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
     #edit
       = form_for @identifier, :url => { :action => :updatexml } do |f|
@@ -21,12 +17,13 @@
         #ict_tool_wrapper
           #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-obj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138_represents', 'data-formatter' => 'imgspect_link', 'data-refs-verb' => 'http://purl.org/dc/terms/references', 'data-endpoint-verb' => 'http://data.perseus.org/rdfvocab/cite/imageServer' }
             
-          %div{:id => "imgspect"}
-        
-        .clearfix
-        %div{:id => "editors"}
+        %div{:id => "imgspect"}
+
+        .clearfix.card
+          %div{:id => "editors"}
           = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
-          
+
+        .card
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
 -#-------------------------------------------------------------
