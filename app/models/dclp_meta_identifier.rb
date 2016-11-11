@@ -48,4 +48,12 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
     DCLPMetaIdentifier.preprocess(content)
   end
 
+  def to_s
+   serialization_string = ''
+   @configuration.scheme.each_key do |key|
+     serialization_string += '__' + key.to_s + '__: ' + self[key].to_s
+   end
+   return serialization_string
+  end
+
 end

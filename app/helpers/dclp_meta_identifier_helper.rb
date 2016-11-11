@@ -173,7 +173,7 @@ module DclpMetaIdentifierHelper
       end
     
     end
-  end
+  end # module DclpEdition
 
   module DclpWork
 
@@ -408,5 +408,26 @@ module DclpMetaIdentifierHelper
       end
 
     end
-  end
+
+  end # module DclpWork
+  
+  module DclpObject
+    class Collection
+      attr_accessor :list
+      def initialize collection, collectionList
+        @list = []
+
+        if collection
+          @list << collection
+        end
+        
+        if collectionList
+          @list += collectionList
+        end
+
+      end
+    end
+
+  end # module DclpObject
+
 end

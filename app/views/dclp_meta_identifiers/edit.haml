@@ -25,10 +25,18 @@
 
         %h4.category.work
           %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
-        .editbox{:style => 'display: block;'}
+        .editbox{:style => 'display: none;'}
 
           = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt displayName', :title => @identifier.configuration.xpath(:titleStmt)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
+          .clear
+          
+          = label_tag 'archiveName', I18n.t('dclp.label.archiveName'), :class => 'meta archiveName', :title => @identifier.configuration.xpath(:archiveName)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :archiveName }
+          .clear
+          
+          = label_tag 'archiveLink', I18n.t('dclp.label.archiveLink'), :class => 'meta archiveLink', :title => @identifier.configuration.xpath(:archiveLink)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :archiveLink }
           .clear
           
           = render :partial => 'dclp_meta_identifiers/contentText'
@@ -42,17 +50,16 @@
 
         %h4.category.object
           %a{:name => 'Edition'}=I18n.t('dclp.legend.object')
-        .editbox{:style => 'display: none;'}
-
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
-          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
+        .editbox{:style => 'display: block;'}
+          = render :partial => 'dclp_meta_identifiers/object'
           .clear
+
+          
           .swifty.quickSave=I18n.t('label.quickSave')
 
         %h4.category.general
           %a{:name => 'General<'}=I18n.t('dclp.legend.general')
         .editbox{:style => 'display: none;'}
-          = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
           = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
 
           .clear

@@ -111,11 +111,18 @@ div#edit input#hgv_meta_identifier_publicationExtra_3_value {
   width: 7.5em; }
 
 div#edit input#hgv_meta_identifier_titleStmt,
-div#edit input#hgv_meta_identifier_overview
+div#edit input#hgv_meta_identifier_overview,
+div#edit input#hgv_meta_identifier_layout,
+div#edit input#hgv_meta_identifier_archiveName,
+div#edit input#hgv_meta_identifier_archiveLink,
+div#edit ul#multiItems_collectionList input
  {
   width: 27em; }
 
-div#edit input#hgv_meta_identifier_material {
+div#edit input#hgv_meta_identifier_material,
+div#edit input#hgv_meta_identifier_bookForm,
+div#edit input#hgv_meta_identifier_columns,
+div#edit input#hgv_meta_identifier_writtenLines {
   width: 10em; }
 
 div#edit div.editbox label#publicationExtraFullTitle {
@@ -531,7 +538,9 @@ div#edit div.ref input {
   width: 32em;
 }
 
-div#edit label.displayName {
+div#edit label.displayName,
+div#edit label.archiveName,
+div#edit label.archiveLink {
   width: 14em;
 }
 
@@ -545,4 +554,8 @@ div#edit label.workDateFrom {
 
 div#edit div.multi {
   width: auto;
+}
+
+div#edit textarea#hgv_meta_identifier_notes{
+  height: 10em;
 }

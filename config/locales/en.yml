@@ -136,6 +136,8 @@ en:
       addEdition: add edition
       addWork: add work
       titleStmt: Display Name (Description)
+      archiveName: Archive Name
+      archiveLink: Archive Link
       overview: Legacy Display Name
       contentTextGenre: Genre
       contentTextReligion: Religion
@@ -281,6 +283,10 @@ en:
       geoPreview: update geo preview
       publicationPreview: update publication preview
       addAlternativePlace: add alternative location
+      bookForm: Book form
+      columns: Columns
+      writtenLines: Lines
+      layout: Layout
 
     tooltip:
       multiMentionedDateReference: Reference (line and column)

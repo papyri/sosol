@@ -24,30 +24,35 @@
         :id:
           :name: xml:id
           :pattern: /\AFR\d+\Z/
+  :inventory:
+    :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msPart
+    :multiple: true
+    :children:
+      :settlement:
+        :xpath: placeName/settlement
+      :collection:
+        :xpath: collection
+      :inventoryNumber:
+        :xpath: idno[@type='invNo']
+        :attributes:
+          :id:
+            :name: xml:id
   :metadata:
     :publication:
     :publicationTitle:
     :publicationExtra:
+    :sammelbuchBibliography:
     :collectionPlaceName:
-    :collection:
     :collectionInventoryNumber:
     :collectionTemporaryNotes:
     :collectionTemporaryInventoryNumber:
     :figures:
     :illustrations:
-    :inventory:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msPart
+    :collection:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno[@type='invNo']
+    :collectionList:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno/idno[@type='invNo']
       :multiple: true
-      :children:
-        :settlement:
-          :xpath: placeName/settlement
-        :collection:
-          :xpath: collection
-        :inventoryNumber:
-          :xpath: idno[@type='invNo']
-          :attributes:
-            :id:
-              :name: xml:id
     :archiveName:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']
     :archiveLink:
@@ -58,7 +63,7 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@columns
     :writtenLines:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines
-    :layoutDesc:
+    :layout:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/p
     :ldab:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
