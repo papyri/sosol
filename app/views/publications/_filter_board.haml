@@ -1,0 +1,19 @@
+#filter
+  %button{:class => "filter active", "data-target" => "all"}
+    All
+  - if has_voting
+    %button{:class => "filter", "data-target" => "voting-column"}
+      Needs Review
+  - if has_finalizing
+    %button{:class => "filter", "data-target" => "finalizing-column"}
+      Finalizing
+  - if has_approved
+    %button{:class => "filter", "data-target" => "approved-column"}
+      Approved
+  %input{:type => 'text', :class => 'input', :id => 're-search', :placeholder => "Quick Filter"}
+  %button{:class => "filter", :id => 'filter-count'}
+    Search
+  .archive_link
+    = link_to "Download All", { :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset }, :class => 'btn bg-sdw'
+  .archive_link
+    = link_to "Archived", { :controller => 'user', :action => 'archives', :board_id => @board.id }, :class => 'btn bg-sdw'

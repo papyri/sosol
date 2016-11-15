@@ -52,20 +52,19 @@
               = text_area_tag 'submit_comment', "", :class=>"input", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               = hidden_field_tag 'do_community_signup', @signup_communities.join(',')
               = hidden_field_tag 'do_community_confirm', @confirm_communities.join(',')
+              .columns
+                .text-center
+                  .select-container
+                    = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
+                    .carret
+                      %i{:class => "fa fa-caret-down"}
+                  = submit_tag "Submit to Boards", :onclick => 'this.disabled=true; jQuery(this).addClass("disabled"); this.form.submit();', :disabled => true, :class => 'submit margin-left', :id => "submit_button"
         - else
           %p
             %em
               Publication may not be submitted at this time.
           - if !@publication.modified?
             No changes have been made.
-        .columns
-          - if @show_submit
-            .text-center
-              .select-container
-                = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
-                .carret
-                  %i{:class => "fa fa-caret-down"}
-              = submit_tag "Submit to Boards", :onclick => 'this.disabled=true;this.form.submit();', :disabled => true, :class => 'submit margin-left', :id => "submit_button"
     = render :partial => 'action_bar'
 
     - if @current_user.developer

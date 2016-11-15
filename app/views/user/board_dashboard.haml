@@ -1,5 +1,8 @@
 #main-wrapper
-  #container
+  - has_finalizing = @finalizing_publications && @finalizing_publications.length > 0
+  - has_voting = @needs_reviewing_publications && @needs_reviewing_publications.length > 0
+  - has_approved = @approved_publications && @approved_publications.length > 0
+  #container{:class => 'publications'}
     - page_title = ""
     - if @board.community && @board.community.friendly_name
       - page_title = @board.community.friendly_name + " community "
@@ -7,24 +10,24 @@
     %header
       %h1
         = page_title
-    %nav.card
-      %ul.menu
-        %li
-          = link_to "Download Board Publications", { :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset }, :class => 'btn autosize'
-        %li
-          = link_to "Archived", :controller => 'user', :action => 'archives', :board_id => @board.id
+    = render "common/flash_all_perseids"
+    .container-wrapper
+      = render( :partial => 'publications/filter_board', :locals => { :has_finalizing => has_finalizing, :has_voting => has_voting, :has_approved => has_approved})
 
-    - if @needs_reviewing_publications && @needs_reviewing_publications.length > 0
-      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
-      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
+      #voting-column.publication-container
+        - if has_voting
+          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
+          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
 
-    - if @finalizing_publications && @finalizing_publications.length > 0
-      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
-      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
+      #finalizing-column.publication-container
+        - if has_finalizing
+          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
+          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
 
-    - if @approved_publications && @approved_publications.length > 0
-      = render :partial => "publications/publication_header_perseids", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
-      = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
+      #approved-column.publication-container
+        - if has_approved
+          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
+          = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
     -if @count > 50
       %p
       -if @offset > 0
@@ -35,4 +38,7 @@
       = render :partial => "publications/publication_header_perseids", :locals => {:status => "Waiting", :view_type => "board", :list_name => "waiting" }
       = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
 
-
+:javascript
+  jQuery(document).ready(
+    function() { perseids_filters(); }
+  );

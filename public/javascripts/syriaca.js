@@ -26,5 +26,15 @@ function diffUsingJS(viewType,baseText) {
 }
 
 function getAndDiff(baseUri) {
-  jQuery.get(baseUri).done(function(data) { diffUsingJS(0,data)});
+  jQuery.ajax({
+
+		url: baseUri,
+	  method: "GET"	,
+		success: function(data) {
+			diffUsingJS(0,data);
+		},
+		failure: function() {
+			console.log("Failed to retrieve data from " + baseUri);
+		}
+	});
 }

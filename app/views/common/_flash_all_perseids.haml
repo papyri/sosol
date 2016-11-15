@@ -1,4 +1,5 @@
-.card
-  - flash.each do |key, msg|
-    %i{:class => 'fa fa-info-circle'}
-    = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"
+-if flash.keys.length > 0
+  .card
+    - flash.each do |key, msg|
+      %i{:class => 'fa fa-info-circle'}
+      = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"

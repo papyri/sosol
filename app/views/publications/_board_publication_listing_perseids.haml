@@ -2,13 +2,22 @@
   - list_id = "publication_list_holder_" + list_name
 - else
   - list_id = "publication_list_holder"
-%div{:class => "publication-column", :id => list_id }
+%div{:class => "publication-column", :id => list_id, "data-type" => 'list_name' }
   - publications.each do |publication|
-    %div{:class => 'fix-sdw'}
-      %div{:class => 'publication'}
-        %span{:class => 'legend'}
-          - display_title = publication.title
-          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name
+    %div{:class => 'publication'}
+      - display_title = publication.title
+      %ul{:class => 'publication-items'}
+        - Identifier.site_identifier_classes.each do |i|
+          - if i.constantize::is_visible
+            - publication.identifiers.each do |m|
+              - if m.type == i
+                %li{:class => m.class}
+                  %span{:class => 'type-legend'}
+                    = m.class::FRIENDLY_NAME
+                  = link_to m.title, edit_polymorphic_path([publication,m])
+      %span{:class => "legend"}
+        %span{:class => "alt-title"}
+        = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name, :class => "original"
         - if list_name == "approved"
           - if publication.find_finalizer_user
             - finalizer_div_id = "finalizer_" + publication.id.to_s
@@ -27,15 +36,6 @@
                   %li{:class => "votes"}
                     = vote.user.human_name + " (" + vote.user.name + ") "
                     = vote.choice
-        %div{:class => "dropdown-container"}
-          %ul{:class => "type-dropdown"}
-            - Identifier.site_identifier_classes.each do |i|
-              - has_active = false
-              - if i.constantize::is_visible
-                - publication.identifiers.each do |m|
-                  - if m.type == i
-                    %li{:class => m.class}
-                      = link_to m.class::FRIENDLY_NAME, edit_polymorphic_path([publication,m]), {:title => m.title}
 :javascript
   jQuery(document).ready(
     function() { perseids_publication_selector(); });

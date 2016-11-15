@@ -4,4 +4,8 @@
 = javascript_include_tag 'syriaca'
 #diffoutput
 :javascript
-  getAndDiff("#{@identifier.to_remote_raw_path}");
+  jQuery( document ).ready(
+    function() {
+      getAndDiff("#{@identifier.to_remote_raw_path}");
+    }
+  )
