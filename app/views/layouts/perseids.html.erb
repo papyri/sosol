@@ -8,11 +8,14 @@
     <title>
       <%= "#{Sosol::Application.config.site_name}: #{controller.controller_name} - #{controller.action_name}" %>
     </title>
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css"/>
+    <%= stylesheet_link_tag 'syriaca/syr-icon-fonts.css' %>
     <%= stylesheet_link_tag 'perseids' %>
     <%= stylesheet_link_tag 'perseids_additions' %>
     <%= javascript_include_tag :defaults %>
     <%= javascript_include_tag "dashboard" %>
-  	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.slim.min.js"></script>
+  	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.slim.min.js"></script>
+	  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
     <%= javascript_include_tag "cross_site" %>
     <script language="javascript" type="text/javascript">
       jQuery.noConflict();
@@ -24,7 +27,9 @@
     <%= javascript_include_tag 'perseids-ld' %>
     <%= javascript_include_tag 'perseids-tools' %>
     <%= javascript_include_tag 'perseids-cite' %>
+    <%= javascript_include_tag 'typeahead.bundle' %>
     <%= javascript_include_tag 'perseids-pages' %>
+    <%= javascript_include_tag 'jquery.sticky-kit.min' %>
     <%= javascript_include_tag 'perseids-design' %>
     <script type="text/javascript">
       (function() {
@@ -83,7 +88,6 @@
 	    <%= render('user/perseids_user_box') %>
 	  </nav>
     </div>
-    <%= render "common/flash_all"  %>
     <%= yield %>
   </body>
 </html>

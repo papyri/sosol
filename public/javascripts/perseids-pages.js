@@ -162,13 +162,23 @@ CtsSelector.prototype.populate_selector = function( select_element, options ) {
   }
   if ( count == 0 ) {
     select_element.disabled = true;
+    jQuery(select_element).parent().addClass('disabled');
     select_element.hide();
   }
   else {
     if (count > 1) {
-      select_element.insert("<option value=''>click to select...</option>");
+      var placeholder;
+      if (select_element.name == 'group_urn') {
+        placeholder = "Select Author/Textgroup..."
+      } else if (select_element.name == 'work_urn') {
+        placeholder = "Select Work..."
+      } else {
+        placeholder = "Select Edition..."
+      }
+      select_element.insert("<option value=''>" + placeholder + "</option>");
     } 
     select_element.disabled = false;
+    jQuery(select_element).parent().removeClass('disabled');
     select_element.show();
   }
 }

@@ -2,6 +2,9 @@
  * Color variables
 */
 /**
+ *    ICONS
+ */
+/**
  *
  * Sizes
  *
@@ -38,9 +41,6 @@
   height: 60px;
   width: 120px; }
 
-nav#archive_links {
-  clear: both; }
-
 #themeSelector {
   display: none; }
 
@@ -48,5 +48,19 @@ nav#archive_links {
   -webkit-box-sizing: unset;
   -moz-box-sizing: unset;
   box-sizing: unset; }
+
+.select-bar input[type="text"] {
+  border: 5px solid #7986cb;
+  font-size: 16px;
+  width: 100%;
+  height: 45px;
+  padding-left: 1em;
+  text-align: left;
+  padding: 5px; }
+  .select-bar input[type="text"]:focus {
+    border-color: #ffb74d; }
+
+.card textarea.input.xml-content {
+  height: 100%; }
 
 /*# sourceMappingURL=perseids_additions.css.map */

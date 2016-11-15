@@ -59,13 +59,16 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
 		background-color:$COLOR_PRI;
 		color: $COLOR_FOREGROUND;
 	 	border:none;
-	 	width: $BUTTON_WIDTH;
 	 	text-align: center;
 		border:1px solid $COLOR_PRI; 
 	 	&:active {
 	 		border:1px solid $COLOR_PRI;
 			padding:0;
 	 	}
+ 	}
+ 	&.disabled, &[disabled] {
+ 		background-color:#e0e0e0;
+ 		color:$COLOR_DISABLED;
  	}
  	&.important {
  		@extend .bg-sdw;

@@ -35,7 +35,6 @@ function perseids_filters() {
 				that.show();
 			}
 			else {
-				console.log(that);
 				if (that.attr("id") == target) {
 					that.show();
 				} else {
@@ -67,17 +66,37 @@ function perseids_filters() {
 		var numberItems = count;
 		jQuery("#filter-count").text(count);
 	});
-	jQuery(".publication-validate").on("click", function (event) {
+
+	jQuery(".publication-validate").on("click", function(event) {
 		event.preventDefault();
 
-		jQuery('#validate-modal pre').each(function (i, block) {
-			hljs.highlightBlock(block);
+   	jQuery('#validate-modal pre').each(function(i, block) {
+	  	hljs.highlightBlock(block);
 		});
-		jQuery("#validate-modal").show();
+  	jQuery("#validate-modal").show();
 
 	});
-	jQuery("#validate-modal .close").on("click", function (event) {
+  jQuery("#validate-modal .close").on("click", function(event) {
 		event.preventDefault();
-		jQuery("#validate-modal").hide();
+  	jQuery("#validate-modal").hide();
 	});
+	jQuery(".publication-items li").on("mouseenter", function() {
+  	var that = jQuery(this),
+  		publication = that.parents(".publication").find(".legend");
+  	publication.find(".original").hide();
+  	publication.find(".alt-title").text(that.find("a").text()).show();
+  }).on("mouseleave", function() {
+  	var that = jQuery(this),
+  	publication = that.parents(".publication").find(".legend");
+
+	 	publication.find(".alt-title").hide();
+	 	publication.find(".original").show();
+
+  });
+  jQuery("#filter").stick_in_parent();
+  jQuery("#archive_links").stick_in_parent();
+  jQuery("#workwithtexts").on("click", function(e) {
+  	e.preventDefault();
+  	jQuery(".select-bar").toggle();
+  });
 }

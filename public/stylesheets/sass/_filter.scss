@@ -1,37 +1,46 @@
 #filter {
 
-box-sizing: border-box;
-	margin:$OUTLINE_SIZE;
-	border:$OUTLINE_SIZE solid $COLOR_PRI;
-	height: $BUTTON_HEIGHT + 2*$OUTLINE_SIZE;
-	background-color:white;	
-	display:inline-block;
+	box-sizing: border-box;
+	display:block;
 	padding:0;
 	width:auto;
 	> * {
-		vertical-align: middle
+		margin:0 auto;
 	}
+
 	button {
-		width:$BUTTON_WIDTH/2;
-		margin:0;
-		background-color:white;
-		border:none;
-		&[data-target].active {
-			background-color: $COLOR_PRI;
-			color:white;
-	 		border:1px solid $COLOR_GRAY; 
-	 		border-right:$OUTLINE_SIZE solid $COLOR_PRI;
-			padding:0;
-	 	}
+		@extend .btn;
+		@extend .bg-sdw;
+		display:block;
+		&.active {
+			@extend .revert;
+		}
+		&:hover {
+			display:block !important;
+		}
 	}
 	input[type="text"] {
-		border:none;
-		background-color:#DDDDDD;
+		@extend .bg-sdw;
+		border:$OUTLINE_SIZE solid $COLOR_PRI;
+		background-color:$COLOR_FOREGROUND;
 		line-height: $BUTTON_HEIGHT;
+		display:block;
 		padding:0;
-		margin:0;
-		display:inline-block;
-		padding:0 $OUTLINE_SIZE;
+		margin:$MARGIN;
+		width:$BUTTON_WIDTH;
+		text-indent: 5px;
+
+		@include medium {
+	  		width:$MD_BUTTON_WIDTH;
+			height: $MD_BUTTON_HEIGHT;
+			line-height: $MD_BUTTON_HEIGHT;
+		}
+
+		@include phone {
+	  		width:$XS_BUTTON_WIDTH;
+			height: $XS_BUTTON_HEIGHT;
+			line-height: $XS_BUTTON_HEIGHT;
+		}
 	}
 	#filter-count {
 		width:auto;

@@ -4,51 +4,51 @@
   - has_finalizing = @finalizing_publications && @finalizing_publications.length > 0
   - has_submitted = @submitted_publications && @submitted_publications.length > 0
   - has_committed = @committed_publications && @committed_publications.length > 0
-  = render( :partial => 'publications/filter', :locals => { :has_new => has_new, :has_editing => has_editing, :has_committed => has_committed, :has_finalizing => has_finalizing, :has_submitted => has_submitted})
-  #container
+  #container{:class => 'publications'}
     = render( :partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys })
-    - if @community
-      %header
-        %h1
-          = @community.format_name + " community publications"
+    = render "common/flash_all_perseids"
+    .container-wrapper
+      = render( :partial => 'publications/filter', :locals => { :has_new => has_new, :has_editing => has_editing, :has_committed => has_committed, :has_finalizing => has_finalizing, :has_submitted => has_submitted})
+      #archive_links
+      - if @community
+        %header
+          %h1
+            = @community.format_name + " community publications"
 
-    #new-column.publication-container
-      - if has_new
-        .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "New", :view_type => "user", :list_name => "new"}
-          = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @new_publications, :view_type => "user", :list_name => "new"}
+      #new-column.publication-container
+        - if has_new
+          .publication_list_holder
+            = render :partial => "publications/publication_header_perseids", :locals => {:status => "New", :view_type => "user", :list_name => "new"}
+            = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @new_publications, :view_type => "user", :list_name => "new"}
 
-    #editing-column.publication-container
-      - if has_editing
-        .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Editing", :view_type => "user", :list_name => "editing" }
-          = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @editing_publications, :view_type => "user", :list_name => "editing" }
+      #editing-column.publication-container
+        - if has_editing
+          .publication_list_holder
+            = render :partial => "publications/publication_header_perseids", :locals => {:status => "Editing", :view_type => "user", :list_name => "editing" }
+            = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @editing_publications, :view_type => "user", :list_name => "editing" }
 
-    #submitted-column.publication-container
-      - if has_submitted
-        .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Submitted", :view_type => "user", :list_name => "submitted" }
-          = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @submitted_publications, :view_type => "user", :list_name => "submitted" }
+      #submitted-column.publication-container
+        - if has_submitted
+          .publication_list_holder
+            = render :partial => "publications/publication_header_perseids", :locals => {:status => "Submitted", :view_type => "user", :list_name => "submitted" }
+            = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @submitted_publications, :view_type => "user", :list_name => "submitted" }
 
-    #finalizing-column.publication-container
-      - if has_finalizing
-        .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalizing", :view_type => "user", :list_name => "finalizing" }
-          = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "user", :list_name => "finalizing" }
+      #finalizing-column.publication-container
+        - if has_finalizing
+          .publication_list_holder
+            = render :partial => "publications/publication_header_perseids", :locals => {:status => "Finalizing", :view_type => "user", :list_name => "finalizing" }
+            = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @finalizing_publications, :view_type => "user", :list_name => "finalizing" }
 
-    #committed-column.publication-container
-      - if has_committed
-        .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Committed", :view_type => "user", :list_name => "committed" }
-          = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @committed_publications, :view_type => "user", :list_name => "committed" }
-    %nav.card{ :id => 'archive_links'}
-      = link_to "Archive All Committed", {:controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id}, :class => 'btn'
-      = link_to "Archived", { :controller => 'user', :action => 'archives',  :id => @current_user.id }, :class => 'btn'
+      #committed-column.publication-container
+        - if has_committed
+          .publication_list_holder
+            = render :partial => "publications/publication_header_perseids", :locals => {:status => "Committed", :view_type => "user", :list_name => "committed" }
+            = render :partial => "publications/publication_listing_perseids", :locals => {:publications => @committed_publications, :view_type => "user", :list_name => "committed" }
 
-    - if defined?(@show_events)
-      - @events = Event.find(:all, :order => "created_at DESC", :limit => 25, :include => [:owner, :target])[0..24]
-      %h2 News Feed
-      = render :partial => "events/list", :object => @events
+      - if defined?(@show_events)
+        - @events = Event.find(:all, :order => "created_at DESC", :limit => 25, :include => [:owner, :target])[0..24]
+        %h2 News Feed
+        = render :partial => "events/list", :object => @events
 :javascript
   jQuery(document).ready(
     function() { perseids_filters(); }

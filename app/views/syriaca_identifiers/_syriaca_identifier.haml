@@ -1,3 +1,5 @@
-= link_to 'XML', editxml_publication_syriaca_identifier_path( syriaca_identifier.publication, syriaca_identifier)
-= link_to 'Preview', preview_publication_syriaca_identifier_path( syriaca_identifier.publication, syriaca_identifier)
-%br
+%ul{:class => 'unstyled'}
+  %li
+    = link_to 'XML', editxml_publication_syriaca_identifier_path( syriaca_identifier.publication, syriaca_identifier), :class => 'btn fullsize'
+  %li
+    = link_to 'Preview', preview_publication_syriaca_identifier_path( syriaca_identifier.publication, syriaca_identifier), :class => 'btn fullsize'

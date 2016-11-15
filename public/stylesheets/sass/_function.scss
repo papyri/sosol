@@ -1,0 +1,32 @@
+@mixin collection-item($name, $icon-font-class, $specific-icon-class, $color, $icon-height-factor:0.6) {
+	.publication {
+	  .publication-items > li.#{$name} {
+	  	background-color: $color;
+	  	> a:before {
+	  		@extend .#{$icon-font-class};
+	  		@extend .#{$specific-icon-class};
+	  		font-size: $PUBLICATION_CARD_HEIGHT*$icon-height-factor;
+			line-height: $PUBLICATION_CARD_HEIGHT;
+	  		text-align:center;
+	  		width:$PUBLICATION_CARD_HEIGHT;
+	  	}
+	  }
+	}
+	#container.publications {
+		.new-bar {
+			.btn {
+				&.#{$name} {
+				  	background-color: $color;
+					&:before {
+				  		@extend .#{$icon-font-class};
+				  		@extend .#{$specific-icon-class};
+				  		font-size: $PUBLICATION_CARD_HEIGHT*$icon-height-factor;
+						line-height: $PUBLICATION_CARD_HEIGHT;
+				  		text-align:center;
+				  		width:$PUBLICATION_CARD_HEIGHT;
+					}
+				}
+			}
+		}
+	}
+}

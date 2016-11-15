@@ -25,7 +25,7 @@ body, .columns {
 		> .card {
 			margin-bottom:$MARGIN_BIG;
 		}
-		> header {
+		> header, .publication-container header {
 			color:$COLOR_PRI;
 			border-bottom:2px solid $COLOR_PRI;
 			display: inline-block;
@@ -120,104 +120,8 @@ body, .columns {
 			width:100%;
 		}
 	}
-
-	label {
-		display:block;
-		margin:$MARGIN_BIG 0;
-	}
-	input {
-		@extend .fg-sdw;
-		height:$CARD_BUTTON_HEIGHT;
-	}
-	input:not([type="button"]){
-		border:$OUTLINE_SIZE solid $COLOR_PRI;
-		width:75%;
-		padding-left:1em;
-		@extend .font-button ;
-		text-transform: none!important;
-		&:focus {
-			border-color:$COLOR_SEC;
-		}
-	}
-	textarea.input, input[type="text"] {
-		border:$OUTLINE_SIZE solid $COLOR_PRI;
-		width:100%;
-		height:60px;
-		padding-left:1em;
-		text-align:left;
-		padding:$MARGIN_SMALL;
-		&:focus {
-			border-color:$COLOR_SEC;
-		}
-		&.xml-content {
-		    height: 100%;
-		}
-	}
-	input[type="submit"] {
-		text-transform: uppercase;
-		background-color:$COLOR_PRI;
-		color: $COLOR_FOREGROUND;
-	 	border:none;
-	 	width: $BUTTON_WIDTH;
-	 	text-align: center;
-		border:1px solid $COLOR_PRI; 
-		margin-top: $BUTTON_HEIGHT;
-		padding:0;
-	 	&:active, &:hover, &:focus {
-	 		border:1px solid $COLOR_PRI;
-			height:$CARD_BUTTON_HEIGHT;
-	 	}
-	}
-	select {
-	 	min-width: $BUTTON_WIDTH*1.5;
-		height:$CARD_BUTTON_HEIGHT;
-		font-size:$BUTTON_FONT_SIZE;
-		background-color:transparent;
-		border:none;
-		border-right:none;
-		overflow: hidden;
-	    appearance:none;
-	    -moz-appearance:none; /* Firefox */
-	    -webkit-appearance:none; /* Safari and Chrome */
-	    width:$BUTTON_WIDTH;
-	    cursor:pointer;
-	}
-	.select-container {
-		display:inline-block;
-		cursor:pointer;
-		position:relative;
-		border:$OUTLINE_SIZE solid $COLOR_PRI;
-		background-color:$COLOR_FOREGROUND;
-		//overflow: hidden;
-		select {
-			padding-right: $CARD_BUTTON_HEIGHT + $OUTLINE_SIZE;
-			height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
-			overflow: hidden;
-			z-index: 99;
-		}
-		.carret {
-			display:none;
-		}
-		&:after{
-			pointer-events: none;
-			z-index: 1;
-			position: absolute;
-			right:0;
-			background-color:$COLOR_PRI;
-			top:0;
-			display:block;
-			width:$CARD_BUTTON_HEIGHT;
-			height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
-			line-height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
-			content:"";
-			color:white;
-			text-align:center;
-		    font-size: 40px;
-		    vertical-align: baseline;
-		    @extend .fa;
-		}
-	}
 }
+
 .margin-left {
 	margin-left:$MARGIN_BIG;
 }

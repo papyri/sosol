@@ -1,160 +1,297 @@
-.publication-container {
-	clear:both;
-	&:before, &:after {
-		clear:both;
+#container.publications {
+	.new-bar, .select-bar {
+		margin:$MARGIN_SMALL $MARGIN_SMALL $MARGIN_BIG*1.5 $MARGIN_SMALL;
+		padding:$MARGIN_BIG;
+		h2 {
+			margin-bottom: $MARGIN_BIG;
+		}
+		.btn {
+			border:none;
+			@extend .bg-sdw;
+			padding-left:2.5*$OUTLINE_SIZE;
+			padding-right:2.5*$OUTLINE_SIZE;
+			font-size: 15px;
+		}
+	}
+	.select-bar {
+		display:none;
+		.btn, .select-container {
+			margin-bottom: $OUTLINE_SIZE*2;
+		}
+		.btn {
+			&:first-child {
+				margin-left: $OUTLINE_SIZE;
+			}
+			width:$MD_BUTTON_WIDTH;
+		}
+	}
+	.new-bar {
+		@extend .bg-sdw;
+		background-color:$COLOR_FOREGROUND;
+
+		.btn {
+			position:relative;
+			&:before {
+				color:white;
+				position:absolute;
+				top:0;
+				left:0;
+		  		font-family: "FontAwesome";
+		  		font-size: $BUTTON_HEIGHT/2;
+				line-height: $BUTTON_HEIGHT;
+		  		text-align:center;
+		  		width:$BUTTON_HEIGHT;
+		  		z-index:998;
+			}
+			padding-left:$BUTTON_HEIGHT;
+			@include medium {
+				padding-left:$MD_BUTTON_HEIGHT;
+				&:before {
+			  		font-size: $MD_BUTTON_HEIGHT/2*1.2;
+					line-height: $MD_BUTTON_HEIGHT;
+			  		text-align:center;
+			  		width:$MD_BUTTON_HEIGHT;
+				}
+			}
+			width:auto;
+			&:link, &:visited, &:hover {
+				color:white;
+				border:none;
+			}
+			&.primary {
+				background-color: $COLOR_PRI;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TEXT};	
+				}
+			}
+			&.TreebankCiteIdentifier {
+				background-color: $COLOR_Treebank;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TREEBANK};	
+				}
+			}
+			&.EpiCTSIdentifier {
+				background-color: $COLOR_Transcription;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TRANSCRIPTION};	
+				}
+			}
+			&.CommentaryCiteIdentifier {
+				background-color: $COLOR_Commentary;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_COMMENTARY};	
+				}
+			}
+			&.AlignmentCiteIdentifier {
+				background-color: $COLOR_Text_Alignment;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TEXT_ALIGNMENT};	
+				}
+			}
+			&.CitationCTSIdentifier {
+				background-color: $COLOR_Passage;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_PASSAGE};	
+				}
+			}
+			&.OaCiteIdentifier {
+				background-color: $COLOR_Annotations;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_ANNOTATIONS};	
+				}
+			}
+			&.OACIdentifier {
+				background-color: $COLOR_Text_Annotations;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TEXT_ANNOTATIONS};	
+				}
+			}
+			&.EpiTransCTSIdentifier {
+				background-color: $COLOR_Translation;
+				&:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TRANSLATION};	
+				}
+			}
+		}
+	}
+	.container-wrapper {
+		position:relative;
+
+		.publication-container {
+			margin-right:$BUTTON_WIDTH*4/3;
+			margin-top:3em;
+			
+
+			@include medium {
+				margin-right:$MD_BUTTON_WIDTH*4/3;
+			}
+		}
+		#filter, #archive_links {
+			padding-top:50px;
+			float:right;
+		}
 	}
 }
 .publication {
 	@extend .bg-sdw;
 	background-color:white;
-
-	width:30%;
-	margin-right:2%;
-	@include medium {
-
-		width:45%;
-		margin-right:5%;
-	}
-	@include phone {
-		width:100%;
-		margin-right:0;
-	}
+	display:flex;
+	flex-direction:row;
+	width:100%;
 	margin-top:0;
-	display:inline-block;
-	float:left;
 
-  	height:$CARD_BUTTON_HEIGHT;
-  	margin-bottom: 1*$CARD_BUTTON_HEIGHT/3;
-  	position:relative;
+  	height:$PUBLICATION_CARD_HEIGHT;
+  	margin-bottom: 1*$PUBLICATION_CARD_HEIGHT/3;
 
   	.publication-validate {
-  		display:none;
-  		height:100%;
-  		line-height: $CARD_BUTTON_HEIGHT;
-  		width:$CARD_BUTTON_HEIGHT;
+  		display:block;
+  		height:$PUBLICATION_CARD_HEIGHT;
+  		line-height: $PUBLICATION_CARD_HEIGHT;
+  		width:$PUBLICATION_CARD_HEIGHT;
   		text-align:center;
-  		position:absolute;
-  		left:0;
   		background-color:$COLOR_PRI;
   		color:white;
   	}
 
-  	&:hover {
-  		.publication-validate {
-  			display:block;
-  		}
-  		/*
-  		// Not sure about this part
-  		.legend {
-  			margin-left:$CARD_BUTTON_HEIGHT + 2 * $OUTLINE_SIZE;
-  		}
-  		*/
-  	}
-
-	.legend_container {
-		display:inline-block;
-		float:left;
-		padding:$MARGIN_SMALL;
-		width:auto;
-	}
-	.legend_container:nth-child(2):after {
-		content: "...";
-		display: inline;
-	}
-	.legend_container .legend {
-		display:none;
-	}
-
-	.legend_container:first-child .legend {
-		display:inline-block;
+	.legend {
+		display:block;
+		line-height: $PUBLICATION_CARD_HEIGHT;
+		font-weight: 400;
 		text-overflow: hidden;
 		overflow: hidden;
+		flex-grow:1;
+		a {
+			text-decoration: none;
+		}
 	}
-	.border{
-		position:absolute;
-		right:0;
-  		height:$CARD_BUTTON_HEIGHT;
+	.publication-items {
+  		display:flex;
+  		flex-direction: row;
+  		height:$PUBLICATION_CARD_HEIGHT;
 		width:$BUTTON_WIDTH;
   		list-style:none;
   		margin:0;
-  		height:0;
+  		padding:0;
+  		width:$PUBLICATION_CARD_HEIGHT*($MAX_ICONS_HOME+1);
+  		text-overflow: hidden;
 		> li {
-			text-overflow:hidden;
-			overflow:hidden;
 			color:white;
-			float:right;
-			display:block;
-			width:$OUTLINE_SIZE*2;
-			padding-left:$OUTLINE_SIZE*2;
+	  		width:$PUBLICATION_CARD_HEIGHT;
+			position:relative;
 			a:active, a:link, a:hover, a:visited {
 				display:block;
-				height:$CARD_BUTTON_HEIGHT;
-				line-height: $CARD_BUTTON_HEIGHT;
-				width:auto;
+				font-size: 1px;
+				height:$PUBLICATION_CARD_HEIGHT;
+				line-height: $PUBLICATION_CARD_HEIGHT;
+				width:$PUBLICATION_CARD_HEIGHT;
 				color:white;
 				font-family: Roboto;
 				font-weight: 500;
 				font-style: normal;
-				font-size: $BUTTON_FONT_SIZE;
 				text-decoration: none;
-				&:hover {
-					text-decoration:underline;
+				text-overflow: hidden;
+				color:transparent;
+				z-index: 997;
+				&:before {
+					color:white;
+					position:absolute;
+					top:0;
+					left:0;
+			  		font-family: "FontAwesome";
+			  		font-size: $PUBLICATION_CARD_HEIGHT/2*1.2;
+					line-height: $PUBLICATION_CARD_HEIGHT;
+			  		text-align:center;
+			  		width:$PUBLICATION_CARD_HEIGHT;
+			  		z-index:998;
 				}
-			}
-			&.treebank {
-				background-color: $COLOR_Treebank;
-			}
-			&.transcription {
-				background-color: $COLOR_Transcription;
-			}
-			&.commentary {
-				background-color: $COLOR_Commentary;
-			}
-			&.text-alignment {
-				background-color: $COLOR_Text_Alignment;
-			}
-			&.passage {
-				background-color: $COLOR_Passage;
-			}
-			&.annotations {
-				background-color: $COLOR_Annotations;
-			}
-			&.text-annotations {
-				background-color: $COLOR_Text_Annotations;
-			}
-			&.translation {
-				background-color: $COLOR_Translation;
 			}
 			&.TreebankCiteIdentifier {
 				background-color: $COLOR_Treebank;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TREEBANK};
+				}
 			}
 			&.EpiCTSIdentifier {
 				background-color: $COLOR_Transcription;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TRANSCRIPTION};
+				}
 			}
 			&.CommentaryCiteIdentifier {
 				background-color: $COLOR_Commentary;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_COMMENTARY};
+				}
 			}
 			&.AlignmentCiteIdentifier {
 				background-color: $COLOR_Text_Alignment;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TEXT_ALIGNMENT};
+				}
 			}
 			&.CitationCTSIdentifier {
 				background-color: $COLOR_Passage;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_PASSAGE};
+				}
 			}
 			&.OaCiteIdentifier {
 				background-color: $COLOR_Annotations;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_ANNOTATIONS};
+				}
 			}
 			&.OACIdentifier {
 				background-color: $COLOR_Text_Annotations;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TEXT_ANNOTATIONS};
+				}
 			}
 			&.EpiTransCTSIdentifier {
 				background-color: $COLOR_Translation;
+				a:before {
+					@extend .#{$fa-css-prefix}-#{$ICON_TRANSLATION};
+				}
 			}
 			&.votes {
 				background-color: $COLOR_GRAY;
 			}
+
+			/* Popover */
+			.type-legend {
+				background-color: rgba(0,0,0,0.85);
+				border-radius: 5px;
+				bottom: 42px;
+				box-shadow: 0 0 5px rgba(0,0,0,0.4);
+				color: #fff;
+				display: none;
+				font-size: 12px;
+				font-family: 'Helvetica',sans-serif;
+				left: -95px;
+				padding: 7px 10px;
+				position: absolute;
+				width: 200px;
+				z-index: 999;
+				
+				&:before {
+					border-top: 7px solid rgba(0,0,0,0.85);
+					border-right: 7px solid transparent;
+					border-left: 7px solid transparent;
+					bottom: -7px;
+					content: '';
+					display: block;
+					left: 50%;
+					margin-left: -7px;
+					position: absolute;
+				}
+			}
 			&:hover {
-				width:auto;
-				padding-right:$OUTLINE_SIZE*2;
+				.type-legend {
+					display: block;
+					-webkit-animation: fade-in .3s linear 1, move-up .3s linear 1;
+					-moz-animation: fade-in .3s linear 1, move-up .3s linear 1;
+					-ms-animation: fade-in .3s linear 1, move-up .3s linear 1;
+				}
 			}
 		}
 	}

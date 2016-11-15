@@ -108,7 +108,7 @@
   src: url("../fonts/fontawesome-webfont.eot?#iefix&v=4.6.3") format("embedded-opentype"), url("../fonts/fontawesome-webfont.woff2?v=4.6.3") format("woff2"), url("../fonts/fontawesome-webfont.woff?v=4.6.3") format("woff"), url("../fonts/fontawesome-webfont.ttf?v=4.6.3") format("truetype"), url("../fonts/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal; }
-.fa, .card .select-container:after {
+.fa, .select-container:after {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -165,9 +165,9 @@
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .card .fa-pull-left.select-container:after {
+.fa.fa-pull-left, .fa-pull-left.select-container:after {
   margin-right: .3em; }
-.fa.fa-pull-right, .card .fa-pull-right.select-container:after {
+.fa.fa-pull-right, .fa-pull-right.select-container:after {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
@@ -177,9 +177,9 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, .card .pull-left.select-container:after {
+.fa.pull-left, .pull-left.select-container:after {
   margin-right: .3em; }
-.fa.pull-right, .card .pull-right.select-container:after {
+.fa.pull-right, .pull-right.select-container:after {
   margin-left: .3em; }
 
 .fa-spin {
@@ -606,7 +606,7 @@
 .fa-random:before {
   content: ""; }
 
-.fa-comment:before {
+.fa-comment:before, #container.publications .new-bar .btn.OaCiteIdentifier:before, #container.publications .new-bar #filter button.OaCiteIdentifier:before, #filter #container.publications .new-bar button.OaCiteIdentifier:before, #container.publications .new-bar .btn.OACIdentifier:before, #container.publications .new-bar #filter button.OACIdentifier:before, #filter #container.publications .new-bar button.OACIdentifier:before, .publication .publication-items > li.OaCiteIdentifier a:before, .publication .publication-items > li.OACIdentifier a:before {
   content: ""; }
 
 .fa-magnet:before {
@@ -803,7 +803,11 @@
   content: ""; }
 
 .fa-copy:before,
-.fa-files-o:before {
+.fa-files-o:before,
+#container.publications .new-bar .btn.AlignmentCiteIdentifier:before,
+#container.publications .new-bar #filter button.AlignmentCiteIdentifier:before,
+#filter #container.publications .new-bar button.AlignmentCiteIdentifier:before,
+.publication .publication-items > li.AlignmentCiteIdentifier a:before {
   content: ""; }
 
 .fa-paperclip:before {
@@ -952,7 +956,7 @@
 .fa-cutlery:before {
   content: ""; }
 
-.fa-file-text-o:before {
+.fa-file-text-o:before, #container.publications .new-bar .btn.primary:before, #container.publications .new-bar #filter button.primary:before, #filter #container.publications .new-bar button.primary:before, #container.publications .new-bar .btn.EpiCTSIdentifier:before, #container.publications .new-bar #filter button.EpiCTSIdentifier:before, #filter #container.publications .new-bar button.EpiCTSIdentifier:before, #container.publications .new-bar .btn.CommentaryCiteIdentifier:before, #container.publications .new-bar #filter button.CommentaryCiteIdentifier:before, #filter #container.publications .new-bar button.CommentaryCiteIdentifier:before, #container.publications .new-bar .btn.CitationCTSIdentifier:before, #container.publications .new-bar #filter button.CitationCTSIdentifier:before, #filter #container.publications .new-bar button.CitationCTSIdentifier:before, #container.publications .new-bar .btn.EpiTransCTSIdentifier:before, #container.publications .new-bar #filter button.EpiTransCTSIdentifier:before, #filter #container.publications .new-bar button.EpiTransCTSIdentifier:before, .publication .publication-items > li.EpiCTSIdentifier a:before, .publication .publication-items > li.CommentaryCiteIdentifier a:before, .publication .publication-items > li.CitationCTSIdentifier a:before, .publication .publication-items > li.EpiTransCTSIdentifier a:before {
   content: ""; }
 
 .fa-building-o:before {
@@ -1086,7 +1090,7 @@
 .fa-crop:before {
   content: ""; }
 
-.fa-code-fork:before {
+.fa-code-fork:before, #container.publications .new-bar .btn.TreebankCiteIdentifier:before, #container.publications .new-bar #filter button.TreebankCiteIdentifier:before, #filter #container.publications .new-bar button.TreebankCiteIdentifier:before, .publication .publication-items > li.TreebankCiteIdentifier a:before {
   content: ""; }
 
 .fa-unlink:before,
@@ -2286,6 +2290,9 @@
  * Color variables
 */
 /**
+ *    ICONS
+ */
+/**
  *
  * Sizes
  *
@@ -2299,7 +2306,7 @@
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, .publication {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -2309,7 +2316,7 @@
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
+.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
@@ -2325,19 +2332,19 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
+.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="button"]), .modal input:not([type="button"]) {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, .card input:link:not([type="button"]), .card ul.menu > li a:link, #main-menu nav ul li a:link, .modal input:link:not([type="button"]) {
+  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, #main-menu nav ul li a:link, .card input:link:not([type="button"]), .modal input:link:not([type="button"]) {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="button"]), .modal input:not([type="button"]) {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card input:not([type="button"]), .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .modal input:not([type="button"]) {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="button"]), .modal input:not([type="button"]) {
       font-size: 16px; } }
 
 .font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
@@ -2416,6 +2423,9 @@ h2, h3, h4, h5, h6 {
  * Color variables
 */
 /**
+ *    ICONS
+ */
+/**
  *
  * Sizes
  *
@@ -2429,7 +2439,7 @@ h2, h3, h4, h5, h6 {
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, .publication {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -2439,12 +2449,12 @@ h2, h3, h4, h5, h6 {
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
+.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
 
-button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
+button, .btn, #filter button, .btn:hover, #filter button:hover, .btn:visited, #filter button:visited, .btn:focus, #filter button:focus, .btn:link, #filter button:link {
   height: 45px;
   line-height: 45px;
   /* Basic button has white background*/
@@ -2458,49 +2468,51 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
   margin: 0 5px 5px 0;
   display: inline-block;
   cursor: pointer; }
-  button.autosize, .btn.autosize, .btn:hover.autosize, .btn:visited.autosize, .btn:focus.autosize, .btn:link.autosize {
+  button.autosize, .btn.autosize, #filter button.autosize, .btn:hover.autosize, #filter button:hover.autosize, .btn:visited.autosize, #filter button:visited.autosize, .btn:focus.autosize, #filter button:focus.autosize, .btn:link.autosize, #filter button:link.autosize {
     width: auto;
     padding: 0 22.5px; }
-    button.autosize:active, .btn.autosize:active, .btn:hover.autosize:active, .btn:visited.autosize:active, .btn:focus.autosize:active, .btn:link.autosize:active {
+    button.autosize:active, .btn.autosize:active, #filter button.autosize:active, .btn:hover.autosize:active, #filter button:hover.autosize:active, .btn:visited.autosize:active, #filter button:visited.autosize:active, .btn:focus.autosize:active, #filter button:focus.autosize:active, .btn:link.autosize:active, #filter button:link.autosize:active {
       border: 1px solid white;
       padding: 0 22.5px; }
-  button.TreebankCiteIdentifier, .btn.TreebankCiteIdentifier, .btn:hover.TreebankCiteIdentifier, .btn:visited.TreebankCiteIdentifier, .btn:focus.TreebankCiteIdentifier, .btn:link.TreebankCiteIdentifier {
+  button.TreebankCiteIdentifier, .btn.TreebankCiteIdentifier, #filter button.TreebankCiteIdentifier, .btn:hover.TreebankCiteIdentifier, #filter button:hover.TreebankCiteIdentifier, .btn:visited.TreebankCiteIdentifier, #filter button:visited.TreebankCiteIdentifier, .btn:focus.TreebankCiteIdentifier, #filter button:focus.TreebankCiteIdentifier, .btn:link.TreebankCiteIdentifier, #filter button:link.TreebankCiteIdentifier {
     background-color: #a5d6a7;
     color: white; }
-  button.AlignmentCiteIdentifier, .btn.AlignmentCiteIdentifier, .btn:hover.AlignmentCiteIdentifier, .btn:visited.AlignmentCiteIdentifier, .btn:focus.AlignmentCiteIdentifier, .btn:link.AlignmentCiteIdentifier {
+  button.AlignmentCiteIdentifier, .btn.AlignmentCiteIdentifier, #filter button.AlignmentCiteIdentifier, .btn:hover.AlignmentCiteIdentifier, #filter button:hover.AlignmentCiteIdentifier, .btn:visited.AlignmentCiteIdentifier, #filter button:visited.AlignmentCiteIdentifier, .btn:focus.AlignmentCiteIdentifier, #filter button:focus.AlignmentCiteIdentifier, .btn:link.AlignmentCiteIdentifier, #filter button:link.AlignmentCiteIdentifier {
     background-color: #ef9a9a;
     color: white; }
-  button.OaCiteIdentifier, .btn.OaCiteIdentifier, .btn:hover.OaCiteIdentifier, .btn:visited.OaCiteIdentifier, .btn:focus.OaCiteIdentifier, .btn:link.OaCiteIdentifier {
+  button.OaCiteIdentifier, .btn.OaCiteIdentifier, #filter button.OaCiteIdentifier, .btn:hover.OaCiteIdentifier, #filter button:hover.OaCiteIdentifier, .btn:visited.OaCiteIdentifier, #filter button:visited.OaCiteIdentifier, .btn:focus.OaCiteIdentifier, #filter button:focus.OaCiteIdentifier, .btn:link.OaCiteIdentifier, #filter button:link.OaCiteIdentifier {
     background-color: #81d4fa;
     color: white; }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
+    button, .btn, #filter button, .btn:hover, #filter button:hover, .btn:visited, #filter button:visited, .btn:focus, #filter button:focus, .btn:link, #filter button:link {
       width: 180px;
       height: 45px;
       line-height: 45px; } }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
+    button, .btn, #filter button, .btn:hover, #filter button:hover, .btn:visited, #filter button:visited, .btn:focus, #filter button:focus, .btn:link, #filter button:link {
       width: 180px;
       height: 45px;
       line-height: 45px; } }
-  button:active, button.active, .btn:active, .btn.active, .btn:hover:active, .btn:hover.active, .btn:visited:active, .btn:visited.active, .btn:focus:active, .btn:focus.active, .btn:link:active, .btn:link.active {
+  button:active, button.active, .btn:active, #filter button:active, .btn.active, #filter button.active, .btn:hover:active, #filter button:hover:active, .btn:hover.active, #filter button:hover.active, .btn:visited:active, #filter button:visited:active, .btn:visited.active, #filter button:visited.active, .btn:focus:active, #filter button:focus:active, .btn:focus.active, #filter button:focus.active, .btn:link:active, #filter button:link:active, .btn:link.active, #filter button:link.active {
     border: 1px solid #bdbdbd;
     border-right: 5px solid #7986cb;
     padding: 0; }
-  button.revert, .btn.revert, .btn:hover.revert, .btn:visited.revert, .btn:focus.revert, .btn:link.revert {
+  button.revert, #filter button.active, .btn.revert, #filter button.revert, #filter button.active, .btn:hover.revert, #filter button:hover.revert, #filter button.active:hover, .btn:visited.revert, #filter button:visited.revert, #filter button.active:visited, .btn:focus.revert, #filter button:focus.revert, #filter button.active:focus, .btn:link.revert, #filter button:link.revert, #filter button.active:link {
     background-color: #7986cb;
     color: white;
     border: none;
-    width: 250px;
     text-align: center;
     border: 1px solid #7986cb; }
-    button.revert:active, .btn.revert:active, .btn:hover.revert:active, .btn:visited.revert:active, .btn:focus.revert:active, .btn:link.revert:active {
+    button.revert:active, #filter button.active:active, .btn.revert:active, #filter button.revert:active, #filter button.active:active, .btn:hover.revert:active, #filter button:hover.revert:active, #filter button.active:hover:active, .btn:visited.revert:active, #filter button:visited.revert:active, #filter button.active:visited:active, .btn:focus.revert:active, #filter button:focus.revert:active, #filter button.active:focus:active, .btn:link.revert:active, #filter button:link.revert:active, #filter button.active:link:active {
       border: 1px solid #7986cb;
       padding: 0; }
-  button.full-size, .btn.full-size, .btn:hover.full-size, .btn:visited.full-size, .btn:focus.full-size, .btn:link.full-size {
+  button.disabled, button[disabled], .btn.disabled, #filter button.disabled, .btn[disabled], #filter button[disabled], .btn:hover.disabled, #filter button:hover.disabled, .btn:hover[disabled], #filter button:hover[disabled], .btn:visited.disabled, #filter button:visited.disabled, .btn:visited[disabled], #filter button:visited[disabled], .btn:focus.disabled, #filter button:focus.disabled, .btn:focus[disabled], #filter button:focus[disabled], .btn:link.disabled, #filter button:link.disabled, .btn:link[disabled], #filter button:link[disabled] {
+    background-color: #e0e0e0;
+    color: #bdbdbd; }
+  button.full-size, .btn.full-size, #filter button.full-size, .btn:hover.full-size, #filter button:hover.full-size, .btn:visited.full-size, #filter button:visited.full-size, .btn:focus.full-size, #filter button:focus.full-size, .btn:link.full-size, #filter button:link.full-size {
     width: 100%;
     text-decoration: none; }
-    button.full-size:active, button.full-size.active, .btn.full-size:active, .btn.full-size.active, .btn:hover.full-size:active, .btn:hover.full-size.active, .btn:visited.full-size:active, .btn:visited.full-size.active, .btn:focus.full-size:active, .btn:focus.full-size.active, .btn:link.full-size:active, .btn:link.full-size.active {
+    button.full-size:active, button.full-size.active, .btn.full-size:active, #filter button.full-size:active, .btn.full-size.active, #filter button.full-size.active, .btn:hover.full-size:active, #filter button:hover.full-size:active, .btn:hover.full-size.active, #filter button:hover.full-size.active, .btn:visited.full-size:active, #filter button:visited.full-size:active, .btn:visited.full-size.active, #filter button:visited.full-size.active, .btn:focus.full-size:active, #filter button:focus.full-size:active, .btn:focus.full-size.active, #filter button:focus.full-size.active, .btn:link.full-size:active, #filter button:link.full-size:active, .btn:link.full-size.active, #filter button:link.full-size.active {
       border: 1px solid #bdbdbd;
       padding: 0; }
 
@@ -2534,7 +2546,7 @@ body, .columns {
         padding: 0; } }
     #main-wrapper > #container > .card {
       margin-bottom: 20px; }
-    #main-wrapper > #container > header {
+    #main-wrapper > #container > header, #main-wrapper > #container .publication-container header {
       color: #7986cb;
       border-bottom: 2px solid #7986cb;
       display: inline-block;
@@ -2543,13 +2555,13 @@ body, .columns {
       padding-bottom: 0.5em;
       margin: 3em 0 3em 0;
       padding: 0 3em 0.5em 0; }
-      #main-wrapper > #container > header > * {
+      #main-wrapper > #container > header > *, #main-wrapper > #container .publication-container header > * {
         margin: 0;
         padding: 0; }
-      #main-wrapper > #container > header:first-child {
+      #main-wrapper > #container > header:first-child, #main-wrapper > #container .publication-container header:first-child {
         margin: 0 0 3em 0; }
       @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-        #main-wrapper > #container > header {
+        #main-wrapper > #container > header, #main-wrapper > #container .publication-container header {
           border-bottom: none;
           padding: 2em; } }
 
@@ -2612,86 +2624,6 @@ body, .columns {
       .card.third-size {
         flex: 1 1 auto;
         width: 100%; } }
-  .card label {
-    display: block;
-    margin: 20px 0; }
-  .card input {
-    height: 60px; }
-  .card input:not([type="button"]) {
-    border: 5px solid #7986cb;
-    width: 75%;
-    padding-left: 1em;
-    text-transform: none !important; }
-    .card input:not([type="button"]):focus {
-      border-color: #ffb74d; }
-  .card textarea.input, .card input[type="text"] {
-    border: 5px solid #7986cb;
-    width: 100%;
-    height: 60px;
-    padding-left: 1em;
-    text-align: left;
-    padding: 5px; }
-    .card textarea.input:focus, .card input[type="text"]:focus {
-      border-color: #ffb74d; }
-    .card textarea.input.xml-content, .card input[type="text"].xml-content {
-      height: 100%; }
-  .card input[type="submit"] {
-    text-transform: uppercase;
-    background-color: #7986cb;
-    color: white;
-    border: none;
-    width: 250px;
-    text-align: center;
-    border: 1px solid #7986cb;
-    margin-top: 45px;
-    padding: 0; }
-    .card input[type="submit"]:active, .card input[type="submit"]:hover, .card input[type="submit"]:focus {
-      border: 1px solid #7986cb;
-      height: 60px; }
-  .card select {
-    min-width: 375px;
-    height: 60px;
-    font-size: 20px;
-    background-color: transparent;
-    border: none;
-    border-right: none;
-    overflow: hidden;
-    appearance: none;
-    -moz-appearance: none;
-    /* Firefox */
-    -webkit-appearance: none;
-    /* Safari and Chrome */
-    width: 250px;
-    cursor: pointer; }
-  .card .select-container {
-    display: inline-block;
-    cursor: pointer;
-    position: relative;
-    border: 5px solid #7986cb;
-    background-color: white; }
-    .card .select-container select {
-      padding-right: 65px;
-      height: 50px;
-      overflow: hidden;
-      z-index: 99; }
-    .card .select-container .carret {
-      display: none; }
-    .card .select-container:after {
-      pointer-events: none;
-      z-index: 1;
-      position: absolute;
-      right: 0;
-      background-color: #7986cb;
-      top: 0;
-      display: block;
-      width: 60px;
-      height: 50px;
-      line-height: 50px;
-      content: "";
-      color: white;
-      text-align: center;
-      font-size: 40px;
-      vertical-align: baseline; }
 
 .margin-left {
   margin-left: 20px; }
@@ -2784,10 +2716,10 @@ ol.sentences {
     @media (max-width: 1000px) {
       .columns-btn .container-btn {
         flex-direction: row; } }
-    .columns-btn .container-btn .btn {
+    .columns-btn .container-btn .btn, .columns-btn .container-btn #filter button, #filter .columns-btn .container-btn button {
       height: 60px;
       line-height: 60px; }
-      .columns-btn .container-btn .btn:last-child {
+      .columns-btn .container-btn .btn:last-child, .columns-btn .container-btn #filter button:last-child, #filter .columns-btn .container-btn button:last-child {
         margin-bottom: 0; }
 
 ul.unstyled {
@@ -2807,7 +2739,7 @@ ul.dashed {
 ul.btns > li {
   height: 47px;
   line-height: 47px; }
-  ul.btns > li .btn {
+  ul.btns > li .btn, ul.btns > li #filter button, #filter ul.btns > li button {
     margin: 0; }
   ul.btns > li:before {
     clear: both; }
@@ -2960,7 +2892,7 @@ ul.btns > li {
     #main-menu .logins ul li.google a, #main-menu .logins ul li.google a:visited, #main-menu .logins ul li.google a:focus, #main-menu .logins ul li.google a:link, #main-menu .logins ul li.google a:active, #main-menu .logins ul li.yahoo a, #main-menu .logins ul li.yahoo a:visited, #main-menu .logins ul li.yahoo a:focus, #main-menu .logins ul li.yahoo a:link, #main-menu .logins ul li.yahoo a:active, #main-menu .logins ul li.aol a, #main-menu .logins ul li.aol a:visited, #main-menu .logins ul li.aol a:focus, #main-menu .logins ul li.aol a:link, #main-menu .logins ul li.aol a:active, #main-menu .logins ul li.openid a, #main-menu .logins ul li.openid a:visited, #main-menu .logins ul li.openid a:focus, #main-menu .logins ul li.openid a:link, #main-menu .logins ul li.openid a:active {
       color: white;
       border: none; }
-      #main-menu .logins ul li.google a .fa, #main-menu .logins ul li.google a .card .select-container:after, .card #main-menu .logins ul li.google a .select-container:after, #main-menu .logins ul li.google a:visited .fa, #main-menu .logins ul li.google a:visited .card .select-container:after, .card #main-menu .logins ul li.google a:visited .select-container:after, #main-menu .logins ul li.google a:focus .fa, #main-menu .logins ul li.google a:focus .card .select-container:after, .card #main-menu .logins ul li.google a:focus .select-container:after, #main-menu .logins ul li.google a:link .fa, #main-menu .logins ul li.google a:link .card .select-container:after, .card #main-menu .logins ul li.google a:link .select-container:after, #main-menu .logins ul li.google a:active .fa, #main-menu .logins ul li.google a:active .card .select-container:after, .card #main-menu .logins ul li.google a:active .select-container:after, #main-menu .logins ul li.yahoo a .fa, #main-menu .logins ul li.yahoo a .card .select-container:after, .card #main-menu .logins ul li.yahoo a .select-container:after, #main-menu .logins ul li.yahoo a:visited .fa, #main-menu .logins ul li.yahoo a:visited .card .select-container:after, .card #main-menu .logins ul li.yahoo a:visited .select-container:after, #main-menu .logins ul li.yahoo a:focus .fa, #main-menu .logins ul li.yahoo a:focus .card .select-container:after, .card #main-menu .logins ul li.yahoo a:focus .select-container:after, #main-menu .logins ul li.yahoo a:link .fa, #main-menu .logins ul li.yahoo a:link .card .select-container:after, .card #main-menu .logins ul li.yahoo a:link .select-container:after, #main-menu .logins ul li.yahoo a:active .fa, #main-menu .logins ul li.yahoo a:active .card .select-container:after, .card #main-menu .logins ul li.yahoo a:active .select-container:after, #main-menu .logins ul li.aol a .fa, #main-menu .logins ul li.aol a .card .select-container:after, .card #main-menu .logins ul li.aol a .select-container:after, #main-menu .logins ul li.aol a:visited .fa, #main-menu .logins ul li.aol a:visited .card .select-container:after, .card #main-menu .logins ul li.aol a:visited .select-container:after, #main-menu .logins ul li.aol a:focus .fa, #main-menu .logins ul li.aol a:focus .card .select-container:after, .card #main-menu .logins ul li.aol a:focus .select-container:after, #main-menu .logins ul li.aol a:link .fa, #main-menu .logins ul li.aol a:link .card .select-container:after, .card #main-menu .logins ul li.aol a:link .select-container:after, #main-menu .logins ul li.aol a:active .fa, #main-menu .logins ul li.aol a:active .card .select-container:after, .card #main-menu .logins ul li.aol a:active .select-container:after, #main-menu .logins ul li.openid a .fa, #main-menu .logins ul li.openid a .card .select-container:after, .card #main-menu .logins ul li.openid a .select-container:after, #main-menu .logins ul li.openid a:visited .fa, #main-menu .logins ul li.openid a:visited .card .select-container:after, .card #main-menu .logins ul li.openid a:visited .select-container:after, #main-menu .logins ul li.openid a:focus .fa, #main-menu .logins ul li.openid a:focus .card .select-container:after, .card #main-menu .logins ul li.openid a:focus .select-container:after, #main-menu .logins ul li.openid a:link .fa, #main-menu .logins ul li.openid a:link .card .select-container:after, .card #main-menu .logins ul li.openid a:link .select-container:after, #main-menu .logins ul li.openid a:active .fa, #main-menu .logins ul li.openid a:active .card .select-container:after, .card #main-menu .logins ul li.openid a:active .select-container:after {
+      #main-menu .logins ul li.google a .fa, #main-menu .logins ul li.google a .select-container:after, #main-menu .logins ul li.google a:visited .fa, #main-menu .logins ul li.google a:visited .select-container:after, #main-menu .logins ul li.google a:focus .fa, #main-menu .logins ul li.google a:focus .select-container:after, #main-menu .logins ul li.google a:link .fa, #main-menu .logins ul li.google a:link .select-container:after, #main-menu .logins ul li.google a:active .fa, #main-menu .logins ul li.google a:active .select-container:after, #main-menu .logins ul li.yahoo a .fa, #main-menu .logins ul li.yahoo a .select-container:after, #main-menu .logins ul li.yahoo a:visited .fa, #main-menu .logins ul li.yahoo a:visited .select-container:after, #main-menu .logins ul li.yahoo a:focus .fa, #main-menu .logins ul li.yahoo a:focus .select-container:after, #main-menu .logins ul li.yahoo a:link .fa, #main-menu .logins ul li.yahoo a:link .select-container:after, #main-menu .logins ul li.yahoo a:active .fa, #main-menu .logins ul li.yahoo a:active .select-container:after, #main-menu .logins ul li.aol a .fa, #main-menu .logins ul li.aol a .select-container:after, #main-menu .logins ul li.aol a:visited .fa, #main-menu .logins ul li.aol a:visited .select-container:after, #main-menu .logins ul li.aol a:focus .fa, #main-menu .logins ul li.aol a:focus .select-container:after, #main-menu .logins ul li.aol a:link .fa, #main-menu .logins ul li.aol a:link .select-container:after, #main-menu .logins ul li.aol a:active .fa, #main-menu .logins ul li.aol a:active .select-container:after, #main-menu .logins ul li.openid a .fa, #main-menu .logins ul li.openid a .select-container:after, #main-menu .logins ul li.openid a:visited .fa, #main-menu .logins ul li.openid a:visited .select-container:after, #main-menu .logins ul li.openid a:focus .fa, #main-menu .logins ul li.openid a:focus .select-container:after, #main-menu .logins ul li.openid a:link .fa, #main-menu .logins ul li.openid a:link .select-container:after, #main-menu .logins ul li.openid a:active .fa, #main-menu .logins ul li.openid a:active .select-container:after {
         line-height: 60px;
         margin: 0 0.5em 0 0.5em; }
     #main-menu .logins ul li.google {
@@ -2984,14 +2916,14 @@ ul.btns > li {
   text-transform: none !important; }
   .card input:not([type="button"]):focus, .modal input:not([type="button"]):focus {
     border-color: #ffb74d; }
-.card textarea.input, .modal textarea.input {
+.card textarea.input, .card input[type="text"], .modal textarea.input, .modal input[type="text"] {
   border: 5px solid #7986cb;
   width: 100%;
   height: 60px;
   padding-left: 1em;
   text-align: left;
   padding: 5px; }
-  .card textarea.input:focus, .modal textarea.input:focus {
+  .card textarea.input:focus, .card input[type="text"]:focus, .modal textarea.input:focus, .modal input[type="text"]:focus {
     border-color: #ffb74d; }
 .card input[type="submit"], .modal input[type="submit"] {
   text-transform: uppercase;
@@ -3007,128 +2939,244 @@ ul.btns > li {
     border: 1px solid #7986cb;
     height: 60px; }
 
-.publication-container {
-  clear: both; }
-  .publication-container:before, .publication-container:after {
-    clear: both; }
+.select-container {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  border: 5px solid #7986cb;
+  background-color: white; }
+  .select-container select {
+    font-size: 16px;
+    padding-right: 50px;
+    height: 35px;
+    background-color: transparent;
+    border: none;
+    border-right: none;
+    overflow: hidden;
+    appearance: none;
+    -moz-appearance: none;
+    /* Firefox */
+    -webkit-appearance: none;
+    /* Safari and Chrome */
+    width: 180px;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 99; }
+  .select-container .carret {
+    display: none; }
+  .select-container:after {
+    pointer-events: none;
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    background-color: #7986cb;
+    top: 0;
+    display: block;
+    width: 45px;
+    height: 35px;
+    line-height: 35px;
+    content: "";
+    color: white;
+    text-align: center;
+    font-size: 40px;
+    vertical-align: baseline; }
+  .select-container.disabled {
+    border-color: #bdbdbd;
+    color: #e0e0e0; }
+    .select-container.disabled:after {
+      color: #e0e0e0;
+      background-color: #bdbdbd; }
+    .select-container.disabled select {
+      min-width: 135px; }
+
+#container.publications .new-bar, #container.publications .select-bar {
+  margin: 5px 5px 30px 5px;
+  padding: 20px; }
+  #container.publications .new-bar h2, #container.publications .select-bar h2 {
+    margin-bottom: 20px; }
+  #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button {
+    border: none;
+    padding-left: 12.5px;
+    padding-right: 12.5px;
+    font-size: 15px; }
+#container.publications .select-bar {
+  display: none; }
+  #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .select-bar .select-container {
+    margin-bottom: 10px; }
+  #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button {
+    width: 180px; }
+    #container.publications .select-bar .btn:first-child, #container.publications .select-bar #filter button:first-child, #filter #container.publications .select-bar button:first-child {
+      margin-left: 5px; }
+#container.publications .new-bar {
+  background-color: white; }
+  #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button {
+    position: relative;
+    padding-left: 45px;
+    width: auto; }
+    #container.publications .new-bar .btn:before, #container.publications .new-bar #filter button:before, #filter #container.publications .new-bar button:before {
+      color: white;
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: "FontAwesome";
+      font-size: 22.5px;
+      line-height: 45px;
+      text-align: center;
+      width: 45px;
+      z-index: 998; }
+    @media (min-width: 1001px) and (max-width: 1200px) {
+      #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button {
+        padding-left: 45px; }
+        #container.publications .new-bar .btn:before, #container.publications .new-bar #filter button:before, #filter #container.publications .new-bar button:before {
+          font-size: 27px;
+          line-height: 45px;
+          text-align: center;
+          width: 45px; } }
+    #container.publications .new-bar .btn:link, #container.publications .new-bar #filter button:link, #filter #container.publications .new-bar button:link, #container.publications .new-bar .btn:visited, #container.publications .new-bar #filter button:visited, #filter #container.publications .new-bar button:visited, #container.publications .new-bar .btn:hover, #container.publications .new-bar #filter button:hover, #filter #container.publications .new-bar button:hover {
+      color: white;
+      border: none; }
+    #container.publications .new-bar .btn.primary, #container.publications .new-bar #filter button.primary, #filter #container.publications .new-bar button.primary {
+      background-color: #7986cb; }
+    #container.publications .new-bar .btn.TreebankCiteIdentifier, #container.publications .new-bar #filter button.TreebankCiteIdentifier, #filter #container.publications .new-bar button.TreebankCiteIdentifier {
+      background-color: #a5d6a7; }
+    #container.publications .new-bar .btn.EpiCTSIdentifier, #container.publications .new-bar #filter button.EpiCTSIdentifier, #filter #container.publications .new-bar button.EpiCTSIdentifier {
+      background-color: #ffe082; }
+    #container.publications .new-bar .btn.CommentaryCiteIdentifier, #container.publications .new-bar #filter button.CommentaryCiteIdentifier, #filter #container.publications .new-bar button.CommentaryCiteIdentifier {
+      background-color: #ce93d8; }
+    #container.publications .new-bar .btn.AlignmentCiteIdentifier, #container.publications .new-bar #filter button.AlignmentCiteIdentifier, #filter #container.publications .new-bar button.AlignmentCiteIdentifier {
+      background-color: #ef9a9a; }
+    #container.publications .new-bar .btn.CitationCTSIdentifier, #container.publications .new-bar #filter button.CitationCTSIdentifier, #filter #container.publications .new-bar button.CitationCTSIdentifier {
+      background-color: #f8bbd0; }
+    #container.publications .new-bar .btn.OaCiteIdentifier, #container.publications .new-bar #filter button.OaCiteIdentifier, #filter #container.publications .new-bar button.OaCiteIdentifier {
+      background-color: #81d4fa; }
+    #container.publications .new-bar .btn.OACIdentifier, #container.publications .new-bar #filter button.OACIdentifier, #filter #container.publications .new-bar button.OACIdentifier {
+      background-color: #bcaaa4; }
+    #container.publications .new-bar .btn.EpiTransCTSIdentifier, #container.publications .new-bar #filter button.EpiTransCTSIdentifier, #filter #container.publications .new-bar button.EpiTransCTSIdentifier {
+      background-color: #bfcf2d; }
+#container.publications .container-wrapper {
+  position: relative; }
+  #container.publications .container-wrapper .publication-container {
+    margin-right: 333.33333px;
+    margin-top: 3em; }
+    @media (min-width: 1001px) and (max-width: 1200px) {
+      #container.publications .container-wrapper .publication-container {
+        margin-right: 240px; } }
+  #container.publications .container-wrapper #filter, #container.publications .container-wrapper #archive_links {
+    padding-top: 50px;
+    float: right; }
 
 .publication {
   background-color: white;
-  width: 30%;
-  margin-right: 2%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
   margin-top: 0;
-  display: inline-block;
-  float: left;
-  height: 60px;
-  margin-bottom: 20px;
-  position: relative; }
-  @media (min-width: 1001px) and (max-width: 1200px) {
-    .publication {
-      width: 45%;
-      margin-right: 5%; } }
-  @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .publication {
-      width: 100%;
-      margin-right: 0; } }
+  height: 45px;
+  margin-bottom: 15px; }
   .publication .publication-validate {
-    display: none;
-    height: 100%;
-    line-height: 60px;
-    width: 60px;
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    width: 45px;
     text-align: center;
-    position: absolute;
-    left: 0;
     background-color: #7986cb;
     color: white; }
-  .publication:hover {
-    /*
-    // Not sure about this part
-    .legend {
-    	margin-left:$CARD_BUTTON_HEIGHT + 2 * $OUTLINE_SIZE;
-    }
-    */ }
-    .publication:hover .publication-validate {
-      display: block; }
-  .publication .legend_container {
-    display: inline-block;
-    float: left;
-    padding: 5px;
-    width: auto; }
-  .publication .legend_container:nth-child(2):after {
-    content: "...";
-    display: inline; }
-  .publication .legend_container .legend {
-    display: none; }
-  .publication .legend_container:first-child .legend {
-    display: inline-block;
+  .publication .legend {
+    display: block;
+    line-height: 45px;
+    font-weight: 400;
     text-overflow: hidden;
-    overflow: hidden; }
-  .publication .border {
-    position: absolute;
-    right: 0;
-    height: 60px;
+    overflow: hidden;
+    flex-grow: 1; }
+    .publication .legend a {
+      text-decoration: none; }
+  .publication .publication-items {
+    display: flex;
+    flex-direction: row;
+    height: 45px;
     width: 250px;
     list-style: none;
     margin: 0;
-    height: 0; }
-    .publication .border > li {
-      text-overflow: hidden;
-      overflow: hidden;
+    padding: 0;
+    width: 225px;
+    text-overflow: hidden; }
+    .publication .publication-items > li {
       color: white;
-      float: right;
-      display: block;
-      width: 10px;
-      padding-left: 10px; }
-      .publication .border > li a:active, .publication .border > li a:link, .publication .border > li a:hover, .publication .border > li a:visited {
+      width: 45px;
+      position: relative;
+      /* Popover */ }
+      .publication .publication-items > li a:active, .publication .publication-items > li a:link, .publication .publication-items > li a:hover, .publication .publication-items > li a:visited {
         display: block;
-        height: 60px;
-        line-height: 60px;
-        width: auto;
+        font-size: 1px;
+        height: 45px;
+        line-height: 45px;
+        width: 45px;
         color: white;
         font-family: Roboto;
         font-weight: 500;
         font-style: normal;
-        font-size: 20px;
-        text-decoration: none; }
-        .publication .border > li a:active:hover, .publication .border > li a:link:hover, .publication .border > li a:hover:hover, .publication .border > li a:visited:hover {
-          text-decoration: underline; }
-      .publication .border > li.treebank {
+        text-decoration: none;
+        text-overflow: hidden;
+        color: transparent;
+        z-index: 997; }
+        .publication .publication-items > li a:active:before, .publication .publication-items > li a:link:before, .publication .publication-items > li a:hover:before, .publication .publication-items > li a:visited:before {
+          color: white;
+          position: absolute;
+          top: 0;
+          left: 0;
+          font-family: "FontAwesome";
+          font-size: 27px;
+          line-height: 45px;
+          text-align: center;
+          width: 45px;
+          z-index: 998; }
+      .publication .publication-items > li.TreebankCiteIdentifier {
         background-color: #a5d6a7; }
-      .publication .border > li.transcription {
+      .publication .publication-items > li.EpiCTSIdentifier {
         background-color: #ffe082; }
-      .publication .border > li.commentary {
+      .publication .publication-items > li.CommentaryCiteIdentifier {
         background-color: #ce93d8; }
-      .publication .border > li.text-alignment {
+      .publication .publication-items > li.AlignmentCiteIdentifier {
         background-color: #ef9a9a; }
-      .publication .border > li.passage {
+      .publication .publication-items > li.CitationCTSIdentifier {
         background-color: #f8bbd0; }
-      .publication .border > li.annotations {
+      .publication .publication-items > li.OaCiteIdentifier {
         background-color: #81d4fa; }
-      .publication .border > li.text-annotations {
+      .publication .publication-items > li.OACIdentifier {
         background-color: #bcaaa4; }
-      .publication .border > li.translation {
+      .publication .publication-items > li.EpiTransCTSIdentifier {
         background-color: #bfcf2d; }
-      .publication .border > li.TreebankCiteIdentifier {
-        background-color: #a5d6a7; }
-      .publication .border > li.EpiCTSIdentifier {
-        background-color: #ffe082; }
-      .publication .border > li.CommentaryCiteIdentifier {
-        background-color: #ce93d8; }
-      .publication .border > li.AlignmentCiteIdentifier {
-        background-color: #ef9a9a; }
-      .publication .border > li.CitationCTSIdentifier {
-        background-color: #f8bbd0; }
-      .publication .border > li.OaCiteIdentifier {
-        background-color: #81d4fa; }
-      .publication .border > li.OACIdentifier {
-        background-color: #bcaaa4; }
-      .publication .border > li.EpiTransCTSIdentifier {
-        background-color: #bfcf2d; }
-      .publication .border > li.votes {
+      .publication .publication-items > li.votes {
         background-color: #bdbdbd; }
-      .publication .border > li:hover {
-        width: auto;
-        padding-right: 10px; }
+      .publication .publication-items > li .type-legend {
+        background-color: rgba(0, 0, 0, 0.85);
+        border-radius: 5px;
+        bottom: 42px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        color: #fff;
+        display: none;
+        font-size: 12px;
+        font-family: 'Helvetica',sans-serif;
+        left: -95px;
+        padding: 7px 10px;
+        position: absolute;
+        width: 200px;
+        z-index: 999; }
+        .publication .publication-items > li .type-legend:before {
+          border-top: 7px solid rgba(0, 0, 0, 0.85);
+          border-right: 7px solid transparent;
+          border-left: 7px solid transparent;
+          bottom: -7px;
+          content: '';
+          display: block;
+          left: 50%;
+          margin-left: -7px;
+          position: absolute; }
+      .publication .publication-items > li:hover .type-legend {
+        display: block;
+        -webkit-animation: fade-in .3s linear 1, move-up .3s linear 1;
+        -moz-animation: fade-in .3s linear 1, move-up .3s linear 1;
+        -ms-animation: fade-in .3s linear 1, move-up .3s linear 1; }
   .publication .dropdown-container.votes {
     width: 180px; }
     .publication .dropdown-container.votes .type-dropdown {
@@ -3136,34 +3184,34 @@ ul.btns > li {
 
 #filter {
   box-sizing: border-box;
-  margin: 5px;
-  border: 5px solid #7986cb;
-  height: 55px;
-  background-color: white;
-  display: inline-block;
+  display: block;
   padding: 0;
   width: auto; }
   #filter > * {
-    vertical-align: middle; }
+    margin: 0 auto; }
   #filter button {
-    width: 125px;
-    margin: 0;
-    background-color: white;
-    border: none; }
-    #filter button[data-target].active {
-      background-color: #7986cb;
-      color: white;
-      border: 1px solid #bdbdbd;
-      border-right: 5px solid #7986cb;
-      padding: 0; }
+    display: block; }
+    #filter button:hover {
+      display: block !important; }
   #filter input[type="text"] {
-    border: none;
-    background-color: #DDDDDD;
+    border: 5px solid #7986cb;
+    background-color: white;
     line-height: 45px;
+    display: block;
     padding: 0;
-    margin: 0;
-    display: inline-block;
-    padding: 0 5px; }
+    margin: 0 5px 5px 0;
+    width: 250px;
+    text-indent: 5px; }
+    @media (min-width: 1001px) and (max-width: 1200px) {
+      #filter input[type="text"] {
+        width: 180px;
+        height: 45px;
+        line-height: 45px; } }
+    @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
+      #filter input[type="text"] {
+        width: 180px;
+        height: 45px;
+        line-height: 45px; } }
   #filter #filter-count {
     width: auto;
     display: none; }
@@ -3222,5 +3270,117 @@ ul.btns > li {
 
 .modal form {
   padding: 10px; }
+
+@font-face {
+  font-family: 'syriaca';
+  src: url("syriaca/fonts/syriaca.eot");
+  src: url("syriaca/fonts/syriaca.eot") format("embedded-opentype"), url("syriaca/fonts/syriaca.woff2") format("woff2"), url("syriaca/fonts/syriaca.woff") format("woff"), url("syriaca/fonts/syriaca.ttf") format("truetype"), url("syriaca/fonts/syriaca.svg") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'syriaca';
+    src: url('../font/syriaca.svg?22870373#syriaca') format('svg');
+  }
+}
+*/
+[class^="icon-syriaca-"]:before, [class*=" icon-syriaca-"]:before, .icon-syriaca, .publication .publication-items > li.SyriacaIdentifier > a:before, #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before, .publication .publication-items > li.syriaca-sbd > a:before, #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+  font-family: "syriaca";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+  /* opacity: .8; */
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }
+
+.icon-syriaca-author:before {
+  content: '\e902'; }
+
+/* '' */
+.icon-syriaca-SBD:before, .publication .publication-items > li.syriaca-sbd > a:before, #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+  content: '\e906'; }
+
+/* '' */
+.icon-syriaca-qadishe:before {
+  content: '\e90a'; }
+
+/* '' */
+.icon-syriaca-unknown:before {
+  content: '\e90e'; }
+
+/* '' */
+.icon-syriaca-unknown3:before {
+  content: '\e912'; }
+
+/* '' */
+.icon-syriaca-unknown2:before {
+  content: '\e916'; }
+
+/* '' */
+.icon-syriaca-bhse:before {
+  content: '\e91a'; }
+
+/* '' */
+.icon-syriaca-gazetteer:before, .publication .publication-items > li.SyriacaIdentifier > a:before, #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before {
+  content: '\e922'; }
+
+/* '' */
+.icon-syriaca-syriaca:before {
+  content: '\e926'; }
+
+/* '' */
+.icon-syriaca-works:before {
+  content: '\e932'; }
+
+/* '' */
+/* Made with fontello. Don't forget to remove margin in the scss created with fontello */
+.publication .publication-items > li.SyriacaIdentifier {
+  background-color: #592d1f; }
+  .publication .publication-items > li.SyriacaIdentifier > a:before {
+    font-size: 22.5px;
+    line-height: 45px;
+    text-align: center;
+    width: 45px; }
+
+#container.publications .new-bar .btn.SyriacaIdentifier, #container.publications .new-bar #filter button.SyriacaIdentifier, #filter #container.publications .new-bar button.SyriacaIdentifier {
+  background-color: #592d1f; }
+  #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before {
+    font-size: 22.5px;
+    line-height: 45px;
+    text-align: center;
+    width: 45px; }
+
+.publication .publication-items > li.syriaca-sbd {
+  background-color: #614f69; }
+  .publication .publication-items > li.syriaca-sbd > a:before {
+    font-size: 22.5px;
+    line-height: 45px;
+    text-align: center;
+    width: 45px; }
+
+#container.publications .new-bar .btn.syriaca-sbd, #container.publications .new-bar #filter button.syriaca-sbd, #filter #container.publications .new-bar button.syriaca-sbd {
+  background-color: #614f69; }
+  #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+    font-size: 22.5px;
+    line-height: 45px;
+    text-align: center;
+    width: 45px; }
 
 /*# sourceMappingURL=perseids.css.map */

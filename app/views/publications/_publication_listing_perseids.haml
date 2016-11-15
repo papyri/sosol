@@ -2,7 +2,7 @@
   - list_id = "publication_list_holder_" + list_name
 - else
   - list_id = "publication_list_holder"
-%div{:class => "publication_card", :id => list_id }
+%div{:class => "publication_column", :id => list_id, "data-type" => list_name }
   - publications.each do |publication|
     - data = {}
     - publication.identifiers.collect do |i|
@@ -11,20 +11,17 @@
       - data[i.type] << i
     %div{:class => 'publication'}
       - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")" +  view_type && view_type == "community" ? publication.owner.name : ''
-      - Identifier.site_identifier_classes.each do |c|
-        - if c.constantize::is_visible && data[c]
-          - data[c].each do |i|
-            %div{:class => 'legend_container'}
-              %span{:class => 'legend'}
-                = link_to i.title, edit_polymorphic_path([publication,i]), {:title => i.class::FRIENDLY_NAME}
-      %ul{:class => 'border'}
+      %ul{:class => 'publication-items'}
         - Identifier.site_identifier_classes.each do |c|
-          - has_active = false
           - if c.constantize::is_visible && data[c]
             - data[c].each do |i|
-              %li{:class => "#{has_active} #{i.class}"}
-                = link_to i.class::FRIENDLY_NAME, edit_polymorphic_path([publication,i]), {:title => i.title}
-
+              %li{:class => "#{i.class}"}
+                %span{:class => 'type-legend'}
+                  = i.class::FRIENDLY_NAME
+                = link_to i.title, edit_polymorphic_path([publication,i]), {:title => i.class::FRIENDLY_NAME}
+      %span{:class => "legend"}
+        %span{:class => "alt-title"}
+        = link_to display_title, publication, :class => "original"
 :javascript
   jQuery(document).ready(
     function() { perseids_publication_selector(); });

@@ -1,14 +1,11 @@
-#main.site
-  %h2 
-    = @publication.title
-    - if !@publication.status.nil? && @publication.status != ''
-      == (#{@publication.status})
+#main-wrapper.site
+  #container
+    %h1
+      = @publication.title
+      - if !@publication.status.nil? && @publication.status != ''
+        == (#{@publication.status})
       
-  -# render :partial => "common/flash_all"    
-
-  %h2
-    Are You Sure You Want to Delete this publication? This action will only delete your copy of this publication, but cannot be undone.
-  %h1
-    = button_to "Delete", @publication, :method => :delete 
-    = "or"
-    = link_to "Cancel", @publication
+    %h2 Are You Sure You Want to Delete this publication? This action will only delete your copy of this publication, but cannot be undone.
+    %h1
+      = button_to "Delete", @publication, :method => :delete, :class => 'btn bg-sdw'
+      = link_to "Cancel", @publication, :class => 'btn bg-sdw'

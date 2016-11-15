@@ -1,3 +1,5 @@
+$MAX_ICONS_HOME: 4;
+
 $MD_SCREEN: 1200px;
 $SM_SCREEN:1000px;
 $XS_SCREEN: 799px;
@@ -16,7 +18,22 @@ $COLOR_Text_Annotations: #bcaaa4;
 $COLOR_Commentary: #ce93d8;
 $COLOR_Translation: #bfcf2d;
 $COLOR_GRAY: #bdbdbd;
+$COLOR_DISABLED: $COLOR_GRAY;
 $COLOR_BACKGROUND: #eceff1;
+
+/**
+ *    ICONS
+ */
+
+$ICON_TREEBANK: "code-fork";
+$ICON_TRANSCRIPTION : "file-text-o";
+$ICON_COMMENTARY : "file-text-o";
+$ICON_TEXT_ALIGNMENT : "files-o";
+$ICON_PASSAGE : "file-text-o";
+$ICON_ANNOTATIONS : "comment";
+$ICON_TEXT_ANNOTATIONS : "comment";
+$ICON_TRANSLATION : "file-text-o";
+$ICON_TEXT : $ICON_TRANSCRIPTION;
 
 /**
  *
@@ -25,6 +42,7 @@ $COLOR_BACKGROUND: #eceff1;
  */
  $BUTTON_HEIGHT: 45px;
  $CARD_BUTTON_HEIGHT: 60px;
+ $PUBLICATION_CARD_HEIGHT: 45px;
  $BUTTON_WIDTH: 250px;
  $BUTTON_FONT_SIZE:20px;
 

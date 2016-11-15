@@ -1,35 +1,26 @@
-.card
-  %nav
-    - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
-    = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target], :class => 'btn TreebankCiteIdentifier autosize'}
-    - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
-    = link_to align[:text], align[:href], html_options = { 'target' => align[:target], :class => 'btn AlignmentCiteIdentifier autosize'}
-    = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import'), :class => 'btn OaCiteIdentifier autosize'
-  %br
-  %a{:id => "cts_selector_widget", :href => "#"}== Or click select a text to work with.
-  %div{:id => 'publications-_cts_selector', :style => "display:none;" }
-    %input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
-    - cache(:action => 'dashboard', :part => 'publication_selector') do
-      = form_tag :controller => controller, :action => "create_from_selector" do
-        = hidden_field_tag 'IdentifierClass','CTSIdentifier'
-        .text-left
-          - [CTSIdentifier].each do |identifier_class|
-            .select-container
-              = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
-              .carret
-                %i{:class => "fa fa-caret-down"}
-          %input{:type => 'text',:id => 'cts_selector_text', :placeholder => 'Type work title...'}
-          .select-container{:style => 'display:none;'}
-            = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-            .carret
-              %i{:class => "fa fa-caret-down"}
-          .select-container{:style => 'display:none;'}
-            = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-            .carret
-              %i{:class => "fa fa-caret-down"}
-          .select-container
-            = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-            .carret
-              %i{:class => "fa fa-caret-down"}
-          = submit_tag "Emend", :disabled => true, :id => 'emend_button', :class => 'submit'
-          = submit_tag "Create Edition", :disabled => true, :id => 'create_button', :class => 'submit'
+.new-bar
+  - tb = Tools::Manager.link_to('treebank_editor','arethusa',:create,[])
+  = link_to tb[:text], tb[:href], html_options = {'target' => tb[:target], :class => 'btn TreebankCiteIdentifier'}
+  - align = Tools::Manager.link_to('alignment_editor',:alpheios,:create,[])
+  = link_to align[:text], align[:href], html_options = { 'target' => align[:target], :class => 'btn AlignmentCiteIdentifier'}
+  = link_to 'Import Annotations', url_for(:controller => 'oa_cite_identifiers', :action => 'import'), :class => 'btn OaCiteIdentifier'
+  %a{:href => "#", :class => "btn primary", :id => "workwithtexts"}
+    Work with Text
+#publications-_cts_selector{:style => "display:none;"}
+= form_tag({:controller => controller, :action => "create_from_selector"},{:class => "select-bar"}) do
+  %h2
+    Select a publication to work with:
+  %input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
+  = hidden_field_tag 'IdentifierClass','CTSIdentifier'
+  - [CTSIdentifier].each do |identifier_class|
+    .select-container
+      = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
+  %input{:type => 'text',:id => 'cts_selector_text', :placeholder => 'Type work title...'}
+  .select-container.disabled
+    = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  .select-container.disabled
+    = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  .select-container.disabled
+    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
+  = submit_tag "Emend", :disabled => true, :id => 'emend_button', :class => 'btn'
+  = submit_tag "Create Edition", :disabled => true, :id => 'create_button', :class => 'btn'
