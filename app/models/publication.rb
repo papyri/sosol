@@ -31,6 +31,12 @@ class Publication < ActiveRecord::Base
     property :community_name do
       key :type, :string
     end
+    property :identifiers do
+      key :type, :array
+      items do
+        key :'$ref', :Identifier
+      end
+    end
   end
 
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }

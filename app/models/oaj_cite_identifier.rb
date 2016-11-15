@@ -40,4 +40,9 @@ class OajCiteIdentifier < CiteIdentifier
      raise "Rename not supported yet!"
   end
 
+  # @overrides Identifier.mimetype
+  def mimetype
+    "application/ld+json"
+  end
+
 end

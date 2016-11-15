@@ -122,17 +122,19 @@ class SyriacaIdentifier < Identifier
     type, id = self.to_components[3..-1]
     "data/places/tei/#{id}.xml"
   end
+
+  # retrieve the remote path for review
+  # eventually this should be found in the metadata
+  # in the identifier contents or use id_attribute directly
+  def to_remote_raw_path
+    type, id = self.to_components[3..-1]
+	  "https://raw.githubusercontent.com/srophe/srophe-app-data/master/data/places/tei/#{id}.xml";
+  end
   
   # @overrides Identifier#get_catalog_link
   # links to the original gazetteer entry on syriaca
   def get_catalog_link
     return self.name
-  end
-
-  # @overrides Identifier#is_valid_xml?
-  # temporarily for workflow testing
-  def is_valid_xml?(content)
-    return true
   end
 
 end
