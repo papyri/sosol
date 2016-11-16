@@ -27,6 +27,14 @@ class Decree < ActiveRecord::Base
     self.choices.split(' ')  
   end
   
+  # Check to see if a vote is for the action of a given decree
+  # *Args*
+  # - +vote+ a vote to check to see if it is for the action of this decree
+  # *Returns*: true or false
+  def is_vote_for_action?(vote)
+    decree_choices = self.get_choice_array
+    return decree_choices.include?(vote.choice)
+  end
 
   #*Args*:
   #- +votes+ set of votes to be tallied to determine if decree should be triggered

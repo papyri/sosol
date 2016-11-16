@@ -556,6 +556,14 @@ class Publication < ActiveRecord::Base
     return false
   end
 
+  def votes_by_decree_action
+    if self.votes && self.status == "voting" && self.owner_type == "Board"
+      return self.owner.votes_per_decree(self.votes)
+    else
+      return {}
+    end
+  end
+
   #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
   #
   #*Args*

@@ -126,6 +126,24 @@ class Board < ActiveRecord::Base
     
     return ""
   end #tally_votes
+
+  # Sort a set of votes by the decree to which they apply
+  # *Args*
+  # - +votes+ the votes
+  # *Returns*
+  # - a hash whose keys are the decree action and whose values are the array of applicable votes
+  def votes_per_decree(votes)
+    status = Hash.new
+    self.decrees.each do |decree|
+      status[decree.action] = []
+      votes.each do |v|
+        if decree.is_vote_for_action?(v)
+          status[decree.action] << v
+        end
+      end
+    end
+    status
+  end
   
 
   #Will generally be called when the status of a publication is changed.
