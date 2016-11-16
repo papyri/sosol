@@ -341,7 +341,11 @@ class PublicationsController < ApplicationController
       #note this can only be called on a board owned publication
       if @publication.owner_type != "Board"
         flash[:error] = "Can't change finalizer on non-board copy of publication."
-        redirect_to show
+        redirect_to @publication and return
+      end
+      unless @publication.owner.users.includes(@current_user)
+        flash[:error] = "You are not a board member for this publication."
+        redirect_to @publication and return
       end
 
       SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)

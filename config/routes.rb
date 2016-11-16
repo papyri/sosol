@@ -155,6 +155,7 @@ Sosol::Application.routes.draw do
   get :finalize_review
   post :finalize
   post :become_finalizer
+  get  :become_finalizer
   get :agent_failure_callback
   get :send_to_agent
   end
@@ -447,6 +448,7 @@ Sosol::Application.routes.draw do
     
       member do
         get :history
+        get :raw_preview
         get :preview
         get :editxml
         get :rename_review
