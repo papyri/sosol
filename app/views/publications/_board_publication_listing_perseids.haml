@@ -2,7 +2,7 @@
   - list_id = "publication_list_holder_" + list_name
 - else
   - list_id = "publication_list_holder"
-%div{:class => "publication-column", :id => list_id, "data-type" => 'list_name' }
+%div{:class => "publication-column", :id => list_id, "data-type" => "#{list_name}" }
   - publications.each do |publication|
     %div{:class => 'publication'}
       - display_title = publication.title
@@ -18,24 +18,29 @@
       %span{:class => "legend"}
         %span{:class => "alt-title"}
         = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name, :class => "original"
-        - if list_name == "approved"
-          - if publication.find_finalizer_user
-            - finalizer_div_id = "finalizer_" + publication.id.to_s
-            %br
-            = publication.find_finalizer_user.human_name
-            = " is finalizing. "
-            = button_to "Make me finalizer.", { :controller=>'publications', :action=>'become_finalizer', :id=>publication.id, :onclick => 'this.disabled=true;return true;' }
-        - if list_name == "needs_review" || list_name == "waiting"
-          - if publication.votes.count > 0
-            %div{:class=>"votes dropdown-container"}
-              %ul{:class => "type-dropdown"}
-                %li{:class => "active votes"}
-                  = publication.votes.count
-                  = publication.votes.count == 1 ? " vote" : " votes"
-                - publication.votes.each do |vote|
-                  %li{:class => "votes"}
-                    = vote.user.human_name + " (" + vote.user.name + ") "
-                    = vote.choice
+      - if list_name == "needs_review" || list_name == "waiting"
+        - votes = publication.votes_by_decree_action
+        - votes.keys.each do |action|
+          - if votes[action].length > 0
+            - icon = action == 'approve' ? "fa-thumbs-up" : "fa-thumbs-down"
+            - color = action == 'approve' ? "success" : "danger"
+            %div{:class => "info-square #{color}"}
+              %a{:href => "#"}
+                %i{:class => "fa #{icon}"}
+                %ul
+                  - votes[action].each do |v|
+                    %li
+                      = v.user.human_name + " (" + v.user.name + ") "
+      - if list_name == "approved"
+        - if publication.find_finalizer_user
+          - title = publication.find_finalizer_user.human_name + " is finalizing. "
+          - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>publication.id)
+          %div{:class => "info-square button"}
+            %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;'}
+              %i{:class => "fa fa-graduation-cap"}
+              %ul
+                %li
+                  = publication.find_finalizer_user.human_name + " is finalizing. "
 :javascript
   jQuery(document).ready(
     function() { perseids_publication_selector(); });

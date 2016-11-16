@@ -126,7 +126,7 @@
 				margin-right:$MD_BUTTON_WIDTH*4/3;
 			}
 		}
-		#filter, #archive_links {
+		#filter {
 			padding-top:50px;
 			float:right;
 		}
@@ -143,16 +143,6 @@
   	height:$PUBLICATION_CARD_HEIGHT;
   	margin-bottom: 1*$PUBLICATION_CARD_HEIGHT/3;
 
-  	.publication-validate {
-  		display:block;
-  		height:$PUBLICATION_CARD_HEIGHT;
-  		line-height: $PUBLICATION_CARD_HEIGHT;
-  		width:$PUBLICATION_CARD_HEIGHT;
-  		text-align:center;
-  		background-color:$COLOR_PRI;
-  		color:white;
-  	}
-
 	.legend {
 		display:block;
 		line-height: $PUBLICATION_CARD_HEIGHT;
@@ -163,6 +153,84 @@
 		a {
 			text-decoration: none;
 		}
+	}
+	.publication-validate {
+  		display:block;
+  		height:$PUBLICATION_CARD_HEIGHT;
+  		line-height: $PUBLICATION_CARD_HEIGHT;
+  		width:$PUBLICATION_CARD_HEIGHT;
+  		text-align:center;
+  		background-color:$COLOR_PRI;
+  		color:white;
+  	}
+	.info-square {
+  		display:block;
+  		height:$PUBLICATION_CARD_HEIGHT;
+  		line-height: $PUBLICATION_CARD_HEIGHT;
+  		width:$PUBLICATION_CARD_HEIGHT;
+  		text-align:center;
+  		background-color:$COLOR_PRI;
+  		&.success { background-color: $COLOR_SUCCESS; }
+  		&.danger  { background-color: $COLOR_DANGER; }
+		&.button  { background-color: $COLOR_PRI; }
+  		a, a:link, a:hover, a:visited {
+	  		color:white;
+	  		text-decoration: none;
+	  		display:block;
+	  		width:100%;
+	  		height:100%;
+	  		line-height: $PUBLICATION_CARD_HEIGHT;
+	  		position:relative;
+			/* Popover */
+			ul {
+				background-color: rgba(0,0,0,0.85);
+				border-radius: 5px;
+				bottom: 42px;
+				box-shadow: 0 0 5px rgba(0,0,0,0.4);
+				color: #fff;
+				display: none;
+				font-size: 12px;
+				line-height: 16px;
+				font-family: 'Helvetica',sans-serif;
+				left: -95px;
+				padding: 7px 10px;
+				position: absolute;
+				width: 200px;
+				z-index: 999;
+				list-style-type: none;
+				li {
+					margin:none;
+					padding:none;
+					display: inline-block;
+					&:after {
+						content: ", ";
+					}
+					&:last-child:after {
+						content: "";
+					}
+				}
+				
+				&:before {
+					border-top: 7px solid rgba(0,0,0,0.85);
+					border-right: 7px solid transparent;
+					border-left: 7px solid transparent;
+					bottom: -7px;
+					content: '';
+					display: block;
+					left: 50%;
+					margin-left: -7px;
+					position: absolute;
+				}
+			}
+			&:hover {
+				ul {
+					display: block;
+					-webkit-animation: fade-in .3s linear 1, move-up .3s linear 1;
+					-moz-animation: fade-in .3s linear 1, move-up .3s linear 1;
+					-ms-animation: fade-in .3s linear 1, move-up .3s linear 1;
+				}
+			}
+  		}
 	}
 	.publication-items {
   		display:flex;

@@ -32,7 +32,7 @@
         - if !@publication.status.nil? && @publication.status != ''
           == (#{@publication.status})
       
-    -# render :partial => "common/flash_all"    
+    = render :partial => "common/flash_all_perseids"
 
     - if %w{new editing}.include?(@publication.status)
       #submit.card

@@ -3061,7 +3061,7 @@ ul.btns > li {
     @media (min-width: 1001px) and (max-width: 1200px) {
       #container.publications .container-wrapper .publication-container {
         margin-right: 240px; } }
-  #container.publications .container-wrapper #filter, #container.publications .container-wrapper #archive_links {
+  #container.publications .container-wrapper #filter {
     padding-top: 50px;
     float: right; }
 
@@ -3073,14 +3073,6 @@ ul.btns > li {
   margin-top: 0;
   height: 45px;
   margin-bottom: 15px; }
-  .publication .publication-validate {
-    display: block;
-    height: 45px;
-    line-height: 45px;
-    width: 45px;
-    text-align: center;
-    background-color: #7986cb;
-    color: white; }
   .publication .legend {
     display: block;
     line-height: 45px;
@@ -3090,6 +3082,75 @@ ul.btns > li {
     flex-grow: 1; }
     .publication .legend a {
       text-decoration: none; }
+  .publication .publication-validate {
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    width: 45px;
+    text-align: center;
+    background-color: #7986cb;
+    color: white; }
+  .publication .info-square {
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    width: 45px;
+    text-align: center;
+    background-color: #7986cb; }
+    .publication .info-square.success {
+      background-color: #1fa67a; }
+    .publication .info-square.danger {
+      background-color: #c9302c; }
+    .publication .info-square.button {
+      background-color: #7986cb; }
+    .publication .info-square a, .publication .info-square a:link, .publication .info-square a:hover, .publication .info-square a:visited {
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+      line-height: 45px;
+      position: relative;
+      /* Popover */ }
+      .publication .info-square a ul, .publication .info-square a:link ul, .publication .info-square a:hover ul, .publication .info-square a:visited ul {
+        background-color: rgba(0, 0, 0, 0.85);
+        border-radius: 5px;
+        bottom: 42px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        color: #fff;
+        display: none;
+        font-size: 12px;
+        line-height: 16px;
+        font-family: 'Helvetica',sans-serif;
+        left: -95px;
+        padding: 7px 10px;
+        position: absolute;
+        width: 200px;
+        z-index: 999;
+        list-style-type: none; }
+        .publication .info-square a ul li, .publication .info-square a:link ul li, .publication .info-square a:hover ul li, .publication .info-square a:visited ul li {
+          margin: none;
+          padding: none;
+          display: inline-block; }
+          .publication .info-square a ul li:after, .publication .info-square a:link ul li:after, .publication .info-square a:hover ul li:after, .publication .info-square a:visited ul li:after {
+            content: ", "; }
+          .publication .info-square a ul li:last-child:after, .publication .info-square a:link ul li:last-child:after, .publication .info-square a:hover ul li:last-child:after, .publication .info-square a:visited ul li:last-child:after {
+            content: ""; }
+        .publication .info-square a ul:before, .publication .info-square a:link ul:before, .publication .info-square a:hover ul:before, .publication .info-square a:visited ul:before {
+          border-top: 7px solid rgba(0, 0, 0, 0.85);
+          border-right: 7px solid transparent;
+          border-left: 7px solid transparent;
+          bottom: -7px;
+          content: '';
+          display: block;
+          left: 50%;
+          margin-left: -7px;
+          position: absolute; }
+      .publication .info-square a:hover ul, .publication .info-square a:link:hover ul, .publication .info-square a:hover:hover ul, .publication .info-square a:visited:hover ul {
+        display: block;
+        -webkit-animation: fade-in .3s linear 1, move-up .3s linear 1;
+        -moz-animation: fade-in .3s linear 1, move-up .3s linear 1;
+        -ms-animation: fade-in .3s linear 1, move-up .3s linear 1; }
   .publication .publication-items {
     display: flex;
     flex-direction: row;
