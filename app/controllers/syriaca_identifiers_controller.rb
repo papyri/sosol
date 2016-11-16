@@ -19,7 +19,7 @@ class SyriacaIdentifiersController < IdentifiersController
 
   # - GET /publications/1/syriaca_identifiers/1/preview
   # - Provides preview of what the XML from the repository will look like with stylesheets applied
-  def preview
+  def raw_preview
     find_identifier
     parameters = {}
     parameters['data-root'] = "https://raw.githubusercontent.com/srophe/srophe-app-data/master/data"
@@ -31,6 +31,11 @@ class SyriacaIdentifiersController < IdentifiersController
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt syriaca srophe-app resources xsl tei2html.xsl})),
         parameters)
+    render :template => 'syriaca_identifiers/raw_preview', :layout => false
+  end
+
+  def preview
+    find_identifier
     @is_editor_view = true
   end
   

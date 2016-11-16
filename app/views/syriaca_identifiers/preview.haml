@@ -1,8 +1,3 @@
-%link{:rel => "stylesheet", :type => "text/css", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", :integrity => "sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", :crossorigin => "anonymous"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/stylesheets/syriaca/main.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/stylesheets/syriaca/syr-font-families.css"}
-%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/stylesheets/syriaca/perseids-override.css"}
-%script{:src => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", :integrity => "sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", :crossorigin => "anonymous"}
 #main-wrapper
   #container
     = render :partial => 'identifiers/header_perseids'
@@ -11,6 +6,4 @@
         = f.error_messages
         
         %label Preview
-        .PContent
-          .container.well.well-white
-            = @html_preview.html_safe
+        %iframe{:src => url_for(:action => 'raw_preview', :id => @identifier.id, :publication => @identifier.publication.id), :width => "100%", :height => "800px", :style => "padding: 5px;"}
