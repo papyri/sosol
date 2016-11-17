@@ -606,7 +606,7 @@
 .fa-random:before {
   content: ""; }
 
-.fa-comment:before, #container.publications .new-bar .btn.OaCiteIdentifier:before, #container.publications .new-bar #filter button.OaCiteIdentifier:before, #filter #container.publications .new-bar button.OaCiteIdentifier:before, #container.publications .new-bar .btn.OACIdentifier:before, #container.publications .new-bar #filter button.OACIdentifier:before, #filter #container.publications .new-bar button.OACIdentifier:before, .publication .publication-items > li.OaCiteIdentifier a:before, .publication .publication-items > li.OACIdentifier a:before {
+.fa-comment:before {
   content: ""; }
 
 .fa-magnet:before {
@@ -916,7 +916,7 @@
 .fa-bolt:before {
   content: ""; }
 
-.fa-sitemap:before {
+.fa-sitemap:before, #container.publications .new-bar .btn.TreebankCiteIdentifier:before, #container.publications .new-bar #filter button.TreebankCiteIdentifier:before, #filter #container.publications .new-bar button.TreebankCiteIdentifier:before, .publication .publication-items > li.TreebankCiteIdentifier a:before {
   content: ""; }
 
 .fa-umbrella:before {
@@ -1090,7 +1090,7 @@
 .fa-crop:before {
   content: ""; }
 
-.fa-code-fork:before, #container.publications .new-bar .btn.TreebankCiteIdentifier:before, #container.publications .new-bar #filter button.TreebankCiteIdentifier:before, #filter #container.publications .new-bar button.TreebankCiteIdentifier:before, .publication .publication-items > li.TreebankCiteIdentifier a:before {
+.fa-code-fork:before {
   content: ""; }
 
 .fa-unlink:before,
@@ -1956,7 +1956,7 @@
 .fa-sticky-note:before {
   content: ""; }
 
-.fa-sticky-note-o:before {
+.fa-sticky-note-o:before, #container.publications .new-bar .btn.OaCiteIdentifier:before, #container.publications .new-bar #filter button.OaCiteIdentifier:before, #filter #container.publications .new-bar button.OaCiteIdentifier:before, #container.publications .new-bar .btn.OACIdentifier:before, #container.publications .new-bar #filter button.OACIdentifier:before, #filter #container.publications .new-bar button.OACIdentifier:before, .publication .publication-items > li.OaCiteIdentifier a:before, .publication .publication-items > li.OACIdentifier a:before {
   content: ""; }
 
 .fa-cc-jcb:before {
@@ -3443,5 +3443,3 @@ ul.btns > li {
     line-height: 45px;
     text-align: center;
     width: 45px; }
-
-/*# sourceMappingURL=perseids.css.map */
