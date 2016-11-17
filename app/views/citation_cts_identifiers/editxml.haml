@@ -6,10 +6,10 @@
 //------------------------------------------------------------
 //  Content
 //------------------------------------------------------------
-.main.full
-  = render :partial => 'identifiers/edit_bar'
-  .site
-    = render :partial => 'identifiers/header'
+#main-wrapper.main.full
+  #container
+    = render :partial => 'identifiers/header_perseids'
+    = render :partial => 'identifiers/edit_bar_perseids'
     #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
     #edit
       = form_for @identifier, :url => { :action => :updatexml } do |f|
@@ -19,9 +19,9 @@
             
           %div{:id => "imgspect"}    
         
-        .clearfix
-        %div{:id => "editors"}
-          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'alpheios-enabled-text greek observechange'
+        .card.clearfix
+          %div{:id => "editors"}
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
           
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
