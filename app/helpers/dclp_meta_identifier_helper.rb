@@ -212,31 +212,44 @@ module DclpMetaIdentifierHelper
     def DclpWork.getIdFromUrl(urlList, type)
       id = ''
       urlList.each{|url|
-       
-       case type
-       when :tlg
-         if /\A.*tlg(?<id>\d+)\Z/ =~ url
-           return id
-         end
-       when :tm
-         if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
-           return id
-         end
-       when :stoa
-         if /\A.*stoa(?<id>\d+)\Z/ =~ url
-           return id
-         end
-       when :phi
-         if /\A.*phi(?<id>\d+)\Z/ =~ url
-           return id
-         end
-       when :cwkb
-       else
-         return nil
-       end
-
-     }
-     return nil
+        case type
+        when :tlg
+          if /\A.*tlg(?<id>\d+)\Z/ =~ url
+            return id
+          end
+        when :tm
+          if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
+            return id
+          end
+        when :stoa
+          if /\A.*stoa(?<id>\d+)\Z/ =~ url
+            return id
+          end
+        when :phi
+          if /\A.*phi(?<id>\d+)\Z/ =~ url
+            return id
+          end
+        when :cwkb
+        else
+          return nil
+        end
+      }
+      return nil
+    end
+    
+    def DclpWork.getLanguageFromUrl(urlList)
+      language = ''
+      urlList.each{|url|
+        if /(?<language>greek|latin)/ =~ url
+          case language
+            when 'latin'
+              return 'la'
+            when 'greek'
+              return 'grc'
+          end
+        end
+      }
+      return nil
     end
 
     # Data structure for publication information
@@ -244,20 +257,21 @@ module DclpMetaIdentifierHelper
       attr_accessor :name, :language, :tlg, :cwkb, :phi, :stoa, :certainty, :ref, :corresp
       def initialize init = nil
         @name      = init[:value]
-        @language  = init[:attributes][:language]
+        
 
         @ref       = init[:attributes][:ref]
         @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
         @certainty = init[:children][:certainty] ? init[:children][:certainty][:attributes][:target] : nil
         @corresp   = init[:attributes][:corresp]
       end
 
       def to_s()
-        '[AUTHOR ' + (@name ? @name : '-') + ' | language ' + (@language || '') + ' | tlg ' + (@tlg || '') + ' | cwkb ' + (@cwkb || '') + ' | phi ' + (@phi || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ']'
+        '[AUTHOR ' + (@name ? @name : '-') + ' | language ' + (@language || 'xxx') + ' | tlg ' + (@tlg || '') + ' | cwkb ' + (@cwkb || '') + ' | phi ' + (@phi || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ']'
       end
     end
 
@@ -266,13 +280,13 @@ module DclpMetaIdentifierHelper
       attr_accessor :name, :language, :tlg, :cwkb, :tm, :stoa, :certainty, :ref, :date, :from, :to, :corresp
       def initialize init = nil
         @name      = init[:value]
-        @language  = init[:attributes][:language]
         
         @ref       = init[:attributes][:ref]
         @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DclpWork.getIdFromUrl(@ref, :tm)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
         @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
         @date      = init[:children][:date] ? init[:children][:date][:value] : nil
