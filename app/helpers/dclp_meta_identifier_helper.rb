@@ -266,8 +266,7 @@ module DclpMetaIdentifierHelper
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
         @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
-        @certainty = init[:children][:certainty] ? init[:children][:certainty][:attributes][:target] : nil
-        @corresp   = init[:attributes][:corresp]
+        @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
       end
 
       def to_s()
@@ -288,12 +287,11 @@ module DclpMetaIdentifierHelper
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
         @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
-        @certainty = init[:children][:certainty] && init[:children][:certainty][:attributes][:target] ? init[:children][:certainty][:attributes][:target] : nil
+        @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
         @date      = init[:children][:date] ? init[:children][:date][:value] : nil
         @when      = init[:children][:date] ? init[:children][:date][:attributes][:when] : nil
         @from      = init[:children][:date] ? init[:children][:date][:attributes][:from] : @when
         @to        = init[:children][:date] ? init[:children][:date][:attributes][:to] : nil
-        @corresp   = init[:attributes][:corresp]
         
       end
 
@@ -337,7 +335,7 @@ module DclpMetaIdentifierHelper
 
     # Data structure for publication information
     class Extra
-      attr_accessor :value, :unit, :certainty, :from, :to, :corresp
+      attr_accessor :value, :unit, :certainty, :from, :to
 
       def initialize init = nil
         @value     = nil
@@ -355,8 +353,8 @@ module DclpMetaIdentifierHelper
             @to        = defined?(init[:attributes][:to]) ? init[:attributes][:to] : nil
             @corresp   = defined?(init[:attributes][:corresp]) ? init[:attributes][:corresp] : nil
           end
-          if init[:children] && init[:children][:certainty] && init[:children][:certainty][:attributes] && init[:children][:certainty][:attributes][:target]
-            @certainty = init[:children][:certainty][:attributes][:target]
+          if init[:children] && init[:children][:certainty]
+            @certainty = init[:children][:certainty]
           end
         end
       end

@@ -108,11 +108,8 @@
 #              :xpath: idno[@type='cwkb']
 #              :pattern: /\A\d+\Z/
             :certainty:
-              :xpath: certainty[@cert='low'][@locus='value']
-              :attributes:
-                :target:
-                  :name: target
-                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
         :title:
           :xpath: title[@type='main'][@level='m']
           :attributes:
@@ -149,11 +146,8 @@
                   :name: to
                   :pattern: '/\A\d\d\d\d\Z/'
             :certainty:
-              :xpath: certainty[@cert='low'][@locus='value']
-              :attributes:
-                :target:
-                  :name: target
-                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
         :extra:
           :xpath: biblScope
           :multiple: true
@@ -163,11 +157,8 @@
               :pattern: /\Avol|generic|lines|generic|fragment|page|chapter|poem\Z/
           :children:
             :certainty:
-              :xpath: certainty[@cert='low'][@locus='value']
-              :attributes:
-                :target:
-                  :name: target
-                  :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
     :contentText:
       :xpath: /TEI/teiHeader/profileDesc/textClass/keywords/term
       :multiple: true

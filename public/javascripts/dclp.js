@@ -336,7 +336,7 @@ function multiAddWorkExtra(plusButton){
 '                              <option value="side">Side</option>' +
 '                              <option value="generic">Generic</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
-'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_corresp" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][corresp]" type="text">' +
+'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_certainty" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][certainty]" type="text">' +
 '                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][from]" type="text">' +
 '                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][to]" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +

@@ -36,13 +36,10 @@
           = text_field_tag baseChildren + '[author][phi]', (work.author ? work.author.phi : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorPhi'
           .clear
 
-          = label_tag baseChildren + '[author][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = label_tag baseChildren + '[author][children][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
           = text_field_tag baseChildren + '[author][certainty]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
-          = label_tag baseChildren + '[author][corresp]', I18n.t('dclp.label.workCorresp'), :class => 'meta workCorresp', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][corresp]', (work.author ? work.author.corresp : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
-          .clear
-          
+
           %h6=I18n.t('dclp.label.illustrationOnline')
           =I18n.t('dclp.help.illustrationOnline')
           .clear
@@ -85,9 +82,6 @@
 
           = label_tag baseChildren + '[title][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
           = text_field_tag baseChildren + '[title][certainty]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
-          .clear
-          = label_tag baseChildren + '[title][corresp]', I18n.t('dclp.label.workCorresp'), :class => 'meta workCorresp', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][corresp]', (work.title ? work.title.corresp : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
