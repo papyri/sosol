@@ -2927,6 +2927,7 @@ ul.btns > li {
     border-color: #ffb74d; }
 .card input[type="submit"], .modal input[type="submit"] {
   text-transform: uppercase;
+  cursor: pointer;
   background-color: #7986cb;
   color: white;
   border: none;

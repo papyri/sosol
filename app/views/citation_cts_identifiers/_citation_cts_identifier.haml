@@ -1,6 +1,8 @@
+%ul{:class => 'unstyled'}
+  %li
+    = link_to 'XML', editxml_publication_citation_cts_identifier_path( citation_cts_identifier.publication, citation_cts_identifier), :class => 'btn fullsize'
+  %li
+    = link_to 'Preview', preview_publication_citation_cts_identifier_path( citation_cts_identifier.publication, citation_cts_identifier), :class => 'btn fullsize'
+  %li
+    = link_to 'Delete', polymorphic_path([citation_cts_identifier.publication, citation_cts_identifier]), :confirm => 'Are you sure?', :method => :delete , :class => 'btn fullsize'
 
-= link_to 'XML', editxml_publication_citation_cts_identifier_path( citation_cts_identifier.publication, citation_cts_identifier)
-= link_to 'Preview', preview_publication_citation_cts_identifier_path( citation_cts_identifier.publication, citation_cts_identifier)
-= link_to 'Delete', polymorphic_path([citation_cts_identifier.publication, citation_cts_identifier]), :confirm => 'Are you sure?', :method => :delete
-
-%br

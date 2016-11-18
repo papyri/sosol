@@ -1,5 +1,7 @@
-.create
-  %h3 Edit Passage:
-  %p
-    = render(:partial => "citation_cts_identifiers/create_from_cts_urn_form", :locals => {:parent_identifier => @identifier, :pubtype => pubtype})
+#main-wrapper
+  #container
+    .card.create
+      %h1 Select Passage:
+      %p
+      = render(:partial => "citation_cts_identifiers/create_from_cts_urn_form", :locals => {:parent_identifier => @identifier, :pubtype => pubtype})
 

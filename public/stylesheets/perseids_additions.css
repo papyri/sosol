@@ -63,4 +63,5 @@
 .card textarea.input.xml-content {
   height: 100%; }
 
-/*# sourceMappingURL=perseids_additions.css.map */
+.rows .row {
+  margin: 5px; }

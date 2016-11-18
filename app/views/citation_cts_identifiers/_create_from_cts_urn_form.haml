@@ -5,19 +5,20 @@
   = hidden_field_tag 'urn',parent_identifier.urn_attribute
   = hidden_field_tag 'collection', parent_identifier.inventory
   = hidden_field_tag 'pubtype', pubtype.to_s
-  = label_tag 'From:'
-  - citeinfo = parent_identifier.related_inventory.parse_inventory()
-  - citeinfo['citations'].each_index do |index|
-    = label_tag citeinfo['citations'][index]
-    %input{:type => 'text', :name => 'cite_from_' + index.to_s, :class =>'cite_from'}     
-  %br
-  = label_tag 'To:'
-  - citeinfo['citations'].each_index do |index|
-    = label_tag citeinfo['citations'][index]
-    %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to'}     
-  %br
-  
-  %br
+  .rows
+    .row
+      %h2
+        From:
+      - citeinfo = parent_identifier.related_inventory.parse_inventory()
+      - citeinfo['citations'].each_index do |index|
+        = label_tag citeinfo['citations'][index]
+        %input{:type => 'text', :name => 'cite_from_' + index.to_s, :class =>'cite_from'}     
+    .row
+      %h2
+        To:
+      - citeinfo['citations'].each_index do |index|
+        = label_tag citeinfo['citations'][index]
+        %input{:type => 'text', :name => 'cite_to_' + index.to_s, :class =>'cite_to'}     
   = form.submit "Retrieve", :class => ''
   = javascript_include_tag 'perseids-cts'
 

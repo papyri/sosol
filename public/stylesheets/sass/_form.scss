@@ -32,6 +32,7 @@
 	}
 	input[type="submit"] {
 		text-transform: uppercase;
+                cursor: pointer;
 		background-color:$COLOR_PRI;
 		color: $COLOR_FOREGROUND;
 	 	border:none;
