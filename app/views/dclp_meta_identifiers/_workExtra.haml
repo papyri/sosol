@@ -6,11 +6,11 @@
         -if extra.value == 'and'
           = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :disabled => :diabled, :class => 'workExtraAnd', :onchange => "editionExtraChange(this);"
         -elsif
-          = select_tag baseChildren + '[extra][' + (index).to_s + '][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
           = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
           = text_field_tag baseChildren + '[extra][' + (index).to_s + '][children][certainty]', extra.certainty, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
         %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_workExtra

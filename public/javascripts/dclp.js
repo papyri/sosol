@@ -201,10 +201,10 @@ function multiAddWork(e){
 '                      <h5>' +
 '                        Author' +
 '                      </h5>' +
-'                      <label class="meta workAuthorName" for="hgv_meta_identifier_work_' + workIndex +'_children_author_name">TLG Name</label>' +
-'                      <input class="observechange workAuthorName" id="hgv_meta_identifier_work_' + workIndex +'_children_author_name" name="hgv_meta_identifier[work][' + workIndex +'][children][author][name]" onchange="workAuthorNameChange(this);" type="text">' +
-'                      <label class="meta workAuthorLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_author_language">Language</label>' +
-'                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_author_language" name="hgv_meta_identifier[work][' + workIndex +'][children][author][language]"><option value=""></option>' +
+'                      <label class="meta workAuthorName" for="hgv_meta_identifier_work_' + workIndex +'_children_author_value">TLG Name</label>' +
+'                      <input class="observechange workAuthorName" id="hgv_meta_identifier_work_' + workIndex +'_children_author_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][value]" onchange="workAuthorNameChange(this);" type="text">' +
+'                      <label class="meta workAuthorLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_author_attributes_language">Language</label>' +
+'                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_author_attributes_language" name="hgv_meta_identifier[work][' + workIndex +'][children][author][attributes][language]"><option value=""></option>' +
 '                      <option value="la">Latin</option>' +
 '                      <option value="grc">Greek</option></select>' +
 '                      <div class="clear"></div>' +
@@ -245,10 +245,10 @@ function multiAddWork(e){
 '                      <h5>' +
 '                        Work' +
 '                      </h5>' +
-'                      <label class="meta workTitleName" for="hgv_meta_identifier_work_' + workIndex +'_children_title_name">TM Work</label>' +
-'                      <input class="observechange workTitleName" id="hgv_meta_identifier_work_' + workIndex +'_children_title_name" name="hgv_meta_identifier[work][' + workIndex +'][children][title][name]" onchange="workTitleNameChange(this);" type="text">' +
+'                      <label class="meta workTitleName" for="hgv_meta_identifier_work_' + workIndex +'_children_title_value">TM Work</label>' +
+'                      <input class="observechange workTitleName" id="hgv_meta_identifier_work_' + workIndex +'_children_title_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][value]" onchange="workTitleNameChange(this);" type="text">' +
 '                      <label class="meta workTitleLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_title_language">Language</label>' +
-'                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_title_language" name="hgv_meta_identifier[work][' + workIndex +'][children][title][language]"><option value=""></option>' +
+'                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_title_attributes_language" name="hgv_meta_identifier[work][' + workIndex +'][children][title][attributes][language]"><option value=""></option>' +
 '                      <option value="la">Latin</option>' +
 '                      <option value="grc">Greek</option></select>' +
 '                      <div class="clear"></div>' +
@@ -321,7 +321,7 @@ function multiAddWorkExtra(plusButton){
   var workExtraIndex = multiGetNextIndex('workExtra' + workIndex);
 
   var item = '<li style="position: relative;">' +
-'                              <select class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_unit" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][unit]"><option value="volume">Volume</option>' +
+'                              <select class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_unit" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][unit]"><option value="volume">Volume</option>' +
 '                              <option value="vol" selected="selected">Volume</option>' +
 '                              <option value="pp">Pages</option>' +
 '                              <option value="no">Number</option>' +
@@ -337,8 +337,8 @@ function multiAddWorkExtra(plusButton){
 '                              <option value="generic">Generic</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_certainty" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][certainty]" type="text">' +
-'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][from]" type="text">' +
-'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][to]" type="text">' +
+'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="text">' +
+'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                              <span class="move" title="move">o</span>' +
 '                            </li>';

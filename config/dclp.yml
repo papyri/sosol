@@ -155,6 +155,12 @@
             :unit:
               :name: unit
               :pattern: /\Avol|generic|lines|generic|fragment|page|chapter|poem\Z/
+            :from:
+              :name: from
+              :pattern: /\A\d+\Z/
+            :to:
+              :name: to
+              :pattern: /\A\d+\Z/
           :children:
             :certainty:
               :xpath: certainty[@cert='low'][@locus='value']/@target

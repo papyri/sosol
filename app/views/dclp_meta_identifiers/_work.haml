@@ -15,11 +15,11 @@
 
           %h5
             Author
-          = label_tag baseChildren + '[author][name]', I18n.t('dclp.label.workAuthorName'), :class => 'meta workAuthorName', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][name]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName', :onchange => "workAuthorNameChange(this);"
+          = label_tag baseChildren + '[author][value]', I18n.t('dclp.label.workAuthorName'), :class => 'meta workAuthorName', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][value]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName', :onchange => "workAuthorNameChange(this);"
 
-          = label_tag baseChildren + '[author][language]', I18n.t('biblio.label.language'), :class => 'meta workAuthorLanguage', :title => @identifier.configuration.xpath(:work)
-          = select_tag baseChildren + '[author][language]', options_for_select(DclpWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          = label_tag baseChildren + '[author][attributes][language]', I18n.t('biblio.label.language'), :class => 'meta workAuthorLanguage', :title => @identifier.configuration.xpath(:work)
+          = select_tag baseChildren + '[author][attributes][language]', options_for_select(DclpWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
 
           = label_tag baseChildren + '[author][tlg]', I18n.t('dclp.label.workTlg'), :class => 'meta workAuthorTlg', :title => @identifier.configuration.xpath(:work)
@@ -37,7 +37,7 @@
           .clear
 
           = label_tag baseChildren + '[author][children][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][certainty]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = text_field_tag baseChildren + '[author][children][certainty]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
@@ -50,11 +50,11 @@
 
           %h5
             Work
-          = label_tag baseChildren + '[title][name]', I18n.t('dclp.label.workTitleName'), :class => 'meta workTitleName', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][name]', (work.title ?  work.title.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleName', :onchange => "workTitleNameChange(this);"
+          = label_tag baseChildren + '[title][value]', I18n.t('dclp.label.workTitleName'), :class => 'meta workTitleName', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][value]', (work.title ?  work.title.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleName', :onchange => "workTitleNameChange(this);"
 
-          = label_tag baseChildren + '[title][language]', I18n.t('biblio.label.language'), :class => 'meta workTitleLanguage', :title => @identifier.configuration.xpath(:work)
-          = select_tag baseChildren + '[title][language]', options_for_select(DclpWork.languageOptions, (work.title ? work.title.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          = label_tag baseChildren + '[title][attributes][language]', I18n.t('biblio.label.language'), :class => 'meta workTitleLanguage', :title => @identifier.configuration.xpath(:work)
+          = select_tag baseChildren + '[title][attributes][language]', options_for_select(DclpWork.languageOptions, (work.title ? work.title.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
 
           = label_tag baseChildren + '[title][tlg]', I18n.t('dclp.label.workTlg'), :class => 'meta workTitleTlg', :title => @identifier.configuration.xpath(:work)
@@ -80,8 +80,8 @@
           =I18n.t('dclp.help.workTitleDate')
           .clear
 
-          = label_tag baseChildren + '[title][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][certainty]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = label_tag baseChildren + '[title][children][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][children][certainty]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
