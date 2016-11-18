@@ -166,7 +166,7 @@ module AgentHelper
         http.send_request('GET',url.request_uri)
       end
       unless (response.code == '200')
-        raise "Unable to retreive content from #{url}"
+        raise "Unable to retrieve content from #{url}"
       end
       return response.body.force_encoding("UTF-8")
     end
@@ -232,7 +232,7 @@ module AgentHelper
         http.send_request('GET',uri.request_uri)
       end
       unless (response.code == '200')
-        raise "Unable to retreive content from #{uri}"
+        raise "Unable to retrieve content from #{uri}"
       end
       return response.body.force_encoding("UTF-8")
     end
