@@ -12,7 +12,7 @@
 
         %h4.category.edition
           %a{:name => 'Edition'}=I18n.t('dclp.legend.edition')
-        .editbox{:style => 'display: none;'}
+        .editbox{:style => 'display: block;'}
           = render :partial => 'dclp_meta_identifiers/edition'
 
           .clear
@@ -50,7 +50,7 @@
 
         %h4.category.object
           %a{:name => 'Edition'}=I18n.t('dclp.legend.object')
-        .editbox{:style => 'display: block;'}
+        .editbox{:style => 'display: none;'}
           = render :partial => 'dclp_meta_identifiers/object'
           .clear
 

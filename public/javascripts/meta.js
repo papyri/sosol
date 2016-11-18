@@ -96,14 +96,16 @@ function toggleMentionedDates(dateId){
 
 /**** multi ****/
 
-function multiAdd(id)
+function multiAdd(id, pathToActualValue)
 {
   var value = $$('#multiPlus_' + id + ' > input')[0].value;
+  var idSuffix   = typeof pathToActualValue !== 'undefined' ? '_' + pathToActualValue : '';
+  var nameSuffix = typeof pathToActualValue !== 'undefined' ? '[' + pathToActualValue.replace(/_/g, '][') + ']' : '';
 
   var index = multiGetNextIndex(id);
 
   var item = '<li>' +
-             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']" id="hgv_meta_identifier_' + id + '_' + index + '" class="observechange">' +
+             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']' + nameSuffix + '" id="hgv_meta_identifier_' + id + '_' + index + idSuffix + '" class="observechange">' +
              '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
              '  <span class="move">o</span>' +
              '</li>';
