@@ -75,7 +75,7 @@
   <body>
     <div id="main-menu" class="off">
       <div id="logo-container">
-	      <div class="logo"><%= image_tag('logo.png',{:alt=>"Perseids"}) %></div>
+	      <div class="logo"><%= link_to( image_tag('logo.png',{:alt=>"Perseids"} ), dashboard_url ) %></div>
 	      <a class="more" href="#"><%= image_tag('more.png') %> /></a>
 	  </div>
     <%= render "user/user_welcome" %>
