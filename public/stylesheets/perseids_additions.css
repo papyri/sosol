@@ -65,3 +65,9 @@
 
 .rows .row {
   margin: 5px; }
+
+.loading {
+  background-image: url("../images/ajax_loader.gif");
+  background-repeat: no-repeat;
+  background-position: top left;
+  opacity: 0.5; }

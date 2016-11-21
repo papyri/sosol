@@ -319,6 +319,7 @@ class PublicationsController < ApplicationController
 
   # GET /publications
   # GET /publications.xml
+  # @deprecated in Perseids - use API instead
   def index
     @branches = @current_user.repository.branches
     @branches.delete("master")

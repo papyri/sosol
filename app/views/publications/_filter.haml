@@ -16,7 +16,7 @@
   - if has_committed
     %button{:class => "filter", "data-target" => "committed-column"}
       Committed
-  .archive_link
-    = link_to "Archive Committed", {:controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id}, :class => 'btn bg-sdw'
+    .archive_link
+      = link_to "Archive Committed", {:controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id}, :class => 'btn bg-sdw'
   .archive_link
     = link_to "Archived", { :controller => 'user', :action => 'archives',  :id => @current_user.id }, :class => 'btn bg-sdw'

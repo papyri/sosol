@@ -13,6 +13,7 @@ class BoardsController < ApplicationController
   end
   
   #Presents overview for publication.
+  # @deprecated ? This is not used in Perseids
   def overview
     @board = Board.find(params[:id].to_s)
 
