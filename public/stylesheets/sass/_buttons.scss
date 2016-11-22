@@ -49,7 +49,9 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
 		height: $XS_BUTTON_HEIGHT;
 		line-height: $XS_BUTTON_HEIGHT;
 	}
-
+	&.quickaction {
+		text-transform: none;
+	}
  	&:active, &.active {
  		border:1px solid $COLOR_GRAY; 
  		border-right:$OUTLINE_SIZE solid $COLOR_PRI;

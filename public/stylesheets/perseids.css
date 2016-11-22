@@ -2493,6 +2493,8 @@ button, .btn, #filter button, .btn:hover, #filter button:hover, .btn:visited, #f
       width: 180px;
       height: 45px;
       line-height: 45px; } }
+  button.quickaction, .btn.quickaction, #filter button.quickaction, .btn:hover.quickaction, #filter button:hover.quickaction, .btn:visited.quickaction, #filter button:visited.quickaction, .btn:focus.quickaction, #filter button:focus.quickaction, .btn:link.quickaction, #filter button:link.quickaction {
+    text-transform: none; }
   button:active, button.active, .btn:active, #filter button:active, .btn.active, #filter button.active, .btn:hover:active, #filter button:hover:active, .btn:hover.active, #filter button:hover.active, .btn:visited:active, #filter button:visited:active, .btn:visited.active, #filter button:visited.active, .btn:focus:active, #filter button:focus:active, .btn:focus.active, #filter button:focus.active, .btn:link:active, #filter button:link:active, .btn:link.active, #filter button:link.active {
     border: 1px solid #bdbdbd;
     border-right: 5px solid #7986cb;
@@ -2990,6 +2992,9 @@ ul.btns > li {
     .select-container.disabled select {
       min-width: 135px; }
 
+#container.publications .quickswitch-target {
+  display: none;
+  margin: 1em 2em; }
 #container.publications .new-bar, #container.publications .select-bar {
   margin: 5px 5px 30px 5px;
   padding: 20px; }
@@ -3083,6 +3088,24 @@ ul.btns > li {
     flex-grow: 1; }
     .publication .legend a {
       text-decoration: none; }
+  .publication .alt-title {
+    display: none; }
+    .publication .alt-title ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0; }
+      .publication .alt-title ul li {
+        padding: 0;
+        margin: 0;
+        display: inline; }
+        .publication .alt-title ul li span {
+          display: none; }
+        .publication .alt-title ul li a:hover {
+          text-decoration: underline; }
+        .publication .alt-title ul li:before {
+          content: ", "; }
+        .publication .alt-title ul li:first-child:before {
+          content: ""; }
   .publication .publication-validate {
     display: block;
     height: 45px;
@@ -3444,3 +3467,5 @@ ul.btns > li {
     line-height: 45px;
     text-align: center;
     width: 45px; }
+
+/*# sourceMappingURL=perseids.css.map */

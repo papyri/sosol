@@ -1,4 +1,8 @@
 #container.publications {
+	.quickswitch-target {
+		display: none;
+		margin:1em 2em;
+	}
 	.new-bar, .select-bar {
 		margin:$MARGIN_SMALL $MARGIN_SMALL $MARGIN_BIG*1.5 $MARGIN_SMALL;
 		padding:$MARGIN_BIG;
@@ -152,6 +156,35 @@
 		flex-grow:1;
 		a {
 			text-decoration: none;
+		}
+	}
+	.alt-title {
+		display: none;
+		ul {
+			list-style-type: none;
+			margin:0;
+			padding:0;
+
+			li {
+				padding:0;
+				margin:0;
+				display: inline;
+				span {
+					display: none;
+				}
+				a:hover {
+					text-decoration: underline;
+				}
+				&:before {
+					content: ", ";
+
+				}
+				&:first-child {
+					&:before {
+						content: "";
+					}
+				}
+			}
 		}
 	}
 	.publication-validate {

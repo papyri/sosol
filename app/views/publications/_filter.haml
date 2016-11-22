@@ -20,3 +20,6 @@
       = link_to "Archive Committed", {:controller => 'publications', :action => "confirm_archive_all", :id => @current_user.id}, :class => 'btn bg-sdw'
   .archive_link
     = link_to "Archived", { :controller => 'user', :action => 'archives',  :id => @current_user.id }, :class => 'btn bg-sdw'
+  %button{:class => "quickaction", :id => 'toggleTitles'}
+    %i{:class => "fa fa-exchange"}
+    Show Document Titles
