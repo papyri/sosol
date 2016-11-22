@@ -1,12 +1,14 @@
 #main-wrapper.site
   #container
-    %h1
-      = @publication.title
-      - if !@publication.status.nil? && @publication.status != ''
-        == (#{@publication.status})
+    .card
+      %h1
+        = @publication.title
+        - if !@publication.status.nil? && @publication.status != ''
+          == (#{@publication.status})
       
-    %h2
-      Are You Sure You Want to Withdraw this publication? This action will delete every non-canonical copy of this publication except for the original owner's (i.e. every board copy), and cannot be undone.
-    %h1
-      = link_to "Withdraw", {:id => @publication.id , :controller => "publications", :action => "withdraw"}, :class => 'btn bg-sdw'
-      = link_to "Cancel", @publication, :class => 'btn bg-sdw'
+      %div{:class => "info-square danger"}
+        %i{:class => "fa fa-info-circle"}
+        Are you sure you want to withdraw this publication? This action will delete every non-canonical copy of this publication except for the original owner's (i.e. every board copy), and cannot be undone.
+      %p
+        = link_to "Withdraw", {:id => @publication.id , :controller => "publications", :action => "withdraw"}, :class => 'btn revert bg-sdw'
+        = link_to "Cancel", @publication, :class => 'btn revert bg-sdw'

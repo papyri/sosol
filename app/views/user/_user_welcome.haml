@@ -12,10 +12,8 @@
   %nav{:class=>"logins"}
     %ul
       %li{:href => "#", :class =>"yahoo"}
-        %a
-          %span{:class => "text"}Read More
+        = "#{Sosol::Application.config.site_wiki_link}".html_safe
       %li{:href => "#", :class =>"aol"}
-        %a
-          %span{:class => "text"}Sample Publications
+        = "#{Sosol::Application.config.site_pubs_link}".html_safe
 
 

@@ -45,6 +45,11 @@
 	 		border:1px solid $COLOR_PRI;
 			height:$CARD_BUTTON_HEIGHT;
 	 	}
+		&.disabled {
+			border-color: $COLOR_DISABLED;
+			color: #e0e0e0;
+			background-color:$COLOR_DISABLED;
+		}
 	}
 }
 
@@ -56,9 +61,9 @@
 	background-color:$COLOR_FOREGROUND;
 	//overflow: hidden;
 	select { 
-		font-size:$MD_BUTTON_FONT_SIZE;
-		padding-right: $MD_BUTTON_HEIGHT + $OUTLINE_SIZE;
-		height:$MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+		font-size:$BUTTON_FONT_SIZE;
+		padding-right: $CARD_BUTTON_HEIGHT + $OUTLINE_SIZE;
+		height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
 		background-color:transparent;
 		border:none;
 		border-right:none;
@@ -66,7 +71,7 @@
 	    appearance:none;
 	    -moz-appearance:none; /* Firefox */
 	    -webkit-appearance:none; /* Safari and Chrome */
-	    width:$MD_BUTTON_WIDTH;
+	    width:$BUTTON_WIDTH;
 	    cursor:pointer;
 		overflow: hidden;
 		z-index: 99;
@@ -83,9 +88,9 @@
 		background-color:$COLOR_PRI;
 		top:0;
 		display:block;
-		width:$MD_BUTTON_HEIGHT;
-		height:$MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
-		line-height:$MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+		width:$CARD_BUTTON_HEIGHT;
+		height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+		line-height:$CARD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
 		content:"";
 		color:white;
 		text-align:center;
@@ -101,7 +106,7 @@
 			background-color:$COLOR_DISABLED;
 		}
 		select { 
-			min-width: $MD_BUTTON_WIDTH*0.75;
+			min-width: $BUTTON_WIDTH*0.75;
 		}
 	}
 }

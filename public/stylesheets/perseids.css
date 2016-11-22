@@ -2941,6 +2941,10 @@ ul.btns > li {
   .card input[type="submit"]:active, .card input[type="submit"]:hover, .card input[type="submit"]:focus, .modal input[type="submit"]:active, .modal input[type="submit"]:hover, .modal input[type="submit"]:focus {
     border: 1px solid #7986cb;
     height: 60px; }
+  .card input[type="submit"].disabled, .modal input[type="submit"].disabled {
+    border-color: #bdbdbd;
+    color: #e0e0e0;
+    background-color: #bdbdbd; }
 
 .select-container {
   display: inline-block;
@@ -2949,9 +2953,9 @@ ul.btns > li {
   border: 5px solid #7986cb;
   background-color: white; }
   .select-container select {
-    font-size: 16px;
-    padding-right: 50px;
-    height: 35px;
+    font-size: 20px;
+    padding-right: 65px;
+    height: 50px;
     background-color: transparent;
     border: none;
     border-right: none;
@@ -2961,7 +2965,7 @@ ul.btns > li {
     /* Firefox */
     -webkit-appearance: none;
     /* Safari and Chrome */
-    width: 180px;
+    width: 250px;
     cursor: pointer;
     overflow: hidden;
     z-index: 99; }
@@ -2975,9 +2979,9 @@ ul.btns > li {
     background-color: #7986cb;
     top: 0;
     display: block;
-    width: 45px;
-    height: 35px;
-    line-height: 35px;
+    width: 60px;
+    height: 50px;
+    line-height: 50px;
     content: "";
     color: white;
     text-align: center;
@@ -2990,7 +2994,7 @@ ul.btns > li {
       color: #e0e0e0;
       background-color: #bdbdbd; }
     .select-container.disabled select {
-      min-width: 135px; }
+      min-width: 187.5px; }
 
 #container.publications .quickswitch-target {
   display: none;
@@ -3046,19 +3050,19 @@ ul.btns > li {
     #container.publications .new-bar .btn.TreebankCiteIdentifier, #container.publications .new-bar #filter button.TreebankCiteIdentifier, #filter #container.publications .new-bar button.TreebankCiteIdentifier {
       background-color: #a5d6a7; }
     #container.publications .new-bar .btn.EpiCTSIdentifier, #container.publications .new-bar #filter button.EpiCTSIdentifier, #filter #container.publications .new-bar button.EpiCTSIdentifier {
-      background-color: #ffe082; }
-    #container.publications .new-bar .btn.CommentaryCiteIdentifier, #container.publications .new-bar #filter button.CommentaryCiteIdentifier, #filter #container.publications .new-bar button.CommentaryCiteIdentifier {
       background-color: #ce93d8; }
+    #container.publications .new-bar .btn.CommentaryCiteIdentifier, #container.publications .new-bar #filter button.CommentaryCiteIdentifier, #filter #container.publications .new-bar button.CommentaryCiteIdentifier {
+      background-color: #bfcf2d; }
     #container.publications .new-bar .btn.AlignmentCiteIdentifier, #container.publications .new-bar #filter button.AlignmentCiteIdentifier, #filter #container.publications .new-bar button.AlignmentCiteIdentifier {
       background-color: #ef9a9a; }
     #container.publications .new-bar .btn.CitationCTSIdentifier, #container.publications .new-bar #filter button.CitationCTSIdentifier, #filter #container.publications .new-bar button.CitationCTSIdentifier {
-      background-color: #f8bbd0; }
+      background-color: #ce93d8; }
     #container.publications .new-bar .btn.OaCiteIdentifier, #container.publications .new-bar #filter button.OaCiteIdentifier, #filter #container.publications .new-bar button.OaCiteIdentifier {
       background-color: #81d4fa; }
     #container.publications .new-bar .btn.OACIdentifier, #container.publications .new-bar #filter button.OACIdentifier, #filter #container.publications .new-bar button.OACIdentifier {
       background-color: #bcaaa4; }
     #container.publications .new-bar .btn.EpiTransCTSIdentifier, #container.publications .new-bar #filter button.EpiTransCTSIdentifier, #filter #container.publications .new-bar button.EpiTransCTSIdentifier {
-      background-color: #bfcf2d; }
+      background-color: #ce93d8; }
 #container.publications .container-wrapper {
   position: relative; }
   #container.publications .container-wrapper .publication-container {
@@ -3218,19 +3222,19 @@ ul.btns > li {
       .publication .publication-items > li.TreebankCiteIdentifier {
         background-color: #a5d6a7; }
       .publication .publication-items > li.EpiCTSIdentifier {
-        background-color: #ffe082; }
-      .publication .publication-items > li.CommentaryCiteIdentifier {
         background-color: #ce93d8; }
+      .publication .publication-items > li.CommentaryCiteIdentifier {
+        background-color: #bfcf2d; }
       .publication .publication-items > li.AlignmentCiteIdentifier {
         background-color: #ef9a9a; }
       .publication .publication-items > li.CitationCTSIdentifier {
-        background-color: #f8bbd0; }
+        background-color: #ce93d8; }
       .publication .publication-items > li.OaCiteIdentifier {
         background-color: #81d4fa; }
       .publication .publication-items > li.OACIdentifier {
         background-color: #bcaaa4; }
       .publication .publication-items > li.EpiTransCTSIdentifier {
-        background-color: #bfcf2d; }
+        background-color: #ce93d8; }
       .publication .publication-items > li.votes {
         background-color: #bdbdbd; }
       .publication .publication-items > li .type-legend {

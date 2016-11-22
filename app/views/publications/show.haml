@@ -3,16 +3,23 @@
   :javascript 
 
     function checkForComment() { 
-      comment_text = $('submit_comment').value; 
+      comment_text = $('submit_comment').value;
+      var disabled = true;
       if ($('community_id') != null)
       {
         var selected_submit = $('community_id').value;
-        $('submit_button').disabled = (selected_submit == "")  ||  ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
+        disabled = (selected_submit == "")  ||  ( comment_text.replace(/^\s+|\s+$/g, '') == "" );
       }
       else
       {
-        $('submit_button').disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" )
-      } 
+        disabled = ( comment_text.replace(/^\s+|\s+$/g, '') == "" );
+      }
+      $('submit_button').disabled = disabled;
+      if (disabled) {
+        jQuery('#submit_button').addClass('disabled');
+      } else {
+        jQuery('#submit_button').removeClass('disabled');
+      }
     }
 
     function toggle_div(obj) {
@@ -55,10 +62,10 @@
               .columns
                 .text-center
                   .select-container
-                    = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true  ,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s }
+                    = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s}
                     .carret
                       %i{:class => "fa fa-caret-down"}
-                  = submit_tag "Submit to Boards", :onclick => 'this.disabled=true; jQuery(this).addClass("disabled"); this.form.submit();', :disabled => true, :class => 'submit margin-left', :id => "submit_button"
+                  = submit_tag "Submit to Boards", :onclick => 'this.disabled=true; jQuery(this).addClass("disabled"); this.form.submit();', :disabled => true, :class => 'disabled submit margin-left', :id => "submit_button"
         - else
           %p
             %em
@@ -108,7 +115,7 @@
               %div{:id => "less_comments_link", :style => "display:none;"}
                 %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_comments');Effect.SlideDown('more_comments_link');Effect.SlideUp('less_comments_link');return false;"}
                   Less...
-     
+
         - if @xml_only_comments != nil
           %div{:id => "xml_only_comments_div", :style => "display:;"}
             %br
@@ -127,7 +134,7 @@
               %div{:id => "less_xml_comments_link", :style => "display:none;"}
                 %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_xml_comments');Effect.SlideDown('more_xml_comments_link');Effect.SlideUp('less_xml_comments_link');return false;"}
                   Less...
-            
+
         - if @other_user_publications != nil && @other_user_publications.length > 0
           %br
           %h3 This publication is also being edited by:
