@@ -4,7 +4,7 @@
   %ul.items{:id => 'multiItems_' + key.to_s}
     - valueList.each_index do |index|
       %li
-        - id = 'hgv_meta_identifier[' + key.to_s.gsub(/_/, '][') + (defined?(pathToActualValue) ? '[' + pathToActualValue.join('][') + ']' : '') + '][' + index.to_s + ']' 
+        - id = 'hgv_meta_identifier[' + key.to_s.gsub(/_/, '][') + '][' + index.to_s + ']' + (defined?(pathToActualValue) ? '[' + pathToActualValue.join('][') + ']' : '') 
         - value = defined?(pathToActualValue) ? HgvMetaIdentifierHelper::getValueFromHashByMultidimensionalKey(valueList[index], pathToActualValue) : valueList[index]
         = text_field_tag id, value, :disabled => !@identifier.mutable?, :class => 'observechange'
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
