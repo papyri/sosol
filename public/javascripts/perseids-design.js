@@ -112,12 +112,12 @@ function perseids_filters() {
         var ul = that.find(".publication-items").clone();
         ul.removeClass("publication-items")
         that.find(".alt-title").html(ul).show()
-        jQuery("#toggleTitles").text("Show Publication Titles")
+        jQuery("#toggleTitles span").text("Show Publication Titles")
       });
     } else {
       jQuery(".publication .alt-title").hide();
       jQuery(".publication .original").show();
-      jQuery("#toggleTitles").text("Show Document Titles")
+      jQuery("#toggleTitles span").text("Show Document Titles")
     }
   });
   jQuery("#toggleTitles").click();

@@ -1,9 +1,9 @@
 %ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
-      = link_to 'XML', editxml_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn fullsize'
+      = link_to 'XML', editxml_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn '
   %li
-    = link_to 'Preview', preview_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn fullsize'
+    = link_to 'Preview', preview_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn '
   - if @identifier.mutable? && @identifier.publication.status != 'finalizing'
     %li
-      = link_to 'Select Passage', link_citation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn fullsize'
+      = link_to 'Select Passage', link_citation_publication_tei_cts_identifier_path( tei_cts_identifier.publication, tei_cts_identifier), :class => 'btn '

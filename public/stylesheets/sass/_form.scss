@@ -9,7 +9,7 @@
 		@extend .fg-sdw;
 		height:$CARD_BUTTON_HEIGHT;
 	}
-	input:not([type="button"]){
+	input:not([type="submit"]):not([type="button"]) {
 		border:$OUTLINE_SIZE solid $COLOR_PRI;
 		width:75%;
 		padding-left:1em;
@@ -41,6 +41,7 @@
 		border:1px solid $COLOR_PRI; 
 		margin-top: $BUTTON_HEIGHT;
 		padding:0;
+		@extend .font-button ;
 	 	&:active, &:hover, &:focus {
 	 		border:1px solid $COLOR_PRI;
 			height:$CARD_BUTTON_HEIGHT;

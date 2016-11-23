@@ -86,4 +86,10 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
 			padding:0;
 	 	}
  	}
+
+	&.card-size {
+		height: $CARD_BUTTON_HEIGHT;
+		line-height: $CARD_BUTTON_HEIGHT;
+		text-align: center;
+	}
 }

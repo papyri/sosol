@@ -21,3 +21,8 @@ function confirmSignup() {
     } 
     return true;
 }
+
+jQuery(document).ready(function() {
+  jQuery("#community_id option[value='']").text("Please select...");
+    
+});

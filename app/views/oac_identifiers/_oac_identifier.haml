@@ -1,8 +1,8 @@
 %ul{:class => 'menu'}
   - if @identifier.mutable? && @identifier.publication.status != 'finalizing' && @identifier.class::IDENTIFIER_PREFIX == 'urn:cts:'
     %li
-      = link_to 'Select Target', polymorphic_path([:link_citation,oac_identifier.publication,oac_identifier.parentIdentifier]), :class => 'btn fullsize'
+      = link_to 'Select Target', polymorphic_path([:link_citation,oac_identifier.publication,oac_identifier.parentIdentifier]), :class => 'btn '
     %li
-      = link_to 'Edit', edit_publication_oac_identifier_path( oac_identifier.publication, oac_identifier), :class => 'btn fullsize'
+      = link_to 'Edit', edit_publication_oac_identifier_path( oac_identifier.publication, oac_identifier), :class => 'btn '
   %li
-    = link_to 'Preview', preview_publication_oac_identifier_path( oac_identifier.publication, oac_identifier), :class => 'btn fullsize'
+    = link_to 'Preview', preview_publication_oac_identifier_path( oac_identifier.publication, oac_identifier), :class => 'btn '
