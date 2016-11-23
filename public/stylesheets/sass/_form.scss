@@ -76,6 +76,19 @@
 		overflow: hidden;
 		z-index: 99;
 	}
+	&.small {
+		select {
+			font-size: $MD_BUTTON_FONT_SIZE;
+			padding-right: $MD_BUTTON_HEIGHT + $OUTLINE_SIZE;
+			height: $MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+			width: $MD_BUTTON_WIDTH;
+		}
+		&:after {
+			width:$MD_BUTTON_HEIGHT;
+			height:$MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+			line-height:$MD_BUTTON_HEIGHT - (2 * $OUTLINE_SIZE);
+		}
+	}
 
 	.carret {
 		display:none;

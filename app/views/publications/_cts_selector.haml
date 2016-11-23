@@ -13,13 +13,13 @@
   %input{ :id => 'cts_proxy', :type => 'hidden', :value => url_for(:controller => 'cts_proxy', :only_path => true) }
   = hidden_field_tag 'IdentifierClass','CTSIdentifier'
   - [CTSIdentifier].each do |identifier_class|
-    .select-container
+    .select-container.small
       = select_tag("#{identifier_class}CollectionSelect", options_for_select(inventories))
-  .select-container
+  .select-container.small
     = select_tag 'group_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-  .select-container
+  .select-container.small
     = select_tag 'work_urn', nil, :disabled => true, :style => 'min-width: 5em;'
-  .select-container
+  .select-container.small
     = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;'
   = submit_tag "Emend", :disabled => true, :id => 'emend_button', :class => 'btn'
   = submit_tag "Create Edition", :disabled => true, :id => 'create_button', :class => 'btn'
