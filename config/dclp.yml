@@ -79,8 +79,9 @@
     #:ldab:
     #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
     #  :pattern: /\A\d+\Z/
-    :dclpHybrid:
-      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='dclp-hybrid']
+    #:dclpHybrid:
+    #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='dclp-hybrid']
+    #  :pattern: '/\A[^;]+;[^;]*;[^;]+\Z/'
     :mp3:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
       :pattern: /\A\d+(\.\d+)?\Z/ # vielleicht auch Buchstaben?!

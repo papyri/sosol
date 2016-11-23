@@ -90,17 +90,11 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         if params[:hgv_meta_identifier][:contentText]
           params[:hgv_meta_identifier][:contentText].each_pair{|key, value|
             type = case key.to_i
-            when 0
+            when 0, 1
               'description'
-            when 1
-              'description'
-            when 2
+            when 2, 3
               'religion'
-            when 3
-              'religion'
-            when 4
-              'culture'
-            when 5
+            when 4, 5
               'culture'
             else
               ''

@@ -5,6 +5,7 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
   FRIENDLY_NAME = "DCLP Meta"
   IDENTIFIER_NAMESPACE = 'dclp'
 
+  XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 
   # cl: needs to load additional xpaths
   # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes

@@ -62,6 +62,10 @@
         .editbox{:style => 'display: none;'}
           = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
+          .clear
+          = label_tag 'mp3', I18n.t('dclp.label.mp3'), :class => 'meta mp3', :title => @identifier.configuration.xpath(:mp3)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :mp3 }
+          .clear
           = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
           .clear
           .swifty.quickSave=I18n.t('label.quickSave')
