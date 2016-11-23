@@ -1,9 +1,13 @@
-= form_for Publication.new, :url => { :controller => "cite_publications", :action => "create_from_linked_urn" } do |f|
-  = f.error_messages
-  %br
-  %h2 Import Annotations from a Google Spreadsheet
-  %p{:class => 'hints'} The spreadsheet must already be published and adhere to a supported predefined template. You must supply the public link below. This can be either the "Link to Share" or the "Link to Published Data"
-  %label Google Spreadsheet Link:
-  %input{:name=>'init_value[]', :type=>'url', :class => 'observechange', :required => true, :pattern => 'https:\/\/docs.google.com\/spreadsheets?\/.+', :title =>"Supply a valid Google Spreadsheet URL", :size => 100}
-  = hidden_field_tag "identifier_type", 'Oa'
-  = f.submit "Import", :class => 'save'
+#main-wrapper
+  #container
+    .card
+      %h1 Import Annotations from a Google Spreadsheet
+      = form_for Publication.new, :url => { :controller => "cite_publications", :action => "create_from_linked_urn" } do |f|
+        = f.error_messages
+        %div{:class => "info-square danger"}
+          %i{:class => "fa fa-info-circle"}
+          The spreadsheet must already be published and adhere to a supported predefined template. You must supply the public link below. This can be either the "Link to Share" or the "Link to Published Data"
+        %label Google Spreadsheet Link:
+        %input{:name=>'init_value[]', :type=>'url', :class => 'observechange', :required => true, :pattern => 'https:\/\/docs.google.com\/spreadsheets?\/.+', :title =>"Supply a valid Google Spreadsheet URL", :size => 100}
+        = hidden_field_tag "identifier_type", 'Oa'
+        = f.submit "Import", :class => 'save btn revert'
