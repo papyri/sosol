@@ -1,4 +1,4 @@
-%ul{:class => 'unstyled'}
+%ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
       = link_to 'Edit', edit_polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :class => 'btn fullsize'

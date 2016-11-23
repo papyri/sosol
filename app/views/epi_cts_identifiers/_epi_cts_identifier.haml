@@ -1,4 +1,4 @@
-%ul{:class => 'unstyled'}
+%ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
       = link_to 'XML', editxml_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn fullsize'
