@@ -52,7 +52,7 @@ class TeiCtsIdentifiersController < IdentifiersController
   
    def link_translation
     find_identifier
-    render(:template => 'tei_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'tei_trans_cts_identifiers',:publication_id => @identifier.publication.id)
+    render(:template => 'tei_trans_cts_identifiers/create',:locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:controller => 'tei_trans_cts_identifiers',:publication_id => @identifier.publication.id}
    end
    
    def link_citation
