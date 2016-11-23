@@ -76,9 +76,9 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines
     :layout:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/p
-    :ldab:
-      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
-      :pattern: /\A\d+\Z/
+    #:ldab:
+    #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
+    #  :pattern: /\A\d+\Z/
     :dclpHybrid:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='dclp-hybrid']
     :mp3:

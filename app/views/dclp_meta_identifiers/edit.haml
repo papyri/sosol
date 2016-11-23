@@ -60,8 +60,9 @@
         %h4.category.general
           %a{:name => 'General<'}=I18n.t('dclp.legend.general')
         .editbox{:style => 'display: none;'}
+          = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
           = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
-
           .clear
           .swifty.quickSave=I18n.t('label.quickSave')
 
