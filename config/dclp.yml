@@ -41,6 +41,8 @@
     :publication:
     :publicationTitle:
     :publicationExtra:
+    :otherPublications:
+    :citedLiterature:
     :sammelbuchBibliography:
     :collectionPlaceName:
     :collectionInventoryNumber:
@@ -48,6 +50,15 @@
     :collectionTemporaryInventoryNumber:
     :figures:
     :illustrations:
+    :translationsDe:
+    :translationsEn:
+    :translationsIt:
+    :translationsEs:
+    :translationsLa:
+    :translationsFr:
+    :citedLiterature:
+    :bl:
+    :plannedForFuturePrintRelease:
     :collection:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno[@type='invNo']
     :collectionList:

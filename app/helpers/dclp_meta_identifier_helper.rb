@@ -331,6 +331,10 @@ module DclpMetaIdentifierHelper
           }
         end
       end
+
+      def to_s
+        '[ContentText genre: ' + @genre.to_s + ', religion: ' + @religion.to_s + ', culture ' + @culture.to_s + '; overview: ' + @overview + ']' 
+      end
     end
 
     # Data structure for publication information

@@ -2,6 +2,7 @@ include DclpMetaIdentifierHelper
 
 require 'net/http'
 
+
 class DclpMetaIdentifiersController < HgvMetaIdentifiersController
 
   def edit
@@ -59,4 +60,67 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     def find_identifier
       @identifier = DCLPMetaIdentifier.find(params[:id].to_s)
     end
+
+    def prune_params
+      super
+
+      if params[:hgv_meta_identifier]
+
+        # get rid of either collection or of collectionList
+        if params[:hgv_meta_identifier][:collectionList]
+          if params[:hgv_meta_identifier][:collectionList].length == 1
+            params[:hgv_meta_identifier][:collection] = params[:hgv_meta_identifier][:collectionList].shift[1]
+            params[:hgv_meta_identifier].delete :collectionList
+          end
+        end
+
+        # get rid of empty contentText fields
+        if params[:hgv_meta_identifier][:contentText]
+          params[:hgv_meta_identifier][:contentText].delete_if{|key, value| value.empty? }
+        end
+      end
+    end
+
+    def complement_params
+      super
+
+      if params[:hgv_meta_identifier]
+
+        # contentText: add type attributes for terms according to their position number
+        if params[:hgv_meta_identifier][:contentText]
+          params[:hgv_meta_identifier][:contentText].each_pair{|key, value|
+            type = case key.to_i
+            when 0
+              'description'
+            when 1
+              'description'
+            when 2
+              'religion'
+            when 3
+              'religion'
+            when 4
+              'culture'
+            when 5
+              'culture'
+            else
+              ''
+            end
+            params[:hgv_meta_identifier][:contentText][key] = {'value' => value, 'attributes' => {'class' => type}}
+          }
+        end
+
+        # contentText: add overview
+        if params[:hgv_meta_identifier][:overview]
+          overview = {'value' => params[:hgv_meta_identifier][:overview], 'attributes' => {'class' => 'overview'}}
+          if params[:hgv_meta_identifier][:contentText]
+            params[:hgv_meta_identifier][:contentText]['overview'] = overview
+          else
+            params[:hgv_meta_identifier][:contentText] = {'overview' => overview}
+          end
+          params[:hgv_meta_identifier].delete :overview
+        end
+
+      end
+    end
+
 end
