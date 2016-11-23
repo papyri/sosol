@@ -401,7 +401,11 @@ class HGVMetaIdentifier < HGVIdentifier
         if attributeLegal? key # value && !value.empty? # CL: Biblio patch
           element = doc.bulldozePath(config[:xpath])
 
-          element.text = value
+          if config[:xpath] =~ /@([\w]+)\Z/
+            element.attributes[$1] = value
+          else
+            element.text = value
+          end
           if config[:attributes]
             config[:attributes].each_pair {|attribute_key, attribute_config|
               element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key]
