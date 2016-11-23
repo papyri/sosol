@@ -184,8 +184,8 @@ CtsSelector.prototype.populate_selector = function( select_element, options ) {
 }
 
 CtsSelector.prototype.update_group_urns = function() {
-  $('emend_button').disabled = true;
-  $('create_button').disabled = true;
+  this.toggle_button_state("#emend_button",true);
+  this.toggle_button_state("#create_button",true);
   this.clear_selector($('edition_urn'));
   this.clear_selector($('work_urn'));
   var inventory = $F('CTSIdentifierCollectionSelect');
@@ -198,8 +198,8 @@ CtsSelector.prototype.update_group_urns = function() {
 }
 
 CtsSelector.prototype.update_work_urns = function() {
-  $('emend_button').disabled = true;
-  $('create_button').disabled = true;
+  this.toggle_button_state("#emend_button",true);
+  this.toggle_button_state("#create_button",true);
   this.clear_selector($('edition_urn'));
   //------------------------------------------------------------
   //  get the works for the selected textgroup and populate the work selector
@@ -210,12 +210,11 @@ CtsSelector.prototype.update_work_urns = function() {
     var works = this.inventories[inventory][textgroup].works;
     this.populate_selector($('work_urn'),works);
     this.update_edition_urns();
-  }
-  //------------------------------------------------------------
-  //  hack to disable Create for perseus editions for now
-  //------------------------------------------------------------
-  if ( inventory != 'perseus' ) {
-      $('create_button').disabled = false;
+    if (jQuery.isEmptyObject(works)) {
+      this.toggle_button_state("#create_button",true);
+    } else {
+      this.toggle_button_state("#create_button",false);
+    }
   }
 }
 
@@ -232,17 +231,28 @@ CtsSelector.prototype.update_edition_urns = function() {
     var editions = this.inventories[inventory][textgroup].works[work].editions
     if ( editions ) {
       this.populate_selector($('edition_urn'),editions)
-      $('emend_button').disabled = false;
+      this.toggle_button_state("#emend_button",false);
     } 
     else {
       //------------------------------------------------------------
       //  still need to empty it out
       //------------------------------------------------------------
       this.populate_selector($('edition_urn'),{})
-      $('emend_button').disabled = true;
+      this.toggle_button_state("#emend_button",true);
     }
   }
 }
+
+CtsSelector.prototype.toggle_button_state = function(elem,disabled) {
+  if (disabled) {
+    jQuery(elem).addClass("disabled");
+    jQuery(elem).attr("disabled",true);
+  } else {
+    jQuery(elem).removeClass("disabled");
+    jQuery(elem).attr("disabled",false);
+  }
+};
+  
 CtsSelector.prototype.activate_typeahead = function(work_matches) {
   var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
