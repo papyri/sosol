@@ -2,16 +2,17 @@
   %label{:id => 'edit_commit'} Edit summary (Briefly describe the changes you have made):
   %br
   -#the save button and comment box styled differently in editor.sass based on different class on top and bottom
+  - disabled_class = identifier.mutable? ? '' : 'disabled'
   -if where_at == :top
     = text_field_tag :commenttop, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'commenttop observechangecomtop', :disabled => !identifier.mutable?
-    = f.submit "Save", :id => 'identifier_submit_top', :class => 'savetop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+    = f.submit "Save", :id => 'identifier_submit_top', :class => "savetop #{disabled_class}", :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
-      = f.submit "Save With Broken Leiden+", :class => 'brokentop', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+      = f.submit "Save With Broken Leiden+", :class => "brokentop #{disabled_class}", :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
   -else
     = text_field_tag :comment, defined?(original_commit_comment) ? original_commit_comment : '', :class => 'comment observechangecomment', :disabled => !identifier.mutable?
-    = f.submit "Save", :id => 'identifier_submit', :class => 'save', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+    = f.submit "Save", :id => 'identifier_submit', :class => "save #{disabled_class}", :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
     - if defined?(bad_leiden) && bad_leiden
-      = f.submit "Save With Broken Leiden+", :class => 'brokenbottom', :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
+      = f.submit "Save With Broken Leiden+", :class => "brokenbottom #{disabled_class}", :disabled => !identifier.mutable?, :onclick => 'set_conf_false()'
       :javascript
         if (document.getElementById('notice_error'))
           {var forceChangeTrue = true;}

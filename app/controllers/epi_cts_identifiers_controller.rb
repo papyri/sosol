@@ -87,8 +87,7 @@ class EpiCtsIdentifiersController < IdentifiersController
      :edition => @identifier.urn_attribute,
      :collection => @identifier.inventory,
      :publication_id => @identifier.publication.id, 
-     :controller_name => 'epi_trans_cts_identifiers',
-     :emend => :showemend } and return
+     :controller_name => 'epi_trans_cts_identifiers'} and return
   end
    
   def link_citation

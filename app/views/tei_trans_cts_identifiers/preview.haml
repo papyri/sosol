@@ -1,12 +1,10 @@
-#main
-  = render :partial => 'identifiers/edit_bar'
-
-  .site
-    = render :partial => 'identifiers/header'
-    #edit
-      = form_for @identifier, :url => { :action => :update }  do |f|
-        = f.error_messages
+#main-wrapper
+  #container
+    = render :partial => 'identifiers/header_perseids'
+    = render :partial => 'identifiers/edit_bar_perseids'
+  #edit
+    = form_for @identifier, :url => { :action => :update }  do |f|
+      = f.error_messages
         
-        %label Preview
-        .PContent
-          = @identifier[:html_preview].html_safe
+      .PContent.card
+        = @identifier[:html_preview].html_safe

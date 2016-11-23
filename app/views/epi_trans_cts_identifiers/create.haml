@@ -1,5 +1,5 @@
 #main-wrapper
   #container
     .card.create
-      = render(partial: 'publications/cts_translation_selector', :locals => { :edition => edition, :collection => collection, :emend => :showemend, :hide_text => :hide_text, :publication_id => publication_id, :controller_name => controller_name })
+      = render(partial: 'publications/cts_translation_selector', :locals => { :edition => edition, :collection => collection, :hide_text => :hide_text, :publication_id => publication_id, :controller_name => controller_name })
       - link_type = EpiTransCTSIdentifier::FRIENDLY_NAME

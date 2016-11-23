@@ -33,5 +33,5 @@
   //  Start ACE editor
   //------------------------------------------------------------
   jQuery( document ).ready( function() {
-    $(".alpheios-enabled-text").texAce({lang:'xml',theme_selector:true});
+    jQuery("textarea:not([disabled])").texAce({lang:'xml',theme_selector:true});
   });

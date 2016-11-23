@@ -28,10 +28,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
         flash.keep
         return redirect_to :action => override, :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s
     end
-    # Add URL to image service for display of related images
-    @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:context)[:href] 
-    # find text for preview
-    set_related_items
+    redirect_to :action =>"editxml",:publication=>params[:publication],:id=>params[:id]
   end
   
   def editxml
@@ -39,6 +36,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
     @identifier[:cite_image_service] = Tools::Manager.link_to('image_service',:cite,:binary)[:href] 
     @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
+    set_related_items
     render :template => 'epi_trans_cts_identifiers/editxml'
   end
 
@@ -113,8 +111,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
             :edition => params[:CTSIdentifierEditionSelect],
             :controller_name => 'epi_trans_cts_identifiers',
             :collection => collection,
-            :publication_id => params[:publication_id], 
-            :emend => :showemend}
+            :publication_id => params[:publication_id]}
 
         return
       end

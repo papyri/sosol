@@ -78,25 +78,24 @@
       - if @publication.modified?
         %h1 MODIFIED PUBLICATION
 
-    .columns
+    .card
+      - for identifier in @publication.identifiers
+        - if identifier.class::is_visible
+          %h2
+            == #{identifier.class::FRIENDLY_NAME} -
+            = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
+          %p
+            = render :partial => "identifiers/identifier_image", :locals => {:identifier => identifier}
+            - if identifier.needs_reviewing?(@current_user.id)
+              = image_tag('review_flag.png')
+          %span{:class => 'details'}
+            = identifier.title
+
+          - if @publication.status != "archived"
+            = render :partial => identifier
+
+    - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
       .card
-        - for identifier in @publication.identifiers
-          - if identifier.class::is_visible
-            %h2
-              == #{identifier.class::FRIENDLY_NAME} -
-              = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
-            %p
-              = render :partial => "identifiers/identifier_image", :locals => {:identifier => identifier}
-              - if identifier.needs_reviewing?(@current_user.id)
-                = image_tag('review_flag.png')
-            %span{:class => 'details'}
-              = identifier.title
-
-            - if @publication.status != "archived"
-              = render :partial => identifier
-
-      - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
-        .card
         - if @all_comments != nil
           %div{:id => "all_comments_div", :style => "display:none;"}
             %br

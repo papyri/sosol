@@ -10,13 +10,9 @@
       = form_for @identifier, :url => { :action => :updatexml } do |f|
         = f.error_messages
         
-        .card
-          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
-                
-        %label XML
-        .clearfix
-          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'input xml-content'
-        %br
+        .clearfix.card
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'input text xml-content'
+
         .card
           = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
@@ -34,5 +30,5 @@
   //  Start Ace Editor 
   //------------------------------------------------------------
   jQuery( document ).ready( function() {
-    jQuery("textarea").texAce({lang:'xml',theme_selector:true});
+    jQuery("textarea:not([disabled])").texAce({lang:'xml',theme_selector:true});
   });

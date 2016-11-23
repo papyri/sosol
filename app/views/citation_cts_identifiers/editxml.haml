@@ -50,6 +50,6 @@
   //  Start ACE editor
   //------------------------------------------------------------
   jQuery( document ).ready( function() {
-    $("#citation_cts_identifier_xml_content").texAce({lang:'xml',theme_selector:true});
+    jQuery("textarea:not([disabled])").texAce({lang:'xml',theme_selector:true});
   });
 

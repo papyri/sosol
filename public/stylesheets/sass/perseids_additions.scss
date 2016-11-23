@@ -47,3 +47,24 @@
   opacity: 0.5; 
 }
 
+.diff {
+  border: 1px solid gray;
+  padding: 1em;
+  ins {
+    pre {
+      code {
+        white-space: pre-wrap;
+        background: rgb(187, 255, 170);
+      }
+    }
+  }
+
+  del {
+    text-decoration: none;
+    pre {
+      code {
+        background: rgb(255, 187, 170);
+      }
+    }
+  }
+}

@@ -72,4 +72,15 @@
   background-position: top left;
   opacity: 0.5; }
 
+.diff {
+  border: 1px solid gray;
+  padding: 1em; }
+  .diff ins pre code {
+    white-space: pre-wrap;
+    background: #bbffaa; }
+  .diff del {
+    text-decoration: none; }
+    .diff del pre code {
+      background: #ffbbaa; }
+
 /*# sourceMappingURL=perseids_additions.css.map */

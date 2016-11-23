@@ -1,7 +1,7 @@
 %ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
-      = link_to 'XML', editxml_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+      = link_to 'Edit', editxml_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
   - if @identifier.allow_leiden
     %li
       = link_to 'Leiden+', leiden_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '

@@ -2,23 +2,21 @@
   - unless defined? hide_text
     %p== Existing publication:
   = form_tag :controller => controller_name, :action => "create_from_selector" do
-    %p{:class => ['cts_selector_hint']}== Select a publication to work with:
     = hidden_field_tag 'IdentifierClass','CTSIdentifier'
     = hidden_field_tag 'publication_id',publication_id
     = hidden_field_tag 'CTSIdentifierCollectionSelect',collection.to_s
     = hidden_field_tag 'CTSIdentifierEditionSelect',edition.to_s
-    = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
-    //= text_field_tag('passage')
-    -if emend == :showemend
-      = submit_tag "Emend", :disabled => true, :id => 'emend_button'
-      %div{:id => 'create_translation'}
-        %span{:id => 'emend_or_create'}==Or
-        = submit_tag "Create Translation", :disabled => true, :id => 'create_button', :class => 'btn'
-        .select-container.disabled
-          = select_tag 'create_lang', options_for_select([%w{English eng},%w{French fr},%w{Latin lat},%w{Croatian hrv},%w{German deu}, %w{Italian ita}, %w{Persian(Farsi) fas}, %w{Arabic ara}, %w{Georgian geo}])
-    -else
-      = submit_tag "Emend", :disabled => true, :id => 'emend_button', :style => 'display:none', :class => 'btn'
-      = submit_tag "Create Translation", :disabled => true, :id => 'create_button', :style => 'display:none', :class => 'btn'
+    #select_translation
+      %label{:class => ['cts_selector_hint']}== Select a publication to work with:
+      .select-container.disabled
+        = select_tag 'edition_urn', nil, :disabled => true, :style => 'min-width: 5em;', :onchange => "if(this.options[0].value==''){this.remove(0)};"
+      = submit_tag "Emend", :disabled => true, :id => 'emend_button', :class => 'btn disabled'
+      %span{:id => 'emend_or_create'}==Or
+      //= text_field_tag('passage')
+    %div{:id => 'create_translation'}
+      .select-container.disabled
+        = select_tag 'create_lang', options_for_select([%w{English eng},%w{French fr},%w{Latin lat},%w{Croatian hrv},%w{German deu}, %w{Italian ita}, %w{Persian(Farsi) fas}, %w{Arabic ara}, %w{Georgian geo}])
+      = submit_tag "Create Translation", :id => 'create_button', :class => 'btn'
 
 
 :javascript
@@ -65,11 +63,9 @@
     }
     
     if (count == 0) {
-      $$('p.cts_selector_hint')[0].innerHTML = 'No existing translations';
       select_element.disabled = true;
-      select_element.hide();
       $('emend_button').disabled = true;
-      $('emend_button').hide();
+      $('select_translation').hide();
       $('emend_or_create').hide();
     } else {
       if (count > 1) {
@@ -77,8 +73,9 @@
       } 
       $('emend_button').disabled = false;
       select_element.disabled = false;
+      jQuery(select_element).removeClass("disabled");
+      jQuery("#emend_button").removeClass("disabled");
     }
-    $('create_button').disabled = false;
   }
   
     
