@@ -506,6 +506,10 @@ class HGVMetaIdentifier < HGVIdentifier
       :altIdentifier => {
         :parent => "/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier[@type='temporary']",
         :children => ['placename', 'collection', 'idno', 'note']
+      },
+      :msDesc => {
+        :parent => "/TEI/teiHeader/fileDesc/sourceDesc/msDesc",
+        :children => ['msIdentifier', 'physDesc', 'history', 'additional']
       }
     }
 
