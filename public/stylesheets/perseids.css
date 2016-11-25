@@ -3012,6 +3012,10 @@ ul.btns > li {
 #container.publications .quickswitch-target {
   display: none;
   margin: 1em 2em; }
+#container.publications .original > .collection {
+  display: none; }
+#container.publications .original > .publications {
+  display: block; }
 #container.publications .new-bar, #container.publications .select-bar {
   margin: 5px 5px 30px 5px;
   padding: 20px; }
@@ -3106,22 +3110,27 @@ ul.btns > li {
     .publication .legend a {
       text-decoration: none; }
   .publication .alt-title {
-    display: none; }
-    .publication .alt-title ul {
-      list-style-type: none;
+    display: none;
+    line-height: 45px; }
+  .publication .original {
+    display: inline-block;
+    line-height: 45px; }
+    .publication .original ul.publications {
+      #
+			list-style-type: none;
       margin: 0;
       padding: 0; }
-      .publication .alt-title ul li {
+      .publication .original ul.publications li {
         padding: 0;
         margin: 0;
         display: inline; }
-        .publication .alt-title ul li span {
+        .publication .original ul.publications li span {
           display: none; }
-        .publication .alt-title ul li a:hover {
+        .publication .original ul.publications li a:hover {
           text-decoration: underline; }
-        .publication .alt-title ul li:before {
+        .publication .original ul.publications li:before {
           content: ", "; }
-        .publication .alt-title ul li:first-child:before {
+        .publication .original ul.publications li:first-child:before {
           content: ""; }
   .publication .publication-validate {
     display: block;

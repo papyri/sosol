@@ -22,6 +22,16 @@
                   = link_to i.title, edit_polymorphic_path([publication,i])
                 - else
                   = link_to i.title, polymorphic_path([publication,i], :action => 'preview')
-      %span{:class => "legend"}
+      %div{:class => "legend"}
         %div{:class => "alt-title"}
-        = link_to display_title, publication, :class => "original"
+        %div{:class => 'original'}
+          = link_to display_title, publication, :class => "collection"
+          %ul{:class => 'publications'}
+            - Identifier.site_identifier_classes.each do |c|
+              - if c.constantize::is_visible && data[c]
+                - data[c].each do |i|
+                  %li{:class => "#{i.class}"}
+                    - if i.mutable?
+                      = link_to i.title, edit_polymorphic_path([publication,i])
+                    - else
+                      = link_to i.title, polymorphic_path([publication,i], :action => 'preview')

@@ -3,6 +3,23 @@
 		display: none;
 		margin:1em 2em;
 	}
+	.original {
+		@if $COLLECTION_NAME_SHOW_AS_DEFAULT {
+		> .collection {
+		    display: block;
+		  }
+		> .publications {
+		    display: none;
+		  }
+		} @else {
+		> .collection {
+		    display: none;
+		  }
+		> .publications {
+		    display: block;
+		  }
+		}
+	}
 	.new-bar, .select-bar {
 		margin:$MARGIN_SMALL $MARGIN_SMALL $MARGIN_BIG*1.5 $MARGIN_SMALL;
 		padding:$MARGIN_BIG;
@@ -160,7 +177,13 @@
 	}
 	.alt-title {
 		display: none;
-		ul {
+		line-height: $PUBLICATION_CARD_HEIGHT;
+	}
+	.original {
+		display: inline-block;
+		line-height: $PUBLICATION_CARD_HEIGHT;
+
+		ul.publications {#
 			list-style-type: none;
 			margin:0;
 			padding:0;

@@ -94,7 +94,7 @@ function perseids_filters() {
 
   });
   jQuery("#filter").stick_in_parent();
-  jQuery("#archive_links").stick_in_parent();
+  jQuery("#archive_links").stick_in_parent();	
   jQuery("#workwithtexts").on("click", function(e) {
     e.preventDefault();
     jQuery(".select-bar").toggle();
@@ -102,23 +102,7 @@ function perseids_filters() {
   jQuery("#toggleTitles").data("toggled", false);
   jQuery("#toggleTitles").on("click", function(e) {
     e.preventDefault();
-
-    jQuery(this).data("toggled", !jQuery(this).data("toggled"));
-
-    if(jQuery(this).data("toggled") == true) {
-      jQuery(".publication").each(function() {
-        var that = jQuery(this);
-        that.find(".original").hide();
-        var ul = that.find(".publication-items").clone();
-        ul.removeClass("publication-items")
-        that.find(".alt-title").html(ul).show()
-        jQuery("#toggleTitles span").text("Show Publication Titles")
-      });
-    } else {
-      jQuery(".publication .alt-title").hide();
-      jQuery(".publication .original").show();
-      jQuery("#toggleTitles span").text("Show Document Titles")
-    }
+    jQuery(".publication .original .publications").toggle();
+    jQuery(".publication .original .collection").toggle();
   });
-  jQuery("#toggleTitles").click();
 }
