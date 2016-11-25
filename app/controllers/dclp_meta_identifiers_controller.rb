@@ -74,6 +74,19 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           end
         end
 
+        # get rid of empty extra/biblScopes/passages for editions/biblio
+        if params[:hgv_meta_identifier][:edition]
+          params[:hgv_meta_identifier][:edition].each_value{|edition|
+            if edition[:children] && edition[:children][:extra]
+              edition[:children][:extra].each_pair{|key, extra|
+                if extra[:value].empty?
+                  edition[:children][:extra].delete key
+                end
+              }
+            end
+          }
+        end
+
         # get rid of empty contentText fields
         if params[:hgv_meta_identifier][:contentText]
           params[:hgv_meta_identifier][:contentText].delete_if{|key, value| value.empty? }
