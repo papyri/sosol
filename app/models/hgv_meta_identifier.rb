@@ -172,8 +172,8 @@ class HGVMetaIdentifier < HGVIdentifier
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
           node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
-          if attribute_config[:split]
-            node[:attributes][attribute_key] = node[:attributes][attribute_key].split(attribute_config[:split].empty? ? attribute_config[:split] : ' ')
+          if attribute_config[:split] && node[:attributes][attribute_key] && !node[:attributes][attribute_key].empty?
+            node[:attributes][attribute_key] = node[:attributes][attribute_key].split(!attribute_config[:split].empty? ? attribute_config[:split] : ' ')
           end
         }
       end
@@ -301,15 +301,40 @@ class HGVMetaIdentifier < HGVIdentifier
   #   - +data+ → +Array+ of items to be saved to EpiDoc, each item is a +Hash+ object may have a +:value+ and a +Hash+ of +:attributes+ as well as a +Hash+ of +:children+
   #   - +config+ → configuration as read from +hgv.yml+
   # Side effect on +parent+, adds new children
+  def elementHasAnyContent? item
+    if item.class == String && !item.strip.empty?
+      return true
+    elsif item.class == Hash && item[:value] && !item[:value].strip.empty?
+      return true
+    elsif item.class == Hash && item[:attributes] && !item[:attributes].values.join.strip.empty?
+      return true
+    elsif item.class == Hash && item[:children] && !item[:children].empty?
+      item[:children].each_value{|child|
+        if elementHasAnyContent? child
+          return true
+        end
+      }
+    end
+    return false
+  end
+
+  def attributeHasAnyContent? item
+    if item.class == String && !item.strip.empty?
+      return true
+    elsif item.kind_of?(Hash) && !item.values.join.strip.empty?
+      return true
+    end
+    return false
+  end
+
   def set_epidoc_attributes_tree parent, xpath, data, config
     child_name = xpath[/\A([\w]+)[\w\/\[\]@:=']*\Z/, 1]
     child_attributes = xpath.scan /@([\w:]+)='([\w]+)'/
     index = 1
+
     data.each { |item|
 
-      hasContent = (item.class == String) ? (item.strip.empty? ? false : true) : (item[:value] && !item[:value].strip.empty? ? true : (item[:attributes] && !item[:attributes].values.join.empty? ? true : (!item[:children].empty? ? true : false)))
-
-      if hasContent
+      if elementHasAnyContent? item
 
         child = REXML::Element.new child_name
         child_attributes.each{|name, value|
@@ -329,8 +354,14 @@ class HGVMetaIdentifier < HGVIdentifier
 
           if config[:attributes]
             config[:attributes].each_pair{|attribute_key, attribute_config|
-               if item[:attributes] && item[:attributes][attribute_key] && !item[:attributes][attribute_key].strip.empty?
-                 child.attributes[attribute_config[:name]] = item[:attributes][attribute_key].strip
+               if item[:attributes] && attributeHasAnyContent?(item[:attributes][attribute_key])
+                 attribute_value = item[:attributes][attribute_key]
+                 if attribute_config[:split] && !attribute_config[:split].empty? && attribute_value.kind_of?(Hash)
+                   attribute_value = attribute_value.values.join(config[:split])
+                 else
+                   attribute_value = attribute_value.strip
+                 end
+                 child.attributes[attribute_config[:name]] = attribute_value
                elsif attribute_config[:default]
                  child.attributes[attribute_config[:name]] = attribute_config[:default]
                end
@@ -398,6 +429,10 @@ class HGVMetaIdentifier < HGVIdentifier
       else
         value = self[key] && !self[key].empty? ? (config[:children] || config[:attributes] ? self[key][:value] : self[key]) : nil
         
+        if config[:split] && value.kind_of?(Hash)
+          value = value.values.join(!config[:split].empty? ? config[:split] : ' ');
+        end
+
         if attributeLegal? key # value && !value.empty? # CL: Biblio patch
           element = doc.bulldozePath(config[:xpath])
 
@@ -617,7 +652,11 @@ class HGVMetaIdentifier < HGVIdentifier
       if config[:attributes]
         config[:attributes].each_pair{|attribute_key, attribute_config|
           if data['attributes'] && data['attributes'][attribute_key] && !data['attributes'][attribute_key].to_s.strip.empty?
-            result_item[:attributes][attribute_key] = data['attributes'][attribute_key].to_s.strip
+            if attribute_config[:split]
+              result_item[:attributes][attribute_key] = data['attributes'][attribute_key]
+            else
+              result_item[:attributes][attribute_key] = data['attributes'][attribute_key].to_s.strip
+            end
           elsif attribute_config[:default]
             result_item[:attributes][attribute_key] = attribute_config[:default]
           end
