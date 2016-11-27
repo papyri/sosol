@@ -18,7 +18,9 @@
               %li{:class => "#{i.class}"}
                 %span{:class => 'type-legend'}
                   = i.class::FRIENDLY_NAME
-                - if i.mutable?
+                - if publication.status == 'finalizing'
+                  = link_to i.title, finalize_review_publication_path(publication)
+                - elsif i.mutable?
                   = link_to i.title, edit_polymorphic_path([publication,i])
                 - else
                   = link_to i.title, polymorphic_path([publication,i], :action => 'preview')
@@ -31,6 +33,8 @@
               - if c.constantize::is_visible && data[c]
                 - data[c].each do |i|
                   %li{:class => "#{i.class}"}
+                    - if publication.status == 'finalizing'
+                      = link_to i.title, finalize_review_publication_path(publication)
                     - if i.mutable?
                       = link_to i.title, edit_polymorphic_path([publication,i])
                     - else

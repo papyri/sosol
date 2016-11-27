@@ -63,8 +63,8 @@ class Community < ActiveRecord::Base
     #if there are no boards to review the publication, don't let them submit
     return self.boards && self.boards.length > 0
   end
-  
-  #*Returns* 
+
+  #*Returns*
   #- a standard format for the community name and friendly_name.
   #Used to ensure consistency throughout pages.
   def format_name

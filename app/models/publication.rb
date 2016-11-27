@@ -54,6 +54,7 @@ class Publication < ActiveRecord::Base
   has_many :identifiers, :dependent => :destroy
   has_many :events, :as => :target, :dependent => :destroy
   has_many :votes, :dependent => :destroy
+  has_many :assignments, :dependent => :destroy
   has_many :comments
 
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
@@ -554,6 +555,10 @@ class Publication < ActiveRecord::Base
     end
     #no vote found
     return false
+  end
+
+  def user_can_assign?(user)
+    self.community_id && self.community.admins.include?(user)
   end
 
   def votes_by_decree_action
@@ -1533,7 +1538,18 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  def is_assignable?()
+    Rails.logger.info(self.community.to_s)
+    self.community_id && self.community.allows_assignment > 0 && self.owner.class == Board && self.status == 'voting'
+  end
 
+  def assignable_voters()
+    if self.is_assignable?
+       return self.owner.users.select { |u| ! self.user_has_voted?(u.id) }
+    else
+       return []
+    end
+  end
 
   protected
     #Returns title string in form acceptable to  ".git/refs/"

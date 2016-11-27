@@ -2,6 +2,7 @@ class PublicationsController < ApplicationController
   ##layout 'site'
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
+  before_filter :community_admin_guard, :only => [:assign]
 
   def new
   end
@@ -697,6 +698,66 @@ class PublicationsController < ApplicationController
     publication_from_identifier(identifier, related_identifiers)
   end
 
+  # TODO guard on community admin ownership
+  def assign
+
+    if params[:commit] == "Clear Assignments"
+      @publication.assignments.each do |a|
+        a.destroy
+      end
+      flash[:info] = "Assignments cleared."
+      redirect_to :controller => :user, :action => :board_dashboard, :board_id => @publication.owner.id.to_s
+      return
+    end
+
+    if params[:voters].blank?
+      flash[:error] = "You must assign a voter."
+      redirect_to :controller => :user, :action => :board_dashboard, :board_id => @publication.owner.id.to_s
+      return
+    end
+
+    #fails - voting is over
+    if @publication.status != "voting"
+      flash[:warning] = "Voting is over for this publication."
+      redirect_to :controller => :user, :action => :board_dashboard, :board_id => @publication.owner.id.to_s
+      return
+    end
+
+    updated = false
+    params[:voters].each do |voter|
+      Rails.logger.info("Assigning voter #{voter}")
+      Assignment.transaction do
+        Rails.logger.info("Transaction start")
+        @publication.lock!
+        #note that votes go to the publication's identifier
+        @assignment = Assignment.new()
+        @assignment.user_id = voter
+        @assignment.publication_id = @publication.id
+        @assignment.board_id = @publication.owner_id
+
+        #double check that they have not already voted and are not already assigned
+        if @publication.assignments.collect{ |a| a.user_id == voter}.size == 0
+          if @publication.user_has_voted?(voter)
+            flash[:warning] = "Unable to assign a user who has already voted."
+          else
+            Rails.logger.info("assigning")
+            @assignment.save!
+            updated = true
+            # invalidate their cache since an action may have changed its status
+            expire_publication_cache(@publication.creator.id)
+            expire_fragment(/board_publications_\d+/)
+          end
+        end
+      end
+    end
+    if updated
+      flash[:info] = "Assignments updated."
+    else
+      flash[:info] = "No changes made to assignments."
+    end
+    redirect_to :controller => :user, :action => :board_dashboard, :board_id => @publication.owner.id.to_s
+  end
+
   def vote
     #note that votes will go with the boards copy of the pub and identifiers
     #  vote history will also be recorded in the comment of the origin pub and identifier
@@ -738,6 +799,7 @@ class PublicationsController < ApplicationController
       @publication.lock!
       #note that votes go to the publication's identifier
       @vote = Vote.new(params[:vote])
+      @assignment = Assignment.where(:publication_id => @publication.id, :user_id => @current_user.id ).first
       vote_identifier = @vote.identifier.lock!
       @vote.user_id = @current_user.id
       @vote.board_id = @publication.owner_id
@@ -756,8 +818,13 @@ class PublicationsController < ApplicationController
       #has_voted = vote_identifier.votes.find_by_user_id(@current_user.id)
       has_voted = @publication.user_has_voted?(@current_user.id)
       if !has_voted
+
         @comment.save!
         @vote.save!
+        if @assignment
+          @assignment.vote_id = @vote.id
+          @assignment.save!
+        end
         # invalidate their cache since an action may have changed its status
         expire_publication_cache(@publication.creator.id)
         expire_fragment(/board_publications_\d+/)
@@ -935,6 +1002,14 @@ class PublicationsController < ApplicationController
     def ownership_guard
       find_publication
       if !@publication.mutable_by?(@current_user)
+        flash[:error] = 'Operation not permitted.'
+        redirect_to dashboard_url
+      end
+    end
+
+    def community_admin_guard
+      find_publication
+      unless @publication.user_can_assign?(@current_user)
         flash[:error] = 'Operation not permitted.'
         redirect_to dashboard_url
       end

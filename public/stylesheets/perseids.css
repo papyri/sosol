@@ -2949,6 +2949,10 @@ ul.btns > li {
     border-color: #bdbdbd;
     color: #e0e0e0;
     background-color: #bdbdbd; }
+  .card input[type="submit"].small, .modal input[type="submit"].small {
+    height: 45px;
+    margin-top: 0px;
+    border: 5px solid #7986cb; }
 
 .select-container {
   display: inline-block;

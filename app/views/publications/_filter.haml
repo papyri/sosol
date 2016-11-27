@@ -10,6 +10,12 @@
   - if has_editing
     %button{:class => "filter", "data-target" => "editing-column"}
       Editing
+  - if has_assigned
+    %button{:class => "filter", "data-target" => "assigned-column"}
+      Voting
+  - if has_finalizing
+    %button{:class => "filter", "data-target" => "finalizing-column"}
+      Finalizing
   - if has_submitted
     %button{:class => "filter", "data-target" => "submitted-column"}
       Submitted

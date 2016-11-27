@@ -4,6 +4,8 @@
   - list_id = "publication_list_holder"
 %div{:class => "publication-column", :id => list_id, "data-type" => "#{list_name}" }
   - publications.each do |publication|
+    - can_assign = publication.user_can_assign?(@current_user)
+    - assignable_to = publication.assignable_voters
     %div{:class => 'publication'}
       - display_title = publication.title
       %ul{:class => 'publication-items'}
@@ -31,16 +33,25 @@
                   - votes[action].each do |v|
                     %li
                       = v.user.human_name + " (" + v.user.name + ") "
+          - if can_assign && assignable_to.size > 0
+            %div{:class => "info-square quickswitch",  "data-target" => ".assign"}
+              %a{:href => "#"}
+                %i{:class => "fa fa-user-plus"}
+                %ul
+                  %li
+                    Assign
       - if list_name == "approved"
         - if publication.find_finalizer_user
-          - title = publication.find_finalizer_user.human_name + " is finalizing. "
           - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>publication.id)
           %div{:class => "info-square button"}
             %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;'}
               %i{:class => "fa fa-graduation-cap"}
               %ul
                 %li
-                  = publication.find_finalizer_user.human_name + " is finalizing. "
+                  = "Make me finalizer instead of " + publication.find_finalizer_user.human_name
+    - if can_assign && assignable_to.size > 0
+      %div{:class => "card quickswitch-target assign"}
+        = render :partial => "publications/assign", :locals => {:publication => publication}
 :javascript
   jQuery(document).ready(
     function() { perseids_publication_selector(); });

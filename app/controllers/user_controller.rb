@@ -223,6 +223,8 @@ class UserController < ApplicationController
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @assigned_publications = Assignment.find_all_by_user_id(@current_user.id, :conditions => {:vote_id => nil }, :order => "updated_at DESC").collect{|a|a.publication}
 
     # TODO enable more fine grained control of events that are shown
     # THIS shouldn't be merged back into master as is
@@ -838,14 +840,19 @@ Developer:
       #find all pubs that are still in voting phase
       @board_voting_publications = Publication.find(:all, :conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC", :limit => limit, :offset => @offset )
       #find all pubs that the user needs to review
+      # and is assigned to review, if applicable
       @needs_reviewing_publications = @board_voting_publications.collect{ |p|
         needs_review = false
-        p.identifiers.each do |id|
-          if id.needs_reviewing?(@current_user.id)
-            needs_review = true
+        if ! p.is_assignable? || # if the publication can't be assigned, then anyone can review it
+          p.assignments.select{ |a| a.user_id == @current_user.id }.size == 1 || # assigned members can vote
+          p.user_can_assign?(@current_user) # addmins can vote or assign
+          p.identifiers.each do |id|
+            if id.needs_reviewing?(@current_user.id)
+              needs_review = true
+            end
           end
+          needs_review ? p :nil
         end
-        needs_review ? p :nil
       }.compact
 
       if @needs_reviewing_publications.nil?

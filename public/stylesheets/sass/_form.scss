@@ -51,6 +51,11 @@
 			color: #e0e0e0;
 			background-color:$COLOR_DISABLED;
 		}
+		&.small {
+			height:$BUTTON_HEIGHT;
+			margin-top: 0px;
+			border:5px solid $COLOR_PRI;
+		}
 	}
 }
 
