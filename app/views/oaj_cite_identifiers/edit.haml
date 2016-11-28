@@ -2,11 +2,11 @@
   #container
     = render :partial => 'identifiers/header_perseids'
     = render :partial => 'identifiers/edit_bar_perseids'
-    #edit.card
+    #edit
       = form_for @identifier, :url => { :action => :update } do |f|
         = f.error_messages
         %label JSON-LD Object
-        %br
-        = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 20, :wrap => 'off', :class => 'input observechange'
-    .card
-      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+        .card
+          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 20, :wrap => 'off', :class => 'input observechange'
+        .card
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }

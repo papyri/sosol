@@ -21,11 +21,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
     should "display edit" do
       get :edit, :id => @identifier.id.to_s
       assert_response :success
-      assert_select 'ul.sentence_list' do
-        assert_select 'li.sentence' do
-          assert_select 'a' do
-            assert_select 'span.word'
-          end
+      assert_select 'li.sentence' do
+        assert_select 'a' do
+          assert_select 'span.word'
         end
       end
     end
@@ -33,11 +31,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
     should "display preview" do
       get :preview, :id => @identifier.id.to_s
       assert_response :success
-      assert_select 'ul.sentence_list' do
-        assert_select 'li.sentence' do
-          assert_select "a[href*=viewer]" do
-            assert_select 'span.word'
-          end
+      assert_select 'li.sentence' do
+        assert_select "a[href*=viewer]" do
+          assert_select 'span.word'
         end
       end
     end

@@ -27,11 +27,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     should "display edit" do
       get :edit, :id => @identifier.id.to_s
       assert_response :success
-      assert_select 'ul.sentence_list' do
-        assert_select 'li.sentence' do
-          assert_select 'a' do
-            assert_select 'span.word'
-          end
+      assert_select 'li.sentence' do
+        assert_select 'a' do
+          assert_select 'span.word'
         end
       end
     end
@@ -39,11 +37,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     should "display preview" do
       get :preview, :id => @identifier.id.to_s
       assert_response :success
-      assert_select 'ul.sentence_list' do
-        assert_select 'li.sentence' do
-          assert_select "a[href*=viewer]" do
-            assert_select 'span.word'
-          end
+      assert_select 'li.sentence' do
+        assert_select "a[href*=viewer]" do
+          assert_select 'span.word'
         end
       end
     end
@@ -82,11 +78,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
     should "display review" do
       get :review, :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s
       assert_response :success
-      assert_select 'ul.sentence_list' do
-        assert_select 'li.sentence' do
-          assert_select "a[href*=gold=100]" do
-            assert_select 'span.word'
-          end
+      assert_select 'li.sentence' do
+        assert_select "a[href*=gold=100]" do
+          assert_select 'span.word'
         end
       end
     end

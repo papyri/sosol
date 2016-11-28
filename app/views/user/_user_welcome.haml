@@ -6,7 +6,7 @@
     %img{:class => "user-picture", :src=> "https://www.gravatar.com/avatar/#{md5}?d=mm", :width=>"150"}
     %p
       %em Welcome back
-      %br
+      %p
         = @current_user.human_name
 -else
   %nav{:class=>"logins"}

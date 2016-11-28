@@ -27,9 +27,7 @@ class UserControllerTest < ActionController::TestCase
         get :user_dashboard
         assert_not_nil @user
         assert_not_nil @user.repository
-        assert_select 'table.results' do
-          assert_select 'tr', 2
-        end
+        assert_select 'div.publication', 1
        end
 
       should "publications in non-default community show only in community dashboard" do
@@ -38,14 +36,10 @@ class UserControllerTest < ActionController::TestCase
         @publication2.save!
 
         get :user_dashboard
-        assert_select 'table.results' do
-          assert_select 'tr', 2
-        end
+        assert_select 'div.publication', 1
 
         get :user_community_dashboard, :community_id => @community2.id.to_s
-        assert_select 'table.results' do
-          assert_select 'tr', 2
-        end
+        assert_select 'div.publication', 1
 
       end
 
