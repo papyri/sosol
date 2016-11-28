@@ -3,20 +3,29 @@ class BoardsController < ApplicationController
   #layout "site"
   #layout "header_footer"
   before_filter :authorize
-  before_filter :check_admin
+  before_filter :check_admin, :only => [:index, :new, :create, :destroy, :rank, :update_rankings, :confirm_destroy, :send_board_reminder_emails]
+  before_filter :check_community_admin, :only => [:overview, :find_member, :add_member, :remove_member, :edit, :update, :show ]
+
 
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
   def check_admin
     if @current_user.nil? || !@current_user.admin
-      render :file => 'public/403.html', :status => '403'
+      render :file => 'public/403', :status => '403', :formats => 'html'
     end
   end
-  
+
+  #Ensures user has full admin rights or at least community admin rights for a community board
+  def check_community_admin
+    find_board
+    return if @current_user &&
+      (@current_user.admin || (@board.community_id && @board.community.admins.include?(@current_user)))
+    render :file => 'public/403', :status => '403', :formats => 'html'
+  end
+
+
   #Presents overview for publication.
   # @deprecated ? This is not used in Perseids
   def overview
-    @board = Board.find(params[:id].to_s)
-
     if @board.users.find_by_id(@current_user.id) || @current_user.developer
       # below is dangerous since it will expose publications to non owners
       #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
@@ -38,12 +47,10 @@ class BoardsController < ApplicationController
   end
   
   def find_member
-    @board = Board.find(params[:id].to_s)
   end
 
   #Adds the user to the board member list.
   def add_member
-    @board = Board.find(params[:id].to_s)
     user = User.find_by_name(params[:user_name].to_s)
 
     if nil == @board.users.find_by_id(user.id) 
@@ -58,7 +65,6 @@ class BoardsController < ApplicationController
   def remove_member
     user = User.find(params[:user_id].to_s)
 
-    @board = Board.find(params[:id].to_s)
     @board.users.delete(user)
     @board.save
 
@@ -87,8 +93,7 @@ class BoardsController < ApplicationController
   # GET /boards/1
   # GET /boards/1.xml
   def show
-    @board = Board.find(params[:id].to_s)
-
+    find_board
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @board }
@@ -119,7 +124,7 @@ class BoardsController < ApplicationController
 
   # GET /boards/1/edit
   def edit
-    @board = Board.find(params[:id].to_s)
+    find_board
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES) - @board.identifier_classes
   end
 
@@ -176,8 +181,7 @@ class BoardsController < ApplicationController
   # PUT /boards/1
   # PUT /boards/1.xml
   def update
-    @board = Board.find(params[:id].to_s)
-
+    find_board
     Identifier::IDENTIFIER_SUBCLASSES.each do |identifier_class|
       if params.has_key?(identifier_class) && params[:"#{identifier_class}"].to_s == "1"
         @board.identifier_classes << identifier_class
@@ -199,7 +203,7 @@ class BoardsController < ApplicationController
   # DELETE /boards/1
   # DELETE /boards/1.xml
   def destroy
-    @board = Board.find(params[:id].to_s)
+    find_board
     @board.destroy
 
     respond_to do |format|
@@ -331,7 +335,12 @@ class BoardsController < ApplicationController
   end
 
   def confirm_destroy
-    @board = Board.find(params[:id].to_s)
+    find_board
   end
+
+  protected
+    def find_board
+      @board = Board.find(params[:id].to_s)
+    end
 
 end
