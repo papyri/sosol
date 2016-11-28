@@ -845,7 +845,7 @@ Developer:
         needs_review = false
         if ! p.is_assignable? || # if the publication can't be assigned, then anyone can review it
           p.assignments.select{ |a| a.user_id == @current_user.id }.size == 1 || # assigned members can vote
-          p.user_can_assign?(@current_user) # addmins can vote or assign
+          p.user_can_assign?(@current_user) # admins can vote or assign
           p.identifiers.each do |id|
             if id.needs_reviewing?(@current_user.id)
               needs_review = true
@@ -854,7 +854,6 @@ Developer:
           needs_review ? p :nil
         end
       }.compact
-
       if @needs_reviewing_publications.nil?
         @member_already_voted_on = @board_voting_publications
       else

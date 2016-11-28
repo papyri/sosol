@@ -113,6 +113,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           #master board user
           @master_user = FactoryGirl.create(:user, :name => "master_freaky_bob")
 
+          #community admin
+          @community_admin = FactoryGirl.create(:user, :name => "community_admin")
+
           #a general member in the community
           @community_user = FactoryGirl.create(:user, :name => "community_freaky_bob")
 
@@ -133,9 +136,11 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                                :allows_self_signup => true,
                                                #:abbreviation => "tc",
                                                :description => "a syriaca comunity for testing",
-                                               :pass_to => "mockagent")
+                                               :pass_to => "mockagent",
+                                               :allows_assignment => 1)
 
           @test_agent_community.members << @community_user
+          @test_agent_community.admins << @community_admin
           @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id)
           @test_agent_board.users << @board_user
           @test_agent_decree = FactoryGirl.create(:count_decree,
@@ -218,11 +223,49 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           Rails.logger.debug "Community Board has publication"
 
-          #vote on it
+          #get the board publication
           board_publication = board_publications.first
 
           #find syriaca identifier
           syriaca_identifier = board_publication.identifiers.first
+
+          assert board_publication.user_can_assign?(@community_admin)
+
+          # verify it doesn't appear on voting list for non-admins and that the user can't vote on it
+          open_session do |unassigned_session|
+            unassigned_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
+            unassigned_session.assert_select "div#voting-column" do
+              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
+            end
+            unassigned_session.assert_select "div#publication_list_holder_waiting" do
+              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+            end
+            unassigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_identifiers/#{syriaca_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
+            unassigned_session.assert_select "#vote_submit", false
+
+          end
+
+          # verify it does appear on board view for admin and assign it
+          open_session do |admin_session|
+            admin_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @community_admin.id.to_s
+            admin_session.assert_select "div#voting-column" do
+              admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+            end
+            admin_session.post 'publications/assign/' + board_publication.id.to_s + '?test_user_id=' + @community_admin.id.to_s, \
+              :assignment => { :publication_id => board_publication.id }, \
+              :voters => [ @board_user.id.to_s ]
+          end
+
+          # verify it now appears on voting board view for assigned user
+          open_session do |assigned_session|
+            assigned_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
+            assigned_session.assert_select "div#voting-column" do
+              assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+            end
+            assigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_identifiers/#{syriaca_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
+            assigned_session.assert_select "#vote_submit"
+          end
+
 
           assert_not_nil  syriaca_identifier, "Did not find the syriaca identifier"
           Rails.logger.debug "Found syriaca identifier, will vote on it"

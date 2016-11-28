@@ -561,6 +561,17 @@ class Publication < ActiveRecord::Base
     self.community_id && self.community.admins.include?(user)
   end
 
+  def user_can_vote?(user)
+    self.owner_type == 'Board' &&
+    ! self.user_has_voted?(user.id) &&
+    self.owner.users.include?(user) &&
+    (! self.community_id ||
+     ! self.community.allows_assignment ||
+     self.assignments.select{|a| a.user == user }.size == 1
+    )
+
+  end
+
   def votes_by_decree_action
     if self.votes && self.status == "voting" && self.owner_type == "Board"
       return self.owner.votes_per_decree(self.votes)

@@ -10,7 +10,7 @@
           = vote.choice
           = vote.user.name
   %br
-  - if !user_has_voted && identifier.publication.status == "voting"
+  - if !user_has_voted && identifier.publication.status == "voting" && identifier.publication.user_can_vote?(@current_user)
     = form_for Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :as => :vote, :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
       #submit
         = f.hidden_field :publication_id

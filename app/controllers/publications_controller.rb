@@ -725,7 +725,6 @@ class PublicationsController < ApplicationController
 
     updated = false
     params[:voters].each do |voter|
-      Rails.logger.info("Assigning voter #{voter}")
       Assignment.transaction do
         Rails.logger.info("Transaction start")
         @publication.lock!
@@ -736,11 +735,10 @@ class PublicationsController < ApplicationController
         @assignment.board_id = @publication.owner_id
 
         #double check that they have not already voted and are not already assigned
-        if @publication.assignments.collect{ |a| a.user_id == voter}.size == 0
+        if @publication.assignments.select{ |a| a.user_id == voter}.size == 0
           if @publication.user_has_voted?(voter)
             flash[:warning] = "Unable to assign a user who has already voted."
           else
-            Rails.logger.info("assigning")
             @assignment.save!
             updated = true
             # invalidate their cache since an action may have changed its status
