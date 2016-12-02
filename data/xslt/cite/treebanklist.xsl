@@ -102,6 +102,7 @@
     
     <xsl:template match="sentence">
         <xsl:element name="li">
+            <xsl:attribute name="class">sentence</xsl:attribute>
             <xsl:attribute name="data-s"><xsl:value-of select="@id"/></xsl:attribute>
             <xsl:attribute name="title"><xsl:value-of select="string-join((@document_id,@subdoc,@span), ':')"/></xsl:attribute>
             <xsl:choose>
