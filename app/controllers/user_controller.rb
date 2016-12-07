@@ -231,6 +231,7 @@ class UserController < ApplicationController
     if (@current_user.admin || @current_user.developer)    
       @show_events = true
     end
+
   end
 
   #Finds publications created by the current user and are part of the specified community.

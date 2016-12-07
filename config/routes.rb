@@ -156,6 +156,7 @@ Sosol::Application.routes.draw do
   post :finalize
   post :become_finalizer
   get  :become_finalizer
+  post :assign_finalizer
   get :agent_failure_callback
   get :send_to_agent
   end

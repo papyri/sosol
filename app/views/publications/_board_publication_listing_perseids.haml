@@ -41,7 +41,14 @@
                   %li
                     Assign
       - if list_name == "approved"
-        - if publication.find_finalizer_user
+        - if can_assign
+          %div{:class => "info-square quickswitch", "data-target" => ".assign_finalizer"}
+            %a{:href => "#"}
+              %i{:class => "fa fa-graduation-cap"}
+              %ul
+                %li
+                  = "Assign Finalizer"
+        - elsif publication.find_finalizer_user
           - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>publication.id)
           %div{:class => "info-square button"}
             %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;'}
@@ -49,6 +56,9 @@
               %ul
                 %li
                   = "Make me finalizer instead of " + publication.find_finalizer_user.human_name
+    - if can_assign && list_name == 'approved'
+      %div{:class => "card quickswitch-target assign_finalizer"}
+        = render :partial => "publications/assign_finalizer", :locals => {:publication => publication}
     - if can_assign && assignable_to.size > 0
       %div{:class => "card quickswitch-target assign"}
         = render :partial => "publications/assign", :locals => {:publication => publication}

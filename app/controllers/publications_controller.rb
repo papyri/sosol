@@ -335,6 +335,29 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def assign_finalizer
+    @publication = Publication.find(params[:id].to_s)
+    @user = User.find(params[:user_id].to_s)
+    original_publication_owner_id = @publication.owner.id
+    @publication.with_lock do
+      #note this can only be called on a board owned publication
+      if @publication.owner_type != "Board"
+        flash[:error] = "Can't change finalizer on non-board copy of publication."
+        redirect_to @publication and return
+      end
+      unless @publication.owner.users.includes(@user)
+        flash[:error] = "#{@user.name} is not a board member for this publication."
+        redirect_to @publication and return
+      end
+
+      SendToFinalizerJob.new.async.perform(@publication.id, @user.id)
+    end
+
+    flash[:notice] = "Finalizer change running. Check back in a few minutes."
+    redirect_to :controller => 'user', :action => 'dashboard', :board_id => original_publication_owner_id
+
+  end
+
   def become_finalizer
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
