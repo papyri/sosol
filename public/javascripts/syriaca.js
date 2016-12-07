@@ -28,13 +28,19 @@ function diffUsingJS(viewType,baseText) {
 function getAndDiff(baseUri) {
   jQuery.ajax({
 
-		url: baseUri,
-	  method: "GET"	,
-		success: function(data) {
-			diffUsingJS(0,data);
-		},
-		failure: function() {
-			console.log("Failed to retrieve data from " + baseUri);
-		}
-	});
+        url: baseUri,
+        method: "GET"	,
+	success: function(data) {
+          var str;
+          try {
+            str = (new XMLSerializer()).serializeToString(data);
+          } catch(e) {
+            str = data;
+          }
+	  diffUsingJS(0,str);
+	},
+	failure: function() {
+	  console.log("Failed to retrieve data from " + baseUri);
+	}
+  });
 }
