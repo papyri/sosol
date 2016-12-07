@@ -127,8 +127,8 @@ class SyriacaIdentifier < Identifier
   # eventually this should be found in the metadata
   # in the identifier contents or use id_attribute directly
   def to_remote_raw_path
-    type, id = self.to_components[3..-1]
-	  "https://raw.githubusercontent.com/srophe/srophe-app-data/master/data/places/tei/#{id}.xml";
+    return "#{self.name}/tei"
+
   end
   
   # @overrides Identifier#get_catalog_link
