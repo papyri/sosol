@@ -297,8 +297,14 @@ class UserController < ApplicationController
     else
       @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
     end
-
-
+    unless @publications.size > 0
+      flash[:notice] = "You have no archived publications!"
+      if params[:board_id]
+        redirect_to :controller => "user", :action => "board_dashboard", :board_id => params[:board_id]
+      else
+        redirect_to dashboard_url
+      end
+    end
   end
 
   def update_terms
