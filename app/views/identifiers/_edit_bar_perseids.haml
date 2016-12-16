@@ -37,7 +37,9 @@
         = link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview), :class => params[:action] == 'preview' ? 'active' : ''
     -else
       %li
-        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''
+        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit editxml commentary update}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to 'Preview',polymorphic_path([:preview,@identifier.publication, @identifier]), :class => %w{preview}.include?(params[:action]) ? 'active' : ''
     %li
       = link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history), :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''
     - if @identifier.publication.status == 'finalizing' && @identifier.mutable?

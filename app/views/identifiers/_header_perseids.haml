@@ -4,8 +4,6 @@
   %h1
     - if @identifier.publication.owner_type == "Board"
       = "Review " + @identifier.publication.owner.friendly_name + " - "
-    - else
-      = "Editing "
     %em
       = @identifier.title
   %h2

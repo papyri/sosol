@@ -1,10 +1,10 @@
 %ul{:class => 'menu'}
   %li
-    = link_to 'Edit', edit_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn '
+    = link_to 'Edit', edit_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn bg-sdw'
   %li
-    = link_to 'Edit Treebank XML', editxml_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn '
+    = link_to 'Edit Treebank XML', editxml_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn bg-sdw'
   - if treebank_cite_identifier.get_reviewer_agent
     %li
-      = link_to 'Compare', review_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn '
+      = link_to 'Compare', review_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn bg-sdw'
   %li
-    = link_to 'Preview', preview_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn '
+    = link_to 'Preview', preview_publication_treebank_cite_identifier_path( treebank_cite_identifier.publication, treebank_cite_identifier), :class => 'btn bg-sdw'

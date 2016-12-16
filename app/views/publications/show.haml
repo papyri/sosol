@@ -88,8 +88,9 @@
             = render :partial => "identifiers/identifier_image", :locals => {:identifier => identifier}
             - if identifier.needs_reviewing?(@current_user.id)
               = image_tag('review_flag.png')
-          %span{:class => 'details'}
-            = identifier.title
+          %div{:class => 'details'}
+            %p 
+              = identifier.title
 
           - if @publication.status != "archived"
             = render :partial => identifier
