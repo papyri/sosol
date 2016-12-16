@@ -87,6 +87,11 @@
 			width:40%;
 		}
 	}
+        .user-picture-tip:hover:after {
+                display: inline;
+                content: attr(data-title);
+                color: $COLOR_SEC;
+        }
 
 	nav {
 		border-top:1px solid $COLOR_GRAY;

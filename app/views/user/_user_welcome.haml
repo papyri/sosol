@@ -3,7 +3,8 @@
   - md5.update @current_user.email
   .welcome
 
-    %img{:class => "user-picture", :src=> "https://www.gravatar.com/avatar/#{md5}?d=mm", :width=>"150"}
+    %span{:class => "user-picture-tip", "data-title" => "Set your profile picture at http://gravatar.com"}
+      %img{:class => "user-picture", :src=> "https://www.gravatar.com/avatar/#{md5}?d=mm&r=pg", :width=>"150"}
     %p
       %em Welcome back
       %p

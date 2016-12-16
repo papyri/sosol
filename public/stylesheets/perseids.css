@@ -2812,6 +2812,10 @@ ul.btns > li {
     @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
       #main-menu .user-picture {
         width: 40%; } }
+  #main-menu .user-picture-tip:hover:after {
+    display: inline;
+    content: attr(data-title);
+    color: #ffb74d; }
   #main-menu nav {
     border-top: 1px solid #bdbdbd;
     /*
