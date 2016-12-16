@@ -13,14 +13,13 @@
     textElem.innerHTML=ptext
   });
   
-#main
-  = render :partial => 'identifiers/edit_bar'
-
-  .site
-    #edit
+#main-wrapper
+  #container
+    = render :partial => 'identifiers/header_perseids'
+    = render :partial => 'identifiers/edit_bar_perseids'
+    #edit.card
       = form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
-        %h2 Preview
         .PContent
           = @html_preview.html_safe
        
