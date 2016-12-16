@@ -3,9 +3,8 @@
 
 #main-wrapper
   #container
+    = render :partial => 'identifiers/header_perseids'
     = render :partial => 'identifiers/edit_bar_perseids'
     .card
-      = render :partial => 'identifiers/header'
-    %div{:class => 'card no-padding'}
       .hints Select a sentence to Preview in Alpheios
       = @list.html_safe

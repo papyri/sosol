@@ -1,7 +1,11 @@
-- if @identifier.mutable? 
-  = link_to 'Edit in Alpheios', edit_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
-  = link_to 'Edit Alignment XML', editxml_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
-= link_to 'Preview', preview_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier)
-- if alignment_cite_identifier.publication.identifiers.size > 1
-  = link_to 'Delete', polymorphic_path([alignment_cite_identifier.publication, alignment_cite_identifier]), :confirm => 'Are you sure?', :method => :delete
-%br
+%ul{:class => 'menu'}
+  - if @identifier.mutable? 
+    %li
+      = link_to 'Edit in Alpheios', edit_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier), :class => 'btn bg-sdw'
+    %li
+      = link_to 'Edit Alignment XML', editxml_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier), :class => 'btn bg-sdw'
+  %li
+    = link_to 'Preview', preview_publication_alignment_cite_identifier_path( alignment_cite_identifier.publication, alignment_cite_identifier), :class => 'btn bg-sdw'
+  - if alignment_cite_identifier.publication.identifiers.size > 1
+    %li
+      = link_to 'Delete', polymorphic_path([alignment_cite_identifier.publication, alignment_cite_identifier]), :confirm => 'Are you sure?', :method => :delete, :class => 'btn bg-sdw'
