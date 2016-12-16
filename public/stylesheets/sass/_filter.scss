@@ -46,4 +46,25 @@
 		width:auto;
 		display:none;
 	}
+	fieldset {
+	        @extend .font-body;
+                color: $COLOR_PRI;
+		border:$OUTLINE_SIZE solid $COLOR_PRI;
+		background-color:$COLOR_BACKGROUND;
+		line-height: $BUTTON_HEIGHT;
+		display:block;
+		padding:0;
+		margin:$MARGIN;
+		text-indent: 5px;
+
+		@include medium {
+			line-height: $MD_BUTTON_HEIGHT;
+		}
+
+		@include phone {
+			line-height: $XS_BUTTON_HEIGHT;
+		}
+	}
+        legend {
+        }
 }

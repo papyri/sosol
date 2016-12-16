@@ -99,15 +99,16 @@ function perseids_filters() {
     e.preventDefault();
     jQuery(".select-bar").toggle();
   });
-  jQuery("#toggleTitles").data("toggled", false);
-  jQuery("#toggleTitles").on("click", function(e) {
-    e.preventDefault();
-    jQuery(".publication .original .publications").toggle();
-    jQuery(".publication .original .collection").toggle();
-  });
   jQuery(".quickswitch").on("click", function(e) {
     e.preventDefault();
     var parent = jQuery(this).parents(".publication");
     parent.nextAll(jQuery(this).data("target")).first().toggle();
   });
 }
+
+function toggleTitles(e) {
+    e.preventDefault();
+    jQuery(".publication .original .publications").toggle();
+    jQuery(".publication .original .collection").toggle();
+}
+

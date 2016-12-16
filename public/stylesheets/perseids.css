@@ -2354,7 +2354,7 @@
   font-size: 15px;
   text-transform: uppercase; }
 
-.font-body, body, body {
+.font-body, body, #filter fieldset, body {
   font-family: Roboto;
   font-weight: 400;
   font-style: normal;
@@ -3330,6 +3330,21 @@ ul.btns > li {
   #filter #filter-count {
     width: auto;
     display: none; }
+  #filter fieldset {
+    color: #7986cb;
+    border: 5px solid #7986cb;
+    background-color: #eceff1;
+    line-height: 45px;
+    display: block;
+    padding: 0;
+    margin: 0 5px 5px 0;
+    text-indent: 5px; }
+    @media (min-width: 1001px) and (max-width: 1200px) {
+      #filter fieldset {
+        line-height: 45px; } }
+    @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
+      #filter fieldset {
+        line-height: 45px; } }
 
 /* The Modal (background) */
 .modal {
@@ -3351,6 +3366,10 @@ ul.btns > li {
   /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4);
   /* Black w/ opacity */ }
+
+.modal.popup {
+  display: block;
+  /* Popups aren't hidden */ }
 
 /* Modal Content/Box */
 .modal-content {
@@ -3497,5 +3516,3 @@ ul.btns > li {
     line-height: 45px;
     text-align: center;
     width: 45px; }
-
-/*# sourceMappingURL=perseids.css.map */
