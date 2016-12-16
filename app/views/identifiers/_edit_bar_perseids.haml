@@ -7,7 +7,9 @@
       = link_to 'Overview', publication_path(@identifier.publication), :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''
     -if @identifier.class.to_s =~ /CTSIdentifier/
       %li
-        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''
+        = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit editxml commentary update}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to 'Preview',polymorphic_path([:preview,@identifier.publication, @identifier]), :class => %w{preview}.include?(params[:action]) ? 'active' : ''
       %li
         = link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
     -elsif @identifier.class == TreebankCiteIdentifier || @identifier.class == AlignmentCiteIdentifier
@@ -26,7 +28,13 @@
         = link_to 'Change Title', polymorphic_path([@identifier.publication, @identifier], :action => :edit_title)
     -elsif @identifier.class == OaCiteIdentifier
       %li
-        = link_to 'Edit (XML)', editxml_publication_oa_cite_identifier_path( @identifier.publication, @identifier), :class => %w{editxml}.include?(params[:action]) ? 'active' : ''
+        = link_to 'Edit', edit_publication_oa_cite_identifier_path( @identifier.publication, @identifier), :class => %w{edit}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to 'Edit XML', editxml_publication_oa_cite_identifier_path( @identifier.publication, @identifier), :class => %w{editxml}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to 'Preview',polymorphic_path([:preview,@identifier.publication, @identifier]), :class => %w{preview}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to "Download Copy", {:controller => 'publications', :id => @identifier.publication.id, :action => "download"}
       -if @identifier.can_import?
         %li
           = link_to 'Import', import_update_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
@@ -35,11 +43,15 @@
         = link_to 'Edit', polymorphic_path([@identifier.publication, @identifier], :action => :editxml), :class => params[:action] == 'editxml' ? 'active' : ''
       %li
         = link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview), :class => params[:action] == 'preview' ? 'active' : ''
+      %li
+        = link_to "Download Copy", {:controller => 'publications', :id => @identifier.publication.id, :action => "download"}
     -else
       %li
         = link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]), :class => %w{edit editxml commentary update}.include?(params[:action]) ? 'active' : ''
       %li
         = link_to 'Preview',polymorphic_path([:preview,@identifier.publication, @identifier]), :class => %w{preview}.include?(params[:action]) ? 'active' : ''
+      %li
+        = link_to "Download Copy", {:controller => 'publications', :id => @identifier.publication.id, :action => "download"}
     %li
       = link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history), :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''
     - if @identifier.publication.status == 'finalizing' && @identifier.mutable?

@@ -1,14 +1,14 @@
 %ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
-      = link_to 'Edit', editxml_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+      = link_to 'Edit', editxml_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
   - if @identifier.allow_leiden
     %li
-      = link_to 'Leiden+', leiden_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+      = link_to 'Leiden+', leiden_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
   %li
-    = link_to 'Preview', preview_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+    = link_to 'Preview', preview_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
   - if @identifier.mutable? && @identifier.publication.status != 'finalizing'
     %li
-      = link_to 'Select Passage', link_citation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+      = link_to 'Select Passage', link_citation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
     %li
-      = link_to 'Add Translation', link_translation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn '
+      = link_to 'Add Translation', link_translation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'

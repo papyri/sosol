@@ -1,14 +1,12 @@
-#main
-  = javascript_include_tag 'overlib/overlib'
-  = render :partial => 'identifiers/edit_bar'
-
-  .site
-    = render :partial => 'identifiers/header'
-    #edit
+= javascript_include_tag 'overlib/overlib'
+#main-wrapper
+  #container
+    = render :partial => 'identifiers/header_perseids'
+    = render :partial => 'identifiers/edit_bar_perseids'
+    #edit.card
       = form_for @identifier, :url => { :action => :update }  do |f|
         = f.error_messages
         
-        %label Preview
         .PContent
           = render :partial => 'epi_trans_cts_identifiers/related_items'
           = @identifier[:html_preview].html_safe

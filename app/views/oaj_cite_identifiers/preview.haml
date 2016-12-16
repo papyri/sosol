@@ -3,6 +3,5 @@
     = render :partial => 'identifiers/header_perseids'
     = render :partial => 'identifiers/edit_bar_perseids'
     .card.oaj_cite_preview
-      %label Preview
       %pre
         = @identifier.content.html_safe

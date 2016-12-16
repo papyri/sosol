@@ -1,14 +1,14 @@
 %ul{:class => 'menu'}
   - if !(@identifier.has_related_citations)
     %li
-      = link_to 'Edit', edit_polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :class => 'btn '
+      = link_to 'Edit', edit_polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :class => 'btn bg-sdw'
   %li
-    = link_to 'Preview', preview_publication_epi_trans_cts_identifier_path( epi_trans_cts_identifier.publication, epi_trans_cts_identifier), :class => 'btn '
+    = link_to 'Preview', preview_publication_epi_trans_cts_identifier_path( epi_trans_cts_identifier.publication, epi_trans_cts_identifier), :class => 'btn bg-sdw'
   - if @identifier.has_valid_reffs? && @identifier.mutable? && @identifier.publication.status != 'finalizing'
     %li
-      = link_to 'Select Passage', link_citation_publication_epi_trans_cts_identifier_path( epi_trans_cts_identifier.publication, epi_trans_cts_identifier), :class => 'btn '
+      = link_to 'Select Passage', link_citation_publication_epi_trans_cts_identifier_path( epi_trans_cts_identifier.publication, epi_trans_cts_identifier), :class => 'btn bg-sdw'
   %li
-    = link_to 'Delete', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :confirm => 'Are you sure?', :method => :delete, :class => 'btn '
+    = link_to 'Delete', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier]), :confirm => 'Are you sure?', :method => :delete, :class => 'btn bg-sdw'
   %li
-    = link_to 'Rename', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier], :action => :edit_title), :class => 'btn '
+    = link_to 'Rename', polymorphic_path([epi_trans_cts_identifier.publication, epi_trans_cts_identifier], :action => :edit_title), :class => 'btn bg-sdw'
 
