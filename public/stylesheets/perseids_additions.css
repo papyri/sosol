@@ -88,3 +88,24 @@
     text-decoration: none; }
     .diff del pre code {
       background: #ffbbaa; }
+
+#termsofservice ol {
+  list-style: roman outside;
+  padding-left: 1rem; }
+
+#termsofservice ol li ol {
+  list-style-type: lower-alpha;
+  margin-left: 2rem; }
+
+#termsofservice ol li ol li ol {
+  list-style-type: lower-roman;
+  margin-left: 2rem; }
+
+#termsofservice input[type="checkbox"] {
+  border: none;
+  width: auto;
+  padding-left: 0;
+  height: 1em;
+  font-size: inherit; }
+
+/*# sourceMappingURL=perseids_additions.css.map */
