@@ -45,7 +45,7 @@
           %ul
             - all_communities.each do |community|
               %li
-                = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
+                = link_to community.friendly_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
     %li
       = link_to 'about', 'http://sites.tufts.edu/perseids', :onclick => "window.open(this.href);return false;"
     - if @current_user.admin
