@@ -18,7 +18,7 @@
     
     <xsl:template match="oac:Annotation">
 		<div class="oac_annotation" about="{@rdf:about}" typeof="oac:Annotation">
-		    <span class="label">Annotation:</span><xsl:value-of select="@rdf:about"/>
+		    <h2><span class="label">Annotation URI:</span></h2><xsl:value-of select="@rdf:about"/>
         	<xsl:apply-templates select="oac:annotatedAt"/>
             <xsl:apply-templates select="oac:annotatedBy"/>
 		    <xsl:apply-templates select="rdfs:label"/>
@@ -30,6 +30,7 @@
     
     <xsl:template match="oac:hasTarget">
         <div class="oac_target">
+            <h3><span class="label">Target:</span></h3>
             <a href="{@rdf:resource}" rel="oac:hasTarget">
                 <xsl:value-of select="@rdf:resource"/>
             </a>
@@ -46,7 +47,7 @@
                 </div>        
             </xsl:when>
             <xsl:otherwise>
-                <span class="label">Commentary Text:</span>
+                <h3><span class="label">Commentary Text:</span></h3>
                 <xsl:apply-templates/>
             </xsl:otherwise>
         </xsl:choose>
@@ -71,7 +72,7 @@
     
     <xsl:template match="oac:annotatedBy">
         <div class="oac_creator" rel="oac:annotatedBy">
-            <span class="label">Annotator:</span>
+            <h3><span class="label">Annotator:</span></h3>
             <xsl:apply-templates/>
         </div>
     </xsl:template>
@@ -83,14 +84,14 @@
     
     <xsl:template match="oac:annotatedAt">
         <div class="oac_created" rel="oac:annotatedAt">
-            <span class="label">Created at:</span>
+            <h3><span class="label">Created at:</span></h3>
             <xsl:value-of select="."/>
         </div>
     </xsl:template>
     
     <xsl:template match="oac:motivatedBy">
         <div class="oac_motivation" rel="oac:motivatedBy" resource="{@rdf:resource}">
-            <span class="label"><xsl:value-of select="@rdf:resource"/></span>
+            <h3><span class="label">Motivation:</span></h3><xsl:value-of select="@rdf:resource"/>
         </div>
     </xsl:template>
 </xsl:stylesheet>
