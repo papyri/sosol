@@ -163,7 +163,7 @@ CtsSelector.prototype.populate_selector = function( select_element, options ) {
   if ( count == 0 ) {
     select_element.disabled = true;
     jQuery(select_element).parent().addClass('disabled');
-    select_element.hide();
+    jQuery(select_element).parent().hide();
   }
   else {
     if (count > 1) {
@@ -179,7 +179,7 @@ CtsSelector.prototype.populate_selector = function( select_element, options ) {
     } 
     select_element.disabled = false;
     jQuery(select_element).parent().removeClass('disabled');
-    select_element.show();
+    jQuery(select_element).parent().show();
   }
 }
 
@@ -219,7 +219,7 @@ CtsSelector.prototype.update_work_urns = function() {
 }
 
 CtsSelector.prototype.update_edition_urns = function() {
-  $('emend_button').disabled = true;
+  this.toggle_button_state("#emend_button",true);
   //------------------------------------------------------------
   //  get the editions for the selected textgroup and work 
   //  and populate the edition selector
