@@ -239,3 +239,17 @@ ol.sentences {
 		}
 	}
 }
+.flash-notice {
+	display: block;
+	color: $COLOR_FOREGROUND;
+	&.error {
+		background-color: $COLOR_DANGER;
+	}
+	&.notice {
+		background-color: $COLOR_SUCCESS;
+	}
+	&.warning {
+		background-color: $COLOR_DANGER;
+	}
+}
+

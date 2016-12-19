@@ -2728,6 +2728,16 @@ ol.sentences {
       .columns-btn .container-btn .btn:last-child, .columns-btn .container-btn #filter button:last-child, #filter .columns-btn .container-btn button:last-child {
         margin-bottom: 0; }
 
+.flash-notice {
+  display: block;
+  color: white; }
+  .flash-notice.error {
+    background-color: #c9302c; }
+  .flash-notice.notice {
+    background-color: #1fa67a; }
+  .flash-notice.warning {
+    background-color: #c9302c; }
+
 ul.unstyled {
   padding: 0; }
   ul.unstyled > li {
@@ -3520,3 +3530,5 @@ ul.btns > li {
     line-height: 45px;
     text-align: center;
     width: 45px; }
+
+/*# sourceMappingURL=perseids.css.map */
