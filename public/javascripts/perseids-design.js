@@ -23,6 +23,12 @@ function perseids_publication_selector() {
     });
 }
 
+function browser_test() {
+  var ua = navigator.userAgent;
+  if (!(ua.match(/Firefox/i) || ua.match(/Chrome/i))) {
+    jQuery("#browser_warning").show();
+  }
+}
 function perseids_filters() {
   jQuery(".filter[data-target]").on("click", function (event) {
   	event.preventDefault();

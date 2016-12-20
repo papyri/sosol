@@ -8,6 +8,7 @@
   #container{:class => 'publications'}
     = render( :partial => 'publications/cts_selector', :locals => { :hide_text => :hide_text, :controller => 'cts_publications', :inventories => CTS::CTSLib.getInventoriesHash().keys })
     = render "common/flash_all_perseids"
+    = render "common/browser_warning"
     .container-wrapper
       = render( :partial => 'publications/filter', :locals => { :has_new => has_new, :has_editing => has_editing, :has_committed => has_committed, :has_finalizing => has_finalizing, :has_assigned => has_assigned, :has_submitted => has_submitted})
       - if @community
@@ -58,5 +59,8 @@
         = render :partial => "events/list", :object => @events
 :javascript
   jQuery(document).ready(
-    function() { perseids_filters(); }
+    function() {
+      perseids_filters();
+      browser_test();
+    }
   );

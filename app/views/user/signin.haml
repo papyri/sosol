@@ -1,5 +1,6 @@
 #main-wrapper
   #container
+    = render "common/browser_warning"
     .columns
       .card
         %h2 Login with a Social Identity or OpenID Provider:
@@ -20,3 +21,9 @@
         %li Publish new documents
         %li Collaborate with other users
 
+:javascript
+  jQuery(document).ready(
+    function() {
+      browser_test();
+    }
+  );
