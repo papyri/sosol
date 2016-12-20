@@ -230,6 +230,9 @@ module DclpMetaIdentifierHelper
             return id
           end
         when :cwkb
+          if /\A.*cwkb\.org\/(author|work).*[^\d](?<id>\d+)[^\d].*\Z/ =~ url
+            return id
+          end
         else
           return nil
         end
