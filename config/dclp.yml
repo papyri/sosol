@@ -76,6 +76,10 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines
     :layout:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/p
+    :scriptType:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
+    :pagination:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
     #:ldab:
     #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
     #  :pattern: /\A\d+\Z/
@@ -184,10 +188,6 @@
         :class:
           :name: type
           :pattern: /\A(culture|religion|description|overview)\Z/
-    :scriptType:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
-    :pagination:
-      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
     :printedIllustration:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/listBibl/bibl[@type='printed']
       :multiple: true
