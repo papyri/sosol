@@ -288,6 +288,8 @@ en:
       columns: Columns
       writtenLines: Lines
       layout: Layout
+      scriptType: Script type
+      pagination: Pagination
 
     tooltip:
       multiMentionedDateReference: Reference (line and column)
