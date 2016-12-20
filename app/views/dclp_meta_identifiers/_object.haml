@@ -14,6 +14,14 @@
 
 .clear
 
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :scriptType }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :scriptType }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :pagination }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :pagination }
+
+.clear
+
 = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :layout }
 = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :layout }
 
