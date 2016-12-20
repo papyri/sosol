@@ -122,7 +122,9 @@ div#edit ul#multiItems_collectionList input
 div#edit input#hgv_meta_identifier_material,
 div#edit input#hgv_meta_identifier_bookForm,
 div#edit input#hgv_meta_identifier_columns,
-div#edit input#hgv_meta_identifier_writtenLines {
+div#edit input#hgv_meta_identifier_writtenLines,
+div#edit input#hgv_meta_identifier_scriptType,
+div#edit input#hgv_meta_identifier_pagination {
   width: 10em; }
 
 div#edit div.editbox label#publicationExtraFullTitle {
