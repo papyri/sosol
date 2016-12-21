@@ -385,6 +385,19 @@ class HGVMetaIdentifier < HGVIdentifier
           parent.add offset
         end
 
+        if config[:xpath] == 'ptr/@target' && /\Ahttp:\/\/papyri\.info\/biblio\/\d+\Z/ =~ item[:value] # CL: CROMULENT BIBLIO ID HACK
+          # set papyri.info url
+          child.text = nil
+          child.attributes['target'] = item[:value]
+
+          # load ignore tags and surround them with comments
+          REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', parent)
+          BiblioIdentifier.getRelatedItemElements(item[:value]).each{|ignore|
+            parent.add ignore
+          }
+          REXML::Comment.new(' ignore - stop ', parent)
+        end
+
         parent.add child
 
       end
