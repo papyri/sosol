@@ -1,19 +1,17 @@
-#main-wrapper
-  #container
-    %header
-      %h1
-        Commit
-        = @commit[:id][0..6]
-        for
-        %em
-          = @identifier.title
-      %h2
-        from publication
-        = @identifier.publication.title
-    = render :partial => "common/flash_all_perseids"
-    .card
-      %h2
-        = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
-      = render :partial => "common/commit_box", :locals => {:identifier => @identifier, :commit => @commit, :prev_commit => @prev_commit, :next_commit => @next_commit}
-    #edit.card
-      = render :partial => 'common/diff', :object => @diff
+%header
+  %h1
+    Commit
+    = @commit[:id][0..6]
+    for
+    %em
+      = @identifier.title
+  %h2
+    from publication
+    = @identifier.publication.title
+= render :partial => "common/flash_all_perseids"
+.card
+  %h2
+    = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
+  = render :partial => "common/commit_box", :locals => {:identifier => @identifier, :commit => @commit, :prev_commit => @prev_commit, :next_commit => @next_commit}
+#edit.card
+  = render :partial => 'common/diff', :object => @diff

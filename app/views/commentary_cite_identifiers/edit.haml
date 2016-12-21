@@ -10,25 +10,23 @@
     PerseidsCiteComm.setup_editor();
   });
 
-#main-wrapper
-  #container
-    = render :partial => 'identifiers/header_perseids'
-    = render :partial => 'identifiers/edit_bar_perseids'
-    .edit.card
-      %p
-      = form_for @identifier, :url => { :action => 'update', :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
-        = hidden_field_tag 'publication_id',@publication.id
-        = hidden_field_tag 'id',@identifier.id
-        = hidden_field_tag 'commentary_language', @identifier.language
-        .targets
-          %h2
-            %span{:class =>"oac_label"} Commentary On
-          - @identifier.get_targets().each do |t|
-            .oac_target
-              %a{:href =>"#{t}", :target =>"_blank"} #{t}
-        #edit-panel
-          .wmd-panel{:id=>'wmd-panel'}
-            .wmd-preview{:id => 'wmd-preview'} 
-            .wmd-button-bar{:id => 'wmd-button-bar'}
-            %textarea{:id => 'wmd-input', :class=>'wmd-input input', :name=> 'commentary_text'} #{params[:commentary_text]}
-            = render :partial => 'identifiers/edit_commit', :locals => { :f => form, :identifier => @identifier,  :original_commit_comment => @original_commit_comment, :where_at => :bottom }
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+.edit.card
+  %p
+  = form_for @identifier, :url => { :action => 'update', :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
+    = hidden_field_tag 'publication_id',@publication.id
+    = hidden_field_tag 'id',@identifier.id
+    = hidden_field_tag 'commentary_language', @identifier.language
+    .targets
+      %h2
+        %span{:class =>"oac_label"} Commentary On
+      - @identifier.get_targets().each do |t|
+        .oac_target
+          %a{:href =>"#{t}", :target =>"_blank"} #{t}
+    #edit-panel
+      .wmd-panel{:id=>'wmd-panel'}
+        .wmd-preview{:id => 'wmd-preview'}
+        .wmd-button-bar{:id => 'wmd-button-bar'}
+        %textarea{:id => 'wmd-input', :class=>'wmd-input input', :name=> 'commentary_text'} #{params[:commentary_text]}
+        = render :partial => 'identifiers/edit_commit', :locals => { :f => form, :identifier => @identifier,  :original_commit_comment => @original_commit_comment, :where_at => :bottom }

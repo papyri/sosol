@@ -1,17 +1,15 @@
-#main-wrapper
-  #container
-    .card.create
-      %h1 Edit or Annotate?
-      = form_for CitationCTSIdentifier.new(), :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
-        = hidden_field_tag 'publication_id',@publication.id.to_s
-        = hidden_field_tag 'collection',params[:collection]
-        = hidden_field_tag 'urn',params[:urn]
-        = button_to "Edit"
-      = form_for OaCiteIdentifier.new(), :url => { :action => "edit_or_create", :controller => "oa_cite_identifiers"} do |form|
-        = hidden_field_tag 'publication_id',@publication.id.to_s
-        = hidden_field_tag 'target_uri',params[:target_uri]
-        = hidden_field_tag "collection_urn", 'urn:cite:perseus:pdlann'
-        = submit_tag "Annotate", :method => 'post'
+.card.create
+  %h1 Edit or Annotate?
+  = form_for CitationCTSIdentifier.new(), :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
+    = hidden_field_tag 'publication_id',@publication.id.to_s
+    = hidden_field_tag 'collection',params[:collection]
+    = hidden_field_tag 'urn',params[:urn]
+    = button_to "Edit"
+  = form_for OaCiteIdentifier.new(), :url => { :action => "edit_or_create", :controller => "oa_cite_identifiers"} do |form|
+    = hidden_field_tag 'publication_id',@publication.id.to_s
+    = hidden_field_tag 'target_uri',params[:target_uri]
+    = hidden_field_tag "collection_urn", 'urn:cite:perseus:pdlann'
+    = submit_tag "Annotate", :method => 'post'
     
   
   

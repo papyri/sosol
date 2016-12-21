@@ -1,6 +1,4 @@
-#main-wrapper
-  #container
-    .create
-      %h1 Edit Passage:
-      %p
-      = render(:partial => "citation_cts_identifiers/create_from_cts_urn_form", :locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:publication_id => @identifier.publication.id, :pubtype => 'edition'})
+.create
+  %h1 Edit Passage:
+  %p
+  = render(:partial => "citation_cts_identifiers/create_from_cts_urn_form", :locals => {:edition => @identifier.urn_attribute,:collection => @identifier.inventory,:publication_id => @identifier.publication.id, :pubtype => 'edition'})

@@ -1,13 +1,11 @@
-#main-wrapper
-  #container
-    %header
-      %h1
-        = "Change title of " + @identifier.name
-  .card
-    = form_for @identifier, :url => { :action => :update_title } do |f|
-      = f.error_messages
+%header
+  %h1
+    = "Change title of " + @identifier.name
+.card
+= form_for @identifier, :url => { :action => :update_title } do |f|
+  = f.error_messages
 
-      = f.label :title
-      = f.text_field :title, :size => 100
+  = f.label :title
+  = f.text_field :title, :size => 100
 
-      = f.submit "Update"
+  = f.submit "Update"

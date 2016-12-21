@@ -6,24 +6,22 @@
 //------------------------------------------------------------
 //  Content
 //------------------------------------------------------------
-#main-wrapper.main.full
-  #container
-    = render :partial => 'identifiers/header_perseids'
-    = render :partial => 'identifiers/edit_bar_perseids'
-    #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
-    #edit
-      = form_for @identifier, :url => { :action => :updatexml } do |f|
-        = f.error_messages
-        #ict_tool_wrapper
-          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.urn_attribute, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
-            
-          %div{:id => "imgspect"}    
-        
-        .card.clearfix
-          %div{:id => "editors"}
-          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
-          
-          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+#Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
+#edit
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.error_messages
+    #ict_tool_wrapper
+      #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-sbj' => @identifier.urn_attribute, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation', 'data-formatter' => 'imgspect_link'}
+
+      %div{:id => "imgspect"}
+
+    .card.clearfix
+      %div{:id => "editors"}
+      = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
+
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
 -#-------------------------------------------------------------
 -#  imgspect includes

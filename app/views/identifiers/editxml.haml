@@ -2,18 +2,16 @@
 //  CSS
 //------------------------------------------------------------
 %link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/texAce/texAce.css"}
-#main-wrapper
-  #container
-    = render :partial => 'identifiers/header_perseids'
-    = render :partial => 'identifiers/edit_bar_perseids'
-    #edit
-      = render :partial => "common/flash_all_perseids"
-      = form_for @identifier, :url => { :action => :updatexml } do |f|
-        = f.error_messages
-        .card
-          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
-        .card
-          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+#edit
+  = render :partial => "common/flash_all_perseids"
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.error_messages
+    .card
+      = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
+    .card
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
 = javascript_include_tag 'confirm'
 -#-------------------------------------------------------------

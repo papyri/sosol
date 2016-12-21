@@ -1,23 +1,22 @@
-#container.publications {
+#container .publications {
 	.quickswitch-target {
 		display: none;
 		margin:1em 2em;
 	}
 	.original {
-		@if $COLLECTION_NAME_SHOW_AS_DEFAULT {
+		&.boards {
+		  > .collection {
+		      display: block;
+		    }
+		  > .publications {
+		      display: none;
+		    }
+		}
 		> .collection {
-		    display: block;
-		  }
-		> .publications {
 		    display: none;
-		  }
-		} @else {
-		> .collection {
-		    display: none;
-		  }
+		}
 		> .publications {
 		    display: block;
-		  }
 		}
 	}
 	.new-bar, .select-bar {

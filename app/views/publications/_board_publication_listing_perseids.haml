@@ -18,8 +18,18 @@
                     = m.class::FRIENDLY_NAME
                   = link_to m.title, edit_polymorphic_path([publication,m])
       %span{:class => "legend"}
-        %span{:class => "alt-title"}
-        = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name, :class => "original"
+        %div{:class => "alt-title"}
+        %div{:class => 'original boards'}
+          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name, :class => "collection"
+          %ul{:class => 'publications'}
+            - Identifier.site_identifier_classes.each do |i|
+              - if i.constantize::is_visible
+                - publication.identifiers.each do |m|
+                  - if m.type == i
+                    %li{:class => m.class}
+                      %span{:class => 'type-legend'}
+                        = m.class::FRIENDLY_NAME
+                      = link_to m.title, edit_polymorphic_path([publication,m])
       - if list_name == "needs_review" || list_name == "waiting"
         - votes = publication.votes_by_decree_action
         - votes.keys.each do |action|

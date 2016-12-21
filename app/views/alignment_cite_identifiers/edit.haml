@@ -1,12 +1,10 @@
 = javascript_include_tag 'confirm'
 = javascript_include_tag 'treebank-cite'
   
-#main-wrapper
-  #container
-    = render :partial => 'identifiers/header_perseids'
-    = render :partial => 'identifiers/edit_bar_perseids'
-    .card
-      %div{:class => "hints"}
-        %i{:class => 'fa fa-info-circle'}
-        Select a sentence to Edit in Alpheios
-      = @list.html_safe
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+.card
+  %div{:class => "hints"}
+    %i{:class => 'fa fa-info-circle'}
+    Select a sentence to Edit in Alpheios
+  = @list.html_safe

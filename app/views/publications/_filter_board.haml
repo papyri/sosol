@@ -17,3 +17,9 @@
     = link_to "Download All", { :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset }, :class => 'btn bg-sdw'
   .archive_link
     = link_to "Archived", { :controller => 'user', :action => 'archives', :board_id => @board.id }, :class => 'btn bg-sdw'
+  %fieldset
+    %legend Display Titles
+    %input{:type => 'radio', :name => 'titles', :value => 'Document', :id => 'doctitles',  :onchange => 'toggleTitles(event);'}
+    %label{:for => 'doctitles'}Document
+    %input{:type => 'radio', :name => 'titles', :value => 'Publication', :id => 'pubtitles', :checked => 'checked', :onchange => 'toggleTitles(event);'}
+    %label{:for => 'pubtitles'}Publication

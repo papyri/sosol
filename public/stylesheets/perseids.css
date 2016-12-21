@@ -804,9 +804,9 @@
 
 .fa-copy:before,
 .fa-files-o:before,
-#container.publications .new-bar .btn.AlignmentCiteIdentifier:before,
-#container.publications .new-bar #filter button.AlignmentCiteIdentifier:before,
-#filter #container.publications .new-bar button.AlignmentCiteIdentifier:before,
+#container .publications .new-bar .btn.AlignmentCiteIdentifier:before,
+#container .publications .new-bar #filter button.AlignmentCiteIdentifier:before,
+#filter #container .publications .new-bar button.AlignmentCiteIdentifier:before,
 .publication .publication-items > li.AlignmentCiteIdentifier a:before {
   content: ""; }
 
@@ -916,7 +916,7 @@
 .fa-bolt:before {
   content: ""; }
 
-.fa-sitemap:before, #container.publications .new-bar .btn.TreebankCiteIdentifier:before, #container.publications .new-bar #filter button.TreebankCiteIdentifier:before, #filter #container.publications .new-bar button.TreebankCiteIdentifier:before, .publication .publication-items > li.TreebankCiteIdentifier a:before {
+.fa-sitemap:before, #container .publications .new-bar .btn.TreebankCiteIdentifier:before, #container .publications .new-bar #filter button.TreebankCiteIdentifier:before, #filter #container .publications .new-bar button.TreebankCiteIdentifier:before, .publication .publication-items > li.TreebankCiteIdentifier a:before {
   content: ""; }
 
 .fa-umbrella:before {
@@ -956,7 +956,7 @@
 .fa-cutlery:before {
   content: ""; }
 
-.fa-file-text-o:before, #container.publications .new-bar .btn.primary:before, #container.publications .new-bar #filter button.primary:before, #filter #container.publications .new-bar button.primary:before, #container.publications .new-bar .btn.EpiCTSIdentifier:before, #container.publications .new-bar #filter button.EpiCTSIdentifier:before, #filter #container.publications .new-bar button.EpiCTSIdentifier:before, #container.publications .new-bar .btn.CommentaryCiteIdentifier:before, #container.publications .new-bar #filter button.CommentaryCiteIdentifier:before, #filter #container.publications .new-bar button.CommentaryCiteIdentifier:before, #container.publications .new-bar .btn.CitationCTSIdentifier:before, #container.publications .new-bar #filter button.CitationCTSIdentifier:before, #filter #container.publications .new-bar button.CitationCTSIdentifier:before, #container.publications .new-bar .btn.EpiTransCTSIdentifier:before, #container.publications .new-bar #filter button.EpiTransCTSIdentifier:before, #filter #container.publications .new-bar button.EpiTransCTSIdentifier:before, .publication .publication-items > li.EpiCTSIdentifier a:before, .publication .publication-items > li.CommentaryCiteIdentifier a:before, .publication .publication-items > li.CitationCTSIdentifier a:before, .publication .publication-items > li.EpiTransCTSIdentifier a:before {
+.fa-file-text-o:before, #container .publications .new-bar .btn.primary:before, #container .publications .new-bar #filter button.primary:before, #filter #container .publications .new-bar button.primary:before, #container .publications .new-bar .btn.EpiCTSIdentifier:before, #container .publications .new-bar #filter button.EpiCTSIdentifier:before, #filter #container .publications .new-bar button.EpiCTSIdentifier:before, #container .publications .new-bar .btn.CommentaryCiteIdentifier:before, #container .publications .new-bar #filter button.CommentaryCiteIdentifier:before, #filter #container .publications .new-bar button.CommentaryCiteIdentifier:before, #container .publications .new-bar .btn.CitationCTSIdentifier:before, #container .publications .new-bar #filter button.CitationCTSIdentifier:before, #filter #container .publications .new-bar button.CitationCTSIdentifier:before, #container .publications .new-bar .btn.EpiTransCTSIdentifier:before, #container .publications .new-bar #filter button.EpiTransCTSIdentifier:before, #filter #container .publications .new-bar button.EpiTransCTSIdentifier:before, .publication .publication-items > li.EpiCTSIdentifier a:before, .publication .publication-items > li.CommentaryCiteIdentifier a:before, .publication .publication-items > li.CitationCTSIdentifier a:before, .publication .publication-items > li.EpiTransCTSIdentifier a:before {
   content: ""; }
 
 .fa-building-o:before {
@@ -1956,7 +1956,7 @@
 .fa-sticky-note:before {
   content: ""; }
 
-.fa-sticky-note-o:before, #container.publications .new-bar .btn.OaCiteIdentifier:before, #container.publications .new-bar #filter button.OaCiteIdentifier:before, #filter #container.publications .new-bar button.OaCiteIdentifier:before, #container.publications .new-bar .btn.OACIdentifier:before, #container.publications .new-bar #filter button.OACIdentifier:before, #filter #container.publications .new-bar button.OACIdentifier:before, .publication .publication-items > li.OaCiteIdentifier a:before, .publication .publication-items > li.OACIdentifier a:before {
+.fa-sticky-note-o:before, #container .publications .new-bar .btn.OaCiteIdentifier:before, #container .publications .new-bar #filter button.OaCiteIdentifier:before, #filter #container .publications .new-bar button.OaCiteIdentifier:before, #container .publications .new-bar .btn.OACIdentifier:before, #container .publications .new-bar #filter button.OACIdentifier:before, #filter #container .publications .new-bar button.OACIdentifier:before, .publication .publication-items > li.OaCiteIdentifier a:before, .publication .publication-items > li.OACIdentifier a:before {
   content: ""; }
 
 .fa-cc-jcb:before {
@@ -2306,7 +2306,7 @@
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .new-bar, .publication, #filter button, #filter input[type="text"] {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -2439,7 +2439,7 @@ h2, h3, h4, h5, h6 {
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .new-bar, .publication, #filter button, #filter input[type="text"] {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -3068,38 +3068,42 @@ ul.btns > li {
     .select-container.disabled select {
       min-width: 187.5px; }
 
-#container.publications .quickswitch-target {
+#container .publications .quickswitch-target {
   display: none;
   margin: 1em 2em; }
-#container.publications .original > .collection {
-  display: none; }
-#container.publications .original > .publications {
+#container .publications .original.boards > .collection {
   display: block; }
-#container.publications .new-bar, #container.publications .select-bar {
+#container .publications .original.boards > .publications {
+  display: none; }
+#container .publications .original > .collection {
+  display: none; }
+#container .publications .original > .publications {
+  display: block; }
+#container .publications .new-bar, #container .publications .select-bar {
   margin: 5px 5px 30px 5px;
   padding: 20px; }
-  #container.publications .new-bar h2, #container.publications .select-bar h2 {
+  #container .publications .new-bar h2, #container .publications .select-bar h2 {
     margin-bottom: 20px; }
-  #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button, #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button {
+  #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button {
     border: none;
     padding-left: 12.5px;
     padding-right: 12.5px;
     font-size: 15px; }
-#container.publications .select-bar {
+#container .publications .select-bar {
   display: none; }
-  #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button, #container.publications .select-bar .select-container {
+  #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .select-bar .select-container {
     margin-bottom: 10px; }
-  #container.publications .select-bar .btn, #container.publications .select-bar #filter button, #filter #container.publications .select-bar button {
+  #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button {
     width: 180px; }
-    #container.publications .select-bar .btn:first-child, #container.publications .select-bar #filter button:first-child, #filter #container.publications .select-bar button:first-child {
+    #container .publications .select-bar .btn:first-child, #container .publications .select-bar #filter button:first-child, #filter #container .publications .select-bar button:first-child {
       margin-left: 5px; }
-#container.publications .new-bar {
+#container .publications .new-bar {
   background-color: white; }
-  #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button {
+  #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button {
     position: relative;
     padding-left: 45px;
     width: auto; }
-    #container.publications .new-bar .btn:before, #container.publications .new-bar #filter button:before, #filter #container.publications .new-bar button:before {
+    #container .publications .new-bar .btn:before, #container .publications .new-bar #filter button:before, #filter #container .publications .new-bar button:before {
       color: white;
       position: absolute;
       top: 0;
@@ -3111,43 +3115,43 @@ ul.btns > li {
       width: 45px;
       z-index: 998; }
     @media (min-width: 1001px) and (max-width: 1200px) {
-      #container.publications .new-bar .btn, #container.publications .new-bar #filter button, #filter #container.publications .new-bar button {
+      #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button {
         padding-left: 45px; }
-        #container.publications .new-bar .btn:before, #container.publications .new-bar #filter button:before, #filter #container.publications .new-bar button:before {
+        #container .publications .new-bar .btn:before, #container .publications .new-bar #filter button:before, #filter #container .publications .new-bar button:before {
           font-size: 27px;
           line-height: 45px;
           text-align: center;
           width: 45px; } }
-    #container.publications .new-bar .btn:link, #container.publications .new-bar #filter button:link, #filter #container.publications .new-bar button:link, #container.publications .new-bar .btn:visited, #container.publications .new-bar #filter button:visited, #filter #container.publications .new-bar button:visited, #container.publications .new-bar .btn:hover, #container.publications .new-bar #filter button:hover, #filter #container.publications .new-bar button:hover {
+    #container .publications .new-bar .btn:link, #container .publications .new-bar #filter button:link, #filter #container .publications .new-bar button:link, #container .publications .new-bar .btn:visited, #container .publications .new-bar #filter button:visited, #filter #container .publications .new-bar button:visited, #container .publications .new-bar .btn:hover, #container .publications .new-bar #filter button:hover, #filter #container .publications .new-bar button:hover {
       color: white;
       border: none; }
-    #container.publications .new-bar .btn.primary, #container.publications .new-bar #filter button.primary, #filter #container.publications .new-bar button.primary {
+    #container .publications .new-bar .btn.primary, #container .publications .new-bar #filter button.primary, #filter #container .publications .new-bar button.primary {
       background-color: #7986cb; }
-    #container.publications .new-bar .btn.TreebankCiteIdentifier, #container.publications .new-bar #filter button.TreebankCiteIdentifier, #filter #container.publications .new-bar button.TreebankCiteIdentifier {
+    #container .publications .new-bar .btn.TreebankCiteIdentifier, #container .publications .new-bar #filter button.TreebankCiteIdentifier, #filter #container .publications .new-bar button.TreebankCiteIdentifier {
       background-color: #a5d6a7; }
-    #container.publications .new-bar .btn.EpiCTSIdentifier, #container.publications .new-bar #filter button.EpiCTSIdentifier, #filter #container.publications .new-bar button.EpiCTSIdentifier {
+    #container .publications .new-bar .btn.EpiCTSIdentifier, #container .publications .new-bar #filter button.EpiCTSIdentifier, #filter #container .publications .new-bar button.EpiCTSIdentifier {
       background-color: #ce93d8; }
-    #container.publications .new-bar .btn.CommentaryCiteIdentifier, #container.publications .new-bar #filter button.CommentaryCiteIdentifier, #filter #container.publications .new-bar button.CommentaryCiteIdentifier {
+    #container .publications .new-bar .btn.CommentaryCiteIdentifier, #container .publications .new-bar #filter button.CommentaryCiteIdentifier, #filter #container .publications .new-bar button.CommentaryCiteIdentifier {
       background-color: #bfcf2d; }
-    #container.publications .new-bar .btn.AlignmentCiteIdentifier, #container.publications .new-bar #filter button.AlignmentCiteIdentifier, #filter #container.publications .new-bar button.AlignmentCiteIdentifier {
+    #container .publications .new-bar .btn.AlignmentCiteIdentifier, #container .publications .new-bar #filter button.AlignmentCiteIdentifier, #filter #container .publications .new-bar button.AlignmentCiteIdentifier {
       background-color: #ef9a9a; }
-    #container.publications .new-bar .btn.CitationCTSIdentifier, #container.publications .new-bar #filter button.CitationCTSIdentifier, #filter #container.publications .new-bar button.CitationCTSIdentifier {
+    #container .publications .new-bar .btn.CitationCTSIdentifier, #container .publications .new-bar #filter button.CitationCTSIdentifier, #filter #container .publications .new-bar button.CitationCTSIdentifier {
       background-color: #ce93d8; }
-    #container.publications .new-bar .btn.OaCiteIdentifier, #container.publications .new-bar #filter button.OaCiteIdentifier, #filter #container.publications .new-bar button.OaCiteIdentifier {
+    #container .publications .new-bar .btn.OaCiteIdentifier, #container .publications .new-bar #filter button.OaCiteIdentifier, #filter #container .publications .new-bar button.OaCiteIdentifier {
       background-color: #81d4fa; }
-    #container.publications .new-bar .btn.OACIdentifier, #container.publications .new-bar #filter button.OACIdentifier, #filter #container.publications .new-bar button.OACIdentifier {
+    #container .publications .new-bar .btn.OACIdentifier, #container .publications .new-bar #filter button.OACIdentifier, #filter #container .publications .new-bar button.OACIdentifier {
       background-color: #81d4fa; }
-    #container.publications .new-bar .btn.EpiTransCTSIdentifier, #container.publications .new-bar #filter button.EpiTransCTSIdentifier, #filter #container.publications .new-bar button.EpiTransCTSIdentifier {
+    #container .publications .new-bar .btn.EpiTransCTSIdentifier, #container .publications .new-bar #filter button.EpiTransCTSIdentifier, #filter #container .publications .new-bar button.EpiTransCTSIdentifier {
       background-color: #ce93d8; }
-#container.publications .container-wrapper {
+#container .publications .container-wrapper {
   position: relative; }
-  #container.publications .container-wrapper .publication-container {
+  #container .publications .container-wrapper .publication-container {
     margin-right: 333.33333px;
     margin-top: 3em; }
     @media (min-width: 1001px) and (max-width: 1200px) {
-      #container.publications .container-wrapper .publication-container {
+      #container .publications .container-wrapper .publication-container {
         margin-right: 240px; } }
-  #container.publications .container-wrapper #filter {
+  #container .publications .container-wrapper #filter {
     padding-top: 50px;
     float: right; }
 
@@ -3476,7 +3480,7 @@ ul.btns > li {
   }
 }
 */
-[class^="icon-syriaca-"]:before, [class*=" icon-syriaca-"]:before, .icon-syriaca, .publication .publication-items > li.SyriacaIdentifier > a:before, #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before, .publication .publication-items > li.syriaca-sbd > a:before, #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+[class^="icon-syriaca-"]:before, [class*=" icon-syriaca-"]:before, .icon-syriaca, .publication .publication-items > li.SyriacaIdentifier > a:before, #container .publications .new-bar .btn.SyriacaIdentifier:before, #container .publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container .publications .new-bar button.SyriacaIdentifier:before, .publication .publication-items > li.syriaca-sbd > a:before, #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
   font-family: "syriaca";
   font-style: normal;
   font-weight: normal;
@@ -3503,7 +3507,7 @@ ul.btns > li {
   content: '\e902'; }
 
 /* '' */
-.icon-syriaca-SBD:before, .publication .publication-items > li.syriaca-sbd > a:before, #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+.icon-syriaca-SBD:before, .publication .publication-items > li.syriaca-sbd > a:before, #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
   content: '\e906'; }
 
 /* '' */
@@ -3527,7 +3531,7 @@ ul.btns > li {
   content: '\e91a'; }
 
 /* '' */
-.icon-syriaca-gazetteer:before, .publication .publication-items > li.SyriacaIdentifier > a:before, #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before {
+.icon-syriaca-gazetteer:before, .publication .publication-items > li.SyriacaIdentifier > a:before, #container .publications .new-bar .btn.SyriacaIdentifier:before, #container .publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container .publications .new-bar button.SyriacaIdentifier:before {
   content: '\e922'; }
 
 /* '' */
@@ -3548,9 +3552,9 @@ ul.btns > li {
     text-align: center;
     width: 45px; }
 
-#container.publications .new-bar .btn.SyriacaIdentifier, #container.publications .new-bar #filter button.SyriacaIdentifier, #filter #container.publications .new-bar button.SyriacaIdentifier {
+#container .publications .new-bar .btn.SyriacaIdentifier, #container .publications .new-bar #filter button.SyriacaIdentifier, #filter #container .publications .new-bar button.SyriacaIdentifier {
   background-color: #592d1f; }
-  #container.publications .new-bar .btn.SyriacaIdentifier:before, #container.publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container.publications .new-bar button.SyriacaIdentifier:before {
+  #container .publications .new-bar .btn.SyriacaIdentifier:before, #container .publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container .publications .new-bar button.SyriacaIdentifier:before {
     font-size: 22.5px;
     line-height: 45px;
     text-align: center;
@@ -3564,9 +3568,9 @@ ul.btns > li {
     text-align: center;
     width: 45px; }
 
-#container.publications .new-bar .btn.syriaca-sbd, #container.publications .new-bar #filter button.syriaca-sbd, #filter #container.publications .new-bar button.syriaca-sbd {
+#container .publications .new-bar .btn.syriaca-sbd, #container .publications .new-bar #filter button.syriaca-sbd, #filter #container .publications .new-bar button.syriaca-sbd {
   background-color: #614f69; }
-  #container.publications .new-bar .btn.syriaca-sbd:before, #container.publications .new-bar #filter button.syriaca-sbd:before, #filter #container.publications .new-bar button.syriaca-sbd:before {
+  #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
     font-size: 22.5px;
     line-height: 45px;
     text-align: center;

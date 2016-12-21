@@ -6,25 +6,23 @@
 //------------------------------------------------------------
 //  Content
 //------------------------------------------------------------
-#main-wrapper.editxml
-  #container
-    = render :partial => 'identifiers/header_perseids'
-    = render :partial => 'identifiers/edit_bar_perseids'
-    #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
-    #edit
-      = form_for @identifier, :url => { :action => :updatexml } do |f|
-        = f.error_messages
-        #ict_tool_wrapper
-          #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-obj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138_represents', 'data-formatter' => 'imgspect_link', 'data-refs-verb' => 'http://purl.org/dc/terms/references', 'data-endpoint-verb' => 'http://data.perseus.org/rdfvocab/cite/imageServer' }
-            
-        %div{:id => "imgspect"}
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+#Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
+#edit
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.error_messages
+    #ict_tool_wrapper
+      #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-obj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138_represents', 'data-formatter' => 'imgspect_link', 'data-refs-verb' => 'http://purl.org/dc/terms/references', 'data-endpoint-verb' => 'http://data.perseus.org/rdfvocab/cite/imageServer' }
 
-        .clearfix.card
-          %div{:id => "editors"}
-          = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'xml-content input observechange'
+    %div{:id => "imgspect"}
 
-        .card
-          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+    .clearfix.card
+      %div{:id => "editors"}
+      = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'xml-content input observechange'
+
+    .card
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
 -#-------------------------------------------------------------
 -#  imgspect includes
