@@ -1,8 +1,9 @@
 = stylesheet_link_tag 'community'
-.community
+%header
   %h1
     Select a new default Community
 
+.community.card
   - if @communities.length <= 0
   
     %p

@@ -1,10 +1,10 @@
-#main.site
-  %h2 
-    = @community.name
-   
-  %h2
-    = 'Are You Sure You Want to Delete this community, ' + @community.name + '? This action cannot be undone!'
+%header
   %h1
-    = link_to "Delete", @community, :confirm => 'Are you sure?', :method => :delete 
-    = "or"
-    = link_to "Cancel", @community
+    = @community.name
+%div{:class => "card warning"}
+  %i{:class => 'fa fa-info-circle'}
+  = 'Are You Sure You Want to Delete this community, ' + @community.name + '? This action cannot be undone!'
+%h1.card
+  = link_to "Delete", @community, :confirm => 'Are you sure?', :method => :delete , :class => 'btn revert bg-sdw'
+  = "or"
+  = link_to "Cancel", @community, :class => 'btn revert bg-sdw'

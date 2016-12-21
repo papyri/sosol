@@ -1,9 +1,11 @@
 = stylesheet_link_tag "community"
 
-.community
+%header
   %h1
     = "Editing " + @community.format_name + " community"
-  
+
+.community.card
+
   = form_for(@community) do |f|
     = f.error_messages
   
@@ -29,8 +31,9 @@
   %br 
   = render :partial => "edit_end_user"
   %br 
-  %br 
+  %br
 
+.card
   %h2
     Boards
   = link_to 'Add Board', :controller => "boards", :action => "new", :community_id => @community.id |
@@ -65,6 +68,7 @@
     = admin.name
     %br
   
-  %br
-  = link_to 'Show', @community |
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Show', @community, :class => 'btn bg-sdw'
   

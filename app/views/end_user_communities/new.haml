@@ -1,9 +1,9 @@
 = stylesheet_link_tag "community"
-
-.community
+%header
   %h1
     = "New community"
-  
+
+.community.card
   = form_for(@community) do |f|
     = f.error_messages
   

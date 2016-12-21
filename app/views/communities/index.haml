@@ -1,10 +1,9 @@
 = stylesheet_link_tag 'community'
 
-.community
-  
-  
+%header
   %h1
     Listing communities
+.community.card.no-bottom-margin
 
   - if @communities.length <= 0
   
@@ -47,5 +46,8 @@
 
           
 
-= link_to 'New community', :action => :new
-= link_to 'Change default',:controller => :communities, :action => :select_default
+%ul{:class => 'menu'}
+  %li
+    = link_to 'New community', {:action => :new}, :class => 'btn bg-sdw'
+  %li
+    = link_to 'Change default',{:controller => :communities, :action => :select_default}, :class => 'btn bg-sdw'
