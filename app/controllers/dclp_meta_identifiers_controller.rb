@@ -127,6 +127,15 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           params[:hgv_meta_identifier].delete :overview
         end
 
+        # edition link to papyri.info
+        if params[:hgv_meta_identifier][:edition]
+          params[:hgv_meta_identifier][:edition].each {|key, edition|
+            if edition[:children] && edition[:children][:link] && edition[:children][:link][:value] # && (/\A\d+\Z/ ~= edition[:children][:link][:value])
+                edition[:children][:link][:value] = 'http://papyri.info/biblio/' + edition[:children][:link][:value]
+            end
+          }
+        end
+
       end
     end
 
