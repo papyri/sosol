@@ -19,8 +19,8 @@
         - baseChildren = base + '[children]'
 
         %li.edition{:id => 'edition_' + editionIndex.to_s }
-          = label_tag baseChildren + '[link]', I18n.t('dclp.label.editionLink'), :class => 'meta editionLink', :title => @identifier.configuration.xpath(:edition)
-          = text_field_tag baseChildren + '[link]', edition.link, :disabled => !@identifier.mutable?, :class => 'observechange editionLink', :onchange => "editionLinkChange(this);"
+          = label_tag baseChildren + '[link][value]', I18n.t('dclp.label.editionLink'), :class => 'meta editionLink', :title => @identifier.configuration.xpath(:edition)
+          = text_field_tag baseChildren + '[link][value]', edition.link, :disabled => !@identifier.mutable?, :class => 'observechange editionLink', :onchange => "editionLinkChange(this);"
           = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta editionType', :title => @identifier.configuration.xpath(:edition)
           = hidden_field_tag baseAttributes + '[type]', edition.type, :disabled => !@identifier.mutable?, :class => 'observechange editionType'
           = hidden_field_tag baseAttributes + '[subtype]', edition.subtype, :disabled => !@identifier.mutable?, :class => 'observechange editionSubtype'
