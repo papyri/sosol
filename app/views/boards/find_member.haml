@@ -1,7 +1,9 @@
 = stylesheet_link_tag "board"
 
-%h1
-  Editing board
-Click user to add to board.
-= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("boards", "add_member", @board.id  ) }
+%header
+  %h1
+    Editing board
+.card
+  Click user to add to board.
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("boards", "add_member", @board.id  ) }
 

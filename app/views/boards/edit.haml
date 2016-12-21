@@ -1,39 +1,42 @@
 = stylesheet_link_tag "board"
+%header
+  %h1
+    = @board.title + " ( " + @board.friendly_name + " )"
 
-%h1
-  = @board.title + " ( " + @board.friendly_name + " )"
-
-- if @board.community
-  %br
-  %b Community
-  %br
-  = @board.community.name + " ( " + @board.community.friendly_name + " ) "
-  %br
-    
-%b 
-  = "Editorial Board for "
-- @board.identifier_classes.each do |ic|
-  = ic + " "
-%br
-%b
-  = 'Rank is '
-=@board.rank.to_s
-%br
-= form_for(@board) do |f|
-  = f.error_messages 
-  %b
-    Update Friendly name 
-    
-  = f.text_field :friendly_name
-  %br
-  - if @available_identifier_classes.size > 0
-    %b
-      Add classes:
-    - @available_identifier_classes.each do |identifier_class|
-      = check_box_tag identifier_class
-      = identifier_class.sub(/Identifier$/,'')
+.card
+  - if @board.community
     %br
-  = f.submit "Update"
+    %b Community
+    %br
+    = @board.community.name + " ( " + @board.community.friendly_name + " ) "
+    %br
+
+  %b
+    = "Editorial Board for "
+  - @board.identifier_classes.each do |ic|
+    = ic + " "
+  %br
+  %b
+    = 'Rank is '
+  =@board.rank.to_s
+  %br
+  = form_for(@board) do |f|
+    = f.error_messages
+    %b
+      Update Friendly name
+
+    = f.text_field :friendly_name
+    %br
+    - if @available_identifier_classes.size > 0
+      %b
+        Add classes:
+      - @available_identifier_classes.each do |identifier_class|
+        = check_box_tag identifier_class
+        = identifier_class.sub(/Identifier$/,'')
+      %br
+    = f.submit "Update"
+
+.card.no-bottom-margin
 
   -# dont let them change the name of the board...repositories depend on it 1-2010
   -#= f.label :title
@@ -47,33 +50,34 @@
   %h3{'style' => "display:inline;"}
     Members
   = link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id
-  
+
   .member
 
     - @board.users.each do |user|
       .remove_user
         .user_name
           = user.name
-          = link_to "X", :controller => "boards", :action => "remove_member", :user_id => user.id 
+          = link_to "X", :controller => "boards", :action => "remove_member", :user_id => user.id
           %br
-    
+
   %h3{'style' => "display:inline;"}
     Decrees
-  = link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id 
+  = link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id
 
-  - @board.decrees.each do |decree| 
-    = render :partial => decree 
+  - @board.decrees.each do |decree|
+    = render :partial => decree
 
   %h3{'style' => "display:inline;"}
     E-mails
   = link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id
-  - @board.emailers.each do |emailer| 
+  - @board.emailers.each do |emailer|
     = render :partial => emailer
 
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Show Board', @board, :class => 'btn bg-sdw'
 
-= link_to 'Show This Board', @board
-
-- if @board.community
-  %br
-  = link_to 'Edit ' + @board.community.name + ' community', edit_polymorphic_path([@board.community]) 
+  - if @board.community
+    %li
+      = link_to 'Edit Community', edit_polymorphic_path([@board.community]) , :class => 'btn bg-sdw'
     

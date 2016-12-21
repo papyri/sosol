@@ -2968,6 +2968,19 @@ ul.btns > li {
   margin: 20px 0; }
 .card input, .modal input {
   height: 60px; }
+.card .checkbox, .modal .checkbox {
+  height: 45px;
+  vertical-align: middle; }
+  .card .checkbox > input, .modal .checkbox > input {
+    vertical-align: middle; }
+  .card .checkbox > label, .modal .checkbox > label {
+    height: 45px;
+    vertical-align: middle;
+    display: inline;
+    margin: 0; }
+  .card .checkbox > span, .modal .checkbox > span {
+    height: 45px;
+    vertical-align: middle; }
 .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
   border: 5px solid #7986cb;
   width: 75%;

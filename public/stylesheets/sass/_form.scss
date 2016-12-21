@@ -9,6 +9,24 @@
 		@extend .fg-sdw;
 		height:$CARD_BUTTON_HEIGHT;
 	}
+	.checkbox {
+		height:$XS_BUTTON_HEIGHT;
+		vertical-align: middle;
+		> input {
+			vertical-align: middle;
+		}
+		> label {
+			height: $XS_BUTTON_HEIGHT;
+			vertical-align: middle;
+			display: inline;
+			margin: 0;
+		}
+		> span {
+			height: $XS_BUTTON_HEIGHT;
+			vertical-align: middle;
+		}
+
+	}
 	input:not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
 		border:$OUTLINE_SIZE solid $COLOR_PRI;
 		width:75%;
