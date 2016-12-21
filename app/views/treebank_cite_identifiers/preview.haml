@@ -6,5 +6,7 @@
     = render :partial => 'identifiers/header_perseids'
     = render :partial => 'identifiers/edit_bar_perseids'
     .card
-      .hints Select a sentence to preview in Alpheios
+      %div{:class => "hints"}
+        %i{:class => 'fa fa-info-circle'}
+        Select a sentence to preview
       = @list.html_safe

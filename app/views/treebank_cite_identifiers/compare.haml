@@ -14,6 +14,7 @@
             %li{ :class => ''}
               = link_to c[:text], c[:href], html_options = {'target' => c[:target], 'title' => c[:title]} 
       - else
-        %p 
+        %div{:class => "warning"}
+          %i{:class => 'fa fa-info-circle'}
           You have no files to compare with
           = link_to @identifier.name, polymorphic_path([@identifier.publication, @identifier], :action => :preview)

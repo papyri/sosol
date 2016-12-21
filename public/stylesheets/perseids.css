@@ -2332,19 +2332,19 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]), .modal input:not([type="submit"]):not([type="button"]), .card input[type="submit"], .modal input[type="submit"] {
+.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, #main-menu nav ul li a:link, .card input:link:not([type="submit"]):not([type="button"]), .modal input:link:not([type="submit"]):not([type="button"]), .card input[type="submit"]:link, .modal input[type="submit"]:link {
+  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, ul.menu > li a:link, #main-menu nav ul li a:link, .card input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"]:link, .modal input[type="submit"]:link {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]), .modal input:not([type="submit"]):not([type="button"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]), .modal input:not([type="submit"]):not([type="button"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
 
 .font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
@@ -2552,6 +2552,8 @@ body, .columns {
         padding: 0; } }
     #main-wrapper > #container > .card {
       margin-bottom: 20px; }
+      #main-wrapper > #container > .card.no-bottom-margin {
+        margin-bottom: 0; }
     #main-wrapper > #container > header, #main-wrapper > #container .publication-container header {
       color: #7986cb;
       border-bottom: 2px solid #7986cb;
@@ -2623,6 +2625,8 @@ body, .columns {
     color: #ffb74d; }
   .card.no-padding {
     padding: 0; }
+  .card.no-bottom-margin {
+    margin-bottom: 0; }
   .card.third-size {
     flex: 1 0.33 auto;
     width: 33%; }
@@ -2672,6 +2676,41 @@ body, .columns {
             border-bottom: 1px solid #bdbdbd;
             border-right: 5px solid #7986cb; } }
 
+ul.menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 5px; }
+  @media (max-width: 1000px) {
+    ul.menu {
+      flex-direction: column; } }
+  ul.menu > li {
+    display: inline-block;
+    flex-grow: 1;
+    cursor: pointer;
+    position: relative; }
+    ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active {
+      display: block;
+      box-sizing: border-box;
+      height: 60px;
+      color: #7986cb;
+      line-height: 60px;
+      text-align: center;
+      border-bottom: 5px solid #eceff1; }
+      @media (max-width: 1000px) {
+        ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active {
+          flex-direction: column;
+          height: 45px;
+          line-height: 45px;
+          font-size: 16px;
+          border-bottom: 1px solid #bdbdbd;
+          border-right: 5px solid #eceff1; } }
+      ul.menu > li > a:active, ul.menu > li > a.active, ul.menu > li > a:focus, ul.menu > li a:link:active, ul.menu > li a:link.active, ul.menu > li a:link:focus, ul.menu > li a:hover:active, ul.menu > li a:hover.active, ul.menu > li a:hover:focus, ul.menu > li a:visited:active, ul.menu > li a:visited.active, ul.menu > li a:visited:focus, ul.menu > li a:focus:active, ul.menu > li a:focus.active, ul.menu > li a:focus:focus, ul.menu > li a:active:active, ul.menu > li a:active.active, ul.menu > li a:active:focus {
+        border-bottom: 5px solid #7986cb; }
+        @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
+          ul.menu > li > a:active, ul.menu > li > a.active, ul.menu > li > a:focus, ul.menu > li a:link:active, ul.menu > li a:link.active, ul.menu > li a:link:focus, ul.menu > li a:hover:active, ul.menu > li a:hover.active, ul.menu > li a:hover:focus, ul.menu > li a:visited:active, ul.menu > li a:visited.active, ul.menu > li a:visited:focus, ul.menu > li a:focus:active, ul.menu > li a:focus.active, ul.menu > li a:focus:focus, ul.menu > li a:active:active, ul.menu > li a:active.active, ul.menu > li a:active:focus {
+            border-bottom: 1px solid #bdbdbd;
+            border-right: 5px solid #7986cb; } }
+
 ol.sentences {
   margin: 0;
   padding: 0;
@@ -2688,8 +2727,8 @@ ol.sentences {
       width: 3em;
       position: absolute;
       left: 0;
-      height: 60px;
-      line-height: 60px;
+      height: 45px;
+      line-height: 45px;
       text-align: right;
       color: #7986cb; }
     ol.sentences > li:after {
@@ -2699,8 +2738,8 @@ ol.sentences {
       color: white; }
     ol.sentences > li a {
       margin-left: 3em;
-      height: 60px;
-      line-height: 60px;
+      height: 45px;
+      line-height: 45px;
       display: inline-block;
       overflow: hidden; }
       ol.sentences > li a:active, ol.sentences > li a:link, ol.sentences > li a:visited, ol.sentences > li a:hover {
@@ -2929,12 +2968,12 @@ ul.btns > li {
   margin: 20px 0; }
 .card input, .modal input {
   height: 60px; }
-.card input:not([type="submit"]):not([type="button"]), .modal input:not([type="submit"]):not([type="button"]) {
+.card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
   border: 5px solid #7986cb;
   width: 75%;
   padding-left: 1em;
   text-transform: none !important; }
-  .card input:not([type="submit"]):not([type="button"]):focus, .modal input:not([type="submit"]):not([type="button"]):focus {
+  .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus, .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus {
     border-color: #ffb74d; }
 .card textarea.input, .card input[type="text"], .modal textarea.input, .modal input[type="text"] {
   border: 5px solid #7986cb;
@@ -3000,6 +3039,8 @@ ul.btns > li {
     width: 45px;
     height: 35px;
     line-height: 35px; }
+  .select-container.wide select {
+    width: 500px; }
   .select-container .carret {
     display: none; }
   .select-container:after {
@@ -3095,7 +3136,7 @@ ul.btns > li {
     #container.publications .new-bar .btn.OaCiteIdentifier, #container.publications .new-bar #filter button.OaCiteIdentifier, #filter #container.publications .new-bar button.OaCiteIdentifier {
       background-color: #81d4fa; }
     #container.publications .new-bar .btn.OACIdentifier, #container.publications .new-bar #filter button.OACIdentifier, #filter #container.publications .new-bar button.OACIdentifier {
-      background-color: #bcaaa4; }
+      background-color: #81d4fa; }
     #container.publications .new-bar .btn.EpiTransCTSIdentifier, #container.publications .new-bar #filter button.EpiTransCTSIdentifier, #filter #container.publications .new-bar button.EpiTransCTSIdentifier {
       background-color: #ce93d8; }
 #container.publications .container-wrapper {
@@ -3272,7 +3313,7 @@ ul.btns > li {
       .publication .publication-items > li.OaCiteIdentifier {
         background-color: #81d4fa; }
       .publication .publication-items > li.OACIdentifier {
-        background-color: #bcaaa4; }
+        background-color: #81d4fa; }
       .publication .publication-items > li.EpiTransCTSIdentifier {
         background-color: #ce93d8; }
       .publication .publication-items > li.votes {

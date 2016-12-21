@@ -2,7 +2,7 @@
   #container
     %header
       %h1
-        = "Editing " + @identifier.name
+        = "Change title of " + @identifier.name
   .card
     = form_for @identifier, :url => { :action => :update_title } do |f|
       = f.error_messages

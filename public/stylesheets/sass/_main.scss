@@ -24,6 +24,9 @@ body, .columns {
 		}
 		> .card {
 			margin-bottom:$MARGIN_BIG;
+			&.no-bottom-margin {
+				margin-bottom: 0;
+			}
 		}
 		> header, .publication-container header {
 			color:$COLOR_PRI;
@@ -112,6 +115,9 @@ body, .columns {
 	&.no-padding {
 		padding:0;
 	}
+	&.no-bottom-margin {
+		margin-bottom:0;
+	}
 	&.third-size {
 		flex:1 0.33 auto;
 		width:33%;
@@ -175,6 +181,50 @@ body, .columns {
 		}
 	}
 }
+ul.menu {
+	list-style-type: none;
+	padding: 0;
+	margin: 5px;
+
+	@include phone-and-small {
+		flex-direction: column;
+	}
+
+	> li {
+		display: inline-block;
+		flex-grow: 1;
+		cursor: pointer;
+		position: relative;
+		> a, a:link, a:hover, a:visited, a:focus, a:active {
+			@include phone-and-small {
+				flex-direction: column;
+				height: $XS_BUTTON_HEIGHT;
+				line-height: $XS_BUTTON_HEIGHT;
+				font-size: $XS_BUTTON_FONT_SIZE;
+				border-bottom: 1px solid $COLOR_GRAY;
+				border-right: $OUTLINE_SIZE solid $COLOR_BACKGROUND;
+			}
+			display: block;
+			box-sizing: border-box;
+
+			height: $CARD_BUTTON_HEIGHT;
+			color: $COLOR_PRI;
+
+			line-height: $CARD_BUTTON_HEIGHT;
+			@extend .font-button;
+			text-align: center;
+
+			border-bottom: $OUTLINE_SIZE solid $COLOR_BACKGROUND;
+			&:active, &.active, &:focus {
+				border-bottom: $OUTLINE_SIZE solid $COLOR_PRI;
+				@include phone {
+					border-bottom: 1px solid $COLOR_GRAY;
+					border-right: $OUTLINE_SIZE solid $COLOR_PRI;
+				}
+			}
+		}
+	}
+}
 ol.sentences {
 	margin:0;
 	padding:0;
@@ -191,8 +241,8 @@ ol.sentences {
 		    width: 3em;
 		    position:absolute;
 		    left:0;
-			height:$CARD_BUTTON_HEIGHT;
-			line-height:$CARD_BUTTON_HEIGHT;
+			height:$SENTENCE_HEIGHT;
+			line-height:$SENTENCE_HEIGHT;
 			text-align:right;
 			color:$COLOR_PRI;
 		}
@@ -203,8 +253,8 @@ ol.sentences {
 		}
 		a {
 			margin-left:3em;
-			height:$CARD_BUTTON_HEIGHT;
-			line-height:$CARD_BUTTON_HEIGHT;
+			height:$SENTENCE_HEIGHT;
+			line-height:$SENTENCE_HEIGHT;
 			display:inline-block;
 			overflow:hidden;
 			&:active, &:link, &:visited, &:hover {

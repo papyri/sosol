@@ -1,44 +1,43 @@
-%nav.card
-  %ul.menu
+%ul.menu
+  %li
+    = link_to I18n.t('publication.commentslink'), {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe, :class => 'btn revert bg-sdw'
+  - if %w{new editing submitted approved voting committed}.include? @publication.status
     %li
-      = link_to I18n.t('publication.commentslink'), {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe, :class => 'btn autosize'
-    - if @publication.allow_user_withdrawal?(@current_user)
+      = link_to "Download Copy", {:controller => 'publications', :id => @publication.id, :action => "download"}, :class => "btn revert bg-sdw"
+  - if @publication.allow_user_withdrawal?(@current_user)
+    %li
+      = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn revert bg-sdw autosize", :id => "withdraw_pub"
+  - if %w{approved voting finalizing}.include?(@publication.status)
+    %li
+      = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn revert bg-sdw autosize"
+  - if @publication.status == "committed"
+    %li
+      = link_to "Archive", {:controller => 'publications', :id => @publication.id, :action => "confirm_archive"}, :class => "btn revert bg-sdw"
+  - if @allow_delete
+    %li
+      = link_to "Delete", {:controller => 'publications', :id => @publication.id, :action => "confirm_delete"}, :class => "btn revert bg-sdw"
+  - if @current_user.developer
+    %li
+      = link_to "developer immediate delete", @publication, :method => :delete, :class => "btn revert bg-sdw"
+  -# if owner is a board, and it is approved, add a button to make me the finalizer
+  - if @publication.owner_type == "Board" && @publication.status == "approved"
+    -# if i am already the finalizer dont show the button
+    - finalizer = @publication.find_finalizer_user
+    - if !(finalizer && finalizer.id == @current_user.id)
       %li
-        = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn autosize", :id => "withdraw_pub"
-    - if @allow_delete
+        - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>@publication.id)
+        %div{:class => "info-square button"}
+          %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;', :title => "Make Me Finalizer"}
+            %i{:class => "fa fa-graduation-cap"}
+  - if %w{editing new}.include?(@publication.status)
+    - for class_type in @creatable_identifiers
+      - link_type = class_type.constantize::FRIENDLY_NAME
+      - create_type = 'Create new ' + link_type
+      - newstyle = 'style="color:white; background-color:#005DAA"'
       %li
-        = link_to "Delete", {:controller => 'publications', :id => @publication.id, :action => "confirm_delete"}, :class => "btn autosize"
-    - if %w{approved voting finalizing}.include?(@publication.status)
-      %li
-        = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn autosize"
-    - if @publication.status == "committed"
-      %li
-        = link_to "Archive", {:controller => 'publications', :id => @publication.id, :action => "confirm_archive"}, :class => "btn autosize"
-    - if @current_user.developer
-      %li
-        = link_to "developer immediate delete", @publication, :method => :delete, :class => "btn autosize"
-    - if %w{new editing submitted approved voting committed}.include? @publication.status
-      %li
-        = link_to "Download Copy", {:controller => 'publications', :id => @publication.id, :action => "download"}, :class => "btn autosize"
-    -# if owner is a board, and it is approved, add a button to make me the finalizer
-    - if @publication.owner_type == "Board" && @publication.status == "approved"
-      -# if i am already the finalizer dont show the button
-      - finalizer = @publication.find_finalizer_user
-      - if !(finalizer && finalizer.id == @current_user.id)
-        %li
-          - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>@publication.id)
-          %div{:class => "info-square button"}
-            %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;', :title => "Make Me Finalizer"}
-              %i{:class => "fa fa-graduation-cap"}
-    - if %w{editing new}.include?(@publication.status)
-      - for class_type in @creatable_identifiers
-        - link_type = class_type.constantize::FRIENDLY_NAME
-        - create_type = 'Create new ' + link_type
-        - newstyle = 'style="color:white; background-color:#005DAA"'
-        %li
-          - if class_type == 'APISIdentifier'
-            - options = ['Create new APIS'] << APISIdentifier.collection_names_hash.sort
-            - form_for :apis, :url => {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type} do |f|
-              = select_tag 'apis_collection', options_for_select(options.flatten.uniq), :onchange => "this.form.submit()"
-          - else
-            = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');", :class => 'btn autosize'})
+        - if class_type == 'APISIdentifier'
+          - options = ['Create new APIS'] << APISIdentifier.collection_names_hash.sort
+          - form_for :apis, :url => {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type} do |f|
+            = select_tag 'apis_collection', options_for_select(options.flatten.uniq), :onchange => "this.form.submit()"
+        - else
+          = link_to(create_type, options = {:controller => 'identifiers', :action => 'create', :publication_id => @publication.id, :identifier_type => class_type, :method => :post}, html_options = {:id => "#{link_type}", :onclick => "$('#{link_type}').replace('<b #{newstyle}>Creating New #{link_type}...</b>');", :class => 'btn revert bg-sdw'})

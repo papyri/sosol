@@ -1,53 +1,55 @@
-%h1
-  = "Community " + @community.format_name
-%b
-  Name:
-= @community.name
-%br 
+#main-wrapper
+  #container
+    %header
+      %h1
+        = "Community " + @community.format_name
+    .card
+      %b
+        Name:
+      = @community.name
+      %br
+      %b
+        Friendly name:
+      = @community.friendly_name
+      %br
 
-%b
-  Friendly name:
-= @community.friendly_name 
-%br
-   
-%b
-  Description:
-= @community.description
-%br
+      %b
+        Description:
+      = @community.description
+      %br
 
-%b
-  Allows Self-Signup:
-= @community.allows_self_signup
-%br
+      %b
+        Allows Self-Signup:
+      = @community.allows_self_signup
+      %br
 
-%b
-  Admins
-  %br 
-   
-- @community.admins.each do |a|
-  = a.human_name + " ( " + a.name + " )"
-  %br
-%br 
-  
-%b
-  Members
-  %br 
-- @community.members.each do |m|
-  = m.human_name + " ( " + m.name + " )"
-  %br 
-%br 
+      %b
+        Admins
+      %br
 
-%b
-  Boards
-  %br
-- @community.boards.each do |b|
-  = b.name
-  %br
-  
-= link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id
+      - @community.admins.each do |a|
+        = a.human_name + " ( " + a.name + " )"
+        %br
+      %br
 
-%br
-%br
+      %b
+        Members
+      %br
+      - @community.members.each do |m|
+        = m.human_name + " ( " + m.name + " )"
+        %br
+      %br
 
-= link_to 'Edit', edit_polymorphic_path([@community])  |
-= link_to 'Destroy', polymorphic_path([@community], :action=> :confirm_destroy) 
+      %b
+        Boards
+      %br
+      - @community.boards.each do |b|
+        = b.name
+        %br
+
+
+      %br
+
+      = link_to 'Edit', edit_polymorphic_path([@community]), :class => 'btn bg-sdw'
+      = link_to 'Destroy', polymorphic_path([@community], :action=> :confirm_destroy) , :class => 'btn bg-sdw'
+      = link_to 'Send Email Reminders', {:controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id}, :class => 'btn bg-sdw'

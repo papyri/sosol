@@ -41,6 +41,7 @@
       
     = render :partial => "common/flash_all_perseids"
 
+    = render :partial => 'action_bar'
     - if %w{new editing}.include?(@publication.status)
       #submit.card
         - if @show_submit
@@ -59,28 +60,25 @@
               = text_area_tag 'submit_comment', "", :class=>"input", :onkeyup => "checkForComment()", :cols => 70, :rows => 4
               = hidden_field_tag 'do_community_signup', @signup_communities.join(',')
               = hidden_field_tag 'do_community_confirm', @confirm_communities.join(',')
-              .columns
-                .text-center
-                  .select-container
-                    = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s}
-                    .carret
-                      %i{:class => "fa fa-caret-down"}
-                  = submit_tag "Submit to Boards", :onclick => 'this.disabled=true; jQuery(this).addClass("disabled"); this.form.submit();', :disabled => true, :class => 'disabled submit margin-left', :id => "submit_button"
+              .select-container.wide
+                = select_tag "community[id]", options_for_select(@submittable_communities, :selected => @publication.community_id.to_s), {:include_blank => true,:onchange => "confirmSignup() && checkForComment();", 'data-current' => @publication.community_id.to_s}
+                .carret
+                  %i{:class => "fa fa-caret-down"}
+              = submit_tag "Submit to Boards", :onclick => 'this.disabled=true; jQuery(this).addClass("disabled"); this.form.submit();', :disabled => true, :class => 'disabled submit margin-left', :id => "submit_button"
         - else
           %p
             %em
               Publication may not be submitted at this time.
           - if !@publication.modified?
             No changes have been made.
-    = render :partial => 'action_bar'
 
     - if @current_user.developer
       - if @publication.modified?
         %h1 MODIFIED PUBLICATION
 
-    .card
-      - for identifier in @publication.identifiers
-        - if identifier.class::is_visible
+    - for identifier in @publication.identifiers
+      - if identifier.class::is_visible
+        .card.no-bottom-margin
           %h2
             == #{identifier.class::FRIENDLY_NAME} -
             = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
@@ -92,8 +90,8 @@
             %p 
               = identifier.title
 
-          - if @publication.status != "archived"
-            = render :partial => identifier
+        - if @publication.status != "archived"
+          = render :partial => identifier
 
     - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
       .card
