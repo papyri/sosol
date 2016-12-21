@@ -86,13 +86,13 @@ function perseids_filters() {
   	event.preventDefault();
     jQuery("#validate-modal").hide();
   });
-  jQuery(".publication-items li").on("mouseenter", function() {
+  jQuery(".publication-items li").on("mouseenter", function(e) {
     e.preventDefault();
     var that = jQuery(this),
     	publication = that.parents(".publication").find(".legend");
     publication.find(".original").hide();
     publication.find(".alt-title").text(that.find("a").text()).show();
-  }).on("mouseleave", function() {
+  }).on("mouseleave", function(e) {
     e.preventDefault();
     var that = jQuery(this),
     publication = that.parents(".publication").find(".legend");
