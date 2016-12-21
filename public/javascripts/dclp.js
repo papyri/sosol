@@ -12,7 +12,7 @@ function workAuthorNumberChange(el){
 
 function editionLinkChange(el){
   var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview';
-  var updatee = el.identify().replace('link', 'biblioPreview');
+  var updatee = el.identify().replace('link', 'biblioPreview').replace('_value', '');
   new Ajax.Updater({ success: updatee}, url, { parameters: {biblio: el.getValue()}, onFailure: function(){ console.log(updatee); $(updatee).update('<i>Loading review data failed…</i>'); } });
 }
 
@@ -89,8 +89,8 @@ function multiAddEditionRaw(e){
   var editionIndex = multiGetNextIndex('edition');
 
   var item = '<li id="edition_0" class="edition" style="position: relative;">' +
-'  <label title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'principalEdition\']/listBibl/bibl" for="hgv_meta_identifier_edition_' + editionIndex + '_children_link" class="meta editionLink">Biblio</label>' +
-'  <input type="text" onchange="editionLinkChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][link]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_link" class="observechange editionLink">' +
+'  <label title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'principalEdition\']/listBibl/bibl" for="hgv_meta_identifier_edition_' + editionIndex + '_children_link_value" class="meta editionLink">Biblio</label>' +
+'  <input type="text" onchange="editionLinkChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][link][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_link_value" class="observechange editionLink">' +
 '  <label title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'principalEdition\']/listBibl/bibl" for="hgv_meta_identifier_edition_' + editionIndex + '_attributes_type" class="meta editionType">Type</label>' +
 '  <input type="hidden" value="publication" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][type]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_type" class="observechange editionType">' +
 '  <input type="hidden" value="principal" name="hgv_meta_identifier[edition][' + editionIndex + '][attributes][subtype]" id="hgv_meta_identifier_edition_' + editionIndex + '_attributes_subtype" class="observechange editionSubtype">' +
