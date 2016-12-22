@@ -470,8 +470,15 @@ class HGVMetaIdentifier < HGVIdentifier
           end
 
         else
+          if config[:xpath] =~ /\A.+\/@([A-Za-z]+)\Z/
+            attribute_name = $1
+            if parent = doc.elements[xpath_parent]
+              parent.attributes.delete attribute_name
+            end
+          else
+            doc.elements.delete_all config[:xpath]
+          end
 
-          doc.elements.delete_all config[:xpath]
           if parent = doc.elements[xpath_parent]
             if !parent.has_elements? && parent.texts.join.strip.empty?
               parent.elements['..'].delete parent
