@@ -558,7 +558,7 @@ class Publication < ActiveRecord::Base
   end
 
   def user_can_assign?(user)
-    self.community_id && self.community.allows_assignment && self.community.admins.include?(user)
+    self.community_id && self.community.allows_assignment > 0 && self.community.admins.include?(user)
   end
 
   def user_can_vote?(user)
@@ -566,7 +566,7 @@ class Publication < ActiveRecord::Base
     ! self.user_has_voted?(user.id) &&
     self.owner.users.include?(user) &&
     (! self.community_id ||
-     ! self.community.allows_assignment ||
+     self.community.allows_assignment == 0 ||
      self.assignments.select{|a| a.user == user }.size == 1
     )
 
@@ -1550,7 +1550,6 @@ class Publication < ActiveRecord::Base
   end
 
   def is_assignable?()
-    Rails.logger.info(self.community.to_s)
     self.community_id && self.community.allows_assignment > 0 && self.owner.class == Board && self.status == 'voting'
   end
 
