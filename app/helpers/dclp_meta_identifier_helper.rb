@@ -111,7 +111,7 @@ module DclpMetaIdentifierHelper
       # +Array+ of all String member attributes that have a TEI equivalent
       @@atomList          = [:type, :subtype, :ubertype, :language, :link]
 
-      attr_accessor :type, :subtype, :ubertype, :language, :link, :extraList, :preview
+      attr_accessor :type, :subtype, :ubertype, :language, :link, :biblioId, :extraList, :preview
 
       # Constructor
       # - *Args*  :
@@ -123,6 +123,7 @@ module DclpMetaIdentifierHelper
         @ubertype  = nil
         @language  = nil
         @link      = nil
+        @biblioId  = nil
         @extraList = []
         @preview   = nil
 
@@ -132,10 +133,16 @@ module DclpMetaIdentifierHelper
             if init[:edition][:attributes]
               self.populateAtomFromHash init[:edition][:attributes]
             end
-            if init[:edition][:children][:extra]
-              init[:edition][:children][:extra].each {|extra|
-                @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
-              }
+            if init[:edition][:children]
+              if init[:edition][:children][:link]
+                @link = init[:edition][:children][:link][:value]
+                @biblioId = @link.match(/\A.+\/(\d+)\Z/).captures
+              end
+              if init[:edition][:children][:extra]
+                init[:edition][:children][:extra].each {|extra|
+                  @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
+                }
+              end
             end
 
             #if init[:publication][:children] && init[:provenance][:children][:place]
