@@ -55,6 +55,9 @@
                     <xsl:element name="span">
                         <xsl:attribute name="class">sentence_prev</xsl:attribute>
                         <xsl:attribute name="data-s"><xsl:value-of select="$prev"/></xsl:attribute>
+                        <xsl:element name="i">
+                            <xsl:attribute name="class">fa fa-arrow-left</xsl:attribute>
+                        </xsl:element>
                         <xsl:text>Previous</xsl:text>
                     </xsl:element>
                 </xsl:if>
@@ -64,6 +67,9 @@
                         <xsl:attribute name="class">sentence_next</xsl:attribute>
                         <xsl:attribute name="data-s"><xsl:value-of select="$next"/></xsl:attribute>
                         <xsl:text>Next</xsl:text>
+                        <xsl:element name="i">
+                            <xsl:attribute name="class">fa fa-arrow-right</xsl:attribute>
+                        </xsl:element>
                     </xsl:element>
                 </xsl:if>
             </xsl:element>

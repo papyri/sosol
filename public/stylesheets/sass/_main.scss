@@ -264,6 +264,7 @@ ol.sentences {
 		}
 	}
 }
+
 .columns-btn {
 	display:flex;
 	flex-direction:row;
@@ -299,7 +300,10 @@ ol.sentences {
 		background-color: $COLOR_SUCCESS;
 	}
 	&.warning {
-		background-color: $COLOR_DANGER;
+		background-color: $COLOR_WARNING;
+	}
+	&.hints {
+		background-color: $COLOR_HINTS;
 	}
 }
 

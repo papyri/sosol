@@ -12,6 +12,7 @@
 	.checkbox {
 		height:$XS_BUTTON_HEIGHT;
 		vertical-align: middle;
+		background-color: $COLOR_FOREGROUND;
 		> input {
 			vertical-align: middle;
 		}

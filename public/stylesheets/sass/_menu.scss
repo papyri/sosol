@@ -122,7 +122,7 @@
 					line-height: $BUTTON_HEIGHT;
 					border-bottom:1px solid $COLOR_GRAY;
 					@extend .font-button;
-					color: black;
+					color: $COLOR_PRI;
 					text-decoration: none!important;
 					text-overflow: ellipsis;
 					overflow:hidden;
@@ -198,6 +198,7 @@
 		}
 		ul li {
 			a, a:visited, a:focus, a:link, a:active  {
+				color: $COLOR_LINKS;
 				height: $CARD_BUTTON_HEIGHT;
 				line-height: $CARD_BUTTON_HEIGHT;
 				img {

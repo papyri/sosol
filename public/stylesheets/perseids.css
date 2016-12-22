@@ -2367,7 +2367,7 @@
   font-size: 15px;
   line-height: 15px;
   text-decoration: underline;
-  color: black; }
+  color: #000090; }
 
 em {
   font-family: Roboto;
@@ -2390,7 +2390,7 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: #eceff1; }
+  background-color: #d6e0e6; }
 
 *,
 *:before,
@@ -2695,7 +2695,7 @@ ul.menu {
       color: #7986cb;
       line-height: 60px;
       text-align: center;
-      border-bottom: 5px solid #eceff1; }
+      border-bottom: 5px solid #d6e0e6; }
       @media (max-width: 1000px) {
         ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active {
           flex-direction: column;
@@ -2703,7 +2703,7 @@ ul.menu {
           line-height: 45px;
           font-size: 16px;
           border-bottom: 1px solid #bdbdbd;
-          border-right: 5px solid #eceff1; } }
+          border-right: 5px solid #d6e0e6; } }
       ul.menu > li > a:active, ul.menu > li > a.active, ul.menu > li > a:focus, ul.menu > li a:link:active, ul.menu > li a:link.active, ul.menu > li a:link:focus, ul.menu > li a:hover:active, ul.menu > li a:hover.active, ul.menu > li a:hover:focus, ul.menu > li a:visited:active, ul.menu > li a:visited.active, ul.menu > li a:visited:focus, ul.menu > li a:focus:active, ul.menu > li a:focus.active, ul.menu > li a:focus:focus, ul.menu > li a:active:active, ul.menu > li a:active.active, ul.menu > li a:active:focus {
         border-bottom: 5px solid #7986cb; }
         @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
@@ -2775,7 +2775,9 @@ ol.sentences {
   .flash-notice.notice {
     background-color: #1fa67a; }
   .flash-notice.warning {
-    background-color: #c9302c; }
+    background-color: #f57c00; }
+  .flash-notice.hints {
+    background-color: #1976d2; }
 
 ul.unstyled {
   padding: 0; }
@@ -2901,7 +2903,7 @@ ul.btns > li {
           height: 45px;
           line-height: 45px;
           border-bottom: 1px solid #bdbdbd;
-          color: black;
+          color: #7986cb;
           text-decoration: none !important;
           text-overflow: ellipsis;
           overflow: hidden; }
@@ -2942,6 +2944,7 @@ ul.btns > li {
     #main-menu .logins h3 {
       margin-bottom: 15px; }
     #main-menu .logins ul li a, #main-menu .logins ul li a:visited, #main-menu .logins ul li a:focus, #main-menu .logins ul li a:link, #main-menu .logins ul li a:active {
+      color: #000090;
       height: 60px;
       line-height: 60px; }
       #main-menu .logins ul li a img, #main-menu .logins ul li a:visited img, #main-menu .logins ul li a:focus img, #main-menu .logins ul li a:link img, #main-menu .logins ul li a:active img {
@@ -2970,7 +2973,8 @@ ul.btns > li {
   height: 60px; }
 .card .checkbox, .modal .checkbox {
   height: 45px;
-  vertical-align: middle; }
+  vertical-align: middle;
+  background-color: white; }
   .card .checkbox > input, .modal .checkbox > input {
     vertical-align: middle; }
   .card .checkbox > label, .modal .checkbox > label {
@@ -3405,7 +3409,7 @@ ul.btns > li {
   #filter fieldset {
     color: #7986cb;
     border: 5px solid #7986cb;
-    background-color: #eceff1;
+    background-color: #d6e0e6;
     line-height: 45px;
     display: block;
     padding: 0;
