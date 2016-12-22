@@ -1,12 +1,12 @@
-#main
- 
-  #users_list
-    %h2 Link to Usage Data for Each User
+%header
+  %h1 Link to Usage Data for Each User
+
+#users_list.card
+  %br
+  %br
+  - @users.each do |user|
+    = link_to(user.human_name, options = {:controller => 'user', :action => 'show', :user_name => user.name})
+    = "&nbsp; User name: ".html_safe + user.name
+    = "&nbsp; Member since ".html_safe
+    #{user.created_at.to_date.to_s(:long)}
     %br
-    %br
-    - @users.each do |user|
-      = link_to(user.human_name, options = {:controller => 'user', :action => 'show', :user_name => user.name})
-      = "&nbsp; User name: ".html_safe + user.name
-      = "&nbsp; Member since ".html_safe 
-      #{user.created_at.to_date.to_s(:long)}
-      %br
