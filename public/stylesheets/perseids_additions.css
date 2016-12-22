@@ -108,4 +108,10 @@
   height: 1em;
   font-size: inherit; }
 
+.oa_cite_annotation pre {
+  background-color: #eceff1;
+  width: 100%;
+  overflow: scroll;
+  font-family: "Courier New", Courier, monospace; }
+
 /*# sourceMappingURL=perseids_additions.css.map */
