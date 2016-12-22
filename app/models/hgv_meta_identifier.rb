@@ -153,39 +153,49 @@ class HGVMetaIdentifier < HGVIdentifier
   #   - or a single item depending of was the config parameter for +:multiple+ sais (either +true+ or +false+)
   def get_epidoc_attributes_tree doc, config
     tree = []
-    
-    doc.elements.each(config[:xpath]){|element|
-      node = {:value => '', :attributes => {}, :children => {}}
 
-      if config[:preFlag] && element.previous_element && config[:preFlag] == element.previous_element.name # CL: CROMULENT GEO HACK
-        node[:preFlag] = 'bei';
+    if config[:xpath] =~ /\A(.+)\/@([A-Za-z]+)\Z/ # for attributes
+      element_xpath  = $1
+      attribute_name = $2
+      if parent = doc.elements[element_xpath]
+        tree[tree.length] = {:value => parent.attributes[attribute_name], :attributes => {}, :children => {}}
       end
+    else # for elements
 
-      if element.name.to_s == 'origDate' # CL: CROMULENT DATE HACK
-        node[:value] = element.to_s.gsub(/[\s]+/, ' ').gsub(/<\/?[^>]*>/, "").strip
-      elsif element.text && !element.text.strip.empty?
-        node[:value] = element.text.strip
-      else
-        node[:value] = config[:default]
-      end
+      doc.elements.each(config[:xpath]){|element|
+        node = {:value => '', :attributes => {}, :children => {}}
 
-      if config[:attributes]
-        config[:attributes].each_pair{|attribute_key, attribute_config|
-          node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
-          if attribute_config[:split] && node[:attributes][attribute_key] && !node[:attributes][attribute_key].empty?
-            node[:attributes][attribute_key] = node[:attributes][attribute_key].split(!attribute_config[:split].empty? ? attribute_config[:split] : ' ')
-          end
-        }
-      end
+        if config[:preFlag] && element.previous_element && config[:preFlag] == element.previous_element.name # CL: CROMULENT GEO HACK
+          node[:preFlag] = 'bei';
+        end
 
-      if config[:children]
-        config[:children].each_pair{|child_key, child_config|
-          node[:children][child_key] = get_epidoc_attributes_tree element, child_config
-        }
-      end
-      
-      tree[tree.length] = node
-    }
+        if element.name.to_s == 'origDate' # CL: CROMULENT DATE HACK
+          node[:value] = element.to_s.gsub(/[\s]+/, ' ').gsub(/<\/?[^>]*>/, "").strip
+        elsif element.text && !element.text.strip.empty?
+          node[:value] = element.text.strip
+        else
+          node[:value] = config[:default]
+        end
+
+        if config[:attributes]
+          config[:attributes].each_pair{|attribute_key, attribute_config|
+            node[:attributes][attribute_key] = element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
+            if attribute_config[:split] && node[:attributes][attribute_key] && !node[:attributes][attribute_key].empty?
+              node[:attributes][attribute_key] = node[:attributes][attribute_key].split(!attribute_config[:split].empty? ? attribute_config[:split] : ' ')
+            end
+          }
+        end
+
+        if config[:children]
+          config[:children].each_pair{|child_key, child_config|
+            node[:children][child_key] = get_epidoc_attributes_tree element, child_config
+          }
+        end
+
+        tree[tree.length] = node
+      }
+
+    end
 
     return config[:multiple] ? tree : tree.first
   end
