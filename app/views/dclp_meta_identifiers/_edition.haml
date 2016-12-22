@@ -5,9 +5,10 @@
   = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
   .clear
   .multi.edition{:id => 'multi_edition'}
-    Search
-    %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} bibliography
-    on Papyri.info
+    Search bibliography on
+    %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} Papyri.info
+    or
+    %a{:href => 'http://www.trismegistos.org/text/' + @identifier.configuration.xpath(:tmNo), :target => '_blank'} Trismegistos
 
     - bibliographicalItems = @identifier[:edition]
     %hr
