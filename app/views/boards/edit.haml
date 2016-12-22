@@ -31,8 +31,9 @@
       %b
         Add classes:
       - @available_identifier_classes.each do |identifier_class|
-        = check_box_tag identifier_class
-        = identifier_class.sub(/Identifier$/,'')
+        .checkbox
+          = check_box_tag identifier_class
+          = identifier_class.sub(/Identifier$/,'')
       %br
     = f.submit "Update"
 

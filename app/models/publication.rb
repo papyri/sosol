@@ -558,7 +558,7 @@ class Publication < ActiveRecord::Base
   end
 
   def user_can_assign?(user)
-    self.community_id && self.community.admins.include?(user)
+    self.community_id && self.community.allows_assignment && self.community.admins.include?(user)
   end
 
   def user_can_vote?(user)
