@@ -11,9 +11,11 @@ function workAuthorNumberChange(el){
 /* **** E D I T I O N **** */
 
 function editionLinkChange(el){
-  var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview';
-  var updatee = el.identify().replace('link', 'biblioPreview').replace('_value', '');
-  new Ajax.Updater({ success: updatee}, url, { parameters: {biblio: el.getValue()}, onFailure: function(){ console.log(updatee); $(updatee).update('<i>Loading review data failed…</i>'); } });
+  if(el.getValue().match(/^\d+$/)){
+    var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_preview' : '/dclp_meta_identifiers/biblio_preview';
+    var updatee = el.identify().replace('link', 'biblioPreview').replace('_value', '');
+    new Ajax.Updater({ success: updatee}, url, { parameters: {biblio: el.getValue()}, onFailure: function(){ $(updatee).update('<i>Loading review data failed…</i>'); } });
+  }
 }
 
 function editionUbertypeChange(el) {
@@ -366,4 +368,5 @@ Event.observe(window, 'load', function() {
   $$('.editionubertype').each(function(el){el.observe('change', function(ev){ editionUbertypeChange(el); });});
   $$('.addEdition').each(function(el){el.observe('click', function(ev){ multiAddEditionRaw(el); });});
   $$('.addWork').each(function(el){el.observe('click', function(ev){ multiAddWork(el); });});
+  $$('input.editionLink').each(function(el){editionLinkChange(el);});
 });
