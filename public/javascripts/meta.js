@@ -597,6 +597,10 @@ function checkNotAddedMultiples(){
   multiAdd('translationsEs');
   multiAdd('translationsLa');
   multiAdd('translationsFr');
+  multiAdd('printedIllustration');
+  multiAdd('onlineResource', 'children_link_attributes_target');
+  multiAdd('collectionList');
+  multiAdd('keywords');
 }
 
 function complementPlace(key, data){
