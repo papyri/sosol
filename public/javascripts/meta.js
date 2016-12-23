@@ -98,19 +98,21 @@ function toggleMentionedDates(dateId){
 
 function multiAdd(id, pathToActualValue)
 {
-  var value = $$('#multiPlus_' + id + ' > input')[0].value;
-  var idSuffix   = typeof pathToActualValue !== 'undefined' ? '_' + pathToActualValue : '';
-  var nameSuffix = typeof pathToActualValue !== 'undefined' ? '[' + pathToActualValue.replace(/_/g, '][') + ']' : '';
+  if($$('#multiPlus_' + id + ' > input') && $$('#multiPlus_' + id + ' > input').length){
+    var value = $$('#multiPlus_' + id + ' > input')[0].value;
+    var idSuffix   = typeof pathToActualValue !== 'undefined' ? '_' + pathToActualValue : '';
+    var nameSuffix = typeof pathToActualValue !== 'undefined' ? '[' + pathToActualValue.replace(/_/g, '][') + ']' : '';
 
-  var index = multiGetNextIndex(id);
+    var index = multiGetNextIndex(id);
 
-  var item = '<li>' +
-             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']' + nameSuffix + '" id="hgv_meta_identifier_' + id + '_' + index + idSuffix + '" class="observechange">' +
-             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-             '  <span class="move">o</span>' +
-             '</li>';
+    var item = '<li>' +
+               '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']' + nameSuffix + '" id="hgv_meta_identifier_' + id + '_' + index + idSuffix + '" class="observechange">' +
+               '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+               '  <span class="move">o</span>' +
+               '</li>';
 
-  multiUpdate(id, item);
+    multiUpdate(id, item);
+  }
 }
 
 function multiAddCitedLiterature(){
@@ -574,15 +576,15 @@ function mentionedDateNewCertainty(selectbox)
 /**** check ****/
 
 function checkNotAddedMultiples(){
-  if($('mentionedDate_date').value.match(/-?\d{4}(-\d{2}(-\d{2})?)?/)){
+  if($('mentionedDate_date') && $('mentionedDate_date').value.match(/-?\d{4}(-\d{2}(-\d{2})?)?/)){
     multiAddMentionedDate();
   }
 
-  if($('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
+  if($('bl_volume') && $('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
     multiAddBl();
   }
-  
-  if($('figures_url').value.match(/http:\/\/.+/)){
+
+  if($('figures_url') && $('figures_url').value.match(/http:\/\/.+/)){
     multiAddFigures();
   }
 
