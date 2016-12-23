@@ -320,7 +320,13 @@ class HGVMetaIdentifier < HGVIdentifier
       return true
     elsif item.class == Hash && item[:children] && !item[:children].empty?
       item[:children].each_value{|child|
-        if elementHasAnyContent? child
+        if child.class == Array
+          child.each{|sibling|
+            if elementHasAnyContent? sibling
+              return true
+            end
+          }
+        elsif elementHasAnyContent? child
           return true
         end
       }
