@@ -1,14 +1,13 @@
 .editionContainer
   .clear
-  %a{:href => 'http://www.trismegistos.org/text/' + @identifier.configuration.xpath(:tmNo), :target => '_blank'}
-    = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
+  = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
   = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
   .clear
   .multi.edition{:id => 'multi_edition'}
     Search bibliography on
     %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} Papyri.info
-    or
-    %a{:href => 'http://www.trismegistos.org/text/' + @identifier.configuration.xpath(:tmNo), :target => '_blank'} Trismegistos
+    or view this record in
+    %a{:href => 'http://www.trismegistos.org/text/' + @identifier[:tmNo], :target => '_blank'} Trismegistos
 
     - bibliographicalItems = @identifier[:edition]
     %hr
