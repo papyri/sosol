@@ -404,14 +404,14 @@ module DclpMetaIdentifierHelper
             if init[:children][:author]
               @author = Author.new(init[:children][:author])
             end
-          #  if init[:children][:title]
-          #    @title = Title.new(init[:children][:title])
-          #  end
-          #  if init[:children][:extra]
-          #    init[:children][:extra].each {|extra|
-          #      @extraList << Extra.new(extra)
-          #    }
-          #  end
+            if init[:children][:title]
+              @title = Title.new(init[:children][:title])
+            end
+            if init[:children][:extra]
+              init[:children][:extra].each {|extra|
+                @extraList << Extra.new(extra)
+              }
+            end
           end
         end
       end

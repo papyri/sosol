@@ -704,9 +704,9 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:children].each_pair{|child_key, child_config|
           if child_config[:multiple]
             children = []
-            
+
             if data[:children]
-              x = data[:children][child_key].kind_of?(Hash) ? data[:children][child_key].values : data[:children][child_key]
+              x = data[:children][child_key].kind_of?(Hash) ? data[:children][child_key].values : (data[:children][child_key].kind_of?(Array) ? data[:children][child_key] : [])
               
               x.each{|child|
                 children[children.length] = populate_tree_from_attributes_hash child, child_config # recursion óla
@@ -714,7 +714,7 @@ class HGVMetaIdentifier < HGVIdentifier
             end
             result_item[:children][child_key] = children
           else
-            result_item[:children][child_key] = populate_tree_from_attributes_hash  data['children'][child_key], child_config # recursion óla
+            result_item[:children][child_key] = populate_tree_from_attributes_hash data['children'][child_key], child_config # recursion óla
           end
         }
       end
