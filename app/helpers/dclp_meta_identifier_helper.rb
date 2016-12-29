@@ -217,48 +217,52 @@ module DclpMetaIdentifierHelper
     end
     
     def DclpWork.getIdFromUrl(urlList, type)
-      id = ''
-      urlList.each{|url|
-        case type
-        when :tlg
-          if /\A.*tlg(?<id>\d+)\Z/ =~ url
-            return id
+      if urlList
+        id = ''
+        urlList.each{|url|
+          case type
+          when :tlg
+            if /\A.*tlg(?<id>\d+)\Z/ =~ url
+              return id
+            end
+          when :tm
+            if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
+              return id
+            end
+          when :stoa
+            if /\A.*stoa(?<id>\d+)\Z/ =~ url
+              return id
+            end
+          when :phi
+            if /\A.*phi(?<id>\d+)\Z/ =~ url
+              return id
+            end
+          when :cwkb
+            if /\A.*cwkb\.org\/(author|work).*[^\d](?<id>\d+)[^\d].*\Z/ =~ url
+              return id
+            end
+          else
+            return nil
           end
-        when :tm
-          if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
-            return id
-          end
-        when :stoa
-          if /\A.*stoa(?<id>\d+)\Z/ =~ url
-            return id
-          end
-        when :phi
-          if /\A.*phi(?<id>\d+)\Z/ =~ url
-            return id
-          end
-        when :cwkb
-          if /\A.*cwkb\.org\/(author|work).*[^\d](?<id>\d+)[^\d].*\Z/ =~ url
-            return id
-          end
-        else
-          return nil
-        end
-      }
+        }
+      end
       return nil
     end
     
     def DclpWork.getLanguageFromUrl(urlList)
-      language = ''
-      urlList.each{|url|
-        if /(?<language>greek|latin)/ =~ url
-          case language
-            when 'latin'
-              return 'la'
-            when 'greek'
-              return 'grc'
+      if urlList
+        language = ''
+        urlList.each{|url|
+          if /(?<language>greek|latin)/ =~ url
+            case language
+              when 'latin'
+                return 'la'
+              when 'greek'
+                return 'grc'
+            end
           end
-        end
-      }
+        }
+      end
       return nil
     end
 
@@ -269,7 +273,7 @@ module DclpMetaIdentifierHelper
         @name      = init[:value]
         
 
-        @ref       = init[:attributes][:ref]
+        @ref       = init[:attributes][:ref] ? init[:attributes][:ref] : []
         @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
@@ -290,7 +294,7 @@ module DclpMetaIdentifierHelper
       def initialize init = nil
         @name      = init[:value]
         
-        @ref       = init[:attributes][:ref]
+        @ref       = init[:attributes][:ref] ? init[:attributes][:ref] : []
         @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DclpWork.getIdFromUrl(@ref, :tm)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
@@ -400,17 +404,14 @@ module DclpMetaIdentifierHelper
             if init[:children][:author]
               @author = Author.new(init[:children][:author])
             end
-            if init[:children][:title]
-              @title = Title.new(init[:children][:title])
-            end
-            if init[:children][:extra]
-              init[:children][:extra].each {|extra|
-                @extraList << Extra.new(extra)
-              }
-              
-             @extraList << Extra.new({:value => 'and'})
-             @extraList << Extra.new({:value => '23', :unit => 'volume'})
-            end
+          #  if init[:children][:title]
+          #    @title = Title.new(init[:children][:title])
+          #  end
+          #  if init[:children][:extra]
+          #    init[:children][:extra].each {|extra|
+          #      @extraList << Extra.new(extra)
+          #    }
+          #  end
           end
         end
       end
