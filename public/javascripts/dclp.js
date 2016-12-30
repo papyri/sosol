@@ -220,8 +220,8 @@ function multiAddWork(e){
 '                      <label class="meta workAuthorPhi" for="hgv_meta_identifier_work_' + workIndex +'_children_author_phi">Phi</label>' +
 '                      <input class="observechange workAuthorPhi" id="hgv_meta_identifier_work_' + workIndex +'_children_author_phi" name="hgv_meta_identifier[work][' + workIndex +'][children][author][phi]" type="text">' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_author_certainty">Certainty</label>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_certainty" name="hgv_meta_identifier[work][' + workIndex +'][children][author][certainty]" type="text">' +
+'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value">Certainty</label>' +
+'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][children][certainty][value]" type="text">' +
 '                      <div class="clear"></div>' +
 '                      <label class="meta workCorresp" for="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp">Corresp</label>' +
 '                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][author][corresp]" type="text">' +
@@ -264,15 +264,15 @@ function multiAddWork(e){
 '                      <label class="meta workTitleTm" for="hgv_meta_identifier_work_' + workIndex +'_children_title_tm">TM</label>' +
 '                      <input class="observechange workTitleTm" id="hgv_meta_identifier_work_' + workIndex +'_children_title_tm" name="hgv_meta_identifier[work][' + workIndex +'][children][title][tm]" type="text">' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workDate workDateFrom" for="hgv_meta_identifier_work_' + workIndex +'_children_title_date_from">Year of Creation</label>' +
-'                      <input class="observechange workDate workDateFrom" id="hgv_meta_identifier_work_' + workIndex +'_children_title_date_from" name="hgv_meta_identifier[work][' + workIndex +'][children][title][date][from]" type="text">' +
+'                      <label class="meta workDate workDateFrom" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_from">Year of Creation</label>' +
+'                      <input class="observechange workDate workDateFrom" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_from" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][date][attributes][from]" type="text">' +
 '                      <label class="meta workDate workDateTo" for="hgv_meta_identifier_work_' + workIndex +'_children_title_date_to">to</label>' +
-'                      <input class="observechange workDate workDateTo" id="hgv_meta_identifier_work_' + workIndex +'_children_title_date_to" name="hgv_meta_identifier[work][' + workIndex +'][children][title][date][to]" type="text">' +
+'                      <input class="observechange workDate workDateTo" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_to" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][date][attributes][to]" type="text">' +
 '                      <div class="clear"></div>' +
 '                      e.g. -412 to 120' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_title_certainty">Certainty</label>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_certainty" name="hgv_meta_identifier[work][' + workIndex +'][children][title][certainty]" type="text">' +
+'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value">Certainty</label>' +
+'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="text">' +
 '                      <div class="clear"></div>' +
 '                      <label class="meta workCorresp" for="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp">Corresp</label>' +
 '                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][title][corresp]" type="text">' +
@@ -338,7 +338,7 @@ function multiAddWorkExtra(plusButton){
 '                              <option value="side">Side</option>' +
 '                              <option value="generic">Generic</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
-'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_certainty" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][certainty]" type="text">' +
+'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="text">' +
 '                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="text">' +
 '                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +

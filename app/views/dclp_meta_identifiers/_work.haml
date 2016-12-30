@@ -36,8 +36,8 @@
           = text_field_tag baseChildren + '[author][phi]', (work.author ? work.author.phi : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorPhi'
           .clear
 
-          = label_tag baseChildren + '[author][children][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][children][certainty]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = label_tag baseChildren + '[author][children][certainty][value]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[author][children][certainty][value]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
@@ -71,17 +71,17 @@
           = text_field_tag baseChildren + '[title][tm]', (work.title ? work.title.tm : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleTm'
           .clear
           
-          = label_tag baseChildren + '[title][date][from]', I18n.t('dclp.label.workDate'), :class => 'meta workDate workDateFrom', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][date][from]', (work.title ? work.title.from : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateFrom'
+          = label_tag baseChildren + '[title][children][date][attributes][from]', I18n.t('dclp.label.workDate'), :class => 'meta workDate workDateFrom', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][children][date][attributes][from]', (work.title ? work.title.from : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateFrom'
           
-          = label_tag baseChildren + '[title][date][to]', I18n.t('dclp.label.workDateTo'), :class => 'meta workDate workDateTo', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][date][to]', (work.title ? work.title.to : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateTo'
+          = label_tag baseChildren + '[title][children][date][attributes][to]', I18n.t('dclp.label.workDateTo'), :class => 'meta workDate workDateTo', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][children][date][attributes][to]', (work.title ? work.title.to : ''), :disabled => !@identifier.mutable?, :class => 'observechange workDate workDateTo'
           .clear
           =I18n.t('dclp.help.workTitleDate')
           .clear
 
-          = label_tag baseChildren + '[title][children][certainty]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][children][certainty]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = label_tag baseChildren + '[title][children][certainty][value]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
+          = text_field_tag baseChildren + '[title][children][certainty][value]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
