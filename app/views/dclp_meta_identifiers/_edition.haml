@@ -1,6 +1,5 @@
 .editionContainer
   .clear
-  = @identifier[:edition]
   = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
   = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
   .clear

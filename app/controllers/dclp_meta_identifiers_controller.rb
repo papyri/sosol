@@ -77,12 +77,19 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         # get rid of empty extra/biblScopes/passages for editions/biblio
         if params[:hgv_meta_identifier][:edition]
           params[:hgv_meta_identifier][:edition].each_value{|edition|
-            if edition[:children] && edition[:children][:extra]
-              edition[:children][:extra].each_pair{|key, extra|
-                if extra[:value].empty?
-                  edition[:children][:extra].delete key
-                end
-              }
+            if edition[:children]
+              # delete title if there is a biblio id
+              if edition[:children][:link] && edition[:children][:link] && edition[:children][:link][:value] && (edition[:children][:link][:value] =~ /\A\d+\Z/)
+                edition[:children].delete :title
+              end
+
+              if edition[:children][:extra]
+                edition[:children][:extra].each_pair{|key, extra|
+                  if extra[:value].empty?
+                    edition[:children][:extra].delete key
+                  end
+                }
+              end
             end
           }
         end
@@ -99,6 +106,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         if params[:hgv_meta_identifier][:onlineResource]
           params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
         end
+
       end
     end
 
