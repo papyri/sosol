@@ -136,6 +136,12 @@ module DclpMetaIdentifierHelper
             if init[:edition][:attributes]
               self.populateAtomFromHash init[:edition][:attributes]
             end
+
+            @ubertype = @subtype
+            if @type == 'edition'
+              @ubertype = 'principal'
+            end
+
             if init[:edition][:children]
               if init[:edition][:children][:link]
                 @link = init[:edition][:children][:link][:value]
@@ -154,12 +160,6 @@ module DclpMetaIdentifierHelper
                 }
               end
             end
-
-            #if init[:publication][:children] && init[:provenance][:children][:place]
-            #  init[:provenance][:children] && init[:provenance][:children][:place].each{|place|
-            #    self.addPlace(HgvGeo::Place.new(:place => place))
-            #  }
-            #end
 
           else
             self.populateAtomFromHash init
