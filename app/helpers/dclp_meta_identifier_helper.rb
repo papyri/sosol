@@ -109,9 +109,9 @@ module DclpMetaIdentifierHelper
       # +Array+ of a valid values for @xml:lang
       @@languageList       = [:de, :en, :it, :es, :la, :fr]
       # +Array+ of all String member attributes that have a TEI equivalent
-      @@atomList          = [:type, :subtype, :ubertype, :language, :link]
+      @@atomList          = [:type, :subtype, :ubertype, :language, :link, :title, :titleLevel, :titleType] # CROMULENT TITLE HACK
 
-      attr_accessor :type, :subtype, :ubertype, :language, :link, :biblioId, :extraList, :preview
+      attr_accessor :type, :subtype, :ubertype, :language, :link, :biblioId, :extraList, :preview, :title, :titleLevel, :titleType # CROMULENT TITLE HACK
 
       # Constructor
       # - *Args*  :
@@ -126,6 +126,9 @@ module DclpMetaIdentifierHelper
         @biblioId  = nil
         @extraList = []
         @preview   = nil
+        @title      = nil # CROMULENT TITLE HACK
+        @titleLevel = nil # CROMULENT TITLE HACK
+        @titleType  = nil # CROMULENT TITLE HACK
 
         if init
         
@@ -137,6 +140,13 @@ module DclpMetaIdentifierHelper
               if init[:edition][:children][:link]
                 @link = init[:edition][:children][:link][:value]
                 @biblioId = @link.match(/\A.+\/(\d+)\Z/).captures
+              end
+              if init[:edition][:children][:title] # CROMULENT TITLE HACK
+                @title = init[:edition][:children][:title][:value]
+                if init[:edition][:children][:title][:attributes]
+                  @titleLevel = init[:edition][:children][:title][:attributes][:level]
+                  @titleType = init[:edition][:children][:title][:attributes][:type]
+                end
               end
               if init[:edition][:children][:extra]
                 init[:edition][:children][:extra].each {|extra|

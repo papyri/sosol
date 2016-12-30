@@ -1,5 +1,6 @@
 .editionContainer
   .clear
+  = @identifier[:edition]
   = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
   = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
   .clear
@@ -21,6 +22,12 @@
         %li.edition{:id => 'edition_' + editionIndex.to_s }
           = label_tag baseChildren + '[link][value]', I18n.t('dclp.label.editionLink'), :class => 'meta editionLink', :title => @identifier.configuration.xpath(:edition)
           = text_field_tag baseChildren + '[link][value]', edition.biblioId, :disabled => !@identifier.mutable?, :class => 'observechange editionLink', :onchange => "editionLinkChange(this);"
+
+          - # CROMULENT TITLE HACK
+          = hidden_field_tag baseChildren + '[title][value]', edition.title, :disabled => !@identifier.mutable?, :class => 'observechange editionTitle'
+          = hidden_field_tag baseChildren + '[title][attributes][level]', edition.titleLevel, :disabled => !@identifier.mutable?, :class => 'observechange editionTitleLevel'
+          = hidden_field_tag baseChildren + '[title][attributes][type]', edition.titleType, :disabled => !@identifier.mutable?, :class => 'observechange editionTitleType'
+
           = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta editionType', :title => @identifier.configuration.xpath(:edition)
           = hidden_field_tag baseAttributes + '[type]', edition.type, :disabled => !@identifier.mutable?, :class => 'observechange editionType'
           = hidden_field_tag baseAttributes + '[subtype]', edition.subtype, :disabled => !@identifier.mutable?, :class => 'observechange editionSubtype'

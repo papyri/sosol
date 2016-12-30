@@ -215,6 +215,13 @@
           :name: xml:lang
           :pattern: /\A(de|en|it|es|la|fr)\Z/
       :children:
+        :title: # CROMULENT TITLE HACK
+          :xpath: title
+          :attributes:
+            :level:
+              :name: level
+            :type:
+              :name: type
         :link:
           :xpath: ptr/@target
         :extra:
