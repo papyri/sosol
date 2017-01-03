@@ -229,6 +229,13 @@ class HGVMetaIdentifier < HGVIdentifier
     populate_epidoc_attributes_from_attributes_hash(attributes_hash)
 
     epidoc = set_epidoc_attributes
+
+    # salvage xsugar formatted text
+    originalEpiDoc = content()
+    regExp = /<div [^>]*type=["']edition["'][^>]*>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>[^<>]+<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/div>/
+    originalText = originalEpiDoc[regExp]
+    epidoc.gsub!(regExp, originalText);
+
     Rails.logger.debug epidoc
 
     #set_content does not validate xml (which is what epidoc is)
