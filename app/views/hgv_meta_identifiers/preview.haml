@@ -121,3 +121,15 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:plannedForFuturePrintRelease]
+          -# DCLP
+          - collections = DclpObject::Collection.new(@identifier[:collection], @identifier[:collectionList])
+          - if collections.list
+            %tr
+              %th=I18n.t('dclp.label.collection')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - collections.list.each do |collectionItem|
+                    %li
+                      =collectionItem
