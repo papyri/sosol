@@ -138,6 +138,7 @@ en:
       addWork: add work
       mp3: MP3
       titleStmt: Display Name (Description)
+      archive: Archive
       archiveName: Archive Name
       archiveLink: Archive Link
       overview: Legacy Display Name
