@@ -133,3 +133,17 @@
                   - collections.list.each do |collectionItem|
                     %li
                       =collectionItem
+          - if @identifier[:archiveName] || @identifier[:archiveLink]
+            %tr
+              %th=I18n.t('dclp.label.archive')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                -if @identifier[:archiveLink]
+                  %a
+                    -if @identifier[:archiveName]
+                      =@identifier[:archiveName]
+                    -else
+                      ???
+                -else
+                  =@identifier[:archiveName]
