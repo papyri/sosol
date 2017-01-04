@@ -158,7 +158,7 @@
                     %li
                       %a{:href => onlineResource[:children][:link][:attributes][:target]}
                         = (onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] ? onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] : onlineResource[:children][:link][:attributes][:target])
-          - if @identifier[:work]
+          - if @identifier[:work] && !@identifier[:work].empty?
             %tr
               %th=I18n.t('dclp.legend.work')
               %td.edit
@@ -179,7 +179,7 @@
                         - if work.extraList
                           - work.extraList.each do |extra|
                             = extra.value
-          - if @identifier[:edition]
+          - if @identifier[:edition] && !@identifier[:edition].empty?
             %tr
               %th=I18n.t('dclp.legend.edition')
               %td.edit
