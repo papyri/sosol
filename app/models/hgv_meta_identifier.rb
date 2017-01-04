@@ -231,11 +231,7 @@ class HGVMetaIdentifier < HGVIdentifier
     epidoc = set_epidoc_attributes
 
     # salvage xsugar formatted text
-    originalEpiDoc = content()
-    #regExp = /<div [^>]*type=["']edition["'][^>]*>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>[^<>]+<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/div>/
-    regExp = /<div [^>]*type=["']edition["'][^>]*>([^<>]|<[^>]+\/>|<[^>]+>([^<>]|<[^>]+\/>|<[^>]+>[^<>]+<\/[^>]+>)+<\/[^>]+>)+<\/div>/
-    originalText = originalEpiDoc[regExp]
-    epidoc.sub!(regExp, originalText)
+    epidoc = epidoc.slice(0, getTextStart(epidoc)) + salvageText + epidoc[getTextEnd(epidoc)..-1]
 
     Rails.logger.debug epidoc
 
@@ -243,6 +239,36 @@ class HGVMetaIdentifier < HGVIdentifier
     #self.set_content(epidoc, :comment => comment)
     #set_xml_content validates xml
     self.set_xml_content(epidoc, :comment => comment)
+  end
+
+  def salvageText
+    originalEpiDoc = content()
+    originalEpiDoc.slice(getTextStart(originalEpiDoc), getTextLength(originalEpiDoc))
+  end
+
+  def getTextStart epiDocXml
+    epiDocXml.index(/<div [^>]*type=["']edition["'][^>]*>/)
+  end
+
+  def getTextEnd epiDocXml
+    startIndex = getTextStart epiDocXml
+    currentIndex = startIndex
+    scale = 1
+    safetyRope = 1024
+    while (scale > 0) && (safetyRope > 0)
+      currentIndex = epiDocXml.index(/(<div|<\/div)/, currentIndex + 1)
+      if epiDocXml.slice(currentIndex + 1, 1) == '/'
+        scale -= 1
+      else
+        scale += 1
+      end
+      safetyRope -= 1
+    end
+    currentIndex + '</div>'.length
+  end
+
+  def getTextLength epiDocXml
+    getTextEnd(epiDocXml) - getTextStart(epiDocXml)
   end
 
   # ?
