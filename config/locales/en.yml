@@ -129,6 +129,7 @@ en:
       object: Physical Description (Collection, Dimension, Layout, Material)
       general: General Notes
     label:
+      collection: Place, Collection, Inventory Number
       editionLink: Biblio
       illustration: Illustrations
       illustrationPrinted: Printed Images
