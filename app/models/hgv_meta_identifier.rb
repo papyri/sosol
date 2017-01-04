@@ -233,6 +233,7 @@ class HGVMetaIdentifier < HGVIdentifier
     # salvage xsugar formatted text
     originalEpiDoc = content()
     regExp = /<div [^>]*type=["']edition["'][^>]*>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>[^<>]+<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/div>/
+    regExp = /<div [^>]*type=["']edition["'][^>]*>([^<>]|<[^>]+\/>|<[^>]+>([^<>]|<[^>]+\/>|<[^>]+>[^<>]+<\/[^>]+>)+<\/[^>]+>)+<\/div>/
     originalText = originalEpiDoc[regExp]
     epidoc.sub!(regExp, originalText)
 
