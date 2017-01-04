@@ -234,7 +234,7 @@ class HGVMetaIdentifier < HGVIdentifier
     originalEpiDoc = content()
     regExp = /<div [^>]*type=["']edition["'][^>]*>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>(<[^>]+>[^<>]+<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/[^>]+>|<[^>]+\/>|[^<>])*<\/div>/
     originalText = originalEpiDoc[regExp]
-    epidoc.gsub!(regExp, originalText)
+    epidoc.sub!(regExp, originalText)
 
     Rails.logger.debug epidoc
 
