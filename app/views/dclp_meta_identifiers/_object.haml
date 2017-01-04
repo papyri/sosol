@@ -30,6 +30,6 @@
 .multi.collection
   - collection = DclpObject::Collection.new(@identifier[:collection], @identifier[:collectionList])
   %h5
-    Place, Collection, Inventory Number
+    =I18n.t('dclp.label.collection')
   = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => 'collectionList', :multiList => collection.list }
   .clear
