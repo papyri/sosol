@@ -192,3 +192,9 @@
                       - if edition.biblioId
                         %a{:href => 'http://papyri.info/biblio/' + edition.biblioId}
                           = edition.biblioId
+                      - if edition.title
+                        = edition.title
+                        = '(' + I18n.t('edition.ubertype.' + edition.ubertype) + ')'
+                      - if edition.extraList
+                        - edition.extraList.each do |extra|
+                          = extra.value
