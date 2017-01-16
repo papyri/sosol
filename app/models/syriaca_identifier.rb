@@ -70,7 +70,13 @@ class SyriacaIdentifier < Identifier
   # @overrides Identifier#titleize
   # uses name as title
   def titleize
-    title = self.name
+    xml = REXML::Document.new(self.xml_content).root
+    title = REXML::XPath.first(xml,'/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@level="a"]',{"tei" => NS_TEI})
+    if title 
+      title = title.text();
+    else
+      title = self.name;
+    end
     return title
   end
 
@@ -134,7 +140,7 @@ class SyriacaIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # links to the original gazetteer entry on syriaca
   def get_catalog_link
-    return self.name
+    ["View at Syriaca.org",self.name]
   end
 
 end

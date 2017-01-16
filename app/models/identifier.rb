@@ -646,7 +646,7 @@ class Identifier < ActiveRecord::Base
 
   ## get a link to the catalog for this identifier
   def get_catalog_link
-    NumbersRDF::NumbersHelper.identifier_to_url(self.name)
+    [Sosol::Application.config.site_catalog_search, NumbersRDF::NumbersHelper.identifier_to_url(self.name)]
   end
   
   ## create a default title for an identifier

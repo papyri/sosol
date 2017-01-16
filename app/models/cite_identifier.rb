@@ -164,7 +164,7 @@ class CiteIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # Currently no catalog for CiteIdentifiers
   def get_catalog_link
-    return ''
+    return []
   end
 
   # @overrides Identifier#titleize

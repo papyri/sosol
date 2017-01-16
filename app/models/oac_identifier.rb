@@ -23,7 +23,7 @@ class OACIdentifier < Identifier
   
   def get_catalog_link
    # no catalog for annotations right now
-   return ''
+   return []
   end
   
   def titleize
