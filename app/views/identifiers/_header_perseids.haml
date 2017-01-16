@@ -3,12 +3,14 @@
 %header
   %h1
     - if @identifier.publication.owner_type == "Board"
-      = "Review " + @identifier.publication.owner.friendly_name + " - "
+      = @identifier.publication.owner.friendly_name + " Reviewing - "
     %em
-      = @identifier.title
+      = @identifier.title 
   %h2
-    = " from publication "
-    = link_to @identifier.publication.title, @identifier.publication
+    %span 
+      (from
+      = link_to @identifier.publication.title, @identifier.publication
+      ) 
     
   -#- if @identifier.publication.owner_type == "User"
   -#  #submit
