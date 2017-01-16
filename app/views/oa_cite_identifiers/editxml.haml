@@ -8,6 +8,7 @@
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
 
+    = render :partial => "common/flash_all_perseids"
     .clearfix.card
       = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'input text xml-content'
 

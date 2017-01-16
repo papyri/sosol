@@ -155,43 +155,51 @@ class TreebankCiteIdentifier < CiteIdentifier
   #   - modified 'content'
   def preprocess(content)
     parser = XmlHelper::getDomParser(content,DOM_PARSER)
-    treebank = parser.parseroot
-    # make sure we have the creator saved as the annotator
-    creator_uri = make_annotator_uri
-    xpath = "annotator/uri"
-    all_annotators = parser.all(treebank, xpath)
-    add = true
-    all_annotators.each do |ann|
-      if  ann.text == creator_uri
-        add = false
+    begin
+      treebank = parser.parseroot
+    
+      # make sure we have the creator saved as the annotator
+      creator_uri = make_annotator_uri
+      xpath = "annotator/uri"
+      all_annotators = parser.all(treebank, xpath)
+      add = true
+      all_annotators.each do |ann|
+        if  ann.text == creator_uri
+          add = false
+        end
       end
-    end
-    if (add)
-      annotator = parser.make_elem("annotator")
-      short = parser.make_text_elem("short",nil,self.publication.creator.name)
-      persname = parser.make_text_elem("name",nil,self.publication.creator.human_name)
-      address = parser.make_text_elem("address",nil,self.publication.creator.email)
-      uri = parser.make_text_elem("uri",nil,creator_uri)
-      parser.add_child(annotator,short)
-      parser.add_child(annotator,persname)
-      parser.add_child(annotator,address)
-      parser.add_child(annotator,uri)
-      parser.insert_before(treebank,"sentence[1]",annotator)
-    end
-    content = parser.to_s
-    # autoadjust sentence numbering
-    result = JRubyXML.apply_xsl_transform_catch_messages(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite treebankrenumber.xsl})))
-    # TODO verify against correct schema for format
-    if (! result[:messages].nil? && result[:messages].length > 0)
-      # we don't want to immediately commit
-      # the revised content -- if there were messages
-      # we will store it separately to keep the full chain of history
-      self[:transform_messages] = result[:messages]
-      self[:postcommit] = result[:content]
-    else
+      if (add)
+        annotator = parser.make_elem("annotator")
+        short = parser.make_text_elem("short",nil,self.publication.creator.name)
+        persname = parser.make_text_elem("name",nil,self.publication.creator.human_name)
+        address = parser.make_text_elem("address",nil,self.publication.creator.email)
+        uri = parser.make_text_elem("uri",nil,creator_uri)
+        parser.add_child(annotator,short)
+        parser.add_child(annotator,persname)
+        parser.add_child(annotator,address)
+        parser.add_child(annotator,uri)
+        parser.insert_before(treebank,"sentence[1]",annotator)
+      end
+      content = parser.to_s
+      # autoadjust sentence numbering
+      result = JRubyXML.apply_xsl_transform_catch_messages(
+        JRubyXML.stream_from_string(content),
+        JRubyXML.stream_from_file(File.join(Rails.root,%w{data xslt cite treebankrenumber.xsl})))
+      # TODO verify against correct schema for format
+      if (! result[:messages].nil? && result[:messages].length > 0)
+        # we don't want to immediately commit
+        # the revised content -- if there were messages
+        # we will store it separately to keep the full chain of history
+        self[:transform_messages] = result[:messages]
+        self[:postcommit] = result[:content]
+      else
         content = result[:content]
+      end
+    rescue Exception => e
+      # invalid xml will cause a parser error - it will be
+      # caught at a later stage on the commit check against the
+      # schema so just log and move on 
+      Rails.logger.error("Error parsing #{e}")
     end
     return content
   end

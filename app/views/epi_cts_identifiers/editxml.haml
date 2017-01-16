@@ -12,6 +12,7 @@
 #edit
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
+    = render :partial => "common/flash_all_perseids"
     #ict_tool_wrapper
       #ict_tool{:class=> 'perseidsld_query_obj_simple', 'data-obj' => @identifier.work_urn, 'data-verb' => 'http://www.cidoc-crm.org/cidoc-crm/P138_represents', 'data-formatter' => 'imgspect_link', 'data-refs-verb' => 'http://purl.org/dc/terms/references', 'data-endpoint-verb' => 'http://data.perseus.org/rdfvocab/cite/imageServer' }
 
