@@ -195,6 +195,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
             Rails.logger.debug "-identifier-"
             Rails.logger.debug "title is: " +  pi.title
             Rails.logger.debug "was it modified?: " + pi.modified?.to_s
+            assert_equal "Beth Agre", pi.title
           end
 
           # set the community
