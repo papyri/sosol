@@ -810,6 +810,7 @@ Developer:
     #  @member_already_voted_on
     def find_board_publications(board_id, offset, max_voting=50)
       @board = Board.find_by_id(board_id)
+      show_all = ! @board.community_id || @board.community.allows_assignment == 0 || @board.community.admins.include?(@current_user) 
 
       #get publications for the member to finalize
       @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
@@ -817,13 +818,18 @@ Developer:
 
       #get publications that have been approved
       #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
-      @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
+      if show_all
+        @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
+      else
+        @approved_publications = []
+      end
 
       #remove approved publications if in the finalizer list
       @finalizing_publications.each do |fp|
         #remove it from the list of approved publications
+        #unless the user can reassign it
         @approved_publications.each do |ap|
-         if fp.origin == ap.origin
+         if fp.origin == ap.origin && ! ap.user_can_assign?(@current_user)
            @approved_publications.delete(ap)
          end
         end
@@ -861,10 +867,12 @@ Developer:
           needs_review ? p :nil
         end
       }.compact
-      if @needs_reviewing_publications.nil?
-        @member_already_voted_on = @board_voting_publications
-      else
-        @member_already_voted_on = @board_voting_publications - @needs_reviewing_publications
+      if show_all
+        if @needs_reviewing_publications.nil?
+          @member_already_voted_on = @board_voting_publications
+        else
+          @member_already_voted_on = @board_voting_publications - @needs_reviewing_publications
+        end
       end
 
       # move publications with votes to the front of the array

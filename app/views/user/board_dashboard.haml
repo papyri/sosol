@@ -1,22 +1,23 @@
 - has_finalizing = @finalizing_publications && @finalizing_publications.length > 0
 - has_voting = @needs_reviewing_publications && @needs_reviewing_publications.length > 0
 - has_approved = @approved_publications && @approved_publications.length > 0
+- page_title = @board.friendly_name 
+- if @board.community && @board.community.friendly_name
+  - page_title = page_title + " (" + @board.community.friendly_name + " community )"
+%header
+  %h1
+    = page_title
+= render "common/flash_all_perseids"
 .publications
-  - page_title = ""
-  - if @board.community && @board.community.friendly_name
-    - page_title = @board.community.friendly_name + " community "
-    - page_title = page_title + @board.friendly_name + " board"
-  %header
-    %h1
-      = page_title
-  = render "common/flash_all_perseids"
   .container-wrapper
     = render( :partial => 'publications/filter_board', :locals => { :has_finalizing => has_finalizing, :has_voting => has_voting, :has_approved => has_approved})
 
+    - can_assign = (@board.community_id && @board.community.allows_assignment > 0 && @board.community.admins.include?(@current_user))
     #voting-column.publication-container
       - if has_voting
+        - status = can_assign ? 'Voting (Assign Voter)' : 'Voting'
         .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Vote", :view_type => "board", :list_name => "needs_review" }
+          = render :partial => "publications/publication_header_perseids", :locals => {:status => status, :view_type => "board", :list_name => "needs_review" }
           = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
 
     #finalizing-column.publication-container
@@ -28,7 +29,8 @@
     #approved-column.publication-container
       - if has_approved
         .publication_list_holder
-          = render :partial => "publications/publication_header_perseids", :locals => {:status => "Approved", :view_type => "board", :list_name => "approved" }
+          - status = can_assign ? 'Approved (Reassign Finalizer)' : 'Approved'
+          = render :partial => "publications/publication_header_perseids", :locals => {:status => status, :view_type => "board", :list_name => "approved" }
           = render :partial => "publications/board_publication_listing_perseids", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
 
     -if @count > 50

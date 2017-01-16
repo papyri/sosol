@@ -43,7 +43,7 @@
                   - votes[action].each do |v|
                     %li
                       = v.user.human_name + " (" + v.user.name + ") "
-        - if can_assign && assignable_to.size > 0
+        - if list_name != "waiting" && can_assign && assignable_to.size > 0
           %div{:class => "info-square quickswitch",  "data-target" => ".assign"}
             %a{:href => "#"}
               %i{:class => "fa fa-user-plus"}

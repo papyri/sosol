@@ -734,7 +734,7 @@ class PublicationsController < ApplicationController
     end
 
     if params[:voters].blank?
-      flash[:error] = "You must assign a voter."
+      flash[:error] = "You must assign a voter. If none are selectable, you can clear existing assignments and reassign."
       redirect_to :controller => :user, :action => :board_dashboard, :board_id => @publication.owner.id.to_s
       return
     end
@@ -747,21 +747,24 @@ class PublicationsController < ApplicationController
     end
 
     updated = false
-    params[:voters].each do |voter|
+    # if more than one assignment is allowed, the assignment select will allow multiple
+    # and the param will be an array, otherwise just a single int
+    voters = params[:voters].respond_to?(:each) ? params[:voters] : [ params[:voters] ]
+    voters.each do |v|
+      voter = v.to_i
       Assignment.transaction do
         Rails.logger.info("Transaction start")
         @publication.lock!
-        #note that votes go to the publication's identifier
-        @assignment = Assignment.new()
-        @assignment.user_id = voter
-        @assignment.publication_id = @publication.id
-        @assignment.board_id = @publication.owner_id
-
         #double check that they have not already voted and are not already assigned
         if @publication.assignments.select{ |a| a.user_id == voter}.size == 0
           if @publication.user_has_voted?(voter)
             flash[:warning] = "Unable to assign a user who has already voted."
           else
+            #note that votes go to the publication's identifier
+            @assignment = Assignment.new()
+            @assignment.user_id = voter
+            @assignment.publication_id = @publication.id
+            @assignment.board_id = @publication.owner_id
             @assignment.save!
             updated = true
             # invalidate their cache since an action may have changed its status
