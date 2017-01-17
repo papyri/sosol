@@ -238,8 +238,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
             unassigned_session.assert_select "div#voting-column" do
               unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
             end
+            # waiting list should also be empty for non-admins
             unassigned_session.assert_select "div#publication_list_holder_waiting" do
-              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
             end
             unassigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_identifiers/#{syriaca_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
             unassigned_session.assert_select "#vote_submit", false
