@@ -11,9 +11,11 @@
     - community_ids = @current_user.boards.collect{ |b| b.community_id }
     - community_ids.uniq!
     - community_ids.compact!
-    - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+    - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id}) 
     - user_communities = @current_user.community_memberships
-    - all_communities = end_communities | user_communities
+    - admin_communities = @current_user.community_admins
+    - assigned_communities = Assignment.find_all_by_user_id(@current_user.id, :conditions => {:vote_id => nil }, :order => "updated_at DESC").select{|a| a.publication.community_id}.collect{|a|a.publication.community}
+    - all_communities = end_communities | user_communities | admin_communities | assigned_communities
     - if community_ids.length > 0
       - current_board_id  = nil
       - if @current_board
