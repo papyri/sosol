@@ -187,7 +187,7 @@ function multiAddEditionRaw(e){
 '  <span title="delete" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
 '  <span title="move" class="move">o</span>' +
 '</li>' +
-"<script>jQuery('.editionLink').autocomplete({ source: '/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });</script>";
+"<script>jQuery('.editionLink').autocomplete({ source: '/editor/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });</script>";
 
   multiUpdate('edition', item);
 }
@@ -370,3 +370,4 @@ Event.observe(window, 'load', function() {
   $$('.addWork').each(function(el){el.observe('click', function(ev){ multiAddWork(el); });});
   $$('input.editionLink').each(function(el){editionLinkChange(el);});
 });
+
