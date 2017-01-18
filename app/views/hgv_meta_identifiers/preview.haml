@@ -147,6 +147,26 @@
                       ???
                 -else
                   =@identifier[:archiveName]
+          - if @identifier[:layout]
+            %tr
+              %th=I18n.t('meta.label.layout')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td=@identifier[:layout]
+          - if @identifier[:scriptType]
+            %tr
+              %th=I18n.t('meta.label.scriptType')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td=@identifier[:scriptType]
+          - if @identifier[:printedIllustration]
+            %tr
+              %th=I18n.t('dclp.label.illustrationPrinted')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td
+                - @identifier[:printedIllustration].each do |printedIllustrationItem|
+                  = printedIllustrationItem
           - if @identifier[:onlineResource] && !@identifier[:onlineResource].empty?
             %tr
               %th=I18n.t('dclp.label.illustrationOnline')
