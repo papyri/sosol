@@ -38,7 +38,7 @@
       -if @identifier.can_import?
         %li
           = link_to 'Import', import_update_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
-    -elsif @identifier.class == SyriacaIdentifier
+    -elsif @identifier.class == SyriacaIdentifier || @identifier.class == SyriacaPersonIdentifier
       %li
         = link_to 'Edit', polymorphic_path([@identifier.publication, @identifier], :action => :editxml), :class => params[:action] == 'editxml' ? 'active' : ''
       %li

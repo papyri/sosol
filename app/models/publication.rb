@@ -1469,7 +1469,7 @@ class Publication < ActiveRecord::Base
       if i.class.to_s =~ /CiteIdentifier/
         has_cite = true
       end
-      if i.class.to_s =~ /SyriacaIdentifier/
+      if i.class.to_s =~ /SyriacaIdentifier|SyriacaPersonIdentifier/
         is_external = true
       end
       if i.class.to_s == "APISIdentifier"

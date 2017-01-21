@@ -84,12 +84,22 @@
         - if identifier.needs_reviewing?(@current_user.id)
           = image_tag('review_flag.png')
       %div{:class => 'details'}
-        %p
-          = identifier.title
-
+        .columns
+          .column
+            %p
+              = identifier.title
+          .column
+            %label Last edits (up to 5 shown):
+            %ul
+              - for commit in identifier.get_commits(5)
+                - message = commit[:message].split("\n").first || '(no message)'
+                %li
+                  = html_escape(message)
+                  %em 
+                    By: 
+                    = commit[:committer_name]
     - if @publication.status != "archived"
       = render :partial => identifier
-
 - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
   .card
     - if @all_comments != nil

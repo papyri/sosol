@@ -164,11 +164,11 @@ class Identifier < ActiveRecord::Base
   # Retrieve the commits made to a file in the repository
   # - *Returns* :
   #   - array of commits
-  def get_commits
+  def get_commits(max=10)
     # hack fix this to get 10 commits unti we can merge 
     # https://github.com/sosol/sosol/issues/81
     self.repository.get_log_for_file_from_branch(
-        self.to_path, self.branch, 10 
+        self.to_path, self.branch, max
     )
   end
 
