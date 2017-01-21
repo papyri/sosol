@@ -457,6 +457,18 @@ Sosol::Application.routes.draw do
       end
     end
 
+    resources :syriaca_person_identifiers do
+    
+      member do
+        get :history
+        get :raw_preview
+        get :preview
+        get :editxml
+        get :rename_review
+        put :updatexml
+      end
+    end
+
     # the cts_oac_identifier resource model is deprecated
     resources :cts_oac_identifiers do
     

@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'test_helper'
 require 'ddiff'
 
@@ -134,7 +135,6 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                                :name => "test_syriaca_community",
                                                :friendly_name => "testy agent",
                                                :allows_self_signup => true,
-                                               #:abbreviation => "tc",
                                                :description => "a syriaca comunity for testing",
                                                :pass_to => "mockagent",
                                                :allows_assignment => 1)
@@ -150,6 +150,27 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                             :choices => "ok")
           @test_agent_board.decrees << @test_agent_decree
           @place_file = File.read(File.join(File.dirname(__FILE__), 'data', '1000.xml'))
+
+          @test_person_community = FactoryGirl.create(:pass_through_community,
+                                               :name => "test_syriaca_oerson_community",
+                                               :friendly_name => "testy agent",
+                                               :allows_self_signup => true,
+                                               :description => "a syriaca person comunity for testing",
+                                               :pass_to => "mockagent",
+                                               :allows_assignment => 1)
+
+          @test_person_community.members << @community_user
+          @test_person_community.admins << @community_admin
+          @test_person_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestPersonBoard", :community_id => @test_person_community.id)
+          @test_person_board.users << @board_user
+          @test_person_decree = FactoryGirl.create(:count_decree,
+                                            :board => @test_person_board,
+                                            :trigger => 1.0,
+                                            :action => "approve",
+                                            :choices => "ok")
+          @test_agent_board.decrees << @test_agent_decree
+          @person_file = File.read(File.join(File.dirname(__FILE__), 'data', '1002.xml'))
+
 
 
           Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz syriaca community testing setup complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
@@ -276,6 +297,171 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
             meta_session.post 'publications/vote/' + board_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
               :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => syriaca_identifier.publication.id, :identifier_id => syriaca_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => syriaca_identifier.publication.id.to_s, :identifier_id => syriaca_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @test_agent_board.id.to_s, :choice => "ok" }
+
+            Rails.logger.debug "--flash is: " + meta_session.flash.inspect
+
+          end
+
+          #reload the publication to get the vote associations to go thru?
+          board_publication.reload
+
+          vote_str = "Votes on meta are: "
+          board_publication.votes.each do |v|
+            vote_str = vote_str + v.choice
+          end
+          Rails.logger.debug  vote_str
+
+          assert_equal 1, board_publication.votes.length, "publication should have one vote"
+          assert_equal 1, board_publication.children.length, "publication should have one child"
+
+          #vote should have changed publication to approved and put to finalizer
+          assert_equal "approved", board_publication.status, "publication not approved after vote"
+          Rails.logger.debug "--publication approved"
+
+          #now finalizer should have it
+          board_final_publication = board_publication.find_finalizer_publication
+
+          assert_equal board_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
+          Rails.logger.debug "---Meta Finalizer has publication"
+
+          board_final_identifier = board_final_publication.identifiers.first
+
+          #finalize the meta
+          open_session do |meta_finalize_session|
+
+            meta_finalize_session.post 'publications/' + board_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+              :comment => 'I agree is great and now it is final'
+
+            Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
+            Rails.logger.debug "----session data is: " + meta_finalize_session.session.to_hash.inspect
+            Rails.logger.debug meta_finalize_session.body
+          end
+
+          board_final_publication.reload
+          assert_equal "finalized", board_final_publication.status, "board final publication not finalized"
+
+          Rails.logger.debug "committed"
+
+          #compare the publications
+          #you must look at the output to check the results of the comparisons
+          #final and submitters' copy should have comments and votes
+          Rails.logger.debug "++++++++USER PUBLICATION++++++"
+          @creator_user.publications.first.log_info
+
+          board_publication.reload
+          Rails.logger.debug "++++++++meta BOARD PUBLICATION++++++"
+          board_publication.log_info
+
+          Rails.logger.debug "Compare user with meta finalizer publication"
+          compare_publications(@creator_user.publications.first, board_final_publication)
+          @publication.destroy
+
+          Rails.logger.debug "ENDED TEST: user creates and submits publication to syriaca community"
+        end
+
+        should "user creates and submits publication with person record to community"  do
+          Rails.logger.debug "BEGIN TEST: user creates and submits publication with person record to community"
+
+          assert_not_equal nil, @test_person_community, "Community not created"
+
+          #create a publication with a session
+          Rails.logger.debug "---Create A New Publication---"
+          open_session do |submit_session|
+            #submit_session.post 'api/v1/xmlitems/Syriaca?test_user_id=' + @creator_user.id.to_s, @place_file, "CONTENT_TYPE" => 'text/xml'
+            submit_session.post 'dmm_api/create/item/SyriacaPerson?test_user_id=' + @creator_user.id.to_s, @person_file, "CONTENT_TYPE" => 'text/xml'
+            Rails.logger.debug "--flash is: " + submit_session.flash.inspect
+            @publication = @creator_user.publications.first
+            @publication.log_info
+          end
+
+          Rails.logger.debug "---Publication Created---"
+          Rails.logger.debug "---Identifiers for publication " + @publication.title + " are:"
+
+          @publication.identifiers.each do |pi|
+            Rails.logger.debug "-identifier-"
+            Rails.logger.debug "title is: " +  pi.title
+            Rails.logger.debug "was it modified?: " + pi.modified?.to_s
+            assert_equal "ʿAbd al-Masih b. Naʿima of Homs — ", pi.title
+          end
+
+          # set the community
+          #open_session do |update_session|
+          #  update_session.put "api/v1/publications/#{@publication.id.to_s}" + '?test_user_id=' + @creator_user.id.to_s,
+          #    { :community_name => @test_agent_community.name }.to_json, "CONTENT_TYPE" => 'application/json'
+          #end
+
+          #submit to the community
+          Rails.logger.debug "---Submit Publication---"
+          open_session do |submit_session|
+            submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, :submit_comment => "I made a new pub", :community => { :id => @test_person_community.id.to_s }
+            assert_equal "Publication submitted to #{@test_person_community.friendly_name}.", submit_session.flash[:notice]
+            Rails.logger.debug "--flash is: " + submit_session.flash.inspect
+          end
+          @publication.reload
+
+          #now meta should have it
+          assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
+
+          Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
+
+          #board should have 1 publication
+          board_publications = Publication.find(:all, :conditions => { :owner_id => @test_person_board.id, :owner_type => "Board" } )
+          assert_equal 1, board_publications.length, "Board does not have 1 publication but rather, " + board_publications.length.to_s + " publications"
+
+          Rails.logger.debug "Community Board has publication"
+
+          #get the board publication
+          board_publication = board_publications.first
+
+          #find syriaca identifier
+          syriaca_person_identifier = board_publication.identifiers.first
+
+          assert board_publication.user_can_assign?(@community_admin)
+
+          # verify it doesn't appear on voting list for non-admins and that the user can't vote on it
+          open_session do |unassigned_session|
+            unassigned_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
+            unassigned_session.assert_select "div#voting-column" do
+              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
+            end
+            # waiting list should also be empty for non-admins
+            unassigned_session.assert_select "div#publication_list_holder_waiting", false
+
+            unassigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_person_identifiers/#{syriaca_person_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
+            unassigned_session.assert_select "#vote_submit", false
+
+          end
+
+          # verify it does appear on board view for admin and assign it
+          open_session do |admin_session|
+            admin_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @community_admin.id.to_s
+            admin_session.assert_select "div#voting-column" do
+              admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+            end
+            admin_session.post 'publications/assign/' + board_publication.id.to_s + '?test_user_id=' + @community_admin.id.to_s, \
+              :assignment => { :publication_id => board_publication.id }, \
+              :voters => [ @board_user.id.to_s ]
+          end
+
+          # verify it now appears on voting board view for assigned user
+          open_session do |assigned_session|
+            assigned_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
+            assigned_session.assert_select "div#voting-column" do
+              assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
+            end
+            assigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_person_identifiers/#{syriaca_person_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
+            assigned_session.assert_select "#vote_submit"
+          end
+
+
+          assert_not_nil  syriaca_person_identifier, "Did not find the syriaca identifier"
+          Rails.logger.debug "Found syriaca identifier, will vote on it"
+
+          #vote on meta publication
+          open_session do |meta_session|
+            meta_session.post 'publications/vote/' + board_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+              :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => syriaca_person_identifier.publication.id, :identifier_id => syriaca_person_identifier.id, :reason => "vote" }, \
+              :vote => { :publication_id => syriaca_person_identifier.publication.id.to_s, :identifier_id => syriaca_person_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @test_person_board.id.to_s, :choice => "ok" }
 
             Rails.logger.debug "--flash is: " + meta_session.flash.inspect
 

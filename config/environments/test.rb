@@ -48,7 +48,7 @@ Sosol::Application.configure do
   config.canonical_canonical_repository = config.canonical_repository
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
 
-  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OajCiteIdentifier,OaCiteIdentifier,TreebankCiteIdentifier,SyriacaIdentifier'
+  config.site_identifiers = 'AlignmentCiteIdentifier,APISIdentifier,BiblioIdentifier,CiteIdentifier,CommentaryCiteIdentifier,CTSInventoryIdentifier,DDBIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,HGVMetaIdentifier,HGVTransIdentifier,OajCiteIdentifier,OaCiteIdentifier,TreebankCiteIdentifier,SyriacaIdentifier,SyriacaPersonIdentifier'
 
   config.site_email_from='admin@localhost'
   config.action_mailer.default_url_options= { host: 'localhost' }

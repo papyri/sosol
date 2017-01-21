@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://syriaca.org/documentation/syriaca-tei-main.rnc" type="application/relax-ng-compact-syntax"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title level="a" xml:lang="en"><%= title %></title>
+                <sponsor>Syriaca.org: The Syriac Reference Portal</sponsor>
+                <funder>The Andrew W. Mellon Foundation</funder>
+                <funder>The National Endowment for the Humanities</funder>
+                <funder>The International Balzan Prize Foundation</funder>
+                <principal>David A. Michelson</principal>
+            </titleStmt>
+            <editionStmt>
+                <edition n="1.0"/>
+            </editionStmt>
+            <publicationStmt>
+                <authority>Syriaca.org: The Syriac Reference Portal</authority>
+                <idno type="URI"><%= id %></idno>
+                <availability>
+                    <licence target="http://creativecommons.org/licenses/by/3.0/">
+                        <p>Distributed under a Creative Commons Attribution 3.0 Unported License.</p>
+                    </licence>
+                </availability>
+                <date><%= Time.now.xmlschema %></date>
+            </publicationStmt>
+            <seriesStmt>
+              <p/>
+            </seriesStmt>
+            <sourceDesc>
+                <p>Born digital.</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <editorialDecl>
+                <p>This record created following the Syriaca.org guidelines. 
+                        Documentation available at: <ref target="http://syriaca.org/documentation">http://syriaca.org/documentation</ref>.</p>
+                <interpretation>
+                    <p>Approximate dates described in terms of centuries or partial centuries
+                            have been interpreted as documented in 
+                            <ref target="http://syriaca.org/documentation/dates.html">Syriaca.org Dates</ref>.</p>
+                </interpretation>
+            </editorialDecl>
+            <classDecl>
+                <taxonomy>
+                    <category xml:id="syriaca-headword">
+                        <catDesc>The name used by Syriaca.org for document titles, citation, and disambiguation. 
+                                These names have been created according to the Syriac.org guidelines for headwords: 
+                                <ref target="http://syriaca.org/documentation/headwords.html">http://syriaca.org/documentation/headwords.html</ref>.</catDesc>
+                    </category>
+                    <category xml:id="syriaca-anglicized">
+                        <catDesc>An anglicized version of a name, included to facilitate searching.</catDesc>
+                    </category>
+                </taxonomy>
+                <taxonomy>
+                    <category xml:id="syriaca-author">
+                        <catDesc>A person who is relevant to the Guide to Syriac Authors</catDesc>
+                    </category>
+                    <category xml:id="syriaca-saint">
+                        <catDesc>A person who is relevant to the Bibliotheca Hagiographica Syriaca.</catDesc>
+                    </category>
+                </taxonomy>
+            </classDecl>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="syr">Unvocalized Syriac of any variety or period</language>
+                <language ident="syr-Syrj">Vocalized West Syriac</language>
+                <language ident="syr-Syrn">Vocalized East Syriac</language>
+                <language ident="en">English</language>
+                <language ident="en-x-gedsh">Names or terms Romanized into English according to the standards 
+                        adopted by the Gorgias Encyclopedic Dictionary of the Syriac Heritage</language>
+                <language ident="ar">Arabic</language>
+                <language ident="fr">French</language>
+                <language ident="de">German</language>
+                <language ident="la">Latin</language>
+            </langUsage>
+        </profileDesc>
+        <revisionDesc status="draft">
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2016-08-17-04:00">Update persName texts nodes from new headwords.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#ngibson" when="2016-08-02+02:00" xml:id="change1005-1">Merged in Baumstark data</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-10-15-04:00">ADDED: Renumbered bibl xml:id attributes and source references to be sequential.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-10-15-04:00">ADDED: syriaca-computed-end for elements with date attributes</change>
+            <change who="http://syriaca.org/documentation/editors.xml#tcarlson" n="1.0" when="2014-07-31-05:00"> CREATED: person </change>
+        </revisionDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <listPerson>
+                <person xml:id="<%= n %>" ana="#syriaca-author"/>
+            </listPerson>
+        </body>
+    </text>
+</TEI>

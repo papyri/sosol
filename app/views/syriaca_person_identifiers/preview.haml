@@ -1,0 +1,13 @@
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+- if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier) && @identifier.publication.owner.users.include?(@current_user)
+  = render :partial => 'diffremote'
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.text_area :xml_content, :style => 'display:none;'
+#edit
+  = form_for @identifier, :url => { :action => :update }  do |f|
+    = f.error_messages
+
+    %label Preview
+
+    %iframe{:src => url_for(:action => 'raw_preview', :id => @identifier.id, :publication => @identifier.publication.id), :width => "100%", :height => "800px", :style => "padding: 5px;"}

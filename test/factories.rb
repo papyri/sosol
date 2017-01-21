@@ -28,6 +28,10 @@ FactoryGirl.define do
     "http://syriaca.org/place/#{n}"
   end
 
+  sequence :syriaca_person_identifier_string do |n|
+    "http://syriaca.org/person/#{n}"
+  end
+
   sequence :epi_cts_identifier_string do |n|
     "perseus/greekLit/tlg0012/tlg001/edition/perseus-grc#{n}"
   end
@@ -120,6 +124,10 @@ FactoryGirl.define do
     f.identifier_classes ['SyriacaIdentifier']
   end
 
+  factory :syriaca_person_community_board, :parent => :hgv_community_board do |f|
+    f.identifier_classes ['SyriacaPersonIdentifier']
+  end
+
 
   factory :user do |f|
     f.name { FactoryGirl.generate(:name) }
@@ -181,6 +189,10 @@ FactoryGirl.define do
 
   factory :SyriacaIdentifier do |f|
     f.name { FactoryGirl.generate(:syriaca_identifier_string) }
+  end
+
+  factory :SyriacaPersonIdentifier do |f|
+    f.name { FactoryGirl.generate(:syriaca_person_identifier_string) }
   end
 
   factory :community do |f|

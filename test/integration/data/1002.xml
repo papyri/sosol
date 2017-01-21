@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://syriaca.org/documentation/syriaca-tei-main.rnc" type="application/relax-ng-compact-syntax"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title level="a" xml:lang="en">ʿAbd al-Masih b. Naʿima of Homs — <foreign xml:lang="syr">ܥܒܕ ܡܫܝܚܐ ܒܪ ܥܒܕ ܐܠܠܗ ܒܪ ܢܐܥܡܗ ܚܡܨܝܐ</foreign>
+                </title>
+                <sponsor>Syriaca.org: The Syriac Reference Portal</sponsor>
+                <funder>The Andrew W. Mellon Foundation</funder>
+                <funder>The National Endowment for the Humanities</funder>
+                <funder>The International Balzan Prize Foundation</funder>
+                <principal>David A. Michelson</principal>
+                <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                <editor role="general" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
+                <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#tcarlson">Thomas A. Carlson</editor>
+                <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
+                <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#kheal">Kristian Heal</editor>
+                <respStmt>
+                    <resp>Data from Macuch, Abuna, De Urbina, Duval, Assemani (vols. 1-2), Chabot, Wright, and Brock collected, verified, reconciled, and entered by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#kheal">Kristian Heal</name>
+                </respStmt>
+                <respStmt>
+                    <resp>German data entry by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#skhader">Samer Khader</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Editing, document design, proofreading, data entry by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Matching with viaf.org records, data entry, data transformation, conversion to XML by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Editing, Syriac name entry, disambiguation research, conversion to XML by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#tcarlson">Thomas A. Carlson</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Arabic name entry by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#pkirlles">Philemon Kirlles</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Normalization of GEDSH dates and entry matching with viaf.org records by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#avawter">Alex Vawter</name>
+                </respStmt>
+            </titleStmt>
+            <editionStmt>
+                <edition n="1.0"/>
+            </editionStmt>
+            <publicationStmt>
+                <authority>Syriaca.org: The Syriac Reference Portal</authority>
+                <idno type="URI">http://syriaca.org/person/1002/tei</idno>
+                <availability>
+                    <licence target="http://creativecommons.org/licenses/by/3.0/">
+                        <p>Distributed under a Creative Commons Attribution 3.0 Unported License.</p>
+                        <p>This entry incorporates copyrighted material from the following work(s):
+                                    <listBibl>
+                                <bibl>
+                                    <ptr target="#bib1002-4"/>
+                                </bibl>
+                                <bibl>
+                                    <ptr target="#bib1002-3"/>
+                                </bibl>
+                            </listBibl>
+                            <note>used under a Creative Commons Attribution license <ref target="http://creativecommons.org/licenses/by/3.0/"/>
+                            </note>
+                        </p>
+                    </licence>
+                </availability>
+                <date>2016-12-09+01:00</date>
+            </publicationStmt>
+            <seriesStmt>
+                <title level="s">The Syriac Biographical Dictionary</title>
+                <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent">Jeanne-Nicole Mellon Saint-Laurent</editor>
+                <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
+                <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
+                <respStmt>
+                    <resp>Edited by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Edited by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent">Jeanne-Nicole Mellon Saint-Laurent</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Edited by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P.  Gibson</name>
+                </respStmt>
+                <respStmt>
+                    <resp>Edited by</resp>
+                    <name type="person" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
+                </respStmt>
+                <idno type="URI">http://syriaca.org/persons</idno>
+                <biblScope unit="vol" from="2" to="2">
+                    <title level="m">A Guide to Syriac Authors</title>
+                    <idno type="URI">http://syriaca.org/authors</idno>
+                </biblScope>
+            </seriesStmt>
+            <sourceDesc>
+                <p>Born digital.</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <editorialDecl>
+                <p>This record created following the Syriaca.org guidelines. 
+                        Documentation available at: <ref target="http://syriaca.org/documentation">http://syriaca.org/documentation</ref>.</p>
+                <interpretation>
+                    <p>Approximate dates described in terms of centuries or partial centuries
+                            have been interpreted as documented in 
+                            <ref target="http://syriaca.org/documentation/dates.html">Syriaca.org Dates</ref>.</p>
+                </interpretation>
+            </editorialDecl>
+            <classDecl>
+                <taxonomy>
+                    <category xml:id="syriaca-headword">
+                        <catDesc>The name used by Syriaca.org for document titles, citation, and disambiguation. 
+                                These names have been created according to the Syriac.org guidelines for headwords: 
+                                <ref target="http://syriaca.org/documentation/headwords.html">http://syriaca.org/documentation/headwords.html</ref>.</catDesc>
+                    </category>
+                    <category xml:id="syriaca-anglicized">
+                        <catDesc>An anglicized version of a name, included to facilitate searching.</catDesc>
+                    </category>
+                </taxonomy>
+                <taxonomy>
+                    <category xml:id="syriaca-author">
+                        <catDesc>A person who is relevant to the Guide to Syriac Authors</catDesc>
+                    </category>
+                    <category xml:id="syriaca-saint">
+                        <catDesc>A person who is relevant to the Bibliotheca Hagiographica Syriaca.</catDesc>
+                    </category>
+                </taxonomy>
+            </classDecl>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="syr">Unvocalized Syriac of any variety or period</language>
+                <language ident="syr-Syrj">Vocalized West Syriac</language>
+                <language ident="syr-Syrn">Vocalized East Syriac</language>
+                <language ident="en">English</language>
+                <language ident="en-x-gedsh">Names or terms Romanized into English according to the standards 
+                        adopted by the Gorgias Encyclopedic Dictionary of the Syriac Heritage</language>
+                <language ident="ar">Arabic</language>
+                <language ident="fr">French</language>
+                <language ident="de">German</language>
+                <language ident="la">Latin</language>
+            </langUsage>
+        </profileDesc>
+        <revisionDesc status="draft">
+            <change who="http://syriaca.org/documentation/editors.xml#ngibson" when="2016-12-09+01:00">Changed @xml:lang 'en-xsrp1' to 'en-x-srp1'</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2016-08-17-04:00">Update persName texts nodes from new headwords.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2016-08-16-04:00">Insert new headwords, new headword id ends with '-h'.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#ngibson" when="2016-08-02+02:00" xml:id="change1002-1">Merged in Baumstark data</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2016-06-20-04:00">Move headword attribute from Gedesh to first English name.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-10-15-04:00">ADDED: Renumbered bibl xml:id attributes and source references to be sequential.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-10-15-04:00">ADDED: Add alternate names for search functionality.</change>
+            <change who="http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-10-15-04:00">ADDED: syriaca-computed-end for elements with date attributes</change>
+            <change who="http://syriaca.org/documentation/editors.xml#tcarlson" n="1.0" when="2014-07-31-05:00"> CREATED: person </change>
+        </revisionDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <listPerson>
+                <person xml:id="person-1002" ana="#syriaca-author">
+                    <persName xml:id="name1002-h" xml:lang="en" resp="http://syriaca.org" syriaca-tags="#syriaca-headword">
+                        <forename sort="1">ʿAbd al-Masih</forename>
+                        <addName type="family" sort="2">b. Naʿima</addName>
+                        <addName type="untagged-title" sort="2">of Homs</addName>
+                    </persName>
+                    <persName xml:id="name1002-1" xml:lang="en-x-gedsh" source="#bib1002-1">
+                        <forename sort="1">ʿAbd al-Masīḥ</forename>
+                        <addName type="family" sort="2">b. Nāʿima</addName>
+                        <addName type="untagged-title" sort="2">al-Ḥimṣī</addName>
+                    </persName>
+                    <persName xml:id="name1002-2" corresp="#name1002-3 #name1002-4 #name1002-5" xml:lang="en" source="#bib1002-2">
+                        <forename sort="1">‛Abd al-Masīḥ</forename>
+                        <addName type="family" sort="2">ibn ‛Abd Allah ibn Nā‛ima</addName>
+                        <addName type="untagged-title" sort="2">of Ḥomṣ</addName>
+                    </persName>
+                    <persName xml:id="name1002-3" corresp="#name1002-2 #name1002-4 #name1002-5" xml:lang="ar" source="#bib1002-3">
+                        <forename sort="1">عبد المسيح</forename>
+                        <addName type="family" sort="2">بن عبد الله ابن ناعمة</addName>
+                        <addName type="untagged-title" sort="2">الحمصي</addName>
+                    </persName>
+                    <persName xml:id="name1002-4" corresp="#name1002-2 #name1002-3 #name1002-5" xml:lang="syr" syriaca-tags="#syriaca-headword" source="#bib1002-4">
+                        <forename sort="1">ܥܒܕ ܡܫܝܚܐ</forename>
+                        <addName type="family" sort="2">ܒܪ ܥܒܕ ܐܠܠܗ ܒܪ ܢܐܥܡܗ</addName>
+                        <addName type="untagged-title" sort="2">ܚܡܨܝܐ</addName>
+                    </persName>
+                    <persName xml:id="name1002-5" corresp="#name1002-2 #name1002-3 #name1002-4" xml:lang="syr-Syrj" source="#bib1002-4">
+                        <forename sort="1">ܥܒܶܕ ܡܫܺܝܚܐ</forename>
+                        <addName type="family" sort="2">ܒܰܪ ܥܒܰܕ ܐܰܠܠܗ ܒܰܪ ܢܰܐܥܡܗ</addName>
+                        <addName type="untagged-title" sort="2">ܚܶܡܨܝܳܐ</addName>
+                    </persName>
+                    <persName xml:id="name1002-6" xml:lang="en-x-srp1" syriaca-tags="#syriaca-simplified-script">Abd al-Masīḥ b. Nāima al-Ḥimṣī</persName>
+                    <persName xml:id="name1002-7" xml:lang="en-x-srp1" syriaca-tags="#syriaca-simplified-script">‘Abd al-Masīḥ b. Nā‘ima al-Ḥimṣī</persName>
+                    <persName xml:lang="en" xml:id="name1002-8">ʿAbd al-Masīḥ b. Nāʿima</persName>
+                    <persName xml:lang="de-x-baumstrk" xml:id="name1002-9" source="#bib1002-5">
+                        <forename>ʿAbd al-Masîḥ</forename>
+                        <addName type="family">ibn Nāʿima</addName>
+                    </persName>
+                    <idno type="URI">http://syriaca.org/person/1002</idno>
+                    <idno type="URI">http://viaf.org/viaf/sourceID/SRP|person_1002</idno>
+                    <note type="abstract" xml:id="abstract-en-1002"/>
+                    <bibl xml:id="bib1002-1">
+                        <title level="m" xml:lang="en">The Gorgias Encyclopedic Dictionary of the Syriac Heritage</title>
+                        <ptr target="http://syriaca.org/bibl/1"/>
+                        <citedRange unit="pp">196</citedRange>
+                    </bibl>
+                    <bibl xml:id="bib1002-2">
+                        <title level="m" xml:lang="en">The Scattered Pearls: A History of Syriac Literature and Sciences</title>
+                        <ptr target="http://syriaca.org/bibl/4"/>
+                        <citedRange unit="pp">184</citedRange>
+                    </bibl>
+                    <bibl xml:id="bib1002-3">
+                        <title level="m" xml:lang="ar">كتاب اللؤلؤ المنثور في تاريخ العلوم والأداب السريانية</title>
+                        <ptr target="http://syriaca.org/bibl/2"/>
+                        <citedRange unit="pp">159</citedRange>
+                    </bibl>
+                    <bibl xml:id="bib1002-4">
+                        <title level="m" xml:lang="syr">ܒܪ̈ܘܠܐ ܒܕܝܪ̈ܐ ܕܥܠ ܡܪܕܘܬ ܝܘܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܗܕܝܪ̈ܐ</title>
+                        <ptr target="http://syriaca.org/bibl/3"/>
+                        <citedRange unit="pp">182</citedRange>
+                    </bibl>
+                    <bibl xml:id="bib1002-5">
+                        <title xml:lang="de">Baumstark, Geschichte der syrischen Literatur mit Ausschluß der christlich-palästinensischen Texte</title>
+                        <ptr target="http://syriaca.org/bibl/638"/>
+                        <citedRange unit="pp">230</citedRange>
+                    </bibl>
+                </person>
+            </listPerson>
+        </body>
+    </text>
+</TEI>
