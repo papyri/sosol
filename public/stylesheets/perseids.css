@@ -3497,7 +3497,7 @@ ul.btns > li {
   }
 }
 */
-[class^="icon-syriaca-"]:before, [class*=" icon-syriaca-"]:before, .icon-syriaca, .publication .publication-items > li.SyriacaIdentifier > a:before, #container .publications .new-bar .btn.SyriacaIdentifier:before, #container .publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container .publications .new-bar button.SyriacaIdentifier:before, .publication .publication-items > li.syriaca-sbd > a:before, #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
+[class^="icon-syriaca-"]:before, [class*=" icon-syriaca-"]:before, .icon-syriaca, .publication .publication-items > li.SyriacaIdentifier > a:before, #container .publications .new-bar .btn.SyriacaIdentifier:before, #container .publications .new-bar #filter button.SyriacaIdentifier:before, #filter #container .publications .new-bar button.SyriacaIdentifier:before, .publication .publication-items > li.SyriacaPersonIdentifier > a:before, #container .publications .new-bar .btn.SyriacaPersonIdentifier:before, #container .publications .new-bar #filter button.SyriacaPersonIdentifier:before, #filter #container .publications .new-bar button.SyriacaPersonIdentifier:before {
   font-family: "syriaca";
   font-style: normal;
   font-weight: normal;
@@ -3524,7 +3524,7 @@ ul.btns > li {
   content: '\e902'; }
 
 /* '' */
-.icon-syriaca-SBD:before, .publication .publication-items > li.syriaca-sbd > a:before, #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
+.icon-syriaca-SBD:before, .publication .publication-items > li.SyriacaPersonIdentifier > a:before, #container .publications .new-bar .btn.SyriacaPersonIdentifier:before, #container .publications .new-bar #filter button.SyriacaPersonIdentifier:before, #filter #container .publications .new-bar button.SyriacaPersonIdentifier:before {
   content: '\e906'; }
 
 /* '' */
@@ -3577,20 +3577,18 @@ ul.btns > li {
     text-align: center;
     width: 45px; }
 
-.publication .publication-items > li.syriaca-sbd {
+.publication .publication-items > li.SyriacaPersonIdentifier {
   background-color: #614f69; }
-  .publication .publication-items > li.syriaca-sbd > a:before {
+  .publication .publication-items > li.SyriacaPersonIdentifier > a:before {
     font-size: 22.5px;
     line-height: 45px;
     text-align: center;
     width: 45px; }
 
-#container .publications .new-bar .btn.syriaca-sbd, #container .publications .new-bar #filter button.syriaca-sbd, #filter #container .publications .new-bar button.syriaca-sbd {
+#container .publications .new-bar .btn.SyriacaPersonIdentifier, #container .publications .new-bar #filter button.SyriacaPersonIdentifier, #filter #container .publications .new-bar button.SyriacaPersonIdentifier {
   background-color: #614f69; }
-  #container .publications .new-bar .btn.syriaca-sbd:before, #container .publications .new-bar #filter button.syriaca-sbd:before, #filter #container .publications .new-bar button.syriaca-sbd:before {
+  #container .publications .new-bar .btn.SyriacaPersonIdentifier:before, #container .publications .new-bar #filter button.SyriacaPersonIdentifier:before, #filter #container .publications .new-bar button.SyriacaPersonIdentifier:before {
     font-size: 22.5px;
     line-height: 45px;
     text-align: center;
     width: 45px; }
-
-/*# sourceMappingURL=perseids.css.map */

@@ -1,4 +1,4 @@
 $SyriacaFontPath: "syriaca/fonts/";
 @import "syriaca_font"; /* Made with fontello. Don't forget to remove margin in the scss created with fontello */
 @include collection-item("SyriacaIdentifier", "icon-syriaca", "icon-syriaca-gazetteer", rgb(89, 45, 31), 0.5);
-@include collection-item("syriaca-sbd", "icon-syriaca", "icon-syriaca-SBD", rgb(97, 79, 105), 0.5);
+@include collection-item("SyriacaPersonIdentifier", "icon-syriaca", "icon-syriaca-SBD", rgb(97, 79, 105), 0.5);
