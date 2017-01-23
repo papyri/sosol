@@ -97,7 +97,7 @@
                   = html_escape(message)
                   %em 
                     By: 
-                    = commit[:committer_name]
+                    = commit[:committer_name].force_encoding("UTF-8")
     - if @publication.status != "archived"
       = render :partial => identifier
 - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
@@ -146,8 +146,8 @@
       %ul
         - for other_pub in @other_user_publications
           %li
-            = other_pub.creator.human_name
-            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{Sosol::Application.config.site_name} - Publication #{other_pub.title}")}>
+            = other_pub.creator.human_name.force_encoding("UTF-8")
+            == <#{mail_to(other_pub.creator.email, nil, :subject => "#{Sosol::Application.config.site_name} - Publication #{other_pub.title.force_encoding("UTF-8")}")}>
             == (last edited #{time_ago_in_words(other_pub.updated_at)} ago)
 
 
