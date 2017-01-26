@@ -94,7 +94,7 @@
               - for commit in identifier.get_commits(5)
                 - message = commit[:message].split("\n").first || '(no message)'
                 %li
-                  = html_escape(message)
+                  = html_escape(message.force_encoding("UTF-8"))
                   %em 
                     By: 
                     = commit[:committer_name].force_encoding("UTF-8")
