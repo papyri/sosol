@@ -11,8 +11,7 @@
 //------------------------------------------------------------
 = render :partial => 'identifiers/header_perseids'
 = render :partial => 'identifiers/edit_bar_perseids'
-- if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier) && @identifier.publication.owner.users.include?(@current_user)
-  = render :partial => 'diffremote'
+= render :partial => 'diffremote'
 #edit
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
