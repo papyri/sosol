@@ -61,6 +61,8 @@ module AgentHelper
         return UrlAgent.new()
     elsif (a_agent[:type] == 'github')
         return GitHubProxyAgent.new(a_agent)
+    elsif (a_agent[:type] == 'srophe_processor')
+        return SropheProcessorAgent.new(a_agent)
     else
       raise "Agent type #{a_agent[:type]} not supported"
     end
@@ -290,6 +292,40 @@ module AgentHelper
       else
         nil
       end
+    end
+  end
+
+  class SropheProcessorAgent
+    attr_accessor :conf
+    def initialize(a_conf)
+      @conf = a_conf
+    end
+
+    def post_content(content)
+      url = URI.parse(@conf[:post_url])
+      response = Net::HTTP.start(url.host, url.port) do |http|
+        headers = {'Content-Type' => 'text/xml; charset=utf-8',
+                   'apikey' => @conf[:apikey]}
+        if (@conf[:timeout])
+          http.read_timeout = conf[:timeout]
+        end
+        http.send_request('POST',url.request_uri,content,headers)
+      end
+      if (response.code != '200')
+        error = "Received error response #{response.code} #{response.msg} POSTING to #{url.request_uri}"
+        Rails.logger.error(error)
+        raise Exception.new(error)
+      else
+        new_content = response.body.force_encoding("UTF-8")
+        parser = XmlHelper::getDomParser(new_content,'REXML')
+        doc = parser.parseroot
+        tei = parser.first(doc, "/response[@status='okay']/record/tei:TEI", {'tei' => "http://www.tei-c.org/ns/1.0"})
+        return tei.to_s
+      end
+    end
+    
+    def to_s
+      @conf[:post_url]
     end
   end
 end

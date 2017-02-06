@@ -49,6 +49,22 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
         test = SyriacaIdentifier.new_from_template(@publication)
         assert test.is_valid_xml?
       end
+
+      should "preprocess_for_finalization" do 
+        test = SyriacaIdentifier.new_from_template(@publication)
+        mock_data  = File.read(File.join(File.dirname(__FILE__), 'data', 'srophe_processed.xml'))
+        @agent = stub("mockagent")
+        @client = stub("mockclient")
+        @client = stub("mockclient")
+        @client.stubs(:post_content).returns(mock_data)
+        @client.stubs(:get_transformation).returns(nil)
+        @client.stubs(:to_s).returns("mock srophe agent")
+        AgentHelper.stubs(:get_client).with(@agent).returns(@client)
+        AgentHelper.stubs(:agent_of).with(test.name).returns(@agent)
+        rc = test.preprocess_for_finalization("dummy")
+        assert rc
+        assert test.xml_content == mock_data
+      end
     end
 
   end

@@ -126,8 +126,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           @client = stub("mockclient")
           @client.stubs(:post_content).returns(201)
           @client.stubs(:get_transformation).returns(nil)
-          AgentHelper.stubs(:get_client).returns(@client)
-          AgentHelper.stubs(:agent_of).returns(@agent)
+          AgentHelper.stubs(:get_client).with(@agent).returns(@client)
+          AgentHelper.stubs(:agent_of).with('mockagent').returns(@agent)
 
           # a complete integration test would pass to a test instance of the flask-github-proxy
           #:pass_to => "https://github.com/perseids-project/srophe-app-data")
@@ -170,7 +170,16 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                             :choices => "ok")
           @test_agent_board.decrees << @test_agent_decree
           @person_file = File.read(File.join(File.dirname(__FILE__), 'data', '1002.xml'))
-
+        
+          @mock_data  = File.read(File.join(File.dirname(__FILE__), 'data', 'srophe_processed.xml'))
+          @ppagent = stub("mockagent2")
+          @ppclient = stub("mockclient2")
+          @ppclient.stubs(:post_content).returns(@mock_data)
+          @ppclient.stubs(:get_transformation).returns(nil)
+          @ppclient.stubs(:to_s).returns("mock srophe agent")
+          AgentHelper.stubs(:agent_of).with('http://syriaca.org/place/1000').returns(@ppagent)
+          AgentHelper.stubs(:agent_of).with('http://syriaca.org/person/1002').returns(@ppagent)
+          AgentHelper.stubs(:get_client).with(@ppagent).returns(@ppclient)
 
 
           Rails.logger.debug "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz syriaca community testing setup complete zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
@@ -218,6 +227,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
             Rails.logger.debug "was it modified?: " + pi.modified?.to_s
             assert_equal "Beth Agre", pi.title
           end
+
 
           # set the community
           #open_session do |update_session|
@@ -339,6 +349,11 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           board_final_publication.reload
           assert_equal "finalized", board_final_publication.status, "board final publication not finalized"
+          
+          # make sure the content was preprocessed
+          # preprocessed version has a new name entry
+          assert_match /name221-1c/, board_final_publication.identifiers.first.content
+ 
 
           Rails.logger.debug "committed"
 

@@ -143,4 +143,17 @@ class SyriacaIdentifier < Identifier
     ["View at Syriaca.org",self.name]
   end
 
+  # @overrides Identifier#preprocess_for_finalization
+  # Posts to Srophe normalization service
+  def preprocess_for_finalization(reviewed_by)
+    if self.status == 'finalizing-preprocessed'
+      return false
+    end 
+    agent = AgentHelper::agent_of(self.name)
+    agent_client = AgentHelper::get_client(agent)
+    updated = agent_client.post_content(self.content)
+    self.set_xml_content(updated,{:comment => "Preprocessed via #{agent_client.to_s}"})
+    self.status = "finalizing-preprocessed" # TODO check this 
+    return true
+  end
 end

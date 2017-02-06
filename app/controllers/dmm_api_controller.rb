@@ -328,7 +328,12 @@ class DmmApiController < ApplicationController
       begin
         # Reset the expiration time on the csrf cookie (should really be handled by OAuth)
         params[:raw_post] = request.raw_post.force_encoding("UTF-8") unless params[:raw_post]
-        agent = AgentHelper::agent_of(params[:raw_post])
+        begin
+          agent = AgentHelper::agent_of(params[:raw_post])
+        rescue Exception => e
+          Rails.logger.error(e)
+        end
+        
         unless (params[:comment])
           params[:comment] = "create_from_api"
         end

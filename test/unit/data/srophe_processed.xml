@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<TEI xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:syriaca="http://syriaca.org" xml:lang="en">
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:syriaca="http://syriaca.org" xml:lang="en">
     <teiHeader>
         <fileDesc>
             <titleStmt>
@@ -32,7 +31,7 @@
                         <p>Distributed under a Creative Commons Attribution 3.0 Unported License.</p>
                     </licence>
                 </availability>
-                <date>2014-01-14-05:00</date>
+                <date>2017-02-05-06:00</date>
             </publicationStmt>
             <seriesStmt>
                 <ab>Test</ab>
@@ -67,6 +66,7 @@
             </langUsage>
         </profileDesc>
         <revisionDesc status="published">
+            <change who="http://syriaca.org/documentation/editors.xml#srophe-admin-scripts" when="2017-02-05-06:00">Updated: Updated alternate names for search functionality, corrects bug in https://github.com/srophe/srophe-eXist-app/issues/874.</change>
             <change who=" http://syriaca.org/documentation/editors.xml#wsalesky" when="2014-01-14">ADDED: syriaca-computed-start and syriaca-computed-end attributes for searching</change>
             <change who=" http://syriaca.org/documentation/editors.xml#tcarlson" when="2013-12-18-05:00">CREATED: place</change>
         </revisionDesc>
@@ -78,6 +78,8 @@
                     <placeName xml:id="name1000-1" xml:lang="en" syriaca-tags="#syriaca-headword">Beth Agre</placeName>
                     <placeName xml:id="name1000-2" xml:lang="en" source="#bib1000-1">Beṯ Agre</placeName>
                     <placeName xml:id="name221-1" xml:lang="en" syriaca-tags="#syriaca-headword" source="#bib221-2">Ṭur ʿAbdin</placeName>
+                    <placeName xml:id="name221-1c" xml:lang="en-x-srp1" syriaca-tags="#syriaca-simplified-script">Ṭur Abdin</placeName>
+                    <placeName xml:id="name221-1d" xml:lang="en-x-srp1" syriaca-tags="#syriaca-simplified-script">Ṭur ‛Abdin</placeName>
                     <desc xml:id="abstract-en-1000" xml:lang="en"/>
                     <location type="nested" source="#bib1000-1">
                         <region ref="http://syriaca.org/place/722">Mosul region</region>
