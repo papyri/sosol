@@ -299,9 +299,11 @@ class TreebankCiteIdentifier < CiteIdentifier
   def matching_files(a_conditions)
     review_files = []
     check_targets = self.class::targets(self.xml_content)
+    # we enforce a hard limit of 50 to prevent the system from dying horribly
     if (check_targets) 
       pub_files = Publication.find(
         :all, 
+        :limit => 50,
         :conditions => a_conditions).collect { |p| 
           p.identifiers.select{|i| 
               i.class == TreebankCiteIdentifier &&
