@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryGirl.define do  
 
   sequence :name do |n|
     "name_#{n}"
@@ -151,6 +151,13 @@ FactoryGirl.define do
   factory :count_decree, :parent => :decree do |f|
     f.tally_method Decree::TALLY_METHODS[:count]
   end
+
+  factory :rule do |f|
+    f.expire_days 1
+    f.floor 1
+    f.association :decree
+  end
+
 
   factory :emailer do |f|
     f.association :board

@@ -584,11 +584,12 @@ class Publication < ActiveRecord::Base
   #
   #*Args*
   #- +user_votes+ the votes to be tallied. By default, the publicaiton's own votes are used.
+  #- +apply_rules+ whether or not to apply rules (default is false)
   #*Returns*
   #- +decree_action+ determined by the vote tally or +nil+ if no decree is triggered by the tally.
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
-  def tally_votes(user_votes = nil)
+  def tally_votes(user_votes = nil, apply_rules = false)
     user_votes ||= self.votes #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
@@ -606,7 +607,11 @@ class Publication < ActiveRecord::Base
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
       return "" #another check to make sure only the board is voting on its copy
     else
-      decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
+      if apply_rules
+        decree_action = self.owner.apply_rules(user_votes) #since board has decrees let them figure out the vote results
+      else
+        decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
+      end
     end
 
 
