@@ -155,7 +155,6 @@ FactoryGirl.define do
   factory :rule do |f|
     f.expire_days 1
     f.floor 1
-    f.association :decree
   end
 
 
