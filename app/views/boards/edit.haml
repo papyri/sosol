@@ -67,6 +67,9 @@
 
   - @board.decrees.each do |decree|
     = render :partial => decree
+    - if decree.rules
+      - decree.rules.each do |rule|
+        = render :partial => rule
 
   %h3{'style' => "display:inline;"}
     E-mails

@@ -1,5 +1,5 @@
 class Rule < ActiveRecord::Base
-  attr_accessible :expire_days, :floor
+  attr_accessible :expire_days, :floor, :decree_id
   belongs_to :decree
 
   def apply_rule?(votes)
@@ -10,7 +10,7 @@ class Rule < ActiveRecord::Base
       end
     end
     now = DateTime.now()
-    return (now >= last_date + self.expire_days.days) && self.decree.perform_action?(votes,self.floor)
+    return ! last_date.nil? && (now >= last_date + self.expire_days.days) && self.decree.perform_action?(votes,self.floor)
   end
 
 end

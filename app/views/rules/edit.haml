@@ -1,0 +1,29 @@
+%header
+  %h1
+    Editing rule for
+    = @rule.decree.board.title 
+    = "#{@rule.decree.action} Decree"
+.card
+  = form_for(@rule) do |f|
+    = f.error_messages
+    %p
+      = f.label "#{:floor} (#{@rule.decree.tally_method})"
+      = f.text_field :floor
+      %br
+      The 
+      = @rule.decree.tally_method 
+      floor to apply to the decree for this rule.
+    %br
+    %br
+    %p
+      = f.label "Apply how many days after last vote?"
+      = f.text_field :expire_days
+      %br
+      The number of days after the last vote at which the rule will be applicable.
+    %br
+    %br
+    %p
+      = f.hidden_field :decree_id
+    %p
+      = f.submit "Update"
+

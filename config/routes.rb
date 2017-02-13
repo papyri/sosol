@@ -91,6 +91,7 @@ Sosol::Application.routes.draw do
 
   resources :votes
   resources :decrees
+  resources :rules
   resources :docos
   resources :boards do
     collection do
@@ -108,6 +109,7 @@ Sosol::Application.routes.draw do
   get :add_member
   get :remove_member
   post :update_rankings
+  get :apply_rules
   end
   end
 

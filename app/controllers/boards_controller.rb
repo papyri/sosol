@@ -4,7 +4,7 @@ class BoardsController < ApplicationController
   #layout "header_footer"
   before_filter :authorize
   before_filter :check_admin, :only => [:index, :new, :create, :destroy, :rank, :update_rankings, :confirm_destroy, :send_board_reminder_emails]
-  before_filter :check_community_admin, :only => [:overview, :find_member, :add_member, :remove_member, :edit, :update, :show ]
+  before_filter :check_community_admin, :only => [:overview, :find_member, :add_member, :remove_member, :edit, :update, :show, :apply_rules, :confirm_apply_rules ]
 
 
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
@@ -251,6 +251,26 @@ class BoardsController < ApplicationController
       return
     end
     
+  end
+
+  def confirm_apply_rules
+    find_board
+  end
+
+  def apply_rules
+    find_board
+    notices = []
+    @publications = Publication.where({:owner_id => @board.id,  :status => :voting})
+    @publications.each do |p|
+      action = p.tally_votes(nil,true)
+      if action.nil? || action == ""
+        notices << "Rule thresholds not met for #{p.title}"
+      else
+        notices << "Initated #{action} for #{p.title}"
+      end
+    end
+    flash[:notice] = notices.join("<br/>")
+    redirect_to :controller => :user, :action => :board_dashboard, :board_id => @board.id
   end
 
 

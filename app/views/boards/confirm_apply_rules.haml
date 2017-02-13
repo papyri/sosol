@@ -1,0 +1,15 @@
+%header
+  %h1
+    Apply Decree Rules for
+    = @board.title
+.card
+  %div{:class => "card flash-notice warning"}
+    %i{:class => 'fa fa-info-circle'}
+    Are You Sure You Want to Apply These Decree Rules?
+  - @board.decrees.each do |decree|
+    = render :partial => decree, :locals => {:hide_edit_link => 'true'}
+    - if decree.rules
+      - decree.rules.each do |rule|
+        = render :partial => rule, :locals => {:hide_edit_link => 'true'}
+  = link_to "Apply", { :controller => :boards, :action => :apply_rules, :id => @board.id }, :class => 'btn bg-sdw'
+  = link_to "Cancel",{ :controller => :user, :action => :board_dashboard, :board_id => @board.id }, :class => 'btn bg-sdw'
