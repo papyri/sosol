@@ -80,6 +80,10 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
     :pagination:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
+    :width:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/width[@unit='cm']
+    :height:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/height[@unit='cm']
     #:ldab:
     #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
     #  :pattern: /\A\d+\Z/
