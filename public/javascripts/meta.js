@@ -669,7 +669,7 @@ Event.observe(window, 'load', function() {
   hideDateTabs();
 
   // submit
-  $('identifier_submit').observe('click', checkNotAddedMultiples);
+  $('identifier_submit').observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false();});
 
   $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('div#edit form')[0].submit();});});
 

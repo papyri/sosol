@@ -70,8 +70,10 @@ function rememberToggledView(){
       })[0] + ';';
     }
   });
-  
+
   $('expansionSet').value = expansionSet;
+
+  return expansionSet;
 }
 
 function showExpansions(){
@@ -93,6 +95,7 @@ function showExpansions(){
     }
   });
   $('expansionSet').value = '';
+  return flash;
 }
 
 

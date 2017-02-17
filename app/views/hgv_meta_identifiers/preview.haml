@@ -206,7 +206,7 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
               %td
                 %ul
-                  - @identifier[:edition].each_with_index do |edition|
+                  - @identifier[:edition].each do |edition|
                     %li
                       - edition = DclpEdition::Edition.new(:edition => edition)
                       - if edition.biblioId
