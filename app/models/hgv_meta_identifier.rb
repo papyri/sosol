@@ -231,7 +231,9 @@ class HGVMetaIdentifier < HGVIdentifier
     epidoc = set_epidoc_attributes
 
     # salvage xsugar formatted text
-    epidoc = epidoc.slice(0, getTextStart(epidoc)) + salvageText + epidoc[getTextEnd(epidoc)..-1]
+    if hasText?(epidoc) and !hasEmptyText?(epidoc)
+      epidoc = epidoc.slice(0, getTextStart(epidoc)) + salvageText + epidoc[getTextEnd(epidoc)..-1]
+    end
 
     Rails.logger.debug epidoc
 
@@ -239,6 +241,14 @@ class HGVMetaIdentifier < HGVIdentifier
     #self.set_content(epidoc, :comment => comment)
     #set_xml_content validates xml
     self.set_xml_content(epidoc, :comment => comment)
+  end
+
+  def hasText? epiDocXml
+    epiDocXml.index(/<div [^>]*type=["']edition["'][^>]*>/)
+  end
+
+  def hasEmptyText? epiDocXml
+    epiDocXml.index(/<div [^>]*type=["']edition["'][^>]*\/>/)
   end
 
   def salvageText
@@ -253,18 +263,23 @@ class HGVMetaIdentifier < HGVIdentifier
   def getTextEnd epiDocXml
     startIndex = getTextStart epiDocXml
     currentIndex = startIndex
-    scale = 1
-    safetyRope = 1024
-    while (scale > 0) && (safetyRope > 0)
-      currentIndex = epiDocXml.index(/(<div|<\/div)/, currentIndex + 1)
-      if epiDocXml.slice(currentIndex + 1, 1) == '/'
-        scale -= 1
-      else
-        scale += 1
+
+    if epiDocXml[startIndex..-1] =~ /^<div [^>]*type=["']edition["'][^>]*\/>/ # empty text div
+      epiDocXml.index('/>', currentIndex) + '/>'.length
+    else # text div with content
+      scale = 1
+      safetyRope = 1024
+      while (scale > 0) && (safetyRope > 0)
+        currentIndex = epiDocXml.index(/(<\/?div)/, currentIndex + 1)
+        if epiDocXml.slice(currentIndex + 1, 1) == '/'
+          scale -= 1
+        else
+          scale += 1
+        end
+        safetyRope -= 1
       end
-      safetyRope -= 1
+      currentIndex + '</div>'.length
     end
-    currentIndex + '</div>'.length
   end
 
   def getTextLength epiDocXml
