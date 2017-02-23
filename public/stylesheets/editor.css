@@ -719,7 +719,8 @@ div#header {
   height: auto; }
 
 div.nav {
-  top: auto; }
+  top: auto;
+  z-index: 103; }
 
 div.editor_nav {
   display: none;
