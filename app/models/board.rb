@@ -127,6 +127,11 @@ class Board < ActiveRecord::Base
     return ""
   end #tally_votes
 
+  #Checks to see if the decree has any rules associated with it
+  #
+  #*Returns*:
+  # - true if there are rules
+  # - false if there are none
   def has_rules?
     has_rules = false
     self.decrees.each do |decree|
@@ -136,17 +141,6 @@ class Board < ActiveRecord::Base
       end
     end
     return has_rules
-  end
-
-  def apply_rules(votes)
-    self.decrees.each do |decree|
-      decree.rules.each do |rule|
-        if rule.apply_rule?(votes)
-          return decree.action
-        end
-      end
-    end
-    return ""
   end
 
   # Sort a set of votes by the decree to which they apply

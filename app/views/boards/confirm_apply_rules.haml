@@ -5,7 +5,7 @@
 .card
   %div{:class => "card flash-notice warning"}
     %i{:class => 'fa fa-info-circle'}
-    Are You Sure You Want to Apply These Decree Rules?
+    Are you sure you want to apply these decree rules?
   - @board.decrees.each do |decree|
     = render :partial => decree, :locals => {:hide_edit_link => 'true'}
     - if decree.rules

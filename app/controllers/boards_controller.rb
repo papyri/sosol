@@ -253,10 +253,15 @@ class BoardsController < ApplicationController
     
   end
 
+  # Displays confirmation screen for application of decree rules
   def confirm_apply_rules
     find_board
   end
 
+  # Responds to affirmative confirmation from confirm_apply_rules
+  # by iteratating through all board publications in the voting state
+  # and calling publication.tally_votes with the apply_rules flag set to
+  # true to initiate action if decree rules allow
   def apply_rules
     find_board
     notices = []
@@ -266,7 +271,7 @@ class BoardsController < ApplicationController
       if action.nil? || action == ""
         notices << "Rule thresholds not met for #{p.title}"
       else
-        notices << "Initated #{action} for #{p.title}"
+        notices << "Initiated #{action} for #{p.title}"
       end
     end
     flash[:notice] = notices.join("<br/>")
