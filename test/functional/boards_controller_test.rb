@@ -114,6 +114,17 @@ class BoardsControllerTest < ActionController::TestCase
 
       assert_redirected_to boards_path
     end
+
+    should "confirm apply rules" do 
+      get :confirm_apply_rules, :id => @board.id
+      assert_response :success
+    end
+
+    should "apply rules" do 
+      post :apply_rules, :id => @board.id
+      assert_redirected_to :controller => :user, :action => :board_dashboard, :board_id => @board.id
+    end
+
   end
 
   context "as non-admin" do
@@ -171,6 +182,16 @@ class BoardsControllerTest < ActionController::TestCase
       assert_difference('Board.count', 0) do
         delete :destroy, :id => @board.id
       end
+      assert_response 403
+    end
+
+    should "not confirm apply rules" do 
+      get :confirm_apply_rules, :id => @board.id
+      assert_response 403
+    end
+
+    should "not apply rules" do 
+      post :apply_rules, :id => @board.id
       assert_response 403
     end
   end
@@ -254,6 +275,26 @@ class BoardsControllerTest < ActionController::TestCase
         delete :destroy, :id => @community_board.id
       end
       assert_response 403
+    end
+
+    should "not confirm apply rules to non-community board" do 
+      get :confirm_apply_rules, :id => @board.id
+      assert_response 403
+    end
+
+    should "not apply rules to non-community board" do 
+      post :apply_rules, :id => @board.id
+      assert_response 403
+    end
+
+    should "confirm apply rules to community board" do 
+      get :confirm_apply_rules, :id => @community_board.id
+      assert_response :success
+    end
+
+    should "apply rules to community board" do 
+      post :apply_rules, :id => @community_board.id
+      assert_redirected_to :controller => :user, :action => :board_dashboard, :board_id => @community_board.id
     end
   end
 end
