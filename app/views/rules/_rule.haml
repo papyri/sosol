@@ -1,0 +1,15 @@
+.rule
+  %h3 Rule  
+  %b
+    Floor 
+  = "#{rule.floor} #{rule.decree.tally_method}"
+  %br
+  
+  %b
+    Apply this many days after last vote:
+  = rule.expire_days
+  %br
+    
+  - if !defined?(hide_edit_link)
+    = link_to 'Edit', edit_rule_path(rule)
+    = link_to 'Delete', rule, :confirm => 'Are you sure?', :method => :delete

@@ -13,6 +13,9 @@
   %input{:type => 'text', :class => 'input', :id => 're-search', :placeholder => "Quick Filter"}
   %button{:class => "filter", :id => 'filter-count'}
     Search
+  - if has_voting && @board.has_rules?
+    .archive_link
+      = link_to "Apply Rules", { :controller => 'boards', :action => 'confirm_apply_rules', :id => @board.id }, :class => 'btn bg-sdw'
   .archive_link
     = link_to "Download All", { :controller => 'user', :action => 'download_board_publications', :board_id => @board.id, :offset => @offset }, :class => 'btn bg-sdw'
   .archive_link

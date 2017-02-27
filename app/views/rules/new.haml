@@ -1,0 +1,36 @@
+
+= stylesheet_link_tag "board"
+
+%header
+  %h1
+    New rule for
+    = @decree.board.title 
+    = @decree.action
+    board
+
+.card
+  = form_for(@rule) do |f|
+    = f.error_messages
+
+    %p
+      = f.label :floor
+      = f.text_field :floor, :size => 2
+      %br
+      The floor (for the number of votes or percentage) at which the rule will apply.
+
+    %br
+    %br
+
+    %p
+      = f.label :expire_days
+      = f.text_field :expire_days, :size => 2
+      %br
+      The number of days to wait after the last vote before allowing the rule to be invoked.
+
+    %br
+    %br
+
+    %p
+      = f.hidden_field :decree_id
+      = f.submit "Create"
+

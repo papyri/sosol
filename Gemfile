@@ -14,6 +14,7 @@ end
 group :test do
   gem 'rake'
   gem 'mocha'
+  gem 'timecop'
 end
 
 gem 'jquery-rails'

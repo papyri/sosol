@@ -200,6 +200,7 @@ GEM
       activerecord (>= 3.2)
     thor (0.19.1)
     tilt (1.4.1)
+    timecop (0.8.1)
     timers (4.0.1)
       hitimes
     treetop (1.4.15)
@@ -260,6 +261,7 @@ DEPENDENCIES
   sucker_punch (~> 1.0)
   swagger-blocks
   test_after_commit
+  timecop
   uglifier (>= 1.0.3)
   uuid
   warbler

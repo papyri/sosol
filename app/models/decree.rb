@@ -1,6 +1,7 @@
 #Decrees represent the possible choices, outcomes and counting methods of a vote.
 class Decree < ActiveRecord::Base
   belongs_to :board
+  has_many :rules
 
   TALLY_METHODS = {:percent => "percent",
                    :count => "count"}
@@ -38,10 +39,12 @@ class Decree < ActiveRecord::Base
 
   #*Args*:
   #- +votes+ set of votes to be tallied to determine if decree should be triggered
+  #- +trigger_override+ optional trigger value can be supplied override what is set on the decree
   #*Returns*:
   #- +true+ if if the given votes tally to trigger the decree
   #- +false+ otherwise
-  def perform_action?(votes)
+  def perform_action?(votes,trigger_override=nil)
+    use_trigger = trigger_override.nil? ? self.trigger : trigger_override
     #pull choices out
     decree_choices = self.get_choice_array
     #count votes
@@ -59,7 +62,7 @@ class Decree < ActiveRecord::Base
       if decree_vote_count > 0 && self.board.users.length.to_f > 0
         percent =  (decree_vote_count.to_f / self.board.users.length.to_f) * 100
 
-        if percent >= self.trigger
+        if percent >= use_trigger
           #check if the action has already been done
           #do the action? or return the action?
           #   
@@ -69,7 +72,7 @@ class Decree < ActiveRecord::Base
       end
     elsif tally_method == Decree::TALLY_METHODS[:count]
       #min absolute vote count
-      if decree_vote_count >= self.trigger
+      if decree_vote_count >= use_trigger
         #check if the action has already been done
         #do the action? or return the action?
         #

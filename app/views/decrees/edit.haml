@@ -32,6 +32,10 @@
     %br
     %p
       = f.hidden_field :board_id
-    %p
-      = f.submit "Update"
 
+  %h3{'style' => "display:inline;"}
+    Rules
+  = link_to "Add", :controller => "rules", :action => "new", :decree_id => @decree.id
+
+  - @decree.rules.each do |rule|
+    = render :partial => rule
