@@ -154,7 +154,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://www.w3.org/2001/XMLSchema")
       @schema = verifier_factory.compileSchema(
-        "http://nlp.perseus.tufts.edu/syntax/treebank/treebank-1.6.xsd")
+        "#{Rails.root}/data/templates/treebank-1.7.xsd")
     end
   end
   
