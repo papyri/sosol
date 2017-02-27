@@ -162,6 +162,15 @@
 
   	height:$PUBLICATION_CARD_HEIGHT;
   	margin-bottom: 1*$PUBLICATION_CARD_HEIGHT/3;
+        .community_info {
+	  line-height:$PUBLICATION_CARD_HEIGHT;
+          font-size: small;
+          padding-left: .5em;
+          padding-right: .5em;
+          text-align: right;
+          overflow: hidden;
+          font-style: italic;
+        }
 
 	.legend {
 		display:block;

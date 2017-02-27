@@ -3180,6 +3180,14 @@ ul.btns > li {
   margin-top: 0;
   height: 45px;
   margin-bottom: 15px; }
+  .publication .community_info {
+    line-height: 45px;
+    font-size: small;
+    padding-left: .5em;
+    padding-right: .5em;
+    text-align: right;
+    overflow: hidden;
+    font-style: italic; }
   .publication .legend {
     display: block;
     line-height: 45px;

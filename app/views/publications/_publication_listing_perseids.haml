@@ -4,13 +4,14 @@
   - list_id = "publication_list_holder"
 %div{:class => "publication_column", :id => list_id, "data-type" => list_name }
   - publications.each do |publication|
+    - community_info = publication.community_id && !publication.community.is_default? ? publication.community.friendly_name : nil
     - data = {}
     - publication.identifiers.collect do |i|
       - unless data[i.type]
         - data[i.type] = []
       - data[i.type] << i
     %div{:class => 'publication'}
-      - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")" +  view_type && view_type == "community" ? publication.owner.name : ''
+      - display_title = publication.title
       %ul{:class => 'publication-items'}
         - Identifier.site_identifier_classes.each do |c|
           - if c.constantize::is_visible && data[c]
@@ -39,3 +40,6 @@
                       = link_to i.title, edit_polymorphic_path([publication,i])
                     - else
                       = link_to i.title, polymorphic_path([publication,i], :action => 'preview')
+      - if community_info
+        %div{:class => 'community_info'}
+          %span=community_info
