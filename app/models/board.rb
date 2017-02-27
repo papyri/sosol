@@ -127,7 +127,8 @@ class Board < ActiveRecord::Base
     return ""
   end #tally_votes
 
-  #Checks to see if the decree has any rules associated with it
+  # Checks to see if the decrees for this board have 
+  # any rules associated with them
   #
   #*Returns*:
   # - true if there are rules
@@ -142,6 +143,24 @@ class Board < ActiveRecord::Base
     end
     return has_rules
   end
+
+  # Checks to see if the decrees for this board have 
+  # any rules associated with them that can be applied
+  # and if so returns the action that the rule would invoke
+  # *Returns*:
+  #   - the first action to be involved to a decree rule
+  #   - or the empty string if no action applies
+  def apply_rules(votes)
+    self.decrees.each do |decree|
+      decree.rules.each do |rule|
+        if rule.apply_rule?(votes)
+          return decree.action
+        end
+      end
+    end
+    return ""
+  end
+
 
   # Sort a set of votes by the decree to which they apply
   # *Args*
