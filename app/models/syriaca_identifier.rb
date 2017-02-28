@@ -140,7 +140,7 @@ class SyriacaIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # links to the original gazetteer entry on syriaca
   def get_catalog_link
-    ["View at Syriaca.org",self.name]
+    ["View current record at Syriaca.org",self.name]
   end
 
   # @overrides Identifier#preprocess_for_finalization
