@@ -4,7 +4,7 @@
 
 function diffUsingJS(viewType,baseText) {
 	"use strict";
-		var newtxt = difflib.stringAsLines(jQuery("#syriaca_identifier_xml_content").get(0).value,baseText);
+		var newtxt = difflib.stringAsLines(jQuery(".xml-content").get(0).value,baseText);
 		var base = difflib.stringAsLines(baseText);
 		var sm = new difflib.SequenceMatcher(base, newtxt);
 		var opcodes = sm.get_opcodes();
