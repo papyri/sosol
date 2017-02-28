@@ -7,7 +7,7 @@
 - if @community
   %header
     %h1
-      = @community.format_name + " community publications"
+      = @community.friendly_name + " community publications"
     - if @community.admins.include?(@current_user)
       = link_to 'Manage Community', @community, :class => 'btn revert bg-sdw'
 .publications
