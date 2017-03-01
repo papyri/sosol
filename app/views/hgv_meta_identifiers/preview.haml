@@ -13,6 +13,46 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:titleStmt]
+          - if @identifier[:work] && !@identifier[:work].empty?
+            %tr
+              %th=I18n.t('dclp.legend.work')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - @identifier[:work].each do |work|
+                    %li
+                      - work = DclpWork::Work.new(work)
+                      - if work.author
+                        = work.author.name
+                        - if work.author.language && !work.author.language.empty?
+                          = '(' + I18n.t('language.' + work.author.language) + ')'
+                      - if work.title
+                        = work.title.name
+                        - if work.title.language && !work.title.language.empty?
+                          = '(' + I18n.t('language.' + work.title.language) + ')'
+                        - if work.extraList
+                          - work.extraList.each do |extra|
+                            = extra.value
+          - if @identifier[:edition] && !@identifier[:edition].empty?
+            %tr
+              %th=I18n.t('dclp.legend.edition')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - @identifier[:edition].each do |edition|
+                    %li
+                      - edition = DclpEdition::Edition.new(:edition => edition)
+                      - if edition.biblioId
+                        %a{:href => 'http://papyri.info/biblio/' + edition.biblioId}
+                          = edition.biblioId
+                      - if edition.title
+                        = edition.title
+                        = '(' + I18n.t('edition.ubertype.' + edition.ubertype) + ')'
+                      - if edition.extraList
+                        - edition.extraList.each do |extra|
+                          = extra.value
           - if @identifier[:publicationTitle]
             %tr
               %th=I18n.t('meta.label.publications')
@@ -178,43 +218,3 @@
                     %li
                       %a{:href => onlineResource[:children][:link][:attributes][:target]}
                         = (onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] ? onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] : onlineResource[:children][:link][:attributes][:target])
-          - if @identifier[:work] && !@identifier[:work].empty?
-            %tr
-              %th=I18n.t('dclp.legend.work')
-              %td.edit
-                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
-              %td
-                %ul
-                  - @identifier[:work].each do |work|
-                    %li
-                      - work = DclpWork::Work.new(work)
-                      - if work.author
-                        = work.author.name
-                        - if work.author.language && !work.author.language.empty?
-                          = '(' + I18n.t('language.' + work.author.language) + ')'
-                      - if work.title
-                        = work.title.name
-                        - if work.title.language && !work.title.language.empty?
-                          = '(' + I18n.t('language.' + work.title.language) + ')'
-                        - if work.extraList
-                          - work.extraList.each do |extra|
-                            = extra.value
-          - if @identifier[:edition] && !@identifier[:edition].empty?
-            %tr
-              %th=I18n.t('dclp.legend.edition')
-              %td.edit
-                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
-              %td
-                %ul
-                  - @identifier[:edition].each do |edition|
-                    %li
-                      - edition = DclpEdition::Edition.new(:edition => edition)
-                      - if edition.biblioId
-                        %a{:href => 'http://papyri.info/biblio/' + edition.biblioId}
-                          = edition.biblioId
-                      - if edition.title
-                        = edition.title
-                        = '(' + I18n.t('edition.ubertype.' + edition.ubertype) + ')'
-                      - if edition.extraList
-                        - edition.extraList.each do |extra|
-                          = extra.value
