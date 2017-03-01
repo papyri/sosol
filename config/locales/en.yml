@@ -293,6 +293,8 @@ en:
       layout: Layout
       scriptType: Script type
       pagination: Pagination
+      width: Width
+      height: Height
 
     tooltip:
       multiMentionedDateReference: Reference (line and column)

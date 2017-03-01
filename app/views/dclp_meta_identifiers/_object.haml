@@ -22,6 +22,14 @@
 
 .clear
 
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :width }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :width }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :height }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :height }
+
+.clear
+
 = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :layout }
 = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :layout }
 
