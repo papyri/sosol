@@ -13,6 +13,11 @@ class DCLPTextIdentifier < DDBIdentifier
     return false
   end
 
+  # cl: CROMULENT DCLP ‘View in PN’ hack
+  def get_catalog_link
+    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+)$/, 1]
+  end
+
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :
   #   - +parameters+ → xsl parameter hash, e.g. +{:leiden-style => 'ddb'}+, defaults to empty hash

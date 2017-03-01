@@ -57,4 +57,9 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
    return serialization_string
   end
 
+  # cl: CROMULENT DCLP ‘View in PN’ hack
+  def get_catalog_link
+    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+)$/, 1]
+  end
+
 end
