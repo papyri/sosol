@@ -1537,7 +1537,7 @@ class Publication < ActiveRecord::Base
   end
 
   def related_text
-    self.identifiers.select{|i| (i.class == DDBIdentifier || i.class == DCLPMetaIdentifier || i.class == DCLPTextIdentifier) && !i.is_reprinted?}.last
+    self.identifiers.select{|i| ((i.class == DDBIdentifier || i.class == DCLPTextIdentifier) && !i.is_reprinted?)  || i.class == DCLPMetaIdentifier }.last
   end
 
   protected
