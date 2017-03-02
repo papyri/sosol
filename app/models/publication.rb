@@ -1474,15 +1474,16 @@ class Publication < ActiveRecord::Base
     has_biblio = false
     has_cts = false
     has_apis = false
+    has_dclp = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
         has_biblio = true
       end
-      if i.class.to_s == "HGVMetaIdentifier"
+      if i.class.to_s == "HGVMetaIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
         has_meta = true
       end
-      if i.class.to_s == "DDBIdentifier"
+      if i.class.to_s == "DDBIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
        has_text = true
       end
       if i.class.to_s =~ /CTSIdentifier/
@@ -1491,6 +1492,14 @@ class Publication < ActiveRecord::Base
       if i.class.to_s == "APISIdentifier"
         has_apis = true
       end
+      if i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
+       has_dclp = true
+      end
+    end
+
+    if has_dclp
+      creatable_identifiers.delete("DDBIdentifier")
+      creatable_identifiers.delete("HGVMetaIdentifier")
     end
     if !has_text
       #cant create trans
