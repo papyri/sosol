@@ -56,7 +56,7 @@
   <!-- copy <div type='textpart'> directly -->
   <xsl:template match="tei:div[@type='textpart']">
     <xsl:element name="div">
-      <xsl:copy-of select="@*"/>
+      <xsl:copy-of select="@*[not(name(.) = 'corresp')]"/>
       <xsl:apply-templates select="element()"/>
     </xsl:element>
   </xsl:template>
