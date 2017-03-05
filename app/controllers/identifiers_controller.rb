@@ -39,7 +39,7 @@ class IdentifiersController < ApplicationController
       begin
         @identifier = identifier_type.new_from_template(@publication)
       rescue Exception => e
-        flash[:error] = e.message
+        flash[:error] = e.message + ' (The message that is always emtpy? - Yes.)'
         redirect_to publication_path(@publication.id) and return
       end
     end

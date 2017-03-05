@@ -68,12 +68,10 @@ class DCLPTextIdentifier < DDBIdentifier
 
   # ?
   def n_attribute
-    ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
-    if ddb
-      return ddb.n_attribute
-    else
-      return nil
-    end
+    text = DCLPTextIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    meta = DCLPMetaIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+
+    return meta ? meta.n_attribute : (text ? text.n_attribute : nil)
   end
   
   # ?
