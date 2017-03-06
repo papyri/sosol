@@ -720,7 +720,11 @@ div#header {
 
 div.nav {
   top: auto;
-  z-index: 103; }
+}
+
+div.nav li ul {
+  z-index: 103; 
+}
 
 div.editor_nav {
   display: none;
