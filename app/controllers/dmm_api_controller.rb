@@ -238,7 +238,7 @@ class DmmApiController < ApplicationController
   ##
   def ping
       @current_user[:uri] = "#{Sosol::Application.config.site_user_namespace}#{URI.escape(@current_user.name)}"
-      @current_user[:comunities] = @current_user.community_memberships.collect{ | c| c.id }
+      @current_user[:communities] = @current_user.community_memberships.collect{ | c| c.id }
       render :json => @current_user
   end
 
