@@ -49,7 +49,22 @@
   <xsl:template match="tei:div[@type='edition']">
     <div type='translation'>
       <xslt:attribute name="xml:lang"><xslt:value-of select="$lang"/></xslt:attribute>
-      <xsl:apply-templates select="node()"/>
+      <xsl:choose>
+        <xsl:when test="node()">
+          <xsl:apply-templates select="node()"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="dummy">
+            <div xml:lang="grc" type="edition" xml:space="preserve">
+            <div n="1" subtype="column" type="textpart"><ab>
+              <lb n="1"/>
+            </ab>
+            </div>
+            </div>
+          </xsl:variable>
+            <xsl:apply-templates select="$dummy//tei:div[@type='textpart']"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </div>
   </xsl:template>
   
