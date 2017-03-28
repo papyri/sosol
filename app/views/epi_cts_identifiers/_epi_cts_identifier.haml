@@ -12,3 +12,5 @@
       = link_to 'Select Passage', link_citation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
     %li
       = link_to 'Add Translation', link_translation_publication_epi_cts_identifier_path( epi_cts_identifier.publication, epi_cts_identifier), :class => 'btn bg-sdw'
+    %li
+      = link_to 'Add Commentary',  {:controller => :commentary_cite_identifiers ,:action => :create_from_annotation, :init_value => [ @identifier.urn_attribute ] , 'publication_id' => @identifier.publication.id }, :class => 'btn bg-sdw'

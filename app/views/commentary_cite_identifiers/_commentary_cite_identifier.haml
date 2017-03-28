@@ -3,3 +3,5 @@
     = link_to 'Edit', edit_publication_commentary_cite_identifier_path( commentary_cite_identifier.publication, commentary_cite_identifier), :class => 'btn bg-sdw'
   %li
     = link_to 'Preview', preview_publication_commentary_cite_identifier_path( commentary_cite_identifier.publication, commentary_cite_identifier), :class => 'btn bg-sdw'
+  %li
+    = link_to 'Delete', polymorphic_path([commentary_cite_identifier.publication, commentary_cite_identifier]), :confirm => 'Are you sure?', :method => :delete, :class => 'btn bg-sdw'

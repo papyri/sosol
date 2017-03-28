@@ -262,13 +262,14 @@ class Identifier < ActiveRecord::Base
   # Create default XML file and identifier model entry for associated identifier class
   # - *Args*  :
   #   - +publication+ -> the publication the new translation is a part of
+  #   - +allow_multiple+ -> flag to indicate if multiple identifiers of this type are allowed on the publication
   # - *Returns* :
   #   - new identifier
-  def self.new_from_template(publication)
+  def self.new_from_template(publication, allow_multiple = false)
     new_identifier = self.new(:name => self.next_temporary_identifier)
     Identifier.transaction do
       publication.lock!
-      if publication.identifiers.select{|i| i.class == self}.length > 0
+      if publication.identifiers.select{|i| i.class == self}.length > 0 && ! allow_multiple
         return nil
       else
         new_identifier.publication = publication

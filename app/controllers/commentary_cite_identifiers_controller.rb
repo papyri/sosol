@@ -30,7 +30,7 @@ class CommentaryCiteIdentifiersController < IdentifiersController
       return
     end
     
-    @identifier = CommentaryCiteIdentifier.new_from_template(@publication)
+    @identifier = CommentaryCiteIdentifier.new_from_template(@publication, true)
     @identifier.update_targets(params[:init_value],"Set targets from init.")
     redirect_to polymorphic_path([@publication, @identifier],:action => :edit)
 
@@ -78,6 +78,23 @@ class CommentaryCiteIdentifiersController < IdentifiersController
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt cite commentary_cite_html_preview.xsl})),
         params)
+  end
+
+  def destroy
+    find_identifier 
+    remaining = @identifier.publication.identifiers.select { |i| 
+      i != @identifier 
+    }
+    if (remaining.size == 0)
+      flash[:error] = "This would leave the publication without any identifiers."
+    end
+    name = @identifier.title
+    pub = @identifier.publication
+    @identifier.destroy
+    
+    flash[:notice] = name + ' was successfully removed from your publication.'
+    redirect_to pub
+    return
   end
 
   protected
