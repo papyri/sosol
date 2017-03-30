@@ -17,7 +17,7 @@ class HGVMetaIdentifier < HGVIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
+        xsl ? xsl : %w{data xslt metadata preview.xsl})),
         parameters)
   end
 

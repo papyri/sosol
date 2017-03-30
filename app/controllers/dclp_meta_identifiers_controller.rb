@@ -52,6 +52,15 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     render json: data_array, content_type: 'application/json'
   end
 
+  # - GET /publications/1/ddb_identifiers/1/preview
+  # - Provides preview of what the DDB Text XML from the repository will look like with PN Stylesheets applied
+  def preview
+    find_identifier
+    @identifier[:html_preview] = @identifier.preview
+    @is_editor_view = true
+    render :template => 'ddb_identifiers/preview'
+  end
+
   protected
 
     # Sets the identifier instance variable values
