@@ -464,6 +464,14 @@ en:
       palaeo: Palaeo
       illustration: Illustration
     extra:
+      book: Book
+      chapter: Chapter
+      folio: Folio
+      fragment: Fragment
+      inventory: Inventory
+      line: Line
+      parts: Parts
+      poem: Poem
       volume: Volume
       page: Page
       pages: Pages

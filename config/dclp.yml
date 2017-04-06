@@ -174,7 +174,7 @@
           :attributes:
             :unit:
               :name: unit
-              :pattern: /\Avol|generic|lines|generic|fragment|page|chapter|poem\Z/
+              :pattern: /\Abook|chapter|col|columns|fasc|fascicle|folio|fragment|fragments|generic|inventory|issue|line|lines|no|number|numbers|page|pages|parts|plate|poem|pp|side|tome|vol|volume\Z/
             :from:
               :name: from
               :pattern: /\A\d+\Z/
@@ -234,7 +234,7 @@
           :attributes:
             :unit:
               :name: unit
-              :pattern: /\Avolume|fascicle|side|numbers|pages|lines|fragment|fragments|folio|inventory|number|columns|generic|parts|pp\Z/
+              :pattern: /\Abook|chapter|col|columns|fasc|fascicle|folio|fragment|fragments|generic|inventory|issue|line|lines|no|number|numbers|page|pages|parts|plate|poem|pp|side|tome|vol|volume\Z/
             :corresp:
               :name: corresp
               :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
