@@ -422,7 +422,7 @@ class HGVMetaIdentifier < HGVIdentifier
                if item[:attributes] && attributeHasAnyContent?(item[:attributes][attribute_key])
                  attribute_value = item[:attributes][attribute_key]
                  if attribute_config[:split] && !attribute_config[:split].empty? && attribute_value.kind_of?(Hash)
-                   attribute_value = attribute_value.values.join(config[:split])
+                   attribute_value = attribute_value.values.join(attribute_config[:split])
                  else
                    attribute_value = attribute_value.strip
                  end

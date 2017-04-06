@@ -144,10 +144,10 @@
 #            :tm: # http://www.trismegistos.org/authorwork/1146
 #              :xpath: idno[@type='tm']
 #              :pattern: /\A\d+\Z/
-#            :tlg: # http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018
+#            :tlg: # http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018 (Greek)
 #              :xpath: idno[@type='tlg']
 #              :pattern: /\A\d+\Z/
-#            :stoa: # http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016
+#            :stoa: # http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016 (Latin)
 #              :xpath: idno[@type='stoa']
 #              :pattern: /\A\d+\Z/
 #            :cwkb: # http://cwkb.org/work/id/1411/rdf

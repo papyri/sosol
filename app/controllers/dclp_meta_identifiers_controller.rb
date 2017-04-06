@@ -162,6 +162,56 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           }
         end
 
+        # author & work: tlg, phi, stoa, tm and cwkb
+        if params[:hgv_meta_identifier][:work]
+          params[:hgv_meta_identifier][:work].each {|key, work|
+            if work[:children]
+              if work[:children][:author]
+                refList = {}
+                if work[:children][:author][:attributes] && work[:children][:author][:attributes][:ref] && work[:children][:author][:attributes][:ref].kind_of?(Hash)
+                  refList = work[:children][:author][:attributes][:ref]
+                end
+                if work[:children][:author][:tlg] && work[:children][:author][:tlg] =~ /\d\d\d\d/
+                  refList[:tlg] = 'http://data.perseus.org/catalog/urn:cts:greekLit:tlg' +  work[:children][:author][:tlg]
+                end
+                if work[:children][:author][:phi] && work[:children][:author][:phi] =~ /\d\d\d\d/
+                  refList[:phi] = 'http://data.perseus.org/catalog/urn:cts:latinLit:phi' + work[:children][:author][:phi]
+                end
+                if work[:children][:author][:stoa] && work[:children][:author][:stoa] =~ /\d\d\d\d/
+                  refList[:stoa] = 'http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa' + work[:children][:author][:stoa]
+                end
+                if work[:children][:author][:cwkb] && work[:children][:author][:cwkb] =~ /\d+/
+                  refList[:cwkb] = 'http://cwkb.org/author/id/' +  work[:children][:author][:cwkb] + '/rdf'
+                end
+                work[:children][:author][:attributes][:ref] = refList.invert.invert
+              end
+              if work[:children][:title]
+                refList = {}
+                if work[:children][:title][:attributes] && work[:children][:title][:attributes][:ref] && work[:children][:title][:attributes][:ref].kind_of?(Hash)
+                  refList = work[:children][:title][:attributes][:ref]
+                end
+                if work[:children][:title][:tm] && work[:children][:title][:tm] =~ /\d+/
+                  refList[:tm] = 'http://www.trismegistos.org/authorwork/' +  work[:children][:title][:tm]
+                end
+                if work[:children][:title][:cwkb] && work[:children][:title][:cwkb] =~ /\d+/
+                  refList[:cwkb] = 'http://cwkb.org/work/id/' +  work[:children][:title][:cwkb] + '/rdf'
+                end
+                if work[:children][:title][:stoa] && work[:children][:title][:stoa] =~ /\d+/
+                  if work[:children][:author] && work[:children][:author][:stoa] && work[:children][:author][:stoa] =~ /\d\d\d\d/
+                    refList[:stoa] = 'http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa' + work[:children][:author][:stoa] + '.stoa' + work[:children][:title][:stoa]
+                  end
+                end
+                if work[:children][:title][:tlg] && work[:children][:title][:tlg] =~ /\d+/
+                  if work[:children][:author] && work[:children][:author][:tlg] && work[:children][:author][:tlg] =~ /\d\d\d\d/
+                    refList[:tlg] = 'http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg' + work[:children][:author][:tlg] + '.tlg' + work[:children][:title][:tlg]
+                  end
+                end
+                work[:children][:title][:attributes][:ref] = refList.invert.invert
+              end
+            end
+          }
+        end
+
       end
     end
 
