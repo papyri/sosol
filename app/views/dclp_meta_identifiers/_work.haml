@@ -92,15 +92,11 @@
           
           %h5
             Passage
-
           .extraContainer
             =render :partial => 'dclp_meta_identifiers/workExtra', :locals => {:extraList => work.extraList, :baseChildren => baseChildren, :workIndex => workIndex}
             .clear
 
-          = text_field_tag baseAttributes + '[corresp]', work.corresp, :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
-          
-          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-          %span.move{:title => I18n.t('tooltip.multiMove')} o
+          = hidden_field_tag baseAttributes + '[corresp]', work.corresp, :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
 
     :javascript
       Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
