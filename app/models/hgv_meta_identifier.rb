@@ -634,6 +634,10 @@ class HGVMetaIdentifier < HGVIdentifier
       :msDesc => {
         :parent => "/TEI/teiHeader/fileDesc/sourceDesc/msDesc",
         :children => ['msIdentifier', 'physDesc', 'history', 'additional']
+      },
+      :publicationStmt => {
+        :parent => "/TEI/teiHeader/fileDesc/publicationStmt",
+        :children => ['authority', 'idno', 'availability']
       }
     }
 
