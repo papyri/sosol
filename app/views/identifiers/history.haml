@@ -15,7 +15,7 @@
       - for commit in @identifier.get_commits
         - message = commit[:message].split("\n").first || '(no message)'
         %li
-          = link_to html_escape(message), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)
+          = link_to html_escape(message.force_encoding("UTF-8")), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)
           %em 
             By: 
-            = commit[:committer_name]
+            = commit[:committer_name].force_encoding("UTF-8")
