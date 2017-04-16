@@ -156,4 +156,35 @@ class SyriacaIdentifier < Identifier
     self.status = "finalizing-preprocessed" # TODO check this 
     return true
   end
+
+  # Add a 'change' tags to the tei:revisionDesc of the identifer's XML file via XSLT during the finalization process
+  # - add a 'change' tag for each vote on the identifier
+  # - add a 'change' tag for finalization message
+  # - build a commit message that contains *all* comments/users
+  # - commits the additions to the repository
+  # - *Args*  :
+  #   - +comment_text+ -> the comment the user has provided
+  #   - +user+ ->  the 'user' that supplied the comment - used in the 'who' attribute of the 'change' tag
+  def update_revision_desc(comment_text, user)
+    commit_message = "Update revisionDesc\n\n"
+    change_desc_content = self.xml_content
+
+    # assume context is from finalizing publication, so parent is board's copy
+    if self.parent
+      parent_classes = self.parent.owner.identifier_classes
+    else
+      # if we created upon finalization we won't have a parent...
+      parent_classes = []
+    end  
+   
+    Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
+      change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content, c.created_at.localtime.xmlschema )
+      commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
+    end
+
+    change_desc_content = add_change_desc( "Finalized - " + comment_text, user, change_desc_content)
+    commit_message += " - Finalized - #{comment_text} (#{user.human_name})"
+
+    self.set_xml_content(change_desc_content, :comment => commit_message)
+  end
 end
