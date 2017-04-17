@@ -4,6 +4,8 @@
   - if %w{new editing submitted approved voting committed}.include? @publication.status
     %li
       = link_to "Download Copy", {:controller => 'publications', :id => @publication.id, :action => "download"}, :class => "btn revert bg-sdw"
+    %li
+      = link_to "BagIt Archive", {:controller => 'publications', :id => @publication.id, :action => "download", :format => 'bagit'}, :class => "btn revert bg-sdw"
   - if @publication.allow_user_withdrawal?(@current_user)
     %li
       = link_to "Withdraw from Editorial Review", {:controller => 'publications', :id => @publication.id, :action => "confirm_withdraw"}, :class => "btn revert bg-sdw autosize", :id => "withdraw_pub"

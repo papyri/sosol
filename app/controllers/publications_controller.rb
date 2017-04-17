@@ -3,6 +3,7 @@ class PublicationsController < ApplicationController
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
   before_filter :community_admin_guard, :only => [:assign]
+  include BagitHelper
 
   def new
   end
@@ -14,8 +15,13 @@ class PublicationsController < ApplicationController
     require 'pp'
 
     @publication = Publication.find(params[:id].to_s)
-
-
+    if params[:format] == 'bagit'
+      BagitHelper::bagit(@publication) do | (tempfile, zipfile) |
+        send_data File.read(tempfile), :type => 'application/zip', :filename => zipfile
+      end
+      return
+    end
+    
     file_friendly_name = @publication.title.gsub(/[\\\/:."*?<>|\s]+/, "-")
    # raise file_friendly_name
     t = Tempfile.new("publication_download_#{file_friendly_name}-#{request.remote_ip}")
@@ -46,7 +52,6 @@ class PublicationsController < ApplicationController
     t.close
     t.unlink
   end
-
 
 
 

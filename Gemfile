@@ -34,7 +34,8 @@ gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '>= 3.0.5'
 gem 'grit', '~> 2.4.0'
-gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
+gem 'rubyzip', '~> 1.0.0', :require => 'zip/zip'
+gem 'zip-zip'
 gem 'prototype-rails'
 gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
@@ -56,3 +57,5 @@ gem 'test_after_commit', :group => :test
 gem 'faraday_middleware'
 gem 'doorkeeper', "=2.2.2"
 gem 'swagger-blocks'
+gem 'bagit'
+gem 'validatable'
