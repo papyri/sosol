@@ -16,7 +16,7 @@ class PublicationsController < ApplicationController
 
     @publication = Publication.find(params[:id].to_s)
     if params[:format] == 'bagit'
-      BagitHelper::bagit(@publication) do | (tempfile, zipfile) |
+      BagitHelper::bagit(@publication,@current_user) do | (tempfile, zipfile) |
         send_data File.read(tempfile), :type => 'application/zip', :filename => zipfile
       end
       return

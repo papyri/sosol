@@ -3,20 +3,71 @@ module BagitHelper
   require 'zip/zip'
   require 'zip/zipfilesystem'
 
+
   # Creates a BagIt Archive from a Publication's contents
+  # if the publication contains annotations targeting CTS identifiers, 
+  # we will create this as a Research Object Bundle
+  # adhering to https://w3id.org/ro/bagit/profile
+  # otherwise it will just be a simple bagit archive
   # - *Args*  :
   #   - +publication+ -> the Publication to bag
   # - *Yields* :
   #   - temp zipfile to send and the filename
-  def self.bagit(publication) 
+  def self.bagit(publication,current_user) 
+    is_ro = false
+    now_iso = Time.now.iso8601
+    # setup the research object bundle manifest in case we need it
+    ro_manifest = { }
+    ro_manifest['@context'] = ["https://w3id.org/bundle/context"]
+    ro_manifest['@id'] = '../'
+    ro_manifest['createdBy'] = { 'name' => current_user.full_name, 'uri' => current_user.uri }
+    ro_manifest['createdOn'] = now_iso
+    ro_manifest['aggregates'] = []
+    ro_manifest['annotations'] = []
+
+    # TODO eventually it would be nice to generate a handle for the archive
     file_friendly_name = publication.title.gsub(/[\\\/:."*?<>|\s]+/, "-")
-    bagit_name = "perseidspublication_" + publication.id.to_s + "_" + Time.now.strftime("%a%d%b%Y_%H%M")
+    bagit_name = "perseidspublication_" + publication.id.to_s + "_" + now_iso
     Dir.mktmpdir { |dir|
       bagdir = File.join(dir.to_s, bagit_name)
       Dir.mkdir bagdir
       bag = BagIt::Bag.new bagdir
+      local_aggregates = []
       publication.identifiers.each do |id|
-        bag.add_file( id.download_file_name ) do |io|
+        if (id.respond_to?(:as_ro))
+          ro = id.as_ro
+        end
+        unless ro.nil?
+            is_ro = true
+            # add the content to the annotations directory
+            bag.add_tag_file(File.join('metadata','annotations',id.download_file_name)) do |io|
+              io.puts id.xml_content
+            end
+            #update the ro_manifest
+            ro_manifest['aggregates'].concat(ro['aggregates'])
+            ro_manifest['annotations'].concat(ro['annotations'])
+        else
+          bag.add_file( id.download_file_name ) do |io|
+            io.puts id.xml_content
+            local_aggregates << id
+          end
+        end
+      end
+      if is_ro
+        local_aggregates.each do |a|
+          agg = { 
+           'uri' => File.join('../data/',a.download_file_name), 
+           'mediatype' => a.mimetype,
+           'createdBy' =>  { 'name' => a.publication.creator.full_name, 'uri' => a.publication.creator.uri }
+          }
+          if (a.publication.creator != current_user) 
+            agg['retrievedBy'] = { 'name' => current_user.full_name, 'uri' => current_user.uri }
+          end
+          ro_manifest['aggregates'] << agg
+        end
+        # TODO we should dedupe the aggregates array because we might have duplicates in there
+        bag.add_tag_file(File.join('metadata','manifest.json')) do |io|
+          io.puts JSON.pretty_generate(ro_manifest)
         end
       end
       bag.manifest!

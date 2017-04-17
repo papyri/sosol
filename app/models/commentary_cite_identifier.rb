@@ -111,6 +111,12 @@ class CommentaryCiteIdentifier < CiteIdentifier
     self.set_xml_content(oacRdf, :comment => 'Update uris to reflect new identifier')
   end
 
+  # @overrides Identifier#mimetype
+  def mimetype
+    'application/rdf+xml'
+  end
+
+
   ##################################################
   # Public ComentaryCiteIdentifier Instance Methods
   ##################################################
@@ -153,8 +159,13 @@ class CommentaryCiteIdentifier < CiteIdentifier
   # Used to prototype export of CITE Annotations as part
   # of a CTS-Centered Research Object Bundle
   def as_ro
-    ro = {'aggregates' => [], 'annotations' => []}
-    urns = []
+    urns = { }
+    ro = { 'annotations' => [], 'aggregates' => [] } 
+    about = []
+    aggregates = []
+    self.publication.identifiers.select { |id| id != self && id.respond_to?(:urn_attribute) }.each do |u| 
+        urns[u.urn_attribute] = File.join('../data/',u.download_file_name)
+    end
     targets = OacHelper::get_targets(get_annotation)
     targets.each do |t|
       if (t =~ /urn:cts:/)
@@ -167,14 +178,30 @@ class CommentaryCiteIdentifier < CiteIdentifier
         if urn_obj.nil?
           next
         end
-        urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-        ro['annotations'] << { "about" => [urn_value], 'dc:format' => 'http://data.perseus.org/rdfvocab/commentary' }
-      end 
+        u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+        if urns[u]
+          about << urns[u] 
+        else
+          about << u
+          aggregates << u
+        end
+   
+      end
     end
-    urns.uniq.each do |u|
-      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    if about.size > 0 
+      ro['annotations'] << { 
+        "about" => about,
+        'conformsTo' => 'http://data.perseus.org/rdfvocab/commentary', 
+        'mediatype' => self.mimetype,
+        'content' => File.join('annotations',self.download_file_name),
+        'oa:motivating' => 'oa:commenting',
+        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+      }
+      ro['aggregates'] = aggregates
+      return ro
+    else 
+      return nil
     end
-    return ro
   end
 
 
