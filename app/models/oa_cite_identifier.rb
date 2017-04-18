@@ -259,6 +259,56 @@ class OaCiteIdentifier < CiteIdentifier
   def mimetype
     "application/rdf+xml"
   end
+  #################################################
+  # PROTOTYPE METHODS
+  #################################################
+
+  # Used to prototype export of CITE Annotations as part
+  # of a CTS-Centered Research Object Bundle
+  def as_ro
+    ro = { 'annotations' => [], 'aggregates' => [] } 
+    about = []
+    aggregates = []
+    urns = self.publication.ro_local_aggregates()
+    targets = []
+    OacHelper::get_all_annotations(self.rdf).each() { |el|
+      targets.concat(OacHelper::get_targets(el))
+    }
+    targets.each do |t|
+      if (t =~ /urn:cts:/)
+        urn_value = t.match(/(urn:cts:.*)$/).captures[0]
+        begin
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+        rescue
+          Rails.logger.error("Invalid CTS URN #{urn_value}")
+        end
+        if urn_obj.nil?
+          next
+        end
+        u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+        if urns[u]
+          about << urns[u] 
+        else
+          about << u
+          aggregates << u
+        end
+   
+      end
+    end
+    if about.size > 0 
+      ro['annotations'] << { 
+        "about" => about.uniq,
+        'conformsTo' => 'http://www.openannotation.org/spec/core/',
+        'mediatype' => self.mimetype,
+        'content' => File.join('annotations',self.download_file_name),
+        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+      }
+      ro['aggregates'] = aggregates.uniq
+      return ro
+    else 
+      return nil
+    end
+  end
 
   #########################################
   # Private Helper Methods

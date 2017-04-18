@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cnt="http://www.w3.org/2011/content#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:lawd="http://lawd.info/ontology/"
+         xmlns:dcmit="http://purl.org/dc/dcmitype/"
+         xmlns:oa="http://www.w3.org/ns/oa#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:perseus="http://data.perseus.org/"
+         xmlns:lode="http://linkedevents.org/ontology/#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:prov="http://www.w3.org/ns/prov#">
+   <oa:Annotation rdf:about="http://data.perseus.org/collections/urn:cite:perseus:pdlann.1.1/#1-1">
+      <dcterms:title>perseus-bio-1 at Hdt. 1.1</dcterms:title>
+      <rdfs:comment>very certain</rdfs:comment>
+      <oa:hasTarget rdf:resource="http://data.perseus.org/citations/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1"/>
+      <oa:motivatedBy rdf:resource="http://www.w3.org/ns/oa#identifying"/>
+      <oa:hasBody rdf:resource="http://data.perseus.org/people/smith:perseus-1#this"/>
+      <oa:annotatedAt>2014-09-09T16:50:30.970Z</oa:annotatedAt>
+      <oa:serializedBy>
+         <prov:SoftwareAgent rdf:about="https://github.perseids.org/perseids-annotator"/>
+      </oa:serializedBy>
+      <oa:annotatedBy>
+         <foaf:Person rdf:about="http://data.perseus.org/sosol/users/Bridget%20Almas">
+            <foaf:name>Bridget Almas</foaf:name>
+         </foaf:Person>
+      </oa:annotatedBy>
+   </oa:Annotation>
+</rdf:RDF>
