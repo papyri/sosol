@@ -1566,6 +1566,17 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  # get a map of local aggregates for a research object from this publication
+  # iterates through the identifiers in the publication, mappig the urn attribute
+  # value to a local bagit archive data path
+  def ro_local_aggregates()
+    urns = {}
+    self.identifiers.select { |id| id.respond_to?(:urn_attribute) }.each do |u| 
+        urns[u.urn_attribute] = File.join('../data/',u.download_file_name)
+    end
+    return urns
+  end
+
   protected
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)

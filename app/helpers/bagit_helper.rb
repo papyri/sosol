@@ -65,7 +65,7 @@ module BagitHelper
           end
           ro_manifest['aggregates'] << agg
         end
-        # TODO we should dedupe the aggregates array because we might have duplicates in there
+        ro_manifest['aggregates'].uniq!
         bag.add_tag_file(File.join('metadata','manifest.json')) do |io|
           io.puts JSON.pretty_generate(ro_manifest)
         end

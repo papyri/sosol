@@ -321,7 +321,9 @@ class TreebankCiteIdentifier < CiteIdentifier
   # of a CTS-Centered Research Object Bundle
   def as_ro
     ro = {'aggregates' => [], 'annotations' => []}
-    urns = []
+    about = []
+    aggregates = []
+    urns = self.publication.ro_local_aggregates()
     parsed = XmlHelper::parseattributes(content,
       {"sentence" => ['document_id','subdoc','id']})
     last_target = nil
@@ -336,27 +338,33 @@ class TreebankCiteIdentifier < CiteIdentifier
           urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
           begin
             urn_obj = CTS::CTSLib.urnObj(urn_value)
-            passage = urn_obj.getPassage(100)
           rescue
           end
         end
-        if (! urn_obj.nil? && ! subdoc.nil?)
-          if (passage.nil?)
-            full_urn = "#{urn_value}:#{subdoc}"
+        unless urn_obj.nil?
+          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          if urns[u]
+            about << urns[u] 
           else
-            full_urn = "#{urn_value}.#{subdoc}"
+            about << u
+            aggregates << u
           end
-        end # end test for cts and subdoc
-        if full_urn
-          urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-          ro['annotations'] << { "about" => [full_urn], "query" => "s=#{s['id']}" , 'dc:format' => 'http://data.perseus.org/rdfvocab/treebank' }
         end
       end # end test for document_id
     end
-    urns.uniq.each do |u|
-      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    if about.size > 0 
+      ro['annotations'] << { 
+        "about" => about.uniq,
+        'conformsTo' => 'http://data.perseus.org/rdfvocab/treebank', 
+        'mediatype' => self.mimetype,
+        'content' => File.join('annotations',self.download_file_name),
+        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+      }
+      ro['aggregates'] = aggregates.uniq
+      return ro
+    else 
+      return nil
     end
-    return ro
   end
 
   # parse the supplied content for annotation targets

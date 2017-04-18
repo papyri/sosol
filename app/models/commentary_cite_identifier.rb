@@ -159,13 +159,10 @@ class CommentaryCiteIdentifier < CiteIdentifier
   # Used to prototype export of CITE Annotations as part
   # of a CTS-Centered Research Object Bundle
   def as_ro
-    urns = { }
     ro = { 'annotations' => [], 'aggregates' => [] } 
     about = []
     aggregates = []
-    self.publication.identifiers.select { |id| id != self && id.respond_to?(:urn_attribute) }.each do |u| 
-        urns[u.urn_attribute] = File.join('../data/',u.download_file_name)
-    end
+    urns = self.publication.ro_local_aggregates()
     targets = OacHelper::get_targets(get_annotation)
     targets.each do |t|
       if (t =~ /urn:cts:/)
@@ -190,14 +187,14 @@ class CommentaryCiteIdentifier < CiteIdentifier
     end
     if about.size > 0 
       ro['annotations'] << { 
-        "about" => about,
+        "about" => about.uniq,
         'conformsTo' => 'http://data.perseus.org/rdfvocab/commentary', 
         'mediatype' => self.mimetype,
         'content' => File.join('annotations',self.download_file_name),
         'oa:motivating' => 'oa:commenting',
         'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
       }
-      ro['aggregates'] = aggregates
+      ro['aggregates'] = aggregates.uniq
       return ro
     else 
       return nil
