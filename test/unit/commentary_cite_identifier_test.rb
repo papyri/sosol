@@ -113,11 +113,15 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
       should "process a ro" do
         test = CommentaryCiteIdentifier.new_from_template(@publication)
         test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],"test")
-         expected = {
-           'aggregates' => [ {'uri' => 'urn:cts:greekLit:tlg0012.tlg001.perseus-grc1', 'mediatype' => 'text/xml'}],
-           'annotations'=> [
-           {"about"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],
-            "dc:format"=>"http://data.perseus.org/rdfvocab/commentary"}]
+        expected = {
+          "annotations"=>
+             [{"about"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"],
+               "conformsTo"=>"http://data.perseus.org/rdfvocab/commentary",
+               "mediatype"=>"application/rdf+xml",
+               "content"=>"annotations/perseus-pdlcomm.1.1.xml",
+               "oa:motivating"=>"oa:commenting",
+               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}],
+          "aggregates"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"]
         }
         assert_equal(expected, test.as_ro())
       end
