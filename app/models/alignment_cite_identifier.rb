@@ -54,6 +54,52 @@ class AlignmentCiteIdentifier < CiteIdentifier
       raise Exception.new("Sentence Identifier Missing")
     end
   end
+
+  ###########################
+  # PROTOTYPE METHODS
+  ###########################
+
+  # Used to prototype export of CITE Annotations as part
+  # of a CTS-Centered Research Object Bundle
+  def as_ro
+    ro = {'aggregates' => [], 'annotations' => []}
+    about = []
+    aggregates = []
+    urns = self.publication.ro_local_aggregates()
+    t = REXML::Document.new(self.xml_content)
+    REXML::XPath.each(t,"/align:aligned-text/align:sentence/align:wds/align:comment[@class='uri']",{"align"=>NS_ALIGN}).each do |comment|
+      uri = comment.text
+      if (uri =~ /urn:cts:/)
+        urn_value = uri.match(/(urn:cts:.*)$/).captures[0]
+        begin
+          urn_obj = CTS::CTSLib.urnObj(urn_value)
+        rescue
+        end
+      end
+      unless urn_obj.nil?
+        u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+        if urns[u]
+          about << urns[u] 
+        else
+          about << u
+          aggregates << u
+        end
+      end
+    end
+    if about.size > 0 
+      ro['annotations'] << { 
+        "about" => about.uniq,
+        'conformsTo' => 'http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd',
+        'mediatype' => self.mimetype,
+        'content' => File.join('annotations',self.download_file_name),
+        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+      }
+      ro['aggregates'] = aggregates.uniq
+      return ro
+    else 
+      return nil
+    end
+  end
   
   ########################
   # Private Helper Methods
