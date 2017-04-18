@@ -3,6 +3,8 @@
     = link_to I18n.t('publication.commentslink'), {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe, :class => 'btn revert bg-sdw'
   - if %w{new editing submitted approved voting committed}.include? @publication.status
     %li
+      = link_to "Download", {:controller => 'publications', :id => @publication.id, :action => "download"}, :class => "btn revert bg-sdw"
+    %li
       = link_to "Export", {:controller => 'publications', :id => @publication.id, :action => "download", :format => 'bagit' }, :class => "btn revert bg-sdw"
   - if @publication.allow_user_withdrawal?(@current_user)
     %li
