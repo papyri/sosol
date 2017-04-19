@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'jgit_tree'
+require 'shellwords'
 
 class Grit::Commit
   def to_hash
@@ -216,7 +217,17 @@ class Repository
     # Heavyweight (missing objects are actually copied):
     #head_ref = other_repo.jgit_repo.resolve(branch).name()
     Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path}, #{@path})")
-    Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
+    begin
+      Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
+    rescue Java::JavaUtilConcurrent::ExecutionException => e
+      Rails.logger.error(e.inspect)
+      fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch #{other_repo.name} #{branch}:#{new_branch}"
+      Rails.logger.info("Trying fallback git command: #{fallback_git_command}")
+      Rails.logger.info(`#{fallback_git_command}`)
+      unless $?.to_i == 0
+        raise "Error with fallback git command in copy_branch_from_repo"
+      end
+    end
     #self.fetch_objects(other_repo, branch)
     #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     #self.create_branch(new_branch, other_repo.name + "/" + branch)
