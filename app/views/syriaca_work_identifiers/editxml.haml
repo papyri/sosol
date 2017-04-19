@@ -1,0 +1,30 @@
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/stylesheets/syriaca/syr-font-families.css"}
+:css
+  textarea {
+    font-family: "EastSyriacAdiabene", "East Syriac Adiabene","SertoBatnan", "Serto Batnan", "EstrangeloEdessa", "Estrangelo Edessa", Verdana, Arial, Helvetica, sans-serif !important;
+  }
+//------------------------------------------------------------
+//  Content
+//------------------------------------------------------------
+= render :partial => 'identifiers/header_perseids'
+= render :partial => 'identifiers/edit_bar_perseids'
+= render :partial => 'diffremote'
+#edit
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.error_messages
+    = render :partial => "common/flash_all_perseids"
+    .clearfix.card
+      = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'observechange input xml-content'
+    .card
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+= javascript_include_tag 'confirm'
+-#-------------------------------------------------------------
+-#  Page javascript
+-#-------------------------------------------------------------
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+

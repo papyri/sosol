@@ -1,0 +1,11 @@
+%link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/stylesheets/diffview.css"}
+= javascript_include_tag 'difflib'
+= javascript_include_tag 'diffview'
+= javascript_include_tag 'syriaca'
+#diffoutput
+:javascript
+  jQuery( document ).ready(
+    function() {
+      getAndDiff("#{@identifier.to_remote_raw_path}");
+    }
+  )
