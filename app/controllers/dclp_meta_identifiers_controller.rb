@@ -162,8 +162,22 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           }
         end
 
-        # author & work: tlg, phi, stoa, tm and cwkb
         if params[:hgv_meta_identifier][:work]
+          # add xor ids and excludes
+          if params[:hgv_meta_identifier][:workAlternative] && params[:hgv_meta_identifier][:workAlternative] == 'alternative' && params[:hgv_meta_identifier][:work] && params[:hgv_meta_identifier][:work].length > 1
+            listOfAlternatives = []
+            params[:hgv_meta_identifier][:work].each {|key, work|
+              id = 'work_' + key
+              work[:attributes][:id] = id
+              listOfAlternatives << id
+            }
+            params[:hgv_meta_identifier][:work].each {|key, work|
+              id = work[:attributes][:id]
+              work[:attributes][:exclude] = listOfAlternatives.select{ |excludeId| excludeId != id }.join(' ')
+            }
+          end
+
+          # author & work: generate links to tlg, phi, stoa, tm and cwkb
           params[:hgv_meta_identifier][:work].each {|key, work|
             if work[:children]
               if work[:children][:author]

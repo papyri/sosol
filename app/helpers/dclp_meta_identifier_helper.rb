@@ -404,24 +404,39 @@ module DclpMetaIdentifierHelper
     class Work
       # +Array+ of a valid values for @subtype
       @@subtypeList = [:ancient, :ancientQuote]
-      @@atomList = [:subtype, :corresp]
+      @@atomList = [:subtype, :corresp, :id, :exclude]
 
-      attr_accessor :subtype, :corresp, :author, :title, :extraList
+      attr_accessor :subtype, :corresp, :id, :exclude, :alternative, :author, :title, :extraList
+
+      def self.alternative? workListAsObtainedFromEpiDoc
+        workListAsObtainedFromEpiDoc.each do |work|
+          if work && work[:attributes] && work[:attributes][:exclude] && !work[:attributes][:exclude].empty?
+            return true
+          end
+        end
+        return false
+      end
 
       # Constructor
       # - *Args*  :
       #   - +init+ → +Hash+ object containing provenance data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
       # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
       def initialize init = nil
-        @subtype   = nil
-        @corresp   = nil
-        @author    = nil
-        @title     = nil
-        @extraList = []
+        @subtype     = nil
+        @corresp     = nil
+        @id          = nil
+        @exclude     = nil
+        @alternative = nil
+        @author      = nil
+        @title       = nil
+        @extraList   = []
 
         if init
           if init[:attributes]
             self.populateAtomFromHash init[:attributes]
+            if @id && !@id.empty?
+              @alternative = true
+            end
           end
           if init[:children]
             if init[:children][:author]

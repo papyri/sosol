@@ -102,7 +102,13 @@
           :pattern: /\Aancient|ancientQuote\Z/
         :corresp:
           :name: corresp
-          :pattern: '/\A#FR\d+( #FR\d+)*\Z/' 
+          :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :id:
+          :name: 'xml:id'
+          :pattern: '/\Awork_\d+\Z/'
+        :exclude:
+          :name: exclude
+          :pattern: '/\A#work_\d+( #work_\d+)*\Z/' 
       :children:
         :author:
           :xpath: author

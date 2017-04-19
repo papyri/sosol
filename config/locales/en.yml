@@ -158,6 +158,7 @@ en:
       workInternetResourcesDescription: e.g. classical works, knowledge base
       workCertainty: Certainty
       workCorresp: Corresp
+      workAlternative: xor
       workName: TM Work
       workTm: TM
       workDate: Year of Creation

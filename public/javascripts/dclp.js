@@ -349,7 +349,7 @@ function multiAddWork(e){
 '                        </div>' +
 '                        <div class="clear"></div>' +
 '                      </div>' +
-'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_attributes_corresp" name="hgv_meta_identifier[work][' + workIndex +'][attributes][corresp]" type="text">' +
+'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_attributes_corresp" name="hgv_meta_identifier[work][' + workIndex +'][attributes][corresp]" type="hidden">' +
 '                      <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                      <span class="move" title="move">o</span>' +
 '                    </li>';

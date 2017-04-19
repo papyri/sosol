@@ -2,6 +2,8 @@
 
   .clear
   .multi.work{:id => 'multi_work'}
+    = label_tag 'hgv_meta_identifier[workAlternative]', I18n.t('dclp.label.workAlternative'), :class => 'meta workAlternative', :title => @identifier.configuration.xpath(:work)
+    = check_box_tag 'hgv_meta_identifier[workAlternative]', 'alternative', DclpWork::Work.alternative?(@identifier[:work]), disabled: !@identifier.mutable?, :class => 'observechange workAlternative'
     %ul.items{:id => 'multiItems_work'}
       - @identifier[:work].each_with_index do |work, workIndex|
         - work = DclpWork::Work.new(work)
@@ -97,6 +99,8 @@
             .clear
 
           = hidden_field_tag baseAttributes + '[corresp]', work.corresp, :disabled => !@identifier.mutable?, :class => 'observechange workCorresp'
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
 
     :javascript
       Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
