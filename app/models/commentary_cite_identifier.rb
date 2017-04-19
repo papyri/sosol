@@ -162,43 +162,44 @@ class CommentaryCiteIdentifier < CiteIdentifier
     ro = { 'annotations' => [], 'aggregates' => [] } 
     about = []
     aggregates = []
-    urns = self.publication.ro_local_aggregates()
-    targets = OacHelper::get_targets(get_annotation)
-    targets.each do |t|
-      if (t =~ /urn:cts:/)
-        urn_value = t.match(/(urn:cts:.*)$/).captures[0]
-        begin
-          urn_obj = CTS::CTSLib.urnObj(urn_value)
-        rescue
-          Rails.logger.error("Invalid CTS URN #{urn_value}")
-        end
-        if urn_obj.nil?
-          next
-        end
-        u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-        if urns[u]
-          about << urns[u] 
-        else
-          about << u
-          aggregates << u
-        end
-   
+    if self.publication.identifiers.size > 1
+      urns = self.publication.ro_local_aggregates()
+      targets = OacHelper::get_targets(get_annotation)
+      targets.each do |t|
+        if (t =~ /urn:cts:/)
+          urn_value = t.match(/(urn:cts:.*)$/).captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+          rescue
+            Rails.logger.error("Invalid CTS URN #{urn_value}")
+          end
+          if urn_obj.nil?
+            next
+          end
+          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          if urns[u]
+            about << urns[u] 
+          end
+       end 
       end
     end
+    # if this commentary is pointing at a local text we will package it as an annotation
+    # otherwise it gets packaged as a data item
+    package_obj = {
+      'conformsTo' => 'http://www.openannotation.org/spec/core/',
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
     if about.size > 0 
-      ro['annotations'] << { 
-        "about" => about.uniq,
-        'conformsTo' => 'http://data.perseus.org/rdfvocab/commentary', 
-        'mediatype' => self.mimetype,
-        'content' => File.join('annotations',self.download_file_name),
-        'oa:motivating' => 'oa:commenting',
-        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
-      }
-      ro['aggregates'] = aggregates.uniq
-      return ro
+      package_obj['content'] = File.join('annotations',self.download_file_name)
+      package_obj['about'] = about.uniq
+      package_obj['oa:motivating'] = 'oa:commenting'
+      ro['annotations'] << package_obj
     else 
-      return nil
+      package_obj['uri'] = File.join('annotations',self.download_file_name)
+      ro['aggregates'] << package_obj
     end
+    return ro
   end
 
 

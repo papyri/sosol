@@ -14,7 +14,6 @@ module BagitHelper
   # - *Yields* :
   #   - temp zipfile to send and the filename
   def self.bagit(publication,current_user) 
-    is_ro = false
     now_iso = Time.now.iso8601
     # setup the research object bundle manifest in case we need it
     ro_manifest = { }
@@ -38,37 +37,24 @@ module BagitHelper
           ro = id.as_ro
         end
         unless ro.nil?
-            is_ro = true
+          if (ro['annotations'].size > 0)
             # add the content to the annotations directory
             bag.add_tag_file(File.join('metadata','annotations',id.download_file_name)) do |io|
               io.puts id.xml_content
             end
-            #update the ro_manifest
-            ro_manifest['aggregates'].concat(ro['aggregates'])
+            #update the ro annotations manifest
             ro_manifest['annotations'].concat(ro['annotations'])
-        else
-          bag.add_file( id.download_file_name ) do |io|
-            io.puts id.xml_content
-            local_aggregates << id
+          else
+            bag.add_file( id.download_file_name ) do |io|
+              io.puts id.xml_content
+            end
+            #update the ro aggregates manifest
+            ro_manifest['aggregates'].concat(ro['annotations'])
           end
         end
       end
-      if is_ro
-        local_aggregates.each do |a|
-          agg = { 
-           'uri' => File.join('../data/',a.download_file_name), 
-           'mediatype' => a.mimetype,
-           'createdBy' =>  { 'name' => a.publication.creator.full_name, 'uri' => a.publication.creator.uri }
-          }
-          if (a.publication.creator != current_user) 
-            agg['retrievedBy'] = { 'name' => current_user.full_name, 'uri' => current_user.uri }
-          end
-          ro_manifest['aggregates'] << agg
-        end
-        ro_manifest['aggregates'].uniq!
-        bag.add_tag_file(File.join('metadata','manifest.json')) do |io|
-          io.puts JSON.pretty_generate(ro_manifest)
-        end
+      bag.add_tag_file(File.join('metadata','manifest.json')) do |io|
+       io.puts JSON.pretty_generate(ro_manifest)
       end
       bag.manifest!
       zipfile = bagit_name + ".zip"
@@ -109,6 +95,21 @@ module BagitHelper
   # add a disk file to a zip archive
   def self.put_into_archive(disk_file_path, io, zip_file_path)
     io.add(zip_file_path, disk_file_path)
+  end
+
+  def self.generate_prov_derivation(source,derived_from)
+    prov = {
+      '@context': {
+        'prov': "http://www.w3.org/ns/prov#"
+       },
+      '@id' =>  source,
+      '@type' => 'prov:Entity',
+      'prov:wasDerviedFrom' => {
+        '@type' => 'prov:Entity',
+        '@id'   => dervied_from
+      }
+    }
+    JSON.pretty_generate(prov)
   end
 
 end
