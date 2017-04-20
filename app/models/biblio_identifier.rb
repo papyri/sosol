@@ -553,8 +553,8 @@ class BiblioIdentifier < HGVIdentifier
         unless element.nil?
           if attribute
             element.attributes[attribute] = self[key]
-            if key == :paginationTo
-              element.text = self[key] + (self[:paginationFrom] && !self[:paginationFrom].strip.empty? ? '-' + self[:paginationFrom] : '' )
+            if key == :paginationFrom
+              element.text = self[key] + (self[:paginationTo] && !self[:paginationTo].strip.empty? ? '-' + self[:paginationTo] : '' )
             end
           else
             element.text = self[key]
