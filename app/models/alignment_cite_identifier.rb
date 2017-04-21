@@ -55,6 +55,11 @@ class AlignmentCiteIdentifier < CiteIdentifier
     end
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd'
+  end
+
   ###########################
   # PROTOTYPE METHODS
   ###########################
@@ -64,7 +69,7 @@ class AlignmentCiteIdentifier < CiteIdentifier
   def as_ro
     ro = {'aggregates' => [], 'annotations' => []}
     about = []
-    aggregates = []
+    derived_from = []
     urns = self.publication.ro_local_aggregates()
     t = REXML::Document.new(self.xml_content)
     REXML::XPath.each(t,"/align:aligned-text/align:sentence/align:wds/align:comment[@class='uri']",{"align"=>NS_ALIGN}).each do |comment|
@@ -75,30 +80,35 @@ class AlignmentCiteIdentifier < CiteIdentifier
           urn_obj = CTS::CTSLib.urnObj(urn_value)
         rescue
         end
+      else
+        derived_from << uri
       end
       unless urn_obj.nil?
         u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
         if urns[u]
           about << urns[u] 
         else
-          about << u
-          aggregates << u
+          derived_from << u
         end
       end
     end
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
     if about.size > 0 
-      ro['annotations'] << { 
-        "about" => about.uniq,
-        'conformsTo' => 'http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd',
-        'mediatype' => self.mimetype,
-        'content' => File.join('annotations',self.download_file_name),
-        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
-      }
-      ro['aggregates'] = aggregates.uniq
-      return ro
+      package_obj['content'] = File.join('annotations',self.download_file_name)
+      package_obj['about'] = about.uniq
+      ro['annotations'] << package_obj
     else 
-      return nil
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+      package_obj['history'] = prov_file_name
+      ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      ro['aggregates'] << package_obj
     end
+    return ro
   end
   
   ########################

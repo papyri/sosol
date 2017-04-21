@@ -472,4 +472,9 @@ class EpiCTSIdentifier < CTSIdentifier
     return preprocessed_leiden
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng'
+  end 
+
 end

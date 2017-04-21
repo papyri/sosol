@@ -51,6 +51,11 @@ module BagitHelper
             #update the ro aggregates manifest
             ro_manifest['aggregates'].concat(ro['aggregates'])
           end
+          if (ro['provenance'])
+            bag.add_tag_file(File.join('metadata',ro['provenance']['file'])) do |io|
+              io.puts ro['provenance']['contents']
+            end
+          end
         end
       end
       if ro_manifest['annotations'].size == 0
@@ -100,17 +105,18 @@ module BagitHelper
     io.add(zip_file_path, disk_file_path)
   end
 
-  def self.generate_prov_derivation(source,derived_from)
+  def self.generate_prov_doc(source,derived_from)
+    entities = []
+    derived_from.each do |d|
+      entities << { '@type' => 'prov:Entity', '@id' => d }
+    end
     prov = {
       '@context'=> {
         'prov'=> "http://www.w3.org/ns/prov#"
        },
-      '@id' =>  source,
+      '@id' =>  File.join('../../data/',source),
       '@type' => 'prov:Entity',
-      'prov:wasDerviedFrom' => {
-        '@type' => 'prov:Entity',
-        '@id'   => dervied_from
-      }
+      'prov:wasDerviedFrom' => entities 
     }
     JSON.pretty_generate(prov)
   end

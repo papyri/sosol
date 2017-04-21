@@ -290,6 +290,11 @@ class TreebankCiteIdentifier < CiteIdentifier
     super()
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'https://raw.githubusercontent.com/alpheios-project/schemas/master/xsd/treebank-1.7.xsd'
+  end
+
   ###########################
   # PROTOTYPE METHODS
   ###########################
@@ -322,7 +327,7 @@ class TreebankCiteIdentifier < CiteIdentifier
   def as_ro
     ro = {'aggregates' => [], 'annotations' => []}
     about = []
-    aggregates = []
+    derived_from = []
     urns = self.publication.ro_local_aggregates()
     parsed = XmlHelper::parseattributes(content,
       {"sentence" => ['document_id','subdoc','id']})
@@ -346,25 +351,33 @@ class TreebankCiteIdentifier < CiteIdentifier
           if urns[u]
             about << urns[u] 
           else
-            about << u
-            aggregates << u
+            derived_from << u
           end
+        else
+          derived_from << document_id
         end
       end # end test for document_id
     end
+    # if the treebank is pointing at a local text we will package it as an annotation
+    # otherwise it gets packaged as a data item and we add provenance information to indicate
+    # where it's derived from
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
     if about.size > 0 
-      ro['annotations'] << { 
-        "about" => about.uniq,
-        'conformsTo' => 'http://data.perseus.org/rdfvocab/treebank', 
-        'mediatype' => self.mimetype,
-        'content' => File.join('annotations',self.download_file_name),
-        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
-      }
-      ro['aggregates'] = aggregates.uniq
-      return ro
+        package_obj['content'] = File.join('annotations',self.download_file_name)
+        package_obj['about'] = about.uniq
+        ro['annotations'] << package_obj
     else 
-      return nil
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+      package_obj['history'] = prov_file_name
+      ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      ro['aggregates'] << package_obj
     end
+    return ro
   end
 
   # parse the supplied content for annotation targets

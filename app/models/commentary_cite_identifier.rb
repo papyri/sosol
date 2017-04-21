@@ -116,6 +116,11 @@ class CommentaryCiteIdentifier < CiteIdentifier
     'application/rdf+xml'
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'http://www.openannotation.org/spec/core/'
+  end
+
 
   ##################################################
   # Public ComentaryCiteIdentifier Instance Methods
@@ -186,7 +191,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
     # if this commentary is pointing at a local text we will package it as an annotation
     # otherwise it gets packaged as a data item
     package_obj = {
-      'conformsTo' => 'http://www.openannotation.org/spec/core/',
+      'conformsTo' => self.schema,
       'mediatype' => self.mimetype,
       'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
     }
