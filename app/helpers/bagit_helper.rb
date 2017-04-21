@@ -49,9 +49,12 @@ module BagitHelper
               io.puts id.xml_content
             end
             #update the ro aggregates manifest
-            ro_manifest['aggregates'].concat(ro['annotations'])
+            ro_manifest['aggregates'].concat(ro['aggregates'])
           end
         end
+      end
+      if ro_manifest['annotations'].size == 0
+        ro_manifest.delete('annotations')
       end
       bag.add_tag_file(File.join('metadata','manifest.json')) do |io|
        io.puts JSON.pretty_generate(ro_manifest)
@@ -99,8 +102,8 @@ module BagitHelper
 
   def self.generate_prov_derivation(source,derived_from)
     prov = {
-      '@context': {
-        'prov': "http://www.w3.org/ns/prov#"
+      '@context'=> {
+        'prov'=> "http://www.w3.org/ns/prov#"
        },
       '@id' =>  source,
       '@type' => 'prov:Entity',

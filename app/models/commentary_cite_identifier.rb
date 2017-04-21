@@ -196,7 +196,7 @@ class CommentaryCiteIdentifier < CiteIdentifier
       package_obj['oa:motivating'] = 'oa:commenting'
       ro['annotations'] << package_obj
     else 
-      package_obj['uri'] = File.join('annotations',self.download_file_name)
+      package_obj['uri'] = File.join('../data',self.download_file_name)
       ro['aggregates'] << package_obj
     end
     return ro
