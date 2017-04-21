@@ -116,7 +116,7 @@ module BagitHelper
        },
       '@id' =>  File.join('../../data/',source),
       '@type' => 'prov:Entity',
-      'prov:wasDerviedFrom' => entities 
+      'prov:wasDerivedFrom' => entities 
     }
     JSON.pretty_generate(prov)
   end
