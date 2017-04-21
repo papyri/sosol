@@ -182,13 +182,13 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
         end
         should "process a ro" do
           expected = {
-            "annotations"=>
-               [{"about"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"],
-                 'conformsTo' => 'http://www.openannotation.org/spec/core/',
+            "annotations" => [],
+            "aggregates"=> [
+              {  'conformsTo' => 'http://www.openannotation.org/spec/core/',
                  "mediatype"=>"application/rdf+xml",
-                 "content"=>"annotations/#{@identifier.download_file_name}",
-                 "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}],
-            "aggregates"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"]
+                 "uri"=>"../data/#{@identifier.download_file_name}",
+                 "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}
+           ]
           }
           assert_equal(expected, @identifier.as_ro())
         end

@@ -114,14 +114,13 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
         test = CommentaryCiteIdentifier.new_from_template(@publication)
         test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],"test")
         expected = {
-          "annotations"=>
-             [{"about"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"],
-               "conformsTo"=>"http://data.perseus.org/rdfvocab/commentary",
+          "annotations" => [],
+          "aggregates"=> [
+            {  'conformsTo' => 'http://www.openannotation.org/spec/core/',
                "mediatype"=>"application/rdf+xml",
-               "content"=>"annotations/perseus-pdlcomm.1.1.xml",
-               "oa:motivating"=>"oa:commenting",
-               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}],
-          "aggregates"=>["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1"]
+               "uri"=>"../data/#{test.download_file_name}",
+               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}
+         ]
         }
         assert_equal(expected, test.as_ro())
       end

@@ -95,14 +95,17 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
       should "export ro" do
         file = File.read(File.join(File.dirname(__FILE__), 'data', 'align1.xml'))
         test = AlignmentCiteIdentifier.new_from_supplied(@publication,"http://example.org",file,"New alignment")
-        expected = {
-          "annotations"=>
-             [{"about"=>["urn:cts:greekLit:tlg0020.tlg001.perseus-grc2","urn:cts:greekLit:tlg0020.tlg001.perseus-eng2"],
-               'conformsTo' => 'http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd',
-               "mediatype"=>"application/xml",
-               "content"=>"annotations/perseus-align.1.1.xml",
-               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}],
-          "aggregates"=>["urn:cts:greekLit:tlg0020.tlg001.perseus-grc2","urn:cts:greekLit:tlg0020.tlg001.perseus-eng2"]
+         expected = {
+           "annotations" => [],
+           "aggregates"=> [
+              {  'conformsTo' => test.schema,
+                 "mediatype"=>"application/xml",
+                 "uri"=>"../data/#{test.download_file_name}",
+                 "history" => "provenance/#{test.download_file_name.sub(/.xml$/, '.prov.jsonld')}",
+                 "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}},
+           ],
+           "provenance" => { "file" => "provenance/#{test.download_file_name.sub(/.xml$/,'.prov.jsonld')}", 
+                             "contents" => "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/perseus-align.1.1.xml\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0020.tlg001.perseus-grc2\"\n    },\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0020.tlg001.perseus-eng2\"\n    }\n  ]\n}"}
          }
          assert_equal(expected, test.as_ro())
       end

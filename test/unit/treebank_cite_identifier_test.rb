@@ -142,13 +142,16 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
          file = File.read(File.join(File.dirname(__FILE__), 'data', 'ctstb.xml'))
          test = TreebankCiteIdentifier.new_from_supplied(@publication,"http://testapp",file,"apicreate")
          expected = {
-          "annotations"=>
-             [{"about"=>["urn:cts:latinLit:phi1221.phi007.perseus-lat1"],
-               "conformsTo"=>"http://data.perseus.org/rdfvocab/treebank",
-               "mediatype"=>"application/xml",
-               "content"=>"annotations/perseus-lattb.1.1.xml",
-               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}],
-          "aggregates"=>["urn:cts:latinLit:phi1221.phi007.perseus-lat1"]
+           "annotations" => [],
+           "aggregates"=> [
+              {  'conformsTo' => test.schema,
+                 "mediatype"=>"application/xml",
+                 "uri"=>"../data/#{test.download_file_name}",
+                 "history" => "provenance/#{test.download_file_name.sub(/.xml$/, '.prov.jsonld')}",
+                 "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}},
+           ],
+           "provenance" => { "file" => "provenance/#{test.download_file_name.sub(/.xml$/,'.prov.jsonld')}", 
+                             "contents" => "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/perseus-lattb.1.1.xml\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:latinLit:phi1221.phi007.perseus-lat1\"\n    }\n  ]\n}"}
          }
          assert_equal(expected, test.as_ro())
        end
