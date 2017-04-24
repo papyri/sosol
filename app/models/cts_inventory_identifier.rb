@@ -145,4 +145,8 @@ class CTSInventoryIdentifier < Identifier
   def download_file_name
     'cts-inventory.xml'
   end
+
+  def schema
+    'http://chs.harvard.edu/xmlns/cts3/ti'
+  end
 end

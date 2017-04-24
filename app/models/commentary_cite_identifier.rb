@@ -111,6 +111,17 @@ class CommentaryCiteIdentifier < CiteIdentifier
     self.set_xml_content(oacRdf, :comment => 'Update uris to reflect new identifier')
   end
 
+  # @overrides Identifier#mimetype
+  def mimetype
+    'application/rdf+xml'
+  end
+
+  # @overrides Identifier#schema
+  def schema
+    'http://www.openannotation.org/spec/core/'
+  end
+
+
   ##################################################
   # Public ComentaryCiteIdentifier Instance Methods
   ##################################################
@@ -153,26 +164,45 @@ class CommentaryCiteIdentifier < CiteIdentifier
   # Used to prototype export of CITE Annotations as part
   # of a CTS-Centered Research Object Bundle
   def as_ro
-    ro = {'aggregates' => [], 'annotations' => []}
-    urns = []
-    targets = OacHelper::get_targets(get_annotation)
-    targets.each do |t|
-      if (t =~ /urn:cts:/)
-        urn_value = t.match(/(urn:cts:.*)$/).captures[0]
-        begin
-          urn_obj = CTS::CTSLib.urnObj(urn_value)
-        rescue
-          Rails.logger.error("Invalid CTS URN #{urn_value}")
-        end
-        if urn_obj.nil?
-          next
-        end
-        urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-        ro['annotations'] << { "about" => [urn_value], 'dc:format' => 'http://data.perseus.org/rdfvocab/commentary' }
-      end 
+    ro = { 'annotations' => [], 'aggregates' => [] } 
+    about = []
+    aggregates = []
+    if self.publication.identifiers.size > 1
+      urns = self.publication.ro_local_aggregates()
+      targets = OacHelper::get_targets(get_annotation)
+      targets.each do |t|
+        if (t =~ /urn:cts:/)
+          urn_value = t.match(/(urn:cts:.*)$/).captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+          rescue
+            Rails.logger.error("Invalid CTS URN #{urn_value}")
+          end
+          if urn_obj.nil?
+            next
+          end
+          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          if urns[u]
+            about << urns[u] 
+          end
+       end 
+      end
     end
-    urns.uniq.each do |u|
-      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    # if this commentary is pointing at a local text we will package it as an annotation
+    # otherwise it gets packaged as a data item
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
+    if about.size > 0 
+      package_obj['content'] = File.join('annotations',self.download_file_name)
+      package_obj['about'] = about.uniq
+      package_obj['oa:motivating'] = 'oa:commenting'
+      ro['annotations'] << package_obj
+    else 
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      ro['aggregates'] << package_obj
     end
     return ro
   end

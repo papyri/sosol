@@ -169,8 +169,31 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
         end
       end
 
+      context "cts annotation" do
+        setup do
+          file = File.read(File.join(File.dirname(__FILE__), 'data', 'oacite2.xml'))
+          @identifier = OaCiteIdentifier.new_from_supplied(@publication,
+            "",file,"import")
+        end
+        teardown do
+          unless @identifier.nil?
+            @identifier.destroy
+          end
+        end
+        should "process a ro" do
+          expected = {
+            "annotations" => [],
+            "aggregates"=> [
+              {  'conformsTo' => 'http://www.openannotation.org/spec/core/',
+                 "mediatype"=>"application/rdf+xml",
+                 "uri"=>"../data/#{@identifier.download_file_name}",
+                 "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}
+           ]
+          }
+          assert_equal(expected, @identifier.as_ro())
+        end
+    
+      end
     end
-   
   end
-
 end

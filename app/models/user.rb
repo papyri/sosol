@@ -196,4 +196,8 @@ class User < ActiveRecord::Base
         }
     end
   end
+
+  def uri
+    "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.name)}"
+  end
 end

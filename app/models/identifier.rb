@@ -715,11 +715,35 @@ class Identifier < ActiveRecord::Base
     self.to_path
   end
 
+  # return the schema of the identifier content
+  # - *Returns* :
+  #   - the schema of the identifier content
+  def schema
+    ''
+  end
+
   # return the mimetype of the identifier content
-  # - *Returns% :
+  # - *Returns* :
   #   - the mimetype of the identifier content
   def mimetype
     "application/xml"
+  end
+
+  # describe the identifier as data object in a 
+  # downloadable Research Object Bundle
+  # by default it just gets put in the data folder
+  def as_ro
+    ro = { 'annotations' => [], 'aggregates' => [] } 
+    about = []
+    aggregates = []
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
+    package_obj['uri'] = File.join('../data',self.download_file_name)
+    ro['aggregates'] << package_obj
+    return ro
   end
 
 end

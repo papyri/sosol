@@ -260,6 +260,62 @@ class OaCiteIdentifier < CiteIdentifier
     "application/rdf+xml"
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'http://www.openannotation.org/spec/core/'
+  end
+  #################################################
+  # PROTOTYPE METHODS
+  #################################################
+
+  # Used to prototype export of CITE Annotations as part
+  # of a CTS-Centered Research Object Bundle
+  def as_ro
+    ro = { 'annotations' => [], 'aggregates' => [] } 
+    about = []
+    aggregates = []
+    if self.publication.identifiers.size > 1
+      urns = self.publication.ro_local_aggregates()
+      targets = []
+      OacHelper::get_all_annotations(self.rdf).each() { |el|
+        targets.concat(OacHelper::get_targets(el))
+      }
+      targets.each do |t|
+        if (t =~ /urn:cts:/)
+          urn_value = t.match(/(urn:cts:.*)$/).captures[0]
+          begin
+            urn_obj = CTS::CTSLib.urnObj(urn_value)
+          rescue
+            Rails.logger.error("Invalid CTS URN #{urn_value}")
+          end
+          if urn_obj.nil?
+            next
+          end
+          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          if urns[u]
+            about << urns[u] 
+          end
+        end
+      end
+    end
+    package_obj = { 
+        'conformsTo' => self.schema,
+        'mediatype' => self.mimetype,
+        'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
+    # if the annotations are pointing at a local text we will package it as an annotation
+    # otherwise it gets packaged as a data item
+    if about.size > 0 
+      package_obj['content'] = File.join('annotations',self.download_file_name)
+      package_obj['about'] = about.uniq
+      ro['annotations'] << package_obj
+    else 
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      ro['aggregates'] << package_obj
+    end
+    return ro
+  end
+
   #########################################
   # Private Helper Methods
   #########################################

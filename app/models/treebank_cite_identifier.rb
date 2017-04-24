@@ -290,6 +290,11 @@ class TreebankCiteIdentifier < CiteIdentifier
     super()
   end
 
+  # @overrides Identifier#schema
+  def schema
+    'https://raw.githubusercontent.com/alpheios-project/schemas/master/xsd/treebank-1.7.xsd'
+  end
+
   ###########################
   # PROTOTYPE METHODS
   ###########################
@@ -321,7 +326,9 @@ class TreebankCiteIdentifier < CiteIdentifier
   # of a CTS-Centered Research Object Bundle
   def as_ro
     ro = {'aggregates' => [], 'annotations' => []}
-    urns = []
+    about = []
+    derived_from = []
+    urns = self.publication.ro_local_aggregates()
     parsed = XmlHelper::parseattributes(content,
       {"sentence" => ['document_id','subdoc','id']})
     last_target = nil
@@ -336,25 +343,39 @@ class TreebankCiteIdentifier < CiteIdentifier
           urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
           begin
             urn_obj = CTS::CTSLib.urnObj(urn_value)
-            passage = urn_obj.getPassage(100)
           rescue
           end
         end
-        if (! urn_obj.nil? && ! subdoc.nil?)
-          if (passage.nil?)
-            full_urn = "#{urn_value}:#{subdoc}"
+        unless urn_obj.nil?
+          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
+          if urns[u]
+            about << urns[u] 
           else
-            full_urn = "#{urn_value}.#{subdoc}"
+            derived_from << u
           end
-        end # end test for cts and subdoc
-        if full_urn
-          urns << "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-          ro['annotations'] << { "about" => [full_urn], "query" => "s=#{s['id']}" , 'dc:format' => 'http://data.perseus.org/rdfvocab/treebank' }
+        else
+          derived_from << document_id
         end
       end # end test for document_id
     end
-    urns.uniq.each do |u|
-      ro['aggregates'] << {'uri' => u, 'mediatype' => 'text/xml' }
+    # if the treebank is pointing at a local text we will package it as an annotation
+    # otherwise it gets packaged as a data item and we add provenance information to indicate
+    # where it's derived from
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
+    if about.size > 0 
+        package_obj['content'] = File.join('annotations',self.download_file_name)
+        package_obj['about'] = about.uniq
+        ro['annotations'] << package_obj
+    else 
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+      package_obj['history'] = prov_file_name
+      ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      ro['aggregates'] << package_obj
     end
     return ro
   end
