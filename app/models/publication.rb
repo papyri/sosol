@@ -814,10 +814,14 @@ class Publication < ActiveRecord::Base
   def send_to_finalizer(finalizer = nil)
     board_members = self.owner.users
     if !finalizer
-      #get someone from the board
-#      board_members = self.owner.users
-      # just select a random board member to be the finalizer
-      finalizer = board_members[rand(board_members.length)]
+      # if the board has a default finalizer use it 
+      # it shouldn't be possible for the board.finalizer_user not to be a member, but just be sure
+      if ! self.owner.finalizer_user.nil? && board_members.include?(self.owner.finalizer_user)
+        finalizer = self.owner.finalizer_user
+      else 
+        # just select a random board member to be the finalizer
+        finalizer = board_members[rand(board_members.length)]
+      end
     end
 
     self.remove_finalizer()

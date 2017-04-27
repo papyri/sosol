@@ -107,6 +107,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           #users to put on the boards
           @board_user = FactoryGirl.create(:user, :name => "board_man_freaky_bob")
+          @board_user2 = FactoryGirl.create(:user, :name => "board_woman_jane")
+          @board_user3 = FactoryGirl.create(:user, :name => "board_woman_sally")
 
           #a user to submit publications
           @creator_user = FactoryGirl.create(:user, :name => "creator_freaky_syriacan_editor")
@@ -143,6 +145,11 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           @test_agent_community.admins << @community_admin
           @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id)
           @test_agent_board.users << @board_user
+          @test_agent_board.users << @board_user2
+          @test_agent_board.users << @board_user3
+          @default_finalizer = @board_user3
+          @test_agent_board.finalizer_user = @default_finalizer
+          @test_agent_board.save
           @test_agent_decree = FactoryGirl.create(:count_decree,
                                             :board => @test_agent_board,
                                             :trigger => 1.0,
@@ -190,7 +197,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           begin
             ActiveRecord::Base.connection_pool.with_connection do |conn|
               count = 0
-              [ @board_user, @creator_user, @master_user, @community_user, @test_agent_community ].each do |entity|
+              [ @board_user, @creator_user, @master_user, @community_user, @test_agent_community, @board_user2, @board_user3 ].each do |entity|
                 count = count + 1
                 #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
                 unless entity.nil?
@@ -330,8 +337,10 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           #now finalizer should have it
           board_final_publication = board_publication.find_finalizer_publication
+          finalizer = board_publication.find_finalizer_user
 
           assert_equal board_final_publication.status, "finalizing", "Board user's publication is not for finalizing"
+          assert_equal @default_finalizer, finalizer, "Default finalizer was not assigned"
           Rails.logger.debug "---Meta Finalizer has publication"
 
           board_final_identifier = board_final_publication.identifiers.first
