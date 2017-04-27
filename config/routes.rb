@@ -107,7 +107,10 @@ Sosol::Application.routes.draw do
     member do
   get :edit_members
   get :add_member
+  get :find_member_finalizer
+  get :set_member_finalizer
   get :remove_member
+  get :remove_member_finalizer
   post :update_rankings
   get :apply_rules
   end

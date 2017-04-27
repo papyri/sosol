@@ -4,7 +4,7 @@ class BoardsController < ApplicationController
   #layout "header_footer"
   before_filter :authorize
   before_filter :check_admin, :only => [:index, :new, :create, :destroy, :rank, :update_rankings, :confirm_destroy, :send_board_reminder_emails]
-  before_filter :check_community_admin, :only => [:overview, :find_member, :add_member, :remove_member, :edit, :update, :show, :apply_rules, :confirm_apply_rules ]
+  before_filter :check_community_admin, :only => [:overview, :find_member, :add_member, :remove_member, :edit, :update, :show, :apply_rules, :confirm_apply_rules, :find_member_finalizer, :set_member_finalizer, :remove_member_finalizer ]
 
 
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
@@ -49,6 +49,11 @@ class BoardsController < ApplicationController
   def find_member
   end
 
+  def find_member_finalizer
+    find_board
+    @members = @board.users
+  end
+
   #Adds the user to the board member list.
   def add_member
     user = User.find_by_name(params[:user_name].to_s)
@@ -65,10 +70,34 @@ class BoardsController < ApplicationController
   def remove_member
     user = User.find(params[:user_id].to_s)
 
+    if @board.finalizer_user == user
+      @board.finalizer_user = nil
+    end
     @board.users.delete(user)
     @board.save
 
     redirect_to :action => "edit", :id => (@board).id
+  end
+
+  # Sets the default finalizer for the board
+  def set_member_finalizer
+    find_board
+    if nil == @board.users.find_by_id(params[:user_id])
+      flash[:error] = "User #{params[:user_name]} is not a member of this board."
+    else 
+      @board.finalizer_user = User.find(params[:user_id])
+      @board.save
+      flash[:notice] = "Default finalizer updated to #{params[:user_name]}."
+    end
+    redirect_to :action => :edit, :id => (@board).id
+  end
+
+  # Removes the default finalizer for the board
+  def remove_member_finalizer
+    @board.finalizer_user = nil
+    @board.save
+    flash[:notice] = "Default finalizer removed."
+    redirect_to :action => :edit, :id => (@board).id
   end
 
   # GET /boards

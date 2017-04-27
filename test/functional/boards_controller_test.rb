@@ -194,17 +194,36 @@ class BoardsControllerTest < ActionController::TestCase
       post :apply_rules, :id => @board.id
       assert_response 403
     end
+
+    should "not find finalizer" do 
+      get :find_member_finalizer, :id => @board.id
+      assert_response 403
+    end
+
+    should "not set finalizer" do 
+      get :set_member_finalizer, :id => @board.id, :user_id => @user.id, :user_name => @user.name
+      assert_response 403
+    end
+
+    should "not remove finalizer" do 
+      get :remove_member_finalizer, :id => @board.id
+      assert_response 403
+    end
+
   end
 
   context "as community-admin" do
 
     setup do
       @user = FactoryGirl.create(:user)
+      @member = FactoryGirl.create(:user)
+      @other_user = FactoryGirl.create(:user)
       @request.session[:user_id] = @user.id
       Sosol::Application.config.allow_canonical_boards = true
       @board = FactoryGirl.create(:board)
       @community_board = FactoryGirl.create(:community_board)
       @community_board.community.admins = [@user]
+      @community_board.users << @member
     end
 
     teardown do
@@ -295,6 +314,32 @@ class BoardsControllerTest < ActionController::TestCase
     should "apply rules to community board" do 
       post :apply_rules, :id => @community_board.id
       assert_redirected_to :controller => :user, :action => :board_dashboard, :board_id => @community_board.id
+    end
+
+    should "show only members to set as finalizer" do 
+      get :find_member_finalizer, :id => @community_board.id
+      assert_select 'li.select_user_name', 1
+      assert_select 'li.select_user_name a', text: "#{@member.human_name} (#{@member.name})"
+    end
+
+    should "set only members as finalizer" do 
+      get :set_member_finalizer, :id => @community_board.id, :user_name => @other_user.name, :user_id => @other_user.id
+      assert_equal "User #{@other_user.name} is not a member of this board.", flash[:error]
+      assert_nil @community_board.finalizer_user
+      get :set_member_finalizer, :id => @community_board.id, :user_name => @member.name, :user_id => @member.id
+      assert_equal "Default finalizer updated to #{@member.name}.", flash[:notice]
+      @community_board.reload
+      assert_equal @member, @community_board.finalizer_user
+    end
+
+    should "remove member as finalizer when removing member" do
+      get :set_member_finalizer, :id => @community_board.id, :user_name => @member.name, :user_id => @member.id
+      @community_board.reload
+      assert_equal @member, @community_board.finalizer_user
+      get :remove_member, :id => @community_board.id, :user_id => @member.id
+      @community_board.reload
+      assert_equal 0, @community_board.users.size
+      assert_nil @community_board.finalizer_user
     end
   end
 end

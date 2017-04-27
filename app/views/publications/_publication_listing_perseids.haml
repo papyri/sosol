@@ -43,3 +43,7 @@
       - if community_info
         %div{:class => 'community_info'}
           %span=community_info
+      - link = url_for(:controller => 'publications', :id => publication.id, :action => "download", :format => 'bagit' )
+      %div{:class => "info-square button"}
+        %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;', :title => "Export Research Object Bag"}
+          %i{:class => "fa fa-shopping-bag"}

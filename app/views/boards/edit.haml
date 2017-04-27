@@ -60,6 +60,17 @@
           = user.name
           = link_to "X", :controller => "boards", :action => "remove_member", :user_id => user.id
           %br
+  
+  %h3{'style' => "display:inline;"}
+    Default Finalizer
+  = link_to "Set", :controller => "boards", :action => "find_member_finalizer", :id => @board.id
+  - unless @board.finalizer_user.nil?
+    = link_to "Remove", :controller => "boards", :action => "remove_member_finalizer", :id => @board.id
+  .member
+    - if @board.finalizer_user.nil?
+      (Not Set)
+    - else
+      = @board.finalizer_user.human_name
 
   %h3{'style' => "display:inline;"}
     Decrees
