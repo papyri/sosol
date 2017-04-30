@@ -476,7 +476,7 @@ class PublicationsController < ApplicationController
         commit_sha = @publication.community.finalize(@publication)
       elsif Sosol::Application.config.allow_canonical_boards
         # backwards compatibility - commit to master
-        canon_sha = @publication.commit_to_canon 
+        commit_sha = @publication.commit_to_canon 
       else
         raise "Community required for finalization."
       end

@@ -265,7 +265,8 @@ class Publication < ActiveRecord::Base
   #If so, then the publication is submitted to that board.
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
-  def submit_to_next_board
+  # a preferred next board may optionally be requested
+  def submit_to_next_board(preferred=nil)
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
     @recent_submit_sha = ''
 
@@ -279,6 +280,12 @@ class Publication < ActiveRecord::Base
 
     
     boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
+    if ! preferred.nil? && boards.include?(preferred)
+      # if an available board was specfically requested, move it to the front of the list
+      # this techincally leaves it in the list, but if it's a valid board it will just get
+      # assigned and we'll return and if it not it just will be skipped potentially twice
+      boards = unshift(preferred)
+    end
 
     #check each board in order by priority rank
     boards.each do |board|
@@ -646,7 +653,11 @@ class Publication < ActiveRecord::Base
       self.change_status("approved")
 
       #set up for finalizing
-      SendToFinalizerJob.new.async.perform(self.id)
+      if self.owner.auto_finalize?
+        SendToAutoFinalizerJob.new.async.perform(self.id)
+      else
+        SendToFinalizerJob.new.async.perform(self.id)
+      end
   #----reject-----
     elsif decree_action == "reject"
 
@@ -803,6 +814,11 @@ class Publication < ActiveRecord::Base
     # - write a 'Signed-off-by:' line for each Ed. Board member
     # - rewrite the committer to the finalizer
     # - change parent lineage to flattened commits
+  end
+
+  def send_to_finalizer_and_finalize(finalizer=nil,next_board=nil)
+    send_to_finalizer(finalizer)
+    auto_finalize(next_board)
   end
 
   #Finalizer is a user who is responsible for preparing the publication for the final commit to canon. They will be given a copy of the publication to edit.
@@ -1579,6 +1595,111 @@ class Publication < ActiveRecord::Base
         urns[u.urn_attribute] = File.join('../data/',u.download_file_name)
     end
     return urns
+  end
+
+  # auto finalize a publication - this is copied from the controller - 
+  # should really remove redundant logic in the controller method
+  def auto_finalize(next_board=nil)
+    comment = "autofinalize"
+    user = self.finalizer_user
+    if self.needs_rename?
+      raise Exception.new("Can't autofinalize - publication requires rename.")
+    end
+
+    # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+    # if something goes wrong
+    max_loops = self.identifiers.size
+    loop_count = 0
+    done_preprocessing = false
+    self.transaction do
+      while (! done_preprocessing) do
+        loop_count = loop_count + 1
+        any_preprocessed = false
+        #find all modified identiers in the publication and run any necessary preprocessing
+        self.identifiers.each do |id|
+          #board controls this id and it has been modified
+          if id.modified? && self.find_first_board.controls_identifier?(id) 
+            modified = id.preprocess_for_finalization(self.find_first_board.users.collect { |m| m.human_name })
+            if (modified)
+              id.save
+              any_preprocessed = true
+            end
+          end
+        end # end iteration through identifiers
+        # if we have multiple identifiers
+        # we need to rerun preprocessing until no more changes are made 
+        # because a preprocessing step can modify a related identifier, 
+        # e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = max_loops == 1 ? true : ! any_preprocessed
+        if (!done_preprocessing && loop_count == max_loops)
+          raise Exception.new("Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing.")
+        end
+      end # done preprocessing
+    end # end transaction
+
+    #find all modified identiers in the publication so we can set the votes into the xml
+    self.identifiers.each do |id|
+      #board controls this id and it has been modified
+      if id.modified? && self.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
+        id.update_revision_desc(comment, user);
+        id.save
+      end
+    end
+
+    #copy back in any case
+    self.copy_back_to_user(comment, user)
+
+    # finalize
+    if self.is_community_publication?
+      commit_sha = self.community.finalize(self)
+    elsif Sosol::Application.config.allow_canonical_boards
+      # backwards compatibility - commit to master
+      commit_sha = self.commit_to_canon 
+    else
+      raise "Community required for finalization."
+    end
+
+    self.transaction do
+      c = Comment.new()
+      c.comment = comment
+      c.user = user
+      c.reason = "finalizing"
+      c.git_hash = commit_sha 
+      c.identifier_id = self.identifiers.first.id
+      c.publication = self.origin
+      c.save
+
+      #create an event to show up on dashboard
+      event = Event.new()
+      event.owner = user
+      event.target = self.parent #used parent so would match approve event
+      event.category = "committed"
+      event.save!
+
+      #need to set status of ids
+      self.set_origin_and_local_identifier_status("committed")
+      self.set_board_identifier_status("committed")
+
+     
+      previous_parent = self.parent
+
+      #send publication to the next board
+      error_text, identifier_for_comment = self.origin.submit_to_next_board(next_board)
+
+      if error_text != ""
+        raise Exception.new(error_text)
+      else
+        #as it is set up the finalizer will have a parent that is a board whose status must be set
+        #check that parent is board
+        if previous_parent && previous_parent.owner_type == "Board"
+          previous_parent.archive
+          previous_parent.owner.send_status_emails("committed", self)
+        end
+        self.change_status('finalized')
+        self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        self.save!
+      end
+    end
   end
 
   protected
