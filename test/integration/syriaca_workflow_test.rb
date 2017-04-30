@@ -106,6 +106,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
 
           #users to put on the boards
+          @disperser_user = FactoryGirl.create(:user, :name => "disperser")
           @board_user = FactoryGirl.create(:user, :name => "board_man_freaky_bob")
           @board_user2 = FactoryGirl.create(:user, :name => "board_woman_jane")
           @board_user3 = FactoryGirl.create(:user, :name => "board_woman_sally")
@@ -143,6 +144,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           @test_agent_community.members << @community_user
           @test_agent_community.admins << @community_admin
+
           @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id)
           @test_agent_board.users << @board_user
           @test_agent_board.users << @board_user2
@@ -159,7 +161,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           @place_file = File.read(File.join(File.dirname(__FILE__), 'data', '1000.xml'))
 
           @test_person_community = FactoryGirl.create(:pass_through_community,
-                                               :name => "test_syriaca_oerson_community",
+                                               :name => "test_syriaca_person_community",
                                                :friendly_name => "testy agent",
                                                :allows_self_signup => true,
                                                :description => "a syriaca person comunity for testing",
@@ -168,7 +170,15 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           @test_person_community.members << @community_user
           @test_person_community.admins << @community_admin
-          @test_person_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestPersonBoard", :community_id => @test_person_community.id)
+          @test_disperse_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestDispersalBoard", :community_id => @test_person_community.id, :skip_finalize => true, :rank => 1)
+          @test_disperse_board.users << @disperser_user
+          @test_disperse_decree = FactoryGirl.create(:count_decree,
+                                            :board => @test_disperse_board,
+                                            :trigger => 1.0,
+                                            :action => "approve",
+                                            :choices => "ok")
+
+          @test_person_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestPersonBoard", :community_id => @test_person_community.id, :rank => 2)
           @test_person_board.users << @board_user
           @test_person_decree = FactoryGirl.create(:count_decree,
                                             :board => @test_person_board,
@@ -197,7 +207,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           begin
             ActiveRecord::Base.connection_pool.with_connection do |conn|
               count = 0
-              [ @board_user, @creator_user, @master_user, @community_user, @test_agent_community, @board_user2, @board_user3 ].each do |entity|
+              [ @board_user, @creator_user, @master_user, @community_user, @test_agent_community, @board_user2, @board_user3, @test_disperse_board, @disperser_user ].each do |entity|
                 count = count + 1
                 #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
                 unless entity.nil?
@@ -255,6 +265,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
 
           Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
+
 
           #board should have 1 publication
           board_publications = Publication.find(:all, :conditions => { :owner_id => @test_agent_board.id, :owner_type => "Board" } )
@@ -428,7 +439,18 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
 
-          #board should have 1 publication
+          #disperse board should have 1 publication
+          board_publications = Publication.find(:all, :conditions => { :owner_id => @test_disperse_board.id, :owner_type => "Board" } )
+          assert_equal 1, board_publications.length, "Disperse Board does not have 1 publication but rather, " + board_publications.length.to_s + " publications"
+          board_publication = board_publications.first
+          syriaca_person_identifier = board_publication.identifiers.first
+          open_session do |disperse_session|
+            disperse_session.post 'publications/vote/' + board_publication.id.to_s + '?test_user_id=' + @disperser_user.id.to_s, \
+              :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => syriaca_person_identifier.publication.id, :identifier_id => syriaca_person_identifier.id, :reason => "vote" }, \
+              :vote => { :publication_id => syriaca_person_identifier.publication.id.to_s, :identifier_id => syriaca_person_identifier.id.to_s, :user_id => @disperser_user.id.to_s, :board_id => @test_disperse_board.id.to_s, :choice => "ok" }
+          end
+
+          #should have skipped finalization and next board should have 1 publication
           board_publications = Publication.find(:all, :conditions => { :owner_id => @test_person_board.id, :owner_type => "Board" } )
           assert_equal 1, board_publications.length, "Board does not have 1 publication but rather, " + board_publications.length.to_s + " publications"
 

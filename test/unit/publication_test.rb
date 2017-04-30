@@ -113,7 +113,7 @@ class PublicationTest < ActiveSupport::TestCase
       end
 
       teardown do
-        @publication.destroy unless !Publication.exists?(@publication.id)
+        @publication.destroy unless @publication.nil? || !Publication.exists?(@publication.id)
         @user.destroy
         @community.destroy
       end

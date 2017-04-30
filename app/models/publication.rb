@@ -265,13 +265,14 @@ class Publication < ActiveRecord::Base
   #If so, then the publication is submitted to that board.
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
-  # a preferred next board may optionally be requested
-  def submit_to_next_board(preferred=nil)
+  # @param submitted_from - if the publication has been passed on from
+  #                         another board this will be a hash with the last board and the last titlej
+  def submit_to_next_board(submitted_from = nil)
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
     @recent_submit_sha = ''
 
     #determine which ids are ready to be submitted (modified, editing...)
-    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
+    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing' || id.status == 'submitted')}
 
     Rails.logger.info "---Submittable identifiers are: "
     submittable_identifiers.each do |log_si|
@@ -280,15 +281,13 @@ class Publication < ActiveRecord::Base
 
     
     boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
-    if ! preferred.nil? && boards.include?(preferred)
-      # if an available board was specfically requested, move it to the front of the list
-      # this techincally leaves it in the list, but if it's a valid board it will just get
-      # assigned and we'll return and if it not it just will be skipped potentially twice
-      boards = unshift(preferred)
-    end
 
     #check each board in order by priority rank
     boards.each do |board|
+
+      if submitted_from && submitted_from['board'] == board
+        next
+      end
 
       #if board.community == publication.community
       boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
@@ -309,7 +308,10 @@ class Publication < ActiveRecord::Base
         end
 
         #copy the repo, models, etc... to the board
-        boards_copy = copy_to_owner(board)
+        if submitted_from
+          newtitle = board.name + "/" + submitted_from['last_title']
+        end
+        boards_copy = copy_to_owner(board,newtitle)
         boards_copy.status = "voting"
         boards_copy.save!
 
@@ -642,20 +644,17 @@ class Publication < ActiveRecord::Base
   #----approve-----
     if decree_action == "approve"
 
-      #set status
       self.status = "approved_pending"
       self.save
-      self.set_origin_and_local_identifier_status("approved")
-
       #send emails
       self.owner.send_status_emails("approved", self)
-
-      self.change_status("approved")
-
-      #set up for finalizing
+      #set status
       if self.can_skip_finalization?
         self.skip_finalization
       else
+        self.set_origin_and_local_identifier_status("approved")
+        self.change_status("approved")
+        #set up for finalizing
         SendToFinalizerJob.new.async.perform(self.id)
       end
   #----reject-----
@@ -1600,7 +1599,7 @@ class Publication < ActiveRecord::Base
       return false 
     end
     has_next_board = false
-    submittable_identifiers = self.identifiers.select { |id| id.modified? && (id.status == 'editing')}
+    submittable_identifiers = self.identifiers.select { |id| id.modified? && (id.status == 'editing' || id.status == 'submitted')}
     boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
     boards.each do |board|
       boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
@@ -1622,19 +1621,16 @@ class Publication < ActiveRecord::Base
       event.category = "skipfinalize"
       event.save!
 
-      self.set_origin_and_local_identifier_status("committed")
-      self.set_board_identifier_status("committed")
+      # we don't change the status because it hasn't changed -
+      # we need to pass to the next board to change it
 
       #send publication to the next board
-      error_text, identifier_for_comment = self.origin.submit_to_next_board()
+      error_text, identifier_for_comment = self.origin.submit_to_next_board({ 'board' => self.owner, 'last_title' => self.title})
 
       if error_text != ""
         raise Exception.new(error_text)
       else
-        if self.owner_type == "Board"
-          self.archive
-          self.owner.send_status_emails("committed", self)
-        end
+        self.archive
       end
     end
   end
