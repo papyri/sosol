@@ -530,6 +530,8 @@ class Publication < ActiveRecord::Base
         self.branch = new_branch_name
         # set status to new status
         self.status = new_status
+        # reset the next_board to nil
+        self.next_board = nil
         begin
           self.save!
         rescue ActiveRecord::RecordInvalid
@@ -678,6 +680,11 @@ class Publication < ActiveRecord::Base
       #NOTE since they decided not to let editors edit we don't need to copy back to user 1-28-2010
 
       self.origin.save!
+
+      # destroy any previous archived board copies
+      self.find_previous_board_publications.each do |p|
+        p.destroy
+      end
 
       self.destroy
 
@@ -1289,6 +1296,15 @@ class Publication < ActiveRecord::Base
       p.owner
     end
     return parents
+  end
+
+  #Finds any previous board publications
+  #
+  #*Returns*
+  #- +board+ that owns the publication.
+  def find_previous_board_publications
+    self.origin
+    return Publication.where({ :parent_id => self.origin.id, :status => 'archived'})
   end
 
   #finds the closest parent publication whose owner is a board and returns that publication

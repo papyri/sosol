@@ -855,7 +855,7 @@ class PublicationsController < ApplicationController
           @assignment.vote_id = @vote.id
           @assignment.save!
         end
-        if (params[:next_board])
+        if (params[:next_board] && params[:next_board] != '')
           flash[:notice] += ' Next board was set.'
           @vote.publication.origin.next_board = params[:next_board]
           @vote.publication.origin.save
