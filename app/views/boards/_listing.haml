@@ -1,5 +1,6 @@
 %b
   = listing.title + " ( " + listing.friendly_name + " ) "
+  = listing.skip_finalize ? 'NON FINALIZING' : ''
 
 = link_to 'Show', listing
 = link_to 'Edit', edit_board_path(listing)

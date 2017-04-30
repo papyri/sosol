@@ -22,7 +22,10 @@
       %br
       = f.text_field :rank
       %br
-    %br
+    %p
+      .checkbox
+        = f.check_box :skip_finalize
+        Skips Finalization
     %p
       = f.label "Identifier classes"
       %br

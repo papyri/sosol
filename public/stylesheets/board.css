@@ -4,7 +4,7 @@
   margin-right: 1em;
   margin-bottom: 0.5em;
   color: black;
-  background: #cccccc;
+  background: #CCCCCC;
   border-color: black;
   border-style: solid;
   border-width: 0.13em; }
@@ -15,7 +15,7 @@
   margin-right: 1em;
   margin-bottom: 0.5em;
   color: black;
-  background: #cccccc;
+  background: #CCCCCC;
   border-color: black;
   border-style: solid;
   border-width: 0.13em; }
@@ -26,7 +26,7 @@
   margin-right: 1em;
   margin-bottom: 0.5em;
   color: black;
-  background: #cccccc;
+  background: #CCCCCC;
   border-color: black;
   border-style: solid;
   border-width: 0.13em; }
@@ -36,20 +36,16 @@
   margin-right: 1em;
   margin-bottom: 0.5em;
   color: black;
-  background: #cccccc;
+  background: #CCCCCC;
   border-color: red;
   border-style: solid;
   border-width: 0.13em;
   cursor: move; }
 
-.rule {
-  width: 75%;
+.skip_finalize {
+  width: 95%;
   padding: 0.5em;
   margin-right: 1em;
-  margin-left: 1em;
   margin-bottom: 0.5em;
-  color: black;
-  background: #cccccc;
-  border-color: black;
-  border-style: solid;
-  border-width: 0.13em; }
+  color: red;
+  font-weight: bold; }

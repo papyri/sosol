@@ -850,9 +850,15 @@ class PublicationsController < ApplicationController
 
         @comment.save!
         @vote.save!
+        flash[:notice] = 'Vote was successfully created.'
         if @assignment
           @assignment.vote_id = @vote.id
           @assignment.save!
+        end
+        if (params[:next_board])
+          flash[:notice] += ' Next board was set.'
+          @vote.publication.origin.next_board = params[:next_board]
+          @vote.publication.origin.save
         end
         # invalidate their cache since an action may have changed its status
         expire_publication_cache(@publication.creator.id)

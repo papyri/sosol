@@ -281,11 +281,17 @@ class Publication < ActiveRecord::Base
 
     
     boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
+    # if the next board was requested push it to the front of the list
+    if self.next_board
+      boards = boards.select do |b| b.id != self.next_board end
+      boards.unshift Board.find(self.next_board)
+    end
 
     #check each board in order by priority rank
+    previous_boards = self.find_previous_boards
     boards.each do |board|
 
-      if submitted_from && submitted_from['board'] == board
+      if submitted_from && submitted_from['board'] == board || previous_boards.include?(board)
         next
       end
 
@@ -1273,6 +1279,18 @@ class Publication < ActiveRecord::Base
     return nil
   end
 
+  #Finds any previous board owner of the publication
+  #
+  #*Returns*
+  #- +board+ that owns the publication.
+  def find_previous_boards
+    self.origin
+    parents = Publication.where({ :parent_id => self.origin.id, :status => 'archived'}).collect do |p| 
+      p.owner
+    end
+    return parents
+  end
+
   #finds the closest parent publication whose owner is a board and returns that publication
 
   #Finds the closest parent(or self) publication whose owner is a board. Returns that publication.
@@ -1591,24 +1609,28 @@ class Publication < ActiveRecord::Base
     return urns
   end
 
+  def submittable_to(from)
+    previous_boards = self.find_previous_boards
+    submittable_to = []
+    submittable_identifiers = self.identifiers.select { |id| id.modified? && (id.status == 'editing' || id.status == 'submitted')}
+    boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
+    boards.each do |board|
+      if from == board || previous_boards.include?(board)
+        next
+      end
+      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+      if boards_identifiers.length > 0
+        submittable_to << board
+      end
+    end
+    return submittable_to
+  end
+
   # checks to see if this publication should skip the finalization step
   # board must be set to allow it, and the publication must have a next board
   # to go to
   def can_skip_finalization?
-    unless self.owner.skip_finalize
-      return false 
-    end
-    has_next_board = false
-    submittable_identifiers = self.identifiers.select { |id| id.modified? && (id.status == 'editing' || id.status == 'submitted')}
-    boards = Board.ranked_by_community_id( self.community ? self.community.id : nil )
-    boards.each do |board|
-      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-      if boards_identifiers.length > 0
-        has_next_board = true
-        break
-      end
-    end
-    return has_next_board
+    return self.owner.skip_finalize && self.submittable_to(self.owner).size > 0
   end
 
   # skips the finalization step and moves it to the next board

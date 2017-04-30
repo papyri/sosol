@@ -449,6 +449,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
               :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => syriaca_person_identifier.publication.id, :identifier_id => syriaca_person_identifier.id, :reason => "vote" }, \
               :vote => { :publication_id => syriaca_person_identifier.publication.id.to_s, :identifier_id => syriaca_person_identifier.id.to_s, :user_id => @disperser_user.id.to_s, :board_id => @test_disperse_board.id.to_s, :choice => "ok" }
           end
+          
 
           #should have skipped finalization and next board should have 1 publication
           board_publications = Publication.find(:all, :conditions => { :owner_id => @test_person_board.id, :owner_type => "Board" } )
@@ -458,6 +459,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
 
           #get the board publication
           board_publication = board_publications.first
+
+          # make sure the dispersed board is found in previous parents
+          assert_equal [@test_disperse_board], board_publication.find_previous_boards
 
           #find syriaca identifier
           syriaca_person_identifier = board_publication.identifiers.first

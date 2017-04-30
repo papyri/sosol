@@ -32,8 +32,9 @@
   =@board.rank.to_s
   %br
 
-
-
+  -if @board.skip_finalize
+    %p.skip_finalize
+      This board skips the finalization step! Make sure another board is configured to do it.
 
   %h3
     Members

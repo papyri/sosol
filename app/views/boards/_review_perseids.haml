@@ -25,6 +25,19 @@
             = select "vote", "choice", choices, {:include_blank => true}
             .carret
               %i{:class => "fa fa-caret-down"}
+          -# if this board is setup to skip finalization, then it needs to go to another board for further
+          -# voting. Make sure the voter chooses the next board.
+          - if identifier.publication.owner.skip_finalize
+            Next Board 
+            - boards = Hash.new
+            - submittable_to = identifier.publication.submittable_to(identifier.publication.owner)
+            - submittable_to.each do |b|
+              - boards[b.name] = b.id
+            .select-container
+              = select_tag "next_board", options_for_select(boards), {:include_blank => true}
+              .carret
+                %i{:class => "fa fa-caret-down"}
+
       %div
         = label_tag "comment", "Your Comment (Required)"
         = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote input'
