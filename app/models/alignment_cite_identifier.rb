@@ -103,9 +103,11 @@ class AlignmentCiteIdentifier < CiteIdentifier
       ro['annotations'] << package_obj
     else 
       package_obj['uri'] = File.join('../data',self.download_file_name)
-      prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
-      package_obj['history'] = prov_file_name
-      ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      if derived_from.size > 0
+        prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+        package_obj['history'] = prov_file_name
+        ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      end
       ro['aggregates'] << package_obj
     end
     return ro

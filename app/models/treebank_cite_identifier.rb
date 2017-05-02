@@ -335,7 +335,7 @@ class TreebankCiteIdentifier < CiteIdentifier
     parsed['sentence'].each do |s|
       document_id = s['document_id']
       subdoc = s['subdoc']
-      if (! document_id.nil?)
+      if (! document_id.nil? && document_id != '')
         full_uri = document_id
         # we only know how to make subdocs part of the uri 
         # if we are dealing with cts urns
@@ -372,9 +372,11 @@ class TreebankCiteIdentifier < CiteIdentifier
         ro['annotations'] << package_obj
     else 
       package_obj['uri'] = File.join('../data',self.download_file_name)
-      prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
-      package_obj['history'] = prov_file_name
-      ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      if derived_from.size> 0
+        prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+        package_obj['history'] = prov_file_name
+        ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      end
       ro['aggregates'] << package_obj
     end
     return ro
