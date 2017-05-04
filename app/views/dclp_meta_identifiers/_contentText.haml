@@ -25,16 +25,16 @@
 .clear
 .contentText.keywords
   %h5.contentText=I18n.t('dclp.label.contentTextKeywords')
-  .multi{:id => 'multi_keywords'}
-    %ul.items{:id => 'multiItems_keywords'}
+  .multi{:id => 'multi_contentText'}
+    %ul.items{:id => 'multiItems_contentText'}
       - contentText.keywords.each_index do |index|
         - itemIndex = index + 6
         %li
           = text_field_tag base + '[' + itemIndex.to_s + ']', contentText.keywords[index], :disabled => !@identifier.mutable?, :class => 'observechange'
           %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
           %span.move{:title => I18n.t('tooltip.multiMove')} o
-    %p.add{:id => 'multiPlus_keywords'}
+    %p.add{:id => 'multiPlus_contentText'}
       %input.observechange
-      %span{:onclick => "multiAdd('keywords')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+      %span{:onclick => "multiAdd('contentText')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-    = javascript_tag "Sortable.create('multiItems_keywords', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    = javascript_tag "Sortable.create('multiItems_contentText', {overlap: 'horizontal', constraint: false, handle: 'move'});"
