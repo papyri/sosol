@@ -1406,9 +1406,8 @@ class Publication < ActiveRecord::Base
     identifiers.first
   end
 
-  def get_all_comments(title)
+  def get_db_comments(title)
     all_built_comments = []
-    xml_only_built_comments = []
     # select all comments associated with a publication title - will include from all users
     # BMA What is the purpose of limiting comments to the title rather than the id?
     @arcomments = Comment.find_by_sql("SELECT a.comment, a.user_id, a.identifier_id, a.reason, a.created_at
@@ -1448,7 +1447,12 @@ class Publication < ActiveRecord::Base
 
       all_built_comments << built_comment
     end
+    return all_built_comments
+  end
 
+  def get_all_comments(title)
+    all_built_comments = self.get_db_comments(title)
+    xml_only_built_comments = []
     # add comments hash from each of the publication's identifiers XML file to array
     identifiers.each do |i|
       where_from = i.class::FRIENDLY_NAME

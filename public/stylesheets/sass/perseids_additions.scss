@@ -108,7 +108,18 @@
     font-family: "Courier New", Courier, monospace;
 }
 
+#vote-comments {
+    border: 2px outset $COLOR_PRI;
+    padding: 2px;
+    margin-left: 1rem;
+    max-height: 400px;
+    overflow: scroll;
+}
 
+#vote-comments .comment_partial .model_comment {
+  padding-top: .5rem;
+  border-bottom:1px solid $COLOR_GRAY;
+}
 
 
 

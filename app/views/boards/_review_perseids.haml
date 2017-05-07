@@ -1,47 +1,56 @@
 - if identifier.modified?
-  %h1 Votes
-  - user_has_voted = identifier.publication.user_has_voted?(@current_user.id)
-  %ul
-    - if identifier.publication.votes.length == 0
-      %li No votes yet.
-    - else
-      - identifier.publication.votes.each do |vote|
-        %li
-          = vote.choice
-          = vote.user.name
-  %br
-  - if !user_has_voted && identifier.publication.status == "voting" && identifier.publication.user_can_vote?(@current_user)
-    = form_for Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :as => :vote, :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
-      #submit
-        = f.hidden_field :publication_id
-        = f.hidden_field :identifier_id
-        %div
-          Your Vote (Required)
-          - choices = Hash.new
-          - identifier.publication.owner.decrees.each do |d|
-            - d.get_choice_array.each do |c|
-              - choices[c] = c
-          .select-container
-            = select "vote", "choice", choices, {:include_blank => true}
-            .carret
-              %i{:class => "fa fa-caret-down"}
-          -# if this board is setup to skip finalization, then it needs to go to another board for further
-          -# voting. Make sure the voter chooses the next board.
-          - if identifier.publication.owner.skip_finalize
-            Next Board 
-            - boards = Hash.new
-            - submittable_to = identifier.publication.submittable_to(identifier.publication.owner)
-            - submittable_to.each do |b|
-              - boards[b.name] = b.id
-            .select-container
-              = select_tag "next_board", options_for_select(boards), {:include_blank => true}
-              .carret
-                %i{:class => "fa fa-caret-down"}
+  .columns
+    .column.large-column
+      %h1 Votes
+      - user_has_voted = identifier.publication.user_has_voted?(@current_user.id)
+      %ul
+        - if identifier.publication.votes.length == 0
+          %li No votes yet.
+        - else
+          - identifier.publication.votes.each do |vote|
+            %li
+              = vote.choice
+              = vote.user.name
+      %br
+      - if !user_has_voted && identifier.publication.status == "voting" && identifier.publication.user_can_vote?(@current_user)
+        = form_for Vote.new({:publication_id => identifier.publication.id, :identifier_id => identifier.id}), :as => :vote, :url => { :controller => "publications", :action => "vote", :id => identifier.publication.id } do |f|
+          #submit
+            = f.hidden_field :publication_id
+            = f.hidden_field :identifier_id
+            %div
+              Your Vote (Required)
+              - choices = Hash.new
+              - identifier.publication.owner.decrees.each do |d|
+                - d.get_choice_array.each do |c|
+                  - choices[c] = c
+              .select-container
+                = select "vote", "choice", choices, {:include_blank => true}
+                .carret
+                  %i{:class => "fa fa-caret-down"}
+              -# if this board is setup to skip finalization, then it needs to go to another board for further
+              -# voting. Make sure the voter chooses the next board.
+              - if identifier.publication.owner.skip_finalize
+                Next Board 
+                - boards = Hash.new
+                - submittable_to = identifier.publication.submittable_to(identifier.publication.owner)
+                - submittable_to.each do |b|
+                  - boards[b.name] = b.id
+                .select-container
+                  = select_tag "next_board", options_for_select(boards), {:include_blank => true}
+                  .carret
+                    %i{:class => "fa fa-caret-down"}
 
-      %div
-        = label_tag "comment", "Your Comment (Required)"
-        = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote input'
-        = f.submit "Vote", :id => 'vote_submit', :disabled => true, :onclick => 'preventDoubleVote()'
+          %div
+            = label_tag "comment", "Your Comment (Required)"
+            = text_area :comment, "comment", :onkeyup => "checkForComment(event)", :class => 'observechangevote input'
+            = f.submit "Vote", :id => 'vote_submit', :disabled => true, :onclick => 'preventDoubleVote()'
+    .column.small-column
+      #vote-comments
+        - max_visible_comments = 5
+        - all_comments = identifier.publication.get_db_comments(identifier.publication.origin.title)
+        %h2 Publication Comments
+        = link_to 'Add Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => identifier.publication.id, :method => :get }, :onclick => "window.open(this.href, 'new win', 'width=800, height=600'); return false;".html_safe
+        = render :partial => "publications/commentall",  :object => all_comments
   %hr
         
 :javascript

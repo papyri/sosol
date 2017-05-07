@@ -114,4 +114,13 @@
   overflow: scroll;
   font-family: "Courier New", Courier, monospace; }
 
-/*# sourceMappingURL=perseids_additions.css.map */
+#vote-comments {
+  border: 2px outset #7986cb;
+  padding: 2px;
+  margin-left: 1rem;
+  max-height: 400px;
+  overflow: scroll; }
+
+#vote-comments .comment_partial .model_comment {
+  padding-top: .5rem;
+  border-bottom: 1px solid #bdbdbd; }

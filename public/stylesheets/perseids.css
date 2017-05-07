@@ -2590,6 +2590,12 @@ body, .columns {
   *
   .columns > *.card {
     margin-bottom: 0; }
+  *
+  .columns > *.large-column {
+    width: 75%; }
+  *
+  .columns > *.small-column {
+    width: 25%; }
   @media (min-width: 800px) and (max-width: 1000px) {
     *
     .columns > * {

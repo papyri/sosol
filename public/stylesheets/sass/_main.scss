@@ -70,6 +70,12 @@ body, .columns {
 	&.card {
 		margin-bottom:0;
 	}
+        &.large-column {
+	  width:75%;
+        }
+        &.small-column {
+	  width:25%;
+        }
 	@include small {
 		width:100%;
 		&.card {
