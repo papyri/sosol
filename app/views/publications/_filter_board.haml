@@ -22,7 +22,7 @@
     = link_to "Archived", { :controller => 'user', :action => 'archives', :board_id => @board.id }, :class => 'btn bg-sdw'
   %fieldset
     %legend Display Titles
-    %input{:type => 'radio', :name => 'titles', :value => 'Document', :id => 'doctitles',  :onchange => 'toggleTitles(event);'}
+    %input{:type => 'radio', :name => 'titles', :value => 'Document', :id => 'doctitles',  :checked => 'checked', :onchange => 'toggleTitles(event);'}
     %label{:for => 'doctitles'}Document
-    %input{:type => 'radio', :name => 'titles', :value => 'Publication', :id => 'pubtitles', :checked => 'checked', :onchange => 'toggleTitles(event);'}
+    %input{:type => 'radio', :name => 'titles', :value => 'Publication', :id => 'pubtitles', :onchange => 'toggleTitles(event);'}
     %label{:for => 'pubtitles'}Publication

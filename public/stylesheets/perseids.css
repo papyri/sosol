@@ -3089,9 +3089,9 @@ ul.btns > li {
   display: none;
   margin: 1em 2em; }
 #container .publications .original.boards > .collection {
-  display: block; }
-#container .publications .original.boards > .publications {
   display: none; }
+#container .publications .original.boards > .publications {
+  display: block; }
 #container .publications .original > .collection {
   display: none; }
 #container .publications .original > .publications {
