@@ -12,7 +12,7 @@
   .container-wrapper
     = render( :partial => 'publications/filter_board', :locals => { :has_finalizing => has_finalizing, :has_voting => has_voting, :has_approved => has_approved})
 
-    - can_assign = (@board.community_id && @board.community.allows_assignment > 0 && @board.community.admins.include?(@current_user))
+    - can_assign = (@board.community_id && @board.max_assignable > 0 && @board.community.admins.include?(@current_user))
     #voting-column.publication-container
       - if has_voting
         - status = can_assign ? 'Voting (Assign Voter)' : 'Voting'

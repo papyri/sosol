@@ -812,7 +812,7 @@ Developer:
     #  @member_already_voted_on
     def find_board_publications(board_id, offset, max_voting=50)
       @board = Board.find_by_id(board_id)
-      show_all = ! @board.community_id || @board.community.allows_assignment == 0 || @board.community.admins.include?(@current_user) 
+      show_all = ! @board.community_id || ! @board.requires_assignment || @board.community.admins.include?(@current_user) 
 
       #get publications for the member to finalize
       @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")

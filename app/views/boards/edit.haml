@@ -29,6 +29,13 @@
     .checkbox
       = f.check_box :skip_finalize
       Skips Finalization
+    %br
+    .checkbox 
+      = f.check_box :requires_assignment
+      Requires Assignment
+    %b 
+      Max Assignable Voters (per publication)
+    = f.text_field :max_assignable
 
     %br
     - if @available_identifier_classes.size > 0

@@ -139,13 +139,12 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                                :friendly_name => "testy agent",
                                                :allows_self_signup => true,
                                                :description => "a syriaca comunity for testing",
-                                               :pass_to => "mockagent",
-                                               :allows_assignment => 1)
+                                               :pass_to => "mockagent")
 
           @test_agent_community.members << @community_user
           @test_agent_community.admins << @community_admin
 
-          @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id)
+          @test_agent_board = FactoryGirl.create(:syriaca_community_board, :title => "SyriacaTestBoard", :community_id => @test_agent_community.id, :max_assignable => 1, :requires_assignment => true)
           @test_agent_board.users << @board_user
           @test_agent_board.users << @board_user2
           @test_agent_board.users << @board_user3
@@ -165,8 +164,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                                :friendly_name => "testy agent",
                                                :allows_self_signup => true,
                                                :description => "a syriaca person comunity for testing",
-                                               :pass_to => "mockagent",
-                                               :allows_assignment => 1)
+                                               :pass_to => "mockagent")
 
           @test_person_community.members << @community_user
           @test_person_community.admins << @community_admin
@@ -178,7 +176,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
                                             :action => "approve",
                                             :choices => "ok")
 
-          @test_person_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestPersonBoard", :community_id => @test_person_community.id, :rank => 2)
+          @test_person_board = FactoryGirl.create(:syriaca_person_community_board, :title => "SyriacaTestPersonBoard", :community_id => @test_person_community.id, :rank => 2, :max_assignable => 1, :requires_assignment => true)
           @test_person_board.users << @board_user
           @test_person_decree = FactoryGirl.create(:count_decree,
                                             :board => @test_person_board,
