@@ -21,9 +21,21 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ActiveRecord::Base
-
-
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
+
+  # Excerpted from git/refs.c: (https://github.com/git/git/blob/master/refs.c#L55-L69)
+  # Make sure "ref" is something reasonable to have under ".git/refs/";
+  # We do not like it if:
+  GIT_VALID_REF_REGEXES = [
+      /^\./, # any path component of it begins with "."
+      /\.\./, # it has double dots ".."
+      /[[:cntrl:]]/, # it has ASCII control characters
+      /\/[.\/]/, # it has path components starting with "/" or "."
+      /[\[\\\t~^:? ]/, # it has ":", "?", "[", "\", "^", "~", SP, or TAB anywhere
+      /[.\/]$/, # it ends with a "/" or a "."
+      /@{/, # it contains a "@{" portion
+      /\.lock$/ # it ends with ".lock
+    ]
 
   validates_presence_of :title, :branch
 
@@ -47,18 +59,11 @@ class Publication < ActiveRecord::Base
     :inclusion => { :in => PUBLICATION_STATUS, :message => "%{value} is not a valid publication status" }
 
   validates_each :branch do |model, attr, value|
-    # Excerpted from git/refs.c:
-    # Make sure "ref" is something reasonable to have under ".git/refs/";
-    # We do not like it if:
-    if value =~ /^\./ ||    # - any path component of it begins with ".", or
-       value =~ /\.\./ ||   # - it has double dots "..", or
-       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
-       value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
-       value =~ /\.lock$/   # - it ends with ".lock"
-      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+    GIT_VALID_REF_REGEXES.each do |git_regex|
+      if value =~ git_regex
+        model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+      end
     end
-    # not yet handling ASCII control characters
   end
 
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
@@ -1528,13 +1533,24 @@ class Publication < ActiveRecord::Base
   end
 
   protected
+    def sanitize_ref(input_ref)
+      output_refs = input_ref.split('/')
+      output_refs.map do |output_ref|
+        GIT_VALID_REF_REGEXES.each do |regex|
+          output_ref.gsub!(regex,'')
+        end
+      end
+      return output_refs.join('/')
+    end
+
     #Returns title string in form acceptable to  ".git/refs/"
     def title_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
+      # convert spaces to underscores and strip accents and terminal dot, then pass through sanitize_ref
+      sanitize_ref(java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,''))
     end
 
     #Returns identifier string in form acceptable to  ".git/refs/"
     def identifier_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
+      title_to_ref(str)
     end
 end
