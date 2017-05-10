@@ -219,7 +219,7 @@ class Repository
     Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path}, #{@path})")
     begin
       Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
-    rescue Java::JavaUtilConcurrent::ExecutionException => e
+    rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
       Rails.logger.error(e.inspect)
       fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
       Rails.logger.info("Trying fallback git command: #{fallback_git_command}")
