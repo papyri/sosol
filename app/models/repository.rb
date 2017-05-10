@@ -25,6 +25,34 @@ class Repository
   attr_reader :master, :path, :repo
   @@jgit_repo_cache = java.util.WeakHashMap.new
 
+  # Excerpted from git/refs.c: (https://github.com/git/git/blob/master/refs.c#L55-L69)
+  # Make sure "ref" is something reasonable to have under ".git/refs/";
+  # We do not like it if:
+  GIT_VALID_REF_REGEXES = [
+      /^\./, # any path component of it begins with "."
+      /\.\./, # it has double dots ".."
+      /[[:cntrl:]]/, # it has ASCII control characters
+      /\/[.\/]/, # it has path components starting with "/" or "."
+      /[\[\\\t~^:? ]/, # it has ":", "?", "[", "\", "^", "~", SP, or TAB anywhere
+      /[.\/]$/, # it ends with a "/" or a "."
+      /@{/, # it contains a "@{" portion
+      /\.lock$/ # it ends with ".lock
+    ]
+
+  # Returns input string in a form acceptable to  ".git/refs/"
+  def self.sanitize_ref(input_ref)
+    # convert spaces to underscores and strip accents and terminal dot
+    no_accents_or_spaces = java.text.Normalizer.normalize(input_ref.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
+    # iterate over each path component, replacing invalid characters
+    output_refs = no_accents_or_spaces.split('/')
+    output_refs.map do |output_ref|
+      Repository::GIT_VALID_REF_REGEXES.each do |regex|
+        output_ref.gsub!(regex,'')
+      end
+    end
+    return output_refs.join('/')
+  end
+
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
   def initialize(master = nil)
@@ -356,9 +384,5 @@ class Repository
   def self.increase_timeout
     Grit::Git.git_timeout *= 2
     Rails.logger.warn "Git timed out, increasing timeout to #{Grit::Git.git_timeout}"
-  end
-
-  def safe_repo_name(name)
-    java.text.Normalizer.normalize(name.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
   end
 end
