@@ -302,7 +302,7 @@ class Repository
   end
 
   def name
-    return [@master_class_path, @master.name].join('/').tr(' ', '_')
+    return self.class.sanitize_ref([@master_class_path, @master.name].join('/'))
   end
 
   def add_alternates(other_repo)
