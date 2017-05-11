@@ -17,6 +17,7 @@ module CollectionsHelper
         config.host = config_file['collections_api_host']
         config.base_path = config_file['collections_api_base_path']
         config.scheme = config_file['collections_api_scheme']
+        config.debugging = config_file['collections_api_debugging']
         @api_client = CollectionsClient::ApiClient.new(config)
       else
         @api_client = nil
@@ -61,15 +62,7 @@ module CollectionsHelper
     member = CollectionsClient::MemberItem.new
     member.id = pid_for(object.id, object.class.to_s)
     member.location = "#{config['local_item_base_path']}/#{object.id}"
-    begin
-      result, code, headers = api_client.collections_id_member_post_with_http_info(collection_id,member)
-      if code != 202
-          raise Exception.new("Unable to add item to collection. Received code #{code}")
-      end
-    rescue CollectionsClient::ApiError => e 
-      Rails.logger.error(e) 
-      raise Exception.new("Unable to add item to collection. Received error #{e}")
-    end
+    result = api_client.collections_id_members_post_with_http_info(collection_id,member)
   end
 
   def self.delete_from_collection(collection_id, mid)
@@ -78,15 +71,7 @@ module CollectionsHelper
       Rails.logger.info("No Collections API Client Defined")
       return
     end
-    begin
-      result, code, headers = api_client.collections_id_member_delete_with_http_info(collection_id,mid)
-      if code != 200 && code != 202
-          raise Exception.new("Unable to remove item from collection. Received code #{code}")
-      end
-    rescue CollectionsClient::ApiError => e 
-      Rails.logger.error(e) 
-      raise Exception.new("Unable to remove item from collection. Received error #{e}")
-    end
+    result = api_client.collections_id_members_mid_delete(collection_id,mid)
   end
 
   def self.delete_collection(collection_id)
@@ -95,15 +80,7 @@ module CollectionsHelper
       Rails.logger.info("No Collections API Client Defined")
       return
     end
-    begin
-      result, code, headers = api_client.collections_id_delete_with_http_info(collection_id)
-      if code != 200 && code != 202
-          raise Exception.new("Unable to remove collection. Received code #{code}")
-      end
-    rescue CollectionsClient::ApiError => e 
-      Rails.logger.error(e) 
-      raise Exception.new("Unable to remove collection. Received error #{e}")
-    end
+    result = api_client.collections_id_delete(collection_id)
   end
 
 
@@ -114,29 +91,33 @@ module CollectionsHelper
       return
     end
     pid = pid_for(user.id, user.class.to_s)
-    collection, code, headers = api_client.collections_id_get_with_http_info(pid)
-    if code == 404 && create_if_missing
-      # build a CollectionObject
-      collection = CollectionsClient::Collection.new
-      collection.id = pid
-      collection.capabilities.is_ordered = false
-      collection.capabilities.appends_to_end = true
-      collection.capabilities.supports_roles = false
-      collection.capabilities.membership_is_mutable = true
-      collection.capabilities.metadata_is_mutable = false
-      collection.capabilities.restricted_to_type = ""
-      collection.capabilities.max_length = -1
-      collection.properties.license = "https://creativecommons.org/licenses/by-sa/4.0/"
-      collection.properties.has_access_restrictions = false
-      collection.properties.model_type = "http://rd-alliance.org/ns/collection"
-      collection.properties.description_ontology = "http://purl.org/dc/terms/"
-      collection.properties.member_of = []
-      collection.ownership = user.uri
-      collection.description = {"title" => "Collection of Perseids Data Object Created by #{user.full_name}" } 
-      result, code, headers = get_collections_api().collections_post_with_http_info(collection)
-    end
-    if code != 200 || code != 202
-      raise Exception.new("User Collection Not Found")
+    begin 
+      collection = api_client.collections_id_get(pid)
+    rescue CollectionsClient::ApiError => e
+      Rails.logger.info(e)
+      if create_if_missing
+        # build a CollectionObject
+        collection = CollectionsClient::CollectionObject.new
+        collection.id = pid
+        collection.capabilities = CollectionsClient::CollectionCapabilities.new
+        collection.capabilities.is_ordered = false
+        collection.capabilities.appends_to_end = true
+        collection.capabilities.supports_roles = false
+        collection.capabilities.membership_is_mutable = true
+        collection.capabilities.metadata_is_mutable = false
+        collection.capabilities.restricted_to_type = ""
+        collection.capabilities.max_length = -1
+        collection.properties = CollectionsClient::CollectionProperties.new
+        collection.properties.license = "https://creativecommons.org/licenses/by-sa/4.0/"
+        collection.properties.has_access_restrictions = false
+        collection.properties.model_type = "http://rd-alliance.org/ns/collection"
+        collection.properties.description_ontology = "http://purl.org/dc/terms/"
+        collection.properties.member_of = []
+        collection.properties.ownership = user.uri
+        #collection.description = {"title" => "Collection of Perseids Data Object Created by #{user.full_name}" } 
+        # if it fails this time lett the error raised fall through
+        result = api_client.collections_post(collection)
+      end
     end
     return collection.id
   end
@@ -148,29 +129,33 @@ module CollectionsHelper
       return
     end
     pid = pid_for(topic, 'topic', datatype)
-    collection, code, headers = api_client.collections_id_get_with_http_info(pid)
-    if code == 404 && create_if_missing
-      # build a CollectionObject
-      collection = CollectionsClient::Collection.new
-      collection.id = pid
-      collection.capabilities.is_ordered = false
-      collection.capabilities.appends_to_end = true
-      collection.capabilities.supports_roles = false
-      collection.capabilities.membership_is_mutable = true
-      collection.capabilities.metadata_is_mutable = false
-      collection.capabilities.restricted_to_type = datatype
-      collection.capabilities.max_length = -1
-      collection.properties.license = "https://creativecommons.org/licenses/by-sa/4.0/"
-      collection.properties.has_access_restrictions = false
-      collection.properties.model_type = "http://rd-alliance.org/ns/collection"
-      collection.properties.description_ontology = "http://purl.org/dc/terms/"
-      collection.properties.member_of = []
-      collection.ownership = "http://perseids.org"
-      collection.description = {"title" => "Collection of Perseids Annotations of type #{datatype} on #{topic}"}
-      result, code, headers = get_collections_api().collections_post_with_http_info(collection)
-    end
-    if code != 200 || code != 202
-      raise Exception.new("Topic Collection Not Found")
+    begin
+      collection = api_client.collections_id_get(pid)
+    rescue CollectionsClient::ApiError => e
+      Rails.logger.info(e)
+      if create_if_missing
+        # build a CollectionObject
+        collection = CollectionsClient::CollectionObject.new
+        collection.id = pid
+        collection.capabilities = CollectionsClient::CollectionCapabilities.new
+        collection.capabilities.is_ordered = false
+        collection.capabilities.appends_to_end = true
+        collection.capabilities.supports_roles = false
+        collection.capabilities.membership_is_mutable = true
+        collection.capabilities.metadata_is_mutable = false
+        collection.capabilities.restricted_to_type = datatype
+        collection.capabilities.max_length = -1
+        collection.properties = CollectionsClient::CollectionProperties.new
+        collection.properties.license = "https://creativecommons.org/licenses/by-sa/4.0/"
+        collection.properties.has_access_restrictions = false
+        collection.properties.model_type = "http://rd-alliance.org/ns/collection"
+        collection.properties.description_ontology = "http://purl.org/dc/terms/"
+        collection.properties.member_of = []
+        collection.properties.ownership = "http://perseids.org"
+        #collection.description = {"title" => "Collection of Perseids Annotations of type #{datatype} on #{topic}"}
+        # if it fails this time let the error raised fall through
+        result = api_client.collections_post(collection)
+      end
     end
     return collection.id
   end
