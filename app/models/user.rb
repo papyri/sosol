@@ -107,6 +107,8 @@ class User < ActiveRecord::Base
     end # != test
   end # after_create
 
+  before_destroy :remove_from_collections
+
   def human_name
     # get user name
     if self.full_name && self.full_name.strip != ""
@@ -159,6 +161,10 @@ class User < ActiveRecord::Base
     "#{self.author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
 
+  def get_collection
+
+  end
+
   before_destroy do |user|
     user.repository.destroy
   end
@@ -200,4 +206,23 @@ class User < ActiveRecord::Base
   def uri
     "#{Sosol::Application.config.site_user_namespace}#{URI.escape(self.name)}"
   end
+
+  def get_collection(create_if_missing = false)
+    collection = CollectionsHelper::get_collection(self.pid)
+    if create_if_missing && ! collection
+      collection = CollectionsHelper::create_user_collection(user)
+    end
+    return collection.id
+  end
+
+  private
+
+    def remove_from_collections
+      # TODO we should really add a rollback in case it fails..
+      collection_id = CollectionsHelper::get_user_collection(self, false)
+      if collection_id
+        CollectionsHelper::delete_collection(collection_id)
+      end
+    end
+
 end

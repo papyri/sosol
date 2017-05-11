@@ -33,6 +33,10 @@ class Identifier < ActiveRecord::Base
 
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
 
+  after_create :add_to_collections
+  after_update :update_in_collections
+  before_destroy :remove_from_collections
+
   validates_presence_of :name, :type
 
   belongs_to :publication
@@ -729,6 +733,14 @@ class Identifier < ActiveRecord::Base
     "application/xml"
   end
 
+  # Get the primary topic(s) of this identiifer
+  # - *Returns*:
+  #   - an array of topic identifiers
+  def get_topics
+    # default is none
+    []
+  end
+
   # describe the identifier as data object in a 
   # downloadable Research Object Bundle
   # by default it just gets put in the data folder
@@ -745,5 +757,24 @@ class Identifier < ActiveRecord::Base
     ro['aggregates'] << package_obj
     return ro
   end
+
+  protected
+    # add this identifier to one or more external collections
+    # default behavior is a no-op. Override in the derived classes
+    def add_to_collections
+
+    end
+
+    # update this identifier in one or more external collections
+    # default behavior is a no-op. Override in the derived classes
+    def update_in_collections
+
+    end
+
+    # remove this identifier from one or more external collections
+    # default behavior is a no-op. Override in the derived classes
+    def remove_from_collections
+
+    end
 
 end

@@ -187,8 +187,13 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
               {  'conformsTo' => 'http://www.openannotation.org/spec/core/',
                  "mediatype"=>"application/rdf+xml",
                  "uri"=>"../data/#{@identifier.download_file_name}",
+                 "history" => "provenance/#{@identifier.download_file_name.sub(/.xml$/, '.prov.jsonld')}",
                  "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}
-           ]
+            ],
+            "provenance"=>
+              {"file"=> "provenance/#{@identifier.download_file_name.sub(/.xml$/, '.prov.jsonld')}",
+               "contents"=> "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/#{@identifier.download_file_name}\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0012.tlg001.perseus-grc1\"\n    },\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1\"\n    }\n  ]\n}"
+              }
           }
           assert_equal(expected, @identifier.as_ro())
         end

@@ -295,6 +295,24 @@ class TreebankCiteIdentifier < CiteIdentifier
     'https://raw.githubusercontent.com/alpheios-project/schemas/master/xsd/treebank-1.7.xsd'
   end
 
+  # @overrides Identifier#get_topics
+  def get_topics
+    topics = []
+    parsed = XmlHelper::parseattributes(self.xml_content,
+      {"sentence" => ['document_id','subdoc']})
+    uris = {}
+    parsed['sentence'].each do |s|
+      next if s['document_id'].nil? || s['document_id'] == ''
+      unless uris[s['document_id']]
+        uris[s['document_id']] = {}
+      end
+      if ! s['subdoc'].nil? && s['subdoc'] != ''
+        uris[s['document_id']][s['subdoc']] = 1
+      end
+    end
+    return CTS::CTSLib::validate_and_parse(uris)
+  end
+
   ###########################
   # PROTOTYPE METHODS
   ###########################
@@ -320,66 +338,6 @@ class TreebankCiteIdentifier < CiteIdentifier
       end
     end
     review_files
-  end
-
-  # Used to prototype export of CITE Annotations as part
-  # of a CTS-Centered Research Object Bundle
-  def as_ro
-    ro = {'aggregates' => [], 'annotations' => []}
-    about = []
-    derived_from = []
-    urns = self.publication.ro_local_aggregates()
-    parsed = XmlHelper::parseattributes(content,
-      {"sentence" => ['document_id','subdoc','id']})
-    last_target = nil
-    parsed['sentence'].each do |s|
-      document_id = s['document_id']
-      subdoc = s['subdoc']
-      if (! document_id.nil? && document_id != '')
-        full_uri = document_id
-        # we only know how to make subdocs part of the uri 
-        # if we are dealing with cts urns
-        if (document_id =~ /urn:cts:/)
-          urn_value = document_id.match(/(urn:cts:.*)$/).captures[0]
-          begin
-            urn_obj = CTS::CTSLib.urnObj(urn_value)
-          rescue
-          end
-        end
-        unless urn_obj.nil?
-          u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-          if urns[u]
-            about << urns[u] 
-          else
-            derived_from << u
-          end
-        else
-          derived_from << document_id
-        end
-      end # end test for document_id
-    end
-    # if the treebank is pointing at a local text we will package it as an annotation
-    # otherwise it gets packaged as a data item and we add provenance information to indicate
-    # where it's derived from
-    package_obj = {
-      'conformsTo' => self.schema,
-      'mediatype' => self.mimetype,
-      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
-    }
-    if about.size > 0 
-        package_obj['content'] = File.join('annotations',self.download_file_name)
-        package_obj['about'] = about.uniq
-        ro['annotations'] << package_obj
-    else 
-      package_obj['uri'] = File.join('../data',self.download_file_name)
-      if derived_from.size> 0
-        prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
-        package_obj['history'] = prov_file_name
-        ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
-      end
-      ro['aggregates'] << package_obj
-    end
-    return ro
   end
 
   # parse the supplied content for annotation targets
