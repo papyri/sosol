@@ -286,6 +286,7 @@ class CiteIdentifier < Identifier
       self.get_topics().each do |c|
         collections << CollectionsHelper::get_topic_collection(c, self.class.to_s, false)
       end
+      Rails.logger.info("Removing from collections before destroy")
       RemoveFromCollectionsJob.new.async.perform(collections,mid)
       # TODO we really should have a rollback of this if the destroy ends up failing...
     end

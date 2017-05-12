@@ -10,46 +10,27 @@ module CollectionsHelper
   end
 
   def self.get_api_instance
-    unless defined? @api_client
-      config_file = get_config()
-      if config_file['collections_api_host'] && config_file['collections_api_host'] != ''
-        config = CollectionsClient::Configuration.new()
-        config.host = config_file['collections_api_host']
-        config.base_path = config_file['collections_api_base_path']
-        config.scheme = config_file['collections_api_scheme']
-        config.debugging = config_file['collections_api_debugging']
-        @api_client = CollectionsClient::ApiClient.new(config)
-      else
-        @api_client = nil
-      end
+    config_file = get_config()
+    if config_file['collections_api_host'] && config_file['collections_api_host'] != ''
+      config = CollectionsClient::Configuration.new()
+      config.host = config_file['collections_api_host']
+      config.base_path = config_file['collections_api_base_path']
+      config.scheme = config_file['collections_api_scheme']
+      config.debugging = config_file['collections_api_debugging']
+      return CollectionsClient::ApiClient.new(config)
+    else
+      raise "No Collections Host Configured"
     end
-    return @api_client
   end
 
   def self.get_collections_api
-    unless defined? @collections_api
-      api_client = get_api_instance
-      if api_client.nil?
-        @collections_api = nil
-        Rails.logger.info("No Collections API Client Defined")
-      else
-        @collections_api = CollectionsClient::CollectionsApi.new(api_client)
-      end
-      return @collections_api
-    end
+    api_client = get_api_instance()
+    return CollectionsClient::CollectionsApi.new(api_client)
   end
 
   def self.get_members_api
-    unless defined? @members_api
-      api_client = get_api_instance
-      if api_client .nil?
-        @members_api = nil
-        Rails.logger.info("No Collections API Client Defined")
-      else
-        @members_api = CollectionsClient::MembersApi.new(api_client)
-      end
-      return @members_api
-    end
+    api_client = get_api_instance()
+    return CollectionsClient::MembersApi.new(api_client)
   end
 
   def self.put_to_collection(collection_id, object)
@@ -93,6 +74,12 @@ module CollectionsHelper
     pid = pid_for(user.id, user.class.to_s)
     begin 
       collection = api_client.collections_id_get(pid)
+      if collection.nil? || collection.id.nil?
+        # collection not found returns an ApiError 
+        # but if the client can't build a collection from the response
+        # it just quietly produces a nil so we have to check explicity for that
+        raise Exception.new("Invalid Collection")
+      end
     rescue CollectionsClient::ApiError => e
       Rails.logger.info(e)
       if create_if_missing
@@ -131,6 +118,12 @@ module CollectionsHelper
     pid = pid_for(topic, 'topic', datatype)
     begin
       collection = api_client.collections_id_get(pid)
+      if collection.nil? || collection.id.nil?
+        # collection not found returns an ApiError 
+        # but if the client can't build a collection from the response
+        # it just quietly produces a nil so we have to check explicity for that
+        raise Exception.new("Invalid Collection")
+      end
     rescue CollectionsClient::ApiError => e
       Rails.logger.info(e)
       if create_if_missing
@@ -162,11 +155,13 @@ module CollectionsHelper
 
   def self.pid_for(local_id, type, datatype=nil)
     # eventually we want to use a real pid minting service
-    pid = "http://perseids.org/collections/#{type}/"
+    #pid = URI.escape("http://perseids.org/collections/#{type}/")
+    pid = 'collections_type_'
     unless datatype.nil?
-      pid = pid + URI.escape(datatype) + "/"
+      pid = pid + URI.escape(datatype + "_")
     end
     pid = pid + URI.escape(local_id.to_s)
+    Rails.logger.info("PID FOR Produced " + pid)
     return pid
   end
 
