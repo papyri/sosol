@@ -84,7 +84,9 @@ class Repository
   end
 
   def fork_bare(destination_path)
-    `git clone --bare -q -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)}`
+    unless Dir.exists?(destination_path)
+      Rails.logger.info(`git clone --bare -q -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)} 2>&1`)
+    end
   end
 
   def create
