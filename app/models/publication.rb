@@ -21,8 +21,6 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ActiveRecord::Base
-
-
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
 
   validates_presence_of :title, :branch
@@ -47,18 +45,11 @@ class Publication < ActiveRecord::Base
     :inclusion => { :in => PUBLICATION_STATUS, :message => "%{value} is not a valid publication status" }
 
   validates_each :branch do |model, attr, value|
-    # Excerpted from git/refs.c:
-    # Make sure "ref" is something reasonable to have under ".git/refs/";
-    # We do not like it if:
-    if value =~ /^\./ ||    # - any path component of it begins with ".", or
-       value =~ /\.\./ ||   # - it has double dots "..", or
-       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
-       value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
-       value =~ /\.lock$/   # - it ends with ".lock"
-      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+    Repository::GIT_VALID_REF_REGEXES.each do |git_regex|
+      if value =~ git_regex
+        model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+      end
     end
-    # not yet handling ASCII control characters
   end
 
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
@@ -134,7 +125,7 @@ class Publication < ActiveRecord::Base
     #title is first identifier in list
     #but added the option to set the title to whatever the caller wants
     if nil == original_title
-      original_title = identifier_to_ref(identifiers.values.flatten.first)
+      original_title = Repository.sanitize_ref(identifiers.values.flatten.first)
     else
       original_was_nil = true;
     end
@@ -188,7 +179,7 @@ class Publication < ActiveRecord::Base
   # validation, replacing spaces with underscore.
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
-    publication.branch ||= title_to_ref(publication.title)
+    publication.branch ||= Repository.sanitize_ref(publication.title)
   end
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
@@ -499,7 +490,7 @@ class Publication < ActiveRecord::Base
       end
 
       if self.parent && (self.parent.owner.class == Board)
-        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+        new_branch_components.unshift(Repository.sanitize_ref(self.parent.owner.title))
       end
 
       new_branch_name = new_branch_components.join('/')
@@ -858,7 +849,7 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
       new_finalizing_publication.title = old_finalizing_publication.title
-      new_finalizing_publication.branch = old_finalizing_publication.branch
+      new_finalizing_publication.branch = Repository.sanitize_ref(new_finalizing_publication.title)
       new_finalizing_publication.parent = old_finalizing_publication.parent
 
       new_finalizing_publication.save!
@@ -1259,7 +1250,7 @@ class Publication < ActiveRecord::Base
     duplicate.owner = new_owner
     duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
-    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
 
@@ -1283,7 +1274,7 @@ class Publication < ActiveRecord::Base
     duplicate.owner = self.community.end_user
     duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
     duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
-    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
 
@@ -1440,7 +1431,7 @@ class Publication < ActiveRecord::Base
       if i.class.to_s == "HGVMetaIdentifier"
         has_meta = true
       end
-      if i.class.to_s == "DDBIdentifier" && !i.is_reprinted?
+      if i.class.to_s == "DDBIdentifier"
        has_text = true
       end
       if i.class.to_s =~ /CTSIdentifier/
@@ -1485,14 +1476,7 @@ class Publication < ActiveRecord::Base
     return creatable_identifiers
   end
 
-  protected
-    #Returns title string in form acceptable to  ".git/refs/"
-    def title_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
-    end
-
-    #Returns identifier string in form acceptable to  ".git/refs/"
-    def identifier_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
-    end
+  def related_text
+    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+  end
 end

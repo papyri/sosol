@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.22.2'
+gem 'rails', '~> 3.2.22'
 
 # Needed for the new asset pipeline
 group :assets do

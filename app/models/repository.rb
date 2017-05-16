@@ -8,6 +8,34 @@ class Repository
   attr_reader :master, :path
   @@jgit_repo_cache = java.util.WeakHashMap.new
 
+  # Excerpted from git/refs.c: (https://github.com/git/git/blob/master/refs.c#L55-L69)
+  # Make sure "ref" is something reasonable to have under ".git/refs/";
+  # We do not like it if:
+  GIT_VALID_REF_REGEXES = [
+      /^\./, # any path component of it begins with "."
+      /\.\./, # it has double dots ".."
+      /[[:cntrl:]]/, # it has ASCII control characters
+      /\/[.\/]/, # it has path components starting with "/" or "."
+      /[\[\\\t~^:? ]/, # it has ":", "?", "[", "\", "^", "~", SP, or TAB anywhere
+      /[.\/]$/, # it ends with a "/" or a "."
+      /@{/, # it contains a "@{" portion
+      /\.lock$/ # it ends with ".lock
+    ]
+
+  # Returns input string in a form acceptable to  ".git/refs/"
+  def self.sanitize_ref(input_ref)
+    # convert spaces to underscores and strip accents and terminal dot
+    no_accents_or_spaces = java.text.Normalizer.normalize(input_ref.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
+    # iterate over each path component, replacing invalid characters
+    output_refs = no_accents_or_spaces.split('/')
+    output_refs.map do |output_ref|
+      Repository::GIT_VALID_REF_REGEXES.each do |regex|
+        output_ref.gsub!(regex,'')
+      end
+    end
+    return output_refs.join('/')
+  end
+
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
   def initialize(master = nil)
@@ -174,7 +202,18 @@ class Repository
     # Heavyweight (missing objects are actually copied):
     #head_ref = other_repo.jgit_repo.resolve(branch).name()
     Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path}, #{@path})")
-    Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
+    begin
+      Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
+    rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
+      Rails.logger.error(e.inspect)
+      self.add_remote(other_repo)
+      fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
+      Rails.logger.info("Trying fallback git command: #{fallback_git_command}")
+      Rails.logger.info(`#{fallback_git_command}`)
+      unless $?.to_i == 0
+        raise "Error with fallback git command in copy_branch_from_repo"
+      end
+    end
     #self.fetch_objects(other_repo, branch)
     #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
     #self.create_branch(new_branch, other_repo.name + "/" + branch)
@@ -207,6 +246,10 @@ class Repository
 
   def alternates=(repository_paths)
     File.write(self.alternates_path, repository_paths.join("\n"))
+  end
+
+  def name
+    return self.class.sanitize_ref([@master_class_path, @master.name].join('/'))
   end
 
   def add_alternates(other_repo)
@@ -268,9 +311,5 @@ class Repository
       Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}\n#{e.backtrace.join("\n")}")
       raise Exceptions::CommitError.new("Commit failed. #{e.message}")
     end
-  end
-
-  def safe_repo_name(name)
-    java.text.Normalizer.normalize(name.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'')
   end
 end

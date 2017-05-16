@@ -1,3 +1,4 @@
+# encoding: utf-8
 # - Sub-class of HGVIdentifier
 # - Includes acts_as_translation defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class HGVTransIdentifier < HGVIdentifier
@@ -52,6 +53,10 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Returns* :
   #   - new translation identifier
   def self.new_from_template(publication)
+    if publication.related_text.nil?
+      raise 'No related text to create translation from—this error may occur because the only text associated with this publication is a reprint stub.'
+      return nil
+    end
     new_identifier = super(publication)
     
     new_identifier.stub_text_structure('en')
@@ -61,7 +66,7 @@ class HGVTransIdentifier < HGVIdentifier
   
   # Returns the 'last' DDB Text identifier that is not a reprint in this tranlsations publication
   def related_text
-    self.publication.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+    self.publication.related_text
   end
   
   # Place any actions you always want to perform on translation identifier content prior to it being committed in this method
