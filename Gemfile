@@ -17,7 +17,7 @@ group :test do
 end
 
 gem 'jquery-rails'
-
+gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
 gem 'haml', '>= 3.0.25'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
