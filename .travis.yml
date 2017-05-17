@@ -8,8 +8,10 @@ jdk:
   - openjdk7
 rvm:
   - jruby-1.7.21
-before_script:
+before_install:
   - gem install bundler
+  - gem update bundler
+before_script:
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
   - gem pristine jruby-launcher
