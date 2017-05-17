@@ -7,7 +7,7 @@ jdk:
   - oraclejdk8
   - openjdk7
 rvm:
-  - jruby
+  - jruby-1.7.21
 before_script:
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
