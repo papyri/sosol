@@ -203,6 +203,7 @@ DEPENDENCIES
   haml (>= 3.0.25)
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
+  jruby-jars (= 1.7.21)
   json (>= 1.6.6)
   mocha
   prototype-rails
