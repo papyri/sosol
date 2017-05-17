@@ -9,6 +9,7 @@ jdk:
 rvm:
   - jruby-1.7.21
 before_script:
+  - gem install bundler
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
   - gem pristine jruby-launcher
