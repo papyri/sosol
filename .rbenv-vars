@@ -1,0 +1,2 @@
+JRUBY_OPTS=-J-Xmx4g
+RUBYOPT?=-W0
