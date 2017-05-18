@@ -310,7 +310,7 @@ class PublicationsController < ApplicationController
       flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
       redirect_to show
     else
-      SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
+      SendToFinalizerJob.perform_async(@publication.id, @current_user.id)
     end
 
     flash[:notice] = "Finalizer change running. Check back in a few minutes."

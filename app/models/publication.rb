@@ -616,7 +616,7 @@ class Publication < ActiveRecord::Base
       self.change_status("approved")
 
       #set up for finalizing
-      SendToFinalizerJob.new.async.perform(self.id)
+      SendToFinalizerJob.perform_async(self.id)
   #----reject-----
     elsif decree_action == "reject"
 
