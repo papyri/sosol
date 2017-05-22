@@ -623,6 +623,10 @@ class HGVMetaIdentifier < HGVIdentifier
   def sort doc
     # general
     sort_paths = {
+      :teiHeader => {
+        :parent => '/TEI/teiHeader',
+        :children => ['fileDesc', 'encodingDesc', 'profileDesc', 'revisionDesc']
+      },
       :msIdentifier => {
         :parent => '/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier',
         :children => ['placename', 'collection', 'idno', 'altIdentifier']
