@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.18'
+gem 'rails', '~> 3.2.22'
 
 # Needed for the new asset pipeline
 group :assets do
@@ -17,7 +17,7 @@ group :test do
 end
 
 gem 'jquery-rails'
-
+gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
 gem 'haml', '>= 3.0.25'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
