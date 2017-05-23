@@ -12,25 +12,9 @@
   <xsl:param name="path">/dev/null/idp.data</xsl:param>
   <xsl:variable name="outbase">/dev/null/idp.html</xsl:variable>
   <xsl:variable name="tmbase">/dev/null/files</xsl:variable>
-  <xsl:param name="biblio"/>
-  <xsl:variable name="biblio-relations" select="tokenize($biblio, '\s+')"/>
   <xsl:template match="/">
     <div class="metadata">
         <xsl:apply-templates mode="metadata"/>
-        <xsl:call-template name="biblio"/>
     </div>
-  </xsl:template>
-  
-  <xsl:template name="biblio">
-    <xsl:if test="$biblio-relations[1]">
-      <div id="bibliography">
-        <h3>Citations</h3>
-        <ul>
-          <xsl:for-each select="$biblio-relations">
-            <li><a href="{.}" class="BP">cite</a></li>
-          </xsl:for-each>
-        </ul>
-      </div>
-    </xsl:if>  
   </xsl:template>
 </xsl:stylesheet>
