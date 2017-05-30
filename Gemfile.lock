@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/RDACollectionsWG/ruby-collections-client
-  revision: 4c6d883f08287340f9c1b9cc7b06e1cd2815bfa8
+  revision: ad360a59d0ec35b80063d25a35d532c5ba088a55
   specs:
-    rda-collections-client (0.0.1)
+    rda-collections-client (0.0.4)
       json (~> 1.8, >= 1.8.3)
       typhoeus (~> 1.0, >= 1.0.1)
 
@@ -137,7 +137,7 @@ GEM
     jruby-jars (1.7.21)
     jruby-openssl (0.9.8-java)
     jruby-rack (1.1.19)
-    json (1.8.3-java)
+    json (1.8.6-java)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.5.4)

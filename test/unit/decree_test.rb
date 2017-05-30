@@ -38,7 +38,9 @@ class DecreeTest < ActiveSupport::TestCase
         end
       
         teardown do
-          @publication.destroy
+          unless @publication.nil?
+            @publication.destroy
+          end
         end
       
         should "perform action when trigger is met" do

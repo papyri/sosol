@@ -236,6 +236,14 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  before_destroy do |publication|
+    # TODO we should really add a rollback in case it fails..
+    collection_id = CollectionsHelper::get_pub_collection(self, false)
+    if collection_id
+      CollectionsHelper::delete_collection(collection_id)
+    end
+  end
+
   #Outputs publication information and content to the Rails logger.
    def log_info
         Rails.logger.info "-----Publication Info-----"
@@ -434,10 +442,6 @@ class Publication < ActiveRecord::Base
     else
       return true
     end
-  end
-
-  # TODO: rename actual branch after branch attribute rename
-  after_create do |publication|
   end
 
   #Sets the origin status for publication identifiers that this publication's board controls. Sets are made on the origin copy.
@@ -1687,4 +1691,5 @@ class Publication < ActiveRecord::Base
     def identifier_to_ref(str)
       java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
     end
+
 end

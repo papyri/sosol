@@ -281,6 +281,7 @@ class CiteIdentifier < Identifier
       # might be gone by the time the async job runs?
       mid = CollectionsHelper::pid_for(self.id,self.class.to_s)
       collections = []
+      collections << CollectionsHelper::get_pub_collection(self.publication, false)
       collections << CollectionsHelper::get_user_collection(self.publication.owner, false)
       # remove it from the subject collection
       self.get_topics().each do |c|

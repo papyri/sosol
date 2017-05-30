@@ -4,10 +4,9 @@ class RemoveFromCollectionsJob
     begin
       Rails.logger.debug("RemoveFromCollectionsJob started (identifier_id: #{member_id})")
       Rails.logger.flush if Rails.logger.respond_to? :flush
-      ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-      ActiveRecord::Base.connection_pool.with_connection do
-        collections.each do |c| 
-          CollectionsHelper::delete_from_collection(c,member_id)
+      collections.each do |c| 
+        unless c.nil?
+            CollectionsHelper::delete_from_collection(c,member_id)
         end
       end
     ensure
