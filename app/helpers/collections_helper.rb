@@ -80,7 +80,10 @@ module CollectionsHelper
       Rails.logger.info("No Collections API Client Defined")
       return nil
     end
-    result = api_client.collections_id_delete(collection_id)
+    begin
+      result = api_client.collections_id_delete(collection_id)
+    rescue
+    end
   end
 
 
@@ -168,11 +171,13 @@ module CollectionsHelper
 
   def self.pid_for(local_id, type, datatype=nil)
     # eventually we want to use a real pid minting service
-    pid = URI.escape("http://perseids.org/collections/#{type}")
+    config_file = get_config()
+    pid_prefix = config_file['pid_prefix']
+    pid = URI.escape("#{pid_prefix}/#{type}")
     unless datatype.nil?
-      pid = pid + URI.escape("_" + datatype)
+      pid = pid + URI.escape("/" + datatype)
     end
-    pid = pid + URI.escape("_" + local_id.to_s)
+    pid = pid + URI.escape("/" + local_id.to_s)
     Rails.logger.info("PID FOR Produced " + pid)
     return pid
   end
