@@ -3,18 +3,26 @@ development:
   collections_api_host: 'collections.perseids.org'
   collections_api_base_path: '/'
   collections_api_scheme: 'http'
+  collections_api_debugging: true
+  raise_errors: true
 test:
   local_item_base_path: 'http://localhost/api/v1/items'
   collections_api_host: ''
   collections_api_base_path: '/'
   collections_api_scheme: 'http'
+  collections_api_debugging: true
+  raise_errors: true
 production:
   local_item_base_path: 'https://sosol.perseids.org/api/v1/items'
   collections_api_host: 'collections.perseids.org'
   collections_api_base_path: '/'
   collections_api_scheme: 'http'
+  collections_api_debugging: false
+  raise_errors: false
 staging:
   local_item_base_path: 'https://sosol-staging.perseids.org/api/v1/items'
   collections_api_host: 'collections.perseids.org'
   collections_api_base_path: '/'
   collections_api_scheme: 'http'
+  collections_api_debugging: false
+  raise_errors: false
