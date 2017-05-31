@@ -20,7 +20,7 @@ class AddToCollectionsJob
           if user_collection
             CollectionsHelper::put_to_collection(user_collection, identifier)
           else
-            Rails.logger.warning("Unable to retrieve user collection for " + identifier.to_s)
+            Rails.logger.warn("Unable to retrieve user collection for " + identifier.to_s)
           end
 
           # add it to the subject collections
@@ -29,7 +29,7 @@ class AddToCollectionsJob
             if topic_collection
               CollectionsHelper::put_to_collection(topic_collection, identifier)
             else
-               Rails.logger.warning("Unable to retrieve topic collection for " + identifier.to_s)
+               Rails.logger.warn("Unable to retrieve topic collection for " + identifier.to_s)
             end
           end
         end
