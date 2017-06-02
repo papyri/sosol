@@ -219,7 +219,7 @@ class User < ActiveRecord::Base
 
     def remove_from_collections
       # TODO we should really add a rollback in case it fails..
-      collection_id = CollectionsHelper::get_user_collection(self, false)
+      collection_id = CollectionsHelper::get_collection(self, false)
       if collection_id
         CollectionsHelper::delete_collection(collection_id)
       end

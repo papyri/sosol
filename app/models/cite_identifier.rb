@@ -161,7 +161,13 @@ class CiteIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # Currently no catalog for CiteIdentifiers
   def get_catalog_link
-    return []
+    collections = self.get_collections()
+    links = []
+    collections.each do | c |
+      links << CollectionsHelper::make_member_link(c,self)
+    end
+    Rails.logger.info("Links = " + links.to_s)
+    return ["Collections Service Link", links[0]]
   end
 
   # @overrides Identifier#titleize
@@ -182,6 +188,11 @@ class CiteIdentifier < Identifier
   # Get the file name for download of identifier contents
   def download_file_name
     self.urn_attribute.sub(IDENTIFIER_PREFIX,'').gsub(/:/,'-') + ".xml"
+  end
+
+  # @overrides Identifier#pid
+  def pid
+    self.urn_attribute
   end
 
   ##################################################
@@ -279,17 +290,21 @@ class CiteIdentifier < Identifier
     def remove_from_collections
       # we need to gather the collections here rather than the async job because the identifier 
       # might be gone by the time the async job runs?
-      mid = CollectionsHelper::pid_for(self.id,self.class.to_s)
-      collections = []
-      collections << CollectionsHelper::get_pub_collection(self.publication, false)
-      collections << CollectionsHelper::get_user_collection(self.publication.owner, false)
-      # remove it from the subject collection
-      self.get_topics().each do |c|
-        collections << CollectionsHelper::get_topic_collection(c, self.class.to_s, false)
-      end
-      Rails.logger.info("Removing from collections before destroy")
+      mid = self.pid()
+      collections = self.get_collections()
       RemoveFromCollectionsJob.new.async.perform(collections,mid)
       # TODO we really should have a rollback of this if the destroy ends up failing...
+    end
+
+    # get the list of collections to which this identifier should belong
+    def get_collections
+      collections = []
+      collections << CollectionsHelper::pid_for(self.publication)
+      collections << CollectionsHelper::pid_for(self.publication.owner)
+      self.get_topics().each do |c|
+        collections << CollectionsHelper::pid_for(Topic.new(c),self.class.to_s)
+      end
+      return collections
     end
 
 end

@@ -741,6 +741,11 @@ class Identifier < ActiveRecord::Base
     []
   end
 
+  # Return a pid for this identifier, is possible
+  def pid
+    return nil
+  end
+
   # describe the identifier as data object in a 
   # downloadable Research Object Bundle
   # by default it just gets put in the data folder
