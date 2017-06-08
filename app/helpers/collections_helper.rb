@@ -52,7 +52,7 @@ module CollectionsHelper
     end
   end
 
-  def self.put_to_collection(collection_id, object)
+  def self.put_to_collection(collection, object, create_if_missing=true)
     config = get_config
     api_client = get_members_api()
     if api_client.nil?
@@ -67,7 +67,28 @@ module CollectionsHelper
     if object.mimetype == 'application/xml'
       member.location = member.location + "?format=xml"
     end
-    result = api_client.collections_id_members_post_with_http_info(collection_id,member)
+    begin
+      result = api_client.collections_id_members_post(collection.id,member)
+    rescue CollectionsClient::ApiError => e
+      if e.code == 404 && create_if_missing
+        if (self.post_collection(collection))
+          api_client.collections_id_members_post(collection.id,member)
+        end
+      else
+        Rails.logger.error(e)
+        raise e
+      end
+    end
+  end
+
+  def self.post_collection(collection)
+    config = get_config
+    api_client = get_collections_api()
+    if api_client.nil?
+      Rails.logger.info("No Collections API Client Defined")
+      return
+    end
+    return api_client.collections_post(collection)
   end
 
   def self.get_collection_members(collection_id)
@@ -80,63 +101,43 @@ module CollectionsHelper
     return api_client.collections_id_members_get(collection_id).contents
   end
 
-  def self.delete_from_collection(collection_id, mid)
+  def self.delete_from_collection(collection, mid)
     api_client = get_members_api()
     if api_client.nil?
       Rails.logger.info("No Collections API Client Defined")
       return nil
     end
     begin
-      result = api_client.collections_id_members_mid_delete(collection_id,mid)
+      result = api_client.collections_id_members_mid_delete(collection.id,mid)
     rescue
     end
   end
 
-  def self.delete_collection(collection_id)
+  def self.delete_collection(collection)
     api_client = get_collections_api()
     if api_client.nil?
       Rails.logger.info("No Collections API Client Defined")
       return nil
     end
     begin
-      result = api_client.collections_id_delete(collection_id)
+      result = api_client.collections_id_delete(collection.id)
     rescue
     end
   end
 
-  def self.get_collection(object, ensure_created=false, datatype=nil)
+  def self.make_collection(object, datatype=nil)
     pid = pid_for(object, datatype)
-    api_client = get_collections_api()
-    if api_client.nil?
-      Rails.logger.info("No Collections API Client Defined")
-      return nil
+    case object
+    when object.respond_to?(:full_name)
+      title = "Collection of Perseids Data Object Created by #{object.full_name}"
+    when object.respond_to?(:title)
+      title = object.title
+    when object.respond_to?(:id)
+      title = "Collection of Perseids Annotations of type #{datatype} on #{object.id}"
+    else
+      title = "Unknown Collection Type"
     end
-    begin 
-      collection = api_client.collections_id_get(pid)
-      if collection.nil? || collection.id.nil?
-        # collection not found returns an ApiError 
-        # but if the client can't build a collection from the response
-        # it just quietly produces a nil so we have to check explicity for that
-        raise Exception.new("Invalid Collection")
-      end
-    rescue CollectionsClient::ApiError => e
-      Rails.logger.info(e)
-      if ensure_created
-        case object
-        when object.respond_to?(:full_name)
-          title = "Collection of Perseids Data Object Created by #{object.full_name}"
-        when object.respond_to?(:title)
-          title = object.title
-        when object.respond_to?(:id)
-          title = "Collection of Perseids Annotations of type #{datatype} on #{object.id}"
-        else
-          title = "Unknown Collection Type"
-        end
-        collection = build_collection_object(pid, {'title'=>title, 'datatype' => datatype})
-        result = api_client.collections_post(collection)
-      end
-    end
-    return collection.nil? ? nil : collection.id
+    return build_collection_object(pid, {'title'=>title, 'datatype' => datatype})
   end
 
   def self.pid_for(object, datatype=nil)
@@ -150,7 +151,6 @@ module CollectionsHelper
       pid = pid + URI.escape("/" + datatype)
     end
     pid = pid + URI.escape("/" + local_id)
-    Rails.logger.info("PID FOR Produced " + pid)
     return pid
   end
 

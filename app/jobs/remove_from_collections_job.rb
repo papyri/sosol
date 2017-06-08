@@ -6,7 +6,11 @@ class RemoveFromCollectionsJob
       Rails.logger.flush if Rails.logger.respond_to? :flush
       collections.each do |c| 
         unless c.nil?
-          CollectionsHelper::delete_from_collection(c,member_id)
+          begin
+            CollectionsHelper::delete_from_collection(c,member_id)
+          rescue
+            Rails.logger.warn("Unable to remove #{member_id.to_s} from collection #{c.to_s}")
+          end
         end
       end
     ensure

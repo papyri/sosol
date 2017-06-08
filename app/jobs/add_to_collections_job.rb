@@ -7,23 +7,14 @@ class AddToCollectionsJob
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do
         identifier = Identifier.find(identifier_id)
+        collections = identifier.get_collections()
         # add it to publication and user collections
-        [identifier.publication, identifier.publication.owner].each do |c|
-          collection = CollectionsHelper::get_collection(c, true)
-          if collection
-            CollectionsHelper::put_to_collection(collection, identifier)
-          else
-             Rails.logger.warn("Unable to retrieve collection for " + c.to_s)
-          end
-        end
-
-        # add it to the subject collections
-        identifier.get_topics().each do |c|
-          topic_collection = CollectionsHelper::get_collection(Topic.new(c), true, identifier.class.to_s)
-          if topic_collection
-            CollectionsHelper::put_to_collection(topic_collection, identifier)
-          else
-             Rails.logger.warn("Unable to retrieve topic collection for " + identifier.to_s)
+        collections.each do |c|
+          begin
+            CollectionsHelper::put_to_collection(c, identifier, true)
+          rescue Exception => e
+            Rails.logger.error(e)
+            Rails.logger.warn("Unable to post to collection for #{c.id.to_s} #{identifier.to_s}")
           end
         end
       end

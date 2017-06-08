@@ -238,10 +238,8 @@ class Publication < ActiveRecord::Base
 
   before_destroy do |publication|
     # TODO we should really add a rollback in case it fails..
-    collection_id = CollectionsHelper::get_collection(self, false)
-    if collection_id
-      CollectionsHelper::delete_collection(collection_id)
-    end
+    collection = CollectionsHelper::make_collection(self)
+    CollectionsHelper::delete_collection(collection)
   end
 
   #Outputs publication information and content to the Rails logger.

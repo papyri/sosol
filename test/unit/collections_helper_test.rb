@@ -48,22 +48,6 @@ class CollectionsHelperTest < ActiveSupport::TestCase
       teardown do
       end
 
-      should "create a collection if missing" do
-        mock_pub = stub("mockpub")
-        mock_pub.stubs(:id).returns('dummypub')
-        mock_pub.stubs(:title).returns("Dummy Publication")
-        created = CollectionsHelper::get_collection(mock_pub,true)
-        assert_equal "org.perseids.test/Mocha::Mock/dummypub", created 
-      end
-
-      should "not create a collection if missing" do
-        mock_pub = stub("mockpub")
-        mock_pub.stubs(:id).returns('dummypub')
-        mock_pub.stubs(:title).returns("Dummy Publication")
-        created = CollectionsHelper::get_collection(mock_pub,false)
-        assert_nil created 
-      end
-
     end
 
     should "add to a collection" do 
@@ -81,16 +65,15 @@ class CollectionsHelperTest < ActiveSupport::TestCase
       mock_identifier.stubs(:pid).returns('urn:cite:perseus:test123.1')
       # skip the tests if the configuration calls for that
       unless CollectionsHelper::get_api_instance().nil? 
-        CollectionsHelper::delete_collection(CollectionsHelper::pid_for(mock_pub))
-        pub_collection = CollectionsHelper::get_collection(mock_pub, true)
-        assert_not_nil(pub_collection)
-        CollectionsHelper::put_to_collection(pub_collection, mock_identifier)
-        contents = CollectionsHelper::get_collection_members(pub_collection)
+        pub_coll = CollectionsHelper::make_collection(mock_pub)
+        CollectionsHelper::delete_collection(pub_coll)
+        CollectionsHelper::put_to_collection(pub_coll, mock_identifier)
+        contents = CollectionsHelper::get_collection_members(pub_coll.id)
         assert_equal 1, contents.size
         assert_equal mock_identifier.pid(), contents[0].id
-        CollectionsHelper::delete_from_collection(pub_collection,mock_identifier.pid())
-        CollectionsHelper::delete_collection(pub_collection)
-        assert_nil CollectionsHelper::get_collection(mock_pub, false)
+        CollectionsHelper::delete_from_collection(pub_coll,mock_identifier.pid())
+        CollectionsHelper::delete_collection(pub_coll)
+        #assert_ CollectionsHelper::get_collection(mock_pub, false)
       end
     end
     

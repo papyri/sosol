@@ -763,6 +763,11 @@ class Identifier < ActiveRecord::Base
     return ro
   end
 
+  # get the collections to which identifier this beongs
+  def get_collections
+    return []
+  end
+
   protected
     # add this identifier to one or more external collections
     # default behavior is a no-op. Override in the derived classes

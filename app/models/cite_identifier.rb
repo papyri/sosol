@@ -166,7 +166,6 @@ class CiteIdentifier < Identifier
     collections.each do | c |
       links << CollectionsHelper::make_member_link(c,self)
     end
-    Rails.logger.info("Links = " + links.to_s)
     return ["Collections Service Link", links[0]]
   end
 
@@ -256,6 +255,17 @@ class CiteIdentifier < Identifier
     return ro
   end
 
+  # get the list of collections to which this identifier should belong
+  def get_collections
+    collections = []
+    collections << CollectionsHelper::make_collection(self.publication)
+    collections << CollectionsHelper::make_collection(self.publication.owner)
+    self.get_topics().each do |c|
+      collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
+    end
+    return collections
+  end
+
   #############################
   # Private Helper Methods
   #############################
@@ -296,16 +306,6 @@ class CiteIdentifier < Identifier
       # TODO we really should have a rollback of this if the destroy ends up failing...
     end
 
-    # get the list of collections to which this identifier should belong
-    def get_collections
-      collections = []
-      collections << CollectionsHelper::pid_for(self.publication)
-      collections << CollectionsHelper::pid_for(self.publication.owner)
-      self.get_topics().each do |c|
-        collections << CollectionsHelper::pid_for(Topic.new(c),self.class.to_s)
-      end
-      return collections
-    end
 
 end
 
