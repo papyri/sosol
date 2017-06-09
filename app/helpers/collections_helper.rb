@@ -9,10 +9,10 @@ module CollectionsHelper
     return @config
   end
 
-  def self.make_member_link(cid,member)
+  def self.make_member_link(coll,member)
     config_file = get_config()
     mid = member_id_for(member)
-    return "#{config_file['collections_api_scheme']}://#{config_file['collections_api_host']}#{config_file['collections_api_base_path']}collections/#{cid}/members/#{mid}"
+    return [ coll.description['title'], "#{config_file['collections_api_scheme']}://#{config_file['collections_api_host']}#{config_file['collections_api_base_path']}collections/#{coll.id}/members/#{mid}" ]
   end
 
   def self.get_api_instance

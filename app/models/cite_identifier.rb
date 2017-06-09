@@ -166,7 +166,7 @@ class CiteIdentifier < Identifier
     collections.each do | c |
       links << CollectionsHelper::make_member_link(c,self)
     end
-    return ["Collections Service Link", links[0]]
+    return { 'Collections' => links }
   end
 
   # @overrides Identifier#titleize
@@ -260,9 +260,9 @@ class CiteIdentifier < Identifier
     collections = []
     collections << CollectionsHelper::make_collection(self.publication)
     collections << CollectionsHelper::make_collection(self.publication.owner)
-    self.get_topics().each do |c|
-      collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
-    end
+    #self.get_topics().each do |c|
+    #  collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
+    #end
     return collections
   end
 

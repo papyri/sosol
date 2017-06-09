@@ -1,5 +1,22 @@
 Identifier
 = identifier.name
 - link = identifier.get_catalog_link
-- if link.size == 2
-  = link_to link[0],link[1]
+- if link.is_a?(Hash)
+  - link.each do |key, value| 
+    #catalog-menu
+      %ul
+        %li{:class => "p-dropdown"}
+          %a{:href => "#menu-#{key}"}
+            %span{:class=>"label"}
+              = key
+            %span{:class=>"caret-container"}
+              %i{:class=>"fa fa-caret-down when-off", "aria-hidden"=>"true"}
+              %i{:class=>"fa fa-caret-up when-on"}
+        %li{:class=>"p-dropdown-container", :id=>"menu-#{key}"}
+          %ul
+            - value.each do |l|
+              %li
+                = link_to l[0],l[1]
+- else 
+  - if link.size == 2
+    = link_to link[0],link[1]
