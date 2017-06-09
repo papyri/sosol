@@ -127,13 +127,12 @@ module CollectionsHelper
 
   def self.make_collection(object, datatype=nil)
     pid = pid_for(object, datatype)
-    case object
-    when object.respond_to?(:full_name)
-      title = "Collection of Perseids Data Object Created by #{object.full_name}"
-    when object.respond_to?(:title)
+    if object.respond_to?('full_name')
+      title = "Perseids User Data By #{object.full_name}"
+    elsif object.respond_to?('title')
       title = object.title
-    when object.respond_to?(:id)
-      title = "Collection of Perseids Annotations of type #{datatype} on #{object.id}"
+    elsif object.respond_to?('id')
+      title = "Perseids #{datatype} Annotations on #{object.id}"
     else
       title = "Unknown Collection Type"
     end

@@ -260,6 +260,11 @@ class CiteIdentifier < Identifier
     collections = []
     collections << CollectionsHelper::make_collection(self.publication)
     collections << CollectionsHelper::make_collection(self.publication.owner)
+    # TODO
+    # need probably not to always get all topics -- i.e. for catalog link
+    # this would to be too onerous for files with many topics -- 
+    # should calculate only when absolutely needed
+    # also may drag down the server on create and delete
     #self.get_topics().each do |c|
     #  collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
     #end
