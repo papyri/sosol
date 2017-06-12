@@ -161,12 +161,13 @@ class CiteIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # Currently no catalog for CiteIdentifiers
   def get_catalog_link
-    collections = self.get_collections()
-    links = []
-    collections.each do | c |
-      links << CollectionsHelper::make_member_link(c,self)
+    pub_collection = CollectionsHelper::make_collection(self.publication)
+    link = CollectionsHelper::make_data_link(pub_collection,self)
+    if link.nil?
+      []
+    else
+      [ 'Collection Data Link', link ]
     end
-    return { 'Collections' => links }
   end
 
   # @overrides Identifier#titleize
@@ -260,15 +261,31 @@ class CiteIdentifier < Identifier
     collections = []
     collections << CollectionsHelper::make_collection(self.publication)
     collections << CollectionsHelper::make_collection(self.publication.owner)
-    # TODO
-    # need probably not to always get all topics -- i.e. for catalog link
-    # this would to be too onerous for files with many topics -- 
-    # should calculate only when absolutely needed
-    # also may drag down the server on create and delete
-    #self.get_topics().each do |c|
-    #  collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
-    #end
+    self.get_topics().each do |c|
+      collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
+    end
     return collections
+  end
+
+  # @overrides Identifier#add_to_collections
+  def add_to_collections
+    AddToCollectionsJob.new.async.perform(self.id)
+  end
+
+  # @overrides Identifier#update_in_collections
+  def update_in_collections
+    # default is a noop - updates don't require collection operations
+    # update may be necessary if topics were updated though....
+  end
+
+  # @overrides Identifier#remove_from_collections
+  def remove_from_collections
+    # we need to gather the collections here rather than the async job because the identifier 
+    # might be gone by the time the async job runs?
+    mid = self.pid()
+    collections = self.get_collections()
+    RemoveFromCollectionsJob.new.async.perform(collections,mid)
+    # TODO we really should have a rollback of this if the destroy ends up failing...
   end
 
   #############################
@@ -290,29 +307,9 @@ class CiteIdentifier < Identifier
       return urn_components
     end
 
-    # @overrides Identifier#add_to_collections
-    def add_to_collections
-        AddToCollectionsJob.new.async.perform(self.id)
-    end
-
-    # @overrides Identifier#update_in_collections
-    def update_in_collections
-      # default is a noop - updates don't require collection operations
-      # update may be necessary if topics were updated though....
-    end
-
-    # @overrides Identifier#remove_from_collections
-    def remove_from_collections
-      # we need to gather the collections here rather than the async job because the identifier 
-      # might be gone by the time the async job runs?
-      mid = self.pid()
-      collections = self.get_collections()
-      RemoveFromCollectionsJob.new.async.perform(collections,mid)
-      # TODO we really should have a rollback of this if the destroy ends up failing...
-    end
-
-
 end
+
+
 
 
 

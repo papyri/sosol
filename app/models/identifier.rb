@@ -33,8 +33,6 @@ class Identifier < ActiveRecord::Base
 
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
 
-  after_create :add_to_collections
-  after_update :update_in_collections
   before_destroy :remove_from_collections
 
   validates_presence_of :name, :type
@@ -283,6 +281,8 @@ class Identifier < ActiveRecord::Base
 
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    # it would be better to do this in an after_create callback but we won't have content yet then
+    new_identifier.add_to_collections()
 
     return new_identifier
   end
@@ -316,6 +316,8 @@ class Identifier < ActiveRecord::Base
     new_identifier.set_content(updated_content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     template_init = new_identifier.add_change_desc(comment)
     new_identifier.set_xml_content(template_init, :comment => 'Initializing Content')
+    # it would be better to do this in an after_create callback but we won't have content yet then
+    new_identifier.add_to_collections()
     return new_identifier
   end
 
@@ -768,23 +770,22 @@ class Identifier < ActiveRecord::Base
     return []
   end
 
-  protected
-    # add this identifier to one or more external collections
-    # default behavior is a no-op. Override in the derived classes
-    def add_to_collections
+  # add this identifier to one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def add_to_collections
 
-    end
+  end
 
-    # update this identifier in one or more external collections
-    # default behavior is a no-op. Override in the derived classes
-    def update_in_collections
+  # update this identifier in one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def update_in_collections
 
-    end
+  end
 
-    # remove this identifier from one or more external collections
-    # default behavior is a no-op. Override in the derived classes
-    def remove_from_collections
+  # remove this identifier from one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def remove_from_collections
 
-    end
+  end
 
 end

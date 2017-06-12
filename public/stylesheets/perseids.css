@@ -2332,19 +2332,19 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, #catalog-menu ul li a, #catalog-menu ul li a:visited, #catalog-menu ul li a:focus, #catalog-menu ul li a:link, #catalog-menu ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, ul.menu > li a:link, #main-menu nav ul li a:link, #catalog-menu ul li a:link, .card input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"]:link, .modal input[type="submit"]:link {
+  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, ul.menu > li a:link, #main-menu nav ul li a:link, .card input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"]:link, .modal input[type="submit"]:link {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, #catalog-menu ul li a, #catalog-menu ul li a:visited, #catalog-menu ul li a:focus, #catalog-menu ul li a:link, #catalog-menu ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, #catalog-menu ul li a, #catalog-menu ul li a:visited, #catalog-menu ul li a:focus, #catalog-menu ul li a:link, #catalog-menu ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
 
 .font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
@@ -2971,65 +2971,6 @@ ul.btns > li {
       background-color: #00a8ff; }
     #main-menu .logins ul li.openid {
       background-color: #f7931e; }
-
-#catalog-menu {
-  width: 250px; }
-  #catalog-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: block; }
-    #catalog-menu ul li {
-      display: block;
-      /*
-      	Dropdown link container
-      	.label is the text of the dropdown
-      	.caret-container is the arrow
-      	.when-off and .when-on are used to switch arrow sense
-      */
-      /*
-      	Perseids Dropdown Container in Menu have a children ul
-      */ }
-      #catalog-menu ul li a, #catalog-menu ul li a:visited, #catalog-menu ul li a:focus, #catalog-menu ul li a:link, #catalog-menu ul li a:active {
-        cursor: pointer;
-        display: block;
-        height: 45px;
-        line-height: 45px;
-        color: #7986cb;
-        text-decoration: none !important;
-        text-overflow: ellipsis;
-        overflow: hidden; }
-      #catalog-menu ul li.active a {
-        border-right: 5px solid #7986cb; }
-      #catalog-menu ul li.p-dropdown .label {
-        display: inline-block; }
-      #catalog-menu ul li.p-dropdown .caret-container {
-        display: inline-block;
-        height: 100%;
-        max-width: 2em;
-        margin-right: 1em;
-        float: right;
-        text-align: right;
-        line-height: 45px; }
-      #catalog-menu ul li.p-dropdown.active a {
-        border-right: none;
-        border-top: 5px solid #7986cb; }
-      #catalog-menu ul li.p-dropdown .when-off {
-        display: inline; }
-      #catalog-menu ul li.p-dropdown .when-on {
-        display: none; }
-      #catalog-menu ul li.p-dropdown.active .when-on {
-        display: inline; }
-      #catalog-menu ul li.p-dropdown.active .when-off {
-        display: none; }
-      #catalog-menu ul li.p-dropdown-container {
-        display: none; }
-        #catalog-menu ul li.p-dropdown-container.visible {
-          display: block;
-          background-color: #e5e5e5;
-          border-bottom: 5px solid #7986cb; }
-          #catalog-menu ul li.p-dropdown-container.visible a {
-            font-size: 95%; }
 
 .card label, .modal label {
   display: block;
