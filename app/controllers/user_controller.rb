@@ -95,6 +95,7 @@ class UserController < ApplicationController
   def account
     if @current_user
       @identifiers = @current_user.user_identifiers
+      @collection = CollectionsHelper::make_data_link(CollectionsHelper::make_collection(@current_user))
     end
   end
 
