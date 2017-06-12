@@ -9,15 +9,27 @@ module CollectionsHelper
     return @config
   end
 
-  def self.make_member_link(coll,member)
+  def self.enabled?(config_file)
+    config_file['collections_api_host'] && config_file['collections_api_host'] != ''
+  end
+
+  def self.make_data_link(coll,member=nil)
     config_file = get_config()
-    mid = member_id_for(member)
-    return [ coll.description['title'], "#{config_file['collections_api_scheme']}://#{config_file['collections_api_host']}#{config_file['collections_api_base_path']}collections/#{coll.id}/members/#{mid}" ]
+    if enabled?(config_file)
+      link = "#{config_file['collections_api_scheme']}://#{config_file['collections_api_host']}#{config_file['collections_api_base_path']}collections/#{coll.id}/members"
+      unless member.nil? 
+        mid = member_id_for(member)
+        link = "#{link}/#{mid}" 
+      end
+    else
+      link = nil
+    end
+    return link
   end
 
   def self.get_api_instance
     config_file = get_config()
-    if config_file['collections_api_host'] && config_file['collections_api_host'] != ''
+    if enabled?(config_file)
       config = CollectionsClient::Configuration.new()
       config.host = config_file['collections_api_host']
       config.base_path = config_file['collections_api_base_path']
