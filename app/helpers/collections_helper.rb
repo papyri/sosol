@@ -115,6 +115,7 @@ module CollectionsHelper
     member = CollectionsClient::MemberItem.new
     member.id = member_id_for(object)
     member.location = "#{config['local_item_base_path']}/#{object.id}"
+    member.datatype = object.class.to_s
     member.mappings = CollectionsClient::CollectionItemMappingMetadata.new()
     member.mappings.date_added = Time.now.iso8601
     if object.mimetype == 'application/xml'
