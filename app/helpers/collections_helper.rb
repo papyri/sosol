@@ -1,7 +1,15 @@
+#  Provides methods for interacting with a collection service
+#  configuration provided in the 'collections.yml' file
+#  delegates collection service interactions to the RDA ruby-collections-client
+#  gem (https://github.com/RDACollectionsWG/ruby-collections-client)
+#  this class provides the glue between that and SoSOL
 module CollectionsHelper
 
   require 'rda-collections-client'
 
+  # Read the collections.yml config file and return the parsed config settings
+  # - *Returns*:
+  #   - the config hash  
   def self.get_config
     unless defined? @config
       @config = YAML::load(ERB.new(File.new(File.join(Rails.root, %w{config collections.yml})).read).result)[Rails.env]
@@ -9,10 +17,22 @@ module CollectionsHelper
     return @config
   end
 
+  # Check to see if a collection service is enabled per the config
+  # - *Args*:
+  #   +config_file+ -> the parsed configuration hash
+  # - *Returns*:
+  #   - true if enabled false if not
   def self.enabled?(config_file)
     config_file['collections_api_host'] && config_file['collections_api_host'] != ''
   end
 
+  # Make a link to a collection 
+  # - *Args*:
+  #   +coll+ -> the collection
+  #   +member+ -> a member object
+  # - *Returns*: 
+  #   - if a memeber was requested, returns a link to that member
+  #     otherwise returns a link to all members in the collection
   def self.make_data_link(coll,member=nil)
     config_file = get_config()
     if enabled?(config_file)
@@ -27,6 +47,13 @@ module CollectionsHelper
     return link
   end
 
+  # Get an instance of the api client
+  # - *Returns:*:
+  #   - an api client or nil if disabled or invalid config
+  # - *Raises*:
+  #   - Exception only if config sets "raise_errors" to true
+  #     and a client could not be created, otherwise fails quietly 
+  #     and returns nil  
   def self.get_api_instance
     config_file = get_config()
     if enabled?(config_file)
@@ -46,6 +73,9 @@ module CollectionsHelper
     end
   end
 
+  # Get an instance of the api client for collections operations
+  # - *Returns:*:
+  #   - an api client or nil if disabled or invalid config
   def self.get_collections_api
     api_client = get_api_instance()
     if api_client.nil? 
@@ -55,6 +85,9 @@ module CollectionsHelper
     end
   end
 
+  # Get an instance of the api client for member operations
+  # - *Returns:*:
+  #   - an api client or nil if disabled or invalid config
   def self.get_members_api
     api_client = get_api_instance()
     if api_client.nil?
@@ -64,6 +97,14 @@ module CollectionsHelper
     end
   end
 
+  # Add an object to a collection
+  # - *Args*:
+  #   +collection+ -> the Collection to add to
+  #   +object+ -> the object to add to the collection
+  #   +create_if_missing+ -> boolean flag to request creation of collection
+  #                          if it doesn't exist yet
+  # - *Raises:*:
+  #   - an Exception if put fails
   def self.put_to_collection(collection, object, create_if_missing=true)
     config = get_config
     api_client = get_members_api()
@@ -93,6 +134,9 @@ module CollectionsHelper
     end
   end
 
+  # Add a new collection
+  # - *Args*:
+  #   +collection+ -> the Collection to add
   def self.post_collection(collection)
     config = get_config
     api_client = get_collections_api()
@@ -103,6 +147,11 @@ module CollectionsHelper
     return api_client.collections_post(collection)
   end
 
+  # Get all members of a collection (used for testing only)
+  # - *Args*:
+  #   +collection_id+ -> the id of the collection
+  # - *Returns*:
+  #   - the list of collection members
   def self.get_collection_members(collection_id)
     config = get_config
     api_client = get_members_api()
@@ -113,6 +162,10 @@ module CollectionsHelper
     return api_client.collections_id_members_get(collection_id).contents
   end
 
+  # Delete a member item from a collection
+  # - *Args*:
+  #   +collection+ -> the collection to delete from
+  #   +mid+ -> the id of the member item to be deleted
   def self.delete_from_collection(collection, mid)
     api_client = get_members_api()
     if api_client.nil?
@@ -125,6 +178,9 @@ module CollectionsHelper
     end
   end
 
+  # Delete a collection
+  # - *Args*:
+  #   +collection+ -> the collection to delete
   def self.delete_collection(collection)
     api_client = get_collections_api()
     if api_client.nil?
@@ -137,6 +193,12 @@ module CollectionsHelper
     end
   end
 
+  # Make a new collection object
+  # - *Args*:
+  #   +object+ -> the object the collection is for
+  #   +datatype+ -> optional datatype specifier
+  # - *Returns*:
+  #   - the collection object
   def self.make_collection(object, datatype=nil)
     pid = pid_for(object, datatype)
     if object.respond_to?('full_name')
@@ -151,6 +213,12 @@ module CollectionsHelper
     return build_collection_object(pid, {'title'=>title, 'datatype' => datatype})
   end
 
+  # Make a pseudo-pid for a SoSOL object
+  # - *Args*:
+  #   +object+ -> the object to identify
+  #   +datatype+ -> optional datatype specifier
+  # - *Returns*:
+  #   - a pseudo pid string
   def self.pid_for(object, datatype=nil)
     # eventually we want to use a real pid minting service
     local_id = object.id.to_s
@@ -165,6 +233,13 @@ module CollectionsHelper
     return pid
   end
 
+  # Make an identifier for a member item in a collection
+  # if the object itself provides a pid method it uses that
+  # otherwise it mints a pseudo-pid
+  # - *Args*:
+  #   +object+ -> the object to identify
+  # - *Returns*:
+  #   - the id
   def self.member_id_for(object)
     object_pid = object.pid()
     if object_pid.nil?
@@ -173,6 +248,12 @@ module CollectionsHelper
     return URI.escape(object_pid)
   end
 
+  # Build a new collection object
+  # - *Args*:
+  #   +pid+ -> the PID for the collection
+  #   +params+ -> parameters (currently only title and datatype are supported)
+  # - *Returns*:
+  #    - the collection object
   def self.build_collection_object(pid, params)
     collection = CollectionsClient::CollectionObject.new
     collection.id = pid
