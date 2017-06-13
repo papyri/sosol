@@ -1,7 +1,7 @@
 language: ruby
 sudo: false
 env:
-  - JRUBY_OPTS=-J-Xmx1g
+  - JRUBY_OPTS=-J-Xmx2g
 jdk:
   - oraclejdk7
   - oraclejdk8

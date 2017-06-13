@@ -20,6 +20,9 @@
         = link_to "Terms of Service", :controller => :user, :action => "show_terms"
       %li
         = link_to "Your Usage Stats", usage_url
+      -if ! @collection.nil?
+        %li
+          = link_to "Your Collection Data", @collection
       %li
         = link_to "Usage Stats By User", all_users_links_url
   .rows

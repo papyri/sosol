@@ -151,7 +151,8 @@ if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteI
                  "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}},
            ],
            "provenance" => { "file" => "provenance/#{test.download_file_name.sub(/.xml$/,'.prov.jsonld')}", 
-                             "contents" => "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/perseus-lattb.1.1.xml\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:latinLit:phi1221.phi007.perseus-lat1\"\n    }\n  ]\n}"}
+                             "contents" => "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/perseus-lattb.1.1.xml\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:latinLit:phi1221.phi007.perseus-lat1\"\n    },\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:latinLit:phi1221.phi007.perseus-lat1:appendix\"\n    },\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:latinLit:phi1221.phi007.perseus-lat1:0-5\"\n    }\n  ]\n}"
+                            }
          }
          assert_equal(expected, test.as_ro())
        end

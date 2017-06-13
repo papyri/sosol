@@ -33,6 +33,8 @@ class Identifier < ActiveRecord::Base
 
   IDENTIFIER_STATUS = %w{ new editing submitted approved finalizing committed archived }
 
+  before_destroy :remove_from_collections
+
   validates_presence_of :name, :type
 
   belongs_to :publication
@@ -279,6 +281,8 @@ class Identifier < ActiveRecord::Base
 
     initial_content = new_identifier.file_template
     new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    # it would be better to do this in an after_create callback but we won't have content yet then
+    new_identifier.add_to_collections()
 
     return new_identifier
   end
@@ -312,6 +316,8 @@ class Identifier < ActiveRecord::Base
     new_identifier.set_content(updated_content, :comment => comment, :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
     template_init = new_identifier.add_change_desc(comment)
     new_identifier.set_xml_content(template_init, :comment => 'Initializing Content')
+    # it would be better to do this in an after_create callback but we won't have content yet then
+    new_identifier.add_to_collections()
     return new_identifier
   end
 
@@ -729,6 +735,19 @@ class Identifier < ActiveRecord::Base
     "application/xml"
   end
 
+  # Get the primary topic(s) of this identiifer
+  # - *Returns*:
+  #   - an array of topic identifiers
+  def get_topics
+    # default is none
+    []
+  end
+
+  # Return a pid for this identifier, is possible
+  def pid
+    return nil
+  end
+
   # describe the identifier as data object in a 
   # downloadable Research Object Bundle
   # by default it just gets put in the data folder
@@ -744,6 +763,29 @@ class Identifier < ActiveRecord::Base
     package_obj['uri'] = File.join('../data',self.download_file_name)
     ro['aggregates'] << package_obj
     return ro
+  end
+
+  # get the collections to which identifier this beongs
+  def get_collections
+    return []
+  end
+
+  # add this identifier to one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def add_to_collections
+
+  end
+
+  # update this identifier in one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def update_in_collections
+
+  end
+
+  # remove this identifier from one or more external collections
+  # default behavior is a no-op. Override in the derived classes
+  def remove_from_collections
+
   end
 
 end

@@ -8,8 +8,6 @@ class CiteIdentifier < Identifier
   IDENTIFIER_PREFIX = 'urn:cite:'
   IDENTIFIER_NAMESPACE = 'cite'
 
-  after_commit :update_collections
-
   ##################################################
   # Public Class Method Overrides
   ##################################################
@@ -110,7 +108,6 @@ class CiteIdentifier < Identifier
   # Public Instance Method Overrides
   ##################################################
 
-
   # Return the identifier formatted for inclusion in an xml:id attribute
   def id_attribute
      # TODO figure out best way to handle urn as id attribute (: not allowed)
@@ -164,7 +161,13 @@ class CiteIdentifier < Identifier
   # @overrides Identifier#get_catalog_link
   # Currently no catalog for CiteIdentifiers
   def get_catalog_link
-    return []
+    pub_collection = CollectionsHelper::make_collection(self.publication)
+    link = CollectionsHelper::make_data_link(pub_collection,self)
+    if link.nil?
+      []
+    else
+      [ 'Collection Data Link', link ]
+    end
   end
 
   # @overrides Identifier#titleize
@@ -187,6 +190,11 @@ class CiteIdentifier < Identifier
     self.urn_attribute.sub(IDENTIFIER_PREFIX,'').gsub(/:/,'-') + ".xml"
   end
 
+  # @overrides Identifier#pid
+  def pid
+    self.urn_attribute
+  end
+
   ##################################################
   # Public CITE Identifier Only Instance Methods
   ##################################################
@@ -194,14 +202,6 @@ class CiteIdentifier < Identifier
   # Return the identifier formatted as full urn for inclusion in an XML attribute
   def urn_attribute
      return IDENTIFIER_PREFIX + self.to_urn_components.join(":")
-  end
-
-  # Updates External Collection from the Identifier Content
-  # Cite Identifier Specific Method
-  def update_collections
-     # TODOD
-     # add to user collection
-     # update annotation targets collection
   end
 
   # make a annotator uri from the owner of the parent publication
@@ -214,6 +214,78 @@ class CiteIdentifier < Identifier
   def clear_cache
     # no op
     # override in sub classes
+  end
+
+  # @overrides Identifier#as_ro
+  def as_ro
+    ro = {'aggregates' => [], 'annotations' => []}
+    about = []
+    derived_from = []
+    local_urns = self.publication.ro_local_aggregates()
+    topics = self.get_topics()
+    topics.each do |t|
+      if local_urns[t]
+        about << local_urns[t] 
+      else
+        derived_from << t
+      end
+    end
+    package_obj = {
+      'conformsTo' => self.schema,
+      'mediatype' => self.mimetype,
+      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
+    }
+    if about.size > 0 
+      package_obj['content'] = File.join('annotations',self.download_file_name)
+      package_obj['about'] = about.uniq
+      # a bit of a hack (as if the rest isn't) but we don't 
+      # have an appropriate standad motivation for anything except Commentary items
+      if self.class == CommentaryCiteIdentifier
+        package_obj['oa:motivating'] = 'oa:commenting'
+      end
+      ro['annotations'] << package_obj
+    else 
+      package_obj['uri'] = File.join('../data',self.download_file_name)
+      if derived_from.size > 0
+        prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
+        package_obj['history'] = prov_file_name
+        ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
+      end
+      ro['aggregates'] << package_obj
+    end
+    return ro
+  end
+
+  # get the list of collections to which this identifier should belong
+  def get_collections
+    collections = []
+    collections << CollectionsHelper::make_collection(self.publication)
+    collections << CollectionsHelper::make_collection(self.publication.owner)
+    self.get_topics().each do |c|
+      collections << CollectionsHelper::make_collection(Topic.new(c),self.class.to_s)
+    end
+    return collections
+  end
+
+  # @overrides Identifier#add_to_collections
+  def add_to_collections
+    AddToCollectionsJob.new.async.perform(self.id)
+  end
+
+  # @overrides Identifier#update_in_collections
+  def update_in_collections
+    # default is a noop - updates don't require collection operations
+    # update may be necessary if topics were updated though....
+  end
+
+  # @overrides Identifier#remove_from_collections
+  def remove_from_collections
+    # we need to gather the collections here rather than the async job because the identifier 
+    # might be gone by the time the async job runs?
+    mid = self.pid()
+    collections = self.get_collections()
+    RemoveFromCollectionsJob.new.async.perform(collections,mid)
+    # TODO we really should have a rollback of this if the destroy ends up failing...
   end
 
   #############################
@@ -234,7 +306,10 @@ class CiteIdentifier < Identifier
       urn_components << temp_components[2]
       return urn_components
     end
+
 end
+
+
 
 
 

@@ -60,59 +60,17 @@ class AlignmentCiteIdentifier < CiteIdentifier
     'http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd'
   end
 
-  ###########################
-  # PROTOTYPE METHODS
-  ###########################
-
-  # Used to prototype export of CITE Annotations as part
-  # of a CTS-Centered Research Object Bundle
-  def as_ro
-    ro = {'aggregates' => [], 'annotations' => []}
-    about = []
-    derived_from = []
-    urns = self.publication.ro_local_aggregates()
+  # @overrides Identifier#get_topics
+  def get_topics
     t = REXML::Document.new(self.xml_content)
+    uris = {}
     REXML::XPath.each(t,"/align:aligned-text/align:sentence/align:wds/align:comment[@class='uri']",{"align"=>NS_ALIGN}).each do |comment|
       uri = comment.text
-      if (uri =~ /urn:cts:/)
-        urn_value = uri.match(/(urn:cts:.*)$/).captures[0]
-        begin
-          urn_obj = CTS::CTSLib.urnObj(urn_value)
-        rescue
-        end
-      else
-        derived_from << uri
-      end
-      unless urn_obj.nil?
-        u = "urn:cts:" + urn_obj.getTextGroup(true) + "." + urn_obj.getWork(false) + "." + urn_obj.getVersion(false)
-        if urns[u]
-          about << urns[u] 
-        else
-          derived_from << u
-        end
-      end
+      uris[uri] = {}
     end
-    package_obj = {
-      'conformsTo' => self.schema,
-      'mediatype' => self.mimetype,
-      'createdBy' => { 'name' => self.publication.creator.full_name, 'uri' => self.publication.creator.uri }
-    }
-    if about.size > 0 
-      package_obj['content'] = File.join('annotations',self.download_file_name)
-      package_obj['about'] = about.uniq
-      ro['annotations'] << package_obj
-    else 
-      package_obj['uri'] = File.join('../data',self.download_file_name)
-      if derived_from.size > 0
-        prov_file_name = File.join('provenance',self.download_file_name.sub(/\.xml$/,'.prov.jsonld'))
-        package_obj['history'] = prov_file_name
-        ro['provenance'] = { 'file' => prov_file_name, 'contents' => BagitHelper::generate_prov_doc(self.download_file_name, derived_from.uniq) }
-      end
-      ro['aggregates'] << package_obj
-    end
-    return ro
+    return CTS::CTSLib::validate_and_parse(uris)
   end
-  
+
   ########################
   # Private Helper Methods
   ########################

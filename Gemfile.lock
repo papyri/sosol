@@ -6,6 +6,14 @@ GIT
       json
 
 GIT
+  remote: https://github.com/RDACollectionsWG/ruby-collections-client
+  revision: ad360a59d0ec35b80063d25a35d532c5ba088a55
+  specs:
+    rda-collections-client (0.0.4)
+      json (~> 1.8, >= 1.8.3)
+      typhoeus (~> 1.0, >= 1.0.1)
+
+GIT
   remote: https://github.com/onelogin/ruby-saml
   revision: 3b81caafaeadfc9fdb981c87a4562fadea86aff2
   ref: 3b81caa
@@ -93,6 +101,8 @@ GEM
       railties (>= 3.2)
     dynamic_form (1.1.4)
     erubis (2.7.0)
+    ethon (0.10.1)
+      ffi (>= 1.3.0)
     execjs (2.5.2)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -106,6 +116,7 @@ GEM
       http-cookie (~> 1.0.0)
     faraday_middleware (0.10.0)
       faraday (>= 0.7.4, < 0.10)
+    ffi (1.9.18-java)
     grit (2.4.1)
       diff-lcs (~> 1.1)
       mime-types (~> 1.15)
@@ -126,7 +137,7 @@ GEM
     jruby-jars (1.7.21)
     jruby-openssl (0.9.8-java)
     jruby-rack (1.1.19)
-    json (1.8.3-java)
+    json (1.8.6-java)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.5.4)
@@ -210,6 +221,8 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    typhoeus (1.1.2)
+      ethon (>= 0.9.0)
     tzinfo (0.3.44)
     uglifier (2.2.1)
       execjs (>= 0.3.0)
@@ -259,6 +272,7 @@ DEPENDENCIES
   rack (>= 1.1.0)
   rails (= 3.2.21)
   rake
+  rda-collections-client!
   ruby-debug
   ruby-saml!
   rubyzip (~> 1.0.0)

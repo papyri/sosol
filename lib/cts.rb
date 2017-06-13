@@ -649,6 +649,61 @@ module CTS
          Rails.logger.error(e.backtrace);
         end
       end 
+
+      ##
+      # parse, validate and compose things that might contain urns
+      # @param uris - hash such as
+      #   { 'urn:cts:greekLit:tlg0012.tlg001.perseus-grc1' => { '1.1' => 1, '2.1' => 1},
+      #     'http://data.perseus.org/urn:cts:greekLit:tlg0012.tlg001.perseus-grc1' => { '1.1' => 1},
+      #     'http://someotherurl.org/abc/def' => {'any old junk' => 1 }
+      #   }
+      # @param [Boolean] include_nonurns - if true includes non urn keys as is
+      # @returns an array of unique valid urns composed of these parts
+      def validate_and_parse(uris, include_nonurns=true)
+        parsed = []
+        uris.keys.each do |u|
+          if u =~ /urn:cts:/
+            urn_value = u.match(/(urn:cts:.*)$/).captures[0]
+            begin
+              urn_obj = CTS::CTSLib.urnObj(urn_value)
+              textgroup = urn_obj.getTextGroup(true)
+              work = urn_obj.getWork(false)
+              version = urn_obj.getVersion(false)
+              passage = urn_obj.getPassage(100)
+            rescue
+              # the first thing to fail will be thrown
+            end
+            # if we can construct at least a textgroup and work it's a validly formatted cts reference
+            if  ! urn_obj.nil? && ! textgroup.nil? && ! work.nil?
+              urn = "urn:cts:" + textgroup + "." + work
+              if ! version.nil?
+                urn = urn + "." + version
+              end 
+              # add the base urn to the topic list
+              parsed << urn
+              urn_with_passage = nil
+              uris[u].keys.each do |subdoc|
+                if passage.nil? 
+                  urn_with_passage = urn + ":" + subdoc
+                else
+                  # if we have a passage in the document_id then the subdoc
+                  # is probably a lower level citation
+                  urn_with_passage = urn + ':' + passage + "." + subdoc
+                end
+                parsed << urn_with_passage
+              end
+              # if we weren't passed subdocs, but have a passage, go ahead and add it as is
+              if urn_with_passage.nil? && passage
+                parsed << urn + ':' + passage 
+              end
+            end # end test for cts and subdoc
+          elsif include_nonurns 
+            # unless we exclude non urns just take everything else as-is
+            parsed << u
+          end # end test for document_id
+        end
+        return parsed
+      end
     end #class
   end #module CTSLib
 end #module CTS

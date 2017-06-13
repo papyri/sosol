@@ -9,6 +9,10 @@ module Api::V1
       doorkeeper_authorize! :write
     end
 
+    before_filter do
+      request.format = "json" unless params[:format]
+    end
+
     swagger_path "/items" do
       operation :post do
         key :description, 'Creates a new publication for the supplied data identifier type'

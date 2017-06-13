@@ -114,13 +114,19 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CommentaryCit
         test = CommentaryCiteIdentifier.new_from_template(@publication)
         test.update_targets(["urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2"],"test")
         expected = {
-          "annotations" => [],
           "aggregates"=> [
             {  'conformsTo' => 'http://www.openannotation.org/spec/core/',
                "mediatype"=>"application/rdf+xml",
+               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri},
                "uri"=>"../data/#{test.download_file_name}",
-               "createdBy"=>{"name"=> @creator.full_name, "uri"=> @creator.uri}}
-         ]
+               "history"=>"provenance/perseus-pdlcomm.1.1.prov.jsonld",
+            }
+          ],
+          "annotations" => [],
+          "provenance"=> { 
+            "file"=>"provenance/perseus-pdlcomm.1.1.prov.jsonld",
+            "contents" => "{\n  \"@context\": {\n    \"prov\": \"http://www.w3.org/ns/prov#\"\n  },\n  \"@id\": \"../../data/perseus-pdlcomm.1.1.xml\",\n  \"@type\": \"prov:Entity\",\n  \"prov:wasDerivedFrom\": [\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0012.tlg001.perseus-grc1\"\n    },\n    {\n      \"@type\": \"prov:Entity\",\n      \"@id\": \"urn:cts:greekLit:tlg0012.tlg001.perseus-grc1:1.1-1.2\"\n    }\n  ]\n}"
+          }
         }
         assert_equal(expected, test.as_ro())
       end
