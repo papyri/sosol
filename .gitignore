@@ -16,3 +16,4 @@ lib/rxsugar
 .sass-cache
 *.swp
 *.css.map
+.lock-*

@@ -61,7 +61,7 @@
         - elsif publication.find_finalizer_user
           - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>publication.id)
           %div{:class => "info-square button"}
-            %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;'}
+            %a{:href => "#{link}", :disabled => publication.advisory_lock_exists?("become_finalizer_#{publication.id}"), :onclick => 'this.disabled=true;return true;'}
               %i{:class => "fa fa-graduation-cap"}
               %ul
                 %li

@@ -2,7 +2,7 @@
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.21'
+gem 'rails', '~> 3.2.22'
 
 # Needed for the new asset pipeline
 group :assets do
@@ -18,7 +18,7 @@ group :test do
 end
 
 gem 'jquery-rails'
-
+gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
 gem 'haml', '>= 3.0.25'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
@@ -52,6 +52,7 @@ gem 'mediawiki_api', :git => 'https://github.com/sosol/mediawiki-ruby-api'
 gem 'hypothesis-client', :git => 'https://github.com/PerseusDL/hypothesis-client'
 gem 'jruby-openssl', '>=0.9.8', :platform => :jruby
 gem 'ruby-saml', :platform => :jruby, :git => 'https://github.com/onelogin/ruby-saml', :ref => '3b81caa'
+gem 'with_advisory_lock'
 
 gem 'test_after_commit', :group => :test
 gem 'faraday_middleware'

@@ -39,7 +39,7 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized finalizing-preprocessed approved_pending }
 
   validates_presence_of :title, :branch
 
@@ -60,19 +60,15 @@ class Publication < ActiveRecord::Base
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
+  validates :status,
+    :inclusion => { :in => PUBLICATION_STATUS, :message => "%{value} is not a valid publication status" }
+
   validates_each :branch do |model, attr, value|
-    # Excerpted from git/refs.c:
-    # Make sure "ref" is something reasonable to have under ".git/refs/";
-    # We do not like it if:
-    if value =~ /^\./ ||    # - any path component of it begins with ".", or
-       value =~ /\.\./ ||   # - it has double dots "..", or
-       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
-       value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
-       value =~ /\.lock$/   # - it ends with ".lock"
-      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+    Repository::GIT_VALID_REF_REGEXES.each do |git_regex|
+      if value =~ git_regex
+        model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+      end
     end
-    # not yet handling ASCII control characters
   end
 
   #validate :community_can_be_assigned?
@@ -149,7 +145,7 @@ class Publication < ActiveRecord::Base
     #title is first identifier in list
     #but added the option to set the title to whatever the caller wants
     if nil == original_title
-      original_title = identifier_to_ref(identifiers.values.flatten.first)
+      original_title = Repository.sanitize_ref(identifiers.values.flatten.first)
     else
       original_was_nil = true;
     end
@@ -203,7 +199,7 @@ class Publication < ActiveRecord::Base
   # validation, replacing spaces with underscore.
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
-    publication.branch ||= title_to_ref(publication.title)
+    publication.branch ||= Repository.sanitize_ref(publication.title)
     # all publications should have a community even if it's the default
     unless publication.community_id
       default_community = Community.default
@@ -515,7 +511,7 @@ class Publication < ActiveRecord::Base
       end
 
       if self.parent && (self.parent.owner.class == Board)
-        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+        new_branch_components.unshift(Repository.sanitize_ref(self.parent.owner.title))
       end
 
       new_branch_name = new_branch_components.join('/')
@@ -527,24 +523,35 @@ class Publication < ActiveRecord::Base
 
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
-      self.transaction do
-        # set to new branch
-        self.branch = new_branch_name
-        # set status to new status
-        self.status = new_status
-        # reset the next_board to nil
-        self.next_board = nil
-        begin
+      retries = 0
+      begin
+        self.transaction do
+          # set to new branch
+          self.branch = new_branch_name
+          # set status to new status
+          self.status = new_status
+          # reset the next_board to nil
+          self.next_board = nil
           self.save!
-        rescue ActiveRecord::RecordInvalid
-          self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
-          self.save!
+          # save succeeded, so perform actual git change
+          # branch from the original branch
+          self.owner.repository.create_branch(new_branch_name, old_branch_name)
+          # delete the original branch
+          self.owner.repository.delete_branch(old_branch_name)
         end
-        # save succeeded, so perform actual git change
-        # branch from the original branch
-        self.owner.repository.create_branch(new_branch_name, old_branch_name)
-        # delete the original branch
-        self.owner.repository.delete_branch(old_branch_name)
+      rescue ActiveRecord::RecordInvalid
+        self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        retry
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
+          retry
+        else
+          raise e
+        end
       end
     end
   end
@@ -619,11 +626,13 @@ class Publication < ActiveRecord::Base
 
     #check that we are still taking votes
     if self.status != "voting"
+      Rails.logger.warn("Publication#tally_votes for #{self.id} does not have status 'voting'")
       return "" #return nothing and do nothing since the voting is now over
     end
 
     #need to tally votes and see if any action will take place
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      Rails.logger.warn("Publication#tally_votes for #{self.id} not owned by a Board")
       return "" #another check to make sure only the board is voting on its copy
     else
       if apply_rules
@@ -633,6 +642,7 @@ class Publication < ActiveRecord::Base
       end
     end
 
+    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -857,7 +867,20 @@ class Publication < ActiveRecord::Base
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.change_status('finalizing')
-    finalizing_publication.save!
+    retries = 0
+    begin
+      finalizing_publication.save!
+    rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+      Rails.logger.warn(e.message)
+      retries += 1
+      if retries <= 3
+        sleep(2 ** retries)
+        Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+        retry
+      else
+        raise e
+      end
+    end
   end
 
   #Destroys this publication's finalizer's copy.
@@ -892,7 +915,7 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
       new_finalizing_publication.title = old_finalizing_publication.title
-      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.branch = Repository.sanitize_ref(new_finalizing_publication.title)
       new_finalizing_publication.parent = old_finalizing_publication.parent
 
       new_finalizing_publication.save!
@@ -1365,7 +1388,7 @@ class Publication < ActiveRecord::Base
     else
       duplicate.title = new_title
     end
-    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
 
@@ -1677,6 +1700,10 @@ class Publication < ActiveRecord::Base
         self.archive
       end
     end
+  end
+
+  def related_text
+    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
   end
 
   protected

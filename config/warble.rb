@@ -15,6 +15,7 @@ Warbler::Config.new do |config|
   config.dirs = %w(app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/perseus/epidoc data/xslt/pn/navigator)
 
   # Additional files/directories to include, above those in config.dirs
+  config.includes = FileList[".ruby-version"]
   # config.includes = FileList["db"]
   # config.includes = FileList[
     # "db/production.sqlite3",

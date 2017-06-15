@@ -42,6 +42,25 @@ class PublicationTest < ActiveSupport::TestCase
       assert_equal "P.Lond._Herm", @publication.branch
     end
   end
+ 
+  context "a publication with a title with a REALLY invalid Git ref" do
+    setup do
+      @user = FactoryGirl.create(:user)
+      
+      @pubtitle = "P:.#{1.chr}~L..o[n^d?.\t He......r\\m."
+      @user.repository.create_branch(@branchname)
+      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
+    end
+
+    teardown do
+      @user.destroy
+    end
+
+    should "have a branch with a valid Git ref" do
+      assert @publication.save
+      assert_equal "P.Lond._Herm", @publication.branch
+    end
+  end
   
   context "with canonical boards allowed" do
     setup do

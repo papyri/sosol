@@ -5,7 +5,7 @@ class CollectionIdentifiersController < ApplicationController
   # Ensures user has DDB rights to view page. Otherwise returns 403 error.
   def check_ddb
     if @current_user.nil? || !(@current_user.boards.select{|b| b.identifier_classes.include?("DDBIdentifier")}.length > 0)
-      render :file => 'public/403.html', :status => '403'
+      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
     end
   end
 

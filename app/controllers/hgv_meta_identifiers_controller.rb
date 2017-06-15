@@ -121,7 +121,7 @@ class HgvMetaIdentifiersController < IdentifiersController
         # get rid of empty publication parts
         if params[:hgv_meta_identifier][:publicationExtra]
           params[:hgv_meta_identifier][:publicationExtra].delete_if{|index, extra|
-            extra[:value].empty?
+            extra[:value].nil? || extra[:value].empty?
           }
         end
 
