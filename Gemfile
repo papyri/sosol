@@ -19,7 +19,8 @@ end
 
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
-gem 'haml', '>= 3.0.25'
+gem 'haml', '= 4.0.6'
+
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
@@ -54,7 +55,7 @@ gem 'jruby-openssl', '>=0.9.8', :platform => :jruby
 gem 'ruby-saml', :platform => :jruby, :git => 'https://github.com/onelogin/ruby-saml', :ref => '3b81caa'
 gem 'with_advisory_lock'
 
-gem 'test_after_commit', :group => :test
+gem 'test_after_commit', "= 0.4.1", :group => :test
 gem 'faraday_middleware'
 gem 'doorkeeper', "=2.2.2"
 gem 'swagger-blocks'
