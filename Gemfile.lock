@@ -161,7 +161,7 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.4)
     mime-types (1.25.1)
-    mocha (1.2.1)
+    mocha (1.1.0)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
@@ -286,7 +286,7 @@ DEPENDENCIES
   jruby-openssl (>= 0.9.8)
   json (>= 1.6.6)
   mediawiki_api!
-  mocha
+  mocha (= 1.1.0)
   nokogiri (>= 1.6.6.2)
   prototype-rails
   puma

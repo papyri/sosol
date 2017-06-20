@@ -13,7 +13,7 @@ end
 
 group :test do
   gem 'rake'
-  gem 'mocha'
+  gem 'mocha', "= 1.1.0" # later versions of mocha cause stubbing to fail under jruby-1.7.26 in 2.0 mode
   gem 'timecop'
 end
 
@@ -47,7 +47,7 @@ gem 'sucker_punch', '~> 1.0'
 gem 'uuid'
 gem 'xmlcanonicalizer'
 gem 'nokogiri', '>= 1.6.6.2'
-gem 'mocha'
+gem 'mocha', "= 1.1.0" # later versions of mocha cause stubbing to fail under jruby-1.7.26 in 2.0 mode
 gem 'ruby-debug'
 gem 'mediawiki_api', :git => 'https://github.com/sosol/mediawiki-ruby-api'
 gem 'hypothesis-client', :git => 'https://github.com/PerseusDL/hypothesis-client'
