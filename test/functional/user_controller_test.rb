@@ -16,10 +16,10 @@ class UserControllerTest < ActionController::TestCase
 
     teardown do
       @request.session[:user_id] = nil
-      @user.destroy
       @publication.destroy
       @community.destroy
       @community2.destroy
+      @user.destroy
     end
 
     context "basic tests" do
@@ -62,12 +62,12 @@ class UserControllerTest < ActionController::TestCase
 
     teardown do
       @request.session[:user_id] = nil
-      @user.destroy
       @publication.destroy
+      @u2publication.destroy
       @community.destroy
       @community2.destroy
       @user2.destroy
-      @u2publication.destroy
+      @user.destroy
     end
 
     should "non admin can't list users by email" do
@@ -109,12 +109,12 @@ class UserControllerTest < ActionController::TestCase
 
     teardown do
       @request.session[:user_id] = nil
-      @user.destroy
       @publication.destroy
+      @u2publication.destroy
       @community.destroy
       @community2.destroy
+      @user.destroy
       @user2.destroy
-      @u2publication.destroy
     end
 
     should "admin can list users by email" do
