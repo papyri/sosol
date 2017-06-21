@@ -1,7 +1,8 @@
 language: ruby
 sudo: false
 env:
-  - JRUBY_OPTS="-J-Xmx1g --2.0"
+  - JRUBY_OPTS="-J-Xmx1g-XX:MaxPermSize=256M --2.0"
+-J-XX:MaxPermSize=###M 
 jdk:
   - oraclejdk7
   - oraclejdk8
