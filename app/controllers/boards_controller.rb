@@ -26,6 +26,7 @@ class BoardsController < ApplicationController
   #Presents overview for publication.
   # @deprecated ? This is not used in Perseids
   def overview
+    # find_board is called from check_community_admin filter to set @boardt
     if @board.users.find_by_id(@current_user.id) || @current_user.developer
       # below is dangerous since it will expose publications to non owners
       #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
@@ -47,6 +48,7 @@ class BoardsController < ApplicationController
   end
   
   def find_member
+    # find_board is called from check_community_admin filter to set @board
   end
 
   def find_member_finalizer
@@ -56,6 +58,7 @@ class BoardsController < ApplicationController
 
   #Adds the user to the board member list.
   def add_member
+    # find_board is called from check_community_admin filter to set @board
     user = User.find_by_name(params[:user_name].to_s)
 
     if nil == @board.users.find_by_id(user.id) 
@@ -70,6 +73,7 @@ class BoardsController < ApplicationController
   def remove_member
     user = User.find(params[:user_id].to_s)
 
+    # find_board is called from check_community_admin filter to set @board
     if @board.finalizer_user == user
       @board.finalizer_user = nil
     end
