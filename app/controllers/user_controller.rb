@@ -240,6 +240,7 @@ class UserController < ApplicationController
 
   #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
+    is_perseids = Sosol::Application.config.site_name == 'Perseids'
     cid = params[:community_id]
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
