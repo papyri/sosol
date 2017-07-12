@@ -107,4 +107,8 @@ Warbler::Config.new do |config|
 
   # JNDI data source name
   # config.webxml.jndi = 'jdbc/rails'
+
+  # Set JRuby to run in 2.0 mode.
+  config.webxml.jruby.compat.version = "2.0"
+
 end
