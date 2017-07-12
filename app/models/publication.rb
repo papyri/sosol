@@ -1267,11 +1267,13 @@ class Publication < ActiveRecord::Base
       original_origin.change_status('editing')
       # @balmas Persieds wants to allow comments to remain even after 
       # withdrawing from review so that reviewers can do interim reviews 
-      # this should be something that is addressed in the review engine
-      # redesign and made configurable per board or community
-      #original_origin.comments.each do |c|
-      #  c.destroy
-      #end
+      # this should maybe be something made configurable per board or community
+      is_perseids = Sosol::Application.config.site_name == 'Perseids'
+      unless is_perseids
+        original_origin.comments.each do |c|
+          c.destroy
+        end
+      end
       original_origin.identifiers.each do |i|
         i.status = 'editing'
         i.save!
