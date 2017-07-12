@@ -311,7 +311,7 @@ class PublicationsController < ApplicationController
         @comment.save
         expire_publication_cache
         expire_fragment(/board_publications_\d+/)
-        submitted_to = @publication.community ? @publication.community.friendly_name : "Perseids"
+        submitted_to = @publication.community ? @publication.community.friendly_name : Sosol::Application.config.site_name
         flash[:notice] = "Publication submitted to #{submitted_to}."
       else
         #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
