@@ -25,9 +25,9 @@ class CommunitiesController < ApplicationController
   end
 
   # GET /communities/new
-  # GET /communities/new.xml
   def new
-
+    # don't create a Community here because this method is now
+    # just a way station to creating a specific community subclass
   end
 
   # GET /communities/1/edit
