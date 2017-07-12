@@ -115,6 +115,7 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.xml
   def destroy
+    # ownership_guard on destroy sets @comment
     @comment.destroy
 
     respond_to do |format|
