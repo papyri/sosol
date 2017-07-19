@@ -2,7 +2,7 @@
   %h1
     == #{@current_user.name}'s Account Info
 .columns
-  .card
+  .sosolcard
     %h2
       Personal
     = form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
@@ -27,14 +27,14 @@
         = link_to "Usage Stats By User", all_users_links_url
   .rows
     - if @current_user.community_memberships.length > 0
-      .card
+      .sosolcard
         %h2
           Communities
         %ul.unstyled
           - @current_user.community_memberships.each do |cm|
             %li
               = cm.name
-    .card
+    .sosolcard
       %h2
         Your Identities
       - if @identifiers.length == 0

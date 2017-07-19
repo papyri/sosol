@@ -16,9 +16,9 @@
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
     = render :partial => "common/flash_all"
-    .clearfix.card
+    .clearfix.sosolcard
       = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'observechange input xml-content'
-    .card
+    .sosolcard
       = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 = javascript_include_tag 'confirm'
 -#-------------------------------------------------------------

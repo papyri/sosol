@@ -1,4 +1,4 @@
-.card.create
+.sosolcard.create
   %h1 Edit or Annotate?
   = form_for CitationCTSIdentifier.new(), :url => { :action => "edit_or_create", :controller => "citation_cts_identifiers"} do |form|
     = hidden_field_tag 'publication_id',@publication.id.to_s

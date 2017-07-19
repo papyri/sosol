@@ -3,7 +3,7 @@
     New board
     - if @board.community
       = " for community " + @board.community.name
-#main.site.card
+#main.site.sosolcard
   = form_for(@board) do |f|
     = f.error_messages
     = f.hidden_field :community_id

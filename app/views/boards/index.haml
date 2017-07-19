@@ -6,7 +6,7 @@
   
   -# sort by community and rank? - no community boards are shown on different page
   -for c in @boards.keys
-    .card
+    .sosolcard
       %h2 #{c}
       - for board in @boards[c]
         = render :partial => "listing" , :object => board

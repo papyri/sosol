@@ -1,11 +1,11 @@
 = render :partial => 'identifiers/header_perseids'
 = render :partial => 'identifiers/edit_bar_perseids'
 = form_for @identifier, :url => { :action => :update }, :html => {:name => 'helper'} do |f|
-  #edit.card
+  #edit.sosolcard
     = f.error_messages
     %br
     = text_area_tag 'tei_cts_identifier', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
-  .card
+  .sosolcard
     = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
 
 = javascript_include_tag 'confirm'

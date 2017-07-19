@@ -40,7 +40,7 @@
 
 = render :partial => 'action_bar'
 - if %w{new editing}.include?(@publication.status)
-  #submit.card
+  #submit.sosolcard
     - if @show_submit
       %h2 Submit
       %p
@@ -75,7 +75,7 @@
 
 - for identifier in @publication.identifiers
   - if identifier.class::is_visible
-    .card.no-bottom-margin
+    .sosolcard.no-bottom-margin
       %h2
         == #{identifier.class::FRIENDLY_NAME} -
         = render :partial => "identifiers/pn_link", :locals => {:identifier => identifier}
@@ -101,7 +101,7 @@
     - if @publication.status != "archived"
       = render :partial => identifier
 - if @all_comments != nil  || @xml_only_comments != nil || (@other_user_publications != nil && @other_user_publications.length > 0)
-  .card
+  .sosolcard
     - if @all_comments != nil
       %div{:id => "all_comments_div", :style => "display:none;"}
         %br

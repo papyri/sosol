@@ -3,7 +3,7 @@
   %h1
     = @board.title + " ( " + @board.friendly_name + " )"
 
-.card
+.sosolcard
   - if @board.community
     %br
     %b Community
@@ -48,7 +48,7 @@
       %br
     = f.submit "Update"
 
-.card.no-bottom-margin
+.sosolcard.no-bottom-margin
 
   -# dont let them change the name of the board...repositories depend on it 1-2010
   -#= f.label :title

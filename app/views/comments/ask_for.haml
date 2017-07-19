@@ -7,7 +7,7 @@
   .row
     = render :partial => 'common/flash_all'
   .row
-    .card
+    .sosolcard
       %h1
         %header
           = @publication.title
@@ -26,7 +26,7 @@
           No Comments Yet
   .row
     - for comment in @comments
-      .card
+      .sosolcard
         = render :partial => comment
 
 

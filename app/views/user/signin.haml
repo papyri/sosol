@@ -1,11 +1,11 @@
 = render "common/browser_warning"
 .columns
-  .card
+  .sosolcard
     %h2 Login with a Social Identity or OpenID Provider:
     #janrainEngageEmbed
   =render :partial => "shib/wayf_box"
 
-.card
+.sosolcard
   %h3 What is this?
   %p!== Instead of creating yet another username and password, #{config.site_name} will use the account you select above. If you don't see your institution or a social identity provider that you want to use, you may have an OpenID you can use from another service such as Flickr, Blogger, or WordPress.com account - click the OpenID logo and then the icon for the corresponding service, and it well help you find out your OpenID URL.
   %br

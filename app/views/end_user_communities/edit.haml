@@ -4,7 +4,7 @@
   %h1
     = "Editing " + @community.format_name + " community"
 
-.community.card
+.community.sosolcard
 
   = form_for(@community) do |f|
     = f.error_messages
@@ -33,7 +33,7 @@
   %br 
   %br
 
-.card
+.sosolcard
   %h2
     Boards
   = link_to 'Add Board', :controller => "boards", :action => "new", :community_id => @community.id |

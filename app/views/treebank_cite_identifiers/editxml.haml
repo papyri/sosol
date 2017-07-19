@@ -4,17 +4,17 @@
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
 
-    .card
+    .sosolcard
       = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
 
     = render :partial => "common/flash_all"
     %label XML
     -#= clippy "#{@identifier.class.to_s.underscore}_xml_content"
-    .clearfix.card
+    .clearfix.sosolcard
       = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input observechange xml-content'
 
     %br
-    .card
+    .sosolcard
       = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
 
 = javascript_include_tag 'confirm'

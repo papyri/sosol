@@ -12,7 +12,7 @@
 
 = render :partial => 'identifiers/header_perseids'
 = render :partial => 'identifiers/edit_bar_perseids'
-.edit.card
+.edit.sosolcard
   %p
   = form_for @identifier, :url => { :action => 'update', :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|
     = hidden_field_tag 'publication_id',@publication.id

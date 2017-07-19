@@ -17,7 +17,7 @@
   -#   = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
   -#- elsif @identifier.publication.owner_type == "Board"
 
-.card
+.sosolcard
   - if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier) && @identifier.publication.owner.users.include?(@current_user)
     = render :partial => "boards/review_perseids", :locals => {:identifier => @identifier}
 

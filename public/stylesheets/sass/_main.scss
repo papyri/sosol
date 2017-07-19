@@ -22,7 +22,7 @@ body, .columns {
 		@include phone {
 			padding:0;
 		}
-		> .card {
+		> .sosolcard {
 			margin-bottom:$MARGIN_BIG;
 			&.no-bottom-margin {
 				margin-bottom: 0;
@@ -67,7 +67,7 @@ body, .columns {
 }*
 .columns > * {
 	width:50%;
-	&.card {
+	&.sosolcard {
 		margin-bottom:0;
 	}
         &.large-column {
@@ -78,7 +78,7 @@ body, .columns {
         }
 	@include small {
 		width:100%;
-		&.card {
+		&.sosolcard {
 			//flex:none;
 		}
 	}
@@ -94,7 +94,7 @@ body, .columns {
 		margin:$MARGIN_SMALL  0;
 	}
 }
-.rows > .card {
+.rows > .sosolcard {
 	&:last-child {
 		margin-bottom:0;
 	}
@@ -108,7 +108,7 @@ body, .columns {
 	margin-top:0;
 	padding:$MARGIN_SMALL $MARGIN_SMALL;
 }
-.card {
+.sosolcard {
 	margin:$MARGIN_SMALL;
 	flex:1 1 auto;
 	@extend .bg-sdw;
@@ -138,7 +138,7 @@ body, .columns {
 	margin-left:$MARGIN_BIG;
 }
 
-.card {
+.sosolcard {
 	ul.menu {
 		list-style-type:none;
 		padding:0;

@@ -1,4 +1,4 @@
-#append_annotation.card
+#append_annotation.sosolcard
   = form_for @identifier, :url => { :action => "append_annotation", :controller => "oa_cite_identifiers"} do |form|
     = hidden_field_tag 'id', @identifier.id.to_s
     = hidden_field_tag 'target_uri',params[:target_uri]

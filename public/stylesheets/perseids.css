@@ -2306,7 +2306,7 @@
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .sosolcard, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -2316,7 +2316,7 @@
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
+.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .sosolcard input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
@@ -2332,22 +2332,22 @@
   font-style: normal;
   font-size: 45px; }
 
-.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+.font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .sosolcard ul.menu > li > a, .sosolcard ul.menu > li a:link, .sosolcard ul.menu > li a:hover, .sosolcard ul.menu > li a:visited, .sosolcard ul.menu > li a:focus, .sosolcard ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .sosolcard input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .sosolcard input[type="submit"], .modal input[type="submit"] {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
   text-transform: uppercase; }
-  .font-button:link, button:link, .btn:link, #filter button:link, .card ul.menu > li a:link, ul.menu > li a:link, #main-menu nav ul li a:link, .card input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"]:link, .modal input[type="submit"]:link {
+  .font-button:link, button:link, .btn:link, #filter button:link, .sosolcard ul.menu > li a:link, ul.menu > li a:link, #main-menu nav ul li a:link, .sosolcard input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:link:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .sosolcard input[type="submit"]:link, .modal input[type="submit"]:link {
     text-decoration: none !important; }
   @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .sosolcard ul.menu > li > a, .sosolcard ul.menu > li a:link, .sosolcard ul.menu > li a:hover, .sosolcard ul.menu > li a:visited, .sosolcard ul.menu > li a:focus, .sosolcard ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .sosolcard input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .sosolcard input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
   @media (min-width: 1001px) and (max-width: 1200px) {
-    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .card input[type="submit"], .modal input[type="submit"] {
+    .font-button, button, .btn, #filter button, .btn:hover, .btn:visited, .btn:focus, .btn:link, .sosolcard ul.menu > li > a, .sosolcard ul.menu > li a:link, .sosolcard ul.menu > li a:hover, .sosolcard ul.menu > li a:visited, .sosolcard ul.menu > li a:focus, .sosolcard ul.menu > li a:active, ul.menu > li > a, ul.menu > li a:link, ul.menu > li a:hover, ul.menu > li a:visited, ul.menu > li a:focus, ul.menu > li a:active, #main-menu nav ul li a, #main-menu nav ul li a:visited, #main-menu nav ul li a:focus, #main-menu nav ul li a:link, #main-menu nav ul li a:active, .sosolcard input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .sosolcard input[type="submit"], .modal input[type="submit"] {
       font-size: 16px; } }
 
-.font-subheading, h2, h3, h4, h5, h6, .card > h2, .card > h3 {
+.font-subheading, h2, h3, h4, h5, h6, .sosolcard > h2, .sosolcard > h3 {
   font-family: Roboto;
   font-weight: 500;
   font-style: normal;
@@ -2439,7 +2439,7 @@ h2, h3, h4, h5, h6 {
  *
  *
  */
-.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .card, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
+.bg-sdw, button.important, .btn.important, .btn.important:hover, .btn.important:visited, .btn.important:focus, .btn.important:link, .sosolcard, #main-menu, #container .publications .new-bar .btn, #container .publications .new-bar #filter button, #filter #container .publications .new-bar button, #container .publications .select-bar .btn, #container .publications .select-bar #filter button, #filter #container .publications .select-bar button, #container .publications .new-bar, .publication, #filter button, #filter input[type="text"] {
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75); }
@@ -2449,7 +2449,7 @@ h2, h3, h4, h5, h6 {
   -moz-box-shadow: none;
   box-shadow: none; }
 
-.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .card input, .modal input {
+.fg-sdw, button.important.fg, .btn.important.fg, #filter button.important.fg, .btn.important.fg:hover, .btn.important.fg:visited, .btn.important.fg:focus, .btn.important.fg:link, .sosolcard input, .modal input {
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75); }
@@ -2550,9 +2550,9 @@ body, .columns {
     @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
       #main-wrapper > #container {
         padding: 0; } }
-    #main-wrapper > #container > .card {
+    #main-wrapper > #container > .sosolcard {
       margin-bottom: 20px; }
-      #main-wrapper > #container > .card.no-bottom-margin {
+      #main-wrapper > #container > .sosolcard.no-bottom-margin {
         margin-bottom: 0; }
     #main-wrapper > #container > header, #main-wrapper > #container .publication-container header {
       color: #7986cb;
@@ -2588,7 +2588,7 @@ body, .columns {
 .columns > * {
   width: 50%; }
   *
-  .columns > *.card {
+  .columns > *.sosolcard {
     margin-bottom: 0; }
   *
   .columns > *.large-column {
@@ -2612,7 +2612,7 @@ body, .columns {
   .rows > *, .columns > * {
     margin: 5px 0; } }
 
-.rows > .card:last-child {
+.rows > .sosolcard:last-child {
   margin-bottom: 0; }
 
 .columns > .rows {
@@ -2622,44 +2622,44 @@ body, .columns {
   margin-top: 0;
   padding: 5px 5px; }
 
-.card {
+.sosolcard {
   margin: 5px;
   flex: 1 1 auto;
   padding: 20px;
   background-color: white; }
-  .card > h2, .card > h3 {
+  .sosolcard > h2, .sosolcard > h3 {
     color: #ffb74d; }
-  .card.no-padding {
+  .sosolcard.no-padding {
     padding: 0; }
-  .card.no-bottom-margin {
+  .sosolcard.no-bottom-margin {
     margin-bottom: 0; }
-  .card.third-size {
+  .sosolcard.third-size {
     flex: 1 0.33 auto;
     width: 33%; }
     @media (max-width: 1000px) {
-      .card.third-size {
+      .sosolcard.third-size {
         flex: 1 1 auto;
         width: 100%; } }
 
 .margin-left {
   margin-left: 20px; }
 
-.card ul.menu {
+.sosolcard ul.menu {
   list-style-type: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: row; }
   @media (max-width: 1000px) {
-    .card ul.menu {
+    .sosolcard ul.menu {
       flex-direction: column; } }
-  .card ul.menu > li {
+  .sosolcard ul.menu > li {
     display: inline-block;
     flex-grow: 1;
     cursor: pointer;
     position: relative;
     background-color: white; }
-    .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active {
+    .sosolcard ul.menu > li > a, .sosolcard ul.menu > li a:link, .sosolcard ul.menu > li a:hover, .sosolcard ul.menu > li a:visited, .sosolcard ul.menu > li a:focus, .sosolcard ul.menu > li a:active {
       display: block;
       box-sizing: border-box;
       height: 60px;
@@ -2668,17 +2668,17 @@ body, .columns {
       text-align: center;
       border-bottom: 5px solid white; }
       @media (max-width: 1000px) {
-        .card ul.menu > li > a, .card ul.menu > li a:link, .card ul.menu > li a:hover, .card ul.menu > li a:visited, .card ul.menu > li a:focus, .card ul.menu > li a:active {
+        .sosolcard ul.menu > li > a, .sosolcard ul.menu > li a:link, .sosolcard ul.menu > li a:hover, .sosolcard ul.menu > li a:visited, .sosolcard ul.menu > li a:focus, .sosolcard ul.menu > li a:active {
           flex-direction: column;
           height: 45px;
           line-height: 45px;
           font-size: 16px;
           border-bottom: 1px solid #bdbdbd;
           border-right: 5px solid white; } }
-      .card ul.menu > li > a:active, .card ul.menu > li > a.active, .card ul.menu > li > a:focus, .card ul.menu > li a:link:active, .card ul.menu > li a:link.active, .card ul.menu > li a:link:focus, .card ul.menu > li a:hover:active, .card ul.menu > li a:hover.active, .card ul.menu > li a:hover:focus, .card ul.menu > li a:visited:active, .card ul.menu > li a:visited.active, .card ul.menu > li a:visited:focus, .card ul.menu > li a:focus:active, .card ul.menu > li a:focus.active, .card ul.menu > li a:focus:focus, .card ul.menu > li a:active:active, .card ul.menu > li a:active.active, .card ul.menu > li a:active:focus {
+      .sosolcard ul.menu > li > a:active, .sosolcard ul.menu > li > a.active, .sosolcard ul.menu > li > a:focus, .sosolcard ul.menu > li a:link:active, .sosolcard ul.menu > li a:link.active, .sosolcard ul.menu > li a:link:focus, .sosolcard ul.menu > li a:hover:active, .sosolcard ul.menu > li a:hover.active, .sosolcard ul.menu > li a:hover:focus, .sosolcard ul.menu > li a:visited:active, .sosolcard ul.menu > li a:visited.active, .sosolcard ul.menu > li a:visited:focus, .sosolcard ul.menu > li a:focus:active, .sosolcard ul.menu > li a:focus.active, .sosolcard ul.menu > li a:focus:focus, .sosolcard ul.menu > li a:active:active, .sosolcard ul.menu > li a:active.active, .sosolcard ul.menu > li a:active:focus {
         border-bottom: 5px solid #7986cb; }
         @media (max-width: 799px) and (-webkit-min-device-pixel-ratio: 2) {
-          .card ul.menu > li > a:active, .card ul.menu > li > a.active, .card ul.menu > li > a:focus, .card ul.menu > li a:link:active, .card ul.menu > li a:link.active, .card ul.menu > li a:link:focus, .card ul.menu > li a:hover:active, .card ul.menu > li a:hover.active, .card ul.menu > li a:hover:focus, .card ul.menu > li a:visited:active, .card ul.menu > li a:visited.active, .card ul.menu > li a:visited:focus, .card ul.menu > li a:focus:active, .card ul.menu > li a:focus.active, .card ul.menu > li a:focus:focus, .card ul.menu > li a:active:active, .card ul.menu > li a:active.active, .card ul.menu > li a:active:focus {
+          .sosolcard ul.menu > li > a:active, .sosolcard ul.menu > li > a.active, .sosolcard ul.menu > li > a:focus, .sosolcard ul.menu > li a:link:active, .sosolcard ul.menu > li a:link.active, .sosolcard ul.menu > li a:link:focus, .sosolcard ul.menu > li a:hover:active, .sosolcard ul.menu > li a:hover.active, .sosolcard ul.menu > li a:hover:focus, .sosolcard ul.menu > li a:visited:active, .sosolcard ul.menu > li a:visited.active, .sosolcard ul.menu > li a:visited:focus, .sosolcard ul.menu > li a:focus:active, .sosolcard ul.menu > li a:focus.active, .sosolcard ul.menu > li a:focus:focus, .sosolcard ul.menu > li a:active:active, .sosolcard ul.menu > li a:active.active, .sosolcard ul.menu > li a:active:focus {
             border-bottom: 1px solid #bdbdbd;
             border-right: 5px solid #7986cb; } }
 
@@ -2972,42 +2972,42 @@ ul.btns > li {
     #main-menu .logins ul li.openid {
       background-color: #f7931e; }
 
-.card label, .modal label {
+.sosolcard label, .modal label {
   display: block;
   margin: 20px 0; }
-.card input, .modal input {
+.sosolcard input, .modal input {
   height: 60px; }
-.card .checkbox, .modal .checkbox {
+.sosolcard .checkbox, .modal .checkbox {
   height: 45px;
   vertical-align: middle;
   background-color: white; }
-  .card .checkbox > input, .modal .checkbox > input {
+  .sosolcard .checkbox > input, .modal .checkbox > input {
     vertical-align: middle; }
-  .card .checkbox > label, .modal .checkbox > label {
+  .sosolcard .checkbox > label, .modal .checkbox > label {
     height: 45px;
     vertical-align: middle;
     display: inline;
     margin: 0; }
-  .card .checkbox > span, .modal .checkbox > span {
+  .sosolcard .checkbox > span, .modal .checkbox > span {
     height: 45px;
     vertical-align: middle; }
-.card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+.sosolcard input:not([type="submit"]):not([type="button"]):not([type="checkbox"]), .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
   border: 5px solid #7986cb;
   width: 75%;
   padding-left: 1em;
   text-transform: none !important; }
-  .card input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus, .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus {
+  .sosolcard input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus, .modal input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):focus {
     border-color: #ffb74d; }
-.card textarea.input, .card input[type="text"], .modal textarea.input, .modal input[type="text"] {
+.sosolcard textarea.input, .sosolcard input[type="text"], .modal textarea.input, .modal input[type="text"] {
   border: 5px solid #7986cb;
   width: 100%;
   height: 60px;
   padding-left: 1em;
   text-align: left;
   padding: 5px; }
-  .card textarea.input:focus, .card input[type="text"]:focus, .modal textarea.input:focus, .modal input[type="text"]:focus {
+  .sosolcard textarea.input:focus, .sosolcard input[type="text"]:focus, .modal textarea.input:focus, .modal input[type="text"]:focus {
     border-color: #ffb74d; }
-.card input[type="submit"], .modal input[type="submit"] {
+.sosolcard input[type="submit"], .modal input[type="submit"] {
   text-transform: uppercase;
   cursor: pointer;
   background-color: #7986cb;
@@ -3018,14 +3018,14 @@ ul.btns > li {
   border: 1px solid #7986cb;
   margin-top: 45px;
   padding: 0; }
-  .card input[type="submit"]:active, .card input[type="submit"]:hover, .card input[type="submit"]:focus, .modal input[type="submit"]:active, .modal input[type="submit"]:hover, .modal input[type="submit"]:focus {
+  .sosolcard input[type="submit"]:active, .sosolcard input[type="submit"]:hover, .sosolcard input[type="submit"]:focus, .modal input[type="submit"]:active, .modal input[type="submit"]:hover, .modal input[type="submit"]:focus {
     border: 1px solid #7986cb;
     height: 60px; }
-  .card input[type="submit"].disabled, .modal input[type="submit"].disabled {
+  .sosolcard input[type="submit"].disabled, .modal input[type="submit"].disabled {
     border-color: #bdbdbd;
     color: #e0e0e0;
     background-color: #bdbdbd; }
-  .card input[type="submit"].small, .modal input[type="submit"].small {
+  .sosolcard input[type="submit"].small, .modal input[type="submit"].small {
     height: 45px;
     margin-top: 0px;
     border: 5px solid #7986cb; }
