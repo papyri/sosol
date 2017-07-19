@@ -70,27 +70,15 @@
         .joiner
         %ul
           - if params[:controller] != 'publications'
-            -if @identifier.class.to_s =~ /CTSIdentifier/
-              %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
-              %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
-            -elsif @identifier.class == TreebankCiteIdentifier || @identifier.class == AlignmentCiteIdentifier
-              %li{ :class => %w{edit commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
-              %li{ :class => %w{editxml}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit XML', polymorphic_path([:editxml,@identifier.publication, @identifier])
-              %li{ :class => ''}= link_to "Download Copy", :controller => 'publications', :id => @identifier.publication.id, :action => "download"
-              -if @can_compare
-                %li{ :class => ''}
-                  = link_to 'Compare', polymorphic_path([:compare,@identifier.publication, @identifier])
-              %li{ :class => params[:action] == ''}= link_to 'Change Title', polymorphic_path([@identifier.publication, @identifier], :action => :edit_title)
-            -elsif @identifier.class == OaCiteIdentifier
-              %li{ :class => ''}= link_to 'Edit (XML)', editxml_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
-              -if @identifier.can_import?
-                %li{:class => ''}= link_to 'Import', import_update_publication_oa_cite_identifier_path( @identifier.publication, @identifier)
+            -if @identifier.class == OACIdentifier
+              %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri])
             -else
               %li{ :class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
             - if @identifier.publication.status == 'finalizing' && @identifier.mutable?
               %li{ :class => params[:action] == 'rename_review' ? 'active' : ''}= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review)
             -# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post
+            %li= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :onclick => "window.open(this.href,'new win','width=600, height=200');return false;".html_safe
           - elsif params[:action] == 'finalize_review'
             %li{ :class => !%w{history show_commit}.include?(params[:action]) ? 'active' : ''}= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier])
             %li{ :class => params[:action] == 'history' ? 'active' : ''}= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history)
@@ -139,9 +127,3 @@
                 %li{ :class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier])
                 %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
                 %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
-        - when SyriacaIdentifier
-          .identifier_sub_menu#sub_menu_2
-            
-            %ul
-              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
-              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
