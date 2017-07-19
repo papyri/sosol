@@ -1,7 +1,7 @@
 -# render :partial => "common/flash_all"
 
 #edit_header
-  %p
+  %h1
     - if @identifier.publication.owner_type == "Board"
       = "Review " + @identifier.publication.owner.friendly_name + " - "
     - else
@@ -15,7 +15,7 @@
   -#   = button_to "Submit", submit_review_publication_path(@identifier.publication), :disabled => !@identifier.mutable?, :class => 'submit', :method => :get
   -#- elsif @identifier.publication.owner_type == "Board"
   - if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier) && @identifier.publication.owner.users.include?(@current_user)
-    = render :partial => "boards/review_perseids", :locals => {:identifier => @identifier}
+    = render :partial => "boards/review", :locals => {:identifier => @identifier}
 
   %h3
     = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}

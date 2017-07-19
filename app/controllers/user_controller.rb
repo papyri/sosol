@@ -217,7 +217,8 @@ class UserController < ApplicationController
     communities << nil
 
     # TODO  we need a better way to trigger site-specific functionality
-    is_perseids = Sosol::Application.config.site_name == 'Perseids'
+    is_perseids = SiteHelper::is_perseids?
+
     # for Perseids we want to show community info on the main dashboard
     show_comm = is_perseids ?  {} : { :community_id => communities }
 
@@ -235,12 +236,16 @@ class UserController < ApplicationController
     if (@current_user.admin || @current_user.developer || ! is_perseids)    
       @show_events = true
     end
-
+    if is_perseids
+      render "user_dashboard_perseids"
+    else
+      render "user_dashboard"
+    end
   end
 
   #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
-    is_perseids = Sosol::Application.config.site_name == 'Perseids'
+    is_perseids = SiteHelper::is_perseids?
     cid = params[:community_id]
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
@@ -252,7 +257,11 @@ class UserController < ApplicationController
    end
 
     @community = Community.find_by_id(cid)
-    render "user_dashboard"
+    if is_perseids
+      render "user_dashboard_perseids"
+    else
+      render "user_dashboard"
+    end
   end
 
   def export_options
@@ -287,13 +296,22 @@ class UserController < ApplicationController
 
 
 
-    render 'user_dashboard'
+    if is_perseids
+      render "user_dashboard_perseids"
+    else
+      render "user_dashboard"
+    end
   end
 
   #Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
     find_board_publications(params[:board_id], params[:offset], 50)
     @current_board = @board
+    if is_perseids
+      render "board_dashboard_perseids"
+    else
+      render "board_dashboard"
+    end
   end
 
   def archives
