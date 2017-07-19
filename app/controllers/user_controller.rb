@@ -296,7 +296,7 @@ class UserController < ApplicationController
 
 
 
-    if is_perseids
+    if SiteHelper::is_perseids?
       render "user_dashboard_perseids"
     else
       render "user_dashboard"
@@ -307,7 +307,7 @@ class UserController < ApplicationController
   def board_dashboard
     find_board_publications(params[:board_id], params[:offset], 50)
     @current_board = @board
-    if is_perseids
+    if SiteHelper::is_perseids?
       render "board_dashboard_perseids"
     else
       render "board_dashboard"
