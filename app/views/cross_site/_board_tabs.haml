@@ -1,10 +1,58 @@
+:javascript
+  function showBoardDialog(e)
+  {
+    
+    var board_list = $('board_list');
+    var body = document.body;
+    var board_menu = $('board_menu');
+    
+    body.appendChild(board_list);
+    
+    if (board_list.style.display == "block")
+    {
+      board_list.style.display = "none";
+    }
+    else
+    {
+      board_list.style.display = "block";
+    }
+    
+    board_list.setStyle({ position: 'absolute', zIndex: '9999'});
+    
+    var left_pos = board_menu.cumulativeOffset().left + board_menu.getWidth() - board_list.getWidth() ;
+    var top_pos = board_menu.cumulativeOffset().top + board_menu.getHeight() ;
+    
+    board_list.style.top = top_pos + "px";
+    board_list.style.left = left_pos + "px";
+   
+  }
+  
+  
+  Event.observe(document.body, 'click',
+    function windowClick(e)
+    {
+      var clicked = $(Event.element(e));
+      if (clicked.id != 'board_menu')
+      { 
+        if ($('board_list')) 
+          {
+            $('board_list').style.display = "none";
+          }
+      }
+    }
+   );
+  
+
+
 - if @current_user
-  -# backwards compatibility 
+  
+  
+  - # backwards compatibility 
   - if Sosol::Application.config.allow_canonical_boards
     - sosol_boards = @current_user.boards.ranked_by_community_id(nil)
   - else
     - sosol_boards = []
-  
+
   -# need list of community board ids
   - community_ids = @current_user.boards.collect{ |b| b.community_id }
   - community_ids.uniq!
@@ -12,34 +60,39 @@
 
   - if sosol_boards.length > 0 || community_ids.length > 0
 
+
+        
     - current_board_id  = nil
     
     - if @current_board
       - current_board_id = @current_board.id
     - elsif false && @current_publication && @current_publication.owner_type == "Board"
       - current_board_id = @current_publication.owner.id
+    
 
-
-
-
+    
+ 
     %li{:onclick=>"showBoardDialog(event)",  :id=>"board_menu", :class=>"editor_menu"}
       = "Boards"
   
     %div{:class => "editor_nav", :id=>"board_list"}
       %ul
-
         - sosol_boards.each do |sb|
           %li
             = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
+        
+    
         
         - community_ids.each do |next_id|
          
           - community_boards = @current_user.boards.ranked_by_community_id(next_id)
           - current_name = Community.find(next_id).friendly_name
           
+
           %li
             = current_name    
           - community_boards.each do |cb|
             %li
               = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
-
+              
+          

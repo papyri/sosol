@@ -1,3 +1,49 @@
+:javascript
+  function showCommunityDialog(e)
+  {
+    
+    var community_list = $('community_list');
+    var body = document.body;
+    var community_menu = $('community_menu');
+    
+    body.appendChild(community_list);
+    
+    if (community_list.style.display == "block")
+    {
+      community_list.style.display = "none";
+    }
+    else
+    {
+      community_list.style.display = "block";
+    }
+    
+    community_list.setStyle({ position: 'absolute', zIndex: '9999'});
+    
+    
+    var left_pos = community_menu.cumulativeOffset().left + community_menu.getWidth() - community_list.getWidth() ;
+    var top_pos = community_menu.cumulativeOffset().top + community_menu.getHeight() ;
+    
+    community_list.style.top = top_pos + "px";
+    community_list.style.left = left_pos + "px";
+
+    
+  }
+
+  Event.observe(document.body, 'click',
+    function windowClick(e)
+    {
+      var clicked = $(Event.element(e));
+      if (clicked.id != 'community_menu')
+      { 
+        if ($('community_list')) 
+          {
+            $('community_list').style.display = "none";
+          }
+      }
+    }
+   );
+
+
 - if @current_user
 
   - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
