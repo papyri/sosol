@@ -18,7 +18,7 @@
           %td{:width=>"#{colwidth}%"}
             = i.constantize::FRIENDLY_NAME
     - publications.each do |publication|
-      %tr
+      %tr{:class => "publication"}
         - if defined? selectable
           %td{:width => "5%"} 
             = check_box_tag 'publication_id[]', publication.id.to_s
