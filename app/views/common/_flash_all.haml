@@ -1,4 +1,9 @@
-- flash.each do |key, msg|
-  = content_tag :div, msg.html_safe, :class => ["flash", key].join(' '), :id => "notice_#{key}"
-  /- content_tag(:script, :type => "text/javascript")  do
-  /  == setTimeout("new Effect.Fade('notice_#{key}',{duration:2.0});", 15000);
+-if flash.keys.length > 0
+  - flash.each do |key, msg|
+    - if SiteHelper::is_perseids?
+      %div{:class => "card flash-notice #{key}"}
+        %i{:class => 'fa fa-info-circle'}
+        = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"
+    - else
+      = content_tag :div, msg.html_safe, :class => ["flash", key].join(' '), :id => "notice_#{key}"
+  - flash.clear

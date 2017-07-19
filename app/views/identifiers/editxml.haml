@@ -5,7 +5,7 @@
 = render :partial => 'identifiers/header_perseids'
 = render :partial => 'identifiers/edit_bar_perseids'
 #edit
-  = render :partial => "common/flash_all_perseids"
+  = render :partial => "common/flash_all"
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
     .card

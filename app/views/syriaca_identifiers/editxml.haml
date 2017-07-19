@@ -15,7 +15,7 @@
 #edit
   = form_for @identifier, :url => { :action => :updatexml } do |f|
     = f.error_messages
-    = render :partial => "common/flash_all_perseids"
+    = render :partial => "common/flash_all"
     .clearfix.card
       = f.text_area :xml_content, :disabled => !@identifier.mutable?, :rows => 40, :wrap => 'off', :class => 'observechange input xml-content'
     .card

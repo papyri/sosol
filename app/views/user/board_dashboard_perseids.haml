@@ -7,7 +7,7 @@
 %header
   %h1
     = page_title
-= render "common/flash_all_perseids"
+= render "common/flash_all"
 .publications
   .container-wrapper
     = render( :partial => 'publications/filter_board', :locals => { :has_finalizing => has_finalizing, :has_voting => has_voting, :has_approved => has_approved})

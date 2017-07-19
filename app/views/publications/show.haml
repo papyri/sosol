@@ -36,7 +36,7 @@
     - if !@publication.status.nil? && @publication.status != ''
       == (#{@publication.status})
 
-= render :partial => "common/flash_all_perseids"
+= render :partial => "common/flash_all"
 
 = render :partial => 'action_bar'
 - if %w{new editing}.include?(@publication.status)

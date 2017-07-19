@@ -11,7 +11,7 @@
     .card
       = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :top }
                 
-    = render :partial => "common/flash_all_perseids"
+    = render :partial => "common/flash_all"
     %label XML
     .clearfix.card
       = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'xml-content input observechange'

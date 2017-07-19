@@ -1,6 +1,0 @@
--if flash.keys.length > 0
-  - flash.each do |key, msg|
-    %div{:class => "card flash-notice #{key}"}
-      %i{:class => 'fa fa-info-circle'}
-      = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"
-  - flash.clear
