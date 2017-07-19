@@ -6,4 +6,4 @@
         = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"
     - else
       = content_tag :div, msg.html_safe, :class => ["flash", key].join(' '), :id => "notice_#{key}"
-  - flash.clear
+  - unless Rails.env.test? flash.clear
