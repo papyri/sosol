@@ -1,9 +1,11 @@
-= stylesheet_link_tag 'community'
 
-%header
+
+
+.community
+  
+  
   %h1
     Listing communities
-.community.sosolcard.no-bottom-margin
 
   - if @communities.length <= 0
   
@@ -18,20 +20,29 @@
           Name
         %th
           Friendly name
-        %th
-          Type
+        
+        -#
+          %th
+            Abbreviation
+    
         %th
           Description
+        -#
+          %th
+            Logo
+    
+    
       - @communities.each do |community|
-        - classname = community.is_default? ? 'defaultcommunity' : ''
         %tr
-          %td{:class => classname}
+          %td 
             = community.name 
-          %td{:class => classname}
+          %td 
             = community.friendly_name 
-          %td{:class => classname}
-            = community.type
-          %td{:class => classname}
+          -#
+            %td 
+              = community.abbreviation 
+      
+          %td 
             = community.description 
           -#
             %td 
@@ -42,12 +53,8 @@
           %td 
             = link_to 'Edit', edit_polymorphic_path([community]) 
           %td 
-            = link_to 'Destroy', polymorphic_path([community], :action=> :confirm_destroy) 
-
+            = link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete 
           
 
-%ul{:class => 'menu'}
-  %li
-    = link_to 'New community', {:action => :new}, :class => 'btn bg-sdw'
-  %li
-    = link_to 'Change default',{:controller => :communities, :action => :select_default}, :class => 'btn bg-sdw'
+= link_to 'New community', {:action => :new}
+= link_to 'Change default',{:controller => :communities, :action => :select_default}

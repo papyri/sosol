@@ -1,35 +1,34 @@
+
 - if @community
-  %header
-    %h1
-      = "Community Admins for " + @community.format_name
-  .sosolcard.no-bottom-margin
 
-    %p
-      = 'These admins are able to add/remove community members and edit the settings for the '  + @community.format_name
+  %h1 
+    = "Community Admins for " + @community.format_name
+  
+  %p 
+    = 'These admins are able to add/remove community members and edit the settings for the '  + @community.format_name
+  %br
+  %h2
+    Existing Admins
+    
+  %p click X by name to remove
+  %br
+  - @community.admins.each do |admin|
+    .remove_user
+      .user_name
+        = admin.human_name + "  ( " + admin.name + " ) " 
+        = link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id
     %br
-    %h2
-      Existing Admins
+    
+    
+  %h2
+    Potential Admins
+  %p 
+    click name to add
+  %br       
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_admin", @community.id ) }
 
-    %p click X by name to remove
-    %br
-    - @community.admins.each do |admin|
-      .remove_user
-        .user_name
-          = admin.human_name + "  ( " + admin.name + " ) "
-          = link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id
-      %br
-
-
-    %h2
-      Potential Admins
-    %p
-      click name to add
-    %br
-    = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_admin", @community.id ) }
-
-
-
-    %br
-  %ul.menu
-    %li
-      = link_to 'Edit More', edit_community_path(@community), :class => 'btn bg-sdw'
+  
+    
+%br
+%br
+  = link_to 'Edit more of this community', edit_community_path(@community)

@@ -1,56 +1,55 @@
-%header
-  %h1
-    = "Community " + @community.format_name
-.sosolcard.no-bottom-margin
-  %b
-    Name:
-  = @community.name
-  %br
-  %b
-    Friendly name:
-  = @community.friendly_name
-  %br
+%h1
+  = "Community " + @community.format_name
+%b
+  Name:
+= @community.name
+%br 
 
-  %b
-    Description:
-  = @community.description
-  %br
+%b
+  Friendly name:
+= @community.friendly_name 
+%br
+   
+%b
+  Description:
+= @community.description
+%br
 
-  %b
-    Allows Self-Signup:
-  = @community.allows_self_signup
-  %br
+%b
+  Allows Self-Signup:
+= @community.allows_self_signup
+%br
 
-  %b
-    Admins
-  %br
+%br
 
-  - @community.admins.each do |a|
-    = a.human_name + " ( " + a.name + " )"
-    %br
+%b
+  Admins
+  %br 
+   
+- @community.admins.each do |a|
+  = a.human_name + " ( " + a.name + " )"
   %br
+%br 
+  
+%b
+  Members
+  %br 
+- @community.members.each do |m|
+  = m.human_name + " ( " + m.name + " )"
+  %br 
+%br 
 
-  %b
-    Members
+%b
+  Boards
   %br
-  - @community.members.each do |m|
-    = m.human_name + " ( " + m.name + " )"
-    %br
+- @community.boards.each do |b|
+  = b.name
   %br
+  
+= link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id
 
-  %b
-    Boards
-  %br
-  - @community.boards.each do |b|
-    = b.name
-    %br
+%br
+%br
 
-
-  %br
-%ul.menu
-  %li
-    = link_to 'Edit', edit_polymorphic_path([@community]), :class => 'btn bg-sdw'
-  %li
-    = link_to 'Destroy', polymorphic_path([@community], :action=> :confirm_destroy) , :class => 'btn bg-sdw'
-  %li
-    = link_to 'Send Email Reminders', {:controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id}, :class => 'btn bg-sdw'
+= link_to 'Edit', edit_community_path(@community) |  
+= link_to 'Destroy', :controller => "communities", :id => @community.id, :action => "confirm_destroy"
