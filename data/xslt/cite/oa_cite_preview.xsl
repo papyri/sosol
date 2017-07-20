@@ -26,7 +26,7 @@
     </xsl:template>
     
     <xsl:template match="oac:Annotation">
-        <div class="oa_cite_annotation clearfix card">
+        <div class="oa_cite_annotation clearfix sosolcard">
             <div class="columns">
                <div>
                     <xsl:apply-templates select="dcterms:title"/>
