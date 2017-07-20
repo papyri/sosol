@@ -97,11 +97,11 @@ class UserController < ApplicationController
       @identifiers = @current_user.user_identifiers
       @collection = CollectionsHelper::make_data_link(CollectionsHelper::make_collection(@current_user))
     end
-    SiteHelper::is_perseids? ? render 'user_account_perseids' : 'user_account'
+    render SiteHelper::is_perseids? ? 'user_account_perseids' : 'user_account'
   end
 
   def signin
-    SiteHelper::is_perseids? ? render 'signin_perseids' : 'signin'
+    render SiteHelper::is_perseids? ? 'signin_perseids' : 'signin'
   end
 
   def terms
@@ -333,7 +333,7 @@ class UserController < ApplicationController
         redirect_to dashboard_url
       end
     end
-    SiteHelper::is_perseids? ? render 'archives_perseids' : 'archives'
+    render SiteHelper::is_perseids? ? 'archives_perseids' : 'archives'
   end
 
   def update_terms
