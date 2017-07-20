@@ -595,7 +595,7 @@ class PublicationsController < ApplicationController
     determine_available_communities()
 
     respond_to do |format|
-      format.html { render SiteHelper::is_perseids? ? "show_perseids" : "show"
+      format.html { render SiteHelper::is_perseids? ? "show_perseids" : "show" }
       format.xml  { render :xml => @publication }
     end
   end
