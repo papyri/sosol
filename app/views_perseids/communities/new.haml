@@ -1,0 +1,19 @@
+= stylesheet_link_tag "community"
+
+.community
+  %header
+    %h1
+      = "Select Community Type"
+  %ul{:class => 'menu'}
+    -# TODO which type of communities to allow should be site configurable 
+    -#Also might not want to show new links if user is just going to be denied
+    -#due to access
+    %li
+      = link_to "Master", {:controller=> 'master_communities', :action => :new}, :class => 'btn bg-sdw'
+    %li
+      = link_to "End User", {:controller=> 'end_user_communities', :action => :new}, :class => 'btn bg-sdw'
+    %li
+      = link_to "Pass Through", {:controller=> 'pass_through_communities', :action => :new}, :class => 'btn bg-sdw'
+  %br  
+  
+ 
