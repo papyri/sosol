@@ -282,9 +282,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it doesn't appear on voting list for non-admins and that the user can't vote on it
           open_session do |unassigned_session|
             unassigned_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
-            unassigned_session.assert_select "div#voting-column" do
-              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
-            end
+            unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
             # waiting list should also be empty for non-admins
             unassigned_session.assert_select "div#publication_list_holder_waiting", false
 
@@ -296,9 +294,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it does appear on board view for admin and assign it
           open_session do |admin_session|
             admin_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @community_admin.id.to_s
-            admin_session.assert_select "div#voting-column" do
-              admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
-            end
+            admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
             admin_session.post 'publications/assign/' + board_publication.id.to_s + '?test_user_id=' + @community_admin.id.to_s, \
               :assignment => { :publication_id => board_publication.id }, \
               :voters => [ @board_user.id.to_s ]
@@ -307,9 +303,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it now appears on voting board view for assigned user
           open_session do |assigned_session|
             assigned_session.get 'user/board_dashboard?board_id=' + @test_agent_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
-            assigned_session.assert_select "div#voting-column" do
-              assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
-            end
+            assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
             assigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_identifiers/#{syriaca_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
             assigned_session.assert_select "#vote_submit"
           end
@@ -469,9 +463,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it doesn't appear on voting list for non-admins and that the user can't vote on it
           open_session do |unassigned_session|
             unassigned_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
-            unassigned_session.assert_select "div#voting-column" do
-              unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
-            end
+            unassigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]", false
             # waiting list should also be empty for non-admins
             unassigned_session.assert_select "div#publication_list_holder_waiting", false
 
@@ -483,9 +475,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it does appear on board view for admin and assign it
           open_session do |admin_session|
             admin_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @community_admin.id.to_s
-            admin_session.assert_select "div#voting-column" do
-              admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
-            end
+            admin_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
             admin_session.post 'publications/assign/' + board_publication.id.to_s + '?test_user_id=' + @community_admin.id.to_s, \
               :assignment => { :publication_id => board_publication.id }, \
               :voters => [ @board_user.id.to_s ]
@@ -494,9 +484,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
           # verify it now appears on voting board view for assigned user
           open_session do |assigned_session|
             assigned_session.get 'user/board_dashboard?board_id=' + @test_person_board.id.to_s + '&test_user_id=' + @board_user.id.to_s
-            assigned_session.assert_select "div#voting-column" do
-              assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
-            end
+            assigned_session.assert_select "a[href ^= /publications/#{board_publication.id.to_s}/]"
             assigned_session.get "/publications/#{board_publication.id.to_s}/syriaca_person_identifiers/#{syriaca_person_identifier.id.to_s}/editxml" + '?test_user_id=' + @board_user.id.to_s
             assigned_session.assert_select "#vote_submit"
           end
