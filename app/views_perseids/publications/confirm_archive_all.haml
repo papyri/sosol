@@ -1,0 +1,25 @@
+:javascript
+  function show_working_image() {
+    //you have to submit the form before class toggle or does not work correctly
+    $('archive_all_form').submit();
+    $('show_working').toggleClassName('loading');
+    Effect.SlideDown('show_working_div');
+  }
+
+.sosolcard
+  %h1 Archive Publications
+  %p
+    Are you sure you want to archive ALL the publications below?  This may take some time, so please be patient.
+    -# using the link_to_function and form_tag to get the link to submit with a 'post' and execute the javascript
+    -# to show the 'loading' image while working
+  = form_tag(url_for_options = {:controller => 'publications', :action => 'archive_all', :pub_ids => @publications}, options = {:method => :post, :id => 'archive_all_form'})
+  = link_to_function 'Archive ALL', "show_working_image();", :id => 'archive_all_link', :class => 'btn bg-sdw'
+  = link_to "Cancel", dashboard_url, :class => 'btn bg-sdw'
+  %div{:id => "show_working_div", :style => "display:none;"}
+    = text_area_tag 'show_working', nil, :cols => 40, :rows => 10
+    -#line below is to get the image to load so it is available when class is toggled - for chrome, safari
+    = image_tag("ajax_loader.gif", :style => "display:none;")
+  %ul{:class => 'unstyled'}
+    - @publications.each do |pub|
+      %li
+        = pub.title

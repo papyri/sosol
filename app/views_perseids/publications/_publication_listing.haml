@@ -1,0 +1,49 @@
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+%div{:class => "publication_column", :id => list_id, "data-type" => list_name }
+  - publications.each do |publication|
+    - community_info = publication.community_id && !publication.community.is_default? ? publication.community.friendly_name : nil
+    - data = {}
+    - publication.identifiers.collect do |i|
+      - unless data[i.type]
+        - data[i.type] = []
+      - data[i.type] << i
+    %div{:class => 'publication'}
+      - display_title = publication.title
+      %ul{:class => 'publication-items'}
+        - Identifier.site_identifier_classes.each do |c|
+          - if c.constantize::is_visible && data[c]
+            - data[c].each do |i|
+              %li{:class => "#{i.class}"}
+                %span{:class => 'type-legend'}
+                  = i.class::FRIENDLY_NAME
+                - if publication.status == 'finalizing'
+                  = link_to i.title, finalize_review_publication_path(publication)
+                - elsif i.mutable?
+                  = link_to i.title, edit_polymorphic_path([publication,i])
+                - else
+                  = link_to i.title, polymorphic_path([publication,i], :action => 'preview')
+      %div{:class => "legend"}
+        %div{:class => "alt-title"}
+        %div{:class => 'original'}
+          = link_to display_title, publication, :class => "collection"
+          %ul{:class => 'publications'}
+            - Identifier.site_identifier_classes.each do |c|
+              - if c.constantize::is_visible && data[c]
+                - data[c].each do |i|
+                  %li{:class => "#{i.class}"}
+                    - if publication.status == 'finalizing'
+                      = link_to i.title, finalize_review_publication_path(publication)
+                    - if i.mutable?
+                      = link_to i.title, edit_polymorphic_path([publication,i])
+                    - else
+                      = link_to i.title, polymorphic_path([publication,i], :action => 'preview')
+      - if community_info
+        %div{:class => 'community_info'}
+          %span=community_info
+      - link = url_for(:controller => 'publications', :id => publication.id, :action => "download", :format => 'bagit' )
+      %div{:class => "info-square button"}
+        %a{:href => "#{link}", :onclick => 'this.disabled=true;return true;', :title => "Export Research Object Bag"}
+          %i{:class => "fa fa-shopping-bag"}

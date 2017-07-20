@@ -1,0 +1,52 @@
+- has_finalizing = @finalizing_publications && @finalizing_publications.length > 0
+- has_voting = @needs_reviewing_publications && @needs_reviewing_publications.length > 0
+- has_approved = @approved_publications && @approved_publications.length > 0
+- page_title = @board.friendly_name 
+- if @board.community && @board.community.friendly_name
+  - page_title = page_title + " (" + @board.community.friendly_name + " community )"
+%header
+  %h1
+    = page_title
+= render "common/flash_all"
+.publications
+  .container-wrapper
+    = render( :partial => 'publications/filter_board', :locals => { :has_finalizing => has_finalizing, :has_voting => has_voting, :has_approved => has_approved})
+
+    - can_assign = (@board.community_id && @board.max_assignable > 0 && @board.community.admins.include?(@current_user))
+    #voting-column.publication-container
+      - if has_voting
+        - status = can_assign ? 'Voting (Assign Voter)' : 'Voting'
+        .publication_list_holder
+          = render :partial => "publications/publication_header", :locals => {:status => status, :view_type => "board", :list_name => "needs_review" }
+          = render :partial => "publications/board_publication_listing", :locals => {:publications => @needs_reviewing_publications, :view_type => "board", :list_name => "needs_review" }
+
+    #finalizing-column.publication-container
+      - if has_finalizing
+        .publication_list_holder
+          = render :partial => "publications/publication_header", :locals => {:status => "Finalize", :view_type => "board", :list_name => "finalizing" }
+          = render :partial => "publications/board_publication_listing", :locals => {:publications => @finalizing_publications, :view_type => "board", :list_name => "finalizing" }
+
+    #approved-column.publication-container
+      - if has_approved
+        .publication_list_holder
+          - status = can_assign ? 'Approved (Reassign Finalizer)' : 'Approved'
+          = render :partial => "publications/publication_header", :locals => {:status => status, :view_type => "board", :list_name => "approved" }
+          = render :partial => "publications/board_publication_listing", :locals => {:publications => @approved_publications, :view_type => "board", :list_name => "approved" }
+
+    -if @count > 50
+      %p
+      -if @offset > 0
+        = link_to "< Previous 50", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset-50
+      = link_to "Next 50 >", :controller => 'user', :action => 'board_dashboard', :board_id => @board.id, :offset => @offset+50
+
+    #waiting-column.publication-container
+      - if @member_already_voted_on && @member_already_voted_on.length > 0
+        .publication_list_holder
+          = render :partial => "publications/publication_header", :locals => {:status => "Waiting", :view_type => "board", :list_name => "waiting" }
+          = render :partial => "publications/board_publication_listing", :locals => {:publications => @member_already_voted_on, :view_type => "board", :list_name => "waiting" }
+
+
+:javascript
+  jQuery(document).ready(
+    function() { perseids_filters(); }
+  );

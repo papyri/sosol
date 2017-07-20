@@ -1,0 +1,77 @@
+- if defined?(list_name)
+  - list_id = "publication_list_holder_" + list_name
+- else
+  - list_id = "publication_list_holder"
+%div{:class => "publication-column", :id => list_id, "data-type" => "#{list_name}" }
+  - publications.each do |publication|
+    - can_assign = publication.user_can_assign?(@current_user)
+    - assignable_to = publication.assignable_voters
+    %div{:class => 'publication'}
+      - display_title = publication.title
+      %ul{:class => 'publication-items'}
+        - Identifier.site_identifier_classes.each do |i|
+          - if i.constantize::is_visible
+            - publication.identifiers.each do |m|
+              - if m.type == i
+                %li{:class => m.class}
+                  %span{:class => 'type-legend'}
+                    = m.class::FRIENDLY_NAME
+                  = link_to m.title, edit_polymorphic_path([publication,m])
+      %span{:class => "legend"}
+        %div{:class => "alt-title"}
+        %div{:class => 'original boards'}
+          = link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name, :class => "collection"
+          %ul{:class => 'publications'}
+            - Identifier.site_identifier_classes.each do |i|
+              - if i.constantize::is_visible
+                - publication.identifiers.each do |m|
+                  - if m.type == i
+                    %li{:class => m.class}
+                      %span{:class => 'type-legend'}
+                        = m.class::FRIENDLY_NAME
+                      = link_to m.title, edit_polymorphic_path([publication,m])
+      - if list_name == "needs_review" || list_name == "waiting"
+        - votes = publication.votes_by_decree_action
+        - votes.keys.each do |action|
+          - if votes[action].length > 0
+            - icon = action == 'approve' ? "fa-thumbs-up" : "fa-thumbs-down"
+            - color = action == 'approve' ? "success" : "danger"
+            %div{:class => "info-square #{color}"}
+              %a{:href => "#"}
+                %i{:class => "fa #{icon}"}
+                %ul
+                  - votes[action].each do |v|
+                    %li
+                      = v.user.human_name + " (" + v.user.name + ") "
+        - if list_name != "waiting" && can_assign && assignable_to.size > 0
+          %div{:class => "info-square quickswitch",  "data-target" => ".assign"}
+            %a{:href => "#"}
+              %i{:class => "fa fa-user-plus"}
+              %ul
+                %li
+                  Assign
+      - if list_name == "approved"
+        - if can_assign
+          %div{:class => "info-square quickswitch", "data-target" => ".assign_finalizer"}
+            %a{:href => "#"}
+              %i{:class => "fa fa-graduation-cap"}
+              %ul
+                %li
+                  = "Assign Finalizer"
+        - elsif publication.find_finalizer_user
+          - link = url_for(:controller=>'publications', :action=>'become_finalizer', :id=>publication.id)
+          %div{:class => "info-square button"}
+            %a{:href => "#{link}", :disabled => publication.advisory_lock_exists?("become_finalizer_#{publication.id}"), :onclick => 'this.disabled=true;return true;'}
+              %i{:class => "fa fa-graduation-cap"}
+              %ul
+                %li
+                  = "Make me finalizer instead of " + publication.find_finalizer_user.human_name
+    - if can_assign && list_name == 'approved'
+      %div{:class => "sosolcard quickswitch-target assign_finalizer"}
+        = render :partial => "publications/assign_finalizer", :locals => {:publication => publication}
+    - if can_assign && assignable_to.size > 0
+      %div{:class => "sosolcard quickswitch-target assign"}
+        = render :partial => "publications/assign", :locals => {:publication => publication}
+:javascript
+  jQuery(document).ready(
+    function() { perseids_publication_selector(); });

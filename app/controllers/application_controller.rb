@@ -8,8 +8,8 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'ad8f219816db8990ae5254e6c8ea4b25'
 
-  if SiteHelper::is_perseids? 
-    prepend_view_path "app/views_perseids"
+  if defined?(Sosol::Application.config.site_views)
+    prepend_view_path Sosol::Application.config.site_views
   end
   
   # See ActionController::Base for details 

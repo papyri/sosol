@@ -1,0 +1,28 @@
+//------------------------------------------------------------
+//  CSS
+//------------------------------------------------------------
+%link{:rel => "stylesheet", :type => "text/css", :href => "/javascripts/texAce/texAce.css"}
+= render :partial => 'identifiers/header'
+= render :partial => 'identifiers/edit_bar'
+#edit
+  = render :partial => "common/flash_all"
+  = form_for @identifier, :url => { :action => :updatexml } do |f|
+    = f.error_messages
+    .sosolcard
+      = f.text_area :xml_content, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc',  :rows => 40, :wrap => 'off', :class => 'input xml-content observechange'
+    .sosolcard
+      = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+
+= javascript_include_tag 'confirm'
+-#-------------------------------------------------------------
+-#  texAce includes
+-#-------------------------------------------------------------
+= javascript_include_tag "texAce/src/js/texAce"
+= javascript_include_tag "texAce/third_party/ace-builds/src-noconflict/ace"
+= javascript_include_tag "texAce/third_party/jquery-cookie/jquery.cookie"
+:javascript
+  showMatch("#{@identifier.class.to_s.underscore}_xml_content", "**POSSIBLE ERROR**");
+  // **POSSIBLE ERROR** defined in insert_error_here method in identifiers controller
+  jQuery( document ).ready( function() {
+    jQuery("textarea:not([disabled])").texAce({lang:'xml',theme_selector:true});
+  });

@@ -103,8 +103,9 @@ if Sosol::Application.config.site_identifiers.split(',').include?('SyriacaIdenti
         setup do
           #Rails.logger.level = :debug
           Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-
+          # tests rely on perseids view functionality
+          ApplicationController::prepend_view_path 'app/views_perseids'
+          
           #users to put on the boards
           @disperser_user = FactoryGirl.create(:user, :name => "disperser")
           @board_user = FactoryGirl.create(:user, :name => "board_man_freaky_bob")
