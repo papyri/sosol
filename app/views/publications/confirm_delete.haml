@@ -1,12 +1,14 @@
-.sosolcard
-  %h1
+#main.site
+  %h2 
     = @publication.title
     - if !@publication.status.nil? && @publication.status != ''
       == (#{@publication.status})
+      
+  -# render :partial => "common/flash_all"    
 
-  %div{:class => "info-square danger"}
-    %i{:class => "fa fa-info-circle"}
-    Are you sure you want to delete this publication? This action will only delete your copy of this publication, but cannot be undone.
-  %p
-    = button_to "Delete", @publication, :method => :delete, :class => 'btn bg-sdw '
-    = link_to "Cancel", @publication, :class => 'btn revert bg-sdw card-size'
+  %h2
+    Are You Sure You Want to Delete this publication? This action will only delete your copy of this publication, but cannot be undone.
+  %h1
+    = button_to "Delete", @publication, :method => :delete 
+    = "or"
+    = link_to "Cancel", @publication

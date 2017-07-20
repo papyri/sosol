@@ -1,27 +1,22 @@
-= render "common/browser_warning"
-.columns
-  .sosolcard
-    %h2 Login with a Social Identity or OpenID Provider:
-    #janrainEngageEmbed
-  =render :partial => "shib/wayf_box"
+#main.site
+  -# render :partial => "common/flash_all"
+  -##rpx_box
+    -#%iframe{ :src => rpx_signin_url('embed'), :scrolling => 'no', :frameBorder => 'no', :style => "width:30em;height:20em;" }
 
-.sosolcard
-  %h3 What is this?
-  %p!== Instead of creating yet another username and password, #{config.site_name} will use the account you select above. If you don't see your institution or a social identity provider that you want to use, you may have an OpenID you can use from another service such as Flickr, Blogger, or WordPress.com account - click the OpenID logo and then the icon for the corresponding service, and it well help you find out your OpenID URL.
-  %br
-  %h3 Do I have to give you my password?
-  %p!== <strong>No.</strong> After entering your info above, you will be taken to the service that you picked and enter your password there. Then you will be asked to approve #{config.site_name} to have limited access to basic information like your username and email address. Finally you will be redirected back here to finish signing up. <strong>We will never have access to your passwords or your accounts.</strong>
-  %h2 Why should I sign up?
-  Once you sign up or sign in using the form to the left, you'll be able to:
-  %ul{ :style => 'margin-left:30px;' }
-    %li Edit documents
-    %li Submit documents for publication
-    %li Publish new documents
-    %li Collaborate with other users
+  #janrainEngageEmbed
 
-:javascript
-  jQuery(document).ready(
-    function() {
-      browser_test();
-    }
-  );
+  #signup_box
+    %h2 Why should I sign up?
+    Once you sign up or sign in using the form to the left, you'll be able to:
+    %ul{ :style => 'margin-left:30px;' }
+      %li Edit documents
+      %li Submit documents for publication
+      %li Publish new documents
+      %li Collaborate with other users
+
+  #signup_explanation.text_box
+    %h3 What is this?
+    %p!== Instead of creating yet another username and password, #{Sosol::Application.config.site_name} will use your Google, AOL, Facebook, or Yahoo account. If you don't have one of these accounts, you can create an OpenID for free at <a href="https://www.myopenid.com/signup">myOpenID.com</a>. If you have a Flickr, Blogger, or WordPress.com account, you may already have an OpenID through those services - click the OpenID logo and then the icon for the corresponding service, and it well help you find out your OpenID URL.
+    %br
+    %h3 Do I have to give you my password?
+    %p!== <strong>No.</strong> After entering your info above, you will be taken to the service that you picked and enter your password there. Then you will be asked to approve #{Sosol::Application.config.site_name} to have limited access to basic information like your username and email address. Finally you will be redirected back here to finish signing up. <strong>We will never have access to your passwords or your accounts.</strong>

@@ -1,10 +1,15 @@
-%h1
-  = @publication.title
-  - if !@publication.status.nil? && @publication.status != ''
-    == (#{@publication.status})
 
-%h3
-  Are You Sure You Want to Archive this publication?
-%h1
-  = link_to "Archive", {:id => @publication.id ,  :controller => "publications", :action => "archive" }, :class => 'btn bg-sdw'
-  = link_to "Cancel", @publication, :class => 'btn bg-sdw'
+#main
+  %h2 
+    = @publication.title
+    - if !@publication.status.nil? && @publication.status != ''
+      == (#{@publication.status})
+      
+  -# render :partial => "common/flash_all"    
+
+  %h2
+    Are You Sure You Want to Archive this publication?
+  %h1
+    = link_to "Archive", :id => @publication.id ,  :controller => "publications", :action => "archive"
+    = "or"
+    = link_to "Cancel", @publication

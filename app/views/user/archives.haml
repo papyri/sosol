@@ -1,38 +1,18 @@
-= render :partial => "common/flash_all"
+#main
 
-%h1
-  - page_title = ""
-  - if @board && @board.name
-    - if @board.community && @board.community.friendly_name
-      - page_title = @board.community.friendly_name + " community "
-    - page_title = page_title + @board.name + " board "
-  - else
-    - page_title = "Your "
-  = page_title + " Archived Publications"
+  -# render :partial => "common/flash_all"
 
-%div{:class => "publication_column"}
-  - for publication in @publications
-    - data = {}
-    - publication.identifiers.collect do |i|
-      - unless data[i.type]
-        - data[i.type] = []
-      - data[i.type] << i
-    %div{:class => 'publication'}
-      - display_title = publication.title #publication.title.split('/').last + "(" + publication.creator.name + ")" +  view_type && view_type == "community" ? publication.owner.name : ''
-      %ul{:class => 'publication-items'}
-        - Identifier.site_identifier_classes.each do |c|
-          - if c.constantize::is_visible && data[c]
-            - data[c].each do |i|
-              %li{:class => "#{i.class}"}
-                %span{:class => 'type-legend'}
-                  = i.class::FRIENDLY_NAME
-                = link_to(i.title, polymorphic_path([publication, i], :action => 'preview'))
-      %span{:class => "legend"}
-        %div{:class => "alt-title"}
-        = link_to display_title, publication, :class => "original"
-:javascript
-  jQuery(document).ready(
-    function() { perseids_filters(); }
-  );
+  %h1
+    - page_title = ""
+    - if @board && @board.name
+      - if @board.community && @board.community.friendly_name
+        - page_title = @board.community.friendly_name + " community " 
+      - page_title = page_title + @board.name + " board "
+    - else
+      - page_title = "Your "
+    = page_title + " Archived Publications"
+  
+  
+  = render :partial => "publications/list", :object => @publications
   
 
