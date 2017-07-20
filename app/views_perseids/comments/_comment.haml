@@ -1,0 +1,19 @@
+.comment_partial
+  .name 
+    - if comment.user && comment.user.name
+      = comment.user.human_name
+  .time
+    = comment.created_at
+  .reason 
+    - if comment.reason
+      = comment.reason
+    - if comment.identifier && comment.identifier.title
+      on
+      = comment.identifier.class::FRIENDLY_NAME
+  .comment    
+    - if comment.comment
+      = comment.comment
+  - if comment.user == @current_user && comment.reason == 'general' || comment.reason == 'review'
+    = link_to I18n.t('model.edit'), polymorphic_url([comment], :action => :edittext, :publication_id => comment.publication_id, :identifier_id => comment.identifier_id, :from => :ask_for)
+    = link_to I18n.t('model.destroy'), polymorphic_url([comment], :publication_id => comment.publication_id, :identifier_id => comment.identifier_id), :confirm => I18n.t('model.confirmdestroy'), :method => :delete
+

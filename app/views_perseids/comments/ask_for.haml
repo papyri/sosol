@@ -1,0 +1,33 @@
+= stylesheet_link_tag 'perseids'
+= stylesheet_link_tag 'perseids_additions'
+= javascript_include_tag "prototype"
+= javascript_include_tag "rails"
+= csrf_meta_tag
+.rows.modal.popup
+  .row
+    = render :partial => 'common/flash_all'
+  .row
+    .sosolcard
+      %h1
+        %header
+          = @publication.title
+
+
+      = form_for Comment.new(:publication_id => @publication_id, :identifier_id => @identifier_id, :reason => "general"), :url => { :controller => "comments", :action => "create" } do |form|
+        = form.hidden_field :publication_id
+        = form.hidden_field :identifier_id 
+        = form.hidden_field :reason
+        = form.text_area :comment, :rows => 8, :cols => 80
+        = form.hidden_field :reason
+        %br
+        = form.submit "Add Comment", :id => "submit_button"
+      - if @comments.length < 1
+        %h3
+          No Comments Yet
+  .row
+    - for comment in @comments
+      .sosolcard
+        = render :partial => comment
+
+
+
