@@ -10,8 +10,8 @@
     PerseidsCiteComm.setup_editor();
   });
 
-= render :partial => 'identifiers/header_perseids'
-= render :partial => 'identifiers/edit_bar_perseids'
+= render :partial => 'identifiers/header'
+= render :partial => 'identifiers/edit_bar'
 .edit.sosolcard
   %p
   = form_for @identifier, :url => { :action => 'update', :controller => "commentary_cite_identifiers"}, :html => {:onsubmit => 'PerseidsCiteComm.check_input();'} do |form|

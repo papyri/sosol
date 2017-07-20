@@ -97,11 +97,9 @@ class UserController < ApplicationController
       @identifiers = @current_user.user_identifiers
       @collection = CollectionsHelper::make_data_link(CollectionsHelper::make_collection(@current_user))
     end
-    render SiteHelper::is_perseids? ? 'user_account_perseids' : 'user_account'
   end
 
   def signin
-    render SiteHelper::is_perseids? ? 'signin_perseids' : 'signin'
   end
 
   def terms
@@ -237,11 +235,6 @@ class UserController < ApplicationController
     if (@current_user.admin || @current_user.developer || ! is_perseids)    
       @show_events = true
     end
-    if is_perseids
-      render "user_dashboard_perseids"
-    else
-      render "user_dashboard"
-    end
   end
 
   #Finds publications created by the current user and are part of the specified community.
@@ -258,11 +251,7 @@ class UserController < ApplicationController
    end
 
     @community = Community.find_by_id(cid)
-    if is_perseids
-      render "user_dashboard_perseids"
-    else
-      render "user_dashboard"
-    end
+    render "user_dashboard"
   end
 
   def export_options
@@ -297,22 +286,13 @@ class UserController < ApplicationController
 
 
 
-    if SiteHelper::is_perseids?
-      render "user_dashboard_perseids"
-    else
-      render "user_dashboard"
-    end
+    render "user_dashboard"
   end
 
   #Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
     find_board_publications(params[:board_id], params[:offset], 50)
     @current_board = @board
-    if SiteHelper::is_perseids?
-      render "board_dashboard_perseids"
-    else
-      render "board_dashboard"
-    end
   end
 
   def archives
@@ -333,7 +313,6 @@ class UserController < ApplicationController
         redirect_to dashboard_url
       end
     end
-    render SiteHelper::is_perseids? ? 'archives_perseids' : 'archives'
   end
 
   def update_terms

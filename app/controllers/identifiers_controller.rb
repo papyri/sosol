@@ -114,7 +114,7 @@ class IdentifiersController < ApplicationController
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
       @is_editor_view = true
-      render :template => 'identifiers/editxml'
+      render :template => 'identifiers/editxml' 
     end
   end
   

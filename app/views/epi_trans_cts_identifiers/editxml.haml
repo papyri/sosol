@@ -3,8 +3,8 @@
 //  CSS
 //------------------------------------------------------------
 %link{:rel => "stylesheet", :type => "text/css", :href => "#{root_url}/javascripts/texAce/texAce.css"}
-= render :partial => 'identifiers/header_perseids'
-= render :partial => 'identifiers/edit_bar_perseids'
+= render :partial => 'identifiers/header'
+= render :partial => 'identifiers/edit_bar'
 #Cite_Image_Service{:display => 'none;', 'data-content' => @identifier[:cite_image_service]}
 #edit
   = form_for @identifier, :url => { :action => :updatexml } do |f|

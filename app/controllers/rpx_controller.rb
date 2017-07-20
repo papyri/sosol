@@ -141,7 +141,6 @@ class RpxController < ApplicationController
       @email = guess_email data
       @full_name = guess_full_name data
     end
-    render SiteHelper::is_perseids? ? "login_return_perseids" : "login_return"
     
   end
 

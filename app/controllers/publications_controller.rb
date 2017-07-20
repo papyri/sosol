@@ -407,7 +407,6 @@ class PublicationsController < ApplicationController
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
     end
     @is_editor_view = true
-    render SiteHelper::is_perseids? ? "finalize_review_perseids" : "finalize_review"
   end
 
 
@@ -595,7 +594,7 @@ class PublicationsController < ApplicationController
     determine_available_communities()
 
     respond_to do |format|
-      format.html { render SiteHelper::is_perseids? ? "show_perseids" : "show" }
+      format.html # show.html.erb
       format.xml  { render :xml => @publication }
     end
   end
@@ -884,7 +883,6 @@ class PublicationsController < ApplicationController
 
   def confirm_archive
     @publication = Publication.find(params[:id].to_s)
-    render SiteHelper::is_perseids? ? "confirm_archive_perseids" : "confirm_archive"
   end
 
   def confirm_archive_all
@@ -897,7 +895,6 @@ class PublicationsController < ApplicationController
       end
     end
     @publications = Publication.find_all_by_owner_id(params[:id].to_s, :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id].to_s, :parent_id => nil }, :order => "updated_at DESC")
-    render SiteHelper::is_perseids? ? "confirm_archive_all_perseids" : "confirm_archive_all"
 
   end
 
@@ -920,7 +917,6 @@ class PublicationsController < ApplicationController
 
   def confirm_withdraw
    @publication = Publication.find(params[:id].to_s)
-    render SiteHelper::is_perseids? ? "confirm_withdraw_perseids" : "confirm_withdraw"
   end
 
   def withdraw
@@ -946,7 +942,6 @@ class PublicationsController < ApplicationController
 
   def confirm_delete
     @publication = Publication.find(params[:id].to_s)
-    render SiteHelper::is_perseids? ? "confirm_delete_perseids" : "confirm_delete"
   end
 
   # DELETE

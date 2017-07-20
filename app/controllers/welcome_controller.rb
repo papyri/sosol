@@ -6,6 +6,5 @@ class WelcomeController < ApplicationController
       redirect_to :controller => "user", :action => "dashboard"
       return
     end
-    render SiteHelper::is_perseids? ? 'welcome_perseids' : 'welcome'
   end
 end

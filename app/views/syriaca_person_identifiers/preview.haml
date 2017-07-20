@@ -1,5 +1,5 @@
-= render :partial => 'identifiers/header_perseids'
-= render :partial => 'identifiers/edit_bar_perseids'
+= render :partial => 'identifiers/header'
+= render :partial => 'identifiers/edit_bar'
 - if @identifier.publication.owner_type == "Board" && @identifier.publication.owner.controls_identifier?(@identifier) && @identifier.publication.owner.users.include?(@current_user)
   = render :partial => 'diffremote'
   = form_for @identifier, :url => { :action => :updatexml } do |f|
