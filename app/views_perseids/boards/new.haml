@@ -1,9 +1,9 @@
-#main.site
-  -# render :partial => "common/flash_all"  
+%header
   %h1
     New board
     - if @board.community
       = " for community " + @board.community.name
+#main.site.sosolcard
   = form_for(@board) do |f|
     = f.error_messages
     = f.hidden_field :community_id
@@ -22,19 +22,22 @@
       %br
       = f.text_field :rank
       %br
-    %br
+    %p
+      .checkbox
+        = f.check_box :skip_finalize
+        Skips Finalization
     %p
       = f.label "Identifier classes"
       %br
       - @available_identifier_classes.each do |identifier_class|
         / show all choices
-        = check_box_tag identifier_class
+        .checkbox
+          = check_box_tag identifier_class
 
-        / limit to one choice
-        /= check_box_tag  "#{identifier_class}", "#{identifier_class}", false
-
-        = identifier_class.sub(/Identifier$/,'')
-        %br
+          / limit to one choice
+          /= check_box_tag  "#{identifier_class}", "#{identifier_class}", false
+          %span
+            = identifier_class.sub(/Identifier$/,'')
     %br
     %p
       = f.submit "Create"

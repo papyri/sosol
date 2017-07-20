@@ -1,0 +1,12 @@
+= stylesheet_link_tag "board"
+
+%header
+  %h1
+    Editing board finalizer
+.sosolcard
+  Click user to set as finalizer
+  %ul
+    - @members.each do |user|
+      %li.select_user_name
+        = link_to user.human_name + " (" + user.name + ")", :controller => :boards, :action => "set_member_finalizer", :id => @board.id, :user_name => user.name,  :user_id => user.id
+

@@ -1,0 +1,109 @@
+= stylesheet_link_tag "board"
+%header
+  %h1
+    = @board.title + " ( " + @board.friendly_name + " )"
+
+.sosolcard
+  - if @board.community
+    %br
+    %b Community
+    %br
+    = @board.community.name + " ( " + @board.community.friendly_name + " ) "
+    %br
+
+  %b
+    = "Editorial Board for "
+  - @board.identifier_classes.each do |ic|
+    = ic + " "
+  %br
+  %b
+    = 'Rank is '
+  =@board.rank.to_s
+  %br
+  = form_for(@board) do |f|
+    = f.error_messages
+    %b
+      Update Friendly name
+
+    = f.text_field :friendly_name
+    .checkbox
+      = f.check_box :skip_finalize
+      Skips Finalization
+    %br
+    .checkbox 
+      = f.check_box :requires_assignment
+      Requires Assignment
+    %b 
+      Max Assignable Voters (per publication)
+    = f.text_field :max_assignable
+
+    %br
+    - if @available_identifier_classes.size > 0
+      %b
+        Add classes:
+      - @available_identifier_classes.each do |identifier_class|
+        .checkbox
+          = check_box_tag identifier_class
+          = identifier_class.sub(/Identifier$/,'')
+      %br
+    = f.submit "Update"
+
+.sosolcard.no-bottom-margin
+
+  -# dont let them change the name of the board...repositories depend on it 1-2010
+  -#= f.label :title
+  -#= f.text_field :title
+  -#= f.submit "Save"
+  -#= f.label :rank
+    = f.text_field :rank
+    = f.submit "Update rank"
+  %br
+  %br
+  %h3{'style' => "display:inline;"}
+    Members
+  = link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id
+
+  .member
+
+    - @board.users.each do |user|
+      .remove_user
+        .user_name
+          = user.name
+          = link_to "X", :controller => "boards", :action => "remove_member", :user_id => user.id
+          %br
+
+  %h3{'style' => "display:inline;"}
+    Default Finalizer
+  = link_to "Set", :controller => "boards", :action => "find_member_finalizer", :id => @board.id
+  - unless @board.finalizer_user.nil?
+    = link_to "Remove", :controller => "boards", :action => "remove_member_finalizer", :id => @board.id
+  .member
+    - if @board.finalizer_user.nil?
+      (Not Set)
+    - else
+      = @board.finalizer_user.human_name
+
+  %h3{'style' => "display:inline;"}
+    Decrees
+  = link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id
+
+  - @board.decrees.each do |decree|
+    = render :partial => decree
+    - if decree.rules
+      - decree.rules.each do |rule|
+        = render :partial => rule
+
+  %h3{'style' => "display:inline;"}
+    E-mails
+  = link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id
+  - @board.emailers.each do |emailer|
+    = render :partial => emailer
+
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Show Board', @board, :class => 'btn bg-sdw'
+
+  - if @board.community
+    %li
+      = link_to 'Edit Community', edit_polymorphic_path([@board.community]) , :class => 'btn bg-sdw'
+    

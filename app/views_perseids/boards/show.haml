@@ -1,0 +1,63 @@
+= stylesheet_link_tag "board"
+%header
+  %h1
+    = @board.title
+.sosolcard.no-bottom-margin
+  - if @board.community
+    %br
+    %b Community
+    %br
+    = @board.community.name + " ( " + @board.community.friendly_name + " ) "
+    %br
+    
+
+  %b
+    Title is
+  = @board.title
+  %br
+
+  %b
+    Friendly Name
+  = @board.friendly_name
+  %br
+
+  %b
+    = "Editorial Board for "
+  - @board.identifier_classes.each do |ic|
+    = ic + " "
+  %br
+
+  %b
+    = 'Rank is '
+  =@board.rank.to_s
+  %br
+
+  -if @board.skip_finalize
+    %p.skip_finalize
+      This board skips the finalization step! Make sure another board is configured to do it.
+
+  %h3
+    Members
+  .member
+    - @board.users.count
+    - @board.users.each do |user|
+      = user.name
+      %br
+
+  %h3
+    Decrees
+  - @board.decrees.each do |decree|
+    = render :partial => decree, :locals =>  {:hide_edit_link=> 'true'}
+
+  %h3
+    E-mails
+  - @board.emailers.each do |email|
+    = render :partial => email, :locals =>  {:hide_edit_link=> 'true'}
+
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Edit Board', edit_board_path(@board), :class => 'btn bg-sdw'
+
+  - if @board.community
+    %li
+      = link_to 'Edit Community', {:controller => 'communities', :action => 'edit', :id => @board.community.id}, :class => 'btn bg-sdw autosize'

@@ -1,24 +1,19 @@
-%header
-  %h1
-    Editorial boards
 #main.site
   = stylesheet_link_tag "board"
   
   -# sort by community and rank? - no community boards are shown on different page
-  -for c in @boards.keys
-    .sosolcard
-      %h2 #{c}
-      - for board in @boards[c]
-        = render :partial => "listing" , :object => board
-        %br
+  %h1
+    Editorial boards
+  - for board in @boards
+    = render :partial => "listing" , :object => board
+    %br   
     
   %br
-  %ul{:class => 'menu'}
-    %li
-      = link_to 'Send Email Reminders', {:controller => "boards", :action => "send_board_reminder_emails"}, :class => 'btn bg-sdw'
-    %li
-      = link_to 'Change Priority Rank', {:controller => 'boards', :action => 'rank'}, :class => 'btn bg-sdw'
-    -if Sosol::Application.config.allow_canonical_boards
-      %li
-        = link_to 'New board', new_board_path, :class => 'btn bg-sdw'
+  %p
+    = link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails"
 
+ 
+  %p
+    = link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank'
+  %p
+    = link_to 'New board', new_board_path
