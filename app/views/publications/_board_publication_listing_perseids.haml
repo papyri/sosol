@@ -67,10 +67,10 @@
                 %li
                   = "Make me finalizer instead of " + publication.find_finalizer_user.human_name
     - if can_assign && list_name == 'approved'
-      %div{:class => "card quickswitch-target assign_finalizer"}
+      %div{:class => "sosolcard quickswitch-target assign_finalizer"}
         = render :partial => "publications/assign_finalizer", :locals => {:publication => publication}
     - if can_assign && assignable_to.size > 0
-      %div{:class => "card quickswitch-target assign"}
+      %div{:class => "sosolcard quickswitch-target assign"}
         = render :partial => "publications/assign", :locals => {:publication => publication}
 :javascript
   jQuery(document).ready(
