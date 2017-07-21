@@ -1,42 +1,39 @@
-.sosolcard.no-bottom-margin
-  %p
-    %b
-      Board:
-    = h @emailer.board_id
-  %p
-    %b
-      Members:
-    = h @emailer.user_id
-  %p
-    %b
-      Extra addresses:
-    = h @emailer.extra_addresses
-  %p
-    %b
-      When to send:
-    = h @emailer.when_to_send
-  %p
-    %b
-      Include document:
-    = h @emailer.include_document
-  %p
-    %b
-      Include comments:
-    = h @emailer.include_comments
-  %p
-    %b
-      Send to owner:
-    = h @emailer.send_to_owner
-  %p
-    %b
-      Subject:
-    = h @emailer.subject
-  %p
-    %b
-      Message:
-    = h @emailer.message
-%ul{:class => 'menu'}
-  %li
-    = link_to 'Edit', edit_emailer_path(@emailer), :class => 'btn bg-sdw'
-  %li
-    = link_to 'Back', emailers_path, :class => 'btn bg-sdw'
+%p
+  %b
+    Board:
+  = h @emailer.board_id
+%p
+  %b
+    Members:
+  = h @emailer.user_id
+%p
+  %b
+    Extra addresses:
+  = h @emailer.extra_addresses
+%p
+  %b
+    When to send:
+  = h @emailer.when_to_send
+%p
+  %b
+    Include document:
+  = h @emailer.include_document
+%p
+  %b
+    Include comments:
+  = h @emailer.include_comments
+%p
+  %b
+    Send to owner:
+  = h @emailer.send_to_owner
+%p
+  %b
+    Subject:
+  = h @emailer.subject
+%p
+  %b
+    Message:
+  = h @emailer.message
+= link_to 'Edit', edit_emailer_path(@emailer), :class => 'btn bg-sdw'
+| 
+= link_to 'Back', emailers_path, :class => 'btn bg-sdw'
