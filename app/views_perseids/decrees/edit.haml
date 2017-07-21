@@ -1,0 +1,43 @@
+%header
+  %h1
+    Editing decree for
+    = @decree.board.title
+    board
+.sosolcard
+  = form_for(@decree) do |f|
+    = f.error_messages
+    %p
+      = f.label :action
+      .select-container.small
+        = f.select :action, @decree.board.result_actions_hash
+      %br
+      The resulting action of the decree when the trigger is met.
+    %br
+    %br
+    %p
+      = f.label :trigger
+      = f.text_field :trigger
+      .select-container.small
+        = f.select :tally_method, Decree.tally_methods_hash
+      %br
+      The number of votes or the percentage that will trigger the action.
+    %br
+    %br
+    %p
+      = f.label :choices
+      = f.text_field :choices
+      %br
+      The choices that constitue a vote for this decree. Separate by spaces (i.e. yes no defer).
+    %br
+    %br
+    %p
+      = f.hidden_field :board_id
+    %p
+      = f.submit "Update"
+
+  %h3{'style' => "display:inline;"}
+    Rules
+  = link_to "Add", :controller => "rules", :action => "new", :decree_id => @decree.id
+
+  - @decree.rules.each do |rule|
+    = render :partial => rule

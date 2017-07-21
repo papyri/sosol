@@ -1,0 +1,48 @@
+
+= stylesheet_link_tag "board"
+
+%header
+  %h1
+    New decree for
+    = @board.title
+    board
+
+.sosolcard
+  = form_for(@decree) do |f|
+    = f.error_messages
+
+    %p
+      = f.label :action
+      .select-container.small
+        = f.select :action, @board.result_actions_hash
+      %br
+      The resulting action of the decree when the trigger is met.
+
+    %br
+    %br
+
+    %p
+      = f.label :trigger
+      = f.text_field :trigger, :size => 2
+      .select-container.small
+        = f.select :tally_method, Decree.tally_methods_hash
+      %br
+      The number of votes or the percentage that will trigger the action.
+
+    %br
+    %br
+
+    %p
+      = f.label :choices
+      = f.text_field :choices
+      %br
+      The choices that constitute a vote for this decree. Separate by spaces (i.e. yes no defer).
+
+    = f.hidden_field :board_id
+
+    %br
+    %br
+
+    %p
+      = f.submit "Create"
+
