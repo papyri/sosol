@@ -1,0 +1,38 @@
+%h1
+  Listing comments
+%table
+  %tr
+    %th
+      Comment
+    %th
+      User
+    %th
+      Publication
+    %th
+      Identifier
+    %th
+      Git Hash
+    %th
+      Reason
+  - for comment in @comments
+    %tr
+      %td
+        = h comment.comment
+      %td
+        = h comment.user_id
+      %td
+        = h comment.publication_id
+      %td
+        = h comment.identifier_id
+      %td
+        = h comment.git_hash
+      %td
+        = h comment.reason
+      %td
+        = link_to 'Show', comment
+      %td
+        = link_to 'Edit', edit_comment_path(comment)
+      %td
+        = link_to 'Destroy', comment, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New comment', new_comment_path
