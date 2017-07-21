@@ -1,17 +1,18 @@
-%header
-  %h1
-    Commit
-    = @commit[:id][0..6]
-    for
-    %em
+#main
+  =# render :partial => 'identifiers/edit_bar'
+  .site
+    %h1
+      Commit
+      = @commit[:id][0..6]
+      for
       = @identifier.title
-  %h2
-    from publication
-    = @identifier.publication.title
-= render :partial => "common/flash_all"
-.sosolcard
-  %h2
-    = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
-  = render :partial => "common/commit_box", :locals => {:identifier => @identifier, :commit => @commit, :prev_commit => @prev_commit, :next_commit => @next_commit}
-#edit.sosolcard
-  = render :partial => 'common/diff', :object => @diff
+      from publication
+      = @identifier.publication.title
+      %br
+    %h3
+      = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
+    %br
+    = render :partial => "common/commit_box", :locals => {:identifier => @identifier, :commit => @commit, :prev_commit => @prev_commit, :next_commit => @next_commit}
+    %br
+    #edit
+      = render :partial => 'common/diff', :object => @diff

@@ -1,0 +1,21 @@
+%header
+  %h1
+    History for
+    %em
+      = @identifier.title
+  %h2
+    from publication
+    = @identifier.publication.title
+= render :partial => "common/flash_all"
+.sosolcard
+  %h3
+    = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
+  #edit
+    %ul
+      - for commit in @identifier.get_commits
+        - message = commit[:message].split("\n").first || '(no message)'
+        %li
+          = link_to html_escape(message.force_encoding("UTF-8")), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)
+          %em 
+            By: 
+            = commit[:committer_name].force_encoding("UTF-8")
