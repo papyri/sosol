@@ -30,6 +30,7 @@ module Sosol
     config.filter_parameters += [:password]
 
     # Configure custom application parameters
+    # see also config/initializers/site.rb which has site specific parameters now
     config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
     config.canonical_repository = File.join(config.repository_root, 'canonical.git')
     config.rpx_base_url = 'https://rpxnow.com'
