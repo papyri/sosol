@@ -1,9 +1,10 @@
 = stylesheet_link_tag "community"
 
-%h1
-  = "New community"
+%header
+  %h1
+    = "New community"
 
-.community
+.community.sosolcard
   = form_for(@community) do |f|
     = f.error_messages
   

@@ -1,7 +1,8 @@
 = stylesheet_link_tag "community"
-%h1
-  = "Editing " + @community.format_name + " community"
-.community
+%header
+  %h1
+    = "Editing " + @community.format_name + " community"
+.community.sosolcard
 
   = form_for(@community) do |f|
     = f.error_messages
@@ -66,5 +67,7 @@
     = admin.name
     %br
   
-  = link_to 'Show', @community
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Show', @community, :class => 'btn bg-sdw'
   
