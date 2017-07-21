@@ -1,0 +1,17 @@
+.sosolcard
+  %div{:class => "info-notice"}
+    %i{:class => "fa fa-info-circle"}
+    %span Please confirm that you want to associate the institutional account identifier for
+      %strong
+        = h @display_id
+      with the user account for
+      = @current_user.full_name
+      (
+      = @current_user.email
+      )
+
+  = form_tag("associate_submit") do
+    %br
+      = submit_tag "Confirm"
+      = submit_tag "Cancel"
+

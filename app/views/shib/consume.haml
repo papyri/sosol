@@ -1,29 +1,27 @@
-.sosolcard
-  %div{:class => "info-notice"}
-    %i{:class => "fa fa-info-circle"}
-    %span You've authenticated as
-      %strong
-        = h @display_id
-    %p
-      You must to choose a nickname to complete the sign-up process.
-    %p
-      %strong
-        Note: this nickname will be visible to all users of the platform.
-  = form_for :new_user, :url => { :action => "create_submit" } do |f|
-    %table
-      %tr
-        %th.label
-          Nickname
-        %td
-          = f.text_field :name, :value => @name
-      %tr
-        %th.label
-          Full Name
-        %td
-          = f.text_field :full_name, :value => @full_name
-      %tr
-        %th.label
-          E-Mail
-        %td
-          = f.text_field :email, :value => @email
-    = submit_tag "Create"
+%div
+  %span You've authenticated as
+    %strong
+      = h @display_id
+  %p
+    You must to choose a nickname to complete the sign-up process.
+  %p
+    %strong
+      Note: this nickname will be visible to all users of the platform.
+= form_for :new_user, :url => { :action => "create_submit" } do |f|
+  %table
+    %tr
+      %th.label
+        Nickname
+      %td
+        = f.text_field :name, :value => @name
+    %tr
+      %th.label
+        Full Name
+      %td
+        = f.text_field :full_name, :value => @full_name
+    %tr
+      %th.label
+        E-Mail
+      %td
+        = f.text_field :email, :value => @email
+  = submit_tag "Create"

@@ -1,10 +1,10 @@
 -if ShibHelper::shib_enabled?
   #shib_login
-    %h2 Or use Insitutional Credentials:
+    =label_tag 'Or add an Institutional Account from:'
     #wayf_select_form{:class=>'clearfix'}
       -if ShibHelper::num_idps < 3
-        - idps = ShibHelper::get_idp_list
-        - idps.each do |idp|
+        - @idps = ShibHelper::get_idp_list
+        - @idps.each do |idp|
           = form_for :new_user, :url => { :action => "signin", :controller=> "shib", :protocol => 'https' } do |f|
             %input{:type => "hidden", :name=>"idp", :value=>"#{idp[:key]}"}
             %button{:type=>"submit"} 
@@ -12,5 +12,4 @@
       - else
         = form_for :new_user, :url => { :action => "signin", :controller=> "shib", :protocol => 'https' } do |f|   
           =select_tag "idp", options_for_select(ShibHelper::get_idp_hash)
-          =submit_tag "Sign In"
-
+          =submit_tag "Sign In"      
