@@ -1,8 +1,4 @@
 :agents:
-  :recogito:
-    :uri_match: "http://pelagios.org/recogito#version1.0"
-    :transformations:
-      :OACIdentifier: "/data/xslt/oac/recogito_to_oac.xsl"
   :eagle:
     :uri_match: "http://www.eagle-network.eu"
     :transformations:
@@ -20,7 +16,7 @@
         :post: "json"
       :auth:
         :username: "Perseids"
-        :password: ""
+        :password: "YourPassword"
   :googless:
     :uri_match: "https://docs.google.com/spreadsheet"
     :get_url: "http://spreadsheets.google.com/feeds/list/WORKSHEET_ID/od6/public/values"
@@ -39,10 +35,16 @@
     :get_url: "http://cts.perseids.org/api/cts/?request=GetPassage&urn=URN"
     :transformations:
       :OaCiteIdentifier: "/data/xslt/cite/cts5_to_oa_cite.xsl"
-  :syriaca_github:
-    :uri_match: "https://github.com/perseids-project/srophe-app-data"
+  :sample_github:
+    :uri_match: "https://github.com/sampleorg/samplerepo"
     :type: "github"
-    :post_url: "http://services2.perseids.org/flask-github-proxy/perseids_syriaca/push/<PATH>"
+    :post_url: "http://fgh.perseids.org/flask-github-proxy/perseids_sample/push/<PATH>"
     :timeout: 3600
-    :client_secret: "yoursecrethere"
+    :client_secret: "YourSecret"
     :log_message: "<ID> Edited by <USER> via Perseids."
+  :srophe_processor:
+    :uri_match: "http://syriaca.org/"
+    :type: "srophe_processor"
+    :post_url: "http://wwwb.library.vanderbilt.edu/exist/apps/srophe-admin/modules/services/sosol-pp.xql"
+    :apikey: "YourKey"
+
