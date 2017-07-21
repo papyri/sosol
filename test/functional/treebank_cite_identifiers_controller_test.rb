@@ -3,6 +3,7 @@ require 'test_helper'
 if Sosol::Application.config.site_identifiers.split(',').include?('TreebankCiteIdentifier')
   class TreebankCiteIdentifiersControllerTest < ActionController::TestCase
     setup do
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @user = FactoryGirl.create(:user)
       @user2 = FactoryGirl.create(:user)
       @request.session[:user_id] = @user.id

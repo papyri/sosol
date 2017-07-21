@@ -3,6 +3,7 @@ require 'test_helper'
 if Sosol::Application.config.site_identifiers.split(',').include?('CitationCTSIdentifier')
   class CtsPublicationsControllerTest < ActionController::TestCase
     def setup
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @user = FactoryGirl.create(:user, :name => "Creator")
       @request.session[:user_id] = @user.id
     end

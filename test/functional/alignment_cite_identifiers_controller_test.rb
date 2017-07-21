@@ -4,6 +4,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('AlignmentCite
   class AlignmentCiteIdentifiersControllerTest < ActionController::TestCase
 
     setup do
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @user = FactoryGirl.create(:user)
       @request.session[:user_id] = @user.id
       @publication = FactoryGirl.create(:publication, :owner => @user, :creator => @user, :status => "new")

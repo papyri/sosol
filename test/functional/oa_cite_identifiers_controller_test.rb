@@ -4,6 +4,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
   class OaCiteIdentifiersControllerTest < ActionController::TestCase
 
     def setup
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @user = FactoryGirl.create(:user)
       @user2 = FactoryGirl.create(:user)
       @request.session[:user_id] = @user.id
@@ -217,6 +218,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('OaCiteIdentif
 
     context "with external agent content" do
       setup do
+        ApplicationController::prepend_view_path 'app/views_perseids'
         file = File.read(File.join(File.dirname(__FILE__), '../unit/data', 'oacite1.xml'))
         @identifier = OaCiteIdentifier.new_from_supplied(@publication,
           "https://docs.google.com/spreadsheet/pub?key=0AsEF52NLjohvdGRFcG9KMzFWLUNfQ04zRUtBZjVSUHc&output=html",file,"import")

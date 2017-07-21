@@ -3,6 +3,7 @@ require 'test_helper'
 if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifier')
   class CitePublicationsControllerTest < ActionController::TestCase
     def setup
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @user = FactoryGirl.create(:user)
       @request.session[:user_id] = @user.id
     end
@@ -42,6 +43,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifie
     context "with stubbed url agent" do
 
       setup do
+        ApplicationController::prepend_view_path 'app/views_perseids'
         @client = stub("url")
         @client.stubs(:get_content).returns(File.read(File.join(File.dirname(__FILE__), 'data', 'updatetb.xml')))
         AgentHelper.stubs(:get_client).returns(@client)
@@ -101,6 +103,7 @@ if Sosol::Application.config.site_identifiers.split(',').include?('CiteIdentifie
 
     context "with stubbed googless agent" do
       setup do
+        ApplicationController::prepend_view_path 'app/views_perseids'
         # use a mock Google agent so test doesn't depend upon live google doc
         # test document should produce 9 annotations (from 6 entries in the spreadsheet)
         @client = stub("googless")

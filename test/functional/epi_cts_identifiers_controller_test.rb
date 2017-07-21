@@ -3,6 +3,7 @@ require 'test_helper'
 if Sosol::Application.config.site_identifiers.split(',').include?('EpiCTSIdentifier')
   class EpiCtsIdentifiersControllerTest < ActionController::TestCase
     def setup
+      ApplicationController::prepend_view_path 'app/views_perseids'
       @creator = FactoryGirl.create(:user, :name => "Creator")
       @request.session[:user_id] = @creator.id
       @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
