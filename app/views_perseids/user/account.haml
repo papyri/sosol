@@ -1,0 +1,60 @@
+%header
+  %h1
+    == #{@current_user.name}'s Account Info
+.columns
+  .sosolcard
+    %h2
+      Personal
+    = form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
+      = f.error_messages
+      = f.label :full_name
+      = f.text_field :full_name
+      = f.label :affiliation
+      = f.text_field :affiliation
+      = f.label :email
+      = f.text_field :email
+      = f.submit "Update", {:class => 'btn revert'}
+
+    %ul.unstyled
+      %li
+        = link_to "Terms of Service", :controller => :user, :action => "show_terms"
+      %li
+        = link_to "Your Usage Stats", usage_url
+      -if ! @collection.nil?
+        %li
+          = link_to "Your Collection Data", @collection
+      %li
+        = link_to "Usage Stats By User", all_users_links_url
+  .rows
+    - if @current_user.community_memberships.length > 0
+      .sosolcard
+        %h2
+          Communities
+        %ul.unstyled
+          - @current_user.community_memberships.each do |cm|
+            %li
+              = cm.name
+    .sosolcard
+      %h2
+        Your Identities
+      - if @identifiers.length == 0
+        %p
+          No Identities are associated with this account.
+      - else
+        %p
+          Identities associated with this account:
+        %ul{:class => 'dashed btns'}
+          - @identifiers.each do |identifier|
+            %li
+              = h identifier.identifier
+              = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
+        %br{:clear => 'both'}
+        %p
+          = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
+          = render :partial => "shib/wayf_box_link"
+
+
+%script{:src => rpx_widget_url, :type => "text/javascript"}
+:javascript
+  RPXNOW.overlay = true;
+  RPXNOW.language_preference = 'en';

@@ -1,57 +1,64 @@
-%header
+#main
+  -# render :partial => "common/flash_all"
+
   %h1
     == #{@current_user.name}'s Account Info
-.columns
-  .sosolcard
-    %h2
-      Personal
-    = form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
-      = f.error_messages
+  - if @current_user.community_memberships.length > 0
+    %h3
+      Communities
+    - @current_user.community_memberships.each do |cm|
+      = cm.name
+      %br
+    
+  %h3
+    Personal
+  = form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f|
+    = f.error_messages
+    %p
       = f.label :full_name
+      %br
       = f.text_field :full_name
+    %p
       = f.label :affiliation
+      %br
       = f.text_field :affiliation
+    %p
       = f.label :email
+      %br
       = f.text_field :email
-      = f.submit "Update", {:class => 'btn revert'}
-
-    %ul.unstyled
-      %li
-        = link_to "Terms of Service", :controller => :user, :action => "show_terms"
-      %li
-        = link_to "Your Usage Stats", usage_url
-      -if ! @collection.nil?
+    %br
+    / %h3
+    /   Interface
+    / %p
+    /   Enter choices for languages (en de it fr la el es)
+    /   %br
+    /   = f.text_field :language_prefs
+    %p
+      %br
+      = f.submit "Update"
+  %br
+  %br
+  = link_to "Your Usage Stats", usage_url
+  %br
+  %br
+  = link_to "Usage Stats By User", all_users_links_url
+  %br
+  %br
+  %h3
+    Your OpenIDs
+  - if @identifiers.length == 0
+    %p
+      No OpenIDs are associated with this account.
+  - else
+    %p
+      OpenIDs associated with this account:
+    %ul
+      - @identifiers.each do |identifier|
         %li
-          = link_to "Your Collection Data", @collection
-      %li
-        = link_to "Usage Stats By User", all_users_links_url
-  .rows
-    - if @current_user.community_memberships.length > 0
-      .sosolcard
-        %h2
-          Communities
-        %ul.unstyled
-          - @current_user.community_memberships.each do |cm|
-            %li
-              = cm.name
-    .sosolcard
-      %h2
-        Your Identities
-      - if @identifiers.length == 0
-        %p
-          No Identities are associated with this account.
-      - else
-        %p
-          Identities associated with this account:
-        %ul{:class => 'dashed btns'}
-          - @identifiers.each do |identifier|
-            %li
-              = h identifier.identifier
-              = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
-        %br{:clear => 'both'}
-        %p
-          = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
-          = render :partial => "shib/wayf_box_link"
+          = h identifier.identifier
+          \-
+          = link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id
+  = link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;"
 
 
 %script{:src => rpx_widget_url, :type => "text/javascript"}
