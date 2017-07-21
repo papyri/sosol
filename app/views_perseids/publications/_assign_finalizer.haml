@@ -1,0 +1,15 @@
+- assignable_to = {}
+- current_user = publication.find_finalizer_user
+- publication.owner.users.each { |a| assignable_to[a.human_name] = a.id  if current_user.nil? || current_user.id != a.id  }
+- if assignable_to.size > 0
+  = form_for publication, :url => { :controller => "publications", :action => "assign_finalizer" }, :method => 'post' do |form|
+    = hidden_field_tag 'id', publication.id
+    %label Assign Finalizer
+    - if current_user 
+      %p Current Finalizer: #{current_user.human_name}
+    .select-container.small
+      = select_tag "user_id", options_for_select(assignable_to, :selected =>  current_user.nil? ? nil : current_user.id)
+      .carret
+        %i{:class => "fa fa-caret-down"}
+    = form.submit "Assign", :id => 'assign_submit', :class => 'btn small'
+  %div

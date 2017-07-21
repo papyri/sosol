@@ -1,0 +1,22 @@
+- assignable_to = {}
+- publication.assignable_voters.each { |a| assignable_to[a.human_name] = a.id }
+- assigned_voters = publication.assignments.collect { |a| a.user_id }
+- if assignable_to.size > 0
+  = form_for Assignment.new({:publication_id => publication.id}), :as => :assignment, :url => { :controller => "publications", :action => "assign", :id => publication.id } do |f|
+    = f.hidden_field :publication_id
+    -if assigned_voters.size < publication.owner.max_assignable
+      %label 
+        Assign Voters 
+        %br 
+        = publication.owner.max_assignable - assigned_voters.size 
+        more can be assigned
+      .select-container.small
+        = select_tag "voters", options_for_select(assignable_to, :selected => assigned_voters, :disabled => assigned_voters), :multiple => (publication.owner.max_assignable > 1) , :include_blank => true
+        .carret
+          %i{:class => "fa fa-caret-down"}
+      = f.submit "Assign", :id => 'assign_submit', :class => 'btn small'
+      %label Or
+    -else
+      %label Max voters assigned. Clear assignments to reassign. 
+    %div
+      = f.submit "Clear Assignments", :id => 'assign_clear', :class => 'btn small'
