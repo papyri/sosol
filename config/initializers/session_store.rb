@@ -2,7 +2,7 @@
 
 Sosol::Application.config.session_store :cookie_store, { 
   :key => '_sosol_session',
-  :secret => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6', 
+  :secret => 'developmentsecret', 
   :httponly => false
 }
 
