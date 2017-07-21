@@ -1,27 +1,35 @@
-= render "common/flash_all"
-.sosolcard
-  %div{:class => "info-notice"}
-    %i{:class => "fa fa-info-circle"}
-    %span
-      You've authenticated as
-      %strong
-        = h session[:identifier]
-    %p
-      If you want to sign up for a new account, please fill out the form below.
+#main.site
+  -# render :partial => "common/flash_all"
+  %p
+    You've authenticated as
+    %strong
+      = h session[:identifier]
+  %p{:style => "font-size:larger"}
+    If you already have a papyri.info account and use Google as your login
+    provider, we haven't been able to link your account to your new Google+ login (
+    %a{:href => "/docs/login_change", :target => "_blank"} more info
+    ). Click
+    = mail_to "hugh.cayless@duke.edu", "HERE",
+      subject: "Account change for [YOUR USERNAME]",
+      body: session[:identifier]
+    to send us your username and login info so that we can link your new login
+    to your account.
+  %p
+    If you want to sign up for a new account, please fill out the form below.
   = form_for :new_user, :url => { :action => "create_submit" } do |f|
     %table
       %tr
-        %th.label
+        %th
           Username
         %td
           = f.text_field :name, :value => @name.gsub(/\s+/, "")
       %tr
-        %th.label
+        %th
           Full Name
         %td
           = f.text_field :full_name, :value => @full_name
       %tr
-        %th.label
+        %th
           E-Mail
         %td
           = f.text_field :email, :value => @email

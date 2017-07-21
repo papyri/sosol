@@ -1,0 +1,28 @@
+= render "common/flash_all"
+.sosolcard
+  %div{:class => "info-notice"}
+    %i{:class => "fa fa-info-circle"}
+    %span
+      You've authenticated as
+      %strong
+        = h session[:identifier]
+    %p
+      If you want to sign up for a new account, please fill out the form below.
+  = form_for :new_user, :url => { :action => "create_submit" } do |f|
+    %table
+      %tr
+        %th.label
+          Username
+        %td
+          = f.text_field :name, :value => @name.gsub(/\s+/, "")
+      %tr
+        %th.label
+          Full Name
+        %td
+          = f.text_field :full_name, :value => @full_name
+      %tr
+        %th.label
+          E-Mail
+        %td
+          = f.text_field :email, :value => @email
+    = submit_tag "Create"
