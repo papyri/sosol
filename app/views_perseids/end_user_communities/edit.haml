@@ -1,0 +1,74 @@
+= stylesheet_link_tag "community"
+
+%header
+  %h1
+    = "Editing " + @community.format_name + " community"
+
+.community.sosolcard
+
+  = form_for(@community) do |f|
+    = f.error_messages
+  
+  
+    = f.label :name 
+    = @community.name
+    %br
+    
+    = f.label :friendly_name 
+    = f.text_field :friendly_name
+    %br
+
+    = f.label :description 
+    = f.text_field :description
+    %br
+
+    = f.label :allows_self_signup
+    = f.check_box :allows_self_signup
+    %br
+
+    = f.submit 'Update Above'
+
+  %br 
+  = render :partial => "edit_end_user"
+  %br 
+  %br
+
+.sosolcard
+  %h2
+    Boards
+  = link_to 'Add Board', :controller => "boards", :action => "new", :community_id => @community.id |
+  = link_to 'Change Priority Rank', :controller => "boards", :action => "rank", :community_id => @community.id
+  %br
+  %br
+  - community_boards = Board.ranked_by_community_id(@community.id)
+  - community_boards.each do |board|
+    = render :partial => "boards/listing", :object => board
+    %br
+    -# for board in @community.boards
+      = render :partial => "boards/listing" , :object => board
+      
+  
+  %br
+  %br
+  %h2 
+    Members
+  = link_to 'Add/Remove Members', :controller => "communities", :action => "add_member_page"
+  %br
+  %br
+  - @community.members.each do |member|
+    = member.name
+    %br
+  %br
+  %h2 
+    Admins
+  = link_to 'Add/Remove Admins', :controller => "communities", :action => "add_admin_page"
+  %br
+  %br
+  - @community.admins.each do |admin|
+    = admin.name
+    %br
+  
+%ul{:class => 'menu'}
+  %li
+    = link_to 'Show', @community, :class => 'btn bg-sdw'
+  
