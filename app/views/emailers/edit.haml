@@ -11,18 +11,22 @@
 
   %p
     = f.label :include_document
+    %br
     = f.check_box :include_document
 
   %p
     = f.label :include_comments
+    %br
     = f.check_box :include_comments
 
   %p
     = f.label :send_to_owner
+    %br
     = f.check_box :send_to_owner
 
   %p
     = f.label :send_to_all_board_members
+    %br
     = f.check_box :send_to_all_board_members
 
 
@@ -40,7 +44,7 @@
   %p
     = f.label :extra_addresses
     %br
-    = f.text_area :extra_addresses, :cols => "80", :rows => "2", :class => 'input'
+    = f.text_area :extra_addresses, :cols => "80", :rows => "2"
 
   %p
     = f.label :subject
@@ -54,6 +58,6 @@
     %span
       = I18n.t("mailers.form_message_hint")
     %br
-    = f.text_area :message, :cols => "80", :rows => "20", :class => 'input'
+    = f.text_area :message, :cols => "80", :rows => "20"
   %p
     = f.submit "Update"
