@@ -3,4 +3,5 @@
     %div{:class => "sosolcard flash-notice #{key}"}
       %i{:class => 'fa fa-info-circle'}
       = content_tag :span, msg.html_safe, :class => ["flash", key ].join(' '), :id => "notice_#{key}"
-  - flash.clear
+  - unless Rails.env.test?
+    - flash.clear
