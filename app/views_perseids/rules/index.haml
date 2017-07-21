@@ -1,0 +1,24 @@
+%header
+  %h1
+    Listing rules
+.sosolcard.no-bottom-margin
+  %table
+    %tr
+      %th
+        Floor
+      %th
+        Apply after Days
+    - for rule in @rules
+      %tr
+        %td
+          = h rule.floor
+        %td
+          = h rule.expire_days
+        %td
+          = link_to 'Show', rule
+        %td
+          = link_to 'Edit', edit_rule_path(rule)
+        %td
+          = link_to 'Destroy', rule, :confirm => 'Are you sure?', :method => :delete
+%br
+= link_to 'New rule', new_rule_path, :class => 'btn bg-sdw'
