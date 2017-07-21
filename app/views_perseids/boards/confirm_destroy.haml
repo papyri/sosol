@@ -1,0 +1,10 @@
+#main.site
+  %h2 
+    = @board.name
+   
+  %h2
+    = 'Are You Sure You Want to Delete this board, ' + @board.name + '? This action cannot be undone!'
+  %h1
+    = link_to "Delete", @board, :confirm => 'Are you sure?', :method => :delete 
+    = "or"
+    = link_to "Cancel", @board

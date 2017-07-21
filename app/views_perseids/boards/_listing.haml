@@ -1,0 +1,10 @@
+%b
+  = listing.title + " ( " + listing.friendly_name + " ) "
+  = listing.skip_finalize ? 'NON FINALIZING' : ''
+
+= link_to 'Show', listing
+= link_to 'Edit', edit_board_path(listing)
+-#= link_to 'Destroy', listing, :confirm => 'Are you sure?', :method => :delete
+
+= link_to 'Destroy', :controller => "boards", :id => listing.id, :action => "confirm_destroy"
+
