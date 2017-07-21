@@ -1,0 +1,21 @@
+.decree
+  
+  %b
+    Action:
+  = decree.action
+  %br
+  
+  %b
+    Trigger:
+  = decree.trigger
+  = decree.tally_method
+  %br
+    
+  %b
+    Choices:
+  = decree.choices
+  %br
+    
+  - if !defined?(hide_edit_link)
+    = link_to 'Edit', edit_decree_path(decree)
+    = link_to 'Delete', decree, :confirm => 'Are you sure?', :method => :delete
