@@ -1,29 +1,27 @@
-= stylesheet_link_tag 'perseids'
-= stylesheet_link_tag 'perseids_additions'
+= stylesheet_link_tag 'master'
+= stylesheet_link_tag 'master_additions'
+= stylesheet_link_tag 'editor'
 = javascript_include_tag "prototype"
 = javascript_include_tag "rails"
 = csrf_meta_tag
-.rows.modal.popup
-  .row
-    = render :partial => 'common/flash_all'
-  .row
-    .sosolcard
-      %h1
-        %header
-          Editing comment
+%p
+  = render :partial => 'common/flash_all'
+%p
+  %h1
+    Editing comment
 
-      = form_for(@comment) do |f|
-        = f.error_messages
-        - if @from
-          = hidden_field_tag 'from', @from
-        %p
-          = f.label :comment
-          %br
-          = f.text_field :comment
-        %p
-          = f.submit "Update"
+  = form_for(@comment) do |f|
+    = f.error_messages
+    - if @from
+      = hidden_field_tag 'from', @from
+    %p
+      = f.label :comment
+      %br
+      = f.text_field :comment
+    %p
+      = f.submit "Update"
 
-        - if @from
-          = link_to 'Back', polymorphic_url([@comment], :action => :ask_for, :publication_id => @comment.publication.id, :identifier_id => @comment.identifier ? @comment.identifier.id : ''), :class => 'btn card-size bg-sdw revert'
-        -else 
-          = link_to 'Back', comments_path, :class => 'btn card-size bg-sdw revert'
+    - if @from
+      = link_to 'Back', polymorphic_url([@comment], :action => :ask_for, :publication_id => @comment.publication.id, :identifier_id => @comment.identifier ? @comment.identifier.id : '')
+      -else 
+      = link_to 'Back', comments_path
