@@ -1,0 +1,62 @@
+-# render :partial => "common/flash_all"
+%header
+  %h1
+    Editing E-mailer for
+    = @emailer.board.title
+.sosolcard
+  = form_for(@emailer) do |f|
+    = f.error_messages
+
+
+    = f.label :when_to_send
+    .select-container
+      = f.select :when_to_send,  @whens
+
+    %p.checkbox
+      = f.label :include_document
+      = f.check_box :include_document
+
+    %p.checkbox
+      = f.label :include_comments
+      = f.check_box :include_comments
+
+    %p.checkbox
+      = f.label :send_to_owner
+      = f.check_box :send_to_owner
+
+    %p.checkbox
+      = f.label :send_to_all_board_members
+      = f.check_box :send_to_all_board_members
+
+
+
+    %h4{ :style => "display:inline;" }
+      Send to Other SoSol Users
+    -#= link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => @emailer.id
+    %br
+    - @emailer.users.each do |user|
+      = user.name
+      -#= link_to "x", :controller => "emailers", :action => "remove_member", :user_id => user.id
+    %br
+
+
+    %p
+      = f.label :extra_addresses
+      %br
+      = f.text_area :extra_addresses, :cols => "80", :rows => "2", :class => 'input'
+
+    %p
+      = f.label :subject
+      %span
+        = I18n.t("mailers.form_subject_hint")
+      %br
+      =f.text_field :subject , {:placeholder => "!TOPIC: !PUBLICATION_TITLE !IDENTIFIER_TITLES!", :size => "75"}
+
+    %p
+      = f.label :message
+      %span
+        = I18n.t("mailers.form_message_hint")
+      %br
+      = f.text_area :message, :cols => "80", :rows => "20", :class => 'input'
+    %p
+      = f.submit "Update"
