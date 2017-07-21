@@ -1,32 +1,30 @@
-%header
-  %h1
-    Listing decrees
-.sosolcard.no-bottom-margin
-  %table
+%h1
+  Listing decrees
+%table
+  %tr
+    %th
+      Action
+    %th
+      Trigger
+    %th
+      Choices
+    %th
+      Board
+  - for decree in @decrees
     %tr
-      %th
-        Action
-      %th
-        Trigger
-      %th
-        Choices
-      %th
-        Board
-    - for decree in @decrees
-      %tr
-        %td
-          = h decree.action
-        %td
-          = h decree.trigger
-        %td
-          = h decree.choices
-        %td
-          = h decree.board_id
-        %td
-          = link_to 'Show', decree
-        %td
-          = link_to 'Edit', edit_decree_path(decree)
-        %td
-          = link_to 'Destroy', decree, :confirm => 'Are you sure?', :method => :delete
+      %td
+        = h decree.action
+      %td
+        = h decree.trigger
+      %td
+        = h decree.choices
+      %td
+        = h decree.board_id
+      %td
+        = link_to 'Show', decree
+      %td
+        = link_to 'Edit', edit_decree_path(decree)
+      %td
+        = link_to 'Destroy', decree, :confirm => 'Are you sure?', :method => :delete
 %br
-= link_to 'New decree', new_decree_path, :class => 'btn bg-sdw'
+= link_to 'New decree', new_decree_path

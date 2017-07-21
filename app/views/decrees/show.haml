@@ -1,34 +1,31 @@
-.sosolcard.no-bottom-margin
-  %p
-    %b
-      Action:
-    = @decree.action
+%p
+  %b
+    Action:
+  = @decree.action 
 
-  %p
-    %b
-      Trigger:
-    = @decree.trigger
+%p
+  %b
+    Trigger:
+  = @decree.trigger
 
-  %p
-    %b
-      Choices:
-    = @decree.choices
-
-
-  %p
-    %b
-      Trigger:
-    = @decree.trigger
-    = @decree.tally_method
+%p
+  %b
+    Choices:
+  = @decree.choices
 
 
-  %p
-    %b
-      Board:
-    = @decree.board.title
+%p
+  %b
+    Trigger:
+  = @decree.trigger 
+  = @decree.tally_method 
 
-%ul{:class => 'menu'}
-  %li
-    = link_to 'Edit', edit_decree_path(@decree) , :class => 'btn bg-sdw'
-  %li
-    = link_to 'Back', decrees_path, :class => 'btn bg-sdw'
+
+%p
+  %b
+    Board:
+  = @decree.board.title
+
+= link_to 'Edit', edit_decree_path(@decree) 
+|
+= link_to 'Back', decrees_path
