@@ -215,37 +215,35 @@ class UserController < ApplicationController
     end
     communities << nil
 
-    # TODO  we need a better way to trigger site-specific functionality
-    is_perseids = SiteHelper::is_perseids?
+    show_community_pubs = SiteHelper::show_community_pubs?
 
     # for Perseids we want to show community info on the main dashboard
-    show_comm = is_perseids ?  {} : { :community_id => communities }
+    show_comm = show_community_pubs ?  {} : { :community_id => communities }
 
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }.merge(show_comm), :include => [{:identifiers => :votes}], :order => "updated_at DESC")
 
-    if is_perseids
+    if SiteHelper::show_assigned_pubs?
       @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
       @assigned_publications = Assignment.find_all_by_user_id(@current_user.id, :conditions => {:vote_id => nil }, :order => "updated_at DESC").collect{|a|a.publication}
     end
 
-    # TODO enable more fine grained control of events that are shown
-    if (@current_user.admin || @current_user.developer || ! is_perseids)    
+    if (SiteHelper::show_events? ||  @current_user.admin || @current_user.developer)
       @show_events = true
     end
   end
 
   #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
-    is_perseids = SiteHelper::is_perseids?
+    show_assigned_pubs = SiteHelper::show_assigned_pubs?
     cid = params[:community_id]
     @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    if is_perseids
+    if show_assigned_pubs
       @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
       @assigned_publications = Assignment.find_all_by_user_id(@current_user.id, :conditions => {:vote_id => nil }, :order => "updated_at DESC").select{|a| a.publication.community_id && a.publication.community_id == cid.to_i}.collect{|a|a.publication}
    end

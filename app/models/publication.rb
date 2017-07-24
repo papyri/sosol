@@ -1268,8 +1268,7 @@ class Publication < ActiveRecord::Base
       # @balmas Persieds wants to allow comments to remain even after 
       # withdrawing from review so that reviewers can do interim reviews 
       # this should maybe be something made configurable per board or community
-      is_perseids = Sosol::Application.config.site_name == 'Perseids'
-      unless is_perseids
+      unless SiteHelper::keep_comments?
         original_origin.comments.each do |c|
           c.destroy
         end
