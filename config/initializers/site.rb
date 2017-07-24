@@ -13,8 +13,8 @@ Sosol::Application.configure do
   config.site_cookie_domain = 'localhost'
   config.site_cookie_expire_minutes = 60
   config.current_terms_version = 0
-  config.site_show_community_pubs=true
-  config.site_show_assigned_pubs=true
+  config.site_show_community_pubs=false
+  config.site_show_assigned_pubs=false
   config.site_show_events=true
-  config.site_keep_comments=true
+  config.site_keep_comments=false
 end
