@@ -230,7 +230,7 @@ class UserController < ApplicationController
       @assigned_publications = Assignment.find_all_by_user_id(@current_user.id, :conditions => {:vote_id => nil }, :order => "updated_at DESC").collect{|a|a.publication}
     end
 
-    if (SiteHelper::show_events? ||  @current_user.admin || @current_user.developer)
+    if (!SiteHelper::hide_events? ||  @current_user.admin || @current_user.developer)
       @show_events = true
     end
   end

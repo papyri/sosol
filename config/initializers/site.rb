@@ -15,6 +15,6 @@ Sosol::Application.configure do
   config.current_terms_version = 0
   config.site_show_community_pubs=false
   config.site_show_assigned_pubs=false
-  config.site_show_events=true
+  config.site_hide_events=false
   config.site_keep_comments=false
 end

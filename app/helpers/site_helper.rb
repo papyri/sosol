@@ -17,9 +17,9 @@ module SiteHelper
     end
   end
 
-  def self.show_events?
+  def self.hide_events?
     begin
-      ! Sosol::Application.config.site_show_community_events
+      Sosol::Application.config.site_hide_events
     rescue
       true
     end
