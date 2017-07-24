@@ -8,8 +8,11 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'ad8f219816db8990ae5254e6c8ea4b25'
 
-  unless (defined?(Sosol::Application.config.site_views)).nil?
+  begin
     prepend_view_path Sosol::Application.config.site_views
+  rescue
+    # checking for defined? on the config setting is behaving very flaky
+    # if we catch an exception it means it wasn't defined
   end
   
   # See ActionController::Base for details 
