@@ -10,7 +10,7 @@ module SiteHelper
   end
 
   def self.show_events?
-    (defined?(Sosol::Application.config.site_show_events).nil? || Sosol::Application.config.site_show_community_events
+    (defined?(Sosol::Application.config.site_show_events)).nil? || Sosol::Application.config.site_show_community_events
   end
 
   def self.keep_comments?
