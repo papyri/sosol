@@ -5,7 +5,7 @@ module SiteHelper
     ! defined?(Sosol::Application.config.site_show_community_pubs) || Sosol::Application.config.site_show_community_pubs
   end
 
-  def self.show_all_pubs?
+  def self.show_assigned_pubs?
     ! defined?(Sosol::Application.config.site_show_assigned_pubs) || Sosol::Application.config.site_show_assigned_pubs
   end
 
