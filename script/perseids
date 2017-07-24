@@ -1,9 +1,0 @@
-#!/bin/sh
-# these are the steps to deploy the Perseids version of SoSOL
-
-# git clone https://github.com/PersusDL/perseids_private_config
-# cp -r private_config/* config
-# jruby -S warble war:clean
-# jruby -S warble war
-# curl --user admin:password --upload-file sosol.war "http://localhost:8080/manager/deploy?path=/sosol&update=true"
-
