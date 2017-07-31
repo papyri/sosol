@@ -126,7 +126,7 @@ module CollectionsHelper
     rescue CollectionsClient::ApiError => e
       if e.code == 404 && create_if_missing
         if (self.post_collection(collection))
-          api_client.collections_id_members_post(collection.id,member)
+          api_client.collections_id_members_post(collection.id,[member])
         end
       else
         Rails.logger.error(e)
@@ -145,7 +145,7 @@ module CollectionsHelper
       Rails.logger.info("No Collections API Client Defined")
       return
     end
-    return api_client.collections_post(collection)
+    return api_client.collections_post([collection])
   end
 
   # Get all members of a collection (used for testing only)
@@ -267,6 +267,7 @@ module CollectionsHelper
     collection.capabilities.restricted_to_type = params['datatype'].nil? ? '' : params['datatype']
     collection.capabilities.max_length = -1
     collection.properties = CollectionsClient::CollectionProperties.new
+    #collection.properties.date_created = Time.now.utc
     collection.properties.license = "https://creativecommons.org/licenses/by-sa/4.0/"
     collection.properties.has_access_restrictions = false
     collection.properties.model_type = "http://rd-alliance.org/ns/collection"

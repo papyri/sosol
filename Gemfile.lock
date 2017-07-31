@@ -7,9 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/RDACollectionsWG/ruby-collections-client
-  revision: ad360a59d0ec35b80063d25a35d532c5ba088a55
+  revision: 349c2f60b72e1b7edff5b24cd332f29aeec0d3d3
+  tag: v1.0.0
   specs:
-    rda-collections-client (0.0.4)
+    rda-collections-client (1.0.0)
       json (~> 1.8, >= 1.8.3)
       typhoeus (~> 1.0, >= 1.0.1)
 

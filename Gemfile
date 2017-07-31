@@ -61,6 +61,6 @@ gem 'doorkeeper', "=2.2.2"
 gem 'swagger-blocks'
 gem 'bagit'
 gem 'validatable'
-gem 'rda-collections-client', :git => 'https://github.com/RDACollectionsWG/ruby-collections-client'
+gem 'rda-collections-client', :git => 'https://github.com/RDACollectionsWG/ruby-collections-client', :tag => 'v1.0.0'
 
 
