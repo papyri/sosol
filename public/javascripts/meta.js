@@ -96,25 +96,6 @@ function toggleMentionedDates(dateId){
 
 /**** multi ****/
 
-function multiAdd(id, pathToActualValue)
-{
-  if($$('#multiPlus_' + id + ' > input') && $$('#multiPlus_' + id + ' > input').length){
-    var value = $$('#multiPlus_' + id + ' > input')[0].value;
-    var idSuffix   = typeof pathToActualValue !== 'undefined' ? '_' + pathToActualValue : '';
-    var nameSuffix = typeof pathToActualValue !== 'undefined' ? '[' + pathToActualValue.replace(/_/g, '][') + ']' : '';
-
-    var index = multiGetNextIndex(id);
-
-    var item = '<li>' +
-               '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']' + nameSuffix + '" id="hgv_meta_identifier_' + id + '_' + index + idSuffix + '" class="observechange">' +
-               '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-               '  <span class="move">o</span>' +
-               '</li>';
-
-    multiUpdate(id, item);
-  }
-}
-
 function multiAddCitedLiterature(){
   var target     = $('citedLiterature_target').value;
   var pagination = $('citedLiterature_pagination').value;
@@ -471,20 +452,6 @@ function multiAddMentionedDate()
   mentionedDateNewDate($('hgv_meta_identifier_mentionedDate_' + index +  '_date1'));
 }
 
-function multiGetNextIndex(id)
-{
-  var path = '#multiItems_' + id + ' > li > input';
-
-  var index = 0;
-  $$(path).each(function(item){
-    var itemIndex = item.id.match(/(\d+)[^\d]*$/)[1] * 1;
-    if(index <= itemIndex){
-      index = itemIndex + 1;
-    }
-  });
-  return index;
-}
-
 function multiUpdate(id, newItem)
 {
   $('multiItems_' + id).insert(newItem);
@@ -588,7 +555,7 @@ function checkNotAddedMultiples(){
     multiAddFigures();
   }
 
-  multiAdd('contentText');
+  multiAdd('contentText', 6);
   multiAdd('illustrations');
   multiAdd('otherPublications');  
   multiAdd('translationsDe');

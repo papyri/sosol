@@ -11,6 +11,6 @@
         %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + key.to_s}
     %input.observechange
-    %span{:onclick => "multiAdd('" + key.to_s + "'" + (defined?(pathToActualValue) ? ", '" + pathToActualValue.join('_') + "'" : '') + ")", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+    %span{:onclick => "multiAdd('" + key.to_s + "'" + (defined?(pathToActualValue) ? ", 0, '" + pathToActualValue.join('_') + "'" : '') + ")", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

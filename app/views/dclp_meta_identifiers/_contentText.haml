@@ -35,6 +35,6 @@
           %span.move{:title => I18n.t('tooltip.multiMove')} o
     %p.add{:id => 'multiPlus_contentText'}
       %input.observechange
-      %span{:onclick => "multiAdd('contentText')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+      %span{:onclick => "multiAdd('contentText', 6)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
     = javascript_tag "Sortable.create('multiItems_contentText', {overlap: 'horizontal', constraint: false, handle: 'move'});"

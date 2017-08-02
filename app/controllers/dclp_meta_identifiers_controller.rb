@@ -114,7 +114,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           params[:hgv_meta_identifier][:printedIllustration].delete_if{|key, value| value.empty? }
         end
         if params[:hgv_meta_identifier][:onlineResource]
-          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
+          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value.kind_of?(Hash) || !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
         end
 
       end
@@ -143,7 +143,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         end
 
         # contentText: add overview
-        if params[:hgv_meta_identifier][:overview]
+        if params[:hgv_meta_identifier][:overview] && !params[:hgv_meta_identifier][:overview].empty?
           overview = {'value' => params[:hgv_meta_identifier][:overview], 'attributes' => {'class' => 'overview'}}
           if params[:hgv_meta_identifier][:contentText]
             params[:hgv_meta_identifier][:contentText]['overview'] = overview
