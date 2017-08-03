@@ -38,8 +38,7 @@
           = text_field_tag baseChildren + '[author][phi]', (work.author ? work.author.phi : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorPhi'
           .clear
 
-          = label_tag baseChildren + '[author][children][certainty][value]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][children][certainty][value]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = hidden_field_tag baseChildren + '[author][children][certainty][value]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')
@@ -82,8 +81,7 @@
           =I18n.t('dclp.help.workTitleDate')
           .clear
 
-          = label_tag baseChildren + '[title][children][certainty][value]', I18n.t('dclp.label.workCertainty'), :class => 'meta workCertainty', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[title][children][certainty][value]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
+          = hidden_field_tag baseChildren + '[title][children][certainty][value]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
 
           %h6=I18n.t('dclp.label.illustrationOnline')

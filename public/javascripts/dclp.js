@@ -259,11 +259,9 @@ function multiAddWork(e){
 '                      <label class="meta workAuthorPhi" for="hgv_meta_identifier_work_' + workIndex +'_children_author_phi">Phi</label>' +
 '                      <input class="observechange workAuthorPhi" id="hgv_meta_identifier_work_' + workIndex +'_children_author_phi" name="hgv_meta_identifier[work][' + workIndex +'][children][author][phi]" type="text">' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value">Certainty</label>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][children][certainty][value]" type="text">' +
+'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][children][certainty][value]" type="hidden">' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCorresp" for="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp">Corresp</label>' +
-'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][author][corresp]" type="text">' +
+'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][author][corresp]" type="hidden">' +
 '                      <div class="clear"></div>' +
 '                      <h6>Online Resources</h6>' +
 '                      e.g. classical works, knowledge base' +
@@ -310,11 +308,9 @@ function multiAddWork(e){
 '                      <div class="clear"></div>' +
 '                      e.g. -412 to 120' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCertainty" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value">Certainty</label>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="text">' +
+'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="hidden">' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workCorresp" for="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp">Corresp</label>' +
-'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][title][corresp]" type="text">' +
+'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][title][corresp]" type="hidden">' +
 '                      <div class="clear"></div>' +
 '                      <h6>Online Resources</h6>' +
 '                      e.g. classical works, knowledge base' +
@@ -390,9 +386,9 @@ function multiAddWorkExtra(plusButton){
 '                              <option value="side">Side</option>' +
 '                              <option value="generic">Generic</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
-'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="text">' +
-'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="text">' +
-'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="text">' +
+'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="hidden">' +
+'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="hidden">' +
+'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="hidden">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                              <span class="move" title="move">o</span>' +
 '                            </li>';
