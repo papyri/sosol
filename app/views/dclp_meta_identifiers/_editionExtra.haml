@@ -5,15 +5,15 @@
       %li
         = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
         = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
-        = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', extra.corresp, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-        = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
-        = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', extra.corresp, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
 
     - if extraList.length < 3
       - extraList.length.upto(2) do |index|
         %li
-          = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, nil), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      nil , :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+          = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, nil), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      nil , :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
