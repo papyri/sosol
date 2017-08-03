@@ -10,5 +10,5 @@ data/xslt/epidoc:
 
 data/xslt/pn/navigator:
   :type: git
-  :repository: git://github.com/papyri/navigator.git
+  :repository: git://github.com/DCLP/navigator.git
   :revision: 7661cda98c35b5472b499b5abdfb6055a28a31c3
