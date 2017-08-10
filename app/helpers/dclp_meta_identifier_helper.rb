@@ -207,12 +207,25 @@ module DclpMetaIdentifierHelper
 
   module DclpWork
 
+    # List of all available authorities
+    # - *Returns* :
+    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
+    def DclpWork.authorityOptions
+      [
+        [I18n.t('work.authority.tlg'),  :tlg],
+        [I18n.t('work.authority.stoa'), :stoa],
+        [I18n.t('work.authority.cwkb'), :cwkb],
+        [I18n.t('work.authority.phi'),  :phi],
+        [I18n.t('work.authority.tm'),   :tm]
+      ]
+    end
+
     # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpWork.subtypeOptions
       [
-        [I18n.t('work.subtype.ancient'),   :ancient],
+        [I18n.t('work.subtype.ancient'), :ancient],
         [I18n.t('work.subtype.ancientQuote'), :ancientQuote]
       ]
     end
@@ -291,16 +304,17 @@ module DclpMetaIdentifierHelper
 
     # Data structure for publication information
     class Author
-      attr_accessor :name, :language, :tlg, :cwkb, :phi, :stoa, :certainty, :ref, :corresp
+      attr_accessor :name, :language, :tlg, :cwkb, :phi, :stoa, :authority, :certainty, :ref, :corresp
       def initialize init = nil
         @name      = init[:value]
-        
 
         @ref       = init[:attributes][:ref] ? init[:attributes][:ref] : []
         @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @authority = {:phi => @phi, :tlg => @tlg, :stoa => @stoa, :cwkb => @cwkb}
+
         @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
         @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
