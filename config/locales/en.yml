@@ -498,6 +498,12 @@ en:
       page: page
       chapter: chapter
       poem: poem
+    authority:
+      tlg: TLG
+      stoa: Stoa
+      cwkb: CWKB
+      phi: Phi
+      tm: TM
 
   provenance:
     epoch:
