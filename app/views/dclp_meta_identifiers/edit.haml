@@ -12,7 +12,7 @@
 
         %h4.category.edition
           %a{:name => 'Edition'}=I18n.t('dclp.legend.edition')
-        .editbox{:style => 'display: block;'}
+        .editbox{:style => 'display: none;'}
           = render :partial => 'dclp_meta_identifiers/edition'
 
           .clear
@@ -25,7 +25,7 @@
 
         %h4.category.work
           %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
-        .editbox{:style => 'display: none;'}
+        .editbox{:style => 'display: block;'}
 
           = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt displayName', :title => @identifier.configuration.xpath(:titleStmt)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
