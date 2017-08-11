@@ -1,11 +1,29 @@
 /* **** W O R K **** */
 
-function workAuthorNameChange(el){
-  //console.log('workAuthorChange');
-}
+function workAuthorityChange(el){
+  var select = $(el);
+  var key = select.value;
+  var oldKey = select.readAttribute('data');
+  var caption = select.select('option[value=' + key + ']')[0].innerHTML;
+  var valid = true;
 
-function workAuthorNumberChange(el){
-  //console.log('workAuthorNumberChange');
+  select.up().siblings('select').each(function(sib){
+    if(key == sib.select('select')[0].value){
+      valid = false;
+    }
+  });
+
+  if(!valid){
+    alert(caption + ' cannot be used twice.');
+    select.value = oldKey;
+  } else {
+    var input = select.siblings('input')[0];
+    input.setAttribute('name', input.readAttribute('name').replace(/\[[^\]]+\]$/, '[' + key + ']'));
+    input.setAttribute('id', input.readAttribute('id').replace(/_[^_]+$/, '_' + key));
+    select.setAttribute('data', key);
+  }
+
+  return valid;
 }
 
 /* **** E D I T I O N **** */
@@ -412,10 +430,49 @@ function multiAddWorkExtraAnd(plusButton){
   multiUpdate('workExtra' + workIndex, item);
 }
 
+function multiAddWorkAuthorAuthority(plusButton){
+  multiAddWorkAuthority(plusButton, 'author');
+}
+
+function multiAddWorkTitleAuthority(plusButton){
+  multiAddWorkAuthority(plusButton, 'title');
+}
+
+function multiAddWorkAuthority(plusButton, mode){
+  var workIndex = plusButton.up(3).identify().substring(5);
+  var authorityList = {tlg: 'TLG', stoa: 'Stoa', phi: 'Phi', cwkb: 'CWKB', tm: 'TM'};
+  if(mode == 'author'){
+    delete authorityList.tm;
+  } else if(mode == 'title') {
+    delete authorityList.phi;
+  }
+
+  var authorityCandidates = Object.keys(authorityList);
+  plusButton.up(2).select('ul > li > select').each(function(el){
+    authorityCandidates.splice(authorityCandidates.indexOf(el.value), 1);
+  });
+
+  if(authorityCandidates.length > 0){
+  var item = '<li><select class="observechange workAuthority" data="phi" id="" name="" onchange="return workAuthorityChange(this);">';
+
+  for(var key in authorityList){
+    item += '<option value="' + key + '"' + (authorityCandidates[0] == key ? ' selected="selected"' : '') + '>' + authorityList[key] + '</option>';
+  }
+
+  item += '</select>' +
+'                            <input class="observechange workAuthority" id="hgv_meta_identifier_work_' + workIndex + '_children_' + mode + '_' + authorityCandidates[0] + '" name="hgv_meta_identifier[work][' + workIndex + '][children][' + mode + '][' + authorityCandidates[0] + ']" value="" type="text">' +
+'                            <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
+'                            <span class="move" title="move">o</span>' +
+'                          </li>';
+  multiUpdate('work' + mode.charAt(0).toUpperCase() + mode.slice(1) + 'Authority' + workIndex, item);
+  } else {
+    alert('You cannot add any further authority numbers.');
+  }
+}
+
 Event.observe(window, 'load', function() {
   $$('.editionubertype').each(function(el){el.observe('change', function(ev){ editionUbertypeChange(el); });});
   $$('.addEdition').each(function(el){el.observe('click', function(ev){ multiAddEditionRaw(el); });});
   $$('.addWork').each(function(el){el.observe('click', function(ev){ multiAddWork(el); });});
   $$('input.editionLink').each(function(el){editionLinkChange(el);});
 });
-
