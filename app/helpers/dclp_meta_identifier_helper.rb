@@ -210,14 +210,22 @@ module DclpMetaIdentifierHelper
     # List of all available authorities
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpWork.authorityOptions
-      [
+    def DclpWork.authorityOptions(mode = null)
+      options = [
         [I18n.t('work.authority.tlg'),  :tlg],
         [I18n.t('work.authority.stoa'), :stoa],
         [I18n.t('work.authority.cwkb'), :cwkb],
         [I18n.t('work.authority.phi'),  :phi],
         [I18n.t('work.authority.tm'),   :tm]
       ]
+
+      if(mode == :author)
+        options.delete_if {|x| x[1] == :tm}
+      elsif(mode == :title)
+        options.delete_if {|x| x[1] == :phi}
+      end
+
+      options
     end
 
     # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
