@@ -327,7 +327,7 @@ module DclpMetaIdentifierHelper
 
     # Data structure for publication information
     class Title
-      attr_accessor :name, :language, :tlg, :cwkb, :tm, :stoa, :certainty, :ref, :date, :from, :to, :corresp
+      attr_accessor :name, :language, :tlg, :cwkb, :tm, :stoa, :authority, :certainty, :ref, :date, :from, :to, :corresp
       def initialize init = nil
         @name      = init[:value]
         
@@ -336,6 +336,7 @@ module DclpMetaIdentifierHelper
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @authority = {:tm => @tm, :tlg => @tlg, :stoa => @stoa, :cwkb => @cwkb}
         @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
         
         @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
