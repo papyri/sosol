@@ -31,7 +31,7 @@
               %ul.items.multiItems_workAuthorAuthority{:id => 'multiItems_workAuthorAuthority' + workIndex.to_s}
                 - work.author.authority.each do |key, value|
                   %li
-                    = select_tag '', options_for_select(DclpWork.authorityOptions, key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
+                    = select_tag '', options_for_select(DclpWork.authorityOptions(:author), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
                     = text_field_tag baseChildren + '[author][' + key.to_s + ']', value, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority'
                     %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
                     %span.move{:title => I18n.t('tooltip.multiMove')} o
@@ -59,7 +59,7 @@
               %ul.items.multiItems_workTitleAuthority{:id => 'multiItems_workTitleAuthority' + workIndex.to_s}
                 - work.title.authority.each do |key, value|
                   %li
-                    = select_tag '', options_for_select(DclpWork.authorityOptions, key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
+                    = select_tag '', options_for_select(DclpWork.authorityOptions(:title), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
                     = text_field_tag baseChildren + '[title][' + key.to_s + ']', value, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority'
                     %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
                     %span.move{:title => I18n.t('tooltip.multiMove')} o

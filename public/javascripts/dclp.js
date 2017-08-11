@@ -440,7 +440,7 @@ function multiAddWorkTitleAuthority(plusButton){
 
 function multiAddWorkAuthority(plusButton, mode){
   var workIndex = plusButton.up(3).identify().substring(5);
-  var authorityList = {tlg: 'TLG', stoa: 'Stoa', phi: 'Phi', cwkb: 'CWKB', tm: 'TM'};
+  var authorityList = {tlg: 'TLG', stoa: 'Stoa', cwkb: 'CWKB', phi: 'Phi', tm: 'TM'};
   if(mode == 'author'){
     delete authorityList.tm;
   } else if(mode == 'title') {
