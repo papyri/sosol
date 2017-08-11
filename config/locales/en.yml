@@ -154,13 +154,13 @@ en:
       workTm: TM
       workCwkb: CWKB
       workStoa: Stoa
+      workAuthority: Digital/Online identifiers for this author
       workInternetResources: Internet Resources
       workInternetResourcesDescription: e.g. classical works, knowledge base
       workCertainty: Certainty
       workCorresp: Corresp
       workAlternative: alternative work
       workName: TM Work
-      workTm: TM
       workDate: Year of Creation
       workDateTo: to
       workAddAlternative: add alternative
