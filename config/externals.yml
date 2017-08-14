@@ -5,12 +5,12 @@ lib/rxsugar:
 
 data/xslt/epidoc:
   :type: subversion
-  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt
+  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/0-example-p5-xslt-LOCKED
   :revision: 1755
 
 data/xslt/perseus/epidoc:
   :type: subversion
-  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt
+  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/0-example-p5-xslt-LOCKED
   :revision: 2380
 
 data/xslt/pn/navigator:
