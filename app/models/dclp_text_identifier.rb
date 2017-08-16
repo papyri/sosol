@@ -25,6 +25,9 @@ class DCLPTextIdentifier < DDBIdentifier
   # - *Returns* :
   #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
   def preview parameters = {}, xsl = nil
+    parameters.reverse_merge!(
+      "leiden-style" => "dclp"
+    )
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(self.xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
