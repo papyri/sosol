@@ -32,24 +32,35 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   # Call to test
   # localhost:3000/dclp_meta_identifiers/biblio_autocomplete?term=Clio
   def biblio_autocomplete
-    data = {}
+    data_array = []
     if !params[:term].nil? && /\A[^\d][^\d][^\d][^\d].*\Z/.match(params[:term])
-      uri = URI.parse('http://localhost:8080/exist/apps/papyrillio/autocomplete_json.xml?term=' + params[:term])
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth("admin", "papy")
-      response = http.request(request)
-      data = JSON.parse(response.body)
-
-      data_array = []
+      data = exist('http://localhost:8080/exist/apps/papyrillio/autocomplete_json.xml?term=' + params[:term])
       data.each do |key, value|
         if /\Ab\d+\Z/.match(key)
           data_array.push({:label => value, :value => key[1..-1]})
         end
       end
-
     end
     render json: data_array, content_type: 'application/json'
+  end
+
+  # Call to test
+  # localhost:3000/dclp_meta_identifiers/work_autocomplete=Aristo
+  def ancient_author_autocomplete
+    data = {}
+    if !params[:term].nil? && /\A[^\d]{4}.*\Z/.match(params[:term])
+      data = exist 'http://localhost:8080/exist/apps/papyrillio/autocompleteAncientAuthors_json.xml?term=' + params[:term]
+    end
+    render json: data['author'], content_type: 'application/json'
+  end
+
+  def exist url
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    request.basic_auth("admin", "papy")
+    response = http.request(request)
+    JSON.parse(response.body)
   end
 
   # - GET /publications/1/ddb_identifiers/1/preview
