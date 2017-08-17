@@ -141,7 +141,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://relaxng.org/ns/structure/1.0")
       @schema = verifier_factory.compileSchema(
-        "http://www.stoa.org/epidoc/schema/8.22/tei-epidoc.rng")
+        "http://www.stoa.org/epidoc/schema/8.23/tei-epidoc.rng")
     end
   end
 
