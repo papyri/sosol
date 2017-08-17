@@ -50,8 +50,13 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     data = {}
     if !params[:term].nil? && /\A[^\d]{4}.*\Z/.match(params[:term])
       data = exist 'http://localhost:8080/exist/apps/papyrillio/autocompleteAncientAuthors_json.xml?term=' + params[:term]
+      if data['author'].kind_of? Hash
+        data = [data['author']]
+      else
+        data = data['author']
+      end
     end
-    render json: data['author'], content_type: 'application/json'
+    render json: data, content_type: 'application/json'
   end
 
   def exist url
