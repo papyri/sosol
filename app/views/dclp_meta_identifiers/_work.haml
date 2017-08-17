@@ -18,7 +18,7 @@
           %h5
             Author
           = label_tag baseChildren + '[author][value]', I18n.t('dclp.label.workAuthorName'), :class => 'meta workAuthorName', :title => @identifier.configuration.xpath(:work)
-          = text_field_tag baseChildren + '[author][value]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName', :onchange => "workAuthorNameChange(this);"
+          = text_field_tag baseChildren + '[author][value]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName'
 
           = label_tag baseChildren + '[author][attributes][language]', I18n.t('biblio.label.language'), :class => 'meta workAuthorLanguage', :title => @identifier.configuration.xpath(:work)
           = select_tag baseChildren + '[author][attributes][language]', options_for_select(DclpWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
@@ -26,7 +26,7 @@
 
           .authorityContainer
             %h6{:title => work.author.ref.join("\n")}
-              =I18n.t('dclp.label.workAuthority')
+              =I18n.t('dclp.label.workAuthorAuthority')
             .multi
               %ul.items.multiItems_workAuthorAuthority{:id => 'multiItems_workAuthorAuthority' + workIndex.to_s}
                 - work.author.authority.each do |key, value|
@@ -54,7 +54,7 @@
 
           .authorityContainer
             %h6{:title => work.title.ref.join("\n")}
-              =I18n.t('dclp.label.workAuthority')
+              =I18n.t('dclp.label.workWorkAuthority')
             .multi
               %ul.items.multiItems_workTitleAuthority{:id => 'multiItems_workTitleAuthority' + workIndex.to_s}
                 - work.title.authority.each do |key, value|
@@ -92,5 +92,5 @@
 
     :javascript
       Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
-   
+      jQuery('input.workAuthorName').autocomplete({ source: window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/ancient_author_autocomplete' : '/dclp_meta_identifiers/ancient_author_autocomplete', delay: 500, minLength: 4, close: function(event, ui){ workAuthorNameChange(this); }});
   .clear

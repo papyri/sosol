@@ -1,5 +1,9 @@
 /* **** W O R K **** */
 
+function workAuthorNameChange(el){
+  var authorName = jQuery(el).val();
+}
+
 function workAuthorityChange(el){
   var select = $(el);
   var key = select.value;
@@ -244,121 +248,80 @@ function multiAddEditionRaw(e){
 '  <span title="delete" onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
 '  <span title="move" class="move">o</span>' +
 '</li>' +
-"<script>jQuery('.editionLink').autocomplete({ source: '/editor/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });</script>";
+"<script>jQuery('.editionLink').autocomplete({ source: '" + (window.location.href.indexOf('/editor/') > 0 ? '/editor' : '') + "/dclp_meta_identifiers/biblio_autocomplete', delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });</script>";
 
   multiUpdate('edition', item);
 }
 
-
 function multiAddWork(e){
   var workIndex = multiGetNextIndex('work');
-
+//' + workIndex +'
   var item = '<li class="work" id="work_' + workIndex +'" style="position: relative;">' +
 '                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_attributes_subtype" name="hgv_meta_identifier[work][' + workIndex +'][attributes][subtype]"><option value="ancient" selected="selected">Primary</option>' +
 '                      <option value="ancientQuote">Citation</option></select>' +
 '                      <div class="clear"></div>' +
-'                      <h5>' +
-'                        Author' +
-'                      </h5>' +
-'                      <label class="meta workAuthorName" for="hgv_meta_identifier_work_' + workIndex +'_children_author_value">TLG Name</label>' +
-'                      <input class="observechange workAuthorName" id="hgv_meta_identifier_work_' + workIndex +'_children_author_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][value]" onchange="workAuthorNameChange(this);" type="text">' +
-'                      <label class="meta workAuthorLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_author_attributes_language">Language</label>' +
+'                      <h5>Author</h5>' +
+'                      <label class="meta workAuthorName" for="hgv_meta_identifier_work_' + workIndex +'_children_author_value" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">TLG Name</label>' +
+'                      <input class="observechange workAuthorName ui-autocomplete-input" id="hgv_meta_identifier_work_' + workIndex +'_children_author_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][value]" value="" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" type="text">' +
+'                      <label class="meta workAuthorLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_author_attributes_language" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">Language</label>' +
 '                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_author_attributes_language" name="hgv_meta_identifier[work][' + workIndex +'][children][author][attributes][language]"><option value=""></option>' +
 '                      <option value="la">Latin</option>' +
 '                      <option value="grc">Greek</option></select>' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workAuthorTlg" for="hgv_meta_identifier_work_' + workIndex +'_children_author_tlg">TLG</label>' +
-'                      <input class="observechange workAuthorTlg" id="hgv_meta_identifier_work_' + workIndex +'_children_author_tlg" name="hgv_meta_identifier[work][' + workIndex +'][children][author][tlg]" onchange="workAuthorTlgChange(this);" type="text">' +
-'                      <label class="meta workAuthorCwkb" for="hgv_meta_identifier_work_' + workIndex +'_children_author_cwkb">CWKB</label>' +
-'                      <input class="observechange workAuthorCwkb" id="hgv_meta_identifier_work_' + workIndex +'_children_author_cwkb" name="hgv_meta_identifier[work][' + workIndex +'][children][author][cwkb]" type="text">' +
-'                      <div class="clear"></div>' +
-'                      <label class="meta workAuthorStoa" for="hgv_meta_identifier_work_' + workIndex +'_children_author_stoa">Stoa</label>' +
-'                      <input class="observechange workAuthorStoa" id="hgv_meta_identifier_work_' + workIndex +'_children_author_stoa" name="hgv_meta_identifier[work][' + workIndex +'][children][author][stoa]" type="text">' +
-'                      <label class="meta workAuthorPhi" for="hgv_meta_identifier_work_' + workIndex +'_children_author_phi">Phi</label>' +
-'                      <input class="observechange workAuthorPhi" id="hgv_meta_identifier_work_' + workIndex +'_children_author_phi" name="hgv_meta_identifier[work][' + workIndex +'][children][author][phi]" type="text">' +
-'                      <div class="clear"></div>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][children][certainty][value]" type="hidden">' +
-'                      <div class="clear"></div>' +
-'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_author_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][author][corresp]" type="hidden">' +
-'                      <div class="clear"></div>' +
-'                      <h6>Online Resources</h6>' +
-'                      e.g. classical works, knowledge base' +
-'                      <div class="clear"></div>' +
-'                      <div class="multi multi_ref">' +
-'                        <div class="multi ref" id="multi_work_' + workIndex +'_children_author_attributes_ref">' +
-'                          <ul class="items" id="multiItems_work_' + workIndex +'_children_author_attributes_ref"></ul>' +
-'                          <p class="add" id="multiPlus_work_' + workIndex +'_children_author_attributes_ref">' +
-'                            <input class="observechange">' +
-'                            <span onclick="multiAdd(\'work_' + workIndex +'_children_author_attributes_ref\')" title="✓">add</span>' +
+'                      <div class="authorityContainer">' +
+'                        <h6>Digital/Online identifiers for this author</h6>' +
+'                        <div class="multi">' +
+'                          <ul class="items multiItems_workAuthorAuthority" id="multiItems_workAuthorAuthority' + workIndex +'"></ul>' +
+'                          <p class="add" id="multiPlus_workAuthorAuthority">' +
+'                            <span onclick="multiAddWorkAuthorAuthority(this)" title="✓">add</span>' +
 '                          </p>' +
-'                          <script type="text/javascript">' +
-'                          //&lt;![CDATA[' +
-'                          Sortable.create(\'multiItems_work_' + workIndex +'_children_author_attributes_ref\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
-'                          //]]&gt;' +
+'                          <script>' +
+'                            Sortable.create(\'multiItems_workAuthorAuthority' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
 '                          </script>' +
 '                        </div>' +
 '                      </div>' +
+'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_author_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][author][children][certainty][value]" type="hidden">' +
 '                      <div class="clear"></div>' +
-'                      <h5>' +
-'                        Work' +
-'                      </h5>' +
-'                      <label class="meta workTitleName" for="hgv_meta_identifier_work_' + workIndex +'_children_title_value">TM Work</label>' +
+'                      <h5>Work</h5>' +
+'                      <label class="meta workTitleName" for="hgv_meta_identifier_work_' + workIndex +'_children_title_value" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">TM Work</label>' +
 '                      <input class="observechange workTitleName" id="hgv_meta_identifier_work_' + workIndex +'_children_title_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][value]" onchange="workTitleNameChange(this);" type="text">' +
-'                      <label class="meta workTitleLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_title_language">Language</label>' +
+'                      <label class="meta workTitleLanguage" for="hgv_meta_identifier_work_' + workIndex +'_children_title_attributes_language" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">Language</label>' +
 '                      <select class="observechange workSubtype" id="hgv_meta_identifier_work_' + workIndex +'_children_title_attributes_language" name="hgv_meta_identifier[work][' + workIndex +'][children][title][attributes][language]"><option value=""></option>' +
 '                      <option value="la">Latin</option>' +
 '                      <option value="grc">Greek</option></select>' +
 '                      <div class="clear"></div>' +
-'                      <label class="meta workTitleTlg" for="hgv_meta_identifier_work_' + workIndex +'_children_title_tlg">TLG</label>' +
-'                      <input class="observechange workTitleTlg" id="hgv_meta_identifier_work_' + workIndex +'_children_title_tlg" name="hgv_meta_identifier[work][' + workIndex +'][children][title][tlg]" onchange="workTitleTlgChange(this);" type="text">' +
-'                      <label class="meta workTitleCwkb" for="hgv_meta_identifier_work_' + workIndex +'_children_title_cwkb">CWKB</label>' +
-'                      <input class="observechange workTitleCwkb" id="hgv_meta_identifier_work_' + workIndex +'_children_title_cwkb" name="hgv_meta_identifier[work][' + workIndex +'][children][title][cwkb]" type="text">' +
-'                      <div class="clear"></div>' +
-'                      <label class="meta workTitleStoa" for="hgv_meta_identifier_work_' + workIndex +'_children_title_stoa">Stoa</label>' +
-'                      <input class="observechange workTitleStoa" id="hgv_meta_identifier_work_' + workIndex +'_children_title_stoa" name="hgv_meta_identifier[work][' + workIndex +'][children][title][stoa]" type="text">' +
-'                      <label class="meta workTitleTm" for="hgv_meta_identifier_work_' + workIndex +'_children_title_tm">TM</label>' +
-'                      <input class="observechange workTitleTm" id="hgv_meta_identifier_work_' + workIndex +'_children_title_tm" name="hgv_meta_identifier[work][' + workIndex +'][children][title][tm]" type="text">' +
-'                      <div class="clear"></div>' +
-'                      <label class="meta workDate workDateFrom" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_from">Year of Creation</label>' +
+'                      <div class="authorityContainer">' +
+'                        <h6>Digital/Online identifiers for this work</h6>' +
+'                        <div class="multi">' +
+'                          <ul class="items multiItems_workTitleAuthority" id="multiItems_workTitleAuthority' + workIndex +'"></ul>' +
+'                          <p class="add" id="multiPlus_workTitleAuthority">' +
+'                            <span onclick="multiAddWorkTitleAuthority(this)" title="✓">add</span>' +
+'                          </p>' +
+'                          <script>' +
+'                            Sortable.create(\'multiItems_workTitleAuthority' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+'                          </script>' +
+'                        </div>' +
+'                        <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="hidden">' +
+'                        <div class="clear"></div>' +
+'                      </div>' +
+'                      <label class="meta workDate workDateFrom" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_from" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">Year of Creation</label>' +
 '                      <input class="observechange workDate workDateFrom" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_from" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][date][attributes][from]" type="text">' +
-'                      <label class="meta workDate workDateTo" for="hgv_meta_identifier_work_' + workIndex +'_children_title_date_to">to</label>' +
+'                      <label class="meta workDate workDateTo" for="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_to" title="/TEI/text/body/div[@type=\'bibliography\'][@subtype=\'ancientEdition\']/listBibl/bibl[@type=\'publication\']">to</label>' +
 '                      <input class="observechange workDate workDateTo" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_date_attributes_to" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][date][attributes][to]" type="text">' +
 '                      <div class="clear"></div>' +
 '                      e.g. -412 to 120' +
 '                      <div class="clear"></div>' +
-'                      <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="hidden">' +
-'                      <div class="clear"></div>' +
-'                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_children_title_corresp" name="hgv_meta_identifier[work][' + workIndex +'][children][title][corresp]" type="hidden">' +
-'                      <div class="clear"></div>' +
-'                      <h6>Online Resources</h6>' +
-'                      e.g. classical works, knowledge base' +
-'                      <div class="clear"></div>' +
-'                      <div class="multi ref" id="multi_work_' + workIndex +'_children_title_attributes_ref">' +
-'                        <ul class="items" id="multiItems_work_' + workIndex +'_children_title_attributes_ref"></ul>' +
-'                        <p class="add" id="multiPlus_work_' + workIndex +'_children_title_attributes_ref">' +
-'                          <input class="observechange">' +
-'                          <span onclick="multiAdd(\'work_' + workIndex +'_children_title_attributes_ref\')" title="✓">add</span>' +
-'                        </p>' +
-'                        <script type="text/javascript">' +
-'                        //&lt;![CDATA[' +
-'                        Sortable.create(\'multiItems_work_' + workIndex +'_children_title_attributes_ref\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
-'                        //]]&gt;' +
-'                        </script>' +
-'                      </div>' +
-'                      <div class="clear"></div>' +
-'                      <h5>' +
-'                        Passage' +
-'                      </h5>' +
+'                      <h5>Passage</h5>' +
 '                      <div class="extraContainer">' +
 '                        <hr>' +
 '                        <div class="multi">' +
-'                          <ul class="items" id="multiItems_workExtra' + workIndex +'"></ul>' +
+'                          <ul class="items multiItems_workExtra" id="multiItems_workExtra' + workIndex +'"></ul>' +
 '                          <p class="add" id="multiPlus_workExtra">' +
 '                            <span onclick="multiAddWorkExtra(this)" title="✓">add</span>' +
 '                            <span onclick="multiAddWorkExtraAnd(this)" title="✓">add and</span>' +
 '                          </p>' +
 '                          <script>' +
-'                            Sortable.create(\'multiItems_workExtra\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+'                            Sortable.create(\'multiItems_workExtra' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
 '                          </script>' +
 '                        </div>' +
 '                        <div class="clear"></div>' +
@@ -366,8 +329,10 @@ function multiAddWork(e){
 '                      <input class="observechange workCorresp" id="hgv_meta_identifier_work_' + workIndex +'_attributes_corresp" name="hgv_meta_identifier[work][' + workIndex +'][attributes][corresp]" type="hidden">' +
 '                      <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                      <span class="move" title="move">o</span>' +
-'                    </li>';
-
+'                    </li>' +
+'                  <script>' +
+"                    jQuery('input.workAuthorName').autocomplete({ source: window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/ancient_author_autocomplete' : '/dclp_meta_identifiers/ancient_author_autocomplete', delay: 500, minLength: 4, close: function(event, ui){ workAuthorNameChange(this); }});" +
+'                  </script>';
   multiUpdate('work', item);
 }
 
@@ -376,20 +341,7 @@ function multiAddWorkExtra(plusButton){
   var workExtraIndex = multiGetNextIndex('workExtra' + workIndex);
 
   var item = '<li style="position: relative;">' +
-'                              <select class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_unit" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][unit]">' +
-'                              <option value="book">Book</option>' +
-'                              <option value="chapter">Chapter</option>' +
-'                              <option value="columns">Column</option>' +
-'                              <option value="fascicle">Fascicle</option>' +
-'                              <option value="folio">Folio</option>' +
-'                              <option value="fragment">Fragment</option>' +
-'                              <option value="fragments">Fragment</option>' +
-'                              <option value="inventory">Inventory</option>' +
-'                              <option value="line">Line</option>' +
-'                              <option value="lines">Line</option>' +
-'                              <option value="parts">Parts</option>' +
-'                              <option value="poem">Poem</option>' +
-'                              <option value="volume" selected="selected">Volume</option>' +
+'                              <select class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_unit" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][unit]"><option value="volume">Volume</option>' +
 '                              <option value="vol" selected="selected">Volume</option>' +
 '                              <option value="pp">Pages</option>' +
 '                              <option value="no">Number</option>' +
@@ -404,9 +356,9 @@ function multiAddWorkExtra(plusButton){
 '                              <option value="side">Side</option>' +
 '                              <option value="generic">Generic</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
-'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="hidden">' +
-'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="hidden">' +
-'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="hidden">' +
+'                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="text">' +
+'                              <input class="observechange editionExtraFrom" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_from" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][from]" type="text">' +
+'                              <input class="observechange editionExtraTo" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_to" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][to]" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                              <span class="move" title="move">o</span>' +
 '                            </li>';
@@ -416,12 +368,6 @@ function multiAddWorkExtra(plusButton){
 function multiAddWorkExtraAnd(plusButton){
   var workIndex = plusButton.up(3).identify().substring(5);
   var workExtraIndex = multiGetNextIndex('workExtra' + workIndex);
-  
-  console.log(plusButton);
-  console.log(workIndex);
-  console.log(workExtraIndex);
-  
-
   var item = '<li style="position: relative; z-index: 0; left: 0px; top: 0px;">' +
 '                              <input class="workExtraAnd" disabled="disabled" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" value="and" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +

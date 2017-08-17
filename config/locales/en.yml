@@ -154,7 +154,8 @@ en:
       workTm: TM
       workCwkb: CWKB
       workStoa: Stoa
-      workAuthority: Digital/Online identifiers for this author
+      workWorkAuthority: Digital/Online identifiers for this author
+      workAuthorAuthority: Digital/Online identifiers for this work
       workInternetResources: Internet Resources
       workInternetResourcesDescription: e.g. classical works, knowledge base
       workCertainty: Certainty
