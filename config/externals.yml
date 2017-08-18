@@ -6,9 +6,9 @@ lib/rxsugar:
 data/xslt/epidoc:
   :type: git
   :repository: https://github.com/DCLP/epidoc-xslt.git
-  :revision: 382b55ce781c885f8b33fbadadcc3528dfcb1545
+  :revision: 90d18dbfe4c3486eb87da8f795b4865d58582a59
 
 data/xslt/pn/navigator:
   :type: git
   :repository: git://github.com/DCLP/navigator.git
-  :revision: 47f10946b633f1e253fb2bfc9ba109463d580aae
+  :revision: d785c8686f92fa53e31d60c0348044ba3094c115
