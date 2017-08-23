@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!-- this stylesheet is used to produce HTML for the lbl commentary view -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
-  <xsl:import href="../pn/navigator/pn-xslt/global-varsandparams.xsl"/>
-  <xsl:import href="../pn/navigator/pn-xslt/htm-tpl-lang.xsl"/>  
-  <xsl:import href="../pn/navigator/pn-xslt/htm-tpl-apparatus.xsl"/>
+  <xsl:import href="../pn/navigator/pn-xslt/pi-global-varsandparams.xsl"/>
+  <xsl:import href="../epidoc/htm-tpl-lang.xsl"/>
+  <xsl:import href="../epidoc/htm-tpl-apparatus.xsl"/>
   <xsl:import href="lb_id.xsl"/>
   <xsl:import href="commentary_preview.xsl"/>
   
