@@ -144,15 +144,14 @@ module DclpMetaIdentifierHelper
         @titleType  = nil # CROMULENT TITLE HACK
 
         if init
-        
           if init[:edition]
             if init[:edition][:attributes]
               self.populateAtomFromHash init[:edition][:attributes]
             end
 
             @ubertype = @subtype
-            if @type == 'edition'
-              @ubertype = 'principal'
+            if @type == 'reference' && @subtype == 'principal'
+              @ubertype = 'reference'
             end
 
             if init[:edition][:children]
