@@ -1,11 +1,12 @@
 - base = 'hgv_meta_identifier[contentText]'
 - contentText = DclpWork::ContentText.new(:contentText => @identifier[:contentText])
 
-%div
-  = label_tag 'overview', I18n.t('dclp.label.overview'), :class => 'meta displayName overview', :title => @identifier.configuration.xpath(:contentText)
-  = text_field_tag 'hgv_meta_identifier[overview]', contentText.overview, :disabled => !@identifier.mutable?, :class => 'observechange displayName'
-  %span{ :title => 'delete', :onclick => "if(confirm('Are you sure you want to delete the legacy display name?')){console.log($(this).up().select('input')); $(this).up().select('input')[0].setValue(''); $(this).up().hide(); }", :class => 'delete'}x
-.clear
+-if !contentText.overview.empty?
+  %div
+    = label_tag 'overview', I18n.t('dclp.label.overview'), :class => 'meta displayName overview', :title => @identifier.configuration.xpath(:contentText)
+    = text_field_tag 'hgv_meta_identifier[overview]', contentText.overview, :disabled => !@identifier.mutable?, :class => 'observechange displayName'
+    %span{ :title => 'delete', :onclick => "if(confirm('Are you sure you want to delete the legacy display name?')){console.log($(this).up().select('input')); $(this).up().select('input')[0].setValue(''); $(this).up().hide(); }", :class => 'delete'}x
+  .clear
 
 .contentText.genre
   %h5.contentText=I18n.t('dclp.label.contentTextGenre')
