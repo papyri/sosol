@@ -4,6 +4,7 @@
 class DmmApiController < ApplicationController
   rescue_from Exceptions::CommitError, :with => :commit_failed
   
+  before_filter :set_cors_headers
   before_filter :authorize, :except => [:api_item_info, :api_item_get, :preflight_check]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
   before_filter :update_cookie
@@ -243,6 +244,16 @@ class DmmApiController < ApplicationController
   end
 
   protected
+
+    def set_cors_headers
+      if ENV['RAILS_ENV'] == "development"
+        headers['Access-Control-Allow-Origin'] = Sosol::Application.config.dev_url
+        headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+        headers['Access-Control-Request-Method'] = '*'
+        headers['Access-Control-Allow-Credentials'] = 'true'
+        headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token'
+     end
+    end
 
     def update_cookie
       expires = Sosol::Application.config.site_cookie_expire_minutes || 60
