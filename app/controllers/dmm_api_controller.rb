@@ -7,7 +7,7 @@ class DmmApiController < ApplicationController
   before_filter :set_cors_headers
   before_filter :authorize, :except => [:api_item_info, :api_item_get, :preflight_check]
   before_filter :ownership_guard, :only => [:api_item_patch, :api_item_append]
-  before_filter :update_cookie
+  before_filter :update_cookie, :except => [ :api_item_return ]
 
   skip_before_filter :accept_terms # don't display accept_terms on api requests
  
