@@ -146,30 +146,21 @@ function multiAddEditionRaw(e){
 '          <select name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][unit]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_unit" class="observechange editionExtra">' +
 '          <option value="book">Book</option>' +
 '          <option value="chapter">Chapter</option>' +
-'          <option value="col">Column</option>' +
-'          <option value="columns">Column</option>' +
-'          <option value="fasc">Fascicle</option>' +
+'          <option value="column">Column</option>' +
 '          <option value="fascicle">Fascicle</option>' +
 '          <option value="folio">Folio</option>' +
 '          <option value="fragment">Fragment</option>' +
-'          <option value="fragments">Fragment</option>' +
 '          <option value="generic">Generic</option>' +
 '          <option value="inventory">Inventory</option>' +
 '          <option value="issue">Issue</option>' +
 '          <option value="line">Line</option>' +
-'          <option value="lines">Line</option>' +
-'          <option value="no">Number</option>' +
 '          <option value="number">Numbers</option>' +
-'          <option value="numbers">Numbers</option>' +
 '          <option value="page">Page</option>' +
-'          <option value="pages">Pages</option>' +
-'          <option value="pp">Pages</option>' +
-'          <option value="parts">Parts</option>' +
+'          <option value="part">Part</option>' +
 '          <option value="plate">Plate</option>' +
 '          <option value="poem">Poem</option>' +
 '          <option value="side">Side</option>' +
 '          <option value="tome">Tome</option>' +
-'          <option value="vol">Volume</option>' +
 '          <option value="volume" selected="selected">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_value" class="observechange editionExtra">' +
 '          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_corresp" class="observechange editionExtra">' +
@@ -180,30 +171,21 @@ function multiAddEditionRaw(e){
 '          <select name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][unit]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_unit" class="observechange editionExtra">' +
 '          <option value="book">Book</option>' +
 '          <option value="chapter" selected="selected">Chapter</option>' +
-'          <option value="col">Column</option>' +
-'          <option value="columns">Column</option>' +
-'          <option value="fasc">Fascicle</option>' +
+'          <option value="column">Column</option>' +
 '          <option value="fascicle">Fascicle</option>' +
 '          <option value="folio">Folio</option>' +
 '          <option value="fragment">Fragment</option>' +
-'          <option value="fragments">Fragment</option>' +
 '          <option value="generic">Generic</option>' +
 '          <option value="inventory">Inventory</option>' +
 '          <option value="issue">Issue</option>' +
 '          <option value="line">Line</option>' +
-'          <option value="lines">Line</option>' +
-'          <option value="no">Number</option>' +
 '          <option value="number">Numbers</option>' +
-'          <option value="numbers">Numbers</option>' +
 '          <option value="page">Page</option>' +
-'          <option value="pages">Pages</option>' +
-'          <option value="pp">Pages</option>' +
-'          <option value="parts">Parts</option>' +
+'          <option value="part">Part</option>' +
 '          <option value="plate">Plate</option>' +
 '          <option value="poem">Poem</option>' +
 '          <option value="side">Side</option>' +
 '          <option value="tome">Tome</option>' +
-'          <option value="vol">Volume</option>' +
 '          <option value="volume">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_value" class="observechange editionExtra">' +
 '          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_corresp" class="observechange editionExtra">' +
@@ -214,30 +196,21 @@ function multiAddEditionRaw(e){
 '          <select name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][unit]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_unit" class="observechange editionExtra">' +
 '          <option value="book">Book</option>' +
 '          <option value="chapter">Chapter</option>' +
-'          <option value="col">Column</option>' +
-'          <option value="columns">Column</option>' +
-'          <option value="fasc">Fascicle</option>' +
+'          <option value="column">Column</option>' +
 '          <option value="fascicle">Fascicle</option>' +
 '          <option value="folio">Folio</option>' +
 '          <option value="fragment">Fragment</option>' +
-'          <option value="fragments">Fragment</option>' +
 '          <option value="generic">Generic</option>' +
 '          <option value="inventory">Inventory</option>' +
 '          <option value="issue">Issue</option>' +
 '          <option value="line">Line</option>' +
-'          <option value="lines">Line</option>' +
-'          <option value="no">Number</option>' +
 '          <option value="number">Numbers</option>' +
-'          <option value="numbers">Numbers</option>' +
 '          <option value="page" selected="selected">Page</option>' +
-'          <option value="pages">Pages</option>' +
-'          <option value="pp">Pages</option>' +
-'          <option value="parts">Parts</option>' +
+'          <option value="part">Part</option>' +
 '          <option value="plate">Plate</option>' +
 '          <option value="poem">Poem</option>' +
 '          <option value="side">Side</option>' +
 '          <option value="tome">Tome</option>' +
-'          <option value="vol">Volume</option>' +
 '          <option value="volume">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_value" class="observechange editionExtra">' +
 '          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_corresp" class="observechange editionExtra">' +
@@ -347,30 +320,21 @@ function multiAddWorkExtra(plusButton){
 '                              <select class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_attributes_unit" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][attributes][unit]">' +
 '          <option value="book">Book</option>' +
 '          <option value="chapter">Chapter</option>' +
-'          <option value="col">Column</option>' +
-'          <option value="columns">Column</option>' +
-'          <option value="fasc">Fascicle</option>' +
+'          <option value="column">Column</option>' +
 '          <option value="fascicle">Fascicle</option>' +
 '          <option value="folio">Folio</option>' +
 '          <option value="fragment">Fragment</option>' +
-'          <option value="fragments">Fragment</option>' +
 '          <option value="generic">Generic</option>' +
 '          <option value="inventory">Inventory</option>' +
 '          <option value="issue">Issue</option>' +
 '          <option value="line">Line</option>' +
-'          <option value="lines">Line</option>' +
-'          <option value="no">Number</option>' +
 '          <option value="number">Numbers</option>' +
-'          <option value="numbers">Numbers</option>' +
 '          <option value="page">Page</option>' +
-'          <option value="pages">Pages</option>' +
-'          <option value="pp">Pages</option>' +
-'          <option value="parts">Parts</option>' +
+'          <option value="part">Part</option>' +
 '          <option value="plate">Plate</option>' +
 '          <option value="poem">Poem</option>' +
 '          <option value="side">Side</option>' +
 '          <option value="tome">Tome</option>' +
-'          <option value="vol">Volume</option>' +
 '          <option value="volume" selected="selected">Volume</option></select>' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" type="text">' +
 '                              <input class="observechange editionExtra" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][children][certainty][value]" type="hidden">' +

@@ -180,7 +180,7 @@
           :attributes:
             :unit:
               :name: unit
-              :pattern: /\Abook|chapter|col|columns|fasc|fascicle|folio|fragment|fragments|generic|inventory|issue|line|lines|no|number|numbers|page|pages|parts|plate|poem|pp|side|tome|vol|volume\Z/
+              :pattern: /\Abook|chapter|column|fascicle|folio|fragment|generic|inventory|issue|line|number|page|part|plate|poem|side|tome|volume\Z/
             :from:
               :name: from
               :pattern: /\A\d+\Z/
@@ -240,7 +240,7 @@
           :attributes:
             :unit:
               :name: unit
-              :pattern: /\Abook|chapter|col|columns|fasc|fascicle|folio|fragment|fragments|generic|inventory|issue|line|lines|no|number|numbers|page|pages|parts|plate|poem|pp|side|tome|vol|volume\Z/
+              :pattern: /\Abook|chapter|column|fascicle|folio|fragment|generic|inventory|issue|line|number|page|part|plate|poem|side|tome|volume\Z/
             :corresp:
               :name: corresp
               :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
