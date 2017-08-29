@@ -67,7 +67,7 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP biblScop/@unit (book, chapter, column, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.extraOptions
@@ -91,6 +91,17 @@ module DclpMetaIdentifierHelper
         [I18n.t('edition.extra.tome'),      :tome],
         [I18n.t('edition.extra.volume'),    :volume]
       ]
+    end
+
+    def DclpEdition.validExtraOption? test
+      if test.is_a?(Symbol) || test.is_a?(String)
+        DclpEdition.extraOptions.each{ |option|
+          if test.to_sym == option[1]
+            return true
+          end
+        }
+      end
+      return false
     end
 
     # Data structure for publication information
