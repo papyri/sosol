@@ -238,6 +238,13 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
                 end
                 work[:children][:title][:attributes][:ref] = refList.invert.invert
               end
+              if work[:children][:extra]
+                work[:children][:extra].each{ |index, extra|
+                  if extra[:value] && (extra[:value] == 'and')
+                    work[:children][:extra][index] = {"attributes"=>{"unit"=>"generic", "from"=>"", "to"=>""}, "value"=>"and", "children"=>{"certainty"=>{"value"=>""}}}
+                  end
+                }
+              end
             end
           }
         end
