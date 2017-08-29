@@ -350,7 +350,7 @@ function multiAddWorkExtraAnd(plusButton){
   var workIndex = plusButton.up(3).identify().substring(5);
   var workExtraIndex = multiGetNextIndex('workExtra' + workIndex);
   var item = '<li style="position: relative; z-index: 0; left: 0px; top: 0px;">' +
-'                              <input class="workExtraAnd" disabled="disabled" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" onchange="editionExtraChange(this);" value="and" type="text">' +
+'                              <input class="workExtraAnd" disabled="disabled" id="hgv_meta_identifier_work_' + workIndex + '_children_extra_' + workExtraIndex + '_value" name="hgv_meta_identifier[work][' + workIndex + '][children][extra][' + workExtraIndex + '][value]" value="and" type="text">' +
 '                              <span class="delete" onclick="multiRemove(this.parentNode)" title="delete">x</span>' +
 '                              <span class="move" title="move">o</span>' +
 '                            </li>';

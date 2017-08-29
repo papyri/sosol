@@ -4,7 +4,7 @@
     - extraList.each_with_index do |extra, index|
       %li
         -if extra.value == 'and'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :disabled => :diabled, :class => 'workExtraAnd', :onchange => "editionExtraChange(this);"
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :disabled => :diabled, :class => 'workExtraAnd'
         -elsif
           = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
           = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
