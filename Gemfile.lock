@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/RDACollectionsWG/ruby-collections-client
-  revision: 349c2f60b72e1b7edff5b24cd332f29aeec0d3d3
-  tag: v1.0.0
+  revision: e634539bcd1805e37d89ef0963df3965a1076f30
+  tag: v1.0.1
   specs:
-    rda-collections-client (1.0.0)
+    rda-collections-client (1.0.1)
       json (~> 1.8, >= 1.8.3)
       typhoeus (~> 1.0, >= 1.0.1)
 
@@ -240,7 +240,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    typhoeus (1.1.2)
+    typhoeus (1.3.0)
       ethon (>= 0.9.0)
     tzinfo (0.3.53)
     uglifier (3.2.0)

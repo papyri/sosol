@@ -263,7 +263,7 @@ module CollectionsHelper
     collection.capabilities.appends_to_end = true
     collection.capabilities.supports_roles = false
     collection.capabilities.membership_is_mutable = true
-    collection.capabilities.metadata_is_mutable = false
+    collection.capabilities.properties_are_mutable = false
     collection.capabilities.restricted_to_type = params['datatype'].nil? ? '' : params['datatype']
     collection.capabilities.max_length = -1
     collection.properties = CollectionsClient::CollectionProperties.new
