@@ -5,6 +5,7 @@ class DCLPTextIdentifier < DDBIdentifier
 
   FRIENDLY_NAME = "DCLP Text"
   IDENTIFIER_NAMESPACE = 'dclp'
+  XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
   
   # cl: at the moment there are no reprints for DCLP
   # therefore the result is always false
