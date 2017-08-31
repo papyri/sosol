@@ -90,7 +90,7 @@ class DCLPTextIdentifier < DDBIdentifier
     DCLPTextIdentifier.preprocess(content)
   end
 
-  # Applies the preprocess XSLT to 'content' (uses same preprocess.xsl as DCLP Meta)
+  # Applies the preprocess XSLT to 'content'
   # - *Args*  :
   #   - +content+ -> XML as string
   # - *Returns* :
@@ -99,7 +99,7 @@ class DCLPTextIdentifier < DDBIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt metadata preprocess.xsl})))
+        %w{data xslt ddb preprocess.xsl})))
   end
 
   # ?

@@ -108,9 +108,18 @@
 
   <!-- set xml-model processing instruction, converting previous oxygen processing instructions -->
   <xsl:template match="processing-instruction('oxygen')|processing-instruction('xml-model')">
+    <xsl:choose>
+      <xsl:when test="/tei:TEI//tei:idno[@type='dclp']">
+    <xsl:processing-instruction name="xml-model"><xsl:text>href="http://www.stoa.org/epidoc/schema/8.23/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text></xsl:processing-instruction>
+    <xsl:text>
+</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
     <xsl:processing-instruction name="xml-model"><xsl:text>href="http://www.stoa.org/epidoc/schema/8.16/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text></xsl:processing-instruction>
     <xsl:text>
 </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- always generate handNotes from content -->
