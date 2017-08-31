@@ -84,15 +84,9 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/width[@unit='cm']
     :height:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/height[@unit='cm']
-    #:ldab:
-    #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
-    #  :pattern: /\A\d+\Z/
-    #:dclpHybrid:
-    #  :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='dclp-hybrid']
-    #  :pattern: '/\A[^;]+;[^;]*;[^;]+\Z/'
     :mp3:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
-      :pattern: /\A\d+(\.\d+)?\Z/ # vielleicht auch Buchstaben?!
+      :pattern: /\A\d+(\.\d+)?\Z/
     :work:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='ancientEdition']/listBibl/bibl[@type='publication']
       :multiple: true
@@ -119,20 +113,13 @@
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
+              # sample patterns and languages for tm, tlg, stoa and cwkb
+              # phi: http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
+              # tlg: http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
+              # stoa: http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040 (Latin)
+              # cwkb: http://cwkb.org/author/id/2402/rdf
               :split: ' '
           :children:
-#            :tlg: # http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
-#              :xpath: idno[@type='tlg']
-#              :pattern: /\A\d+\Z/
-#            :phi: # http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
-#              :xpath: idno[@type='phi']
-#              :pattern: /\A\d+\Z/
-#            :stoa: # http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040 (Latin)
-#              :xpath: idno[@type='stoa']
-#              :pattern: /\A\d+\Z/
-#            :cwkb: # http://cwkb.org/author/id/2402/rdf
-#              :xpath: idno[@type='cwkb']
-#              :pattern: /\A\d+\Z/
             :certainty:
               :xpath: certainty[@cert='low'][@locus='value']/@target
               :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
@@ -145,20 +132,13 @@
             :ref:
               :name: ref
               :pattern: /\Ahttp:\/\//
+              # patterns and languages for tm, tlg, stoa and cwkb
+              # tm: http://www.trismegistos.org/authorwork/1146
+              # tlg: http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018 (Greek)
+              # stoa: http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016 (Latin)
+              # cwkb: http://cwkb.org/work/id/1411/rdf
               :split: ' '
           :children:
-#            :tm: # http://www.trismegistos.org/authorwork/1146
-#              :xpath: idno[@type='tm']
-#              :pattern: /\A\d+\Z/
-#            :tlg: # http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018 (Greek)
-#              :xpath: idno[@type='tlg']
-#              :pattern: /\A\d+\Z/
-#            :stoa: # http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016 (Latin)
-#              :xpath: idno[@type='stoa']
-#              :pattern: /\A\d+\Z/
-#            :cwkb: # http://cwkb.org/work/id/1411/rdf
-#              :xpath: idno[@type='cwkb']
-#              :pattern: /\A\d+\Z/
             :date:
               :xpath: date
               :attributes:

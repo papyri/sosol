@@ -11,9 +11,8 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     @is_editor_view = true
   end
 
-  # Provides a small data preview snippets (values for when, notBefore and notAfter as well as the hgv formatted value) for display within the hgv metadata editor
-  # Assumes that hgv metadata is passed in via post and uses the values containd in hash entry »:textDate« to generate preview snippets for hgv date.
-  # Side effect on +@update+
+  # Provides a small data preview snippets for a biblio record
+  # Assumes that biblio number is passed in via in hash entry »:biblio«
   def biblio_preview
     @update = 'No preview available';
     if !params[:biblio].nil? && /\A\d+\Z/.match(params[:biblio])
@@ -68,8 +67,8 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     JSON.parse(response.body)
   end
 
-  # - GET /publications/1/ddb_identifiers/1/preview
-  # - Provides preview of what the DDB Text XML from the repository will look like with PN Stylesheets applied
+  # - GET /publications/123/dclp_text_identifiers/456/preview
+  # - Provides preview of what the XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
     @identifier[:html_preview] = @identifier.preview
@@ -81,7 +80,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
 
     # Sets the identifier instance variable values
     # - *Params*  :
-    #   - +id+ -> id from identifier table of the DCLP Text
+    #   - +id+ -> id from identifier table of the DCLP Text or Meta
     def find_identifier
       @identifier = DCLPMetaIdentifier.find(params[:id].to_s)
     end
