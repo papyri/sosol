@@ -160,6 +160,8 @@ class Identifier < ActiveRecord::Base
         self.name.sub(/trans/,''))
     elsif self.class == APISIdentifier
       title = self.name.split('/').last
+    elsif self.class == DCLPMetaIdentifier
+      title = self.name.split('/').last
     end
 
     if title.nil?

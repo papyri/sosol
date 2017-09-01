@@ -145,6 +145,22 @@ class PublicationsController < ApplicationController
     redirect_to @publication
   end
 
+  def create_from_dclp_template
+    @publication = Publication.new_from_dclp_template(@current_user)
+
+    # create event
+    e = Event.new
+    e.category = "created"
+    e.target = @publication
+    e.owner = @current_user
+    e.save!
+
+    flash[:notice] = 'Publication was successfully created.'
+    #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
+    expire_publication_cache
+    redirect_to @publication
+  end
+
   def create_from_templates
     @publication = Publication.new_from_templates(@current_user)
 

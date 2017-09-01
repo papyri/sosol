@@ -379,6 +379,28 @@ class Publication < ActiveRecord::Base
     return new_publication
   end
 
+  def self.new_from_dclp_template(creator)
+    new_publication = Publication.new(:owner => creator, :creator => creator)
+
+    # fetch a title without creating from template
+    new_publication.title = DCLPMetaIdentifier.new(:name => DCLPMetaIdentifier.next_temporary_identifier).titleize
+
+    new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
+    new_publication.save!
+
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+
+    #create the required meta data and transcriptions
+    new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
+    #new_dclp_text = DCLPTextIdentifier.new_from_template(new_publication)
+
+    # go ahead and create the third so we can get rid of the create button
+    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
+
+    return new_publication
+  end
+
   #*Returns*
   #- +true+ if any of the identifiers in the publication have been modified.
   #- +false+ if none of the identifiers in the publication have been modified.
