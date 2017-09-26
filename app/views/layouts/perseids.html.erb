@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <%= csrf_meta_tag %>
     <meta name='robots' content='noindex, nofollow' />
-    <meta name='SoSOL-Sparql-Endpoint' content='http://services.perseids.org/fuseki/ds/query?query='/>
+    <meta name='SoSOL-Sparql-Endpoint' content='//services.perseids.org/fuseki/ds/query?query='/>
     <title>
       <%= "#{Sosol::Application.config.site_name}: #{controller.controller_name} - #{controller.action_name}" %>
     </title>
-  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css"/>
+  	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css"/>
     <%= stylesheet_link_tag 'perseids' %>
     <%= stylesheet_link_tag 'perseids_additions' %>
     <%= javascript_include_tag :defaults %>
