@@ -164,7 +164,7 @@ module JRubyXML
         org.iso_relax.verifier.VerifierFactory.newInstance(
           "http://www.w3.org/2001/XMLSchema")
       @schema = verifier_factory.compileSchema(
-        "http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd")
+        "#{Rails.root}/data/templates/alpheios-aligned-text.xsd")
     end
   end
   
