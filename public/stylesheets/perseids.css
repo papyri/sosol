@@ -118,7 +118,7 @@
 
 /* makes the font 33% larger relative to the icon container */
 .fa-lg {
-  font-size: 1.33333em;
+  font-size: 1.3333333333em;
   line-height: 0.75em;
   vertical-align: -15%; }
 
@@ -135,24 +135,24 @@
   font-size: 5em; }
 
 .fa-fw {
-  width: 1.28571em;
+  width: 1.2857142857em;
   text-align: center; }
 
 .fa-ul {
   padding-left: 0;
-  margin-left: 2.14286em;
+  margin-left: 2.1428571429em;
   list-style-type: none; }
   .fa-ul > li {
     position: relative; }
 
 .fa-li {
   position: absolute;
-  left: -2.14286em;
-  width: 2.14286em;
-  top: 0.14286em;
+  left: -2.1428571429em;
+  width: 2.1428571429em;
+  top: 0.1428571429em;
   text-align: center; }
   .fa-li.fa-lg {
-    left: -1.85714em; }
+    left: -1.8571428571em; }
 
 .fa-border {
   padding: .2em .25em .15em;
@@ -2473,6 +2473,7 @@ button, .btn, #filter button, .btn:hover, #filter button:hover, .btn:visited, #f
     padding: 0 22.5px; }
     button.autosize:active, .btn.autosize:active, #filter button.autosize:active, .btn:hover.autosize:active, #filter button:hover.autosize:active, .btn:visited.autosize:active, #filter button:visited.autosize:active, .btn:focus.autosize:active, #filter button:focus.autosize:active, .btn:link.autosize:active, #filter button:link.autosize:active {
       border: 1px solid white;
+      border-right: 5px solid #7986cb;
       padding: 0 22.5px; }
   button.TreebankCiteIdentifier, .btn.TreebankCiteIdentifier, #filter button.TreebankCiteIdentifier, .btn:hover.TreebankCiteIdentifier, #filter button:hover.TreebankCiteIdentifier, .btn:visited.TreebankCiteIdentifier, #filter button:visited.TreebankCiteIdentifier, .btn:focus.TreebankCiteIdentifier, #filter button:focus.TreebankCiteIdentifier, .btn:link.TreebankCiteIdentifier, #filter button:link.TreebankCiteIdentifier {
     background-color: #a5d6a7;
@@ -3169,7 +3170,7 @@ ul.btns > li {
 #container .publications .container-wrapper {
   position: relative; }
   #container .publications .container-wrapper .publication-container {
-    margin-right: 333.33333px;
+    margin-right: 333.3333333333px;
     margin-top: 3em; }
     @media (min-width: 1001px) and (max-width: 1200px) {
       #container .publications .container-wrapper .publication-container {

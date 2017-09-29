@@ -21,6 +21,7 @@ button, .btn, .btn:hover, .btn:visited, .btn:focus, .btn:link {
 		padding:0 ($BUTTON_HEIGHT/2);
 		&:active {
 			border:1px solid $COLOR_FOREGROUND;
+ 		        border-right:$OUTLINE_SIZE solid $COLOR_PRI;
 			padding:0 ($BUTTON_HEIGHT/2);
 		}
 	}
