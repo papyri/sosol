@@ -103,7 +103,7 @@
                     <xsl:value-of select="normalize-space(cts:title[@xml:lang=$e_lang]|cts5:title[@xml:lang=$e_lang])"/>
                 </xsl:when>
                 <xsl:when test="cts:title|cts5:title">
-                    <xsl:value-of select="translate(normalize-space(cts5:title[1]|cts5:title[1]),':',',')"/>
+                    <xsl:value-of select="translate(normalize-space(cts:title[1]|cts5:title[1]),':',',')"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(substring-after(@projid,':'))"/>
