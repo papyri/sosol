@@ -1,7 +1,7 @@
 module DclpMetaIdentifierHelper
   module DclpEdition
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP edition types (+publication+, +reference+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.typeOptions
@@ -11,7 +11,7 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP edition subtypes (+principal+, +partial+, +previous+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.subtypeOptions
@@ -27,7 +27,10 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP edition types and subtypes combined as one ‘ubertype’ (+principal+, +reference+, +partial+, etc.)
+    # e.g. publication + principal = principal
+    # e.g. reference + principal = reference
+    # e.g. reference + partial = partial
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.ubertypeOptions1
@@ -40,7 +43,11 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP edition types and subtypes combined as one ‘ubertype’ (+translation+, +study+, +catalogue+, etc.)
+    # (those below the horizontal line in the drop down menu)
+    # e.g. reference + translation = translation
+    # e.g. reference + study = study
+    # e.g. reference + catalogue = catalogue
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.ubertypeOptions2
@@ -52,7 +59,7 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP languages (+de+, +en+, +it+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.languageOptions
@@ -67,39 +74,43 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP biblScop/@unit (+book+, +chapter+, +column+, etc.)
+    # listed in alphabetical order
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpEdition.extraOptions
       [
         [I18n.t('edition.extra.book'),      :book],
         [I18n.t('edition.extra.chapter'),   :chapter],
-        [I18n.t('edition.extra.col'),       :col],
-        [I18n.t('edition.extra.col'),       :columns],
-        [I18n.t('edition.extra.fasc'),      :fasc],
-        [I18n.t('edition.extra.fasc'),      :fascicle],
+        [I18n.t('edition.extra.column'),    :column],
+        [I18n.t('edition.extra.fascicle'),  :fascicle],
         [I18n.t('edition.extra.folio'),     :folio],
         [I18n.t('edition.extra.fragment'),  :fragment],
-        [I18n.t('edition.extra.fragment'),  :fragments],
         [I18n.t('edition.extra.generic'),   :generic],
         [I18n.t('edition.extra.inventory'), :inventory],
         [I18n.t('edition.extra.issue'),     :issue],
         [I18n.t('edition.extra.line'),      :line],
-        [I18n.t('edition.extra.line'),      :lines],
-        [I18n.t('edition.extra.no'),        :no],
-        [I18n.t('edition.extra.numbers'),   :number],
-        [I18n.t('edition.extra.numbers'),   :numbers],
+        [I18n.t('edition.extra.number'),    :number],
         [I18n.t('edition.extra.page'),      :page],
-        [I18n.t('edition.extra.pages'),     :pages],
-        [I18n.t('edition.extra.pages'),     :pp],
-        [I18n.t('edition.extra.parts'),     :parts],
+        [I18n.t('edition.extra.part'),      :part],
         [I18n.t('edition.extra.plate'),     :plate],
         [I18n.t('edition.extra.poem'),      :poem],
         [I18n.t('edition.extra.side'),      :side],
         [I18n.t('edition.extra.tome'),      :tome],
-        [I18n.t('edition.extra.volume'),    :vol],
         [I18n.t('edition.extra.volume'),    :volume]
       ]
+    end
+
+    # Test whether a given value (+test+) is comprised in above list (DclpEdition.extraOptions)
+    def DclpEdition.validExtraOption? test
+      if test.is_a?(Symbol) || test.is_a?(String)
+        DclpEdition.extraOptions.each{ |option|
+          if test.to_sym == option[1]
+            return true
+          end
+        }
+      end
+      return false
     end
 
     # Data structure for publication information
@@ -128,8 +139,8 @@ module DclpMetaIdentifierHelper
 
       # Constructor
       # - *Args*  :
-      #   - +init+ → +Hash+ object containing provenance data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
-      # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
+      #   - +init+ → +Hash+ object containing edition data as provided by the model class +DCLPMetaIdentifier+, used to initialise member variables, defaults to +nil+
+      # Side effect on +@type+, +@subtype+, +@ubertype+, +@language+, +@link+, +@biblioId+, +@extraList+, +@preview+, +@title+, +@titleLevel+ and +@titleType+
       def initialize init = nil
         @type      = nil
         @subtype   = nil
@@ -189,11 +200,11 @@ module DclpMetaIdentifierHelper
         @subtype = value
       end
       
-      # Updates instance variables from a hash
+      # Updates atomic instance variables (strings, numbers, etc.) from a given hash
       # - *Args*  :
-      #   - +epiDocList+ → data contained in +BiblioIdentifier+'s +:provenance+ attribute
+      #   - +hash+ → key value pairs of object data
       # - *Returns* :
-      #   - +Array+ of +HgvGeo::Provenance+ objects
+      #   - +Array+ of variable names for atomic values
       # Side effect on all member variables that are declared in +@@atomList+
       def populateAtomFromHash hash
         @@atomList.each {|member|
@@ -206,7 +217,7 @@ module DclpMetaIdentifierHelper
 
   module DclpWork
 
-    # List of all available authorities
+    # List of all available authorities (+tlg+, +stoa+, +cwkb+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpWork.authorityOptions(mode = null)
@@ -227,7 +238,8 @@ module DclpMetaIdentifierHelper
       options
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid subtype options for DCLP work (+ancient+, +ancientQuote+, etc.)
+    # type is always +publication+
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpWork.subtypeOptions
@@ -237,7 +249,7 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
+    # Assembles all valid type options for DCLP work languages (+la+, +el+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
     def DclpWork.languageOptions
@@ -245,17 +257,6 @@ module DclpMetaIdentifierHelper
         ['', ''],
         [I18n.t('language.la'), :la],
         [I18n.t('language.el'), :grc],
-      ]
-    end
-
-    # Assembles all valid type options for HGV provenance (+composed+, +sent+, +sold+, etc.)
-    # - *Returns* :
-    #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpWork.certaintyOptions
-      [
-        ['', ''],
-        [I18n.t('work.type.high'), :high],
-        [I18n.t('work.type.low'),  :low]
       ]
     end
     
@@ -359,7 +360,7 @@ module DclpMetaIdentifierHelper
       end
     end
 
-    # ContentText, genre, religtion, culture and other keywords
+    # ContentText, genre, religion, culture and other keywords
     class ContentText
       attr_accessor :genre, :religion, :culture, :keywords, :overview
       def initialize init = nil
@@ -441,8 +442,8 @@ module DclpMetaIdentifierHelper
 
       # Constructor
       # - *Args*  :
-      #   - +init+ → +Hash+ object containing provenance data as provided by the model class +BiblioIdentifier+, used to initialise member variables, defaults to +nil+
-      # Side effect on +@type+, +@subtype+, +@date+ and +@placeList+
+      #   - +init+ → +Hash+ object containing work data as provided by the model class +DCLPMetaIdentifier+, used to initialise member variables, defaults to +nil+
+      # Side effect on +@subtype+, +@corresp+, +@id+, +@exclude+, +@alternative+, +@author+, +@title+ and +@extraList+
       def initialize init = nil
         @subtype     = nil
         @corresp     = nil
@@ -476,11 +477,11 @@ module DclpMetaIdentifierHelper
         end
       end
 
-      # Updates instance variables from a hash
+      # Updates atomic instance variables (strings, numbers, etc.) from a given hash
       # - *Args*  :
-      #   - +epiDocList+ → data contained in +BiblioIdentifier+'s +:provenance+ attribute
+      #   - +hash+ → key value pairs of object data
       # - *Returns* :
-      #   - +Array+ of +HgvGeo::Provenance+ objects
+      #   - +Array+ of variable names for atomic values
       # Side effect on all member variables that are declared in +@@atomList+
       def populateAtomFromHash hash
         @@atomList.each {|member|

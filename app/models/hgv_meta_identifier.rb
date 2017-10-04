@@ -365,7 +365,7 @@ class HGVMetaIdentifier < HGVIdentifier
       return true
     elsif item.class == Hash && item[:value] && !item[:value].strip.empty?
       return true
-    elsif item.class == Hash && item[:attributes] && !item[:attributes].values.join.strip.empty?
+    elsif item.class == Hash && item[:attributes] && !item[:attributes].values.join.strip.empty? && !(item[:attributes].values.join.strip =~ /\A[{}]+\Z/)
       return true
     elsif item.class == Hash && item[:children] && !item[:children].empty?
       item[:children].each_value{|child|

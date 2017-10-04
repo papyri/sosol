@@ -472,17 +472,14 @@ en:
       fragment: Fragment
       inventory: Inventory
       line: Line
-      parts: Parts
+      part: Part
       poem: Poem
       volume: Volume
       page: Page
-      pages: Pages
-      pp: Pages
-      'no': Number
-      numbers: Numbers
-      col: Column
+      number: Number
+      column: Column
       tome: Tome
-      fasc: Fascicle
+      fascicle: Fascicle
       issue: Issue
       plate: Plate
       side: Side

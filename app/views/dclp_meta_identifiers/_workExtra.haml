@@ -4,15 +4,24 @@
     - extraList.each_with_index do |extra, index|
       %li
         -if extra.value == 'and'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :disabled => :diabled, :class => 'workExtraAnd', :onchange => "editionExtraChange(this);"
+          %span and
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value, :class => 'workExtraAnd'
         -elsif
           = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]', extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
           = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][children][certainty][value]', extra.certainty, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
-          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
-          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]', extra.from, :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]', extra.to, :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
         %span.move{:title => I18n.t('tooltip.multiMove')} o
+        -# cl: This comment and the following 6 lines of code can be delete when there are no deprecated tei:biblScope/@units in play any longer
+        - if !DclpEdition.validExtraOption?(extra.unit)
+          %span{:style => 'color: red;'}
+            Warning! The unit
+            %b
+              = '‘' + extra.unit.to_s + '’'
+            is deprecated. Please select appropriate value.
+
   %p.add#multiPlus_workExtra
     %span{:onclick => "multiAddWorkExtra(this)",    :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
     %span{:onclick => "multiAddWorkExtraAnd(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('dclp.label.workExtraAddAnd')
