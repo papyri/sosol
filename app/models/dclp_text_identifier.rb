@@ -64,6 +64,13 @@ class DCLPTextIdentifier < DDBIdentifier
       return File.join(path_components)
     end
   end
+
+  # Path constructor for born-digital temporary SoSOL identifiers
+  def temporary_path
+    trimmed_name = name.sub(/(papyri|litpap).info\/#{IDENTIFIER_NAMESPACE}\//, '')
+    components = trimmed_name.split(';')
+    return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
+  end
   
   # ?
   def id_attribute
