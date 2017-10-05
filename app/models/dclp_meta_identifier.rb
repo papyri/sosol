@@ -58,8 +58,9 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
   end
 
   # cl: CROMULENT DCLP ‘View in PN’ hack
+  # name can be »papyri.info/dclp/SoSOL;2017;0002«
   def get_catalog_link
-    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+)$/, 1]
+    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
   end
 
 end

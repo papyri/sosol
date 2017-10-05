@@ -393,7 +393,7 @@ class Publication < ActiveRecord::Base
 
     #create the required meta data and transcriptions
     new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
-    #new_dclp_text = DCLPTextIdentifier.new_from_template(new_publication)
+    new_dclp_text = DCLPTextIdentifier.new_from_dclp_meta_identifier(new_dclp_meta)
 
     # go ahead and create the third so we can get rid of the create button
     #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
