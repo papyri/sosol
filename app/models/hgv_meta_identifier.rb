@@ -545,7 +545,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
 
           if parent = doc.elements[xpath_parent]
-            if !parent.has_elements? && parent.texts.join.strip.empty?
+            if emptyElement? parent
               parent.elements['..'].delete parent
             end
           end
@@ -566,6 +566,30 @@ class HGVMetaIdentifier < HGVIdentifier
     formatter.write doc, modified_xml_content
 
     return modified_xml_content
+  end
+
+  # checks whether an xml element is empty, in a certain sense
+  # (1) it has no child elements
+  # (2) it contains no meaningful text
+  # (3) it has no attributes that are defined as standalone attributes, e.g. in dclp.yml or hgv.yml
+  #     for DCLP there are
+  #       archiveLink (/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']/@ref)
+  #       bookForm (/TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/@form)
+  #       columns (/TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@columns)
+  #       writtenLines (/TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines)
+  #     and also in nested structures (which are not taken into consideration as of yet [and they are likely not needed]), such as
+  #       certainty (certainty[@cert='low'][@locus='value']/@target)
+  #       link (ptr/@target)
+  def emptyElement? element
+    hasStandaloneAttribute = false
+    @configuration.toplevel_standalone_attributes.each {|key, config|
+      if config[:element_name] == element.name
+        if element.attributes[config[:attribute_name].to_s] && !element.attributes[config[:attribute_name].to_s].empty?
+          hasStandaloneAttribute = true
+        end
+      end
+    }
+    !element.has_elements? && element.texts.join.strip.empty? && !hasStandaloneAttribute
   end
 
   # Tells whether a certain key is a valid HGV accessor
