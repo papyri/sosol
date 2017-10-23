@@ -27,7 +27,7 @@ module HgvMetaIdentifierHelper
     # Reads out config/hgv.yml and stores all configuration parameters in an instance variable called +@scheme+. Adds defaults and prunes invalid configuration entries.
   class HgvMetaConfiguration
 
-    attr_reader :scheme, :keys;
+    attr_reader :scheme, :keys, :toplevel_standalone_attributes;
 
     # Constructor laods and complements HGV configuration from +config/hgv.yml+ and prepares a list that contains all valid HGV keys
     # Assumes the existenz of configuration file +config/hgv.yml+, for further information about expected values and format see there
@@ -47,7 +47,13 @@ module HgvMetaIdentifierHelper
       @scheme.each_value {|item|
         @keys += retrieve_all_keys item
       }
-  
+
+      @toplevel_standalone_attributes = {}
+      @scheme.each {|key, config|
+        if config[:xpath] =~ /\/(\w+)(\[.+\])*?\/@(\w+)\Z/
+          @toplevel_standalone_attributes[key] = {:element_name => $1, :attribute_name => $3}
+        end
+      }
     end
 
     # Recursivle retrieves all valid keys (element key, attribute keys, child keys)
