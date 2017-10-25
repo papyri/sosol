@@ -335,31 +335,6 @@ class HGVMetaIdentifier < HGVIdentifier
 
   protected
 
-=begin
-
-:contentText => [
-  'x',
-  'y',
-  'z',
-  ...
-]
-
-:bl => [
-  {:value => nil, :children => {}, :attributes =>{}},
-  {:value => nil, :children => {}, :attributes =>{}},
-  {:value => nil, :children => {}, :attributes =>{}},
-  ...
-]
-
-=end
-
-  # Recursively writes user information to EpiDoc xml
-  # - *Args*  :
-  #   - +parent+ → parent element, new elements will be appended to this node
-  #   - +xpath+ → relative xpath that sais where to store the data
-  #   - +data+ → +Array+ of items to be saved to EpiDoc, each item is a +Hash+ object may have a +:value+ and a +Hash+ of +:attributes+ as well as a +Hash+ of +:children+
-  #   - +config+ → configuration as read from +hgv.yml+
-  # Side effect on +parent+, adds new children
   def elementHasAnyContent? item
     if item.class == String && !item.strip.empty?
       return true
@@ -392,6 +367,13 @@ class HGVMetaIdentifier < HGVIdentifier
     return false
   end
 
+  # Recursively writes user information to EpiDoc xml
+  # - *Args*  :
+  #   - +parent+ → parent element, new elements will be appended to this node
+  #   - +xpath+ → relative xpath that sais where to store the data
+  #   - +data+ → +Array+ of items to be saved to EpiDoc, each item is a +Hash+ object may have a +:value+ and a +Hash+ of +:attributes+ as well as a +Hash+ of +:children+
+  #   - +config+ → configuration as read from +hgv.yml+
+  # Side effect on +parent+, adds new children
   def set_epidoc_attributes_tree parent, xpath, data, config
     child_name = xpath[/\A([\w]+)[\w\/\[\]@:=']*\Z/, 1]
     child_attributes = xpath.scan /@([\w:]+)='([\w]+)'/
@@ -545,9 +527,7 @@ class HGVMetaIdentifier < HGVIdentifier
           end
 
           if parent = doc.elements[xpath_parent]
-            if emptyElement? parent
-              parent.elements['..'].delete parent
-            end
+            deleteLegacyElements parent
           end
         end
 
@@ -566,6 +546,16 @@ class HGVMetaIdentifier < HGVIdentifier
     formatter.write doc, modified_xml_content
 
     return modified_xml_content
+  end
+
+  def deleteLegacyElements element
+    if emptyElement? element
+      parent = element.parent
+      if parent
+        parent.delete element
+        deleteLegacyElements parent
+      end
+    end
   end
 
   # checks whether an xml element is empty, in a certain sense
