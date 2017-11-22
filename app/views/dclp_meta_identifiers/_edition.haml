@@ -6,8 +6,9 @@
   .multi.edition{:id => 'multi_edition'}
     Search bibliography on
     %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} Papyri.info
-    or view this record in
-    %a{:href => 'http://www.trismegistos.org/text/' + @identifier[:tmNo], :target => '_blank'} Trismegistos
+    - if @identifier[:tmNo] && !@identifier[:tmNo].empty?
+      or view this record in
+      %a{:href => 'http://www.trismegistos.org/text/' + @identifier[:tmNo], :target => '_blank'} Trismegistos
 
     - bibliographicalItems = @identifier[:edition]
     %hr
