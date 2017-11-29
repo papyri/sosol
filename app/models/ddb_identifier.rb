@@ -101,6 +101,11 @@ class DDBIdentifier < Identifier
   end
   
   def after_rename(options = {})
+    dummy_header(options)
+    update_header(options)
+  end
+
+  def dummy_header(options = {})
     original = options[:original]
 
     # copy back the content to the original name before we update the header
@@ -134,7 +139,11 @@ class DDBIdentifier < Identifier
         original_relative.set_xml_content(dummy_header, :comment => dummy_comment_text)
       end
     end
-    
+  end
+
+  def update_header(options = {})
+    original = options[:original]
+
     if options[:update_header]
       rewritten_xml =
         JRubyXML.apply_xsl_transform(

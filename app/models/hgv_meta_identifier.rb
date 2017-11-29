@@ -288,6 +288,10 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # ?
   def after_rename(options = {})
+    update_header(options)
+  end
+
+  def update_header(options = {})
     if options[:update_header]
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
