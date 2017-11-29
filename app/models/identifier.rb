@@ -358,6 +358,7 @@ class Identifier < ActiveRecord::Base
   def rename(new_name, options = {})
     original = self.dup
     options[:original] = original
+    options[:new_name] = new_name
 
     original_name = self.name
     original_path = self.to_path
