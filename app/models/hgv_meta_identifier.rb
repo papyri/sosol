@@ -288,10 +288,6 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # ?
   def after_rename(options = {})
-    update_header(options)
-  end
-
-  def update_header(options = {})
     if options[:update_header]
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
@@ -300,7 +296,8 @@ class HGVMetaIdentifier < HGVIdentifier
             %w{data xslt metadata update_header.xsl})),
           :filename_text => self.to_components.last,
           :reprint_from_text => options[:set_dummy_header] ? options[:original].title : '',
-          :reprent_ref_attirbute => options[:set_dummy_header] ? options[:original].to_components.last : ''
+          :reprent_ref_attirbute => options[:set_dummy_header] ? options[:original].to_components.last : '',
+          :hybrid => options[:hybrid] ? options[:hybrid] : ''
         )
       self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
     end
