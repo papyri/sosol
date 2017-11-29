@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="http://www.stoa.org/epidoc/schema/8.23/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-   <!-- changed 8.16 to 8.23 -->
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
   <teiHeader>
     <fileDesc>
@@ -12,13 +11,7 @@
         <idno type="filename"><%= id %></idno>
         <idno type="dclp"><%= id %></idno>
         <idno type="dclp-hybrid"><%= n %></idno>
-        <idno type="LDAB"><%= id %></idno>
         <idno type="TM"><%= id %></idno>
-   <!-- all idnos are the same apart from dclp-hybrid. I suspect we have to declare a SoSOL 2017 \d+ 
-        here. We can enter the TM number (= <%= id %>) when we know it, as we very often will, but 
-        will still need the SoSOL 2017 \d+ as a placeholder.
-        As there are no dependencies on HGV, no cross references, because everything is in one file
-        there is no need for related_metas here, I think-->
         <availability>
           <p>© Duke Databank of Documentary Papyri. This work is licensed under a
           <ref type="license" target="http://creativecommons.org/licenses/by/3.0/">Creative 
@@ -48,9 +41,6 @@
             </origin>
           </history>
         </msDesc>
-  <!-- as found in the relevant position in 
-      https://github.com/DCLP/sosol/blob/master/data/templates/hgv_meta_identifier.xml.erb
-      -->
       </sourceDesc>
     </fileDesc>
     <encodingDesc>
@@ -83,7 +73,6 @@
             <title level="s" type="abbreviated"><%= n %></title><!-- provide meaningful data -->
             <biblScope unit="volume"><%= n %></biblScope><!-- provide meaningful data -->
             <biblScope unit="number"><%= n %></biblScope><!-- provide meaningful data -->
-    <!-- I do not think that this is where we need SoSOL 2017 \d+ -->
           </bibl>
         </listBibl>
     </div>
