@@ -49,6 +49,20 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
     DCLPMetaIdentifier.preprocess(content)
   end
 
+  # Whenever a DCLP Meta Identifier is renamed, the corresponding DCLP Text Identifier needs to be renamed as well
+  def after_rename(options = {})
+    super(options)
+    self.publication.controlled_identifiers.each {|i|
+      if i.class == DCLPTextIdentifier && i.name != options[:new_name]
+        i.transaction do
+          i.name = options[:new_name]
+          i.title = i.titleize
+          i.save!
+        end
+      end
+      }
+  end
+
   def to_s
    serialization_string = ''
    @configuration.scheme.each_key do |key|
