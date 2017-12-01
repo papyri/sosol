@@ -30,11 +30,11 @@
         -else
           %label New name:
           = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+          - unless @identifier.needs_rename?
+            %br
+            %br
+            = check_box_tag :set_dummy_header
+            Leave dummy header in original file
         %br
         %br
-        - unless @identifier.needs_rename?
-          = check_box_tag :set_dummy_header
-          Leave dummy header in original file
-          %br
-          %br
         = f.submit "Rename", :class => 'save', :disabled => !@identifier.mutable?
