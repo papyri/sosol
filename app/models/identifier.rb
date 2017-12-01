@@ -539,7 +539,9 @@ class Identifier < ActiveRecord::Base
   def get_hybrid type = null
     doc = REXML::Document.new self.content
     if hybrid_idno = doc.elements["/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='" + (type ? type.to_s + '-' : '') + "hybrid']"]
-        return hybrid_idno.text.strip
+        if hybrid_idno.text
+          return hybrid_idno.text.to_s.strip
+        end
     end
     return ''
   end
