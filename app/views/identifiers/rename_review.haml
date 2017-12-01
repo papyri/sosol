@@ -26,7 +26,7 @@
           = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
           %br
           %label New dclp-hybrid name:
-          = text_field_tag :new_hybrid, 'NOT IMPLEMENTED YET', :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+          = text_field_tag :new_hybrid, @identifier.hybrid, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
         -else
           %label New name:
           = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?

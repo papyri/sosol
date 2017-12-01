@@ -1,4 +1,5 @@
 class DCLPMetaIdentifier < HGVMetaIdentifier
+  attr_accessor :hybrid
 
   PATH_PREFIX = 'DCLP'
 
@@ -13,6 +14,7 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
   def post_initialization_configuration
     @configuration = HgvMetaIdentifierHelper::HgvMetaConfiguration.new :dclp
     @valid_epidoc_attributes = @configuration.keys
+    @hybrid = get_hybrid :dclp
   end
 
   # cl: can be made simpler for DCLP needs

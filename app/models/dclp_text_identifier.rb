@@ -1,5 +1,5 @@
 class DCLPTextIdentifier < DDBIdentifier
-  attr_accessor :configuration, :valid_epidoc_attributes
+  attr_accessor :configuration, :valid_epidoc_attributes, :hybrid
 
   PATH_PREFIX = 'DCLP'
 
@@ -43,6 +43,7 @@ class DCLPTextIdentifier < DDBIdentifier
   def post_initialization_configuration
     @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
+    @hybrid = get_hybrid :dclp
   end
 
   # ?

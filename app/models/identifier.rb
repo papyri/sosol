@@ -536,4 +536,12 @@ class Identifier < ActiveRecord::Base
     NumbersRDF::NumbersHelper.identifier_to_url(self.name)
   end
 
+  def get_hybrid type = null
+    doc = REXML::Document.new self.content
+    if hybrid_idno = doc.elements["/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='" + (type ? type.to_s + '-' : '') + "hybrid']"]
+        return hybrid_idno.text.strip
+    end
+    return ''
+  end
+
 end
