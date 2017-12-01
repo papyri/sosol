@@ -68,7 +68,7 @@ class IdentifiersController < ApplicationController
   def rename
     find_identifier
     begin
-      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header])
+      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header], :new_hybrid => params[:new_hybrid])
       flash[:notice] = "Identifier renamed."
     rescue RuntimeError => e
       flash[:error] = e.to_s
