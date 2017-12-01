@@ -21,8 +21,15 @@
         %br
       = form_for @identifier, :url => { :action => "rename" } do |f|
         = f.error_messages
-        %label New name:
-        = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+        -if [DCLPMetaIdentifier, DCLPTextIdentifier].include? @identifier.class
+          %label New file name:
+          = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+          %br
+          %label New dclp-hybrid name:
+          = text_field_tag :new_hybrid, 'NOT IMPLEMENTED YET', :class => :comment, :size => '80', :disabled => !@identifier.mutable?
+        -else
+          %label New name:
+          = text_field_tag :new_name, @identifier.name, :class => :comment, :size => '80', :disabled => !@identifier.mutable?
         %br
         %br
         - unless @identifier.needs_rename?
