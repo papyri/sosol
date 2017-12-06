@@ -152,4 +152,12 @@ class DCLPTextIdentifier < DDBIdentifier
     '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
   end
 
+  def correspondingDclpMetaIdentifier
+    self.publication.controlled_identifiers.each {|i|
+      if i.class == DCLPMetaIdentifier
+        return i
+      end
+    }
+  end
+
 end

@@ -85,4 +85,12 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
     '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
   end
 
+  def correspondingDclpTextIdentifier
+    self.publication.controlled_identifiers.each {|i|
+      if i.class == DCLPTextIdentifier
+        return i
+      end
+    }
+  end
+
 end
