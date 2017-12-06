@@ -71,7 +71,7 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
       }
   end
 
-  def to_s
+  def to_string
    serialization_string = ''
    @configuration.scheme.each_key do |key|
      serialization_string += '__' + key.to_s + '__: ' + self[key].to_s
