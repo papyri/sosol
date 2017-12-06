@@ -57,9 +57,15 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
     self.publication.controlled_identifiers.each {|i|
       if i.class == DCLPTextIdentifier && i.name != options[:new_name]
         i.transaction do
+          relatives = i.relatives
           i.name = options[:new_name]
           i.title = i.titleize
           i.save!
+          relatives.each do |relative|
+            relative.name = i.name
+            relative.title = i.title
+            relative.save!
+          end
         end
       end
       }
