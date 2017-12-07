@@ -2,6 +2,8 @@
   .clear
   = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
   = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
+  = label_tag 'ldab', I18n.t('dclp.label.ldab'), :class => 'meta ldab', :title => @identifier.configuration.xpath(:ldab)
+  = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :ldab }
   .clear
   .multi.edition{:id => 'multi_edition'}
     Search bibliography on
