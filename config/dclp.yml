@@ -84,6 +84,9 @@
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/width[@unit='cm']
     :height:
       :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/height[@unit='cm']
+    :ldab:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
+      :pattern: /\A\d+\Z/
     :mp3:
       :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
       :pattern: /\A\d+(\.\d+)?\Z/
