@@ -111,22 +111,6 @@ class DCLPTextIdentifier < DDBIdentifier
         %w{data xslt ddb preprocess.xsl})))
   end
 
-  # ?
-  def after_rename(options = {})
-    if options[:update_header]
-      rewritten_xml =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-            %w{data xslt metadata update_header.xsl})),
-          :filename_text => self.to_components.last,
-          :reprint_from_text => options[:set_dummy_header] ? options[:original].title : '',
-          :reprent_ref_attirbute => options[:set_dummy_header] ? options[:original].to_components.last : ''
-        )
-      self.set_xml_content(rewritten_xml, :comment => "Update header to reflect new identifier '#{self.name}'")
-    end
-  end
-
   def self.new_from_dclp_meta_identifier(dclpMetaIdentifier)
     new_identifier = self.new(:name => dclpMetaIdentifier.name)
 
@@ -150,6 +134,14 @@ class DCLPTextIdentifier < DDBIdentifier
   # name can be »papyri.info/dclp/SoSOL;2017;0002«
   def get_catalog_link
     '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
+  end
+
+  def correspondingDclpMetaIdentifier
+    self.publication.controlled_identifiers.each {|i|
+      if i.class == DCLPMetaIdentifier
+        return i
+      end
+    }
   end
 
 end

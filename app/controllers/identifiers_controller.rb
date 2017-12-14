@@ -59,6 +59,9 @@ class IdentifiersController < ApplicationController
   def rename_review
     #TODO - does this need to be locked down somehow so not get to it via URL entry?
     find_identifier
+    if @identifier.class == DCLPTextIdentifier
+      redirect_to polymorphic_path([@identifier.publication, @identifier.correspondingDclpMetaIdentifier], :action => :rename_review) and return
+    end
     @is_editor_view = true
     render :template => 'identifiers/rename_review'
   end
