@@ -1563,8 +1563,9 @@ module HgvMetaIdentifierHelper
         return t
       end
 
-      # centuries
-      if date_item[:c]
+      if date_item[:c] # centuries
+        date_item.delete :precision # centuries may not have a precision
+        date_item.delete :precision2
         t[:attributes][:notBefore] = HgvDate.getYearIso date_item[:c], date_item[:cx], :chronMin
         if date_item[:c2]
           t[:attributes][:notAfter] = HgvDate.getYearIso date_item[:c2], date_item[:cx2], :chronMax
@@ -1586,7 +1587,7 @@ module HgvMetaIdentifierHelper
         else
           t[:attributes][:precision] = 'low'
         end
-      else
+      else # year, month, day
         y = {nil => '', 0 => '-'}[date_item[:y] =~ /-/] + date_item[:y].sub('-', '').rjust(4, '0')
         m = HgvDate.getMonthIso date_item[:m], date_item[:yx], :chronMin
         d = HgvDate.getDayIso date_item[:d], date_item[:m], date_item[:mx], :chronMin
