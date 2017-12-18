@@ -163,9 +163,9 @@ function multiAddEditionRaw(e){
 '          <option value="tome">Tome</option>' +
 '          <option value="volume" selected="selected">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_value" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_corresp" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_from" class="observechange editionExtraFrom">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_to" class="observechange editionExtraTo">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_corresp" class="observechange editionExtra">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_from" class="observechange editionExtraFrom">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][0][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_0_attributes_to" class="observechange editionExtraTo">' +
 '        </li>' +
 '        <li>' +
 '          <select name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][unit]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_unit" class="observechange editionExtra">' +
@@ -188,9 +188,9 @@ function multiAddEditionRaw(e){
 '          <option value="tome">Tome</option>' +
 '          <option value="volume">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_value" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_corresp" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_from" class="observechange editionExtraFrom">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_to" class="observechange editionExtraTo">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_corresp" class="observechange editionExtra">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_from" class="observechange editionExtraFrom">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][1][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_1_attributes_to" class="observechange editionExtraTo">' +
 '        </li>' +
 '        <li>' +
 '          <select name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][unit]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_unit" class="observechange editionExtra">' +
@@ -213,9 +213,9 @@ function multiAddEditionRaw(e){
 '          <option value="tome">Tome</option>' +
 '          <option value="volume">Volume</option></select>' +
 '          <input type="text" onchange="editionExtraChange(this);" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][value]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_value" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_corresp" class="observechange editionExtra">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_from" class="observechange editionExtraFrom">' +
-'          <input type="text" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_to" class="observechange editionExtraTo">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][corresp]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_corresp" class="observechange editionExtra">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][from]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_from" class="observechange editionExtraFrom">' +
+'          <input type="hidden" name="hgv_meta_identifier[edition][' + editionIndex + '][children][extra][2][attributes][to]" id="hgv_meta_identifier_edition_' + editionIndex + '_children_extra_2_attributes_to" class="observechange editionExtraTo">' +
 '        </li>' +
 '      </ul>' +
 '    </div>' +
