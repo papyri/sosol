@@ -26,6 +26,9 @@
   </xsl:template>
   
   <!-- strip comments -->
+  <xsl:template match="comment()[matches(string(.), 'ignore - (start|stop).*')]">
+    <xsl:copy/>
+  </xsl:template>
   <xsl:template match="comment()"/>
 
   <!-- enforce ordering of /tei:TEI/tei:text/tei:body
