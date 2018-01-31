@@ -175,6 +175,8 @@ en:
     help:
       illustrationOnline: e.g. classical works, knowledge base
       workTitleDate: e.g. -412 to 120
+      renameNewName: e.g. papyri.info/dclp/555
+      renameNewHybrid: e.g. psicongr;17;13 [optional, can be left empty]
 
   meta:
     legend:
