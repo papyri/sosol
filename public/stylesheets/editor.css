@@ -276,6 +276,8 @@ styled_button_show {
     .diff del pre code {
       background: #ffbbaa; }
 
+#rename form div.new_name_new_hybrid input.comment {
+  width: 12em; }
 #edit form textarea {
   width: 100%;
   height: 50em;
