@@ -132,6 +132,13 @@
               %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'APIS', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+        - when DCLPMetaIdentifier
+          .identifier_sub_menu#sub_menu_2
+
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Meta', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
         - when HGVMetaIdentifier
           .identifier_sub_menu#sub_menu_2
             
