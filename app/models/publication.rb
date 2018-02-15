@@ -1434,7 +1434,9 @@ class Publication < ActiveRecord::Base
     end
 
     # add comments hash from each of the publication's identifiers XML file to array
-    identifiers.each do |i|
+    # in the case of DCLP, only one of its twin identifiers (DCLPMetaIdentifier and DCLPTextIdentifier) needs to be processed
+    identifiers.select{|i|i.class != DCLPTextIdentifier || !identifiers.find_index{|i| i.class == DCLPMetaIdentifier}}.each do |i|
+      puts i.class
       where_from = i.class::FRIENDLY_NAME
       ident_title = i.title
 
