@@ -3,7 +3,6 @@ sudo: false
 env:
   - JRUBY_OPTS="-J-Xmx1g --2.0"
 jdk:
-  - oraclejdk7
   - oraclejdk8
   - openjdk7
 rvm:
