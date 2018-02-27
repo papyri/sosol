@@ -1,0 +1,43 @@
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bookForm }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :bookForm }
+
+.clear
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :columns }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :columns }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :writtenLines }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :writtenLines }
+
+.clear
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :scriptType }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :scriptType }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :pagination }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :pagination }
+
+.clear
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :width }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :width }
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :height }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :height }
+
+.clear
+
+= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :layout }
+= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :layout }
+
+.clear
+
+.multi.collection
+  - collection = DclpObject::Collection.new(@identifier[:collection], @identifier[:collectionList])
+  %h5
+    =I18n.t('dclp.label.collection')
+  = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => 'collectionList', :multiList => collection.list }
+  .clear

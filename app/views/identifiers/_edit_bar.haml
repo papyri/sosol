@@ -25,6 +25,24 @@
               - for meta in metas
                 %li
                   = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
+      - identifierList = @identifier.publication.identifiers.select{|i| i.class == DCLPTextIdentifier}
+      - if identifierList.length > 0
+        %li{ :class => params[:controller] == 'dclp_text_identifiers' ? 'active' : ''}
+          = link_to 'Text', edit_text_publication_path(@identifier.publication)
+          - if identifierList.length > 1
+            %ul
+              - for identifierItem in identifierList
+                %li
+                  = link_to identifierItem.titleize, edit_polymorphic_path([@identifier.publication, text])
+      - identifierList = @identifier.publication.identifiers.select{|i| i.class == DCLPMetaIdentifier}
+      - if identifierList.length > 0
+        %li{ :class => params[:controller] == 'dclp_meta_identifiers' ? 'active' : ''}
+          = link_to 'Meta', edit_meta_publication_path(@identifier.publication)
+          - if identifierList.length > 1
+            %ul
+              - for identifierItem in identifierList
+                %li
+                  = link_to identifierItem.titleize, edit_polymorphic_path([@identifier.publication, meta])
       - if @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}.length > 0
         %li{ :class => params[:controller] == 'apis_identifers' ? 'active' : ''}
           = link_to 'APIS (beta)', edit_apis_publication_path(@identifier.publication)
@@ -88,9 +106,17 @@
           -# another way to do it
         -# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post
         -# %a{:href=>"#", :onClick=>"window.open('#{linky}', 'Comment', 'toolbar=0, menubar=0, location=0, status=0')"}=Comment
-    
+
     - if !%w{history rename_review show show_commit}.include?(params[:action])
       - case @identifier
+        - when DCLPTextIdentifier
+          .identifier_sub_menu#sub_menu_2
+            
+            %ul
+              %li{ :class => %w{edit update}.include?(params[:action]) ? 'active' : ''}= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'commentary' ? 'active' : ''}= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
         - when DDBIdentifier
           .identifier_sub_menu#sub_menu_2
             
@@ -104,6 +130,13 @@
           
             %ul
               %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'APIS', edit_polymorphic_path([@identifier.publication, @identifier])
+              %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
+              %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
+        - when DCLPMetaIdentifier
+          .identifier_sub_menu#sub_menu_2
+
+            %ul
+              %li{ :class => params[:action] == 'edit' ? 'active' : ''}= link_to 'Meta', edit_polymorphic_path([@identifier.publication, @identifier])
               %li{ :class => params[:action] == 'editxml' ? 'active' : ''}= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml)
               %li{ :class => params[:action] == 'preview' ? 'active' : ''}= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview)
         - when HGVMetaIdentifier

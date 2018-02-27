@@ -1,0 +1,26 @@
+%hr
+.multi#multi_editonExtra
+  %ul.items#multiItems_editionExtra
+    - extraList.each_with_index do |extra, index|
+      %li
+        = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, extra.unit), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+        = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   extra.value,   :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', extra.corresp, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    extra.from,    :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+        = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      extra.to,      :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'
+        -# cl: This comment and the following 6 lines of code can be delete when there are no deprecated tei:biblScope/@units in play any longer
+        - if !DclpEdition.validExtraOption?(extra.unit)
+          %span{:style => 'color: red;'}
+            Warning! The unit
+            %b
+              = '‘' + extra.unit.to_s + '’'
+            is deprecated. Please select appropriate value.
+
+    - if extraList.length < 3
+      - extraList.length.upto(2) do |index|
+        %li
+          = select_tag baseChildren + '[extra][' + (index).to_s + '][attributes][unit]', options_for_select(DclpEdition.extraOptions, nil), :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = text_field_tag baseChildren + '[extra][' + (index).to_s + '][value]',   nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra', :onchange => "editionExtraChange(this);"
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][corresp]', nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtra'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][from]',    nil, :disabled => !@identifier.mutable?, :class => 'observechange editionExtraFrom'
+          = hidden_field_tag baseChildren + '[extra][' + (index).to_s + '][attributes][to]',      nil , :disabled => !@identifier.mutable?, :class => 'observechange editionExtraTo'

@@ -108,6 +108,9 @@ class Publication < ActiveRecord::Base
   def populate_identifiers_from_identifiers(identifiers, original_title = nil)
 
     self.repository.update_master_from_canonical
+    if identifiers.class == String && identifiers.include?('/dclp/') #cl: circumvent the number server for dclp stuff
+      identifiers = {'dclp' => [identifiers]}
+    else
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
@@ -120,6 +123,7 @@ class Publication < ActiveRecord::Base
     end
     # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)
     # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
+    end
 
 
     #title is first identifier in list
@@ -368,6 +372,28 @@ class Publication < ActiveRecord::Base
     #create the required meta data and transcriptions
     new_ddb = DDBIdentifier.new_from_template(new_publication)
     new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
+
+    # go ahead and create the third so we can get rid of the create button
+    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
+
+    return new_publication
+  end
+
+  def self.new_from_dclp_template(creator)
+    new_publication = Publication.new(:owner => creator, :creator => creator)
+
+    # fetch a title without creating from template
+    new_publication.title = DCLPMetaIdentifier.new(:name => DCLPMetaIdentifier.next_temporary_identifier).titleize
+
+    new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
+    new_publication.save!
+
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+
+    #create the required meta data and transcriptions
+    new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
+    new_dclp_text = DCLPTextIdentifier.new_from_dclp_meta_identifier(new_dclp_meta)
 
     # go ahead and create the third so we can get rid of the create button
     #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
@@ -1461,15 +1487,16 @@ class Publication < ActiveRecord::Base
     has_biblio = false
     has_cts = false
     has_apis = false
+    has_dclp = false
 
     self.identifiers.each do |i|
       if i.class.to_s == "BiblioIdentifier"
         has_biblio = true
       end
-      if i.class.to_s == "HGVMetaIdentifier"
+      if i.class.to_s == "HGVMetaIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
         has_meta = true
       end
-      if i.class.to_s == "DDBIdentifier"
+      if i.class.to_s == "DDBIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
        has_text = true
       end
       if i.class.to_s =~ /CTSIdentifier/
@@ -1478,6 +1505,14 @@ class Publication < ActiveRecord::Base
       if i.class.to_s == "APISIdentifier"
         has_apis = true
       end
+      if i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
+       has_dclp = true
+      end
+    end
+
+    if has_dclp
+      creatable_identifiers.delete("DDBIdentifier")
+      creatable_identifiers.delete("HGVMetaIdentifier")
     end
     if !has_text
       #cant create trans
@@ -1515,6 +1550,6 @@ class Publication < ActiveRecord::Base
   end
 
   def related_text
-    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+    self.identifiers.select{|i| ((i.class == DDBIdentifier || i.class == DCLPTextIdentifier) && !i.is_reprinted?)  || i.class == DCLPMetaIdentifier }.last
   end
 end

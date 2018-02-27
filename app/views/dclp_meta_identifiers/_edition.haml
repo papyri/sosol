@@ -1,0 +1,57 @@
+.editionContainer
+  .clear
+  = label_tag 'tmNo', I18n.t('meta.label.tmNo'), :class => 'meta tmNo', :title => @identifier.configuration.xpath(:tmNo)
+  = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo }
+  = label_tag 'ldab', I18n.t('dclp.label.ldab'), :class => 'meta ldab', :title => @identifier.configuration.xpath(:ldab)
+  = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :ldab }
+  .clear
+  .multi.edition{:id => 'multi_edition'}
+    Search bibliography on
+    %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} Papyri.info
+    - if @identifier[:tmNo] && !@identifier[:tmNo].empty?
+      or view this record in
+      %a{:href => 'http://www.trismegistos.org/text/' + @identifier[:tmNo], :target => '_blank'} Trismegistos
+
+    - bibliographicalItems = @identifier[:edition]
+    %hr
+    %ul.items{:id => 'multiItems_edition'}
+      - bibliographicalItems.each_index do |editionIndex|
+        - edition = DclpEdition::Edition.new(:edition => bibliographicalItems[editionIndex])
+        - base = 'hgv_meta_identifier[edition][' + editionIndex.to_s + ']'
+        - baseAttributes = base + '[attributes]'
+        - baseChildren = base + '[children]'
+
+        %li.edition{:id => 'edition_' + editionIndex.to_s }
+          = label_tag baseChildren + '[link][value]', I18n.t('dclp.label.editionLink'), :class => 'meta editionLink', :title => @identifier.configuration.xpath(:edition)
+          = text_field_tag baseChildren + '[link][value]', edition.biblioId, :disabled => !@identifier.mutable?, :class => 'observechange editionLink', :onchange => "editionLinkChange(this);"
+
+          - # CROMULENT TITLE HACK
+          = hidden_field_tag baseChildren + '[title][value]', edition.title, :disabled => !@identifier.mutable?, :class => 'observechange editionTitle'
+          = hidden_field_tag baseChildren + '[title][attributes][level]', edition.titleLevel, :disabled => !@identifier.mutable?, :class => 'observechange editionTitleLevel'
+          = hidden_field_tag baseChildren + '[title][attributes][type]', edition.titleType, :disabled => !@identifier.mutable?, :class => 'observechange editionTitleType'
+
+          = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta editionType', :title => @identifier.configuration.xpath(:edition)
+          = hidden_field_tag baseAttributes + '[type]', edition.type, :disabled => !@identifier.mutable?, :class => 'observechange editionType'
+          = hidden_field_tag baseAttributes + '[subtype]', edition.subtype, :disabled => !@identifier.mutable?, :class => 'observechange editionSubtype'
+          = select_tag baseAttributes + '[ubertype]', grouped_options_for_select({'' => DclpEdition.ubertypeOptions1, '--------' => DclpEdition.ubertypeOptions2}, edition.ubertype), :disabled => !@identifier.mutable?, :class => 'observechange editionubertype'
+          = label_tag baseAttributes + '[language]', I18n.t('bibliography.language'), :class => 'meta editionLanguage', :title => @identifier.configuration.xpath(:edition), :style => (edition.subtype != 'translation' ? 'display: none;' : '')
+          = select_tag baseAttributes + '[language]', options_for_select(DclpEdition.languageOptions, edition.language), :disabled => !@identifier.mutable?, :class => 'observechange editionLanguage', :style => (edition.subtype != 'translation' ? 'display: none;' : '')
+          %p.clear
+
+          %h5
+            Preview
+          %p.biblioPreview{:id => 'hgv_meta_identifier_edition_' + editionIndex.to_s + '_children_biblioPreview'}
+
+          .extraContainer
+            =render :partial => 'dclp_meta_identifiers/editionExtra', :locals => {:extraList => edition.extraList, :baseChildren => baseChildren, :editionIndex => editionIndex}
+            .clear
+
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
+
+    :javascript
+      Sortable.create('multiItems_edition', {overlap: 'horizontal', constraint: false, handle: 'move'});
+      var url = window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/biblio_autocomplete' : '/dclp_meta_identifiers/biblio_autocomplete';
+      jQuery('input.editionLink').autocomplete({ source: url, delay: 500, minLength: 4, search: function(event, ui){ if(jQuery(this).val().match(/^\d+$/)){return false;} }, close: function(event, ui){ jQuery(this).trigger('change'); } });
+   
+  .clear

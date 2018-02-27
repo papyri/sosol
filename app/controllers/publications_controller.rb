@@ -96,8 +96,13 @@ class PublicationsController < ApplicationController
     end
 
     identifier = params[:id]
+    related_identifiers = nil
 
-    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    if !(/papyri\.info\/dclp/ =~ identifier) # cromulent dclp hack to circumvent number server
+      related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    else
+      related_identifiers = [identifier]
+    end
 
     publication_from_identifier(identifier, related_identifiers)
   end
@@ -136,6 +141,22 @@ class PublicationsController < ApplicationController
     @publication = new_publication
 
     flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+
+  def create_from_dclp_template
+    @publication = Publication.new_from_dclp_template(@current_user)
+
+    # create event
+    e = Event.new
+    e.category = "created"
+    e.target = @publication
+    e.owner = @current_user
+    e.save!
+
+    flash[:notice] = 'Publication was successfully created.'
+    #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     expire_publication_cache
     redirect_to @publication
   end

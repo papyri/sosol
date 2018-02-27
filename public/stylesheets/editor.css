@@ -276,6 +276,8 @@ styled_button_show {
     .diff del pre code {
       background: #ffbbaa; }
 
+#rename form div.new_name_new_hybrid input.comment {
+  width: 12em; }
 #edit form textarea {
   width: 100%;
   height: 50em;
@@ -719,7 +721,12 @@ div#header {
   height: auto; }
 
 div.nav {
-  top: auto; }
+  top: auto;
+}
+
+div.nav li ul {
+  z-index: 103; 
+}
 
 div.editor_nav {
   display: none;
@@ -790,3 +797,9 @@ div.batch_box {
 
 div.preview_commentary {
   margin-left: 3em; }
+
+form.edit_dclp_meta_identifier label{
+  display: block;
+  float: left;
+  width: 12em;
+}

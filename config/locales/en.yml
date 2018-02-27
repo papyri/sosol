@@ -19,6 +19,7 @@ en:
     es: Spanish
     la: Latin
     el: Greek
+    grc: Greek
 
   biblio:
     legend:
@@ -121,6 +122,61 @@ en:
       ostracon: Ostraca
       corpora: Corpora
       series: Series
+
+  dclp:
+    legend:
+      edition: Editions & Bibliography
+      work: Author & Work
+      object: Physical Description (Collection, Dimension, Layout, Material)
+      general: General Notes
+    label:
+      collection: Place, Collection, Inventory Number
+      editionLink: Biblio
+      illustration: Illustrations
+      illustrationPrinted: Printed Images
+      illustrationOnline: Online Resources
+      addEdition: add edition
+      addWork: add work
+      ldab: LDAB
+      mp3: MP3
+      titleStmt: Display Name (Description)
+      archive: Archive
+      archiveName: Archive Name
+      archiveLink: Archive Link
+      overview: Legacy Display Name
+      contentTextGenre: Genre
+      contentTextReligion: Religion
+      contentTextCulture: Culture
+      contentTextKeywords: Keywords
+      workAuthorName: TLG Name
+      workTitleName: TM Work
+      workTlg: TLG
+      workPhi: Phi
+      workTm: TM
+      workCwkb: CWKB
+      workStoa: Stoa
+      workAuthorAuthority: Digital/Online identifiers for this author
+      workWorkAuthority: Digital/Online identifiers for this work
+      workInternetResources: Internet Resources
+      workInternetResourcesDescription: e.g. classical works, knowledge base
+      workCertainty: Certainty
+      workCorresp: Corresp
+      workAlternative: alternative work
+      workName: TM Work
+      workDate: Year of Creation
+      workDateTo: to
+      workAddAlternative: add alternative
+      workMentionAlternative: is alternative to
+      workDisplayName: Display Name
+      workLegacy: Description
+      workExtra: Passage
+      workExtraAddAnd: add and
+      workExtraBookNumber: Book Number
+    help:
+      illustrationOnline: e.g. classical works, knowledge base
+      workTitleDate: e.g. -412 to 120
+      renameNewName: e.g. papyri.info/dclp/555
+      renameNewHybrid: e.g. psicongr;17;13 [optional, can be left empty]
 
   meta:
     legend:
@@ -236,6 +292,14 @@ en:
       geoPreview: update geo preview
       publicationPreview: update publication preview
       addAlternativePlace: add alternative location
+      bookForm: Book form
+      columns: Columns
+      writtenLines: Lines
+      layout: Layout
+      scriptType: Script type
+      pagination: Pagination
+      width: Width
+      height: Height
 
     tooltip:
       multiMentionedDateReference: Reference (line and column)
@@ -378,6 +442,69 @@ en:
     monthAndYearUncertain: year and month uncertain
     dayAndYearUncertain: year and day uncertain
     dayMonthAndYearUncertain: year, month and day uncertain
+
+  edition:
+    type:
+      publication: Publication
+      reference: Reference
+    subtype:
+      principal: principal
+      partial: partial
+      previous: previous
+      readings: readings
+      translation: Translation
+      study: Study
+      catalogue: Catalogue
+      palaeo: Palaeo
+      illustration: Illustration
+    ubertype:
+      principal: Principal edition
+      reference: Reference edition
+      partial: Partial edition
+      previous: Previous edition
+      readings: Readings
+      translation: Translation
+      study: Study
+      catalogue: Catalogue
+      palaeo: Palaeo
+      illustration: Illustration
+    extra:
+      book: Book
+      chapter: Chapter
+      folio: Folio
+      fragment: Fragment
+      inventory: Inventory
+      line: Line
+      part: Part
+      poem: Poem
+      volume: Volume
+      page: Page
+      number: Number
+      column: Column
+      tome: Tome
+      fascicle: Fascicle
+      issue: Issue
+      plate: Plate
+      side: Side
+      generic: Generic
+
+  work:
+    subtype:
+      ancient: Primary
+      ancientQuote: Citation
+    extra:
+      generic: generic
+      lines: lines
+      fragment: fragment
+      page: page
+      chapter: chapter
+      poem: poem
+    authority:
+      tlg: TLG
+      stoa: Stoa
+      cwkb: CWKB
+      phi: Phi
+      tm: TM
 
   provenance:
     epoch:

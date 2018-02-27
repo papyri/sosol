@@ -104,6 +104,8 @@
           = image_tag('hgv.gif')
         - if identifier.class == APISIdentifier
           = image_tag('apis.png')
+        - if identifier.class == DCLPMetaIdentifier ||identifier.class == DCLPTextIdentifier
+          = image_tag('dclp.png')
         - if identifier.class == OACIdentifier
           = image_tag('oac-logo-ds.png')
         - if identifier.needs_reviewing?(@current_user.id)

@@ -39,7 +39,7 @@ class IdentifiersController < ApplicationController
       begin
         @identifier = identifier_type.new_from_template(@publication)
       rescue Exception => e
-        flash[:error] = e.message
+        flash[:error] = e.message + ' (identifiers_controller::create)'
         redirect_to publication_path(@publication.id) and return
       end
     end
@@ -59,6 +59,9 @@ class IdentifiersController < ApplicationController
   def rename_review
     #TODO - does this need to be locked down somehow so not get to it via URL entry?
     find_identifier
+    if @identifier.class == DCLPTextIdentifier
+      redirect_to polymorphic_path([@identifier.publication, @identifier.correspondingDclpMetaIdentifier], :action => :rename_review) and return
+    end
     @is_editor_view = true
     render :template => 'identifiers/rename_review'
   end
@@ -68,7 +71,7 @@ class IdentifiersController < ApplicationController
   def rename
     find_identifier
     begin
-      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header])
+      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header], :new_hybrid => params[:new_hybrid])
       flash[:notice] = "Identifier renamed."
     rescue RuntimeError => e
       flash[:error] = e.to_s

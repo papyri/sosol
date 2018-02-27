@@ -101,6 +101,11 @@ class DDBIdentifier < Identifier
   end
   
   def after_rename(options = {})
+    dummy_header(options)
+    update_header(options)
+  end
+
+  def dummy_header(options = {})
     original = options[:original]
 
     # copy back the content to the original name before we update the header
@@ -134,7 +139,11 @@ class DDBIdentifier < Identifier
         original_relative.set_xml_content(dummy_header, :comment => dummy_comment_text)
       end
     end
-    
+  end
+
+  def update_header(options = {})
+    original = options[:original]
+
     if options[:update_header]
       rewritten_xml =
         JRubyXML.apply_xsl_transform(
@@ -249,6 +258,10 @@ class DDBIdentifier < Identifier
     if get_broken_leiden(original_xml_content).nil?
       # get div type=edition from XML in string format for conversion
       abs = DDBIdentifier.get_div_edition(original_xml).join('')
+      # if there’s only an empty stub, add a single line to make it valid for xsugar grammar and add default language if there is none
+      if /\A<div[^>]+\/>\Z/ =~ abs then
+        abs = abs[0..-3] + (/xml:lang/ =~ abs ? '' : ' xml:lang="grc"') + '><ab><lb n="1"/></ab></div>'
+      end
       # transform XML to Leiden+ 
       transformed = DDBIdentifier.xml2nonxml(abs)
       

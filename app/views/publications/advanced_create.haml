@@ -8,11 +8,14 @@
 .advanced_create
   %h3 Create New Publication
   %p
-    Create a new publication record and text.
+    Create a new DDB publication record and text.
     = render :partial => "publications/create_from_templates_form"
   %p
     Create a new APIS record.
     = render :partial => "publications/create_from_apis_template_form"
+  %p
+    Create a new DCLP record.
+    = render :partial => "publications/create_from_dclp_template_form"
   %p
     Create a new biblio record.
     = render :partial => "publications/create_from_biblio_template_form"
@@ -20,6 +23,9 @@
 .advanced_create
   %h3 From PN ID
   %p A PN ID example is "papyri.info/ddbdp/bgu;7;1510"
+  %p
+    To find the appropriate TM number search
+    %a{ :href => 'http://www.trismegistos.org/ldab/search.php', :title => 'LDAB', :target => '_blank' } here
   %p
     = render :partial => "publications/create_from_pn_id_form"
 .advanced_create

@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <langUsage>
-    <language ident="ar">Arabic</language>
+    <language ident="ara">Arabic</language>
     <language ident="arc">Aramaic</language>
     <language ident="arc-Nbat">Nabatean</language>
     <language ident="cop">Coptic</language>
     <language ident="egy-Egyd">Demotic</language>
     <language ident="egy-Egyh">Hieratic</language>
     <language ident="en">English</language>
+    <language ident="got">Gothic</language>
     <language ident="grc">Greek</language>
     <language ident="grc-Latn">Greek in Latin script</language>
+    <language ident="he">Hebrew</language>
+    <language ident="ka">Georgian</language>
     <language ident="la">Latin</language>
     <language ident="la-Grek">Latin in Greek script</language>
     <language ident="pal">Pahlavi</language>
+    <language ident="syc">Classical Syriac</language>
     <language ident="xpr">Parthian</language>
 </langUsage>

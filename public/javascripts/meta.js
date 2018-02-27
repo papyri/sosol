@@ -28,20 +28,22 @@ function provenanceOrigPlaceUnknownToggle(unknown){
 /**** publication ****/
 
 function publicationPreview(){
-  preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
-            $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
-            $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
+  if($('publicationExtraFullTitle')){
+    preview = $('hgv_meta_identifier_publicationTitle').getValue() + ' ' + 
+              $('hgv_meta_identifier_publicationExtra_0_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_1_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_2_value').getValue() + ' ' +
+              $('hgv_meta_identifier_publicationExtra_3_value').getValue() + ' ';
 
-  $('multiItems_publicationExtra').select('input').each(function(input){
+    $('multiItems_publicationExtra').select('input').each(function(input){
    
-    if(input.type.toLowerCase() != 'hidden'){
-      preview += input.getValue() + ' ';
-    }
-  });
+      if(input.type.toLowerCase() != 'hidden'){
+        preview += input.getValue() + ' ';
+      }
+    });
   
-  $('publicationExtraFullTitle').innerHTML = preview;
+    $('publicationExtraFullTitle').innerHTML = preview;
+  }
 }
 
 /**** date ****/
@@ -94,21 +96,6 @@ function toggleMentionedDates(dateId){
 
 /**** multi ****/
 
-function multiAdd(id)
-{
-  var value = $$('#multiPlus_' + id + ' > input')[0].value;
-
-  var index = multiGetNextIndex(id);
-
-  var item = '<li>' +
-             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']" id="hgv_meta_identifier_' + id + '_' + index + '" class="observechange">' +
-             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-             '  <span class="move">o</span>' +
-             '</li>';
-
-  multiUpdate(id, item);
-}
-
 function multiAddCitedLiterature(){
   var target     = $('citedLiterature_target').value;
   var pagination = $('citedLiterature_pagination').value;
@@ -151,8 +138,6 @@ function multiAddProvenanceRaw(e){
   var provenanceIndex = multiGetNextIndex('provenance');
   var geoPlaceKey = generateRandomId('geoPlace');
   var addPlaceKey = generateRandomId('addPlace');
-  
-  console.log('provenanceIndex: '+provenanceIndex);
 
   var item = '<li id="provenance_' + provenanceIndex + '" class="provenance">' +
              '   <p class="clear"></p>' +
@@ -467,20 +452,6 @@ function multiAddMentionedDate()
   mentionedDateNewDate($('hgv_meta_identifier_mentionedDate_' + index +  '_date1'));
 }
 
-function multiGetNextIndex(id)
-{
-  var path = '#multiItems_' + id + ' > li > input';
-
-  var index = 0;
-  $$(path).each(function(item){
-    var itemIndex = item.id.match(/(\d+)[^\d]*$/)[1] * 1;
-    if(index <= itemIndex){
-      index = itemIndex + 1;
-    }
-  });
-  return index;
-}
-
 function multiUpdate(id, newItem)
 {
   $('multiItems_' + id).insert(newItem);
@@ -572,19 +543,19 @@ function mentionedDateNewCertainty(selectbox)
 /**** check ****/
 
 function checkNotAddedMultiples(){
-  if($('mentionedDate_date').value.match(/-?\d{4}(-\d{2}(-\d{2})?)?/)){
+  if($('mentionedDate_date') && $('mentionedDate_date').value.match(/-?\d{4}(-\d{2}(-\d{2})?)?/)){
     multiAddMentionedDate();
   }
 
-  if($('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
+  if($('bl_volume') && $('bl_volume').value.match(/([IVXLCDM]+|(II [1|2]))/)){
     multiAddBl();
   }
-  
-  if($('figures_url').value.match(/http:\/\/.+/)){
+
+  if($('figures_url') && $('figures_url').value.match(/http:\/\/.+/)){
     multiAddFigures();
   }
 
-  multiAdd('contentText');
+  multiAdd('contentText', 6);
   multiAdd('illustrations');
   multiAdd('otherPublications');  
   multiAdd('translationsDe');
@@ -593,6 +564,10 @@ function checkNotAddedMultiples(){
   multiAdd('translationsEs');
   multiAdd('translationsLa');
   multiAdd('translationsFr');
+  multiAdd('printedIllustration');
+  multiAdd('onlineResource', 'children_link_attributes_target');
+  multiAdd('collectionList');
+  multiAdd('keywords');
 }
 
 function complementPlace(key, data){
@@ -661,9 +636,9 @@ Event.observe(window, 'load', function() {
   hideDateTabs();
 
   // submit
-  $('identifier_submit').observe('click', checkNotAddedMultiples);
+  $('identifier_submit').observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false();});
 
-  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('form.edit_hgv_meta_identifier')[0].submit();});});
+  $$('.quickSave').each(function(e){e.observe('click', function(e){checkNotAddedMultiples(); geoReferenceWizard(); rememberToggledView(); set_conf_false(); $$('div#edit form')[0].submit();});});
 
   $('identifier_submit').observe('click', geoReferenceWizard);
 
