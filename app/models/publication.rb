@@ -1480,7 +1480,7 @@ class Publication < ActiveRecord::Base
   end
 
   def creatable_identifiers
-    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES).select{ |identifier| identifier != 'DCLPMetaIdentifier' && identifier != 'DCLPTextIdentifier'}
 
     #WARNING hardcoded identifier dependency hack
     #enforce creation order
