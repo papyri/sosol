@@ -6,7 +6,7 @@ module NumbersRDF
   NAMESPACE_IDENTIFIER = 'papyri.info'
   
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = 'papyri.info'
+  NUMBERS_SERVER_DOMAIN = 'litpap.info'
   NUMBERS_SERVER_PORT = 80
 
   class Timeout < ::Timeout::Error; end
@@ -112,7 +112,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}/source']/dcterms:relation/@rdf:resource[not(. =//dcterms:replaces/@rdf:resource)]", identifier)
+          "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}/source']/dcterms:relation/rdf:Description/@rdf:about", identifier)
         if results.nil?
           return nil
         else
