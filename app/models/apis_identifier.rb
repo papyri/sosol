@@ -4,8 +4,7 @@ class APISIdentifier < HGVMetaIdentifier
 
   PATH_PREFIX = 'APIS'
   IDENTIFIER_NAMESPACE = 'apis'
-  XML_VALIDATOR = JRubyXML::EpiDocP5Validator
-
+  XML_VALIDATOR = JRubyXML::APISEpiDocValidator
   FRIENDLY_NAME = "APIS"
 
   def temporary_path
