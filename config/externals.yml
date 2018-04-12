@@ -4,9 +4,9 @@ lib/rxsugar:
   :revision: rails-3-nfd
 
 data/xslt/epidoc:
-  :type: subversion
-  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/example-p5-xslt
-  :revision: 1755 
+  :type: git
+  :repository: https://github.com/EpiDoc/Stylesheets
+  :revision: 0dfe7677566e86e26b539f84219e0631b1568abb
 
 data/xslt/pn/navigator:
   :type: git
