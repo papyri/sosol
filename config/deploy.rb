@@ -82,4 +82,4 @@ end
 # require 'hoptoad_notifier/capistrano'
 
 require './config/boot'
-require 'airbrake/capistrano'
+# require 'airbrake/capistrano'
