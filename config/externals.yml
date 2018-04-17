@@ -4,14 +4,14 @@ lib/rxsugar:
   :revision: rails-3-nfd
 
 data/xslt/epidoc:
-  :type: subversion
-  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/0-example-p5-xslt-LOCKED
-  :revision: 1755
+  :type: git
+  :repository: https://github.com/EpiDoc/Stylesheets
+  :revision: 0dfe7677566e86e26b539f84219e0631b1568abb
 
 data/xslt/perseus/epidoc:
-  :type: subversion
-  :repository: https://svn.code.sf.net/p/epidoc/code/trunk/0-example-p5-xslt-LOCKED
-  :revision: 2380
+  :type: git
+  :repository: https://github.com/EpiDoc/Stylesheets
+  :revision: 1ffd6717140731863e15029b2e6c9a47453763d7
 
 data/xslt/pn/navigator:
   :type: git
