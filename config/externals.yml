@@ -28,7 +28,7 @@ public/javascripts/texAce:
 public/javascripts/imgspect:
   :type: git
   :repository: git://github.com/perseids-project/imgspect.git
-  :revision: 0aac5566a5ff85829be4211f91ad3c5d0b53f721
+  :revision: 95acbd6162c488f344d899bbd03fc38cb31d45f9
   :git_enable_submodules: true
   :git_submodules_recursive: true
 
