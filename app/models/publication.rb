@@ -1102,8 +1102,6 @@ class Publication < ActiveRecord::Base
       # check if any identifiers need renaming before proceeding
       if self.needs_rename?
         raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
-        # redirect_to @publication
-        return
       end
 
       # Pre-process identifiers for finalization
@@ -1129,24 +1127,18 @@ class Publication < ActiveRecord::Base
           end
         rescue Exception => e
           raise "Error preprocessing finalization copy. #{e.to_s}"
-          # redirect_to self
-          return
         end # end iteration through identifiers
         # we need to rerun preprocessing until no more changes are made because a preprocessing step
         # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
         done_preprocessing = ! any_preprocessed
         if (!done_preprocessing && loop_count == max_loops)
           raise "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
-          # redirect_to self
-          break
         end
       end # done preprocessing
 
       # to prevent a community publication from being finalized if there is no end_user to get the final version
       if self.is_community_publication? && self.community.end_user.nil?
         raise "Error finalizing. No End User for the community."
-        # redirect_to self
-        return
       end
 
       # find all modified identiers in the publication so we can set the votes into the xml
@@ -1170,8 +1162,6 @@ class Publication < ActiveRecord::Base
           canon_sha = self.commit_to_canon
         rescue Errno::EACCES => git_permissions_error
           raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-          # redirect_to self
-          return
         end
       end
       # done committing to canon

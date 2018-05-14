@@ -318,7 +318,6 @@ class PublicationsController < ApplicationController
   end
 
   def finalize_review
-
     @publication = Publication.find(params[:id].to_s)
     @identifier = @publication.controlled_identifiers.last
 
@@ -328,8 +327,6 @@ class PublicationsController < ApplicationController
     end
     @is_editor_view = true
   end
-
-
 
   def finalize
     @publication = Publication.find(params[:id].to_s)
@@ -349,7 +346,6 @@ class PublicationsController < ApplicationController
   # GET /publications/1
   # GET /publications/1.xml
   def show
-
     begin
       @publication = Publication.find(params[:id].to_s)
     rescue
