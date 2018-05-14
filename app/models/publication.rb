@@ -1164,11 +1164,10 @@ class Publication < ActiveRecord::Base
 
       # if it is a community pub, we don't commit to canon
       # instead we ONLY copy changes back to origin (done above)
+      canon_sha = ''
       unless self.is_community_publication? # commit to canon
         begin
           canon_sha = self.commit_to_canon
-          expire_publication_cache(self.creator.id)
-          expire_fragment(/board_publications_\d+/)
         rescue Errno::EACCES => git_permissions_error
           raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
           # redirect_to self

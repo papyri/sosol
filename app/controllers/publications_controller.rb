@@ -336,6 +336,8 @@ class PublicationsController < ApplicationController
 
     begin
       @publication.finalize(params[:comment])
+      expire_publication_cache(@publication.creator.id)
+      expire_fragment(/board_publications_\d+/)
       flash[:notice] = 'Publication finalized.'
     rescue RuntimeError => e
       flash[:error] = e.message
