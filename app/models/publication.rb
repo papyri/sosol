@@ -1099,6 +1099,13 @@ class Publication < ActiveRecord::Base
 
   def finalize(finalization_comment_string = '')
     self.with_lock do
+      # check if any identifiers need renaming before proceeding
+      if self.needs_rename?
+        raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+        # redirect_to @publication
+        return
+      end
+
       # Pre-process identifiers for finalization
       # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
       # if something goes wrong

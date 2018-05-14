@@ -334,13 +334,6 @@ class PublicationsController < ApplicationController
   def finalize
     @publication = Publication.find(params[:id].to_s)
 
-    if @publication.needs_rename?
-      identifiers_needing_rename = @publication.identifiers_needing_rename
-      flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
-      redirect_to @publication
-      return
-    end
-
     begin
       @publication.finalize(params[:comment])
       flash[:notice] = 'Publication finalized.'
