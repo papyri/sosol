@@ -320,17 +320,8 @@ class PublicationsController < ApplicationController
   def finalize_review
 
     @publication = Publication.find(params[:id].to_s)
-    @identifier = nil#@publication.entry_identifier
-    #if we are finalizing then find the board that this pub came from
-    # and find the identifers that the board controls
-    if @publication.parent.owner_type == "Board"
-      @publication.identifiers.each do |id|
-        if @publication.parent.owner.controls_identifier?(id)
-          @identifier = id
-          #TODO change to array if board can control multiple identifiers
-        end
-      end
-    end
+    @identifier = @publication.controlled_identifiers.last
+
     @diff = @publication.diff_from_canon
     if @diff.blank?
       flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
@@ -344,142 +335,19 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id].to_s)
 
     if @publication.needs_rename?
-      identifiers_needing_rename = @publication.controlled_identifiers.select do |i|
-        i.needs_rename?
-      end
+      identifiers_needing_rename = @publication.identifiers_needing_rename
       flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
       redirect_to @publication
       return
     end
 
-    # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
-    # if something goes wrong
-    max_loops = @publication.identifiers.size
-    loop_count = 0
-    done_preprocessing = false
-    @publication.transaction do
-      while (! done_preprocessing) do
-        loop_count = loop_count + 1
-        any_preprocessed = false
-        begin
-          #find all modified identiers in the publication and run any necessary preprocessing
-          @publication.identifiers.each do |id|
-            #board controls this id and it has been modified
-            if id.modified? && @publication.find_first_board.controls_identifier?(id)
-              modified = id.preprocess_for_finalization
-              if (modified)
-                id.save
-                any_preprocessed = true
-              end
-            end
-          end
-        rescue Exception => e
-          flash[:error] = "Error preprocessing finalization copy. #{e.to_s}"
-          redirect_to @publication
-          return
-        end # end iteration through identifiers
-        # we need to rerun preprocessing until no more changes are made because a preprocessing step
-        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
-        done_preprocessing = ! any_preprocessed
-        if (!done_preprocessing && loop_count == max_loops)
-          flash[:error] = "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
-          redirect_to @publication
-          break
-        end
-      end # done preprocessing
-    end # end transaction
-    #to prevent a community publication from being finalized if there is no end_user to get the final version
-    if @publication.is_community_publication? && @publication.community.end_user.nil?
-      flash[:error] = "Error finalizing. No End User for the community."
-      redirect_to @publication
-      return
+    begin
+      @publication.finalize(params[:comment])
+      flash[:notice] = 'Publication finalized.'
+    rescue RuntimeError => e
+      flash[:error] = e.message
     end
 
-    #find all modified identiers in the publication so we can set the votes into the xml
-    @publication.identifiers.each do |id|
-      #board controls this id and it has been modified
-      if id.modified? && @publication.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
-        id.update_revision_desc(params[:comment].to_s, @current_user);
-        id.save
-      end
-    end
-
-
-    #copy back in any case
-    @publication.copy_back_to_user(params[:comment].to_s, @current_user)
-
-    #if it is a community pub, we don't commit to canon
-    #instead we copy changes back to origin
-    if @publication.is_community_publication?
-
-      #@publication.copy_back_to_user(params[:comment].to_s, @current_user)
-
-
-    else #commit to canon
-      begin
-        canon_sha = @publication.commit_to_canon
-        expire_publication_cache(@publication.creator.id)
-        expire_fragment(/board_publications_\d+/)
-      rescue Errno::EACCES => git_permissions_error
-        flash[:error] = "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
-        redirect_to @publication
-        return
-      end
-    end
-
-
-    #go ahead and store a comment on finalize even if the user makes no comment...so we have a record of the action
-    @comment = Comment.new()
-
-    if params[:comment] && params[:comment] != ""
-      @comment.comment = params[:comment]
-    else
-      @comment.comment = "no comment"
-    end
-    @comment.user = @current_user
-    @comment.reason = "finalizing"
-    @comment.git_hash = canon_sha
-    #associate comment with original identifier/publication
-    @comment.identifier_id = params[:identifier_id]
-    @comment.publication = @publication.origin
-
-    @comment.save
-
-    #create an event to show up on dashboard
-    @event = Event.new()
-    @event.owner = @current_user
-    @event.target = @publication.parent #used parent so would match approve event
-    @event.category = "committed"
-    @event.save!
-
-    #TODO need to submit to next board
-    #need to set status of ids
-    @publication.set_origin_and_local_identifier_status("committed")
-    @publication.set_board_identifier_status("committed")
-
-    #as it is set up the finalizer will have a parent that is a board whose status must be set
-    #check that parent is board
-    if @publication.parent && @publication.parent.owner_type == "Board"
-      @publication.parent.archive
-      @publication.parent.owner.send_status_emails("committed", @publication)
-    #else #the user is a super user
-    end
-
-    #send publication to the next board
-    error_text, identifier_for_comment = @publication.origin.submit_to_next_board
-    if error_text != ""
-      flash[:error] = error_text
-    end
-    @publication.change_status('finalized')
-    # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
-    # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
-    # ever gets archived, so the next time the same finalizer tries to finalize the same publication
-    # you get an error because the title is already taken. I'm going to add the date time to the title
-    # of the finalized publication as a workaround
-    @publication.title = @publication.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
-    @publication.save!
-
-    flash[:notice] = 'Publication finalized.'
     redirect_to @publication
   end
 
