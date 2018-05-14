@@ -332,7 +332,11 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id].to_s)
 
     begin
-      @publication.finalize(params[:comment])
+      # Synchronous finalization, errors get presented in error flash
+      # @publication.finalize(params[:comment])
+      # Asynchronous finalization, errors get sent to Airbrake
+      FinalizeJob.new.async.perform(@publication.id, params[:comment])
+      # Need a way to do this at the correct time for async finalization?
       expire_publication_cache(@publication.creator.id)
       expire_fragment(/board_publications_\d+/)
       flash[:notice] = 'Publication finalized.'
