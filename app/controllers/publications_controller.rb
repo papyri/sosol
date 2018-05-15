@@ -310,7 +310,12 @@ class PublicationsController < ApplicationController
       flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
       redirect_to show
     else
-      SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
+      if @publication.children.any?{|c| c.advisory_lock_exists?("finalize_#{c.id}")}
+        flash[:error] = "Cen't change finalizer - finalizer's copy is already in the process of being finalized."
+        redirect_to show
+      else
+        SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
+      end
     end
 
     flash[:notice] = "Finalizer change running. Check back in a few minutes."
@@ -320,6 +325,12 @@ class PublicationsController < ApplicationController
   def finalize_review
     @publication = Publication.find(params[:id].to_s)
     @identifier = @publication.controlled_identifiers.last
+    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
+      flash[:notice] = "This publication is currently being finalized. Check back in a few minutes."
+    elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
+      flash[:notice] = "Someone is already performing a make-me-finalizer action with this publication. Please check back in a few minutes."
+      redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
+    end
 
     @diff = @publication.diff_from_canon
     if @diff.blank?
@@ -330,21 +341,29 @@ class PublicationsController < ApplicationController
 
   def finalize
     @publication = Publication.find(params[:id].to_s)
-
-    begin
-      # Synchronous finalization, errors get presented in error flash
-      # @publication.finalize(params[:comment])
-      # Asynchronous finalization, errors get sent to Airbrake
-      FinalizeJob.new.async.perform(@publication.id, params[:comment])
-      # Need a way to do this at the correct time for async finalization?
-      expire_publication_cache(@publication.creator.id)
-      expire_fragment(/board_publications_\d+/)
-      flash[:notice] = 'Publication finalized.'
-    rescue RuntimeError => e
-      flash[:error] = e.message
+    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
+      flash[:error] = "Finalization is already running for this publication. Please check back in a few minutes."
+      redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
+    elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
+      flash[:error] = "Unable to perform finalization - someone is already performing a make-me-finalizer action with this publication. Please check back in a few minutes."
+      redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
+    else
+      begin
+        # Synchronous finalization, errors get presented in error flash
+        # @publication.finalize(params[:comment])
+        # flash[:notice] = 'Publication finalized.'
+        # Asynchronous finalization, errors get sent to Airbrake
+        FinalizeJob.new.async.perform(@publication.id, params[:comment])
+        flash[:notice] = "Finalization running. Check back in a few minutes."
+        # Need a way to do this at the correct time for async finalization?
+        expire_publication_cache(@publication.creator.id)
+        expire_fragment(/board_publications_\d+/)
+      rescue RuntimeError => e
+        flash[:error] = e.message
+      end
     end
 
-    redirect_to @publication
+    redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
   end
 
   # GET /publications/1
