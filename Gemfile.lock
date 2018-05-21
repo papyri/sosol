@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     actionmailer (3.2.22.5)
       actionpack (= 3.2.22.5)
@@ -215,7 +215,7 @@ DEPENDENCIES
   test_after_commit
   uglifier (>= 1.0.3)
   warbler
-  with_advisory_lock
+  with_advisory_lock (~> 3.0.0)
 
 BUNDLED WITH
    1.14.6

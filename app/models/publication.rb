@@ -392,7 +392,7 @@ class Publication < ActiveRecord::Base
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if self.status != "editing" # && self.status != "new"
+    if (self.status != "editing") || self.advisory_lock_exists?("finalize_#{self.id}")  # && self.status != "new"
       return false
     else
       return true
@@ -1062,6 +1062,126 @@ class Publication < ActiveRecord::Base
     return commit_sha
   end
 
+  def finalize(finalization_comment_string = '')
+    self.with_lock do
+      # check if any identifiers need renaming before proceeding
+      if self.needs_rename?
+        raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+      end
+
+      # Pre-process identifiers for finalization
+      # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+      # if something goes wrong
+      max_loops = self.identifiers.size
+      loop_count = 0
+      done_preprocessing = false
+      while (! done_preprocessing) do
+        loop_count = loop_count + 1
+        any_preprocessed = false
+        begin
+          #find all modified identiers in the publication and run any necessary preprocessing
+          self.identifiers.each do |id|
+            #board controls this id and it has been modified
+            if id.modified? && self.find_first_board.controls_identifier?(id)
+              modified = id.preprocess_for_finalization
+              if (modified)
+                id.save
+                any_preprocessed = true
+              end
+            end
+          end
+        rescue Exception => e
+          raise "Error preprocessing finalization copy. #{e.to_s}"
+        end # end iteration through identifiers
+        # we need to rerun preprocessing until no more changes are made because a preprocessing step
+        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = ! any_preprocessed
+        if (!done_preprocessing && loop_count == max_loops)
+          raise "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
+        end
+      end # done preprocessing
+
+      # to prevent a community publication from being finalized if there is no end_user to get the final version
+      if self.is_community_publication? && self.community.end_user.nil?
+        raise "Error finalizing. No End User for the community."
+      end
+
+      # find all modified identiers in the publication so we can set the votes into the xml
+      # NOTE: DCLP needs special logic for this
+      self.identifiers.each do |id|
+        #board controls this id and it has been modified
+        if id.modified? && self.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
+          id.update_revision_desc(finalization_comment_string.to_s, self.owner);
+          id.save
+        end
+      end
+      
+      # copy back to creator/origin in any case
+      self.copy_back_to_user(finalization_comment_string.to_s, self.owner)
+
+      # if it is a community pub, we don't commit to canon
+      # instead we ONLY copy changes back to origin (done above)
+      canon_sha = ''
+      unless self.is_community_publication? # commit to canon
+        begin
+          canon_sha = self.commit_to_canon
+        rescue Errno::EACCES => git_permissions_error
+          raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+        end
+      end
+      # done committing to canon
+      
+      # store a comment on finalize even if the user makes no comment...so we have a record of the action
+      finalization_comment = Comment.new()
+
+      if finalization_comment_string && finalization_comment_string != ""
+        finalization_comment.comment = finalization_comment_string.to_s
+      else
+        finalization_comment.comment = "no comment"
+      end
+      finalization_comment.user = self.owner
+      finalization_comment.reason = "finalizing"
+      finalization_comment.git_hash = canon_sha
+      # associate comment with original identifier/publication
+      finalization_comment.identifier_id = self.controlled_identifiers.last
+      finalization_comment.publication = self.origin
+      finalization_comment.save
+
+      # create an event to show up on dashboard
+      finalization_event = Event.new()
+      finalization_event.owner = self.owner
+      finalization_event.target = self.parent #used parent so would match approve event
+      finalization_event.category = "committed"
+      finalization_event.save!
+
+      # set status of identifiers
+      self.set_origin_and_local_identifier_status("committed")
+      self.set_board_identifier_status("committed")
+
+      # the finalizer will have a parent that is a board whose status must be set
+      # check that parent is board, then archive the board publication and send status emails
+      if self.parent && self.parent.owner_type == "Board"
+        self.parent.archive
+        self.parent.owner.send_status_emails("committed", self)
+      #else #the user is a super user
+      end
+
+      # send publication to the next board
+      error_text, identifier_for_comment = self.origin.submit_to_next_board
+      if error_text != ""
+        raise error_text
+      end
+      self.change_status('finalized')
+
+      # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+      # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+      # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+      # you get an error because the title is already taken. I'm going to add the date time to the title
+      # of the finalized publication as a workaround
+      self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+      self.save!
+    end # end lock
+  end
 
   def branch_from_master
     owner.repository.create_branch(branch)
@@ -1112,6 +1232,12 @@ class Publication < ActiveRecord::Base
     canonical_sha = canon.get_head('master')
     diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
     return diff || ""
+  end
+
+  def identifiers_needing_rename
+    self.controlled_identifiers.select do |i|
+      i.needs_rename?
+    end
   end
 
   def needs_rename?

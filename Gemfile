@@ -1,6 +1,6 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.22'
 
@@ -40,6 +40,6 @@ gem 'warbler'
 gem 'puma'
 gem 'database_cleaner'
 gem 'sucker_punch', '~> 1.0'
-gem 'with_advisory_lock'
+gem 'with_advisory_lock', '~> 3.0.0'
 
 gem 'test_after_commit', :group => :test
