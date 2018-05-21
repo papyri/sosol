@@ -392,7 +392,7 @@ class Publication < ActiveRecord::Base
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if self.status != "editing" # && self.status != "new"
+    if (self.status != "editing") || self.advisory_lock_exists?("finalize_#{self.id}")  # && self.status != "new"
       return false
     else
       return true
@@ -411,7 +411,7 @@ class Publication < ActiveRecord::Base
        (!(check_user.developer || check_user.admin))
       return false
     else
-      return true
+      return true && (self.mutable? || check_user.developer || check_user.admin)
     end
   end
 
