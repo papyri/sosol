@@ -71,7 +71,17 @@ class ActiveSupport::TestCase
     DatabaseCleaner.clean
   end
 
+  def setup_flock
+    ENV['FLOCK_DIR'] = Dir.mktmpdir
+  end
+
+  def teardown_flock
+    FileUtils.remove_entry_secure ENV['FLOCK_DIR']
+  end
+
   setup :setup_test_repository
   setup :setup_database_cleaner
+  setup :setup_flock
   teardown :teardown_database_cleaner
+  teardown :teardown_flock
 end
