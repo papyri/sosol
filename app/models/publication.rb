@@ -411,7 +411,7 @@ class Publication < ActiveRecord::Base
        (!(check_user.developer || check_user.admin))
       return false
     else
-      return true && (self.mutable? || check_user.developer || check_user.admin)
+      return true
     end
   end
 
