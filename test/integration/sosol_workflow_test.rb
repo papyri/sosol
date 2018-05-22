@@ -679,7 +679,10 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           end
           
           should "not race during make-me-finalizer" do
+            assert_not_nil @ddb_board
             @ddb_board.reload
+            assert_not_nil @ddb_board
+            assert Board.exists?(@ddb_board.id)
             assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should have one child'
             finalizing_publication = @ddb_board.publications.first.children.first
             original_finalizer = finalizing_publication.owner
