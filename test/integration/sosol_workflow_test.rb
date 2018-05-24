@@ -556,6 +556,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         should "not be able to race with multiple submissions" do
           Rails.logger.info("submission race on pub: #{@publication.inspect}")
+          assert Publication.exists?(@publication.id)
+          assert User.exists?(@publication.owner.id)
           submit_publication_id = @publication.id.to_s
           submitter = @publication.owner.id.to_s
 
