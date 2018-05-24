@@ -211,7 +211,7 @@ class Repository
       self.add_remote(other_repo)
       fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
       Rails.logger.info("Trying fallback git command: #{fallback_git_command}")
-      Rails.logger.info(`#{fallback_git_command}`)
+      Rails.logger.info(`#{fallback_git_command}`.scrub)
       unless $?.to_i == 0
         raise "Error with fallback git command in copy_branch_from_repo"
       end
