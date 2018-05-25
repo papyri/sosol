@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'ddiff'
+require 'thwait'
 
 class SosolWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
@@ -608,7 +609,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
           Rails.logger.debug "submit race threadwaiting on: #{new_active_threads.inspect}"
           Rails.logger.flush
-          new_active_threads.each(&:join)
+          # new_active_threads.each(&:join)
+          ThreadsWait.all_waits(*new_active_threads)
           Rails.logger.debug "submit race threadwaiting done"
           Rails.logger.flush
 
@@ -759,7 +761,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
             Rails.logger.debug "MMF race threadwaiting on: #{new_active_threads.inspect}"
             Rails.logger.flush
-            new_active_threads.each(&:join)
+            # new_active_threads.each(&:join)
+            ThreadsWait.all_waits(*new_active_threads)
             Rails.logger.debug "MMF race threadwaiting done"
             Rails.logger.flush
 
