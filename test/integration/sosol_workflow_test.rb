@@ -528,6 +528,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
     end
 
     teardown do
+      Rails.logger.info("Running IDP2 context teardown in thread: #{Thread.current.object_id}")
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do |conn|
         ( @ddb_board.users + [ @james, @submitter,
@@ -702,11 +703,13 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             mmf_publication_owner_id = mmf_publication.owner.id.to_s
 
             Rails.logger.info("MMF race on pub: #{mmf_publication.inspect}")
+            Rails.logger.info("MMF race parent thread id: #{Thread.current.object_id}")
 
             new_active_threads = []
 
             new_active_threads << Thread.new do
               begin
+                Rails.logger.info("Starting MMF race thread 1: #{Thread.current.object_id}")
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
@@ -731,6 +734,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
             new_active_threads << Thread.new do
               begin
+                Rails.logger.info("Starting MMF race thread 2: #{Thread.current.object_id}")
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
