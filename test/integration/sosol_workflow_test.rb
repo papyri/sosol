@@ -711,9 +711,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
                     begin
-                      assert Publication.exists?(mmf_publication_id)
-                      assert User.exists?(different_finalizer)
-                      assert Board.exists?(mmf_publication_owner_id)
+                      assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 1'
+                      assert User.exists?(different_finalizer), 'MMF finalizer should exist in thread 1'
+                      assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 1'
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 1")
@@ -735,9 +735,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
                     begin
-                      assert Publication.exists?(mmf_publication_id)
-                      assert User.exists?(different_finalizer_2)
-                      assert Board.exists?(mmf_publication_owner_id)
+                      assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 2'
+                      assert User.exists?(different_finalizer_2), 'MMF finalizer should exist in thread 2'
+                      assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 2'
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 2")
