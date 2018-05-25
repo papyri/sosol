@@ -9,7 +9,9 @@ class TallyVotesJob
       ActiveRecord::Base.connection_pool.with_connection do
         publication = Publication.find(publication_id)
         publication.with_lock do
-          publication.tally_votes(related_votes)
+          publication.with_advisory_lock("tally_votes_#{publication_id}") do
+            publication.tally_votes(related_votes)
+          end
         end
       end
     ensure
