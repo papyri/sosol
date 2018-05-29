@@ -980,8 +980,9 @@ class Publication < ActiveRecord::Base
         # nothing new from canon, trivial merge by updating HEAD
         # e.g. "Fast-forward" merge, HEAD is already contained in the commit
         # canon.fetch_objects(self.owner.repository)
-        canon.add_alternates(self.owner.repository)
-        commit_sha = canon.update_ref('master', publication_sha)
+        # canon.add_alternates(self.owner.repository)
+        # commit_sha = canon.update_ref('master', publication_sha)
+        canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
 
         self.change_status('committed')
         self.save!
@@ -1041,8 +1042,9 @@ class Publication < ActiveRecord::Base
         self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
 
         # canon.fetch_objects(self.owner.repository)
-        canon.add_alternates(self.owner.repository)
-        commit_sha = canon.update_ref('master', finalized_commit_sha1)
+        # canon.add_alternates(self.owner.repository)
+        # commit_sha = canon.update_ref('master', finalized_commit_sha1)
+        canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
 
         self.change_status('committed')
         self.save!
