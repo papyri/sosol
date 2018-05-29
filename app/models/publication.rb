@@ -891,11 +891,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    merge_base_backticks = Repository.run_command("#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}").chomp
-    unless $?.success?
-      raise "git merge-base failure: #{$?.inspect}"
-    end
-    return merge_base_backticks
+    Repository.run_command("#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}").chomp
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
