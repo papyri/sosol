@@ -251,6 +251,10 @@ class Repository
       remote_config.addURI(org.eclipse.jgit.transport.URIish.new("file://" + other_repo.path))
       remote_config.update(self.jgit_repo.getConfig())
     end
+    unless system("#{self.git_command_prefix} config #{Shellwords.escape("remote.#{other_repo.name}.url")}")
+      Rails.logger.info("Git remote URL not found for #{other_repo.name} inside #{self.name}, adding using fallback Git command")
+      self.class.run_command("#{self.git_command_prefix} remote add #{Shellwords.escape(other_repo.name)} #{Shellwords.escape(other_repo.path)}")
+    end
   end
 
   def name
