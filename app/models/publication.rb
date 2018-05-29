@@ -970,93 +970,94 @@ class Publication < ActiveRecord::Base
   def commit_to_canon
     #commit_sha is just used to return git sha reference point for comment
     commit_sha = nil
+    self.with_advisory_lock('commit_to_canon') do
+      canon = Repository.new
+      publication_sha = self.head
+      canonical_sha = canon.get_head('master')
 
-    canon = Repository.new
-    publication_sha = self.head
-    canonical_sha = canon.get_head('master')
+      if canon_controlled_identifiers.length > 0
+        if self.merge_base(canonical_sha) == canonical_sha
+          # nothing new from canon, trivial merge by updating HEAD
+          # e.g. "Fast-forward" merge, HEAD is already contained in the commit
+          # canon.fetch_objects(self.owner.repository)
+          # canon.add_alternates(self.owner.repository)
+          # commit_sha = canon.update_ref('master', publication_sha)
+          canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
 
-    if canon_controlled_identifiers.length > 0
-      if self.merge_base(canonical_sha) == canonical_sha
-        # nothing new from canon, trivial merge by updating HEAD
-        # e.g. "Fast-forward" merge, HEAD is already contained in the commit
-        # canon.fetch_objects(self.owner.repository)
-        # canon.add_alternates(self.owner.repository)
-        # commit_sha = canon.update_ref('master', publication_sha)
-        canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
+          self.change_status('committed')
+          self.save!
+        else
+          # Both the merged commit and HEAD are independent and must be tied
+          # together by a merge commit that has both of them as its parents.
 
-        self.change_status('committed')
-        self.save!
-      else
-        # Both the merged commit and HEAD are independent and must be tied
-        # together by a merge commit that has both of them as its parents.
-
-        # TODO: DRY from flatten_commits
-        controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
-          self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
-        end
-
-        controlled_paths_blobs =
-          Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
-
-        Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-        Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-        
-        # roll a tree SHA1 by reading the canonical master tree,
-        # adding controlled path blobs, then writing the modified tree
-        # (happens on the finalizer's repo)
-        self.owner.repository.update_master_from_canonical
-        jgit_tree = JGit::JGitTree.new()
-        jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
-        inserter = self.owner.repository.jgit_repo.newObjectInserter()
-        controlled_paths_blobs.each_pair do |path, blob|
-          unless blob.nil?
-            file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
-            jgit_tree.add_blob(path, file_id.name())
+          # TODO: DRY from flatten_commits
+          controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
+            self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
           end
+
+          controlled_paths_blobs =
+            Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
+
+          Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+          Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+          
+          # roll a tree SHA1 by reading the canonical master tree,
+          # adding controlled path blobs, then writing the modified tree
+          # (happens on the finalizer's repo)
+          self.owner.repository.update_master_from_canonical
+          jgit_tree = JGit::JGitTree.new()
+          jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
+          inserter = self.owner.repository.jgit_repo.newObjectInserter()
+          controlled_paths_blobs.each_pair do |path, blob|
+            unless blob.nil?
+              file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
+              jgit_tree.add_blob(path, file_id.name())
+            end
+          end
+          inserter.flush()
+
+          tree_sha1 = jgit_tree.update_sha
+         
+          Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+          commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
+
+          inserter = self.owner.repository.jgit_repo.newObjectInserter()
+
+          commit = org.eclipse.jgit.lib.CommitBuilder.new()
+          commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+          commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
+          commit.setAuthor(self.owner.jgit_actor)
+          commit.setCommitter(self.owner.jgit_actor)
+          commit.setEncoding("UTF-8")
+          commit.setMessage(commit_message)
+
+          finalized_commit_sha1 = inserter.insert(commit).name()
+          inserter.flush()
+          inserter.release()
+
+          Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+
+          # Update our own head first
+          self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
+
+          # canon.fetch_objects(self.owner.repository)
+          # canon.add_alternates(self.owner.repository)
+          # commit_sha = canon.update_ref('master', finalized_commit_sha1)
+          canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
+
+          self.change_status('committed')
+          self.save!
         end
-        inserter.flush()
 
-        tree_sha1 = jgit_tree.update_sha
-       
-        Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-
-        commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
-
-        inserter = self.owner.repository.jgit_repo.newObjectInserter()
-
-        commit = org.eclipse.jgit.lib.CommitBuilder.new()
-        commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
-        commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
-        commit.setAuthor(self.owner.jgit_actor)
-        commit.setCommitter(self.owner.jgit_actor)
-        commit.setEncoding("UTF-8")
-        commit.setMessage(commit_message)
-
-        finalized_commit_sha1 = inserter.insert(commit).name()
-        inserter.flush()
-        inserter.release()
-
-        Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
-
-        # Update our own head first
-        self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
-
-        # canon.fetch_objects(self.owner.repository)
-        # canon.add_alternates(self.owner.repository)
-        # commit_sha = canon.update_ref('master', finalized_commit_sha1)
-        canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
-
+        # finalized, try to repack
+        RepackCanonicalJob.new.async.perform()
+      else
+        # nothing under canon control, just say it's committed
         self.change_status('committed')
         self.save!
       end
-
-      # finalized, try to repack
-      RepackCanonicalJob.new.async.perform()
-    else
-      # nothing under canon control, just say it's committed
-      self.change_status('committed')
-      self.save!
-    end
+    end # with_advisory_lock('commit_to_canon')
     return commit_sha
   end
 
