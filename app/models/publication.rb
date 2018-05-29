@@ -668,7 +668,7 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    rev_list = `#{self.repository.git_command_prefix} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    rev_list = Repository.run_command("#{self.repository.git_command_prefix} rev-list #{canon_branch_point}..#{board_branch_point}").split("\n")
     unless $?.success?
       raise "git rev-list failure in Publication#creator_commits: #{$?.inspect}"
     end
@@ -697,7 +697,7 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = self.creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      commit_touches_path = `#{self.repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map{|p| Shellwords.escape(p)}.join(" ")}`
+      commit_touches_path = Repository.run_command("#{self.repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map{|p| Shellwords.escape(p)}.join(" ")}")
       !commit_touches_path.blank?
     end
 
@@ -705,7 +705,7 @@ class Publication < ActiveRecord::Base
 
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = `#{self.repository.git_command_prefix} log -1 --pretty=format:%s #{controlled_commit}`.strip
+      message = Repository.run_command("#{self.repository.git_command_prefix} log -1 --pretty=format:%s #{controlled_commit}").strip
       unless message.blank?
         creator_commit_messages << " - #{message}"
       end
@@ -891,7 +891,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    merge_base_backticks = `#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}`.chomp
+    merge_base_backticks = Repository.run_command("#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}").chomp
     unless $?.success?
       raise "git merge-base failure: #{$?.inspect}"
     end
@@ -1230,7 +1230,7 @@ class Publication < ActiveRecord::Base
   def diff_from_canon
     canon = Repository.new
     canonical_sha = canon.get_head('master')
-    diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
+    diff = Repository.run_command("git --git-dir=\"#{self.owner.repository.path}\" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}")
     return diff || ""
   end
 

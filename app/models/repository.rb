@@ -36,6 +36,30 @@ class Repository
     return output_refs.join('/')
   end
 
+  def self.run_command(command_string)
+    Rails.logger.info("Repository.run_command started (called from #{caller_locations(1,1)[0].to_s}): #{command_string}")
+    # JRuby 9.0.0.0+:
+    # t1 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    t1 = Time.now
+    result = `#{command_string}`
+    t2 = Time.now
+    Rails.logger.info("Repository.run_command finished (called from #{caller_locations(1,1)[0].to_s}) in #{(t2 - t1).to_s} seconds: #{command_string}")
+    unless result.blank?
+      begin
+        Rails.logger.debug(result)
+      rescue Exception => e
+        Rails.logger.debug("Repository.run_command error logging result: #{e.message}")
+      end
+    end
+    if !($?.success?)
+      Rails.logger.error("Repository.run_command error (called from #{caller_locations(1,1)[0].to_s}): #{command_string}")
+      Rails.logger.error("Repository.run_command exit code: #{$?.exitstatus.to_s}")
+      raise "Rupository.run_command error running: #{command_string}\n#{result}"
+    else
+      return result
+    end
+  end
+
   # Allow Repository instances to be created outside User context.
   # These instances will only work with the canonical repo.
   def initialize(master = nil)
@@ -85,7 +109,7 @@ class Repository
 
   def fork_bare(destination_path)
     unless Dir.exists?(destination_path)
-      Rails.logger.info(`git clone --bare -q -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)} 2>&1`)
+      Rails.logger.info(self.class.run_command("git clone --bare -q -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)} 2>&1"))
     end
   end
 
@@ -101,7 +125,7 @@ class Repository
   end
 
   def repack
-    `#{self.git_command_prefix} repack`
+    self.class.run_command("#{self.git_command_prefix} repack")
     unless $?.success?
       Rails.logger.warn("Canonical repack failed")
     end
@@ -164,15 +188,15 @@ class Repository
   end
 
   def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
-    `#{git_command_prefix} log -n #{limit} --follow --pretty=format:%H #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}`.split("\n")
+    self.class.run_command("#{git_command_prefix} log -n #{limit} --follow --pretty=format:%H #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}").split("\n")
   end
 
   def get_head(branch)
-    return `#{self.git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}`.chomp
+    return self.class.run_command("#{self.git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}").chomp
   end
 
   def update_ref(branch, sha1)
-    return `#{self.git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}`
+    return self.class.run_command("#{self.git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}")
   end
 
   def update_master_from_canonical
@@ -210,8 +234,7 @@ class Repository
       Rails.logger.error(e.inspect)
       self.add_remote(other_repo)
       fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
-      Rails.logger.info("Trying fallback git command: #{fallback_git_command}")
-      Rails.logger.info(`#{fallback_git_command}`.scrub)
+      self.class.run_command(fallback_git_command)
       unless $?.to_i == 0
         raise "Error with fallback git command in copy_branch_from_repo"
       end

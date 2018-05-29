@@ -140,7 +140,7 @@ class Identifier < ActiveRecord::Base
   def commit_id_to_hash(commit_id)
     commit = {}
     commit[:id] = commit_id
-    commit_data = `#{self.repository.git_command_prefix} log -n 1 --pretty=format:"%s%n%an%n%cn%n%at%n%ct" #{commit_id}`.split("\n")
+    commit_data = Repository.run_command("#{self.repository.git_command_prefix} log -n 1 --pretty=format:\"%s%n%an%n%cn%n%at%n%ct\" #{commit_id}").split("\n")
     commit[:message], commit[:author_name], commit[:committer_name], commit[:authored_date], commit[:committed_date] = commit_data
     commit[:message] = commit[:message].empty? ? '(no commit message)' : commit[:message]
     commit[:authored_date] = Time.at(commit[:authored_date].to_i)
