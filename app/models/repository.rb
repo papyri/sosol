@@ -232,12 +232,8 @@ class Repository
       Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
     rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
       Rails.logger.error(e.inspect)
-      self.add_remote(other_repo)
-      fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
+      fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{branch}:#{new_branch} 2>&1"
       self.class.run_command(fallback_git_command)
-      unless $?.to_i == 0
-        raise "Error with fallback git command in copy_branch_from_repo"
-      end
     end
     #self.fetch_objects(other_repo, branch)
     #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
