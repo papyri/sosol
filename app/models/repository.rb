@@ -233,7 +233,7 @@ class Repository
     rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
       Rails.logger.error(e.inspect)
       self.add_remote(other_repo)
-      fallback_git_command = "git --git-dir=#{Shellwords.escape(@path)} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
+      fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{other_repo.name} #{branch}:#{new_branch} 2>&1"
       self.class.run_command(fallback_git_command)
       unless $?.to_i == 0
         raise "Error with fallback git command in copy_branch_from_repo"
