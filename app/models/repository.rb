@@ -226,18 +226,14 @@ class Repository
     # Lightweight (but have to watch out for side-effects of repo deletion):
     # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
-    #head_ref = other_repo.jgit_repo.resolve(branch).name()
     Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path}, #{@path})")
-    begin
-      Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
-    rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
-      Rails.logger.error(e.inspect)
-      fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{branch}:#{new_branch} 2>&1"
-      self.class.run_command(fallback_git_command)
-    end
-    #self.fetch_objects(other_repo, branch)
-    #Rails.logger.info("copy_branch_from_repo #{branch} = #{head_ref} locally: #{jgit_repo.resolve("refs/remotes/" + other_repo.name + "/" + branch).name()}")
-    #self.create_branch(new_branch, other_repo.name + "/" + branch)
+    # begin
+    #   Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
+    # rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
+    #   Rails.logger.error(e.inspect)
+    fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1"
+    self.class.run_command(fallback_git_command)
+    # end
   end
 
   def add_remote(other_repo)
