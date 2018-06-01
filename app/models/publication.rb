@@ -22,6 +22,7 @@ require 'shellwords'
 
 class Publication < ActiveRecord::Base
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
+  @@canon_mutex = Mutex.new
 
   validates_presence_of :title, :branch
 
@@ -970,7 +971,8 @@ class Publication < ActiveRecord::Base
   def commit_to_canon
     #commit_sha is just used to return git sha reference point for comment
     commit_sha = nil
-    self.with_advisory_lock('commit_to_canon') do
+    @@canon_mutex.lock
+    begin
       canon = Repository.new
       publication_sha = self.head
       canonical_sha = canon.get_head('master')
@@ -1057,7 +1059,9 @@ class Publication < ActiveRecord::Base
         self.change_status('committed')
         self.save!
       end
-    end # with_advisory_lock('commit_to_canon')
+    ensure
+      @@canon_mutex.unlock
+    end # @@canon_mutex held
     return commit_sha
   end
 
