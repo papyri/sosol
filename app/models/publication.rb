@@ -1066,7 +1066,7 @@ class Publication < ActiveRecord::Base
   end
 
   def finalize(finalization_comment_string = '')
-    self.with_lock do
+    self.transaction do
       # check if any identifiers need renaming before proceeding
       if self.needs_rename?
         raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"

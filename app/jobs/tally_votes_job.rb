@@ -8,8 +8,8 @@ class TallyVotesJob
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do
         publication = Publication.find(publication_id)
-        publication.with_lock do
-          publication.with_advisory_lock("tally_votes_#{publication_id}") do
+        publication.with_advisory_lock("tally_votes_#{publication_id}") do
+          publication.transaction do
             publication.tally_votes(related_votes)
           end
         end
