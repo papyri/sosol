@@ -154,6 +154,10 @@ class Repository
         return nil
       end
       last_commit_id = self.jgit_repo.resolve(branch)
+      if last_commit_id.nil?
+        Rails.logger.error("Could not resolve branch #{branch} in repo #{self.path}")
+        return nil
+      end
       jgit_tree = org.eclipse.jgit.revwalk.RevWalk.new(self.jgit_repo).parseCommit(last_commit_id).getTree()
       path_filter = org.eclipse.jgit.treewalk.filter.PathFilter.create(file)
       tree_walk = org.eclipse.jgit.treewalk.TreeWalk.new(self.jgit_repo)
