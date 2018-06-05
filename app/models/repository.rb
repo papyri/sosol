@@ -41,7 +41,14 @@ class Repository
     # JRuby 9.0.0.0+:
     # t1 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     t1 = Time.now
-    result = `#{command_string}`
+    result = ''
+    begin
+      result = `#{command_string}`
+    rescue ArgumentError => e
+      # Sometimes, Git will give output which contains an invalid UTF-8 byte sequence which causes JRuby's internal backticks implementation
+      # to raise an ArgumentError. This is a workaround for that.
+      Rails.logger.error(e.inspect)
+    end
     t2 = Time.now
     Rails.logger.info("Repository.run_command finished (called from #{caller_locations(1,1)[0].to_s}) in #{(t2 - t1).to_s} seconds: #{command_string}")
     unless result.blank?
