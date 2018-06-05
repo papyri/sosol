@@ -1148,7 +1148,7 @@ class Publication < ActiveRecord::Base
       # associate comment with original identifier/publication
       finalization_comment.identifier_id = self.controlled_identifiers.last
       finalization_comment.publication = self.origin
-      finalization_comment.save
+      finalization_comment.save!
 
       # create an event to show up on dashboard
       finalization_event = Event.new()
