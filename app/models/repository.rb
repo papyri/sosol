@@ -267,10 +267,6 @@ class Repository
     end
   end
 
-  def name
-    return [@master_class_path, @master.name].join('/').tr(' ', '_')
-  end
-
   def alternates_path
     File.join(self.path,%w{objects info alternates})
   end
