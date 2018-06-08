@@ -1,9 +1,5 @@
 language: ruby
 sudo: false
-addons:
-  apt:
-    packages:
-    - libc-bin
 env:
   - JRUBY_OPTS="-J-Xmx1g --2.0"
 jdk:
