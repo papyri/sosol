@@ -37,7 +37,7 @@ class Repository
   end
 
   def self.run_command(command_string)
-    Rails.logger.info("Repository.run_command started (called from #{caller_locations(1,1)[0].to_s}): #{command_string}")
+    Rails.logger.info("Repository.run_command started (called from #{caller[0].to_s}): #{command_string}")
     # JRuby 9.0.0.0+:
     # t1 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     t1 = Time.now
@@ -50,7 +50,7 @@ class Repository
       Rails.logger.error(e.inspect)
     end
     t2 = Time.now
-    Rails.logger.info("Repository.run_command finished (called from #{caller_locations(1,1)[0].to_s}) in #{(t2 - t1).to_s} seconds: #{command_string}")
+    Rails.logger.info("Repository.run_command finished (called from #{caller[0].to_s}) in #{(t2 - t1).to_s} seconds: #{command_string}")
     unless result.blank?
       begin
         Rails.logger.debug(result)
@@ -59,7 +59,7 @@ class Repository
       end
     end
     if !($?.success?)
-      Rails.logger.error("Repository.run_command error (called from #{caller_locations(1,1)[0].to_s}): #{command_string}")
+      Rails.logger.error("Repository.run_command error (called from #{caller[0].to_s}): #{command_string}")
       Rails.logger.error("Repository.run_command exit code: #{$?.exitstatus.to_s}")
       raise "Rupository.run_command error running: #{command_string}\n#{result}"
     else
