@@ -242,7 +242,7 @@ class Repository
     #   Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
     # rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
     #   Rails.logger.error(e.inspect)
-    fallback_git_command = "#{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1"
+    fallback_git_command = "set -o pipefail; #{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8"
     self.class.run_command(fallback_git_command)
     # end
   end
