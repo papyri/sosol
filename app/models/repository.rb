@@ -19,7 +19,8 @@ class Repository
       /[\[\\\t~^:? ]/, # it has ":", "?", "[", "\", "^", "~", SP, or TAB anywhere
       /[.\/]$/, # it ends with a "/" or a "."
       /@{/, # it contains a "@{" portion
-      /\.lock$/ # it ends with ".lock
+      /\.lock$/, # it ends with ".lock
+      /[$`!]/ # special rules for bash quoting in copy_branch_from_repo: no $ ` !
     ]
 
   # Returns input string in a form acceptable to  ".git/refs/"
@@ -242,7 +243,12 @@ class Repository
     #   Java::gitwrapper.utils::fetchLite(branch, new_branch, other_repo.path, @path)
     # rescue Java::JavaLang::Exception, Java::JavaUtilConcurrent::ExecutionException => e
     #   Rails.logger.error(e.inspect)
-    fallback_git_command = "bash -c 'set -o pipefail; #{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8'"
+
+    # This will work as long as paths/branches don't contain:
+    # $ ` \ !
+    # See the bash man page QUOTING section on double quotes.
+    # See also Repository.sanitize_ref
+    fallback_git_command = "bash -c \"set -o pipefail; #{self.git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8\""
     self.class.run_command(fallback_git_command)
     # end
   end
