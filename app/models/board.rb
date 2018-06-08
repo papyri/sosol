@@ -33,6 +33,7 @@ class Board < ActiveRecord::Base
   
   validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
   validates_presence_of :title
+  validates_format_of :title, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => 'Board title cannot contain any of the following special characters: $!`"'
   
   has_repository
   

@@ -8,6 +8,7 @@ class Repository
   attr_reader :master, :path
   @@jgit_repo_cache = java.util.WeakHashMap.new
 
+  BASH_SPECIAL_CHARACTERS_REGEX = /[$`!"]/ # special rules for bash quoting in copy_branch_from_repo: no $ ` ! "
   # Excerpted from git/refs.c: (https://github.com/git/git/blob/master/refs.c#L55-L69)
   # Make sure "ref" is something reasonable to have under ".git/refs/";
   # We do not like it if:
@@ -20,7 +21,7 @@ class Repository
       /[.\/]$/, # it ends with a "/" or a "."
       /@{/, # it contains a "@{" portion
       /\.lock$/, # it ends with ".lock
-      /[$`!"]/ # special rules for bash quoting in copy_branch_from_repo: no $ ` ! "
+      BASH_SPECIAL_CHARACTERS_REGEX
     ]
 
   # Returns input string in a form acceptable to  ".git/refs/"
@@ -84,7 +85,7 @@ class Repository
       FileUtils.mkdir_p(File.join(Sosol::Application.config.repository_root, @master_class_path))
 
       @path = File.join(Sosol::Application.config.repository_root,
-                        @master_class_path, "#{master.name}.git")
+                        @master_class_path, "#{master.name.gsub(Repository::BASH_SPECIAL_CHARACTERS_REGEX,'_')}.git")
     end
   end
 
