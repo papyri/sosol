@@ -200,9 +200,12 @@ class HGVTransIdentifier < HGVIdentifier
       body = HGVTransIdentifier.get_body(original_xml)
       
       # transform XML to Leiden+ 
-      transformed = HGVTransIdentifier.xml2nonxml(body.join('')).force_encoding('UTF-8') #via jrubyHelper
-      
-      return transformed
+      begin
+        transformed = HGVTransIdentifier.xml2nonxml(body.join('')).force_encoding('UTF-8') #via jrubyHelper
+        return transformed
+      rescue RXSugar::XMLParseError => e
+        return nil
+      end
     else
       return nil
     end
