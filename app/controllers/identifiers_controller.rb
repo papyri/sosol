@@ -19,6 +19,14 @@ class IdentifiersController < ApplicationController
     @commits = @identifier.get_commits(20).map{|c| @identifier.commit_id_to_hash(c)}
     render :template => 'identifiers/history'
   end
+
+  # GET /publications/1/xxx_identifiers/1/
+  # - redirect to edit
+  def show
+    find_identifier
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit) and return
+  end
   
   # POST /identifiers
   def create
