@@ -41,5 +41,6 @@ gem 'puma'
 gem 'database_cleaner'
 gem 'sucker_punch', '~> 1.0'
 gem 'with_advisory_lock', '~> 3.0.0'
+gem 'silencer'
 
 gem 'test_after_commit', :group => :test
