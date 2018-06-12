@@ -1,6 +1,6 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.22'
 
@@ -31,7 +31,7 @@ gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
-gem 'airbrake', '= 4.3.0'
+gem 'airbrake', '~> 5.6.1'
 gem 'grit', '~> 2.4.0'
 gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
 gem 'prototype-rails'
@@ -41,6 +41,6 @@ gem 'warbler'
 gem 'puma'
 gem 'database_cleaner'
 gem 'sucker_punch', '~> 1.0'
-gem 'with_advisory_lock'
+gem 'with_advisory_lock', '~> 3.0.0'
 
 gem 'test_after_commit', '= 0.4.1', :group => :test

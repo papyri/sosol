@@ -105,8 +105,8 @@ class RpxController < ApplicationController
     user_identifier = UserIdentifier.find_by_identifier(identifier)
     unless user_identifier
       begin
-        unless guess_email data == '' # some providers don't return email addresses
-          user = User.find_by_email(guess_email data)
+        unless guess_email(data) == '' # some providers don't return email addresses
+          user = User.find_by_email(guess_email(data))
           if user
             user_identifier = UserIdentifier.create(:identifier => identifier)
             user.user_identifiers << user_identifier
@@ -137,9 +137,9 @@ class RpxController < ApplicationController
       end
     else
       session[:identifier] = identifier
-      @name = guess_name data
-      @email = guess_email data
-      @full_name = guess_full_name data
+      @name = guess_name(data)
+      @email = guess_email(data)
+      @full_name = guess_full_name(data)
     end
   end
 
