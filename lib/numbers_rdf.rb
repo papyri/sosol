@@ -92,7 +92,7 @@ module NumbersRDF
           return nil
         else
           return process_numbers_server_response_body(
-            response.body,
+            response.body.force_encoding("UTF-8"),
             xpath)
         end
       end

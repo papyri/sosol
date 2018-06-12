@@ -34,7 +34,6 @@ Sosol::Application.routes.draw do
 
   resources :votes
   resources :decrees
-  resources :docos
   resources :boards do
     collection do
   get :rank
@@ -67,8 +66,6 @@ Sosol::Application.routes.draw do
   resources :events
   resource :session
   match 'help' => 'user#help', :as => :help
-  match 'build' => 'docos#build', :as => :build
-  match 'documentation' => 'docos#documentation', :as => :documentation
   match 'usage' => 'user#usage_stats', :as => :usage
   match 'all_users_links' => 'user#all_users_links', :as => :all_users_links
   match 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins
@@ -326,6 +323,7 @@ Sosol::Application.routes.draw do
     end
   end
 
+  match 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
   match 'editor/user/info' => 'user#info'
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/

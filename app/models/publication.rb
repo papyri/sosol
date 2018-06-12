@@ -21,9 +21,7 @@ require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ActiveRecord::Base
-
-
-  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived }
+  PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
 
   validates_presence_of :title, :branch
 
@@ -43,19 +41,15 @@ class Publication < ActiveRecord::Base
   validates_uniqueness_of :title, :scope => [:owner_type, :owner_id, :status]
   validates_uniqueness_of :branch, :scope => [:owner_type, :owner_id]
 
+  validates :status,
+    :inclusion => { :in => PUBLICATION_STATUS, :message => "%{value} is not a valid publication status" }
+
   validates_each :branch do |model, attr, value|
-    # Excerpted from git/refs.c:
-    # Make sure "ref" is something reasonable to have under ".git/refs/";
-    # We do not like it if:
-    if value =~ /^\./ ||    # - any path component of it begins with ".", or
-       value =~ /\.\./ ||   # - it has double dots "..", or
-       value =~ /\/[.\/]/ ||# - it has path components starting with "/" or "."
-       value =~ /[~^: ]/ || # - it has [..], "~", "^", ":" or SP, anywhere, or
-       value =~ /[.\/]$/ || # - it ends with a "/" or a "."
-       value =~ /\.lock$/   # - it ends with ".lock"
-      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+    Repository::GIT_VALID_REF_REGEXES.each do |git_regex|
+      if value =~ git_regex
+        model.errors.add(attr, "Branch \"#{value}\" contains illegal characters")
+      end
     end
-    # not yet handling ASCII control characters
   end
 
   scope :other_users, lambda{ |title, id| {:conditions => [ "title = ? AND creator_id != ? AND ( status = 'editing' OR status = 'submitted' )", title, id] }        }
@@ -131,7 +125,7 @@ class Publication < ActiveRecord::Base
     #title is first identifier in list
     #but added the option to set the title to whatever the caller wants
     if nil == original_title
-      original_title = identifier_to_ref(identifiers.values.flatten.first)
+      original_title = Repository.sanitize_ref(identifiers.values.flatten.first)
     else
       original_was_nil = true;
     end
@@ -185,7 +179,7 @@ class Publication < ActiveRecord::Base
   # validation, replacing spaces with underscore.
   # TODO: do a branch rename inside before_validation_on_update?
   before_validation do |publication|
-    publication.branch ||= title_to_ref(publication.title)
+    publication.branch ||= Repository.sanitize_ref(publication.title)
   end
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
@@ -398,7 +392,7 @@ class Publication < ActiveRecord::Base
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if self.status != "editing" # && self.status != "new"
+    if (self.status != "editing") || self.advisory_lock_exists?("finalize_#{self.id}")  # && self.status != "new"
       return false
     else
       return true
@@ -496,7 +490,7 @@ class Publication < ActiveRecord::Base
       end
 
       if self.parent && (self.parent.owner.class == Board)
-        new_branch_components.unshift(title_to_ref(self.parent.owner.title))
+        new_branch_components.unshift(Repository.sanitize_ref(self.parent.owner.title))
       end
 
       new_branch_name = new_branch_components.join('/')
@@ -508,22 +502,33 @@ class Publication < ActiveRecord::Base
 
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
-      self.transaction do
-        # set to new branch
-        self.branch = new_branch_name
-        # set status to new status
-        self.status = new_status
-        begin
+      retries = 0
+      begin
+        self.transaction do
+          # set to new branch
+          self.branch = new_branch_name
+          # set status to new status
+          self.status = new_status
           self.save!
-        rescue ActiveRecord::RecordInvalid
-          self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
-          self.save!
+          # save succeeded, so perform actual git change
+          # branch from the original branch
+          self.owner.repository.create_branch(new_branch_name, old_branch_name)
+          # delete the original branch
+          self.owner.repository.delete_branch(old_branch_name)
         end
-        # save succeeded, so perform actual git change
-        # branch from the original branch
-        self.owner.repository.create_branch(new_branch_name, old_branch_name)
-        # delete the original branch
-        self.owner.repository.delete_branch(old_branch_name)
+      rescue ActiveRecord::RecordInvalid
+        self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        retry
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#change_status #{self.id} retry: #{retries}")
+          retry
+        else
+          raise e
+        end
       end
     end
   end
@@ -558,13 +563,13 @@ class Publication < ActiveRecord::Base
   #This is where the main action takes place for deciding how votes are organized and what happens for vote results.
   #
   #*Args*
-  #- +user_votes+ the votes to be tallied. By default, the publicaiton's own votes are used.
+  #- +user_votes+ the votes to be tallied. By default, the publication's own votes are used.
   #*Returns*
   #- +decree_action+ determined by the vote tally or +nil+ if no decree is triggered by the tally.
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes #use the publication's votes
+    user_votes ||= self.votes(true) #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
     #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
@@ -574,16 +579,19 @@ class Publication < ActiveRecord::Base
 
     #check that we are still taking votes
     if self.status != "voting"
+      Rails.logger.warn("Publication#tally_votes for #{self.id} does not have status 'voting'")
       return "" #return nothing and do nothing since the voting is now over
     end
 
     #need to tally votes and see if any action will take place
     if self.owner_type != "Board" # || !self.owner #make sure board still exist...add error message?
+      Rails.logger.warn("Publication#tally_votes for #{self.id} not owned by a Board")
       return "" #another check to make sure only the board is voting on its copy
     else
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
 
+    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -790,7 +798,20 @@ class Publication < ActiveRecord::Base
     #should we clear the modified flag so we can tell if the finalizer has done anything
     # that way we will know in the future if we can change finalizersedidd
     finalizing_publication.change_status('finalizing')
-    finalizing_publication.save!
+    retries = 0
+    begin
+      finalizing_publication.save!
+    rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+      Rails.logger.warn(e.message)
+      retries += 1
+      if retries <= 3
+        sleep(2 ** retries)
+        Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+        retry
+      else
+        raise e
+      end
+    end
   end
 
   #Destroys this publication's finalizer's copy.
@@ -825,7 +846,7 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
       new_finalizing_publication.title = old_finalizing_publication.title
-      new_finalizing_publication.branch = title_to_ref(new_finalizing_publication.title)
+      new_finalizing_publication.branch = Repository.sanitize_ref(new_finalizing_publication.title)
       new_finalizing_publication.parent = old_finalizing_publication.parent
 
       new_finalizing_publication.save!
@@ -1076,6 +1097,126 @@ class Publication < ActiveRecord::Base
     return commit_sha
   end
 
+  def finalize(finalization_comment_string = '')
+    self.with_lock do
+      # check if any identifiers need renaming before proceeding
+      if self.needs_rename?
+        raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+      end
+
+      # Pre-process identifiers for finalization
+      # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+      # if something goes wrong
+      max_loops = self.identifiers.size
+      loop_count = 0
+      done_preprocessing = false
+      while (! done_preprocessing) do
+        loop_count = loop_count + 1
+        any_preprocessed = false
+        begin
+          #find all modified identiers in the publication and run any necessary preprocessing
+          self.identifiers.each do |id|
+            #board controls this id and it has been modified
+            if id.modified? && self.find_first_board.controls_identifier?(id)
+              modified = id.preprocess_for_finalization
+              if (modified)
+                id.save
+                any_preprocessed = true
+              end
+            end
+          end
+        rescue Exception => e
+          raise "Error preprocessing finalization copy. #{e.to_s}"
+        end # end iteration through identifiers
+        # we need to rerun preprocessing until no more changes are made because a preprocessing step
+        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
+        done_preprocessing = ! any_preprocessed
+        if (!done_preprocessing && loop_count == max_loops)
+          raise "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
+        end
+      end # done preprocessing
+
+      # to prevent a community publication from being finalized if there is no end_user to get the final version
+      if self.is_community_publication? && self.community.end_user.nil?
+        raise "Error finalizing. No End User for the community."
+      end
+
+      # find all modified identiers in the publication so we can set the votes into the xml
+      # NOTE: DCLP needs special logic for this
+      self.identifiers.each do |id|
+        #board controls this id and it has been modified
+        if id.modified? && self.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
+          id.update_revision_desc(finalization_comment_string.to_s, self.owner);
+          id.save
+        end
+      end
+      
+      # copy back to creator/origin in any case
+      self.copy_back_to_user(finalization_comment_string.to_s, self.owner)
+
+      # if it is a community pub, we don't commit to canon
+      # instead we ONLY copy changes back to origin (done above)
+      canon_sha = ''
+      unless self.is_community_publication? # commit to canon
+        begin
+          canon_sha = self.commit_to_canon
+        rescue Errno::EACCES => git_permissions_error
+          raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+        end
+      end
+      # done committing to canon
+      
+      # store a comment on finalize even if the user makes no comment...so we have a record of the action
+      finalization_comment = Comment.new()
+
+      if finalization_comment_string && finalization_comment_string != ""
+        finalization_comment.comment = finalization_comment_string.to_s
+      else
+        finalization_comment.comment = "no comment"
+      end
+      finalization_comment.user = self.owner
+      finalization_comment.reason = "finalizing"
+      finalization_comment.git_hash = canon_sha
+      # associate comment with original identifier/publication
+      finalization_comment.identifier_id = self.controlled_identifiers.last
+      finalization_comment.publication = self.origin
+      finalization_comment.save
+
+      # create an event to show up on dashboard
+      finalization_event = Event.new()
+      finalization_event.owner = self.owner
+      finalization_event.target = self.parent #used parent so would match approve event
+      finalization_event.category = "committed"
+      finalization_event.save!
+
+      # set status of identifiers
+      self.set_origin_and_local_identifier_status("committed")
+      self.set_board_identifier_status("committed")
+
+      # the finalizer will have a parent that is a board whose status must be set
+      # check that parent is board, then archive the board publication and send status emails
+      if self.parent && self.parent.owner_type == "Board"
+        self.parent.archive
+        self.parent.owner.send_status_emails("committed", self)
+      #else #the user is a super user
+      end
+
+      # send publication to the next board
+      error_text, identifier_for_comment = self.origin.submit_to_next_board
+      if error_text != ""
+        raise error_text
+      end
+      self.change_status('finalized')
+
+      # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+      # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+      # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+      # you get an error because the title is already taken. I'm going to add the date time to the title
+      # of the finalized publication as a workaround
+      self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+      self.save!
+    end # end lock
+  end
 
   def branch_from_master
     owner.repository.create_branch(branch)
@@ -1129,6 +1270,12 @@ class Publication < ActiveRecord::Base
       # {:unified => 5000, :timeout => false}, canonical_sha, self.head,
       # '--', *(self.controlled_paths))
     return diff || ""
+  end
+
+  def identifiers_needing_rename
+    self.controlled_identifiers.select do |i|
+      i.needs_rename?
+    end
   end
 
   def needs_rename?
@@ -1267,7 +1414,7 @@ class Publication < ActiveRecord::Base
     duplicate.owner = new_owner
     duplicate.creator = self.creator
     duplicate.title = self.owner.name + "/" + self.title
-    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
 
@@ -1291,7 +1438,7 @@ class Publication < ActiveRecord::Base
     duplicate.owner = self.community.end_user
     duplicate.creator = self.community.end_user #severing direct connection to orginal publication     self.creator
     duplicate.title = self.community.name + "/" + self.creator.name + "/" + self.title #adding orginal creator to title as reminder for end_user
-    duplicate.branch = title_to_ref(duplicate.title)
+    duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
 
@@ -1493,14 +1640,7 @@ class Publication < ActiveRecord::Base
     return creatable_identifiers
   end
 
-  protected
-    #Returns title string in form acceptable to  ".git/refs/"
-    def title_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
-    end
-
-    #Returns identifier string in form acceptable to  ".git/refs/"
-    def identifier_to_ref(str)
-      java.text.Normalizer.normalize(str.tr(' ','_'),java.text.Normalizer::Form::NFD).gsub(/\p{M}/,'').sub(/\.$/,'')
-    end
+  def related_text
+    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+  end
 end

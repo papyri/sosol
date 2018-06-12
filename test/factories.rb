@@ -158,7 +158,7 @@ FactoryGirl.define do
     f.user_id :user_id
     f.identifier_id :identifier_id
     f.reason :reason
-    f.publication_id :publicaiton_id
+    f.publication_id :publication_id
     
   end
 

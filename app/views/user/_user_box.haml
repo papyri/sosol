@@ -8,18 +8,18 @@
       \|
       = link_to 'help', help_url, :onclick => "window.open(this.href);return false;"
       -# can uncomment lines below to put links directly to text and translation help pages
-      -#= link_to 'Text Leiden+ Help', documentation_url(:docotype => "text"), :onclick => "window.open(this.href);return false;"
+      -#= link_to 'Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus', :onclick => "window.open(this.href);return false;"
       -#\|
-      -#= link_to 'Translation Leiden+ Help', documentation_url(:docotype => "translation"), :onclick => "window.open(this.href);return false;"
+      -#= link_to 'Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation', :onclick => "window.open(this.href);return false;"
       \|
       = link_to 'sign out', signout_url
       %p
       - if @current_user.admin 
         = link_to 'Boards', boards_url
         \|
-        = link_to 'Edit Text Leiden+ Help', docos_url(:docotype => "text")
+        = link_to 'Edit Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus'
         \|
-        = link_to 'Edit Translation Leiden+ Help', docos_url(:docotype => "translation")
+        = link_to 'Edit Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation'
         \|
         = link_to 'Email Users', sendmsg_url
         \|

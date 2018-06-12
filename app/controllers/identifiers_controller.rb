@@ -6,7 +6,6 @@ class IdentifiersController < ApplicationController
   # - edit the XML file from the repository of the associated identifier
   def editxml
     find_identifier
-    @identifier[:xml_content] = @identifier.xml_content
     @is_editor_view = true
     render :template => 'identifiers/editxml'
   end
@@ -37,12 +36,16 @@ class IdentifiersController < ApplicationController
     if params[:apis_collection]
       @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
     else
-      @identifier = identifier_type.new_from_template(@publication)
+      begin
+        @identifier = identifier_type.new_from_template(@publication)
+      rescue Exception => e
+        flash[:error] = e.message
+        redirect_to publication_path(@publication.id) and return
+      end
     end
     if @identifier.nil?
       flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
-      redirect_to polymorphic_path([@publication],
-                                   :action => :show) and return
+      redirect_to publication_path(@publication.id) and return
     else
       flash[:notice] = "File created."
       expire_publication_cache
@@ -102,7 +105,7 @@ class IdentifiersController < ApplicationController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str + ". This file was NOT SAVED."
+      flash.now[:error] = parse_error.to_str[0,1000] + ". This file was NOT SAVED."
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
       @is_editor_view = true

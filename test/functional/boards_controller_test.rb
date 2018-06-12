@@ -3,6 +3,7 @@ require 'test_helper'
 class BoardsControllerTest < ActionController::TestCase
   def setup
     @admin = FactoryGirl.create(:admin)
+    @non_admin = FactoryGirl.create(:user)
     @request.session[:user_id] = @admin.id
     @board = FactoryGirl.create(:board)
     @board_two = FactoryGirl.create(:board)
@@ -11,8 +12,15 @@ class BoardsControllerTest < ActionController::TestCase
   def teardown
     @request.session[:user_id] = nil
     @admin.destroy
+    @non_admin.destroy
     @board.destroy unless !Board.exists? @board.id
     @board_two.destroy unless !Board.exists? @board_two.id
+  end
+
+  test "should return forbidden for non-admin" do
+    @request.session[:user_id] = @non_admin.id
+    get :index
+    assert_response :forbidden
   end
   
   test "should get index" do
