@@ -196,7 +196,7 @@ DEPENDENCIES
   dynamic_form
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
-  haml (>= 3.0.25)
+  haml (= 4.0.6)
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
   jruby-jars (= 1.7.26)
@@ -214,10 +214,10 @@ DEPENDENCIES
   shoulda-matchers (>= 2.0.0)
   silencer
   sucker_punch (~> 1.0)
-  test_after_commit
+  test_after_commit (= 0.4.1)
   uglifier (>= 1.0.3)
   warbler
   with_advisory_lock (~> 3.0.0)
 
 BUNDLED WITH
-   1.14.6
+   1.15.1
