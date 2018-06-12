@@ -18,7 +18,7 @@ end
 
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
-gem 'haml', '>= 3.0.25'
+gem 'haml', '= 4.0.6'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
@@ -43,4 +43,4 @@ gem 'database_cleaner'
 gem 'sucker_punch', '~> 1.0'
 gem 'with_advisory_lock', '~> 3.0.0'
 
-gem 'test_after_commit', :group => :test
+gem 'test_after_commit', '= 0.4.1', :group => :test
